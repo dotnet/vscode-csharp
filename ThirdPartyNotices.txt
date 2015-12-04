@@ -9,7 +9,7 @@ expressly granted, whether by implication, estoppel or otherwise.
 
 1. omnisharp-roslyn version 1.0.0 (https://github.com/OmniSharp/omnisharp-roslyn)
 2. ScriptCS (https://github.com/scriptcs/scriptcs)
-3. run-in-terminal version 0.0.2 (https://github.com/jrieken/run-in-terminal)
+3. run-in-terminal version 0.0.2 (https://github.com/microsoft/run-in-terminal)
 4. semver version 5.1.0 (https://github.com/npm/node-semver)
 5. DefinitelyTyped version 0.0.1 (https://github.com/borisyankov/DefinitelyTyped)
 
