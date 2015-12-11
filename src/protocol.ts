@@ -214,7 +214,7 @@ export interface ProjectInformationResponse {
 }
 
 export interface WorkspaceInformationResponse {
-	MSBuild: MsBuildWorkspaceInformation;
+	MsBuild: MsBuildWorkspaceInformation;
 	Dnx: DnxWorkspaceInformation;
 	ScriptCs: ScriptCsContext;
 }

@@ -52,7 +52,7 @@ gulp.task('omnisharp:clean', function () {
 });
 
 gulp.task('omnisharp:fetch', ['omnisharp:clean'], function () {
-	return downloadOmnisharp('v1.5.6')
+	return downloadOmnisharp('v1.6.7.9')
 		.pipe(decompress({strip: 1}))
 		.pipe(gulp.dest('bin'));
 });

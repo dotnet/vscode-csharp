@@ -116,11 +116,11 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
 				let label: string;
 
 				// show sln-file if applicable
-				if (info.MSBuild.SolutionPath) {
-					label = basename(info.MSBuild.SolutionPath)//workspace.getRelativePath(info.MSBuild.SolutionPath);
-					fileNames.push({ pattern: info.MSBuild.SolutionPath });
+				if (info.MsBuild.SolutionPath) {
+					label = basename(info.MsBuild.SolutionPath)//workspace.getRelativePath(info.MsBuild.SolutionPath);
+					fileNames.push({ pattern: info.MsBuild.SolutionPath });
 
-					for (let project of info.MSBuild.Projects) {
+					for (let project of info.MsBuild.Projects) {
 						fileNames.push({ pattern: project.Path });
 						if (project.SourceFiles) {
 							for (let sourceFile of project.SourceFiles) {
