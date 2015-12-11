@@ -1,6 +1,6 @@
 {
     "name": "vscode-omnisharp",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "Omnisharp extension that is being shipped with VS Code.",
     "displayName": "Built-in Omnisharp",
     "author": "Microsoft Corporation",
