@@ -169,11 +169,11 @@ export abstract class OmnisharpServer {
 
 		return omnisharpLauncher(cwd, argv).then(value => {
 			this._serverProcess = value.process;
-			this._fireEvent('stdout', `[INFO] Started OmniSharp from '${value.command}' with process id ${value.process.pid}...\n`);
+            this._fireEvent('stdout', `[INFO] Started OmniSharp from '${value.command}' with process id ${value.process.pid}...\n`);
+            this._fireEvent('ServerStart', solutionPath);
+			this._setState(ServerState.Started);
 			return this._doConnect();
 		}).then(_ => {
-			this._fireEvent('ServerStart', solutionPath);
-			this._setState(ServerState.Started);
 			this._processQueue();
 		}, err => {
 			this._fireEvent('ServerError', err);
