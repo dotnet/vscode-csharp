@@ -21,9 +21,12 @@
         "github-releases": "^0.3.0",
         "gulp": "^3.8.9",
         "gulp-decompress": "^1.2.0",
+        "gulp-filter": "^3.0.1",
         "tmp": "0.0.28",
         "vinyl-fs": "^2.2.1",
-        "typescript": "^1.7.3"
+        "typescript": "^1.7.3",
+        "gulp-tslint": "^4.3.0",
+        "tslint-microsoft-contrib": "^2.0.0"
     },
     "engines": {
         "vscode": "^0.10.1"

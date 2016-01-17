@@ -1,0 +1,12 @@
+{
+    "rules": {
+        "no-unused-expression": true,
+        "no-unused-variable": true,
+        "no-unreachable": true,
+        "no-duplicate-variable": true,
+        "no-var-keyword": true,
+        "promise-must-complete": true,
+        "curly": true,
+        "semicolon": true
+    }
+}
