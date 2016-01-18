@@ -1,7 +1,6 @@
 var gulp = require('gulp');
 var decompress = require('gulp-decompress');
 var tslint = require("gulp-tslint");
-var filter = require('gulp-filter');
 var es = require('event-stream');
 var GitHub = require('github-releases');
 var tmp = require('tmp');
@@ -63,12 +62,6 @@ var allTypeScript = [
     'src/**/*.ts',
     '!**/*.d.ts',
     '!**/typings**'
-];
-
-var tslintFilter = [
-	'**',
-	'!**/*.d.ts',
-	'!**/typings/**'
 ];
 
 var lintReporter = function (output, file, options) {
