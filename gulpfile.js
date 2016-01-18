@@ -60,15 +60,15 @@ gulp.task('omnisharp:fetch', ['omnisharp:clean'], function () {
 });
 
 var allTypeScript = [
-	'src/**/*.ts'
+    'src/**/*.ts',
+    '!**/*.d.ts',
+    '!**/typings**'
 ];
 
 var tslintFilter = [
 	'**',
 	'!**/*.d.ts',
-	'!**/typings/**',
-	'!**/*.test.ts',
-	'!src/vs/editor/standalone-languages/test/**'
+	'!**/typings/**'
 ];
 
 var lintReporter = function (output, file, options) {
@@ -82,7 +82,6 @@ var lintReporter = function (output, file, options) {
 
 gulp.task('tslint', function () {
 	gulp.src(allTypeScript)
-	.pipe(filter(tslintFilter))
 	.pipe(tslint({
 		rulesDirectory: "node_modules/tslint-microsoft-contrib"
 	}))
