@@ -1,6 +1,6 @@
 {
     "name": "vscode-omnisharp",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "description": "Omnisharp extension that is being shipped with VS Code.",
     "displayName": "Built-in Omnisharp",
     "author": "Microsoft Corporation",
@@ -11,13 +11,13 @@
         "postinstall": "node ./node_modules/vscode/bin/install && gulp omnisharp && tsc"
     },
     "dependencies": {
-        "vscode": "^0.11.0",
         "run-in-terminal": "*",
         "semver": "*",
         "request-light": "^0.1.0",
 		"jsonc-parser": "^0.2.0"
     },
     "devDependencies": {
+        "vscode": "^0.11.0",
         "del": "^2.0.2",
         "event-stream": "^3.3.2",
         "github-releases": "^0.3.0",
