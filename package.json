@@ -26,6 +26,7 @@
         "tmp": "0.0.28",
         "vinyl-fs": "^2.2.1",
         "typescript": "^1.8.9",
+        "tslint": "^3.3.0",
         "gulp-tslint": "^4.3.0",
         "tslint-microsoft-contrib": "^2.0.0"
     },
