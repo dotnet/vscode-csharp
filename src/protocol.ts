@@ -45,6 +45,8 @@ export var FilesChanged = '/filesChanged';
 
 export var SignatureHelp = '/signatureHelp';
 
+export var GetTestContext = '/gettestcontext';
+
 export interface Request {
 	Filename: string;
 	Line?: number;
@@ -334,6 +336,14 @@ export interface UnresolvedDependenciesMessage {
 export interface PackageDependency {
 	Name: string;
 	Version: string;
+}
+
+export interface GetTestContextRequest extends Request {
+    Type : string;
+}
+
+export interface GetTestContextResponse {
+    TestCommand: string;
 }
 
 export namespace V2 {
