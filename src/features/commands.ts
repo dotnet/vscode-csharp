@@ -187,19 +187,22 @@ export function runTests(server: OmnisharpServer, testType) {
 
     return server.makeRequest<proto.GetTestContextResponse>(proto.GetTestContext, request).then(value => {
         let cwd = dirname(activeEditor.document.fileName);
-        return runCommandInOutputChannel(value.TestCommand, channel, cwd);
+        return runTestsInOutputChannel(value.TestCommand, channel, cwd);
     });
 }
 
-export function runCommandInOutputChannel(command: string, channel: OutputChannel, cwd: string): Promise<ChildProcess> {
+export function runTestsInOutputChannel(command: string, channel: OutputChannel, cwd: string): Promise<ChildProcess> {
 
     return new Promise<ChildProcess>((resolve, reject) => {
+
+        window.setStatusBarMessage("Running tests...");
+
         let args = command.split(" ");
         let cmd = args.shift();
         let childprocess: ChildProcess;
         try {
             channel.appendLine("[INFO] Running command: " + command);
-            childprocess = spawn(cmd, args, { cwd: cwd});
+            childprocess = spawn(cmd, args, { cwd: cwd });
         } catch (e) {
             channel.appendLine("[ERROR]" + e);
         }
@@ -209,9 +212,31 @@ export function runCommandInOutputChannel(command: string, channel: OutputChanne
         });
 
         childprocess.stdout.on('data', (data: NodeBuffer) => {
-            channel.append(data.toString());
+            var line = data.toString();
+            var match = parseTestsResults(line);
+            if (match.success) {
+                if (match.errors + match.failures > 0)
+                    channel.show();
+
+                window.setStatusBarMessage(line);
+            }
+            channel.append(line);
         });
 
         resolve(childprocess);
     });
+}
+
+
+function parseTestsResults(text: string): any {
+
+    const finalResultRegex = /(?:Total|Tests run): \d+, Errors: (\d+), (?:Failed|Failures): (\d+)/i;
+
+    var match = text.match(finalResultRegex);
+    if (match && match.length > 0) {
+        var errors = parseInt(match[1]);
+        var failures = parseInt(match[2]);
+        return { success: true, errors, failures };
+    }
+    return { success: false, errors: 0, failures: 0 };
 }
