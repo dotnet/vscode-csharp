@@ -11,8 +11,11 @@
         "postinstall": "tsc"
     },
     "dependencies": {
+        "decompress": "^3.0.0",
+        "github-releases": "^0.3.2",
         "run-in-terminal": "*",
-        "semver": "*"
+        "semver": "*",
+        "tmp": "^0.0.28"
     },
     "devDependencies": {
         "vscode": "^0.10.1",

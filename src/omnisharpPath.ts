@@ -10,7 +10,8 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 const runFileName = process.platform === 'win32' ? 'run.cmd' : 'run';
-const omniSharpFileName = process.platform === 'win32' ? 'omnisharp.exe' : 'omnisharp';
+const omniSharpFileName = process.platform === 'win32' ? 'omnisharp.cmd' : 'omnisharp';
+const omniSharpExeFileName = process.platform === 'win32' ? 'omnisharp.exe' : 'omnisharp';
 
 enum PathKind {
 	File,
@@ -57,7 +58,12 @@ function getLaunchFilePath(filePath: string): Promise<string> {
 					return candidate;
 				}
 
-				throw new Error(`Could not find launch file in ${filePath}. Expected '${runFileName}' or '${omniSharpFileName}.`);
+				candidate = path.join(filePath, omniSharpExeFileName);
+				if (fs.existsSync(candidate)) {
+					return candidate;
+				}
+
+				throw new Error(`Could not find launch file in ${filePath}. Expected '${runFileName}', '${omniSharpFileName}', or '${omniSharpExeFileName}'.`);
 			}
 		});
 }

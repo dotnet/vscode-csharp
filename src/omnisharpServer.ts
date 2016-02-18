@@ -176,18 +176,19 @@ export abstract class OmnisharpServer {
 				this._fireEvent('stdout', `[INFO] Starting OmniSharp at '${solutionPath}'...\n`);
 				this._fireEvent('BeforeServerStart', solutionPath);
 
-				return omnisharpLauncher(serverPath, cwd, argv).then(value => {
-					this._serverProcess = value.process;
-					this._fireEvent('stdout', `[INFO] Started OmniSharp from '${value.serverPath}' with process id ${value.process.pid}...\n`);
-					this._fireEvent('ServerStart', solutionPath);
-					this._setState(ServerState.Started);
-					return this._doConnect();
-				}).then(_ => {
-					this._processQueue();
-				}, err => {
-					this._fireEvent('ServerError', err);
-					throw err;
-				});
+				return omnisharpLauncher(serverPath, cwd, argv)
+					.then(value => {
+						this._serverProcess = value.process;
+						return this._doConnect();
+					}).then(_ => {
+						this._fireEvent('stdout', `[INFO] Started OmniSharp from '${serverPath}' with process id ${this._serverProcess.pid}...\n`);
+						this._fireEvent('ServerStart', solutionPath);
+						this._setState(ServerState.Started);
+						this._processQueue();
+					}).catch(err => {
+						this._fireEvent('ServerError', err);
+						throw err;
+					});
 			})
 			.catch(err => {
 				this._setState(ServerState.NotInstalled);
@@ -290,8 +291,8 @@ export abstract class OmnisharpServer {
 			request = {
 				path,
 				data,
-				onSuccess: () => resolve(),
-				onError: () => reject(),
+				onSuccess: resolve,
+				onError: reject,
 				_enqueued: Date.now()
 			};
 			
@@ -375,7 +376,7 @@ namespace WireProtocol {
 export class StdioOmnisharpServer extends OmnisharpServer {
 
 	private static _seqPool = 1;
-	private static StartupTimeout = 1000 * 60;
+	private static StartupTimeout = 1000 * 10;
 
 	private _rl: ReadLine;
 	private _activeRequest: { [seq: number]: { onSuccess: Function; onError: Function; } } = Object.create(null);
@@ -518,8 +519,8 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 		return new Promise<any>((resolve, reject) => {
 
 			this._activeRequest[thisRequestPacket.Seq] = {
-				onSuccess: () => resolve(),
-				onError: () => reject()
+				onSuccess: resolve,
+				onError: reject
 			};
 
 			this._serverProcess.stdin.write(JSON.stringify(thisRequestPacket) + '\n');
