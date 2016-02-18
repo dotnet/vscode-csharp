@@ -123,7 +123,7 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
 
 				// show sln-file if applicable
 				if (info.MsBuild.SolutionPath) {
-					label = basename(info.MsBuild.SolutionPath)//workspace.getRelativePath(info.MsBuild.SolutionPath);
+					label = basename(info.MsBuild.SolutionPath);
 					fileNames.push({ pattern: info.MsBuild.SolutionPath });
 
 					for (let project of info.MsBuild.Projects) {
@@ -152,7 +152,7 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
 					// we already have a message from a sln-file
 				}
 				else if (count === 1) {
-					label = basename(info.Dnx.Projects[0].Path)//workspace.getRelativePath(info.Dnx.Projects[0].Path);
+					label = basename(info.Dnx.Projects[0].Path);
 				}
 				else {
 					label = `${count} projects`;

@@ -5,22 +5,22 @@
 
 'use strict';
 
-import {CancellationToken, CodeLens, SymbolKind, Range, Uri, TextDocument, CodeLensProvider, Position} from 'vscode';
-import {createRequest, toRange, toLocation} from '../typeConvertion';
+import * as vscode from 'vscode';
+import {toRange, toLocation} from '../typeConvertion';
 import AbstractSupport from './abstractProvider';
 import * as proto from '../protocol';
 
-class OmniSharpCodeLens extends CodeLens {
+class OmniSharpCodeLens extends vscode.CodeLens {
 
 	fileName: string;
 
-	constructor(fileName: string, range: Range) {
+	constructor(fileName: string, range: vscode.Range) {
 		super(range);
 		this.fileName = fileName;
 	}
 }
 
-export default class OmniSharpCodeLensProvider extends AbstractSupport implements CodeLensProvider {
+export default class OmniSharpCodeLensProvider extends AbstractSupport implements vscode.CodeLensProvider {
 
 	private static filteredSymbolNames: { [name: string]: boolean } = {
 		'Equals': true,
@@ -29,18 +29,19 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
 		'ToString': true
 	};
 
-	provideCodeLenses(document: TextDocument, token: CancellationToken): CodeLens[] | Thenable<CodeLens[]> {
+	provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
 
 		return this._server.makeRequest<proto.CurrentFileMembersAsTreeResponse>(proto.CurrentFileMembersAsTree, {
 			Filename: document.fileName
-		}, token).then(tree => {
-			var ret: CodeLens[] = [];
+		}, token)
+		.then(tree => {
+			const ret: vscode.CodeLens[] = [];
 			tree.TopLevelTypeDefinitions.forEach(node => OmniSharpCodeLensProvider._convertQuickFix(ret, document.fileName, node));
 			return ret;
 		});
 	}
 
-	private static _convertQuickFix(bucket: CodeLens[], fileName:string, node: proto.Node): void {
+	private static _convertQuickFix(bucket: vscode.CodeLens[], fileName:string, node: proto.Node): void {
 
 		if (node.Kind === 'MethodDeclaration' && OmniSharpCodeLensProvider.filteredSymbolNames[node.Location.Text]) {
 			return;
@@ -54,7 +55,7 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
 		}
 	}
 
-	resolveCodeLens(codeLens: CodeLens, token: CancellationToken): Thenable<CodeLens> {
+	resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken): Thenable<vscode.CodeLens> {
 		if (codeLens instanceof OmniSharpCodeLens) {
 
 			let req = <proto.FindUsagesRequest>{
@@ -69,11 +70,12 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
 				if (!res || !Array.isArray(res.QuickFixes)) {
 					return;
 				}
+				
 				let len = res.QuickFixes.length;
 				codeLens.command = {
 					title: len === 1 ? '1 reference' : `${len} references`,
 					command: 'editor.action.showReferences',
-					arguments: [Uri.file(req.Filename), codeLens.range.start, res.QuickFixes.map(toLocation)]
+					arguments: [vscode.Uri.file(req.Filename), codeLens.range.start, res.QuickFixes.map(toLocation)]
 				};
 
 				return codeLens;

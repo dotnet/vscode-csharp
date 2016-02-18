@@ -7,11 +7,11 @@
 
 import AbstractSupport from './abstractProvider';
 import * as proto from '../protocol';
-import {Uri, DocumentRangeFormattingEditProvider, OnTypeFormattingEditProvider, FormattingOptions, CancellationToken, TextEdit, TextDocument, Range, Position} from 'vscode';
+import * as vscode from 'vscode';
 
-export default class FormattingSupport extends AbstractSupport implements DocumentRangeFormattingEditProvider {
+export default class FormattingSupport extends AbstractSupport implements vscode.DocumentRangeFormattingEditProvider {
 
-	public provideDocumentRangeFormattingEdits(document: TextDocument, range: Range, options: FormattingOptions, token: CancellationToken): Promise<TextEdit[]> {
+	public provideDocumentRangeFormattingEdits(document: vscode.TextDocument, range: vscode.Range, options: vscode.FormattingOptions, token: vscode.CancellationToken): Promise<vscode.TextEdit[]> {
 
 		let request = <proto.FormatRangeRequest>{
 			Filename: document.fileName,
@@ -28,7 +28,7 @@ export default class FormattingSupport extends AbstractSupport implements Docume
 		});
 	}
 
-	public provideOnTypeFormattingEdits(document: TextDocument, position: Position, ch: string, options: FormattingOptions, token: CancellationToken): Promise<TextEdit[]> {
+	public provideOnTypeFormattingEdits(document: vscode.TextDocument, position: vscode.Position, ch: string, options: vscode.FormattingOptions, token: vscode.CancellationToken): Promise<vscode.TextEdit[]> {
 
 		let request = <proto.FormatAfterKeystrokeRequest> {
 			Filename: document.fileName,
@@ -44,9 +44,9 @@ export default class FormattingSupport extends AbstractSupport implements Docume
 		});
 	}
 
-	private static _asEditOptionation(change: proto.TextChange): TextEdit {
-		return new TextEdit(
-			new Range(change.StartLine - 1, change.StartColumn - 1, change.EndLine - 1, change.EndColumn - 1),
+	private static _asEditOptionation(change: proto.TextChange): vscode.TextEdit {
+		return new vscode.TextEdit(
+			new vscode.Range(change.StartLine - 1, change.StartColumn - 1, change.EndLine - 1, change.EndColumn - 1),
 			change.NewText);
 	}
 }

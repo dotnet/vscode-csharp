@@ -8,27 +8,27 @@
 import AbstractSupport from './abstractProvider';
 import * as Protocol from '../protocol';
 import {createRequest} from '../typeConvertion';
-import {SignatureHelpProvider, SignatureHelp, SignatureInformation, ParameterInformation, Uri, CancellationToken, TextDocument, Position} from 'vscode';
+import * as vscode from 'vscode';
 
-export default class OmniSharpSignatureHelpProvider extends AbstractSupport implements SignatureHelpProvider {
+export default class OmniSharpSignatureHelpProvider extends AbstractSupport implements vscode.SignatureHelpProvider {
 
-	public provideSignatureHelp(document: TextDocument, position: Position, token: CancellationToken): Promise<SignatureHelp> {
+	public provideSignatureHelp(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): Promise<vscode.SignatureHelp> {
 
 		let req = createRequest(document, position);
 
 		return this._server.makeRequest<Protocol.SignatureHelp>(Protocol.SignatureHelp, req, token).then(res => {
 
-			let ret = new SignatureHelp();
+			let ret = new vscode.SignatureHelp();
 			ret.activeSignature = res.ActiveSignature;
 			ret.activeParameter = res.ActiveParameter;
 
-			for(let signature of res.Signatures) {
+			for (let signature of res.Signatures) {
 
-				let signatureInfo = new SignatureInformation(signature.Label, signature.Documentation);
+				let signatureInfo = new vscode.SignatureInformation(signature.Label, signature.Documentation);
 				ret.signatures.push(signatureInfo);
 
 				for (let parameter of signature.Parameters) {
-					let parameterInfo = new ParameterInformation(
+					let parameterInfo = new vscode.ParameterInformation(
 						parameter.Label,
 						parameter.Documentation);
 

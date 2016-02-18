@@ -7,39 +7,41 @@
 
 import AbstractSupport from './abstractProvider';
 import * as Protocol from '../protocol';
-import {createRequest, toRange} from '../typeConvertion';
-import {CancellationToken, Uri, Range, WorkspaceSymbolProvider, SymbolInformation, SymbolKind} from 'vscode';
+import {toRange} from '../typeConvertion';
+import * as vscode from 'vscode';
 
+export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport implements vscode.WorkspaceSymbolProvider {
 
-export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport implements WorkspaceSymbolProvider {
-
-	public provideWorkspaceSymbols(search: string, token: CancellationToken): Promise<SymbolInformation[]> {
+	public provideWorkspaceSymbols(search: string, token: vscode.CancellationToken): Promise<vscode.SymbolInformation[]> {
 
 		return this._server.makeRequest<Protocol.FindSymbolsResponse>(Protocol.FindSymbols, <Protocol.FindSymbolsRequest> {
 			Filter: search,
 			Filename: ''
-		}, token).then(res => {
+		}, token)
+		.then(res => {
 			if (res && Array.isArray(res.QuickFixes)) {
 				return res.QuickFixes.map(OmnisharpWorkspaceSymbolProvider._asSymbolInformation);
 			}
 		});
 	}
 
-	private static _asSymbolInformation(symbolInfo: Protocol.SymbolLocation): SymbolInformation {
+	private static _asSymbolInformation(symbolInfo: Protocol.SymbolLocation): vscode.SymbolInformation {
 
-		return new SymbolInformation(symbolInfo.Text, OmnisharpWorkspaceSymbolProvider._toKind(symbolInfo),
+		return new vscode.SymbolInformation(symbolInfo.Text, OmnisharpWorkspaceSymbolProvider._toKind(symbolInfo),
 			toRange(symbolInfo),
-			Uri.file(symbolInfo.FileName));
+			vscode.Uri.file(symbolInfo.FileName));
 	}
 
-	private static _toKind(symbolInfo: Protocol.SymbolLocation): SymbolKind {
+	private static _toKind(symbolInfo: Protocol.SymbolLocation): vscode.SymbolKind {
 		switch (symbolInfo.Kind) {
 			case 'Method':
-				return SymbolKind.Method;
+				return vscode.SymbolKind.Method;
+				
 			case 'Field':
 			case 'Property':
-				return SymbolKind.Field;
+				return vscode.SymbolKind.Field;
 		}
-		return SymbolKind.Class;
+		
+		return vscode.SymbolKind.Class;
 	}
 }

@@ -6,14 +6,13 @@
 'use strict';
 
 import {spawn, ChildProcess} from 'child_process';
-import {getOmnisharpLaunchFilePath} from './omnisharpPath';
 import {satisfies} from 'semver';
 
 const isWindows = process.platform === 'win32';
 
 interface LaunchResult {
-	process: ChildProcess,
-	serverPath: string
+	process: ChildProcess;
+	serverPath: string;
 }
 
 export default function launch(serverPath: string, cwd: string, args: string[]): Promise<LaunchResult> {
@@ -108,7 +107,6 @@ export function testForRequiredMono(versionRange?: string): Promise<boolean> {
 
 		childprocess.stdout.on('close', () => {
 			let match = versionRegExp.exec(stdout);
-			let ret: boolean;
 
 			if (!match) {
 				return resolve(false);

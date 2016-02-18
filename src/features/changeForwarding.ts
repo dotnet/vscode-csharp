@@ -5,13 +5,13 @@
 
 'use strict';
 
-import {Disposable, Uri, workspace} from 'vscode';
+import * as vscode from 'vscode';
 import {OmnisharpServer} from '../omnisharpServer';
 import * as proto from '../protocol';
 
-function forwardDocumentChanges(server: OmnisharpServer): Disposable {
+function forwardDocumentChanges(server: OmnisharpServer): vscode.Disposable {
 
-	return workspace.onDidChangeTextDocument(event => {
+	return vscode.workspace.onDidChangeTextDocument(event => {
 
 		let {document} = event;
 		if (document.isUntitled || document.languageId !== 'csharp') {
@@ -32,12 +32,13 @@ function forwardDocumentChanges(server: OmnisharpServer): Disposable {
 	});
 }
 
-function forwardFileChanges(server: OmnisharpServer): Disposable {
+function forwardFileChanges(server: OmnisharpServer): vscode.Disposable {
 
-	function onFileSystemEvent(uri: Uri): void {
+	function onFileSystemEvent(uri: vscode.Uri): void {
 		if (!server.isRunning()) {
 			return;
 		}
+		
 		let req = { Filename: uri.fsPath };
 		server.makeRequest<boolean>(proto.FilesChanged, [req]).catch(err => {
 			console.warn('[o] failed to forward file change event for ' + uri.fsPath, err);
@@ -45,18 +46,18 @@ function forwardFileChanges(server: OmnisharpServer): Disposable {
 		});
 	}
 
-	const watcher = workspace.createFileSystemWatcher('**/*.*');
+	const watcher = vscode.workspace.createFileSystemWatcher('**/*.*');
 	let d1 = watcher.onDidCreate(onFileSystemEvent);
 	let d2 = watcher.onDidChange(onFileSystemEvent);
 	let d3 = watcher.onDidDelete(onFileSystemEvent);
 
-	return Disposable.from(watcher, d1, d2, d3);
+	return vscode.Disposable.from(watcher, d1, d2, d3);
 }
 
-export default function forwardChanges(server: OmnisharpServer): Disposable {
+export default function forwardChanges(server: OmnisharpServer): vscode.Disposable {
 
 	// combine file watching and text document watching
-	return Disposable.from(
+	return vscode.Disposable.from(
 		forwardDocumentChanges(server),
 		forwardFileChanges(server));
 }

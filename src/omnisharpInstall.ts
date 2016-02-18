@@ -14,7 +14,7 @@ export function downloadOmnisharp(): Promise<boolean> {
 
 export function registerInstallCommand(server: OmnisharpServer): vscode.Disposable {
 	return vscode.commands.registerCommand('omnisharp.install', () => {
-		var item = {
+		const item = {
 			title: 'Yes',
 			command() {
 				downloadOmnisharp()
@@ -22,7 +22,7 @@ export function registerInstallCommand(server: OmnisharpServer): vscode.Disposab
 						if (success) {
 							server.restart();
 						}
-					})
+					});
 			}  
 		};
 

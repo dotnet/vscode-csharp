@@ -8,11 +8,11 @@
 import AbstractSupport from './abstractProvider';
 import * as Protocol from '../protocol';
 import {createRequest, toLocation} from '../typeConvertion';
-import {ReferenceProvider, Location, Range, TextDocument, Uri, CancellationToken, Position} from 'vscode';
+import * as vscode from 'vscode';
 
-export default class OmnisharpReferenceProvider extends AbstractSupport implements ReferenceProvider {
+export default class OmnisharpReferenceProvider extends AbstractSupport implements vscode.ReferenceProvider {
 
-	public provideReferences(document: TextDocument, position: Position, options: { includeDeclaration: boolean;}, token: CancellationToken): Promise<Location[]> {
+	public provideReferences(document: vscode.TextDocument, position: vscode.Position, options: { includeDeclaration: boolean;}, token: vscode.CancellationToken): Promise<vscode.Location[]> {
 
 		let req = createRequest<Protocol.FindUsagesRequest>(document, position);
 		req.OnlyThisFile = false;

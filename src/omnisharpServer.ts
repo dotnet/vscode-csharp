@@ -7,11 +7,10 @@
 
 import {EventEmitter} from 'events';
 import {ChildProcess, exec} from 'child_process';
-import {request} from 'http';
 import {dirname} from 'path';
 import {ReadLine, createInterface} from 'readline';
 import omnisharpLauncher from './omnisharpServerLauncher';
-import {Disposable, CancellationToken, OutputChannel, workspace, window} from 'vscode';
+import * as vscode from 'vscode';
 import {ErrorMessage, UnresolvedDependenciesMessage, MSBuildProjectDiagnostics, ProjectInformationResponse} from './protocol';
 import getLaunchTargets, {LaunchTarget} from './launchTargetFinder';
 import {getOmnisharpLaunchFilePath} from './omnisharpPath';
@@ -39,14 +38,14 @@ export abstract class OmnisharpServer {
 	private _solutionPath: string;
 	private _queue: Request[] = [];
 	private _isProcessingQueue = false;
-	private _channel: OutputChannel;
+	private _channel: vscode.OutputChannel;
 
 	protected _serverProcess: ChildProcess;
 	protected _extraArgv: string[];
 
 	constructor() {
 		this._extraArgv = [];
-		this._channel = window.createOutputChannel('OmniSharp Log');
+		this._channel = vscode.window.createOutputChannel('OmniSharp Log');
 	}
 
 	public isRunning(): boolean {
@@ -68,7 +67,7 @@ export abstract class OmnisharpServer {
 		return this._solutionPath;
 	}
 
-	public getChannel(): OutputChannel {
+	public getChannel(): vscode.OutputChannel {
 		return this._channel;
 	}
 
@@ -142,10 +141,11 @@ export abstract class OmnisharpServer {
 		return this._addListener('started', listener);
 	}
 
-	private _addListener(event: string, listener: (e: any) => any, thisArg?: any): Disposable {
+	private _addListener(event: string, listener: (e: any) => any, thisArg?: any): vscode.Disposable {
 		listener = thisArg ? listener.bind(thisArg) : listener;
 		this._eventBus.addListener(event, listener);
-		return new Disposable(() => this._eventBus.removeListener(event, listener));
+		
+		return new vscode.Disposable(() => this._eventBus.removeListener(event, listener));
 	}
 
 	protected _fireEvent(event: string, args: any): void {
@@ -158,6 +158,7 @@ export abstract class OmnisharpServer {
 		if (!this._start) {
 			this._start = this._doStart(solutionPath);
 		}
+		
 		return this._start;
 	}
 
@@ -198,7 +199,7 @@ export abstract class OmnisharpServer {
 
 	public stop(): Promise<void> {
 
-		var ret: Promise<OmnisharpServer>;
+		let ret: Promise<OmnisharpServer>;
 
 		if (!this._serverProcess) {
 			// nothing to kill
@@ -209,7 +210,7 @@ export abstract class OmnisharpServer {
 			// processes are *not* killed but become root
 			// processes. Therefore we use TASKKILL.EXE
 			ret = new Promise<OmnisharpServer>((resolve, reject) => {
-				var killer = exec(`taskkill /F /T /PID ${this._serverProcess.pid}`, function (err, stdout, stderr) {
+				const killer = exec(`taskkill /F /T /PID ${this._serverProcess.pid}`, function (err, stdout, stderr) {
 					if (err) {
 						return reject(err);
 					}
@@ -236,7 +237,7 @@ export abstract class OmnisharpServer {
 	public restart(solutionPath: string = this._solutionPath): Promise<void> {
 		if (solutionPath) {
 			return this.stop().then(() => {
-				this.start(solutionPath)
+				this.start(solutionPath);
 			});
 		}
 	}
@@ -246,7 +247,7 @@ export abstract class OmnisharpServer {
 			if (targets.length === 0) {
 				return new Promise<void>((resolve, reject) => {
 					// 1st watch for files
-					let watcher = workspace.createFileSystemWatcher('{**/*.sln,**/project.json}', false, true, true);
+					let watcher = vscode.workspace.createFileSystemWatcher('{**/*.sln,**/project.json}', false, true, true);
 					watcher.onDidCreate(uri => {
 						watcher.dispose();
 						resolve();
@@ -267,6 +268,7 @@ export abstract class OmnisharpServer {
 				}
 
 				this._fireEvent('server:MultipleLaunchTargets', targets);
+				
 				return Promise.reject<void>(undefined);
 			}
 
@@ -277,7 +279,7 @@ export abstract class OmnisharpServer {
 
 	// --- requests et al
 
-	public makeRequest<R>(path: string, data?: any, token?: CancellationToken): Promise<R> {
+	public makeRequest<R>(path: string, data?: any, token?: vscode.CancellationToken): Promise<R> {
 
 		if (this._getState() !== ServerState.Started) {
 			return Promise.reject<R>('server has been stopped or not started');
@@ -288,12 +290,13 @@ export abstract class OmnisharpServer {
 			request = {
 				path,
 				data,
-				onSuccess: resolve,
-				onError: reject,
+				onSuccess: () => resolve(),
+				onError: () => reject(),
 				_enqueued: Date.now()
 			};
+			
 			this._queue.push(request);
-			// this._statOnRequestStart(request);
+			
 			if (this._getState() === ServerState.Started && !this._isProcessingQueue) {
 				this._processQueue();
 			}
@@ -326,15 +329,13 @@ export abstract class OmnisharpServer {
 		this._isProcessingQueue = true;
 
 		// send next request and recurse when done
-		var thisRequest = this._queue.shift();
+		const thisRequest = this._queue.shift();
 		this._makeNextRequest(thisRequest.path, thisRequest.data).then(value => {
 			thisRequest.onSuccess(value);
 			this._processQueue();
-			// this._statOnRequestEnd(thisRequest, true);
 		}, err => {
 			thisRequest.onError(err);
 			this._processQueue();
-			// this._statOnRequestEnd(thisRequest, false);
 		}).catch(err => {
 			console.error(err);
 			this._processQueue();
@@ -342,17 +343,6 @@ export abstract class OmnisharpServer {
 	}
 
 	protected abstract _makeNextRequest(path: string, data: any): Promise<any>;
-
-	// private _statOnRequestStart(request: Request): void {
-	// 	console.log(`[DEBUG] *enqueuing* request '${request.path}' (queue size is ${this._queue.length})\n`);
-	// }
-
-	// private _statOnRequestEnd(request: Request, successfully: boolean): void {
-	// 	var duration = Date.now() - request._enqueued,
-	// 		state = successfully ? 'successfully' : 'with errors';
-
-	// 	console.log(`[DEBUG] request '${request.path}' finished *${state}* after ${duration}ms\n`);
-	// }
 }
 
 namespace WireProtocol {
@@ -386,7 +376,6 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 
 	private static _seqPool = 1;
 	private static StartupTimeout = 1000 * 60;
-	private static ResponsePacketTimeout = 1000 * 60 * 15; // helps debugging
 
 	private _rl: ReadLine;
 	private _activeRequest: { [seq: number]: { onSuccess: Function; onError: Function; } } = Object.create(null);
@@ -403,6 +392,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 		while (this._callOnStop.length) {
 			this._callOnStop.pop()();
 		}
+		
 		return super.stop();
 	}
 
@@ -416,18 +406,23 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 			terminal: false
 		});
 
-		var p = new Promise<OmnisharpServer>((resolve, reject) => {
-			var listener: Disposable;
+		const p = new Promise<OmnisharpServer>((resolve, reject) => {
+			let listener: vscode.Disposable;
 
 			// timeout logic
-			var handle = setTimeout(() => {
-				listener && listener.dispose();
+			const handle = setTimeout(() => {
+				if (listener) {
+					listener.dispose();
+				}
+
 				reject(new Error('Failed to start OmniSharp'));
 			}, StdioOmnisharpServer.StartupTimeout);
 
 			// handle started-event
 			listener = this.onOmnisharpStart(() => {
-				listener && listener.dispose();
+				if (listener) {
+					listener.dispose();
+				}
 				clearTimeout(handle);
 				resolve(this);
 			});
@@ -440,16 +435,17 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 
 	private _startListening(): void {
 
-		var onLineReceived = (line: string) => {
+		const onLineReceived = (line: string) => {
 			if (line[0] !== '{') {
 				this._fireEvent('stdout', `${line}\n`);
 				return;
 			}
 
-			var packet: WireProtocol.Packet;
+			let packet: WireProtocol.Packet;
 			try {
 				packet = JSON.parse(line);
-			} catch (e) {
+			}
+			catch (e) {
 				// not json
 				return;
 			}
@@ -471,14 +467,15 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 					break;
 			}
 		};
+		
 		this._rl.addListener('line', onLineReceived);
 		this._callOnStop.push(() => this._rl.removeListener('line', onLineReceived));
 	}
 
 	private _handleResponsePacket(packet: WireProtocol.ResponsePacket): void {
 
-		var requestSeq = packet.Request_seq,
-			entry = this._activeRequest[requestSeq];
+		const requestSeq = packet.Request_seq;
+		const entry = this._activeRequest[requestSeq];
 
 		if (!entry) {
 			console.warn('Received a response WITHOUT a request', packet);
@@ -489,7 +486,8 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 
 		if (packet.Success) {
 			entry.onSuccess(packet.Body);
-		} else {
+		}
+		else {
 			entry.onError(packet.Message || packet.Body);
 		}
 	}
@@ -498,10 +496,11 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 
 		if (packet.Event === 'log') {
 			// handle log events
-			var entry = <{ LogLevel: string; Name: string; Message: string; }> packet.Body;
+			const entry = <{ LogLevel: string; Name: string; Message: string; }> packet.Body;
 			this._fireEvent('stdout', `[${entry.LogLevel}:${entry.Name}] ${entry.Message}\n`);
 			return;
-		} else {
+		}
+		else {
 			// fwd all other events
 			this._fireEvent(packet.Event, packet.Body);
 		}
@@ -509,18 +508,18 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 
 	protected _makeNextRequest(path: string, data: any): Promise<any> {
 
-		var thisRequestPacket: WireProtocol.RequestPacket = {
+		const thisRequestPacket: WireProtocol.RequestPacket = {
 			Type: 'request',
 			Seq: StdioOmnisharpServer._seqPool++,
 			Command: path,
 			Arguments: data
 		};
 
-		return new Promise<any>((c, e) => {
+		return new Promise<any>((resolve, reject) => {
 
 			this._activeRequest[thisRequestPacket.Seq] = {
-				onSuccess: c,
-				onError: e
+				onSuccess: () => resolve(),
+				onError: () => reject()
 			};
 
 			this._serverProcess.stdin.write(JSON.stringify(thisRequestPacket) + '\n');

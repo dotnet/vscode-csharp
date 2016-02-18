@@ -42,7 +42,8 @@ function pickProjectAndStart(server: OmnisharpServer) {
 		return vscode.window.showQuickPick(targets, {
 			matchOnDescription: true,
 			placeHolder: `Select 1 of ${targets.length} projects`
-		}).then(target => {
+		})
+		.then(target => {
 			if (target) {
 				return server.restart(target.target.fsPath);
 			}
@@ -81,7 +82,7 @@ export function dotnetRestoreForAll(server: OmnisharpServer) {
 		});
 
 		return vscode.window.showQuickPick(commands).then(command => {
-			if(command) {
+			if (command) {
 				return command.execute();
 			}
 		});
@@ -91,7 +92,7 @@ export function dotnetRestoreForAll(server: OmnisharpServer) {
 export function dotnetRestoreForProject(server: OmnisharpServer, fileName: string) {
 
 	return server.makeRequest<proto.WorkspaceInformationResponse>(proto.Projects).then((info):Promise<any> => {
-		for(let project of info.Dnx.Projects) {
+		for (let project of info.Dnx.Projects) {
 			if (project.Path === fileName) {
                 let command = "dotnet";
 

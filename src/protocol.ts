@@ -352,7 +352,7 @@ export namespace V2 {
 	}
 
 	export interface GetCodeActionsRequest extends Request {
-		Selection: Range
+		Selection: Range;
 	}
 
 	export interface OmniSharpCodeAction {
