@@ -8,7 +8,7 @@
     "license": "SEE LICENSE IN RuntimeLicenses/license.txt",
     "main": "./out/omnisharpMain",
     "scripts": {
-        "postinstall": "gulp omnisharp && tsc"
+        "postinstall": "tsc"
     },
     "dependencies": {
         "run-in-terminal": "*",
@@ -16,13 +16,7 @@
     },
     "devDependencies": {
         "vscode": "^0.10.1",
-        "del": "^2.0.2",
-        "event-stream": "^3.3.2",
-        "github-releases": "^0.3.0",
         "gulp": "^3.8.9",
-        "gulp-decompress": "^1.2.0",
-        "tmp": "0.0.28",
-        "vinyl-fs": "^2.2.1",
         "typescript": "^1.7.3",
         "tslint": "^3.3.0",
         "gulp-tslint": "^4.3.0",
