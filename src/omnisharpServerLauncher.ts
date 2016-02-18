@@ -9,14 +9,18 @@ import {spawn, ChildProcess} from 'child_process';
 import {getOmnisharpLaunchFilePath} from './omnisharpPath';
 import {satisfies} from 'semver';
 
-var isWindows = /^win/.test(process.platform);
+const isWindows = process.platform === 'win32';
 
-export default function launch(cwd: string, args: string[]):Promise < { process: ChildProcess, command: string } > {
+interface LaunchResult {
+	process: ChildProcess,
+	serverPath: string
+}
+
+export default function launch(serverPath: string, cwd: string, args: string[]): Promise<LaunchResult> {
 
 	return new Promise((resolve, reject) => {
-
 		try {
-			(isWindows ? launchWindows(cwd, args) : launchNix(cwd, args)).then(value => {
+			(isWindows ? launchWindows(serverPath, cwd, args) : launchNix(serverPath, cwd, args)).then(value => {
 
 				// async error - when target not not ENEOT
 				value.process.on('error', reject);
@@ -29,77 +33,72 @@ export default function launch(cwd: string, args: string[]):Promise < { process:
 				reject(err);
 			});
 
-		} catch (err) {
+		}
+		catch (err) {
 			reject(err);
 		}
 	});
 }
 
-function launchWindows(cwd: string, args: string[]): Promise<{ process: ChildProcess, command: string }> {
-	return getOmnisharpLaunchFilePath().then(command => {
+function launchWindows(serverPath: string, cwd: string, args: string[]): Promise<LaunchResult> {
+	args = args.slice(0);
+	args.unshift(serverPath);
+	args = [[
+		'/s',
+		'/c',
+		'"' + args.map(arg => /^[^"].* .*[^"]/.test(arg) ? `"${arg}"` : arg).join(' ') + '"'
+	].join(' ')];
 
-		args = args.slice(0);
-		args.unshift(command);
-		args = [[
-			'/s',
-			'/c',
-			'"' + args.map(arg => /^[^"].* .*[^"]/.test(arg) ? `"${arg}"` : arg).join(' ') + '"'
-		].join(' ')];
-
-		let process = spawn('cmd', args, <any>{
-			windowsVerbatimArguments: true,
-			detached: false,
-			// env: details.env,
-			cwd: cwd
-		});
-
-		return {
-			process,
-			command
-		};
+	const process = spawn('cmd', args, <any>{
+		windowsVerbatimArguments: true,
+		detached: false,
+		// env: details.env,
+		cwd: cwd
 	});
+
+	return Promise.resolve({ process: process, serverPath: serverPath });
 }
 
-function launchNix(cwd: string, args: string[]): Promise<{ process: ChildProcess, command: string }>{
-
+function launchNix(serverPath: string, cwd: string, args: string[]): Promise<LaunchResult>{
+    
 	return new Promise((resolve, reject) => {
-		hasMono('>=4.0.1').then(hasIt => {
-			if (!hasIt) {
+		testForRequiredMono('>=4.0.1').then(success => {
+			if (!success) {
 				reject(new Error('Cannot start Omnisharp because Mono version >=4.0.1 is required. See http://go.microsoft.com/fwlink/?linkID=534832#_20001'));
-			} else {
+			}
+			else {
 				resolve();
 			}
 		});
 	}).then(_ => {
-		return getOmnisharpLaunchFilePath();
-	}).then(command => {
-		let process = spawn(command, args, {
+		const process = spawn(serverPath, args, {
 			detached: false,
 			// env: details.env,
 			cwd
 		});
 
-		return {
-			process,
-			command
-		}
+		return { process: process, serverPath: serverPath };
 	});
 }
 
-const versionRegexp = /(\d+\.\d+\.\d+)/;
-
-export function hasMono(range?: string): Promise<boolean> {
-
+/**
+ * Launch mono process with --version flag and check the content
+ * of stdout for the specified versionRange.
+ */
+export function testForRequiredMono(versionRange?: string): Promise<boolean> {
+    const versionRegExp = /(\d+\.\d+\.\d+)/;
+    
 	return new Promise<boolean>((resolve, reject) => {
 		let childprocess: ChildProcess;
 		try {
 			childprocess = spawn('mono', ['--version']);
-		} catch (e) {
+		}
+		catch (err) {
 			return resolve(false);
 		}
 
-		childprocess.on('error', function (err: any) {
-			resolve(false);
+		childprocess.on('error', err => {
+			return resolve(false);
 		});
 
 		let stdout = '';
@@ -108,18 +107,17 @@ export function hasMono(range?: string): Promise<boolean> {
 		});
 
 		childprocess.stdout.on('close', () => {
-			let match = versionRegexp.exec(stdout),
-				ret: boolean;
+			let match = versionRegExp.exec(stdout);
+			let ret: boolean;
 
 			if (!match) {
-				ret = false;
-			} else if (!range) {
-				ret = true;
-			} else {
-				ret = satisfies(match[1], range);
+				return resolve(false);
+			}
+			else if (!versionRange) {
+				return resolve(true);
 			}
 
-			resolve(ret);
+			return resolve(satisfies(match[1], versionRange));
 		});
 	});
 }

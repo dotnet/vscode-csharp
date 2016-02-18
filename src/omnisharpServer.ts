@@ -14,9 +14,10 @@ import omnisharpLauncher from './omnisharpServerLauncher';
 import {Disposable, CancellationToken, OutputChannel, workspace, window} from 'vscode';
 import {ErrorMessage, UnresolvedDependenciesMessage, MSBuildProjectDiagnostics, ProjectInformationResponse} from './protocol';
 import getLaunchTargets, {LaunchTarget} from './launchTargetFinder';
-
+import {getOmnisharpLaunchFilePath} from './omnisharpPath';
 
 enum ServerState {
+    NotInstalled,
 	Starting,
 	Started,
 	Stopped
@@ -34,7 +35,7 @@ export abstract class OmnisharpServer {
 
 	private _eventBus = new EventEmitter();
 	private _start: Promise<void>;
-	private _state: ServerState = ServerState.Stopped;
+	private _state: ServerState = ServerState.NotInstalled;
 	private _solutionPath: string;
 	private _queue: Request[] = [];
 	private _isProcessingQueue = false;
@@ -125,6 +126,10 @@ export abstract class OmnisharpServer {
 		return this._addListener('ServerStart', listener);
 	}
 
+	public onOmnisharpNotInstalled(listener: () => any) {
+		return this._addListener('OmnisharpNotInstalled', listener);
+	}
+
 	public onServerStop(listener: () => any) {
 		return this._addListener('ServerStop', listener);
 	}
@@ -158,27 +163,35 @@ export abstract class OmnisharpServer {
 
 	private _doStart(solutionPath: string): Promise<void> {
 
-		this._setState(ServerState.Starting);
 		this._solutionPath = solutionPath;
 
-		var cwd = dirname(solutionPath),
-			argv = ['-s', solutionPath, '--hostPID', process.pid.toString(), 'dnx:enablePackageRestore=false'].concat(this._extraArgv);
+		return getOmnisharpLaunchFilePath()
+			.then(serverPath => {
+				this._setState(ServerState.Starting);
 
-		this._fireEvent('stdout', `[INFO] Starting OmniSharp at '${solutionPath}'...\n`);
-		this._fireEvent('BeforeServerStart', solutionPath);
+				const cwd = dirname(solutionPath);
+				const argv = ['-s', solutionPath, '--hostPID', process.pid.toString(), 'dnx:enablePackageRestore=false'].concat(this._extraArgv);
 
-		return omnisharpLauncher(cwd, argv).then(value => {
-			this._serverProcess = value.process;
-            this._fireEvent('stdout', `[INFO] Started OmniSharp from '${value.command}' with process id ${value.process.pid}...\n`);
-            this._fireEvent('ServerStart', solutionPath);
-			this._setState(ServerState.Started);
-			return this._doConnect();
-		}).then(_ => {
-			this._processQueue();
-		}, err => {
-			this._fireEvent('ServerError', err);
-			throw err;
-		});
+				this._fireEvent('stdout', `[INFO] Starting OmniSharp at '${solutionPath}'...\n`);
+				this._fireEvent('BeforeServerStart', solutionPath);
+
+				return omnisharpLauncher(serverPath, cwd, argv).then(value => {
+					this._serverProcess = value.process;
+					this._fireEvent('stdout', `[INFO] Started OmniSharp from '${value.serverPath}' with process id ${value.process.pid}...\n`);
+					this._fireEvent('ServerStart', solutionPath);
+					this._setState(ServerState.Started);
+					return this._doConnect();
+				}).then(_ => {
+					this._processQueue();
+				}, err => {
+					this._fireEvent('ServerError', err);
+					throw err;
+				});
+			})
+			.catch(err => {
+				this._setState(ServerState.NotInstalled);
+				this._fireEvent('OmnisharpNotInstalled', err);
+			});
 	}
 
 	protected abstract _doConnect(): Promise<OmnisharpServer>;
@@ -190,8 +203,8 @@ export abstract class OmnisharpServer {
 		if (!this._serverProcess) {
 			// nothing to kill
 			ret = Promise.resolve(undefined);
-
-		} else if (/^win/.test(process.platform)) {
+		}
+		else if (process.platform === 'win32') {
 			// when killing a process in windows its child
 			// processes are *not* killed but become root
 			// processes. Therefore we use TASKKILL.EXE
@@ -201,13 +214,16 @@ export abstract class OmnisharpServer {
 						return reject(err);
 					}
 				});
+                
 				killer.on('exit', resolve);
 				killer.on('error', reject);
 			});
-		} else {
+		}
+		else {
 			this._serverProcess.kill('SIGTERM');
 			ret = Promise.resolve(undefined);
 		}
+        
 		return ret.then(_ => {
 			this._start = null;
 			this._serverProcess = null;
