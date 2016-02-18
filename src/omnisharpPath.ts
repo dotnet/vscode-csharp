@@ -9,38 +9,91 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-const omnisharpEnv = 'OMNISHARP';
-const isWindows = process.platform === 'win32';
+const runFileName = process.platform === 'win32' ? 'run.cmd' : 'run';
+const omniSharpFileName = process.platform === 'win32' ? 'omnisharp.exe' : 'omnisharp';
 
-export function getOmnisharpPath(): Promise<string> {
+enum PathKind {
+    File,
+    Directory
+}
 
-	let pathCandidate: string;
+function getPathKind(filePath: string): Promise<PathKind> {
+    return new Promise<PathKind>((resolve, reject) => {
+        fs.lstat(filePath, (err, stats) => {
+            if (err) {
+                reject(err);
+            }
+            else if (stats.isFile()) {
+                resolve(PathKind.File);
+            }
+            else if (stats.isDirectory()) {
+                resolve(PathKind.Directory);
+            }
+            else {
+                reject(Error(`Path is not file or directory: ${filePath}`));
+            }
+        });
+    });
+}
 
-	let config = vscode.workspace.getConfiguration();
-	if (config.has('csharp.omnisharp')) {
-		// form config
-		pathCandidate = config.get<string>('csharp.omnisharp');
+function getLaunchFilePath(filePath: string): Promise<string> {
+    return getPathKind(filePath)
+        .then(kind => {
+            if (kind === PathKind.File) {
+                return filePath;
+            }
+            else {
+                // Look for launch file since kind === PathKind.Directory
+                
+                let candidate: string;
 
-	} else if (typeof process.env[omnisharpEnv] === 'string') {
-		// form enviroment variable
+                candidate = path.join(filePath, runFileName);
+                if (fs.existsSync(candidate)) {
+                    return candidate;
+                }
+                
+                candidate = path.join(filePath, omniSharpFileName);
+                if (fs.existsSync(candidate)) {
+                    return candidate;
+                }
+                
+                throw new Error(`Could not find launch file in ${filePath}. Expected '${runFileName}' or '${omniSharpFileName}.`);
+            }
+        });
+}
+
+function getLaunchPathFromSettings(): Promise<string> {
+    const setting = vscode.workspace.getConfiguration('csharp').get<string>('omnisharp');
+	if (setting) {
+        return getLaunchFilePath(setting);
+    }
+    
+    return Promise.reject<string>(Error('OmniSharp user setting does not exist.'));
+}
+
+function getLaunchPathFromEnvironmentVariable(): Promise<string> {
+    const variable = process.env["OMNISHARP"];
+    if (typeof variable === 'string') {
 		console.warn('[deprecated] use workspace or user settings with "csharp.omnisharp":"/path/to/omnisharp"');
-		pathCandidate = process.env[omnisharpEnv];
-
-	} else {
-		// bundled version of Omnisharp
-		pathCandidate = path.join(__dirname, '../bin/omnisharp')
-		if (isWindows) {
-			pathCandidate += '.cmd';
-		}
+        return getLaunchFilePath(variable);
 	}
+    
+    return Promise.reject<string>(Error('OmniSharp environment variable does not exist.'));
+}
 
-	return new Promise<string>((resolve, reject) => {
-		fs.exists(pathCandidate, localExists => {
-			if (localExists) {
-				resolve(pathCandidate);
-			} else {
-				reject('OmniSharp does not exist at location: ' + pathCandidate);
-			}
-		});
-	});
+function getLaunchPathFromDefaultInstallLocation(): Promise<string> {
+    const installLocation = getDefaultOmnisharpInstallLocation();
+    return getLaunchFilePath(installLocation);
+}
+
+export function getDefaultOmnisharpInstallLocation(): string {
+    return path.join(__dirname, '../.omnisharp');
+}
+
+export function getOmnisharpLaunchFilePath(): Promise<string> {
+    // Attempt to find launch file path first from settings, then from environment variable, and finally from the default install location.
+    
+    return getLaunchPathFromSettings()
+        .catch(getLaunchPathFromEnvironmentVariable)
+        .catch(getLaunchPathFromDefaultInstallLocation); 
 }

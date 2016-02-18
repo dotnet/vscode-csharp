@@ -6,7 +6,7 @@
 'use strict';
 
 import {spawn, ChildProcess} from 'child_process';
-import {getOmnisharpPath} from './omnisharpPath';
+import {getOmnisharpLaunchFilePath} from './omnisharpPath';
 import {satisfies} from 'semver';
 
 var isWindows = /^win/.test(process.platform);
@@ -36,7 +36,7 @@ export default function launch(cwd: string, args: string[]):Promise < { process:
 }
 
 function launchWindows(cwd: string, args: string[]): Promise<{ process: ChildProcess, command: string }> {
-	return getOmnisharpPath().then(command => {
+	return getOmnisharpLaunchFilePath().then(command => {
 
 		args = args.slice(0);
 		args.unshift(command);
@@ -71,7 +71,7 @@ function launchNix(cwd: string, args: string[]): Promise<{ process: ChildProcess
 			}
 		});
 	}).then(_ => {
-		return getOmnisharpPath();
+		return getOmnisharpLaunchFilePath();
 	}).then(command => {
 		let process = spawn(command, args, {
 			detached: false,
