@@ -5,13 +5,10 @@
 
 'use strict';
 
-import {exists as fileExists} from 'fs';
 import {spawn, ChildProcess} from 'child_process';
-import {workspace} from 'vscode';
+import {getOmnisharpPath} from './omnisharpPath';
 import {satisfies} from 'semver';
-import {join} from 'path';
 
-var omnisharpEnv = 'OMNISHARP';
 var isWindows = /^win/.test(process.platform);
 
 export default function launch(cwd: string, args: string[]):Promise < { process: ChildProcess, command: string } > {
@@ -86,39 +83,6 @@ function launchNix(cwd: string, args: string[]): Promise<{ process: ChildProcess
 			process,
 			command
 		}
-	});
-}
-
-function getOmnisharpPath(): Promise<string> {
-
-	let pathCandidate: string;
-
-	let config = workspace.getConfiguration();
-	if (config.has('csharp.omnisharp')) {
-		// form config
-		pathCandidate = config.get<string>('csharp.omnisharp');
-
-	} else if (typeof process.env[omnisharpEnv] === 'string') {
-		// form enviroment variable
-		console.warn('[deprecated] use workspace or user settings with "csharp.omnisharp":"/path/to/omnisharp"');
-		pathCandidate = process.env[omnisharpEnv];
-
-	} else {
-		// bundled version of Omnisharp
-		pathCandidate = join(__dirname, '../bin/omnisharp')
-		if (isWindows) {
-			pathCandidate += '.cmd';
-		}
-	}
-
-	return new Promise<string>((resolve, reject) => {
-		fileExists(pathCandidate, localExists => {
-			if (localExists) {
-				resolve(pathCandidate);
-			} else {
-				reject('OmniSharp does not exist at location: ' + pathCandidate);
-			}
-		});
 	});
 }
 
