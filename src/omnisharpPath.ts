@@ -65,20 +65,13 @@ function getLaunchFilePath(filePath: string): Promise<string> {
 function getLaunchPathFromSettings(): Promise<string> {
     const setting = vscode.workspace.getConfiguration('csharp').get<string>('omnisharp');
 	if (setting) {
-        return getLaunchFilePath(setting);
+        return getLaunchFilePath(setting)
+            .catch(err => {
+                vscode.window.showWarningMessage(`Invalid "csharp.omnisharp" user setting specified ('${setting}'). Falling back to default install location.`);
+            });
     }
     
     return Promise.reject<string>(Error('OmniSharp user setting does not exist.'));
-}
-
-function getLaunchPathFromEnvironmentVariable(): Promise<string> {
-    const variable = process.env["OMNISHARP"];
-    if (typeof variable === 'string') {
-		console.warn('[deprecated] use workspace or user settings with "csharp.omnisharp":"/path/to/omnisharp"');
-        return getLaunchFilePath(variable);
-	}
-    
-    return Promise.reject<string>(Error('OmniSharp environment variable does not exist.'));
 }
 
 function getLaunchPathFromDefaultInstallLocation(): Promise<string> {
@@ -91,9 +84,8 @@ export function getDefaultOmnisharpInstallLocation(): string {
 }
 
 export function getOmnisharpLaunchFilePath(): Promise<string> {
-    // Attempt to find launch file path first from settings, then from environment variable, and finally from the default install location.
+    // Attempt to find launch file path first from settings, and then from the default install location.
     
     return getLaunchPathFromSettings()
-        .catch(getLaunchPathFromEnvironmentVariable)
         .catch(getLaunchPathFromDefaultInstallLocation); 
 }
