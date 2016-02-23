@@ -24,6 +24,7 @@ import forwardChanges from './features/changeForwarding';
 import reportStatus from './features/omnisharpStatus';
 import findLaunchTargets from './launchTargetFinder';
 import {Disposable, ExtensionContext, DocumentSelector, languages, extensions} from 'vscode';
+import {installCoreClrDebug} from './coreclr-debug';
 
 export function activate(context: ExtensionContext): any {
 
@@ -75,6 +76,9 @@ export function activate(context: ExtensionContext): any {
 		advisor.dispose();
 		server.stop();
 	}));
+    
+    // install coreclr-debug
+    installCoreClrDebug(context);
 
 	context.subscriptions.push(...disposables);
 }
