@@ -1,0 +1,33 @@
+{
+  "name": "dummy",
+  "compilationOptions": {
+      "emitEntryPoint": true
+  },
+  "dependencies": {
+    "Microsoft.VisualStudio.clrdbg": "14.0.25017-pb-2822693",
+    "Microsoft.VisualStudio.clrdbg.MIEngine": "14.0.30217-pb-1",
+    "Microsoft.VisualStudio.OpenDebugAD7": "1.0.20217-pb-1",
+    "NETStandard.Library": "1.0.0-rc3-23803",
+    "Newtonsoft.Json": "7.0.1",    
+    "Microsoft.VisualStudio.Debugger.Interop.Portable": "1.0.1",
+    "System.Collections.Specialized":  "4.0.1-rc3-23803",
+    "System.Collections.Immutable": "1.2.0-rc3-23803", 
+    "System.Diagnostics.Process" : "4.1.0-rc3-23803",
+    "System.Diagnostics.StackTrace":  "4.0.1-rc3-23803",  
+    "System.Dynamic.Runtime": "4.0.11-rc3-23803",
+    "Microsoft.CSharp": "4.0.1-rc3-23803",
+    "System.Threading.Tasks.Dataflow": "4.6.0-rc3-23803",
+    "System.Threading.Thread": "4.0.0-rc3-23803", 
+    "System.Xml.XDocument": "4.0.11-rc3-23803",
+    "System.Xml.XmlDocument": "4.0.1-rc3-23803",  
+    "System.Xml.XmlSerializer": "4.0.11-rc3-23803",
+    "System.ComponentModel":  "4.0.1-rc3-23803",  
+    "System.ComponentModel.Annotations":  "4.1.0-rc3-23803",  
+    "System.ComponentModel.EventBasedAsync":  "4.0.11-rc3-23803",
+    "System.Runtime.Serialization.Primitives": "4.1.0-rc3-23803",
+    "System.Net.Http":  "4.0.1-rc3-23803"
+  },
+  "frameworks": {
+    "dnxcore50": { }
+  }
+}
