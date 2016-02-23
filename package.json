@@ -33,6 +33,7 @@
     },
     "activationEvents": [
         "onLanguage:csharp",
+        "onLanguage:fsharp",
         "onCommand:o.restart",
         "onCommand:o.pickProjectAndStart",
         "onCommand:o.restore",
@@ -127,6 +128,228 @@
             {
                 "language": "csharp",
                 "path": "./snippets/csharp.json"
+            }
+        ],
+        "debuggers": [
+            {
+                "type": "coreclr",
+                "label": ".NET Core",
+                "enableBreakpointsFor": { "languageIds": [ "csharp", "fsharp" ] },
+
+                "program": "./coreclr-debug/debugAdapters/OpenDebugAD7",
+                "windows": {
+                    "program": "./coreclr-debug/debugAdapters/OpenDebugAD7.exe"
+                },
+
+                "configurationAttributes": {
+                "launch": {
+                    "required": [ "program", "cwd" ],
+                    "properties": {
+                    "program": {
+                        "type": "string",
+                        "description": "Path to the program (executable file) to launch. On Windows, a '.exe' suffix is appended if not specified already.",
+                        "default": "${workspaceRoot}/bin/Debug/dnxcore50/<My-Project-Name>"
+                    },
+                    "cwd": {
+                        "type": "string",
+                        "description": "Path to the working directory of the program being debugged. Default is the current workspace.",
+                        "default": "${workspaceRoot}"
+                    },
+                    "args": {
+                        "type": "array",
+                        "description": "Command line arguments passed to the program.",
+                        "items": { "type": "string" },
+                        "default": [ ]
+                    },
+                    "stopAtEntry": {
+                        "type": "boolean",
+                        "description": "If true, the debugger should stop at the entry point of the target.",
+                        "default": false
+                    },
+                    "launchBrowser": {
+                        "type": "object",
+                        "description": "Describes options to launch a web browser as part of launch",
+                        "default": {
+                        "enabled": true,
+                        "args": "${auto-detect-url}",
+                        "windows": {
+                            "command": "cmd.exe",
+                            "args": "/C start ${auto-detect-url}"
+                        },
+                        "osx": {
+                            "command": "open"
+                        },
+                        "linux": {
+                            "command": "xdg-open"  
+                        }
+                        },
+                        "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "description": "Whether web browser launch is enabled",
+                            "default": true
+                        },
+                        "args": {
+                            "type": "string",
+                            "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
+                            "default": "${auto-detect-url}"
+                        },
+                        "osx": {
+                            "type": "object",
+                            "description": "OSX-specific web launch configuration options",
+                            "default": {
+                            "command": "open"
+                            },
+                            "properties": {
+                                "command": {
+                                "type": "string",
+                                "description": "The command to execute for launching the web browser",
+                                "default": "open"
+                                },
+                                "args": {
+                                "type": "string",
+                                "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
+                                "default": "${auto-detect-url}"
+                                }
+                            }
+                        },
+                        "linux": {
+                            "type": "object",
+                            "description": "Linux-specific web launch configuration options",
+                            "default": {
+                            "command": "xdg-open"
+                            },
+                            "properties": {
+                                "command": {
+                                "type": "string",
+                                "description": "The command to execute for launching the web browser",
+                                "default": "xdg-open"
+                                },
+                                "args": {
+                                "type": "string",
+                                "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
+                                "default": "${auto-detect-url}"
+                                }
+                            }  
+                        },
+                        "windows": {
+                            "type": "object",
+                            "description": "Windows-specific web launch configuration options",
+                            "default": {
+                            "command": "cmd.exe",
+                            "args": "/C start ${auto-detect-url}"
+                            },
+                            "properties": {
+                                "command": {
+                                "type": "string",
+                                "description": "The command to execute for launching the web browser",
+                                "default": "cmd.exe"
+                                },
+                                "args": {
+                                "type": "string",
+                                "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
+                                "default": "/C start ${auto-detect-url}"
+                                }
+                            }  
+                        }
+                        }
+                    },
+                    "sourceFileMap": {
+                        "type": "object",
+                        "description": "Optional source file mappings passed to the debug engine.",
+                        "default": { }
+                    },
+                    "justMyCode": {
+                        "type": "boolean",
+                        "description": "Optional flag to only show user code.",
+                        "default": true
+                    },
+                    "symbolPath": {
+                        "type": "array",
+                        "description": "Array of directories to use to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to. Example: '[ \"/Volumes/symbols\" ]",
+                        "items": { "type": "string" },
+                        "default": [ ]
+                    }
+                    }
+                },
+                "attach": {
+                    "required": [ ],
+                    "properties": {
+                    "processName": {
+                        "type": "string",
+                        "description": "",
+                        "default": "The process name to attach to. If this is used, 'processId' should not be used."
+                    },
+                    "processId": {
+                        "type": "integer",
+                        "description": "The process id to attach to. If this is used, 'processName' should not be used.",
+                        "default": ""
+                    },
+                    "sourceFileMap": {
+                        "type": "object",
+                        "description": "Optional source file mappings passed to the debug engine.",
+                        "default": { }
+                    },
+                    "justMyCode": {
+                        "type": "boolean",
+                        "description": "Optional flag to only show user code.",
+                        "default": true
+                    },
+                    "symbolPath": {
+                        "type": "array",
+                        "description": "Array of directories to use to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to. Example: '[ \"~/symbols\" ]",
+                        "items": { "type": "string" },
+                        "default": [ ]
+                    }
+                    }
+                }
+                },
+
+                "initialConfigurations": [
+                    {
+                        "name": ".NET Core Launch (console)",
+                        "type": "coreclr",
+                        "request": "launch",
+                        "preLaunchTask": "build",
+                        "program": "${workspaceRoot}/bin/Debug/dnxcore50/<My-Project-Name>",
+                        "args": [ ],
+                        "cwd": "${workspaceRoot}",
+                        "stopAtEntry": false,
+                        "sourceFileMap": { }
+                    },
+                    {
+                        "name": ".NET Core Launch (web)",
+                        "type": "coreclr",
+                        "request": "launch",
+                        "preLaunchTask": "build",
+                        "program": "${workspaceRoot}/bin/Debug/dnxcore50/<My-Project-Name>",
+                        "args": [ ],
+                        "cwd": "${workspaceRoot}",
+                        "stopAtEntry": false,
+                        "sourceFileMap": { },
+                        "launchBrowser": {
+                        "enabled": true,
+                        "args": "${auto-detect-url}",
+                        "windows": {
+                            "command": "cmd.exe",
+                            "args": "/C start ${auto-detect-url}"
+                        },              
+                        "osx": {
+                            "command": "open"  
+                        },
+                        "linux": {
+                            "command": "xdg-open"  
+                        }
+                        }
+                    },
+                    {
+                        "name": ".NET Core Attach",
+                        "type": "coreclr",
+                        "request": "attach",
+                        "processName": "<example>",
+                        "sourceFileMap": { }
+                    }
+                ]
             }
         ]
     }
