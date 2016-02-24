@@ -13,7 +13,7 @@ let _coreClrDebugDir: string;
 let _debugAdapterDir: string;
 let _channel: vscode.OutputChannel;
 let _installLog: NodeJS.WritableStream;
-let _completionFileName: string = 'install.complete';
+const _completionFileName: string = 'install.complete';
 
 export function installCoreClrDebug(context: vscode.ExtensionContext) {
     _coreClrDebugDir = path.join(context.extensionPath, 'coreclr-debug');
