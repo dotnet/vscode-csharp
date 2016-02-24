@@ -33,7 +33,6 @@
     },
     "activationEvents": [
         "onLanguage:csharp",
-        "onLanguage:fsharp",
         "onCommand:o.restart",
         "onCommand:o.pickProjectAndStart",
         "onCommand:o.restore",
@@ -130,11 +129,11 @@
                 "path": "./snippets/csharp.json"
             }
         ],
-        "debuggers": [
+        "debuggers": [ 
             {
                 "type": "coreclr",
                 "label": ".NET Core",
-                "enableBreakpointsFor": { "languageIds": [ "csharp", "fsharp" ] },
+                "enableBreakpointsFor": { "languageIds": [ "csharp" ] },
 
                 "program": "./coreclr-debug/debugAdapters/OpenDebugAD7",
                 "windows": {
