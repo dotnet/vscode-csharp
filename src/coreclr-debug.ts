@@ -1,3 +1,7 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 'use strict';
 
 import * as vscode from 'vscode';
@@ -5,9 +9,9 @@ import * as child_process from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 
-var _coreClrDebugDir: string;
-var _debugAdapterDir: string;
-var _channel: vscode.OutputChannel;
+let _coreClrDebugDir: string;
+let _debugAdapterDir: string;
+let _channel: vscode.OutputChannel;
 
 export function installCoreClrDebug(context: vscode.ExtensionContext) {
     _coreClrDebugDir = path.join(context.extensionPath, 'coreclr-debug');
