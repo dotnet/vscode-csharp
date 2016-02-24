@@ -12,16 +12,29 @@ import * as path from 'path';
 let _coreClrDebugDir: string;
 let _debugAdapterDir: string;
 let _channel: vscode.OutputChannel;
+let _installLog: NodeJS.WritableStream;
+let _completionFileName: string = 'install.complete';
 
 export function installCoreClrDebug(context: vscode.ExtensionContext) {
     _coreClrDebugDir = path.join(context.extensionPath, 'coreclr-debug');
     _debugAdapterDir = path.join(_coreClrDebugDir, 'debugAdapters');
-    _channel = vscode.window.createOutputChannel('coreclr-debug');
     
-    if (existsSync(_debugAdapterDir)) {
+    if (existsSync(path.join(_debugAdapterDir, _completionFileName))) {
         console.log('.NET Core Debugger tools already installed');
         return;
     }
+    
+    _channel = vscode.window.createOutputChannel('coreclr-debug');
+    
+    // Create our log file and override _channel.append to also outpu to the log
+    _installLog = fs.createWriteStream(path.join(_coreClrDebugDir, 'install.log'));
+    (function() {
+        var proxied = _channel.append;
+        _channel.append = function(val: string) {
+            _installLog.write(val);
+            proxied.apply(this, arguments);
+        }
+    })();
 
     _channel.appendLine("Downloading and configuring the .NET Core Debugger...");
     _channel.show(vscode.ViewColumn.Three);
@@ -38,11 +51,26 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
 
         return Promise.all(promises);
     }).then(function() {
+        return writeCompletionFile();
+    }).then(function() {
         _channel.appendLine('Succesfully installed .NET Core Debugger.');
     })
     .catch(function(error) {
         _channel.appendLine('Error while installing .NET Core Debugger.');
         console.log(error);
+    });
+}
+
+function writeCompletionFile() : Promise<void> {
+    return new Promise<void>(function(resolve, reject) {
+       fs.writeFile(path.join(_debugAdapterDir, _completionFileName), '', function(err) {
+          if (err) {
+              reject(err);
+          } 
+          else {
+              resolve();
+          }
+       });
     });
 }
 
