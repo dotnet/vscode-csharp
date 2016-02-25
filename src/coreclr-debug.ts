@@ -33,7 +33,7 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
         _channel.append = function(val: string) {
             _installLog.write(val);
             proxied.apply(this, arguments);
-        }
+        };
     })();
 
     _channel.appendLine("Downloading and configuring the .NET Core Debugger...");
@@ -46,7 +46,6 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
         var promises: Promise<void>[] = [];
 
         promises.push(renameDummyEntrypoint());
-        promises = promises.concat(copyFiles(context));
         promises.push(removeLibCoreClrTraceProvider());
 
         return Promise.all(promises);
@@ -94,46 +93,6 @@ function renameDummyEntrypoint() : Promise<void> {
     return promise;
 }
 
-function copyFiles(context: vscode.ExtensionContext): Promise<void>[] {
-    // TODO: This method and all invocations can be removed once
-    // the dotnet cli tools support nuget packages with 
-    // contentFiles metadata
-    // https://docs.nuget.org/create/nuspec-reference#contentfiles-with-visual-studio-2015-update-1-and-later
-
-    var projectJson = JSON.parse(fs.readFileSync(path.join(_coreClrDebugDir, 'project.json')).toString());
-
-    var clrdbgId = 'Microsoft.VisualStudio.clrdbg';
-    var clrdbgVersion: string = projectJson.dependencies[clrdbgId];
-
-    var MIEngineId = 'Microsoft.VisualStudio.clrdbg.MIEngine';
-    var MIEngineVersion: string = projectJson.dependencies[MIEngineId];
-
-    var destRoot: string = _debugAdapterDir;
-
-    var packagesRoot = getPackagesRoot();
-    var clrdbgRoot = path.join(packagesRoot, clrdbgId, clrdbgVersion);
-    var MIEngineRoot = path.join(packagesRoot, MIEngineId, MIEngineVersion);
-
-    var promises: Promise<void>[] = [];
-
-    function copyClrdbg(src: string, dest?: string) { promises.push(copy(path.join(clrdbgRoot, src), dest)); }
-    function copyMIEngine(src: string, dest?: string) { promises.push(copy(path.join(MIEngineRoot, src), dest)); }
-
-    copyClrdbg(path.join('1033', 'clrdbg.resources.dll'), '1033');
-    copyClrdbg(path.join('1033', 'vsdebugeng.impl.resources.dll'), '1033');
-    copyClrdbg(path.join('1033', 'VSDebugUI.dll'), '1033');
-    copyClrdbg('libclrdbg.vsdconfig');
-    copyClrdbg('Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator.ExpressionCompiler.vsdconfig');
-    copyClrdbg('Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator.ResultProvider.vsdconfig');
-    copyClrdbg('version.txt');
-    copyClrdbg('vsdebugeng.impl.vsdconfig');
-    copyClrdbg('vsdebugeng.manimpl.vsdconfig');
-
-    copyMIEngine('coreclr.ad7Engine.json');
-
-    return promises;
-}
-
 function removeLibCoreClrTraceProvider() : Promise<void>
 {
     var filePath = path.join(_debugAdapterDir, 'libcoreclrtraceptprovider' + getPlatformLibExtension());
@@ -146,54 +105,11 @@ function removeLibCoreClrTraceProvider() : Promise<void>
                 if (err) {
                     reject(err);
                 } else {
-                    _channel.appendLine('Succesfully deleted ' + filePath)
+                    _channel.appendLine('Succesfully deleted ' + filePath);
                     resolve();
                 }
             });
         });
-    }
-}
-
-function copy(src: string, dest?: string) : Promise<void> {
-    var destination = _debugAdapterDir;
-    if (dest) {
-        destination = path.join(destination, dest);
-    }
-
-    return new Promise<void>(function(resolve, reject) {
-
-        if (!existsSync(destination)) {
-            fs.mkdirSync(destination);
-        }
-
-        var destFile = path.join(destination, path.basename(src))
-
-        var sourceStream = fs.createReadStream(src);
-        sourceStream.on('error', reject);
-        var destStream = fs.createWriteStream(destFile);
-        destStream.on('error', reject);
-        destStream.on('finish', function() {
-            _channel.appendLine('Succesfully copied ' + src + ' to ' + destination);
-            resolve();
-        });
-        sourceStream.pipe(destStream);
-    });
-}
-
-// TODO: not currently used but may need to be used for updating.
-// TODO: wrap this in try catch for i/o errors
-function deleteDirectoryRecursivelySync(dirPath: string) {
-    if (existsSync(dirPath)) {
-        fs.readdirSync(dirPath).forEach(function(file, index) {
-            var currentPath = path.join(dirPath, file);
-            if (fs.lstatSync(currentPath).isDirectory()) {
-                deleteDirectoryRecursivelySync(currentPath);
-            }
-            else {
-                fs.unlinkSync(currentPath);
-            }
-        });
-        fs.rmdirSync(dirPath);
     }
 }
 
@@ -210,26 +126,9 @@ function existsSync(path: string) : boolean {
     }
 }
 
-function getPackagesRoot() : string {
-    var homedir = getHomeDir();
-    return path.join(homedir, '.nuget', 'packages');
-}
-
-function getHomeDir() : string {
-    switch (process.platform) {
-        case "win32":
-            return process.env['USERPROFILE'];
-        case "darwin":
-        case "linux":
-            return process.env['HOME'];
-        default:
-            throw new Error('Unsupported platform: ' + process.platform);
-    }
-}
-
 function getPlatformExeExtension() : string {
     if (process.platform === 'win32') {
-        return '.exe'
+        return '.exe';
     }
 
     return '';
