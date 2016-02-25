@@ -1,9 +1,9 @@
 {
-    "name": "omnisharp",
+    "name": "csharp",
     "publisher": "ms-vscode",
     "version": "0.3.2",
-    "description": "Omnisharp extension that is being shipped with VS Code.",
-    "displayName": "Built-in Omnisharp",
+    "description": "C# for Visual Studio Code (powered by OmniSharp).",
+    "displayName": "C#",
     "author": "Microsoft Corporation",
     "license": "MIT",
     "main": "./out/omnisharpMain",
