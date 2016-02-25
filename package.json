@@ -29,7 +29,7 @@
         "tslint-microsoft-contrib": "^2.0.0"
     },
     "engines": {
-        "vscode": "^0.10.1"
+        "vscode": "^0.10.10"
     },
     "activationEvents": [
         "onLanguage:csharp",
