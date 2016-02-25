@@ -4,9 +4,9 @@
       "emitEntryPoint": true
   },
   "dependencies": {
-    "Microsoft.VisualStudio.clrdbg": "14.0.25024-pb-2838041",
-    "Microsoft.VisualStudio.clrdbg.MIEngine": "14.0.30224-pb-2",
-    "Microsoft.VisualStudio.OpenDebugAD7": "1.0.20224-pb-1",
+    "Microsoft.VisualStudio.clrdbg": "14.0.25025-preview-2839567",
+    "Microsoft.VisualStudio.clrdbg.MIEngine": "14.0.30225-preview-2",
+    "Microsoft.VisualStudio.OpenDebugAD7": "1.0.20225-preview-2",
     "NETStandard.Library": "1.0.0-rc3-23819",
     "Newtonsoft.Json": "7.0.1",    
     "Microsoft.VisualStudio.Debugger.Interop.Portable": "1.0.1",
