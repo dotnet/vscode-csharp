@@ -1,0 +1,5 @@
+bin
+obj
+project.lock.json
+debugAdapters
+install.log
