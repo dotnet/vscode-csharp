@@ -15,9 +15,22 @@ const Decompress = require('decompress');
 const GitHub = require('github-releases');
 
 const OmnisharpRepo = 'OmniSharp/omnisharp-roslyn';
-const OmnisharpVersion = 'v1.6.7.9';
+const OmnisharpVersion = 'v1.7.2.1';
 
 tmp.setGracefulCleanup();
+
+function getOmnisharpAssetName(): string {
+    switch (process.platform) {
+        case 'win32':
+            return 'omnisharp-coreclr-win-x64.zip';
+        case 'darwin':
+            return 'omnisharp-coreclr-darwin-x64.zip';
+        case 'linux':
+            return 'omnisharp-coreclr-linux-x64.zip';
+        default:
+            throw Error(`Unsupported platform: ${process.platform}`);
+    }
+}
 
 export function downloadOmnisharp(): Promise<boolean> {
 	return new Promise<boolean>((resolve, reject) => {
@@ -25,6 +38,8 @@ export function downloadOmnisharp(): Promise<boolean> {
 			repo: OmnisharpRepo,
 			token: null
 		});
+        
+        const omnisharpAssetName = getOmnisharpAssetName();
 		
 		repo.getReleases({ tag_name: OmnisharpVersion }, (err, releases) => {
 			if (err) {
@@ -34,12 +49,24 @@ export function downloadOmnisharp(): Promise<boolean> {
 			if (!releases.length) {
 				return reject(new Error(`OmniSharp release ${OmnisharpVersion} not found.`));
 			}
-			
-			if (!releases[0].assets.length) {
-				return reject(new Error(`Omnisharp release ${OmnisharpVersion} asset not found.`));
+            
+            // Note: there should only be a single release, but we'll just use the first one if there
+            // are ever multiple releases. Same thing for assets.
+            let asset = null;
+            
+            for (var a of releases[0].assets)
+            {
+                if (a.name === omnisharpAssetName) {
+                    asset = a;
+                    break;
+                }
+            }
+            
+			if (!asset) {
+				return reject(new Error(`Omnisharp release ${OmnisharpVersion} asset, ${omnisharpAssetName} not found.`));
 			}
 			
-			repo.downloadAsset(releases[0].assets[0], (err, inStream) => {
+			repo.downloadAsset(asset, (err, inStream) => {
 				if (err) {
 					return reject(err);
 				}
