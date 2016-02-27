@@ -7,10 +7,12 @@
 
 import * as proto from '../protocol';
 import {OmnisharpServer} from '../omnisharpServer';
-import {Disposable, ViewColumn, commands, window} from 'vscode';
+import {Disposable, ViewColumn, commands, window, OutputChannel} from 'vscode';
 import {join, dirname, basename} from 'path';
 import findLaunchTargets from '../launchTargetFinder';
 import {runInTerminal} from 'run-in-terminal';
+import {createRequest, toRange} from '../typeConvertion';
+import {spawn, ChildProcess} from 'child_process';
 
 const isWin = /^win/.test(process.platform);
 
@@ -21,7 +23,10 @@ export default function registerCommands(server: OmnisharpServer) {
 	let d4 = commands.registerCommand('o.execute', () => dnxExecuteCommand(server));
 	let d5 = commands.registerCommand('o.execute-last-command', () => dnxExecuteLastCommand(server));
 	let d6 = commands.registerCommand('o.showOutput', () => server.getChannel().show(ViewColumn.Three));
-	return Disposable.from(d1, d2, d3, d4, d5, d6);
+    let d7 = commands.registerCommand('o.runSingleTest', () => runTests(server, "Single"));
+    let d8 = commands.registerCommand('o.runFixtureTests', () => runTests(server, "Fixture"));
+    let d9 = commands.registerCommand('o.runAllTests', () => runTests(server, "All"));
+    return Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8, d9);
 }
 
 function pickProjectAndStart(server: OmnisharpServer) {
@@ -168,4 +173,70 @@ export function dnxRestoreForProject(server: OmnisharpServer, fileName: string) 
 
 		return Promise.reject(`Failed to execute restore, try to run 'dnu restore' manually for ${fileName}.`)
 	});
+}
+
+export function runTests(server: OmnisharpServer, testType) {
+
+    let channel = window.createOutputChannel("Tasks");
+    channel.clear();
+
+    let activeEditor = window.activeTextEditor;
+
+    let request = createRequest<proto.GetTestContextRequest>(activeEditor.document, activeEditor.selection.start);
+    request.Type = testType;
+
+    return server.makeRequest<proto.GetTestContextResponse>(proto.GetTestContext, request).then(value => {
+        let cwd = dirname(activeEditor.document.fileName);
+        return runTestsInOutputChannel(value.TestCommand, channel, cwd);
+    });
+}
+
+export function runTestsInOutputChannel(command: string, channel: OutputChannel, cwd: string): Promise<ChildProcess> {
+
+    return new Promise<ChildProcess>((resolve, reject) => {
+
+        window.setStatusBarMessage("Running tests...");
+
+        let args = command.split(" ");
+        let cmd = args.shift();
+        let childprocess: ChildProcess;
+        try {
+            channel.appendLine("[INFO] Running command: " + command);
+            childprocess = spawn(cmd, args, { cwd: cwd });
+        } catch (e) {
+            channel.appendLine("[ERROR]" + e);
+        }
+
+        childprocess.on('error', function(err: any) {
+            channel.appendLine("[ERROR]" + err);
+        });
+
+        childprocess.stdout.on('data', (data: NodeBuffer) => {
+            var line = data.toString();
+            var match = parseTestsResults(line);
+            if (match.success) {
+                if (match.errors + match.failures > 0)
+                    channel.show();
+
+                window.setStatusBarMessage(line);
+            }
+            channel.append(line);
+        });
+
+        resolve(childprocess);
+    });
+}
+
+
+function parseTestsResults(text: string): any {
+
+    const finalResultRegex = /(?:Total|Tests run): \d+, Errors: (\d+), (?:Failed|Failures): (\d+)/i;
+
+    var match = text.match(finalResultRegex);
+    if (match && match.length > 0) {
+        var errors = parseInt(match[1]);
+        var failures = parseInt(match[2]);
+        return { success: true, errors, failures };
+    }
+    return { success: false, errors: 0, failures: 0 };
 }

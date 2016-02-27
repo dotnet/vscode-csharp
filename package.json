@@ -89,6 +89,21 @@
                 "command": "o.execute",
                 "title": "Run Command",
                 "category": "dnx"
+            },
+            {
+                "command": "o.runSingleTest",
+                "title": "Run Single Test",
+                "category": "OmniSharp"
+            },
+            {
+                "command": "o.runFixtureTests",
+                "title": "Run Fixture Tests",
+                "category": "OmniSharp"
+            },
+            {
+                "command": "o.runAllTests",
+                "title": "Run All Tests",
+                "category": "OmniSharp"
             }
         ],
         "keybindings": [
@@ -106,6 +121,21 @@
                 "command": "o.execute-last-command",
                 "key": "Ctrl+L R",
                 "mac": "Cmd+L R"
+            },
+            {
+                "command": "o.runSingleTest",
+                "key": "Ctrl+R R",
+                "mac": "Ctrl+R R"
+            },
+            {
+                "command": "o.runFixtureTests",
+                "key": "Ctrl+R F",
+                "mac": "Ctrl+R F"
+            },
+            {
+                "command": "o.runAllTests",
+                "key": "Ctrl+R A",
+                "mac": "Ctrl+R A"
             },
             {
                 "key": "shift+0",
