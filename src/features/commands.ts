@@ -7,21 +7,24 @@
 
 import * as proto from '../protocol';
 import {OmnisharpServer} from '../omnisharpServer';
-import {Disposable, ViewColumn, commands, window} from 'vscode';
-import {join, dirname, basename} from 'path';
 import findLaunchTargets from '../launchTargetFinder';
 import {runInTerminal} from 'run-in-terminal';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as vscode from 'vscode';
 
 const isWin = /^win/.test(process.platform);
 
-export default function registerCommands(server: OmnisharpServer) {
-	let d1 = commands.registerCommand('o.restart', () => server.restart());
-	let d2 = commands.registerCommand('o.pickProjectAndStart', () => pickProjectAndStart(server));
-	let d3 = commands.registerCommand('o.restore', () => dnxRestoreForAll(server));
-	let d4 = commands.registerCommand('o.execute', () => dnxExecuteCommand(server));
-	let d5 = commands.registerCommand('o.execute-last-command', () => dnxExecuteLastCommand(server));
-	let d6 = commands.registerCommand('o.showOutput', () => server.getChannel().show(ViewColumn.Three));
-	return Disposable.from(d1, d2, d3, d4, d5, d6);
+export default function registerCommands(server: OmnisharpServer, extensionPath: string) {
+	let d1 = vscode.commands.registerCommand('o.restart', () => server.restart());
+	let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', () => pickProjectAndStart(server));
+	let d3 = vscode.commands.registerCommand('o.restore', () => dnxRestoreForAll(server));
+	let d4 = vscode.commands.registerCommand('o.execute', () => dnxExecuteCommand(server));
+	let d5 = vscode.commands.registerCommand('o.execute-last-command', () => dnxExecuteLastCommand(server));
+	let d6 = vscode.commands.registerCommand('o.showOutput', () => server.getChannel().show(vscode.ViewColumn.Three));
+    let d7 = vscode.commands.registerCommand('csharp.addTasksJson', () => addTasksJson(server, extensionPath));
+    
+	return vscode.Disposable.from(d1, d2, d3, d4, d5, d6);
 }
 
 function pickProjectAndStart(server: OmnisharpServer) {
@@ -37,7 +40,7 @@ function pickProjectAndStart(server: OmnisharpServer) {
 			}
 		}
 
-		return window.showQuickPick(targets, {
+		return vscode.window.showQuickPick(targets, {
 			matchOnDescription: true,
 			placeHolder: `Select 1 of ${targets.length} projects`
 		}).then(target => {
@@ -78,12 +81,12 @@ function dnxExecuteCommand(server: OmnisharpServer) {
 			Object.keys(project.Commands).forEach(key => {
 
 				commands.push({
-					label: `dnx ${key} - (${project.Name || basename(project.Path)})`,
-					description: dirname(project.Path),
+					label: `dnx ${key} - (${project.Name || path.basename(project.Path)})`,
+					description: path.dirname(project.Path),
 					execute() {
 						lastCommand = this;
 
-						let command = join(info.Dnx.RuntimePath, 'bin/dnx');
+						let command = path.join(info.Dnx.RuntimePath, 'bin/dnx');
 						let args = [key];
 
 						// dnx-beta[1-6] needs a leading dot, like 'dnx . run'
@@ -96,7 +99,7 @@ function dnxExecuteCommand(server: OmnisharpServer) {
 						}
 
 						return runInTerminal(command, args, {
-							cwd: dirname(project.Path),
+							cwd: path.dirname(project.Path),
 							env: {
 								// KRE_COMPILATION_SERVER_PORT: workspace.DesignTimeHostPort
 							}
@@ -106,7 +109,7 @@ function dnxExecuteCommand(server: OmnisharpServer) {
 			});
 		});
 
-		return window.showQuickPick(commands).then(command => {
+		return vscode.window.showQuickPick(commands).then(command => {
 			if (command) {
 				return command.execute();
 			}
@@ -126,23 +129,23 @@ export function dnxRestoreForAll(server: OmnisharpServer) {
 
 		info.Dnx.Projects.forEach(project => {
 			commands.push({
-				label: `dnu restore - (${project.Name || basename(project.Path)})`,
-				description: dirname(project.Path),
+				label: `dnu restore - (${project.Name || path.basename(project.Path)})`,
+				description: path.dirname(project.Path),
 				execute() {
 
-					let command = join(info.Dnx.RuntimePath, 'bin/dnu');
+					let command = path.join(info.Dnx.RuntimePath, 'bin/dnu');
 					if (isWin) {
 						command += '.cmd';
 					}
 
 					return runInTerminal(command, ['restore'], {
-						cwd: dirname(project.Path)
+						cwd: path.dirname(project.Path)
 					});
 				}
 			});
 		});
 
-		return window.showQuickPick(commands).then(command => {
+		return vscode.window.showQuickPick(commands).then(command => {
 			if(command) {
 				return command.execute();
 			}
@@ -155,17 +158,99 @@ export function dnxRestoreForProject(server: OmnisharpServer, fileName: string) 
 	return server.makeRequest<proto.WorkspaceInformationResponse>(proto.Projects).then((info):Promise<any> => {
 		for(let project of info.Dnx.Projects) {
 			if (project.Path === fileName) {
-				let command = join(info.Dnx.RuntimePath, 'bin/dnu');
+				let command = path.join(info.Dnx.RuntimePath, 'bin/dnu');
 				if (isWin) {
 					command += '.cmd';
 				}
 
 				return runInTerminal(command, ['restore'], {
-					cwd: dirname(project.Path)
+					cwd: path.dirname(project.Path)
 				});
 			}
 		}
 
 		return Promise.reject(`Failed to execute restore, try to run 'dnu restore' manually for ${fileName}.`)
 	});
+}
+
+function exists(path: string) {
+    return new Promise<boolean>((resolve, reject) => {
+        fs.exists(path, exists => {
+            if (exists) {
+                resolve(true);
+            }
+            else {
+                resolve(false);
+            }
+        })
+    })
+}
+
+function mkdir(directoryPath: string) {
+    return new Promise<boolean>((resolve, reject) => {
+        fs.mkdir(directoryPath, err => {
+            if (!err) {
+                resolve(true);
+            }
+            else {
+                reject(err);
+            }
+        })
+    })
+}
+
+function ensureDirectoryCreated(directoryPath: string) {
+    return exists(directoryPath).then(e => {
+        if (e) {
+            return true;
+        }
+        else {
+            return mkdir(directoryPath);
+        }
+    });
+}
+
+export function addTasksJson(server: OmnisharpServer, extensionPath: string) {
+    return new Promise<string>((resolve, reject) => {
+        if (!server.isRunning()) {
+            return reject('OmniSharp is not running.');
+        }
+        
+        let solutionPathOrFolder = server.getSolutionPathOrFolder();
+        if (!solutionPathOrFolder)
+        {
+            return reject('No solution or folder open.');
+        }
+        
+        let vscodeFolderPath = path.join(path.dirname(solutionPathOrFolder), '.vscode');
+        let tasksJsonPath = path.join(vscodeFolderPath, 'tasks.json');
+        
+        return exists(tasksJsonPath).then(e => {
+            if (e) {
+                return resolve(tasksJsonPath);
+            }
+            else {
+                let templatePath = path.join(extensionPath, 'template-tasks.json');
+                
+                return exists(templatePath).then(e => {
+                    if (!e) {
+                        return reject('Could not find template-tasks.json file in extension.');
+                    }
+                    
+                    return ensureDirectoryCreated(vscodeFolderPath).then(ok => {
+                        if (ok) {
+                            let oldFile = fs.createReadStream(templatePath);
+                            let newFile = fs.createWriteStream(tasksJsonPath);
+                            oldFile.pipe(newFile);
+                            
+                            return resolve(tasksJsonPath);
+                        }
+                        else {
+                            return reject(`Could not create ${vscodeFolderPath} directory.`);
+                        }
+                    });
+                });
+            }
+        });
+    });
 }

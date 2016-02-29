@@ -1,7 +1,7 @@
 {
     "name": "csharp",
     "publisher": "ms-vscode",
-    "version": "0.3.3",
+    "version": "0.3.4",
     "description": "C# for Visual Studio Code (powered by OmniSharp).",
     "displayName": "C#",
     "author": "Microsoft Corporation",
@@ -42,7 +42,8 @@
         "onCommand:o.execute",
         "onCommand:o.showOutput",
         "onCommand:o.execute",
-        "onCommand:o.execute-last-command"
+        "onCommand:o.execute-last-command",
+        "onCommand:csharp.addTasksJson"
     ],
     "contributes": {
         "languages": [
@@ -92,6 +93,11 @@
                 "command": "o.execute",
                 "title": "Run Command",
                 "category": "dnx"
+            },
+            {
+                "command": "csharp.addTasksJson",
+                "title": "Add tasks.json (if missing)",
+                "category": "Debugger"
             }
         ],
         "keybindings": [
