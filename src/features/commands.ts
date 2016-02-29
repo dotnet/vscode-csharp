@@ -227,7 +227,9 @@ export function addTasksJson(server: OmnisharpServer, extensionPath: string) {
         
         return exists(tasksJsonPath).then(e => {
             if (e) {
-                return resolve(tasksJsonPath);
+                return vscode.window.showInformationMessage(`${tasksJsonPath} already exists.`).then(_ => {
+                    return resolve(tasksJsonPath);
+                });
             }
             else {
                 let templatePath = path.join(extensionPath, 'template-tasks.json');
