@@ -64,7 +64,7 @@ export function activate(context: ExtensionContext): any {
 		Disposable.from(...localDisposables).dispose();
 	}));
 
-	disposables.push(registerCommands(server));
+	disposables.push(registerCommands(server, context.extensionPath));
 	disposables.push(reportStatus(server));
 
 	// read and store last solution or folder path
