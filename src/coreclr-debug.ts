@@ -43,6 +43,8 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
     .then(function() {
         return spawnChildProcess('dotnet', ['--verbose', 'publish', '-o', _debugAdapterDir], _channel, _coreClrDebugDir);
     }).then(function() {
+        return ensureAd7EngineExists(_channel, _debugAdapterDir);
+    }).then(function() {
         var promises: Promise<void>[] = [];
 
         promises.push(renameDummyEntrypoint());
@@ -145,6 +147,28 @@ function getPlatformLibExtension() : string {
         default:
             throw Error('Unsupported platform ' + process.platform);
     }
+}
+
+function ensureAd7EngineExists(channel: vscode.OutputChannel, outputDirectory: string) : Promise<void> {
+    let filePath = path.join(outputDirectory, "coreclr.ad7Engine.json");
+    return new Promise<void>((resolve, reject) => {
+        fs.exists(filePath, (exists) => {
+            if (exists) {
+                return resolve();
+            } else {
+                channel.appendLine(`${filePath} does not exist.`);
+                channel.appendLine('');
+                // NOTE: The minimum build number is actually less than 1584, but this is the minimum
+                // build that I have tested.
+                channel.appendLine("Error: The .NET CLI did not correctly restore debugger files. Ensure that you have .NET CLI version 1.0.0 build #001584 or newer. You can check your .NET CLI version using 'dotnet --version'.");
+                // TODO: remove the Linux-specific instructions once http://dotnet.github.io/getting-started/ is pointing at a newer build.
+                if (process.platform === "linux") {
+                    channel.appendLine("To update your build of the .NET Tools, run: sudo apt-get install dotnet=1.0.0.001584-1");
+                }
+                return reject("The .NET CLI did not correctly restore debugger files.");
+            }
+        });
+    });
 }
 
 function spawnChildProcess(process: string, args: string[], channel: vscode.OutputChannel, workingDirectory: string) : Promise<void> {
