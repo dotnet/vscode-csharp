@@ -8,6 +8,7 @@
 import * as proto from '../protocol';
 import {OmnisharpServer} from '../omnisharpServer';
 import findLaunchTargets from '../launchTargetFinder';
+import * as pathHelpers from '../pathHelpers';
 import {runInTerminal} from 'run-in-terminal';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -173,39 +174,24 @@ export function dnxRestoreForProject(server: OmnisharpServer, fileName: string) 
 	});
 }
 
-function exists(path: string) {
-    return new Promise<boolean>((resolve, reject) => {
-        fs.exists(path, exists => {
-            if (exists) {
-                resolve(true);
-            }
-            else {
-                resolve(false);
-            }
-        })
-    })
-}
-
-function mkdir(directoryPath: string) {
-    return new Promise<boolean>((resolve, reject) => {
-        fs.mkdir(directoryPath, err => {
-            if (!err) {
-                resolve(true);
-            }
-            else {
-                reject(err);
-            }
-        })
-    })
-}
-
 function ensureDirectoryCreated(directoryPath: string) {
-    return exists(directoryPath).then(e => {
+    return pathHelpers.exists(directoryPath).then(e => {
         if (e) {
             return true;
         }
         else {
-            return mkdir(directoryPath);
+            return pathHelpers.mkdir(directoryPath);
+        }
+    });
+}
+
+function getExpectedVsCodeFolderPath(solutionPathOrFolder: string): Promise<string> {
+    return pathHelpers.getPathKind(solutionPathOrFolder).then(kind => {
+        if (kind === pathHelpers.PathKind.File) {
+            return path.join(path.dirname(solutionPathOrFolder), '.vscode');
+        }
+        else {
+            return path.join(solutionPathOrFolder, '.vscode');
         }
     });
 }
@@ -222,37 +208,38 @@ export function addTasksJson(server: OmnisharpServer, extensionPath: string) {
             return reject('No solution or folder open.');
         }
         
-        let vscodeFolderPath = path.join(path.dirname(solutionPathOrFolder), '.vscode');
-        let tasksJsonPath = path.join(vscodeFolderPath, 'tasks.json');
-        
-        return exists(tasksJsonPath).then(e => {
-            if (e) {
-                return vscode.window.showInformationMessage(`${tasksJsonPath} already exists.`).then(_ => {
-                    return resolve(tasksJsonPath);
-                });
-            }
-            else {
-                let templatePath = path.join(extensionPath, 'template-tasks.json');
-                
-                return exists(templatePath).then(e => {
-                    if (!e) {
-                        return reject('Could not find template-tasks.json file in extension.');
-                    }
-                    
-                    return ensureDirectoryCreated(vscodeFolderPath).then(ok => {
-                        if (ok) {
-                            let oldFile = fs.createReadStream(templatePath);
-                            let newFile = fs.createWriteStream(tasksJsonPath);
-                            oldFile.pipe(newFile);
-                            
-                            return resolve(tasksJsonPath);
-                        }
-                        else {
-                            return reject(`Could not create ${vscodeFolderPath} directory.`);
-                        }
+        return getExpectedVsCodeFolderPath(solutionPathOrFolder).then(vscodeFolderPath => { 
+            let tasksJsonPath = path.join(vscodeFolderPath, 'tasks.json');
+            
+            return pathHelpers.exists(tasksJsonPath).then(e => {
+                if (e) {
+                    return vscode.window.showInformationMessage(`${tasksJsonPath} already exists.`).then(_ => {
+                        return resolve(tasksJsonPath);
                     });
-                });
-            }
+                }
+                else {
+                    let templatePath = path.join(extensionPath, 'template-tasks.json');
+                    
+                    return pathHelpers.exists(templatePath).then(e => {
+                        if (!e) {
+                            return reject('Could not find template-tasks.json file in extension.');
+                        }
+                        
+                        return ensureDirectoryCreated(vscodeFolderPath).then(ok => {
+                            if (ok) {
+                                let oldFile = fs.createReadStream(templatePath);
+                                let newFile = fs.createWriteStream(tasksJsonPath);
+                                oldFile.pipe(newFile);
+                                
+                                return resolve(tasksJsonPath);
+                            }
+                            else {
+                                return reject(`Could not create ${vscodeFolderPath} directory.`);
+                            }
+                        });
+                    });
+                }
+            });
         });
     });
 }
