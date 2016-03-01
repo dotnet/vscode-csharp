@@ -156,7 +156,7 @@
                     "program": {
                         "type": "string",
                         "description": "Path to the program (executable file) to launch. On Windows, a '.exe' suffix is appended if not specified already.",
-                        "default": "${workspaceRoot}/bin/Debug/dnxcore50/<My-Project-Name>"
+                        "default": "${workspaceRoot}/bin/Debug/<path-to-program>"
                     },
                     "cwd": {
                         "type": "string",
@@ -319,7 +319,7 @@
                         "type": "coreclr",
                         "request": "launch",
                         "preLaunchTask": "build",
-                        "program": "${workspaceRoot}/bin/Debug/dnxcore50/<My-Project-Name>",
+                        "program": "${workspaceRoot}/bin/Debug/<path-to-program>",
                         "args": [ ],
                         "cwd": "${workspaceRoot}",
                         "stopAtEntry": false,
@@ -330,7 +330,7 @@
                         "type": "coreclr",
                         "request": "launch",
                         "preLaunchTask": "build",
-                        "program": "${workspaceRoot}/bin/Debug/dnxcore50/<My-Project-Name>",
+                        "program": "${workspaceRoot}/bin/Debug/<path-to-program>",
                         "args": [ ],
                         "cwd": "${workspaceRoot}",
                         "stopAtEntry": false,
