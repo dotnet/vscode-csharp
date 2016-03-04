@@ -120,43 +120,73 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
 
 				let fileNames: vscode.DocumentSelector[] = [];
 				let label: string;
+                
+                // TODO(DustinCa): Refactor this mess
 
 				// show sln-file if applicable
-				if (info.MsBuild.SolutionPath) {
-					label = basename(info.MsBuild.SolutionPath);
-					fileNames.push({ pattern: info.MsBuild.SolutionPath });
+                if ('MsBuild' in info) {
+                    if (info.MsBuild.SolutionPath) {
+                        label = basename(info.MsBuild.SolutionPath);
+                        fileNames.push({ pattern: info.MsBuild.SolutionPath });
 
-					for (let project of info.MsBuild.Projects) {
-						fileNames.push({ pattern: project.Path });
-						if (project.SourceFiles) {
-							for (let sourceFile of project.SourceFiles) {
-								fileNames.push({ pattern: sourceFile });
-							}
-						}
-					}
-				}
+                        for (let project of info.MsBuild.Projects) {
+                            fileNames.push({ pattern: project.Path });
+                            if (project.SourceFiles) {
+                                for (let sourceFile of project.SourceFiles) {
+                                    fileNames.push({ pattern: sourceFile });
+                                }
+                            }
+                        }
+                    }
+                }
 
-				// show dnx projects if applicable
-				let count = 0;
-				for (let project of info.Dnx.Projects) {
-					count += 1;
+                if ('Dnx' in info) {
+                    // show dnx projects if applicable
+                    let count = 0;
+                    for (let project of info.Dnx.Projects) {
+                        count += 1;
 
-					fileNames.push({ pattern: project.Path });
-					if (project.SourceFiles) {
-						for (let sourceFile of project.SourceFiles) {
-							fileNames.push({ pattern: sourceFile });
-						}
-					}
-				}
-				if (label) {
-					// we already have a message from a sln-file
-				}
-				else if (count === 1) {
-					label = basename(info.Dnx.Projects[0].Path);
-				}
-				else {
-					label = `${count} projects`;
-				}
+                        fileNames.push({ pattern: project.Path });
+                        if (project.SourceFiles) {
+                            for (let sourceFile of project.SourceFiles) {
+                                fileNames.push({ pattern: sourceFile });
+                            }
+                        }
+                    }
+                    if (label) {
+                        // we already have a message from a sln-file
+                    }
+                    else if (count === 1) {
+                        label = basename(info.Dnx.Projects[0].Path);
+                    }
+                    else {
+                        label = `${count} projects`;
+                    }
+                }
+                
+                if ('DotNet' in info) {
+                    // show dotnet projects if applicable
+                    let count = 0;
+                    for (let project of info.DotNet.Projects) {
+                        count += 1;
+
+                        fileNames.push({ pattern: project.Path });
+                        // if (project.SourceFiles) {
+                        //     for (let sourceFile of project.SourceFiles) {
+                        //         fileNames.push({ pattern: sourceFile });
+                        //     }
+                        // }
+                    }
+                    if (label) {
+                        // we already have a message from a sln-file
+                    }
+                    else if (count === 1) {
+                        label = basename(info.DotNet.Projects[0].Path);
+                    }
+                    else {
+                        label = `${count} projects`;
+                    }
+                }
 
 				// set project info
 				projectStatus = new Status(fileNames);

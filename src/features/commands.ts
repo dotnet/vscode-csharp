@@ -66,19 +66,36 @@ export function dotnetRestoreForAll(server: OmnisharpServer) {
 
 		let commands:Command[] = [];
 
-		info.Dnx.Projects.forEach(project => {
-			commands.push({
-				label: `dotnet restore - (${path.basename(path.dirname(project.Path))})`,
-				description: path.dirname(project.Path),
-				execute() {
-					let command = "dotnet";
+        if ('DotNet' in info) {
+            info.DotNet.Projects.forEach(project => {
+                commands.push({
+                    label: `dotnet restore - (${path.basename(path.dirname(project.Path))})`,
+                    description: path.dirname(project.Path),
+                    execute() {
+                        let command = "dotnet";
 
-					return runInTerminal(command, ['restore'], {
-						cwd: path.dirname(project.Path)
-					});
-				}
-			});
-		});
+                        return runInTerminal(command, ['restore'], {
+                            cwd: path.dirname(project.Path)
+                        });
+                    }
+                });
+            });
+        }
+        else if ('Dnx' in info) {
+            info.Dnx.Projects.forEach(project => {
+                commands.push({
+                    label: `dotnet restore - (${path.basename(path.dirname(project.Path))})`,
+                    description: path.dirname(project.Path),
+                    execute() {
+                        let command = "dotnet";
+
+                        return runInTerminal(command, ['restore'], {
+                            cwd: path.dirname(project.Path)
+                        });
+                    }
+                });
+            });
+        }
 
 		return vscode.window.showQuickPick(commands).then(command => {
 			if (command) {
