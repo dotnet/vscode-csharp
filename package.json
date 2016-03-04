@@ -35,7 +35,7 @@
         "onLanguage:csharp",
         "onCommand:o.restart",
         "onCommand:o.pickProjectAndStart",
-        "onCommand:o.restore",
+        "onCommand:dotnet.restore",
         "onCommand:o.showOutput",
         "onCommand:csharp.addTasksJson"
     ],
@@ -79,7 +79,7 @@
                 "category": "OmniSharp"
             },
             {
-                "command": "o.restore",
+                "command": "dotnet.restore",
                 "title": "Restore Packages",
                 "category": "dotnet"
             },

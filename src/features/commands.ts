@@ -19,7 +19,7 @@ const isWin = /^win/.test(process.platform);
 export default function registerCommands(server: OmnisharpServer, extensionPath: string) {
 	let d1 = vscode.commands.registerCommand('o.restart', () => server.restart());
 	let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', () => pickProjectAndStart(server));
-	let d3 = vscode.commands.registerCommand('o.restore', () => dotnetRestoreForAll(server));
+	let d3 = vscode.commands.registerCommand('dotnet.restore', () => dotnetRestoreForAll(server));
 	let d4 = vscode.commands.registerCommand('o.showOutput', () => server.getChannel().show(vscode.ViewColumn.Three));
     let d5 = vscode.commands.registerCommand('csharp.addTasksJson', () => addTasksJson(server, extensionPath));
     
