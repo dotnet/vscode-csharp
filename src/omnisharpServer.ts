@@ -200,7 +200,7 @@ export abstract class OmnisharpServer {
 
 	public stop(): Promise<void> {
 
-		let ret: Promise<OmnisharpServer>;
+		let ret: Promise<any>;
 
 		if (!this._serverProcess) {
 			// nothing to kill

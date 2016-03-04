@@ -17,7 +17,7 @@ interface LaunchResult {
 
 export default function launch(serverPath: string, cwd: string, args: string[]): Promise<LaunchResult> {
 
-	return new Promise((resolve, reject) => {
+	return new Promise<LaunchResult>((resolve, reject) => {
 		try {
 			(isWindows ? launchWindows(serverPath, cwd, args) : launchNix(serverPath, cwd, args)).then(value => {
 
