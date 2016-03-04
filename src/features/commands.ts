@@ -19,13 +19,11 @@ const isWin = /^win/.test(process.platform);
 export default function registerCommands(server: OmnisharpServer, extensionPath: string) {
 	let d1 = vscode.commands.registerCommand('o.restart', () => server.restart());
 	let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', () => pickProjectAndStart(server));
-	let d3 = vscode.commands.registerCommand('o.restore', () => dnxRestoreForAll(server));
-	let d4 = vscode.commands.registerCommand('o.execute', () => dnxExecuteCommand(server));
-	let d5 = vscode.commands.registerCommand('o.execute-last-command', () => dnxExecuteLastCommand(server));
-	let d6 = vscode.commands.registerCommand('o.showOutput', () => server.getChannel().show(vscode.ViewColumn.Three));
-    let d7 = vscode.commands.registerCommand('csharp.addTasksJson', () => addTasksJson(server, extensionPath));
+	let d3 = vscode.commands.registerCommand('dotnet.restore', () => dotnetRestoreForAll(server));
+	let d4 = vscode.commands.registerCommand('o.showOutput', () => server.getChannel().show(vscode.ViewColumn.Three));
+    let d5 = vscode.commands.registerCommand('csharp.addTasksJson', () => addTasksJson(server, extensionPath));
     
-	return vscode.Disposable.from(d1, d2, d3, d4, d5, d6);
+	return vscode.Disposable.from(d1, d2, d3, d4, d5);
 }
 
 function pickProjectAndStart(server: OmnisharpServer) {
@@ -58,67 +56,7 @@ interface Command {
 	execute(): Thenable<any>;
 }
 
-let lastCommand: Command;
-
-function dnxExecuteLastCommand(server: OmnisharpServer) {
-	if (lastCommand) {
-		lastCommand.execute();
-	} else {
-		dnxExecuteCommand(server);
-	}
-}
-
-function dnxExecuteCommand(server: OmnisharpServer) {
-
-	if (!server.isRunning()) {
-		return Promise.reject('OmniSharp server is not running.');
-	}
-
-	return server.makeRequest<proto.WorkspaceInformationResponse>(proto.Projects).then(info => {
-
-		let commands: Command[] = [];
-
-		info.Dnx.Projects.forEach(project => {
-			Object.keys(project.Commands).forEach(key => {
-
-				commands.push({
-					label: `dnx ${key} - (${project.Name || path.basename(project.Path)})`,
-					description: path.dirname(project.Path),
-					execute() {
-						lastCommand = this;
-
-						let command = path.join(info.Dnx.RuntimePath, 'bin/dnx');
-						let args = [key];
-
-						// dnx-beta[1-6] needs a leading dot, like 'dnx . run'
-						if (/-beta[1-6]/.test(info.Dnx.RuntimePath)) {
-							args.unshift('.');
-						}
-
-						if (isWin) {
-							command += '.exe';
-						}
-
-						return runInTerminal(command, args, {
-							cwd: path.dirname(project.Path),
-							env: {
-								// KRE_COMPILATION_SERVER_PORT: workspace.DesignTimeHostPort
-							}
-						});
-					}
-				});
-			});
-		});
-
-		return vscode.window.showQuickPick(commands).then(command => {
-			if (command) {
-				return command.execute();
-			}
-		});
-	});
-}
-
-export function dnxRestoreForAll(server: OmnisharpServer) {
+export function dotnetRestoreForAll(server: OmnisharpServer) {
 
 	if (!server.isRunning()) {
 		return Promise.reject('OmniSharp server is not running.');
@@ -130,14 +68,10 @@ export function dnxRestoreForAll(server: OmnisharpServer) {
 
 		info.Dnx.Projects.forEach(project => {
 			commands.push({
-				label: `dnu restore - (${project.Name || path.basename(project.Path)})`,
+				label: `dotnet restore - (${path.basename(path.dirname(project.Path))})`,
 				description: path.dirname(project.Path),
 				execute() {
-
-					let command = path.join(info.Dnx.RuntimePath, 'bin/dnu');
-					if (isWin) {
-						command += '.cmd';
-					}
+					let command = "dotnet";
 
 					return runInTerminal(command, ['restore'], {
 						cwd: path.dirname(project.Path)
@@ -154,15 +88,12 @@ export function dnxRestoreForAll(server: OmnisharpServer) {
 	});
 }
 
-export function dnxRestoreForProject(server: OmnisharpServer, fileName: string) {
+export function dotnetRestoreForProject(server: OmnisharpServer, fileName: string) {
 
 	return server.makeRequest<proto.WorkspaceInformationResponse>(proto.Projects).then((info):Promise<any> => {
 		for(let project of info.Dnx.Projects) {
 			if (project.Path === fileName) {
-				let command = path.join(info.Dnx.RuntimePath, 'bin/dnu');
-				if (isWin) {
-					command += '.cmd';
-				}
+                let command = "dotnet";
 
 				return runInTerminal(command, ['restore'], {
 					cwd: path.dirname(project.Path)
@@ -170,7 +101,7 @@ export function dnxRestoreForProject(server: OmnisharpServer, fileName: string) 
 			}
 		}
 
-		return Promise.reject(`Failed to execute restore, try to run 'dnu restore' manually for ${fileName}.`)
+		return Promise.reject(`Failed to execute restore, try to run 'dotnet restore' manually for ${fileName}.`)
 	});
 }
 
