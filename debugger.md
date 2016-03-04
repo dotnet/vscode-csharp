@@ -25,7 +25,7 @@ Please place your feedback [here](https://github.com/OmniSharp/omnisharp-vscode/
     * **Hint:** While we are in a pre-release phase vscode might ask you to install a C# extension from the marketplace. DO NOT INSTALL IT! This extension doesn't contain debugger bits yet and might bring your system in a weird state.   
 2. Install Dotnet CLI
  * Install Dotnet CLI following the instructions here:  http://dotnet.github.io/getting-started  
- * **Hint for Mac**: Dotnet CLI requires openSSL to work. Don't forget this!
+ * **Hint for Mac**: Dotnet CLI requires openSSL to work. Don't forget this! Execute: `brew install openssl`
 3. C# Extension for VS Code
  * Get "omnisharp-*.vsix" file
     * for Linux from \\\\vsdbgqa\x-plat\vscode-extension\linux\csharp
