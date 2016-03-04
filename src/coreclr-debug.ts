@@ -161,10 +161,6 @@ function ensureAd7EngineExists(channel: vscode.OutputChannel, outputDirectory: s
                 // NOTE: The minimum build number is actually less than 1584, but this is the minimum
                 // build that I have tested.
                 channel.appendLine("Error: The .NET CLI did not correctly restore debugger files. Ensure that you have .NET CLI version 1.0.0 build #001584 or newer. You can check your .NET CLI version using 'dotnet --version'.");
-                // TODO: remove the Linux-specific instructions once http://dotnet.github.io/getting-started/ is pointing at a newer build.
-                if (process.platform === "linux") {
-                    channel.appendLine("To update your build of the .NET Tools, run: sudo apt-get install dotnet=1.0.0.001584-1");
-                }
                 return reject("The .NET CLI did not correctly restore debugger files.");
             }
         });
