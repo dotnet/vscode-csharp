@@ -5,39 +5,37 @@
 'use strict';
 
 import * as paths from 'path';
-import {EventEmitter} from 'events';
-import {Uri, workspace} from 'vscode';
+import * as vscode from 'vscode';
 
 export interface LaunchTarget {
 	label: string;
 	description: string;
-	directory: Uri;
-	resource: Uri;
-	target: Uri;
+	directory: vscode.Uri;
+	resource: vscode.Uri;
+	target: vscode.Uri;
 }
-
 
 export default function getLaunchTargets(): Thenable<LaunchTarget[]> {
 
-	if (!workspace.rootPath) {
+	if (!vscode.workspace.rootPath) {
 		return Promise.resolve([]);
 	}
 
-	return workspace.findFiles('{**/*.sln,**/*.csproj,**/project.json}', '{**/node_modules/**,**/.git/**,**/bower_components/**}', 100).then(resources => {
-		return select(resources, Uri.file(workspace.rootPath));
+	return vscode.workspace.findFiles('{**/*.sln,**/*.csproj,**/project.json}', '{**/node_modules/**,**/.git/**,**/bower_components/**}', 100).then(resources => {
+		return select(resources, vscode.Uri.file(vscode.workspace.rootPath));
 	});
 }
 
-function select(resources: Uri[], root: Uri): LaunchTarget[] {
+function select(resources: vscode.Uri[], root: vscode.Uri): LaunchTarget[] {
 
 	if (!Array.isArray(resources)) {
 		return [];
 	}
 
-	var targets: LaunchTarget[] = [],
-		hasCsProjFiles = false,
-		hasProjectJson = false,
-		hasProjectJsonAtRoot = false;
+	let targets: LaunchTarget[] = [];
+	let hasCsProjFiles = false;
+	let hasProjectJson = false;
+	let hasProjectJsonAtRoot = false;
 
 	hasCsProjFiles = resources
 		.some(resource => /\.csproj$/.test(resource.fsPath));
@@ -48,26 +46,26 @@ function select(resources: Uri[], root: Uri): LaunchTarget[] {
 		if (hasCsProjFiles && /\.sln$/.test(resource.fsPath)) {
 			targets.push({
 				label: paths.basename(resource.fsPath),
-				description: workspace.asRelativePath(paths.dirname(resource.fsPath)),
+				description: vscode.workspace.asRelativePath(paths.dirname(resource.fsPath)),
 				resource,
 				target: resource,
-				directory: Uri.file(paths.dirname(resource.fsPath))
+				directory: vscode.Uri.file(paths.dirname(resource.fsPath))
 			});
 		}
 
 		// project.json files
 		if (/project.json$/.test(resource.fsPath)) {
 
-			var dirname = paths.dirname(resource.fsPath);
+			let dirname = paths.dirname(resource.fsPath);
 			hasProjectJson = true;
 			hasProjectJsonAtRoot = hasProjectJsonAtRoot || dirname === root.fsPath;
 
 			targets.push({
 				label: paths.basename(resource.fsPath),
-				description: workspace.asRelativePath(paths.dirname(resource.fsPath)),
+				description: vscode.workspace.asRelativePath(paths.dirname(resource.fsPath)),
 				resource,
-				target: Uri.file(dirname),
-				directory: Uri.file(dirname)
+				target: vscode.Uri.file(dirname),
+				directory: vscode.Uri.file(dirname)
 			});
 		}
 	});

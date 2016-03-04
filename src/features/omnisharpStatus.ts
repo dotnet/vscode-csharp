@@ -10,7 +10,6 @@ import {dotnetRestoreForProject} from './commands';
 import {basename} from 'path';
 import * as proto from '../protocol';
 
-
 export default function reportStatus(server: OmnisharpServer) {
 	return vscode.Disposable.from(
 		reportServerStatus(server),
@@ -28,7 +27,6 @@ let defaultSelector: vscode.DocumentSelector = [
 ];
 
 class Status {
-
 	selector: vscode.DocumentSelector;
 	text: string;
 	command: string;
@@ -59,7 +57,8 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
 
 		if (projectStatus && vscode.languages.match(projectStatus.selector, document)) {
 			status = projectStatus;
-		} else if (defaultStatus.text && vscode.languages.match(defaultStatus.selector, document)) {
+		}
+		else if (defaultStatus.text && vscode.languages.match(defaultStatus.selector, document)) {
 			status = defaultStatus;
 		}
 
@@ -90,6 +89,13 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
 		render();
 	}));
 
+	disposables.push(server.onOmnisharpNotInstalled(() => {
+		defaultStatus.text = '$(flame) OmniSharp Not Installed';
+		defaultStatus.command = 'omnisharp.install';
+		defaultStatus.color = 'yellow';
+		render();
+	}));
+
 	disposables.push(server.onBeforeServerStart(path => {
 		defaultStatus.text = '$(flame) Starting...';
 		defaultStatus.command = 'o.showOutput';
@@ -101,7 +107,7 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
 		projectStatus = undefined;
 		defaultStatus.text = undefined;
 	}));
-
+    
 	disposables.push(server.onServerStart(path => {
 
 		defaultStatus.text = '$(flame) Running';
@@ -114,41 +120,73 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
 
 				let fileNames: vscode.DocumentSelector[] = [];
 				let label: string;
+                
+                // TODO(DustinCa): Refactor this mess
 
 				// show sln-file if applicable
-				if (info.MsBuild.SolutionPath) {
-					label = basename(info.MsBuild.SolutionPath)//workspace.getRelativePath(info.MsBuild.SolutionPath);
-					fileNames.push({ pattern: info.MsBuild.SolutionPath });
+                if ('MsBuild' in info) {
+                    if (info.MsBuild.SolutionPath) {
+                        label = basename(info.MsBuild.SolutionPath);
+                        fileNames.push({ pattern: info.MsBuild.SolutionPath });
 
-					for (let project of info.MsBuild.Projects) {
-						fileNames.push({ pattern: project.Path });
-						if (project.SourceFiles) {
-							for (let sourceFile of project.SourceFiles) {
-								fileNames.push({ pattern: sourceFile });
-							}
-						}
-					}
-				}
+                        for (let project of info.MsBuild.Projects) {
+                            fileNames.push({ pattern: project.Path });
+                            if (project.SourceFiles) {
+                                for (let sourceFile of project.SourceFiles) {
+                                    fileNames.push({ pattern: sourceFile });
+                                }
+                            }
+                        }
+                    }
+                }
 
-				// show dnx projects if applicable
-				let count = 0;
-				for (let project of info.Dnx.Projects) {
-					count += 1;
+                if ('Dnx' in info) {
+                    // show dnx projects if applicable
+                    let count = 0;
+                    for (let project of info.Dnx.Projects) {
+                        count += 1;
 
-					fileNames.push({ pattern: project.Path });
-					if (project.SourceFiles) {
-						for (let sourceFile of project.SourceFiles) {
-							fileNames.push({ pattern: sourceFile });
-						}
-					}
-				}
-				if (label) {
-					// we already have a message from a sln-file
-				} else if (count === 1) {
-					label = basename(info.Dnx.Projects[0].Path)//workspace.getRelativePath(info.Dnx.Projects[0].Path);
-				} else {
-					label = `${count} projects`;
-				}
+                        fileNames.push({ pattern: project.Path });
+                        if (project.SourceFiles) {
+                            for (let sourceFile of project.SourceFiles) {
+                                fileNames.push({ pattern: sourceFile });
+                            }
+                        }
+                    }
+                    if (label) {
+                        // we already have a message from a sln-file
+                    }
+                    else if (count === 1) {
+                        label = basename(info.Dnx.Projects[0].Path);
+                    }
+                    else {
+                        label = `${count} projects`;
+                    }
+                }
+                
+                if ('DotNet' in info) {
+                    // show dotnet projects if applicable
+                    let count = 0;
+                    for (let project of info.DotNet.Projects) {
+                        count += 1;
+
+                        fileNames.push({ pattern: project.Path });
+                        // if (project.SourceFiles) {
+                        //     for (let sourceFile of project.SourceFiles) {
+                        //         fileNames.push({ pattern: sourceFile });
+                        //     }
+                        // }
+                    }
+                    if (label) {
+                        // we already have a message from a sln-file
+                    }
+                    else if (count === 1) {
+                        label = basename(info.DotNet.Projects[0].Path);
+                    }
+                    else {
+                        label = `${count} projects`;
+                    }
+                }
 
 				// set project info
 				projectStatus = new Status(fileNames);
@@ -187,6 +225,7 @@ export function reportServerStatus(server: OmnisharpServer): vscode.Disposable{
 		if (message.FileName) {
 			appendLine(`${message.FileName}(${message.Line},${message.Column})`);
 		}
+
 		appendLine(message.Text);
 		appendLine();
 		showMessageSoon();

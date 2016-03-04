@@ -8,11 +8,11 @@
 import AbstractSupport from './abstractProvider';
 import * as proto from '../protocol';
 import {createRequest, toRange} from '../typeConvertion';
-import {DocumentHighlightProvider, DocumentHighlight, DocumentHighlightKind, Uri, CancellationToken, TextDocument, Position, Range} from 'vscode';
+import * as vscode from 'vscode';
 
-export default class OmnisharpDocumentHighlightProvider extends AbstractSupport implements DocumentHighlightProvider {
+export default class OmnisharpDocumentHighlightProvider extends AbstractSupport implements vscode.DocumentHighlightProvider {
 
-	public provideDocumentHighlights(resource: TextDocument, position: Position, token: CancellationToken): Promise<DocumentHighlight[]> {
+	public provideDocumentHighlights(resource: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): Promise<vscode.DocumentHighlight[]> {
 
 		let req = createRequest<proto.FindUsagesRequest>(resource, position);
 		req.OnlyThisFile = true;
@@ -25,7 +25,7 @@ export default class OmnisharpDocumentHighlightProvider extends AbstractSupport 
 		});
 	}
 
-	private static _asDocumentHighlight(quickFix: proto.QuickFix): DocumentHighlight {
-		return new DocumentHighlight(toRange(quickFix), DocumentHighlightKind.Read);
+	private static _asDocumentHighlight(quickFix: proto.QuickFix): vscode.DocumentHighlight {
+		return new vscode.DocumentHighlight(toRange(quickFix), vscode.DocumentHighlightKind.Read);
 	}
 }

@@ -7,15 +7,15 @@
 
 import AbstractSupport from './abstractProvider';
 import * as proto from '../protocol';
-import {createRequest, toRange} from '../typeConvertion';
-import {RenameProvider, TextEdit, WorkspaceEdit, TextDocument, Uri, CancellationToken, Position, Range} from 'vscode';
+import {createRequest} from '../typeConvertion';
+import * as vscode from 'vscode';
 
-export default class OmnisharpRenameProvider extends AbstractSupport implements RenameProvider {
+export default class OmnisharpRenameProvider extends AbstractSupport implements vscode.RenameProvider {
 
-	public provideRenameEdits(document: TextDocument, position: Position, newName: string, token: CancellationToken): Promise<WorkspaceEdit> {
+	public provideRenameEdits(document: vscode.TextDocument, position: vscode.Position, newName: string, token: vscode.CancellationToken): Promise<vscode.WorkspaceEdit> {
 
 		let request = createRequest<proto.RenameRequest>(document, position);
-		request.WantsTextChanges = true,
+		request.WantsTextChanges = true;
 		request.RenameTo = newName;
 
 		return this._server.makeRequest<proto.RenameResponse>(proto.Rename, request, token).then(response => {
@@ -24,12 +24,12 @@ export default class OmnisharpRenameProvider extends AbstractSupport implements 
 				return;
 			}
 
-			const edit = new WorkspaceEdit();
+			const edit = new vscode.WorkspaceEdit();
 			response.Changes.forEach(change => {
-				const uri = Uri.file(change.FileName);
+				const uri = vscode.Uri.file(change.FileName);
 				change.Changes.forEach(change => {
 					edit.replace(uri,
-						new Range(change.StartLine - 1, change.StartColumn - 1, change.EndLine - 1, change.EndColumn - 1),
+						new vscode.Range(change.StartLine - 1, change.StartColumn - 1, change.EndLine - 1, change.EndColumn - 1),
 						change.NewText);
 				});
 			});

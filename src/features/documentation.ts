@@ -4,8 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 
-
-var _regExp = /<(\S*?).*?>((.|\r|\n)*?)<\/\1>/;
+const _regExp = /<(\S*?).*?>((.|\r|\n)*?)<\/\1>/;
 
 /**
  * remove xml-tags from string
@@ -16,13 +15,14 @@ export function plain(doc: string): string {
 		return doc;
 	}
 
-	var newDoc: string;
+	let newDoc: string;
 
 	while (true) {
 		newDoc = doc.replace(_regExp,(m, g1, g2, g3) => g2);
 		if (newDoc === doc) {
 			break;
 		}
+		
 		doc = newDoc;
 	}
 

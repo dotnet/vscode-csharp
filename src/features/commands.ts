@@ -8,9 +8,8 @@
 import * as proto from '../protocol';
 import {OmnisharpServer} from '../omnisharpServer';
 import findLaunchTargets from '../launchTargetFinder';
-import * as pathHelpers from '../pathHelpers';
 import {runInTerminal} from 'run-in-terminal';
-import * as fs from 'fs';
+import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
@@ -42,7 +41,8 @@ function pickProjectAndStart(server: OmnisharpServer) {
 		return vscode.window.showQuickPick(targets, {
 			matchOnDescription: true,
 			placeHolder: `Select 1 of ${targets.length} projects`
-		}).then(target => {
+		})
+		.then(target => {
 			if (target) {
 				return server.restart(target.target.fsPath);
 			}
@@ -66,22 +66,39 @@ export function dotnetRestoreForAll(server: OmnisharpServer) {
 
 		let commands:Command[] = [];
 
-		info.Dnx.Projects.forEach(project => {
-			commands.push({
-				label: `dotnet restore - (${path.basename(path.dirname(project.Path))})`,
-				description: path.dirname(project.Path),
-				execute() {
-					let command = "dotnet";
+        if ('DotNet' in info) {
+            info.DotNet.Projects.forEach(project => {
+                commands.push({
+                    label: `dotnet restore - (${path.basename(path.dirname(project.Path))})`,
+                    description: path.dirname(project.Path),
+                    execute() {
+                        let command = "dotnet";
 
-					return runInTerminal(command, ['restore'], {
-						cwd: path.dirname(project.Path)
-					});
-				}
-			});
-		});
+                        return runInTerminal(command, ['restore'], {
+                            cwd: path.dirname(project.Path)
+                        });
+                    }
+                });
+            });
+        }
+        else if ('Dnx' in info) {
+            info.Dnx.Projects.forEach(project => {
+                commands.push({
+                    label: `dotnet restore - (${path.basename(path.dirname(project.Path))})`,
+                    description: path.dirname(project.Path),
+                    execute() {
+                        let command = "dotnet";
+
+                        return runInTerminal(command, ['restore'], {
+                            cwd: path.dirname(project.Path)
+                        });
+                    }
+                });
+            });
+        }
 
 		return vscode.window.showQuickPick(commands).then(command => {
-			if(command) {
+			if (command) {
 				return command.execute();
 			}
 		});
@@ -91,7 +108,7 @@ export function dotnetRestoreForAll(server: OmnisharpServer) {
 export function dotnetRestoreForProject(server: OmnisharpServer, fileName: string) {
 
 	return server.makeRequest<proto.WorkspaceInformationResponse>(proto.Projects).then((info):Promise<any> => {
-		for(let project of info.Dnx.Projects) {
+		for (let project of info.Dnx.Projects) {
 			if (project.Path === fileName) {
                 let command = "dotnet";
 
@@ -105,25 +122,11 @@ export function dotnetRestoreForProject(server: OmnisharpServer, fileName: strin
 	});
 }
 
-function ensureDirectoryCreated(directoryPath: string) {
-    return pathHelpers.exists(directoryPath).then(e => {
-        if (e) {
-            return true;
-        }
-        else {
-            return pathHelpers.mkdir(directoryPath);
-        }
-    });
-}
-
 function getExpectedVsCodeFolderPath(solutionPathOrFolder: string): Promise<string> {
-    return pathHelpers.getPathKind(solutionPathOrFolder).then(kind => {
-        if (kind === pathHelpers.PathKind.File) {
-            return path.join(path.dirname(solutionPathOrFolder), '.vscode');
-        }
-        else {
-            return path.join(solutionPathOrFolder, '.vscode');
-        }
+    return fs.lstatAsync(solutionPathOrFolder).then(stats => {
+        return stats.isFile()
+            ? path.join(path.dirname(solutionPathOrFolder), '.vscode')
+            : path.join(solutionPathOrFolder, '.vscode');
     });
 }
 
@@ -142,7 +145,7 @@ export function addTasksJson(server: OmnisharpServer, extensionPath: string) {
         return getExpectedVsCodeFolderPath(solutionPathOrFolder).then(vscodeFolderPath => { 
             let tasksJsonPath = path.join(vscodeFolderPath, 'tasks.json');
             
-            return pathHelpers.exists(tasksJsonPath).then(e => {
+            return fs.existsAsync(tasksJsonPath).then(e => {
                 if (e) {
                     return vscode.window.showInformationMessage(`${tasksJsonPath} already exists.`).then(_ => {
                         return resolve(tasksJsonPath);
@@ -151,18 +154,16 @@ export function addTasksJson(server: OmnisharpServer, extensionPath: string) {
                 else {
                     let templatePath = path.join(extensionPath, 'template-tasks.json');
                     
-                    return pathHelpers.exists(templatePath).then(e => {
+                    return fs.existsAsync(templatePath).then(e => {
                         if (!e) {
                             return reject('Could not find template-tasks.json file in extension.');
                         }
                         
-                        return ensureDirectoryCreated(vscodeFolderPath).then(ok => {
+                        return fs.ensureDirAsync(vscodeFolderPath).then(ok => {
                             if (ok) {
-                                let oldFile = fs.createReadStream(templatePath);
-                                let newFile = fs.createWriteStream(tasksJsonPath);
-                                oldFile.pipe(newFile);
-                                
-                                return resolve(tasksJsonPath);
+                                return fs.copyAsync(templatePath, tasksJsonPath).then(() => {
+                                    return resolve(tasksJsonPath);
+                                })
                             }
                             else {
                                 return reject(`Could not create ${vscodeFolderPath} directory.`);

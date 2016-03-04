@@ -9,16 +9,16 @@ import {plain} from './documentation';
 import AbstractSupport from './abstractProvider';
 import * as proto from '../protocol';
 import {createRequest} from '../typeConvertion';
-import {CompletionItemProvider, CompletionItem, CompletionItemKind, Uri, CancellationToken, TextDocument, Range, Position} from 'vscode';
+import * as vscode from 'vscode';
 
-export default class OmniSharpCompletionItemProvider extends AbstractSupport implements CompletionItemProvider {
+export default class OmniSharpCompletionItemProvider extends AbstractSupport implements vscode.CompletionItemProvider {
 
-	public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken): Promise<CompletionItem[]> {
+	public provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): Promise<vscode.CompletionItem[]> {
 
 		let wordToComplete = '';
 		let range = document.getWordRangeAtPosition(position);
 		if (range) {
-			wordToComplete = document.getText(new Range(range.start, position));
+			wordToComplete = document.getText(new vscode.Range(range.start, position));
 		}
 
 		let req = createRequest<proto.AutoCompleteRequest>(document, position);
@@ -32,21 +32,22 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
 				return;
 			}
 
-			let result: CompletionItem[] = [];
-			let completions: { [c: string]: CompletionItem[] } = Object.create(null);
+			let result: vscode.CompletionItem[] = [];
+			let completions: { [c: string]: vscode.CompletionItem[] } = Object.create(null);
 
 			// transform AutoCompleteResponse to CompletionItem and
 			// group by code snippet
 			for (let value of values) {
-				let completion = new CompletionItem(value.CompletionText.replace(/\(|\)|<|>/g, ''));
+				let completion = new vscode.CompletionItem(value.CompletionText.replace(/\(|\)|<|>/g, ''));
 				completion.detail = value.DisplayText;
 				completion.documentation = plain(value.Description);
-				completion.kind = _kinds[value.Kind] || CompletionItemKind.Property;
+				completion.kind = _kinds[value.Kind] || vscode.CompletionItemKind.Property;
 
 				let array = completions[completion.label];
 				if (!array) {
 					completions[completion.label] = [completion];
-				} else {
+				}
+				else {
 					array.push(completion);
 				}
 			}
@@ -61,7 +62,8 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
 					// remove non overloaded items
 					delete completions[key];
 
-				} else {
+				}
+				else {
 					// indicate that there is more
 					suggestion.detail = `${suggestion.detail} (+ ${overloadCount} overload(s))`;
 				}
@@ -73,14 +75,14 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
 	}
 }
 
-var _kinds: { [kind: string]: CompletionItemKind; } = Object.create(null);
-_kinds['Variable'] = CompletionItemKind.Variable;
-_kinds['Struct'] = CompletionItemKind.Interface;
-_kinds['Interface'] = CompletionItemKind.Interface;
-_kinds['Enum'] = CompletionItemKind.Enum;
-_kinds['EnumMember'] = CompletionItemKind.Property;
-_kinds['Property'] = CompletionItemKind.Property;
-_kinds['Class'] = CompletionItemKind.Class;
-_kinds['Field'] = CompletionItemKind.Field;
-_kinds['EventField'] = CompletionItemKind.File;
-_kinds['Method'] = CompletionItemKind.Method;
+const _kinds: { [kind: string]: vscode.CompletionItemKind; } = Object.create(null);
+_kinds['Variable'] = vscode.CompletionItemKind.Variable;
+_kinds['Struct'] = vscode.CompletionItemKind.Interface;
+_kinds['Interface'] = vscode.CompletionItemKind.Interface;
+_kinds['Enum'] = vscode.CompletionItemKind.Enum;
+_kinds['EnumMember'] = vscode.CompletionItemKind.Property;
+_kinds['Property'] = vscode.CompletionItemKind.Property;
+_kinds['Class'] = vscode.CompletionItemKind.Class;
+_kinds['Field'] = vscode.CompletionItemKind.Field;
+_kinds['EventField'] = vscode.CompletionItemKind.File;
+_kinds['Method'] = vscode.CompletionItemKind.Method;

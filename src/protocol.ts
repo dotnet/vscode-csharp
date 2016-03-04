@@ -216,6 +216,7 @@ export interface ProjectInformationResponse {
 export interface WorkspaceInformationResponse {
 	MsBuild: MsBuildWorkspaceInformation;
 	Dnx: DnxWorkspaceInformation;
+    DotNet: DotNetWorkspaceInformation;
 	ScriptCs: ScriptCsContext;
 }
 
@@ -256,6 +257,21 @@ export interface DnxProject {
 	Frameworks: DnxFramework[];
 	GlobalJsonPath: string;
 	SourceFiles: string[];
+}
+
+export interface DotNetWorkspaceInformation {
+	Projects: DotNetProject[];
+}
+
+export interface DotNetProject {
+	Path: string;
+	Name: string;
+	Commands: { [name: string]: string; };
+	Configurations: string[];
+	ProjectSearchPaths: string[];
+	Frameworks: DnxFramework[];
+	GlobalJsonPath: string;
+	//SourceFiles: string[];
 }
 
 export interface DnxFramework {
@@ -352,7 +368,7 @@ export namespace V2 {
 	}
 
 	export interface GetCodeActionsRequest extends Request {
-		Selection: Range
+		Selection: Range;
 	}
 
 	export interface OmniSharpCodeAction {

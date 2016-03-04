@@ -8,11 +8,11 @@
 import AbstractSupport from './abstractProvider';
 import * as Protocol from '../protocol';
 import {createRequest, toLocation} from '../typeConvertion';
-import {Uri, TextDocument, Position, Location, CancellationToken, DefinitionProvider} from 'vscode';
+import * as vscode from 'vscode';
 
-export default class CSharpDefinitionProvider extends AbstractSupport implements DefinitionProvider {
+export default class CSharpDefinitionProvider extends AbstractSupport implements vscode.DefinitionProvider {
 
-	public provideDefinition(document: TextDocument, position: Position, token: CancellationToken): Promise<Location> {
+	public provideDefinition(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): Promise<vscode.Location> {
 
 		let req = createRequest(document, position);
 

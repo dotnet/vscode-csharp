@@ -8,12 +8,12 @@
 import {OmnisharpServer} from '../omnisharpServer';
 import AbstractSupport from './abstractProvider';
 import * as proto from '../protocol';
-import {createRequest, toRange} from '../typeConvertion';
-import {Disposable, Uri, CancellationTokenSource, TextDocument, TextDocumentChangeEvent, Range, Diagnostic, DiagnosticCollection, DiagnosticSeverity, Location, workspace, languages} from 'vscode';
+import {toRange} from '../typeConvertion';
+import * as vscode from 'vscode';
 
 export class Advisor {
 
-	private _disposable: Disposable;
+	private _disposable: vscode.Disposable;
 	private _server: OmnisharpServer;
 	private _packageRestoreCounter: number = 0;
 	private _projectSourceFileCounts: { [path: string]: number } = Object.create(null);
@@ -23,7 +23,7 @@ export class Advisor {
 		let d1 = server.onProjectChange(this._onProjectChange, this);
 		let d2 = server.onBeforePackageRestore(this._onBeforePackageRestore, this);
 		let d3 = server.onPackageRestore(this._onPackageRestore, this);
-		this._disposable = Disposable.from(d1, d2, d3);
+		this._disposable = vscode.Disposable.from(d1, d2, d3);
 	}
 
 	public dispose() {
@@ -45,6 +45,7 @@ export class Advisor {
 		if (info.DnxProject && info.DnxProject.SourceFiles) {
 			this._projectSourceFileCounts[info.DnxProject.Path] = info.DnxProject.SourceFiles.length;
 		}
+		
 		if (info.MsBuildProject && info.MsBuildProject.SourceFiles) {
 			this._projectSourceFileCounts[info.MsBuildProject.Path] = info.MsBuildProject.SourceFiles.length;
 		}
@@ -67,8 +68,8 @@ export class Advisor {
 	}
 
 	private _isHugeProject(): boolean {
-		var sourceFileCount = 0;
-		for (var key in this._projectSourceFileCounts) {
+		let sourceFileCount = 0;
+		for (let key in this._projectSourceFileCounts) {
 			sourceFileCount += this._projectSourceFileCounts[key];
 			if (sourceFileCount > 1000) {
 				return true;
@@ -78,49 +79,51 @@ export class Advisor {
 	}
 }
 
-export default function reportDiagnostics(server: OmnisharpServer, advisor: Advisor): Disposable {
+export default function reportDiagnostics(server: OmnisharpServer, advisor: Advisor): vscode.Disposable {
 	return new DiagnosticsProvider(server, advisor);
 }
 
 class DiagnosticsProvider extends AbstractSupport {
 
 	private _validationAdvisor: Advisor;
-	private _disposable: Disposable;
-	private _documentValidations: { [uri: string]: CancellationTokenSource } = Object.create(null);
-	private _projectValidation: CancellationTokenSource;
-	private _diagnostics: DiagnosticCollection;
+	private _disposable: vscode.Disposable;
+	private _documentValidations: { [uri: string]: vscode.CancellationTokenSource } = Object.create(null);
+	private _projectValidation: vscode.CancellationTokenSource;
+	private _diagnostics: vscode.DiagnosticCollection;
 
 	constructor(server: OmnisharpServer, validationAdvisor: Advisor) {
 		super(server);
 		this._validationAdvisor = validationAdvisor;
-		this._diagnostics = languages.createDiagnosticCollection('omnisharp');
+		this._diagnostics = vscode.languages.createDiagnosticCollection('omnisharp');
 
 		let d1 = this._server.onPackageRestore(this._validateProject, this);
 		let d2 = this._server.onProjectChange(this._validateProject, this);
-		let d4 = workspace.onDidOpenTextDocument(event => this._onDocumentAddOrChange(event), this);
-		let d3 = workspace.onDidChangeTextDocument(event => this._onDocumentAddOrChange(event.document), this);
-		let d5 = workspace.onDidCloseTextDocument(this._onDocumentRemove, this);
-		this._disposable = Disposable.from(this._diagnostics, d1, d2, d3, d4, d5);
+		let d4 = vscode.workspace.onDidOpenTextDocument(event => this._onDocumentAddOrChange(event), this);
+		let d3 = vscode.workspace.onDidChangeTextDocument(event => this._onDocumentAddOrChange(event.document), this);
+		let d5 = vscode.workspace.onDidCloseTextDocument(this._onDocumentRemove, this);
+		this._disposable = vscode.Disposable.from(this._diagnostics, d1, d2, d3, d4, d5);
 	}
 
 	public dispose(): void {
 		if (this._projectValidation) {
 			this._projectValidation.dispose();
 		}
+		
 		for (let key in this._documentValidations) {
 			this._documentValidations[key].dispose();
 		}
+		
 		this._disposable.dispose();
 	}
 
-	private _onDocumentAddOrChange(document: TextDocument): void {
+	private _onDocumentAddOrChange(document: vscode.TextDocument): void {
 		if (document.languageId === 'csharp' && document.uri.scheme === 'file') {
 			this._validateDocument(document);
 			this._validateProject();
 		}
 	}
 
-	private _onDocumentRemove(document: TextDocument) {
+	private _onDocumentRemove(document: vscode.TextDocument) {
 		let key = document.uri.toString();
 		let didChange = false;
 		if (this._diagnostics[key]) {
@@ -128,17 +131,19 @@ class DiagnosticsProvider extends AbstractSupport {
 			this._diagnostics[key].dispose();
 			delete this._diagnostics[key];
 		}
+		
 		if (this._documentValidations[key]) {
 			didChange = true;
 			this._documentValidations[key].cancel();
 			delete this._documentValidations[key];
 		}
+		
 		if (didChange) {
 			this._validateProject();
 		}
 	}
 
-	private _validateDocument(document: TextDocument): void {
+	private _validateDocument(document: vscode.TextDocument): void {
 
 		if (!this._validationAdvisor.shouldValidateFiles()) {
 			return;
@@ -149,7 +154,7 @@ class DiagnosticsProvider extends AbstractSupport {
 			this._documentValidations[key].cancel();
 		}
 
-		let source = new CancellationTokenSource();
+		let source = new vscode.CancellationTokenSource();
 		let handle = setTimeout(() => {
 			let req: proto.Request = { Filename: document.fileName };
 			this._server.makeRequest<proto.QuickFixResponse>(proto.CodeCheck, req, source.token).then(value => {
@@ -174,22 +179,23 @@ class DiagnosticsProvider extends AbstractSupport {
 			this._projectValidation.cancel();
 		}
 
-		this._projectValidation = new CancellationTokenSource();
+		this._projectValidation = new vscode.CancellationTokenSource();
 		let handle = setTimeout(() => {
 			this._server.makeRequest<proto.QuickFixResponse>(proto.CodeCheck, {}, this._projectValidation.token).then(value => {
 
 				let quickFixes = value.QuickFixes.sort((a, b) => a.FileName.localeCompare(b.FileName));
-				let entries: [Uri, Diagnostic[]][] = [];
-				let lastEntry: [Uri, Diagnostic[]];
+				let entries: [vscode.Uri, vscode.Diagnostic[]][] = [];
+				let lastEntry: [vscode.Uri, vscode.Diagnostic[]];
 
 				for (let quickFix of quickFixes) {
 
 					let diag = DiagnosticsProvider._asDiagnostic(quickFix);
-					let uri = Uri.file(quickFix.FileName);
+					let uri = vscode.Uri.file(quickFix.FileName);
 
 					if (lastEntry && lastEntry[0].toString() === uri.toString()) {
 						lastEntry[1].push(diag);
-					} else {
+					}
+					else {
 						lastEntry = [uri, [diag]];
 						entries.push(lastEntry);
 					}
@@ -208,25 +214,27 @@ class DiagnosticsProvider extends AbstractSupport {
 
 	// --- data converter
 
-	private static _asDiagnostic(quickFix: proto.QuickFix): Diagnostic {
+	private static _asDiagnostic(quickFix: proto.QuickFix): vscode.Diagnostic {
 		let severity = DiagnosticsProvider._asDiagnosticSeverity(quickFix.LogLevel);
 		let message = `${quickFix.Text} [${quickFix.Projects.map(n => DiagnosticsProvider._asProjectLabel(n)).join(', ') }]`;
-		return new Diagnostic(toRange(quickFix), message, severity);
+		
+		return new vscode.Diagnostic(toRange(quickFix), message, severity);
 	}
 
-	private static _asDiagnosticSeverity(logLevel: string): DiagnosticSeverity {
+	private static _asDiagnosticSeverity(logLevel: string): vscode.DiagnosticSeverity {
 		switch (logLevel.toLowerCase()) {
 			case 'hidden':
 			case 'warning':
 			case 'warn':
-				return DiagnosticSeverity.Warning;
+				return vscode.DiagnosticSeverity.Warning;
+				
 			default:
-				return DiagnosticSeverity.Error;
+				return vscode.DiagnosticSeverity.Error;
 		}
 	}
 
 	private static _asProjectLabel(projectName: string): string {
-		var idx = projectName.indexOf('+');
+		const idx = projectName.indexOf('+');
 		return projectName.substr(idx + 1);
 	}
 }
