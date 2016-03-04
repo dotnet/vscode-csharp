@@ -15,6 +15,37 @@ import {ErrorMessage, UnresolvedDependenciesMessage, MSBuildProjectDiagnostics, 
 import getLaunchTargets, {LaunchTarget} from './launchTargetFinder';
 import {getOmnisharpLaunchFilePath} from './omnisharpPath';
 
+module ServerEvents {
+    export const StateChanged = 'stateChanged';
+    
+    export const StdIn = 'stdin';
+    export const StdOut = 'stdout';
+    export const StdErr = 'stderr';
+    
+    export const Error = 'Error';
+    export const ServerError = 'ServerError';
+    
+    export const UnresolvedDependencies = 'UnresolvedDependencies';
+    
+    export const PackageRestoreStarted = 'PackageRestoreStarted';
+    export const PackageRestoreFinished = 'PackageRestoreFinished';
+    
+    export const ProjectChanged = 'ProjectChanged';
+    export const ProjectAdded = 'ProjectAdded';
+    export const ProjectRemoved = 'ProjectRemoved';
+    
+    export const MsBuildProjectDiagnostics = 'MsBuildProjectDiagnostics';
+    
+    export const BeforeServerStart = 'BeforeServerStart';
+    export const ServerStart = 'ServerStart';
+    export const ServerStop = 'ServerStop';
+    export const OmnisharpNotInstalled = 'OmnisharpNotInstalled';
+    
+    export const MultipleLaunchTargets = 'server:MultipleLaunchTargets';
+    
+    export const Started = 'started';
+}
+
 enum ServerState {
     NotInstalled,
 	Starting,
@@ -59,7 +90,7 @@ export abstract class OmnisharpServer {
 	private _setState(value: ServerState) : void {
 		if (typeof value !== 'undefined' && value !== this._state) {
 			this._state = value;
-			this._fireEvent('stateChanged', this._state);
+			this._fireEvent(ServerEvents.StateChanged, this._state);
 		}
 	}
 
@@ -74,71 +105,71 @@ export abstract class OmnisharpServer {
 	// --- eventing
 
 	public onStdout(listener: (e: string) => any, thisArg?: any) {
-		return this._addListener('stdout', listener, thisArg);
+		return this._addListener(ServerEvents.StdOut, listener, thisArg);
 	}
 
 	public onStderr(listener: (e: string) => any, thisArg?: any) {
-		return this._addListener('stderr', listener, thisArg);
+		return this._addListener(ServerEvents.StdErr, listener, thisArg);
 	}
 
 	public onError(listener: (e: ErrorMessage) => any, thisArg?: any) {
-		return this._addListener('Error', listener, thisArg);
+		return this._addListener(ServerEvents.Error, listener, thisArg);
 	}
 
 	public onServerError(listener: (err: any) => any, thisArg?: any) {
-		return this._addListener('ServerError', listener, thisArg);
+		return this._addListener(ServerEvents.ServerError, listener, thisArg);
 	}
 
 	public onUnresolvedDependencies(listener: (e: UnresolvedDependenciesMessage) => any, thisArg?:any) {
-		return this._addListener('UnresolvedDependencies', listener, thisArg);
+		return this._addListener(ServerEvents.UnresolvedDependencies, listener, thisArg);
 	}
 
 	public onBeforePackageRestore(listener: () => any, thisArg?: any) {
-		return this._addListener('PackageRestoreStarted', listener, thisArg);
+		return this._addListener(ServerEvents.PackageRestoreStarted, listener, thisArg);
 	}
 
 	public onPackageRestore(listener: () => any, thisArg?: any) {
-		return this._addListener('PackageRestoreFinished', listener, thisArg);
+		return this._addListener(ServerEvents.PackageRestoreFinished, listener, thisArg);
 	}
 
 	public onProjectChange(listener: (e: ProjectInformationResponse) => any, thisArg?: any) {
-		return this._addListener('ProjectChanged', listener, thisArg);
+		return this._addListener(ServerEvents.ProjectChanged, listener, thisArg);
 	}
 
 	public onProjectAdded(listener: (e: ProjectInformationResponse) => any, thisArg?: any) {
-		return this._addListener('ProjectAdded', listener, thisArg);
+		return this._addListener(ServerEvents.ProjectAdded, listener, thisArg);
 	}
 
 	public onProjectRemoved(listener: (e: ProjectInformationResponse) => any, thisArg?: any) {
-		return this._addListener('ProjectRemoved', listener, thisArg);
+		return this._addListener(ServerEvents.ProjectRemoved, listener, thisArg);
 	}
 
 	public onMsBuildProjectDiagnostics(listener: (e: MSBuildProjectDiagnostics) => any, thisArg?: any) {
-		return this._addListener('MsBuildProjectDiagnostics', listener, thisArg);
+		return this._addListener(ServerEvents.MsBuildProjectDiagnostics, listener, thisArg);
 	}
 
 	public onBeforeServerStart(listener: (e:string) => any) {
-		return this._addListener('BeforeServerStart', listener);
+		return this._addListener(ServerEvents.BeforeServerStart, listener);
 	}
 
 	public onServerStart(listener: (e: string) => any) {
-		return this._addListener('ServerStart', listener);
-	}
-
-	public onOmnisharpNotInstalled(listener: () => any) {
-		return this._addListener('OmnisharpNotInstalled', listener);
+		return this._addListener(ServerEvents.ServerStart, listener);
 	}
 
 	public onServerStop(listener: () => any) {
-		return this._addListener('ServerStop', listener);
+		return this._addListener(ServerEvents.ServerStop, listener);
+	}
+
+	public onOmnisharpNotInstalled(listener: () => any) {
+		return this._addListener(ServerEvents.OmnisharpNotInstalled, listener);
 	}
 
 	public onMultipleLaunchTargets(listener: (targets: LaunchTarget[]) => any, thisArg?: any) {
-		return this._addListener('server:MultipleLaunchTargets', listener, thisArg);
+		return this._addListener(ServerEvents.MultipleLaunchTargets, listener, thisArg);
 	}
 
 	public onOmnisharpStart(listener: () => any) {
-		return this._addListener('started', listener);
+		return this._addListener(ServerEvents.Started, listener);
 	}
 
 	private _addListener(event: string, listener: (e: any) => any, thisArg?: any): vscode.Disposable {
@@ -173,26 +204,26 @@ export abstract class OmnisharpServer {
 				const cwd = dirname(solutionPath);
 				const argv = ['-s', solutionPath, '--hostPID', process.pid.toString(), 'dnx:enablePackageRestore=false'].concat(this._extraArgv);
 
-				this._fireEvent('stdout', `[INFO] Starting OmniSharp at '${solutionPath}'...\n`);
-				this._fireEvent('BeforeServerStart', solutionPath);
+				this._fireEvent(ServerEvents.StdOut, `[INFO] Starting OmniSharp at '${solutionPath}'...\n`);
+				this._fireEvent(ServerEvents.BeforeServerStart, solutionPath);
 
 				return omnisharpLauncher(serverPath, cwd, argv)
 					.then(value => {
 						this._serverProcess = value.process;
 						return this._doConnect();
 					}).then(_ => {
-						this._fireEvent('stdout', `[INFO] Started OmniSharp from '${serverPath}' with process id ${this._serverProcess.pid}...\n`);
-						this._fireEvent('ServerStart', solutionPath);
+						this._fireEvent(ServerEvents.StdOut, `[INFO] Started OmniSharp from '${serverPath}' with process id ${this._serverProcess.pid}...\n`);
+						this._fireEvent(ServerEvents.ServerStart, solutionPath);
 						this._setState(ServerState.Started);
 						this._processQueue();
 					}).catch(err => {
-						this._fireEvent('ServerError', err);
+						this._fireEvent(ServerEvents.ServerError, err);
 						throw err;
 					});
-			})
-			.catch(err => {
+			},
+            err => {
 				this._setState(ServerState.NotInstalled);
-				this._fireEvent('OmnisharpNotInstalled', err);
+				this._fireEvent(ServerEvents.OmnisharpNotInstalled, err);
 			});
 	}
 
@@ -230,7 +261,7 @@ export abstract class OmnisharpServer {
 			this._start = null;
 			this._serverProcess = null;
 			this._setState(ServerState.Stopped);
-			this._fireEvent('ServerStop', this);
+			this._fireEvent(ServerEvents.ServerStop, this);
 			return;
 		});
 	}
@@ -268,7 +299,7 @@ export abstract class OmnisharpServer {
 					}
 				}
 
-				this._fireEvent('server:MultipleLaunchTargets', targets);
+				this._fireEvent(ServerEvents.MultipleLaunchTargets, targets);
 				
 				return Promise.reject<void>(undefined);
 			}
@@ -399,7 +430,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 
 	protected _doConnect(): Promise<OmnisharpServer> {
 
-		this._serverProcess.stderr.on('data', (data: any) => this._fireEvent('stderr', String(data)));
+		this._serverProcess.stderr.on('data', (data: any) => this._fireEvent(ServerEvents.StdErr, String(data)));
 
 		this._rl = createInterface({
 			input: this._serverProcess.stdout,
@@ -438,7 +469,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 
 		const onLineReceived = (line: string) => {
 			if (line[0] !== '{') {
-				this._fireEvent('stdout', `${line}\n`);
+				this._fireEvent(ServerEvents.StdOut, `${line}\n`);
 				return;
 			}
 
@@ -498,7 +529,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 		if (packet.Event === 'log') {
 			// handle log events
 			const entry = <{ LogLevel: string; Name: string; Message: string; }> packet.Body;
-			this._fireEvent('stdout', `[${entry.LogLevel}:${entry.Name}] ${entry.Message}\n`);
+			this._fireEvent(ServerEvents.StdOut, `[${entry.LogLevel}:${entry.Name}] ${entry.Message}\n`);
 			return;
 		}
 		else {
