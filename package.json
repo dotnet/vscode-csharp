@@ -262,8 +262,8 @@
                     },
                     "sourceFileMap": {
                         "type": "object",
-                        "description": "Optional source file mappings passed to the debug engine.",
-                        "default": { }
+                        "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
+                        "default": { "<source-path>" : "<target-path>" }
                     },
                     "justMyCode": {
                         "type": "boolean",
@@ -293,8 +293,8 @@
                     },
                     "sourceFileMap": {
                         "type": "object",
-                        "description": "Optional source file mappings passed to the debug engine.",
-                        "default": { }
+                        "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
+                        "default": { "<source-path>" : "<target-path>" }
                     },
                     "justMyCode": {
                         "type": "boolean",
@@ -320,8 +320,7 @@
                         "program": "${workspaceRoot}/bin/Debug/<path-to-program>",
                         "args": [ ],
                         "cwd": "${workspaceRoot}",
-                        "stopAtEntry": false,
-                        "sourceFileMap": { }
+                        "stopAtEntry": false
                     },
                     {
                         "name": ".NET Core Launch (web)",
@@ -332,7 +331,6 @@
                         "args": [ ],
                         "cwd": "${workspaceRoot}",
                         "stopAtEntry": false,
-                        "sourceFileMap": { },
                         "launchBrowser": {
                         "enabled": true,
                         "args": "${auto-detect-url}",
@@ -352,8 +350,7 @@
                         "name": ".NET Core Attach",
                         "type": "coreclr",
                         "request": "attach",
-                        "processName": "<example>",
-                        "sourceFileMap": { }
+                        "processName": "<example>"
                     }
                 ]
             }
