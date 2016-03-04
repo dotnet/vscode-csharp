@@ -1,4 +1,4 @@
-﻿#Instructions for setting up the .NET Core debugger
+﻿#Instructions for setting up the .NET Core debugger - PREVIEW
 *Updated on  March 1st 2016 - setup works for Linux & Mac.*
 
 ***Currently working within Microsoft Corp-Net only.***
@@ -15,8 +15,8 @@ Please place your feedback [here](https://github.com/OmniSharp/omnisharp-vscode/
 * X64 only
 * Basic Debugging Setup successfully validated on Ubuntu Linux and Mac
 * Currently NOT working on Windows
-* In case you get this error on F5: *"No task runner configured -  Tasks.json could not be found"*, see the 'once for each project' section below. Currently manual steps are required.
-* If you don’t have mono installed you won’t get IntelliSense. See optional installation section below.
+* In case you get this error on F5: *"No task runner configured -  Tasks.json could not be found"*, see the 'once for each project' section below. 
+* If you don’t have mono installed you won't get IntelliSense. 
 * **Hint:** Setup for Debugging CLR on OSX changed fundamentally end of February 2016. For existing projects please make sure to update your launch.json file according to these steps.​
 
 ###First Time setup
@@ -26,19 +26,16 @@ Please place your feedback [here](https://github.com/OmniSharp/omnisharp-vscode/
 2. Install Dotnet CLI
  * Install Dotnet CLI following the instructions here:  http://dotnet.github.io/getting-started  
  * **Hint for Mac**: Dotnet CLI requires openSSL to work. Don't forget this! Execute: `brew install openssl`
-3. C# Extension for VS Code
- * Get "omnisharp-*.vsix" file
-    * for Linux from \\\\vsdbgqa\x-plat\vscode-extension\linux\csharp
-    * for OSX from \\\\vsdbgqa\x-plat\vscode-extension\osx\csharp
- * Open the .vsix from within VSC to install the extension. VSC will show a message that the extension has been installed and it will restart. 
- * **Magic step:** After the extension is installed, open a C# file. VSC might ask you to install "C#". Select to NOT install it! 
+3. Install C# Extension for VS Code
+ * Get the .vsix file from here: \\\\vsdbgqa\x-plat\vscode-extension\csharp . 
+ * Open "omnisharp-0.3.2.vsix" from within VSC to install the extension. VSC will show a message that the extension has been installed and it will restart. 
+4. Trigger download of platform specific binaries
+ * After the extension is installed, open any C# file in VSC. 
  * In the background a process is triggered to get required bits. You can follow that process in the output window of VSC. Wait to finish that process.
-4. Install Mono 
- * *Currently not required due to issue with command to create tasks.json*
- * ~~To be able to auto-create a tasks.json for every project you'll currently need Mono. You could skip this step, but then you need to create the file manually.~~
- * ~~Run the following commands in a terminal:~~
- * ~~On Mac: brew install mono~~
- * ~~On Linux: sudo apt-get install mono-complete~~
+5. Install Mono 
+ * To be able to auto-create a tasks.json for every project you'll currently need Mono. You could skip this step, but then you need to create the file manually.
+ * Follow the instructions [how to install mono here](http://www.mono-project.com/docs/getting-started/install/). Make sure the version you have installed is >=4.0.1 .
+ 
 
 ###Once for each project
 The following steps have to executed for every project. 
@@ -47,12 +44,11 @@ The following steps have to executed for every project.
 * For attach scenarios modify the processName attribute of launch.json
 * If you want 'compile' support for F5 you need to create a tasks.json file . There are multiple ways to do this.
   * You can get it [here](https://github.com/OmniSharp/omnisharp-vscode/blob/dev/template-tasks.json) and put it manually next to your launch.json file 
-  * ~~Or you can open the command pallette in VSC (F1) and run the command *"Debugger: Add tasks.json"* (Make sure you have installed Mono to be able to do so, see above.
-  (If you don't have Mono installed you might get an error saying *Omnisharp not running*)~~ Unfortunately this is currently not working. We're investigating why.
+  * Or you can open the command pallette in VSC (F1) and run the command *"Debugger: Add tasks.json"* (Make sure you have installed Mono to be able to do so, see above. If you don't have Mono installed you might get an error saying *Omnisharp not running*.)
   * Or if you just want debugging, you can comment out 'preCompileTask' field​
-* **Important hint:**If you run into an error modify your project.json to reference "NETStandrad.Library":"1.0.0-rc3-*"
-  * Make sure the version number is correct. Currently dotnet new creates a project.json that references a version that's too old. You should also get a hint to modify this.
-  * Afterwards run dotnet restore.
+  * Modify your project.json to reference "NETStandard.Library":"1.0.0-rc3-*"
+   * Currently dotnet new creates a project.json that references a version that's too old. You should also get a hint to modify this.
+   * Afterwards run *dotnet restore*.
 * In case you get a restore error due to lack of a NuGet.Config file, just create this file in the root directory of your project. You can find a sample [here](https://github.com/Microsoft/MIEngine/blob/abeebec39221c654bd69a0d2bcadca6a4a0d0392/tools/InstallToVSCode/CLRDependencies/NuGet.Config). 
 
 ####Debugging Code compiled on another computer
@@ -62,8 +58,8 @@ The following steps have to executed for every project.
 
 ####More things to configure In launch.json
 #####Just My Code
-You can optionally configure justMyCode by setting it to "true".
->*"justMyCode":true*
+You can optionally disable justMyCode by setting it to "false".
+>*"justMyCode":false*
 
 #####Source File Map
 You can optionally configure a file by file mapping by providing map following this schema:
@@ -76,8 +72,4 @@ You can optionally configure a file by file mapping by providing map following t
 You can optionally provide paths to symbols following this schema:
 >"symbolPath":"[ \"/Volumes/symbols\"]"
 
-####Optional Installs
-#####Mono
-To install Mono do the following:
-* brew install mono (OSX)
-* sudo apt-get install mono-complete (Linux)
+
