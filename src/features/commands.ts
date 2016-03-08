@@ -23,9 +23,10 @@ export default function registerCommands(server: OmnisharpServer, extensionPath:
 	let d4 = vscode.commands.registerCommand('o.execute', () => dnxExecuteCommand(server));
 	let d5 = vscode.commands.registerCommand('o.execute-last-command', () => dnxExecuteLastCommand(server));
 	let d6 = vscode.commands.registerCommand('o.showOutput', () => server.getChannel().show(vscode.ViewColumn.Three));
-    let d7 = vscode.commands.registerCommand('csharp.addTasksJson', () => addTasksJson(server, extensionPath));
+    let d7 = vscode.commands.registerCommand('dotnet.restore', () => dotnetRestore(server)); 
+    let d8 = vscode.commands.registerCommand('csharp.addTasksJson', () => addTasksJson(server, extensionPath));
     
-	return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7);
+	return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8);
 }
 
 function pickProjectAndStart(server: OmnisharpServer) {
@@ -172,6 +173,31 @@ export function dnxRestoreForProject(server: OmnisharpServer, fileName: string) 
 
 		return Promise.reject(`Failed to execute restore, try to run 'dnu restore' manually for ${fileName}.`)
 	});
+}
+
+function dotnetRestore(server: OmnisharpServer) {
+
+    if (!server.isRunning()) {
+        return Promise.reject('OmniSharp server is not running.');
+    }
+
+    let solutionPathOrFolder = server.getSolutionPathOrFolder();
+    if (!solutionPathOrFolder) {
+        return Promise.reject('No solution or folder open.');
+    }
+
+    pathHelpers.getPathKind(solutionPathOrFolder).then(kind => {
+        if (kind === pathHelpers.PathKind.File) {
+            return path.dirname(solutionPathOrFolder);
+        }
+        else {
+            return solutionPathOrFolder;
+        }
+    }).then((solutionDirectory) => {
+        return runInTerminal('dotnet', ['restore'], {
+            cwd: solutionPathOrFolder
+        });
+    });
 }
 
 function ensureDirectoryCreated(directoryPath: string) {
