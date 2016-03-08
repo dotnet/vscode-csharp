@@ -33,7 +33,7 @@ Please place your feedback [here](https://github.com/OmniSharp/omnisharp-vscode/
 ###Once for each project
 The following steps have to executed for every project. 
 * Whenever you want to start debugging a .NET Core app (e.g. by pressing the debugger-play button) select '.NET Core"  for debug environment in the command palette when VS code first asks for it. 
-* This will create a launch.json file. Enter the name of the executable in 'program' field (including the path). This could be something like *"${workspaceRoot}/bin/Debug/dnxcore50/osx.10.11-x64/HelloWorld"*. 
+* This will create a launch.json file. Enter the name of the executable in 'program' field (including the path). This could be something like *"${workspaceRoot}/bin/Debug/dnxcore50/osx.10.11-x64/HelloWorld"*. On Ubuntu, replace the 'osx...' folder with 'ubuntu.14.04-x64', on Windows, use 'win7-x64'. If are aren't sure, drop to the command line, do a 'dotnet build' and look for the built executable file (**NOT** .dll) under the 'bin/Debug' directory.
 * For attach scenarios modify the processName attribute of launch.json
 * If you want 'compile' support for F5 you need to create a tasks.json file . There are multiple ways to do this.
   * You can get it [here](https://github.com/OmniSharp/omnisharp-vscode/blob/dev/template-tasks.json) and put it manually next to your launch.json file 
