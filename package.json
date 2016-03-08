@@ -35,8 +35,10 @@
         "onLanguage:csharp",
         "onCommand:o.restart",
         "onCommand:o.pickProjectAndStart",
-        "onCommand:dotnet.restore",
+        "onCommand:o.restore",
+        "onCommand:o.execute",
         "onCommand:o.showOutput",
+        "onCommand:o.execute-last-command",
         "onCommand:csharp.addTasksJson"
     ],
     "contributes": {
@@ -79,9 +81,14 @@
                 "category": "OmniSharp"
             },
             {
-                "command": "dotnet.restore",
+                "command": "o.restore",
                 "title": "Restore Packages",
-                "category": "dotnet"
+                "category": "dnx"
+            },
+            {
+                "command": "o.execute",
+                "title": "Run Command",
+                "category": "dnx"
             },
             {
                 "command": "csharp.addTasksJson",
