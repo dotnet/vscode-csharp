@@ -40,7 +40,8 @@
         "onCommand:o.pickProjectAndStart",
         "onCommand:dotnet.restore",
         "onCommand:o.showOutput",
-        "onCommand:csharp.addTasksJson"
+        "onCommand:csharp.addTasksJson",
+        "workspaceContains:project.json"
     ],
     "contributes": {
         "languages": [
