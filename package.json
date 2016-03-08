@@ -1,7 +1,7 @@
 {
     "name": "csharp",
     "publisher": "ms-vscode",
-    "version": "0.3.5",
+    "version": "0.3.6",
     "description": "C# for Visual Studio Code (powered by OmniSharp).",
     "displayName": "C#",
     "author": "Microsoft Corporation",
@@ -35,8 +35,11 @@
         "onLanguage:csharp",
         "onCommand:o.restart",
         "onCommand:o.pickProjectAndStart",
-        "onCommand:dotnet.restore",
+        "onCommand:o.restore",
+        "onCommand:o.execute",
         "onCommand:o.showOutput",
+        "onCommand:o.execute-last-command",
+        "onCommand:dotnet.restore",
         "onCommand:csharp.addTasksJson",
         "workspaceContains:project.json"
     ],
@@ -78,6 +81,16 @@
                 "command": "o.pickProjectAndStart",
                 "title": "Select Project",
                 "category": "OmniSharp"
+            },
+            {
+                "command": "o.restore",
+                "title": "Restore Packages",
+                "category": "dnx"
+            },
+            {
+                "command": "o.execute",
+                "title": "Run Command",
+                "category": "dnx"
             },
             {
                 "command": "dotnet.restore",
