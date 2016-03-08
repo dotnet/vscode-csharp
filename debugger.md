@@ -18,7 +18,7 @@ Please place your feedback [here](https://github.com/OmniSharp/omnisharp-vscode/
 2. Install Dotnet CLI
  * Install Dotnet CLI following the instructions here:  http://dotnet.github.io/getting-started  
  * **Hint for Mac**: Dotnet CLI requires openSSL to work. Don't forget this! Execute: `brew install openssl`
- * **Hint for Windows**: To be able to create portable PDBs you need a newer version of dotnet CLI. See section *Debugging Code compiled on another computer* below.
+ * **Hint for Windows**: To be able to create portable PDBs you need a newer version of dotnet CLI. See [here](https://github.com/OmniSharp/omnisharp-vscode/wiki/Portable-PDBs#downloading-a-net-cli-which-supports-debugtype-option) for more information.
 3. Install C# Extension for VS Code
  * Open the command palette in VSC (F1) and type "ext install C#" to trigger the installation of the extension.
  * VSC will show a message that the extension has been installed and it will restart. 
@@ -44,18 +44,9 @@ The following steps have to executed for every project.
    * Afterwards run *dotnet restore*.
 * In case you get a restore error due to lack of a NuGet.Config file, just create this file in the root directory of your project. You can find a sample [here](https://github.com/Microsoft/MIEngine/blob/abeebec39221c654bd69a0d2bcadca6a4a0d0392/tools/InstallToVSCode/CLRDependencies/NuGet.Config). 
 
-####Debugging Code compiled on another computer
+###Debugging Code compiled on another computer
 * If the target binary is built on Linux / OSX, dotnet CLI will produce portable pdbs by default so no action is necessary.   
-* On Windows:
-    * For msbuild projects, use Visual Studio 2015 Update 1 or newer, and modify the ‘DebugType’ property in the .csproj file as follows: 
-      > *&lt;DebugType>portable&lt;/DebugType>*
-
-    * For .NET CLI projects, install a newer build of .NET CLI that is referenced by the website (latest is available [here](https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-win-x64.latest.exe)) and add this to your project.json:
-      > "compilationOptions": {
-      "debugType": "full"
-      },
-        
-      * **Hint**: We wil update the link to a static version soon.
+* On Windows, you will need to take additional steps to build [portable PDBs](https://github.com/OmniSharp/omnisharp-vscode/wiki/Portable-PDBs#downloading-a-net-cli-which-supports-debugtype-option).
 
 ####More things to configure In launch.json
 #####Just My Code
