@@ -2,10 +2,8 @@
 
 Don't install this extension unless you want to try an early version. 
 
-This is a preview of C# support in Visual Studio code. It is designed to work well with upcoming [.NET Core 1.0]([link](http://dotnet.github.io/). 
+This is a preview of C# support in Visual Studio code. It is designed to work well with the upcoming [.NET Core 1.0](http://dotnet.github.io/). 
 These new projects are based on project.json and the [.NET CLI](https://dotnet.github.io/getting-started/).
-
-For msbuild based projects, or ASP.NET Core 5.0 RC1 you still want to use the [omnisharp extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.omnisharp) instead.
 
 ### Debugging
 This version supports basic debugging capabilities.
