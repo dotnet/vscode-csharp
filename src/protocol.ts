@@ -216,6 +216,7 @@ export interface ProjectInformationResponse {
 export interface WorkspaceInformationResponse {
 	MsBuild: MsBuildWorkspaceInformation;
 	Dnx: DnxWorkspaceInformation;
+    DotNet: DotNetWorkspaceInformation;
 	ScriptCs: ScriptCsContext;
 }
 
@@ -262,6 +263,15 @@ export interface DnxFramework {
 	Name: string;
 	FriendlyName: string;
 	ShortName: string;
+}
+
+export interface DotNetWorkspaceInformation {
+	Projects: DotNetProject[];
+}
+
+export interface DotNetProject {
+	Path: string;
+	SourceFiles: string[];
 }
 
 export interface RenameRequest extends Request {
