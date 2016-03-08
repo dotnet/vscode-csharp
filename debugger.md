@@ -8,6 +8,7 @@ Please place your feedback [here](https://github.com/OmniSharp/omnisharp-vscode/
 ####Prerequisites / Known Issues / Notes
 * Requires .NET Core rc3-23829 or newer. These are daily builds of .NET Core that can be downloaded from the https://www.myget.org/F/dotnet-core/api/v3/index.json nuget feed. These are really daily builds of .NET Core and associated tools. So please continue if you want to dig in and have fun playing with new bits. But don't expect to go to production with those.
 * X64 only
+* Supports Windows, OSX, and Ubuntu 14.04
 * In case you get this error on F5: *"No task runner configured -  Tasks.json could not be found"*, see the 'once for each project' section below. 
 * If you don’t have mono installed you won't get IntelliSense. 
 
@@ -24,7 +25,7 @@ Please place your feedback [here](https://github.com/OmniSharp/omnisharp-vscode/
 4. Trigger download of platform specific binaries
  * After the extension is installed, open any C# file in VSC. 
  * In the background a process is triggered to get required bits. You can follow that process in the output window of VSC. Wait to finish that process.
-5. Install Mono 
+5. Install Mono (Linux/OSX)
  * To be able to auto-create a tasks.json for every project you'll currently need Mono. You could skip this step, but then you need to create the file manually.
  * Follow the instructions [how to install mono here](http://www.mono-project.com/docs/getting-started/install/). Make sure the version you have installed is >=4.0.1 .
 
