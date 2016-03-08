@@ -24,6 +24,12 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
         return;
     }
     
+    if (!isOnPath('dotnet')) {
+        // TODO: In a future release, this should be an error. For this release, we will let it go
+        console.log("The .NET CLI tools are not installed. .NET Core debugging will not be enabled.")
+        return;
+    }
+    
     _channel = vscode.window.createOutputChannel('coreclr-debug');
     
     // Create our log file and override _channel.append to also outpu to the log
@@ -147,6 +153,34 @@ function getPlatformLibExtension() : string {
         default:
             throw Error('Unsupported platform ' + process.platform);
     }
+}
+
+// Determines if the specified command is in one of the directories in the PATH environment variable.
+function isOnPath(command : string) : boolean {
+    let pathValue = process.env['PATH'];
+    if (!pathValue) {
+        return false;
+    }
+    let fileName = command;
+    let seperatorChar = ':';
+    if (process.platform == 'win32') {
+        // on Windows, add a '.exe', and the path is semi-colon seperatode
+        fileName = fileName + ".exe";
+        seperatorChar = ';';   
+    }
+    
+    let pathSegments: string[] = pathValue.split(seperatorChar);
+    for (var segment of pathSegments) {
+        if (segment.length === 0 || !path.isAbsolute(segment)) {
+            continue;
+        }
+        var segmentPath = path.join(segment, fileName);
+        if (existsSync(segmentPath)) {
+            return true;
+        }
+    }
+    
+    return false;
 }
 
 function ensureAd7EngineExists(channel: vscode.OutputChannel, outputDirectory: string) : Promise<void> {
