@@ -6,7 +6,7 @@
 
 import * as vscode from 'vscode';
 import {OmnisharpServer} from '../omnisharpServer';
-import {dotnetRestoreForProject} from './commands';
+import {dnxRestoreForProject} from './commands';
 import {basename} from 'path';
 import * as proto from '../protocol';
 
@@ -235,7 +235,7 @@ export function reportServerStatus(server: OmnisharpServer): vscode.Disposable{
 
 		return vscode.window.showInformationMessage(info, 'Restore').then(value => {
 			if (value) {
-				dotnetRestoreForProject(server, message.FileName);
+				dnxRestoreForProject(server, message.FileName);
 			}
 		});
 	});
