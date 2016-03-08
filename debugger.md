@@ -44,7 +44,6 @@ The following steps have to executed for every project.
 * In case you get a restore error due to lack of a NuGet.Config file, just create this file in the root directory of your project. You can find a sample [here](https://github.com/Microsoft/MIEngine/blob/abeebec39221c654bd69a0d2bcadca6a4a0d0392/tools/InstallToVSCode/CLRDependencies/NuGet.Config). 
 
 ####Debugging Code compiled on another computer
-* The target app binaries must be built with Portable PDBs for symbol loading to work. On Window Portable PDBs are only created when using dotnet cli for compilation.
 * If the target binary is built on Linux / OSX, dotnet CLI will produce portable pdbs by default so no action is necessary.   
 * On Windows:
     * For msbuild projects, use Visual Studio 2015 Update 1 or newer, and modify the ‘DebugType’ property in the .csproj file as follows: 
@@ -56,7 +55,6 @@ The following steps have to executed for every project.
       },
         
       * **Hint**: We wil update the link to a static version soon.
-
 
 ####More things to configure In launch.json
 #####Just My Code
