@@ -6,16 +6,18 @@ This page gives you detailed instructions on how to get your system running.
 Please place your feedback [here](https://github.com/OmniSharp/omnisharp-vscode/issues). 
 
 ####Prerequisites / Known Issues / Notes
+* Requires .NET Core rc3-23829 or newer. These are daily builds of .NET Core that can be downloaded from the https://www.myget.org/F/dotnet-core/api/v3/index.json nuget feed. These are really daily builds of .NET Core and associated tools. So please continue if you want to dig in and have fun playing with new bits. But don't expect to go to production with those.
 * X64 only
 * In case you get this error on F5: *"No task runner configured -  Tasks.json could not be found"*, see the 'once for each project' section below. 
 * If you don’t have mono installed you won't get IntelliSense. 
 
 ###First Time setup
 1. Get Visual Studio Code
- * Install Visual Studio Code (VSC). Pick the latest VSC version from here: https://code.visualstudio.com/insiders Make sure it is at least 0.10.10.       
+ * Install Visual Studio Code (VSC). Pick the latest VSC version from here: https://code.visualstudio.com Make sure it is at least 0.10.10.       
 2. Install Dotnet CLI
  * Install Dotnet CLI following the instructions here:  http://dotnet.github.io/getting-started  
  * **Hint for Mac**: Dotnet CLI requires openSSL to work. Don't forget this! Execute: `brew install openssl`
+ * **Hint for Windows**: To be able to create portable PDBs you need a newer version of dotnet CLI. See section *Debugging Code compiled on another computer* below.
 3. Install C# Extension for VS Code
  * Open the command palette in VSC (F1) and type "ext install C#" to trigger the installation of the extension.
  * VSC will show a message that the extension has been installed and it will restart. 
@@ -43,6 +45,18 @@ The following steps have to executed for every project.
 
 ####Debugging Code compiled on another computer
 * The target app binaries must be built with Portable PDBs for symbol loading to work. On Window Portable PDBs are only created when using dotnet cli for compilation.
+* If the target binary is built on Linux / OSX, dotnet CLI will produce portable pdbs by default so no action is necessary.   
+* On Windows:
+    * For msbuild projects, use Visual Studio 2015 Update 1 or newer, and modify the ‘DebugType’ property in the .csproj file as follows: 
+      > *&lt;DebugType>portable&lt;/DebugType>*
+
+    * For .NET CLI projects, install a newer build of .NET CLI that is referenced by the website (latest is available [here](https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-win-x64.latest.exe)) and add this to your project.json:
+      > "compilationOptions": {
+      "debugType": "full"
+      },
+        
+      * **Hint**: We wil update the link to a static version soon.
+
 
 ####More things to configure In launch.json
 #####Just My Code
