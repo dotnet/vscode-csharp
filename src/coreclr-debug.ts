@@ -45,7 +45,7 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
     _channel.appendLine("Downloading and configuring the .NET Core Debugger...");
     _channel.show(vscode.ViewColumn.Three);
     
-    spawnChildProcess('dotnet', ['--verbose', 'restore'], _channel, _coreClrDebugDir)
+    spawnChildProcess('dotnet', ['--verbose', 'restore', '--configfile', 'NuGet.config'], _channel, _coreClrDebugDir)
     .then(function() {
         return spawnChildProcess('dotnet', ['--verbose', 'publish', '-o', _debugAdapterDir], _channel, _coreClrDebugDir);
     }).then(function() {
