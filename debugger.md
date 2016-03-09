@@ -66,6 +66,11 @@ You can optionally provide paths to symbols following this schema:
 
 
 ###Debugging ASP.NET Core
-In case you want to debug ASP.NET Core applications you can find [samples to get started](https://github.com/caslan/cli-samples) here. 
+In case you want to debug ASP.NET Core applications you can find [samples to get started](https://github.com/caslan/cli-samples) here. To get started:
+
+    git clone https://github.com/caslan/cli-samples.git --branch fordebuggerpreview
+    cd cli-samples/HelloMvc
+    dotnet restore
+
 To be able to run the samples on Linux using Kestrel as Webserver, follow the [setup instructions "Install libuv" here](http://docs.asp.net/en/latest/getting-started/installing-on-linux.html#install-libuv). 
 Currently this page also contains other steps which were required earlier only. Those other sections can be ignored. 
