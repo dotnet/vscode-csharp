@@ -8,14 +8,16 @@ import * as vscode from 'vscode';
 import * as child_process from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
+import TelemetryReporter from 'vscode-extension-telemetry';
 
 let _coreClrDebugDir: string;
 let _debugAdapterDir: string;
 let _channel: vscode.OutputChannel;
 let _installLog: NodeJS.WritableStream;
+let _reporter: TelemetryReporter; // Telemetry reporter
 const _completionFileName: string = 'install.complete';
 
-export function installCoreClrDebug(context: vscode.ExtensionContext) {
+export function installCoreClrDebug(context: vscode.ExtensionContext) {    
     _coreClrDebugDir = path.join(context.extensionPath, 'coreclr-debug');
     _debugAdapterDir = path.join(_coreClrDebugDir, 'debugAdapters');
     
@@ -30,6 +32,7 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
         return;
     }
     
+    initializeTelemetry(context);
     _channel = vscode.window.createOutputChannel('coreclr-debug');
     
     // Create our log file and override _channel.append to also outpu to the log
@@ -45,12 +48,18 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
     _channel.appendLine("Downloading and configuring the .NET Core Debugger...");
     _channel.show(vscode.ViewColumn.Three);
     
+    var installStage = 'dotnet restore';
+    var installError = '';
+    
     spawnChildProcess('dotnet', ['--verbose', 'restore', '--configfile', 'NuGet.config'], _channel, _coreClrDebugDir)
     .then(function() {
+        installStage = "dotnet publish";
         return spawnChildProcess('dotnet', ['--verbose', 'publish', '-o', _debugAdapterDir], _channel, _coreClrDebugDir);
     }).then(function() {
+        installStage = "ensureAd7";
         return ensureAd7EngineExists(_channel, _debugAdapterDir);
     }).then(function() {
+        installStage = "additionalTasks"
         var promises: Promise<void>[] = [];
 
         promises.push(renameDummyEntrypoint());
@@ -58,21 +67,46 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
 
         return Promise.all(promises);
     }).then(function() {
+        installStage = "writeCompletionFile";
         return writeCompletionFile();
     }).then(function() {
+        installStage = "completeSuccess";
         _channel.appendLine('Succesfully installed .NET Core Debugger.');
     })
     .catch(function(error) {
         _channel.appendLine('Error while installing .NET Core Debugger.');
+        
+        installError = error.toString();
         console.log(error);
+    }).then(function() {
+        // log telemetry
+        logTelemetry('Acquisition', {installStage: installStage, installError: installError});
     });
+}
+
+function initializeTelemetry(context: vscode.ExtensionContext) {
+    // parse our own package.json into json
+    var packageJson = JSON.parse(fs.readFileSync(path.join(context.extensionPath, 'package.json')).toString());
+    
+    let extensionId = packageJson["publisher"] + "." + packageJson["name"];
+    let extensionVersion = packageJson["version"];
+    let aiKey = packageJson.contributes.debuggers[0]["aiKey"];
+    
+    _reporter = new TelemetryReporter(extensionId, extensionVersion, aiKey);
+}
+
+function logTelemetry(eventName: string, properties?: {[prop: string]: string}) {
+    if (_reporter)
+    {
+        _reporter.sendTelemetryEvent('coreclr-debug/' + eventName, properties);
+    }
 }
 
 function writeCompletionFile() : Promise<void> {
     return new Promise<void>(function(resolve, reject) {
        fs.writeFile(path.join(_debugAdapterDir, _completionFileName), '', function(err) {
           if (err) {
-              reject(err);
+              reject(err.code);
           } 
           else {
               resolve();
@@ -91,7 +125,7 @@ function renameDummyEntrypoint() : Promise<void> {
     var promise = new Promise<void>(function(resolve, reject) {
        fs.rename(src, dest, function(err) {
            if (err) {
-               reject(err);
+               reject(err.code);
            } else {
                resolve();
            }
@@ -111,7 +145,7 @@ function removeLibCoreClrTraceProvider() : Promise<void>
         return new Promise<void>(function(resolve, reject) {
             fs.unlink(filePath, function(err) {
                 if (err) {
-                    reject(err);
+                    reject(err.code);
                 } else {
                     _channel.appendLine('Succesfully deleted ' + filePath);
                     resolve();
@@ -129,7 +163,7 @@ function existsSync(path: string) : boolean {
         if (err.code === 'ENOENT') {
             return false;
         } else {
-            throw err;
+            throw Error(err.code);
         }
     }
 }
