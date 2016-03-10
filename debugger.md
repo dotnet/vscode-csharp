@@ -18,7 +18,7 @@ Please place your feedback [here](https://github.com/OmniSharp/omnisharp-vscode/
 2. Install Dotnet CLI
  * Install Dotnet CLI following the instructions here:  http://dotnet.github.io/getting-started  
  * **Hint for Mac**: Dotnet CLI requires openSSL to work. Don't forget this! Execute: `brew install openssl`
- * **Hint for Windows**: To be able to create portable PDBs you need a newer version of dotnet CLI. See [here](https://github.com/OmniSharp/omnisharp-vscode/wiki/Portable-PDBs#downloading-a-net-cli-which-supports-debugtype-option) for more information.
+ * **On Windows**: To be able to create portable PDBs you need a newer version of dotnet CLI. See [here](https://github.com/OmniSharp/omnisharp-vscode/wiki/Portable-PDBs#downloading-a-net-cli-which-supports-debugtype-option) for more information.
 3. Install C# Extension for VS Code
  * Open the command palette in VSC (F1) and type "ext install C#" to trigger the installation of the extension.
  * VSC will show a message that the extension has been installed and it will restart. 
@@ -32,21 +32,22 @@ Please place your feedback [here](https://github.com/OmniSharp/omnisharp-vscode/
 
 ###Once for each project
 The following steps have to executed for every project. 
-* Whenever you want to start debugging a .NET Core app (e.g. by pressing the debugger-play button) select '.NET Core"  for debug environment in the command palette when VS code first asks for it. 
-* This will create a launch.json file. Enter the name of the executable in 'program' field (including the path). This could be something like *"${workspaceRoot}/bin/Debug/dnxcore50/osx.10.11-x64/HelloWorld"*. On Ubuntu, replace the 'osx...' folder with 'ubuntu.14.04-x64', on Windows, use 'win7-x64'. If are aren't sure, drop to the command line, do a 'dotnet build' and look for the built executable file (**NOT** .dll) under the 'bin/Debug' directory.
-* For attach scenarios modify the processName attribute of launch.json
-* If you want 'compile' support for F5 you need to create a tasks.json file . There are multiple ways to do this.
-  * You can get it [here](https://github.com/OmniSharp/omnisharp-vscode/blob/dev/template-tasks.json) and put it manually next to your launch.json file 
-  * Or you can open the command palette in VSC (F1) and run the command *"Debugger: Add tasks.json"* (Make sure you have installed Mono to be able to do so, see above. If you don't have Mono installed you might get an error saying *Omnisharp not running*.)
-  * Or if you just want debugging, you can comment out 'preCompileTask' field​ in launch.json.
-* Modify your project.json to reference "NETStandard.Library":"1.0.0-rc3-*"
+* First, modify your project.json to reference "NETStandard.Library":"1.0.0-rc3-*"
    * Currently *dotnet new* creates a project.json that references a version that's too old. You should also get a hint to modify this.
-   * Afterwards run *dotnet restore*.
+   * Afterwards run *dotnet restore*. You can run this in VSC from the command palette (F1).
+* Whenever you want to start debugging a .NET Core app (e.g. by pressing the debugger-play button) select '.NET Core"  for debug environment in the command palette when VS code first asks for it. 
+* If you want 'compile' support for F5 you need to create a tasks.json file . There are multiple ways to do this.
+  * You can open the command palette in VSC (F1) and run the command *"Debugger: Add tasks.json"* (Make sure you have installed Mono  
+  * Or you can get it [here](https://github.com/OmniSharp/omnisharp-vscode/blob/dev/template-tasks.json) and put it manually next to your launch.json file 
+to be able to do so, see above. If you don't have Mono installed you might get an error saying *Omnisharp not running*.)
+  * Or if you just want debugging, you can comment out 'preCompileTask' field​ in launch.json.
+* Before you can launch, you must change your launch.json to enter the name of the executable in 'program' field (including the path). This could be something like *"${workspaceRoot}/bin/Debug/dnxcore50/osx.10.11-x64/HelloWorld"*. On Ubuntu, replace the 'osx...' folder with 'ubuntu.14.04-x64', on Windows, use 'win7-x64'. If are aren't sure, drop to the command line, do a 'dotnet build' and look for the built executable file (**NOT** .dll) under the 'bin/Debug' directory. On Windows, you can still use forward slashes.
+* **Windows Only**: [Change the project.json to use portable PDBs](https://github.com/OmniSharp/omnisharp-vscode/wiki/Portable-PDBs#net-cli-projects-projectjson).
 * In case you get a restore error due to lack of a NuGet.Config file, just create this file in the root directory of your project. You can find a sample [here](https://github.com/Microsoft/MIEngine/blob/abeebec39221c654bd69a0d2bcadca6a4a0d0392/tools/InstallToVSCode/CLRDependencies/NuGet.Config). 
 
 ###Debugging Code compiled on another computer
 * If the target binary is built on Linux / OSX, dotnet CLI will produce portable pdbs by default so no action is necessary.   
-* On Windows, you will need to take additional steps to build [portable PDBs](https://github.com/OmniSharp/omnisharp-vscode/wiki/Portable-PDBs#downloading-a-net-cli-which-supports-debugtype-option).
+* On Windows, you will need to take additional steps to build [portable PDBs](https://github.com/OmniSharp/omnisharp-vscode/wiki/Portable-PDBs#how-to-generate-portable-pdbs).
 
 ####More things to configure In launch.json
 #####Just My Code
