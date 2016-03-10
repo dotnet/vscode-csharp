@@ -6,6 +6,7 @@
     "displayName": "C#",
     "author": "Microsoft Corporation",
     "license": "SEE LICENSE IN RuntimeLicenses/license.txt",
+    "icon": "images/csharpIcon.png",
     "main": "./out/omnisharpMain",
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install && gulp omnisharp && tsc"
