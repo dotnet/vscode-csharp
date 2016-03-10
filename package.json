@@ -1,7 +1,7 @@
 {
     "name": "csharp",
     "publisher": "ms-vscode",
-    "version": "0.3.6",
+    "version": "0.3.7",
     "description": "C# for Visual Studio Code (powered by OmniSharp).",
     "displayName": "C#",
     "author": "Microsoft Corporation",
@@ -14,7 +14,8 @@
         "run-in-terminal": "*",
         "semver": "*",
         "request-light": "^0.1.0",
-		"jsonc-parser": "^0.2.0"
+		"jsonc-parser": "^0.2.0",
+        "vscode-extension-telemetry": "0.0.4"
     },
     "devDependencies": {
         "vscode": "^0.11.0",
