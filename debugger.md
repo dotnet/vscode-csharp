@@ -27,7 +27,7 @@ Please place your feedback [here](https://github.com/OmniSharp/omnisharp-vscode/
  * In the background a process is triggered to get required bits. You can follow that process in the output window of VSC. Wait to finish that process.
 5. Install Mono (Linux/OSX)
  * To be able to auto-create a tasks.json for every project you'll currently need Mono. You could skip this step, but then you need to create the file manually.
- * Follow the instructions [how to install mono here](http://www.mono-project.com/docs/getting-started/install/). Make sure the version you have installed is >=4.0.1 .
+ * Follow the instructions [how to install mono here](http://www.mono-project.com/docs/getting-started/install/). Make sure the version you have installed is >=4.0.1.
 
 
 ###Once for each project
@@ -36,7 +36,7 @@ The following steps have to executed for every project.
    * Currently *dotnet new* creates a project.json that references a version that's too old. You should also get a hint to modify this.
    * Afterwards run *dotnet restore*. You can run this in VSC from the command palette (F1).
 * Whenever you want to start debugging a .NET Core app (e.g. by pressing the debugger-play button) select '.NET Core"  for debug environment in the command palette when VS code first asks for it. 
-* If you want 'compile' support for F5 you need to create a tasks.json file . There are multiple ways to do this.
+* If you want 'compile' support for F5 you need to create a tasks.json file. There are multiple ways to do this.
   * You can open the command palette in VSC (F1) and run the command *"Debugger: Add tasks.json"* (Make sure you have installed Mono  
   * Or you can get it [here](https://github.com/OmniSharp/omnisharp-vscode/blob/dev/template-tasks.json) and put it manually next to your launch.json file 
 to be able to do so, see above. If you don't have Mono installed you might get an error saying *Omnisharp not running*.)
