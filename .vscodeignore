@@ -1,0 +1,14 @@
+**/*.gitignore
+tsconfig.json
+
+src/**
+**/*.map
+
+.vscode/**
+
+coreclr-debug/debugAdapters/**
+coreclr-debug/bin/**
+coreclr-debug/obj/**
+coreclr-debug/project.lock.json
+coreclr-debug/install.log
++RuntimeLicenses/dependencies/*
