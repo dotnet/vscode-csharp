@@ -1,18 +1,26 @@
 {
     "name": "csharp",
     "publisher": "ms-vscode",
-    "version": "0.3.6",
+    "version": "0.3.8",
     "description": "C# for Visual Studio Code (powered by OmniSharp).",
     "displayName": "C#",
     "author": "Microsoft Corporation",
     "license": "SEE LICENSE IN RuntimeLicenses/license.txt",
+    "icon": "images/csharpIcon.png",
+    "categories": [
+        "Debuggers",
+        "Languages",
+        "Linters",
+        "Snippets"
+    ],
     "main": "./out/omnisharpMain",
     "scripts": {
         "postinstall": "gulp omnisharp && tsc"
     },
     "dependencies": {
         "run-in-terminal": "*",
-        "semver": "*"
+        "semver": "*",
+        "vscode-extension-telemetry": "0.0.4"
     },
     "devDependencies": {
         "vscode": "^0.10.1",
