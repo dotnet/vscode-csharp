@@ -1,12 +1,18 @@
 {
     "name": "csharp",
     "publisher": "ms-vscode",
-    "version": "0.3.7",
+    "version": "0.3.8",
     "description": "C# for Visual Studio Code (powered by OmniSharp).",
     "displayName": "C#",
     "author": "Microsoft Corporation",
     "license": "SEE LICENSE IN RuntimeLicenses/license.txt",
     "icon": "images/csharpIcon.png",
+    "categories": [
+        "Debuggers",
+        "Languages",
+        "Linters",
+        "Snippets"
+    ],
     "main": "./out/omnisharpMain",
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install && gulp omnisharp && tsc"
