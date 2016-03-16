@@ -8,6 +8,7 @@
 import {OmnisharpServer} from '../omnisharpServer';
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../protocol';
+import * as serverUtils from '../omnisharpUtils';
 import {createRequest, toRange} from '../typeConvertion';
 import {Disposable, Uri, CancellationTokenSource, TextDocument, TextDocumentChangeEvent, Range, Diagnostic, DiagnosticCollection, DiagnosticSeverity, Location, workspace, languages} from 'vscode';
 
@@ -151,8 +152,7 @@ class DiagnosticsProvider extends AbstractSupport {
 
 		let source = new CancellationTokenSource();
 		let handle = setTimeout(() => {
-			let req: protocol.Request = { Filename: document.fileName };
-			this._server.makeRequest<protocol.QuickFixResponse>(protocol.Requests.CodeCheck, req, source.token).then(value => {
+            serverUtils.codeCheck(this._server, { Filename: document.fileName }, source.token).then(value => {
 
 				// (re)set new diagnostics for this document
 				let diagnostics = value.QuickFixes.map(DiagnosticsProvider._asDiagnostic);
@@ -176,7 +176,7 @@ class DiagnosticsProvider extends AbstractSupport {
 
 		this._projectValidation = new CancellationTokenSource();
 		let handle = setTimeout(() => {
-			this._server.makeRequest<protocol.QuickFixResponse>(protocol.Requests.CodeCheck, {}, this._projectValidation.token).then(value => {
+            serverUtils.codeCheck(this._server, { Filename: null }, this._projectValidation.token).then(value => {
 
 				let quickFixes = value.QuickFixes.sort((a, b) => a.FileName.localeCompare(b.FileName));
 				let entries: [Uri, Diagnostic[]][] = [];

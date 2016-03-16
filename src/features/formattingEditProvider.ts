@@ -7,6 +7,7 @@
 
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../protocol';
+import * as serverUtils from '../omnisharpUtils';
 import {Uri, DocumentRangeFormattingEditProvider, OnTypeFormattingEditProvider, FormattingOptions, CancellationToken, TextEdit, TextDocument, Range, Position} from 'vscode';
 
 export default class FormattingSupport extends AbstractSupport implements DocumentRangeFormattingEditProvider {
@@ -21,7 +22,7 @@ export default class FormattingSupport extends AbstractSupport implements Docume
 			EndColumn: range.end.character + 1
 		};
 
-		return this._server.makeRequest<protocol.FormatRangeResponse>(protocol.Requests.FormatRange, request, token).then(res => {
+		return serverUtils.formatRange(this._server, request, token).then(res => {
 			if (res && Array.isArray(res.Changes)) {
 				return res.Changes.map(FormattingSupport._asEditOptionation);
 			}
@@ -37,7 +38,7 @@ export default class FormattingSupport extends AbstractSupport implements Docume
 			Character: ch
 		};
 
-		return this._server.makeRequest<protocol.FormatRangeResponse>(protocol.Requests.FormatAfterKeystroke, request, token).then(res => {
+		return serverUtils.formatAfterKeystroke(this._server, request, token).then(res => {
 			if (res && Array.isArray(res.Changes)) {
 				return res.Changes.map(FormattingSupport._asEditOptionation);
 			}

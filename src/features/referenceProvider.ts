@@ -7,6 +7,7 @@
 
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../protocol';
+import * as serverUtils from '../omnisharpUtils';
 import {createRequest, toLocation} from '../typeConvertion';
 import {ReferenceProvider, Location, Range, TextDocument, Uri, CancellationToken, Position} from 'vscode';
 
@@ -18,7 +19,7 @@ export default class OmnisharpReferenceProvider extends AbstractSupport implemen
 		req.OnlyThisFile = false;
 		req.ExcludeDefinition = false;
 
-		return this._server.makeRequest<protocol.QuickFixResponse>(protocol.Requests.FindUsages, req, token).then(res => {
+		return serverUtils.findUsages(this._server, req, token).then(res => {
 			if (res && Array.isArray(res.QuickFixes)) {
 				return res.QuickFixes.map(toLocation);
 			}

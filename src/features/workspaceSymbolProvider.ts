@@ -7,6 +7,7 @@
 
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../protocol';
+import * as serverUtils from '../omnisharpUtils';
 import {createRequest, toRange} from '../typeConvertion';
 import {CancellationToken, Uri, Range, WorkspaceSymbolProvider, SymbolInformation, SymbolKind} from 'vscode';
 
@@ -15,10 +16,7 @@ export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport im
 
 	public provideWorkspaceSymbols(search: string, token: CancellationToken): Promise<SymbolInformation[]> {
 
-		return this._server.makeRequest<protocol.FindSymbolsResponse>(protocol.Requests.FindSymbols, <protocol.FindSymbolsRequest> {
-			Filter: search,
-			Filename: ''
-		}, token).then(res => {
+		return serverUtils.findSymbols(this._server, { Filter: search, Filename: '' }, token).then(res => {
 			if (res && Array.isArray(res.QuickFixes)) {
 				return res.QuickFixes.map(OmnisharpWorkspaceSymbolProvider._asSymbolInformation);
 			}

@@ -33,6 +33,19 @@ export interface Request {
 	Line?: number;
 	Column?: number;
 	Buffer?: string;
+    Changes?: LinePositionSpanTextChange[]
+}
+
+export interface LinePositionSpanTextChange {
+    NewText: string;
+    StartLine: number;
+    StartColumn: number;
+    EndLine: number;
+    EndColumn: number;
+}
+
+export interface UpdateBufferRequest extends Request {
+    FromDisk?: boolean;
 }
 
 export interface ChangeBufferRequest {
@@ -334,9 +347,11 @@ export interface PackageDependency {
 }
 
 export namespace V2 {
-
-	export var GetCodeActions = '/v2/getcodeactions';
-	export var RunCodeAction = '/v2/runcodeaction';
+    
+    export module Requests {
+        export const GetCodeActions = '/v2/getcodeactions';
+        export const RunCodeAction = '/v2/runcodeaction';
+    }
 
 	export interface Point {
 		Line: number;
