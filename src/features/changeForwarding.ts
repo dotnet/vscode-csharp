@@ -7,7 +7,7 @@
 
 import {Disposable, Uri, workspace} from 'vscode';
 import {OmnisharpServer} from '../omnisharpServer';
-import * as proto from '../protocol';
+import * as protocol from '../protocol';
 
 function forwardDocumentChanges(server: OmnisharpServer): Disposable {
 
@@ -22,7 +22,7 @@ function forwardDocumentChanges(server: OmnisharpServer): Disposable {
 			return;
 		}
 
-		server.makeRequest(proto.UpdateBuffer, <proto.Request>{
+		server.makeRequest(protocol.Requests.UpdateBuffer, <protocol.Request>{
 			Buffer: document.getText(),
 			Filename: document.fileName
 		}).catch(err => {
@@ -39,7 +39,7 @@ function forwardFileChanges(server: OmnisharpServer): Disposable {
 			return;
 		}
 		let req = { Filename: uri.fsPath };
-		server.makeRequest<boolean>(proto.FilesChanged, [req]).catch(err => {
+		server.makeRequest<boolean>(protocol.Requests.FilesChanged, [req]).catch(err => {
 			console.warn('[o] failed to forward file change event for ' + uri.fsPath, err);
 			return err;
 		});

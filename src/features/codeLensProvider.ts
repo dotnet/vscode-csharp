@@ -8,7 +8,7 @@
 import {CancellationToken, CodeLens, SymbolKind, Range, Uri, TextDocument, CodeLensProvider, Position} from 'vscode';
 import {createRequest, toRange, toLocation} from '../typeConvertion';
 import AbstractSupport from './abstractProvider';
-import * as proto from '../protocol';
+import * as protocol from '../protocol';
 
 class OmniSharpCodeLens extends CodeLens {
 
@@ -31,7 +31,7 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
 
 	provideCodeLenses(document: TextDocument, token: CancellationToken): CodeLens[] | Thenable<CodeLens[]> {
 
-		return this._server.makeRequest<proto.CurrentFileMembersAsTreeResponse>(proto.CurrentFileMembersAsTree, {
+		return this._server.makeRequest<protocol.CurrentFileMembersAsTreeResponse>(protocol.Requests.CurrentFileMembersAsTree, {
 			Filename: document.fileName
 		}, token).then(tree => {
 			var ret: CodeLens[] = [];
@@ -40,7 +40,7 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
 		});
 	}
 
-	private static _convertQuickFix(bucket: CodeLens[], fileName:string, node: proto.Node): void {
+	private static _convertQuickFix(bucket: CodeLens[], fileName:string, node: protocol.Node): void {
 
 		if (node.Kind === 'MethodDeclaration' && OmniSharpCodeLensProvider.filteredSymbolNames[node.Location.Text]) {
 			return;
@@ -57,7 +57,7 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
 	resolveCodeLens(codeLens: CodeLens, token: CancellationToken): Thenable<CodeLens> {
 		if (codeLens instanceof OmniSharpCodeLens) {
 
-			let req = <proto.FindUsagesRequest>{
+			let req = <protocol.FindUsagesRequest>{
 				Filename: codeLens.fileName,
 				Line: codeLens.range.start.line + 1,
 				Column: codeLens.range.start.character + 1,
@@ -65,7 +65,7 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
 				ExcludeDefinition: true
 			};
 
-			return this._server.makeRequest<proto.QuickFixResponse>(proto.FindUsages, req, token).then(res => {
+			return this._server.makeRequest<protocol.QuickFixResponse>(protocol.Requests.FindUsages, req, token).then(res => {
 				if (!res || !Array.isArray(res.QuickFixes)) {
 					return;
 				}

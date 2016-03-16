@@ -7,7 +7,7 @@
 
 import {plain} from './documentation';
 import AbstractSupport from './abstractProvider';
-import * as proto from '../protocol';
+import * as protocol from '../protocol';
 import {createRequest} from '../typeConvertion';
 import {CompletionItemProvider, CompletionItem, CompletionItemKind, Uri, CancellationToken, TextDocument, Range, Position} from 'vscode';
 
@@ -21,12 +21,12 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
 			wordToComplete = document.getText(new Range(range.start, position));
 		}
 
-		let req = createRequest<proto.AutoCompleteRequest>(document, position);
+		let req = createRequest<protocol.AutoCompleteRequest>(document, position);
 		req.WordToComplete = wordToComplete;
 		req.WantDocumentationForEveryCompletionResult = true;
 		req.WantKind = true;
 
-		return this._server.makeRequest<proto.AutoCompleteResponse[]>(proto.AutoComplete, req).then(values => {
+		return this._server.makeRequest<protocol.AutoCompleteResponse[]>(protocol.Requests.AutoComplete, req).then(values => {
 
 			if (!values) {
 				return;

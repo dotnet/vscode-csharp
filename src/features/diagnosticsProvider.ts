@@ -7,7 +7,7 @@
 
 import {OmnisharpServer} from '../omnisharpServer';
 import AbstractSupport from './abstractProvider';
-import * as proto from '../protocol';
+import * as protocol from '../protocol';
 import {createRequest, toRange} from '../typeConvertion';
 import {Disposable, Uri, CancellationTokenSource, TextDocument, TextDocumentChangeEvent, Range, Diagnostic, DiagnosticCollection, DiagnosticSeverity, Location, workspace, languages} from 'vscode';
 
@@ -41,7 +41,7 @@ export class Advisor {
 			&& !this._isHugeProject();
 	}
 
-	private _onProjectChange(info: proto.ProjectInformationResponse): void {
+	private _onProjectChange(info: protocol.ProjectInformationResponse): void {
 		if (info.DnxProject && info.DnxProject.SourceFiles) {
 			this._projectSourceFileCounts[info.DnxProject.Path] = info.DnxProject.SourceFiles.length;
 		}
@@ -151,8 +151,8 @@ class DiagnosticsProvider extends AbstractSupport {
 
 		let source = new CancellationTokenSource();
 		let handle = setTimeout(() => {
-			let req: proto.Request = { Filename: document.fileName };
-			this._server.makeRequest<proto.QuickFixResponse>(proto.CodeCheck, req, source.token).then(value => {
+			let req: protocol.Request = { Filename: document.fileName };
+			this._server.makeRequest<protocol.QuickFixResponse>(protocol.Requests.CodeCheck, req, source.token).then(value => {
 
 				// (re)set new diagnostics for this document
 				let diagnostics = value.QuickFixes.map(DiagnosticsProvider._asDiagnostic);
@@ -176,7 +176,7 @@ class DiagnosticsProvider extends AbstractSupport {
 
 		this._projectValidation = new CancellationTokenSource();
 		let handle = setTimeout(() => {
-			this._server.makeRequest<proto.QuickFixResponse>(proto.CodeCheck, {}, this._projectValidation.token).then(value => {
+			this._server.makeRequest<protocol.QuickFixResponse>(protocol.Requests.CodeCheck, {}, this._projectValidation.token).then(value => {
 
 				let quickFixes = value.QuickFixes.sort((a, b) => a.FileName.localeCompare(b.FileName));
 				let entries: [Uri, Diagnostic[]][] = [];
@@ -208,7 +208,7 @@ class DiagnosticsProvider extends AbstractSupport {
 
 	// --- data converter
 
-	private static _asDiagnostic(quickFix: proto.QuickFix): Diagnostic {
+	private static _asDiagnostic(quickFix: protocol.QuickFix): Diagnostic {
 		let severity = DiagnosticsProvider._asDiagnosticSeverity(quickFix.LogLevel);
 		let message = `${quickFix.Text} [${quickFix.Projects.map(n => DiagnosticsProvider._asProjectLabel(n)).join(', ') }]`;
 		return new Diagnostic(toRange(quickFix), message, severity);
