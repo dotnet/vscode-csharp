@@ -9,7 +9,7 @@ import {OmnisharpServer} from '../omnisharpServer';
 import {dnxRestoreForProject} from './commands';
 import {basename} from 'path';
 import * as proto from '../protocol';
-
+import * as serverUtils from '../omnisharpUtils';
 
 export default function reportStatus(server: OmnisharpServer) {
 	return vscode.Disposable.from(
@@ -110,7 +110,7 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
 		render();
 
 		function updateProjectInfo() {
-			server.makeRequest<proto.WorkspaceInformationResponse>(proto.Projects).then(info => {
+			serverUtils.requestWorkspaceInformation(server).then(info => {
                 
                 interface Project {
                     Path: string;
