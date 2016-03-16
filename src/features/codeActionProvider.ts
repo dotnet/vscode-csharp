@@ -8,7 +8,7 @@
 import {CodeActionProvider, CodeActionContext, Command, CancellationToken, TextDocument, WorkspaceEdit, TextEdit, Range, Uri, workspace, commands} from 'vscode';
 import {OmnisharpServer} from '../omnisharpServer';
 import AbstractProvider from './abstractProvider';
-import {TextChange, V2} from '../protocol';
+import * as protocol from '../protocol';
 import {toRange2} from '../typeConvertion';
 
 export default class OmnisharpCodeActionProvider extends AbstractProvider implements CodeActionProvider {
@@ -37,17 +37,17 @@ export default class OmnisharpCodeActionProvider extends AbstractProvider implem
 			return;
 		}
 
-		let req: V2.GetCodeActionsRequest = {
+		let req: protocol.V2.GetCodeActionsRequest = {
 			Filename: document.fileName,
 			Selection: OmnisharpCodeActionProvider._asRange(range)
 		}
 
-		return this._server.makeRequest<V2.GetCodeActionsResponse>(V2.GetCodeActions, req, token).then(response => {
+		return this._server.makeRequest<protocol.V2.GetCodeActionsResponse>(protocol.V2.GetCodeActions, req, token).then(response => {
 			return response.CodeActions.map(ca => {
 				return {
 					title: ca.Name,
 					command: this._commandId,
-					arguments: [<V2.RunCodeActionRequest>{
+					arguments: [<protocol.V2.RunCodeActionRequest>{
 						Filename: document.fileName,
 						Selection: OmnisharpCodeActionProvider._asRange(range),
 						Identifier: ca.Identifier,
@@ -60,9 +60,9 @@ export default class OmnisharpCodeActionProvider extends AbstractProvider implem
 		});
 	}
 
-	private _runCodeAction(req: V2.RunCodeActionRequest): Promise<any> {
+	private _runCodeAction(req: protocol.V2.RunCodeActionRequest): Promise<any> {
 
-		return this._server.makeRequest<V2.RunCodeActionResponse>(V2.RunCodeAction, req).then(response => {
+		return this._server.makeRequest<protocol.V2.RunCodeActionResponse>(protocol.V2.RunCodeAction, req).then(response => {
 
 			if (response && Array.isArray(response.Changes)) {
 
@@ -86,7 +86,7 @@ export default class OmnisharpCodeActionProvider extends AbstractProvider implem
 		});
 	}
 
-	private static _asRange(range: Range): V2.Range {
+	private static _asRange(range: Range): protocol.V2.Range {
 		let {start, end} = range;
 		return {
 			Start: { Line: start.line + 1, Column: start.character + 1 },

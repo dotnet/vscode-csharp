@@ -6,8 +6,8 @@
 'use strict';
 
 import {OmnisharpServer} from './omnisharpServer';
-import * as proto from './protocol';
+import * as protocol from './protocol';
 
 export function requestWorkspaceInformation(server: OmnisharpServer) {
-    return server.makeRequest<proto.WorkspaceInformationResponse>(proto.Projects)
+    return server.makeRequest<protocol.WorkspaceInformationResponse>(protocol.Requests.Projects)
 } 

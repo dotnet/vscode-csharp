@@ -6,7 +6,7 @@
 'use strict';
 
 import AbstractSupport from './abstractProvider';
-import * as Protocol from '../protocol';
+import * as protocol from '../protocol';
 import {createRequest} from '../typeConvertion';
 import {SignatureHelpProvider, SignatureHelp, SignatureInformation, ParameterInformation, Uri, CancellationToken, TextDocument, Position} from 'vscode';
 
@@ -16,7 +16,7 @@ export default class OmniSharpSignatureHelpProvider extends AbstractSupport impl
 
 		let req = createRequest(document, position);
 
-		return this._server.makeRequest<Protocol.SignatureHelp>(Protocol.SignatureHelp, req, token).then(res => {
+		return this._server.makeRequest<protocol.SignatureHelp>(protocol.Requests.SignatureHelp, req, token).then(res => {
 
 			let ret = new SignatureHelp();
 			ret.activeSignature = res.ActiveSignature;

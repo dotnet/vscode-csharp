@@ -7,7 +7,7 @@
 
 import {plain} from './documentation';
 import AbstractSupport from './abstractProvider';
-import * as Protocol from '../protocol';
+import * as protocol from '../protocol';
 import {createRequest} from '../typeConvertion';
 import {HoverProvider, Hover, TextDocument, CancellationToken, Range, Position} from 'vscode';
 
@@ -15,10 +15,10 @@ export default class OmniSharpHoverProvider extends AbstractSupport implements H
 
 	public provideHover(document: TextDocument, position: Position, token: CancellationToken): Promise<Hover> {
 
-		let req = createRequest<Protocol.TypeLookupRequest>(document, position);
+		let req = createRequest<protocol.TypeLookupRequest>(document, position);
 		req.IncludeDocumentation = true;
 
-		return this._server.makeRequest<Protocol.TypeLookupResponse>(Protocol.TypeLookup, req, token).then(value => {
+		return this._server.makeRequest<protocol.TypeLookupResponse>(protocol.Requests.TypeLookup, req, token).then(value => {
 			if (value && value.Type) {
 				let contents = [plain(value.Documentation), { language: 'csharp', value: value.Type }];
 				return new Hover(contents);

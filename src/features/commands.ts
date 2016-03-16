@@ -5,7 +5,7 @@
 
 'use strict';
 
-import * as proto from '../protocol';
+import * as protocol from '../protocol';
 import {OmnisharpServer} from '../omnisharpServer';
 import findLaunchTargets from '../launchTargetFinder';
 import * as pathHelpers from '../pathHelpers';
@@ -75,7 +75,7 @@ function dnxExecuteCommand(server: OmnisharpServer) {
 		return Promise.reject('OmniSharp server is not running.');
 	}
 
-	return server.makeRequest<proto.WorkspaceInformationResponse>(proto.Projects).then(info => {
+	return server.makeRequest<protocol.WorkspaceInformationResponse>(protocol.Requests.Projects).then(info => {
 
 		let commands: Command[] = [];
 
@@ -125,7 +125,7 @@ export function dnxRestoreForAll(server: OmnisharpServer) {
 		return Promise.reject('OmniSharp server is not running.');
 	}
 
-	return server.makeRequest<proto.WorkspaceInformationResponse>(proto.Projects).then(info => {
+	return server.makeRequest<protocol.WorkspaceInformationResponse>(protocol.Requests.Projects).then(info => {
 
 		let commands:Command[] = [];
 
@@ -157,7 +157,7 @@ export function dnxRestoreForAll(server: OmnisharpServer) {
 
 export function dnxRestoreForProject(server: OmnisharpServer, fileName: string) {
 
-	return server.makeRequest<proto.WorkspaceInformationResponse>(proto.Projects).then((info):Promise<any> => {
+	return server.makeRequest<protocol.WorkspaceInformationResponse>(protocol.Requests.Projects).then((info):Promise<any> => {
 		for(let project of info.Dnx.Projects) {
 			if (project.Path === fileName) {
 				let command = path.join(info.Dnx.RuntimePath, 'bin/dnu');

@@ -6,7 +6,7 @@
 'use strict';
 
 import AbstractSupport from './abstractProvider';
-import * as Protocol from '../protocol';
+import * as protocol from '../protocol';
 import {createRequest, toRange} from '../typeConvertion';
 import {CancellationToken, Uri, Range, WorkspaceSymbolProvider, SymbolInformation, SymbolKind} from 'vscode';
 
@@ -15,7 +15,7 @@ export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport im
 
 	public provideWorkspaceSymbols(search: string, token: CancellationToken): Promise<SymbolInformation[]> {
 
-		return this._server.makeRequest<Protocol.FindSymbolsResponse>(Protocol.FindSymbols, <Protocol.FindSymbolsRequest> {
+		return this._server.makeRequest<protocol.FindSymbolsResponse>(protocol.Requests.FindSymbols, <protocol.FindSymbolsRequest> {
 			Filter: search,
 			Filename: ''
 		}, token).then(res => {
@@ -25,14 +25,14 @@ export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport im
 		});
 	}
 
-	private static _asSymbolInformation(symbolInfo: Protocol.SymbolLocation): SymbolInformation {
+	private static _asSymbolInformation(symbolInfo: protocol.SymbolLocation): SymbolInformation {
 
 		return new SymbolInformation(symbolInfo.Text, OmnisharpWorkspaceSymbolProvider._toKind(symbolInfo),
 			toRange(symbolInfo),
 			Uri.file(symbolInfo.FileName));
 	}
 
-	private static _toKind(symbolInfo: Protocol.SymbolLocation): SymbolKind {
+	private static _toKind(symbolInfo: protocol.SymbolLocation): SymbolKind {
 		switch (symbolInfo.Kind) {
 			case 'Method':
 				return SymbolKind.Method;
