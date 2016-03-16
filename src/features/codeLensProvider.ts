@@ -9,6 +9,7 @@ import {CancellationToken, CodeLens, SymbolKind, Range, Uri, TextDocument, CodeL
 import {createRequest, toRange, toLocation} from '../typeConvertion';
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../protocol';
+import * as serverUtils from '../omnisharpUtils';
 
 class OmniSharpCodeLens extends CodeLens {
 
@@ -31,9 +32,7 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
 
 	provideCodeLenses(document: TextDocument, token: CancellationToken): CodeLens[] | Thenable<CodeLens[]> {
 
-		return this._server.makeRequest<protocol.CurrentFileMembersAsTreeResponse>(protocol.Requests.CurrentFileMembersAsTree, {
-			Filename: document.fileName
-		}, token).then(tree => {
+		return serverUtils.currentFileMembersAsTree(this._server, { Filename: document.fileName }, token).then(tree => {
 			var ret: CodeLens[] = [];
 			tree.TopLevelTypeDefinitions.forEach(node => OmniSharpCodeLensProvider._convertQuickFix(ret, document.fileName, node));
 			return ret;
@@ -65,10 +64,11 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
 				ExcludeDefinition: true
 			};
 
-			return this._server.makeRequest<protocol.QuickFixResponse>(protocol.Requests.FindUsages, req, token).then(res => {
+			return serverUtils.findUsages(this._server, req, token).then(res => {
 				if (!res || !Array.isArray(res.QuickFixes)) {
 					return;
 				}
+                
 				let len = res.QuickFixes.length;
 				codeLens.command = {
 					title: len === 1 ? '1 reference' : `${len} references`,

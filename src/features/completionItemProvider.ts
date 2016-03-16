@@ -8,6 +8,7 @@
 import {plain} from './documentation';
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../protocol';
+import * as serverUtils from '../omnisharpUtils';
 import {createRequest} from '../typeConvertion';
 import {CompletionItemProvider, CompletionItem, CompletionItemKind, Uri, CancellationToken, TextDocument, Range, Position} from 'vscode';
 
@@ -26,7 +27,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
 		req.WantDocumentationForEveryCompletionResult = true;
 		req.WantKind = true;
 
-		return this._server.makeRequest<protocol.AutoCompleteResponse[]>(protocol.Requests.AutoComplete, req).then(values => {
+		return serverUtils.autoComplete(this._server, req).then(values => {
 
 			if (!values) {
 				return;

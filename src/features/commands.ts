@@ -12,6 +12,7 @@ import * as pathHelpers from '../pathHelpers';
 import {runInTerminal} from 'run-in-terminal';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as serverUtils from '../omnisharpUtils';
 import * as vscode from 'vscode';
 
 const isWin = /^win/.test(process.platform);
@@ -75,7 +76,7 @@ function dnxExecuteCommand(server: OmnisharpServer) {
 		return Promise.reject('OmniSharp server is not running.');
 	}
 
-	return server.makeRequest<protocol.WorkspaceInformationResponse>(protocol.Requests.Projects).then(info => {
+	return serverUtils.requestWorkspaceInformation(server).then(info => {
 
 		let commands: Command[] = [];
 
@@ -125,7 +126,7 @@ export function dnxRestoreForAll(server: OmnisharpServer) {
 		return Promise.reject('OmniSharp server is not running.');
 	}
 
-	return server.makeRequest<protocol.WorkspaceInformationResponse>(protocol.Requests.Projects).then(info => {
+	return serverUtils.requestWorkspaceInformation(server).then(info => {
 
 		let commands:Command[] = [];
 
@@ -157,7 +158,7 @@ export function dnxRestoreForAll(server: OmnisharpServer) {
 
 export function dnxRestoreForProject(server: OmnisharpServer, fileName: string) {
 
-	return server.makeRequest<protocol.WorkspaceInformationResponse>(protocol.Requests.Projects).then((info):Promise<any> => {
+	return serverUtils.requestWorkspaceInformation(server).then((info):Promise<any> => {
 		for(let project of info.Dnx.Projects) {
 			if (project.Path === fileName) {
 				let command = path.join(info.Dnx.RuntimePath, 'bin/dnu');
