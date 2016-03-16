@@ -271,6 +271,10 @@ export interface DotNetWorkspaceInformation {
 
 export interface DotNetProject {
 	Path: string;
+    Name: string;
+    CompilationOutputPath: string;
+    CompilationOutputAssemblyFile: string;
+    CompilationOutputPdbFile: string;
 	SourceFiles: string[];
 }
 
