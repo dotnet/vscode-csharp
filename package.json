@@ -15,7 +15,7 @@
   ],
   "main": "./out/omnisharpMain",
   "scripts": {
-    "postinstall": "node ./node_modules/vscode/bin/install && tsc && gulp omnisharp"
+    "postinstall": "node ./node_modules/vscode/bin/install && tsc"
   },
   "dependencies": {
     "decompress": "^3.0.0",
