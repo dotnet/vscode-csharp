@@ -15,26 +15,26 @@
   ],
   "main": "./out/omnisharpMain",
   "scripts": {
-    "postinstall": "gulp omnisharp && tsc"
+    "postinstall": "tsc && gulp omnisharp"
   },
   "dependencies": {
-    "fs-extra-promise": "^0.3.1",
-    "run-in-terminal": "*",
-    "semver": "*",
-    "vscode-extension-telemetry": "0.0.4"
-  },
-  "devDependencies": {
     "del": "^2.0.2",
     "event-stream": "^3.3.2",
+    "fs-extra-promise": "^0.3.1",
     "github-releases": "^0.3.0",
+    "run-in-terminal": "*",
+    "semver": "*",
+    "vscode-extension-telemetry": "0.0.4",
+    "tmp": "0.0.28",
+    "vinyl-fs": "^2.2.1"
+  },
+  "devDependencies": {
     "gulp": "^3.8.9",
     "gulp-decompress": "^1.2.0",
     "gulp-tslint": "^4.3.0",
-    "tmp": "0.0.28",
     "tslint": "^3.3.0",
     "tslint-microsoft-contrib": "^2.0.0",
     "typescript": "^1.7.3",
-    "vinyl-fs": "^2.2.1",
     "vscode": "^0.10.1"
   },
   "engines": {
