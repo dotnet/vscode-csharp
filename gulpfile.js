@@ -8,14 +8,14 @@
 const del = require('del');
 const gulp = require('gulp');
 const tslint = require('gulp-tslint');
-const omnisharpInstall = require('./out/omnisharpInstall');
+const omnisharpDownload = require('./out/omnisharpDownload');
 
 gulp.task('omnisharp:clean', () => {
 	return del('.omnisharp');
 });
 
 gulp.task('omnisharp:fetch', ['omnisharp:clean'], () => {
-	return omnisharpInstall.downloadOmnisharp();
+	return omnisharpDownload.downloadOmnisharp();
 });
 
 const allTypeScript = [
