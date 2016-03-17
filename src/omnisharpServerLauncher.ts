@@ -11,12 +11,21 @@ import {workspace} from 'vscode';
 import {satisfies} from 'semver';
 import {join} from 'path';
 import {getOmnisharpLaunchFilePath} from './omnisharpPath';
+import {downloadOmnisharp} from './omnisharpDownload';
 
 const isWindows = process.platform === 'win32';
 
 export interface LaunchResult {
     process: ChildProcess;
     command: string;
+}
+
+export function installOmnisharpIfNeeded(): Promise<string> {
+    return getOmnisharpLaunchFilePath().catch(err => {
+        return downloadOmnisharp().then(_ => {
+            return getOmnisharpLaunchFilePath();
+        })
+    });
 }
 
 export default function launch(cwd: string, args: string[]): Promise<LaunchResult> {
@@ -44,7 +53,7 @@ export default function launch(cwd: string, args: string[]): Promise<LaunchResul
 }
 
 function launchWindows(cwd: string, args: string[]): Promise<LaunchResult> {
-	return getOmnisharpLaunchFilePath().then(command => {
+	return installOmnisharpIfNeeded().then(command => {
 
 		args = args.slice(0);
 		args.unshift(command);
@@ -69,18 +78,8 @@ function launchWindows(cwd: string, args: string[]): Promise<LaunchResult> {
 }
 
 function launchNix(cwd: string, args: string[]): Promise<LaunchResult>{
-
-	return new Promise((resolve, reject) => {
-		hasMono('>=4.0.1').then(hasIt => {
-			if (!hasIt) {
-				reject(new Error('Cannot start Omnisharp because Mono version >=4.0.1 is required. See http://go.microsoft.com/fwlink/?linkID=534832#_20001'));
-			} else {
-				resolve();
-			}
-		});
-	}).then(_ => {
-		return getOmnisharpLaunchFilePath();
-	}).then(command => {
+    
+    return installOmnisharpIfNeeded().then(command => {
 		let process = spawn(command, args, {
 			detached: false,
 			// env: details.env,
@@ -91,7 +90,30 @@ function launchNix(cwd: string, args: string[]): Promise<LaunchResult>{
 			process,
 			command
 		};
-	});
+    });
+
+	// return new Promise((resolve, reject) => {
+	// 	hasMono('>=4.0.1').then(hasIt => {
+	// 		if (!hasIt) {
+	// 			reject(new Error('Cannot start Omnisharp because Mono version >=4.0.1 is required. See http://go.microsoft.com/fwlink/?linkID=534832#_20001'));
+	// 		} else {
+	// 			resolve();
+	// 		}
+	// 	});
+	// }).then(_ => {
+	// 	return installOmnisharpIfNeeded();
+	// }).then(command => {
+	// 	let process = spawn(command, args, {
+	// 		detached: false,
+	// 		// env: details.env,
+	// 		cwd
+	// 	});
+
+	// 	return {
+	// 		process,
+	// 		command
+	// 	};
+	// });
 }
 
 const versionRegexp = /(\d+\.\d+\.\d+)/;
