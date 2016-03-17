@@ -15,7 +15,7 @@
   ],
   "main": "./out/omnisharpMain",
   "scripts": {
-    "postinstall": "tsc && gulp omnisharp"
+    "postinstall": "tsc"
   },
   "dependencies": {
     "decompress": "^3.0.0",
