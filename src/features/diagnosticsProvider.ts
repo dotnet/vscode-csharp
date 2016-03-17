@@ -9,8 +9,8 @@ import {OmnisharpServer} from '../omnisharpServer';
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../protocol';
 import * as serverUtils from '../omnisharpUtils';
-import {createRequest, toRange} from '../typeConvertion';
-import {Disposable, Uri, CancellationTokenSource, TextDocument, TextDocumentChangeEvent, Range, Diagnostic, DiagnosticCollection, DiagnosticSeverity, Location, workspace, languages} from 'vscode';
+import {toRange} from '../typeConvertion';
+import {Disposable, Uri, CancellationTokenSource, TextDocument, Diagnostic, DiagnosticCollection, DiagnosticSeverity, workspace, languages} from 'vscode';
 
 export class Advisor {
 
@@ -68,8 +68,8 @@ export class Advisor {
 	}
 
 	private _isHugeProject(): boolean {
-		var sourceFileCount = 0;
-		for (var key in this._projectSourceFileCounts) {
+		let sourceFileCount = 0;
+		for (let key in this._projectSourceFileCounts) {
 			sourceFileCount += this._projectSourceFileCounts[key];
 			if (sourceFileCount > 1000) {
 				return true;
@@ -226,7 +226,7 @@ class DiagnosticsProvider extends AbstractSupport {
 	}
 
 	private static _asProjectLabel(projectName: string): string {
-		var idx = projectName.indexOf('+');
+		const idx = projectName.indexOf('+');
 		return projectName.substr(idx + 1);
 	}
 }

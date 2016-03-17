@@ -10,7 +10,7 @@ import AbstractSupport from './abstractProvider';
 import * as protocol from '../protocol';
 import * as serverUtils from '../omnisharpUtils';
 import {createRequest} from '../typeConvertion';
-import {HoverProvider, Hover, TextDocument, CancellationToken, Range, Position} from 'vscode';
+import {HoverProvider, Hover, TextDocument, CancellationToken, Position} from 'vscode';
 
 export default class OmniSharpHoverProvider extends AbstractSupport implements HoverProvider {
 

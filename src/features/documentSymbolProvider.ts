@@ -6,17 +6,16 @@
 'use strict';
 
 import AbstractSupport from './abstractProvider';
-import * as protocol from '../protocol';
 import * as serverUtils from '../omnisharpUtils';
 import {toDocumentSymbol} from '../typeConvertion';
-import {DocumentSymbolProvider, SymbolInformation, SymbolKind, Uri, TextDocument, Range, CancellationToken} from 'vscode';
+import {DocumentSymbolProvider, SymbolInformation, TextDocument, CancellationToken} from 'vscode';
 
 export default class OmnisharpDocumentSymbolProvider extends AbstractSupport implements DocumentSymbolProvider {
 
 	public provideDocumentSymbols(document: TextDocument, token: CancellationToken): Promise<SymbolInformation[]> {
 
 		return serverUtils.currentFileMembersAsTree(this._server, { Filename: document.fileName }, token).then(tree => {
-			var ret: SymbolInformation[] = [];
+			let ret: SymbolInformation[] = [];
 			for (let node of tree.TopLevelTypeDefinitions) {
 				toDocumentSymbol(ret, node);
 			}

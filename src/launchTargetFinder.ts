@@ -5,7 +5,6 @@
 'use strict';
 
 import * as paths from 'path';
-import {EventEmitter} from 'events';
 import {Uri, workspace} from 'vscode';
 
 export interface LaunchTarget {
@@ -34,7 +33,7 @@ function select(resources: Uri[], root: Uri): LaunchTarget[] {
 		return [];
 	}
 
-	var targets: LaunchTarget[] = [],
+	let targets: LaunchTarget[] = [],
 		hasCsProjFiles = false,
 		hasProjectJson = false,
 		hasProjectJsonAtRoot = false;
@@ -58,7 +57,7 @@ function select(resources: Uri[], root: Uri): LaunchTarget[] {
 		// project.json files
 		if (/project.json$/.test(resource.fsPath)) {
 
-			var dirname = paths.dirname(resource.fsPath);
+			const dirname = paths.dirname(resource.fsPath);
 			hasProjectJson = true;
 			hasProjectJsonAtRoot = hasProjectJsonAtRoot || dirname === root.fsPath;
 

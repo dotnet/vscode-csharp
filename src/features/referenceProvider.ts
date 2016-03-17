@@ -9,7 +9,7 @@ import AbstractSupport from './abstractProvider';
 import * as protocol from '../protocol';
 import * as serverUtils from '../omnisharpUtils';
 import {createRequest, toLocation} from '../typeConvertion';
-import {ReferenceProvider, Location, Range, TextDocument, Uri, CancellationToken, Position} from 'vscode';
+import {ReferenceProvider, Location, TextDocument, CancellationToken, Position} from 'vscode';
 
 export default class OmnisharpReferenceProvider extends AbstractSupport implements ReferenceProvider {
 

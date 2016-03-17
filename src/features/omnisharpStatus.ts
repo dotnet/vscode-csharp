@@ -114,7 +114,7 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
                 
                 interface Project {
                     Path: string;
-                    SourceFiles: string[]
+                    SourceFiles: string[];
                 }
                 
 				let fileNames: vscode.DocumentSelector[] = [];

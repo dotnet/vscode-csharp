@@ -5,8 +5,8 @@
 
 'use strict';
 
-import {CancellationToken, CodeLens, SymbolKind, Range, Uri, TextDocument, CodeLensProvider, Position} from 'vscode';
-import {createRequest, toRange, toLocation} from '../typeConvertion';
+import {CancellationToken, CodeLens, Range, Uri, TextDocument, CodeLensProvider} from 'vscode';
+import {toRange, toLocation} from '../typeConvertion';
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../protocol';
 import * as serverUtils from '../omnisharpUtils';
@@ -33,7 +33,7 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
 	provideCodeLenses(document: TextDocument, token: CancellationToken): CodeLens[] | Thenable<CodeLens[]> {
 
 		return serverUtils.currentFileMembersAsTree(this._server, { Filename: document.fileName }, token).then(tree => {
-			var ret: CodeLens[] = [];
+			let ret: CodeLens[] = [];
 			tree.TopLevelTypeDefinitions.forEach(node => OmniSharpCodeLensProvider._convertQuickFix(ret, document.fileName, node));
 			return ret;
 		});
