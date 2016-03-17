@@ -6,60 +6,115 @@
 'use strict';
 
 import * as fs from 'fs-extra-promise';
+import * as path from 'path';
 import * as tmp from 'tmp';
-import * as vfs from 'vinyl-fs';
 
-const es = require('event-stream');
-const  github = require('github-releases');
+const Decompress = require('decompress');
+const Github = require('github-releases');
+
+const OmnisharpRepo = 'OmniSharp/omnisharp-roslyn';
+const OmnisharpVersion = 'v1.9-alpha3';
+const DefaultInstallLocation = path.join(__dirname, '../.omnisharp');
 
 tmp.setGracefulCleanup();
 
-export function downloadOmnisharp(version: string) {
-    var result = es.through();
-    
-    function onError(err) {
-        result.emit('error', err);
+function getOmnisharpAssetName(): string {
+    switch (process.platform) {
+        case 'win32':
+            return 'omnisharp-win-x64-dnx451.zip';
+        case 'darwin':
+            return 'omnisharp-osx-x64-dnxcore50.tar.gz';
+        case 'linux':
+            return 'omnisharp-linux-x64-dnxcore50.tar.gz';
+        default:
+            throw new Error(`Unsupported platform: ${process.platform}`);
     }
-    
-    var repo = new github({
-        repo: 'OmniSharp/omnisharp-roslyn',
-        token: process.env['GITHUB_TOKEN']
-    });
-    
-    repo.getReleases({ tag_name: version }, function (err, releases) {
-        if (err) {
-            return onError(err);
-        }
+}
+
+export function downloadOmnisharp(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+        console.log(`[OmniSharp]: Installing to ${DefaultInstallLocation}`);
         
-        if (!releases.length) {
-            return onError(new Error('Release not found'));
-        }
+        const repo = new Github({ repo: OmnisharpRepo, token: null });
+        const assetName = getOmnisharpAssetName();
         
-        if (!releases[0].assets.length) {
-            return onError(new Error('Assets not found'));
-        }
+        process.stdout.write(`[OmniSharp] Looking for ${OmnisharpVersion}, ${assetName}...`);
         
-        repo.downloadAsset(releases[0].assets[0], function (err, istream) {
+        repo.getReleases({ tag_name: OmnisharpVersion }, (err, releases) => {
             if (err) {
-                return onError(err);
+                return reject(err);
             }
             
-            tmp.file(function (err, tmpPath, fd, cleanupCallback) {
+            if (!releases.length) {
+                return reject(new Error(`OmniSharp release ${OmnisharpVersion} not found.`));
+            }
+            
+            // Note: there should only be a single release, but use the first one
+            // if there are ever multiple results. Same thing for assets.
+            let foundAsset = null;
+            
+            for (var asset of releases[0].assets) {
+                if (asset.name === assetName) {
+                    foundAsset = asset;
+                    break;
+                }
+            }
+            
+            if (!foundAsset) {
+                return reject(new Error(`OmniSharp release ${OmnisharpVersion} asset, ${assetName} not found.`));
+            }
+            
+            console.log(`Found it!`);
+            
+            repo.downloadAsset(foundAsset, (err, inStream) => {
                 if (err) {
-                    return onError(err);
+                    return reject(err);
                 }
                 
-                var ostream = fs.createWriteStream(null, { fd: fd });
-                ostream.once('error', onError);
-                istream.once('error', onError);
-                ostream.once('finish', function () {
-                    vfs.src(tmpPath).pipe(result);
+                tmp.file((err, tmpPath, fd, cleanupCallback) => {
+                    if (err) {
+                        return reject(err);
+                    }
+                    
+                    process.stdout.write(`[OmniSharp] Downloading to ${tmpPath}...`);
+                    
+                    const outStream = fs.createWriteStream(null, { fd: fd });
+                    
+                    outStream.once('error', err => reject(err));
+                    inStream.once('error', err => reject(err));
+                    
+                    outStream.once('finish', () => {
+                        // At this point, the asset has finished downloading.
+                        
+                        console.log(`Done!`);
+                        
+                        let decompress = new Decompress()
+                            .src(tmpPath)
+                            .dest(DefaultInstallLocation);
+                            
+                        if (path.extname(foundAsset.name).toLowerCase() === '.zip') {
+                            decompress = decompress.use(Decompress.zip());
+                            process.stdout.write(`[OmniSharp] Unzipping...`);
+                        }
+                        else {
+                            decompress = decompress.use(Decompress.targz());
+                            process.stdout.write(`[OmniSharp] Untaring...`);
+                        }
+
+                        decompress.run((err, files) => {
+                            if (err) {
+                                return reject(err);
+                            }
+                            
+                            console.log(`Done! ${files.length} files unpacked.`)
+                            
+                            return resolve(true);
+                        });
+                    });
+                    
+                    inStream.pipe(outStream);
                 });
-                
-                istream.pipe(ostream);
             });
         });
     });
-    
-    return result;
 }
