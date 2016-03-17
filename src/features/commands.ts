@@ -5,16 +5,15 @@
 
 'use strict';
 
-import * as proto from '../protocol';
 import {OmnisharpServer} from '../omnisharpServer';
+import * as serverUtils from '../omnisharpUtils';
 import findLaunchTargets from '../launchTargetFinder';
-import * as pathHelpers from '../pathHelpers';
 import {runInTerminal} from 'run-in-terminal';
-import * as fs from 'fs';
+import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-const isWin = /^win/.test(process.platform);
+const isWindows = process.platform === 'win32';
 
 export default function registerCommands(server: OmnisharpServer, extensionPath: string) {
 	let d1 = vscode.commands.registerCommand('o.restart', () => server.restart());
@@ -75,7 +74,7 @@ function dnxExecuteCommand(server: OmnisharpServer) {
 		return Promise.reject('OmniSharp server is not running.');
 	}
 
-	return server.makeRequest<proto.WorkspaceInformationResponse>(proto.Projects).then(info => {
+	return serverUtils.requestWorkspaceInformation(server).then(info => {
 
 		let commands: Command[] = [];
 
@@ -96,7 +95,7 @@ function dnxExecuteCommand(server: OmnisharpServer) {
 							args.unshift('.');
 						}
 
-						if (isWin) {
+						if (isWindows) {
 							command += '.exe';
 						}
 
@@ -125,7 +124,7 @@ export function dnxRestoreForAll(server: OmnisharpServer) {
 		return Promise.reject('OmniSharp server is not running.');
 	}
 
-	return server.makeRequest<proto.WorkspaceInformationResponse>(proto.Projects).then(info => {
+	return serverUtils.requestWorkspaceInformation(server).then(info => {
 
 		let commands:Command[] = [];
 
@@ -136,7 +135,7 @@ export function dnxRestoreForAll(server: OmnisharpServer) {
 				execute() {
 
 					let command = path.join(info.Dnx.RuntimePath, 'bin/dnu');
-					if (isWin) {
+					if (isWindows) {
 						command += '.cmd';
 					}
 
@@ -157,11 +156,11 @@ export function dnxRestoreForAll(server: OmnisharpServer) {
 
 export function dnxRestoreForProject(server: OmnisharpServer, fileName: string) {
 
-	return server.makeRequest<proto.WorkspaceInformationResponse>(proto.Projects).then((info):Promise<any> => {
+	return serverUtils.requestWorkspaceInformation(server).then((info):Promise<any> => {
 		for(let project of info.Dnx.Projects) {
 			if (project.Path === fileName) {
 				let command = path.join(info.Dnx.RuntimePath, 'bin/dnu');
-				if (isWin) {
+				if (isWindows) {
 					command += '.cmd';
 				}
 
@@ -171,7 +170,7 @@ export function dnxRestoreForProject(server: OmnisharpServer, fileName: string) 
 			}
 		}
 
-		return Promise.reject(`Failed to execute restore, try to run 'dnu restore' manually for ${fileName}.`)
+		return Promise.reject(`Failed to execute restore, try to run 'dnu restore' manually for ${fileName}.`);
 	});
 }
 
@@ -186,40 +185,24 @@ function dotnetRestore(server: OmnisharpServer) {
         return Promise.reject('No solution or folder open.');
     }
 
-    pathHelpers.getPathKind(solutionPathOrFolder).then(kind => {
-        if (kind === pathHelpers.PathKind.File) {
-            return path.dirname(solutionPathOrFolder);
-        }
-        else {
-            return solutionPathOrFolder;
-        }
-    }).then((solutionDirectory) => {
+    getFolderPath(solutionPathOrFolder).then(folder => {
         return runInTerminal('dotnet', ['restore'], {
-            cwd: solutionPathOrFolder
+            cwd: folder
         });
     });
 }
 
-function ensureDirectoryCreated(directoryPath: string) {
-    return pathHelpers.exists(directoryPath).then(e => {
-        if (e) {
-            return true;
-        }
-        else {
-            return pathHelpers.mkdir(directoryPath);
-        }
+function getFolderPath(fileOrFolderPath: string): Promise<string> {
+    return fs.lstatAsync(fileOrFolderPath).then(stats => {
+        return stats.isFile()
+            ? path.dirname(fileOrFolderPath)
+            : fileOrFolderPath;
     });
 }
 
 function getExpectedVsCodeFolderPath(solutionPathOrFolder: string): Promise<string> {
-    return pathHelpers.getPathKind(solutionPathOrFolder).then(kind => {
-        if (kind === pathHelpers.PathKind.File) {
-            return path.join(path.dirname(solutionPathOrFolder), '.vscode');
-        }
-        else {
-            return path.join(solutionPathOrFolder, '.vscode');
-        }
-    });
+    return getFolderPath(solutionPathOrFolder).then(folder =>
+        path.join(folder, '.vscode'));
 }
 
 export function addTasksJson(server: OmnisharpServer, extensionPath: string) {
@@ -234,10 +217,10 @@ export function addTasksJson(server: OmnisharpServer, extensionPath: string) {
             return reject('No solution or folder open.');
         }
         
-        return getExpectedVsCodeFolderPath(solutionPathOrFolder).then(vscodeFolderPath => { 
-            let tasksJsonPath = path.join(vscodeFolderPath, 'tasks.json');
+        return getExpectedVsCodeFolderPath(solutionPathOrFolder).then(vscodeFolder => { 
+            let tasksJsonPath = path.join(vscodeFolder, 'tasks.json');
             
-            return pathHelpers.exists(tasksJsonPath).then(e => {
+            return fs.existsAsync(tasksJsonPath).then(e => {
                 if (e) {
                     return vscode.window.showInformationMessage(`${tasksJsonPath} already exists.`).then(_ => {
                         return resolve(tasksJsonPath);
@@ -246,12 +229,12 @@ export function addTasksJson(server: OmnisharpServer, extensionPath: string) {
                 else {
                     let templatePath = path.join(extensionPath, 'template-tasks.json');
                     
-                    return pathHelpers.exists(templatePath).then(e => {
+                    return fs.existsAsync(templatePath).then(e => {
                         if (!e) {
                             return reject('Could not find template-tasks.json file in extension.');
                         }
                         
-                        return ensureDirectoryCreated(vscodeFolderPath).then(ok => {
+                        return fs.ensureDirAsync(vscodeFolder).then(ok => {
                             if (ok) {
                                 let oldFile = fs.createReadStream(templatePath);
                                 let newFile = fs.createWriteStream(tasksJsonPath);
@@ -260,7 +243,7 @@ export function addTasksJson(server: OmnisharpServer, extensionPath: string) {
                                 return resolve(tasksJsonPath);
                             }
                             else {
-                                return reject(`Could not create ${vscodeFolderPath} directory.`);
+                                return reject(`Could not create ${vscodeFolder} directory.`);
                             }
                         });
                     });

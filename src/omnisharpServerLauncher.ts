@@ -11,12 +11,17 @@ import {workspace} from 'vscode';
 import {satisfies} from 'semver';
 import {join} from 'path';
 
-var omnisharpEnv = 'OMNISHARP';
-var isWindows = /^win/.test(process.platform);
+const omnisharpEnv = 'OMNISHARP';
+const isWindows = /^win/.test(process.platform);
 
-export default function launch(cwd: string, args: string[]):Promise < { process: ChildProcess, command: string } > {
+export interface LaunchResult {
+    process: ChildProcess;
+    command: string;
+}
 
-	return new Promise((resolve, reject) => {
+export default function launch(cwd: string, args: string[]): Promise<LaunchResult> {
+
+	return new Promise<LaunchResult>((resolve, reject) => {
 
 		try {
 			(isWindows ? launchWindows(cwd, args) : launchNix(cwd, args)).then(value => {
@@ -38,7 +43,7 @@ export default function launch(cwd: string, args: string[]):Promise < { process:
 	});
 }
 
-function launchWindows(cwd: string, args: string[]): Promise<{ process: ChildProcess, command: string }> {
+function launchWindows(cwd: string, args: string[]): Promise<LaunchResult> {
 	return getOmnisharpPath().then(command => {
 
 		args = args.slice(0);
@@ -63,7 +68,7 @@ function launchWindows(cwd: string, args: string[]): Promise<{ process: ChildPro
 	});
 }
 
-function launchNix(cwd: string, args: string[]): Promise<{ process: ChildProcess, command: string }>{
+function launchNix(cwd: string, args: string[]): Promise<LaunchResult>{
 
 	return new Promise((resolve, reject) => {
 		hasMono('>=4.0.1').then(hasIt => {
@@ -85,7 +90,7 @@ function launchNix(cwd: string, args: string[]): Promise<{ process: ChildProcess
 		return {
 			process,
 			command
-		}
+		};
 	});
 }
 
@@ -105,7 +110,7 @@ function getOmnisharpPath(): Promise<string> {
 
 	} else {
 		// bundled version of Omnisharp
-		pathCandidate = join(__dirname, '../bin/omnisharp')
+		pathCandidate = join(__dirname, '../bin/omnisharp');
 		if (isWindows) {
 			pathCandidate += '.cmd';
 		}

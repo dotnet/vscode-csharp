@@ -8,7 +8,7 @@ import * as vscode from 'vscode';
 import {OmnisharpServer} from '../omnisharpServer';
 import {dnxRestoreForProject} from './commands';
 import {basename} from 'path';
-import * as proto from '../protocol';
+import * as protocol from '../protocol';
 import * as serverUtils from '../omnisharpUtils';
 
 export default function reportStatus(server: OmnisharpServer) {
@@ -114,7 +114,7 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
                 
                 interface Project {
                     Path: string;
-                    SourceFiles: string[]
+                    SourceFiles: string[];
                 }
                 
 				let fileNames: vscode.DocumentSelector[] = [];
@@ -210,12 +210,12 @@ export function reportServerStatus(server: OmnisharpServer): vscode.Disposable{
 
 	let d2 = server.onMsBuildProjectDiagnostics(message => {
 
-		function asErrorMessage(message: proto.MSBuildDiagnosticsMessage) {
+		function asErrorMessage(message: protocol.MSBuildDiagnosticsMessage) {
 			let value = `${message.FileName}(${message.StartLine},${message.StartColumn}): Error: ${message.Text}`;
 			appendLine(value);
 		}
 
-		function asWarningMessage(message: proto.MSBuildDiagnosticsMessage) {
+		function asWarningMessage(message: protocol.MSBuildDiagnosticsMessage) {
 			let value = `${message.FileName}(${message.StartLine},${message.StartColumn}): Warning: ${message.Text}`;
 			appendLine(value);
 		}

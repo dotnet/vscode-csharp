@@ -6,9 +6,9 @@
 'use strict';
 
 import AbstractSupport from './abstractProvider';
-import * as Protocol from '../protocol';
+import * as serverUtils from '../omnisharpUtils';
 import {createRequest, toLocation} from '../typeConvertion';
-import {Uri, TextDocument, Position, Location, CancellationToken, DefinitionProvider} from 'vscode';
+import {TextDocument, Position, Location, CancellationToken, DefinitionProvider} from 'vscode';
 
 export default class CSharpDefinitionProvider extends AbstractSupport implements DefinitionProvider {
 
@@ -16,7 +16,7 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
 
 		let req = createRequest(document, position);
 
-		return this._server.makeRequest<Protocol.ResourceLocation>(Protocol.GoToDefinition, req, token).then(value => {
+		return serverUtils.goToDefinition(this._server, req, token).then(value => {
 			if (value && value.FileName) {
 				return toLocation(value);
 			}

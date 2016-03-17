@@ -6,26 +6,27 @@
 'use strict';
 
 import AbstractSupport from './abstractProvider';
-import * as proto from '../protocol';
+import * as protocol from '../protocol';
+import * as serverUtils from '../omnisharpUtils';
 import {createRequest, toRange} from '../typeConvertion';
-import {DocumentHighlightProvider, DocumentHighlight, DocumentHighlightKind, Uri, CancellationToken, TextDocument, Position, Range} from 'vscode';
+import {DocumentHighlightProvider, DocumentHighlight, DocumentHighlightKind, CancellationToken, TextDocument, Position} from 'vscode';
 
 export default class OmnisharpDocumentHighlightProvider extends AbstractSupport implements DocumentHighlightProvider {
 
 	public provideDocumentHighlights(resource: TextDocument, position: Position, token: CancellationToken): Promise<DocumentHighlight[]> {
 
-		let req = createRequest<proto.FindUsagesRequest>(resource, position);
+		let req = createRequest<protocol.FindUsagesRequest>(resource, position);
 		req.OnlyThisFile = true;
 		req.ExcludeDefinition = false;
 
-		return this._server.makeRequest<proto.QuickFixResponse>(proto.FindUsages, req, token).then(res => {
+		return serverUtils.findUsages(this._server, req, token).then(res => {
 			if (res && Array.isArray(res.QuickFixes)) {
 				return res.QuickFixes.map(OmnisharpDocumentHighlightProvider._asDocumentHighlight);
 			}
 		});
 	}
 
-	private static _asDocumentHighlight(quickFix: proto.QuickFix): DocumentHighlight {
+	private static _asDocumentHighlight(quickFix: protocol.QuickFix): DocumentHighlight {
 		return new DocumentHighlight(toRange(quickFix), DocumentHighlightKind.Read);
 	}
 }
