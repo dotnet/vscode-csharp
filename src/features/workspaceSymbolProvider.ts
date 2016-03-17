@@ -8,8 +8,8 @@
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../protocol';
 import * as serverUtils from '../omnisharpUtils';
-import {createRequest, toRange} from '../typeConvertion';
-import {CancellationToken, Uri, Range, WorkspaceSymbolProvider, SymbolInformation, SymbolKind} from 'vscode';
+import {toRange} from '../typeConvertion';
+import {CancellationToken, Uri, WorkspaceSymbolProvider, SymbolInformation, SymbolKind} from 'vscode';
 
 
 export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport implements WorkspaceSymbolProvider {

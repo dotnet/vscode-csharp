@@ -8,18 +8,18 @@
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../protocol';
 import * as serverUtils from '../omnisharpUtils';
-import {createRequest, toRange} from '../typeConvertion';
-import {RenameProvider, TextEdit, WorkspaceEdit, TextDocument, Uri, CancellationToken, Position, Range} from 'vscode';
+import {createRequest} from '../typeConvertion';
+import {RenameProvider, WorkspaceEdit, TextDocument, Uri, CancellationToken, Position, Range} from 'vscode';
 
 export default class OmnisharpRenameProvider extends AbstractSupport implements RenameProvider {
 
 	public provideRenameEdits(document: TextDocument, position: Position, newName: string, token: CancellationToken): Promise<WorkspaceEdit> {
 
-		let request = createRequest<protocol.RenameRequest>(document, position);
-		request.WantsTextChanges = true,
-		request.RenameTo = newName;
+		let req = createRequest<protocol.RenameRequest>(document, position);
+		req.WantsTextChanges = true;
+		req.RenameTo = newName;
 
-		return serverUtils.rename(this._server, request, token).then(response => {
+		return serverUtils.rename(this._server, req, token).then(response => {
 
 			if (!response) {
 				return;

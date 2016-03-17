@@ -54,7 +54,7 @@ export function rename(server: OmnisharpServer, request: protocol.RenameRequest,
 }
 
 export function requestWorkspaceInformation(server: OmnisharpServer) {
-    return server.makeRequest<protocol.WorkspaceInformationResponse>(protocol.Requests.Projects)
+    return server.makeRequest<protocol.WorkspaceInformationResponse>(protocol.Requests.Projects);
 }
 
 export function runCodeAction(server: OmnisharpServer, request: protocol.V2.RunCodeActionRequest) {

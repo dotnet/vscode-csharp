@@ -5,14 +5,13 @@
 
 'use strict';
 
-import * as protocol from '../protocol';
 import {OmnisharpServer} from '../omnisharpServer';
+import * as serverUtils from '../omnisharpUtils';
 import findLaunchTargets from '../launchTargetFinder';
 import * as pathHelpers from '../pathHelpers';
 import {runInTerminal} from 'run-in-terminal';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as serverUtils from '../omnisharpUtils';
 import * as vscode from 'vscode';
 
 const isWin = /^win/.test(process.platform);
@@ -172,7 +171,7 @@ export function dnxRestoreForProject(server: OmnisharpServer, fileName: string) 
 			}
 		}
 
-		return Promise.reject(`Failed to execute restore, try to run 'dnu restore' manually for ${fileName}.`)
+		return Promise.reject(`Failed to execute restore, try to run 'dnu restore' manually for ${fileName}.`);
 	});
 }
 

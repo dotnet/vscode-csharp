@@ -8,7 +8,6 @@
 import {Disposable, Uri, workspace} from 'vscode';
 import {OmnisharpServer} from '../omnisharpServer';
 import * as serverUtils from '../omnisharpUtils';
-import * as protocol from '../protocol';
 
 function forwardDocumentChanges(server: OmnisharpServer): Disposable {
 

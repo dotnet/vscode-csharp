@@ -6,7 +6,6 @@
 'use strict';
 
 import * as fs from 'fs';
-import * as path from 'path';
 
 export enum PathKind {
     File,
@@ -42,8 +41,8 @@ export function exists(path: string) {
             else {
                 resolve(false);
             }
-        })
-    })
+        });
+    });
 }
 
 export function mkdir(directoryPath: string) {
@@ -55,6 +54,6 @@ export function mkdir(directoryPath: string) {
             else {
                 reject(err);
             }
-        })
-    })
+        });
+    });
 }

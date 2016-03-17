@@ -11,8 +11,8 @@ import {workspace} from 'vscode';
 import {satisfies} from 'semver';
 import {join} from 'path';
 
-var omnisharpEnv = 'OMNISHARP';
-var isWindows = /^win/.test(process.platform);
+const omnisharpEnv = 'OMNISHARP';
+const isWindows = /^win/.test(process.platform);
 
 export default function launch(cwd: string, args: string[]):Promise < { process: ChildProcess, command: string } > {
 
@@ -85,7 +85,7 @@ function launchNix(cwd: string, args: string[]): Promise<{ process: ChildProcess
 		return {
 			process,
 			command
-		}
+		};
 	});
 }
 
@@ -105,7 +105,7 @@ function getOmnisharpPath(): Promise<string> {
 
 	} else {
 		// bundled version of Omnisharp
-		pathCandidate = join(__dirname, '../bin/omnisharp')
+		pathCandidate = join(__dirname, '../bin/omnisharp');
 		if (isWindows) {
 			pathCandidate += '.cmd';
 		}

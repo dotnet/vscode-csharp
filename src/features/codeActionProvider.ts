@@ -41,7 +41,7 @@ export default class OmnisharpCodeActionProvider extends AbstractProvider implem
 		let req: protocol.V2.GetCodeActionsRequest = {
 			Filename: document.fileName,
 			Selection: OmnisharpCodeActionProvider._asRange(range)
-		}
+		};
 
 		return serverUtils.getCodeActions(this._server, req, token).then(response => {
 			return response.CodeActions.map(codeAction => {

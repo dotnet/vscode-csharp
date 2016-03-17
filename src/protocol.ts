@@ -33,7 +33,7 @@ export interface Request {
 	Line?: number;
 	Column?: number;
 	Buffer?: string;
-    Changes?: LinePositionSpanTextChange[]
+    Changes?: LinePositionSpanTextChange[];
 }
 
 export interface LinePositionSpanTextChange {

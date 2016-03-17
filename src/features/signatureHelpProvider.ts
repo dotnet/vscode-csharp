@@ -6,10 +6,9 @@
 'use strict';
 
 import AbstractSupport from './abstractProvider';
-import * as protocol from '../protocol';
 import * as serverUtils from '../omnisharpUtils';
 import {createRequest} from '../typeConvertion';
-import {SignatureHelpProvider, SignatureHelp, SignatureInformation, ParameterInformation, Uri, CancellationToken, TextDocument, Position} from 'vscode';
+import {SignatureHelpProvider, SignatureHelp, SignatureInformation, ParameterInformation, CancellationToken, TextDocument, Position} from 'vscode';
 
 export default class OmniSharpSignatureHelpProvider extends AbstractSupport implements SignatureHelpProvider {
 

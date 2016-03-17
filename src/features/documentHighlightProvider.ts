@@ -9,7 +9,7 @@ import AbstractSupport from './abstractProvider';
 import * as protocol from '../protocol';
 import * as serverUtils from '../omnisharpUtils';
 import {createRequest, toRange} from '../typeConvertion';
-import {DocumentHighlightProvider, DocumentHighlight, DocumentHighlightKind, Uri, CancellationToken, TextDocument, Position, Range} from 'vscode';
+import {DocumentHighlightProvider, DocumentHighlight, DocumentHighlightKind, CancellationToken, TextDocument, Position} from 'vscode';
 
 export default class OmnisharpDocumentHighlightProvider extends AbstractSupport implements DocumentHighlightProvider {
 

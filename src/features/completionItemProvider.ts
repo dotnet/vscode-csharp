@@ -10,7 +10,7 @@ import AbstractSupport from './abstractProvider';
 import * as protocol from '../protocol';
 import * as serverUtils from '../omnisharpUtils';
 import {createRequest} from '../typeConvertion';
-import {CompletionItemProvider, CompletionItem, CompletionItemKind, Uri, CancellationToken, TextDocument, Range, Position} from 'vscode';
+import {CompletionItemProvider, CompletionItem, CompletionItemKind, CancellationToken, TextDocument, Range, Position} from 'vscode';
 
 export default class OmniSharpCompletionItemProvider extends AbstractSupport implements CompletionItemProvider {
 
@@ -74,7 +74,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
 	}
 }
 
-var _kinds: { [kind: string]: CompletionItemKind; } = Object.create(null);
+const _kinds: { [kind: string]: CompletionItemKind; } = Object.create(null);
 _kinds['Variable'] = CompletionItemKind.Variable;
 _kinds['Struct'] = CompletionItemKind.Interface;
 _kinds['Interface'] = CompletionItemKind.Interface;

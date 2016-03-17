@@ -28,7 +28,7 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
     
     if (!isOnPath('dotnet')) {
         // TODO: In a future release, this should be an error. For this release, we will let it go
-        console.log("The .NET CLI tools are not installed. .NET Core debugging will not be enabled.")
+        console.log("The .NET CLI tools are not installed. .NET Core debugging will not be enabled.");
         return;
     }
     
@@ -38,7 +38,7 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
     // Create our log file and override _channel.append to also outpu to the log
     _installLog = fs.createWriteStream(path.join(_coreClrDebugDir, 'install.log'));
     (function() {
-        var proxied = _channel.append;
+        let proxied = _channel.append;
         _channel.append = function(val: string) {
             _installLog.write(val);
             proxied.apply(this, arguments);
@@ -48,8 +48,8 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
     _channel.appendLine("Downloading and configuring the .NET Core Debugger...");
     _channel.show(vscode.ViewColumn.Three);
     
-    var installStage = 'dotnet restore';
-    var installError = '';
+    let installStage = 'dotnet restore';
+    let installError = '';
     
     spawnChildProcess('dotnet', ['--verbose', 'restore', '--configfile', 'NuGet.config'], _channel, _coreClrDebugDir)
     .then(function() {
@@ -59,8 +59,8 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
         installStage = "ensureAd7";
         return ensureAd7EngineExists(_channel, _debugAdapterDir);
     }).then(function() {
-        installStage = "additionalTasks"
-        var promises: Promise<void>[] = [];
+        installStage = "additionalTasks";
+        let promises: Promise<void>[] = [];
 
         promises.push(renameDummyEntrypoint());
         promises.push(removeLibCoreClrTraceProvider());
@@ -86,7 +86,7 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
 
 function initializeTelemetry(context: vscode.ExtensionContext) {
     // parse our own package.json into json
-    var packageJson = JSON.parse(fs.readFileSync(path.join(context.extensionPath, 'package.json')).toString());
+    const packageJson = JSON.parse(fs.readFileSync(path.join(context.extensionPath, 'package.json')).toString());
     
     let extensionId = packageJson["publisher"] + "." + packageJson["name"];
     let extensionVersion = packageJson["version"];
@@ -116,13 +116,13 @@ function writeCompletionFile() : Promise<void> {
 }
 
 function renameDummyEntrypoint() : Promise<void> {
-    var src = path.join(_debugAdapterDir, 'dummy');
-    var dest = path.join(_debugAdapterDir, 'OpenDebugAD7');
+    let src = path.join(_debugAdapterDir, 'dummy');
+    let dest = path.join(_debugAdapterDir, 'OpenDebugAD7');
 
     src += getPlatformExeExtension();
     dest += getPlatformExeExtension();
 
-    var promise = new Promise<void>(function(resolve, reject) {
+    const promise = new Promise<void>(function(resolve, reject) {
        fs.rename(src, dest, function(err) {
            if (err) {
                reject(err.code);
@@ -137,7 +137,7 @@ function renameDummyEntrypoint() : Promise<void> {
 
 function removeLibCoreClrTraceProvider() : Promise<void>
 {
-    var filePath = path.join(_debugAdapterDir, 'libcoreclrtraceptprovider' + getPlatformLibExtension());
+    const filePath = path.join(_debugAdapterDir, 'libcoreclrtraceptprovider' + getPlatformLibExtension());
 
     if (!existsSync(filePath)) {
         return Promise.resolve();
@@ -204,11 +204,12 @@ function isOnPath(command : string) : boolean {
     }
     
     let pathSegments: string[] = pathValue.split(seperatorChar);
-    for (var segment of pathSegments) {
+    for (let segment of pathSegments) {
         if (segment.length === 0 || !path.isAbsolute(segment)) {
             continue;
         }
-        var segmentPath = path.join(segment, fileName);
+        
+        const segmentPath = path.join(segment, fileName);
         if (existsSync(segmentPath)) {
             return true;
         }
@@ -236,7 +237,7 @@ function ensureAd7EngineExists(channel: vscode.OutputChannel, outputDirectory: s
 }
 
 function spawnChildProcess(process: string, args: string[], channel: vscode.OutputChannel, workingDirectory: string) : Promise<void> {
-    var promise = new Promise<void>( function (resolve, reject) {
+    const promise = new Promise<void>(function(resolve, reject) {
         const child = child_process.spawn(process, args, {cwd: workingDirectory});
 
         child.stdout.on('data', (data) => {
