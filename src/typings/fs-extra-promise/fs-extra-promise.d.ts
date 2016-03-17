@@ -4,8 +4,8 @@
 
 // Imported from: https://github.com/soywiz/typescript-node-definitions/fs-extra.d.ts via TSD fs-extra definition
 
-// ///<reference path="../node/node.d.ts"/>
-// ///<reference path="../bluebird/bluebird.d.ts"/>
+///<reference path="../bluebird/bluebird.d.ts"/>
+///<reference path="../ref.d.ts"/>
 
 declare module "fs-extra-promise" {
 	import stream = require("stream");
@@ -177,13 +177,16 @@ declare module "fs-extra-promise" {
 		encoding?: string;
 		fd?: number;
 		mode?: number;
-		bufferSize?: number;
+		autoClose?: boolean;
 	}
+    
 	export interface WriteStreamOptions {
 		flags?: string;
-		encoding?: string;
-		string?: string;
+		defaultEncounding?: string;
+        fd?: number;
+		mode?: number;
 	}
+    
 	export function createReadStream(path: string, options?: ReadStreamOptions): ReadStream;
 	export function createWriteStream(path: string, options?: WriteStreamOptions): WriteStream;
 
