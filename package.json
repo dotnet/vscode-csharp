@@ -18,19 +18,17 @@
     "postinstall": "tsc && gulp omnisharp"
   },
   "dependencies": {
+    "decompress": "^3.0.0",
     "del": "^2.0.2",
-    "event-stream": "^3.3.2",
     "fs-extra-promise": "^0.3.1",
     "github-releases": "^0.3.0",
     "run-in-terminal": "*",
     "semver": "*",
     "vscode-extension-telemetry": "0.0.4",
-    "tmp": "0.0.28",
-    "vinyl-fs": "^2.2.1"
+    "tmp": "0.0.28"
   },
   "devDependencies": {
-    "gulp": "^3.8.9",
-    "gulp-decompress": "^1.2.0",
+    "gulp": "^3.9.1",
     "gulp-tslint": "^4.3.0",
     "tslint": "^3.3.0",
     "tslint-microsoft-contrib": "^2.0.0",
