@@ -29,12 +29,12 @@ function getLaunchFilePath(filePathOrFolder: string): Promise<string> {
         }
         
         candidate = path.join(filePathOrFolder, omnisharpFileName);
-        if (fs.existsAsync(candidate)) {
+        if (fs.existsSync(candidate)) {
             return candidate;
         }
         
         candidate = path.join(filePathOrFolder, omnisharpExeFileName);
-        if (fs.existsAsync(candidate)) {
+        if (fs.existsSync(candidate)) {
             return candidate;
         }
         
