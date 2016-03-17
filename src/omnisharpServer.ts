@@ -187,7 +187,7 @@ export abstract class OmnisharpServer {
 
 		if (!this._serverProcess) {
 			// nothing to kill
-			ret = Promise.resolve(undefined);
+			ret = Promise.resolve<OmnisharpServer>(undefined);
 
 		} else if (/^win/.test(process.platform)) {
 			// when killing a process in windows its child
@@ -204,7 +204,7 @@ export abstract class OmnisharpServer {
 			});
 		} else {
 			this._serverProcess.kill('SIGTERM');
-			ret = Promise.resolve(undefined);
+			ret = Promise.resolve<OmnisharpServer>(undefined);
 		}
 		return ret.then(_ => {
 			this._start = null;

@@ -1,373 +1,388 @@
 {
-    "name": "csharp",
-    "publisher": "ms-vscode",
-    "version": "0.3.8",
-    "description": "C# for Visual Studio Code (powered by OmniSharp).",
-    "displayName": "C#",
-    "author": "Microsoft Corporation",
-    "license": "SEE LICENSE IN RuntimeLicenses/license.txt",
-    "icon": "images/csharpIcon.png",
-    "categories": [
-        "Debuggers",
-        "Languages",
-        "Linters",
-        "Snippets"
+  "name": "csharp",
+  "publisher": "ms-vscode",
+  "version": "0.3.8",
+  "description": "C# for Visual Studio Code (powered by OmniSharp).",
+  "displayName": "C#",
+  "author": "Microsoft Corporation",
+  "license": "SEE LICENSE IN RuntimeLicenses/license.txt",
+  "icon": "images/csharpIcon.png",
+  "categories": [
+    "Debuggers",
+    "Languages",
+    "Linters",
+    "Snippets"
+  ],
+  "main": "./out/omnisharpMain",
+  "scripts": {
+    "postinstall": "gulp omnisharp && tsc"
+  },
+  "dependencies": {
+    "fs-extra-promise": "^0.3.1",
+    "run-in-terminal": "*",
+    "semver": "*",
+    "vscode-extension-telemetry": "0.0.4"
+  },
+  "devDependencies": {
+    "del": "^2.0.2",
+    "event-stream": "^3.3.2",
+    "github-releases": "^0.3.0",
+    "gulp": "^3.8.9",
+    "gulp-decompress": "^1.2.0",
+    "gulp-tslint": "^4.3.0",
+    "tmp": "0.0.28",
+    "tslint": "^3.3.0",
+    "tslint-microsoft-contrib": "^2.0.0",
+    "typescript": "^1.7.3",
+    "vinyl-fs": "^2.2.1",
+    "vscode": "^0.10.1"
+  },
+  "engines": {
+    "vscode": "^0.10.10"
+  },
+  "activationEvents": [
+    "onLanguage:csharp",
+    "onCommand:o.restart",
+    "onCommand:o.pickProjectAndStart",
+    "onCommand:o.restore",
+    "onCommand:o.execute",
+    "onCommand:o.showOutput",
+    "onCommand:o.execute-last-command",
+    "onCommand:dotnet.restore",
+    "onCommand:csharp.addTasksJson",
+    "workspaceContains:project.json"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "csharp",
+        "extensions": [
+          ".cs",
+          ".csx"
+        ],
+        "aliases": [
+          "C#",
+          "csharp"
+        ],
+        "configuration": "./csharp.configuration.json"
+      }
     ],
-    "main": "./out/omnisharpMain",
-    "scripts": {
-        "postinstall": "gulp omnisharp && tsc"
-    },
-    "dependencies": {
-        "run-in-terminal": "*",
-        "semver": "*",
-        "vscode-extension-telemetry": "0.0.4"
-    },
-    "devDependencies": {
-        "vscode": "^0.10.1",
-        "del": "^2.0.2",
-        "event-stream": "^3.3.2",
-        "github-releases": "^0.3.0",
-        "gulp": "^3.8.9",
-        "gulp-decompress": "^1.2.0",
-        "tmp": "0.0.28",
-        "vinyl-fs": "^2.2.1",
-        "typescript": "^1.7.3",
-        "tslint": "^3.3.0",
-        "gulp-tslint": "^4.3.0",
-        "tslint-microsoft-contrib": "^2.0.0"
-    },
-    "engines": {
-        "vscode": "^0.10.10"
-    },
-    "activationEvents": [
-        "onLanguage:csharp",
-        "onCommand:o.restart",
-        "onCommand:o.pickProjectAndStart",
-        "onCommand:o.restore",
-        "onCommand:o.execute",
-        "onCommand:o.showOutput",
-        "onCommand:o.execute-last-command",
-        "onCommand:dotnet.restore",
-        "onCommand:csharp.addTasksJson",
-        "workspaceContains:project.json"
+    "grammars": [
+      {
+        "language": "csharp",
+        "scopeName": "source.cs",
+        "path": "./syntaxes/csharp.json"
+      }
     ],
-    "contributes": {
-        "languages": [
-            {
-                "id": "csharp",
-                "extensions": [
-                    ".cs",
-                    ".csx"
-                ],
-                "aliases": [
-                    "C#",
-                    "csharp"
-                ],
-                "configuration": "./csharp.configuration.json"
-            }
-        ],
-        "grammars": [
-            {
-                "language": "csharp",
-                "scopeName": "source.cs",
-                "path": "./syntaxes/csharp.json"
-            }
-        ],
-        "jsonValidation": [
-            {
-                "fileMatch": "project.json",
-                "url": "http://json.schemastore.org/project"
-            }
-        ],
-        "commands": [
-            {
-                "command": "o.restart",
-                "title": "Restart OmniSharp",
-                "category": "OmniSharp"
-            },
-            {
-                "command": "o.pickProjectAndStart",
-                "title": "Select Project",
-                "category": "OmniSharp"
-            },
-            {
-                "command": "o.restore",
-                "title": "Restore Packages",
-                "category": "dnx"
-            },
-            {
-                "command": "o.execute",
-                "title": "Run Command",
-                "category": "dnx"
-            },
-            {
-                "command": "dotnet.restore",
-                "title": "Restore Packages",
-                "category": "dotnet"
-            },
-            {
-                "command": "csharp.addTasksJson",
-                "title": "Add tasks.json (if missing)",
-                "category": "Debugger"
-            }
-        ],
-        "keybindings": [
-            {
-                "command": "o.showOutput",
-                "key": "Ctrl+L L",
-                "mac": "Cmd+L L"
-            },
-            {
-                "command": "o.execute",
-                "key": "Ctrl+L Shift+R",
-                "mac": "Cmd+L Shift+R"
-            },
-            {
-                "command": "o.execute-last-command",
-                "key": "Ctrl+L R",
-                "mac": "Cmd+L R"
-            },
-            {
-                "key": "shift+0",
-                "command": "^acceptSelectedSuggestion",
-                "when": "editorTextFocus && suggestWidgetVisible && editorLangId == 'csharp' && suggestionSupportsAcceptOnKey"
-            },
-            {
-                "key": "shift+9",
-                "command": "^acceptSelectedSuggestion",
-                "when": "editorTextFocus && suggestWidgetVisible && editorLangId == 'csharp' && suggestionSupportsAcceptOnKey"
-            },
-            {
-                "key": ".",
-                "command": "^acceptSelectedSuggestion",
-                "when": "editorTextFocus && suggestWidgetVisible && editorLangId == 'csharp' && suggestionSupportsAcceptOnKey"
-            }
-        ],
-        "snippets": [
-            {
-                "language": "csharp",
-                "path": "./snippets/csharp.json"
-            }
-        ],
-        "debuggers": [ 
-            {
-                "type": "coreclr",
-                "label": ".NET Core",
-                "enableBreakpointsFor": { "languageIds": [ "csharp" ] },
-
-                "program": "./coreclr-debug/debugAdapters/OpenDebugAD7",
-                "windows": {
-                    "program": "./coreclr-debug/debugAdapters/OpenDebugAD7.exe"
+    "jsonValidation": [
+      {
+        "fileMatch": "project.json",
+        "url": "http://json.schemastore.org/project"
+      }
+    ],
+    "commands": [
+      {
+        "command": "o.restart",
+        "title": "Restart OmniSharp",
+        "category": "OmniSharp"
+      },
+      {
+        "command": "o.pickProjectAndStart",
+        "title": "Select Project",
+        "category": "OmniSharp"
+      },
+      {
+        "command": "o.restore",
+        "title": "Restore Packages",
+        "category": "dnx"
+      },
+      {
+        "command": "o.execute",
+        "title": "Run Command",
+        "category": "dnx"
+      },
+      {
+        "command": "dotnet.restore",
+        "title": "Restore Packages",
+        "category": "dotnet"
+      },
+      {
+        "command": "csharp.addTasksJson",
+        "title": "Add tasks.json (if missing)",
+        "category": "Debugger"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "o.showOutput",
+        "key": "Ctrl+L L",
+        "mac": "Cmd+L L"
+      },
+      {
+        "command": "o.execute",
+        "key": "Ctrl+L Shift+R",
+        "mac": "Cmd+L Shift+R"
+      },
+      {
+        "command": "o.execute-last-command",
+        "key": "Ctrl+L R",
+        "mac": "Cmd+L R"
+      },
+      {
+        "key": "shift+0",
+        "command": "^acceptSelectedSuggestion",
+        "when": "editorTextFocus && suggestWidgetVisible && editorLangId == 'csharp' && suggestionSupportsAcceptOnKey"
+      },
+      {
+        "key": "shift+9",
+        "command": "^acceptSelectedSuggestion",
+        "when": "editorTextFocus && suggestWidgetVisible && editorLangId == 'csharp' && suggestionSupportsAcceptOnKey"
+      },
+      {
+        "key": ".",
+        "command": "^acceptSelectedSuggestion",
+        "when": "editorTextFocus && suggestWidgetVisible && editorLangId == 'csharp' && suggestionSupportsAcceptOnKey"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "csharp",
+        "path": "./snippets/csharp.json"
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "coreclr",
+        "label": ".NET Core",
+        "enableBreakpointsFor": {
+          "languageIds": [
+            "csharp"
+          ]
+        },
+        "program": "./coreclr-debug/debugAdapters/OpenDebugAD7",
+        "windows": {
+          "program": "./coreclr-debug/debugAdapters/OpenDebugAD7.exe"
+        },
+        "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
+        "configurationAttributes": {
+          "launch": {
+            "required": [
+              "program",
+              "cwd"
+            ],
+            "properties": {
+              "program": {
+                "type": "string",
+                "description": "Path to the program (executable file) to launch. On Windows, a '.exe' suffix is appended if not specified already.",
+                "default": "${workspaceRoot}/bin/Debug/<path-to-program>"
+              },
+              "cwd": {
+                "type": "string",
+                "description": "Path to the working directory of the program being debugged. Default is the current workspace.",
+                "default": "${workspaceRoot}"
+              },
+              "args": {
+                "type": "array",
+                "description": "Command line arguments passed to the program.",
+                "items": {
+                  "type": "string"
                 },
-                "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
-
-                "configurationAttributes": {
-                "launch": {
-                    "required": [ "program", "cwd" ],
-                    "properties": {
-                    "program": {
-                        "type": "string",
-                        "description": "Path to the program (executable file) to launch. On Windows, a '.exe' suffix is appended if not specified already.",
-                        "default": "${workspaceRoot}/bin/Debug/<path-to-program>"
-                    },
-                    "cwd": {
-                        "type": "string",
-                        "description": "Path to the working directory of the program being debugged. Default is the current workspace.",
-                        "default": "${workspaceRoot}"
-                    },
-                    "args": {
-                        "type": "array",
-                        "description": "Command line arguments passed to the program.",
-                        "items": { "type": "string" },
-                        "default": [ ]
-                    },
-                    "stopAtEntry": {
-                        "type": "boolean",
-                        "description": "If true, the debugger should stop at the entry point of the target.",
-                        "default": false
-                    },
-                    "launchBrowser": {
-                        "type": "object",
-                        "description": "Describes options to launch a web browser as part of launch",
-                        "default": {
-                        "enabled": true,
-                        "args": "${auto-detect-url}",
-                        "windows": {
-                            "command": "cmd.exe",
-                            "args": "/C start ${auto-detect-url}"
-                        },
-                        "osx": {
-                            "command": "open"
-                        },
-                        "linux": {
-                            "command": "xdg-open"  
-                        }
-                        },
-                        "properties": {
-                        "enabled": {
-                            "type": "boolean",
-                            "description": "Whether web browser launch is enabled",
-                            "default": true
-                        },
-                        "args": {
-                            "type": "string",
-                            "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
-                            "default": "${auto-detect-url}"
-                        },
-                        "osx": {
-                            "type": "object",
-                            "description": "OSX-specific web launch configuration options",
-                            "default": {
-                            "command": "open"
-                            },
-                            "properties": {
-                                "command": {
-                                "type": "string",
-                                "description": "The command to execute for launching the web browser",
-                                "default": "open"
-                                },
-                                "args": {
-                                "type": "string",
-                                "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
-                                "default": "${auto-detect-url}"
-                                }
-                            }
-                        },
-                        "linux": {
-                            "type": "object",
-                            "description": "Linux-specific web launch configuration options",
-                            "default": {
-                            "command": "xdg-open"
-                            },
-                            "properties": {
-                                "command": {
-                                "type": "string",
-                                "description": "The command to execute for launching the web browser",
-                                "default": "xdg-open"
-                                },
-                                "args": {
-                                "type": "string",
-                                "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
-                                "default": "${auto-detect-url}"
-                                }
-                            }  
-                        },
-                        "windows": {
-                            "type": "object",
-                            "description": "Windows-specific web launch configuration options",
-                            "default": {
-                            "command": "cmd.exe",
-                            "args": "/C start ${auto-detect-url}"
-                            },
-                            "properties": {
-                                "command": {
-                                "type": "string",
-                                "description": "The command to execute for launching the web browser",
-                                "default": "cmd.exe"
-                                },
-                                "args": {
-                                "type": "string",
-                                "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
-                                "default": "/C start ${auto-detect-url}"
-                                }
-                            }  
-                        }
-                        }
-                    },
-                    "sourceFileMap": {
-                        "type": "object",
-                        "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
-                        "default": { "<source-path>" : "<target-path>" }
-                    },
-                    "justMyCode": {
-                        "type": "boolean",
-                        "description": "Optional flag to only show user code.",
-                        "default": true
-                    },
-                    "symbolPath": {
-                        "type": "array",
-                        "description": "Array of directories to use to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to. Example: '[ \"/Volumes/symbols\" ]",
-                        "items": { "type": "string" },
-                        "default": [ ]
-                    }
-                    }
+                "default": []
+              },
+              "stopAtEntry": {
+                "type": "boolean",
+                "description": "If true, the debugger should stop at the entry point of the target.",
+                "default": false
+              },
+              "launchBrowser": {
+                "type": "object",
+                "description": "Describes options to launch a web browser as part of launch",
+                "default": {
+                  "enabled": true,
+                  "args": "${auto-detect-url}",
+                  "windows": {
+                    "command": "cmd.exe",
+                    "args": "/C start ${auto-detect-url}"
+                  },
+                  "osx": {
+                    "command": "open"
+                  },
+                  "linux": {
+                    "command": "xdg-open"
+                  }
                 },
-                "attach": {
-                    "required": [ ],
+                "properties": {
+                  "enabled": {
+                    "type": "boolean",
+                    "description": "Whether web browser launch is enabled",
+                    "default": true
+                  },
+                  "args": {
+                    "type": "string",
+                    "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
+                    "default": "${auto-detect-url}"
+                  },
+                  "osx": {
+                    "type": "object",
+                    "description": "OSX-specific web launch configuration options",
+                    "default": {
+                      "command": "open"
+                    },
                     "properties": {
-                    "processName": {
+                      "command": {
                         "type": "string",
-                        "description": "",
-                        "default": "The process name to attach to. If this is used, 'processId' should not be used."
-                    },
-                    "processId": {
-                        "type": "integer",
-                        "description": "The process id to attach to. If this is used, 'processName' should not be used.",
-                        "default": ""
-                    },
-                    "sourceFileMap": {
-                        "type": "object",
-                        "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
-                        "default": { "<source-path>" : "<target-path>" }
-                    },
-                    "justMyCode": {
-                        "type": "boolean",
-                        "description": "Optional flag to only show user code.",
-                        "default": true
-                    },
-                    "symbolPath": {
-                        "type": "array",
-                        "description": "Array of directories to use to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to. Example: '[ \"~/symbols\" ]",
-                        "items": { "type": "string" },
-                        "default": [ ]
+                        "description": "The command to execute for launching the web browser",
+                        "default": "open"
+                      },
+                      "args": {
+                        "type": "string",
+                        "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
+                        "default": "${auto-detect-url}"
+                      }
                     }
+                  },
+                  "linux": {
+                    "type": "object",
+                    "description": "Linux-specific web launch configuration options",
+                    "default": {
+                      "command": "xdg-open"
+                    },
+                    "properties": {
+                      "command": {
+                        "type": "string",
+                        "description": "The command to execute for launching the web browser",
+                        "default": "xdg-open"
+                      },
+                      "args": {
+                        "type": "string",
+                        "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
+                        "default": "${auto-detect-url}"
+                      }
                     }
+                  },
+                  "windows": {
+                    "type": "object",
+                    "description": "Windows-specific web launch configuration options",
+                    "default": {
+                      "command": "cmd.exe",
+                      "args": "/C start ${auto-detect-url}"
+                    },
+                    "properties": {
+                      "command": {
+                        "type": "string",
+                        "description": "The command to execute for launching the web browser",
+                        "default": "cmd.exe"
+                      },
+                      "args": {
+                        "type": "string",
+                        "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
+                        "default": "/C start ${auto-detect-url}"
+                      }
+                    }
+                  }
                 }
+              },
+              "sourceFileMap": {
+                "type": "object",
+                "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
+                "default": {
+                  "<source-path>": "<target-path>"
+                }
+              },
+              "justMyCode": {
+                "type": "boolean",
+                "description": "Optional flag to only show user code.",
+                "default": true
+              },
+              "symbolPath": {
+                "type": "array",
+                "description": "Array of directories to use to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to. Example: '[ \"/Volumes/symbols\" ]",
+                "items": {
+                  "type": "string"
                 },
-
-                "initialConfigurations": [
-                    {
-                        "name": ".NET Core Launch (console)",
-                        "type": "coreclr",
-                        "request": "launch",
-                        "preLaunchTask": "build",
-                        "program": "${workspaceRoot}/bin/Debug/<path-to-program>",
-                        "args": [ ],
-                        "cwd": "${workspaceRoot}",
-                        "stopAtEntry": false
-                    },
-                    {
-                        "name": ".NET Core Launch (web)",
-                        "type": "coreclr",
-                        "request": "launch",
-                        "preLaunchTask": "build",
-                        "program": "${workspaceRoot}/bin/Debug/<path-to-program>",
-                        "args": [ ],
-                        "cwd": "${workspaceRoot}",
-                        "stopAtEntry": false,
-                        "launchBrowser": {
-                        "enabled": true,
-                        "args": "${auto-detect-url}",
-                        "windows": {
-                            "command": "cmd.exe",
-                            "args": "/C start ${auto-detect-url}"
-                        },              
-                        "osx": {
-                            "command": "open"  
-                        },
-                        "linux": {
-                            "command": "xdg-open"  
-                        }
-                        }
-                    },
-                    {
-                        "name": ".NET Core Attach",
-                        "type": "coreclr",
-                        "request": "attach",
-                        "processName": "<example>"
-                    }
-                ]
+                "default": []
+              }
             }
+          },
+          "attach": {
+            "required": [],
+            "properties": {
+              "processName": {
+                "type": "string",
+                "description": "",
+                "default": "The process name to attach to. If this is used, 'processId' should not be used."
+              },
+              "processId": {
+                "type": "integer",
+                "description": "The process id to attach to. If this is used, 'processName' should not be used.",
+                "default": ""
+              },
+              "sourceFileMap": {
+                "type": "object",
+                "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
+                "default": {
+                  "<source-path>": "<target-path>"
+                }
+              },
+              "justMyCode": {
+                "type": "boolean",
+                "description": "Optional flag to only show user code.",
+                "default": true
+              },
+              "symbolPath": {
+                "type": "array",
+                "description": "Array of directories to use to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to. Example: '[ \"~/symbols\" ]",
+                "items": {
+                  "type": "string"
+                },
+                "default": []
+              }
+            }
+          }
+        },
+        "initialConfigurations": [
+          {
+            "name": ".NET Core Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceRoot}/bin/Debug/<path-to-program>",
+            "args": [],
+            "cwd": "${workspaceRoot}",
+            "stopAtEntry": false
+          },
+          {
+            "name": ".NET Core Launch (web)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceRoot}/bin/Debug/<path-to-program>",
+            "args": [],
+            "cwd": "${workspaceRoot}",
+            "stopAtEntry": false,
+            "launchBrowser": {
+              "enabled": true,
+              "args": "${auto-detect-url}",
+              "windows": {
+                "command": "cmd.exe",
+                "args": "/C start ${auto-detect-url}"
+              },
+              "osx": {
+                "command": "open"
+              },
+              "linux": {
+                "command": "xdg-open"
+              }
+            }
+          },
+          {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processName": "<example>"
+          }
         ]
-    }
+      }
+    ]
+  }
 }
