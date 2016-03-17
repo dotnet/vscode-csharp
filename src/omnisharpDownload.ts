@@ -38,7 +38,7 @@ export function downloadOmnisharp(): Promise<boolean> {
         const repo = new Github({ repo: OmnisharpRepo, token: null });
         const assetName = getOmnisharpAssetName();
         
-        process.stdout.write(`[OmniSharp] Looking for ${OmnisharpVersion}, ${assetName}...`);
+        console.log(`[OmniSharp] Looking for ${OmnisharpVersion}, ${assetName}...`);
         
         repo.getReleases({ tag_name: OmnisharpVersion }, (err, releases) => {
             if (err) {
@@ -64,7 +64,7 @@ export function downloadOmnisharp(): Promise<boolean> {
                 return reject(new Error(`OmniSharp release ${OmnisharpVersion} asset, ${assetName} not found.`));
             }
             
-            console.log(`Found it!`);
+            console.log(`[OmniSharp] Found it!`);
             
             repo.downloadAsset(foundAsset, (err, inStream) => {
                 if (err) {
@@ -76,7 +76,7 @@ export function downloadOmnisharp(): Promise<boolean> {
                         return reject(err);
                     }
                     
-                    process.stdout.write(`[OmniSharp] Downloading to ${tmpPath}...`);
+                    console.log(`[OmniSharp] Downloading to ${tmpPath}...`);
                     
                     const outStream = fs.createWriteStream(null, { fd: fd });
                     
@@ -86,7 +86,7 @@ export function downloadOmnisharp(): Promise<boolean> {
                     outStream.once('finish', () => {
                         // At this point, the asset has finished downloading.
                         
-                        console.log(`Done!`);
+                        console.log(`[OmniSharp] Download complete!`);
                         
                         let decompress = new Decompress()
                             .src(tmpPath)
@@ -94,11 +94,11 @@ export function downloadOmnisharp(): Promise<boolean> {
                             
                         if (path.extname(foundAsset.name).toLowerCase() === '.zip') {
                             decompress = decompress.use(Decompress.zip());
-                            process.stdout.write(`[OmniSharp] Unzipping...`);
+                            console.log(`[OmniSharp] Unzipping...`);
                         }
                         else {
                             decompress = decompress.use(Decompress.targz());
-                            process.stdout.write(`[OmniSharp] Untaring...`);
+                            console.log(`[OmniSharp] Untaring...`);
                         }
 
                         decompress.run((err, files) => {
@@ -106,7 +106,7 @@ export function downloadOmnisharp(): Promise<boolean> {
                                 return reject(err);
                             }
                             
-                            console.log(`Done! ${files.length} files unpacked.`)
+                            console.log(`[OmniSharp] Done! ${files.length} files unpacked.`)
                             
                             return resolve(true);
                         });
