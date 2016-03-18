@@ -27,8 +27,15 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
     }
     
     if (!isOnPath('dotnet')) {
-        // TODO: In a future release, this should be an error. For this release, we will let it go
-        console.log("The .NET CLI tools are not installed. .NET Core debugging will not be enabled.");
+        const getDotNetMessage = "Get .NET CLI tools"; 
+        vscode.window.showErrorMessage("The .NET CLI tools cannot be located. .NET Core debugging will not be enabled. Make sure .NET CLI tools are installed and are on the path.",
+            getDotNetMessage).then(function (value) {
+                if (value === getDotNetMessage) {
+                    var open = require('open');
+                    open("http://dotnet.github.io/getting-started/");
+                }
+            });
+            
         return;
     }
     
@@ -45,9 +52,8 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
         };
     })();
 
-    _channel.appendLine("Downloading and configuring the .NET Core Debugger...");
-    _channel.show(vscode.ViewColumn.Three);
-    
+    vscode.window.setStatusBarMessage("Downloading and configuring the .NET Core Debugger...");
+       
     let installStage = 'dotnet restore';
     let installError = '';
     
@@ -71,10 +77,15 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
         return writeCompletionFile();
     }).then(function() {
         installStage = "completeSuccess";
-        _channel.appendLine('Succesfully installed .NET Core Debugger.');
+        vscode.window.setStatusBarMessage('Successfully installed .NET Core Debugger.');
     })
     .catch(function(error) {
-        _channel.appendLine('Error while installing .NET Core Debugger.');
+        const viewLogMessage = "View Log";
+        vscode.window.showErrorMessage('Error while installing .NET Core Debugger.', viewLogMessage).then(function (value) {
+            if (value === viewLogMessage) {
+                _channel.show(vscode.ViewColumn.Three);
+            }
+        })
         
         installError = error.toString();
         console.log(error);
