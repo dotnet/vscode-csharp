@@ -17,6 +17,10 @@ export default class OmniSharpSignatureHelpProvider extends AbstractSupport impl
 		let req = createRequest(document, position);
 
 		return serverUtils.signatureHelp(this._server, req, token).then(res => {
+            
+            if (!res) {
+                return undefined;
+            }
 
 			let ret = new SignatureHelp();
 			ret.activeSignature = res.ActiveSignature;
