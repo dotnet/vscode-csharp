@@ -1,5 +1,6 @@
 bin
 node_modules
 out
+.omnisharp
 
 *.vsix
