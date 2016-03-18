@@ -25,7 +25,8 @@
     "run-in-terminal": "*",
     "semver": "*",
     "vscode-extension-telemetry": "0.0.4",
-    "tmp": "0.0.28"
+    "tmp": "0.0.28",
+    "open": "*"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
