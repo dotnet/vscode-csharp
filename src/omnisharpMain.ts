@@ -23,45 +23,45 @@ import {StdioOmnisharpServer} from './omnisharpServer';
 import forwardChanges from './features/changeForwarding';
 import reportStatus from './features/omnisharpStatus';
 import {addJSONProviders} from './features/json/jsonContributions';
-import {Disposable, ExtensionContext, DocumentSelector, languages} from 'vscode';
 import {installCoreClrDebug} from './coreclr-debug';
+import * as vscode from 'vscode';
 
-export function activate(context: ExtensionContext): any {
+export function activate(context: vscode.ExtensionContext): any {
 
-	const _selector: DocumentSelector = {
+	const _selector: vscode.DocumentSelector = {
 		language: 'csharp',
 		scheme: 'file' // only files from disk
 	};
 
 	const server = new StdioOmnisharpServer();
 	const advisor = new Advisor(server); // create before server is started
-	const disposables: Disposable[] = [];
-	const localDisposables: Disposable[] = [];
-	
+	const disposables: vscode.Disposable[] = [];
+	const localDisposables: vscode.Disposable[] = [];
+
 	disposables.push(server.onServerStart(() => {
 		// register language feature provider on start
-		localDisposables.push(languages.registerDefinitionProvider(_selector, new DefinitionProvider(server)));
-		localDisposables.push(languages.registerCodeLensProvider(_selector, new CodeLensProvider(server)));
-		localDisposables.push(languages.registerDocumentHighlightProvider(_selector, new DocumentHighlightProvider(server)));
-		localDisposables.push(languages.registerDocumentSymbolProvider(_selector, new DocumentSymbolProvider(server)));
-		localDisposables.push(languages.registerReferenceProvider(_selector, new ReferenceProvider(server)));
-		localDisposables.push(languages.registerHoverProvider(_selector, new HoverProvider(server)));
-		localDisposables.push(languages.registerRenameProvider(_selector, new RenameProvider(server)));
-		localDisposables.push(languages.registerDocumentRangeFormattingEditProvider(_selector, new FormatProvider(server)));
-		localDisposables.push(languages.registerOnTypeFormattingEditProvider(_selector, new FormatProvider(server), '}', ';'));
-		localDisposables.push(languages.registerCompletionItemProvider(_selector, new CompletionItemProvider(server), '.', '<'));
-		localDisposables.push(languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server)));
-		localDisposables.push(languages.registerSignatureHelpProvider(_selector, new SignatureHelpProvider(server), '(', ','));
+		localDisposables.push(vscode.languages.registerDefinitionProvider(_selector, new DefinitionProvider(server)));
+		localDisposables.push(vscode.languages.registerCodeLensProvider(_selector, new CodeLensProvider(server)));
+		localDisposables.push(vscode.languages.registerDocumentHighlightProvider(_selector, new DocumentHighlightProvider(server)));
+		localDisposables.push(vscode.languages.registerDocumentSymbolProvider(_selector, new DocumentSymbolProvider(server)));
+		localDisposables.push(vscode.languages.registerReferenceProvider(_selector, new ReferenceProvider(server)));
+		localDisposables.push(vscode.languages.registerHoverProvider(_selector, new HoverProvider(server)));
+		localDisposables.push(vscode.languages.registerRenameProvider(_selector, new RenameProvider(server)));
+		localDisposables.push(vscode.languages.registerDocumentRangeFormattingEditProvider(_selector, new FormatProvider(server)));
+		localDisposables.push(vscode.languages.registerOnTypeFormattingEditProvider(_selector, new FormatProvider(server), '}', ';'));
+		localDisposables.push(vscode.languages.registerCompletionItemProvider(_selector, new CompletionItemProvider(server), '.', '<'));
+		localDisposables.push(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server)));
+		localDisposables.push(vscode.languages.registerSignatureHelpProvider(_selector, new SignatureHelpProvider(server), '(', ','));
 		const codeActionProvider = new CodeActionProvider(server);
 		localDisposables.push(codeActionProvider);
-		localDisposables.push(languages.registerCodeActionsProvider(_selector, codeActionProvider));
+		localDisposables.push(vscode.languages.registerCodeActionsProvider(_selector, codeActionProvider));
 		localDisposables.push(reportDiagnostics(server, advisor));
 		localDisposables.push(forwardChanges(server));
 	}));
 
 	disposables.push(server.onServerStop(() => {
 		// remove language feature providers on stop
-		Disposable.from(...localDisposables).dispose();
+		vscode.Disposable.from(...localDisposables).dispose();
 	}));
 
 	disposables.push(registerCommands(server, context.extensionPath));
@@ -72,7 +72,7 @@ export function activate(context: ExtensionContext): any {
 	server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder'));
 
 	// stop server on deactivate
-	disposables.push(new Disposable(() => {
+	disposables.push(new vscode.Disposable(() => {
 		advisor.dispose();
 		server.stop();
 	}));
