@@ -23,6 +23,7 @@ import {StdioOmnisharpServer} from './omnisharpServer';
 import forwardChanges from './features/changeForwarding';
 import reportStatus from './features/omnisharpStatus';
 import {installCoreClrDebug} from './coreclr-debug';
+import {promptToAddBuildTaskIfNecessary} from './tasks';
 import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext): any {
@@ -76,9 +77,12 @@ export function activate(context: vscode.ExtensionContext): any {
 		server.stop();
 	}));
     
+    // Check to see if there is a tasks.json with a "build" task and prompt the user to add it if missing.
+    promptToAddBuildTaskIfNecessary();
+    
     // install coreclr-debug
     installCoreClrDebug(context);
-
+    
 	context.subscriptions.push(...disposables);
 }
 
