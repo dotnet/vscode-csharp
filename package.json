@@ -108,11 +108,6 @@
         "command": "dotnet.restore",
         "title": "Restore Packages",
         "category": "dotnet"
-      },
-      {
-        "command": "csharp.addTasksJson",
-        "title": "Add tasks.json (if missing)",
-        "category": "Debugger"
       }
     ],
     "keybindings": [
