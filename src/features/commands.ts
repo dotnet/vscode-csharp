@@ -23,9 +23,8 @@ export default function registerCommands(server: OmnisharpServer, extensionPath:
 	let d5 = vscode.commands.registerCommand('o.execute-last-command', () => dnxExecuteLastCommand(server));
 	let d6 = vscode.commands.registerCommand('o.showOutput', () => server.getChannel().show(vscode.ViewColumn.Three));
     let d7 = vscode.commands.registerCommand('dotnet.restore', () => dotnetRestore(server)); 
-    let d8 = vscode.commands.registerCommand('csharp.addTasksJson', () => addTasksJson(server, extensionPath));
     
-	return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8);
+	return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7);
 }
 
 function pickProjectAndStart(server: OmnisharpServer) {
@@ -197,58 +196,5 @@ function getFolderPath(fileOrFolderPath: string): Promise<string> {
         return stats.isFile()
             ? path.dirname(fileOrFolderPath)
             : fileOrFolderPath;
-    });
-}
-
-function getExpectedVsCodeFolderPath(solutionPathOrFolder: string): Promise<string> {
-    return getFolderPath(solutionPathOrFolder).then(folder =>
-        path.join(folder, '.vscode'));
-}
-
-export function addTasksJson(server: OmnisharpServer, extensionPath: string) {
-    return new Promise<string>((resolve, reject) => {
-        if (!server.isRunning()) {
-            return reject('OmniSharp is not running.');
-        }
-        
-        let solutionPathOrFolder = server.getSolutionPathOrFolder();
-        if (!solutionPathOrFolder)
-        {
-            return reject('No solution or folder open.');
-        }
-        
-        return getExpectedVsCodeFolderPath(solutionPathOrFolder).then(vscodeFolder => { 
-            let tasksJsonPath = path.join(vscodeFolder, 'tasks.json');
-            
-            return fs.existsAsync(tasksJsonPath).then(e => {
-                if (e) {
-                    return vscode.window.showInformationMessage(`${tasksJsonPath} already exists.`).then(_ => {
-                        return resolve(tasksJsonPath);
-                    });
-                }
-                else {
-                    let templatePath = path.join(extensionPath, 'template-tasks.json');
-                    
-                    return fs.existsAsync(templatePath).then(e => {
-                        if (!e) {
-                            return reject('Could not find template-tasks.json file in extension.');
-                        }
-                        
-                        return fs.ensureDirAsync(vscodeFolder).then(ok => {
-                            if (ok) {
-                                let oldFile = fs.createReadStream(templatePath);
-                                let newFile = fs.createWriteStream(tasksJsonPath);
-                                oldFile.pipe(newFile);
-                                
-                                return resolve(tasksJsonPath);
-                            }
-                            else {
-                                return reject(`Could not create ${vscodeFolder} directory.`);
-                            }
-                        });
-                    });
-                }
-            });
-        });
     });
 }
