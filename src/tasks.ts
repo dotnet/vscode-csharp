@@ -10,7 +10,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as tasks from 'vscode-tasks';
 
-function promptToAddBuildTask() {
+function promptToAddBuildTask(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
         const item = { title: 'Yes' }
         
@@ -69,17 +69,21 @@ export function promptToAddBuildTaskIfNecessary() {
                     let buildTask = tasksConfig.tasks.find(td => td.taskName === 'build');
                     if (!buildTask) {
                         promptToAddBuildTask().then(shouldAdd => {
-                            buildTask = createBuildTaskDescription();
-                            tasksConfig.tasks.push(buildTask);
-                            writeTasksJson(tasksJsonPath, tasksConfig);
+							if (shouldAdd) {
+								buildTask = createBuildTaskDescription();
+								tasksConfig.tasks.push(buildTask);
+								writeTasksJson(tasksJsonPath, tasksConfig);
+							}
                         });
                     }
                 });
             }
             else {
                 promptToAddBuildTask().then(shouldAdd => {
-                    const tasksConfig = createTasksConfiguration();
-                    writeTasksJson(tasksJsonPath, tasksConfig);
+					if (shouldAdd) {
+						const tasksConfig = createTasksConfiguration();
+						writeTasksJson(tasksJsonPath, tasksConfig);
+					}
                 });
             }
         });
