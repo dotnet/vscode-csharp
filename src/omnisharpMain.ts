@@ -26,8 +26,16 @@ import {addJSONProviders} from './features/json/jsonContributions';
 import {installCoreClrDebug} from './coreclr-debug';
 import {promptToAddBuildTaskIfNecessary} from './tasks';
 import * as vscode from 'vscode';
+import TelemetryReporter from 'vscode-extension-telemetry';
 
 export function activate(context: vscode.ExtensionContext): any {
+    
+    const extensionId = 'ms-vscode.csharp';
+    const extension = vscode.extensions.getExtension(extensionId);
+    const extensionVersion = extension.packageJSON['version'];
+    const aiKey = 'AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217';
+
+    const reporter = new TelemetryReporter(extensionId, extensionVersion, aiKey);
 
 	const _selector: vscode.DocumentSelector = {
 		language: 'csharp',
@@ -85,7 +93,7 @@ export function activate(context: vscode.ExtensionContext): any {
     promptToAddBuildTaskIfNecessary();
     
     // install coreclr-debug
-    installCoreClrDebug(context);
+    installCoreClrDebug(context, reporter);
     
 	context.subscriptions.push(...disposables);
 }
