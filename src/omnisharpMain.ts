@@ -24,7 +24,7 @@ import forwardChanges from './features/changeForwarding';
 import reportStatus from './features/omnisharpStatus';
 import {addJSONProviders} from './features/json/jsonContributions';
 import {installCoreClrDebug} from './coreclr-debug';
-import {promptToAddBuildTaskIfNecessary} from './tasks';
+import {addAssetsIfNecessary} from './assets';
 import * as vscode from 'vscode';
 import TelemetryReporter from 'vscode-extension-telemetry';
 
@@ -90,8 +90,8 @@ export function activate(context: vscode.ExtensionContext): any {
 	// register JSON completion & hover providers for project.json
 	context.subscriptions.push(addJSONProviders());
     
-    // Check to see if there is a tasks.json with a "build" task and prompt the user to add it if missing.
-    promptToAddBuildTaskIfNecessary();
+    // Update or add tasks.json and launch.json
+    addAssetsIfNecessary();
     
     // install coreclr-debug
     installCoreClrDebug(context, reporter);
