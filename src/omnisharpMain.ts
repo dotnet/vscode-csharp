@@ -75,6 +75,11 @@ export function activate(context: vscode.ExtensionContext): any {
 
 	disposables.push(registerCommands(server, context.extensionPath));
 	disposables.push(reportStatus(server));
+    
+    disposables.push(server.onServerStart(() => {
+        // Update or add tasks.json and launch.json
+        addAssetsIfNecessary(server);
+    }));
 
 	// read and store last solution or folder path
 	disposables.push(server.onBeforeServerStart(path => context.workspaceState.update('lastSolutionPathOrFolder', path)));
@@ -89,9 +94,6 @@ export function activate(context: vscode.ExtensionContext): any {
 	
 	// register JSON completion & hover providers for project.json
 	context.subscriptions.push(addJSONProviders());
-    
-    // Update or add tasks.json and launch.json
-    addAssetsIfNecessary();
     
     // install coreclr-debug
     installCoreClrDebug(context, reporter);

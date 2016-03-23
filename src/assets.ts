@@ -9,6 +9,9 @@ import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as tasks from 'vscode-tasks';
+import {OmnisharpServer} from './omnisharpServer';
+import * as serverUtils from './omnisharpUtils';
+import * as protocol from './protocol.ts'
 
 interface DebugConfiguration {
     name: string,
@@ -125,26 +128,26 @@ function promptToAddAssets() {
     });
 }
 
-function createLaunchConfiguration(): ConsoleLaunchConfiguration {
+function createLaunchConfiguration(targetFramework: string, executableName: string): ConsoleLaunchConfiguration {
     return {
         name: '.NET Core Launch (console)',
         type: 'coreclr',
         request: 'launch',
         preLaunchTask: 'build',
-        program: '${workspaceRoot}/bin/Debug/<target-framework>/<project-name.dll>',
+        program: '${workspaceRoot}/bin/Debug/' + targetFramework + '/'+ executableName,
         args: [],
         cwd: '${workspaceRoot}',
         stopAtEntry: false
     }
 }
 
-function createWebLaunchConfiguration(): WebLaunchConfiguration {
+function createWebLaunchConfiguration(targetFramework: string, executableName: string): WebLaunchConfiguration {
     return {
         name: '.NET Core Launch (web)',
         type: 'coreclr',
         request: 'launch',
         preLaunchTask: 'build',
-        program: '${workspaceRoot}/bin/Debug/<target-framework>/<project-name.dll>',
+        program: '${workspaceRoot}/bin/Debug/' + targetFramework + '/'+ executableName,
         args: [],
         cwd: '${workspaceRoot}',
         stopAtEntry: false,
@@ -167,19 +170,19 @@ function createWebLaunchConfiguration(): WebLaunchConfiguration {
 
 function createAttachConfiguration(): AttachConfiguration {
     return {
-        name: '.NET Core Attack',
+        name: '.NET Core Attach',
         type: 'coreclr',
         request: 'attach',
         processName: '<example>'
     }
 }
 
-function createLaunchJson(): any {
+function createLaunchJson(targetFramework: string, executableName: string): any {
     return {
         version: '0.2.0',
         configurations: [
-            createLaunchConfiguration(),
-            createWebLaunchConfiguration(),
+            createLaunchConfiguration(targetFramework, executableName),
+            createWebLaunchConfiguration(targetFramework, executableName),
             createAttachConfiguration()
         ]
     }
@@ -204,7 +207,7 @@ function createTasksConfiguration(): tasks.TaskConfiguration {
     };
 }
 
-function addTasksJsonIfNecessary(paths: Paths, operations: Operations) {
+function addTasksJsonIfNecessary(info: protocol.DotNetWorkspaceInformation, paths: Paths, operations: Operations) {
     return new Promise<void>((resolve, reject) => {
         if (!operations.addTasksJson) {
             return resolve();
@@ -217,66 +220,63 @@ function addTasksJsonIfNecessary(paths: Paths, operations: Operations) {
     });
 }
 
-function updateTasksJsonIfNecesssary(paths: Paths, operations: Operations) {
-    return new Promise<void>((resolve, reject) => {
-        if (!operations.updateTasksJson) {
-            return resolve();
-        }
-        
-        return fs.readFileAsync(paths.tasksJsonPath).then(buffer => {
-            const bufferText = buffer.toString();
-            const tasksJson: tasks.TaskConfiguration = JSON.parse(bufferText);
-            tasksJson.tasks.push(createBuildTaskDescription());
-            const tasksJsonText = JSON.stringify(tasksJson, null, '    ');
-            
-            return fs.writeFileAsync(paths.tasksJsonPath, tasksJsonText);
-        });
-    });
-}
-
-function addLaunchJsonIfNecessary(paths: Paths, operations: Operations) {
+function addLaunchJsonIfNecessary(info: protocol.DotNetWorkspaceInformation, paths: Paths, operations: Operations) {
     return new Promise<void>((resolve, reject) => {
         if (!operations.addLaunchJson) {
             return resolve();
         }
         
-        const launchJson = createLaunchJson();
+        let targetFramework = '<target-framework>';
+        let executableName = '<project-name.dll>';
+        
+        let projectWithEntryPoint = info.Projects.find(project => project.EmitEntryPoint === true);
+
+        if (projectWithEntryPoint) {
+            targetFramework = projectWithEntryPoint.TargetFramework.ShortName;
+            executableName = path.basename(projectWithEntryPoint.CompilationOutputAssemblyFile);
+        }
+        
+        const launchJson = createLaunchJson(targetFramework, executableName);
         const launchJsonText = JSON.stringify(launchJson, null, '    ');
         
         return fs.writeFileAsync(paths.launchJsonPath, launchJsonText);
     });
 }
 
-export function addAssetsIfNecessary() {
+export function addAssetsIfNecessary(server: OmnisharpServer) {
     if (!vscode.workspace.rootPath) {
         return;
     }
     
-    // If there is no project.json, we won't bother to prompt the user for tasks.json.
-    const projectJsonPath = path.join(vscode.workspace.rootPath, 'project.json');
+    // If there is no project.json, we won't bother to prompt the user for tasks.json.		
+    const projectJsonPath = path.join(vscode.workspace.rootPath, 'project.json');		
     if (!fs.existsSync(projectJsonPath)) {
         return;
     }
-    
-    return getOperations().then(operations => {
-        if (!hasOperations(operations)) {
-            return;
-        }
-        
-        promptToAddAssets().then(addAssets => {
-            if (!addAssets) {
-                return;
-            }
-            
-            const paths = getPaths();
-            
-            return fs.ensureDirAsync(paths.vscodeFolder).then(() => {
-                return Promise.all([
-                    addTasksJsonIfNecessary(paths, operations),
-                    updateTasksJsonIfNecesssary(paths, operations),
-                    addLaunchJsonIfNecessary(paths, operations)
-                ]);
+
+    return serverUtils.requestWorkspaceInformation(server).then(info => {
+        // If there are no .NET Core projects, we won't bother offering to add assets.
+        if ('DotNet' in info && info.DotNet.Projects.length > 0) {        
+            return getOperations().then(operations => {
+                if (!hasOperations(operations)) {
+                    return;
+                }
+                
+                promptToAddAssets().then(addAssets => {
+                    if (!addAssets) {
+                        return;
+                    }
+                    
+                    const paths = getPaths();
+                    
+                    return fs.ensureDirAsync(paths.vscodeFolder).then(() => {
+                        return Promise.all([
+                            addTasksJsonIfNecessary(info.DotNet, paths, operations),
+                            addLaunchJsonIfNecessary(info.DotNet, paths, operations)
+                        ]);
+                    });
+                });
             });
-        });
+        }
     });
 }

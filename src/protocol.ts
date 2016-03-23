@@ -268,10 +268,18 @@ export interface DotNetWorkspaceInformation {
 export interface DotNetProject {
 	Path: string;
     Name: string;
+    TargetFramework: DotNetFramework;
     CompilationOutputPath: string;
     CompilationOutputAssemblyFile: string;
     CompilationOutputPdbFile: string;
+    EmitEntryPoint?: boolean;
 	SourceFiles: string[];
+}
+
+export interface DotNetFramework {
+	Name: string;
+	FriendlyName: string;
+	ShortName: string;
 }
 
 export interface RenameRequest extends Request {
