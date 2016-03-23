@@ -17,7 +17,7 @@ let _installLog: NodeJS.WritableStream;
 let _reporter: TelemetryReporter; // Telemetry reporter
 const _completionFileName: string = 'install.complete';
 
-export function installCoreClrDebug(context: vscode.ExtensionContext) {    
+export function installCoreClrDebug(context: vscode.ExtensionContext, reporter: TelemetryReporter) {    
     _coreClrDebugDir = path.join(context.extensionPath, 'coreclr-debug');
     _debugAdapterDir = path.join(_coreClrDebugDir, 'debugAdapters');
     
@@ -39,7 +39,7 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
         return;
     }
     
-    initializeTelemetry(context);
+    _reporter = reporter;
     _channel = vscode.window.createOutputChannel('coreclr-debug');
     
     // Create our log file and override _channel.append to also outpu to the log
@@ -93,17 +93,6 @@ export function installCoreClrDebug(context: vscode.ExtensionContext) {
         // log telemetry
         logTelemetry('Acquisition', {installStage: installStage, installError: installError});
     });
-}
-
-function initializeTelemetry(context: vscode.ExtensionContext) {
-    // parse our own package.json into json
-    const packageJson = JSON.parse(fs.readFileSync(path.join(context.extensionPath, 'package.json')).toString());
-    
-    let extensionId = packageJson["publisher"] + "." + packageJson["name"];
-    let extensionVersion = packageJson["version"];
-    let aiKey = packageJson.contributes.debuggers[0]["aiKey"];
-    
-    _reporter = new TelemetryReporter(extensionId, extensionVersion, aiKey);
 }
 
 function logTelemetry(eventName: string, properties?: {[prop: string]: string}) {
