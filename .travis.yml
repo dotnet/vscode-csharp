@@ -2,11 +2,24 @@ sudo: false
 language: node_js
 
 node_js:
-  - "5.1"
+- "5.1"
 
 os:
   -osx
   -linux
 
 install:
-  - npm install
+- npm install
+- npm install -g vsce
+- vsce package
+
+deploy:
+  provider: releases
+  api_key:
+    secure: T6OzDRQEXpIsIKM2V+X+YgSa1vPDXDdoRBOV39BCDkKv7fDH5rTHs/hVtrwIfLvLVAtJq4kDm6hSVAFLpni1nUHzx2hFCi31CCWPlqhDo31v0CMD6pMccUlCFi2iul3T3EAiT4HmoSEKoCLET8uLIKaYoQ6wc+D11z55kM9DFtv/fGwfxL8FWvbNHYaGc3KNvNOwoMcOc8VpXXGQ1Rtc1IAx62G6qS8V6Yn89sUev/AxT/wcU/wmzNW5UgdAUgnJUFbSumwzfFYFJUdkUSP5iLxjlAJJSNHjHzN5wNX1bIMfSv5DJn1P15ev5OyfjJ+EmjFFmOTJiPlgver/scrZzhrv3kvBYULI8vAAgRWde5CgESGJqv5gEIj3oSICv+2MPmB+Kjr/79AfXrCvORc3an9UASyfgQvamfIoboFLNLZTIe/66oH7UmSJ2rtcaYEKMWHo7qq9cI4yFX6SexwqQehrGPr+QFbjpxFFAhs6aJEFGGgw4i/yheEP6Z7mrKx5wqScVfSLz1iBDmPAkB8pSFhXPk4XpYPjZsCI/wzLERYZ1gBweAKosnMt2anf0Eu1USUo1nXvFmsKTH6lBdBIthVW2va2DCgW+aWQj+j/G670UXT7BoHkcx0GaOzhPc6HeS1ovA9/kX5ZBaslPNAOmGycmGJAuNs2sSvFJf9JZY4=
+  file_glob: true
+  file: "*.vsix"
+  skip_cleanup: true
+  on:
+    repo: OmniSharp/omnisharp-vscode
+    tags: true
