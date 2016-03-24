@@ -25,15 +25,23 @@ import reportStatus from './features/omnisharpStatus';
 import {installCoreClrDebug} from './coreclr-debug';
 import {promptToAddBuildTaskIfNecessary} from './tasks';
 import * as vscode from 'vscode';
+import TelemetryReporter from 'vscode-extension-telemetry';
 
 export function activate(context: vscode.ExtensionContext): any {
+    
+    const extensionId = 'ms-vscode.csharp';
+    const extension = vscode.extensions.getExtension(extensionId);
+    const extensionVersion = extension.packageJSON.version;
+    const aiKey = extension.packageJSON.contributes.debuggers[0].aiKey;
+
+    const reporter = new TelemetryReporter(extensionId, extensionVersion, aiKey);
 
 	const _selector: vscode.DocumentSelector = {
 		language: 'csharp',
 		scheme: 'file' // only files from disk
 	};
 
-	const server = new StdioOmnisharpServer();
+	const server = new StdioOmnisharpServer(reporter);
 	const advisor = new Advisor(server); // create before server is started
 	const disposables: vscode.Disposable[] = [];
 	const localDisposables: vscode.Disposable[] = [];
@@ -74,6 +82,7 @@ export function activate(context: vscode.ExtensionContext): any {
 	// stop server on deactivate
 	disposables.push(new vscode.Disposable(() => {
 		advisor.dispose();
+		server.reportAndClearTelemetry();
 		server.stop();
 	}));
     
@@ -81,7 +90,7 @@ export function activate(context: vscode.ExtensionContext): any {
     promptToAddBuildTaskIfNecessary();
     
     // install coreclr-debug
-    installCoreClrDebug(context);
+    installCoreClrDebug(context, reporter);
     
 	context.subscriptions.push(...disposables);
 }
