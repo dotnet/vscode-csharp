@@ -83,6 +83,7 @@ export function activate(context: vscode.ExtensionContext): any {
 	// stop server on deactivate
 	disposables.push(new vscode.Disposable(() => {
 		advisor.dispose();
+        server.reportAndClearTelemetry();
 		server.stop();
 	}));
 	
