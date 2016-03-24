@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
