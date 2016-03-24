@@ -41,7 +41,12 @@ The following steps have to executed for every project.
   * Or you can get it [here](https://github.com/OmniSharp/omnisharp-vscode/blob/dev/template-tasks.json) and put it manually next to your launch.json file 
 to be able to do so, see above. If you don't have Mono installed you might get an error saying *Omnisharp not running*.)
   * Or if you just want debugging, you can comment out 'preCompileTask' field​ in launch.json.
-* Before you can launch, you must change your launch.json to enter the name of the executable in 'program' field (including the path). This could be something like *"${workspaceRoot}/bin/Debug/dnxcore50/osx.10.11-x64/HelloWorld"*. On Ubuntu, replace the 'osx...' folder with 'ubuntu.14.04-x64', on Windows, use 'win7-x64'. If are aren't sure, drop to the command line, do a 'dotnet build' and look for the built executable file (**NOT** .dll) under the 'bin/Debug' directory. On Windows, you can still use forward slashes.
+* Before you can launch, you must change your launch.json to enter the name of the executable in 'program' field (including the path).
+  * **If you are using the recomended builds of the .NET CLI**: This could be something like *"${workspaceRoot}/bin/Debug/dnxcore50/osx.10.11-x64/HelloWorld"*. On Ubuntu, replace the 'osx...' folder with 'ubuntu.14.04-x64', on Windows, use 'win7-x64'. If are aren't sure, drop to the command line, do a 'dotnet build' and look for the built executable file (**NOT** .dll) under the 'bin/Debug' directory. On Windows, you can still use forward slashes.
+  * **If you are using brand new builds of the .NET CLI (ignore this unless you went out of your way to install the newest bits)**: The CLI will no longer drop a native host executable by default. Future versions of this extension will improve this process, but for now you want to --
+    * Set 'program' to the path to the 'dotnet' executable. You can find the path to dotnet using `which dotnet` (OSX/Linux) or `where.exe dotnet.exe` (Windows).
+    * Set the first element in 'args' to the path to the dll. Example:  
+      `"args": [ "bin/Debug/netstandard1.5/MyApplication.dll" ],`
 * **Windows Only**: [Change the project.json to use portable PDBs](https://github.com/OmniSharp/omnisharp-vscode/wiki/Portable-PDBs#net-cli-projects-projectjson).
 * In case you get a restore error due to lack of a NuGet.Config file, just create this file in the root directory of your project. You can find a sample [here](https://github.com/Microsoft/MIEngine/blob/abeebec39221c654bd69a0d2bcadca6a4a0d0392/tools/InstallToVSCode/CLRDependencies/NuGet.Config). 
 
