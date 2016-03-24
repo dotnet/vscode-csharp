@@ -66,7 +66,7 @@ class Delays {
     nonFocusDelays: number = 0;       // 1501-3000 milliseconds
     bigDelays: number = 0;            // 3000+ milliseconds
     
-    public reportDelay(elapsedTime: number) {
+    public report(elapsedTime: number) {
         if (elapsedTime <= 25) {
             this.immediateDelays += 1;
         }
@@ -89,12 +89,23 @@ class Delays {
             this.bigDelays += 1;
         }
     }
+    
+    public toMeasures(): {[key: string]: number} {
+        return {
+            immedateDelays: this.immediateDelays,
+            nearImmediateDelays: this.nearImmediateDelays,
+            shortDelays: this.shortDelays,
+            mediumDelays: this.mediumDelays,
+            idleDelays: this.idleDelays,
+            nonFocusDelays: this.nonFocusDelays
+        };
+    }
 }
 
 export abstract class OmnisharpServer {
 
     private _reporter: TelemetryReporter;
-    private _requestDelays: { [path: string]: Delays } = {};
+    private _telemetryDelays: { [path: string]: Delays };
 
 	private _eventBus = new EventEmitter();
 	private _start: Promise<void>;
@@ -129,13 +140,24 @@ export abstract class OmnisharpServer {
 	}
     
     private _recordDelay(path: string, elapsedTime: number) {
-        let delays = this._requestDelays[path];
+        let delays = this._telemetryDelays[path];
         if (!delays) {
             delays = new Delays();
-            this._requestDelays[path] = delays;
+            this._telemetryDelays[path] = delays;
         }
         
-        delays.reportDelay(elapsedTime);
+        delays.report(elapsedTime);
+    }
+    
+    public reportAndClearTelemetry() {
+        for (var path in this._telemetryDelays) {
+            const eventName = 'omnisharp' + path;
+            const measures = this._telemetryDelays[path].toMeasures();
+            
+            this._reporter.sendTelemetryEvent(eventName, null, measures);
+        }
+
+        this._telemetryDelays = null;
     }
 
 	public getSolutionPathOrFolder(): string {
@@ -244,6 +266,7 @@ export abstract class OmnisharpServer {
 
 		return omnisharpLauncher(cwd, argv).then(value => {
 			this._serverProcess = value.process;
+            this._telemetryDelays = {};
             this._fireEvent(Events.StdOut, `[INFO] Started OmniSharp from '${value.command}' with process id ${value.process.pid}...\n`);
             this._fireEvent(Events.ServerStart, solutionPath);
 			this._setState(ServerState.Started);
@@ -291,7 +314,7 @@ export abstract class OmnisharpServer {
 			this._start = null;
 			this._serverProcess = null;
 			this._setState(ServerState.Stopped);
-			this._fireEvent('ServerStop', this);
+			this._fireEvent(Events.ServerStop, this);
 			return;
 		});
 	}
