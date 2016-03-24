@@ -23,7 +23,7 @@ import {StdioOmnisharpServer} from './omnisharpServer';
 import forwardChanges from './features/changeForwarding';
 import reportStatus from './features/omnisharpStatus';
 import {installCoreClrDebug} from './coreclr-debug';
-import {promptToAddBuildTaskIfNecessary} from './tasks';
+import {addAssetsIfNecessary} from './assets';
 import * as vscode from 'vscode';
 import TelemetryReporter from 'vscode-extension-telemetry';
 
@@ -74,6 +74,11 @@ export function activate(context: vscode.ExtensionContext): any {
 
 	disposables.push(registerCommands(server, context.extensionPath));
 	disposables.push(reportStatus(server));
+    
+    disposables.push(server.onServerStart(() => {
+        // Update or add tasks.json and launch.json
+        addAssetsIfNecessary(server);
+    }));
 
 	// read and store last solution or folder path
 	disposables.push(server.onBeforeServerStart(path => context.workspaceState.update('lastSolutionPathOrFolder', path)));
@@ -85,9 +90,6 @@ export function activate(context: vscode.ExtensionContext): any {
 		server.reportAndClearTelemetry();
 		server.stop();
 	}));
-    
-    // Check to see if there is a tasks.json with a "build" task and prompt the user to add it if missing.
-    promptToAddBuildTaskIfNecessary();
     
     // install coreclr-debug
     installCoreClrDebug(context, reporter);

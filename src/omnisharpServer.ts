@@ -268,8 +268,8 @@ export abstract class OmnisharpServer {
 			this._serverProcess = value.process;
             this._requestDelays = {};
             this._fireEvent(Events.StdOut, `[INFO] Started OmniSharp from '${value.command}' with process id ${value.process.pid}...\n`);
-            this._fireEvent(Events.ServerStart, solutionPath);
 			this._setState(ServerState.Started);
+            this._fireEvent(Events.ServerStart, solutionPath);
 			return this._doConnect();
 		}).then(_ => {
 			this._processQueue();
