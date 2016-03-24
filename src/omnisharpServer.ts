@@ -105,7 +105,7 @@ class Delays {
 export abstract class OmnisharpServer {
 
     private _reporter: TelemetryReporter;
-    private _telemetryDelays: { [path: string]: Delays };
+    private _requestDelays: { [requestName: string]: Delays };
 
 	private _eventBus = new EventEmitter();
 	private _start: Promise<void>;
@@ -139,25 +139,25 @@ export abstract class OmnisharpServer {
 		}
 	}
     
-    private _recordDelay(path: string, elapsedTime: number) {
-        let delays = this._telemetryDelays[path];
+    private _recordRequestDelay(requestName: string, elapsedTime: number) {
+        let delays = this._requestDelays[requestName];
         if (!delays) {
             delays = new Delays();
-            this._telemetryDelays[path] = delays;
+            this._requestDelays[requestName] = delays;
         }
         
         delays.report(elapsedTime);
     }
     
     public reportAndClearTelemetry() {
-        for (var path in this._telemetryDelays) {
+        for (var path in this._requestDelays) {
             const eventName = 'omnisharp' + path;
-            const measures = this._telemetryDelays[path].toMeasures();
+            const measures = this._requestDelays[path].toMeasures();
             
             this._reporter.sendTelemetryEvent(eventName, null, measures);
         }
 
-        this._telemetryDelays = null;
+        this._requestDelays = null;
     }
 
 	public getSolutionPathOrFolder(): string {
@@ -266,7 +266,7 @@ export abstract class OmnisharpServer {
 
 		return omnisharpLauncher(cwd, argv).then(value => {
 			this._serverProcess = value.process;
-            this._telemetryDelays = {};
+            this._requestDelays = {};
             this._fireEvent(Events.StdOut, `[INFO] Started OmniSharp from '${value.command}' with process id ${value.process.pid}...\n`);
             this._fireEvent(Events.ServerStart, solutionPath);
 			this._setState(ServerState.Started);
@@ -405,7 +405,7 @@ export abstract class OmnisharpServer {
 		return promise.then(response => {
             let endTime = Date.now();
             let elapsedTime = endTime - startTime;
-            this._recordDelay(path, elapsedTime);
+            this._recordRequestDelay(path, elapsedTime);
             
             return response;
         });
