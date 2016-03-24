@@ -1,5 +1,9 @@
 ## C# for Visual Studio Code (powered by OmniSharp)
 
+|Master|Dev|
+|:--:|:--:|
+|[![Master Build Status](https://travis-ci.org/OmniSharp/omnisharp-vscode.svg?branch=master)](https://travis-ci.org/OmniSharp/omnisharp-vscode)|[![Dev Build Status](https://travis-ci.org/OmniSharp/omnisharp-vscode.svg?branch=dev)](https://travis-ci.org/OmniSharp/omnisharp-vscode)|
+
 Don't install this extension unless you want to try an early version. 
 
 This is a preview of C# support in Visual Studio code. It is designed to work well with the upcoming [.NET Core 1.0](http://dotnet.github.io/). 
