@@ -41,7 +41,7 @@ export function activate(context: vscode.ExtensionContext): any {
 		scheme: 'file' // only files from disk
 	};
 
-	const server = new StdioOmnisharpServer();
+	const server = new StdioOmnisharpServer(reporter);
 	const advisor = new Advisor(server); // create before server is started
 	const disposables: vscode.Disposable[] = [];
 	const localDisposables: vscode.Disposable[] = [];

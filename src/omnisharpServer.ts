@@ -13,6 +13,7 @@ import omnisharpLauncher from './omnisharpServerLauncher';
 import {Disposable, CancellationToken, OutputChannel, workspace, window} from 'vscode';
 import {ErrorMessage, UnresolvedDependenciesMessage, MSBuildProjectDiagnostics, ProjectInformationResponse} from './protocol';
 import getLaunchTargets, {LaunchTarget} from './launchTargetFinder';
+import TelemetryReporter from 'vscode-extension-telemetry';
 
 enum ServerState {
 	Starting,
@@ -56,7 +57,44 @@ module Events {
     export const Started = 'started';
 }
 
+class Delays {
+    immediateDelays: number = 0;      // 0-25 milliseconds
+    nearImmediateDelays: number = 0;  // 26-50 milliseconds
+    shortDelays: number = 0;          // 51-250 milliseconds
+    mediumDelays: number = 0;         // 251-500 milliseconds
+    idleDelays: number = 0;           // 501-1500 milliseconds
+    nonFocusDelays: number = 0;       // 1501-3000 milliseconds
+    bigDelays: number = 0;            // 3000+ milliseconds
+    
+    public reportDelay(elapsedTime: number) {
+        if (elapsedTime <= 25) {
+            this.immediateDelays += 1;
+        }
+        else if (elapsedTime <= 50) {
+            this.nearImmediateDelays += 1;
+        }
+        else if (elapsedTime <= 250) {
+            this.shortDelays += 1;
+        }
+        else if (elapsedTime <= 500) {
+            this.mediumDelays += 1;
+        }
+        else if (elapsedTime <= 1500) {
+            this.idleDelays += 1;
+        }
+        else if (elapsedTime <= 3000) {
+            this.nonFocusDelays += 1;
+        }
+        else {
+            this.bigDelays += 1;
+        }
+    }
+}
+
 export abstract class OmnisharpServer {
+
+    private _reporter: TelemetryReporter;
+    private _requestDelays: { [path: string]: Delays } = {};
 
 	private _eventBus = new EventEmitter();
 	private _start: Promise<void>;
@@ -69,9 +107,10 @@ export abstract class OmnisharpServer {
 	protected _serverProcess: ChildProcess;
 	protected _extraArgv: string[];
 
-	constructor() {
+	constructor(reporter: TelemetryReporter) {
 		this._extraArgv = [];
 		this._channel = window.createOutputChannel('OmniSharp Log');
+        this._reporter = reporter;
 	}
 
 	public isRunning(): boolean {
@@ -88,6 +127,16 @@ export abstract class OmnisharpServer {
 			this._fireEvent(Events.StateChanged, this._state);
 		}
 	}
+    
+    private _recordDelay(path: string, elapsedTime: number) {
+        let delays = this._requestDelays[path];
+        if (!delays) {
+            delays = new Delays();
+            this._requestDelays[path] = delays;
+        }
+        
+        delays.reportDelay(elapsedTime);
+    }
 
 	public getSolutionPathOrFolder(): string {
 		return this._solutionPath;
@@ -296,9 +345,13 @@ export abstract class OmnisharpServer {
 		if (this._getState() !== ServerState.Started) {
 			return Promise.reject<TResponse>('server has been stopped or not started');
 		}
-
+        
+        let startTime: number;
 		let request: Request;
+        
 		let promise = new Promise<TResponse>((resolve, reject) => {
+            startTime = Date.now();
+            
 			request = {
 				path,
 				data,
@@ -308,7 +361,6 @@ export abstract class OmnisharpServer {
 			};
             
 			this._queue.push(request);
-			// this._statOnRequestStart(request);
             
 			if (this._getState() === ServerState.Started && !this._isProcessingQueue) {
 				this._processQueue();
@@ -327,7 +379,13 @@ export abstract class OmnisharpServer {
 			});
 		}
 
-		return promise;
+		return promise.then(response => {
+            let endTime = Date.now();
+            let elapsedTime = endTime - startTime;
+            this._recordDelay(path, elapsedTime);
+            
+            return response;
+        });
 	}
 
 	private _processQueue(): void {
@@ -346,11 +404,9 @@ export abstract class OmnisharpServer {
 		this._makeNextRequest(thisRequest.path, thisRequest.data).then(value => {
 			thisRequest.onSuccess(value);
 			this._processQueue();
-			// this._statOnRequestEnd(thisRequest, true);
 		}, err => {
 			thisRequest.onError(err);
 			this._processQueue();
-			// this._statOnRequestEnd(thisRequest, false);
 		}).catch(err => {
 			console.error(err);
 			this._processQueue();
@@ -396,8 +452,8 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 	private _activeRequest: { [seq: number]: { onSuccess: Function; onError: Function; } } = Object.create(null);
 	private _callOnStop: Function[] = [];
 
-	constructor() {
-		super();
+	constructor(reporter: TelemetryReporter) {
+		super(reporter);
 
 		// extra argv
 		this._extraArgv.push('--stdio');
