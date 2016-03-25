@@ -34,7 +34,8 @@
     "tslint": "^3.3.0",
     "tslint-microsoft-contrib": "^2.0.0",
     "typescript": "^1.7.3",
-    "vscode": "^0.10.1"
+    "vscode": "^0.10.1",
+    "vsce": "^1.3.0"
   },
   "engines": {
     "vscode": "^0.10.10"
