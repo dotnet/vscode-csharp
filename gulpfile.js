@@ -8,6 +8,7 @@
 const del = require('del');
 const gulp = require('gulp');
 const tslint = require('gulp-tslint');
+const vsce = require('vsce');
 const omnisharpDownload = require('./out/omnisharpDownload');
 
 gulp.task('omnisharp:clean', () => {
@@ -45,3 +46,7 @@ gulp.task('tslint', () => {
 });
 
 gulp.task('omnisharp', ['omnisharp:fetch']);
+
+gulp.task('package', () => {
+    vsce(['', '', 'package']);
+});
