@@ -23,7 +23,7 @@ import {StdioOmnisharpServer} from './omnisharpServer';
 import forwardChanges from './features/changeForwarding';
 import reportStatus from './features/omnisharpStatus';
 import {addJSONProviders} from './features/json/jsonContributions';
-import {installCoreClrDebug} from './coreclr-debug';
+import * as coreclrdebug from './coreclr-debug/main';
 import {addAssetsIfNecessary} from './assets';
 import * as vscode from 'vscode';
 import TelemetryReporter from 'vscode-extension-telemetry';
@@ -95,8 +95,12 @@ export function activate(context: vscode.ExtensionContext): any {
 	// register JSON completion & hover providers for project.json
 	context.subscriptions.push(addJSONProviders());
     
+	// register empty handler for csharp.installDebugger
+	// running the command activates the extension, which is all we need for installation to kickoff
+	disposables.push(vscode.commands.registerCommand('csharp.installDebugger', () => { }));
+	
     // install coreclr-debug
-    installCoreClrDebug(context, reporter);
+    coreclrdebug.activate(context, reporter);
     
 	context.subscriptions.push(...disposables);
 }
