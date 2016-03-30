@@ -93,7 +93,7 @@ export function activate(context: vscode.ExtensionContext): any {
     
 	// register empty handler for csharp.installDebugger
 	// running the command activates the extension, which is all we need for installation to kickoff
-	disposables.push(vscode.commands.registerCommand('csharp.installDebugger', () => { }));
+	disposables.push(vscode.commands.registerCommand('csharp.downloadDebugger', () => { }));
 	
     // install coreclr-debug
     coreclrdebug.activate(context, reporter);
