@@ -79,6 +79,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         return writeCompletionFile();
     }).then(function() {
         installStage = "completeSuccess";
+        statusBarMessage.dispose();
         vscode.window.setStatusBarMessage('Successfully installed .NET Core Debugger.');
     })
     .catch(function(error) {
