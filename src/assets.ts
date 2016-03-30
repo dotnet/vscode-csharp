@@ -25,7 +25,8 @@ interface ConsoleLaunchConfiguration extends DebugConfiguration {
     args: string[],
     cwd: string,
     stopAtEntry: boolean,
-    env?: any
+    env?: any,
+    externalConsole?: boolean
 }
 
 interface CommandLine {
@@ -138,6 +139,7 @@ function createLaunchConfiguration(targetFramework: string, executableName: stri
         program: '${workspaceRoot}/bin/Debug/' + targetFramework + '/'+ executableName,
         args: [],
         cwd: '${workspaceRoot}',
+        externalConsole: true,
         stopAtEntry: false
     }
 }
