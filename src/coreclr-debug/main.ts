@@ -8,17 +8,18 @@ import * as vscode from 'vscode';
 import * as child_process from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as util from './util';
 import TelemetryReporter from 'vscode-extension-telemetry';
+import CoreClrDebugUtil from './util'
 
 let _channel: vscode.OutputChannel;
 let _installLog: NodeJS.WritableStream;
 let _reporter: TelemetryReporter; // Telemetry reporter
+let _util: CoreClrDebugUtil;
 
 export function activate(context: vscode.ExtensionContext, reporter: TelemetryReporter) {    
-    util.setExtensionDir(context.extensionPath);
+    _util = new CoreClrDebugUtil(context.extensionPath);
     
-    if (util.installCompleteExists()) {
+    if (CoreClrDebugUtil.existsSync(_util.installCompleteFilePath())) {
         console.log('.NET Core Debugger tools already installed');
         return;
     }
@@ -40,7 +41,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
     _channel = vscode.window.createOutputChannel('coreclr-debug');
     
     // Create our log file and override _channel.append to also output to the log
-    _installLog = fs.createWriteStream(util.installLogPath());
+    _installLog = fs.createWriteStream(_util.installLogPath());
     (function() {
         let proxied = _channel.append;
         _channel.append = function(val: string) {
@@ -56,13 +57,13 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
     
     writeInstallBeginFile().then(function() {
         installStage = 'dotnetRestore'
-        return spawnChildProcess('dotnet', ['--verbose', 'restore', '--configfile', 'NuGet.config'], _channel, util.coreClrDebugDir())  
+        return spawnChildProcess('dotnet', ['--verbose', 'restore', '--configfile', 'NuGet.config'], _channel, _util.coreClrDebugDir())  
     }).then(function() {
         installStage = "dotnetPublish";
-        return spawnChildProcess('dotnet', ['--verbose', 'publish', '-o', util.debugAdapterDir()], _channel, util.coreClrDebugDir());
+        return spawnChildProcess('dotnet', ['--verbose', 'publish', '-o', _util.debugAdapterDir()], _channel, _util.coreClrDebugDir());
     }).then(function() {
         installStage = "ensureAd7";
-        return ensureAd7EngineExists(_channel, util.debugAdapterDir());
+        return ensureAd7EngineExists(_channel, _util.debugAdapterDir());
     }).then(function() {
         installStage = "additionalTasks";
         let promises: Promise<void>[] = [];
@@ -113,27 +114,27 @@ function logTelemetry(eventName: string, properties?: {[prop: string]: string}) 
 }
 
 function rewriteManifest() : void {
-    const manifestPath = path.join(util.extensionDir(), 'package.json');
+    const manifestPath = path.join(_util.extensionDir(), 'package.json');
     let manifestString = fs.readFileSync(manifestPath, 'utf8');
     let manifestObject = JSON.parse(manifestString);
     manifestObject.contributes.debuggers[0].runtime = '';
-    manifestObject.contributes.debuggers[0].program = './coreclr-debug/debugAdapters/OpenDebugAD7' + util.getPlatformExeExtension();
+    manifestObject.contributes.debuggers[0].program = './coreclr-debug/debugAdapters/OpenDebugAD7' + CoreClrDebugUtil.getPlatformExeExtension();
     manifestString = JSON.stringify(manifestObject, null, 2);
     fs.writeFileSync(manifestPath, manifestString);
 }
 
 function writeInstallBeginFile() : Promise<void> {
-    return writeEmptyFile(util.installBeginFilePath());
+    return writeEmptyFile(_util.installBeginFilePath());
 }
 
 function deleteInstallBeginFile() {
-    if (util.existsSync(util.installBeginFilePath())) {
-        fs.unlinkSync(util.installBeginFilePath());
+    if (CoreClrDebugUtil.existsSync(_util.installBeginFilePath())) {
+        fs.unlinkSync(_util.installBeginFilePath());
     }
 }
 
 function writeCompletionFile() : Promise<void> {
-    return writeEmptyFile(util.installCompleteFilePath());
+    return writeEmptyFile(_util.installCompleteFilePath());
 }
 
 function writeEmptyFile(path: string) : Promise<void> {
@@ -149,11 +150,11 @@ function writeEmptyFile(path: string) : Promise<void> {
 }
 
 function renameDummyEntrypoint() : Promise<void> {
-    let src = path.join(util.debugAdapterDir(), 'dummy');
-    let dest = path.join(util.debugAdapterDir(), 'OpenDebugAD7');
+    let src = path.join(_util.debugAdapterDir(), 'dummy');
+    let dest = path.join(_util.debugAdapterDir(), 'OpenDebugAD7');
 
-    src += util.getPlatformExeExtension();
-    dest += util.getPlatformExeExtension();
+    src += CoreClrDebugUtil.getPlatformExeExtension();
+    dest += CoreClrDebugUtil.getPlatformExeExtension();
 
     const promise = new Promise<void>(function(resolve, reject) {
        fs.rename(src, dest, function(err) {
@@ -170,9 +171,9 @@ function renameDummyEntrypoint() : Promise<void> {
 
 function removeLibCoreClrTraceProvider() : Promise<void>
 {
-    const filePath = path.join(util.debugAdapterDir(), 'libcoreclrtraceptprovider' + util.getPlatformLibExtension());
+    const filePath = path.join(_util.debugAdapterDir(), 'libcoreclrtraceptprovider' + CoreClrDebugUtil.getPlatformLibExtension());
 
-    if (!util.existsSync(filePath)) {
+    if (!CoreClrDebugUtil.existsSync(filePath)) {
         return Promise.resolve();
     } else {
         return new Promise<void>(function(resolve, reject) {
@@ -209,7 +210,7 @@ function isOnPath(command : string) : boolean {
         }
         
         const segmentPath = path.join(segment, fileName);
-        if (util.existsSync(segmentPath)) {
+        if (CoreClrDebugUtil.existsSync(segmentPath)) {
             return true;
         }
     }

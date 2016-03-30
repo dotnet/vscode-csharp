@@ -7,7 +7,7 @@
 import * as path from 'path';
 import { DebugProtocol } from 'vscode-debugprotocol';
 import * as child_process from 'child_process';
-import * as util from './util';
+import CoreClrDebugUtil from './util';
 
 class ProxyErrorResponse implements DebugProtocol.ErrorResponse {
     public body: { error?: DebugProtocol.Message };
@@ -39,10 +39,10 @@ function serializeProtocolEvent(message: DebugProtocol.ProtocolMessage): string 
 // This proxy will still be called and launch OpenDebugAD7 as a child process.
 // During subsequent code sessions, the rewritten manifest will be loaded and this proxy will no longer be called. 
 function proxy() {
-    util.setExtensionDir(path.resolve(__dirname, '../../'));
+    let util = new CoreClrDebugUtil(path.resolve(__dirname, '../../'));
     
-    if (!util.installCompleteExists()) {
-        if (util.existsSync(util.installBeginFilePath())) {
+    if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {
+        if (CoreClrDebugUtil.existsSync(util.installBeginFilePath())) {
             process.stdout.write(serializeProtocolEvent(new ProxyErrorResponse('The .NET Core Debugger has not finished installing. See Status Bar for details.')));
         } else {
             process.stdout.write(serializeProtocolEvent(new ProxyErrorResponse('Run \'Debugger: Install .NET Core Debugger\' command or open a .NET project directory to download the .NET Core Debugger')));
@@ -51,7 +51,7 @@ function proxy() {
     else
     {
         new Promise<void>(function(resolve, reject) {
-            let processPath = path.join(util.debugAdapterDir(), "OpenDebugAD7" + util.getPlatformExeExtension());
+            let processPath = path.join(util.debugAdapterDir(), "OpenDebugAD7" + CoreClrDebugUtil.getPlatformExeExtension());
             let args = process.argv.slice(2);
             
             // do not explicitly set a current working dir
