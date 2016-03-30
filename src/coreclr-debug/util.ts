@@ -15,103 +15,106 @@ let _installLogPath: string = '';
 let _installBeginFilePath: string = '';
 let _installCompleteFilePath: string = '';
 
-export function setExtensionDir(extensionDir: string) {
-    // ensure that this path actually exists and looks like the root of the extension
-    if (!existsSync(path.join(extensionDir, 'package.json'))) {
-        throw new Error(`Cannot set extension path to ${extensionDir}`);
+export default class CoreClrDebugUtil
+{
+    private _extensionDir: string = '';
+    private _coreClrDebugDir: string = '';
+    private _debugAdapterDir: string = '';
+    private _installLogPath: string = '';
+    private _installBeginFilePath: string = '';
+    private _installCompleteFilePath: string = '';
+    
+    constructor(extensionDir) {
+        _extensionDir = extensionDir;
+        _coreClrDebugDir = path.join(_extensionDir, 'coreclr-debug');
+        _debugAdapterDir = path.join(_coreClrDebugDir, 'debugAdapters');
+        _installLogPath = path.join(_coreClrDebugDir, 'install.log');
+        _installBeginFilePath = path.join(_coreClrDebugDir, 'install.begin');
+        _installCompleteFilePath = path.join(_debugAdapterDir, 'install.complete');
     }
-    _extensionDir = extensionDir;
-    _coreClrDebugDir = path.join(_extensionDir, 'coreclr-debug');
-    _debugAdapterDir = path.join(_coreClrDebugDir, 'debugAdapters');
-    _installLogPath = path.join(_coreClrDebugDir, 'install.log');
-    _installBeginFilePath = path.join(_coreClrDebugDir, 'install.begin');
-    _installCompleteFilePath = path.join(_debugAdapterDir, 'install.complete');
-}
-
-export function extensionDir(): string {
-    if (_extensionDir === '')
-    {
-        throw new Error('Failed to set extension directory');
+        
+    extensionDir(): string {
+        if (_extensionDir === '')
+        {
+            throw new Error('Failed to set extension directory');
+        }
+        return _extensionDir;
     }
-    return _extensionDir;
-}
 
-export function coreClrDebugDir(): string {
-    if (_coreClrDebugDir === '') {
-        throw new Error('Failed to set coreclrdebug directory');
+    coreClrDebugDir(): string {
+        if (_coreClrDebugDir === '') {
+            throw new Error('Failed to set coreclrdebug directory');
+        }
+        return _coreClrDebugDir;
     }
-    return _coreClrDebugDir;
-}
 
-export function debugAdapterDir(): string {
-    if (_debugAdapterDir === '') {
-        throw new Error('Failed to set debugadpter directory');
+    debugAdapterDir(): string {
+        if (_debugAdapterDir === '') {
+            throw new Error('Failed to set debugadpter directory');
+        }
+        return _debugAdapterDir;
     }
-    return _debugAdapterDir;
-}
 
-export function installLogPath(): string {
-    if (_installLogPath === '') {
-        throw new Error('Failed to set install log path');
+    installLogPath(): string {
+        if (_installLogPath === '') {
+            throw new Error('Failed to set install log path');
+        }
+        return _installLogPath;
     }
-    return _installLogPath;
-}
 
-export function installBeginFilePath(): string {
-    if (_installBeginFilePath === '') {
-        throw new Error('Failed to set install begin file path');
+    installBeginFilePath(): string {
+        if (_installBeginFilePath === '') {
+            throw new Error('Failed to set install begin file path');
+        }
+        return _installBeginFilePath;
     }
-    return _installBeginFilePath;
-}
 
-export function installCompleteFilePath(): string {
-    if (_installCompleteFilePath === '')
-    {
-        throw new Error('Failed to set install complete file path');
+    installCompleteFilePath(): string {
+        if (_installCompleteFilePath === '')
+        {
+            throw new Error('Failed to set install complete file path');
+        }
+        return _installCompleteFilePath;
     }
-    return _installCompleteFilePath;
-}
-
-export function installCompleteExists() : boolean {
-    return existsSync(installCompleteFilePath());
-}
-
-export function existsSync(path: string) : boolean {
-    try {
-        fs.accessSync(path, fs.F_OK);
-        return true;
-    } catch (err) {
-        if (err.code === 'ENOENT') {
-            return false;
-        } else {
-            throw Error(err.code);
+ 
+    static existsSync(path: string) : boolean {
+        try {
+            fs.accessSync(path, fs.F_OK);
+            return true;
+        } catch (err) {
+            if (err.code === 'ENOENT') {
+                return false;
+            } else {
+                throw Error(err.code);
+            }
         }
     }
-}
+    
+    static getPlatformExeExtension() : string {
+        if (process.platform === 'win32') {
+            return '.exe';
+        }
 
-export function getPlatformExeExtension() : string {
-    if (process.platform === 'win32') {
-        return '.exe';
+        return '';
     }
 
-    return '';
-}
-
-export function getPlatformLibExtension() : string {
-    switch (process.platform) {
-        case 'win32':
-            return '.dll';
-        case 'darwin':
-            return '.dylib';
-        case 'linux':
-            return '.so';
-        default:
-            throw Error('Unsupported platform ' + process.platform);
+    static getPlatformLibExtension() : string {
+        switch (process.platform) {
+            case 'win32':
+                return '.dll';
+            case 'darwin':
+                return '.dylib';
+            case 'linux':
+                return '.so';
+            default:
+                throw Error('Unsupported platform ' + process.platform);
+        }
     }
-}
-
-/** Used for diagnostics only */
-export function logToFile(message: string): void {
-    let logFolder = path.resolve(coreClrDebugDir(), "extension.log");
-    fs.writeFileSync(logFolder, `${message}${os.EOL}`, { flag: 'a' });
+    
+    
+    /** Used for diagnostics only */
+    logToFile(message: string): void {
+        let logFolder = path.resolve(this.coreClrDebugDir(), "extension.log");
+        fs.writeFileSync(logFolder, `${message}${os.EOL}`, { flag: 'a' });
+    }
 }
