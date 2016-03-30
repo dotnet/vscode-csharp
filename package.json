@@ -53,7 +53,6 @@
     "onCommand:o.showOutput",
     "onCommand:o.execute-last-command",
     "onCommand:dotnet.restore",
-    "onCommand:csharp.addTasksJson",
     "onCommand:csharp.downloadDebugger",
     "workspaceContains:project.json"
   ],
@@ -112,7 +111,7 @@
         "category": "dotnet"
       },
       {
-        "command": "charp.downloadDebugger",
+        "command": "csharp.downloadDebugger",
         "title": "Download .NET Core Debugger",
         "category": "Debug"
       }

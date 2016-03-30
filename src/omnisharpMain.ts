@@ -95,10 +95,6 @@ export function activate(context: vscode.ExtensionContext): any {
 	// register JSON completion & hover providers for project.json
 	context.subscriptions.push(addJSONProviders());
     
-	// register empty handler for csharp.installDebugger
-	// running the command activates the extension, which is all we need for installation to kickoff
-	disposables.push(vscode.commands.registerCommand('csharp.downloadDebugger', () => { }));
-	
     // install coreclr-debug
     coreclrdebug.activate(context, reporter);
     

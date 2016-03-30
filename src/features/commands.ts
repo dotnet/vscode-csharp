@@ -23,8 +23,12 @@ export default function registerCommands(server: OmnisharpServer, extensionPath:
 	let d5 = vscode.commands.registerCommand('o.execute-last-command', () => dnxExecuteLastCommand(server));
 	let d6 = vscode.commands.registerCommand('o.showOutput', () => server.getChannel().show(vscode.ViewColumn.Three));
     let d7 = vscode.commands.registerCommand('dotnet.restore', () => dotnetRestore(server)); 
+	
+    // register empty handler for csharp.installDebugger
+    // running the command activates the extension, which is all we need for installation to kickoff
+    let d8 = vscode.commands.registerCommand('csharp.downloadDebugger', () => { });
     
-	return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7);
+	return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8);
 }
 
 function pickProjectAndStart(server: OmnisharpServer) {
