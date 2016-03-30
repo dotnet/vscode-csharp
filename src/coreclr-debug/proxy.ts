@@ -43,9 +43,9 @@ function proxy() {
     
     if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {
         if (CoreClrDebugUtil.existsSync(util.installBeginFilePath())) {
-            process.stdout.write(serializeProtocolEvent(new ProxyErrorResponse('The .NET Core Debugger has not finished installing. See Status Bar for details.')));
+            process.stdout.write(serializeProtocolEvent(new ProxyErrorResponse('The .NET Core Debugger is still being downloaded. See the Status Bar for more information.')));
         } else {
-            process.stdout.write(serializeProtocolEvent(new ProxyErrorResponse('Run \'Debugger: Install .NET Core Debugger\' command or open a .NET project directory to download the .NET Core Debugger')));
+            process.stdout.write(serializeProtocolEvent(new ProxyErrorResponse('Run \'Debug: Download .NET Core Debugger\' in the Command Palette or open a .NET project directory to download the .NET Core Debugger')));
         }
     }
     else
