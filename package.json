@@ -24,6 +24,7 @@
     "github-releases": "^0.3.0",
     "run-in-terminal": "*",
     "semver": "*",
+    "vscode-debugprotocol": "^1.6.1",
     "vscode-extension-telemetry": "0.0.4",
     "tmp": "0.0.28",
     "open": "*"
@@ -49,7 +50,7 @@
     "onCommand:o.showOutput",
     "onCommand:o.execute-last-command",
     "onCommand:dotnet.restore",
-    "onCommand:csharp.addTasksJson",
+    "onCommand:csharp.downloadDebugger",
     "workspaceContains:project.json"
   ],
   "contributes": {
@@ -105,6 +106,11 @@
         "command": "dotnet.restore",
         "title": "Restore Packages",
         "category": "dotnet"
+      },
+      {
+        "command": "csharp.downloadDebugger",
+        "title": "Download .NET Core Debugger",
+        "category": "Debug"
       }
     ],
     "keybindings": [
@@ -154,10 +160,9 @@
             "csharp"
           ]
         },
-        "program": "./coreclr-debug/debugAdapters/OpenDebugAD7",
-        "windows": {
-          "program": "./coreclr-debug/debugAdapters/OpenDebugAD7.exe"
-        },
+        "runtime": "node",
+        "runtimeArgs": [],
+        "program": "./out/coreclr-debug/proxy.js",
         "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
         "configurationAttributes": {
           "launch": {
