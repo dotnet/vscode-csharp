@@ -56,8 +56,11 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
     let installError = '';
     
     writeInstallBeginFile().then(function() {
+        installStage = 'writeProjectJson';
+        return writeProjectJson();
+    }).then(function() {
         installStage = 'dotnetRestore'
-        return spawnChildProcess('dotnet', ['--verbose', 'restore', '--configfile', 'NuGet.config', '--infer-runtimes'], _channel, _util.coreClrDebugDir())  
+        return spawnChildProcess('dotnet', ['--verbose', 'restore', '--configfile', 'NuGet.config'], _channel, _util.coreClrDebugDir())  
     }).then(function() {
         installStage = "dotnetPublish";
         return spawnChildProcess('dotnet', ['--verbose', 'publish', '-o', _util.debugAdapterDir()], _channel, _util.coreClrDebugDir());
@@ -235,6 +238,66 @@ function ensureAd7EngineExists(channel: vscode.OutputChannel, outputDirectory: s
             }
         });
     });
+}
+
+function writeProjectJson(): Promise<void> {
+    return new Promise<void>(function(resolve, reject) {
+        var projectJson = createProjectJson(CoreClrDebugUtil.getPlatformRuntimeId());
+        
+        fs.writeFile(path.join(_util.coreClrDebugDir(), 'project.json'), JSON.stringify(projectJson, null, 2), {encoding: 'utf8'}, function(err) {
+           if (err) {
+               reject(err.code);
+           }
+           else {
+               resolve();
+           }
+        });
+    });
+}
+
+function createProjectJson(targetRuntime: string): any
+{
+    let projectJson = {
+        name: "dummy",
+        compilationOptions: {
+            emitEntryPoint: true
+        },
+        dependencies: {
+            "Microsoft.VisualStudio.clrdbg": "14.0.25201-preview-2911579",
+            "Microsoft.VisualStudio.clrdbg.MIEngine": "14.0.30401-preview-1",
+            "Microsoft.VisualStudio.OpenDebugAD7": "1.0.20401-preview-1",
+            "NETStandard.Library": "1.5.0-rc2-23931",
+            "Newtonsoft.Json": "7.0.1",
+            "Microsoft.VisualStudio.Debugger.Interop.Portable": "1.0.1",
+            "System.Collections.Specialized":  "4.0.1-rc2-23931",
+            "System.Collections.Immutable": "1.2.0-rc2-23931", 
+            "System.Diagnostics.Process" : "4.1.0-rc2-23931",
+            "System.Diagnostics.StackTrace":  "4.0.1-rc2-23931",  
+            "System.Dynamic.Runtime": "4.0.11-rc2-23931",
+            "Microsoft.CSharp": "4.0.1-rc2-23931",
+            "System.Threading.Tasks.Dataflow": "4.6.0-rc2-23931",
+            "System.Threading.Thread": "4.0.0-rc2-23931", 
+            "System.Xml.XDocument": "4.0.11-rc2-23931",
+            "System.Xml.XmlDocument": "4.0.1-rc2-23931",  
+            "System.Xml.XmlSerializer": "4.0.11-rc2-23931",
+            "System.ComponentModel":  "4.0.1-rc2-23931",  
+            "System.ComponentModel.Annotations":  "4.1.0-rc2-23931",  
+            "System.ComponentModel.EventBasedAsync":  "4.0.11-rc2-23931",
+            "System.Runtime.Serialization.Primitives": "4.1.1-rc2-23931",
+            "System.Net.Http":  "4.0.1-rc2-23931"
+        },
+        frameworks: {
+            "netstandardapp1.5": {
+                imports: [ "dnxcore50", "portable-net45+win8" ]
+            }
+        },
+        runtimes: {
+        }
+    }
+    
+    projectJson.runtimes[targetRuntime] = {};
+    
+    return projectJson;
 }
 
 function spawnChildProcess(process: string, args: string[], channel: vscode.OutputChannel, workingDirectory: string) : Promise<void> {
