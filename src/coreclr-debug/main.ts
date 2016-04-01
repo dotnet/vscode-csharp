@@ -57,7 +57,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
     
     writeInstallBeginFile().then(function() {
         installStage = 'dotnetRestore'
-        return spawnChildProcess('dotnet', ['--verbose', 'restore', '--configfile', 'NuGet.config'], _channel, _util.coreClrDebugDir())  
+        return spawnChildProcess('dotnet', ['--verbose', 'restore', '--configfile', 'NuGet.config', '--infer-runtimes'], _channel, _util.coreClrDebugDir())  
     }).then(function() {
         installStage = "dotnetPublish";
         return spawnChildProcess('dotnet', ['--verbose', 'publish', '-o', _util.debugAdapterDir()], _channel, _util.coreClrDebugDir());
