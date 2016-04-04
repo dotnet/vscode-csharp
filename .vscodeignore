@@ -5,6 +5,7 @@ src/**
 **/*.map
 
 .vscode/**
+.omnisharp/**
 
 coreclr-debug/debugAdapters/**
 coreclr-debug/bin/**
