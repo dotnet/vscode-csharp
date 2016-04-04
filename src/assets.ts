@@ -228,12 +228,24 @@ function addLaunchJsonIfNecessary(info: protocol.DotNetWorkspaceInformation, pat
         
         let targetFramework = '<target-framework>';
         let executableName = '<project-name.dll>';
-        
-        let projectWithEntryPoint = info.Projects.find(project => project.EmitEntryPoint === true);
 
-        if (projectWithEntryPoint) {
-            targetFramework = projectWithEntryPoint.TargetFramework.ShortName;
-            executableName = path.basename(projectWithEntryPoint.CompilationOutputAssemblyFile);
+        let done = false;
+        for (var project of info.Projects) {
+            for (var configuration of project.Configurations) {
+                if (configuration.Name === "Debug" && configuration.EmitEntryPoint === true) {                       
+                    if (project.Frameworks.length > 0) {
+                        targetFramework = project.Frameworks[0].ShortName;
+                        executableName = path.basename(configuration.CompilationOutputAssemblyFile)
+                    }
+                    
+                    done = true;
+                    break;
+                }
+            }               
+            
+            if (done) {
+                break;
+            }
         }
         
         const launchJson = createLaunchJson(targetFramework, executableName);

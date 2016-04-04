@@ -263,17 +263,24 @@ export interface DnxFramework {
 
 export interface DotNetWorkspaceInformation {
 	Projects: DotNetProject[];
+	RuntimePath: string;
 }
 
 export interface DotNetProject {
 	Path: string;
-    Name: string;
-    TargetFramework: DotNetFramework;
-    CompilationOutputPath: string;
-    CompilationOutputAssemblyFile: string;
-    CompilationOutputPdbFile: string;
-    EmitEntryPoint?: boolean;
+	Name: string;
+	ProjectSearchPaths: string[];
+	Configurations: DotNetConfiguration[];
+	Frameworks: DotNetFramework[];
 	SourceFiles: string[];
+}
+
+export interface DotNetConfiguration {
+	Name: string;
+	CompilationOutputPath: string;
+	CompilationOutputAssemblyFile: string;
+	CompilationOutputPdbFile: string;
+	EmitEntryPoint?: boolean;
 }
 
 export interface DotNetFramework {
