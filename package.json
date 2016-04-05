@@ -45,8 +45,6 @@
     "onLanguage:csharp",
     "onCommand:o.restart",
     "onCommand:o.pickProjectAndStart",
-    "onCommand:o.restore",
-    "onCommand:o.execute",
     "onCommand:o.showOutput",
     "onCommand:o.execute-last-command",
     "onCommand:dotnet.restore",
@@ -91,16 +89,6 @@
         "command": "o.pickProjectAndStart",
         "title": "Select Project",
         "category": "OmniSharp"
-      },
-      {
-        "command": "o.restore",
-        "title": "Restore Packages",
-        "category": "dnx"
-      },
-      {
-        "command": "o.execute",
-        "title": "Run Command",
-        "category": "dnx"
       },
       {
         "command": "dotnet.restore",
