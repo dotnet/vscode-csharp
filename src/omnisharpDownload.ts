@@ -13,7 +13,7 @@ const Decompress = require('decompress');
 const Github = require('github-releases');
 
 const OmnisharpRepo = 'OmniSharp/omnisharp-roslyn';
-const OmnisharpVersion = 'v1.9-alpha7';
+const OmnisharpVersion = 'v1.9-alpha10';
 const DefaultInstallLocation = path.join(__dirname, '../.omnisharp');
 
 tmp.setGracefulCleanup();
@@ -21,11 +21,11 @@ tmp.setGracefulCleanup();
 function getOmnisharpAssetName(): string {
     switch (process.platform) {
         case 'win32':
-            return 'omnisharp-win-x64-dnx451.zip';
+            return 'omnisharp-win-x64-net451.zip';
         case 'darwin':
-            return 'omnisharp-osx-x64-dnxcore50.tar.gz';
+            return 'omnisharp-osx-x64-netcoreapp1.0.tar.gz';
         case 'linux':
-            return 'omnisharp-linux-x64-dnxcore50.tar.gz';
+            return 'omnisharp-linux-x64-netcoreapp1.0.tar.gz';
         default:
             throw new Error(`Unsupported platform: ${process.platform}`);
     }
