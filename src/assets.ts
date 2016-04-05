@@ -268,7 +268,7 @@ export function addAssetsIfNecessary(server: OmnisharpServer) {
 
     return serverUtils.requestWorkspaceInformation(server).then(info => {
         // If there are no .NET Core projects, we won't bother offering to add assets.
-        if ('DotNet' in info && info.DotNet.Projects.length > 0) {        
+        if ('DotNet' in info && info.DotNet.Projects.length > 0) {
             return getOperations().then(operations => {
                 if (!hasOperations(operations)) {
                     return;
