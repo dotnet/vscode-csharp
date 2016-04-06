@@ -6,19 +6,20 @@
 'use strict';
 
 import AbstractSupport from './abstractProvider';
-import * as Protocol from '../protocol';
+import * as protocol from '../protocol';
+import * as serverUtils from '../omnisharpUtils';
 import {createRequest, toLocation} from '../typeConvertion';
-import {ReferenceProvider, Location, Range, TextDocument, Uri, CancellationToken, Position} from 'vscode';
+import {ReferenceProvider, Location, TextDocument, CancellationToken, Position} from 'vscode';
 
 export default class OmnisharpReferenceProvider extends AbstractSupport implements ReferenceProvider {
 
 	public provideReferences(document: TextDocument, position: Position, options: { includeDeclaration: boolean;}, token: CancellationToken): Promise<Location[]> {
 
-		let req = createRequest<Protocol.FindUsagesRequest>(document, position);
+		let req = createRequest<protocol.FindUsagesRequest>(document, position);
 		req.OnlyThisFile = false;
 		req.ExcludeDefinition = false;
 
-		return this._server.makeRequest<Protocol.QuickFixResponse>(Protocol.FindUsages, req, token).then(res => {
+		return serverUtils.findUsages(this._server, req, token).then(res => {
 			if (res && Array.isArray(res.QuickFixes)) {
 				return res.QuickFixes.map(toLocation);
 			}

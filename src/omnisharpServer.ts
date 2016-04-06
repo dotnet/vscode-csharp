@@ -7,14 +7,13 @@
 
 import {EventEmitter} from 'events';
 import {ChildProcess, exec} from 'child_process';
-import {request} from 'http';
 import {dirname} from 'path';
 import {ReadLine, createInterface} from 'readline';
 import omnisharpLauncher from './omnisharpServerLauncher';
 import {Disposable, CancellationToken, OutputChannel, workspace, window} from 'vscode';
 import {ErrorMessage, UnresolvedDependenciesMessage, MSBuildProjectDiagnostics, ProjectInformationResponse} from './protocol';
 import getLaunchTargets, {LaunchTarget} from './launchTargetFinder';
-
+import TelemetryReporter from 'vscode-extension-telemetry';
 
 enum ServerState {
 	Starting,
@@ -25,12 +24,88 @@ enum ServerState {
 interface Request {
 	path: string;
 	data?: any;
-	onSuccess: Function;
-	onError: Function;
+	onSuccess(value: any): void;
+	onError(err: any): void;
 	_enqueued: number;
 }
 
+module Events {
+    export const StateChanged = 'stateChanged';
+    
+    export const StdOut = 'stdout';
+    export const StdErr = 'stderr';
+    
+    export const Error = 'Error';
+    export const ServerError = 'ServerError';
+    
+    export const UnresolvedDependencies = 'UnresolvedDependencies';
+    export const PackageRestoreStarted = 'PackageRestoreStarted';
+    export const PackageRestoreFinished = 'PackageRestoreFinished';
+    
+    export const ProjectChanged = 'ProjectChanged';
+    export const ProjectAdded = 'ProjectAdded';
+    export const ProjectRemoved = 'ProjectRemoved';
+    
+    export const MsBuildProjectDiagnostics = 'MsBuildProjectDiagnostics';
+    
+    export const BeforeServerStart = 'BeforeServerStart';
+    export const ServerStart = 'ServerStart';
+    export const ServerStop = 'ServerStop';
+    
+    export const MultipleLaunchTargets = 'server:MultipleLaunchTargets';
+    
+    export const Started = 'started';
+}
+
+class Delays {
+    immediateDelays: number = 0;      // 0-25 milliseconds
+    nearImmediateDelays: number = 0;  // 26-50 milliseconds
+    shortDelays: number = 0;          // 51-250 milliseconds
+    mediumDelays: number = 0;         // 251-500 milliseconds
+    idleDelays: number = 0;           // 501-1500 milliseconds
+    nonFocusDelays: number = 0;       // 1501-3000 milliseconds
+    bigDelays: number = 0;            // 3000+ milliseconds
+    
+    public report(elapsedTime: number) {
+        if (elapsedTime <= 25) {
+            this.immediateDelays += 1;
+        }
+        else if (elapsedTime <= 50) {
+            this.nearImmediateDelays += 1;
+        }
+        else if (elapsedTime <= 250) {
+            this.shortDelays += 1;
+        }
+        else if (elapsedTime <= 500) {
+            this.mediumDelays += 1;
+        }
+        else if (elapsedTime <= 1500) {
+            this.idleDelays += 1;
+        }
+        else if (elapsedTime <= 3000) {
+            this.nonFocusDelays += 1;
+        }
+        else {
+            this.bigDelays += 1;
+        }
+    }
+    
+    public toMeasures(): {[key: string]: number} {
+        return {
+            immedateDelays: this.immediateDelays,
+            nearImmediateDelays: this.nearImmediateDelays,
+            shortDelays: this.shortDelays,
+            mediumDelays: this.mediumDelays,
+            idleDelays: this.idleDelays,
+            nonFocusDelays: this.nonFocusDelays
+        };
+    }
+}
+
 export abstract class OmnisharpServer {
+
+    private _reporter: TelemetryReporter;
+    private _requestDelays: { [requestName: string]: Delays };
 
 	private _eventBus = new EventEmitter();
 	private _start: Promise<void>;
@@ -43,9 +118,10 @@ export abstract class OmnisharpServer {
 	protected _serverProcess: ChildProcess;
 	protected _extraArgv: string[];
 
-	constructor() {
+	constructor(reporter: TelemetryReporter) {
 		this._extraArgv = [];
 		this._channel = window.createOutputChannel('OmniSharp Log');
+        this._reporter = reporter;
 	}
 
 	public isRunning(): boolean {
@@ -59,9 +135,30 @@ export abstract class OmnisharpServer {
 	private _setState(value: ServerState) : void {
 		if (typeof value !== 'undefined' && value !== this._state) {
 			this._state = value;
-			this._fireEvent('stateChanged', this._state);
+			this._fireEvent(Events.StateChanged, this._state);
 		}
 	}
+    
+    private _recordRequestDelay(requestName: string, elapsedTime: number) {
+        let delays = this._requestDelays[requestName];
+        if (!delays) {
+            delays = new Delays();
+            this._requestDelays[requestName] = delays;
+        }
+        
+        delays.report(elapsedTime);
+    }
+    
+    public reportAndClearTelemetry() {
+        for (var path in this._requestDelays) {
+            const eventName = 'omnisharp' + path;
+            const measures = this._requestDelays[path].toMeasures();
+            
+            this._reporter.sendTelemetryEvent(eventName, null, measures);
+        }
+
+        this._requestDelays = null;
+    }
 
 	public getSolutionPathOrFolder(): string {
 		return this._solutionPath;
@@ -74,67 +171,67 @@ export abstract class OmnisharpServer {
 	// --- eventing
 
 	public onStdout(listener: (e: string) => any, thisArg?: any) {
-		return this._addListener('stdout', listener, thisArg);
+		return this._addListener(Events.StdOut, listener, thisArg);
 	}
 
 	public onStderr(listener: (e: string) => any, thisArg?: any) {
-		return this._addListener('stderr', listener, thisArg);
+		return this._addListener(Events.StdErr, listener, thisArg);
 	}
 
 	public onError(listener: (e: ErrorMessage) => any, thisArg?: any) {
-		return this._addListener('Error', listener, thisArg);
+		return this._addListener(Events.Error, listener, thisArg);
 	}
 
 	public onServerError(listener: (err: any) => any, thisArg?: any) {
-		return this._addListener('ServerError', listener, thisArg);
+		return this._addListener(Events.ServerError, listener, thisArg);
 	}
 
 	public onUnresolvedDependencies(listener: (e: UnresolvedDependenciesMessage) => any, thisArg?:any) {
-		return this._addListener('UnresolvedDependencies', listener, thisArg);
+		return this._addListener(Events.UnresolvedDependencies, listener, thisArg);
 	}
 
 	public onBeforePackageRestore(listener: () => any, thisArg?: any) {
-		return this._addListener('PackageRestoreStarted', listener, thisArg);
+		return this._addListener(Events.PackageRestoreStarted, listener, thisArg);
 	}
 
 	public onPackageRestore(listener: () => any, thisArg?: any) {
-		return this._addListener('PackageRestoreFinished', listener, thisArg);
+		return this._addListener(Events.PackageRestoreFinished, listener, thisArg);
 	}
 
 	public onProjectChange(listener: (e: ProjectInformationResponse) => any, thisArg?: any) {
-		return this._addListener('ProjectChanged', listener, thisArg);
+		return this._addListener(Events.ProjectChanged, listener, thisArg);
 	}
 
 	public onProjectAdded(listener: (e: ProjectInformationResponse) => any, thisArg?: any) {
-		return this._addListener('ProjectAdded', listener, thisArg);
+		return this._addListener(Events.ProjectAdded, listener, thisArg);
 	}
 
 	public onProjectRemoved(listener: (e: ProjectInformationResponse) => any, thisArg?: any) {
-		return this._addListener('ProjectRemoved', listener, thisArg);
+		return this._addListener(Events.ProjectRemoved, listener, thisArg);
 	}
 
 	public onMsBuildProjectDiagnostics(listener: (e: MSBuildProjectDiagnostics) => any, thisArg?: any) {
-		return this._addListener('MsBuildProjectDiagnostics', listener, thisArg);
+		return this._addListener(Events.MsBuildProjectDiagnostics, listener, thisArg);
 	}
 
 	public onBeforeServerStart(listener: (e:string) => any) {
-		return this._addListener('BeforeServerStart', listener);
+		return this._addListener(Events.BeforeServerStart, listener);
 	}
 
 	public onServerStart(listener: (e: string) => any) {
-		return this._addListener('ServerStart', listener);
+		return this._addListener(Events.ServerStart, listener);
 	}
 
 	public onServerStop(listener: () => any) {
-		return this._addListener('ServerStop', listener);
+		return this._addListener(Events.ServerStop, listener);
 	}
 
 	public onMultipleLaunchTargets(listener: (targets: LaunchTarget[]) => any, thisArg?: any) {
-		return this._addListener('server:MultipleLaunchTargets', listener, thisArg);
+		return this._addListener(Events.MultipleLaunchTargets, listener, thisArg);
 	}
 
 	public onOmnisharpStart(listener: () => any) {
-		return this._addListener('started', listener);
+		return this._addListener(Events.Started, listener);
 	}
 
 	private _addListener(event: string, listener: (e: any) => any, thisArg?: any): Disposable {
@@ -161,22 +258,23 @@ export abstract class OmnisharpServer {
 		this._setState(ServerState.Starting);
 		this._solutionPath = solutionPath;
 
-		var cwd = dirname(solutionPath),
+		const cwd = dirname(solutionPath),
 			argv = ['-s', solutionPath, '--hostPID', process.pid.toString(), 'dnx:enablePackageRestore=false'].concat(this._extraArgv);
 
-		this._fireEvent('stdout', `[INFO] Starting OmniSharp at '${solutionPath}'...\n`);
-		this._fireEvent('BeforeServerStart', solutionPath);
+		this._fireEvent(Events.StdOut, `[INFO] Starting OmniSharp at '${solutionPath}'...\n`);
+		this._fireEvent(Events.BeforeServerStart, solutionPath);
 
 		return omnisharpLauncher(cwd, argv).then(value => {
 			this._serverProcess = value.process;
-            this._fireEvent('stdout', `[INFO] Started OmniSharp from '${value.command}' with process id ${value.process.pid}...\n`);
-            this._fireEvent('ServerStart', solutionPath);
+            this._requestDelays = {};
+            this._fireEvent(Events.StdOut, `[INFO] Started OmniSharp from '${value.command}' with process id ${value.process.pid}...\n`);
 			this._setState(ServerState.Started);
+            this._fireEvent(Events.ServerStart, solutionPath);
 			return this._doConnect();
 		}).then(_ => {
 			this._processQueue();
 		}, err => {
-			this._fireEvent('ServerError', err);
+			this._fireEvent(Events.ServerError, err);
 			throw err;
 		});
 	}
@@ -185,34 +283,38 @@ export abstract class OmnisharpServer {
 
 	public stop(): Promise<void> {
 
-		var ret: Promise<OmnisharpServer>;
+		let ret: Promise<OmnisharpServer>;
 
 		if (!this._serverProcess) {
 			// nothing to kill
-			ret = Promise.resolve(undefined);
+			ret = Promise.resolve<OmnisharpServer>(undefined);
 
-		} else if (/^win/.test(process.platform)) {
+		}
+        else if (process.platform === 'win32') {
 			// when killing a process in windows its child
 			// processes are *not* killed but become root
 			// processes. Therefore we use TASKKILL.EXE
 			ret = new Promise<OmnisharpServer>((resolve, reject) => {
-				var killer = exec(`taskkill /F /T /PID ${this._serverProcess.pid}`, function (err, stdout, stderr) {
+				const killer = exec(`taskkill /F /T /PID ${this._serverProcess.pid}`, function (err, stdout, stderr) {
 					if (err) {
 						return reject(err);
 					}
 				});
+                
 				killer.on('exit', resolve);
 				killer.on('error', reject);
 			});
-		} else {
-			this._serverProcess.kill('SIGTERM');
-			ret = Promise.resolve(undefined);
 		}
+        else {
+			this._serverProcess.kill('SIGTERM');
+			ret = Promise.resolve<OmnisharpServer>(undefined);
+		}
+        
 		return ret.then(_ => {
 			this._start = null;
 			this._serverProcess = null;
 			this._setState(ServerState.Stopped);
-			this._fireEvent('ServerStop', this);
+			this._fireEvent(Events.ServerStop, this);
 			return;
 		});
 	}
@@ -220,7 +322,7 @@ export abstract class OmnisharpServer {
 	public restart(solutionPath: string = this._solutionPath): Promise<void> {
 		if (solutionPath) {
 			return this.stop().then(() => {
-				this.start(solutionPath)
+				this.start(solutionPath);
 			});
 		}
 	}
@@ -250,7 +352,7 @@ export abstract class OmnisharpServer {
 					}
 				}
 
-				this._fireEvent('server:MultipleLaunchTargets', targets);
+				this._fireEvent(Events.MultipleLaunchTargets, targets);
 				return Promise.reject<void>(undefined);
 			}
 
@@ -261,23 +363,28 @@ export abstract class OmnisharpServer {
 
 	// --- requests et al
 
-	public makeRequest<R>(path: string, data?: any, token?: CancellationToken): Promise<R> {
+	public makeRequest<TResponse>(path: string, data?: any, token?: CancellationToken): Promise<TResponse> {
 
 		if (this._getState() !== ServerState.Started) {
-			return Promise.reject<R>('server has been stopped or not started');
+			return Promise.reject<TResponse>('server has been stopped or not started');
 		}
-
+        
+        let startTime: number;
 		let request: Request;
-		let promise = new Promise<any>((resolve, reject) => {
+        
+		let promise = new Promise<TResponse>((resolve, reject) => {
+            startTime = Date.now();
+            
 			request = {
 				path,
 				data,
-				onSuccess: resolve,
-				onError: reject,
+				onSuccess: value => resolve(value),
+				onError: err => reject(err),
 				_enqueued: Date.now()
 			};
+            
 			this._queue.push(request);
-			// this._statOnRequestStart(request);
+            
 			if (this._getState() === ServerState.Started && !this._isProcessingQueue) {
 				this._processQueue();
 			}
@@ -295,7 +402,13 @@ export abstract class OmnisharpServer {
 			});
 		}
 
-		return promise;
+		return promise.then(response => {
+            let endTime = Date.now();
+            let elapsedTime = endTime - startTime;
+            this._recordRequestDelay(path, elapsedTime);
+            
+            return response;
+        });
 	}
 
 	private _processQueue(): void {
@@ -310,15 +423,13 @@ export abstract class OmnisharpServer {
 		this._isProcessingQueue = true;
 
 		// send next request and recurse when done
-		var thisRequest = this._queue.shift();
+		const thisRequest = this._queue.shift();
 		this._makeNextRequest(thisRequest.path, thisRequest.data).then(value => {
 			thisRequest.onSuccess(value);
 			this._processQueue();
-			// this._statOnRequestEnd(thisRequest, true);
 		}, err => {
 			thisRequest.onError(err);
 			this._processQueue();
-			// this._statOnRequestEnd(thisRequest, false);
 		}).catch(err => {
 			console.error(err);
 			this._processQueue();
@@ -326,17 +437,6 @@ export abstract class OmnisharpServer {
 	}
 
 	protected abstract _makeNextRequest(path: string, data: any): Promise<any>;
-
-	// private _statOnRequestStart(request: Request): void {
-	// 	console.log(`[DEBUG] *enqueuing* request '${request.path}' (queue size is ${this._queue.length})\n`);
-	// }
-
-	// private _statOnRequestEnd(request: Request, successfully: boolean): void {
-	// 	var duration = Date.now() - request._enqueued,
-	// 		state = successfully ? 'successfully' : 'with errors';
-
-	// 	console.log(`[DEBUG] request '${request.path}' finished *${state}* after ${duration}ms\n`);
-	// }
 }
 
 namespace WireProtocol {
@@ -370,14 +470,13 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 
 	private static _seqPool = 1;
 	private static StartupTimeout = 1000 * 60;
-	private static ResponsePacketTimeout = 1000 * 60 * 15; // helps debugging
 
 	private _rl: ReadLine;
 	private _activeRequest: { [seq: number]: { onSuccess: Function; onError: Function; } } = Object.create(null);
 	private _callOnStop: Function[] = [];
 
-	constructor() {
-		super();
+	constructor(reporter: TelemetryReporter) {
+		super(reporter);
 
 		// extra argv
 		this._extraArgv.push('--stdio');
@@ -400,18 +499,25 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 			terminal: false
 		});
 
-		var p = new Promise<OmnisharpServer>((resolve, reject) => {
-			var listener: Disposable;
+		const p = new Promise<OmnisharpServer>((resolve, reject) => {
+			let listener: Disposable;
 
 			// timeout logic
-			var handle = setTimeout(() => {
-				listener && listener.dispose();
+			const handle = setTimeout(() => {
+                if (listener)
+                {
+                    listener.dispose();
+                }
+                
 				reject(new Error('Failed to start OmniSharp'));
 			}, StdioOmnisharpServer.StartupTimeout);
 
 			// handle started-event
 			listener = this.onOmnisharpStart(() => {
-				listener && listener.dispose();
+                if (listener)
+                {
+				    listener.dispose();
+                }
 				clearTimeout(handle);
 				resolve(this);
 			});
@@ -424,16 +530,17 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 
 	private _startListening(): void {
 
-		var onLineReceived = (line: string) => {
+		const onLineReceived = (line: string) => {
 			if (line[0] !== '{') {
-				this._fireEvent('stdout', `${line}\n`);
+				this._fireEvent(Events.StdOut, `${line}\n`);
 				return;
 			}
 
-			var packet: WireProtocol.Packet;
+			let packet: WireProtocol.Packet;
 			try {
 				packet = JSON.parse(line);
-			} catch (e) {
+			}
+            catch (e) {
 				// not json
 				return;
 			}
@@ -455,13 +562,14 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 					break;
 			}
 		};
+        
 		this._rl.addListener('line', onLineReceived);
 		this._callOnStop.push(() => this._rl.removeListener('line', onLineReceived));
 	}
 
 	private _handleResponsePacket(packet: WireProtocol.ResponsePacket): void {
 
-		var requestSeq = packet.Request_seq,
+		const requestSeq = packet.Request_seq,
 			entry = this._activeRequest[requestSeq];
 
 		if (!entry) {
@@ -482,8 +590,8 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 
 		if (packet.Event === 'log') {
 			// handle log events
-			var entry = <{ LogLevel: string; Name: string; Message: string; }> packet.Body;
-			this._fireEvent('stdout', `[${entry.LogLevel}:${entry.Name}] ${entry.Message}\n`);
+			const entry = <{ LogLevel: string; Name: string; Message: string; }> packet.Body;
+			this._fireEvent(Events.StdOut, `[${entry.LogLevel}:${entry.Name}] ${entry.Message}\n`);
 			return;
 		} else {
 			// fwd all other events
@@ -493,18 +601,18 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 
 	protected _makeNextRequest(path: string, data: any): Promise<any> {
 
-		var thisRequestPacket: WireProtocol.RequestPacket = {
+		const thisRequestPacket: WireProtocol.RequestPacket = {
 			Type: 'request',
 			Seq: StdioOmnisharpServer._seqPool++,
 			Command: path,
 			Arguments: data
 		};
 
-		return new Promise<any>((c, e) => {
+		return new Promise<any>((resolve, reject) => {
 
 			this._activeRequest[thisRequestPacket.Seq] = {
-				onSuccess: c,
-				onError: e
+				onSuccess: value => resolve(value),
+				onError: err => reject(err)
 			};
 
 			this._serverProcess.stdin.write(JSON.stringify(thisRequestPacket) + '\n');

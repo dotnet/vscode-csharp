@@ -5,10 +5,11 @@
 
 'use strict';
 
-import {CancellationToken, CodeLens, SymbolKind, Range, Uri, TextDocument, CodeLensProvider, Position} from 'vscode';
-import {createRequest, toRange, toLocation} from '../typeConvertion';
+import {CancellationToken, CodeLens, Range, Uri, TextDocument, CodeLensProvider} from 'vscode';
+import {toRange, toLocation} from '../typeConvertion';
 import AbstractSupport from './abstractProvider';
-import * as proto from '../protocol';
+import * as protocol from '../protocol';
+import * as serverUtils from '../omnisharpUtils';
 
 class OmniSharpCodeLens extends CodeLens {
 
@@ -31,16 +32,14 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
 
 	provideCodeLenses(document: TextDocument, token: CancellationToken): CodeLens[] | Thenable<CodeLens[]> {
 
-		return this._server.makeRequest<proto.CurrentFileMembersAsTreeResponse>(proto.CurrentFileMembersAsTree, {
-			Filename: document.fileName
-		}, token).then(tree => {
-			var ret: CodeLens[] = [];
+		return serverUtils.currentFileMembersAsTree(this._server, { Filename: document.fileName }, token).then(tree => {
+			let ret: CodeLens[] = [];
 			tree.TopLevelTypeDefinitions.forEach(node => OmniSharpCodeLensProvider._convertQuickFix(ret, document.fileName, node));
 			return ret;
 		});
 	}
 
-	private static _convertQuickFix(bucket: CodeLens[], fileName:string, node: proto.Node): void {
+	private static _convertQuickFix(bucket: CodeLens[], fileName:string, node: protocol.Node): void {
 
 		if (node.Kind === 'MethodDeclaration' && OmniSharpCodeLensProvider.filteredSymbolNames[node.Location.Text]) {
 			return;
@@ -57,7 +56,7 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
 	resolveCodeLens(codeLens: CodeLens, token: CancellationToken): Thenable<CodeLens> {
 		if (codeLens instanceof OmniSharpCodeLens) {
 
-			let req = <proto.FindUsagesRequest>{
+			let req = <protocol.FindUsagesRequest>{
 				Filename: codeLens.fileName,
 				Line: codeLens.range.start.line + 1,
 				Column: codeLens.range.start.character + 1,
@@ -65,10 +64,11 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
 				ExcludeDefinition: true
 			};
 
-			return this._server.makeRequest<proto.QuickFixResponse>(proto.FindUsages, req, token).then(res => {
+			return serverUtils.findUsages(this._server, req, token).then(res => {
 				if (!res || !Array.isArray(res.QuickFixes)) {
 					return;
 				}
+                
 				let len = res.QuickFixes.length;
 				codeLens.command = {
 					title: len === 1 ? '1 reference' : `${len} references`,

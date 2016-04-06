@@ -7,9 +7,10 @@
 
 import {plain} from './documentation';
 import AbstractSupport from './abstractProvider';
-import * as proto from '../protocol';
+import * as protocol from '../protocol';
+import * as serverUtils from '../omnisharpUtils';
 import {createRequest} from '../typeConvertion';
-import {CompletionItemProvider, CompletionItem, CompletionItemKind, Uri, CancellationToken, TextDocument, Range, Position} from 'vscode';
+import {CompletionItemProvider, CompletionItem, CompletionItemKind, CancellationToken, TextDocument, Range, Position} from 'vscode';
 
 export default class OmniSharpCompletionItemProvider extends AbstractSupport implements CompletionItemProvider {
 
@@ -21,12 +22,12 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
 			wordToComplete = document.getText(new Range(range.start, position));
 		}
 
-		let req = createRequest<proto.AutoCompleteRequest>(document, position);
+		let req = createRequest<protocol.AutoCompleteRequest>(document, position);
 		req.WordToComplete = wordToComplete;
 		req.WantDocumentationForEveryCompletionResult = true;
 		req.WantKind = true;
 
-		return this._server.makeRequest<proto.AutoCompleteResponse[]>(proto.AutoComplete, req).then(values => {
+		return serverUtils.autoComplete(this._server, req).then(values => {
 
 			if (!values) {
 				return;
@@ -73,7 +74,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
 	}
 }
 
-var _kinds: { [kind: string]: CompletionItemKind; } = Object.create(null);
+const _kinds: { [kind: string]: CompletionItemKind; } = Object.create(null);
 _kinds['Variable'] = CompletionItemKind.Variable;
 _kinds['Struct'] = CompletionItemKind.Interface;
 _kinds['Interface'] = CompletionItemKind.Interface;

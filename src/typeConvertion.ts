@@ -22,16 +22,16 @@ export function toRange2(rangeLike: { StartLine: number; StartColumn: number; En
 	return new vscode.Range(StartLine - 1, StartColumn - 1, EndLine - 1, EndColumn - 1);
 }
 
-export function createRequest<T extends proto.Request>(document: vscode.TextDocument, where: vscode.Position | vscode.Range, includeBuffer:boolean = false): T {
+export function createRequest<T extends proto.Request>(document: vscode.TextDocument, where: vscode.Position | vscode.Range, includeBuffer: boolean = false): T {
 
 	let Line: number, Column: number;
 
 	if (where instanceof vscode.Position) {
 		Line = where.line + 1;
 		Column = where.character + 1;
-	} else if(where instanceof vscode.Range) {
+	} else if (where instanceof vscode.Range) {
 		Line = where.start.line + 1;
-		Column = where.start.character + 1
+		Column = where.start.character + 1;
 	}
 
 	let request: proto.Request = {
@@ -52,13 +52,13 @@ export function toDocumentSymbol(bucket: vscode.SymbolInformation[], node: proto
 
 	if (node.ChildNodes) {
 		for (let child of node.ChildNodes) {
-			toDocumentSymbol(bucket, child, ret.name)
+			toDocumentSymbol(bucket, child, ret.name);
 		}
 	}
 	bucket.push(ret);
 }
 
-var kinds: { [kind: string]: vscode.SymbolKind; } = Object.create(null);
+let kinds: { [kind: string]: vscode.SymbolKind; } = Object.create(null);
 kinds['NamespaceDeclaration'] = vscode.SymbolKind.Namespace;
 kinds['ClassDeclaration'] = vscode.SymbolKind.Class;
 kinds['FieldDeclaration'] = vscode.SymbolKind.Field;

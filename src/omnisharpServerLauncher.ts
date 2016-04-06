@@ -10,13 +10,27 @@ import {spawn, ChildProcess} from 'child_process';
 import {workspace} from 'vscode';
 import {satisfies} from 'semver';
 import {join} from 'path';
+import {getOmnisharpLaunchFilePath} from './omnisharpPath';
+import {downloadOmnisharp} from './omnisharpDownload';
 
-var omnisharpEnv = 'OMNISHARP';
-var isWindows = /^win/.test(process.platform);
+const isWindows = process.platform === 'win32';
 
-export default function launch(cwd: string, args: string[]):Promise < { process: ChildProcess, command: string } > {
+export interface LaunchResult {
+    process: ChildProcess;
+    command: string;
+}
 
-	return new Promise((resolve, reject) => {
+export function installOmnisharpIfNeeded(): Promise<string> {
+    return getOmnisharpLaunchFilePath().catch(err => {
+        return downloadOmnisharp().then(_ => {
+            return getOmnisharpLaunchFilePath();
+        })
+    });
+}
+
+export default function launch(cwd: string, args: string[]): Promise<LaunchResult> {
+
+	return new Promise<LaunchResult>((resolve, reject) => {
 
 		try {
 			(isWindows ? launchWindows(cwd, args) : launchNix(cwd, args)).then(value => {
@@ -38,8 +52,8 @@ export default function launch(cwd: string, args: string[]):Promise < { process:
 	});
 }
 
-function launchWindows(cwd: string, args: string[]): Promise<{ process: ChildProcess, command: string }> {
-	return getOmnisharpPath().then(command => {
+function launchWindows(cwd: string, args: string[]): Promise<LaunchResult> {
+	return installOmnisharpIfNeeded().then(command => {
 
 		args = args.slice(0);
 		args.unshift(command);
@@ -63,19 +77,9 @@ function launchWindows(cwd: string, args: string[]): Promise<{ process: ChildPro
 	});
 }
 
-function launchNix(cwd: string, args: string[]): Promise<{ process: ChildProcess, command: string }>{
-
-	return new Promise((resolve, reject) => {
-		hasMono('>=4.0.1').then(hasIt => {
-			if (!hasIt) {
-				reject(new Error('Cannot start Omnisharp because Mono version >=4.0.1 is required. See http://go.microsoft.com/fwlink/?linkID=534832#_20001'));
-			} else {
-				resolve();
-			}
-		});
-	}).then(_ => {
-		return getOmnisharpPath();
-	}).then(command => {
+function launchNix(cwd: string, args: string[]): Promise<LaunchResult>{
+    
+    return installOmnisharpIfNeeded().then(command => {
 		let process = spawn(command, args, {
 			detached: false,
 			// env: details.env,
@@ -85,41 +89,31 @@ function launchNix(cwd: string, args: string[]): Promise<{ process: ChildProcess
 		return {
 			process,
 			command
-		}
-	});
-}
+		};
+    });
 
-function getOmnisharpPath(): Promise<string> {
+	// return new Promise((resolve, reject) => {
+	// 	hasMono('>=4.0.1').then(hasIt => {
+	// 		if (!hasIt) {
+	// 			reject(new Error('Cannot start Omnisharp because Mono version >=4.0.1 is required. See http://go.microsoft.com/fwlink/?linkID=534832#_20001'));
+	// 		} else {
+	// 			resolve();
+	// 		}
+	// 	});
+	// }).then(_ => {
+	// 	return installOmnisharpIfNeeded();
+	// }).then(command => {
+	// 	let process = spawn(command, args, {
+	// 		detached: false,
+	// 		// env: details.env,
+	// 		cwd
+	// 	});
 
-	let pathCandidate: string;
-
-	let config = workspace.getConfiguration();
-	if (config.has('csharp.omnisharp')) {
-		// form config
-		pathCandidate = config.get<string>('csharp.omnisharp');
-
-	} else if (typeof process.env[omnisharpEnv] === 'string') {
-		// form enviroment variable
-		console.warn('[deprecated] use workspace or user settings with "csharp.omnisharp":"/path/to/omnisharp"');
-		pathCandidate = process.env[omnisharpEnv];
-
-	} else {
-		// bundled version of Omnisharp
-		pathCandidate = join(__dirname, '../bin/omnisharp')
-		if (isWindows) {
-			pathCandidate += '.cmd';
-		}
-	}
-
-	return new Promise<string>((resolve, reject) => {
-		fileExists(pathCandidate, localExists => {
-			if (localExists) {
-				resolve(pathCandidate);
-			} else {
-				reject('OmniSharp does not exist at location: ' + pathCandidate);
-			}
-		});
-	});
+	// 	return {
+	// 		process,
+	// 		command
+	// 	};
+	// });
 }
 
 const versionRegexp = /(\d+\.\d+\.\d+)/;

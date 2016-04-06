@@ -5,51 +5,47 @@
 
 'use strict';
 
-export var GoToDefinition = '/gotoDefinition';
-
-export var CodeCheck = '/codecheck';
-
-export var AutoComplete = '/autocomplete';
-
-export var CurrentFileMembersAsTree = '/currentfilemembersastree';
-
-export var TypeLookup = '/typelookup';
-
-export var AddToProject = '/addtoproject';
-
-export var RemoveFromProject = '/removefromproject';
-
-export var FindUsages = '/findusages';
-
-export var FindSymbols = '/findsymbols';
-
-export var CodeFormat = '/codeformat';
-
-export var GetCodeActions = '/getcodeactions';
-
-export var RunCodeAction = '/runcodeaction';
-
-export var FormatAfterKeystroke = '/formatAfterKeystroke';
-
-export var FormatRange = '/formatRange';
-
-export var UpdateBuffer = '/updatebuffer';
-
-export var ChangeBuffer = '/changebuffer';
-
-export var Projects = '/projects';
-
-export var Rename = '/rename';
-
-export var FilesChanged = '/filesChanged';
-
-export var SignatureHelp = '/signatureHelp';
+export module Requests {
+    export const AddToProject = '/addtoproject';
+    export const AutoComplete = '/autocomplete';
+    export const CodeCheck = '/codecheck';
+    export const CodeFormat = '/codeformat';
+    export const ChangeBuffer = '/changebuffer';
+    export const CurrentFileMembersAsTree = '/currentfilemembersastree';
+    export const FilesChanged = '/filesChanged';
+    export const FindSymbols = '/findsymbols';
+    export const FindUsages = '/findusages';
+    export const FormatAfterKeystroke = '/formatAfterKeystroke';
+    export const FormatRange = '/formatRange';
+    export const GetCodeActions = '/getcodeactions';
+    export const GoToDefinition = '/gotoDefinition';
+    export const Projects = '/projects';
+    export const RemoveFromProject = '/removefromproject';
+    export const Rename = '/rename';
+    export const RunCodeAction = '/runcodeaction';
+    export const SignatureHelp = '/signatureHelp';   
+    export const TypeLookup = '/typelookup';
+    export const UpdateBuffer = '/updatebuffer';
+}
 
 export interface Request {
 	Filename: string;
 	Line?: number;
 	Column?: number;
 	Buffer?: string;
+    Changes?: LinePositionSpanTextChange[];
+}
+
+export interface LinePositionSpanTextChange {
+    NewText: string;
+    StartLine: number;
+    StartColumn: number;
+    EndLine: number;
+    EndColumn: number;
+}
+
+export interface UpdateBufferRequest extends Request {
+    FromDisk?: boolean;
 }
 
 export interface ChangeBufferRequest {
@@ -267,11 +263,30 @@ export interface DnxFramework {
 
 export interface DotNetWorkspaceInformation {
 	Projects: DotNetProject[];
+	RuntimePath: string;
 }
 
 export interface DotNetProject {
 	Path: string;
+	Name: string;
+	ProjectSearchPaths: string[];
+	Configurations: DotNetConfiguration[];
+	Frameworks: DotNetFramework[];
 	SourceFiles: string[];
+}
+
+export interface DotNetConfiguration {
+	Name: string;
+	CompilationOutputPath: string;
+	CompilationOutputAssemblyFile: string;
+	CompilationOutputPdbFile: string;
+	EmitEntryPoint?: boolean;
+}
+
+export interface DotNetFramework {
+	Name: string;
+	FriendlyName: string;
+	ShortName: string;
 }
 
 export interface RenameRequest extends Request {
@@ -347,9 +362,11 @@ export interface PackageDependency {
 }
 
 export namespace V2 {
-
-	export var GetCodeActions = '/v2/getcodeactions';
-	export var RunCodeAction = '/v2/runcodeaction';
+    
+    export module Requests {
+        export const GetCodeActions = '/v2/getcodeactions';
+        export const RunCodeAction = '/v2/runcodeaction';
+    }
 
 	export interface Point {
 		Line: number;
@@ -362,7 +379,7 @@ export namespace V2 {
 	}
 
 	export interface GetCodeActionsRequest extends Request {
-		Selection: Range
+		Selection: Range;
 	}
 
 	export interface OmniSharpCodeAction {
@@ -422,5 +439,4 @@ export namespace V2 {
 		Name: string;
 		Version: string;
 	}
-
 }
