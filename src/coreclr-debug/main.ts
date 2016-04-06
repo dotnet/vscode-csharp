@@ -265,7 +265,7 @@ function createProjectJson(targetRuntime: string): any
         dependencies: {
             "Microsoft.VisualStudio.clrdbg": "14.0.25201-preview-2911579",
             "Microsoft.VisualStudio.clrdbg.MIEngine": "14.0.30401-preview-1",
-            "Microsoft.VisualStudio.OpenDebugAD7": "1.0.20401-preview-1",
+            "Microsoft.VisualStudio.OpenDebugAD7": "1.0.20405-preview-1",
             "NETStandard.Library": "1.5.0-rc2-23931",
             "Newtonsoft.Json": "7.0.1",
             "Microsoft.VisualStudio.Debugger.Interop.Portable": "1.0.1",
