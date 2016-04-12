@@ -5,18 +5,23 @@ This page gives you detailed instructions on how to debug code running under .NE
 File bugs and feature requests [here](https://github.com/OmniSharp/omnisharp-vscode/issues) and [join our insiders group](http://landinghub.visualstudio.com/dotnetcoreinsiders) to help us build great tooling for .NET Core.
 
 ####Requirements
-* Only works with the RC2 version of .NET Core
+* Requires .NET Core RC2 (will not work with earlier versions)
 * X64 only
 * Supports OSX, Ubuntu 14.04, Red Hat Enterprise Linux 7.2, Debian 8.2, Centos 7.1, and Windows 7+
 
 ###First Time setup
 ##### 1: Get Visual Studio Code
-Install Visual Studio Code (VSC). Pick the latest VSC version from here: https://code.visualstudio.com Make sure it is at least 0.10.10.
+Install Visual Studio Code (VSC). Pick the latest VSC version from here: https://code.visualstudio.com Make sure it is at least 0.10.10. 
+
+If you are not sure what version you have, you can see your version of VS Code:
+
+* **OSX:** Code->Abort Visual Studio Code
+* **Windows / Linux:** Help->Abort
 
 ##### 2: Install .NET command line tools
 Install the .NET Core command line tools (CLI) by following the installation part of the instructions here: http://dotnet.github.io/getting-started
 
-**Hint for Mac**: .NET Core requires openSSL to work. Don't forget this! Execute: `brew install openssl`
+**OSX:** .NET Core requires openSSL to work. Don't forget this! Execute: `brew install openssl`
 
 ##### 3: Install C# Extension for VS Code
 Open the command palette in VS Code (F1) and type "ext install C#" to trigger the installation of the extension. VS Code will show a message that the extension has been installed and it will restart.
@@ -45,13 +50,18 @@ You can also find some example projects on https://github.com/aspnet/cli-samples
 Go to File->Open and open the directory in Visual Studio Code. If this is the first time that the C# extension has been activated, it will now download additional platform-specific dependencies.
 
 ##### 3: Add VS Code configuration files to the workspace
-VS Code needs to be configured so it understands how to build your project and debug it. For this there are two files which need to be added -- .vscode/tasks.json and .vscode/launch.json. Tasks.json is used to configure what command line command is executed to build your project, and launch.json configures the type of debugger you want to use, and what program should be run under that debugger. Launch.json also configures VS Code to run the build task from tasks.json so that your program is automatically up-to-date each time you go to debug it.
+VS Code needs to be configured so it understands how to build your project and debug it. For this there are two files which need to be added -- .vscode/tasks.json and .vscode/launch.json. 
+
+* Tasks.json is used to configure what command line command is executed to build your project, and launch.json configures the type of debugger you want to use, and what program should be run under that debugger. 
+* Launch.json configures VS Code to run the build task from tasks.json so that your program is automatically up-to-date each time you go to debug it.
 
 For most projects, the C# extension can automatically generate these files for you. When you open a project and the C# extension is installed, you should see the following prompt in VS Code:
 
 ![Info: Required assets to build and debug are missing from your project. Add them? Yes | Close](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/images/info-bar-add-required-assets.png)
 
 Clicking 'Yes' on this prompt should add these resources.
+
+**Creating configuration files manually**
 
 In case you would rather generate .vscode/tasks.json by hand, you can start with [this example](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/ExampleCode/tasks.json) which configures VS Code to launch 'dotnet build'. If you don't want to build from VS Code at all, you can skip this file. If you do this, you will need to comment out the 'preLaunchTask' from .vscode/launch.json when you create it.
 
@@ -78,9 +88,14 @@ Now open the configuration drop down from the top and select the one you want.
 
 ####More things to configure In launch.json
 #####Just My Code
-You can optionally disable justMyCode by setting it to "false".
+You can optionally disable justMyCode by setting it to "false". You should disable Just My Code when you are trying to debug into a library that you pulled down which doesn't have symbols or is optimized.
 
     "justMyCode":false*
+
+Just My Code is a set of features that makes it easier to focus on debugging your code by hiding some of the details of optimized libraries that you might be using, like the .NET Framework itself. The most important sub parts of this feature are --
+
+* User-unhandled exceptions: automatically stop the debugger just before exceptions are about to be caught by the framework
+* Just My Code stepping: when stepping, if framework code calls back to user code, automaticially stop.
 
 #####Source File Map
 You can optionally configure a file by file mapping by providing map following this schema:
