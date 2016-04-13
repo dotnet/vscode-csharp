@@ -57,7 +57,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
     
     writeInstallBeginFile().then(function() {
         installStage = 'writeProjectJson';
-        return writeProjectJson();
+        return writeProjectJson(_channel);
     }).then(function() {
         installStage = 'dotnetRestore'
         return spawnChildProcess('dotnet', ['--verbose', 'restore', '--configfile', 'NuGet.config'], _channel, _util.coreClrDebugDir())  
@@ -240,12 +240,16 @@ function ensureAd7EngineExists(channel: vscode.OutputChannel, outputDirectory: s
     });
 }
 
-function writeProjectJson(): Promise<void> {
-    return new Promise<void>(function(resolve, reject) {
-        var projectJson = createProjectJson(CoreClrDebugUtil.getPlatformRuntimeId());
+function writeProjectJson(channel: vscode.OutputChannel): Promise<void> {
+    return new Promise<void>(function (resolve, reject) {
+        const projectJsonPath = path.join(_util.coreClrDebugDir(), 'project.json');
+        _channel.appendLine('Creating ' + projectJsonPath);
+
+        const projectJson = createProjectJson(getPlatformRuntimeId(channel));
         
-        fs.writeFile(path.join(_util.coreClrDebugDir(), 'project.json'), JSON.stringify(projectJson, null, 2), {encoding: 'utf8'}, function(err) {
-           if (err) {
+        fs.writeFile(projectJsonPath, JSON.stringify(projectJson, null, 2), {encoding: 'utf8'}, function(err) {
+            if (err) {
+               channel.appendLine('Error: Unable to write to project.json: ' + err.message);
                reject(err.code);
            }
            else {
@@ -253,6 +257,71 @@ function writeProjectJson(): Promise<void> {
            }
         });
     });
+}
+
+function getPlatformRuntimeId(channel: vscode.OutputChannel) : string {
+    switch (process.platform) {
+        case 'win32':
+            return 'win7-x64';
+        case 'darwin':
+            return getDotnetRuntimeId(channel);
+        case 'linux':
+            return getDotnetRuntimeId(channel);
+        default:
+            channel.appendLine('Error: Unsupported platform ' + process.platform);
+            throw Error('Unsupported platform ' + process.platform);
+    }
+}
+    
+function getDotnetRuntimeId(channel: vscode.OutputChannel): string {
+    channel.appendLine("Starting 'dotnet --info'");
+
+    const cliVersionErrorMessage = "Ensure that .NET Core CLI Tools version >= 1.0.0-beta-002173 is installed. Run 'dotnet --version' to see what version is installed.";
+
+    let child = child_process.spawnSync('dotnet', ['--info'], { cwd: _util.coreClrDebugDir() });
+
+    if (child.stderr.length > 0) {
+        channel.append('Error: ' + child.stderr.toString());
+    }
+    const out = child.stdout.toString();
+    if (out.length > 0) {
+        channel.append(out);
+    }
+
+    if (child.status !== 0) {
+        const message = `Error: 'dotnet --info' failed with error ${child.status}`;
+        channel.appendLine(message);
+        channel.appendLine(cliVersionErrorMessage);
+        throw new Error(message);
+    }
+
+    if (out.length === 0) {
+        const message = "Error: 'dotnet --info' provided no output";
+        channel.appendLine(message);
+        channel.appendLine(cliVersionErrorMessage);
+        throw new Error(message);
+    }
+
+    let lines = out.split('\n');
+    let ridLine = lines.filter(function (value) {
+        return value.trim().startsWith('RID:');
+    });
+
+    if (ridLine.length < 1) {
+        channel.appendLine("Error: Cannot find 'RID' property");
+        channel.appendLine(cliVersionErrorMessage);
+        throw new Error('Cannot obtain Runtime ID from dotnet cli');
+    }
+
+    let rid = ridLine[0].split(':')[1].trim();
+
+    if (!rid) {
+        channel.appendLine("Error: Unable to parse 'RID' property.");
+        channel.appendLine(cliVersionErrorMessage);
+        throw new Error('Unable to determine Runtime ID');
+    }
+
+    return rid;
 }
 
 function createProjectJson(targetRuntime: string): any
