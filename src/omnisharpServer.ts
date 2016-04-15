@@ -264,7 +264,7 @@ export abstract class OmnisharpServer {
 		this._fireEvent(Events.StdOut, `[INFO] Starting OmniSharp at '${solutionPath}'...\n`);
 		this._fireEvent(Events.BeforeServerStart, solutionPath);
 
-		return omnisharpLauncher(cwd, argv).then(value => {
+		return omnisharpLauncher(this._channel, cwd, argv).then(value => {
 			this._serverProcess = value.process;
             this._requestDelays = {};
             this._fireEvent(Events.StdOut, `[INFO] Started OmniSharp from '${value.command}' with process id ${value.process.pid}...\n`);
