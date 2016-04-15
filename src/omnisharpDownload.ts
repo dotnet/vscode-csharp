@@ -8,26 +8,39 @@
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 import * as tmp from 'tmp';
+import {SupportedPlatform, getSupportedPlatform} from './utils';
 
 const Decompress = require('decompress');
 const Github = require('github-releases');
 
 const OmnisharpRepo = 'OmniSharp/omnisharp-roslyn';
-const OmnisharpVersion = 'v1.9-alpha10';
+const OmnisharpVersion = 'v1.9-alpha13';
 const DefaultInstallLocation = path.join(__dirname, '../.omnisharp');
 
 tmp.setGracefulCleanup();
 
 function getOmnisharpAssetName(): string {
-    switch (process.platform) {
-        case 'win32':
+    switch (getSupportedPlatform()) {
+        case SupportedPlatform.Windows:
             return 'omnisharp-win-x64-net451.zip';
-        case 'darwin':
+        case SupportedPlatform.OSX:
             return 'omnisharp-osx-x64-netcoreapp1.0.tar.gz';
-        case 'linux':
-            return 'omnisharp-linux-x64-netcoreapp1.0.tar.gz';
+        case SupportedPlatform.CentOS:
+            return 'omnisharp-centos-x64-netcoreapp1.0.tar.gz';
+        case SupportedPlatform.Debian:
+            return 'omnisharp-debian-x64-netcoreapp1.0.tar.gz';
+        case SupportedPlatform.RHEL:
+            return 'omnisharp-rhel-x64-netcoreapp1.0.tar.gz';
+        case SupportedPlatform.Ubuntu:
+            return 'omnisharp-ubuntu-x64-netcoreapp1.0.tar.gz';
+            
         default:
-            throw new Error(`Unsupported platform: ${process.platform}`);
+            if (process.platform === 'linux') {
+                throw new Error(`Unsupported linux distribution`);
+            }
+            else {
+                throw new Error(`Unsupported platform: ${process.platform}`);
+            }
     }
 }
 
