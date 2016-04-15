@@ -263,7 +263,7 @@ function createProjectJson(targetRuntime: string): any
             emitEntryPoint: true
         },
         dependencies: {
-            "Microsoft.VisualStudio.clrdbg": "14.0.25208-preview-2924185",
+            "Microsoft.VisualStudio.clrdbg": "14.0.25214-preview-2934931",
             "Microsoft.VisualStudio.clrdbg.MIEngine": "14.0.30401-preview-1",
             "Microsoft.VisualStudio.OpenDebugAD7": "1.0.20405-preview-1",
             "NETStandard.Library": "1.5.0-rc2-24008",
