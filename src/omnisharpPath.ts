@@ -10,8 +10,8 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 const runFileName = process.platform === 'win32' ? 'run.cmd' : 'run';
-const omnisharpFileName = process.platform === 'win32' ? 'omnisharp.cmd' : 'omnisharp';
-const omnisharpExeFileName = process.platform === 'win32' ? 'omnisharp.exe' : 'omnisharp';
+const omnisharpFileName = process.platform === 'win32' ? 'OmniSharp.cmd' : 'OmniSharp';
+const omnisharpExeFileName = process.platform === 'win32' ? 'OmniSharp.exe' : 'OmniSharp';
 
 function getLaunchFilePath(filePathOrFolder: string): Promise<string> {
     return fs.lstatAsync(filePathOrFolder).then(stats => {
