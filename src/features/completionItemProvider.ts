@@ -26,6 +26,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
 		req.WordToComplete = wordToComplete;
 		req.WantDocumentationForEveryCompletionResult = true;
 		req.WantKind = true;
+		req.WantReturnType = true;
 
 		return serverUtils.autoComplete(this._server, req).then(values => {
 
@@ -40,7 +41,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
 			// group by code snippet
 			for (let value of values) {
 				let completion = new CompletionItem(value.CompletionText.replace(/\(|\)|<|>/g, ''));
-				completion.detail = value.DisplayText;
+				completion.detail = value.ReturnType ? `${value.ReturnType} ${value.DisplayText}` : value.DisplayText;
 				completion.documentation = plain(value.Description);
 				completion.kind = _kinds[value.Kind] || CompletionItemKind.Property;
 
