@@ -8,12 +8,14 @@
     "publisher": "jrieken",
     "main": "./out/omnisharpMain",
     "scripts": {
-        "postinstall": "gulp omnisharp && tsc"
+        "postinstall": "node ./node_modules/vscode/bin/install && gulp omnisharp && tsc"
     },
     "dependencies": {
-        "vscode": "^0.10.1",
+        "vscode": "^0.11.0",
         "run-in-terminal": "*",
-        "semver": "*"
+        "semver": "*",
+        "request-light": "^0.1.0",
+		"jsonc-parser": "^0.2.0"
     },
     "devDependencies": {
         "del": "^2.0.2",
@@ -23,13 +25,14 @@
         "gulp-decompress": "^1.2.0",
         "tmp": "0.0.28",
         "vinyl-fs": "^2.2.1",
-        "typescript": "^1.7.3"
+        "typescript": "^1.8.9"
     },
     "engines": {
-        "vscode": "^0.10.1"
+        "vscode": "^0.10.8"
     },
     "activationEvents": [
         "onLanguage:csharp",
+        "onLanguage:json",
         "onCommand:o.restart",
         "onCommand:o.pickProjectAndStart",
         "onCommand:o.restore",

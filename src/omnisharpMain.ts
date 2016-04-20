@@ -23,6 +23,7 @@ import {StdioOmnisharpServer} from './omnisharpServer';
 import forwardChanges from './features/changeForwarding';
 import reportStatus from './features/omnisharpStatus';
 import findLaunchTargets from './launchTargetFinder';
+import {addJSONProviders} from './features/json/jsonContributions';
 import {Disposable, ExtensionContext, DocumentSelector, languages, extensions} from 'vscode';
 
 export function activate(context: ExtensionContext): any {
@@ -36,7 +37,7 @@ export function activate(context: ExtensionContext): any {
 	const advisor = new Advisor(server); // create before server is started
 	const disposables: Disposable[] = [];
 	const localDisposables: Disposable[] = [];
-
+	
 	disposables.push(server.onServerStart(() => {
 		// register language feature provider on start
 		localDisposables.push(languages.registerDefinitionProvider(_selector, new DefinitionProvider(server)));
@@ -63,7 +64,7 @@ export function activate(context: ExtensionContext): any {
 		Disposable.from(...localDisposables).dispose();
 	}));
 
-	disposables.push(registerCommands(server));
+	//disposables.push(registerCommands(server));
 	disposables.push(reportStatus(server));
 
 	// read and store last solution or folder path
@@ -75,7 +76,11 @@ export function activate(context: ExtensionContext): any {
 		advisor.dispose();
 		server.stop();
 	}));
+	
+	// register JSON completion & hover providers for project.json
+	context.subscriptions.push(addJSONProviders());
 
 	context.subscriptions.push(...disposables);
 }
+
 
