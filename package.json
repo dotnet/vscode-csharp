@@ -45,7 +45,6 @@
   },
   "activationEvents": [
     "onLanguage:csharp",
-    "onLanguage:json",
     "onCommand:o.restart",
     "onCommand:o.pickProjectAndStart",
     "onCommand:o.showOutput",
