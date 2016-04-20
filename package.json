@@ -15,7 +15,7 @@
   ],
   "main": "./out/omnisharpMain",
   "scripts": {
-    "postinstall": "tsc"
+    "postinstall": "node ./node_modules/vscode/bin/install && tsc"
   },
   "dependencies": {
     "decompress": "^3.0.0",
@@ -24,6 +24,8 @@
     "github-releases": "^0.3.0",
     "run-in-terminal": "*",
     "semver": "*",
+    "request-light": "^0.1.0",
+    "jsonc-parser": "^0.2.0",
     "vscode-debugprotocol": "^1.6.1",
     "vscode-extension-telemetry": "0.0.4",
     "tmp": "0.0.28",
@@ -34,8 +36,8 @@
     "gulp-tslint": "^4.3.0",
     "tslint": "^3.3.0",
     "tslint-microsoft-contrib": "^2.0.0",
-    "typescript": "^1.7.3",
-    "vscode": "^0.10.1",
+    "typescript": "^1.8.9",
+    "vscode": "^0.11.0",
     "vsce": "^1.3.0"
   },
   "engines": {
@@ -43,6 +45,7 @@
   },
   "activationEvents": [
     "onLanguage:csharp",
+    "onLanguage:json",
     "onCommand:o.restart",
     "onCommand:o.pickProjectAndStart",
     "onCommand:o.showOutput",
