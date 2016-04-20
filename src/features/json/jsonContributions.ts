@@ -5,7 +5,6 @@
 'use strict';
 
 import {Location, getLocation, createScanner, SyntaxKind} from 'jsonc-parser';
-import {basename} from 'path';
 import {ProjectJSONContribution} from './projectJSONContribution';
 import {XHRRequest, configure as configureXHR, xhr} from 'request-light';
 
@@ -57,12 +56,11 @@ export class JSONHoverProvider implements HoverProvider {
 	}
 
 	public provideHover(document: TextDocument, position: Position, token: CancellationToken): Thenable<Hover> {
-		let fileName = basename(document.fileName);
 		let offset = document.offsetAt(position);
 		let location = getLocation(document.getText(), offset);
 		let node = location.previousNode;
 		if (node && node.offset <= offset && offset <= node.offset + node.length) {
-			let promise = this.jsonContribution.getInfoContribution(fileName, location);
+			let promise = this.jsonContribution.getInfoContribution(document.fileName, location);
 			if (promise) {
 				return promise.then(htmlContent => {
 					let range = new Range(document.positionAt(node.offset), document.positionAt(node.offset + node.length));
@@ -94,9 +92,6 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
 	}
 
 	public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken): Thenable<CompletionList> {
-
-		let fileName = basename(document.fileName);
-
 		let currentWord = this.getCurrentWord(document, position);
 		let overwriteRange = null;
 		let items: CompletionItem[] = [];
@@ -137,12 +132,12 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
 			scanner.setPosition(offset);
 			scanner.scan();
 			let isLast = scanner.getToken() === SyntaxKind.CloseBraceToken || scanner.getToken() === SyntaxKind.EOF;
-			collectPromise = this.jsonContribution.collectPropertySuggestions(fileName, location, currentWord, addValue, isLast, collector);
+			collectPromise = this.jsonContribution.collectPropertySuggestions(document.fileName, location, currentWord, addValue, isLast, collector);
 		} else {
 			if (location.path.length === 0) {
-				collectPromise = this.jsonContribution.collectDefaultSuggestions(fileName, collector);
+				collectPromise = this.jsonContribution.collectDefaultSuggestions(document.fileName, collector);
 			} else {
-				collectPromise = this.jsonContribution.collectValueSuggestions(fileName, location, collector);
+				collectPromise = this.jsonContribution.collectValueSuggestions(document.fileName, location, collector);
 			}
 		}
 		if (collectPromise) {
