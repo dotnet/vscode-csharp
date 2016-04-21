@@ -5,7 +5,7 @@
 
 'use strict';
 
-import {plain} from './documentation';
+import {extractSummaryText} from './documentation';
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../protocol';
 import * as serverUtils from '../omnisharpUtils';
@@ -21,7 +21,7 @@ export default class OmniSharpHoverProvider extends AbstractSupport implements H
 
 		return serverUtils.typeLookup(this._server, req, token).then(value => {
 			if (value && value.Type) {
-				let contents = [plain(value.Documentation), { language: 'csharp', value: value.Type }];
+				let contents = [extractSummaryText(value.Documentation), { language: 'csharp', value: value.Type }];
 				return new Hover(contents);
 			}
 		});

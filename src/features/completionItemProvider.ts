@@ -5,7 +5,7 @@
 
 'use strict';
 
-import {plain} from './documentation';
+import {extractSummaryText} from './documentation';
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../protocol';
 import * as serverUtils from '../omnisharpUtils';
@@ -42,13 +42,14 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
 			for (let value of values) {
 				let completion = new CompletionItem(value.CompletionText.replace(/\(|\)|<|>/g, ''));
 				completion.detail = value.ReturnType ? `${value.ReturnType} ${value.DisplayText}` : value.DisplayText;
-				completion.documentation = plain(value.Description);
+				completion.documentation = extractSummaryText(value.Description);
 				completion.kind = _kinds[value.Kind] || CompletionItemKind.Property;
 
 				let array = completions[completion.label];
 				if (!array) {
 					completions[completion.label] = [completion];
-				} else {
+				}
+				else {
 					array.push(completion);
 				}
 			}
@@ -63,10 +64,12 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
 					// remove non overloaded items
 					delete completions[key];
 
-				} else {
+				}
+				else {
 					// indicate that there is more
 					suggestion.detail = `${suggestion.detail} (+ ${overloadCount} overload(s))`;
 				}
+				
 				result.push(suggestion);
 			}
 
