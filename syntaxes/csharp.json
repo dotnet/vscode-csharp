@@ -553,7 +553,7 @@
           "name": "meta.preprocessor.cs"
         },
         {
-          "match": "^\\s*#\\s*(if|else|elif|endif|define|undef|warning|error|line|pragma|region|endregion)\\b\\s*([^\\/]+)\\s",
+          "match": "^\\s*#\\s*(if|else|elif|endif|define|undef|warning|error|line|pragma|region|endregion)\\b\\s*([^\\/]+)\\s*",
           "name": "meta.preprocessor.cs"
         }
       ]
