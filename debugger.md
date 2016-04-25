@@ -62,7 +62,7 @@ VS Code needs to be configured so it understands how to build your project and d
 * Tasks.json is used to configure what command line command is executed to build your project, and launch.json configures the type of debugger you want to use, and what program should be run under that debugger. 
 * Launch.json configures VS Code to run the build task from tasks.json so that your program is automatically up-to-date each time you go to debug it.
 
-For most projects, the C# extension can automatically generate these files for you. When you open a project and the C# extension is installed, you should see the following prompt in VS Code:
+If you open the folder containing your project.json, the C# extension can automatically generate these files for you. When you open a project and the C# extension is installed, you should see the following prompt in VS Code:
 
 ![Info: Required assets to build and debug are missing from your project. Add them? Yes | Close](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/images/info-bar-add-required-assets.png)
 
@@ -70,9 +70,16 @@ Clicking 'Yes' on this prompt should add these resources.
 
 **Creating configuration files manually**
 
-In case you would rather generate .vscode/tasks.json by hand, you can start with [this example](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/ExampleCode/tasks.json) which configures VS Code to launch 'dotnet build'. If you don't want to build from VS Code at all, you can skip this file. If you do this, you will need to comment out the 'preLaunchTask' from .vscode/launch.json when you create it.
+If your code has multiple projects or you would rather generate these files by hand, here is how --
 
-In case you would rather generate .vscode/launch.json by hand, when you want to start debugging, press the debugger play button (or hit F5) as you would normally do. VS Code will provide a list of templates to select from. Pick ".NET Core" from this list and the edit the 'program' property to indicate the path to the application dll or .NET Core host executable to launch.
+**.vscode/tasks.json**: Start with [this example](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/ExampleCode/tasks.json) which configures VS Code to launch 'dotnet build'. Update the 'cwd' property if your project isn't in the root of the open folder. If you don't want to build from VS Code at all, you can skip this file. If you do this, you will need to comment out the 'preLaunchTask' from .vscode/launch.json when you create it.
+
+**.vscode/launch.json**: When you want to start debugging, press the debugger play button (or hit F5) as you would normally do. VS Code will provide a list of templates to select from. Pick ".NET Core" from this list and the edit the 'program' property to indicate the path to the application dll or .NET Core host executable to launch. For example:
+
+	"configurations": [
+		{
+			...
+			"program": "${workspaceRoot}/MyLaunchingProject/bin/Debug/netcoreapp1.0/MyLaunchingProject.dll",
 
 ##### 4: Windows Only: Enable Portable PDBs
 In the future, this step will go away, but for now you need to [change the project.json to use portable PDBs](https://github.com/OmniSharp/omnisharp-vscode/wiki/Portable-PDBs#net-cli-projects-projectjson).
