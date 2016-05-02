@@ -185,7 +185,7 @@ function removeLibCoreClrTraceProvider() : Promise<void>
                 if (err) {
                     reject(err.code);
                 } else {
-                    _channel.appendLine('Succesfully deleted ' + filePath);
+                    _channel.appendLine('Successfully deleted ' + filePath);
                     resolve();
                 }
             });
