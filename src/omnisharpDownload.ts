@@ -14,7 +14,7 @@ const Decompress = require('decompress');
 const Github = require('github-releases');
 
 const OmnisharpRepo = 'OmniSharp/omnisharp-roslyn';
-const OmnisharpVersion = 'v1.9-alpha13';
+const OmnisharpVersion = 'v1.9-alpha14';
 const DefaultInstallLocation = path.join(__dirname, '../.omnisharp');
 
 tmp.setGracefulCleanup();
