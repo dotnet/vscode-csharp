@@ -70,7 +70,7 @@ export function dotnetRestoreAllProjects(server: OmnisharpServer) {
         if ('DotNet' in info && info.DotNet.Projects.length > 0) {
             for (let project of info.DotNet.Projects) {
                 commands.push({
-                    label: `dotnet restor - (${project.Name || path.basename(project.Path)})`,
+                    label: `dotnet restore - (${project.Name || path.basename(project.Path)})`,
                     description: path.dirname(project.Path),
                     execute() {
                         return runInTerminal('dotnet', ['restore'], {
