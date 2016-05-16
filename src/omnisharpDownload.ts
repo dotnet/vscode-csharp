@@ -16,6 +16,7 @@ const Github = require('github-releases');
 const OmnisharpRepo = 'OmniSharp/omnisharp-roslyn';
 const OmnisharpVersion = 'v1.9-alpha14';
 const DefaultInstallLocation = path.join(__dirname, '../.omnisharp');
+const ApiToken = '18a6f5ecea711220d4f433d4fd41062d479fda1d';
 
 tmp.setGracefulCleanup();
 
@@ -48,7 +49,7 @@ export function downloadOmnisharp(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
         console.log(`[OmniSharp]: Installing to ${DefaultInstallLocation}`);
         
-        const repo = new Github({ repo: OmnisharpRepo, token: null });
+        const repo = new Github({ repo: OmnisharpRepo, token: ApiToken });
         const assetName = getOmnisharpAssetName();
         
         console.log(`[OmniSharp] Looking for ${OmnisharpVersion}, ${assetName}...`);
