@@ -8,11 +8,13 @@
 import {OmnisharpServer} from '../omnisharpServer';
 import * as serverUtils from '../omnisharpUtils';
 import findLaunchTargets from '../launchTargetFinder';
-import {runInTerminal} from 'run-in-terminal';
+import * as cp from 'child_process';
+import * as fs from 'fs-extra-promise';
 import * as path from 'path';
+import * as protocol from '../protocol';
 import * as vscode from 'vscode';
 
-const isWindows = process.platform === 'win32';
+let channel = vscode.window.createOutputChannel('.NET');
 
 export default function registerCommands(server: OmnisharpServer, extensionPath: string) {
 	let d1 = vscode.commands.registerCommand('o.restart', () => server.restart());
@@ -57,6 +59,26 @@ interface Command {
 	execute(): Thenable<any>;
 }
 
+function projectsToCommands(projects: protocol.DotNetProject[]): Promise<Command>[] {
+	return projects.map(project => {
+		let projectDirectory = project.Path;
+
+		return fs.lstatAsync(projectDirectory).then(stats => {
+			if (stats.isFile()) {
+				projectDirectory = path.dirname(projectDirectory);
+			}
+
+			return {
+				label: `dotnet restore - (${project.Name || path.basename(project.Path)})`,
+				description: projectDirectory,
+				execute() {
+					return runDotnetRestore(projectDirectory);
+				}
+			};
+		});
+	});
+}
+
 export function dotnetRestoreAllProjects(server: OmnisharpServer) {
 
 	if (!server.isRunning()) {
@@ -65,23 +87,15 @@ export function dotnetRestoreAllProjects(server: OmnisharpServer) {
 
 	return serverUtils.requestWorkspaceInformation(server).then(info => {
 
-		let commands: Command[] = [];
+		if (!('DotNet in info') || info.DotNet.Projects.length < 1) {
+			return Promise.reject("No .NET Core projects found");
+		}
+		
+		let commandPromises = projectsToCommands(info.DotNet.Projects);
         
-        if ('DotNet' in info && info.DotNet.Projects.length > 0) {
-            for (let project of info.DotNet.Projects) {
-                commands.push({
-                    label: `dotnet restor - (${project.Name || path.basename(project.Path)})`,
-                    description: path.dirname(project.Path),
-                    execute() {
-                        return runInTerminal('dotnet', ['restore'], {
-                            cwd: path.dirname(project.Path)
-                        });
-                    }
-                });
-            }
-        }
-
-		return vscode.window.showQuickPick(commands).then(command => {
+		return Promise.all(commandPromises).then(commands => {
+			return vscode.window.showQuickPick(commands);
+		}).then(command => {
 			if (command) {
 				return command.execute();
 			}
@@ -91,17 +105,42 @@ export function dotnetRestoreAllProjects(server: OmnisharpServer) {
 
 export function dotnetRestoreForProject(server: OmnisharpServer, fileName: string) {
 
-	return serverUtils.requestWorkspaceInformation(server).then(info => {
-        if ('DotNet' in info && info.DotNet.Projects.length > 0) {
-            for (let project of info.DotNet.Projects) {
-                if (project.Path === path.dirname(fileName)) {
-                    return runInTerminal('dotnet', ['restore', fileName], {
-                        cwd: path.dirname(project.Path)
-                    });
-                }
-            }
-        }
+	if (!server.isRunning()) {
+		return Promise.reject('OmniSharp server is not running.');
+	}
 
-		return Promise.reject(`Failed to execute restore, try to run 'dotnet restore' manually for ${fileName}.`);
+	return serverUtils.requestWorkspaceInformation(server).then(info => {
+
+		if (!('DotNet in info') || info.DotNet.Projects.length < 1) {
+			return Promise.reject("No .NET Core projects found");
+		}
+		
+		let directory = path.dirname(fileName);
+		
+		for (let project of info.DotNet.Projects) {
+			if (project.Path === directory) {
+				return runDotnetRestore(directory, fileName);
+			}
+		}
+	});
+}
+
+function runDotnetRestore(cwd: string, fileName?: string) {
+	return new Promise<cp.ChildProcess>((resolve, reject) => {
+		channel.clear();
+		channel.show();
+		
+		let cmd = 'dotnet restore';
+		if (fileName) {
+			cmd = `${cmd} "${fileName}"`
+		}
+		
+		return cp.exec(cmd, {cwd: cwd, env: process.env}, (err, stdout, stderr) => {
+			channel.append(stdout.toString());
+			channel.append(stderr.toString());
+			if (err) {
+				channel.append('ERROR: ' + err);
+			}
+		});		
 	});
 }

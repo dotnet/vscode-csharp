@@ -293,7 +293,7 @@
     "keywords": {
       "patterns": [
         {
-          "match": "\\b(if|else|while|for|foreach|in|do|return|continue|break|switch|case|default|goto|throw|try|catch|finally|lock|yield|await)\\b",
+          "match": "\\b(if|else|while|for|foreach|in|do|return|continue|break|switch|case|default|goto|throw|try|catch|finally|lock|yield|await|when)\\b",
           "name": "keyword.control.cs"
         },
         {
@@ -301,7 +301,7 @@
           "name": "keyword.linq.cs"
         },
         {
-          "match": "\\b(new|is|as|using|checked|unchecked|typeof|sizeof|override|readonly|stackalloc)\\b",
+          "match": "\\b(new|is|as|using|checked|unchecked|typeof|sizeof|override|readonly|stackalloc|nameof)\\b",
           "name": "keyword.operator.cs"
         },
         {
@@ -313,7 +313,7 @@
           "name": "storage.type.var.cs"
         },
         {
-          "match": "[@]\\b(var|event|delegate|add|remove|set|get|value|new|is|as|using|checked|unchecked|typeof|sizeof |override|readonly|stackalloc|from|where|select|group|into|orderby|join|let|on|equals|by|ascending|descending |if|else|while|for|foreach|in|do|return|continue|break|switch|case|default|goto|throw|try|catch|finally|lock|yield|await)\\b",
+          "match": "[@]\\b(var|event|delegate|add|remove|set|get|value|new|is|as|using|checked|unchecked|typeof|sizeof|nameof|when|override|readonly|stackalloc|from|where|select|group|into|orderby|join|let|on|equals|by|ascending|descending |if|else|while|for|foreach|in|do|return|continue|break|switch|case|default|goto|throw|try|catch|finally|lock|yield|await)\\b",
           "name": "meta.class.body.cs"
         }
       ]
@@ -363,7 +363,7 @@
               "include": "#builtinTypes"
             },
             {
-              "begin": "([\\w.]+)\\s*\\(",
+              "begin": "([\\w]+\\s*(?:<[\\w<>\\s,`?]*>)?)\\s*\\(",
               "beginCaptures": {
                 "1": {
                   "name": "entity.name.function.cs"
@@ -502,7 +502,7 @@
       ]
     },
     "parameters": {
-      "begin": "\\b(ref|params|out)?\\s*\\b([\\w.\\[\\]]+)\\s+(\\w+)\\s*(=)?",
+      "begin": "\\b(ref|params|out)?\\s*\\b([\\w?\\[\\]]+(?:\\s*<.*?>)?)\\s+(\\w+)\\s*(=)?",
       "beginCaptures": {
         "1": {
           "name": "storage.type.modifier.cs"

@@ -26,7 +26,7 @@ export function getSupportedPlatform() {
     }
     else if (process.platform === 'linux') {
         // Get the text of /etc/*-release to discover which Linux distribution we're running on.
-        let release = child_process.execSync('cat /etc/*-release').toString().toLowerCase();
+        let release = child_process.execSync('cat /etc/os-release').toString().toLowerCase();
 
         if (release.indexOf('ubuntu') >= 0) {
             return SupportedPlatform.Ubuntu;
