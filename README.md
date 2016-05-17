@@ -28,13 +28,17 @@ This version supports basic debugging capabilities.
 See http://aka.ms/vscclrdebugger for details.
 
 ### Development
+
+First install:
+* Node.js (newer than 4.3.1)
+* Npm (newer 2.14.12)
+
 To **run and develop** do the following:
 
 * Run `npm i`
 * Open in Visual Studio Code (`code .`)
 * *Optional:* run `tsc -w`, make code changes (on Windows, try `start node ".\node_modules\typescript\bin\tsc -w"`)
 * Press F5 to debug
-
 
 ## License  
 The Microsoft C# extension is subject to [these license terms](RuntimeLicenses/license.txt).  
