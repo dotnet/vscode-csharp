@@ -1,9 +1,9 @@
 {
     "name": "omnisharp",
     "publisher": "ms-vscode",
-    "version": "0.3.2",
-    "description": "Omnisharp extension that is being shipped with VS Code.",
-    "displayName": "Built-in Omnisharp",
+    "version": "0.3.3",
+    "displayName": "Legacy C# Support",
+    "description": "Legacy OmniSharp extension [originally bundled with VS Code]. Use this for Mono, Xamarin and Unity development on OS X and Linux.",
     "author": "Microsoft Corporation",
     "license": "MIT",
     "main": "./out/omnisharpMain",

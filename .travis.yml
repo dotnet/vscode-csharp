@@ -1,0 +1,14 @@
+sudo: false
+language: node_js
+
+node_js:
+- "5.1"
+
+os:
+  -osx
+  -linux
+
+install:
+- npm install
+- npm install -g vsce
+- vsce package
