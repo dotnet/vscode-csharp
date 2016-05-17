@@ -1,6 +1,6 @@
 ## Legacy OmniSharp Support for Visual Studio Code
 
-This is the original OmniSharp extension which provided the C# editing support, that was previously bundled with Visual Studio Code.
+This is the original OmniSharp extension which provided the C# editing support that was previously bundled with Visual Studio Code.
 
 For most scenarios, such as development on Windows and [.NET Core RC2](https://www.microsoft.com/net/core/platform) on OS X and Linux, you should use the latest [C# extension for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp). However, support for Unity and Xamarin, and other .csproj-based projects has been temporarily disabled for OS X and Linux. Rest assured that this will be restored in the near future!
 
