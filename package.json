@@ -1,12 +1,13 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
   "license": "SEE LICENSE IN RuntimeLicenses/license.txt",
   "icon": "images/csharpIcon.png",
+  "preview": "true",
   "categories": [
     "Debuggers",
     "Languages",
