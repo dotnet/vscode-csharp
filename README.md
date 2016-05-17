@@ -7,13 +7,11 @@
 This is a preview of C# support in Visual Studio code. It is designed to work well with [.NET Core 1.0](http://dotnet.github.io/). 
 These new projects are based on project.json and the [.NET CLI](https://dotnet.github.io/getting-started/).
 
-### Support for .csproj
+### Support for .csproj and Mono on OS X and Linux
 
-Support for .csproj projects will be improved in future versions of this extension. For now, if you are targeting Mono scenarios (ex: Unity 
-or Xamarin) we suggest instead installing the 'Built-in Omnisharp' extension. Note that the name of the Omnisharp extension is no longer 
-correct - the extension is no longer built into VS Code.
+Support for .csproj projects will be improved in future versions of this extension. For now, if you are targeting Mono scenarios (ex: Unity or Xamarin) we suggest instead installing the 'Built-in Omnisharp' extension. Note that the name of the OmniSharp extension is no longer correct - the extension is no longer built into VS Code.
 
-Installation steps for the Omnisharp extension --
+Use the following steps to install the older OmniSharp extension for Mono support:
 
 1. Install ASP.NET 5 RC1 (NOTE: Do **NOT** use RC2)
     * Windows: https://docs.asp.net/en/1.0.0-rc1/getting-started/installing-on-windows.html
