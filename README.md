@@ -8,7 +8,7 @@ In the meantime, you can install and use this the Legacy OmniSharp extension to 
 
 **Please note the following important details before installing this extension:**
 
-1. You should only use this extension on OS X and Linux if you are developing on .csproj projects. The C# extension officially supports .csproj projects on Windows. Also, if you are doing .NET COre development on Windows, OS X or Linux, the C# extension is the appropriate choice. 
+1. You should only use this extension on OS X and Linux if you are developing on .csproj projects. The C# extension officially supports .csproj projects on Windows. Also, if you are doing .NET Core development on Windows, OS X or Linux, the C# extension is the appropriate choice. 
 
 2. If you already have the C# extension installed, you will need to uninstall before installing the Legacy OmniSharp extension with the following steps:
     * In Visual Studio Code, press Ctrl+P to launch VS Code Quick Open
