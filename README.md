@@ -20,3 +20,8 @@ In the meantime, you can install and use this the Legacy OmniSharp extension to 
     * Allow Visual Studio Code to restart. 
     
 3. This extension has a dependency on Mono >= 4.0.1.
+
+4. This extension can be used to target ASP.NET 5 RC1 and older DNX-based projects. If you need to install ASP.NET 5 RC1, you can still find it in the following locations:
+    * Windows: https://docs.asp.net/en/1.0.0-rc1/getting-started/installing-on-windows.html
+    * OS X: https://docs.asp.net/en/1.0.0-rc1/getting-started/installing-on-mac.html. (Be sure to follow the instructions for using Mono.)
+    * Linux: https://docs.asp.net/en/1.0.0-rc1/getting-started/installing-on-linux.html. (Be sure to follow the instructions for using Mono.)
