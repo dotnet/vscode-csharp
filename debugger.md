@@ -15,8 +15,8 @@ Install Visual Studio Code (VSC). Pick the latest VSC version from here: https:/
 
 If you are not sure what version you have, you can see your version of VS Code:
 
-* **OSX:** Code->Abort Visual Studio Code
-* **Windows / Linux:** Help->Abort
+* **OSX:** Code->About Visual Studio Code
+* **Windows / Linux:** Help->About
 
 ##### 2: Install .NET command line tools
 Install the .NET Core command line tools (CLI) by following the installation part of the instructions here: http://dotnet.github.io/getting-started

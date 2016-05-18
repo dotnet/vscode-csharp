@@ -25,6 +25,11 @@ Please file any issues at https://github.com/OmniSharp/omnisharp-vscode/issues.
 The C# extension now supports basic debugging capabilities! See http://aka.ms/vscclrdebugger for details.
 
 ### Development
+
+First install:
+* Node.js (newer than 4.3.1)
+* Npm (newer 2.14.12)
+
 To **run and develop** do the following:
 
 * Run `npm i`

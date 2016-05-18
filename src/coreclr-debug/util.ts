@@ -112,40 +112,6 @@ export default class CoreClrDebugUtil
         }
     }
     
-    static getPlatformRuntimeId() : string {
-        switch(process.platform) {
-            case 'win32':
-                return 'win7-x64';
-            case 'darwin':
-                return CoreClrDebugUtil.getDotnetRuntimeId();
-            case 'linux':
-                return CoreClrDebugUtil.getDotnetRuntimeId();
-            default:
-                throw Error('Unsupported platform ' + process.platform);
-        }
-    }
-    
-    static getDotnetRuntimeId() : string {
-        let out = child_process.execSync('dotnet --info').toString();
-       
-        let lines = out.split('\n');
-        let ridLine = lines.filter(function(value) {
-            return value.trim().startsWith('RID');
-        });
-        
-        if (ridLine.length < 1) {
-            throw new Error('Cannot obtain Runtime ID from dotnet cli');
-        }
-        
-        let rid = ridLine[0].split(':')[1].trim();
-        
-        if (!rid) {
-            throw new Error('Unable to determine Runtime ID');
-        }
-        
-        return rid;
-    }
-    
     /** Used for diagnostics only */
     logToFile(message: string): void {
         let logFolder = path.resolve(this.coreClrDebugDir(), "extension.log");

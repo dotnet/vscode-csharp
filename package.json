@@ -25,7 +25,6 @@
     "decompress": "^3.0.0",
     "del": "^2.0.2",
     "fs-extra-promise": "^0.3.1",
-    "run-in-terminal": "*",
     "semver": "*",
     "vscode-debugprotocol": "^1.6.1",
     "vscode-extension-telemetry": "0.0.4",
@@ -295,7 +294,7 @@
               "processId": {
                 "type": "integer",
                 "description": "The process id to attach to. If this is used, 'processName' should not be used.",
-                "default": ""
+                "default": 0
               },
               "sourceFileMap": {
                 "type": "object",
@@ -359,7 +358,7 @@
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",
-            "processName": "<example>"
+            "processId": 0
           }
         ]
       }
