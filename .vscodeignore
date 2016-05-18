@@ -7,6 +7,9 @@ src/**
 .vscode/**
 .omnisharp/**
 
+**/.nyc_output/**
+**/coverage/**
+
 coreclr-debug/debugAdapters/**
 coreclr-debug/bin/**
 coreclr-debug/obj/**
