@@ -143,7 +143,7 @@
         },
         "runtime": "",
         "runtimeArgs": [],
-        "program": "./coreclr-debug/debugAdapters/OpenDebugAD7.exe",
+        "program": "./out/coreclr-debug/proxy.js",
         "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
         "configurationAttributes": {
           "launch": {
