@@ -177,32 +177,57 @@ function createAttachConfiguration(): AttachConfiguration {
     }
 }
 
-function createLaunchJson(targetFramework: string, executableName: string): any {
-    return {
-        version: '0.2.0',
-        configurations: [
-            createLaunchConfiguration(targetFramework, executableName),
-            createWebLaunchConfiguration(targetFramework, executableName),
-            createAttachConfiguration()
-        ]
+function createLaunchJson(targetFramework: string, executableName: string, isWebProject: boolean): any {
+    let version =  '0.2.0';
+    
+    if (!isWebProject) {
+        return {
+            version: version,
+            configurations: [
+                createLaunchConfiguration(targetFramework, executableName),
+                createAttachConfiguration()
+            ]
+        }
+    }
+    else { 
+        return {
+            version: version,
+            configurations: [
+                createWebLaunchConfiguration(targetFramework, executableName),
+                createAttachConfiguration()
+            ]
+        }
     }
 }
 
 function createBuildTaskDescription(): tasks.TaskDescription {
     return {
         taskName: 'build',
-        args: [],
+        args: ['dotnet build'],
         isBuildCommand: true,
         problemMatcher: '$msCompile'
     };
 }
 
 function createTasksConfiguration(): tasks.TaskConfiguration {
+    
     return {
         version: '0.1.0',
-        command: 'dotnet',
+        command: '',
         isShellCommand: true,
-        args: [],
+        windows : {
+            command: 'cmd',
+            args : ['/c'],
+        },
+        linux : {
+            command: 'bash',
+            args : ['-c'],
+        },
+        osx : {
+            command: 'sh',
+            args : ['-c'],
+        },
+        suppressTaskName: true,
         tasks: [ createBuildTaskDescription() ]
     };
 }
@@ -220,7 +245,7 @@ function addTasksJsonIfNecessary(info: protocol.DotNetWorkspaceInformation, path
     });
 }
 
-function addLaunchJsonIfNecessary(info: protocol.DotNetWorkspaceInformation, paths: Paths, operations: Operations) {
+function addLaunchJsonIfNecessary(info: protocol.DotNetWorkspaceInformation, paths: Paths, operations: Operations, projectJsonPath: string) {
     return new Promise<void>((resolve, reject) => {
         if (!operations.addLaunchJson) {
             return resolve();
@@ -248,11 +273,21 @@ function addLaunchJsonIfNecessary(info: protocol.DotNetWorkspaceInformation, pat
             }
         }
         
-        const launchJson = createLaunchJson(targetFramework, executableName);
+        const launchJson = createLaunchJson(targetFramework, executableName, hasWebServerDependency(projectJsonPath));
         const launchJsonText = JSON.stringify(launchJson, null, '    ');
         
         return fs.writeFileAsync(paths.launchJsonPath, launchJsonText);
     });
+}
+
+function hasWebServerDependency(projectJsonPath: string) {
+    let projectJson = fs.readFileSync(projectJsonPath, 'utf8');
+    let projectJsonObject = JSON.parse(projectJson);
+    if (projectJsonObject != null && projectJsonObject.dependencies != null) {
+        return (projectJsonObject.dependencies["Microsoft.AspNetCore.Server.Kestrel"] != null)
+    }
+    
+    return false;    
 }
 
 export function addAssetsIfNecessary(server: OmnisharpServer) {
@@ -284,7 +319,7 @@ export function addAssetsIfNecessary(server: OmnisharpServer) {
                     return fs.ensureDirAsync(paths.vscodeFolder).then(() => {
                         return Promise.all([
                             addTasksJsonIfNecessary(info.DotNet, paths, operations),
-                            addLaunchJsonIfNecessary(info.DotNet, paths, operations)
+                            addLaunchJsonIfNecessary(info.DotNet, paths, operations, projectJsonPath)
                         ]);
                     });
                 });
