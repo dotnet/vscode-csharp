@@ -332,9 +332,9 @@ function createProjectJson(targetRuntime: string): any
             emitEntryPoint: true
         },
         dependencies: {
-            "Microsoft.VisualStudio.clrdbg": "14.0.25229-preview-2963841",
-            "Microsoft.VisualStudio.clrdbg.MIEngine": "14.0.30401-preview-1",
-            "Microsoft.VisualStudio.OpenDebugAD7": "1.0.20405-preview-1",
+            "Microsoft.VisualStudio.clrdbg": "14.0.25320-preview-3008693",
+            "Microsoft.VisualStudio.clrdbg.MIEngine": "14.0.30520-preview-9",
+            "Microsoft.VisualStudio.OpenDebugAD7": "1.0.20520-preview-3",
             "NETStandard.Library": "1.5.0-rc2-24027",
             "Newtonsoft.Json": "7.0.1",
             "Microsoft.VisualStudio.Debugger.Interop.Portable": "1.0.1",
