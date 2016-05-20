@@ -24,7 +24,8 @@ interface ConsoleLaunchConfiguration extends DebugConfiguration {
     program: string,
     args: string[],
     cwd: string,
-    stopAtEntry: boolean
+    stopAtEntry: boolean,
+    env?: any
 }
 
 interface CommandLine {
@@ -164,6 +165,9 @@ function createWebLaunchConfiguration(targetFramework: string, executableName: s
             linux: {
                 command: 'xdg-open'
             }
+        },
+        env: {
+            ASPNETCORE_ENVIRONMENT: "Development"
         }
     }
 }

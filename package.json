@@ -261,6 +261,12 @@
                   }
                 }
               },
+              "env": {
+                "type": "object",
+                "additionalProperties": { "type": "string" },
+                "description": "Environment variables passed to the program.",
+                "default": { }
+              },
               "sourceFileMap": {
                 "type": "object",
                 "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
@@ -352,6 +358,9 @@
               "linux": {
                 "command": "xdg-open"
               }
+            },
+            "env": {
+              "ASPNETCORE_ENVIRONMENT": "Development"
             }
           },
           {
