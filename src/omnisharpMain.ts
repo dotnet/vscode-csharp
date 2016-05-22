@@ -19,6 +19,7 @@ import WorkspaceSymbolProvider from './features/workspaceSymbolProvider';
 import reportDiagnostics,{Advisor} from './features/diagnosticsProvider';
 import SignatureHelpProvider from './features/signatureHelpProvider';
 import registerCommands from './features/commands';
+import {addJSONProviders} from './features/json/jsonContributions';
 import {StdioOmnisharpServer} from './omnisharpServer';
 import forwardChanges from './features/changeForwarding';
 import reportStatus from './features/omnisharpStatus';
@@ -90,7 +91,10 @@ export function activate(context: vscode.ExtensionContext): any {
 		server.reportAndClearTelemetry();
 		server.stop();
 	}));
-		
+	
+	// register JSON completion & hover providers for project.json
+	context.subscriptions.push(addJSONProviders());
+	
     // install coreclr-debug
     coreclrdebug.activate(context, reporter);
     
