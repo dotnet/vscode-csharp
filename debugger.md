@@ -19,7 +19,7 @@ If you are not sure what version you have, you can see your version of VS Code:
 * **Windows / Linux:** Help->About
 
 ##### 2: Install .NET command line tools
-Install the .NET Core command line tools (CLI) by following the installation part of the instructions here: http://dotnet.github.io/getting-started
+Install the .NET Core command line tools (CLI) by following the installation part of the instructions here: https://www.microsoft.com/net/core
 
 **OSX:** .NET Core requires openSSL to work. Don't forget this! Execute: `brew install openssl`
 
