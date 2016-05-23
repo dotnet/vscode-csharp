@@ -25,11 +25,13 @@
     "decompress": "^3.0.0",
     "del": "^2.0.2",
     "fs-extra-promise": "^0.3.1",
+    "http-proxy-agent": "^1.0.0",
+    "https-proxy-agent": "^1.0.0",
+    "open": "*",
     "semver": "*",
-    "vscode-debugprotocol": "^1.6.1",
-    "vscode-extension-telemetry": "0.0.4",
     "tmp": "0.0.28",
-    "open": "*"
+    "vscode-debugprotocol": "^1.6.1",
+    "vscode-extension-telemetry": "0.0.4"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
