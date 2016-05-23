@@ -9,15 +9,16 @@ const del = require('del');
 const gulp = require('gulp');
 const tslint = require('gulp-tslint');
 const vsce = require('vsce');
-const omnisharpDownload = require('./out/omnisharpDownload');
+//const omnisharpDownload = require('./out/omnisharpDownload');
 
 gulp.task('omnisharp:clean', () => {
 	return del('.omnisharp');
 });
 
-gulp.task('omnisharp:fetch', ['omnisharp:clean'], () => {
-	return omnisharpDownload.downloadOmnisharp();
-});
+//TODO: decouple omnisharpDownload (specifically proxy.ts) from vscode 
+// gulp.task('omnisharp:fetch', ['omnisharp:clean'], () => {
+// 	return omnisharpDownload.downloadOmnisharp();
+// });
 
 const allTypeScript = [
     'src/**/*.ts',
@@ -45,7 +46,7 @@ gulp.task('tslint', () => {
         }))
 });
 
-gulp.task('omnisharp', ['omnisharp:fetch']);
+// gulp.task('omnisharp', ['omnisharp:fetch']);
 
 gulp.task('package', () => {
     vsce(['', '', 'package']);
