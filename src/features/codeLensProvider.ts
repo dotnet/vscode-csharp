@@ -13,71 +13,80 @@ import * as serverUtils from '../omnisharpUtils';
 
 class OmniSharpCodeLens extends CodeLens {
 
-	fileName: string;
+    fileName: string;
 
-	constructor(fileName: string, range: Range) {
-		super(range);
-		this.fileName = fileName;
-	}
+    constructor(fileName: string, range: Range) {
+        super(range);
+        this.fileName = fileName;
+    }
 }
 
 export default class OmniSharpCodeLensProvider extends AbstractSupport implements CodeLensProvider {
 
-	private static filteredSymbolNames: { [name: string]: boolean } = {
-		'Equals': true,
-		'Finalize': true,
-		'GetHashCode': true,
-		'ToString': true
-	};
+    private static filteredSymbolNames: { [name: string]: boolean } = {
+        'Equals': true,
+        'Finalize': true,
+        'GetHashCode': true,
+        'ToString': true
+    };
 
-	provideCodeLenses(document: TextDocument, token: CancellationToken): CodeLens[] | Thenable<CodeLens[]> {
+    provideCodeLenses(document: TextDocument, token: CancellationToken): CodeLens[] | Thenable<CodeLens[]> {
 
-		return serverUtils.currentFileMembersAsTree(this._server, { Filename: document.fileName }, token).then(tree => {
-			let ret: CodeLens[] = [];
-			tree.TopLevelTypeDefinitions.forEach(node => OmniSharpCodeLensProvider._convertQuickFix(ret, document.fileName, node));
-			return ret;
-		});
-	}
+        return serverUtils.currentFileMembersAsTree(this._server, { Filename: document.fileName }, token).then(tree => {
+            let ret: CodeLens[] = [];
+            tree.TopLevelTypeDefinitions.forEach(node => OmniSharpCodeLensProvider._convertQuickFix(ret, document.fileName, node));
+            return ret;
+        });
+    }
 
-	private static _convertQuickFix(bucket: CodeLens[], fileName:string, node: protocol.Node): void {
+    private static _convertQuickFix(bucket: CodeLens[], fileName: string, node: protocol.Node): void {
 
-		if (node.Kind === 'MethodDeclaration' && OmniSharpCodeLensProvider.filteredSymbolNames[node.Location.Text]) {
-			return;
-		}
+        if (node.Kind === 'MethodDeclaration' && OmniSharpCodeLensProvider.filteredSymbolNames[node.Location.Text]) {
+            return;
+        }
 
-		let lens = new OmniSharpCodeLens(fileName, toRange(node.Location));
-		bucket.push(lens);
+        let lens = new OmniSharpCodeLens(fileName, toRange(node.Location));
+        bucket.push(lens);
 
-		for (let child of node.ChildNodes) {
-			OmniSharpCodeLensProvider._convertQuickFix(bucket, fileName, child);
-		}
-	}
+        for (let child of node.ChildNodes) {
+            OmniSharpCodeLensProvider._convertQuickFix(bucket, fileName, child);
+        }
 
-	resolveCodeLens(codeLens: CodeLens, token: CancellationToken): Thenable<CodeLens> {
-		if (codeLens instanceof OmniSharpCodeLens) {
+        let testFeature = node.Features.find(value => value.startsWith('XunitTestMethod'));
+        if (testFeature) {
+            // this test method has a test feature
+            let testMethod = testFeature.split(':')[1];
 
-			let req = <protocol.FindUsagesRequest>{
-				Filename: codeLens.fileName,
-				Line: codeLens.range.start.line + 1,
-				Column: codeLens.range.start.character + 1,
-				OnlyThisFile: false,
-				ExcludeDefinition: true
-			};
+            bucket.push(new CodeLens(toRange(node.Location), { title: "run test", command: 'dotnet.test.run', arguments: [testMethod, fileName] }));
+            bucket.push(new CodeLens(toRange(node.Location), { title: "debug test", command: 'dotnet.test.debug', arguments: [testMethod, fileName] }));
+        }
+    }
 
-			return serverUtils.findUsages(this._server, req, token).then(res => {
-				if (!res || !Array.isArray(res.QuickFixes)) {
-					return;
-				}
-                
-				let len = res.QuickFixes.length;
-				codeLens.command = {
-					title: len === 1 ? '1 reference' : `${len} references`,
-					command: 'editor.action.showReferences',
-					arguments: [Uri.file(req.Filename), codeLens.range.start, res.QuickFixes.map(toLocation)]
-				};
+    resolveCodeLens(codeLens: CodeLens, token: CancellationToken): Thenable<CodeLens> {
+        if (codeLens instanceof OmniSharpCodeLens) {
 
-				return codeLens;
-			});
-		}
-	}
+            let req = <protocol.FindUsagesRequest>{
+                Filename: codeLens.fileName,
+                Line: codeLens.range.start.line + 1,
+                Column: codeLens.range.start.character + 1,
+                OnlyThisFile: false,
+                ExcludeDefinition: true
+            };
+
+            return serverUtils.findUsages(this._server, req, token).then(res => {
+                if (!res || !Array.isArray(res.QuickFixes)) {
+                    return;
+                }
+
+                let len = res.QuickFixes.length;
+                codeLens.command = {
+                    title: len === 1 ? '1 reference' : `${len} references`,
+                    command: 'editor.action.showReferences',
+                    arguments: [Uri.file(req.Filename), codeLens.range.start, res.QuickFixes.map(toLocation)]
+                };
+
+                return codeLens;
+            });
+        }
+    }
 }
