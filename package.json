@@ -280,6 +280,86 @@
                   "type": "string"
                 },
                 "default": []
+              },
+              "pipeTransport": {
+                "type": "object",
+                "description": "Describes options to launch a program through a pipe transport.",
+                "default": {
+                  "pipeProgram": "enter pipe program name, for example plink.exe",
+                  "pipeArgs": []
+                },
+                "properties" : {
+                  "pipeProgram": {
+                    "type": "string",
+                    "description": "The pipe command to execute.",
+                    "default": "enter pipe program name, for example plink.exe"
+                  },
+                  "pipeArgs": {
+                    "type": "array",
+                    "description": "Command line arguments passed to the pipe program.",
+                    "default": []
+                  },
+                  "windows": {
+                    "type": "object",
+                    "description": "Windows-specific pipe launch configuration options",
+                    "default": {
+                      "pipeProgram": "enter pipe program name, for example plink.exe",
+                      "pipeArgs": []
+                    },
+                    "properties": {
+                      "pipeProgram": {
+                        "type": "string",
+                        "description": "The pipe command to execute.",
+                        "default": "enter pipe program name, for example plink.exe"
+                      },
+                      "pipeArgs": {
+                        "type": "array",
+                        "description": "Command line arguments passed to the pipe program.",
+                        "default": []
+                      }
+                    }
+                  },
+                  "osx": {
+                    "type": "object",
+                    "description": "OSX-specific pipe launch configuration options",
+                    "default": {
+                      "pipeProgram": "enter pipe program name, for example ssh",
+                      "pipeArgs": []
+                    },
+                    "properties": {
+                      "pipeProgram": {
+                        "type": "string",
+                        "description": "The pipe command to execute.",
+                        "default": "enter pipe program name, for example ssh"
+                      },
+                      "pipeArgs": {
+                        "type": "array",
+                        "description": "Command line arguments passed to the pipe program.",
+                        "default": []
+                      }
+                    }
+                  },
+                  "linux": {
+                    "type": "object",
+                    "description": "Linux-specific pipe launch configuration options",
+                    "default": {
+                      "pipeProgram": "enter pipe program name, for example ssh",
+                      "pipeArgs": []
+                    },
+                    "properties": {
+                      "pipeProgram": {
+                        "type": "string",
+                        "description": "The pipe command to execute.",
+                        "default": "enter pipe program name, for example ssh"
+                      },
+                      "pipeArgs": {
+                        "type": "array",
+                        "description": "Command line arguments passed to the pipe program.",
+                        "default": []
+                      }
+                    }
+                  }
+                }
               }
             }
           },
