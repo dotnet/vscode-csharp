@@ -11,6 +11,15 @@ import * as vscode from 'vscode';
 import * as serverUtils from "../omnisharpUtils";
 import * as protocol from '../protocol';
 
+let enableDebug = false;
+
+// check if debugger start is enable
+vscode.commands.getCommands().then(commands => {
+    if (commands.find(c => c == "vscode.startDebug")) {
+        enableDebug = true;
+    }
+});
+
 export function registerDotNetTestRunCommand(server: OmnisharpServer): vscode.Disposable {
     return vscode.commands.registerCommand(
         'dotnet.test.run',
@@ -54,7 +63,11 @@ export function debugDotnetTest(testMethod: string, fileName: string, server: Om
                 "cwd": "${workspaceRoot}",
                 "stopAtEntry": false
             }
-        ).then(undefined, reason => { vscode.window.showErrorMessage('Failed to debug test because ' + reason + '.') });
+        ).then(
+            response => {
+                vscode.window.showInformationMessage('call back from debugger start command')
+            },
+            reason => { vscode.window.showErrorMessage('Failed to debug test because ' + reason + '.') });
     });
 }
 
@@ -68,8 +81,10 @@ export function updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: strin
             toRange(node.Location),
             { title: "run test", command: 'dotnet.test.run', arguments: [testMethod, fileName] }));
 
-        bucket.push(new vscode.CodeLens(
-            toRange(node.Location),
-            { title: "debug test", command: 'dotnet.test.debug', arguments: [testMethod, fileName] }));
+        if (enableDebug) {
+            bucket.push(new vscode.CodeLens(
+                toRange(node.Location),
+                { title: "debug test", command: 'dotnet.test.debug', arguments: [testMethod, fileName] }));
+        }
     }
 }
