@@ -48,7 +48,7 @@ function debugDotnetTest(testMethod: string, fileName: string, server: Omnisharp
                 "type": "coreclr",
                 "request": "launch",
                 "program": response.Executable,
-                "args": [response.Argument],
+                "args": response.Argument.split(' '),
                 "cwd": "${workspaceRoot}",
                 "stopAtEntry": false
             }
