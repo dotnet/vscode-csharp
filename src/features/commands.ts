@@ -13,6 +13,7 @@ import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 import * as protocol from '../protocol';
 import * as vscode from 'vscode';
+import * as dotnetTest from './dotnetTest'
 
 let channel = vscode.window.createOutputChannel('.NET');
 
@@ -27,37 +28,8 @@ export default function registerCommands(server: OmnisharpServer, extensionPath:
     let d5 = vscode.commands.registerCommand('csharp.downloadDebugger', () => { });
 
     return vscode.Disposable.from(d1, d2, d3, d4, d5,
-        vscode.commands.registerCommand('dotnet.test.run', (testMethod, fileName) => runDotnetTest(testMethod, fileName, server)),
-        vscode.commands.registerCommand('dotnet.test.debug', (testMethod, fileName) => debugDotnetTest(testMethod, fileName, server)));
-}
-
-// Run test through dotnet-test command. This function can be moved to a separate structure
-function runDotnetTest(testMethod: string, fileName: string, server: OmnisharpServer) {
-    serverUtils.runDotNetTest(server, { FileName: fileName, MethodName: testMethod }).then(response => {
-        if (response.Pass) {
-            vscode.window.showInformationMessage('Test passed');
-        }
-        else {
-            vscode.window.showErrorMessage('Test failed');
-        }
-    });
-}
-
-// Run test through dotnet-test command with debugger attached
-function debugDotnetTest(testMethod: string, fileName: string, server: OmnisharpServer) {
-    serverUtils.getTestStartInfo(server, { FileName: fileName, MethodName: testMethod }).then(response => {
-        vscode.commands.executeCommand(
-            'vscode.startDebug', {
-                "name": ".NET test launch",
-                "type": "coreclr",
-                "request": "launch",
-                "program": response.Executable,
-                "args": response.Argument.split(' '),
-                "cwd": "${workspaceRoot}",
-                "stopAtEntry": false
-            }
-        );
-    });
+        dotnetTest.registerDotNetTestRunCommand(server),
+        dotnetTest.registerDotNetTestDebugCommand(server));
 }
 
 function pickProjectAndStart(server: OmnisharpServer) {
