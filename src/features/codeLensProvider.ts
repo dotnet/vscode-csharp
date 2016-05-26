@@ -8,6 +8,7 @@
 import {CancellationToken, CodeLens, Range, Uri, TextDocument, CodeLensProvider} from 'vscode';
 import {toRange, toLocation} from '../typeConvertion';
 import AbstractSupport from './abstractProvider';
+import {updateCodeLensForTest} from './dotnetTest';
 import * as protocol from '../protocol';
 import * as serverUtils from '../omnisharpUtils';
 
@@ -52,14 +53,7 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
             OmniSharpCodeLensProvider._convertQuickFix(bucket, fileName, child);
         }
 
-        let testFeature = node.Features.find(value => value.startsWith('XunitTestMethod'));
-        if (testFeature) {
-            // this test method has a test feature
-            let testMethod = testFeature.split(':')[1];
-
-            bucket.push(new CodeLens(toRange(node.Location), { title: "run test", command: 'dotnet.test.run', arguments: [testMethod, fileName] }));
-            bucket.push(new CodeLens(toRange(node.Location), { title: "debug test", command: 'dotnet.test.debug', arguments: [testMethod, fileName] }));
-        }
+        updateCodeLensForTest(bucket, fileName, node);
     }
 
     resolveCodeLens(codeLens: CodeLens, token: CancellationToken): Thenable<CodeLens> {

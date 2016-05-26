@@ -6,8 +6,10 @@
 'use strict';
 
 import {OmnisharpServer} from '../omnisharpServer';
+import {toRange} from '../typeConvertion';
 import * as vscode from 'vscode';
 import * as serverUtils from "../omnisharpUtils";
+import * as protocol from '../protocol';
 
 export function registerDotNetTestRunCommand(server: OmnisharpServer): vscode.Disposable {
     return vscode.commands.registerCommand(
@@ -54,4 +56,20 @@ export function debugDotnetTest(testMethod: string, fileName: string, server: Om
             }
         ).then(undefined, reason => { vscode.window.showErrorMessage('Failed to debug test because ' + reason + '.') });
     });
+}
+
+export function updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node) {
+    let testFeature = node.Features.find(value => value.startsWith('XunitTestMethod'));
+    if (testFeature) {
+        // this test method has a test feature
+        let testMethod = testFeature.split(':')[1];
+
+        bucket.push(new vscode.CodeLens(
+            toRange(node.Location),
+            { title: "run test", command: 'dotnet.test.run', arguments: [testMethod, fileName] }));
+
+        bucket.push(new vscode.CodeLens(
+            toRange(node.Location),
+            { title: "debug test", command: 'dotnet.test.debug', arguments: [testMethod, fileName] }));
+    }
 }
