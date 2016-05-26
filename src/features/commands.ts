@@ -33,9 +33,13 @@ export default function registerCommands(server: OmnisharpServer, extensionPath:
 
 // Run test through dotnet-test command. This function can be moved to a separate structure
 function runDotnetTest(testMethod: string, fileName: string, server: OmnisharpServer) {
-    vscode.window.showInformationMessage('run test! ' + testMethod + ' at ' + fileName);
     serverUtils.runDotNetTest(server, { FileName: fileName, MethodName: testMethod }).then(response => {
-        vscode.window.showInformationMessage('Test ' + testMethod + response.Pass ? 'Passed' : 'Failed');
+        if (response.Pass) {
+            vscode.window.showInformationMessage('Test passed');
+        }
+        else {
+            vscode.window.showErrorMessage('Test failed');
+        }
     });
 }
 
