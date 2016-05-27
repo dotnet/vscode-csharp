@@ -12,6 +12,7 @@ import * as stream from 'stream';
 import * as tmp from 'tmp';
 import {parse} from 'url';
 import {SupportedPlatform, getSupportedPlatform} from './utils';
+import {getProxyAgent} from './proxy';
 
 const Decompress = require('decompress');
 
@@ -48,10 +49,14 @@ function getOmnisharpAssetName(): string {
 
 function download(urlString: string): Promise<stream.Readable> {
     let url = parse(urlString);
+    
+    const agent = getProxyAgent(url);
+    
     let options: https.RequestOptions = {
         host: url.host,
         path: url.path,
-    }
+        agent: agent
+    };
     
     return new Promise<stream.Readable>((resolve, reject) => {
         return https.get(options, res => {
