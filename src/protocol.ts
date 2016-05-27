@@ -27,8 +27,8 @@ export module Requests {
     export const TypeLookup = '/typelookup';
     export const UpdateBuffer = '/updatebuffer';
 
-    export const GetTestStartInfo = '/getteststartinfo';
-    export const RunDotNetTest = '/rundotnettest';
+    export const GetTestStartInfo = '/v2/getteststartinfo';
+    export const RunDotNetTest = '/v2/runtest';
 }
 
 export interface Request {
