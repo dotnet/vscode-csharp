@@ -11,6 +11,16 @@ import * as vscode from 'vscode';
 import * as serverUtils from "../omnisharpUtils";
 import * as protocol from '../protocol';
 
+let _testOutputChannel: vscode.OutputChannel = undefined;
+
+function getTestOutputChannel(): vscode.OutputChannel {
+    if (_testOutputChannel == undefined) {
+        _testOutputChannel = vscode.window.createOutputChannel(".NET Test Log");
+    }
+
+    return _testOutputChannel;
+}
+
 export function registerDotNetTestRunCommand(server: OmnisharpServer): vscode.Disposable {
     return vscode.commands.registerCommand(
         'dotnet.test.run',
@@ -25,15 +35,17 @@ export function registerDotNetTestDebugCommand(server: OmnisharpServer): vscode.
 
 // Run test through dotnet-test command. This function can be moved to a separate structure
 export function runDotnetTest(testMethod: string, fileName: string, server: OmnisharpServer) {
+    getTestOutputChannel().show();
+    getTestOutputChannel().appendLine('Running test ' + testMethod + '...');
     serverUtils
         .runDotNetTest(server, { FileName: fileName, MethodName: testMethod })
         .then(
         response => {
             if (response.Pass) {
-                vscode.window.showInformationMessage('Test passed');
+                getTestOutputChannel().appendLine('Test passed \n');
             }
             else {
-                vscode.window.showErrorMessage('Test failed');
+                getTestOutputChannel().appendLine('Test failed \n');
             }
         },
         reason => {
