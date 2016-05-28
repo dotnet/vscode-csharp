@@ -176,11 +176,16 @@ export interface GetCodeActionsResponse {
     CodeActions: string[];
 }
 
+export interface SyntaxFeature {
+    Name: string;
+    Data: string;
+}
+
 export interface Node {
     ChildNodes: Node[];
     Location: QuickFix;
     Kind: string;
-    Features: string[];
+    Features: SyntaxFeature[];
 }
 
 export interface CurrentFileMembersAsTreeResponse {

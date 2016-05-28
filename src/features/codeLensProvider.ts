@@ -32,15 +32,15 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
     };
 
     provideCodeLenses(document: TextDocument, token: CancellationToken): CodeLens[] | Thenable<CodeLens[]> {
-
+        let request = { Filename: document.fileName };
         return serverUtils.currentFileMembersAsTree(this._server, { Filename: document.fileName }, token).then(tree => {
             let ret: CodeLens[] = [];
-            tree.TopLevelTypeDefinitions.forEach(node => OmniSharpCodeLensProvider._convertQuickFix(ret, document.fileName, node));
+            tree.TopLevelTypeDefinitions.forEach(node => this._convertQuickFix(ret, document.fileName, node));
             return ret;
         });
     }
 
-    private static _convertQuickFix(bucket: CodeLens[], fileName: string, node: protocol.Node): void {
+    private _convertQuickFix(bucket: CodeLens[], fileName: string, node: protocol.Node): void {
 
         if (node.Kind === 'MethodDeclaration' && OmniSharpCodeLensProvider.filteredSymbolNames[node.Location.Text]) {
             return;
@@ -50,10 +50,10 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
         bucket.push(lens);
 
         for (let child of node.ChildNodes) {
-            OmniSharpCodeLensProvider._convertQuickFix(bucket, fileName, child);
+            this._convertQuickFix(bucket, fileName, child);
         }
 
-        updateCodeLensForTest(bucket, fileName, node);
+        updateCodeLensForTest(bucket, fileName, node, this._server.isDebugEnable());
     }
 
     resolveCodeLens(codeLens: CodeLens, token: CancellationToken): Thenable<CodeLens> {

@@ -11,15 +11,6 @@ import * as vscode from 'vscode';
 import * as serverUtils from "../omnisharpUtils";
 import * as protocol from '../protocol';
 
-let enableDebug = false;
-
-// check if debugger start is enable
-vscode.commands.getCommands().then(commands => {
-    if (commands.find(c => c == "vscode.startDebug")) {
-        enableDebug = true;
-    }
-});
-
 export function registerDotNetTestRunCommand(server: OmnisharpServer): vscode.Disposable {
     return vscode.commands.registerCommand(
         'dotnet.test.run',
@@ -64,27 +55,29 @@ export function debugDotnetTest(testMethod: string, fileName: string, server: Om
                 "stopAtEntry": false
             }
         ).then(
-            response => {
-                vscode.window.showInformationMessage('call back from debugger start command')
-            },
-            reason => { vscode.window.showErrorMessage('Failed to debug test because ' + reason + '.') });
+            response => { },
+            reason => { vscode.window.showErrorMessage('Failed to start debugger on test because ' + reason + '.') });
     });
 }
 
-export function updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node) {
-    let testFeature = node.Features.find(value => value.startsWith('XunitTestMethod'));
+export function updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node, isDebugEnable: boolean) {
+    // backward compatible check: Features property doesn't present on older version OmniSharp
+    if (node.Features == undefined) {
+        return;
+    }
+
+    let testFeature = node.Features.find(value => value.Name == 'XunitTestMethod');
     if (testFeature) {
         // this test method has a test feature
-        let testMethod = testFeature.split(':')[1];
 
         bucket.push(new vscode.CodeLens(
             toRange(node.Location),
-            { title: "run test", command: 'dotnet.test.run', arguments: [testMethod, fileName] }));
+            { title: "run test", command: 'dotnet.test.run', arguments: [testFeature.Data, fileName] }));
 
-        if (enableDebug) {
+        if (isDebugEnable) {
             bucket.push(new vscode.CodeLens(
                 toRange(node.Location),
-                { title: "debug test", command: 'dotnet.test.debug', arguments: [testMethod, fileName] }));
+                { title: "debug test", command: 'dotnet.test.debug', arguments: [testFeature.Data, fileName] }));
         }
     }
 }
