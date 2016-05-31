@@ -13,8 +13,9 @@ import * as tmp from 'tmp';
 import {parse} from 'url';
 import {SupportedPlatform, getSupportedPlatform} from './utils';
 import {getProxyAgent} from './proxy';
+import {OutputChannel} from 'vscode';
 
-const Decompress = require('decompress');
+const decompress = require('decompress');
 
 const BaseDownloadUrl = 'https://vscodeoscon.blob.core.windows.net/ext';
 const DefaultInstallLocation = path.join(__dirname, '../.omnisharp');
@@ -73,14 +74,14 @@ function download(urlString: string): Promise<stream.Readable> {
     });
 }
 
-export function downloadOmnisharp(): Promise<boolean> {
+export function downloadOmnisharp(output: OutputChannel): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-        console.log(`[OmniSharp]: Installing to ${DefaultInstallLocation}`);
+        output.appendLine(`[INFO] Installing to ${DefaultInstallLocation}`);
         
         const assetName = getOmnisharpAssetName();
         const urlString = `${BaseDownloadUrl}/${assetName}`;
         
-        console.log(`[OmniSharp] Attempting to download ${assetName}...`);
+        output.appendLine(`[INFO] Attempting to download ${assetName}...`);
 
         return download(urlString)
             .then(inStream => {
@@ -89,7 +90,7 @@ export function downloadOmnisharp(): Promise<boolean> {
                         return reject(err);
                     }
                     
-                    console.log(`[OmniSharp] Downloading to ${tmpPath}...`);
+                    output.appendLine(`[INFO] Downloading to ${tmpPath}...`);
                     
                     const outStream = fs.createWriteStream(null, { fd: fd });
                     
@@ -99,30 +100,18 @@ export function downloadOmnisharp(): Promise<boolean> {
                     outStream.once('finish', () => {
                         // At this point, the asset has finished downloading.
                         
-                        console.log(`[OmniSharp] Download complete!`);
+                        output.appendLine(`[INFO] Download complete!`);
+                        output.appendLine(`[INFO] Decompressing...`);
                         
-                        let decompress = new Decompress()
-                            .src(tmpPath)
-                            .dest(DefaultInstallLocation);
-                            
-                        if (path.extname(assetName).toLowerCase() === '.zip') {
-                            decompress = decompress.use(Decompress.zip());
-                            console.log(`[OmniSharp] Unzipping...`);
-                        }
-                        else {
-                            decompress = decompress.use(Decompress.targz());
-                            console.log(`[OmniSharp] Untaring...`);
-                        }
-
-                        decompress.run((err, files) => {
-                            if (err) {
+                        return decompress(tmpPath, DefaultInstallLocation)
+                            .then(files => {
+                                output.appendLine(`[INFO] Done! ${files.length} files unpacked.`)
+                                return resolve(true);
+                            })
+                            .error(err => {
+                                output.appendLine(`[ERROR] ${err}`);
                                 return reject(err);
-                            }
-                            
-                            console.log(`[OmniSharp] Done! ${files.length} files unpacked.`)
-                            
-                            return resolve(true);
-                        });
+                            });
                     });
                     
                     inStream.pipe(outStream);
