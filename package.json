@@ -22,7 +22,7 @@
     "postinstall": "tsc"
   },
   "dependencies": {
-    "decompress": "^3.0.0",
+    "decompress": "^4.0.0",
     "del": "^2.0.2",
     "fs-extra-promise": "^0.3.1",
     "http-proxy-agent": "^1.0.0",
