@@ -27,9 +27,11 @@ export default function registerCommands(server: OmnisharpServer, extensionPath:
     // running the command activates the extension, which is all we need for installation to kickoff
     let d5 = vscode.commands.registerCommand('csharp.downloadDebugger', () => { });
 
-    return vscode.Disposable.from(d1, d2, d3, d4, d5,
-        dotnetTest.registerDotNetTestRunCommand(server),
-        dotnetTest.registerDotNetTestDebugCommand(server));
+    // register two commands for running and debugging xunit tests
+    let d6 = dotnetTest.registerDotNetTestRunCommand(server);
+    let d7 = dotnetTest.registerDotNetTestDebugCommand(server);
+
+    return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7);
 }
 
 function pickProjectAndStart(server: OmnisharpServer) {

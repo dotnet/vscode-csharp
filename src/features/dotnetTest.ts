@@ -49,7 +49,7 @@ export function runDotnetTest(testMethod: string, fileName: string, server: Omni
             }
         },
         reason => {
-            vscode.window.showErrorMessage('Fail to run test because ' + reason + '.');
+            vscode.window.showErrorMessage(`Failed to run test because ${reason}.`);
         });
 }
 
@@ -68,7 +68,7 @@ export function debugDotnetTest(testMethod: string, fileName: string, server: Om
             }
         ).then(
             response => { },
-            reason => { vscode.window.showErrorMessage('Failed to start debugger on test because ' + reason + '.') });
+            reason => { vscode.window.showErrorMessage(`Failed to start debugger on test because ${reason}.`) });
     });
 }
 
