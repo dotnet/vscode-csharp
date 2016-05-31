@@ -18,24 +18,24 @@ const Decompress = require('decompress');
 
 const BaseDownloadUrl = 'https://vscodeoscon.blob.core.windows.net/ext';
 const DefaultInstallLocation = path.join(__dirname, '../.omnisharp');
-const ApiToken = '18a6f5ecea711220d4f433d4fd41062d479fda1d';
+const OmniSharpVersion = '1.9-beta4';
 
 tmp.setGracefulCleanup();
 
 function getOmnisharpAssetName(): string {
     switch (getSupportedPlatform()) {
         case SupportedPlatform.Windows:
-            return 'omnisharp-win-x64-net451.zip';
+            return `omnisharp-${OmniSharpVersion}-win-x64-net451.zip`;
         case SupportedPlatform.OSX:
-            return 'omnisharp-osx-x64-netcoreapp1.0.tar.gz';
+            return `omnisharp-${OmniSharpVersion}-osx-x64-netcoreapp1.0.tar.gz`;
         case SupportedPlatform.CentOS:
-            return 'omnisharp-centos-x64-netcoreapp1.0.tar.gz';
+            return `omnisharp-${OmniSharpVersion}-centos-x64-netcoreapp1.0.tar.gz`;
         case SupportedPlatform.Debian:
-            return 'omnisharp-debian-x64-netcoreapp1.0.tar.gz';
+            return `omnisharp-${OmniSharpVersion}-debian-x64-netcoreapp1.0.tar.gz`;
         case SupportedPlatform.RHEL:
-            return 'omnisharp-rhel-x64-netcoreapp1.0.tar.gz';
+            return `omnisharp-${OmniSharpVersion}-rhel-x64-netcoreapp1.0.tar.gz`;
         case SupportedPlatform.Ubuntu:
-            return 'omnisharp-ubuntu-x64-netcoreapp1.0.tar.gz';
+            return `omnisharp-${OmniSharpVersion}-ubuntu-x64-netcoreapp1.0.tar.gz`;
             
         default:
             if (process.platform === 'linux') {
