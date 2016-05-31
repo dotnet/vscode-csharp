@@ -37,7 +37,7 @@ export function installOmnisharpIfNeeded(output: OutputChannel): Promise<string>
             throw err;
         }
 		
-        return downloadOmnisharp().then(_ => {
+        return downloadOmnisharp(output).then(_ => {
             return getOmnisharpLaunchFilePath();
         })
     });
