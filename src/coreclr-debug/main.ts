@@ -328,7 +328,7 @@ function createProjectJson(targetRuntime: string): any
 {
     let projectJson = {
         name: "dummy",
-        compilationOptions: {
+        buildOptions: {
             emitEntryPoint: true
         },
         dependencies: {
