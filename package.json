@@ -269,6 +269,11 @@
                 "description": "Environment variables passed to the program.",
                 "default": { }
               },
+              "externalConsole": {
+                "type": "boolean",
+                "description": "If 'true' the debugger should launch the target application into a new external console.",
+                "default": true
+              },
               "sourceFileMap": {
                 "type": "object",
                 "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
@@ -428,7 +433,8 @@
             "program": "${workspaceRoot}/bin/Debug/<target-framework>/<project-name.dll>",
             "args": [],
             "cwd": "${workspaceRoot}",
-            "stopAtEntry": false
+            "stopAtEntry": false,
+            "externalConsole": true
           },
           {
             "name": ".NET Core Launch (web)",
