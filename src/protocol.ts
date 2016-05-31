@@ -26,9 +26,6 @@ export module Requests {
     export const SignatureHelp = '/signatureHelp';
     export const TypeLookup = '/typelookup';
     export const UpdateBuffer = '/updatebuffer';
-
-    export const GetTestStartInfo = '/v2/getteststartinfo';
-    export const RunDotNetTest = '/v2/runtest';
 }
 
 export interface Request {
@@ -375,6 +372,8 @@ export namespace V2 {
     export module Requests {
         export const GetCodeActions = '/v2/getcodeactions';
         export const RunCodeAction = '/v2/runcodeaction';
+        export const GetTestStartInfo = '/v2/getteststartinfo';
+        export const RunDotNetTest = '/v2/runtest';
     }
 
     export interface Point {
@@ -448,26 +447,25 @@ export namespace V2 {
         Name: string;
         Version: string;
     }
-}
 
-// dotnet-test endpoints
+    // dotnet-test endpoints
+    export interface GetTestStartInfoRequest {
+        FileName: string;
+        MethodName: string;
+    }
 
-export interface GetTestStartInfoRequest {
-    FileName: string;
-    MethodName: string;
-}
+    export interface GetTestStartInfoResponse {
+        Executable: string;
+        Argument: string;
+    }
 
-export interface GetTestStartInfoResponse {
-    Executable: string;
-    Argument: string;
-}
+    export interface RunDotNetTestRequest {
+        FileName: string;
+        MethodName: string;
+    }
 
-export interface RunDotNetTestRequest {
-    FileName: string;
-    MethodName: string;
-}
-
-export interface RunDotNetTestResponse {
-    Failure: string;
-    Pass: boolean;
+    export interface RunDotNetTestResponse {
+        Failure: string;
+        Pass: boolean;
+    }
 }
