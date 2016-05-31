@@ -73,10 +73,10 @@ export function updateBuffer(server: OmnisharpServer, request: protocol.UpdateBu
     return server.makeRequest<boolean>(protocol.Requests.UpdateBuffer, request);
 }
 
-export function getTestStartInfo(server: OmnisharpServer, request: protocol.GetTestStartInfoRequest) {
-    return server.makeRequest<protocol.GetTestStartInfoResponse>(protocol.Requests.GetTestStartInfo, request);
+export function getTestStartInfo(server: OmnisharpServer, request: protocol.V2.GetTestStartInfoRequest) {
+    return server.makeRequest<protocol.V2.GetTestStartInfoResponse>(protocol.V2.Requests.GetTestStartInfo, request);
 }
 
-export function runDotNetTest(server: OmnisharpServer, request: protocol.RunDotNetTestRequest) {
-    return server.makeRequest<protocol.RunDotNetTestResponse>(protocol.Requests.RunDotNetTest, request);
+export function runDotNetTest(server: OmnisharpServer, request: protocol.V2.RunDotNetTestRequest) {
+    return server.makeRequest<protocol.V2.RunDotNetTestResponse>(protocol.V2.Requests.RunDotNetTest, request);
 }
