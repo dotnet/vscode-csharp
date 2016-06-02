@@ -116,9 +116,23 @@ You can optionally configure a file by file mapping by providing map following t
 
     "sourceFileMap": {
         "C:\foo":"/home/me/foo"
-        }
+    }
 
 #####Symbol Path
 You can optionally provide paths to symbols following this schema:
 
     "symbolPath":"[ \"/Volumes/symbols\"]"
+
+#####Environment variables
+Environment variables may be passed to your program using this schema:
+
+    "env": {
+        "myVariableName":"theValueGoesHere"
+    }
+
+#####External console (terminal) window
+The target process can optionally launch into a seperate console window. This is enabled by default for non-ASP.NET applications. But it can be explicitly set with:
+
+    "externalConsole": true
+
+If your console app doesn't take console input (ex: all input comes from the command line), you may want to turn this off.

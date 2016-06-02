@@ -24,6 +24,17 @@ Please file any issues at https://github.com/OmniSharp/omnisharp-vscode/issues.
 ### Debugging
 The C# extension now supports basic debugging capabilities! See http://aka.ms/vscclrdebugger for details.
 
+### What's new in C# extension version 1.1
+
+* Preliminary support for `dotnet test`
+* Fix for OmniSharp installation problems on networks with an http proxy
+* Debugger support for an external console
+* Debugger support for environment variables
+* Support for debugging .NET Core 1.0.0 post RC2 builds
+* Automatic web vs. console debugger configuration detection
+* Detach support
+* Fix expression evaluation errors when referencing assemblies which aren't currently loaded
+
 ### Development
 
 First install:
