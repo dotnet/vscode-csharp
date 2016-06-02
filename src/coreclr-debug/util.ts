@@ -83,7 +83,7 @@ export default class CoreClrDebugUtil
             fs.accessSync(path, fs.F_OK);
             return true;
         } catch (err) {
-            if (err.code === 'ENOENT') {
+            if (err.code === 'ENOENT' || err.code === 'ENOTDIR') {
                 return false;
             } else {
                 throw Error(err.code);

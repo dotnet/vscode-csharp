@@ -200,25 +200,29 @@ function isOnPath(command : string) : boolean {
         return false;
     }
     let fileName = command;
-    let seperatorChar = ':';
     if (process.platform == 'win32') {
         // on Windows, add a '.exe', and the path is semi-colon seperatode
         fileName = fileName + ".exe";
-        seperatorChar = ';';   
     }
-    
-    let pathSegments: string[] = pathValue.split(seperatorChar);
+
+    let pathSegments: string[] = pathValue.split(path.delimiter);
     for (let segment of pathSegments) {
         if (segment.length === 0 || !path.isAbsolute(segment)) {
             continue;
         }
-        
+
         const segmentPath = path.join(segment, fileName);
-        if (CoreClrDebugUtil.existsSync(segmentPath)) {
-            return true;
+
+        try {
+            if (CoreClrDebugUtil.existsSync(segmentPath)) {
+                return true;
+            }
+        } catch (err) {
+            // any error from existsSync can be treated as the command not being on the path
+            continue;
         }
     }
-    
+
     return false;
 }
 
