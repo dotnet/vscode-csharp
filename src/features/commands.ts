@@ -14,6 +14,7 @@ import * as path from 'path';
 import * as protocol from '../protocol';
 import * as vscode from 'vscode';
 import * as dotnetTest from './dotnetTest'
+import {DotNetAttachItemsProviderFactory, AttachPicker} from './processPicker'
 
 let channel = vscode.window.createOutputChannel('.NET');
 
@@ -29,9 +30,14 @@ export default function registerCommands(server: OmnisharpServer, extensionPath:
 
     // register two commands for running and debugging xunit tests
     let d6 = dotnetTest.registerDotNetTestRunCommand(server);
-    let d7 = dotnetTest.registerDotNetTestDebugCommand(server);
+    let d7 = dotnetTest.registerDotNetTestDebugCommand(server);    
+    
+    // register process picker for attach
+    let attachItemsProvider = DotNetAttachItemsProviderFactory.Get();
+    let attacher = new AttachPicker(attachItemsProvider);
+    let d8 = vscode.commands.registerCommand('debugger.pickProcess', () => attacher.ShowAttachEntries());
 
-    return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7);
+    return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8);
 }
 
 function pickProjectAndStart(server: OmnisharpServer) {
