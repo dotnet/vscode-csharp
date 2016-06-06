@@ -34,6 +34,7 @@ The C# extension now supports basic debugging capabilities! See http://aka.ms/vs
 * Automatic web vs. console debugger configuration detection
 * Detach support
 * Fix expression evaluation errors when referencing assemblies which aren't currently loaded
+* Fix expression evaluation on Windows 7
 
 ### Development
 

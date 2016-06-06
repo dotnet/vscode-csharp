@@ -139,7 +139,7 @@ function createLaunchConfiguration(targetFramework: string, executableName: stri
         program: '${workspaceRoot}/bin/Debug/' + targetFramework + '/'+ executableName,
         args: [],
         cwd: '${workspaceRoot}',
-        externalConsole: true,
+        externalConsole: false,
         stopAtEntry: false
     }
 }

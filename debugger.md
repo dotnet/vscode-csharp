@@ -131,8 +131,6 @@ Environment variables may be passed to your program using this schema:
     }
 
 #####External console (terminal) window
-The target process can optionally launch into a seperate console window. This is enabled by default for non-ASP.NET applications. But it can be explicitly set with:
+The target process can optionally launch into a seperate console window. You will want this if your console app takes console input (ex: Console.ReadLine). This can be enabled with:
 
     "externalConsole": true
-
-If your console app doesn't take console input (ex: all input comes from the command line), you may want to turn this off.
