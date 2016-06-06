@@ -14,7 +14,7 @@ import {Disposable, CancellationToken, OutputChannel, workspace, window} from 'v
 import {ErrorMessage, UnresolvedDependenciesMessage, MSBuildProjectDiagnostics, ProjectInformationResponse} from './protocol';
 import getLaunchTargets, {LaunchTarget} from './launchTargetFinder';
 import TelemetryReporter from 'vscode-extension-telemetry';
-import * as vscode from 'vscode'
+import * as vscode from 'vscode';
 
 enum ServerState {
 	Starting,
@@ -153,7 +153,7 @@ export abstract class OmnisharpServer {
     }
 
     public reportAndClearTelemetry() {
-        for (var path in this._requestDelays) {
+        for (const path in this._requestDelays) {
             const eventName = 'omnisharp' + path;
             const measures = this._requestDelays[path].toMeasures();
 

@@ -8,7 +8,6 @@
 import { Url, parse as parseUrl } from 'url';
 import HttpProxyAgent = require('http-proxy-agent');
 import HttpsProxyAgent = require('https-proxy-agent');
-import {workspace} from 'vscode';
 
 function getSystemProxyURL(requestURL: Url): string {
 	if (requestURL.protocol === 'http:') {
@@ -20,9 +19,8 @@ function getSystemProxyURL(requestURL: Url): string {
 	return null;
 }
 
-export function getProxyAgent(requestURL: Url): any {
-	const vsConfigProxyUrl = workspace.getConfiguration().get<string>('http.proxy');
-	const proxyURL = vsConfigProxyUrl || getSystemProxyURL(requestURL);
+export function getProxyAgent(requestURL: Url, proxy?: string, strictSSL?: boolean): any {
+	const proxyURL = proxy || getSystemProxyURL(requestURL);
 
 	if (!proxyURL) {
 		return null;
@@ -34,7 +32,8 @@ export function getProxyAgent(requestURL: Url): any {
 		return null;
 	}
 
-	const strictSSL = workspace.getConfiguration().get('http.proxyStrictSSL', true);
+	strictSSL = strictSSL || true;
+
 	const opts = {
 		host: proxyEndpoint.hostname,
 		port: Number(proxyEndpoint.port),
