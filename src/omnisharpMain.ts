@@ -22,7 +22,7 @@ import registerCommands from './features/commands';
 import {StdioOmnisharpServer} from './omnisharpServer';
 import forwardChanges from './features/changeForwarding';
 import reportStatus from './features/omnisharpStatus';
-import * as coreclrdebug from './coreclr-debug/main';
+import * as coreclrdebug from './coreclr-debug/activate';
 import {addAssetsIfNecessary} from './assets';
 import * as vscode from 'vscode';
 import TelemetryReporter from 'vscode-extension-telemetry';
@@ -91,7 +91,7 @@ export function activate(context: vscode.ExtensionContext): any {
 		server.stop();
 	}));
 		
-    // install coreclr-debug
+    // activate coreclr-debug
     coreclrdebug.activate(context, reporter);
     
 	context.subscriptions.push(...disposables);

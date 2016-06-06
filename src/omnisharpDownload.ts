@@ -13,17 +13,16 @@ import * as tmp from 'tmp';
 import {parse} from 'url';
 import {SupportedPlatform, getSupportedPlatform} from './utils';
 import {getProxyAgent} from './proxy';
-import {OutputChannel} from 'vscode';
 
 const decompress = require('decompress');
 
 const BaseDownloadUrl = 'https://vscodeoscon.blob.core.windows.net/ext';
 const DefaultInstallLocation = path.join(__dirname, '../.omnisharp');
-const OmniSharpVersion = '1.9-beta5';
+export const OmniSharpVersion = '1.9-beta5';
 
 tmp.setGracefulCleanup();
 
-function getOmnisharpAssetName(): string {
+export function getOmnisharpAssetName(): string {
     switch (getSupportedPlatform()) {
         case SupportedPlatform.Windows:
             return `omnisharp-${OmniSharpVersion}-win-x64-net451.zip`;
@@ -48,10 +47,10 @@ function getOmnisharpAssetName(): string {
     }
 }
 
-function download(urlString: string): Promise<stream.Readable> {
+function download(urlString: string, proxy?: string, strictSSL?: boolean): Promise<stream.Readable> {
     let url = parse(urlString);
     
-    const agent = getProxyAgent(url);
+    const agent = getProxyAgent(url, proxy, strictSSL);
     
     let options: https.RequestOptions = {
         host: url.host,
@@ -74,23 +73,23 @@ function download(urlString: string): Promise<stream.Readable> {
     });
 }
 
-export function downloadOmnisharp(output: OutputChannel): Promise<boolean> {
+export function downloadOmnisharp(log: (message: string) => void, omnisharpAssetName?: string, proxy?: string, strictSSL?: boolean) {
     return new Promise<boolean>((resolve, reject) => {
-        output.appendLine(`[INFO] Installing to ${DefaultInstallLocation}`);
-        
-        const assetName = getOmnisharpAssetName();
-        const urlString = `${BaseDownloadUrl}/${assetName}`;
-        
-        output.appendLine(`[INFO] Attempting to download ${assetName}...`);
+        log(`[INFO] Installing to ${DefaultInstallLocation}`);
 
-        return download(urlString)
+        const assetName = omnisharpAssetName || getOmnisharpAssetName();
+        const urlString = `${BaseDownloadUrl}/${assetName}`;
+
+        log(`[INFO] Attempting to download ${assetName}...`);
+
+        return download(urlString, proxy, strictSSL)
             .then(inStream => {
                 tmp.file((err, tmpPath, fd, cleanupCallback) => {
                     if (err) {
                         return reject(err);
                     }
                     
-                    output.appendLine(`[INFO] Downloading to ${tmpPath}...`);
+                    log(`[INFO] Downloading to ${tmpPath}...`);
                     
                     const outStream = fs.createWriteStream(null, { fd: fd });
                     
@@ -100,16 +99,16 @@ export function downloadOmnisharp(output: OutputChannel): Promise<boolean> {
                     outStream.once('finish', () => {
                         // At this point, the asset has finished downloading.
                         
-                        output.appendLine(`[INFO] Download complete!`);
-                        output.appendLine(`[INFO] Decompressing...`);
+                        log(`[INFO] Download complete!`);
+                        log(`[INFO] Decompressing...`);
                         
                         return decompress(tmpPath, DefaultInstallLocation)
                             .then(files => {
-                                output.appendLine(`[INFO] Done! ${files.length} files unpacked.`)
+                                log(`[INFO] Done! ${files.length} files unpacked.`);
                                 return resolve(true);
                             })
                             .catch(err => {
-                                output.appendLine(`[ERROR] ${err}`);
+                                log(`[ERROR] ${err}`);
                                 return reject(err);
                             });
                     });
@@ -119,7 +118,7 @@ export function downloadOmnisharp(output: OutputChannel): Promise<boolean> {
             })
             .catch(err =>
             {
-                output.appendLine(`[ERROR] ${err}`);
+                log(`[ERROR] ${err}`);
             });
     });
 }

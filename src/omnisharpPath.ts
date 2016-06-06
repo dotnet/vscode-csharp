@@ -50,7 +50,7 @@ function getLaunchPathFromSettings(): Promise<string> {
             .catch(err => {
                 vscode.window.showWarningMessage(`Invalid "csharp.omnisharp" use setting specified ('${setting}).`);
                 throw err;
-            })
+            });
     }
     
     return Promise.reject<string>(new Error('OmniSharp use setting does not exists.'));
