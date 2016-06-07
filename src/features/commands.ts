@@ -35,7 +35,7 @@ export default function registerCommands(server: OmnisharpServer, extensionPath:
     // register process picker for attach
     let attachItemsProvider = DotNetAttachItemsProviderFactory.Get();
     let attacher = new AttachPicker(attachItemsProvider);
-    let d8 = vscode.commands.registerCommand('debugger.pickProcess', () => attacher.ShowAttachEntries());
+    let d8 = vscode.commands.registerCommand('csharp.listProcess', () => attacher.ShowAttachEntries());
 
     return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8);
 }

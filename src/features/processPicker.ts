@@ -16,21 +16,21 @@ export interface AttachItemsProvider {
 }
 
 export class AttachPicker {
-    constructor(private attachItemsProvider: AttachItemsProvider) {}
+    constructor(private attachItemsProvider: AttachItemsProvider) { }
 
     public ShowAttachEntries(): Promise<string> {
         return this.attachItemsProvider.getAttachItems()
             .then(processEntries => {
                 let attachPickOptions: vscode.QuickPickOptions = {
-                        matchOnDescription: true,
-                        matchOnDetail: true, 
-                        placeHolder: "Select the process to attach to"
+                    matchOnDescription: true,
+                    matchOnDetail: true,
+                    placeHolder: "Select the process to attach to"                    
                 };
 
                 return vscode.window.showQuickPick(processEntries, attachPickOptions)
                     .then(chosenProcess => {
-                        return chosenProcess? chosenProcess.id : null;
-                     });
+                        return chosenProcess ? chosenProcess.id : null;
+                    });
             });
     }
 }
@@ -66,7 +66,19 @@ abstract class DotNetAttachItemsProvider implements AttachItemsProvider {
         return this.getInternalProcessEntries().then(processEntries => {
             // localeCompare is significantly slower than < and > (2000 ms vs 80 ms for 10,000 elements)
             // We can change to localeCompare if this becomes an issue
-            processEntries.sort((a, b) => a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1);
+            let dotnetProcessName = (os.platform() === 'win32') ? 'dotnet.exe' : 'dotnet';
+            processEntries = processEntries.sort((a, b) => {
+                if (a.name.toLowerCase() === dotnetProcessName && b.name.toLowerCase() === dotnetProcessName) {
+                    return a.commandLine.toLowerCase() < b.commandLine.toLowerCase() ? -1 : 1;
+                } else if (a.name.toLowerCase() === dotnetProcessName) {
+                    return -1;
+                } else if (b.name.toLowerCase() === dotnetProcessName) {
+                    return 1;
+                } else {
+                    return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
+                }
+            });
+            
             let attachItems = processEntries.map(p => p.toAttachItem());
             return attachItems;
         });
@@ -101,7 +113,12 @@ export class PsAttachItemsProvider extends DotNetAttachItemsProvider {
 
     protected getInternalProcessEntries(): Promise<Process[]> {
         const commColumnTitle = Array(PsAttachItemsProvider.secondColumnCharacters).join("a");
-        const psCommand = `ps -axcww -o pid=,comm=${commColumnTitle},args=`;
+        // the BSD version of ps uses '-c' to have 'comm' only output the executable name and not
+        // the full path. The Linux version of ps has 'comm' to only display the name of the executable
+        // Note that comm on Linux systems is truncated to 16 characters:
+        // https://bugzilla.redhat.com/show_bug.cgi?id=429565
+        // Since 'args' contains the full path to the executable, even if truncated, searching will work as desired.
+        const psCommand = `ps -axww -o pid=,comm=${commColumnTitle},args=` + (os.platform() === 'darwin' ? ' -c' : '');
         return execChildProcess(psCommand, null).then(processes => {
             return this.parseProcessFromPs(processes);
         });
@@ -196,18 +213,18 @@ export class WmicAttachItemsProvider extends DotNetAttachItemsProvider {
             let key = line.slice(0, line.indexOf('='));
             let value = line.slice(line.indexOf('=') + 1);
             if (key === WmicAttachItemsProvider.wmicNameTitle) {
-                process.name = value;
+                process.name = value.trim();
             }
             else if (key === WmicAttachItemsProvider.wmicPidTitle) {
-                process.pid = value;
+                process.pid = value.trim();
             }
             else if (key === WmicAttachItemsProvider.wmicCommandLineTitle) {
                 const extendedLengthPath = '\\??\\';
                 if (value.startsWith(extendedLengthPath)) {
-                    value = value.slice(extendedLengthPath.length);
+                    value = value.slice(extendedLengthPath.length).trim();
                 }
 
-                process.commandLine = value;
+                process.commandLine = value.trim();
             }
         }
     }

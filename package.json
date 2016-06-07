@@ -52,7 +52,7 @@
     "onCommand:o.showOutput",
     "onCommand:dotnet.restore",
     "onCommand:csharp.downloadDebugger",
-    "onCommand:debugger.pickProcess",
+    "onCommand:csharp.listProcess",
     "workspaceContains:project.json"
   ],
   "contributes": {
@@ -105,9 +105,9 @@
         "category": "Debug"
       },
       {
-        "command": "debugger.pickProcess",
-        "title": "Process picker for attach",
-        "category": "Debug" 
+        "command": "csharp.listProcess",
+        "title": "List process for attach",
+        "category": "CSharp" 
       }
     ],
     "keybindings": [
@@ -150,7 +150,7 @@
         "runtime": "node",
         "runtimeArgs": [],
         "variables": {
-          "pickProcess": "debugger.pickProcess"
+          "pickProcess": "csharp.listProcess"
         },
         "program": "./out/coreclr-debug/proxy.js",
         "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
