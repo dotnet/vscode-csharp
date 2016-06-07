@@ -116,9 +116,21 @@ You can optionally configure a file by file mapping by providing map following t
 
     "sourceFileMap": {
         "C:\foo":"/home/me/foo"
-        }
+    }
 
 #####Symbol Path
 You can optionally provide paths to symbols following this schema:
 
     "symbolPath":"[ \"/Volumes/symbols\"]"
+
+#####Environment variables
+Environment variables may be passed to your program using this schema:
+
+    "env": {
+        "myVariableName":"theValueGoesHere"
+    }
+
+#####External console (terminal) window
+The target process can optionally launch into a seperate console window. You will want this if your console app takes console input (ex: Console.ReadLine). This can be enabled with:
+
+    "externalConsole": true

@@ -200,25 +200,29 @@ function isOnPath(command : string) : boolean {
         return false;
     }
     let fileName = command;
-    let seperatorChar = ':';
     if (process.platform == 'win32') {
         // on Windows, add a '.exe', and the path is semi-colon seperatode
         fileName = fileName + ".exe";
-        seperatorChar = ';';   
     }
-    
-    let pathSegments: string[] = pathValue.split(seperatorChar);
+
+    let pathSegments: string[] = pathValue.split(path.delimiter);
     for (let segment of pathSegments) {
         if (segment.length === 0 || !path.isAbsolute(segment)) {
             continue;
         }
-        
+
         const segmentPath = path.join(segment, fileName);
-        if (CoreClrDebugUtil.existsSync(segmentPath)) {
-            return true;
+
+        try {
+            if (CoreClrDebugUtil.existsSync(segmentPath)) {
+                return true;
+            }
+        } catch (err) {
+            // any error from existsSync can be treated as the command not being on the path
+            continue;
         }
     }
-    
+
     return false;
 }
 
@@ -332,9 +336,9 @@ function createProjectJson(targetRuntime: string): any
             emitEntryPoint: true
         },
         dependencies: {
-            "Microsoft.VisualStudio.clrdbg": "14.0.25229-preview-2963841",
-            "Microsoft.VisualStudio.clrdbg.MIEngine": "14.0.30401-preview-1",
-            "Microsoft.VisualStudio.OpenDebugAD7": "1.0.20405-preview-1",
+            "Microsoft.VisualStudio.clrdbg": "14.0.25406-preview-3044032",
+            "Microsoft.VisualStudio.clrdbg.MIEngine": "14.0.30606-preview-1",
+            "Microsoft.VisualStudio.OpenDebugAD7": "1.0.20527-preview-1",
             "NETStandard.Library": "1.5.0-rc2-24027",
             "Newtonsoft.Json": "7.0.1",
             "Microsoft.VisualStudio.Debugger.Interop.Portable": "1.0.1",

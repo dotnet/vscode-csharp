@@ -14,6 +14,7 @@ import {Disposable, CancellationToken, OutputChannel, workspace, window} from 'v
 import {ErrorMessage, UnresolvedDependenciesMessage, MSBuildProjectDiagnostics, ProjectInformationResponse} from './protocol';
 import getLaunchTargets, {LaunchTarget} from './launchTargetFinder';
 import TelemetryReporter from 'vscode-extension-telemetry';
+import * as vscode from 'vscode'
 
 enum ServerState {
 	Starting,
@@ -31,29 +32,29 @@ interface Request {
 
 module Events {
     export const StateChanged = 'stateChanged';
-    
+
     export const StdOut = 'stdout';
     export const StdErr = 'stderr';
-    
+
     export const Error = 'Error';
     export const ServerError = 'ServerError';
-    
+
     export const UnresolvedDependencies = 'UnresolvedDependencies';
     export const PackageRestoreStarted = 'PackageRestoreStarted';
     export const PackageRestoreFinished = 'PackageRestoreFinished';
-    
+
     export const ProjectChanged = 'ProjectChanged';
     export const ProjectAdded = 'ProjectAdded';
     export const ProjectRemoved = 'ProjectRemoved';
-    
+
     export const MsBuildProjectDiagnostics = 'MsBuildProjectDiagnostics';
-    
+
     export const BeforeServerStart = 'BeforeServerStart';
     export const ServerStart = 'ServerStart';
     export const ServerStop = 'ServerStop';
-    
+
     export const MultipleLaunchTargets = 'server:MultipleLaunchTargets';
-    
+
     export const Started = 'started';
 }
 
@@ -65,7 +66,7 @@ class Delays {
     idleDelays: number = 0;           // 501-1500 milliseconds
     nonFocusDelays: number = 0;       // 1501-3000 milliseconds
     bigDelays: number = 0;            // 3000+ milliseconds
-    
+
     public report(elapsedTime: number) {
         if (elapsedTime <= 25) {
             this.immediateDelays += 1;
@@ -89,8 +90,8 @@ class Delays {
             this.bigDelays += 1;
         }
     }
-    
-    public toMeasures(): {[key: string]: number} {
+
+    public toMeasures(): { [key: string]: number } {
         return {
             immedateDelays: this.immediateDelays,
             nearImmediateDelays: this.nearImmediateDelays,
@@ -115,6 +116,8 @@ export abstract class OmnisharpServer {
 	private _isProcessingQueue = false;
 	private _channel: OutputChannel;
 
+	private _isDebugEnable: boolean = false;
+
 	protected _serverProcess: ChildProcess;
 	protected _extraArgv: string[];
 
@@ -132,28 +135,28 @@ export abstract class OmnisharpServer {
 		return this._state;
 	}
 
-	private _setState(value: ServerState) : void {
+	private _setState(value: ServerState): void {
 		if (typeof value !== 'undefined' && value !== this._state) {
 			this._state = value;
 			this._fireEvent(Events.StateChanged, this._state);
 		}
 	}
-    
+
     private _recordRequestDelay(requestName: string, elapsedTime: number) {
         let delays = this._requestDelays[requestName];
         if (!delays) {
             delays = new Delays();
             this._requestDelays[requestName] = delays;
         }
-        
+
         delays.report(elapsedTime);
     }
-    
+
     public reportAndClearTelemetry() {
         for (var path in this._requestDelays) {
             const eventName = 'omnisharp' + path;
             const measures = this._requestDelays[path].toMeasures();
-            
+
             this._reporter.sendTelemetryEvent(eventName, null, measures);
         }
 
@@ -166,6 +169,10 @@ export abstract class OmnisharpServer {
 
 	public getChannel(): OutputChannel {
 		return this._channel;
+	}
+
+	public isDebugEnable(): boolean {
+		return this._isDebugEnable;
 	}
 
 	// --- eventing
@@ -186,7 +193,7 @@ export abstract class OmnisharpServer {
 		return this._addListener(Events.ServerError, listener, thisArg);
 	}
 
-	public onUnresolvedDependencies(listener: (e: UnresolvedDependenciesMessage) => any, thisArg?:any) {
+	public onUnresolvedDependencies(listener: (e: UnresolvedDependenciesMessage) => any, thisArg?: any) {
 		return this._addListener(Events.UnresolvedDependencies, listener, thisArg);
 	}
 
@@ -214,7 +221,7 @@ export abstract class OmnisharpServer {
 		return this._addListener(Events.MsBuildProjectDiagnostics, listener, thisArg);
 	}
 
-	public onBeforeServerStart(listener: (e:string) => any) {
+	public onBeforeServerStart(listener: (e: string) => any) {
 		return this._addListener(Events.BeforeServerStart, listener);
 	}
 
@@ -272,6 +279,13 @@ export abstract class OmnisharpServer {
             this._fireEvent(Events.ServerStart, solutionPath);
 			return this._doConnect();
 		}).then(_ => {
+			return vscode.commands.getCommands()
+				.then(commands => {
+					if (commands.find(c => c == "vscode.startDebug")) {
+						this._isDebugEnable = true;
+					}
+				});
+		}).then(_ => {
 			this._processQueue();
 		}, err => {
 			this._fireEvent(Events.ServerError, err);
@@ -300,7 +314,7 @@ export abstract class OmnisharpServer {
 						return reject(err);
 					}
 				});
-                
+
 				killer.on('exit', resolve);
 				killer.on('error', reject);
 			});
@@ -309,7 +323,7 @@ export abstract class OmnisharpServer {
 			this._serverProcess.kill('SIGTERM');
 			ret = Promise.resolve<OmnisharpServer>(undefined);
 		}
-        
+
 		return ret.then(_ => {
 			this._start = null;
 			this._serverProcess = null;
@@ -327,7 +341,7 @@ export abstract class OmnisharpServer {
 		}
 	}
 
-	public autoStart(preferredPath:string): Thenable<void> {
+	public autoStart(preferredPath: string): Thenable<void> {
 		return getLaunchTargets().then(targets => {
 			if (targets.length === 0) {
 				return new Promise<void>((resolve, reject) => {
@@ -368,13 +382,13 @@ export abstract class OmnisharpServer {
 		if (this._getState() !== ServerState.Started) {
 			return Promise.reject<TResponse>('server has been stopped or not started');
 		}
-        
+
         let startTime: number;
 		let request: Request;
-        
+
 		let promise = new Promise<TResponse>((resolve, reject) => {
             startTime = Date.now();
-            
+
 			request = {
 				path,
 				data,
@@ -382,9 +396,9 @@ export abstract class OmnisharpServer {
 				onError: err => reject(err),
 				_enqueued: Date.now()
 			};
-            
+
 			this._queue.push(request);
-            
+
 			if (this._getState() === ServerState.Started && !this._isProcessingQueue) {
 				this._processQueue();
 			}
@@ -406,7 +420,7 @@ export abstract class OmnisharpServer {
             let endTime = Date.now();
             let elapsedTime = endTime - startTime;
             this._recordRequestDelay(path, elapsedTime);
-            
+
             return response;
         });
 	}
@@ -504,19 +518,17 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 
 			// timeout logic
 			const handle = setTimeout(() => {
-                if (listener)
-                {
+                if (listener) {
                     listener.dispose();
                 }
-                
+
 				reject(new Error('Failed to start OmniSharp'));
 			}, StdioOmnisharpServer.StartupTimeout);
 
 			// handle started-event
 			listener = this.onOmnisharpStart(() => {
-                if (listener)
-                {
-				    listener.dispose();
+                if (listener) {
+					listener.dispose();
                 }
 				clearTimeout(handle);
 				resolve(this);
@@ -552,17 +564,17 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 
 			switch (packet.Type) {
 				case 'response':
-					this._handleResponsePacket(<WireProtocol.ResponsePacket> packet);
+					this._handleResponsePacket(<WireProtocol.ResponsePacket>packet);
 					break;
 				case 'event':
-					this._handleEventPacket(<WireProtocol.EventPacket> packet);
+					this._handleEventPacket(<WireProtocol.EventPacket>packet);
 					break;
 				default:
 					console.warn('unknown packet: ', packet);
 					break;
 			}
 		};
-        
+
 		this._rl.addListener('line', onLineReceived);
 		this._callOnStop.push(() => this._rl.removeListener('line', onLineReceived));
 	}
@@ -590,7 +602,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 
 		if (packet.Event === 'log') {
 			// handle log events
-			const entry = <{ LogLevel: string; Name: string; Message: string; }> packet.Body;
+			const entry = <{ LogLevel: string; Name: string; Message: string; }>packet.Body;
 			this._fireEvent(Events.StdOut, `[${entry.LogLevel}:${entry.Name}] ${entry.Message}\n`);
 			return;
 		} else {
