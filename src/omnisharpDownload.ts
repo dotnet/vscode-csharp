@@ -19,7 +19,7 @@ const decompress = require('decompress');
 
 const BaseDownloadUrl = 'https://vscodeoscon.blob.core.windows.net/ext';
 const DefaultInstallLocation = path.join(__dirname, '../.omnisharp');
-const OmniSharpVersion = '1.9-beta4';
+const OmniSharpVersion = '1.9-beta5';
 
 tmp.setGracefulCleanup();
 
@@ -108,7 +108,7 @@ export function downloadOmnisharp(output: OutputChannel): Promise<boolean> {
                                 output.appendLine(`[INFO] Done! ${files.length} files unpacked.`)
                                 return resolve(true);
                             })
-                            .error(err => {
+                            .catch(err => {
                                 output.appendLine(`[ERROR] ${err}`);
                                 return reject(err);
                             });
@@ -116,6 +116,10 @@ export function downloadOmnisharp(output: OutputChannel): Promise<boolean> {
                     
                     inStream.pipe(outStream);
                 });
+            })
+            .catch(err =>
+            {
+                output.appendLine(`[ERROR] ${err}`);
             });
     });
 }
