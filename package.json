@@ -305,7 +305,7 @@
                 "properties" : {
                   "pipeCwd": {
                     "type": "string",
-                    "description": "The fully qualified path where the pipe command to execute.",
+                    "description": "The fully qualified path to the working directory for the pipe program.",
                     "default": "${workspaceRoot}"
                   },
                   "pipeProgram": {
@@ -332,7 +332,7 @@
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
-                        "description": "The fully qualified path where the pipe command to execute.",
+                        "description": "The fully qualified path to the working directory for the pipe program.",
                         "default": "${workspaceRoot}"
                       },
                       "pipeProgram": {
@@ -361,7 +361,7 @@
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
-                        "description": "The fully qualified path where the pipe command to execute.",
+                        "description": "The fully qualified path to the working directory for the pipe program.",
                         "default": "${workspaceRoot}"
                       },
                       "pipeProgram": {
@@ -390,7 +390,7 @@
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
-                        "description": "The fully qualified path where the pipe command to execute.",
+                        "description": "The fully qualified path to the working directory for the pipe program.",
                         "default": "${workspaceRoot}"
                       },
                       "pipeProgram": {
