@@ -321,6 +321,12 @@
                     },
                     "default": []
                   },
+                  "pipeEnv": {
+                    "type": "object",
+                    "additionalProperties": { "type": "string" },
+                    "description": "Environment variables passed to the pipe program.",
+                    "default": { }
+                  },
                   "windows": {
                     "type": "object",
                     "description": "Windows-specific pipe launch configuration options",
@@ -347,6 +353,12 @@
                           "type": "string"
                         },
                         "default": []
+                      },
+                      "pipeEnv": {
+                        "type": "object",
+                        "additionalProperties": { "type": "string" },
+                        "description": "Environment variables passed to the pipe program.",
+                        "default": { }
                       }
                     }
                   },
@@ -376,7 +388,13 @@
                           "type": "string"
                         },
                         "default": []
-                      }
+                      },
+                      "pipeEnv": {
+                        "type": "object",
+                        "additionalProperties": { "type": "string" },
+                        "description": "Environment variables passed to the pipe program.",
+                        "default": { }
+                      }                      
                     }
                   },
                   "linux": {
@@ -405,6 +423,12 @@
                           "type": "string"
                         },
                         "default": []
+                      },
+                      "pipeEnv": {
+                        "type": "object",
+                        "additionalProperties": { "type": "string" },
+                        "description": "Environment variables passed to the pipe program.",
+                        "default": { }
                       }
                     }
                   }
