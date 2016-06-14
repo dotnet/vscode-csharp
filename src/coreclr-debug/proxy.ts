@@ -7,7 +7,7 @@
 import * as path from 'path';
 import { DebugProtocol } from 'vscode-debugprotocol';
 import * as child_process from 'child_process';
-import CoreClrDebugUtil from './util';
+import { CoreClrDebugUtil } from './util';
 
 class ProxyErrorResponse implements DebugProtocol.ErrorResponse {
     public body: { error?: DebugProtocol.Message };
@@ -50,7 +50,7 @@ function proxy() {
     }
     else
     {
-        new Promise<void>(function(resolve, reject) {
+        new Promise<void>((resolve, reject) => {
             let processPath = path.join(util.debugAdapterDir(), "OpenDebugAD7" + CoreClrDebugUtil.getPlatformExeExtension());
             let args = process.argv.slice(2);
             
@@ -59,7 +59,7 @@ function proxy() {
             const child = child_process.spawn(processPath, args);
             
             // If we don't exit cleanly from the child process, log the error.
-            child.on('close', function(code: number) {
+            child.on('close', code => {
                if (code !== 0) {
                    reject(new Error(code.toString()));
                } else {
@@ -69,38 +69,38 @@ function proxy() {
             
             process.stdin.setEncoding('utf8');
             
-            child.on('error', function(data) {
+            child.on('error', data => {
                 util.logToFile(`Child error: ${data}`); 
             });
             
-            process.on('SIGTERM', function() {
+            process.on('SIGTERM', () => {
                 child.kill();
                 process.exit(0); 
             });
             
-            process.on('SIGHUP', function() {
+            process.on('SIGHUP', () => {
                 child.kill();
                 process.exit(0); 
             });
             
-            process.stdin.on('error', function(error) {
+            process.stdin.on('error', error => {
                 util.logToFile(`process.stdin error: ${error}`);
             });
             
-            process.stdout.on('error', function(error) {
+            process.stdout.on('error', error => {
                 util.logToFile(`process.stdout error: ${error}`); 
             });
             
-            child.stdout.on('data', function(data) {
+            child.stdout.on('data', data => {
                 process.stdout.write(data); 
             });
             
-            process.stdin.on('data', function(data) {
+            process.stdin.on('data', data => {
                child.stdin.write(data); 
             });
             
             process.stdin.resume();
-        }).catch(function(err) {
+        }).catch(err => {
            util.logToFile(`Promise failed: ${err}`); 
         });
     }

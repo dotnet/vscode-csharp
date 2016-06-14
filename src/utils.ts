@@ -5,7 +5,7 @@
 
 'use strict';
 
-import * as child_process from 'child_process'
+import * as child_process from 'child_process';
 
 export enum SupportedPlatform {
     None,
