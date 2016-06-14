@@ -294,6 +294,11 @@
                 },
                 "default": []
               },
+              "requireExactSource": {
+                "type": "boolean",
+                "description": "Optional flag to require current source code to match the pdb.",
+                "default": true
+              },
               "pipeTransport": {
                 "type": "object",
                 "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (clrdbg).",
@@ -467,6 +472,11 @@
                 "items": {
                   "type": "string"
                 },
+              "requireExactSource": {
+                "type": "boolean",
+                "description": "Optional flag to require current source code to match the pdb.",
+                "default": true
+              },
                 "default": []
               }
             }
