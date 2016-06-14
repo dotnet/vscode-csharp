@@ -5,13 +5,11 @@
 
 'use strict';
 
-import {exists as fileExists} from 'fs';
 import {spawn, ChildProcess} from 'child_process';
 import {workspace, OutputChannel} from 'vscode';
 import {satisfies} from 'semver';
-import {join} from 'path';
 import {getOmnisharpLaunchFilePath} from './omnisharpPath';
-import {downloadOmnisharp} from './omnisharpDownload';
+import {downloadOmnisharp, getOmnisharpAssetName} from './omnisharpDownload';
 import {SupportedPlatform, getSupportedPlatform} from './utils';
 
 const isWindows = process.platform === 'win32';
@@ -37,9 +35,14 @@ export function installOmnisharpIfNeeded(output: OutputChannel): Promise<string>
             throw err;
         }
 		
-        return downloadOmnisharp(output).then(_ => {
+		const logFunction = (message: string) => { output.appendLine(message); };
+		const omnisharpAssetName = getOmnisharpAssetName();
+		const proxy = workspace.getConfiguration().get<string>('http.proxy');
+		const strictSSL = workspace.getConfiguration().get('http.proxyStrictSSL', true);
+
+        return downloadOmnisharp(logFunction, omnisharpAssetName, proxy, strictSSL).then(_ => {
             return getOmnisharpLaunchFilePath();
-        })
+        });
     });
 }
 

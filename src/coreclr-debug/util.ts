@@ -7,16 +7,9 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
-import * as child_process from 'child_process'
+import * as vscode from 'vscode';
 
-let _extensionDir: string = '';
-let _coreClrDebugDir: string = '';
-let _debugAdapterDir: string = '';
-let _installLogPath: string = '';
-let _installBeginFilePath: string = '';
-let _installCompleteFilePath: string = '';
-
-export default class CoreClrDebugUtil
+export class CoreClrDebugUtil
 {
     private _extensionDir: string = '';
     private _coreClrDebugDir: string = '';
@@ -24,58 +17,97 @@ export default class CoreClrDebugUtil
     private _installLogPath: string = '';
     private _installBeginFilePath: string = '';
     private _installCompleteFilePath: string = '';
+
+    private _installLog: fs.WriteStream = null;
+    private _channel: vscode.OutputChannel = null;
     
-    constructor(extensionDir) {
-        _extensionDir = extensionDir;
-        _coreClrDebugDir = path.join(_extensionDir, 'coreclr-debug');
-        _debugAdapterDir = path.join(_coreClrDebugDir, 'debugAdapters');
-        _installLogPath = path.join(_coreClrDebugDir, 'install.log');
-        _installBeginFilePath = path.join(_coreClrDebugDir, 'install.begin');
-        _installCompleteFilePath = path.join(_debugAdapterDir, 'install.complete');
+    constructor(extensionDir: string, channel?: vscode.OutputChannel) {
+        this._extensionDir = extensionDir;
+        this._coreClrDebugDir = path.join(this._extensionDir, 'coreclr-debug');
+        this._debugAdapterDir = path.join(this._coreClrDebugDir, 'debugAdapters');
+        this._installLogPath = path.join(this._coreClrDebugDir, 'install.log');
+        this._installBeginFilePath = path.join(this._coreClrDebugDir, 'install.begin');
+        this._installCompleteFilePath = path.join(this._debugAdapterDir, 'install.complete');
+
+        this._channel = channel;
     }
         
     extensionDir(): string {
-        if (_extensionDir === '')
+        if (this._extensionDir === '')
         {
             throw new Error('Failed to set extension directory');
         }
-        return _extensionDir;
+        return this._extensionDir;
     }
 
     coreClrDebugDir(): string {
-        if (_coreClrDebugDir === '') {
+        if (this._coreClrDebugDir === '') {
             throw new Error('Failed to set coreclrdebug directory');
         }
-        return _coreClrDebugDir;
+        return this._coreClrDebugDir;
     }
 
     debugAdapterDir(): string {
-        if (_debugAdapterDir === '') {
+        if (this._debugAdapterDir === '') {
             throw new Error('Failed to set debugadpter directory');
         }
-        return _debugAdapterDir;
+        return this._debugAdapterDir;
     }
 
     installLogPath(): string {
-        if (_installLogPath === '') {
+        if (this._installLogPath === '') {
             throw new Error('Failed to set install log path');
         }
-        return _installLogPath;
+        return this._installLogPath;
     }
 
     installBeginFilePath(): string {
-        if (_installBeginFilePath === '') {
+        if (this._installBeginFilePath === '') {
             throw new Error('Failed to set install begin file path');
         }
-        return _installBeginFilePath;
+        return this._installBeginFilePath;
     }
 
     installCompleteFilePath(): string {
-        if (_installCompleteFilePath === '')
+        if (this._installCompleteFilePath === '')
         {
             throw new Error('Failed to set install complete file path');
         }
-        return _installCompleteFilePath;
+        return this._installCompleteFilePath;
+    }
+
+    createInstallLog(): void {
+        this._installLog = fs.createWriteStream(this.installLogPath());
+    }
+
+    closeInstallLog(): void {
+        if (this._installLog !== null) {
+            this._installLog.close();
+        }
+    }
+
+    log(message: string): void {
+        console.log(message);
+
+        if (this._installLog != null) {
+            this._installLog.write(message);
+        }
+
+        if (this._channel != null) {
+            this._channel.appendLine(message);
+        }
+    }
+
+    static writeEmptyFile(path: string) : Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            fs.writeFile(path, '', (err) => {
+                if (err) {
+                    reject(err.code);
+                } else {
+                    resolve();
+                }
+            });
+        });
     }
  
     static existsSync(path: string) : boolean {
