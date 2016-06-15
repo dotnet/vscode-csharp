@@ -505,7 +505,7 @@
               "logging": {
                 "type": "object",
                 "required": [],
-                "default": [],
+                "default": {},
                 "description": "Optional flags to determine what types of messages should be logged to the output window.",
                 "properties": {
                   "exceptions": {
