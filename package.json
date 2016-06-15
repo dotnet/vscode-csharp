@@ -299,10 +299,28 @@
                 "description": "Optional flag to require current source code to match the pdb.",
                 "default": true
               },
-              "logModuleLoadEvents": {
-                  "type": "boolean",
-                  "description": "Optional flag to determine whether module load events should be logged to the output window.",
-                  "default": true
+              "logging": {
+                "type": "object",
+                "required": [],
+                "default": {},
+                "description": "Optional flags to determine what types of messages should be logged to the output window.",
+                "properties": {
+                  "exceptions": {
+                      "type": "boolean",
+                      "description": "Optional flag to determine whether exception messages should be logged to the output window.",
+                      "default": true
+                  },
+                  "moduleLoad": {
+                      "type": "boolean",
+                      "description": "Optional flag to determine whether module load events should be logged to the output window.",
+                      "default": true
+                  },
+                  "programOutput": {
+                      "type": "boolean",
+                      "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
+                      "default": true
+                  }
+                }
               },
               "pipeTransport": {
                 "type": "object",
@@ -477,12 +495,35 @@
                 "items": {
                   "type": "string"
                 },
+                "default": []
+              },
               "requireExactSource": {
                 "type": "boolean",
                 "description": "Optional flag to require current source code to match the pdb.",
                 "default": true
               },
-                "default": []
+              "logging": {
+                "type": "object",
+                "required": [],
+                "default": [],
+                "description": "Optional flags to determine what types of messages should be logged to the output window.",
+                "properties": {
+                  "exceptions": {
+                      "type": "boolean",
+                      "description": "Optional flag to determine whether exception messages should be logged to the output window.",
+                      "default": true
+                  },
+                  "moduleLoad": {
+                      "type": "boolean",
+                      "description": "Optional flag to determine whether module load events should be logged to the output window.",
+                      "default": true
+                  },
+                  "programOutput": {
+                      "type": "boolean",
+                      "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
+                      "default": true
+                  }
+                }
               }
             }
           }
