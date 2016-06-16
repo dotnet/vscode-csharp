@@ -319,6 +319,21 @@
                       "type": "boolean",
                       "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
                       "default": true
+                  },
+                  "engineLogging": {
+                      "type": "boolean",
+                      "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
+                      "default": false
+                  },
+                  "trace": {
+                      "type": "boolean",
+                      "description": "Optional flag to determine whether diagnostic adapter command tracing should be logged to the output window.",
+                      "default": false
+                  },
+                  "traceResponse": {
+                      "type": "boolean",
+                      "description": "Optional flag to determine whether diagnostic adapter command and response tracing should be logged to the output window.",
+                      "default": false
                   }
                 }
               },
@@ -522,6 +537,21 @@
                       "type": "boolean",
                       "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
                       "default": true
+                  },
+                  "engineLogging": {
+                      "type": "boolean",
+                      "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
+                      "default": false
+                  },
+                  "trace": {
+                      "type": "boolean",
+                      "description": "Optional flag to determine whether diagnostic adapter command tracing should be logged to the output window.",
+                      "default": false
+                  },
+                  "traceResponse": {
+                      "type": "boolean",
+                      "description": "Optional flag to determine whether diagnostic adapter command and response tracing should be logged to the output window.",
+                      "default": false
                   }
                 }
               }
