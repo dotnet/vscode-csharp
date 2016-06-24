@@ -16,9 +16,9 @@ import {getProxyAgent} from './proxy';
 
 const decompress = require('decompress');
 
-const BaseDownloadUrl = 'https://vscodeoscon.blob.core.windows.net/ext';
+const BaseDownloadUrl = 'https://omnisharpdownload.blob.core.windows.net/ext';
 const DefaultInstallLocation = path.join(__dirname, '../.omnisharp');
-export const OmniSharpVersion = '1.9-beta5';
+export const OmniSharpVersion = '1.9-beta10';
 
 tmp.setGracefulCleanup();
 
