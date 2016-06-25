@@ -5,7 +5,7 @@ This page gives you detailed instructions on how to debug code running under .NE
 File bugs and feature requests [here](https://github.com/OmniSharp/omnisharp-vscode/issues) and [join our insiders group](http://landinghub.visualstudio.com/dotnetcoreinsiders) to help us build great tooling for .NET Core.
 
 ####Requirements
-* Requires .NET Core RC2 (will not work with earlier versions)
+* Requires .NET Core 1.0 RC2 or newer (will not work with earlier versions)
 * X64 only
 * Supports OSX, Ubuntu 14.04, Red Hat Enterprise Linux 7.2, Debian 8.2, Centos 7.1, and Windows 7+
 
@@ -26,7 +26,7 @@ Install the .NET Core command line tools (CLI) by following the installation par
 ##### 3: Install C# Extension for VS Code
 Open the command palette in VS Code (F1) and type "ext install C#" to trigger the installation of the extension. VS Code will show a message that the extension has been installed and it will restart.
 
-If you have previously installed the C# extension, make sure that you have version 1.0.0-rc2 or newer. You can check this by opening the command palette (F1) and running 'Extensions: Show Installed Extensions'.
+If you have previously installed the C# extension, make sure that you have version 1.1.6 or newer. You can check this by opening the command palette (F1) and running 'Extensions: Show Installed Extensions'.
 
 ##### 4: Wait for download of platform-specific files 
 The first time that C# code is opened in VS Code, the extension will download the platform-specific files needed for debugging and editing. Debugging and editor features will not work until these steps finish.
@@ -49,7 +49,7 @@ You can also find some example projects on https://github.com/aspnet/cli-samples
 ##### 2: Open the directory in VS Code
 Go to File->Open and open the directory in Visual Studio Code. If this is the first time that the C# extension has been activated, it will now download additional platform-specific dependencies.
 
-**Troubleshooting 'Error while installing .NET Core Debugger':** If the debugger is failing to download its platform-specific dependencies, first verify that you have the RC2 build of the .NET CLI installed, and it is functioning. You can check this by starting a bash/command prompt and running 'dotnet --info'. 
+**Troubleshooting 'Error while installing .NET Core Debugger':** If the debugger is failing to download its platform-specific dependencies, first verify that you have the 1.0.0-preview1-002702 or newer build of the .NET CLI installed, and it is functioning. You can check this by starting a bash/command prompt and running 'dotnet --info'. 
 
 If the CLI is installed, here are a few additional suggestions:
 
@@ -62,7 +62,7 @@ VS Code needs to be configured so it understands how to build your project and d
 * Tasks.json is used to configure what command line command is executed to build your project, and launch.json configures the type of debugger you want to use, and what program should be run under that debugger. 
 * Launch.json configures VS Code to run the build task from tasks.json so that your program is automatically up-to-date each time you go to debug it.
 
-If you open the folder containing your project.json, the C# extension can automatically generate these files for you. When you open a project and the C# extension is installed, you should see the following prompt in VS Code:
+If you open the folder containing your project.json, the C# extension can automatically generate these files for you if you have a basic project. When you open a project and the C# extension is installed, you should see the following prompt in VS Code:
 
 ![Info: Required assets to build and debug are missing from your project. Add them? Yes | Close](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/images/info-bar-add-required-assets.png)
 
