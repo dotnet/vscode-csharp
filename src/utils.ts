@@ -40,6 +40,10 @@ export function getSupportedPlatform() {
         else if (release.indexOf('debian') >= 0) {
             return SupportedPlatform.Debian;
         }
+        else if (release.indexOf('oracle') >= 0) {
+            // Oracle Linux is binary compatible with CentOS
+            return SupportedPlatform.CentOS;
+        }
     }
 
     return SupportedPlatform.None;	
