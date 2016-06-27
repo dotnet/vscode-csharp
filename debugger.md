@@ -134,3 +134,7 @@ Environment variables may be passed to your program using this schema:
 The target process can optionally launch into a seperate console window. You will want this if your console app takes console input (ex: Console.ReadLine). This can be enabled with:
 
     "externalConsole": true
+
+#### Docker Support
+
+Using Visual Studio Code and the C# extension it is also possible to debug your code running in a Docker container. To do so, follow instructions to install and run [yo docker](https://github.com/Microsoft/generator-docker#generator-docker). This will add files to your project to build a container, and it will add a new debug launch configuration which will invoke a container build, and then debug your app in the container.
