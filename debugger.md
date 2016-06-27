@@ -53,8 +53,10 @@ Go to File->Open and open the directory in Visual Studio Code. If this is the fi
 
 If the CLI is installed, here are a few additional suggestions:
 
-* If clicking on 'View Log' doesn't show a log this means that running the 'dotnet --info' command failed. If it succeeds in bash/command prompt, but fails from VS Code, this likely means that your computer once had an older build of .NET CLI installed, and there are still remnants of it which cause VS Code and other processes besides bash to use the older version instead of the current version. You can try to clean your computer using the uninstall suggestions from http://dotnet.github.io/getting-started/.
+* If clicking on 'View Log' doesn't show a log this means that running the 'dotnet --info' command failed. If it succeeds in bash/command prompt, but fails from VS Code, this likely means that your computer once had an older build of .NET CLI installed, and there are still remnants of it which cause VS Code and other processes besides bash to use the older version instead of the current version. You can resolve this issue by uninstalling the .NET Core CLI, and reinstalling the version you want (see below for macOS).
 * If 'dotnet restore' is failing, make sure you have an internet connection to nuget.org, and make sure that if additional NuGet.Config files are being used, they have valid content. The log will indicate what NuGet.Config files were used. Try removing the files other than the one coming from the extension itself.
+
+MacOS .NET CLI Reinstall Instructions: macOS doesn't have uninstall for pkg files (see [known issue](https://github.com/dotnet/core/blob/master/cli/known-issues.md#uninstallingreinstalling-the-pkg-on-os-x)), one option is to remove the dotnet cli directory with `sudo rm -rf /usr/local/share/dotnet` and then install the pkg again.
 
 ##### 3: Add VS Code configuration files to the workspace
 VS Code needs to be configured so it understands how to build your project and debug it. For this there are two files which need to be added -- .vscode/tasks.json and .vscode/launch.json. 
