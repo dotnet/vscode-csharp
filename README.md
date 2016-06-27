@@ -16,6 +16,7 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 ### **Important!** Breaking Changes as of 1.0.10
 
 * The C# extension now only supports [.NET Core RC2](https://blogs.msdn.microsoft.com/dotnet/2016/05/16/announcing-net-core-rc2/). It no longer supports .NET Core RC1 or ASP .NET 5 RC1.
+* **Support for .csproj projects is partially on OS X and Linux.** This will impact anyone doing .csproj development on OS X or Linux (e.g. Unity, Xamarin, etc.). We are working to address this in the near future. However, for now, you can use the [Legacy C# Support extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.omnisharp).
 
 ### Found a Bug?
 Please file any issues at https://github.com/OmniSharp/omnisharp-vscode/issues.
