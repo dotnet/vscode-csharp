@@ -13,9 +13,9 @@ Welcome to the C# extension for Visual Studio Code! This preview provides the fo
 
 The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnisharp-roslyn).
 
-### **Important!** Breaking Changes as of 1.0.10
+### **Important!** Breaking Changes as of 1.2
 
-* The C# extension now only supports [.NET Core RC2](https://blogs.msdn.microsoft.com/dotnet/2016/05/16/announcing-net-core-rc2/). It no longer supports .NET Core RC1 or ASP .NET 5 RC1.
+* The C# extension now only supports .NET Core 1.0. Please upgrade any RC1 or RC2 projects to the 1.0.0 release build.
 * **Support for .csproj projects is partially functional on OS X and Linux.** This will impact anyone doing .csproj development on OS X or Linux (e.g. Unity, Xamarin, etc.). We are working to address this in the near future. However, for now, you can use the [Legacy C# Support extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.omnisharp).
 
 ### Found a Bug?
@@ -24,17 +24,12 @@ Please file any issues at https://github.com/OmniSharp/omnisharp-vscode/issues.
 ### Debugging
 The C# extension now supports basic debugging capabilities! See http://aka.ms/vscclrdebugger for details.
 
-### What's new in C# extension version 1.1
+### What's new in C# extension version 1.2
 
-* Preliminary support for `dotnet test`
-* Fix for OmniSharp installation problems on networks with an http proxy
-* Debugger support for an external console
-* Debugger support for environment variables
-* Support for debugging .NET Core 1.0.0 post RC2 builds
-* Automatic web vs. console debugger configuration detection
-* Detach support
-* Fix expression evaluation errors when referencing assemblies which aren't currently loaded
-* Fix expression evaluation on Windows 7
+* Adds debugger support for new Linux versions: Ubuntu 16.04, Fedora 23, openSUSE 13.2, and Oracle Linux 7.1
+* Enhanced debug console output: module loads are now output, and there are launch.json options for controlling what is output
+* Source file checksum support for breakpoints. This ensures that the debugger only sets breakpoints in code that exactly matches the open document.
+* Support for editing the value of variables in the watch and locals window (requires VS Code 1.3)
 
 ### Development
 
