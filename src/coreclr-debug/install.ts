@@ -186,7 +186,9 @@ export class DebugInstaller
                 "System.Net.Http":  "4.1.0"
             },
             frameworks: {
-                "netcoreapp1.0": { }
+                "netcoreapp1.0": {
+                    imports: [ "dnxcore50", "portable-net45+win8" ]
+                 }
             },
             runtimes: {
             }
