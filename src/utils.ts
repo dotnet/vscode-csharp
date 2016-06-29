@@ -60,6 +60,7 @@ export function getSupportedPlatform() {
             case 'ubuntu':
                 const versionId = getValue("VERSION_ID");
                 if (versionId.startsWith("14")) {
+                    // This also works for Linux Mint
                     return SupportedPlatform.Ubuntu14;
                 }
                 else if (versionId.startsWith("16")) {
@@ -75,7 +76,7 @@ export function getSupportedPlatform() {
                 return SupportedPlatform.RHEL;
             case 'debian':
                 return SupportedPlatform.Debian;
-            case 'oracle':
+            case 'ol':
                 // Oracle Linux is binary compatible with CentOS
                 return SupportedPlatform.CentOS;
         }
