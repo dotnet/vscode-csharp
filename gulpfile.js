@@ -126,8 +126,11 @@ gulp.task('package:offline', ['clean'], () => {
     packages.push({rid: 'osx.10.11-x64', omni: `omnisharp-${OmniSharpVersion}-osx-x64-netcoreapp1.0.tar.gz`});
     packages.push({rid: 'centos.7-x64', omni: `omnisharp-${OmniSharpVersion}-centos-x64-netcoreapp1.0.tar.gz`});
     packages.push({rid: 'debian.8-x64', omni: `omnisharp-${OmniSharpVersion}-debian-x64-netcoreapp1.0.tar.gz`});
+    packages.push({rid: 'fedora.23-x64', omni: `omnisharp-${OmniSharpVersion}-fedora-x64-netcoreapp1.0.tar.gz`});
+    packages.push({rid: 'opensuse.13.2-x64', omni: `omnisharp-${OmniSharpVersion}-opensuse-x64-netcoreapp1.0.tar.gz`});
     packages.push({rid: 'rhel.7.2-x64', omni: `omnisharp-${OmniSharpVersion}-rhel-x64-netcoreapp1.0.tar.gz`});
-    packages.push({rid: 'ubuntu.14.04-x64', omni: `omnisharp-${OmniSharpVersion}-ubuntu-x64-netcoreapp1.0.tar.gz`});
+    packages.push({rid: 'ubuntu.14.04-x64', omni: `omnisharp-${OmniSharpVersion}-ubuntu14-x64-netcoreapp1.0.tar.gz`});
+    packages.push({rid: 'ubuntu.16.04-x64', omni: `omnisharp-${OmniSharpVersion}-ubuntu16-x64-netcoreapp1.0.tar.gz`});
 
     var promise = Promise.resolve();
 

@@ -5,7 +5,7 @@ This page gives you detailed instructions on how to debug code running under .NE
 File bugs and feature requests [here](https://github.com/OmniSharp/omnisharp-vscode/issues) and [join our insiders group](http://landinghub.visualstudio.com/dotnetcoreinsiders) to help us build great tooling for .NET Core.
 
 ####Requirements
-* Requires .NET Core RC2 (will not work with earlier versions)
+* Requires .NET Core 1.0 RC2 or newer (will not work with earlier versions)
 * X64 only
 * Supports OSX, Ubuntu 14.04, Red Hat Enterprise Linux 7.2, Debian 8.2, Centos 7.1, and Windows 7+
 
@@ -26,7 +26,7 @@ Install the .NET Core command line tools (CLI) by following the installation par
 ##### 3: Install C# Extension for VS Code
 Open the command palette in VS Code (F1) and type "ext install C#" to trigger the installation of the extension. VS Code will show a message that the extension has been installed and it will restart.
 
-If you have previously installed the C# extension, make sure that you have version 1.0.0-rc2 or newer. You can check this by opening the command palette (F1) and running 'Extensions: Show Installed Extensions'.
+If you have previously installed the C# extension, make sure that you have version 1.1.6 or newer. You can check this by opening the command palette (F1) and running 'Extensions: Show Installed Extensions'.
 
 ##### 4: Wait for download of platform-specific files 
 The first time that C# code is opened in VS Code, the extension will download the platform-specific files needed for debugging and editing. Debugging and editor features will not work until these steps finish.
@@ -49,12 +49,14 @@ You can also find some example projects on https://github.com/aspnet/cli-samples
 ##### 2: Open the directory in VS Code
 Go to File->Open and open the directory in Visual Studio Code. If this is the first time that the C# extension has been activated, it will now download additional platform-specific dependencies.
 
-**Troubleshooting 'Error while installing .NET Core Debugger':** If the debugger is failing to download its platform-specific dependencies, first verify that you have the RC2 build of the .NET CLI installed, and it is functioning. You can check this by starting a bash/command prompt and running 'dotnet --info'. 
+**Troubleshooting 'Error while installing .NET Core Debugger':** If the debugger is failing to download its platform-specific dependencies, first verify that you have the 1.0.0-preview1-002702 or newer build of the .NET CLI installed, and it is functioning. You can check this by starting a bash/command prompt and running 'dotnet --info'. 
 
 If the CLI is installed, here are a few additional suggestions:
 
-* If clicking on 'View Log' doesn't show a log this means that running the 'dotnet --info' command failed. If it succeeds in bash/command prompt, but fails from VS Code, this likely means that your computer once had an older build of .NET CLI installed, and there are still remnants of it which cause VS Code and other processes besides bash to use the older version instead of the current version. You can try to clean your computer using the uninstall suggestions from http://dotnet.github.io/getting-started/.
+* If clicking on 'View Log' doesn't show a log this means that running the 'dotnet --info' command failed. If it succeeds in bash/command prompt, but fails from VS Code, this likely means that your computer once had an older build of .NET CLI installed, and there are still remnants of it which cause VS Code and other processes besides bash to use the older version instead of the current version. You can resolve this issue by uninstalling the .NET Core CLI, and reinstalling the version you want (see below for macOS).
 * If 'dotnet restore' is failing, make sure you have an internet connection to nuget.org, and make sure that if additional NuGet.Config files are being used, they have valid content. The log will indicate what NuGet.Config files were used. Try removing the files other than the one coming from the extension itself.
+
+MacOS .NET CLI Reinstall Instructions: macOS doesn't have uninstall for pkg files (see [known issue](https://github.com/dotnet/core/blob/master/cli/known-issues.md#uninstallingreinstalling-the-pkg-on-os-x)), one option is to remove the dotnet cli directory with `sudo rm -rf /usr/local/share/dotnet` and then install the pkg again.
 
 ##### 3: Add VS Code configuration files to the workspace
 VS Code needs to be configured so it understands how to build your project and debug it. For this there are two files which need to be added -- .vscode/tasks.json and .vscode/launch.json. 
@@ -62,7 +64,7 @@ VS Code needs to be configured so it understands how to build your project and d
 * Tasks.json is used to configure what command line command is executed to build your project, and launch.json configures the type of debugger you want to use, and what program should be run under that debugger. 
 * Launch.json configures VS Code to run the build task from tasks.json so that your program is automatically up-to-date each time you go to debug it.
 
-If you open the folder containing your project.json, the C# extension can automatically generate these files for you. When you open a project and the C# extension is installed, you should see the following prompt in VS Code:
+If you open the folder containing your project.json, the C# extension can automatically generate these files for you if you have a basic project. When you open a project and the C# extension is installed, you should see the following prompt in VS Code:
 
 ![Info: Required assets to build and debug are missing from your project. Add them? Yes | Close](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/images/info-bar-add-required-assets.png)
 
@@ -134,3 +136,7 @@ Environment variables may be passed to your program using this schema:
 The target process can optionally launch into a seperate console window. You will want this if your console app takes console input (ex: Console.ReadLine). This can be enabled with:
 
     "externalConsole": true
+
+#### Docker Support
+
+Using Visual Studio Code and the C# extension it is also possible to debug your code running in a [Docker container](https://en.wikipedia.org/wiki/Docker_(software)). To do so, follow instructions to install and run [yo docker](https://github.com/Microsoft/generator-docker#generator-docker). This will add files to your project to build a container, and it will add a new debug launch configuration which will invoke a container build, and then debug your app in the container.
