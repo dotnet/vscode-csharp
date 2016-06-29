@@ -18,7 +18,7 @@ const decompress = require('decompress');
 
 const BaseDownloadUrl = 'https://omnisharpdownload.blob.core.windows.net/ext';
 const DefaultInstallLocation = path.join(__dirname, '../.omnisharp');
-export const OmniSharpVersion = '1.9-beta10';
+export const OmniSharpVersion = '1.9-beta11';
 
 tmp.setGracefulCleanup();
 
