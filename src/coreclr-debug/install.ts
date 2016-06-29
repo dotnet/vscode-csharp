@@ -162,33 +162,31 @@ export class DebugInstaller
                 emitEntryPoint: true
             },
             dependencies: {
-                "Microsoft.VisualStudio.clrdbg": "14.0.25406-preview-3044032",
-                "Microsoft.VisualStudio.clrdbg.MIEngine": "14.0.30610-preview-1",
-                "Microsoft.VisualStudio.OpenDebugAD7": "1.0.20614-preview-2",
-                "NETStandard.Library": "1.5.0-rc2-24027",
+                "Microsoft.VisualStudio.clrdbg": "14.0.25429-preview-3095034",
+                "Microsoft.VisualStudio.clrdbg.MIEngine": "14.0.30629-preview-1",
+                "Microsoft.VisualStudio.OpenDebugAD7": "1.0.20628-preview-1",
+                "NETStandard.Library": "1.6.0",
                 "Newtonsoft.Json": "7.0.1",
                 "Microsoft.VisualStudio.Debugger.Interop.Portable": "1.0.1",
-                "System.Collections.Specialized":  "4.0.1-rc2-24027",
-                "System.Collections.Immutable": "1.2.0-rc2-24027", 
-                "System.Diagnostics.Process" : "4.1.0-rc2-24027",
-                "System.Diagnostics.StackTrace":  "4.0.1-rc2-24027",  
-                "System.Dynamic.Runtime": "4.0.11-rc2-24027",
-                "Microsoft.CSharp": "4.0.1-rc2-24027",
-                "System.Threading.Tasks.Dataflow": "4.6.0-rc2-24027",
-                "System.Threading.Thread": "4.0.0-rc2-24027", 
-                "System.Xml.XDocument": "4.0.11-rc2-24027",
-                "System.Xml.XmlDocument": "4.0.1-rc2-24027",  
-                "System.Xml.XmlSerializer": "4.0.11-rc2-24027",
-                "System.ComponentModel":  "4.0.1-rc2-24027",  
-                "System.ComponentModel.Annotations":  "4.1.0-rc2-24027",  
-                "System.ComponentModel.EventBasedAsync":  "4.0.11-rc2-24027",
-                "System.Runtime.Serialization.Primitives": "4.1.1-rc2-24027",
-                "System.Net.Http":  "4.0.1-rc2-24027"
+                "System.Collections.Specialized":  "4.0.1",
+                "System.Collections.Immutable": "1.2.0", 
+                "System.Diagnostics.Process" : "4.1.0",
+                "System.Diagnostics.StackTrace":  "4.0.1",  
+                "System.Dynamic.Runtime": "4.0.11",
+                "Microsoft.CSharp": "4.0.1",
+                "System.Threading.Tasks.Dataflow": "4.6.0",
+                "System.Threading.Thread": "4.0.0", 
+                "System.Xml.XDocument": "4.0.11",
+                "System.Xml.XmlDocument": "4.0.1",  
+                "System.Xml.XmlSerializer": "4.0.11",
+                "System.ComponentModel":  "4.0.1",  
+                "System.ComponentModel.Annotations":  "4.1.0",  
+                "System.ComponentModel.EventBasedAsync":  "4.0.11",
+                "System.Runtime.Serialization.Primitives": "4.1.1",
+                "System.Net.Http":  "4.1.0"
             },
             frameworks: {
-                "netcoreapp1.0": {
-                    imports: [ "dnxcore50", "portable-net45+win8" ]
-                }
+                "netcoreapp1.0": { }
             },
             runtimes: {
             }
@@ -197,7 +195,7 @@ export class DebugInstaller
         projectJson.runtimes[targetRuntime] = {};
 
         if (this._isOffline) {
-            projectJson.dependencies["Microsoft.NetCore.DotNetHostPolicy"] = "1.0.1-rc-002702";
+            projectJson.dependencies["Microsoft.NetCore.DotNetHostPolicy"] = "1.0.1";
         }
 
         return projectJson;
