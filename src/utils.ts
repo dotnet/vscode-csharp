@@ -43,7 +43,7 @@ export function getSupportedPlatform() {
 
                         // Strip double quotes if necessary
                         if (value.length > 1 && value.startsWith('"') && value.endsWith('"')) {
-                            value = value.substring(1, value.length - 2);
+                            value = value.substring(1, value.length - 1);
                         }
 
                         return value;
