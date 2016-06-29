@@ -35,6 +35,7 @@ export function getSupportedPlatform() {
 
         function getValue(name: string) {
             for (let line of lines) {
+                line = line.trim();
                 if (line.startsWith(name)) {
                     const equalsIndex = line.indexOf('=');
                     if (equalsIndex >= 0) {
