@@ -5,13 +5,13 @@
 
 'use strict';
 
-import {OmnisharpServer} from '../omnisharpServer';
-import * as serverUtils from '../omnisharpUtils';
-import findLaunchTargets from '../launchTargetFinder';
+import {OmnisharpServer} from '../omnisharp/server';
+import * as serverUtils from '../omnisharp/utils';
+import findLaunchTargets from '../omnisharp/launchTargetFinder';
 import * as cp from 'child_process';
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
-import * as protocol from '../protocol';
+import * as protocol from '../omnisharp/protocol';
 import * as vscode from 'vscode';
 import * as dotnetTest from './dotnetTest'
 import {DotNetAttachItemsProviderFactory, AttachPicker} from './processPicker'

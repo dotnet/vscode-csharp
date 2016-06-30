@@ -5,11 +5,11 @@
 
 'use strict';
 
-import {OmnisharpServer} from '../omnisharpServer';
+import {OmnisharpServer} from '../omnisharp/server';
 import AbstractSupport from './abstractProvider';
-import * as protocol from '../protocol';
-import * as serverUtils from '../omnisharpUtils';
-import {toRange} from '../typeConvertion';
+import * as protocol from '../omnisharp/protocol';
+import * as serverUtils from '../omnisharp/utils';
+import {toRange} from '../omnisharp/typeConvertion';
 import {Disposable, Uri, CancellationTokenSource, TextDocument, Diagnostic, DiagnosticCollection, DiagnosticSeverity, workspace, languages} from 'vscode';
 
 export class Advisor {

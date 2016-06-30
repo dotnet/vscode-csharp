@@ -9,9 +9,9 @@ import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as tasks from 'vscode-tasks';
-import {OmnisharpServer} from './omnisharpServer';
-import * as serverUtils from './omnisharpUtils';
-import * as protocol from './protocol.ts'
+import {OmnisharpServer} from './omnisharp/server';
+import * as serverUtils from './omnisharp/utils';
+import * as protocol from './omnisharp/protocol.ts'
 
 interface DebugConfiguration {
     name: string,

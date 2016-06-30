@@ -5,11 +5,11 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import {OmnisharpServer} from '../omnisharpServer';
+import {OmnisharpServer} from '../omnisharp/server';
 import {dotnetRestoreForProject} from './commands';
 import {basename} from 'path';
-import * as protocol from '../protocol';
-import * as serverUtils from '../omnisharpUtils';
+import * as protocol from '../omnisharp/protocol';
+import * as serverUtils from '../omnisharp/utils';
 
 export default function reportStatus(server: OmnisharpServer) {
 	return vscode.Disposable.from(
