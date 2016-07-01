@@ -133,7 +133,7 @@ function getPlatformRuntimeId() : string {
         case 'win32':
             return 'win7-x64';
         case 'darwin':
-            return getDotnetRuntimeId();
+            return 'osx.10.11-x64';
         case 'linux':
             return getDotnetRuntimeId();
         default:
