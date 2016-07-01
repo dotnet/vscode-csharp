@@ -114,7 +114,7 @@ You can optionally disable justMyCode by setting it to "false". You should disab
 Just My Code is a set of features that makes it easier to focus on debugging your code by hiding some of the details of optimized libraries that you might be using, like the .NET Framework itself. The most important sub parts of this feature are --
 
 * User-unhandled exceptions: automatically stop the debugger just before exceptions are about to be caught by the framework
-* Just My Code stepping: when stepping, if framework code calls back to user code, automaticially stop.
+* Just My Code stepping: when stepping, if framework code calls back to user code, automatically stop.
 
 #####Source File Map
 You can optionally configure a file by file mapping by providing map following this schema:
@@ -136,7 +136,7 @@ Environment variables may be passed to your program using this schema:
     }
 
 #####External console (terminal) window
-The target process can optionally launch into a seperate console window. You will want this if your console app takes console input (ex: Console.ReadLine). This can be enabled with:
+The target process can optionally launch into a separate console window. You will want this if your console app takes console input (ex: Console.ReadLine). This can be enabled with:
 
     "externalConsole": true
 
