@@ -6,8 +6,8 @@
 'use strict';
 
 import AbstractSupport from './abstractProvider';
-import * as serverUtils from '../omnisharpUtils';
-import {toDocumentSymbol} from '../typeConvertion';
+import * as serverUtils from '../omnisharp/utils';
+import {toDocumentSymbol} from '../omnisharp/typeConvertion';
 import {DocumentSymbolProvider, SymbolInformation, TextDocument, CancellationToken} from 'vscode';
 
 export default class OmnisharpDocumentSymbolProvider extends AbstractSupport implements DocumentSymbolProvider {

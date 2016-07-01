@@ -6,11 +6,11 @@
 'use strict';
 
 import {CancellationToken, CodeLens, Range, Uri, TextDocument, CodeLensProvider} from 'vscode';
-import {toRange, toLocation} from '../typeConvertion';
+import {toRange, toLocation} from '../omnisharp/typeConvertion';
 import AbstractSupport from './abstractProvider';
 import {updateCodeLensForTest} from './dotnetTest';
-import * as protocol from '../protocol';
-import * as serverUtils from '../omnisharpUtils';
+import * as protocol from '../omnisharp/protocol';
+import * as serverUtils from '../omnisharp/utils';
 
 class OmniSharpCodeLens extends CodeLens {
 

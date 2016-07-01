@@ -5,7 +5,7 @@
 
 'use strict';
 
-import {OmnisharpServer} from '../omnisharpServer';
+import {OmnisharpServer} from '../omnisharp/server';
 import {Disposable} from 'vscode';
 
 export default class AbstractProvider {

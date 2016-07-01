@@ -6,9 +6,9 @@
 'use strict';
 
 import AbstractSupport from './abstractProvider';
-import * as protocol from '../protocol';
-import * as serverUtils from '../omnisharpUtils';
-import {createRequest, toRange} from '../typeConvertion';
+import * as protocol from '../omnisharp/protocol';
+import * as serverUtils from '../omnisharp/utils';
+import {createRequest, toRange} from '../omnisharp/typeConvertion';
 import {DocumentHighlightProvider, DocumentHighlight, DocumentHighlightKind, CancellationToken, TextDocument, Position} from 'vscode';
 
 export default class OmnisharpDocumentHighlightProvider extends AbstractSupport implements DocumentHighlightProvider {

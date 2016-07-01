@@ -15,7 +15,7 @@ const vsce = require('vsce');
 const debugUtil = require('./out/coreclr-debug/util.js');
 const debugInstall = require('./out/coreclr-debug/install.js');
 const fs_extra = require('fs-extra-promise');
-const omnisharpDownload = require('./out/omnisharpDownload');
+const omnisharpDownload = require('./out/omnisharp/download');
 const child_process = require('child_process');
 
 const OmniSharpVersion = omnisharpDownload.OmniSharpVersion;

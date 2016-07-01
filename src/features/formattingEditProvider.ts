@@ -6,8 +6,8 @@
 'use strict';
 
 import AbstractSupport from './abstractProvider';
-import * as protocol from '../protocol';
-import * as serverUtils from '../omnisharpUtils';
+import * as protocol from '../omnisharp/protocol';
+import * as serverUtils from '../omnisharp/utils';
 import {DocumentRangeFormattingEditProvider, FormattingOptions, CancellationToken, TextEdit, TextDocument, Range, Position} from 'vscode';
 
 export default class FormattingSupport extends AbstractSupport implements DocumentRangeFormattingEditProvider {

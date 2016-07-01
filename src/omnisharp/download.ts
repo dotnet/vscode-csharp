@@ -11,8 +11,8 @@ import * as https from 'https';
 import * as stream from 'stream';
 import * as tmp from 'tmp';
 import {parse} from 'url';
-import {SupportedPlatform, getSupportedPlatform} from './utils';
-import {getProxyAgent} from './proxy';
+import {SupportedPlatform, getSupportedPlatform} from '../utils';
+import {getProxyAgent} from '../proxy';
 
 const decompress = require('decompress');
 
