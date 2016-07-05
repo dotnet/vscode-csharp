@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -308,6 +308,11 @@
                 "description": "Optional flag to require current source code to match the pdb.",
                 "default": true
               },
+              "enableStepFiltering": {
+                "type": "boolean",
+                "description": "Optional flag to enable stepping over Properties and Operators.",
+                "default": true
+              },
               "logging": {
                 "type": "object",
                 "required": [],
@@ -524,6 +529,11 @@
               "requireExactSource": {
                 "type": "boolean",
                 "description": "Optional flag to require current source code to match the pdb.",
+                "default": true
+              },
+              "enableStepFiltering": {
+                "type": "boolean",
+                "description": "Optional flag to enable stepping over Properties and Operators.",
                 "default": true
               },
               "logging": {
