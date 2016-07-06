@@ -32,7 +32,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
             getDotNetMessage).then(value => {
                 if (value === getDotNetMessage) {
                     let open = require('open');
-                    open("http://dotnet.github.io/getting-started/");
+                    open("https://www.microsoft.com/net/core#windows");
                 }
             });
 
