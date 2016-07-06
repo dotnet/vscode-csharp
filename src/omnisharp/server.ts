@@ -12,7 +12,7 @@ import {ReadLine, createInterface} from 'readline';
 import omnisharpLauncher from './serverLauncher';
 import {Disposable, CancellationToken, OutputChannel, workspace, window} from 'vscode';
 import {ErrorMessage, UnresolvedDependenciesMessage, MSBuildProjectDiagnostics, ProjectInformationResponse} from './protocol';
-import getLaunchTargets, {LaunchTarget} from './launchTargetFinder';
+import {findLaunchTargets, LaunchTarget, LaunchTargetKind} from './launchTargetFinder';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import * as vscode from 'vscode';
 
@@ -342,7 +342,7 @@ export abstract class OmnisharpServer {
 	}
 
 	public autoStart(preferredPath: string): Thenable<void> {
-		return getLaunchTargets().then(targets => {
+		return findLaunchTargets().then(targets => {
 			if (targets.length === 0) {
 				return new Promise<void>((resolve, reject) => {
 					// 1st watch for files

@@ -7,7 +7,7 @@
 
 import {OmnisharpServer} from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
-import findLaunchTargets from '../omnisharp/launchTargetFinder';
+import {findLaunchTargets} from '../omnisharp/launchTargetFinder';
 import * as cp from 'child_process';
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
