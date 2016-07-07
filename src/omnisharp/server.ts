@@ -9,7 +9,7 @@ import {EventEmitter} from 'events';
 import {ChildProcess, exec} from 'child_process';
 import {dirname} from 'path';
 import {ReadLine, createInterface} from 'readline';
-import launchOmniSharp from './launcher';
+import {launchOmniSharp} from './launcher';
 import * as protocol from './protocol';
 import {findLaunchTargets, LaunchTarget, LaunchTargetKind} from './launchTargetFinder';
 import TelemetryReporter from 'vscode-extension-telemetry';
@@ -269,13 +269,13 @@ export abstract class OmnisharpServer {
 		const argv = [
 			'-s', solutionPath,
 			'--hostPID', process.pid.toString(),
-			'dnx:enablePackageRestore=false']
-			.concat(this._extraArgv);
+			'dnx:enablePackageRestore=false'
+		].concat(this._extraArgv);
 
 		this._fireEvent(Events.StdOut, `[INFO] Starting OmniSharp at '${solutionPath}'...\n`);
 		this._fireEvent(Events.BeforeServerStart, solutionPath);
 
-		return launchOmniSharp(this._channel, cwd, argv).then(value => {
+		return launchOmniSharp({cwd, args: argv}, this._channel).then(value => {
 			this._serverProcess = value.process;
             this._requestDelays = {};
             this._fireEvent(Events.StdOut, `[INFO] Started OmniSharp from '${value.command}' with process id ${value.process.pid}...\n`);

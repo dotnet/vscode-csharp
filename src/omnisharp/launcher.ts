@@ -14,12 +14,17 @@ import {SupportedPlatform, getSupportedPlatform} from '../utils';
 
 const isWindows = process.platform === 'win32';
 
+export interface LaunchDetails {
+	cwd: string;
+	args: string[];
+}
+
 export interface LaunchResult {
     process: ChildProcess;
     command: string;
 }
 
-export function installOmnisharpIfNeeded(output: OutputChannel): Promise<string> {
+function installOmnisharpIfNeeded(output: OutputChannel): Promise<string> {
     return getOmnisharpLaunchFilePath().catch(err => {
         if (getSupportedPlatform() == SupportedPlatform.None && process.platform === 'linux') {
             output.appendLine("[ERROR] Could not locate an OmniSharp server that supports your Linux distribution.");
@@ -46,68 +51,78 @@ export function installOmnisharpIfNeeded(output: OutputChannel): Promise<string>
     });
 }
 
-export default function launchOmniSharp(output: OutputChannel, cwd: string, args: string[]): Promise<LaunchResult> {
-
+export function launchOmniSharp(details: LaunchDetails, output: OutputChannel): Promise<LaunchResult> {
 	return new Promise<LaunchResult>((resolve, reject) => {
-
 		try {
-			(isWindows ? launchWindows(output, cwd, args) : launchNix(output, cwd, args)).then(value => {
+			return installOmnisharpIfNeeded(output).then(command => {
+				return launch(command, details).then(result => {
+					// async error - when target not not ENEOT
+					result.process.on('error', reject);
 
-				// async error - when target not not ENEOT
-				value.process.on('error', reject);
-
-				// success after a short freeing event loop
-				setTimeout(function () {
-					resolve(value);
-				}, 0);
-			}, err => {
-				reject(err);
+					// success after a short freeing event loop
+					setTimeout(function () {
+						resolve(result);
+					}, 0);
+				}, err => {
+					reject(err);
+				});
 			});
-
 		} catch (err) {
 			reject(err);
 		}
 	});
 }
 
-function launchWindows(output: OutputChannel, cwd: string, args: string[]): Promise<LaunchResult> {
-	return installOmnisharpIfNeeded(output).then(command => {
+function launch(command: string, details: LaunchDetails): Promise<LaunchResult> {
+	if (isWindows) {
+		return launchWindows(command, details);
+	} else {
+		return launchNix(command, details);
+	}
+}
 
-		args = args.slice(0);
+function launchWindows(command: string, details: LaunchDetails): Promise<LaunchResult> {
+	return new Promise<LaunchResult>(resolve => {
+
+		function escapeIfNeeded(arg: string) {
+			const hasSpaceWithoutQuotes = /^[^"].* .*[^"]/;
+			return hasSpaceWithoutQuotes.test(arg)
+				? `"${arg}"`
+				: arg;
+		}
+
+		let args = details.args.slice(0); // create copy of details.args
 		args.unshift(command);
 		args = [[
 			'/s',
 			'/c',
-			'"' + args.map(arg => /^[^"].* .*[^"]/.test(arg) ? `"${arg}"` : arg).join(' ') + '"'
+			'"' + args.map(escapeIfNeeded).join(' ') + '"'
 		].join(' ')];
 
 		let process = spawn('cmd', args, <any>{
 			windowsVerbatimArguments: true,
 			detached: false,
-			// env: details.env,
-			cwd: cwd
+			cwd: details.cwd
 		});
 
-		return {
+		return resolve({
 			process,
 			command
-		};
+		});
 	});
 }
 
-function launchNix(output: OutputChannel, cwd: string, args: string[]): Promise<LaunchResult>{
-    
-    return installOmnisharpIfNeeded(output).then(command => {
-		let process = spawn(command, args, {
+function launchNix(command: string, details: LaunchDetails): Promise<LaunchResult>{
+    return new Promise<LaunchResult>(resolve => {
+		let process = spawn(command, details.args, {
 			detached: false,
-			// env: details.env,
-			cwd
+			cwd: details.cwd
 		});
 
-		return {
+		return resolve({
 			process,
 			command
-		};
+		});
     });
 
 	// return new Promise((resolve, reject) => {
@@ -134,9 +149,8 @@ function launchNix(output: OutputChannel, cwd: string, args: string[]): Promise<
 	// });
 }
 
-const versionRegexp = /(\d+\.\d+\.\d+)/;
-
 export function hasMono(range?: string): Promise<boolean> {
+	const versionRegexp = /(\d+\.\d+\.\d+)/;
 
 	return new Promise<boolean>((resolve, reject) => {
 		let childprocess: ChildProcess;

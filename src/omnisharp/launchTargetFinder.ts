@@ -117,5 +117,5 @@ function isSolution(resource: vscode.Uri): boolean {
 }
 
 function isProjectJson(resource: vscode.Uri): boolean {
-	return /\.project.json$/i.test(resource.fsPath);
+	return /\project.json$/i.test(resource.fsPath);
 }
