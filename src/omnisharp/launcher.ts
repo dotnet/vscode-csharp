@@ -10,7 +10,7 @@ import {workspace, OutputChannel} from 'vscode';
 import {satisfies} from 'semver';
 import {getOmnisharpLaunchFilePath} from './path';
 import {downloadOmnisharp, getOmnisharpAssetName} from './download';
-import {SupportedPlatform, getSupportedPlatform} from '../utils';
+import {Platform, getCurrentPlatform} from '../platform';
 
 const isWindows = process.platform === 'win32';
 
@@ -26,7 +26,7 @@ export interface LaunchResult {
 
 function installOmnisharpIfNeeded(output: OutputChannel): Promise<string> {
     return getOmnisharpLaunchFilePath().catch(err => {
-        if (getSupportedPlatform() == SupportedPlatform.None && process.platform === 'linux') {
+        if (getCurrentPlatform() == Platform.Unknown && process.platform === 'linux') {
             output.appendLine("[ERROR] Could not locate an OmniSharp server that supports your Linux distribution.");
             output.appendLine("");
             output.appendLine("OmniSharp provides a richer C# editing experience, with features like IntelliSense and Find All References.");

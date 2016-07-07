@@ -11,7 +11,7 @@ import * as https from 'https';
 import * as stream from 'stream';
 import * as tmp from 'tmp';
 import {parse} from 'url';
-import {SupportedPlatform, getSupportedPlatform} from '../utils';
+import {Platform, getCurrentPlatform} from '../platform';
 import {getProxyAgent} from '../proxy';
 
 const decompress = require('decompress');
@@ -23,24 +23,24 @@ export const OmniSharpVersion = '1.9-beta11';
 tmp.setGracefulCleanup();
 
 export function getOmnisharpAssetName(): string {
-    switch (getSupportedPlatform()) {
-        case SupportedPlatform.Windows:
+    switch (getCurrentPlatform()) {
+        case Platform.Windows:
             return `omnisharp-${OmniSharpVersion}-win-x64-net451.zip`;
-        case SupportedPlatform.OSX:
+        case Platform.OSX:
             return `omnisharp-${OmniSharpVersion}-osx-x64-netcoreapp1.0.tar.gz`;
-        case SupportedPlatform.CentOS:
+        case Platform.CentOS:
             return `omnisharp-${OmniSharpVersion}-centos-x64-netcoreapp1.0.tar.gz`;
-        case SupportedPlatform.Debian:
+        case Platform.Debian:
             return `omnisharp-${OmniSharpVersion}-debian-x64-netcoreapp1.0.tar.gz`;
-        case SupportedPlatform.Fedora:
+        case Platform.Fedora:
             return `omnisharp-${OmniSharpVersion}-fedora-x64-netcoreapp1.0.tar.gz`;
-        case SupportedPlatform.OpenSUSE:
+        case Platform.OpenSUSE:
             return `omnisharp-${OmniSharpVersion}-opensuse-x64-netcoreapp1.0.tar.gz`;
-        case SupportedPlatform.RHEL:
+        case Platform.RHEL:
             return `omnisharp-${OmniSharpVersion}-rhel-x64-netcoreapp1.0.tar.gz`;
-        case SupportedPlatform.Ubuntu14:
+        case Platform.Ubuntu14:
             return `omnisharp-${OmniSharpVersion}-ubuntu14-x64-netcoreapp1.0.tar.gz`;
-        case SupportedPlatform.Ubuntu16:
+        case Platform.Ubuntu16:
             return `omnisharp-${OmniSharpVersion}-ubuntu16-x64-netcoreapp1.0.tar.gz`;
             
         default:
