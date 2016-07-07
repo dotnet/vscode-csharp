@@ -15,10 +15,10 @@ const vsce = require('vsce');
 const debugUtil = require('./out/coreclr-debug/util.js');
 const debugInstall = require('./out/coreclr-debug/install.js');
 const fs_extra = require('fs-extra-promise');
-const omnisharpDownload = require('./out/omnisharp/download');
+const omnisharp = require('./out/omnisharp/download');
 const child_process = require('child_process');
 
-const OmniSharpVersion = omnisharpDownload.OmniSharpVersion;
+const OmniSharpVersion = omnisharp.OmniSharpVersion;
 
 /// used in offline packaging run so does not clean .vsix
 function clean() {
@@ -32,8 +32,8 @@ gulp.task('clean', ['omnisharp:clean',  'debugger:clean', 'package:clean'], () =
 
 /// Omnisharp Tasks
 function installOmnisharp(omnisharpAssetName) {
-    const logFunction = (message) => { console.log(message); };
-    return omnisharpDownload.downloadOmnisharp(logFunction, omnisharpAssetName);
+    const logger = (message) => { console.log(message); };
+    return omnisharp.downloadOmnisharp(omnisharpAssetName, logger);
 }
 
 function cleanOmnisharp() {
@@ -45,7 +45,7 @@ gulp.task('omnisharp:clean', () => {
 });
  
 gulp.task('omnisharp:install', ['omnisharp:clean'], () => {
-    var asset = gulpUtil.env.asset || omnisharpDownload.getOmnisharpAssetName();
+    var asset = gulpUtil.env.asset || omnisharp.getOmnisharpAssetName();
     return installOmnisharp(asset);
 });
 

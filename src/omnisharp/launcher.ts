@@ -40,12 +40,12 @@ function installOmnisharpIfNeeded(output: OutputChannel): Promise<string> {
             throw err;
         }
 		
-		const logFunction = (message: string) => { output.appendLine(message); };
 		const omnisharpAssetName = getOmnisharpAssetName();
 		const proxy = workspace.getConfiguration().get<string>('http.proxy');
 		const strictSSL = workspace.getConfiguration().get('http.proxyStrictSSL', true);
+		const logger = (message: string) => { output.appendLine(message); };
 
-        return downloadOmnisharp(logFunction, omnisharpAssetName, proxy, strictSSL).then(_ => {
+        return downloadOmnisharp(omnisharpAssetName, logger, proxy, strictSSL).then(_ => {
             return getOmnisharpLaunchFilePath();
         });
     });

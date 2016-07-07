@@ -79,14 +79,15 @@ function download(urlString: string, proxy?: string, strictSSL?: boolean): Promi
     });
 }
 
-export function downloadOmnisharp(log: (message: string) => void, omnisharpAssetName?: string, proxy?: string, strictSSL?: boolean) {
+export function downloadOmnisharp(omnisharpAssetName: string, log?: (message: string) => void, proxy?: string, strictSSL?: boolean) {
     return new Promise<boolean>((resolve, reject) => {
+        log = log || (_ => { });
+
         log(`[INFO] Installing to ${DefaultInstallLocation}`);
 
-        const assetName = omnisharpAssetName || getOmnisharpAssetName();
-        const urlString = `${BaseDownloadUrl}/${assetName}`;
+        const urlString = `${BaseDownloadUrl}/${omnisharpAssetName}`;
 
-        log(`[INFO] Attempting to download ${assetName}...`);
+        log(`[INFO] Attempting to download ${omnisharpAssetName}...`);
 
         return download(urlString, proxy, strictSSL)
             .then(inStream => {
