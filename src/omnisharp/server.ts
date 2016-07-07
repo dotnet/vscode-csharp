@@ -9,9 +9,8 @@ import {EventEmitter} from 'events';
 import {ChildProcess, exec} from 'child_process';
 import {dirname} from 'path';
 import {ReadLine, createInterface} from 'readline';
-import omnisharpLauncher from './serverLauncher';
-import {Disposable, CancellationToken, OutputChannel, workspace, window} from 'vscode';
-import {ErrorMessage, UnresolvedDependenciesMessage, MSBuildProjectDiagnostics, ProjectInformationResponse} from './protocol';
+import launchOmniSharp from './serverLauncher';
+import * as protocol from './protocol';
 import {findLaunchTargets, LaunchTarget, LaunchTargetKind} from './launchTargetFinder';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import * as vscode from 'vscode';
@@ -114,7 +113,7 @@ export abstract class OmnisharpServer {
 	private _solutionPath: string;
 	private _queue: Request[] = [];
 	private _isProcessingQueue = false;
-	private _channel: OutputChannel;
+	private _channel: vscode.OutputChannel;
 
 	private _isDebugEnable: boolean = false;
 
@@ -123,7 +122,7 @@ export abstract class OmnisharpServer {
 
 	constructor(reporter: TelemetryReporter) {
 		this._extraArgv = [];
-		this._channel = window.createOutputChannel('OmniSharp Log');
+		this._channel = vscode.window.createOutputChannel('OmniSharp Log');
         this._reporter = reporter;
 	}
 
@@ -167,7 +166,7 @@ export abstract class OmnisharpServer {
 		return this._solutionPath;
 	}
 
-	public getChannel(): OutputChannel {
+	public getChannel(): vscode.OutputChannel {
 		return this._channel;
 	}
 
@@ -185,7 +184,7 @@ export abstract class OmnisharpServer {
 		return this._addListener(Events.StdErr, listener, thisArg);
 	}
 
-	public onError(listener: (e: ErrorMessage) => any, thisArg?: any) {
+	public onError(listener: (e: protocol.ErrorMessage) => any, thisArg?: any) {
 		return this._addListener(Events.Error, listener, thisArg);
 	}
 
@@ -193,7 +192,7 @@ export abstract class OmnisharpServer {
 		return this._addListener(Events.ServerError, listener, thisArg);
 	}
 
-	public onUnresolvedDependencies(listener: (e: UnresolvedDependenciesMessage) => any, thisArg?: any) {
+	public onUnresolvedDependencies(listener: (e: protocol.UnresolvedDependenciesMessage) => any, thisArg?: any) {
 		return this._addListener(Events.UnresolvedDependencies, listener, thisArg);
 	}
 
@@ -205,19 +204,19 @@ export abstract class OmnisharpServer {
 		return this._addListener(Events.PackageRestoreFinished, listener, thisArg);
 	}
 
-	public onProjectChange(listener: (e: ProjectInformationResponse) => any, thisArg?: any) {
+	public onProjectChange(listener: (e: protocol.ProjectInformationResponse) => any, thisArg?: any) {
 		return this._addListener(Events.ProjectChanged, listener, thisArg);
 	}
 
-	public onProjectAdded(listener: (e: ProjectInformationResponse) => any, thisArg?: any) {
+	public onProjectAdded(listener: (e: protocol.ProjectInformationResponse) => any, thisArg?: any) {
 		return this._addListener(Events.ProjectAdded, listener, thisArg);
 	}
 
-	public onProjectRemoved(listener: (e: ProjectInformationResponse) => any, thisArg?: any) {
+	public onProjectRemoved(listener: (e: protocol.ProjectInformationResponse) => any, thisArg?: any) {
 		return this._addListener(Events.ProjectRemoved, listener, thisArg);
 	}
 
-	public onMsBuildProjectDiagnostics(listener: (e: MSBuildProjectDiagnostics) => any, thisArg?: any) {
+	public onMsBuildProjectDiagnostics(listener: (e: protocol.MSBuildProjectDiagnostics) => any, thisArg?: any) {
 		return this._addListener(Events.MsBuildProjectDiagnostics, listener, thisArg);
 	}
 
@@ -241,10 +240,10 @@ export abstract class OmnisharpServer {
 		return this._addListener(Events.Started, listener);
 	}
 
-	private _addListener(event: string, listener: (e: any) => any, thisArg?: any): Disposable {
+	private _addListener(event: string, listener: (e: any) => any, thisArg?: any): vscode.Disposable {
 		listener = thisArg ? listener.bind(thisArg) : listener;
 		this._eventBus.addListener(event, listener);
-		return new Disposable(() => this._eventBus.removeListener(event, listener));
+		return new vscode.Disposable(() => this._eventBus.removeListener(event, listener));
 	}
 
 	protected _fireEvent(event: string, args: any): void {
@@ -257,6 +256,7 @@ export abstract class OmnisharpServer {
 		if (!this._start) {
 			this._start = this._doStart(solutionPath);
 		}
+
 		return this._start;
 	}
 
@@ -265,13 +265,17 @@ export abstract class OmnisharpServer {
 		this._setState(ServerState.Starting);
 		this._solutionPath = solutionPath;
 
-		const cwd = dirname(solutionPath),
-			argv = ['-s', solutionPath, '--hostPID', process.pid.toString(), 'dnx:enablePackageRestore=false'].concat(this._extraArgv);
+		const cwd = dirname(solutionPath);
+		const argv = [
+			'-s', solutionPath,
+			'--hostPID', process.pid.toString(),
+			'dnx:enablePackageRestore=false']
+			.concat(this._extraArgv);
 
 		this._fireEvent(Events.StdOut, `[INFO] Starting OmniSharp at '${solutionPath}'...\n`);
 		this._fireEvent(Events.BeforeServerStart, solutionPath);
 
-		return omnisharpLauncher(this._channel, cwd, argv).then(value => {
+		return launchOmniSharp(this._channel, cwd, argv).then(value => {
 			this._serverProcess = value.process;
             this._requestDelays = {};
             this._fireEvent(Events.StdOut, `[INFO] Started OmniSharp from '${value.command}' with process id ${value.process.pid}...\n`);
@@ -281,7 +285,7 @@ export abstract class OmnisharpServer {
 		}).then(_ => {
 			return vscode.commands.getCommands()
 				.then(commands => {
-					if (commands.find(c => c == "vscode.startDebug")) {
+					if (commands.find(c => c === 'vscode.startDebug')) {
 						this._isDebugEnable = true;
 					}
 				});
@@ -302,7 +306,6 @@ export abstract class OmnisharpServer {
 		if (!this._serverProcess) {
 			// nothing to kill
 			ret = Promise.resolve<OmnisharpServer>(undefined);
-
 		}
         else if (process.platform === 'win32') {
 			// when killing a process in windows its child
@@ -342,11 +345,13 @@ export abstract class OmnisharpServer {
 	}
 
 	public autoStart(preferredPath: string): Thenable<void> {
-		return findLaunchTargets().then(targets => {
-			if (targets.length === 0) {
+		return findLaunchTargets().then(launchTargets => {
+			// If there aren't any potential launch targets, we create file watcher and
+			// try to start the server again once a *.sln or project.json file is created.
+			if (launchTargets.length === 0) {
 				return new Promise<void>((resolve, reject) => {
 					// 1st watch for files
-					let watcher = workspace.createFileSystemWatcher('{**/*.sln,**/project.json}', false, true, true);
+					let watcher = vscode.workspace.createFileSystemWatcher('{**/*.sln,**/project.json}', false, true, true);
 					watcher.onDidCreate(uri => {
 						watcher.dispose();
 						resolve();
@@ -357,27 +362,30 @@ export abstract class OmnisharpServer {
 				});
 			}
 
-			if (targets.length > 1) {
+			// If there's more than one launch target, we start the server if one of the targets
+			// matches the preferred path. Otherwise, we fire the "MultipleLaunchTargets" event,
+			// which is handled in status.ts to display the launch target selector.
+			if (launchTargets.length > 1) {
 
-				for (let target of targets) {
+				for (let target of launchTargets) {
 					if (target.target.fsPath === preferredPath) {
 						// start preferred path
 						return this.restart(preferredPath);
 					}
 				}
 
-				this._fireEvent(Events.MultipleLaunchTargets, targets);
+				this._fireEvent(Events.MultipleLaunchTargets, launchTargets);
 				return Promise.reject<void>(undefined);
 			}
 
-			// just start
-			return this.restart(targets[0].target.fsPath);
+			// If there's only one target, just start
+			return this.restart(launchTargets[0].target.fsPath);
 		});
 	}
 
 	// --- requests et al
 
-	public makeRequest<TResponse>(path: string, data?: any, token?: CancellationToken): Promise<TResponse> {
+	public makeRequest<TResponse>(path: string, data?: any, token?: vscode.CancellationToken): Promise<TResponse> {
 
 		if (this._getState() !== ServerState.Started) {
 			return Promise.reject<TResponse>('server has been stopped or not started');
@@ -500,12 +508,15 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 		while (this._callOnStop.length) {
 			this._callOnStop.pop()();
 		}
+
 		return super.stop();
 	}
 
 	protected _doConnect(): Promise<OmnisharpServer> {
 
-		this._serverProcess.stderr.on('data', (data: any) => this._fireEvent('stderr', String(data)));
+		this._serverProcess.stderr.on('data', (data: any) => {
+			this._fireEvent('stderr', String(data));
+		});
 
 		this._rl = createInterface({
 			input: this._serverProcess.stdout,
@@ -514,7 +525,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 		});
 
 		const p = new Promise<OmnisharpServer>((resolve, reject) => {
-			let listener: Disposable;
+			let listener: vscode.Disposable;
 
 			// timeout logic
 			const handle = setTimeout(() => {
