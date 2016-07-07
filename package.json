@@ -43,7 +43,7 @@
     "vsce": "^1.7.0"
   },
   "engines": {
-    "vscode": "^1.2.1"
+    "vscode": "^1.3.0"
   },
   "activationEvents": [
     "onLanguage:csharp",
@@ -502,9 +502,18 @@
                 "default": "The process name to attach to. If this is used, 'processId' should not be used."
               },
               "processId": {
-                "type": "integer",
-                "description": "The process id to attach to. If this is used, 'processName' should not be used.",
-                "default": 0
+                "anyOf": [ 
+                    {
+                      "type": "string",
+                      "description": "Lists running processes to attach to. If this is used, 'processName' should not be used.",
+                      "default": "${action.pickProcess}"
+                    }, 
+                    {
+                      "type": "integer",
+                      "description": "The process id to attach to. If this is used, 'processName' should not be used.",
+                      "default": 0
+                    }
+                ]                
               },
               "sourceFileMap": {
                 "type": "object",
@@ -620,7 +629,7 @@
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",
-            "processId": 0
+            "processId": "${action.pickProcess}"
           }
         ]
       }
