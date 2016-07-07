@@ -505,12 +505,12 @@
                 "anyOf": [ 
                     {
                       "type": "string",
-                      "description": "Lists running processes to attach to. If this is used, 'processName' should not be used.",
+                      "description": "The process id to attach to. User \"${command.pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
                       "default": "${command.pickProcess}"
                     }, 
                     {
                       "type": "integer",
-                      "description": "The process id to attach to. If this is used, 'processName' should not be used.",
+                      "description": "The process id to attach to. User \"${command.pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
                       "default": 0
                     }
                 ]                
