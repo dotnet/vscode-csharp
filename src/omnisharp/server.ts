@@ -9,7 +9,7 @@ import {EventEmitter} from 'events';
 import {ChildProcess, exec} from 'child_process';
 import {dirname} from 'path';
 import {ReadLine, createInterface} from 'readline';
-import launchOmniSharp from './serverLauncher';
+import launchOmniSharp from './launcher';
 import * as protocol from './protocol';
 import {findLaunchTargets, LaunchTarget, LaunchTargetKind} from './launchTargetFinder';
 import TelemetryReporter from 'vscode-extension-telemetry';

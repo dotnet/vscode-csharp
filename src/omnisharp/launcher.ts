@@ -46,7 +46,7 @@ export function installOmnisharpIfNeeded(output: OutputChannel): Promise<string>
     });
 }
 
-export default function launch(output: OutputChannel, cwd: string, args: string[]): Promise<LaunchResult> {
+export default function launchOmniSharp(output: OutputChannel, cwd: string, args: string[]): Promise<LaunchResult> {
 
 	return new Promise<LaunchResult>((resolve, reject) => {
 
