@@ -506,7 +506,7 @@
                     {
                       "type": "string",
                       "description": "Lists running processes to attach to. If this is used, 'processName' should not be used.",
-                      "default": "${action.pickProcess}"
+                      "default": "${command.pickProcess}"
                     }, 
                     {
                       "type": "integer",
@@ -629,7 +629,7 @@
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",
-            "processId": "${action.pickProcess}"
+            "processId": "${command.pickProcess}"
           }
         ]
       }
