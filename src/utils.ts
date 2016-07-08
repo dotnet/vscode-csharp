@@ -73,7 +73,7 @@ export function getSupportedPlatform() {
                 return SupportedPlatform.Fedora;
             case 'opensuse':
                 return SupportedPlatform.OpenSUSE;
-            case 'rehl':
+            case 'rhel':
                 return SupportedPlatform.RHEL;
             case 'debian':
                 return SupportedPlatform.Debian;
