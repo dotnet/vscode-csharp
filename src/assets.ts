@@ -47,7 +47,7 @@ interface WebLaunchConfiguration extends ConsoleLaunchConfiguration {
 }
 
 interface AttachConfiguration extends DebugConfiguration {
-    processId: number
+    processId: string
 }
 
 interface Paths {
@@ -179,7 +179,7 @@ function createAttachConfiguration(): AttachConfiguration {
         name: '.NET Core Attach',
         type: 'coreclr',
         request: 'attach',
-        processId: 0
+        processId: "${command.pickProcess}"
     }
 }
 
