@@ -108,7 +108,6 @@ export abstract class OmnisharpServer {
     private _requestDelays: { [requestName: string]: Delays };
 
 	private _eventBus = new EventEmitter();
-	private _start: Promise<void>;
 	private _state: ServerState = ServerState.Stopped;
 	private _solutionPath: string;
 	private _queue: Request[] = [];
@@ -252,15 +251,7 @@ export abstract class OmnisharpServer {
 
 	// --- start, stop, and connect
 
-	public start(solutionPath: string): Promise<void> {
-		if (!this._start) {
-			this._start = this._doStart(solutionPath);
-		}
-
-		return this._start;
-	}
-
-	private _doStart(solutionPath: string): Promise<void> {
+	private _start(solutionPath: string): Promise<void> {
 
 		this._setState(ServerState.Starting);
 		this._solutionPath = solutionPath;
@@ -328,7 +319,6 @@ export abstract class OmnisharpServer {
 		}
 
 		return ret.then(_ => {
-			this._start = null;
 			this._serverProcess = null;
 			this._setState(ServerState.Stopped);
 			this._fireEvent(Events.ServerStop, this);
@@ -339,7 +329,7 @@ export abstract class OmnisharpServer {
 	public restart(solutionPath: string = this._solutionPath): Promise<void> {
 		if (solutionPath) {
 			return this.stop().then(() => {
-				this.start(solutionPath);
+				this._start(solutionPath);
 			});
 		}
 	}
