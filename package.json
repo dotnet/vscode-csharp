@@ -144,7 +144,8 @@
         "label": ".NET Core",
         "enableBreakpointsFor": {
           "languageIds": [
-            "csharp"
+            "csharp",
+            "razor"
           ]
         },
         "runtime": "node",
@@ -623,6 +624,9 @@
             },
             "env": {
               "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceRoot}/Views"
             }
           },
           {
