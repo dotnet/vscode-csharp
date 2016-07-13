@@ -260,7 +260,7 @@ export abstract class OmnisharpServer {
 		const argv = [
 			'-s', solutionPath,
 			'--hostPID', process.pid.toString(),
-			'dnx:enablePackageRestore=false'
+			'DotNet:enablePackageRestore=false'
 		].concat(this._extraArgv);
 
 		this._fireEvent(Events.StdOut, `[INFO] Starting OmniSharp at '${solutionPath}'...\n`);
