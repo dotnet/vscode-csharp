@@ -11,7 +11,10 @@ import {dirname} from 'path';
 import {ReadLine, createInterface} from 'readline';
 import {launchOmniSharp} from './launcher';
 import * as protocol from './protocol';
+import {getOmnisharpLaunchFilePath} from './path';
+import {downloadOmnisharp, getOmnisharpAssetName} from './download';
 import {findLaunchTargets, LaunchTarget, LaunchTargetKind} from './launchTargetFinder';
+import {Platform, getCurrentPlatform} from '../platform';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import * as vscode from 'vscode';
 
@@ -48,6 +51,7 @@ module Events {
 
     export const MsBuildProjectDiagnostics = 'MsBuildProjectDiagnostics';
 
+	export const BeforeServerInstall = 'BeforeServerInstall';
     export const BeforeServerStart = 'BeforeServerStart';
     export const ServerStart = 'ServerStart';
     export const ServerStop = 'ServerStop';
@@ -219,6 +223,10 @@ export abstract class OmnisharpServer {
 		return this._addListener(Events.MsBuildProjectDiagnostics, listener, thisArg);
 	}
 
+	public onBeforeServerInstall(listener: () => any) {
+		return this._addListener(Events.BeforeServerInstall, listener);
+	}
+
 	public onBeforeServerStart(listener: (e: string) => any) {
 		return this._addListener(Events.BeforeServerStart, listener);
 	}
@@ -252,39 +260,41 @@ export abstract class OmnisharpServer {
 	// --- start, stop, and connect
 
 	private _start(solutionPath: string): Promise<void> {
+		return this._installOmnisharpIfNeeded().then(command => {
+			this._setState(ServerState.Starting);
+			this._solutionPath = solutionPath;
 
-		this._setState(ServerState.Starting);
-		this._solutionPath = solutionPath;
+			const cwd = dirname(solutionPath);
+			const argv = [
+				'-s', solutionPath,
+				'--hostPID', process.pid.toString(),
+				'DotNet:enablePackageRestore=false'
+			].concat(this._extraArgv);
 
-		const cwd = dirname(solutionPath);
-		const argv = [
-			'-s', solutionPath,
-			'--hostPID', process.pid.toString(),
-			'DotNet:enablePackageRestore=false'
-		].concat(this._extraArgv);
+			this._fireEvent(Events.StdOut, `[INFO] Starting OmniSharp at '${solutionPath}'...\n`);
+			this._fireEvent(Events.BeforeServerStart, solutionPath);
 
-		this._fireEvent(Events.StdOut, `[INFO] Starting OmniSharp at '${solutionPath}'...\n`);
-		this._fireEvent(Events.BeforeServerStart, solutionPath);
-
-		return launchOmniSharp({cwd, args: argv}, this._channel).then(value => {
-			this._serverProcess = value.process;
-            this._requestDelays = {};
-            this._fireEvent(Events.StdOut, `[INFO] Started OmniSharp from '${value.command}' with process id ${value.process.pid}...\n`);
-			this._setState(ServerState.Started);
-            this._fireEvent(Events.ServerStart, solutionPath);
-			return this._doConnect();
-		}).then(_ => {
-			return vscode.commands.getCommands()
-				.then(commands => {
-					if (commands.find(c => c === 'vscode.startDebug')) {
-						this._isDebugEnable = true;
-					}
-				});
-		}).then(_ => {
-			this._processQueue();
-		}, err => {
-			this._fireEvent(Events.ServerError, err);
-			throw err;
+			return launchOmniSharp({command, cwd, args: argv}).then(value => {
+				this._serverProcess = value.process;
+				this._requestDelays = {};
+				this._fireEvent(Events.StdOut, `[INFO] Started OmniSharp from '${value.command}' with process id ${value.process.pid}...\n`);
+				this._setState(ServerState.Started);
+				this._fireEvent(Events.ServerStart, solutionPath);
+				return this._doConnect();
+			}).then(_ => {
+				return vscode.commands.getCommands()
+					.then(commands => {
+						if (commands.find(c => c === 'vscode.startDebug')) {
+							this._isDebugEnable = true;
+						}
+					});
+			}).then(_ => {
+				this._processQueue();
+			}, err => {
+				this._fireEvent(Events.ServerError, err);
+				this._setState(ServerState.Stopped);
+				throw err;
+			});
 		});
 	}
 
@@ -370,6 +380,36 @@ export abstract class OmnisharpServer {
 
 			// If there's only one target, just start
 			return this.restart(launchTargets[0].target.fsPath);
+		});
+	}
+
+	private _installOmnisharpIfNeeded(): Promise<string> {
+		return getOmnisharpLaunchFilePath().catch(err => {
+			if (getCurrentPlatform() == Platform.Unknown && process.platform === 'linux') {
+				this._channel.appendLine("[ERROR] Could not locate an OmniSharp server that supports your Linux distribution.");
+				this._channel.appendLine("");
+				this._channel.appendLine("OmniSharp provides a richer C# editing experience, with features like IntelliSense and Find All References.");
+				this._channel.appendLine("It is recommend that you download the version of OmniSharp that runs on Mono using the following steps:");
+				this._channel.appendLine("    1. If it's not already installed, download and install Mono (http://www.mono-project.com)");
+				this._channel.appendLine("    2. Download and untar https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v1.9-alpha13/omnisharp-linux-mono.tar.gz");
+				this._channel.appendLine("    3. In Visual Studio Code, select Preferences->User Settings to open settings.json.");
+				this._channel.appendLine("    4. In settings.json, add a new setting: \"csharp.omnisharp\": \"/path/to/omnisharp/OmniSharp.exe\"");
+				this._channel.appendLine("    5. Restart Visual Studio Code.");
+				this._channel.show();
+
+				throw err;
+			}
+			
+			const omnisharpAssetName = getOmnisharpAssetName();
+			const proxy = vscode.workspace.getConfiguration().get<string>('http.proxy');
+			const strictSSL = vscode.workspace.getConfiguration().get('http.proxyStrictSSL', true);
+			const logger = (message: string) => { this._channel.appendLine(message); };
+
+			this._fireEvent(Events.BeforeServerInstall, this);
+
+			return downloadOmnisharp(omnisharpAssetName, logger, proxy, strictSSL).then(_ => {
+				return getOmnisharpLaunchFilePath();
+			});
 		});
 	}
 

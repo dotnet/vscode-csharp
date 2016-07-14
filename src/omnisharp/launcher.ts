@@ -6,15 +6,12 @@
 'use strict';
 
 import {spawn, ChildProcess} from 'child_process';
-import {workspace, OutputChannel} from 'vscode';
 import {satisfies} from 'semver';
-import {getOmnisharpLaunchFilePath} from './path';
-import {downloadOmnisharp, getOmnisharpAssetName} from './download';
-import {Platform, getCurrentPlatform} from '../platform';
 
 const isWindows = process.platform === 'win32';
 
 export interface LaunchDetails {
+	command: string;
 	cwd: string;
 	args: string[];
 }
@@ -24,48 +21,19 @@ export interface LaunchResult {
     command: string;
 }
 
-function installOmnisharpIfNeeded(output: OutputChannel): Promise<string> {
-    return getOmnisharpLaunchFilePath().catch(err => {
-        if (getCurrentPlatform() == Platform.Unknown && process.platform === 'linux') {
-            output.appendLine("[ERROR] Could not locate an OmniSharp server that supports your Linux distribution.");
-            output.appendLine("");
-            output.appendLine("OmniSharp provides a richer C# editing experience, with features like IntelliSense and Find All References.");
-            output.appendLine("It is recommend that you download the version of OmniSharp that runs on Mono using the following steps:");
-            output.appendLine("    1. If it's not already installed, download and install Mono (http://www.mono-project.com)");
-            output.appendLine("    2. Download and untar https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v1.9-alpha13/omnisharp-linux-mono.tar.gz");
-            output.appendLine("    3. In Visual Studio Code, select Preferences->User Settings to open settings.json.");
-            output.appendLine("    4. In settings.json, add a new setting: \"csharp.omnisharp\": \"/path/to/omnisharp/OmniSharp.exe\"");
-            output.appendLine("    5. Restart Visual Studio Code.");
-			output.show();
-            throw err;
-        }
-		
-		const omnisharpAssetName = getOmnisharpAssetName();
-		const proxy = workspace.getConfiguration().get<string>('http.proxy');
-		const strictSSL = workspace.getConfiguration().get('http.proxyStrictSSL', true);
-		const logger = (message: string) => { output.appendLine(message); };
-
-        return downloadOmnisharp(omnisharpAssetName, logger, proxy, strictSSL).then(_ => {
-            return getOmnisharpLaunchFilePath();
-        });
-    });
-}
-
-export function launchOmniSharp(details: LaunchDetails, output: OutputChannel): Promise<LaunchResult> {
+export function launchOmniSharp(details: LaunchDetails): Promise<LaunchResult> {
 	return new Promise<LaunchResult>((resolve, reject) => {
 		try {
-			return installOmnisharpIfNeeded(output).then(command => {
-				return launch(command, details).then(result => {
-					// async error - when target not not ENEOT
-					result.process.on('error', reject);
+			return launch(details).then(result => {
+				// async error - when target not not ENEOT
+				result.process.on('error', reject);
 
-					// success after a short freeing event loop
-					setTimeout(function () {
-						resolve(result);
-					}, 0);
-				}, err => {
-					reject(err);
-				});
+				// success after a short freeing event loop
+				setTimeout(function () {
+					resolve(result);
+				}, 0);
+			}, err => {
+				reject(err);
 			});
 		} catch (err) {
 			reject(err);
@@ -73,15 +41,15 @@ export function launchOmniSharp(details: LaunchDetails, output: OutputChannel): 
 	});
 }
 
-function launch(command: string, details: LaunchDetails): Promise<LaunchResult> {
+function launch(details: LaunchDetails): Promise<LaunchResult> {
 	if (isWindows) {
-		return launchWindows(command, details);
+		return launchWindows(details);
 	} else {
-		return launchNix(command, details);
+		return launchNix(details);
 	}
 }
 
-function launchWindows(command: string, details: LaunchDetails): Promise<LaunchResult> {
+function launchWindows(details: LaunchDetails): Promise<LaunchResult> {
 	return new Promise<LaunchResult>(resolve => {
 
 		function escapeIfNeeded(arg: string) {
@@ -92,7 +60,7 @@ function launchWindows(command: string, details: LaunchDetails): Promise<LaunchR
 		}
 
 		let args = details.args.slice(0); // create copy of details.args
-		args.unshift(command);
+		args.unshift(details.command);
 		args = [[
 			'/s',
 			'/c',
@@ -107,21 +75,21 @@ function launchWindows(command: string, details: LaunchDetails): Promise<LaunchR
 
 		return resolve({
 			process,
-			command
+			command: details.command
 		});
 	});
 }
 
-function launchNix(command: string, details: LaunchDetails): Promise<LaunchResult>{
+function launchNix(details: LaunchDetails): Promise<LaunchResult>{
     return new Promise<LaunchResult>(resolve => {
-		let process = spawn(command, details.args, {
+		let process = spawn(details.command, details.args, {
 			detached: false,
 			cwd: details.cwd
 		});
 
 		return resolve({
 			process,
-			command
+			command: details.command
 		});
     });
 
