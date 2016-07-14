@@ -56,9 +56,9 @@ function pickProjectAndStart(server: OmnisharpServer) {
         return vscode.window.showQuickPick(targets, {
             matchOnDescription: true,
             placeHolder: `Select 1 of ${targets.length} projects`
-        }).then(target => {
-            if (target) {
-                return server.restart(target.target.fsPath);
+        }).then(launchTarget => {
+            if (launchTarget) {
+                return server.restart(launchTarget);
             }
         });
     });

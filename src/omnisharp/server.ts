@@ -113,7 +113,7 @@ export abstract class OmnisharpServer {
 
 	private _eventBus = new EventEmitter();
 	private _state: ServerState = ServerState.Stopped;
-	private _solutionPath: string;
+	private _launchTarget: LaunchTarget;
 	private _queue: Request[] = [];
 	private _isProcessingQueue = false;
 	private _channel: vscode.OutputChannel;
@@ -166,7 +166,7 @@ export abstract class OmnisharpServer {
     }
 
 	public getSolutionPathOrFolder(): string {
-		return this._solutionPath;
+		return this._launchTarget.target.fsPath;
 	}
 
 	public getChannel(): vscode.OutputChannel {
@@ -259,11 +259,12 @@ export abstract class OmnisharpServer {
 
 	// --- start, stop, and connect
 
-	private _start(solutionPath: string): Promise<void> {
+	private _start(launchTarget: LaunchTarget): Promise<void> {
 		return this._installOmnisharpIfNeeded().then(command => {
 			this._setState(ServerState.Starting);
-			this._solutionPath = solutionPath;
+			this._launchTarget = launchTarget;
 
+			const solutionPath = launchTarget.target.fsPath;
 			const cwd = dirname(solutionPath);
 			const argv = [
 				'-s', solutionPath,
@@ -336,10 +337,10 @@ export abstract class OmnisharpServer {
 		});
 	}
 
-	public restart(solutionPath: string = this._solutionPath): Promise<void> {
-		if (solutionPath) {
+	public restart(launchTarget: LaunchTarget = this._launchTarget): Promise<void> {
+		if (launchTarget) {
 			return this.stop().then(() => {
-				this._start(solutionPath);
+				this._start(launchTarget);
 			});
 		}
 	}
@@ -367,10 +368,10 @@ export abstract class OmnisharpServer {
 			// which is handled in status.ts to display the launch target selector.
 			if (launchTargets.length > 1) {
 
-				for (let target of launchTargets) {
-					if (target.target.fsPath === preferredPath) {
+				for (let launchTarget of launchTargets) {
+					if (launchTarget.target.fsPath === preferredPath) {
 						// start preferred path
-						return this.restart(preferredPath);
+						return this.restart(launchTarget);
 					}
 				}
 
@@ -379,7 +380,7 @@ export abstract class OmnisharpServer {
 			}
 
 			// If there's only one target, just start
-			return this.restart(launchTargets[0].target.fsPath);
+			return this.restart(launchTargets[0]);
 		});
 	}
 
