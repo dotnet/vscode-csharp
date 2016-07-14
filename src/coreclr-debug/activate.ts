@@ -26,7 +26,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         return;
     }
     
-    if (!isOnPath('dotnet')) {
+    if (!isDotnetOnPath()) {
         const getDotNetMessage = "Get .NET CLI tools"; 
         vscode.window.showErrorMessage("The .NET CLI tools cannot be located. .NET Core debugging will not be enabled. Make sure .NET CLI tools are installed and are on the path.",
             getDotNetMessage).then(value => {
@@ -95,37 +95,15 @@ function deleteInstallBeginFile() {
     }
 }
 
-// Determines if the specified command is in one of the directories in the PATH environment variable.
-function isOnPath(command : string) : boolean {
-    let pathValue = process.env['PATH'];
-    if (!pathValue) {
+function isDotnetOnPath() : boolean {
+    try {
+        child_process.execSync('dotnet --info');
+        return true;
+    }
+    catch (err)
+    {
         return false;
     }
-    let fileName = command;
-    if (process.platform == 'win32') {
-        // on Windows, add a '.exe', and the path is semi-colon seperatode
-        fileName = fileName + ".exe";
-    }
-
-    let pathSegments: string[] = pathValue.split(path.delimiter);
-    for (let segment of pathSegments) {
-        if (segment.length === 0 || !path.isAbsolute(segment)) {
-            continue;
-        }
-
-        const segmentPath = path.join(segment, fileName);
-
-        try {
-            if (CoreClrDebugUtil.existsSync(segmentPath)) {
-                return true;
-            }
-        } catch (err) {
-            // any error from existsSync can be treated as the command not being on the path
-            continue;
-        }
-    }
-
-    return false;
 }
 
 function getPlatformRuntimeId() : string {
