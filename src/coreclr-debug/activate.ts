@@ -11,6 +11,7 @@ import * as path from 'path';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { CoreClrDebugUtil } from './util';
 import * as debugInstall from './install';
+import { SupportedPlatform, getSupportedPlatform } from './../utils';
 
 let _reporter: TelemetryReporter = null;
 let _channel: vscode.OutputChannel = null;
@@ -113,7 +114,25 @@ function getPlatformRuntimeId() : string {
         case 'darwin':
             return 'osx.10.11-x64';
         case 'linux':
-            return getDotnetRuntimeId();
+            switch (getSupportedPlatform())
+            {
+                case SupportedPlatform.CentOS:
+                    return 'centos.7-x64';
+                case SupportedPlatform.Fedora:
+                    return 'fedora.23-x64';
+                case SupportedPlatform.OpenSUSE:
+                    return 'opensuse.13.2-x64';
+                case SupportedPlatform.RHEL:
+                    return 'rhel.7-x64';
+                case SupportedPlatform.Debian:
+                    return 'debian.8-x64';
+                case SupportedPlatform.Ubuntu14:
+                    return 'ubuntu.14.04-x64';
+                case SupportedPlatform.Ubuntu16:
+                    return 'ubuntu.16.04-x64';
+                default:
+                    throw Error('Error: Unsupported linux platform');
+            }
         default:
             _util.log('Error: Unsupported platform ' + process.platform);
             throw Error('Unsupported platform ' + process.platform);
