@@ -17,6 +17,7 @@ interface DebugConfiguration {
     name: string,
     type: string,
     request: string,
+    sourceFileMap?: any,
 }
 
 interface ConsoleLaunchConfiguration extends DebugConfiguration {
@@ -170,6 +171,9 @@ function createWebLaunchConfiguration(targetFramework: string, executableName: s
         },
         env: {
             ASPNETCORE_ENVIRONMENT: "Development"
+        },
+        sourceFileMap: {
+            "/Views": "${workspaceRoot}/Views"
         }
     }
 }
