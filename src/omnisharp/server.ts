@@ -9,7 +9,7 @@ import {EventEmitter} from 'events';
 import {ChildProcess, exec} from 'child_process';
 import {dirname} from 'path';
 import {ReadLine, createInterface} from 'readline';
-import omnisharpLauncher from './omnisharpServerLauncher';
+import omnisharpLauncher from './serverLauncher';
 import {Disposable, CancellationToken, OutputChannel, workspace, window} from 'vscode';
 import {ErrorMessage, UnresolvedDependenciesMessage, MSBuildProjectDiagnostics, ProjectInformationResponse} from './protocol';
 import getLaunchTargets, {LaunchTarget} from './launchTargetFinder';

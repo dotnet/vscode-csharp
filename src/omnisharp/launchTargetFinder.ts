@@ -15,7 +15,6 @@ export interface LaunchTarget {
 	target: Uri;
 }
 
-
 export default function getLaunchTargets(): Thenable<LaunchTarget[]> {
 
 	if (!workspace.rootPath) {

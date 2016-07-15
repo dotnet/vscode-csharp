@@ -38,7 +38,7 @@ function getLaunchFilePath(filePathOrFolder: string): Promise<string> {
             return candidate;
         }
         
-        throw new Error(`Could not fnd launch file in ${filePathOrFolder}. Expected '${runFileName}', '${omnisharpFileName}', '${omnisharpExeFileName}'`);
+        throw new Error(`Could not fnd launch file in ${filePathOrFolder}. Expected '${runFileName}', '${omnisharpFileName}', or '${omnisharpExeFileName}'.`);
     });
 }
 

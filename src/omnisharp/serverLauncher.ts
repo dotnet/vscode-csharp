@@ -8,9 +8,9 @@
 import {spawn, ChildProcess} from 'child_process';
 import {workspace, OutputChannel} from 'vscode';
 import {satisfies} from 'semver';
-import {getOmnisharpLaunchFilePath} from './omnisharpPath';
-import {downloadOmnisharp, getOmnisharpAssetName} from './omnisharpDownload';
-import {SupportedPlatform, getSupportedPlatform} from './utils';
+import {getOmnisharpLaunchFilePath} from './path';
+import {downloadOmnisharp, getOmnisharpAssetName} from './download';
+import {SupportedPlatform, getSupportedPlatform} from '../utils';
 
 const isWindows = process.platform === 'win32';
 

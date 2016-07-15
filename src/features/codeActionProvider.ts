@@ -6,11 +6,11 @@
 'use strict';
 
 import {CodeActionProvider, CodeActionContext, Command, CancellationToken, TextDocument, WorkspaceEdit, TextEdit, Range, Uri, workspace, commands} from 'vscode';
-import {OmnisharpServer} from '../omnisharpServer';
+import {OmnisharpServer} from '../omnisharp/server';
 import AbstractProvider from './abstractProvider';
-import * as protocol from '../protocol';
-import {toRange2} from '../typeConvertion';
-import * as serverUtils from '../omnisharpUtils';
+import * as protocol from '../omnisharp/protocol';
+import {toRange2} from '../omnisharp/typeConvertion';
+import * as serverUtils from '../omnisharp/utils';
 
 export default class OmnisharpCodeActionProvider extends AbstractProvider implements CodeActionProvider {
 

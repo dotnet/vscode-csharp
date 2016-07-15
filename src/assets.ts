@@ -9,14 +9,15 @@ import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as tasks from 'vscode-tasks';
-import {OmnisharpServer} from './omnisharpServer';
-import * as serverUtils from './omnisharpUtils';
-import * as protocol from './protocol.ts'
+import {OmnisharpServer} from './omnisharp/server';
+import * as serverUtils from './omnisharp/utils';
+import * as protocol from './omnisharp/protocol.ts'
 
 interface DebugConfiguration {
     name: string,
     type: string,
     request: string,
+    sourceFileMap?: any,
 }
 
 interface ConsoleLaunchConfiguration extends DebugConfiguration {
@@ -47,7 +48,7 @@ interface WebLaunchConfiguration extends ConsoleLaunchConfiguration {
 }
 
 interface AttachConfiguration extends DebugConfiguration {
-    processId: number
+    processId: string
 }
 
 interface Paths {
@@ -170,6 +171,9 @@ function createWebLaunchConfiguration(targetFramework: string, executableName: s
         },
         env: {
             ASPNETCORE_ENVIRONMENT: "Development"
+        },
+        sourceFileMap: {
+            "/Views": "${workspaceRoot}/Views"
         }
     }
 }
@@ -179,7 +183,7 @@ function createAttachConfiguration(): AttachConfiguration {
         name: '.NET Core Attach',
         type: 'coreclr',
         request: 'attach',
-        processId: 0
+        processId: "${command.pickProcess}"
     }
 }
 

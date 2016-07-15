@@ -5,9 +5,12 @@ This page gives you detailed instructions on how to debug code running under .NE
 File bugs and feature requests [here](https://github.com/OmniSharp/omnisharp-vscode/issues) and [join our insiders group](http://landinghub.visualstudio.com/dotnetcoreinsiders) to help us build great tooling for .NET Core.
 
 ####Requirements
-* Requires .NET Core 1.0 RC2 or newer (will not work with earlier versions)
+* Requires .NET Core 1.0 (rc2 are earlier releases are not supported)
 * X64 only
-* Supports OSX, Ubuntu 14.04, Red Hat Enterprise Linux 7.2, Debian 8.2, Centos 7.1, and Windows 7+
+* Supported operating systems: 
+    * macOS: 10.11+ (El Capitan+)
+    * Linux: Red Hat Enterprise Linux 7.2+, Ubuntu 14.04 LTS, Ubuntu 16.04 LTS, Debian 8.2+, Linux Mint 17+, CentOS 7.1+, Oracle Linux 7.1+, Fedora 23, openSUSE 13.2
+    * Windows: 7+
 
 ###First Time setup
 ##### 1: Get Visual Studio Code
@@ -26,7 +29,7 @@ Install the .NET Core command line tools (CLI) by following the installation par
 ##### 3: Install C# Extension for VS Code
 Open the command palette in VS Code (F1) and type "ext install C#" to trigger the installation of the extension. VS Code will show a message that the extension has been installed and it will restart.
 
-If you have previously installed the C# extension, make sure that you have version 1.1.6 or newer. You can check this by opening the command palette (F1) and running 'Extensions: Show Installed Extensions'.
+If you have previously installed the C# extension, make sure that you have version 1.2 or newer. You can check this by opening the command palette (F1) and running 'Extensions: Show Installed Extensions'.
 
 ##### 4: Wait for download of platform-specific files 
 The first time that C# code is opened in VS Code, the extension will download the platform-specific files needed for debugging and editing. Debugging and editor features will not work until these steps finish.
@@ -49,7 +52,7 @@ You can also find some example projects on https://github.com/aspnet/cli-samples
 ##### 2: Open the directory in VS Code
 Go to File->Open and open the directory in Visual Studio Code. If this is the first time that the C# extension has been activated, it will now download additional platform-specific dependencies.
 
-**Troubleshooting 'Error while installing .NET Core Debugger':** If the debugger is failing to download its platform-specific dependencies, first verify that you have the 1.0.0-preview1-002702 or newer build of the .NET CLI installed, and it is functioning. You can check this by starting a bash/command prompt and running 'dotnet --info'. 
+**Troubleshooting 'Error while installing .NET Core Debugger':** If the debugger is failing to download its platform-specific dependencies, first verify that you have the 1.0.0-preview2-003121 or newer build of the .NET CLI installed, and it is functioning. You can check this by starting a bash/command prompt and running 'dotnet --info'. 
 
 If the CLI is installed, here are a few additional suggestions:
 
@@ -111,7 +114,7 @@ You can optionally disable justMyCode by setting it to "false". You should disab
 Just My Code is a set of features that makes it easier to focus on debugging your code by hiding some of the details of optimized libraries that you might be using, like the .NET Framework itself. The most important sub parts of this feature are --
 
 * User-unhandled exceptions: automatically stop the debugger just before exceptions are about to be caught by the framework
-* Just My Code stepping: when stepping, if framework code calls back to user code, automaticially stop.
+* Just My Code stepping: when stepping, if framework code calls back to user code, automatically stop.
 
 #####Source File Map
 You can optionally configure a file by file mapping by providing map following this schema:
@@ -133,7 +136,7 @@ Environment variables may be passed to your program using this schema:
     }
 
 #####External console (terminal) window
-The target process can optionally launch into a seperate console window. You will want this if your console app takes console input (ex: Console.ReadLine). This can be enabled with:
+The target process can optionally launch into a separate console window. You will want this if your console app takes console input (ex: Console.ReadLine). This can be enabled with:
 
     "externalConsole": true
 
