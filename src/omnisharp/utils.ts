@@ -5,7 +5,7 @@
 
 'use strict';
 
-import {OmnisharpServer} from './omnisharpServer';
+import {OmnisharpServer} from './server';
 import * as protocol from './protocol';
 import * as vscode from 'vscode';
 
