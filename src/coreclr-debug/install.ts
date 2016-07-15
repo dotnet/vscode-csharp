@@ -187,7 +187,7 @@ export class DebugInstaller
             },
             frameworks: {
                 "netcoreapp1.0": {
-                    imports: [ "dnxcore50", "portable-net45+win8" ]
+                    imports: [ "netstandard1.6", "dnxcore50", "portable-net45+win8" ]
                  }
             },
             runtimes: {
