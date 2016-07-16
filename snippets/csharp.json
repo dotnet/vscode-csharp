@@ -539,7 +539,7 @@
 		"prefix": "fact",
 		"body": [
 			"[Fact]",
-			"public void ${2:TestName}()", 
+			"public void ${1:TestName}()", 
 			"{",
 				"//Given",
 				"",
