@@ -282,14 +282,14 @@ export abstract class OmnisharpServer {
 				this._setState(ServerState.Started);
 				this._fireEvent(Events.ServerStart, solutionPath);
 				return this._doConnect();
-			}).then(_ => {
+			}).then(() => {
 				return vscode.commands.getCommands()
 					.then(commands => {
 						if (commands.find(c => c === 'vscode.startDebug')) {
 							this._isDebugEnable = true;
 						}
 					});
-			}).then(_ => {
+			}).then(() => {
 				this._processQueue();
 			}, err => {
 				this._fireEvent(Events.ServerError, err);
@@ -299,22 +299,22 @@ export abstract class OmnisharpServer {
 		});
 	}
 
-	protected abstract _doConnect(): Promise<OmnisharpServer>;
+	protected abstract _doConnect(): Promise<void>;
 
 	public stop(): Promise<void> {
 
-		let ret: Promise<OmnisharpServer>;
+		let ret: Promise<void>;
 
 		if (!this._serverProcess) {
 			// nothing to kill
-			ret = Promise.resolve<OmnisharpServer>(undefined);
+			ret = Promise.resolve();
 		}
         else if (process.platform === 'win32') {
 			// when killing a process in windows its child
 			// processes are *not* killed but become root
 			// processes. Therefore we use TASKKILL.EXE
-			ret = new Promise<OmnisharpServer>((resolve, reject) => {
-				const killer = exec(`taskkill /F /T /PID ${this._serverProcess.pid}`, function (err, stdout, stderr) {
+			ret = new Promise<void>((resolve, reject) => {
+				const killer = exec(`taskkill /F /T /PID ${this._serverProcess.pid}`, (err, stdout, stderr) => {
 					if (err) {
 						return reject(err);
 					}
@@ -325,11 +325,12 @@ export abstract class OmnisharpServer {
 			});
 		}
         else {
+			// Kill Unix process
 			this._serverProcess.kill('SIGTERM');
-			ret = Promise.resolve<OmnisharpServer>(undefined);
+			ret = Promise.resolve();
 		}
 
-		return ret.then(_ => {
+		return ret.then(() => {
 			this._serverProcess = null;
 			this._setState(ServerState.Stopped);
 			this._fireEvent(Events.ServerStop, this);
@@ -543,7 +544,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 		return super.stop();
 	}
 
-	protected _doConnect(): Promise<OmnisharpServer> {
+	protected _doConnect(): Promise<void> {
 
 		this._serverProcess.stderr.on('data', (data: any) => {
 			this._fireEvent('stderr', String(data));
@@ -555,7 +556,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 			terminal: false
 		});
 
-		const p = new Promise<OmnisharpServer>((resolve, reject) => {
+		const p = new Promise<void>((resolve, reject) => {
 			let listener: vscode.Disposable;
 
 			// timeout logic
@@ -573,7 +574,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 					listener.dispose();
                 }
 				clearTimeout(handle);
-				resolve(this);
+				resolve();
 			});
 		});
 
