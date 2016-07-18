@@ -149,7 +149,7 @@ export abstract class OmnisharpServer {
 
 		return {
 			path: config.get<string>('omnisharp'),
-			usesMono: config.get<boolean>('usesMono')
+			usesMono: config.get<boolean>('omnisharpUsesMono')
 		}
 	}
 
@@ -269,7 +269,15 @@ export abstract class OmnisharpServer {
 	// --- start, stop, and connect
 
 	private _start(launchTarget: LaunchTarget): Promise<void> {
-		let flavor = getDefaultFlavor(launchTarget.kind);
+		const options = this._readOptions();
+		
+		let flavor: omnisharp.Flavor;
+		if (options.path !== undefined && options.usesMono === true) {
+			flavor = omnisharp.Flavor.Mono;
+		}
+		else {
+			flavor = getDefaultFlavor(launchTarget.kind);
+		}
 
 		return this._getServerPath(flavor).then(serverPath => {
 			this._setState(ServerState.Starting);
