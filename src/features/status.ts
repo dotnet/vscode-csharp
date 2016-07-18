@@ -90,6 +90,13 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
 		render();
 	}));
 
+	disposables.push(server.onBeforeServerInstall(() => {
+		defaultStatus.text = '$(flame) Installing OmniSharp...';
+		defaultStatus.command = 'o.showOutput';
+		defaultStatus.color = '';
+		render();
+	}));
+
 	disposables.push(server.onBeforeServerStart(path => {
 		defaultStatus.text = '$(flame) Starting...';
 		defaultStatus.command = 'o.showOutput';

@@ -7,7 +7,7 @@
 
 import {OmnisharpServer} from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
-import findLaunchTargets from '../omnisharp/launchTargetFinder';
+import {findLaunchTargets} from '../omnisharp/launcher';
 import * as cp from 'child_process';
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
@@ -47,7 +47,7 @@ function pickProjectAndStart(server: OmnisharpServer) {
         let currentPath = server.getSolutionPathOrFolder();
         if (currentPath) {
             for (let target of targets) {
-                if (target.target.fsPath === currentPath) {
+                if (target.target === currentPath) {
                     target.label = `\u2713 ${target.label}`;
                 }
             }
@@ -56,9 +56,9 @@ function pickProjectAndStart(server: OmnisharpServer) {
         return vscode.window.showQuickPick(targets, {
             matchOnDescription: true,
             placeHolder: `Select 1 of ${targets.length} projects`
-        }).then(target => {
-            if (target) {
-                return server.restart(target.target.fsPath);
+        }).then(launchTarget => {
+            if (launchTarget) {
+                return server.restart(launchTarget);
             }
         });
     });

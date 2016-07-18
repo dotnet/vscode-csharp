@@ -3,6 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
  
+ /*
+ * Note that this file intentionally does not import 'vscode' as the code within is intended
+ * to be usable outside of VS Code. 
+ */
+
 'use strict';
 
 import * as fs from 'fs-extra-promise';
@@ -11,46 +16,70 @@ import * as https from 'https';
 import * as stream from 'stream';
 import * as tmp from 'tmp';
 import {parse} from 'url';
-import {SupportedPlatform, getSupportedPlatform} from '../utils';
+import {Flavor, getInstallDirectory} from './omnisharp';
+import {Platform} from '../platform';
 import {getProxyAgent} from '../proxy';
 
 const decompress = require('decompress');
 
 const BaseDownloadUrl = 'https://omnisharpdownload.blob.core.windows.net/ext';
-const DefaultInstallLocation = path.join(__dirname, '../.omnisharp');
-export const OmniSharpVersion = '1.9-beta11';
+const OmniSharpVersion = '1.9-beta12';
 
 tmp.setGracefulCleanup();
 
-export function getOmnisharpAssetName(): string {
-    switch (getSupportedPlatform()) {
-        case SupportedPlatform.Windows:
-            return `omnisharp-${OmniSharpVersion}-win-x64-net451.zip`;
-        case SupportedPlatform.OSX:
-            return `omnisharp-${OmniSharpVersion}-osx-x64-netcoreapp1.0.tar.gz`;
-        case SupportedPlatform.CentOS:
-            return `omnisharp-${OmniSharpVersion}-centos-x64-netcoreapp1.0.tar.gz`;
-        case SupportedPlatform.Debian:
-            return `omnisharp-${OmniSharpVersion}-debian-x64-netcoreapp1.0.tar.gz`;
-        case SupportedPlatform.Fedora:
-            return `omnisharp-${OmniSharpVersion}-fedora-x64-netcoreapp1.0.tar.gz`;
-        case SupportedPlatform.OpenSUSE:
-            return `omnisharp-${OmniSharpVersion}-opensuse-x64-netcoreapp1.0.tar.gz`;
-        case SupportedPlatform.RHEL:
-            return `omnisharp-${OmniSharpVersion}-rhel-x64-netcoreapp1.0.tar.gz`;
-        case SupportedPlatform.Ubuntu14:
-            return `omnisharp-${OmniSharpVersion}-ubuntu14-x64-netcoreapp1.0.tar.gz`;
-        case SupportedPlatform.Ubuntu16:
-            return `omnisharp-${OmniSharpVersion}-ubuntu16-x64-netcoreapp1.0.tar.gz`;
-            
-        default:
-            if (process.platform === 'linux') {
-                throw new Error(`Unsupported linux distribution`);
-            }
-            else {
-                throw new Error(`Unsupported platform: ${process.platform}`);
-            }
+function getDownloadFileName(flavor: Flavor, platform: Platform): string {
+    let fileName = `omnisharp-${OmniSharpVersion}-`;
+
+    if (flavor === Flavor.CoreCLR) {
+        switch (platform) {
+            case Platform.Windows:
+                fileName += 'win-x64-netcoreapp1.0.zip';
+                break;
+            case Platform.OSX:
+                fileName += 'osx-x64-netcoreapp1.0.tar.gz';
+                break;
+            case Platform.CentOS:
+                fileName += 'centos-x64-netcoreapp1.0.tar.gz';
+                break;
+            case Platform.Debian:
+                fileName += 'debian-x64-netcoreapp1.0.tar.gz';
+                break;
+            case Platform.Fedora:
+                fileName += 'fedora-x64-netcoreapp1.0.tar.gz';
+                break;
+            case Platform.OpenSUSE:
+                fileName += 'opensuse-x64-netcoreapp1.0.tar.gz';
+                break;
+            case Platform.RHEL:
+                fileName += 'rhel-x64-netcoreapp1.0.tar.gz';
+                break;
+            case Platform.Ubuntu14:
+                fileName += 'ubuntu14-x64-netcoreapp1.0.tar.gz';
+                break;
+            case Platform.Ubuntu16:
+                fileName += 'ubuntu16-x64-netcoreapp1.0.tar.gz';
+                break;
+   
+            default:
+                if (process.platform === 'linux') {
+                    throw new Error(`Unsupported linux distribution`);
+                }
+                else {
+                    throw new Error(`Unsupported platform: ${process.platform}`);
+                }
+        }
     }
+    else if (flavor === Flavor.Desktop) {
+        fileName += 'win-x64-net451.zip';
+    }
+    else if (flavor === Flavor.Mono) {
+        fileName += 'mono.tar.gz';
+    }
+    else {
+        throw new Error(`Unexpected OmniSharp flavor specified: ${flavor}`);
+    }
+
+    return fileName;
 }
 
 function download(urlString: string, proxy?: string, strictSSL?: boolean): Promise<stream.Readable> {
@@ -79,14 +108,20 @@ function download(urlString: string, proxy?: string, strictSSL?: boolean): Promi
     });
 }
 
-export function downloadOmnisharp(log: (message: string) => void, omnisharpAssetName?: string, proxy?: string, strictSSL?: boolean) {
+export function go(flavor: Flavor, platform: Platform, log?: (message: string) => void, proxy?: string, strictSSL?: boolean) {
     return new Promise<boolean>((resolve, reject) => {
-        log(`[INFO] Installing to ${DefaultInstallLocation}`);
+        log = log || (_ => { });
 
-        const assetName = omnisharpAssetName || getOmnisharpAssetName();
-        const urlString = `${BaseDownloadUrl}/${assetName}`;
+        log(`Flavor: ${flavor}, Platform: ${platform}`);
 
-        log(`[INFO] Attempting to download ${assetName}...`);
+        const fileName = getDownloadFileName(flavor, platform);
+        const installDirectory = getInstallDirectory(flavor);
+
+        log(`[INFO] Installing OmniSharp to ${installDirectory}`);
+
+        const urlString = `${BaseDownloadUrl}/${fileName}`;
+
+        log(`[INFO] Attempting to download ${fileName}...`);
 
         return download(urlString, proxy, strictSSL)
             .then(inStream => {
@@ -108,7 +143,7 @@ export function downloadOmnisharp(log: (message: string) => void, omnisharpAsset
                         log(`[INFO] Download complete!`);
                         log(`[INFO] Decompressing...`);
                         
-                        return decompress(tmpPath, DefaultInstallLocation)
+                        return decompress(tmpPath, installDirectory)
                             .then(files => {
                                 log(`[INFO] Done! ${files.length} files unpacked.`);
                                 return resolve(true);
