@@ -210,7 +210,19 @@ function launchWindows(details: LaunchDetails): Promise<LaunchResult> {
 	});
 }
 
-function launchNix(details: LaunchDetails): Promise<LaunchResult>{
+function launchNix(details: LaunchDetails): Promise<LaunchResult> {
+	if (details.flavor === omnisharp.Flavor.CoreCLR) {
+		return launchNixCoreCLR(details);
+	}
+	else if (details.flavor === omnisharp.Flavor.Mono) {
+		return launchNixMono(details);
+	}
+	else {
+		throw new Error(`Unexpected OmniSharp flavor: ${details.flavor}`);
+	}
+}
+
+function launchNixCoreCLR(details: LaunchDetails): Promise<LaunchResult> {
     return new Promise<LaunchResult>(resolve => {
 		let process = spawn(details.serverPath, details.args, {
 			detached: false,
@@ -222,29 +234,38 @@ function launchNix(details: LaunchDetails): Promise<LaunchResult>{
 			command: details.serverPath
 		});
     });
+}
 
-	// return new Promise((resolve, reject) => {
-	// 	hasMono('>=4.0.1').then(hasIt => {
-	// 		if (!hasIt) {
-	// 			reject(new Error('Cannot start Omnisharp because Mono version >=4.0.1 is required. See http://go.microsoft.com/fwlink/?linkID=534832#_20001'));
-	// 		} else {
-	// 			resolve();
-	// 		}
-	// 	});
-	// }).then(_ => {
-	// 	return installOmnisharpIfNeeded();
-	// }).then(command => {
-	// 	let process = spawn(command, args, {
-	// 		detached: false,
-	// 		// env: details.env,
-	// 		cwd
-	// 	});
+function launchNixMono(details: LaunchDetails): Promise<LaunchResult> {
+	return new Promise<LaunchResult>((resolve, reject) => {
+		return canLaunchMono().then(() => {
+			let args = details.args.slice(0); // create copy of details.args
+			args.unshift(details.serverPath);
 
-	// 	return {
-	// 		process,
-	// 		command
-	// 	};
-	// });
+			let process = spawn('mono', args, {
+				detached: false,
+				cwd: details.cwd
+			});
+
+			return resolve({
+				process,
+				command: details.serverPath
+			});
+		});
+	});
+}
+
+function canLaunchMono(): Promise<void> {
+	return new Promise<void>((resolve, reject) => {
+		hasMono('>=4.0.1').then(success => {
+			if (success) {
+				return resolve();
+			}
+			else {
+				return reject(new Error('Cannot start Omnisharp because Mono version >=4.0.1 is required.'));
+			}
+		});
+	});
 }
 
 export function hasMono(range?: string): Promise<boolean> {

@@ -405,7 +405,9 @@ export abstract class OmnisharpServer {
 
 		return new Promise<string>((resolve, reject) => {
 			if (options.path) {
-				return omnisharp.findServerPath(options.path).catch(err => {
+				return omnisharp.findServerPath(options.path).then(serverPath => {
+					return resolve(serverPath);
+				}).catch(err => {
 					vscode.window.showWarningMessage(`Invalid "csharp.omnisharp" user setting specified ('${options.path}).`);
 					return reject(err);
 				});
