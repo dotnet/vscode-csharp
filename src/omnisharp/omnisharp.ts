@@ -28,9 +28,6 @@ export enum Flavor {
  * Given a file path, returns the path to the OmniSharp launch file.
  */
 export function findServerPath(filePath: string): Promise<string> {
-	const cmdFileName = process.platform === 'win32' ? 'OmniSharp.cmd' : 'OmniSharp';
-	const exeFileName = process.platform === 'win32' ? 'OmniSharp.exe' : 'OmniSharp';
-
     return fs.lstatAsync(filePath).then(stats => {
         // If a file path was passed, assume its the launch file.
         if (stats.isFile()) {
@@ -40,12 +37,12 @@ export function findServerPath(filePath: string): Promise<string> {
         // Otherwise, search the specified folder.
         let candidate: string;
         
-        candidate = path.join(filePath, cmdFileName);
+        candidate = path.join(filePath, 'OmniSharp.exe');
         if (fs.existsSync(candidate)) {
             return candidate;
         }
         
-        candidate = path.join(filePath, exeFileName);
+        candidate = path.join(filePath, 'OmniSharp');
         if (fs.existsSync(candidate)) {
             return candidate;
         }
@@ -63,7 +60,7 @@ export function getInstallDirectory(flavor: Flavor): string {
         case Flavor.Desktop:
             return basePath + '-desktop';
         case Flavor.Mono:
-            return basePath + '-full';
+            return basePath + '-mono';
 
         default:
             throw new Error(`Unexpected OmniSharp flavor specified: ${flavor}`);

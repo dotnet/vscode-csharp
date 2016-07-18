@@ -410,6 +410,8 @@ export abstract class OmnisharpServer {
 					return reject(err);
 				});
 			}
+
+			return reject('No option specified.');
 		}).catch(err => {
 			return omnisharp.findServerPath(installDirectory);
 		}).catch(err => {
