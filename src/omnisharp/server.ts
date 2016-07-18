@@ -175,7 +175,9 @@ export abstract class OmnisharpServer {
     }
 
 	public getSolutionPathOrFolder(): string {
-		return this._launchTarget.target;
+		return this._launchTarget
+			? this._launchTarget.target
+			: undefined;
 	}
 
 	public getChannel(): vscode.OutputChannel {
