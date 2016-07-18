@@ -11,9 +11,9 @@ import {dirname} from 'path';
 import {ReadLine, createInterface} from 'readline';
 import {launchOmniSharp} from './launcher';
 import * as protocol from './protocol';
-import {getOmnisharpLaunchFilePath} from './path';
-import {downloadOmnisharp, getOmnisharpAssetName} from './download';
-import {findLaunchTargets, LaunchTarget, LaunchTargetKind} from './launchTargetFinder';
+import * as omnisharp from './omnisharp';
+import * as download from './download';
+import {LaunchTarget, findLaunchTargets, getDefaultFlavor} from './launcher';
 import {Platform, getCurrentPlatform} from '../platform';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import * as vscode from 'vscode';
@@ -121,10 +121,10 @@ export abstract class OmnisharpServer {
 	private _isDebugEnable: boolean = false;
 
 	protected _serverProcess: ChildProcess;
-	protected _extraArgv: string[];
+	protected _extraArgs: string[];
 
 	constructor(reporter: TelemetryReporter) {
-		this._extraArgv = [];
+		this._extraArgs = [];
 		this._channel = vscode.window.createOutputChannel('OmniSharp Log');
         this._reporter = reporter;
 	}
@@ -141,6 +141,15 @@ export abstract class OmnisharpServer {
 		if (typeof value !== 'undefined' && value !== this._state) {
 			this._state = value;
 			this._fireEvent(Events.StateChanged, this._state);
+		}
+	}
+
+	private _readOptions(): omnisharp.Options {
+		const config = vscode.workspace.getConfiguration('csharp');
+
+		return {
+			path: config.get<string>('omnisharp'),
+			usesMono: config.get<boolean>('usesMono')
 		}
 	}
 
@@ -166,7 +175,7 @@ export abstract class OmnisharpServer {
     }
 
 	public getSolutionPathOrFolder(): string {
-		return this._launchTarget.target.fsPath;
+		return this._launchTarget.target;
 	}
 
 	public getChannel(): vscode.OutputChannel {
@@ -260,22 +269,24 @@ export abstract class OmnisharpServer {
 	// --- start, stop, and connect
 
 	private _start(launchTarget: LaunchTarget): Promise<void> {
-		return this._installOmnisharpIfNeeded().then(command => {
+		let flavor = getDefaultFlavor(launchTarget.kind);
+
+		return this._getServerPath(flavor).then(serverPath => {
 			this._setState(ServerState.Starting);
 			this._launchTarget = launchTarget;
 
-			const solutionPath = launchTarget.target.fsPath;
+			const solutionPath = launchTarget.target;
 			const cwd = dirname(solutionPath);
-			const argv = [
+			const args = [
 				'-s', solutionPath,
 				'--hostPID', process.pid.toString(),
 				'DotNet:enablePackageRestore=false'
-			].concat(this._extraArgv);
+			].concat(this._extraArgs);
 
 			this._fireEvent(Events.StdOut, `[INFO] Starting OmniSharp at '${solutionPath}'...\n`);
 			this._fireEvent(Events.BeforeServerStart, solutionPath);
 
-			return launchOmniSharp({command, cwd, args: argv}).then(value => {
+			return launchOmniSharp({serverPath, flavor, cwd, args}).then(value => {
 				this._serverProcess = value.process;
 				this._requestDelays = {};
 				this._fireEvent(Events.StdOut, `[INFO] Started OmniSharp from '${value.command}' with process id ${value.process.pid}...\n`);
@@ -370,7 +381,7 @@ export abstract class OmnisharpServer {
 			if (launchTargets.length > 1) {
 
 				for (let launchTarget of launchTargets) {
-					if (launchTarget.target.fsPath === preferredPath) {
+					if (launchTarget.target === preferredPath) {
 						// start preferred path
 						return this.restart(launchTarget);
 					}
@@ -385,9 +396,25 @@ export abstract class OmnisharpServer {
 		});
 	}
 
-	private _installOmnisharpIfNeeded(): Promise<string> {
-		return getOmnisharpLaunchFilePath().catch(err => {
-			if (getCurrentPlatform() == Platform.Unknown && process.platform === 'linux') {
+	private _getServerPath(flavor: omnisharp.Flavor): Promise<string> {
+		// Attempt to find launch file path first from options, and then from the default install location.
+		// If OmniSharp can't be found, download it.
+
+		const options = this._readOptions();
+		const installDirectory = omnisharp.getInstallDirectory(flavor);
+
+		return new Promise<string>((resolve, reject) => {
+			if (options.path) {
+				return omnisharp.findServerPath(options.path).catch(err => {
+					vscode.window.showWarningMessage(`Invalid "csharp.omnisharp" user setting specified ('${options.path}).`);
+					return reject(err);
+				});
+			}
+		}).catch(err => {
+			return omnisharp.findServerPath(installDirectory);
+		}).catch(err => {
+			const platform = getCurrentPlatform();
+			if (platform == Platform.Unknown && process.platform === 'linux') {
 				this._channel.appendLine("[ERROR] Could not locate an OmniSharp server that supports your Linux distribution.");
 				this._channel.appendLine("");
 				this._channel.appendLine("OmniSharp provides a richer C# editing experience, with features like IntelliSense and Find All References.");
@@ -402,15 +429,15 @@ export abstract class OmnisharpServer {
 				throw err;
 			}
 			
-			const omnisharpAssetName = getOmnisharpAssetName();
-			const proxy = vscode.workspace.getConfiguration().get<string>('http.proxy');
-			const strictSSL = vscode.workspace.getConfiguration().get('http.proxyStrictSSL', true);
+			const config = vscode.workspace.getConfiguration();
+			const proxy = config.get<string>('http.proxy');
+			const strictSSL = config.get('http.proxyStrictSSL', true);
 			const logger = (message: string) => { this._channel.appendLine(message); };
 
 			this._fireEvent(Events.BeforeServerInstall, this);
 
-			return downloadOmnisharp(omnisharpAssetName, logger, proxy, strictSSL).then(_ => {
-				return getOmnisharpLaunchFilePath();
+			return download.go(flavor, platform, logger, proxy, strictSSL).then(_ => {
+				return omnisharp.findServerPath(installDirectory);
 			});
 		});
 	}
@@ -533,7 +560,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 		super(reporter);
 
 		// extra argv
-		this._extraArgv.push('--stdio');
+		this._extraArgs.push('--stdio');
 	}
 
 	public stop(): Promise<void> {

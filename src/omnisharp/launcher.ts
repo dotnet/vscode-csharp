@@ -7,11 +7,141 @@
 
 import {spawn, ChildProcess} from 'child_process';
 import {satisfies} from 'semver';
+import {Platform, getCurrentPlatform} from '../platform';
+import * as omnisharp from './omnisharp';
+import * as path from 'path';
+import * as vscode from 'vscode';
 
-const isWindows = process.platform === 'win32';
+const platform = getCurrentPlatform();
+
+export enum LaunchTargetKind {
+    Solution,
+    ProjectJson,
+    Folder
+}
+
+/**
+ * Represents the project or solution that OmniSharp is to be launched with.
+ * */
+export interface LaunchTarget {
+	label: string;
+	description: string;
+	directory: string;
+	target: string;
+	kind: LaunchTargetKind;
+}
+
+export function getDefaultFlavor(kind: LaunchTargetKind) {
+    // Default to desktop (for Windows) or mono (for OSX/Linux) for solution files; otherwise, CoreCLR.
+    if (kind === LaunchTargetKind.Solution) {
+        if (platform === Platform.Windows) {
+            return omnisharp.Flavor.Desktop;
+        }
+
+        return omnisharp.Flavor.Mono;
+    }
+
+    return omnisharp.Flavor.CoreCLR;
+}
+
+/**
+ * Returns a list of potential targets on which OmniSharp can be launched.
+ * This includes `project.json` files, `*.sln` files (if any `*.csproj` files are found), and the root folder
+ * (if it doesn't contain a `project.json` file, but `project.json` files exist).
+ */
+export function findLaunchTargets(): Thenable<LaunchTarget[]> {
+	if (!vscode.workspace.rootPath) {
+		return Promise.resolve([]);
+	}
+
+	return vscode.workspace.findFiles(
+		/*include*/ '{**/*.sln,**/*.csproj,**/project.json}', 
+		/*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
+		/*maxResults*/ 100)
+	.then(resources => {
+		return select(resources, vscode.workspace.rootPath);
+	});
+}
+
+function select(resources: vscode.Uri[], rootPath: string): LaunchTarget[] {
+    // The list of launch targets is calculated like so:
+	//   * If there are .csproj files, .sln files are considered as launch targets.
+	//   * Any project.json file is considered a launch target.
+	//   * If there is no project.json file in the root, the root as added as a launch target.
+	//
+	// TODO:
+	//   * It should be possible to choose a .csproj as a launch target
+	//   * It should be possible to choose a .sln file even when no .csproj files are found 
+	//     within the root.
+
+	if (!Array.isArray(resources)) {
+		return [];
+	}
+
+	let targets: LaunchTarget[] = [],
+		hasCsProjFiles = false,
+		hasProjectJson = false,
+		hasProjectJsonAtRoot = false;
+
+	hasCsProjFiles = resources.some(isCSharpProject);
+
+	resources.forEach(resource => {
+		// Add .sln files if there are .csproj files
+		if (hasCsProjFiles && isSolution(resource)) {
+			targets.push({
+				label: path.basename(resource.fsPath),
+				description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
+				target: resource.fsPath,
+				directory: path.dirname(resource.fsPath),
+				kind: LaunchTargetKind.Solution
+			});
+		}
+
+		// Add project.json files
+		if (isProjectJson(resource)) {
+			const dirname = path.dirname(resource.fsPath);
+			hasProjectJson = true;
+			hasProjectJsonAtRoot = hasProjectJsonAtRoot || dirname === rootPath;
+
+			targets.push({
+				label: path.basename(resource.fsPath),
+				description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
+				target: dirname,
+				directory: dirname,
+				kind: LaunchTargetKind.ProjectJson
+			});
+		}
+	});
+
+	// Add the root folder if there are project.json files, but none in the root.
+	if (hasProjectJson && !hasProjectJsonAtRoot) {
+		targets.push({
+			label: path.basename(rootPath),
+			description: '',
+			target: rootPath,
+			directory: rootPath,
+			kind: LaunchTargetKind.Folder
+		});
+	}
+
+	return targets.sort((a, b) => a.directory.localeCompare(b.directory));
+}
+
+function isCSharpProject(resource: vscode.Uri): boolean {
+	return /\.csproj$/i.test(resource.fsPath);
+}
+
+function isSolution(resource: vscode.Uri): boolean {
+	return /\.sln$/i.test(resource.fsPath);
+}
+
+function isProjectJson(resource: vscode.Uri): boolean {
+	return /\project.json$/i.test(resource.fsPath);
+}
 
 export interface LaunchDetails {
-	command: string;
+	serverPath: string;
+	flavor: omnisharp.Flavor;
 	cwd: string;
 	args: string[];
 }
@@ -42,7 +172,7 @@ export function launchOmniSharp(details: LaunchDetails): Promise<LaunchResult> {
 }
 
 function launch(details: LaunchDetails): Promise<LaunchResult> {
-	if (isWindows) {
+	if (platform === Platform.Windows) {
 		return launchWindows(details);
 	} else {
 		return launchNix(details);
@@ -60,7 +190,7 @@ function launchWindows(details: LaunchDetails): Promise<LaunchResult> {
 		}
 
 		let args = details.args.slice(0); // create copy of details.args
-		args.unshift(details.command);
+		args.unshift(details.serverPath);
 		args = [[
 			'/s',
 			'/c',
@@ -75,21 +205,21 @@ function launchWindows(details: LaunchDetails): Promise<LaunchResult> {
 
 		return resolve({
 			process,
-			command: details.command
+			command: details.serverPath
 		});
 	});
 }
 
 function launchNix(details: LaunchDetails): Promise<LaunchResult>{
     return new Promise<LaunchResult>(resolve => {
-		let process = spawn(details.command, details.args, {
+		let process = spawn(details.serverPath, details.args, {
 			detached: false,
 			cwd: details.cwd
 		});
 
 		return resolve({
 			process,
-			command: details.command
+			command: details.serverPath
 		});
     });
 
