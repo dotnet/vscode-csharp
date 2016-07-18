@@ -243,7 +243,7 @@ function addTasksJsonIfNecessary(info: protocol.DotNetWorkspaceInformation, path
 
 function hasWebServerDependency(projectJsonPath: string) {
     let projectJson = fs.readFileSync(projectJsonPath, 'utf8');
-    let projectJsonObject = JSON.parse(projectJson);
+    let projectJsonObject = JSON.parse(projectJson.replace(/^\uFEFF/, ''));
     
     if (projectJsonObject == null) {
         return false;
