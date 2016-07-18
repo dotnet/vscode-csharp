@@ -23,7 +23,7 @@ import {getProxyAgent} from '../proxy';
 const decompress = require('decompress');
 
 const BaseDownloadUrl = 'https://omnisharpdownload.blob.core.windows.net/ext';
-const OmniSharpVersion = '1.9-beta11';
+const OmniSharpVersion = '1.9-beta12';
 
 tmp.setGracefulCleanup();
 
