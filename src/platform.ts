@@ -85,12 +85,3 @@ export function getCurrentPlatform() {
 
     return Platform.Unknown;	
 }
-
-export function isWindows(platform: Platform) {
-    return platform === Platform.Windows;
-}
-
-export function isUnix(platform: Platform) {
-    return platform !== Platform.Windows
-        || (platform !== Platform.Unknown && process.platform === 'linux'); 
-}
