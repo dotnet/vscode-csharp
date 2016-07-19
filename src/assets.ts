@@ -131,13 +131,34 @@ function promptToAddAssets() {
     });
 }
 
-function createLaunchConfiguration(targetFramework: string, executableName: string): ConsoleLaunchConfiguration {
+function computeProgramPath(projectData: TargetProjectData) {
+    if (!projectData) {
+        // If there's no target project data, use a placeholder for the path.
+        return '${workspaceRoot}/bin/Debug/<target-framework>/<project-name.dll>'
+    }
+
+    let result = '${workspaceRoot}';
+    
+    if (projectData.projectPath) {
+	    result += vscode.workspace.asRelativePath(projectData.projectPath);
+    }
+
+    if (!result.endsWith('/')) {
+        result += '/';
+    }
+
+    result += `bin/${projectData.configurationName}/${projectData.targetFramework}/${projectData.executableName}`;
+
+    return result;
+}
+
+function createLaunchConfiguration(projectData: TargetProjectData): ConsoleLaunchConfiguration {
     return {
         name: '.NET Core Launch (console)',
         type: 'coreclr',
         request: 'launch',
         preLaunchTask: 'build',
-        program: '${workspaceRoot}/bin/Debug/' + targetFramework + '/'+ executableName,
+        program: computeProgramPath(projectData),
         args: [],
         cwd: '${workspaceRoot}',
         externalConsole: false,
@@ -145,13 +166,13 @@ function createLaunchConfiguration(targetFramework: string, executableName: stri
     }
 }
 
-function createWebLaunchConfiguration(targetFramework: string, executableName: string): WebLaunchConfiguration {
+function createWebLaunchConfiguration(projectData: TargetProjectData): WebLaunchConfiguration {
     return {
         name: '.NET Core Launch (web)',
         type: 'coreclr',
         request: 'launch',
         preLaunchTask: 'build',
-        program: '${workspaceRoot}/bin/Debug/' + targetFramework + '/'+ executableName,
+        program: computeProgramPath(projectData),
         args: [],
         cwd: '${workspaceRoot}',
         stopAtEntry: false,
@@ -187,13 +208,13 @@ function createAttachConfiguration(): AttachConfiguration {
     }
 }
 
-function createLaunchJson(targetFramework: string, executableName: string, isWebProject: boolean): any {
+function createLaunchJson(projectData: TargetProjectData, isWebProject: boolean): any {
     let version =  '0.2.0';
      if (!isWebProject) {
         return {
             version: version,
             configurations: [
-                createLaunchConfiguration(targetFramework, executableName),
+                createLaunchConfiguration(projectData),
                 createAttachConfiguration()
             ]
         }
@@ -202,48 +223,113 @@ function createLaunchJson(targetFramework: string, executableName: string, isWeb
         return {
             version: version,
             configurations: [
-                createWebLaunchConfiguration(targetFramework, executableName),
+                createWebLaunchConfiguration(projectData),
                 createAttachConfiguration()
             ]
         }
     }
 }
 
-function createBuildTaskDescription(): tasks.TaskDescription {
+function createBuildTaskDescription(projectData: TargetProjectData): tasks.TaskDescription {
+    let buildPath = '';
+    if (projectData) {
+        buildPath = '${workspaceRoot}';
+        buildPath += vscode.workspace.asRelativePath(projectData.projectJsonPath);
+    }
+
     return {
         taskName: 'build',
-        args: [],
+        args: [buildPath],
         isBuildCommand: true,
         problemMatcher: '$msCompile'
     };
 }
 
-function createTasksConfiguration(): tasks.TaskConfiguration {
+function createTasksConfiguration(projectData: TargetProjectData): tasks.TaskConfiguration {
     return {
         version: '0.1.0',
         command: 'dotnet',
         isShellCommand: true,
         args: [],
-        tasks: [ createBuildTaskDescription() ]
+        tasks: [ createBuildTaskDescription(projectData) ]
     };
 }
 
-function addTasksJsonIfNecessary(info: protocol.DotNetWorkspaceInformation, paths: Paths, operations: Operations) {
+function addTasksJsonIfNecessary(projectData: TargetProjectData, paths: Paths, operations: Operations) {
     return new Promise<void>((resolve, reject) => {
         if (!operations.addTasksJson) {
             return resolve();
         }
         
-        const tasksJson = createTasksConfiguration();
+        const tasksJson = createTasksConfiguration(projectData);
         const tasksJsonText = JSON.stringify(tasksJson, null, '    ');
         
         return fs.writeFileAsync(paths.tasksJsonPath, tasksJsonText);
     });
 }
 
-function hasWebServerDependency(projectJsonPath: string) {
-    let projectJson = fs.readFileSync(projectJsonPath, 'utf8');
-    let projectJsonObject = JSON.parse(projectJson.replace(/^\uFEFF/, ''));
+interface TargetProjectData {
+    projectPath: string;
+    projectJsonPath: string;
+    targetFramework: string;
+    executableName: string;
+    configurationName: string;
+}
+
+function findTargetProjectData(projects: protocol.DotNetProject[]): TargetProjectData {
+    // TODO: For now, assume the Debug configuration. Eventually, we'll need to revisit
+    // this when we allow selecting configurations.
+    const configurationName = 'Debug';
+
+    const executableProjects = findExecutableProjects(projects, configurationName);
+
+    // TODO: We arbitrarily pick the first executable projec that we find. This will need
+    // revisiting when we project a "start up project" selector.
+    const targetProject = executableProjects.length > 0
+        ? executableProjects[0]
+        : undefined;
+
+    if (targetProject && targetProject.Frameworks.length > 0) {
+        const config = targetProject.Configurations.find(c => c.Name === configurationName);
+        if (config) {
+            return {
+                projectPath: targetProject.Path,
+                projectJsonPath: path.join(targetProject.Path, 'project.json'),
+                targetFramework: targetProject.Frameworks[0].ShortName,
+                executableName: path.basename(config.CompilationOutputAssemblyFile),
+                configurationName
+            };
+        }
+    }
+
+    return undefined;
+}
+
+function findExecutableProjects(projects: protocol.DotNetProject[], configName: string) {
+    let result: protocol.DotNetProject[] = [];
+
+    projects.forEach(project => {
+        project.Configurations.forEach(configuration => {
+            if (configuration.Name === configName && configuration.EmitEntryPoint === true) {
+                if (project.Frameworks.length > 0) {
+                    result.push(project);
+                }
+            }
+        });
+    });
+
+    return result;
+}
+
+function hasWebServerDependency(targetProjectData: TargetProjectData) {
+    if (!targetProjectData || !targetProjectData.projectJsonPath) {
+        return;
+    }
+
+    let projectJson = fs.readFileSync(targetProjectData.projectJsonPath, 'utf8');
+    projectJson = projectJson.replace(/^\uFEFF/, '');
+
+    let projectJsonObject = JSON.parse(projectJson);
     
     if (projectJsonObject == null) {
         return false;
@@ -255,38 +341,17 @@ function hasWebServerDependency(projectJsonPath: string) {
         }
     }
     
-    return false;    
+    return false;
 }
 
-function addLaunchJsonIfNecessary(info: protocol.DotNetWorkspaceInformation, paths: Paths, operations: Operations, projectJsonPath: string) {
+function addLaunchJsonIfNecessary(projectData: TargetProjectData, paths: Paths, operations: Operations) {
     return new Promise<void>((resolve, reject) => {
         if (!operations.addLaunchJson) {
             return resolve();
         }
-        
-        let targetFramework = '<target-framework>';
-        let executableName = '<project-name.dll>';
 
-        let done = false;
-        for (var project of info.Projects) {
-            for (var configuration of project.Configurations) {
-                if (configuration.Name === "Debug" && configuration.EmitEntryPoint === true) {                       
-                    if (project.Frameworks.length > 0) {
-                        targetFramework = project.Frameworks[0].ShortName;
-                        executableName = path.basename(configuration.CompilationOutputAssemblyFile)
-                    }
-                    
-                    done = true;
-                    break;
-                }
-            }               
-            
-            if (done) {
-                break;
-            }
-        }
-        
-        const launchJson = createLaunchJson(targetFramework, executableName, hasWebServerDependency(projectJsonPath));
+        const isWebProject = hasWebServerDependency(projectData);
+        const launchJson = createLaunchJson(projectData, isWebProject);
         const launchJsonText = JSON.stringify(launchJson, null, '    ');
         
         return fs.writeFileAsync(paths.launchJsonPath, launchJsonText);
@@ -298,9 +363,14 @@ export function addAssetsIfNecessary(server: OmnisharpServer) {
         return;
     }
     
-    // If there is no project.json, we won't bother to prompt the user for tasks.json.		
-    const projectJsonPath = path.join(vscode.workspace.rootPath, 'project.json');		
-    if (!fs.existsSync(projectJsonPath)) {
+    // If there is no project.json or global.json, we won't bother to prompt the user for tasks.json.		
+    const projectJsonPath = path.join(vscode.workspace.rootPath, 'project.json');
+    const globalJsonPath = path.join(vscode.workspace.rootPath, 'global.json');
+
+    const projectJsonExists = fs.existsSync(projectJsonPath);
+    const globalJsonExists = fs.existsSync(globalJsonPath);
+
+    if (!fs.existsSync(projectJsonPath) && !fs.existsSync(globalJsonPath)) {
         return;
     }
 
@@ -317,12 +387,13 @@ export function addAssetsIfNecessary(server: OmnisharpServer) {
                         return;
                     }
                     
+                    const data = findTargetProjectData(info.DotNet.Projects);
                     const paths = getPaths();
                     
                     return fs.ensureDirAsync(paths.vscodeFolder).then(() => {
                         return Promise.all([
-                            addTasksJsonIfNecessary(info.DotNet, paths, operations),
-                            addLaunchJsonIfNecessary(info.DotNet, paths, operations, projectJsonPath)
+                            addTasksJsonIfNecessary(data, paths, operations),
+                            addLaunchJsonIfNecessary(data, paths, operations)
                         ]);
                     });
                 });
