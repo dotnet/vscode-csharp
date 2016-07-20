@@ -43,8 +43,8 @@ export class Advisor {
 	}
 
 	private _onProjectChange(info: protocol.ProjectInformationResponse): void {
-		if (info.DnxProject && info.DnxProject.SourceFiles) {
-			this._projectSourceFileCounts[info.DnxProject.Path] = info.DnxProject.SourceFiles.length;
+		if (info.DotNetProject && info.DotNetProject.SourceFiles) {
+			this._projectSourceFileCounts[info.DotNetProject.Path] = info.DotNetProject.SourceFiles.length;
 		}
 		if (info.MsBuildProject && info.MsBuildProject.SourceFiles) {
 			this._projectSourceFileCounts[info.MsBuildProject.Path] = info.MsBuildProject.SourceFiles.length;
@@ -94,7 +94,7 @@ class DiagnosticsProvider extends AbstractSupport {
 	constructor(server: OmnisharpServer, validationAdvisor: Advisor) {
 		super(server);
 		this._validationAdvisor = validationAdvisor;
-		this._diagnostics = languages.createDiagnosticCollection('omnisharp');
+		this._diagnostics = languages.createDiagnosticCollection('csharp');
 
 		let d1 = this._server.onPackageRestore(this._validateProject, this);
 		let d2 = this._server.onProjectChange(this._validateProject, this);
@@ -108,9 +108,11 @@ class DiagnosticsProvider extends AbstractSupport {
 		if (this._projectValidation) {
 			this._projectValidation.dispose();
 		}
+
 		for (let key in this._documentValidations) {
 			this._documentValidations[key].dispose();
 		}
+
 		this._disposable.dispose();
 	}
 
@@ -153,9 +155,18 @@ class DiagnosticsProvider extends AbstractSupport {
 		let source = new CancellationTokenSource();
 		let handle = setTimeout(() => {
             serverUtils.codeCheck(this._server, { Filename: document.fileName }, source.token).then(value => {
+				// Easy case: If there are no diagnostics in the file, we can clear it quickly. 
+				if (value.QuickFixes.length === 0) {
+					if (this._diagnostics.has(document.uri)) {
+						this._diagnostics.delete(document.uri);
+					}
 
+					return;
+				}
+				
 				// (re)set new diagnostics for this document
 				let diagnostics = value.QuickFixes.map(DiagnosticsProvider._asDiagnostic);
+
 				this._diagnostics.set(document.uri, diagnostics);
 			});
 		}, 750);
@@ -190,10 +201,21 @@ class DiagnosticsProvider extends AbstractSupport {
 					if (lastEntry && lastEntry[0].toString() === uri.toString()) {
 						lastEntry[1].push(diag);
 					} else {
+						// We're replacing all diagnostics in this file. Pushing an entry with undefined for
+						// the diagnostics first ensures that the previous diagnostics for this file are
+						// cleared. Otherwise, new entries will be merged with the old ones.
+						entries.push([uri, undefined]);
 						lastEntry = [uri, [diag]];
 						entries.push(lastEntry);
 					}
 				}
+
+			    // Clear diagnostics for files that no longer have any diagnostics.
+				this._diagnostics.forEach((uri, diagnostics) => {
+					if (!entries.find(tuple => tuple[0] === uri)) {
+						this._diagnostics.delete(uri);
+					}
+				});
 
 				// replace all entries
 				this._diagnostics.set(entries);
@@ -216,10 +238,11 @@ class DiagnosticsProvider extends AbstractSupport {
 
 	private static _asDiagnosticSeverity(logLevel: string): DiagnosticSeverity {
 		switch (logLevel.toLowerCase()) {
-			case 'hidden':
 			case 'warning':
 			case 'warn':
 				return DiagnosticSeverity.Warning;
+			case 'hidden':
+				return DiagnosticSeverity.Information;
 			default:
 				return DiagnosticSeverity.Error;
 		}
