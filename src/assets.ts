@@ -372,17 +372,6 @@ export function addAssetsIfNecessary(server: OmnisharpServer) {
         return;
     }
     
-    // If there is no project.json or global.json, we won't bother to prompt the user for tasks.json.		
-    const projectJsonPath = path.join(vscode.workspace.rootPath, 'project.json');
-    const globalJsonPath = path.join(vscode.workspace.rootPath, 'global.json');
-
-    const projectJsonExists = fs.existsSync(projectJsonPath);
-    const globalJsonExists = fs.existsSync(globalJsonPath);
-
-    if (!fs.existsSync(projectJsonPath) && !fs.existsSync(globalJsonPath)) {
-        return;
-    }
-
     return serverUtils.requestWorkspaceInformation(server).then(info => {
         // If there are no .NET Core projects, we won't bother offering to add assets.
         if ('DotNet' in info && info.DotNet.Projects.length > 0) {
