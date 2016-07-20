@@ -140,6 +140,18 @@ The target process can optionally launch into a separate console window. You wil
 
     "externalConsole": true
 
+##### Stepping into properties and operators
+The debugger steps over properties and operators in managed code by default. In most cases, this provides a better debugging experience. To change this and enable stepping into properties or operators add:
+
+    "enableStepFiltering": false
+
+#### Attach Support
+The C# debugger supports attaching to processes. To do this, switch to the Debug tab, and open the configuration drop down.
+
+![Debug launch configuration drop down](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/images/debug-launch-configurations.png)
+
+Select the '.NET Core Attach' configuration. Clicking the play button (or pressing F5) will then try to attach. In launch.json, if `processId` is set to `"${command.pickProcess}"` this will provide UI to select which process to attach to.
+
 #### Docker Support
 
 Using Visual Studio Code and the C# extension it is also possible to debug your code running in a [Docker container](https://en.wikipedia.org/wiki/Docker_(software)). To do so, follow instructions to install and run [yo docker](https://github.com/Microsoft/generator-docker#generator-docker). This will add files to your project to build a container, and it will add a new debug launch configuration which will invoke a container build, and then debug your app in the container.
