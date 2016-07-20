@@ -140,14 +140,10 @@ function computeProgramPath(projectData: TargetProjectData) {
     let result = '${workspaceRoot}';
     
     if (projectData.projectPath) {
-	    result += vscode.workspace.asRelativePath(projectData.projectPath);
+        result = path.join(result, path.relative(vscode.workspace.rootPath, projectData.projectPath.fsPath));
     }
 
-    if (!result.endsWith('/')) {
-        result += '/';
-    }
-
-    result += `bin/${projectData.configurationName}/${projectData.targetFramework}/${projectData.executableName}`;
+    result = path.join(result, `bin/${projectData.configurationName}/${projectData.targetFramework}/${projectData.executableName}`);
 
     return result;
 }
@@ -233,8 +229,7 @@ function createLaunchJson(projectData: TargetProjectData, isWebProject: boolean)
 function createBuildTaskDescription(projectData: TargetProjectData): tasks.TaskDescription {
     let buildPath = '';
     if (projectData) {
-        buildPath = '${workspaceRoot}';
-        buildPath += vscode.workspace.asRelativePath(projectData.projectJsonPath);
+        buildPath = path.join('${workspaceRoot}', path.relative(vscode.workspace.rootPath, projectData.projectJsonPath.fsPath));
     }
 
     return {
@@ -269,8 +264,8 @@ function addTasksJsonIfNecessary(projectData: TargetProjectData, paths: Paths, o
 }
 
 interface TargetProjectData {
-    projectPath: string;
-    projectJsonPath: string;
+    projectPath: vscode.Uri;
+    projectJsonPath: vscode.Uri;
     targetFramework: string;
     executableName: string;
     configurationName: string;
@@ -293,8 +288,8 @@ function findTargetProjectData(projects: protocol.DotNetProject[]): TargetProjec
         const config = targetProject.Configurations.find(c => c.Name === configurationName);
         if (config) {
             return {
-                projectPath: targetProject.Path,
-                projectJsonPath: path.join(targetProject.Path, 'project.json'),
+                projectPath: targetProject.Path ? vscode.Uri.file(targetProject.Path) : undefined,
+                projectJsonPath: vscode.Uri.file(path.join(targetProject.Path, 'project.json')),
                 targetFramework: targetProject.Frameworks[0].ShortName,
                 executableName: path.basename(config.CompilationOutputAssemblyFile),
                 configurationName
@@ -326,7 +321,7 @@ function hasWebServerDependency(targetProjectData: TargetProjectData): boolean {
         return false;
     }
 
-    let projectJson = fs.readFileSync(targetProjectData.projectJsonPath, 'utf8');
+    let projectJson = fs.readFileSync(targetProjectData.projectJsonPath.fsPath, 'utf8');
     projectJson = projectJson.replace(/^\uFEFF/, '');
 
     let projectJsonObject: any;
