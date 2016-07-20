@@ -11,6 +11,7 @@ import * as path from 'path';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { CoreClrDebugUtil } from './util';
 import * as debugInstall from './install';
+import { Platform, getCurrentPlatform } from './../platform';
 
 let _reporter: TelemetryReporter = null;
 let _channel: vscode.OutputChannel = null;
@@ -26,13 +27,13 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         return;
     }
     
-    if (!isOnPath('dotnet')) {
+    if (!isDotnetOnPath()) {
         const getDotNetMessage = "Get .NET CLI tools"; 
         vscode.window.showErrorMessage("The .NET CLI tools cannot be located. .NET Core debugging will not be enabled. Make sure .NET CLI tools are installed and are on the path.",
             getDotNetMessage).then(value => {
                 if (value === getDotNetMessage) {
                     let open = require('open');
-                    open("http://dotnet.github.io/getting-started/");
+                    open("https://www.microsoft.com/net/core");
                 }
             });
 
@@ -95,37 +96,15 @@ function deleteInstallBeginFile() {
     }
 }
 
-// Determines if the specified command is in one of the directories in the PATH environment variable.
-function isOnPath(command : string) : boolean {
-    let pathValue = process.env['PATH'];
-    if (!pathValue) {
+function isDotnetOnPath() : boolean {
+    try {
+        child_process.execSync('dotnet --info');
+        return true;
+    }
+    catch (err)
+    {
         return false;
     }
-    let fileName = command;
-    if (process.platform == 'win32') {
-        // on Windows, add a '.exe', and the path is semi-colon seperatode
-        fileName = fileName + ".exe";
-    }
-
-    let pathSegments: string[] = pathValue.split(path.delimiter);
-    for (let segment of pathSegments) {
-        if (segment.length === 0 || !path.isAbsolute(segment)) {
-            continue;
-        }
-
-        const segmentPath = path.join(segment, fileName);
-
-        try {
-            if (CoreClrDebugUtil.existsSync(segmentPath)) {
-                return true;
-            }
-        } catch (err) {
-            // any error from existsSync can be treated as the command not being on the path
-            continue;
-        }
-    }
-
-    return false;
 }
 
 function getPlatformRuntimeId() : string {
@@ -133,9 +112,27 @@ function getPlatformRuntimeId() : string {
         case 'win32':
             return 'win7-x64';
         case 'darwin':
-            return getDotnetRuntimeId();
+            return 'osx.10.11-x64';
         case 'linux':
-            return getDotnetRuntimeId();
+            switch (getCurrentPlatform())
+            {
+                case Platform.CentOS:
+                    return 'centos.7-x64';
+                case Platform.Fedora:
+                    return 'fedora.23-x64';
+                case Platform.OpenSUSE:
+                    return 'opensuse.13.2-x64';
+                case Platform.RHEL:
+                    return 'rhel.7-x64';
+                case Platform.Debian:
+                    return 'debian.8-x64';
+                case Platform.Ubuntu14:
+                    return 'ubuntu.14.04-x64';
+                case Platform.Ubuntu16:
+                    return 'ubuntu.16.04-x64';
+                default:
+                    throw Error('Error: Unsupported linux platform');
+            }
         default:
             _util.log('Error: Unsupported platform ' + process.platform);
             throw Error('Unsupported platform ' + process.platform);

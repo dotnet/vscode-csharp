@@ -15,10 +15,13 @@ const vsce = require('vsce');
 const debugUtil = require('./out/coreclr-debug/util.js');
 const debugInstall = require('./out/coreclr-debug/install.js');
 const fs_extra = require('fs-extra-promise');
-const omnisharpDownload = require('./out/omnisharpDownload');
+const omnisharp = require('./out/omnisharp/omnisharp');
+const download = require('./out/omnisharp/download');
+const platform = require('./out/platform');
 const child_process = require('child_process');
 
-const OmniSharpVersion = omnisharpDownload.OmniSharpVersion;
+const Flavor = omnisharp.Flavor;
+const Platform = platform.Platform;
 
 /// used in offline packaging run so does not clean .vsix
 function clean() {
@@ -31,9 +34,11 @@ gulp.task('clean', ['omnisharp:clean',  'debugger:clean', 'package:clean'], () =
 });
 
 /// Omnisharp Tasks
-function installOmnisharp(omnisharpAssetName) {
-    const logFunction = (message) => { console.log(message); };
-    return omnisharpDownload.downloadOmnisharp(logFunction, omnisharpAssetName);
+function installOmnisharp(omnisharps) {
+    const logger = (message) => { console.log(message); };
+    const promises = omnisharps.map((omni) => download.go(omni.flavor, omni.platform, logger));
+    
+    return Promise.all(promises);
 }
 
 function cleanOmnisharp() {
@@ -45,8 +50,10 @@ gulp.task('omnisharp:clean', () => {
 });
  
 gulp.task('omnisharp:install', ['omnisharp:clean'], () => {
-    var asset = gulpUtil.env.asset || omnisharpDownload.getOmnisharpAssetName();
-    return installOmnisharp(asset);
+    const flavor = gulpUtil.env.flavor || Flavor.CoreCLR;
+    const platform = gulpUtil.env.platform || platform.getCurrentPlatform();
+
+    return installOmnisharp([{flavor, platform}]);
 });
 
 /// Debugger Tasks
@@ -97,11 +104,11 @@ function doPackageSync(packageName) {
     }
 }
 
-function doOfflinePackage(runtimeId, omnisharpAsset, packageName) {
+function doOfflinePackage(runtimeId, omnisharps, packageName) {
     return clean().then(() => {
         return installDebugger(runtimeId);
     }).then(() => {
-        return installOmnisharp(omnisharpAsset);
+        return installOmnisharp(omnisharps);
     }).then(() => {
         doPackageSync(packageName + '-' + runtimeId + '.vsix');
     });
@@ -122,21 +129,21 @@ gulp.task('package:offline', ['clean'], () => {
     var packageName = name + '.' + version;
 
     var packages = [];
-    packages.push({rid: 'win7-x64', omni: `omnisharp-${OmniSharpVersion}-win-x64-net451.zip`});
-    packages.push({rid: 'osx.10.11-x64', omni: `omnisharp-${OmniSharpVersion}-osx-x64-netcoreapp1.0.tar.gz`});
-    packages.push({rid: 'centos.7-x64', omni: `omnisharp-${OmniSharpVersion}-centos-x64-netcoreapp1.0.tar.gz`});
-    packages.push({rid: 'debian.8-x64', omni: `omnisharp-${OmniSharpVersion}-debian-x64-netcoreapp1.0.tar.gz`});
-    packages.push({rid: 'fedora.23-x64', omni: `omnisharp-${OmniSharpVersion}-fedora-x64-netcoreapp1.0.tar.gz`});
-    packages.push({rid: 'opensuse.13.2-x64', omni: `omnisharp-${OmniSharpVersion}-opensuse-x64-netcoreapp1.0.tar.gz`});
-    packages.push({rid: 'rhel.7.2-x64', omni: `omnisharp-${OmniSharpVersion}-rhel-x64-netcoreapp1.0.tar.gz`});
-    packages.push({rid: 'ubuntu.14.04-x64', omni: `omnisharp-${OmniSharpVersion}-ubuntu14-x64-netcoreapp1.0.tar.gz`});
-    packages.push({rid: 'ubuntu.16.04-x64', omni: `omnisharp-${OmniSharpVersion}-ubuntu16-x64-netcoreapp1.0.tar.gz`});
+    packages.push({rid: 'win7-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.Windows}, {flavor: Flavor.Desktop, platform: Platform.Windows}]});
+    packages.push({rid: 'osx.10.11-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.OSX}]});
+    packages.push({rid: 'centos.7-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.CentOS}]});
+    packages.push({rid: 'debian.8-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.Debian}]});
+    packages.push({rid: 'fedora.23-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.Fedora}]});
+    packages.push({rid: 'opensuse.13.2-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.OpenSUSE}]});
+    packages.push({rid: 'rhel.7.2-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.RHEL}]});
+    packages.push({rid: 'ubuntu.14.04-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.Ubuntu14}]});
+    packages.push({rid: 'ubuntu.16.04-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.Ubuntu16}]});
 
     var promise = Promise.resolve();
 
-    packages.forEach(pair => {
+    packages.forEach(data => {
         promise = promise.then(() => {
-            return doOfflinePackage(pair.rid, pair.omni, packageName);
+            return doOfflinePackage(data.rid, data.omnisharps, packageName);
         })
     });
 

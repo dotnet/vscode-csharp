@@ -5,11 +5,11 @@
 
 'use strict';
 
-import {OmnisharpServer} from '../omnisharpServer';
-import {toRange} from '../typeConvertion';
+import {OmnisharpServer} from '../omnisharp/server';
+import {toRange} from '../omnisharp/typeConvertion';
 import * as vscode from 'vscode';
-import * as serverUtils from "../omnisharpUtils";
-import * as protocol from '../protocol';
+import * as serverUtils from "../omnisharp/utils";
+import * as protocol from '../omnisharp/protocol';
 
 let _testOutputChannel: vscode.OutputChannel = undefined;
 

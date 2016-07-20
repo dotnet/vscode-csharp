@@ -6,9 +6,9 @@
 'use strict';
 
 import AbstractSupport from './abstractProvider';
-import * as protocol from '../protocol';
-import * as serverUtils from '../omnisharpUtils';
-import {createRequest, toLocation} from '../typeConvertion';
+import * as protocol from '../omnisharp/protocol';
+import * as serverUtils from '../omnisharp/utils';
+import {createRequest, toLocation} from '../omnisharp/typeConvertion';
 import {ReferenceProvider, Location, TextDocument, CancellationToken, Position} from 'vscode';
 
 export default class OmnisharpReferenceProvider extends AbstractSupport implements ReferenceProvider {

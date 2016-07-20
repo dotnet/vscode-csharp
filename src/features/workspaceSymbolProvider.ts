@@ -6,9 +6,9 @@
 'use strict';
 
 import AbstractSupport from './abstractProvider';
-import * as protocol from '../protocol';
-import * as serverUtils from '../omnisharpUtils';
-import {toRange} from '../typeConvertion';
+import * as protocol from '../omnisharp/protocol';
+import * as serverUtils from '../omnisharp/utils';
+import {toRange} from '../omnisharp/typeConvertion';
 import {CancellationToken, Uri, WorkspaceSymbolProvider, SymbolInformation, SymbolKind} from 'vscode';
 
 
