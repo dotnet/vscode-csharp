@@ -329,8 +329,17 @@ function hasWebServerDependency(targetProjectData: TargetProjectData): boolean {
     let projectJson = fs.readFileSync(targetProjectData.projectJsonPath, 'utf8');
     projectJson = projectJson.replace(/^\uFEFF/, '');
 
-    let projectJsonObject = JSON.parse(projectJson);
-    
+    let projectJsonObject: any;
+
+    try {
+        // TODO: This error should be surfaced to the user. If the JSON can't be parsed
+        // (maybe due to a syntax error like an extra comma), the user should be notified
+        // to fix up their project.json.
+        projectJsonObject = JSON.parse(projectJson);
+    } catch (error) {
+        projectJsonObject = null;
+    }
+
     if (projectJsonObject == null) {
         return false;
     }
