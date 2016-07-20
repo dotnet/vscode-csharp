@@ -183,11 +183,12 @@ export class DebugInstaller
                 "System.ComponentModel.Annotations":  "4.1.0",  
                 "System.ComponentModel.EventBasedAsync":  "4.0.11",
                 "System.Runtime.Serialization.Primitives": "4.1.1",
-                "System.Net.Http":  "4.1.0"
+                "System.Net.Http":  "4.1.0",
+	            "System.Reflection.Emit.Lightweight": "4.0.0"
             },
             frameworks: {
                 "netcoreapp1.0": {
-                    imports: [ "dnxcore50", "portable-net45+win8" ]
+                    imports: [ "netstandard1.6", "dnxcore50", "portable-net45+win8" ]
                  }
             },
             runtimes: {
