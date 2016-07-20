@@ -9,27 +9,39 @@ Welcome to the C# extension for Visual Studio Code! This preview provides the fo
 * Lightweight development tools for [.NET Core](https://dotnet.github.io).
 * Great C# editing support, including Syntax Highlighting, IntelliSense, Go to Definition, Find All References, etc.
 * Debugging support for .NET Core (CoreCLR). NOTE: Mono and Desktop CLR debugging is not supported.
-* Support for project.json projects on Windows, OS X and Linux, and csproj projects on Windows.
+* Support for project.json projects on Windows, macOS and Linux, and csproj projects on Windows.
 
 The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnisharp-roslyn).
 
-### **Important!** Breaking Changes as of 1.2
+### What's New in 1.3
 
-* The C# extension now only supports .NET Core 1.0. Please upgrade any RC1 or RC2 projects to the 1.0.0 release build.
-* **Support for .csproj projects is partially functional on OS X and Linux.** This will impact anyone doing .csproj development on OS X or Linux (e.g. Unity, Xamarin, etc.). We are working to address this in the near future. However, for now, you can use the [Legacy C# Support extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.omnisharp).
+* Support for Unity and Mono development on macOS and Linux has been restored! This release brings back support for the Mono version of OmniSharp, which is used to provide *much* better support for .csproj/.sln projects. Please note that Mono version 4.0.1 or newer is required.
+* Generation of tasks.json and launch.json files can now properly handle nested projects. [#170](https://github.com/OmniSharp/omnisharp-vscode/issues/170)
+* New UI that makes it easy to select a process ID when attaching the debugger to another process. Note: If you have an existing launch.json file, you can re-generate it by deleting the file, closing your workspace in Visual Studio Code and opening it again. Or, you can open the launch.json file and change the `processId` value to `"${command.pickProcess}"`.
+* Support for debugging in .cshtml files. To enable this, add a `sourceFileMap` entry to your launch.json with the following content: `"sourceFileMap": { "/Views": "${workspaceRoot}/Views" }`
+* Support for conditional breakpoints
+* New support for changing variable values in the debugger! To try this, just right-click on the variable name and select 'Set Value'. Note: To properly support this feature, we've changed the display of variable type names in the debugger to a shortened form. The full type name can be viewed by hovering over the name with the mouse.
+* New configuration option to enable [stepping into properties and operators](https://github.com/OmniSharp/omnisharp-vscode/blob/release/debugger.md#stepping-into-properties-and-operators).
+* Duplicate warnings and errors should no longer accumulate in Unity projects [#447](https://github.com/OmniSharp/omnisharp-vscode/issues/447)
+
+### Supported Operating Systems
+
+* Currently, the C# extension supports the following operatings systems:
+  * Windows (64-bit only)
+  * macOS
+  * Ubuntu 14.04 / Linux Mint 17
+  * Ubuntu 16.04
+  * Debian 8.2
+  * CentOS 7.1 / Oracle Linux 7
+  * Red Hat Enterprise Linux (RHEL)
+  * Fedora 23
+  * OpenSUSE 13.2
 
 ### Found a Bug?
 Please file any issues at https://github.com/OmniSharp/omnisharp-vscode/issues.
 
 ### Debugging
 The C# extension now supports basic debugging capabilities! See http://aka.ms/vscclrdebugger for details.
-
-### What's new in C# extension version 1.2
-
-* Adds debugger support for new Linux versions: Ubuntu 16.04, Fedora 23, openSUSE 13.2, and Oracle Linux 7.1
-* Enhanced debug console output: module loads are now output, and there are launch.json options for controlling what is output
-* Source file checksum support for breakpoints. This ensures that the debugger only sets breakpoints in code that exactly matches the open document.
-* Support for editing the value of variables in the watch and locals window (requires VS Code 1.3)
 
 ### Development
 
