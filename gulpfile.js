@@ -34,9 +34,11 @@ gulp.task('clean', ['omnisharp:clean',  'debugger:clean', 'package:clean'], () =
 });
 
 /// Omnisharp Tasks
-function installOmnisharp(flavor, platform) {
+function installOmnisharp(omnisharps) {
     const logger = (message) => { console.log(message); };
-    return download.go(flavor, platform, logger);
+    const promises = omnisharps.map((omni) => download.go(omni.flavor, omni.platform, logger));
+    
+    return Promise.all(promises);
 }
 
 function cleanOmnisharp() {
@@ -51,7 +53,7 @@ gulp.task('omnisharp:install', ['omnisharp:clean'], () => {
     const flavor = gulpUtil.env.flavor || Flavor.CoreCLR;
     const platform = gulpUtil.env.platform || platform.getCurrentPlatform();
 
-    return installOmnisharp(flavor, platform);
+    return installOmnisharp([{flavor, platform}]);
 });
 
 /// Debugger Tasks
@@ -102,11 +104,11 @@ function doPackageSync(packageName) {
     }
 }
 
-function doOfflinePackage(runtimeId, flavor, platform, packageName) {
+function doOfflinePackage(runtimeId, omnisharps, packageName) {
     return clean().then(() => {
         return installDebugger(runtimeId);
     }).then(() => {
-        return installOmnisharp(flavor, platform);
+        return installOmnisharp(omnisharps);
     }).then(() => {
         doPackageSync(packageName + '-' + runtimeId + '.vsix');
     });
@@ -127,21 +129,21 @@ gulp.task('package:offline', ['clean'], () => {
     var packageName = name + '.' + version;
 
     var packages = [];
-    packages.push({rid: 'win7-x64', flavor: Flavor.Desktop, platform: Platform.Windows});
-    packages.push({rid: 'osx.10.11-x64', flavor: Flavor.CoreCLR, platform: Platform.OSX});
-    packages.push({rid: 'centos.7-x64', flavor: Flavor.CoreCLR, platform: Platform.CentOS});
-    packages.push({rid: 'debian.8-x64', flavor: Flavor.CoreCLR, platform: Platform.Debian});
-    packages.push({rid: 'fedora.23-x64', flavor: Flavor.CoreCLR, platform: Platform.Fedora});
-    packages.push({rid: 'opensuse.13.2-x64', flavor: Flavor.CoreCLR, platform: Platform.OpenSUSE});
-    packages.push({rid: 'rhel.7.2-x64', flavor: Flavor.CoreCLR, platform: Platform.RHEL});
-    packages.push({rid: 'ubuntu.14.04-x64', flavor: Flavor.CoreCLR, platform: Platform.Ubuntu14});
-    packages.push({rid: 'ubuntu.16.04-x64', flavor: Flavor.CoreCLR, platform: Platform.Ubuntu16});
+    packages.push({rid: 'win7-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.Windows}, {flavor: Flavor.Desktop, platform: Platform.Windows}]});
+    packages.push({rid: 'osx.10.11-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.OSX}]});
+    packages.push({rid: 'centos.7-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.CentOS}]});
+    packages.push({rid: 'debian.8-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.Debian}]});
+    packages.push({rid: 'fedora.23-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.Fedora}]});
+    packages.push({rid: 'opensuse.13.2-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.OpenSUSE}]});
+    packages.push({rid: 'rhel.7.2-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.RHEL}]});
+    packages.push({rid: 'ubuntu.14.04-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.Ubuntu14}]});
+    packages.push({rid: 'ubuntu.16.04-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.Ubuntu16}]});
 
     var promise = Promise.resolve();
 
     packages.forEach(data => {
         promise = promise.then(() => {
-            return doOfflinePackage(data.rid, data.flavor, data.platform, packageName);
+            return doOfflinePackage(data.rid, data.omnisharps, packageName);
         })
     });
 
