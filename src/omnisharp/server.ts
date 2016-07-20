@@ -433,10 +433,11 @@ export abstract class OmnisharpServer {
 				this._channel.appendLine("");
 				this._channel.appendLine("OmniSharp provides a richer C# editing experience, with features like IntelliSense and Find All References.");
 				this._channel.appendLine("It is recommend that you download the version of OmniSharp that runs on Mono using the following steps:");
-				this._channel.appendLine("    1. If it's not already installed, download and install Mono (http://www.mono-project.com)");
-				this._channel.appendLine("    2. Download and untar https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v1.9-alpha13/omnisharp-linux-mono.tar.gz");
+				this._channel.appendLine("    1. If it's not already installed, download and install Mono (https://www.mono-project.com)");
+				this._channel.appendLine("    2. Download and untar the latest OmniSharp Mono release from  https://github.com/OmniSharp/omnisharp-roslyn/releases/");
 				this._channel.appendLine("    3. In Visual Studio Code, select Preferences->User Settings to open settings.json.");
 				this._channel.appendLine("    4. In settings.json, add a new setting: \"csharp.omnisharp\": \"/path/to/omnisharp/OmniSharp.exe\"");
+				this._channel.appendLine("    4. In settings.json, add a new setting: \"csharp.omnisharpUsesMono\": true");
 				this._channel.appendLine("    5. Restart Visual Studio Code.");
 				this._channel.show();
 
