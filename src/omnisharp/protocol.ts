@@ -212,12 +212,11 @@ export interface AutoCompleteResponse {
 
 export interface ProjectInformationResponse {
     MsBuildProject: MSBuildProject;
-    DnxProject: DnxProject;
+    DotNetProject: DotNetProject;
 }
 
 export interface WorkspaceInformationResponse {
     MsBuild: MsBuildWorkspaceInformation;
-    Dnx: DnxWorkspaceInformation;
     DotNet: DotNetWorkspaceInformation;
     ScriptCs: ScriptCsContext;
 }
@@ -242,29 +241,6 @@ export interface MSBuildProject {
     TargetPath: string;
     TargetFramework: string;
     SourceFiles: string[];
-}
-
-export interface DnxWorkspaceInformation {
-    RuntimePath: string;
-    DesignTimeHostPort: number;
-    Projects: DnxProject[];
-}
-
-export interface DnxProject {
-    Path: string;
-    Name: string;
-    Commands: { [name: string]: string; };
-    Configurations: string[];
-    ProjectSearchPaths: string[];
-    Frameworks: DnxFramework[];
-    GlobalJsonPath: string;
-    SourceFiles: string[];
-}
-
-export interface DnxFramework {
-    Name: string;
-    FriendlyName: string;
-    ShortName: string;
 }
 
 export interface DotNetWorkspaceInformation {

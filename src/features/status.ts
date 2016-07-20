@@ -165,11 +165,8 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
 					}
 				}
 
-				// show dnx projects if applicable
-                if ('Dnx' in info) {
-                    addDnxOrDotNetProjects(info.Dnx.Projects);
-                }
-                else if ('DotNet' in info) {
+				// show .NET Core projects if applicable
+                if ('DotNet' in info) {
                     addDnxOrDotNetProjects(info.DotNet.Projects);
                 }
 
