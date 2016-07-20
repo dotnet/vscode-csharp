@@ -321,9 +321,9 @@ function findExecutableProjects(projects: protocol.DotNetProject[], configName: 
     return result;
 }
 
-function hasWebServerDependency(targetProjectData: TargetProjectData) {
+function hasWebServerDependency(targetProjectData: TargetProjectData): boolean {
     if (!targetProjectData || !targetProjectData.projectJsonPath) {
-        return;
+        return false;
     }
 
     let projectJson = fs.readFileSync(targetProjectData.projectJsonPath, 'utf8');
