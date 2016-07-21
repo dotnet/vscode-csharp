@@ -6,8 +6,8 @@
 'use strict';
 
 import AbstractSupport from './abstractProvider';
-import * as serverUtils from '../omnisharpUtils';
-import {createRequest, toLocation} from '../typeConvertion';
+import * as serverUtils from '../omnisharp/utils';
+import {createRequest, toLocation} from '../omnisharp/typeConvertion';
 import {TextDocument, Position, Location, CancellationToken, DefinitionProvider} from 'vscode';
 
 export default class CSharpDefinitionProvider extends AbstractSupport implements DefinitionProvider {

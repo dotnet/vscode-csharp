@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -17,7 +17,7 @@
     "Linters",
     "Snippets"
   ],
-  "main": "./out/omnisharpMain",
+  "main": "./out/main",
   "scripts": {
     "postinstall": "node ./node_modules/vscode/bin/install && tsc"
   },
@@ -39,11 +39,11 @@
     "tslint": "^3.3.0",
     "tslint-microsoft-contrib": "^2.0.0",
     "typescript": "^1.7.3",
-    "vscode": "^0.11.3",
-    "vsce": "^1.3.0"
+    "vscode": "^0.11.13",
+    "vsce": "^1.7.0"
   },
   "engines": {
-    "vscode": "^0.10.10"
+    "vscode": "^1.3.0"
   },
   "activationEvents": [
     "onLanguage:csharp",
@@ -144,7 +144,8 @@
         "label": ".NET Core",
         "enableBreakpointsFor": {
           "languageIds": [
-            "csharp"
+            "csharp",
+            "razor"
           ]
         },
         "runtime": "node",
@@ -306,6 +307,11 @@
               "requireExactSource": {
                 "type": "boolean",
                 "description": "Optional flag to require current source code to match the pdb.",
+                "default": true
+              },
+              "enableStepFiltering": {
+                "type": "boolean",
+                "description": "Optional flag to enable stepping over Properties and Operators.",
                 "default": true
               },
               "logging": {
@@ -497,9 +503,18 @@
                 "default": "The process name to attach to. If this is used, 'processId' should not be used."
               },
               "processId": {
-                "type": "integer",
-                "description": "The process id to attach to. If this is used, 'processName' should not be used.",
-                "default": 0
+                "anyOf": [ 
+                    {
+                      "type": "string",
+                      "description": "The process id to attach to. Use \"${command.pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                      "default": "${command.pickProcess}"
+                    }, 
+                    {
+                      "type": "integer",
+                      "description": "The process id to attach to. Use \"${command.pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                      "default": 0
+                    }
+                ]                
               },
               "sourceFileMap": {
                 "type": "object",
@@ -524,6 +539,11 @@
               "requireExactSource": {
                 "type": "boolean",
                 "description": "Optional flag to require current source code to match the pdb.",
+                "default": true
+              },
+              "enableStepFiltering": {
+                "type": "boolean",
+                "description": "Optional flag to enable stepping over Properties and Operators.",
                 "default": true
               },
               "logging": {
@@ -604,13 +624,16 @@
             },
             "env": {
               "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceRoot}/Views"
             }
           },
           {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",
-            "processId": 0
+            "processId": "${command.pickProcess}"
           }
         ]
       }

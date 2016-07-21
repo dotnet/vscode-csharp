@@ -5,11 +5,11 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import {OmnisharpServer} from '../omnisharpServer';
+import {OmnisharpServer} from '../omnisharp/server';
 import {dotnetRestoreForProject} from './commands';
 import {basename} from 'path';
-import * as protocol from '../protocol';
-import * as serverUtils from '../omnisharpUtils';
+import * as protocol from '../omnisharp/protocol';
+import * as serverUtils from '../omnisharp/utils';
 
 export default function reportStatus(server: OmnisharpServer) {
 	return vscode.Disposable.from(
@@ -90,6 +90,13 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
 		render();
 	}));
 
+	disposables.push(server.onBeforeServerInstall(() => {
+		defaultStatus.text = '$(flame) Installing OmniSharp...';
+		defaultStatus.command = 'o.showOutput';
+		defaultStatus.color = '';
+		render();
+	}));
+
 	disposables.push(server.onBeforeServerStart(path => {
 		defaultStatus.text = '$(flame) Starting...';
 		defaultStatus.command = 'o.showOutput';
@@ -158,11 +165,8 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
 					}
 				}
 
-				// show dnx projects if applicable
-                if ('Dnx' in info) {
-                    addDnxOrDotNetProjects(info.Dnx.Projects);
-                }
-                else if ('DotNet' in info) {
+				// show .NET Core projects if applicable
+                if ('DotNet' in info) {
                     addDnxOrDotNetProjects(info.DotNet.Projects);
                 }
 

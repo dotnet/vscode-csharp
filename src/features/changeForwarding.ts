@@ -6,8 +6,8 @@
 'use strict';
 
 import {Disposable, Uri, workspace} from 'vscode';
-import {OmnisharpServer} from '../omnisharpServer';
-import * as serverUtils from '../omnisharpUtils';
+import {OmnisharpServer} from '../omnisharp/server';
+import * as serverUtils from '../omnisharp/utils';
 
 function forwardDocumentChanges(server: OmnisharpServer): Disposable {
 

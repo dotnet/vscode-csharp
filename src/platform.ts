@@ -7,8 +7,8 @@
 
 import * as child_process from 'child_process';
 
-export enum SupportedPlatform {
-    None,
+export enum Platform {
+    Unknown,
     Windows,
     OSX,
     CentOS,
@@ -20,12 +20,12 @@ export enum SupportedPlatform {
     Ubuntu16
 }
 
-export function getSupportedPlatform() {
+export function getCurrentPlatform() {
     if (process.platform === 'win32') {
-        return SupportedPlatform.Windows;
+        return Platform.Windows;
     }
     else if (process.platform === 'darwin') {
-        return SupportedPlatform.OSX;
+        return Platform.OSX;
     }
     else if (process.platform === 'linux') {
         // Get the text of /etc/os-release to discover which Linux distribution we're running on.
@@ -62,26 +62,26 @@ export function getSupportedPlatform() {
                 const versionId = getValue("VERSION_ID");
                 if (versionId.startsWith("14")) {
                     // This also works for Linux Mint
-                    return SupportedPlatform.Ubuntu14;
+                    return Platform.Ubuntu14;
                 }
                 else if (versionId.startsWith("16")) {
-                    return SupportedPlatform.Ubuntu16;
+                    return Platform.Ubuntu16;
                 }
             case 'centos':
-                return SupportedPlatform.CentOS;
+                return Platform.CentOS;
             case 'fedora':
-                return SupportedPlatform.Fedora;
+                return Platform.Fedora;
             case 'opensuse':
-                return SupportedPlatform.OpenSUSE;
+                return Platform.OpenSUSE;
             case 'rhel':
-                return SupportedPlatform.RHEL;
+                return Platform.RHEL;
             case 'debian':
-                return SupportedPlatform.Debian;
+                return Platform.Debian;
             case 'ol':
                 // Oracle Linux is binary compatible with CentOS
-                return SupportedPlatform.CentOS;
+                return Platform.CentOS;
         }
     }
 
-    return SupportedPlatform.None;	
+    return Platform.Unknown;	
 }
