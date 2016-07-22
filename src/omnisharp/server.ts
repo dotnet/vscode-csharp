@@ -62,10 +62,13 @@ module Events {
     export const Started = 'started';
 }
 
+const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
+
 export abstract class OmnisharpServer {
 
     private _reporter: TelemetryReporter;
     private _delayTrackers: { [requestName: string]: DelayTracker };
+	private _telemetryIntervalId: NodeJS.Timer = undefined;
 
 	private _eventBus = new EventEmitter();
 	private _state: ServerState = ServerState.Stopped;
@@ -119,15 +122,19 @@ export abstract class OmnisharpServer {
         tracker.reportDelay(elapsedTime);
     }
 
-    public reportAndClearTelemetry() {
-        for (const path in this._delayTrackers) {
+    private _reportTelemetry() {		
+		const delayTrackers = this._delayTrackers;
+
+        for (const path in delayTrackers) {
+			const tracker = delayTrackers[path];
             const eventName = 'omnisharp' + path;
-            const measures = this._delayTrackers[path].getMeasures();
+			if (tracker.hasMeasures()) {
+				const measures = tracker.getMeasures();
+				tracker.clearMeasures();
 
-            this._reporter.sendTelemetryEvent(eventName, null, measures);
+				this._reporter.sendTelemetryEvent(eventName, null, measures);
+			}
         }
-
-        this._delayTrackers = null;
     }
 
 	public getSolutionPathOrFolder(): string {
@@ -267,6 +274,9 @@ export abstract class OmnisharpServer {
 						}
 					});
 			}).then(() => {
+				// Start telemetry reporting
+				this._telemetryIntervalId = setInterval(() => this._reportTelemetry(), TelemetryReportingDelay);
+			}).then(() => {
 				this._processQueue();
 			}, err => {
 				this._fireEvent(Events.ServerError, err);
@@ -281,6 +291,13 @@ export abstract class OmnisharpServer {
 	public stop(): Promise<void> {
 
 		let ret: Promise<void>;
+
+		if (this._telemetryIntervalId !== undefined) {
+			// Stop reporting telemetry
+			clearInterval(this._telemetryIntervalId);
+			this._telemetryIntervalId = undefined;
+			this._reportTelemetry();
+		}
 
 		if (!this._serverProcess) {
 			// nothing to kill

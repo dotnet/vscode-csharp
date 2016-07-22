@@ -55,6 +55,16 @@ export class DelayTracker {
         return this._name;
     }
 
+    public clearMeasures() {
+        this._immediateDelays = 0;
+        this._nearImmediateDelays = 0;
+        this._shortDelays = 0;
+        this._mediumDelays = 0;
+        this._idleDelays = 0;
+        this._nonFocusDelays = 0;
+        this._bigDelays = 0;
+    }
+
 	public hasMeasures() {
 		return this._immediateDelays > 0
 			|| this._nearImmediateDelays > 0
