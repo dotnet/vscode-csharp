@@ -13,6 +13,7 @@ import {launchOmniSharp} from './launcher';
 import * as protocol from './protocol';
 import * as omnisharp from './omnisharp';
 import * as download from './download';
+import {DelayTracker} from './delayTracker';
 import {LaunchTarget, findLaunchTargets, getDefaultFlavor} from './launcher';
 import {Platform, getCurrentPlatform} from '../platform';
 import TelemetryReporter from 'vscode-extension-telemetry';
@@ -61,55 +62,10 @@ module Events {
     export const Started = 'started';
 }
 
-class Delays {
-    immediateDelays: number = 0;      // 0-25 milliseconds
-    nearImmediateDelays: number = 0;  // 26-50 milliseconds
-    shortDelays: number = 0;          // 51-250 milliseconds
-    mediumDelays: number = 0;         // 251-500 milliseconds
-    idleDelays: number = 0;           // 501-1500 milliseconds
-    nonFocusDelays: number = 0;       // 1501-3000 milliseconds
-    bigDelays: number = 0;            // 3000+ milliseconds
-
-    public report(elapsedTime: number) {
-        if (elapsedTime <= 25) {
-            this.immediateDelays += 1;
-        }
-        else if (elapsedTime <= 50) {
-            this.nearImmediateDelays += 1;
-        }
-        else if (elapsedTime <= 250) {
-            this.shortDelays += 1;
-        }
-        else if (elapsedTime <= 500) {
-            this.mediumDelays += 1;
-        }
-        else if (elapsedTime <= 1500) {
-            this.idleDelays += 1;
-        }
-        else if (elapsedTime <= 3000) {
-            this.nonFocusDelays += 1;
-        }
-        else {
-            this.bigDelays += 1;
-        }
-    }
-
-    public toMeasures(): { [key: string]: number } {
-        return {
-            immedateDelays: this.immediateDelays,
-            nearImmediateDelays: this.nearImmediateDelays,
-            shortDelays: this.shortDelays,
-            mediumDelays: this.mediumDelays,
-            idleDelays: this.idleDelays,
-            nonFocusDelays: this.nonFocusDelays
-        };
-    }
-}
-
 export abstract class OmnisharpServer {
 
     private _reporter: TelemetryReporter;
-    private _requestDelays: { [requestName: string]: Delays };
+    private _delayTrackers: { [requestName: string]: DelayTracker };
 
 	private _eventBus = new EventEmitter();
 	private _state: ServerState = ServerState.Stopped;
@@ -154,24 +110,24 @@ export abstract class OmnisharpServer {
 	}
 
     private _recordRequestDelay(requestName: string, elapsedTime: number) {
-        let delays = this._requestDelays[requestName];
-        if (!delays) {
-            delays = new Delays();
-            this._requestDelays[requestName] = delays;
+        let tracker = this._delayTrackers[requestName];
+        if (!tracker) {
+            tracker = new DelayTracker(requestName);
+            this._delayTrackers[requestName] = tracker;
         }
 
-        delays.report(elapsedTime);
+        tracker.reportDelay(elapsedTime);
     }
 
     public reportAndClearTelemetry() {
-        for (const path in this._requestDelays) {
+        for (const path in this._delayTrackers) {
             const eventName = 'omnisharp' + path;
-            const measures = this._requestDelays[path].toMeasures();
+            const measures = this._delayTrackers[path].getMeasures();
 
             this._reporter.sendTelemetryEvent(eventName, null, measures);
         }
 
-        this._requestDelays = null;
+        this._delayTrackers = null;
     }
 
 	public getSolutionPathOrFolder(): string {
@@ -298,7 +254,7 @@ export abstract class OmnisharpServer {
 
 			return launchOmniSharp({serverPath, flavor, cwd, args}).then(value => {
 				this._serverProcess = value.process;
-				this._requestDelays = {};
+				this._delayTrackers = {};
 				this._fireEvent(Events.StdOut, `[INFO] Started OmniSharp from '${value.command}' with process id ${value.process.pid}...\n`);
 				this._setState(ServerState.Started);
 				this._fireEvent(Events.ServerStart, solutionPath);
