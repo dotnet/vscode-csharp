@@ -121,7 +121,7 @@ export function go(flavor: Flavor, platform: Platform, log?: (message: string) =
 
         const urlString = `${BaseDownloadUrl}/${fileName}`;
 
-        log(`[INFO] Attempting to download ${fileName}...`);
+        log(`[INFO] Attempting to download ${urlString}`);
 
         return download(urlString, proxy, strictSSL)
             .then(inStream => {
