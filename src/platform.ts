@@ -80,6 +80,16 @@ export function getCurrentPlatform() {
             case 'ol':
                 // Oracle Linux is binary compatible with CentOS
                 return Platform.CentOS;
+            case 'elementary OS':
+                const eOSVersionId = getValue("VERSION_ID");
+                if (eOSVersionId.startsWith("0.3")) {
+                    // Elementary OS 0.3 Freya is binary compatible with Ubuntu 14.04
+                    return Platform.Ubuntu14;
+                }
+                else if (eOSVersionId.startsWith("0.4")) {
+                    // Elementary OS 0.4 Loki is binary compatible with Ubuntu 16.04
+                    return Platform.Ubuntu16;
+                }
         }
     }
 
