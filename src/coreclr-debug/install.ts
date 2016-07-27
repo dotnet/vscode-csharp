@@ -171,7 +171,6 @@ export class DebugInstaller
                 "System.Collections.Specialized":  "4.0.1",
                 "System.Collections.Immutable": "1.2.0", 
                 "System.Diagnostics.Process" : "4.1.0",
-                "System.Diagnostics.StackTrace":  "4.0.1",  
                 "System.Dynamic.Runtime": "4.0.11",
                 "Microsoft.CSharp": "4.0.1",
                 "System.Threading.Tasks.Dataflow": "4.6.0",
