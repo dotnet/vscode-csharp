@@ -21,14 +21,14 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
     _reporter = reporter;
     _channel = vscode.window.createOutputChannel('coreclr-debug');
     _util = new CoreClrDebugUtil(context.extensionPath, _channel);
-    
+
     if (CoreClrDebugUtil.existsSync(_util.installCompleteFilePath())) {
         console.log('.NET Core Debugger tools already installed');
         return;
     }
-    
+
     if (!isDotnetOnPath()) {
-        const getDotNetMessage = "Get .NET CLI tools"; 
+        const getDotNetMessage = "Get .NET CLI tools";
         vscode.window.showErrorMessage("The .NET CLI tools cannot be located. .NET Core debugging will not be enabled. Make sure .NET CLI tools are installed and are on the path.",
             getDotNetMessage).then(value => {
                 if (value === getDotNetMessage) {
@@ -40,6 +40,23 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         return;
     }
 
+    let dotnetVersion: string = '';
+    let osVersion: string = '';
+    let osRID: string = '';
+    _util.spawnChildProcess('dotnet', ['--info'], _util.coreClrDebugDir(), (data: Buffer) => {
+        var lines: string[] = data.toString().replace(/\r/mg, '').split('\n');
+        lines.forEach(line => {
+            let match: RegExpMatchArray;
+            if (match = /^\ Version:\s*([^\s].*)$/.exec(line)) {
+                dotnetVersion = match[1];
+            } else if (match = /^\ OS Version:\s*([^\s].*)$/.exec(line)) {
+                osVersion = match[1];
+            } else if (match = /^\ RID:\s*([\w\-\.]+)$/.exec(line)) {
+                osRID = match[1];
+            }
+        });
+    });
+
     let installer = new debugInstall.DebugInstaller(_util);
     _util.createInstallLog();
 
@@ -47,8 +64,9 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
 
     let statusBarMessage = vscode.window.setStatusBarMessage("Downloading and configuring the .NET Core Debugger...");
 
-    let installStage = "installBegin";
-    let installError = "";
+    let installStage: string = "installBegin";
+    let installError: string = '';
+    let moreErrors: string = '';
 
     writeInstallBeginFile().then(() => {
         return installer.install(runtimeId);
@@ -67,10 +85,18 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         statusBarMessage.dispose();
 
         installStage = error.installStage;
-        installError = error.installError;
+        installError = error.errorMessage;
+        moreErrors = error.hasMoreErrors ? 'true' : 'false';
     }).then(() => {
         // log telemetry and delete install begin file
-        logTelemetry('Acquisition', {installStage: installStage, installError: installError});
+        logTelemetry('Acquisition', {
+            installStage: installStage,
+            installError: installError,
+            moreErrors: moreErrors,
+            dotnetVersion: dotnetVersion,
+            osVersion: osVersion,
+            osRID: osRID
+        });
         try {
             deleteInstallBeginFile();
         } catch (err) {
@@ -138,7 +164,7 @@ function getPlatformRuntimeId() : string {
             throw Error('Unsupported platform ' + process.platform);
     }
 }
-    
+
 function getDotnetRuntimeId(): string {
     _util.log("Starting 'dotnet --info'");
 
