@@ -26,6 +26,7 @@ export module Requests {
     export const SignatureHelp = '/signatureHelp';
     export const TypeLookup = '/typelookup';
     export const UpdateBuffer = '/updatebuffer';
+    export const Metadata = '/metadata';
 }
 
 export interface Request {
@@ -36,12 +37,34 @@ export interface Request {
     Changes?: LinePositionSpanTextChange[];
 }
 
+export interface GoToDefinitionRequest extends Request
+{
+    WantMetadata?: boolean;
+}
+
 export interface LinePositionSpanTextChange {
     NewText: string;
     StartLine: number;
     StartColumn: number;
     EndLine: number;
     EndColumn: number;
+}
+
+export interface MetadataSource {
+    AssemblyName: string;
+    ProjectName: string;
+    VersionNumber: string;
+    Language: string;
+    TypeName: string;
+}
+
+export interface MetadataRequest extends MetadataSource {
+    Timeout?: number;
+}
+
+export interface MetadataResponse {
+    SourceName: string;
+    Source: string;
 }
 
 export interface UpdateBufferRequest extends Request {
@@ -117,6 +140,10 @@ export interface ResourceLocation {
     FileName: string;
     Line: number;
     Column: number;
+}
+
+export interface GoToDefinitionResponse extends ResourceLocation {
+    MetadataSource?: MetadataSource;
 }
 
 export interface Error {

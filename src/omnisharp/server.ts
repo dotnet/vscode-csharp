@@ -109,7 +109,7 @@ export abstract class OmnisharpServer {
 		return {
 			path: config.get<string>('omnisharp'),
 			usesMono: config.get<boolean>('omnisharpUsesMono')
-		}
+		};
 	}
 
     private _recordRequestDelay(requestName: string, elapsedTime: number) {
@@ -122,7 +122,7 @@ export abstract class OmnisharpServer {
         tracker.reportDelay(elapsedTime);
     }
 
-    private _reportTelemetry() {		
+    private _reportTelemetry() {
 		const delayTrackers = this._delayTrackers;
 
         for (const path in delayTrackers) {
@@ -235,7 +235,7 @@ export abstract class OmnisharpServer {
 
 	private _start(launchTarget: LaunchTarget): Promise<void> {
 		const options = this._readOptions();
-		
+
 		let flavor: omnisharp.Flavor;
 		if (options.path !== undefined && options.usesMono === true) {
 			flavor = omnisharp.Flavor.Mono;
@@ -416,7 +416,7 @@ export abstract class OmnisharpServer {
 
 				throw err;
 			}
-			
+
 			const config = vscode.workspace.getConfiguration();
 			const proxy = config.get<string>('http.proxy');
 			const strictSSL = config.get('http.proxyStrictSSL', true);
