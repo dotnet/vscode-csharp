@@ -21,10 +21,13 @@ export class Advisor {
 
 	constructor(server: OmnisharpServer) {
 		this._server = server;
+
 		let d1 = server.onProjectChange(this._onProjectChange, this);
-		let d2 = server.onBeforePackageRestore(this._onBeforePackageRestore, this);
-		let d3 = server.onPackageRestore(this._onPackageRestore, this);
-		this._disposable = Disposable.from(d1, d2, d3);
+		let d2 = server.onProjectAdded(this._onProjectAdded, this);
+		let d3 = server.onProjectRemoved(this._onProjectRemoved, this);
+		let d4 = server.onBeforePackageRestore(this._onBeforePackageRestore, this);
+		let d5 = server.onPackageRestore(this._onPackageRestore, this);
+		this._disposable = Disposable.from(d1, d2, d3, d4, d5);
 	}
 
 	public dispose() {
@@ -42,13 +45,40 @@ export class Advisor {
 			&& !this._isHugeProject();
 	}
 
-	private _onProjectChange(info: protocol.ProjectInformationResponse): void {
+	private _updateProjectFileCount(path: string, fileCount: number): void {
+		this._projectSourceFileCounts[path] = fileCount;
+	}
+
+	private _addOrUpdateProjectFileCount(info: protocol.ProjectInformationResponse): void {
 		if (info.DotNetProject && info.DotNetProject.SourceFiles) {
-			this._projectSourceFileCounts[info.DotNetProject.Path] = info.DotNetProject.SourceFiles.length;
+			this._updateProjectFileCount(info.DotNetProject.Path, info.DotNetProject.SourceFiles.length);
 		}
+
 		if (info.MsBuildProject && info.MsBuildProject.SourceFiles) {
-			this._projectSourceFileCounts[info.MsBuildProject.Path] = info.MsBuildProject.SourceFiles.length;
+			this._updateProjectFileCount(info.MsBuildProject.Path, info.MsBuildProject.SourceFiles.length);
 		}
+	}
+
+	private _removeProjectFileCount(info: protocol.ProjectInformationResponse): void {
+		if (info.DotNetProject && info.DotNetProject.SourceFiles) {
+			delete this._updateProjectFileCount[info.DotNetProject.Path];
+		}
+
+		if (info.MsBuildProject && info.MsBuildProject.SourceFiles) {
+			delete this._updateProjectFileCount[info.MsBuildProject.Path];
+		}
+	}
+
+	private _onProjectAdded(info: protocol.ProjectInformationResponse): void {
+		this._addOrUpdateProjectFileCount(info);
+	}
+
+	private _onProjectRemoved(info: protocol.ProjectInformationResponse): void {
+		this._removeProjectFileCount(info);
+	}
+
+	private _onProjectChange(info: protocol.ProjectInformationResponse): void {
+		this._addOrUpdateProjectFileCount(info);
 	}
 
 	private _onBeforePackageRestore(): void {
@@ -59,12 +89,12 @@ export class Advisor {
 		this._packageRestoreCounter -= 1;
 	}
 
-	private _isServerStarted(): boolean {
-		return this._server.isRunning();
-	}
-
 	private _isRestoringPackages(): boolean {
 		return this._packageRestoreCounter > 0;
+	}
+
+	private _isServerStarted(): boolean {
+		return this._server.isRunning();
 	}
 
 	private _isHugeProject(): boolean {
@@ -72,9 +102,12 @@ export class Advisor {
 		for (let key in this._projectSourceFileCounts) {
 			sourceFileCount += this._projectSourceFileCounts[key];
 			if (sourceFileCount > 1000) {
+				console.log(`_isHugeProject = true (${sourceFileCount})`);
 				return true;
 			}
 		}
+
+		console.log(`_isHugeProject = false (${sourceFileCount})`);
 		return false;
 	}
 }
@@ -143,13 +176,14 @@ class DiagnosticsProvider extends AbstractSupport {
 
 	private _validateDocument(document: TextDocument): void {
 
-		if (!this._validationAdvisor.shouldValidateFiles()) {
-			return;
-		}
-
+		// If we've already started computing for this document, cancel that work.
 		let key = document.uri.toString();
 		if (this._documentValidations[key]) {
 			this._documentValidations[key].cancel();
+		}
+
+		if (!this._validationAdvisor.shouldValidateFiles()) {
+			return;
 		}
 
 		let source = new CancellationTokenSource();
@@ -176,17 +210,18 @@ class DiagnosticsProvider extends AbstractSupport {
 	}
 
 	private _validateProject(): void {
+		// If we've already started computing for this project, cancel that work.
+		if (this._projectValidation) {
+			this._projectValidation.cancel();
+		}
 
 		if (!this._validationAdvisor.shouldValidateProject()) {
 			return;
 		}
 
-		if (this._projectValidation) {
-			this._projectValidation.cancel();
-		}
-
 		this._projectValidation = new CancellationTokenSource();
 		let handle = setTimeout(() => {
+
             serverUtils.codeCheck(this._server, { Filename: null }, this._projectValidation.token).then(value => {
 
 				let quickFixes = value.QuickFixes.sort((a, b) => a.FileName.localeCompare(b.FileName));
