@@ -6,20 +6,49 @@
 'use strict';
 
 import AbstractSupport from './abstractProvider';
+import {MetadataRequest, GoToDefinitionRequest, MetadataSource} from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import {createRequest, toLocation} from '../omnisharp/typeConvertion';
-import {TextDocument, Position, Location, CancellationToken, DefinitionProvider} from 'vscode';
+import {Uri, TextDocument, Position, Location, CancellationToken, DefinitionProvider} from 'vscode';
+import {DefinitionMetadataDocumentProvider} from './definitionMetadataDocumentProvider';
+
 
 export default class CSharpDefinitionProvider extends AbstractSupport implements DefinitionProvider {
+    private _definitionMetadataDocumentProvider: DefinitionMetadataDocumentProvider;
+
+    constructor(server, definitionMetadataDocumentProvider: DefinitionMetadataDocumentProvider) {
+        super(server);
+        this._definitionMetadataDocumentProvider = definitionMetadataDocumentProvider;
+    }
 
 	public provideDefinition(document: TextDocument, position: Position, token: CancellationToken): Promise<Location> {
 
-		let req = createRequest(document, position);
+		let req = <GoToDefinitionRequest>createRequest(document, position);
+        req.WantMetadata = true;
 
-		return serverUtils.goToDefinition(this._server, req, token).then(value => {
-			if (value && value.FileName) {
-				return toLocation(value);
-			}
+		return serverUtils.goToDefinition(this._server, req, token).then(gotoDefinitionResponse => {
+
+			if (gotoDefinitionResponse && gotoDefinitionResponse.FileName) {
+				return toLocation(gotoDefinitionResponse);
+			} else if (gotoDefinitionResponse.MetadataSource) {
+                const metadataSource: MetadataSource = gotoDefinitionResponse.MetadataSource;
+
+                return serverUtils.getMetadata(this._server, <MetadataRequest> {
+                    Timeout: 5000,
+                    AssemblyName: metadataSource.AssemblyName,
+                    VersionNumber: metadataSource.VersionNumber,
+                    ProjectName: metadataSource.ProjectName,
+                    Language: metadataSource.Language,
+                    TypeName: metadataSource.TypeName
+                }).then(metadataResponse => {
+                    if (!metadataResponse || !metadataResponse.Source || !metadataResponse.SourceName) {
+                        return;
+                    }
+
+                    const uri: Uri = this._definitionMetadataDocumentProvider.addMetadataResponse(metadataResponse);
+                    return new Location(uri, new Position(gotoDefinitionResponse.Line - 1, gotoDefinitionResponse.Column - 1));
+                });
+            }
 		});
 	}
 }
