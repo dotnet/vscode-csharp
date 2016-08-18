@@ -406,6 +406,21 @@
               ]
             },
             {
+              "begin": "=>",
+              "beginCaptures": {
+                "0": {
+                  "name": "punctuation.section.method.begin.cs"
+                }
+              },
+              "end": "(?=;)",
+              "name": "meta.method.body.cs",
+              "patterns": [
+                {
+                  "include": "#code"
+                }
+              ]
+            },
+            {
               "begin": "{",
               "beginCaptures": {
                 "0": {
@@ -423,7 +438,57 @@
           ]
         },
         {
-          "begin": "(?!new)(?=[\\w<].*\\s+)(?=[^=]+\\{)",
+          "begin": "(?!new)(?=[\\w<].*\\s+)(?=[^\\(]+=>)",
+          "end": ";",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.property.end.cs"
+            }
+          },
+          "name": "meta.property.cs",
+          "patterns": [
+            {
+              "include": "#storage-modifiers"
+            },
+            {
+              "begin": "(?=([\\w.]+)\\s*=>)",
+              "captures": {
+                "1": {
+                  "name": "entity.name.function.cs"
+                }
+              },
+              "end": "(?==>)",
+              "name": "meta.method.identifier.cs"
+            },
+            {
+              "begin": "(?=\\w.*\\s+[\\w.]+\\s*=>)",
+              "end": "(?=[\\w.]+\\s*=>)",
+              "name": "meta.method.return-type.cs",
+              "patterns": [
+                {
+                  "include": "#builtinTypes"
+                }
+              ]
+            },
+            {
+              "begin": "=>",
+              "beginCaptures": {
+                "0": {
+                  "name": "punctuation.section.property.begin.cs"
+                }
+              },
+              "end": "(?=;)",
+              "name": "meta.method.body.cs",
+              "patterns": [
+                {
+                  "include": "#code"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "begin": "(?!new)(?=[\\w<].*\\s+)(?=[^=\\(]+\\{)",
           "end": "}",
           "endCaptures": {
             "0": {
