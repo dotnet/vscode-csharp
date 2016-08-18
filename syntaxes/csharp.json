@@ -8,16 +8,26 @@
   "foldingStopMarker": "^\\s*#\\s*endregion|^\\s*\\*/|^\\s*\\}",
   "patterns": [
     {
+      "include": "#using"
+    },
+    {
+      "include": "#namespace"
+    },
+    {
+      "include": "#code"
+    }
+  ],
+  "repository": {
+    "using": {
+      "begin": "^\\s*(using)\\b\\s*",
       "captures": {
         "1": {
           "name": "keyword.other.using.cs"
         }
       },
-      "begin": "^\\s*(using)\\b\\s*",
-      "end": "\\s*(?:$|(;))",
-      "name": "meta.keyword.using.cs"
+      "end": "\\s*(?:$|;)"
     },
-    {
+    "namespace": {
       "begin": "^\\s*((namespace)\\s+([\\w.]+))",
       "beginCaptures": {
         "1": {
@@ -49,17 +59,18 @@
           "name": "meta.namespace.body.cs",
           "patterns": [
             {
+              "include": "#using"
+            },
+            {
+              "include": "#namespace"
+            },
+            {
               "include": "#code"
             }
           ]
         }
       ]
     },
-    {
-      "include": "#code"
-    }
-  ],
-  "repository": {
     "block": {
       "patterns": [
         {
