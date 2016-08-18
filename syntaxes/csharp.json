@@ -28,7 +28,7 @@
       "end": "\\s*(?:$|;)"
     },
     "namespace": {
-      "begin": "^\\s*((namespace)\\s+([\\w.]+))",
+      "begin": "^\\s*[^@]((namespace)\\s+([\\w.]+))",
       "beginCaptures": {
         "1": {
           "name": "meta.namespace.identifier.cs"
@@ -104,7 +104,7 @@
       ]
     },
     "class": {
-      "begin": "(?=\\w?[\\w\\s]*(?:class|struct|interface|enum)\\s+\\w+)",
+      "begin": "(?=\\w?[\\w\\s]*[^@](?:class|struct|interface|enum)\\s+\\w+)",
       "end": "}",
       "endCaptures": {
         "0": {
@@ -324,7 +324,7 @@
           "name": "storage.type.var.cs"
         },
         {
-          "match": "[@]\\b(var|event|delegate|add|remove|set|get|value|new|is|as|using|checked|unchecked|typeof|sizeof|nameof|when|override|readonly|stackalloc|from|where|select|group|into|orderby|join|let|on|equals|by|ascending|descending |if|else|while|for|foreach|in|do|return|continue|break|switch|case|default|goto|throw|try|catch|finally|lock|yield|await)\\b",
+          "match": "[@]\\b(namespace|class|var|event|delegate|add|remove|set|get|value|new|is|as|using|checked|unchecked|typeof|sizeof|nameof|when|override|readonly|stackalloc|from|where|select|group|into|orderby|join|let|on|equals|by|ascending|descending|if|else|while|for|foreach|in|do|return|continue|break|switch|case|default|goto|throw|try|catch|finally|lock|yield|await|internal|public|protected|private|static|const|sealed|abstract|virtual|extern|unsafe|volatile|implicit|explicit|operator|async|partial)\\b",
           "name": "meta.class.body.cs"
         }
       ]
