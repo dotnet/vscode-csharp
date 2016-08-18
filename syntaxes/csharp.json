@@ -502,7 +502,7 @@
       ]
     },
     "parameters": {
-      "begin": "\\b(ref|params|out)?\\s*\\b([\\w?]+(?:\\s*\\[\\s*,?\\s*\\])?(?:\\s*<.*?>)?)\\s+(\\w+)\\s*(=)?",
+      "begin": "\\b(ref|params|out)?\\s*\\b(\\w+(?:\\s*<.*?>)?(?:\\s*\\*)*(?:\\s*\\?)?(?:\\s*\\[.*?\\])?)\\s+(@?\\w+)\\s*(=)?",
       "beginCaptures": {
         "1": {
           "name": "storage.type.modifier.cs"
