@@ -371,9 +371,6 @@
               "include": "#storage-modifiers"
             },
             {
-              "include": "#builtinTypes"
-            },
-            {
               "begin": "([\\w]+\\s*(?:<[\\w<>\\s,`?]*>)?)\\s*\\(",
               "beginCaptures": {
                 "1": {
