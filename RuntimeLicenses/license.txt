@@ -9,7 +9,8 @@ except to the extent those have additional terms.
 IF YOU COMPLY WITH THESE LICENSE TERMS, YOU HAVE THE RIGHTS BELOW.
 
 1. INSTALLATION AND USE RIGHTS. 
-You may install and use any number of copies of the software to develop and test your applications. 
+You may only use the C# Extension for Visual Studio Code with Visual Studio Code, Visual Studio or Xamarin Studio software to
+help you develop and test your applications.
 
 2. TERMS FOR SPECIFIC COMPONENTS. 
 a. Third Party components. The software may include third party components with separate legal notices or governed by other 
@@ -78,17 +79,12 @@ material contractual obligations, the fulfillment of which facilitate the due pe
 which would endanger the purpose of this agreement and the compliance with which a party may constantly trust in (so-called
 "cardinal obligations"). In other cases of slight negligence, Microsoft will not be liable for slight negligence.
 
-12. LEGAL EFFECT. This agreement describes certain legal rights. You may have other rights under the laws of your country. You 
-may also have rights with respect to the party from whom you acquired the software. This agreement does not change your rights
-under the laws of your country if the laws of your country do not permit it to do so.
+12. DISCLAIMER OF WARRANTY. THE SOFTWARE IS LICENSED "AS-IS." YOU BEAR THE RISK OF USING IT. MICROSOFT GIVES NO EXPRESS
+WARRANTIES, GUARANTEES OR CONDITIONS. TO THE EXTENT PERMITTED UNDER YOUR LOCAL LAWS, MICROSOFT EXCLUDES THE IMPLIED WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT.
 
-13. DISCLAIMER OF WARRANTY. DISCLAIMER OF WARRANTY. THE SOFTWARE IS LICENSED “AS-IS.” YOU BEAR THE RISK OF USING IT. MICROSOFT
-GIVES NO EXPRESS WARRANTIES, GUARANTEES OR CONDITIONS. TO THE EXTENT PERMITTED UNDER YOUR LOCAL LAWS, MICROSOFT EXCLUDES THE
-IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. 
-
-14. LIMITATION ON AND EXCLUSION OF DAMAGES. LIMITATION ON AND EXCLUSION OF DAMAGES. YOU CAN RECOVER FROM MICROSOFT AND ITS 
-SUPPLIERS ONLY DIRECT DAMAGES UP TO U.S. $5.00. YOU CANNOT RECOVER ANY OTHER DAMAGES, INCLUDING CONSEQUENTIAL, LOST PROFITS,
-SPECIAL, INDIRECT OR INCIDENTAL DAMAGES.
+13. LIMITATION ON AND EXCLUSION OF DAMAGES. YOU CAN RECOVER FROM MICROSOFT AND ITS SUPPLIERS ONLY DIRECT DAMAGES UP TO U.S.
+$5.00. YOU CANNOT RECOVER ANY OTHER DAMAGES, INCLUDING CONSEQUENTIAL, LOST PROFITS, SPECIAL, INDIRECT OR INCIDENTAL DAMAGES.
 This limitation applies to (a) anything related to the software, services, content (including code) on third party Internet
 sites, or third party applications; and (b) claims for breach of contract, breach of warranty, guarantee or condition, strict
 liability, negligence, or other tort to the extent permitted by applicable law.
