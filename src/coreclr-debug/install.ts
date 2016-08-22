@@ -61,21 +61,25 @@ export class DebugInstaller {
             return this._util.spawnChildProcess('dotnet', ['--verbose', 'restore', '--configfile', 'NuGet.config'], this._util.coreClrDebugDir(),
                 (data: Buffer) => {
                     var text: string = data.toString();
-                    this._util.log(text);
+                    this._util.logRaw(text);
 
-                    // Certain errors are only logged to stdout. Detect these and make a note of the kind of error.
+                    // Certain errors are only logged to stdout.
+                    // Detect these and make a note of the kind of error.
                     DebugInstaller.parseRestoreErrors(text, errorBuilder);
                 },
                 (data: Buffer) => {
+                    var text: string = data.toString();
+                    this._util.logRaw(text);
+
                     // Reference errors are sent to stderr at the end of restore.
-                    DebugInstaller.parseReferenceErrors(data.toString(), errorBuilder);
+                    DebugInstaller.parseReferenceErrors(text, errorBuilder);
                 });
         }).then(() => {
             errorBuilder.installStage = 'dotnetPublish';
             return this._util.spawnChildProcess('dotnet', ['--verbose', 'publish', '-r', runtimeId, '-o', this._util.debugAdapterDir()], this._util.coreClrDebugDir(),
                 (data: Buffer) => {
                     var text: string = data.toString();
-                    this._util.log(text);
+                    this._util.logRaw(text);
 
                     DebugInstaller.parsePublishErrors(text, errorBuilder);
             });
@@ -173,7 +177,9 @@ export class DebugInstaller {
                     this._util.log(`${filePath} does not exist.`);
                     this._util.log('');
                     // NOTE: The minimum build number is actually less than 1584, but this is the minimum tested build.
-                    this._util.log("Error: The .NET CLI did not correctly restore debugger files. Ensure that you have .NET CLI version 1.0.0 build #001584 or newer. You can check your .NET CLI version using 'dotnet --version'.");
+                    this._util.log('Error: The .NET CLI did not correctly restore debugger files. ' +
+                        'Ensure that you have .NET CLI version 1.0.0 build #001584 or newer. ' +
+                        "You can check your .NET CLI version using 'dotnet --version'.");
                     return reject('The .NET CLI did not correctly restore debugger files.');
                 }
             });
@@ -255,7 +261,7 @@ export class DebugInstaller {
                     errorBuilder.errorMessage = connectionError;
                 }
 
-                const parseVersionError: RegExp = /Error reading '.*' at line [0-9]+ column [0-9+]: '.*' is not a valid version string/;
+                const parseVersionError: RegExp = /Error reading '.*' at line [0-9]+ column [0-9]+: '.*' is not a valid version string/;
                 if (parseVersionError.test(line)) {
                     errorBuilder.errorMessage = 'Invalid version string';
                 }

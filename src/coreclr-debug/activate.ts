@@ -27,19 +27,6 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         return;
     }
 
-    if (!isDotnetOnPath()) {
-        const getDotNetMessage = "Get .NET CLI tools";
-        vscode.window.showErrorMessage("The .NET CLI tools cannot be located. .NET Core debugging will not be enabled. Make sure .NET CLI tools are installed and are on the path.",
-            getDotNetMessage).then(value => {
-                if (value === getDotNetMessage) {
-                    let open = require('open');
-                    open("https://www.microsoft.com/net/core");
-                }
-            });
-
-        return;
-    }
-
     let dotnetVersion: string = '';
     let osVersion: string = '';
     let osRID: string = '';
@@ -55,54 +42,63 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
                 osRID = match[1];
             }
         });
-    });
-
-    let installer = new debugInstall.DebugInstaller(_util);
-    _util.createInstallLog();
-
-    let runtimeId = getPlatformRuntimeId();
-
-    let statusBarMessage = vscode.window.setStatusBarMessage("Downloading and configuring the .NET Core Debugger...");
-
-    let installStage: string = "installBegin";
-    let installError: string = '';
-    let moreErrors: string = '';
-
-    writeInstallBeginFile().then(() => {
-        return installer.install(runtimeId);
     }).then(() => {
-        installStage = "completeSuccess";
-        statusBarMessage.dispose();
-        vscode.window.setStatusBarMessage('Successfully installed .NET Core Debugger.');
-    })
-    .catch((error: debugInstall.InstallError) => {
-        const viewLogMessage = "View Log";
-        vscode.window.showErrorMessage('Error while installing .NET Core Debugger.', viewLogMessage).then(value => {
-            if (value === viewLogMessage) {
-                _channel.show(vscode.ViewColumn.Three);
-            }
-        });
-        statusBarMessage.dispose();
+        let installer = new debugInstall.DebugInstaller(_util);
+        _util.createInstallLog();
 
-        installStage = error.installStage;
-        installError = error.errorMessage;
-        moreErrors = error.hasMoreErrors ? 'true' : 'false';
-    }).then(() => {
-        // log telemetry and delete install begin file
-        logTelemetry('Acquisition', {
-            installStage: installStage,
-            installError: installError,
-            moreErrors: moreErrors,
-            dotnetVersion: dotnetVersion,
-            osVersion: osVersion,
-            osRID: osRID
-        });
-        try {
-            deleteInstallBeginFile();
-        } catch (err) {
-            // if this throws there's really nothing we can do
-        }
-        _util.closeInstallLog();
+        let runtimeId = getPlatformRuntimeId();
+
+        let statusBarMessage = vscode.window.setStatusBarMessage("Downloading and configuring the .NET Core Debugger...");
+
+        let installStage: string = "installBegin";
+        let installError: string = '';
+        let moreErrors: string = '';
+
+        writeInstallBeginFile().then(() => {
+            return installer.install(runtimeId);
+        }).then(() => {
+            installStage = "completeSuccess";
+            statusBarMessage.dispose();
+            vscode.window.setStatusBarMessage('Successfully installed .NET Core Debugger.');
+        })
+            .catch((error: debugInstall.InstallError) => {
+                const viewLogMessage = "View Log";
+                vscode.window.showErrorMessage('Error while installing .NET Core Debugger.', viewLogMessage).then(value => {
+                    if (value === viewLogMessage) {
+                        _channel.show(vscode.ViewColumn.Three);
+                    }
+                });
+                statusBarMessage.dispose();
+
+                installStage = error.installStage;
+                installError = error.errorMessage;
+                moreErrors = error.hasMoreErrors ? 'true' : 'false';
+            }).then(() => {
+                // log telemetry and delete install begin file
+                logTelemetry('Acquisition', {
+                    installStage: installStage,
+                    installError: installError,
+                    moreErrors: moreErrors,
+                    dotnetVersion: dotnetVersion,
+                    osVersion: osVersion,
+                    osRID: osRID
+                });
+                try {
+                    deleteInstallBeginFile();
+                } catch (err) {
+                    // if this throws there's really nothing we can do
+                }
+                _util.closeInstallLog();
+            });
+    }).catch(() => {
+        const getDotNetMessage = "Get .NET CLI tools";
+        vscode.window.showErrorMessage("The .NET CLI tools cannot be located. .NET Core debugging will not be enabled. Make sure .NET CLI tools are installed and are on the path.",
+            getDotNetMessage).then(value => {
+                if (value === getDotNetMessage) {
+                    let open = require('open');
+                    open("https://www.microsoft.com/net/core");
+                }
+            });
     });
 }
 
@@ -119,17 +115,6 @@ function writeInstallBeginFile() : Promise<void> {
 function deleteInstallBeginFile() {
     if (CoreClrDebugUtil.existsSync(_util.installBeginFilePath())) {
         fs.unlinkSync(_util.installBeginFilePath());
-    }
-}
-
-function isDotnetOnPath() : boolean {
-    try {
-        child_process.execSync('dotnet --info');
-        return true;
-    }
-    catch (err)
-    {
-        return false;
     }
 }
 
@@ -163,55 +148,4 @@ function getPlatformRuntimeId() : string {
             _util.log('Error: Unsupported platform ' + process.platform);
             throw Error('Unsupported platform ' + process.platform);
     }
-}
-
-function getDotnetRuntimeId(): string {
-    _util.log("Starting 'dotnet --info'");
-
-    const cliVersionErrorMessage = "Ensure that .NET Core CLI Tools version >= 1.0.0-beta-002173 is installed. Run 'dotnet --version' to see what version is installed.";
-
-    let child = child_process.spawnSync('dotnet', ['--info'], { cwd: _util.coreClrDebugDir() });
-
-    if (child.stderr.length > 0) {
-        _util.log('Error: ' + child.stderr.toString());
-    }
-    const out = child.stdout.toString();
-    if (out.length > 0) {
-        _util.log(out);
-    }
-
-    if (child.status !== 0) {
-        const message = `Error: 'dotnet --info' failed with error ${child.status}`;
-        _util.log(message);
-        _util.log(cliVersionErrorMessage);
-        throw new Error(message);
-    }
-
-    if (out.length === 0) {
-        const message = "Error: 'dotnet --info' provided no output";
-        _util.log(message);
-        _util.log(cliVersionErrorMessage);
-        throw new Error(message);
-    }
-
-    let lines = out.split('\n');
-    let ridLine = lines.filter(value => {
-        return value.trim().startsWith('RID:');
-    });
-
-    if (ridLine.length < 1) {
-        _util.log("Error: Cannot find 'RID' property");
-        _util.log(cliVersionErrorMessage);
-        throw new Error('Cannot obtain Runtime ID from dotnet cli');
-    }
-
-    let rid = ridLine[0].split(':')[1].trim();
-
-    if (!rid) {
-        _util.log("Error: Unable to parse 'RID' property.");
-        _util.log(cliVersionErrorMessage);
-        throw new Error('Unable to determine Runtime ID');
-    }
-
-    return rid;
 }

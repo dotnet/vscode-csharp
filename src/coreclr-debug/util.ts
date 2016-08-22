@@ -87,6 +87,18 @@ export class CoreClrDebugUtil
         }
     }
 
+    logRaw(message: string): void {
+        console.log(message);
+
+        if (this._installLog != null) {
+            this._installLog.write(message);
+        }
+
+        if (this._channel != null) {
+            this._channel.append(message);
+        }
+    }
+
     log(message: string): void {
         console.log(message);
 
@@ -116,14 +128,15 @@ export class CoreClrDebugUtil
             const child = child_process.spawn(process, args, { cwd: workingDirectory });
 
             if (!onStdout) {
-                onStdout = (data) => { this.log(`${data}`); };
+                onStdout = (data) => { this.logRaw(`${data}`); };
             }
             child.stdout.on('data', onStdout);
 
             if (!onStderr) {
-                onStderr = (data) => { this.log(`${data}`); };
+                onStderr = (data) => { this.logRaw(`${data}`); };
             }
             child.stderr.on('data', onStderr);
+
             child.on('close', (code: number) => {
                 if (code != 0) {
                     this.log(`${process} exited with error code ${code}`);;
@@ -133,6 +146,10 @@ export class CoreClrDebugUtil
                     resolve();
                 }
             });
+
+            child.on('error', (error: Error) => {
+                reject(error);
+            })
         });
 
         return promise;
