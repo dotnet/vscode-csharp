@@ -60,8 +60,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
             installStage = "completeSuccess";
             statusBarMessage.dispose();
             vscode.window.setStatusBarMessage('Successfully installed .NET Core Debugger.');
-        })
-            .catch((error: debugInstall.InstallError) => {
+        }).catch((error: debugInstall.InstallError) => {
                 const viewLogMessage = "View Log";
                 vscode.window.showErrorMessage('Error while installing .NET Core Debugger.', viewLogMessage).then(value => {
                     if (value === viewLogMessage) {
