@@ -71,7 +71,7 @@
       }
     ],
     "configuration": {
-      "title": "Omnisharp configuration",
+      "title": "C# configuration",
       "properties": {
         "csharp.suppressDotnetInstallWarning": {
           "type": "boolean",
