@@ -70,6 +70,16 @@
         "configuration": "./csharp.configuration.json"
       }
     ],
+    "configuration": {
+      "title": "C# configuration",
+      "properties": {
+        "csharp.suppressDotnetInstallWarning": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress the warning that the .NET CLI is not on the path."
+        }
+      }
+    },
     "grammars": [
       {
         "language": "csharp",

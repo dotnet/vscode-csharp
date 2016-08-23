@@ -90,14 +90,22 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
                 _util.closeInstallLog();
             });
     }).catch(() => {
-        const getDotNetMessage = "Get .NET CLI tools";
-        vscode.window.showErrorMessage("The .NET CLI tools cannot be located. .NET Core debugging will not be enabled. Make sure .NET CLI tools are installed and are on the path.",
-            getDotNetMessage).then(value => {
-                if (value === getDotNetMessage) {
-                    let open = require('open');
-                    open("https://www.microsoft.com/net/core");
-                }
-            });
+        const config = vscode.workspace.getConfiguration('csharp');
+        if (!config.get('suppressDotnetInstallWarning', false)) {
+            const getDotNetMessage = 'Get .NET CLI tools';
+            const goToSettingsMessage = 'Disable this message in user settings';
+            // Buttons are shown in right-to-left order, with a close button to the right of everything;
+            // getDotNetMessage will be the first button, then goToSettingsMessage, then the close button.
+            vscode.window.showErrorMessage('The .NET CLI tools cannot be located. .NET Core debugging will not be enabled. Make sure .NET CLI tools are installed and are on the path.',
+                goToSettingsMessage, getDotNetMessage).then(value => {
+                    if (value === getDotNetMessage) {
+                        let open = require('open');
+                        open('https://www.microsoft.com/net/core');
+                    } else if (value === goToSettingsMessage) {
+                        vscode.commands.executeCommand('workbench.action.openGlobalSettings');
+                    }
+                });
+        }
     });
 }
 
