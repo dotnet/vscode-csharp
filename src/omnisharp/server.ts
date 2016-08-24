@@ -104,12 +104,26 @@ export abstract class OmnisharpServer {
 	}
 
 	private _readOptions(): omnisharp.Options {
-		const config = vscode.workspace.getConfiguration('csharp');
+		// Extra effort is taken below to ensure that legacy versions of options
+		// are supported below. In particular, these are:
+		//
+		// - "csharp.omnisharp" -> "omnisharp.path"
+		// - "csharp.omnisharpUsesMono" -> "omnisharp.useMono"
 
-		return {
-			path: config.get<string>('omnisharp'),
-			usesMono: config.get<boolean>('omnisharpUsesMono')
-		};
+		const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
+		const csharpConfig = vscode.workspace.getConfiguration('csharp');
+
+		const path = omnisharpConfig.has('path')
+			? omnisharpConfig.get<string>('path')
+			: csharpConfig.get<string>('omnisharp');
+
+		const useMono = omnisharpConfig.has('useMono')
+			? omnisharpConfig.get<boolean>('useMono')
+			: csharpConfig.get<boolean>('omnisharpUsesMono');
+
+		const loggingLevel = omnisharpConfig.get<string>('loggingLevel');
+
+		return { path, useMono, loggingLevel };
 	}
 
     private _recordRequestDelay(requestName: string, elapsedTime: number) {
@@ -237,7 +251,7 @@ export abstract class OmnisharpServer {
 		const options = this._readOptions();
 
 		let flavor: omnisharp.Flavor;
-		if (options.path !== undefined && options.usesMono === true) {
+		if (options.path !== undefined && options.useMono === true) {
 			flavor = omnisharp.Flavor.Mono;
 		}
 		else {
@@ -250,11 +264,17 @@ export abstract class OmnisharpServer {
 
 			const solutionPath = launchTarget.target;
 			const cwd = dirname(solutionPath);
-			const args = [
+			let args = [
 				'-s', solutionPath,
 				'--hostPID', process.pid.toString(),
 				'DotNet:enablePackageRestore=false'
-			].concat(this._extraArgs);
+			];
+
+			if (options.loggingLevel === 'verbose') {
+				args.push('-v');
+			}
+
+			args = args.concat(this._extraArgs);
 
 			this._fireEvent(Events.StdOut, `[INFO] Starting OmniSharp at '${solutionPath}'...\n`);
 			this._fireEvent(Events.BeforeServerStart, solutionPath);

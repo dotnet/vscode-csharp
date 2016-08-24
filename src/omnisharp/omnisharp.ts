@@ -15,7 +15,8 @@ import * as path from 'path';
 
 export interface Options {
 	path?: string;
-	usesMono?: boolean;
+	useMono?: boolean;
+    loggingLevel?: string;
 }
 
 export enum Flavor {
