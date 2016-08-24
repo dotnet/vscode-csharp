@@ -14,8 +14,8 @@ import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 
 export interface Options {
-	path?: string;
-	useMono?: boolean;
+    path?: string;
+    useMono?: boolean;
     loggingLevel?: string;
 }
 
