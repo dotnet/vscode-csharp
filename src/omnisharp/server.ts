@@ -104,12 +104,26 @@ export abstract class OmnisharpServer {
 	}
 
 	private _readOptions(): omnisharp.Options {
-		const config = vscode.workspace.getConfiguration('csharp');
+		// Extra effort is taken below to ensure that legacy versions of options
+		// are supported below. In particular, these are:
+		//
+		// - "csharp.omnisharp" -> "omnisharp.path"
+		// - "csharp.omnisharpUsesMono" -> "omnisharp.useMono"
 
-		return {
-			path: config.get<string>('omnisharp'),
-			usesMono: config.get<boolean>('omnisharpUsesMono')
-		};
+		const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
+		const csharpConfig = vscode.workspace.getConfiguration('csharp');
+
+		const path = omnisharpConfig.has('path')
+			? omnisharpConfig.get<string>('path')
+			: csharpConfig.get<string>('omnisharp');
+
+		const useMono = omnisharpConfig.has('useMono')
+			? omnisharpConfig.get<boolean>('useMono')
+			: csharpConfig.get<boolean>('omnisharpUsesMono');
+
+		const loggingLevel = omnisharpConfig.get<string>('loggingLevel');
+
+		return { path, useMono, loggingLevel };
 	}
 
     private _recordRequestDelay(requestName: string, elapsedTime: number) {
@@ -237,7 +251,7 @@ export abstract class OmnisharpServer {
 		const options = this._readOptions();
 
 		let flavor: omnisharp.Flavor;
-		if (options.path !== undefined && options.usesMono === true) {
+		if (options.path !== undefined && options.useMono === true) {
 			flavor = omnisharp.Flavor.Mono;
 		}
 		else {
@@ -250,11 +264,17 @@ export abstract class OmnisharpServer {
 
 			const solutionPath = launchTarget.target;
 			const cwd = dirname(solutionPath);
-			const args = [
+			let args = [
 				'-s', solutionPath,
 				'--hostPID', process.pid.toString(),
 				'DotNet:enablePackageRestore=false'
-			].concat(this._extraArgs);
+			];
+
+			if (options.loggingLevel === 'verbose') {
+				args.push('-v');
+			}
+
+			args = args.concat(this._extraArgs);
 
 			this._fireEvent(Events.StdOut, `[INFO] Starting OmniSharp at '${solutionPath}'...\n`);
 			this._fireEvent(Events.BeforeServerStart, solutionPath);
@@ -391,7 +411,7 @@ export abstract class OmnisharpServer {
 				return omnisharp.findServerPath(options.path).then(serverPath => {
 					return resolve(serverPath);
 				}).catch(err => {
-					vscode.window.showWarningMessage(`Invalid "csharp.omnisharp" user setting specified ('${options.path}).`);
+					vscode.window.showWarningMessage(`Invalid value specified for "omnisharp.path" ('${options.path}).`);
 					return reject(err);
 				});
 			}
@@ -409,9 +429,9 @@ export abstract class OmnisharpServer {
 				this._channel.appendLine("    1. If it's not already installed, download and install Mono (https://www.mono-project.com)");
 				this._channel.appendLine("    2. Download and untar the latest OmniSharp Mono release from  https://github.com/OmniSharp/omnisharp-roslyn/releases/");
 				this._channel.appendLine("    3. In Visual Studio Code, select Preferences->User Settings to open settings.json.");
-				this._channel.appendLine("    4. In settings.json, add a new setting: \"csharp.omnisharp\": \"/path/to/omnisharp/OmniSharp.exe\"");
-				this._channel.appendLine("    4. In settings.json, add a new setting: \"csharp.omnisharpUsesMono\": true");
-				this._channel.appendLine("    5. Restart Visual Studio Code.");
+				this._channel.appendLine("    4. In settings.json, add a new setting: \"omnisharp.path\": \"/path/to/omnisharp/OmniSharp.exe\"");
+				this._channel.appendLine("    5. In settings.json, add a new setting: \"omnisharp.useMono\": true");
+				this._channel.appendLine("    6. Restart Visual Studio Code.");
 				this._channel.show();
 
 				throw err;
