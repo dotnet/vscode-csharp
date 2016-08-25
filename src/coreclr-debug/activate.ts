@@ -5,9 +5,7 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import * as child_process from 'child_process';
 import * as fs from 'fs';
-import * as path from 'path';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { CoreClrDebugUtil } from './util';
 import * as debugInstall from './install';
@@ -99,7 +97,7 @@ function checkForDotnetTools() : Promise<DotnetInfo>
     let dotnetInfo = new DotnetInfo();
 
     return _util.spawnChildProcess('dotnet', ['--info'], _util.coreClrDebugDir(), (data: Buffer) => {
-        var lines: string[] = data.toString().replace(/\r/mg, '').split('\n');
+        let lines: string[] = data.toString().replace(/\r/mg, '').split('\n');
         lines.forEach(line => {
             let match: RegExpMatchArray;
             if (match = /^\ Version:\s*([^\s].*)$/.exec(line)) {

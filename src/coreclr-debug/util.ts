@@ -149,7 +149,7 @@ export class CoreClrDebugUtil
 
             child.on('error', (error: Error) => {
                 reject(error);
-            })
+            });
         });
 
         return promise;
