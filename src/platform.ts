@@ -67,6 +67,8 @@ export function getCurrentPlatform() {
                 else if (versionId.startsWith("16")) {
                     return Platform.Ubuntu16;
                 }
+
+                break;
             case 'centos':
                 return Platform.CentOS;
             case 'fedora':
@@ -90,6 +92,8 @@ export function getCurrentPlatform() {
                     // Elementary OS 0.4 Loki is binary compatible with Ubuntu 16.04
                     return Platform.Ubuntu16;
                 }
+
+                break;
         }
     }
 
