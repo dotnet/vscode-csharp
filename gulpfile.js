@@ -17,6 +17,7 @@ const debugInstall = require('./out/coreclr-debug/install.js');
 const fs_extra = require('fs-extra-promise');
 const omnisharp = require('./out/omnisharp/omnisharp');
 const download = require('./out/omnisharp/download');
+const logger = require('./out/omnisharp/logger');
 const platform = require('./out/platform');
 const child_process = require('child_process');
 
@@ -35,8 +36,11 @@ gulp.task('clean', ['omnisharp:clean',  'debugger:clean', 'package:clean'], () =
 
 /// Omnisharp Tasks
 function installOmnisharp(omnisharps) {
-    const logger = (message) => { console.log(message); };
-    const promises = omnisharps.map((omni) => download.go(omni.flavor, omni.platform, logger));
+    const promises = omnisharps.map((omni, index) => {
+        const log = new logger.Logger(message => process.stdout.write(message), index.toString());
+
+        return download.go(omni.flavor, omni.platform, log);
+    });
     
     return Promise.all(promises);
 }

@@ -13,6 +13,7 @@ import {launchOmniSharp} from './launcher';
 import * as protocol from './protocol';
 import * as omnisharp from './omnisharp';
 import * as download from './download';
+import {Logger} from './logger';
 import {DelayTracker} from './delayTracker';
 import {LaunchTarget, findLaunchTargets, getDefaultFlavor} from './launcher';
 import {Platform, getCurrentPlatform} from '../platform';
@@ -76,6 +77,7 @@ export abstract class OmnisharpServer {
 	private _queue: Request[] = [];
 	private _isProcessingQueue = false;
 	private _channel: vscode.OutputChannel;
+	protected _logger: Logger;
 
 	private _isDebugEnable: boolean = false;
 
@@ -84,8 +86,10 @@ export abstract class OmnisharpServer {
 
 	constructor(reporter: TelemetryReporter) {
 		this._extraArgs = [];
-		this._channel = vscode.window.createOutputChannel('OmniSharp Log');
         this._reporter = reporter;
+
+		this._channel = vscode.window.createOutputChannel('OmniSharp Log');
+		this._logger = new Logger(message => this._channel.append(message));
 	}
 
 	public isRunning(): boolean {
@@ -276,15 +280,33 @@ export abstract class OmnisharpServer {
 
 			args = args.concat(this._extraArgs);
 
-			this._fireEvent(Events.StdOut, `[INFO] Starting OmniSharp at '${solutionPath}'...\n`);
+			this._logger.appendLine(`Starting OmniSharp server at ${new Date().toLocaleString()}`);
+			this._logger.increaseIndent();
+			this._logger.appendLine(`Target: ${solutionPath}`);
+			this._logger.decreaseIndent();
+			this._logger.appendLine();
+
 			this._fireEvent(Events.BeforeServerStart, solutionPath);
 
 			return launchOmniSharp({serverPath, flavor, cwd, args}).then(value => {
+				if (value.usingMono) {
+					this._logger.appendLine(`OmniSharp server started wth Mono`);
+				}
+				else {
+					this._logger.appendLine(`OmniSharp server started`);
+				}
+
+				this._logger.increaseIndent();
+				this._logger.appendLine(`Path: ${value.command}`);
+				this._logger.appendLine(`PID: ${value.process.pid}`);
+				this._logger.decreaseIndent();
+				this._logger.appendLine();
+
 				this._serverProcess = value.process;
 				this._delayTrackers = {};
-				this._fireEvent(Events.StdOut, `[INFO] Started OmniSharp from '${value.command}' with process id ${value.process.pid}...\n`);
 				this._setState(ServerState.Started);
 				this._fireEvent(Events.ServerStart, solutionPath);
+
 				return this._doConnect();
 			}).then(() => {
 				return vscode.commands.getCommands()
@@ -440,11 +462,11 @@ export abstract class OmnisharpServer {
 			const config = vscode.workspace.getConfiguration();
 			const proxy = config.get<string>('http.proxy');
 			const strictSSL = config.get('http.proxyStrictSSL', true);
-			const logger = (message: string) => { this._channel.appendLine(message); };
+			const logger = (message: string) => { this._logger.appendLine(message); };
 
 			this._fireEvent(Events.BeforeServerInstall, this);
 
-			return download.go(flavor, platform, logger, proxy, strictSSL).then(_ => {
+			return download.go(flavor, platform, this._logger, proxy, strictSSL).then(_ => {
 				return omnisharp.findServerPath(installDirectory);
 			});
 		});
@@ -622,7 +644,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 
 		const onLineReceived = (line: string) => {
 			if (line[0] !== '{') {
-				this._fireEvent(Events.StdOut, `${line}\n`);
+				this._logger.appendLine(line);
 				return;
 			}
 
@@ -681,7 +703,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 		if (packet.Event === 'log') {
 			// handle log events
 			const entry = <{ LogLevel: string; Name: string; Message: string; }>packet.Body;
-			this._fireEvent(Events.StdOut, `[${entry.LogLevel}:${entry.Name}] ${entry.Message}\n`);
+			this._logger.appendLine(`[${entry.LogLevel}:${entry.Name}] ${entry.Message}`);
 			return;
 		} else {
 			// fwd all other events
