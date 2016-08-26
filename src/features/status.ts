@@ -156,7 +156,7 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
                 }
 
 				// show sln-file if applicable
-				if ('MSBuild' in info && info.MsBuild.SolutionPath) {
+				if (info.MsBuild && info.MsBuild.SolutionPath) {
 					label = basename(info.MsBuild.SolutionPath); //workspace.getRelativePath(info.MsBuild.SolutionPath);
 					fileNames.push({ pattern: info.MsBuild.SolutionPath });
                     
@@ -166,7 +166,7 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
 				}
 
 				// show .NET Core projects if applicable
-                if ('DotNet' in info) {
+                if (info.DotNet) {
                     addDnxOrDotNetProjects(info.DotNet.Projects);
                 }
 
