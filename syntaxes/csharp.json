@@ -335,11 +335,7 @@
           "name": "keyword.linq.cs"
         },
         {
-          "match": "\\b(new|is|as|using|checked|unchecked|typeof|sizeof|override|readonly|stackalloc|nameof)\\b",
-          "name": "keyword.operator.cs"
-        },
-        {
-          "match": "\\b(event|delegate|fixed|add|remove|set|get|value|var)\\b",
+          "match": "\\b(event|delegate|fixed|add|remove|set|get|value|new|is|as|using|checked|unchecked|typeof|sizeof|stackalloc|nameof)\\b",
           "name": "keyword.other.cs"
         },
         {
