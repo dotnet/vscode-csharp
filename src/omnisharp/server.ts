@@ -13,6 +13,7 @@ import {launchOmniSharp} from './launcher';
 import * as protocol from './protocol';
 import * as omnisharp from './omnisharp';
 import * as download from './download';
+import {readOptions} from './options';
 import {Logger} from './logger';
 import {DelayTracker} from './delayTracker';
 import {LaunchTarget, findLaunchTargets, getDefaultFlavor} from './launcher';
@@ -105,29 +106,6 @@ export abstract class OmnisharpServer {
 			this._state = value;
 			this._fireEvent(Events.StateChanged, this._state);
 		}
-	}
-
-	private _readOptions(): omnisharp.Options {
-		// Extra effort is taken below to ensure that legacy versions of options
-		// are supported below. In particular, these are:
-		//
-		// - "csharp.omnisharp" -> "omnisharp.path"
-		// - "csharp.omnisharpUsesMono" -> "omnisharp.useMono"
-
-		const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
-		const csharpConfig = vscode.workspace.getConfiguration('csharp');
-
-		const path = omnisharpConfig.has('path')
-			? omnisharpConfig.get<string>('path')
-			: csharpConfig.get<string>('omnisharp');
-
-		const useMono = omnisharpConfig.has('useMono')
-			? omnisharpConfig.get<boolean>('useMono')
-			: csharpConfig.get<boolean>('omnisharpUsesMono');
-
-		const loggingLevel = omnisharpConfig.get<string>('loggingLevel');
-
-		return { path, useMono, loggingLevel };
 	}
 
     private _recordRequestDelay(requestName: string, elapsedTime: number) {
@@ -252,7 +230,7 @@ export abstract class OmnisharpServer {
 	// --- start, stop, and connect
 
 	private _start(launchTarget: LaunchTarget): Promise<void> {
-		const options = this._readOptions();
+		const options = readOptions();
 
 		let flavor: omnisharp.Flavor;
 		if (options.path !== undefined && options.useMono === true) {
@@ -403,7 +381,7 @@ export abstract class OmnisharpServer {
 			// If there's more than one launch target, we start the server if one of the targets
 			// matches the preferred path. Otherwise, we fire the "MultipleLaunchTargets" event,
 			// which is handled in status.ts to display the launch target selector.
-			if (launchTargets.length > 1) {
+			if (launchTargets.length > 1 && preferredPath) {
 
 				for (let launchTarget of launchTargets) {
 					if (launchTarget.target === preferredPath) {
@@ -425,7 +403,7 @@ export abstract class OmnisharpServer {
 		// Attempt to find launch file path first from options, and then from the default install location.
 		// If OmniSharp can't be found, download it.
 
-		const options = this._readOptions();
+		const options = readOptions();
 		const installDirectory = omnisharp.getInstallDirectory(flavor);
 
 		return new Promise<string>((resolve, reject) => {

@@ -19,7 +19,7 @@ import {DotNetAttachItemsProviderFactory, AttachPicker} from './processPicker'
 let channel = vscode.window.createOutputChannel('.NET');
 
 export default function registerCommands(server: OmnisharpServer, extensionPath: string) {
-    let d1 = vscode.commands.registerCommand('o.restart', () => server.restart());
+    let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server));
     let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', () => pickProjectAndStart(server));
     let d3 = vscode.commands.registerCommand('o.showOutput', () => server.getChannel().show(vscode.ViewColumn.Three));
     let d4 = vscode.commands.registerCommand('dotnet.restore', () => dotnetRestoreAllProjects(server));
@@ -38,6 +38,15 @@ export default function registerCommands(server: OmnisharpServer, extensionPath:
     let d8 = vscode.commands.registerCommand('csharp.listProcess', () => attacher.ShowAttachEntries());
 
     return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8);
+}
+
+function restartOmniSharp(server: OmnisharpServer) {
+    if (server.isRunning()) {
+        server.restart();
+    }
+    else {
+        server.autoStart('');
+    }
 }
 
 function pickProjectAndStart(server: OmnisharpServer) {
