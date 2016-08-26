@@ -7,7 +7,6 @@
 import { CoreClrDebugUtil } from './util';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as child_process from 'child_process';
 import * as fs_extra from 'fs-extra-promise';
 
 export class InstallError extends Error {
@@ -53,14 +52,14 @@ export class DebugInstaller {
     }
 
     public install(runtimeId: string): Promise<void> {
-        var errorBuilder: InstallError = new InstallError();
+        let errorBuilder: InstallError = new InstallError();
         errorBuilder.installStage = 'writeProjectJson';
 
         return this.writeProjectJson(runtimeId).then(() => {
             errorBuilder.installStage = 'dotnetRestore';
             return this._util.spawnChildProcess('dotnet', ['--verbose', 'restore', '--configfile', 'NuGet.config'], this._util.coreClrDebugDir(),
                 (data: Buffer) => {
-                    var text: string = data.toString();
+                    let text: string = data.toString();
                     this._util.logRaw(text);
 
                     // Certain errors are only logged to stdout.
@@ -68,7 +67,7 @@ export class DebugInstaller {
                     DebugInstaller.parseRestoreErrors(text, errorBuilder);
                 },
                 (data: Buffer) => {
-                    var text: string = data.toString();
+                    let text: string = data.toString();
                     this._util.logRaw(text);
 
                     // Reference errors are sent to stderr at the end of restore.
@@ -78,7 +77,7 @@ export class DebugInstaller {
             errorBuilder.installStage = 'dotnetPublish';
             return this._util.spawnChildProcess('dotnet', ['--verbose', 'publish', '-r', runtimeId, '-o', this._util.debugAdapterDir()], this._util.coreClrDebugDir(),
                 (data: Buffer) => {
-                    var text: string = data.toString();
+                    let text: string = data.toString();
                     this._util.logRaw(text);
 
                     DebugInstaller.parsePublishErrors(text, errorBuilder);
@@ -253,7 +252,7 @@ export class DebugInstaller {
     }
 
     private static parseRestoreErrors(output: string, errorBuilder: InstallError): void {
-        var lines: string[] = output.replace(/\r/mg, '').split('\n');
+        let lines: string[] = output.replace(/\r/mg, '').split('\n');
         lines.forEach(line => {
             if (line.startsWith('error')) {
                 const connectionError: string = 'The server name or address could not be resolved';
@@ -271,16 +270,16 @@ export class DebugInstaller {
 
     private static parseReferenceErrors(output: string, errorBuilder: InstallError): void {
         // Reference errors are restated at the end of the output. Find this section first.
-        var errorRegionRegExp: RegExp = /^Errors in .*project\.json$/gm
-        var beginIndex: number = output.search(errorRegionRegExp);
-        var errorBlock: string = output.slice(beginIndex);
+        let errorRegionRegExp: RegExp = /^Errors in .*project\.json$/gm;
+        let beginIndex: number = output.search(errorRegionRegExp);
+        let errorBlock: string = output.slice(beginIndex);
 
-        var lines: string[] = errorBlock.replace(/\r/mg, '').split('\n');
+        let lines: string[] = errorBlock.replace(/\r/mg, '').split('\n');
         lines.forEach(line => {
-            var referenceRegExp: RegExp = /^(?:\t|\ \ \ \ )Unable to resolve '([^']+)'/g
-            var match: RegExpMatchArray;
+            let referenceRegExp: RegExp = /^(?:\t|\ \ \ \ )Unable to resolve '([^']+)'/g;
+            let match: RegExpMatchArray;
             while (match = referenceRegExp.exec(line)) {
-                var reference: string = match[1];
+                let reference: string = match[1];
                 if (reference.startsWith('Microsoft') ||
                     reference.startsWith('System') ||
                     reference.startsWith('NETStandard') ||
@@ -294,15 +293,15 @@ export class DebugInstaller {
     }
 
     private static parsePublishErrors(output: string, errorBuilder: InstallError): void {
-        var lines: string[] = output.replace(/\r/mg, '').split('\n');
+        let lines: string[] = output.replace(/\r/mg, '').split('\n');
         lines.forEach(line => {
-            var errorTypeRegExp: RegExp = /^([\w\.]+Exception)/g
-            var typeMatch: RegExpMatchArray;
+            const errorTypeRegExp: RegExp = /^([\w\.]+Exception)/g;
+            let typeMatch: RegExpMatchArray;
             while (typeMatch = errorTypeRegExp.exec(line)) {
-                var type: string = typeMatch[1];
+                let type: string = typeMatch[1];
                 if (type === 'System.IO.IOException') {
-                    var ioExceptionRegExp: RegExp = /System\.IO\.IOException: The process cannot access the file '(.*)' because it is being used by another process./g
-                    var ioMatch: RegExpMatchArray;
+                    const ioExceptionRegExp: RegExp = /System\.IO\.IOException: The process cannot access the file '(.*)' because it is being used by another process./g;
+                    let ioMatch: RegExpMatchArray;
                     if (ioMatch = ioExceptionRegExp.exec(line)) {
                         // Remove path as it may contain user information.
                         errorBuilder.errorMessage = `System.IO.IOException: unable to access '${path.basename(ioMatch[1])}'`;
