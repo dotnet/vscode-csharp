@@ -20,6 +20,7 @@ import reportDiagnostics,{Advisor} from './features/diagnosticsProvider';
 import SignatureHelpProvider from './features/signatureHelpProvider';
 import registerCommands from './features/commands';
 import {StdioOmnisharpServer} from './omnisharp/server';
+import {readOptions} from './omnisharp/options';
 import forwardChanges from './features/changeForwarding';
 import reportStatus from './features/status';
 import * as coreclrdebug from './coreclr-debug/activate';
@@ -27,7 +28,6 @@ import {addAssetsIfNecessary} from './assets';
 import * as vscode from 'vscode';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import {DefinitionMetadataDocumentProvider} from './features/definitionMetadataDocumentProvider';
-
 
 export function activate(context: vscode.ExtensionContext): any {
 
@@ -88,7 +88,11 @@ export function activate(context: vscode.ExtensionContext): any {
 
 	// read and store last solution or folder path
 	disposables.push(server.onBeforeServerStart(path => context.workspaceState.update('lastSolutionPathOrFolder', path)));
-	server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder'));
+
+	const options = readOptions();
+	if (options.autoStart) {
+		server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder'));
+	}
 
 	// stop server on deactivate
 	disposables.push(new vscode.Disposable(() => {
