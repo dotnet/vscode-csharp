@@ -149,6 +149,7 @@ export interface LaunchDetails {
 export interface LaunchResult {
     process: ChildProcess;
     command: string;
+	usingMono: boolean;
 }
 
 export function launchOmniSharp(details: LaunchDetails): Promise<LaunchResult> {
@@ -205,7 +206,8 @@ function launchWindows(details: LaunchDetails): Promise<LaunchResult> {
 
 		return resolve({
 			process,
-			command: details.serverPath
+			command: details.serverPath,
+			usingMono: false
 		});
 	});
 }
@@ -231,7 +233,8 @@ function launchNixCoreCLR(details: LaunchDetails): Promise<LaunchResult> {
 
 		return resolve({
 			process,
-			command: details.serverPath
+			command: details.serverPath,
+			usingMono: false
 		});
     });
 }
@@ -249,7 +252,8 @@ function launchNixMono(details: LaunchDetails): Promise<LaunchResult> {
 
 			return resolve({
 				process,
-				command: details.serverPath
+				command: details.serverPath,
+				usingMono: true
 			});
 		});
 	});
