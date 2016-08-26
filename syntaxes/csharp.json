@@ -209,6 +209,10 @@
           "include": "#constants"
         },
         {
+          "include": "#new-expression"
+        },
+
+        {
           "include": "#storage-modifiers"
         },
         {
@@ -354,6 +358,27 @@
         }
       ]
     },
+    "new-expression": {
+      "patterns": [
+        {
+          "begin": "\\b(new)(?!\\s*(?:\\[|\\{|\\())\\s+(.*?)(?=\\(|{)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.new.cs"
+            },
+            "2": {
+              "name": "storage.type.new.cs"
+            }
+          },
+          "end": "(?={|;)",
+          "patterns": [
+            {
+              "include": "#code"
+            }
+          ]
+        }
+      ]
+    },
     "method": {
       "patterns": [
         {
@@ -369,16 +394,6 @@
             },
             {
               "include": "#builtinTypes"
-            }
-          ]
-        },
-        {
-          "begin": "(?=\\bnew\\s+)(?=[\\w<].*\\s+)(?=[^=]+\\()",
-          "end": "(?={|;)",
-          "name": "meta.new-object.cs",
-          "patterns": [
-            {
-              "include": "#code"
             }
           ]
         },
