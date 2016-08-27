@@ -36,6 +36,7 @@
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-tslint": "^4.3.0",
+    "mocha": "^2.2.5",
     "tslint": "^3.3.0",
     "tslint-microsoft-contrib": "^2.0.0",
     "typescript": "^1.7.3",
