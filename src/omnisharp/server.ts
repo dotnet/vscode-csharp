@@ -249,7 +249,8 @@ export abstract class OmnisharpServer {
             let args = [
                 '-s', solutionPath,
                 '--hostPID', process.pid.toString(),
-                'DotNet:enablePackageRestore=false'
+                'DotNet:enablePackageRestore=false',
+                '--encoding', 'utf-8'
             ];
 
             if (options.loggingLevel === 'verbose') {
