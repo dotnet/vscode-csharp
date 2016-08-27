@@ -10,15 +10,16 @@ const path = require('path');
 const del = require('del');
 const gulp = require('gulp');
 const gulpUtil = require('gulp-util');
+const mocha = require('gulp-mocha');
 const tslint = require('gulp-tslint');
 const vsce = require('vsce');
-const debugUtil = require('./out/coreclr-debug/util.js');
-const debugInstall = require('./out/coreclr-debug/install.js');
+const debugUtil = require('./out/src/coreclr-debug/util');
+const debugInstall = require('./out/src/coreclr-debug/install');
 const fs_extra = require('fs-extra-promise');
-const omnisharp = require('./out/omnisharp/omnisharp');
-const download = require('./out/omnisharp/download');
-const logger = require('./out/omnisharp/logger');
-const platform = require('./out/platform');
+const omnisharp = require('./out/src/omnisharp/omnisharp');
+const download = require('./out/src/omnisharp/download');
+const logger = require('./out/src/omnisharp/logger');
+const platform = require('./out/src/platform');
 const child_process = require('child_process');
 
 const Flavor = omnisharp.Flavor;
@@ -152,6 +153,18 @@ gulp.task('package:offline', ['clean'], () => {
     });
 
     return promise;
+});
+
+/// Test Task
+gulp.task('test', () => {
+    gulp.src('out/test/*.tests.js')
+        .pipe(mocha({ui: "tdd"}))
+        .once('error', () => {
+            process.exit(1);
+        })
+        .once('end', () => {
+            process.exit();
+        });
 });
 
 /// Misc Tasks
