@@ -24,7 +24,7 @@ import {Logger} from './logger';
 const decompress = require('decompress');
 
 const BaseDownloadUrl = 'https://omnisharpdownload.blob.core.windows.net/ext';
-const OmniSharpVersion = '1.9-beta13';
+const OmniSharpVersion = '1.9-beta14';
 
 tmp.setGracefulCleanup();
 
