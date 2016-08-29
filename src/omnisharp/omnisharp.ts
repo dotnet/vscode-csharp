@@ -13,11 +13,6 @@
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 
-export interface Options {
-	path?: string;
-	usesMono?: boolean;
-}
-
 export enum Flavor {
     CoreCLR,
     Mono,
