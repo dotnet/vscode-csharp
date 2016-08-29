@@ -20,15 +20,17 @@ import reportDiagnostics,{Advisor} from './features/diagnosticsProvider';
 import SignatureHelpProvider from './features/signatureHelpProvider';
 import registerCommands from './features/commands';
 import {StdioOmnisharpServer} from './omnisharp/server';
+import {readOptions} from './omnisharp/options';
 import forwardChanges from './features/changeForwarding';
 import reportStatus from './features/status';
 import * as coreclrdebug from './coreclr-debug/activate';
 import {addAssetsIfNecessary} from './assets';
 import * as vscode from 'vscode';
 import TelemetryReporter from 'vscode-extension-telemetry';
+import {DefinitionMetadataDocumentProvider} from './features/definitionMetadataDocumentProvider';
 
 export function activate(context: vscode.ExtensionContext): any {
-    
+
     const extensionId = 'ms-vscode.csharp';
     const extension = vscode.extensions.getExtension(extensionId);
     const extensionVersion = extension.packageJSON.version;
@@ -48,7 +50,11 @@ export function activate(context: vscode.ExtensionContext): any {
 
 	disposables.push(server.onServerStart(() => {
 		// register language feature provider on start
-		localDisposables.push(vscode.languages.registerDefinitionProvider(_selector, new DefinitionProvider(server)));
+        const definitionMetadataDocumentProvider = new DefinitionMetadataDocumentProvider();
+        definitionMetadataDocumentProvider.register();
+        localDisposables.push(definitionMetadataDocumentProvider);
+
+		localDisposables.push(vscode.languages.registerDefinitionProvider(_selector, new DefinitionProvider(server, definitionMetadataDocumentProvider)));
 		localDisposables.push(vscode.languages.registerCodeLensProvider(_selector, new CodeLensProvider(server)));
 		localDisposables.push(vscode.languages.registerDocumentHighlightProvider(_selector, new DocumentHighlightProvider(server)));
 		localDisposables.push(vscode.languages.registerDocumentSymbolProvider(_selector, new DocumentSymbolProvider(server)));
@@ -74,7 +80,7 @@ export function activate(context: vscode.ExtensionContext): any {
 
 	disposables.push(registerCommands(server, context.extensionPath));
 	disposables.push(reportStatus(server));
-    
+
     disposables.push(server.onServerStart(() => {
         // Update or add tasks.json and launch.json
         addAssetsIfNecessary(server);
@@ -82,18 +88,21 @@ export function activate(context: vscode.ExtensionContext): any {
 
 	// read and store last solution or folder path
 	disposables.push(server.onBeforeServerStart(path => context.workspaceState.update('lastSolutionPathOrFolder', path)));
-	server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder'));
+
+	const options = readOptions();
+	if (options.autoStart) {
+		server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder'));
+	}
 
 	// stop server on deactivate
 	disposables.push(new vscode.Disposable(() => {
 		advisor.dispose();
-		server.reportAndClearTelemetry();
 		server.stop();
 	}));
-		
+
     // activate coreclr-debug
     coreclrdebug.activate(context, reporter);
-    
+
 	context.subscriptions.push(...disposables);
 }
 

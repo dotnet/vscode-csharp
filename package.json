@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -70,6 +70,43 @@
         "configuration": "./csharp.configuration.json"
       }
     ],
+    "configuration": {
+      "title": "C# configuration",
+      "properties": {
+        "csharp.suppressDotnetInstallWarning": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress the warning that the .NET CLI is not on the path."
+        },
+        "omnisharp.path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Specifies the full path to the OmniSharp server."
+        },
+        "omnisharp.useMono": {
+          "type": "boolean",
+          "default": false,
+          "description": "Launch OmniSharp with Mono."
+        },
+        "omnisharp.loggingLevel": {
+          "type": "string",
+          "default": "default",
+          "enum": [
+            "default",
+            "verbose"
+          ],
+          "description": "Specifies the level of logging output from the OmniSharp server."
+        },
+        "omnisharp.autoStart": {
+          "type": "boolean",
+          "default": true,
+          "description": "Specifies whether the OmniSharp server will be automatically started or not. If false, OmniSharp can be started with the 'Restart OmniSharp' command"
+        }
+      }
+    },
     "grammars": [
       {
         "language": "csharp",

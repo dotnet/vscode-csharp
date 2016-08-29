@@ -45,8 +45,8 @@ export function getCodeActions(server: OmnisharpServer, request: protocol.V2.Get
     return server.makeRequest<protocol.V2.GetCodeActionsResponse>(protocol.V2.Requests.GetCodeActions, request, token);
 }
 
-export function goToDefinition(server: OmnisharpServer, request: protocol.Request, token: vscode.CancellationToken) {
-    return server.makeRequest<protocol.ResourceLocation>(protocol.Requests.GoToDefinition, request);
+export function goToDefinition(server: OmnisharpServer, request: protocol.GoToDefinitionRequest, token: vscode.CancellationToken) {
+    return server.makeRequest<protocol.GoToDefinitionResponse>(protocol.Requests.GoToDefinition, request);
 }
 
 export function rename(server: OmnisharpServer, request: protocol.RenameRequest, token: vscode.CancellationToken) {
@@ -71,6 +71,10 @@ export function typeLookup(server: OmnisharpServer, request: protocol.TypeLookup
 
 export function updateBuffer(server: OmnisharpServer, request: protocol.UpdateBufferRequest) {
     return server.makeRequest<boolean>(protocol.Requests.UpdateBuffer, request);
+}
+
+export function getMetadata(server: OmnisharpServer, request: protocol.MetadataRequest) {
+    return server.makeRequest<protocol.MetadataResponse>(protocol.Requests.Metadata, request);
 }
 
 export function getTestStartInfo(server: OmnisharpServer, request: protocol.V2.GetTestStartInfoRequest) {

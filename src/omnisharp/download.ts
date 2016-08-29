@@ -19,11 +19,12 @@ import {parse} from 'url';
 import {Flavor, getInstallDirectory} from './omnisharp';
 import {Platform} from '../platform';
 import {getProxyAgent} from '../proxy';
+import {Logger} from './logger';
 
 const decompress = require('decompress');
 
 const BaseDownloadUrl = 'https://omnisharpdownload.blob.core.windows.net/ext';
-const OmniSharpVersion = '1.9-beta12';
+const OmniSharpVersion = '1.9-beta14';
 
 tmp.setGracefulCleanup();
 
@@ -108,20 +109,17 @@ function download(urlString: string, proxy?: string, strictSSL?: boolean): Promi
     });
 }
 
-export function go(flavor: Flavor, platform: Platform, log?: (message: string) => void, proxy?: string, strictSSL?: boolean) {
+export function go(flavor: Flavor, platform: Platform, logger: Logger, proxy?: string, strictSSL?: boolean) {
     return new Promise<boolean>((resolve, reject) => {
-        log = log || (_ => { });
-
-        log(`Flavor: ${flavor}, Platform: ${platform}`);
-
         const fileName = getDownloadFileName(flavor, platform);
         const installDirectory = getInstallDirectory(flavor);
 
-        log(`[INFO] Installing OmniSharp to ${installDirectory}`);
+        logger.appendLine(`Installing OmniSharp to ${installDirectory}`);
+        logger.increaseIndent();
 
         const urlString = `${BaseDownloadUrl}/${fileName}`;
 
-        log(`[INFO] Attempting to download ${fileName}...`);
+        logger.appendLine(`Attempting to download ${fileName}`);
 
         return download(urlString, proxy, strictSSL)
             .then(inStream => {
@@ -130,7 +128,7 @@ export function go(flavor: Flavor, platform: Platform, log?: (message: string) =
                         return reject(err);
                     }
                     
-                    log(`[INFO] Downloading to ${tmpPath}...`);
+                    logger.appendLine(`Downloading to ${tmpPath}...`);
                     
                     const outStream = fs.createWriteStream(null, { fd: fd });
                     
@@ -140,16 +138,16 @@ export function go(flavor: Flavor, platform: Platform, log?: (message: string) =
                     outStream.once('finish', () => {
                         // At this point, the asset has finished downloading.
                         
-                        log(`[INFO] Download complete!`);
-                        log(`[INFO] Decompressing...`);
+                        logger.appendLine(`Download complete!`);
+                        logger.appendLine(`Decompressing...`);
                         
                         return decompress(tmpPath, installDirectory)
                             .then(files => {
-                                log(`[INFO] Done! ${files.length} files unpacked.`);
+                                logger.appendLine(`Done! ${files.length} files unpacked.\n`);
                                 return resolve(true);
                             })
                             .catch(err => {
-                                log(`[ERROR] ${err}`);
+                                logger.appendLine(`[ERROR] ${err}`);
                                 return reject(err);
                             });
                     });
@@ -159,7 +157,10 @@ export function go(flavor: Flavor, platform: Platform, log?: (message: string) =
             })
             .catch(err =>
             {
-                log(`[ERROR] ${err}`);
+                logger.appendLine(`[ERROR] ${err}`);
             });
+    }).then(res => {
+        logger.decreaseIndent();
+        return res;
     });
 }

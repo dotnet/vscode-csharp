@@ -8,17 +8,27 @@
   "foldingStopMarker": "^\\s*#\\s*endregion|^\\s*\\*/|^\\s*\\}",
   "patterns": [
     {
+      "include": "#using"
+    },
+    {
+      "include": "#namespace"
+    },
+    {
+      "include": "#code"
+    }
+  ],
+  "repository": {
+    "using": {
+      "begin": "^\\s*(using)\\b\\s*",
       "captures": {
         "1": {
           "name": "keyword.other.using.cs"
         }
       },
-      "begin": "^\\s*(using)\\b\\s*",
-      "end": "\\s*(?:$|(;))",
-      "name": "meta.keyword.using.cs"
+      "end": "\\s*(?:$|;)"
     },
-    {
-      "begin": "^\\s*((namespace)\\s+([\\w.]+))",
+    "namespace": {
+      "begin": "^\\s*[^@]?((namespace)\\s+([\\w.]+))",
       "beginCaptures": {
         "1": {
           "name": "meta.namespace.identifier.cs"
@@ -49,17 +59,38 @@
           "name": "meta.namespace.body.cs",
           "patterns": [
             {
+              "include": "#using"
+            },
+            {
+              "include": "#namespace"
+            },
+            {
               "include": "#code"
             }
           ]
         }
       ]
     },
-    {
-      "include": "#code"
-    }
-  ],
-  "repository": {
+    "variable": {
+      "patterns": [
+        {
+          "match": "\\b(var)\\s+(.*?)(?=(=|;))",
+          "captures": {
+            "1": {
+              "name": "keyword.other.var.cs"
+            }
+          }
+        },
+        {
+          "match": "\\b(?!var|return|yield|throw)([\\w<>*?\\[\\]]+)\\s+([\\w]+)\\s*(?=(=(?!=)|;))",
+          "captures": {
+            "1": {
+              "name": "storage.type.variable.cs"
+            }
+          }
+        }
+      ]
+    },
     "block": {
       "patterns": [
         {
@@ -93,7 +124,7 @@
       ]
     },
     "class": {
-      "begin": "(?=\\w?[\\w\\s]*(?:class|struct|interface|enum)\\s+\\w+)",
+      "begin": "(?=\\w?[\\w\\s]*[^@]?(?:class|struct|interface|enum)\\s+\\w+)",
       "end": "}",
       "endCaptures": {
         "0": {
@@ -164,6 +195,9 @@
         },
         {
           "include": "#class"
+        },
+        {
+          "include": "#variable"
         },
         {
           "include": "#constants"
@@ -301,19 +335,11 @@
           "name": "keyword.linq.cs"
         },
         {
-          "match": "\\b(new|is|as|using|checked|unchecked|typeof|sizeof|override|readonly|stackalloc|nameof)\\b",
-          "name": "keyword.operator.cs"
-        },
-        {
-          "match": "\\b(event|delegate|fixed|add|remove|set|get|value)\\b",
+          "match": "\\b(event|delegate|fixed|add|remove|set|get|value|new|is|as|using|checked|unchecked|typeof|sizeof|stackalloc|nameof)\\b",
           "name": "keyword.other.cs"
         },
         {
-          "match": "\\b(var)\\b",
-          "name": "storage.type.var.cs"
-        },
-        {
-          "match": "[@]\\b(var|event|delegate|add|remove|set|get|value|new|is|as|using|checked|unchecked|typeof|sizeof|nameof|when|override|readonly|stackalloc|from|where|select|group|into|orderby|join|let|on|equals|by|ascending|descending |if|else|while|for|foreach|in|do|return|continue|break|switch|case|default|goto|throw|try|catch|finally|lock|yield|await)\\b",
+          "match": "[@]\\b(namespace|class|var|event|delegate|add|remove|set|get|value|new|is|as|using|checked|unchecked|typeof|sizeof|nameof|when|override|readonly|stackalloc|from|where|select|group|into|orderby|join|let|on|equals|by|ascending|descending|if|else|while|for|foreach|in|do|return|continue|break|switch|case|default|goto|throw|try|catch|finally|lock|yield|await|internal|public|protected|private|static|const|sealed|abstract|virtual|extern|unsafe|volatile|implicit|explicit|operator|async|partial|bool|byte|sbyte|char|decimal|double|float|int|uint|long|ulong|object|short|ushort|string|void|struct|enum|interface)\\b",
           "name": "meta.class.body.cs"
         }
       ]
@@ -360,9 +386,6 @@
               "include": "#storage-modifiers"
             },
             {
-              "include": "#builtinTypes"
-            },
-            {
               "begin": "([\\w]+\\s*(?:<[\\w<>\\s,`?]*>)?)\\s*\\(",
               "beginCaptures": {
                 "1": {
@@ -406,6 +429,21 @@
               ]
             },
             {
+              "begin": "=>",
+              "beginCaptures": {
+                "0": {
+                  "name": "punctuation.section.method.begin.cs"
+                }
+              },
+              "end": "(?=;)",
+              "name": "meta.method.body.cs",
+              "patterns": [
+                {
+                  "include": "#code"
+                }
+              ]
+            },
+            {
               "begin": "{",
               "beginCaptures": {
                 "0": {
@@ -423,7 +461,57 @@
           ]
         },
         {
-          "begin": "(?!new)(?=[\\w<].*\\s+)(?=[^=]+\\{)",
+          "begin": "(?!new)(?=[\\w<].*\\s+)(?=[^\\(]+=>)",
+          "end": ";",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.property.end.cs"
+            }
+          },
+          "name": "meta.property.cs",
+          "patterns": [
+            {
+              "include": "#storage-modifiers"
+            },
+            {
+              "begin": "(?=([\\w.]+)\\s*=>)",
+              "captures": {
+                "1": {
+                  "name": "entity.name.function.cs"
+                }
+              },
+              "end": "(?==>)",
+              "name": "meta.method.identifier.cs"
+            },
+            {
+              "begin": "(?=\\w.*\\s+[\\w.]+\\s*=>)",
+              "end": "(?=[\\w.]+\\s*=>)",
+              "name": "meta.method.return-type.cs",
+              "patterns": [
+                {
+                  "include": "#builtinTypes"
+                }
+              ]
+            },
+            {
+              "begin": "=>",
+              "beginCaptures": {
+                "0": {
+                  "name": "punctuation.section.property.begin.cs"
+                }
+              },
+              "end": "(?=;)",
+              "name": "meta.method.body.cs",
+              "patterns": [
+                {
+                  "include": "#code"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "begin": "(?!new)(?=[\\w<].*\\s+)(?=[^=\\(]+\\{)",
           "end": "}",
           "endCaptures": {
             "0": {
@@ -502,7 +590,7 @@
       ]
     },
     "parameters": {
-      "begin": "\\b(ref|params|out)?\\s*\\b([\\w?\\[\\]]+(?:\\s*<.*?>)?)\\s+(\\w+)\\s*(=)?",
+      "begin": "\\b(ref|params|out)?\\s*\\b(\\w+(?:\\s*<.*?>)?(?:\\s*\\*)*(?:\\s*\\?)?(?:\\s*\\[.*?\\])?)\\s+(@?\\w+)\\s*(=)?",
       "beginCaptures": {
         "1": {
           "name": "storage.type.modifier.cs"
@@ -537,23 +625,10 @@
         {
           "captures": {
             "2": {
-              "name": "meta.toc-list.region.cs"
-            }
-          },
-          "match": "^\\s*#\\s*(region)\\b\\s*([^\\/]+)\\s",
-          "name": "meta.preprocessor.cs"
-        },
-        {
-          "captures": {
-            "2": {
               "name": "entity.name.function.preprocessor.cs"
             }
           },
-          "match": "^\\s*#\\s*(define|undef|if|elif)\\b\\s*(\\S*)",
-          "name": "meta.preprocessor.cs"
-        },
-        {
-          "match": "^\\s*#\\s*(if|else|elif|endif|define|undef|warning|error|line|pragma|region|endregion)\\b\\s*([^\\/]+)\\s",
+          "match": "^\\s*#\\s*(if|else|elif|endif|define|undef|warning|error|line|pragma|region|endregion)\\b\\s*(.*)",
           "name": "meta.preprocessor.cs"
         }
       ]

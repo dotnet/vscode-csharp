@@ -17,6 +17,7 @@ interface DebugConfiguration {
     name: string,
     type: string,
     request: string,
+    internalConsoleOptions?: string,
     sourceFileMap?: any,
 }
 
@@ -158,7 +159,8 @@ function createLaunchConfiguration(projectData: TargetProjectData): ConsoleLaunc
         args: [],
         cwd: '${workspaceRoot}',
         externalConsole: false,
-        stopAtEntry: false
+        stopAtEntry: false,
+        internalConsoleOptions: "openOnSessionStart"
     }
 }
 
@@ -172,6 +174,7 @@ function createWebLaunchConfiguration(projectData: TargetProjectData): WebLaunch
         args: [],
         cwd: '${workspaceRoot}',
         stopAtEntry: false,
+        internalConsoleOptions: "openOnSessionStart",
         launchBrowser: {
             enabled: true,
             args: '${auto-detect-url}',
