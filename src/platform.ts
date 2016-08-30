@@ -94,6 +94,14 @@ export function getCurrentPlatform() {
                 }
 
                 break;
+            case 'linuxmint':
+                const lmVersionId = getValue("VERSION_ID");
+                if (lmVersionId.startsWith("18")) {
+                    // Linux Mint 18 is binary compatible with Ubuntu 16.04
+                    return Platform.Ubuntu16;
+                }
+
+                break;
         }
     }
 
