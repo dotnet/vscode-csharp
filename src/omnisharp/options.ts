@@ -24,13 +24,13 @@ export function readOptions(): Options {
     const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
     const csharpConfig = vscode.workspace.getConfiguration('csharp');
 
-    const path = omnisharpConfig.has('path')
-        ? omnisharpConfig.get<string>('path')
-        : csharpConfig.get<string>('omnisharp');
+    const path = csharpConfig.has('omnisharp')
+        ? csharpConfig.get<string>('omnisharp')
+        : omnisharpConfig.get<string>('path');
 
-    const useMono = omnisharpConfig.has('useMono')
-        ? omnisharpConfig.get<boolean>('useMono')
-        : csharpConfig.get<boolean>('omnisharpUsesMono');
+    const useMono = csharpConfig.has('omnisharpUsesMono')
+        ? csharpConfig.get<boolean>('omnisharpUsesMono')
+        : omnisharpConfig.get<boolean>('useMono');
 
     const loggingLevel = omnisharpConfig.get<string>('loggingLevel');
     const autoStart = omnisharpConfig.get<boolean>('autoStart', true);
