@@ -1,3 +1,16 @@
 {
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+
+    "files.exclude": {
+        "out": true,
+        "typings": false
+    },
+
+    "search.exclude": {
+        "**/node_modules": true,
+        "out/": true
+    },
+   
     "tslint.rulesDirectory": "node_modules/tslint-microsoft-contrib"
 }
