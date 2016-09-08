@@ -149,7 +149,7 @@
       {
         "command": "csharp.listProcess",
         "title": "List process for attach",
-        "category": "CSharp" 
+        "category": "CSharp"
       }
     ],
     "keybindings": [
@@ -317,9 +317,11 @@
               },
               "env": {
                 "type": "object",
-                "additionalProperties": { "type": "string" },
+                "additionalProperties": {
+                  "type": "string"
+                },
                 "description": "Environment variables passed to the program.",
-                "default": { }
+                "default": {}
               },
               "externalConsole": {
                 "type": "boolean",
@@ -363,34 +365,34 @@
                 "description": "Optional flags to determine what types of messages should be logged to the output window.",
                 "properties": {
                   "exceptions": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether exception messages should be logged to the output window.",
-                      "default": true
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether exception messages should be logged to the output window.",
+                    "default": true
                   },
                   "moduleLoad": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether module load events should be logged to the output window.",
-                      "default": true
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether module load events should be logged to the output window.",
+                    "default": true
                   },
                   "programOutput": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
-                      "default": true
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
+                    "default": true
                   },
                   "engineLogging": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
-                      "default": false
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
+                    "default": false
                   },
                   "trace": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether diagnostic adapter command tracing should be logged to the output window.",
-                      "default": false
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether diagnostic adapter command tracing should be logged to the output window.",
+                    "default": false
                   },
                   "traceResponse": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether diagnostic adapter command and response tracing should be logged to the output window.",
-                      "default": false
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether diagnostic adapter command and response tracing should be logged to the output window.",
+                    "default": false
                   }
                 }
               },
@@ -402,7 +404,7 @@
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
                   "pipeArgs": []
                 },
-                "properties" : {
+                "properties": {
                   "pipeCwd": {
                     "type": "string",
                     "description": "The fully qualified path to the working directory for the pipe program.",
@@ -423,9 +425,11 @@
                   },
                   "pipeEnv": {
                     "type": "object",
-                    "additionalProperties": { "type": "string" },
+                    "additionalProperties": {
+                      "type": "string"
+                    },
                     "description": "Environment variables passed to the pipe program.",
-                    "default": { }
+                    "default": {}
                   },
                   "windows": {
                     "type": "object",
@@ -456,9 +460,11 @@
                       },
                       "pipeEnv": {
                         "type": "object",
-                        "additionalProperties": { "type": "string" },
+                        "additionalProperties": {
+                          "type": "string"
+                        },
                         "description": "Environment variables passed to the pipe program.",
-                        "default": { }
+                        "default": {}
                       }
                     }
                   },
@@ -491,10 +497,12 @@
                       },
                       "pipeEnv": {
                         "type": "object",
-                        "additionalProperties": { "type": "string" },
+                        "additionalProperties": {
+                          "type": "string"
+                        },
                         "description": "Environment variables passed to the pipe program.",
-                        "default": { }
-                      }                      
+                        "default": {}
+                      }
                     }
                   },
                   "linux": {
@@ -526,9 +534,11 @@
                       },
                       "pipeEnv": {
                         "type": "object",
-                        "additionalProperties": { "type": "string" },
+                        "additionalProperties": {
+                          "type": "string"
+                        },
                         "description": "Environment variables passed to the pipe program.",
-                        "default": { }
+                        "default": {}
                       }
                     }
                   }
@@ -545,18 +555,18 @@
                 "default": "The process name to attach to. If this is used, 'processId' should not be used."
               },
               "processId": {
-                "anyOf": [ 
-                    {
-                      "type": "string",
-                      "description": "The process id to attach to. Use \"${command.pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
-                      "default": "${command.pickProcess}"
-                    }, 
-                    {
-                      "type": "integer",
-                      "description": "The process id to attach to. Use \"${command.pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
-                      "default": 0
-                    }
-                ]                
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "description": "The process id to attach to. Use \"${command.pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                    "default": "${command.pickProcess}"
+                  },
+                  {
+                    "type": "integer",
+                    "description": "The process id to attach to. Use \"${command.pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                    "default": 0
+                  }
+                ]
               },
               "sourceFileMap": {
                 "type": "object",
@@ -595,34 +605,34 @@
                 "description": "Optional flags to determine what types of messages should be logged to the output window.",
                 "properties": {
                   "exceptions": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether exception messages should be logged to the output window.",
-                      "default": true
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether exception messages should be logged to the output window.",
+                    "default": true
                   },
                   "moduleLoad": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether module load events should be logged to the output window.",
-                      "default": true
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether module load events should be logged to the output window.",
+                    "default": true
                   },
                   "programOutput": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
-                      "default": true
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
+                    "default": true
                   },
                   "engineLogging": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
-                      "default": false
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
+                    "default": false
                   },
                   "trace": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether diagnostic adapter command tracing should be logged to the output window.",
-                      "default": false
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether diagnostic adapter command tracing should be logged to the output window.",
+                    "default": false
                   },
                   "traceResponse": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether diagnostic adapter command and response tracing should be logged to the output window.",
-                      "default": false
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether diagnostic adapter command and response tracing should be logged to the output window.",
+                    "default": false
                   }
                 }
               }
@@ -668,7 +678,7 @@
               "ASPNETCORE_ENVIRONMENT": "Development"
             },
             "sourceFileMap": {
-                "/Views": "${workspaceRoot}/Views"
+              "/Views": "${workspaceRoot}/Views"
             }
           },
           {
