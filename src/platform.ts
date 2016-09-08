@@ -30,7 +30,7 @@ export function getCurrentPlatform() {
     else if (process.platform === 'linux') {
         // Get the text of /etc/os-release to discover which Linux distribution we're running on.
         // For details: https://www.freedesktop.org/software/systemd/man/os-release.html
-        // When any distro or version is added, please update GetClrDbg.sh in MIEngine
+        // When any new distro or version is added, please update GetClrDbg.sh in MIEngine or inform the contributers of MIEngine.
         const text = child_process.execSync('cat /etc/os-release').toString();
         const lines = text.split('\n');
 
