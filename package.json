@@ -17,7 +17,7 @@
     "Linters",
     "Snippets"
   ],
-  "main": "./out/main",
+  "main": "./out/src/main",
   "scripts": {
     "compile": "node ./node_modules/vscode/bin/compile -p ./",
     "watch": "node ./node_modules/vscode/bin/compile -watch -p ./",
