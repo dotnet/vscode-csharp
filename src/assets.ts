@@ -11,7 +11,7 @@ import * as vscode from 'vscode';
 import * as tasks from 'vscode-tasks';
 import {OmnisharpServer} from './omnisharp/server';
 import * as serverUtils from './omnisharp/utils';
-import * as protocol from './omnisharp/protocol.ts'
+import * as protocol from './omnisharp/protocol'
 
 interface DebugConfiguration {
     name: string,
@@ -60,7 +60,7 @@ interface Paths {
 
 function getPaths(): Paths {
     const vscodeFolder = path.join(vscode.workspace.rootPath, '.vscode');
-    
+
     return {
         vscodeFolder: vscodeFolder,
         tasksJsonPath: path.join(vscodeFolder, 'tasks.json'),
@@ -83,7 +83,7 @@ function hasOperations(operations: Operations) {
 function getOperations() {
     const paths = getPaths();
 
-    return getBuildOperations(paths.tasksJsonPath).then(operations => 
+    return getBuildOperations(paths.tasksJsonPath).then(operations =>
            getLaunchOperations(paths.launchJsonPath, operations));
 }
 
@@ -95,7 +95,7 @@ function getBuildOperations(tasksJsonPath: string) {
                     const text = buffer.toString();
                     const tasksJson: tasks.TaskConfiguration = JSON.parse(text);
                     const buildTask = tasksJson.tasks.find(td => td.taskName === 'build');
-                    
+
                     resolve({ updateTasksJson: (buildTask === undefined) });
                 });
             }
@@ -123,7 +123,7 @@ function getLaunchOperations(launchJsonPath: string, operations: Operations) {
 function promptToAddAssets() {
     return new Promise<boolean>((resolve, reject) => {
         const item = { title: 'Yes' }
-        
+
         vscode.window.showInformationMessage('Required assets to build and debug are missing from your project. Add them?', item).then(selection => {
             return selection
                 ? resolve(true)
@@ -139,7 +139,7 @@ function computeProgramPath(projectData: TargetProjectData) {
     }
 
     let result = '${workspaceRoot}';
-    
+
     if (projectData.projectPath) {
         result = path.join(result, path.relative(vscode.workspace.rootPath, projectData.projectPath.fsPath));
     }
@@ -258,10 +258,10 @@ function addTasksJsonIfNecessary(projectData: TargetProjectData, paths: Paths, o
         if (!operations.addTasksJson) {
             return resolve();
         }
-        
+
         const tasksJson = createTasksConfiguration(projectData);
         const tasksJsonText = JSON.stringify(tasksJson, null, '    ');
-        
+
         return fs.writeFileAsync(paths.tasksJsonPath, tasksJsonText);
     });
 }
@@ -341,13 +341,13 @@ function hasWebServerDependency(targetProjectData: TargetProjectData): boolean {
     if (projectJsonObject == null) {
         return false;
     }
-    
+
     for (var key in projectJsonObject.dependencies) {
         if (key.toLowerCase().startsWith("microsoft.aspnetcore.server")) {
             return true;
         }
     }
-    
+
     return false;
 }
 
@@ -360,7 +360,7 @@ function addLaunchJsonIfNecessary(projectData: TargetProjectData, paths: Paths, 
         const isWebProject = hasWebServerDependency(projectData);
         const launchJson = createLaunchJson(projectData, isWebProject);
         const launchJsonText = JSON.stringify(launchJson, null, '    ');
-        
+
         return fs.writeFileAsync(paths.launchJsonPath, launchJsonText);
     });
 }
@@ -369,7 +369,7 @@ export function addAssetsIfNecessary(server: OmnisharpServer) {
     if (!vscode.workspace.rootPath) {
         return;
     }
-    
+
     return serverUtils.requestWorkspaceInformation(server).then(info => {
         // If there are no .NET Core projects, we won't bother offering to add assets.
         if ('DotNet' in info && info.DotNet.Projects.length > 0) {
@@ -377,15 +377,15 @@ export function addAssetsIfNecessary(server: OmnisharpServer) {
                 if (!hasOperations(operations)) {
                     return;
                 }
-                
+
                 promptToAddAssets().then(addAssets => {
                     if (!addAssets) {
                         return;
                     }
-                    
+
                     const data = findTargetProjectData(info.DotNet.Projects);
                     const paths = getPaths();
-                    
+
                     return fs.ensureDirAsync(paths.vscodeFolder).then(() => {
                         return Promise.all([
                             addTasksJsonIfNecessary(data, paths, operations),
