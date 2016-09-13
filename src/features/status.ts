@@ -10,6 +10,7 @@ import {dotnetRestoreForProject} from './commands';
 import {basename} from 'path';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
+import {debounce} from 'lodash';
 
 export default function reportStatus(server: OmnisharpServer) {
 	return vscode.Disposable.from(
@@ -42,6 +43,7 @@ class Status {
 export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable {
 
 	let disposables: vscode.Disposable[] = [];
+    let localDisposables: vscode.Disposable[];
 
 	let entry = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, Number.MIN_VALUE);
 	let defaultStatus = new Status(defaultSelector);
@@ -107,44 +109,48 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
 	disposables.push(server.onServerStop(() => {
 		projectStatus = undefined;
 		defaultStatus.text = undefined;
+
+        vscode.Disposable.from(...localDisposables).dispose();
+        localDisposables = undefined;
 	}));
 
 	disposables.push(server.onServerStart(path => {
+        localDisposables = [];
 
 		defaultStatus.text = '$(flame) Running';
 		defaultStatus.command = 'o.pickProjectAndStart';
 		defaultStatus.color = '';
 		render();
 
-		function updateProjectInfo() {
-			serverUtils.requestWorkspaceInformation(server).then(info => {
-                
+        function updateProjectInfo() {
+            serverUtils.requestWorkspaceInformation(server).then(info => {
+
                 interface Project {
                     Path: string;
                     SourceFiles: string[];
                 }
-                
+
 				let fileNames: vscode.DocumentSelector[] = [];
 				let label: string;
 
                 function addProjectFileNames(project: Project) {
                     fileNames.push({ pattern: project.Path });
-                    
+
                     if (project.SourceFiles) {
                         for (let sourceFile of project.SourceFiles) {
                             fileNames.push({ pattern: sourceFile });
                         }
                     }
                 }
-                
+
                 function addDnxOrDotNetProjects(projects: Project[]) {
                     let count = 0;
-                    
+
                     for (let project of projects) {
                         count += 1;
                         addProjectFileNames(project);
                     }
-                    
+
                     if (!label) {
                         if (count === 1) {
                             label = basename(projects[0].Path); //workspace.getRelativePath(info.Dnx.Projects[0].Path);
@@ -159,7 +165,7 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
 				if (info.MsBuild && info.MsBuild.SolutionPath) {
 					label = basename(info.MsBuild.SolutionPath); //workspace.getRelativePath(info.MsBuild.SolutionPath);
 					fileNames.push({ pattern: info.MsBuild.SolutionPath });
-                    
+
 					for (let project of info.MsBuild.Projects) {
                         addProjectFileNames(project);
 					}
@@ -182,9 +188,11 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
 			});
 		}
 
-		disposables.push(server.onProjectAdded(updateProjectInfo));
-		disposables.push(server.onProjectChange(updateProjectInfo));
-		disposables.push(server.onProjectRemoved(updateProjectInfo));
+        // Don't allow the same request to slam the server within a "short" window
+        let debouncedUpdateProjectInfo = debounce(updateProjectInfo, 1500, { leading: true });
+        localDisposables.push(server.onProjectAdded(debouncedUpdateProjectInfo));
+        localDisposables.push(server.onProjectChange(debouncedUpdateProjectInfo));
+        localDisposables.push(server.onProjectRemoved(debouncedUpdateProjectInfo));
 	}));
 
 	return vscode.Disposable.from(...disposables);
