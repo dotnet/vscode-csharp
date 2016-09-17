@@ -24,11 +24,11 @@ export enum LaunchTargetKind {
  * Represents the project or solution that OmniSharp is to be launched with.
  * */
 export interface LaunchTarget {
-	label: string;
-	description: string;
-	directory: string;
-	target: string;
-	kind: LaunchTargetKind;
+    label: string;
+    description: string;
+    directory: string;
+    target: string;
+    kind: LaunchTargetKind;
 }
 
 export function getDefaultFlavor(kind: LaunchTargetKind) {
@@ -47,7 +47,8 @@ export function getDefaultFlavor(kind: LaunchTargetKind) {
 /**
  * Returns a list of potential targets on which OmniSharp can be launched.
  * This includes `project.json` files, `*.sln` files (if any `*.csproj` files are found), and the root folder
- * (if it doesn't contain a `project.json` file, but `project.json` files exist).
+ * (if it doesn't contain a `project.json` file, but `project.json` files exist). In addition, the root folder
+ * is included if there are any `*.csproj` files present, but a `*.sln* file is not found.
  */
 export function findLaunchTargets(): Thenable<LaunchTarget[]> {
     if (!vscode.workspace.rootPath) {
@@ -68,6 +69,7 @@ function select(resources: vscode.Uri[], rootPath: string): LaunchTarget[] {
     //   * If there are .csproj files, .sln files are considered as launch targets.
     //   * Any project.json file is considered a launch target.
     //   * If there is no project.json file in the root, the root as added as a launch target.
+    //   * Additionally, if there are .csproj files, but no .sln file, the root is added as a launch target.
     //
     // TODO:
     //   * It should be possible to choose a .csproj as a launch target
@@ -80,6 +82,7 @@ function select(resources: vscode.Uri[], rootPath: string): LaunchTarget[] {
 
     let targets: LaunchTarget[] = [],
         hasCsProjFiles = false,
+        hasSlnFile = false,
         hasProjectJson = false,
         hasProjectJsonAtRoot = false;
 
@@ -88,6 +91,8 @@ function select(resources: vscode.Uri[], rootPath: string): LaunchTarget[] {
     resources.forEach(resource => {
         // Add .sln files if there are .csproj files
         if (hasCsProjFiles && isSolution(resource)) {
+            hasSlnFile = true;
+
             targets.push({
                 label: path.basename(resource.fsPath),
                 description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
@@ -113,8 +118,10 @@ function select(resources: vscode.Uri[], rootPath: string): LaunchTarget[] {
         }
     });
 
-    // Add the root folder if there are project.json files, but none in the root.
-    if (hasProjectJson && !hasProjectJsonAtRoot) {
+    // Add the root folder under the following circumstances:
+    // * If there are .csproj files, but no .sln file, and none in the root.
+    // * If there are project.json files, but none in the root.
+    if ((hasCsProjFiles && !hasSlnFile) || (hasProjectJson && !hasProjectJsonAtRoot)) {
         targets.push({
             label: path.basename(rootPath),
             description: '',
