@@ -10,7 +10,8 @@ import {dotnetRestoreForProject} from './commands';
 import {basename} from 'path';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import {debounce} from 'lodash';
+
+const debounce = require('lodash.debounce');
 
 export default function reportStatus(server: OmnisharpServer) {
 	return vscode.Disposable.from(
