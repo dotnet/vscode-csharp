@@ -30,7 +30,7 @@
     "fs-extra-promise": "^0.3.1",
     "http-proxy-agent": "^1.0.0",
     "https-proxy-agent": "^1.0.0",
-    "lodash": "^4.15.0",
+    "lodash.debounce": "^4.0.8",
     "open": "*",
     "semver": "*",
     "tmp": "0.0.28",
