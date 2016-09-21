@@ -9,7 +9,7 @@ export class DefinitionMetadataDocumentProvider implements TextDocumentContentPr
 
     constructor() {
         this._documents = new Map<string, MetadataResponse>();
-        this._documentClosedSubscription = workspace.onDidCloseTextDocument(this.onTextDocumentClosed);
+        this._documentClosedSubscription = workspace.onDidCloseTextDocument(this.onTextDocumentClosed, this);
     }
 
     private onTextDocumentClosed(document: TextDocument) : void {
