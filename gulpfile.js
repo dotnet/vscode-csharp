@@ -42,7 +42,7 @@ function installOmnisharp(omnisharps) {
 
         return download.go(omni.flavor, omni.platform, log);
     });
-    
+
     return Promise.all(promises);
 }
 
@@ -53,7 +53,7 @@ function cleanOmnisharp() {
 gulp.task('omnisharp:clean', () => {
     return cleanOmnisharp();
 });
- 
+
 gulp.task('omnisharp:install', ['omnisharp:clean'], () => {
     const flavor = gulpUtil.env.flavor || Flavor.CoreCLR;
     const platform = gulpUtil.env.platform || platform.getCurrentPlatform();
@@ -157,7 +157,7 @@ gulp.task('package:offline', ['clean'], () => {
 
 /// Test Task
 gulp.task('test', () => {
-    gulp.src('out/test/*.tests.js')
+    gulp.src('out/test/**/*.tests.js')
         .pipe(mocha({ui: "tdd"}))
         .once('error', () => {
             process.exit(1);

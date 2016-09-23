@@ -21,7 +21,7 @@
   "scripts": {
     "compile": "node ./node_modules/vscode/bin/compile -p ./",
     "watch": "node ./node_modules/vscode/bin/compile -watch -p ./",
-    "test": "mocha --timeout 15000 -u tdd ./out/test/*.tests.js",
+    "test": "mocha --timeout 15000 -u tdd ./out/test/**/*.tests.js",
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
@@ -46,7 +46,9 @@
     "tslint-microsoft-contrib": "^2.0.0",
     "typescript": "^1.7.3",
     "vscode": "^0.11.13",
-    "vsce": "^1.7.0"
+    "vsce": "^1.7.0",
+    "chai": "^3.5.0",
+    "vscode-textmate": "^2.1.1"
   },
   "engines": {
     "vscode": "^1.3.0"

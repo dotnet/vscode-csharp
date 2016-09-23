@@ -86,6 +86,8 @@ First install:
 * Node.js (newer than 4.3.1)
 * Npm (newer 2.14.12)
 
+In case you get a *node-gyp* error [follow the instrutions here](https://github.com/nodejs/node-gyp/blob/master/README.md) to fix it. The *vscode-textmate* package pulls in a native node dependency and those instructions will set up the node build tool which deals with those.
+
 To **run and develop** do the following:
 
 * Run `npm i`
@@ -93,6 +95,8 @@ To **run and develop** do the following:
 * *Optional:* run `tsc -w`, make code changes (on Windows, try `start node ".\node_modules\typescript\bin\tsc -w"`)
 * Press <kbd>F5</kbd> to debug
 
+To **test** do the following: `npm run test`
+
 ### License
-The Microsoft C# extension is subject to [these license terms](RuntimeLicenses/license.txt).  
-The source code to this extension is available on [https://github.com/OmniSharp/omnisharp-vscode](https://github.com/OmniSharp/omnisharp-vscode) and licensed under the [MIT license](LICENSE.txt).  
+The Microsoft C# extension is subject to [these license terms](RuntimeLicenses/license.txt).
+The source code to this extension is available on [https://github.com/OmniSharp/omnisharp-vscode](https://github.com/OmniSharp/omnisharp-vscode) and licensed under the [MIT license](LICENSE.txt).

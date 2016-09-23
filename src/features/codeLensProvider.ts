@@ -32,7 +32,6 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
     };
 
     provideCodeLenses(document: TextDocument, token: CancellationToken): CodeLens[] | Thenable<CodeLens[]> {
-        let request = { Filename: document.fileName };
         return serverUtils.currentFileMembersAsTree(this._server, { Filename: document.fileName }, token).then(tree => {
             let ret: CodeLens[] = [];
             tree.TopLevelTypeDefinitions.forEach(node => this._convertQuickFix(ret, document.fileName, node));
