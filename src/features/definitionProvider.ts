@@ -21,16 +21,16 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
         this._definitionMetadataDocumentProvider = definitionMetadataDocumentProvider;
     }
 
-	public provideDefinition(document: TextDocument, position: Position, token: CancellationToken): Promise<Location> {
+    public provideDefinition(document: TextDocument, position: Position, token: CancellationToken): Promise<Location> {
 
-		let req = <GoToDefinitionRequest>createRequest(document, position);
+        let req = <GoToDefinitionRequest>createRequest(document, position);
         req.WantMetadata = true;
 
-		return serverUtils.goToDefinition(this._server, req, token).then(gotoDefinitionResponse => {
+        return serverUtils.goToDefinition(this._server, req, token).then(gotoDefinitionResponse => {
 
-			if (gotoDefinitionResponse && gotoDefinitionResponse.FileName) {
-				return toLocation(gotoDefinitionResponse);
-			} else if (gotoDefinitionResponse.MetadataSource) {
+            if (gotoDefinitionResponse && gotoDefinitionResponse.FileName) {
+                return toLocation(gotoDefinitionResponse);
+            } else if (gotoDefinitionResponse.MetadataSource) {
                 const metadataSource: MetadataSource = gotoDefinitionResponse.MetadataSource;
 
                 return serverUtils.getMetadata(this._server, <MetadataRequest> {
@@ -49,6 +49,6 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
                     return new Location(uri, new Position(gotoDefinitionResponse.Line - 1, gotoDefinitionResponse.Column - 1));
                 });
             }
-		});
-	}
+        });
+    }
 }

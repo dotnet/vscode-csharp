@@ -13,20 +13,20 @@ import {DocumentHighlightProvider, DocumentHighlight, DocumentHighlightKind, Can
 
 export default class OmnisharpDocumentHighlightProvider extends AbstractSupport implements DocumentHighlightProvider {
 
-	public provideDocumentHighlights(resource: TextDocument, position: Position, token: CancellationToken): Promise<DocumentHighlight[]> {
+    public provideDocumentHighlights(resource: TextDocument, position: Position, token: CancellationToken): Promise<DocumentHighlight[]> {
 
-		let req = createRequest<protocol.FindUsagesRequest>(resource, position);
-		req.OnlyThisFile = true;
-		req.ExcludeDefinition = false;
+        let req = createRequest<protocol.FindUsagesRequest>(resource, position);
+        req.OnlyThisFile = true;
+        req.ExcludeDefinition = false;
 
-		return serverUtils.findUsages(this._server, req, token).then(res => {
-			if (res && Array.isArray(res.QuickFixes)) {
-				return res.QuickFixes.map(OmnisharpDocumentHighlightProvider._asDocumentHighlight);
-			}
-		});
-	}
+        return serverUtils.findUsages(this._server, req, token).then(res => {
+            if (res && Array.isArray(res.QuickFixes)) {
+                return res.QuickFixes.map(OmnisharpDocumentHighlightProvider._asDocumentHighlight);
+            }
+        });
+    }
 
-	private static _asDocumentHighlight(quickFix: protocol.QuickFix): DocumentHighlight {
-		return new DocumentHighlight(toRange(quickFix), DocumentHighlightKind.Read);
-	}
+    private static _asDocumentHighlight(quickFix: protocol.QuickFix): DocumentHighlight {
+        return new DocumentHighlight(toRange(quickFix), DocumentHighlightKind.Read);
+    }
 }
