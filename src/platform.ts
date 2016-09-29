@@ -106,5 +106,5 @@ export function getCurrentPlatform() {
         }
     }
 
-    return Platform.Unknown;	
+    return Platform.Unknown;
 }

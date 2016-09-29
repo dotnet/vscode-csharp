@@ -11,51 +11,51 @@ import * as serverUtils from '../omnisharp/utils';
 
 function forwardDocumentChanges(server: OmnisharpServer): Disposable {
 
-	return workspace.onDidChangeTextDocument(event => {
+    return workspace.onDidChangeTextDocument(event => {
 
-		let {document} = event;
-		if (document.isUntitled || document.languageId !== 'csharp') {
-			return;
-		}
+        let {document} = event;
+        if (document.isUntitled || document.languageId !== 'csharp') {
+            return;
+        }
 
-		if (!server.isRunning()) {
-			return;
-		}
+        if (!server.isRunning()) {
+            return;
+        }
 
-		serverUtils.updateBuffer(server, {Buffer: document.getText(), Filename: document.fileName}).catch(err => {
-			console.error(err);
-			return err;
-		});
-	});
+        serverUtils.updateBuffer(server, {Buffer: document.getText(), Filename: document.fileName}).catch(err => {
+            console.error(err);
+            return err;
+        });
+    });
 }
 
 function forwardFileChanges(server: OmnisharpServer): Disposable {
 
-	function onFileSystemEvent(uri: Uri): void {
-		if (!server.isRunning()) {
-			return;
-		}
+    function onFileSystemEvent(uri: Uri): void {
+        if (!server.isRunning()) {
+            return;
+        }
         
-		let req = { Filename: uri.fsPath };
+        let req = { Filename: uri.fsPath };
         
         serverUtils.filesChanged(server, [req]).catch(err => {
-			console.warn(`[o] failed to forward file change event for ${uri.fsPath}`, err);
-			return err;
-		});
-	}
+            console.warn(`[o] failed to forward file change event for ${uri.fsPath}`, err);
+            return err;
+        });
+    }
 
-	const watcher = workspace.createFileSystemWatcher('**/*.*');
-	let d1 = watcher.onDidCreate(onFileSystemEvent);
-	let d2 = watcher.onDidChange(onFileSystemEvent);
-	let d3 = watcher.onDidDelete(onFileSystemEvent);
+    const watcher = workspace.createFileSystemWatcher('**/*.*');
+    let d1 = watcher.onDidCreate(onFileSystemEvent);
+    let d2 = watcher.onDidChange(onFileSystemEvent);
+    let d3 = watcher.onDidDelete(onFileSystemEvent);
 
-	return Disposable.from(watcher, d1, d2, d3);
+    return Disposable.from(watcher, d1, d2, d3);
 }
 
 export default function forwardChanges(server: OmnisharpServer): Disposable {
 
-	// combine file watching and text document watching
-	return Disposable.from(
-		forwardDocumentChanges(server),
-		forwardFileChanges(server));
+    // combine file watching and text document watching
+    return Disposable.from(
+        forwardDocumentChanges(server),
+        forwardFileChanges(server));
 }

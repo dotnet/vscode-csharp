@@ -14,30 +14,30 @@ import {CancellationToken, Uri, WorkspaceSymbolProvider, SymbolInformation, Symb
 
 export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport implements WorkspaceSymbolProvider {
 
-	public provideWorkspaceSymbols(search: string, token: CancellationToken): Promise<SymbolInformation[]> {
+    public provideWorkspaceSymbols(search: string, token: CancellationToken): Promise<SymbolInformation[]> {
 
-		return serverUtils.findSymbols(this._server, { Filter: search, Filename: '' }, token).then(res => {
-			if (res && Array.isArray(res.QuickFixes)) {
-				return res.QuickFixes.map(OmnisharpWorkspaceSymbolProvider._asSymbolInformation);
-			}
-		});
-	}
+        return serverUtils.findSymbols(this._server, { Filter: search, Filename: '' }, token).then(res => {
+            if (res && Array.isArray(res.QuickFixes)) {
+                return res.QuickFixes.map(OmnisharpWorkspaceSymbolProvider._asSymbolInformation);
+            }
+        });
+    }
 
-	private static _asSymbolInformation(symbolInfo: protocol.SymbolLocation): SymbolInformation {
+    private static _asSymbolInformation(symbolInfo: protocol.SymbolLocation): SymbolInformation {
 
-		return new SymbolInformation(symbolInfo.Text, OmnisharpWorkspaceSymbolProvider._toKind(symbolInfo),
-			toRange(symbolInfo),
-			Uri.file(symbolInfo.FileName));
-	}
+        return new SymbolInformation(symbolInfo.Text, OmnisharpWorkspaceSymbolProvider._toKind(symbolInfo),
+            toRange(symbolInfo),
+            Uri.file(symbolInfo.FileName));
+    }
 
-	private static _toKind(symbolInfo: protocol.SymbolLocation): SymbolKind {
-		switch (symbolInfo.Kind) {
-			case 'Method':
-				return SymbolKind.Method;
-			case 'Field':
-			case 'Property':
-				return SymbolKind.Field;
-		}
-		return SymbolKind.Class;
-	}
+    private static _toKind(symbolInfo: protocol.SymbolLocation): SymbolKind {
+        switch (symbolInfo.Kind) {
+            case 'Method':
+                return SymbolKind.Method;
+            case 'Field':
+            case 'Property':
+                return SymbolKind.Field;
+        }
+        return SymbolKind.Class;
+    }
 }
