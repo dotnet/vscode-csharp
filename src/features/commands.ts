@@ -30,8 +30,8 @@ export default function registerCommands(server: OmnisharpServer, extensionPath:
 
     // register two commands for running and debugging xunit tests
     let d6 = dotnetTest.registerDotNetTestRunCommand(server);
-    let d7 = dotnetTest.registerDotNetTestDebugCommand(server);    
-    
+    let d7 = dotnetTest.registerDotNetTestDebugCommand(server);
+
     // register process picker for attach
     let attachItemsProvider = DotNetAttachItemsProviderFactory.Get();
     let attacher = new AttachPicker(attachItemsProvider);
@@ -92,7 +92,7 @@ function projectsToCommands(projects: protocol.DotNetProject[]): Promise<Command
                 label: `dotnet restore - (${project.Name || path.basename(project.Path)})`,
                 description: projectDirectory,
                 execute() {
-                    return runDotnetRestore(projectDirectory);
+                    return dotnetRestore(projectDirectory);
                 }
             };
         });
@@ -107,7 +107,7 @@ export function dotnetRestoreAllProjects(server: OmnisharpServer) {
 
     return serverUtils.requestWorkspaceInformation(server).then(info => {
 
-        if (!('DotNet in info') || info.DotNet.Projects.length < 1) {
+        if (!info.DotNet || info.DotNet.Projects.length < 1) {
             return Promise.reject("No .NET Core projects found");
         }
 
@@ -131,7 +131,7 @@ export function dotnetRestoreForProject(server: OmnisharpServer, fileName: strin
 
     return serverUtils.requestWorkspaceInformation(server).then(info => {
 
-        if (!('DotNet in info') || info.DotNet.Projects.length < 1) {
+        if (!info.DotNet || info.DotNet.Projects.length < 1) {
             return Promise.reject("No .NET Core projects found");
         }
 
@@ -139,28 +139,47 @@ export function dotnetRestoreForProject(server: OmnisharpServer, fileName: strin
 
         for (let project of info.DotNet.Projects) {
             if (project.Path === directory) {
-                return runDotnetRestore(directory, fileName);
+                return dotnetRestore(directory, fileName);
             }
         }
     });
 }
 
-function runDotnetRestore(cwd: string, fileName?: string) {
-    return new Promise<cp.ChildProcess>((resolve, reject) => {
+function dotnetRestore(cwd: string, fileName?: string) {
+    return new Promise<void>((resolve, reject) => {
         channel.clear();
         channel.show();
 
-        let cmd = 'dotnet restore';
+        let cmd = 'dotnet';
+        let args = ['restore'];
+
         if (fileName) {
-            cmd = `${cmd} "${fileName}"`
+            args.push(fileName);
         }
 
-        return cp.exec(cmd, { cwd: cwd, env: process.env }, (err, stdout, stderr) => {
-            channel.append(stdout.toString());
-            channel.append(stderr.toString());
-            if (err) {
-                channel.append('ERROR: ' + err);
-            }
+        let dotnet = cp.spawn(cmd, args, { cwd: cwd, env: process.env });
+
+        function handleData(stream: NodeJS.ReadableStream) {
+            stream.on('data', chunk => {
+                channel.append(chunk.toString());
+            });
+
+            stream.on('err', err => {
+                channel.append(`ERROR: ${err}`);
+            });
+        }
+
+        handleData(dotnet.stdout);
+        handleData(dotnet.stderr);
+
+        dotnet.on('close', (code, signal) => {
+            channel.appendLine(`Done: ${code}.`);
+            resolve();
+        });
+
+        dotnet.on('error', err => {
+            channel.appendLine(`ERROR: ${err}`);
+            reject(err)
         });
     });
 }
