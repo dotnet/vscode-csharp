@@ -40,32 +40,47 @@ export class AttachPicker {
 export class RemoteAttachPicker {
     public static ShowAttachEntries(args : any): Promise<string> {
         // Grab selected name from UI
-        var name : string = args.name;
+        let name : string = args.name;
+
+        if (!name) {
+            // Config name not found. 
+            return new Promise<string>((resolve, reject) => {
+                reject(new Error("Name not defined in current configuration."));
+            });
+        }
 
         // Build path for launch.json to find pipeTransport
         const vscodeFolder : string = path.join(vscode.workspace.rootPath, '.vscode');
-        var launchJsonPath : string = path.join(vscodeFolder, 'launch.json')
+        let launchJsonPath : string = path.join(vscodeFolder, 'launch.json');
 
         // Read launch.json
-        var json : any = JSON.parse(fs.readFileSync(launchJsonPath).toString());
+        let json : any = JSON.parse(fs.readFileSync(launchJsonPath).toString());
 
         // Find correct pipeTransport via selected name
-        var config; 
-        for (var i = 0; i < json.configurations.length; ++i) {
-            if (json.configurations[i].name === name) {
-                config = json.configurations[i];
+        let config; 
+        let configIdx : number;
+        for (configIdx = 0; configIdx < json.configurations.length; ++configIdx) {
+            if (json.configurations[configIdx].name === name) {
+                config = json.configurations[configIdx];
                 break; 
             }
         }
 
+        if (configIdx == json.configurations.length) {
+            // Name not found in list of given configurations. 
+            return new Promise<string>((resolve, reject) => {
+                reject(new Error("Could not find configuration that matches given name"));
+            });
+        }
+
         if (!config.pipeTransport) {
-            // Missing PipeTransport, prompt if user wanted to just do local attach?
+            // Missing PipeTransport, prompt if user wanted to just do local attach.
             return new Promise<string>((resolve, reject) => {
                 reject(new Error("Configuration \"" + args.name + "\" in launch.json does not have a " + 
                 "pipeTransport argument for pickRemoteProcess. Use pickProcess for local attach."));
             });
         } else {
-            var pipeCmd : string = config.pipeTransport.pipeProgram + " " + config.pipeTransport.pipeArgs[0];
+            let pipeCmd : string = config.pipeTransport.pipeProgram + " " + config.pipeTransport.pipeArgs.join(" ");
             return RemoteAttachPicker.getRemoteOS(pipeCmd).then(remoteOS => {
                 return RemoteAttachPicker.getRemoteProcesses(pipeCmd, remoteOS).then(processes => {
                     let attachPickOptions: vscode.QuickPickOptions = {
@@ -85,15 +100,15 @@ export class RemoteAttachPicker {
         const commColumnTitle = Array(PsOutputParser.secondColumnCharacters).join("a");
         const psCommand = `ps -axww -o pid=,comm=${commColumnTitle},args=` + (os === 'darwin' ? ' -c' : '');
 
-        return execChildProcessWithTimeout(pipeCmd + ' ' + psCommand, null).then(output => {
+        return execChildProcess(pipeCmd + ' ' + psCommand, null).then(output => {
             return sortProcessEntries(PsOutputParser.parseProcessFromPs(output), os);
         });
     }
 
     public static getRemoteOS(pipeCmd : string) : Promise<string> { 
-        return execChildProcessWithTimeout(pipeCmd + ' "uname"', null).then(output => {
+        return execChildProcess(pipeCmd + ' "uname"', null).then(output => {
             // Clean string of newlines
-            var cleanOutput : string = output.replace(/[\r\n]+/g, '').toLowerCase();
+            let cleanOutput : string = output.replace(/[\r\n]+/g, '').toLowerCase();
 
             switch(cleanOutput) {
                 case "darwin":
@@ -102,7 +117,7 @@ export class RemoteAttachPicker {
                 // Failure case. TODO: test for windows machine
                 default:
                     return new Promise<string>((resolve, reject) => {
-                        reject(output);
+                        reject(new Error("Could not determine OS. " + output));
                     }); 
             }
         });
@@ -140,7 +155,7 @@ abstract class DotNetAttachItemsProvider implements AttachItemsProvider {
 
     getAttachItems(): Promise<AttachItem[]> {
         return this.getInternalProcessEntries().then(processEntries => {
-            return sortProcessEntries(processEntries, os.platform())
+            return sortProcessEntries(processEntries, os.platform());
         });
     }
 }
@@ -157,7 +172,7 @@ function sortProcessEntries(processEntries : Process[], osPlatform : string) : A
         } else if (b.name.toLowerCase() === dotnetProcessName) {
             return 1;
         } else {
-            return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
+            return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
         }
     });
 
@@ -328,18 +343,6 @@ function execChildProcess(process: string, workingDirectory: string): Promise<st
             if (stderr && stderr.length > 0) {
                 reject(new Error(stderr));
                 return;
-            }
-
-            resolve(stdout);
-        });
-    });
-}
-
-function execChildProcessWithTimeout(process: string, workingDirectory: string): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-        child_process.exec(process, { timeout: 3000, cwd: workingDirectory, maxBuffer: 500 * 1024 }, (error: Error, stdout: string, stderr: string) => {
-            if (stderr && stderr.length > 0) {
-                reject(stderr);
             }
 
             resolve(stdout);
