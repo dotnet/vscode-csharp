@@ -81,19 +81,55 @@ export class RemoteAttachPicker {
             });
         } else {
             let pipeCmd : string = config.pipeTransport.pipeProgram + " " + config.pipeTransport.pipeArgs.join(" ");
-            return RemoteAttachPicker.getRemoteOS(pipeCmd).then(remoteOS => {
-                return RemoteAttachPicker.getRemoteProcesses(pipeCmd, remoteOS).then(processes => {
-                    let attachPickOptions: vscode.QuickPickOptions = {
-                        matchOnDescription: true,
-                        matchOnDetail: true,
-                        placeHolder: "Select the process to attach to"                    
-                    };
-                    return vscode.window.showQuickPick(processes, attachPickOptions).then(item => {
-                        return item ? item.id : null;
-                    });
+            return RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd).then(processes => {
+                let attachPickOptions: vscode.QuickPickOptions = {
+                    matchOnDescription: true,
+                    matchOnDetail: true,
+                    placeHolder: "Select the process to attach to"                    
+                };
+                return vscode.window.showQuickPick(processes, attachPickOptions).then(item => {
+                    return item ? item.id : null;
                 });
             });
         }
+    }
+    
+    public static getRemoteOSAndProcesses(pipeCmd :string) : Promise<AttachItem[]> {
+        const commColumnTitle = Array(PsOutputParser.secondColumnCharacters).join("a");
+        // Commands to get OS and processes
+        const linuxPsCommand = `ps -axww -o pid=,comm=${commColumnTitle},args=`;
+        const osxPsCommand = `ps -axww -o pid=,comm=${commColumnTitle},args= -c`;
+        const command = `uname && if [ $(uname) == "Linux" ] ; then ` + linuxPsCommand + `; elif [ $(uname) == "Darwin" ] ; ` + 
+         `then ` + osxPsCommand + `; fi`;
+
+        return execChildProcess(pipeCmd + ' "' + command + '"', null).then(output => {
+            // OS will be on first line
+            // Processess will follow if listed
+            let lines = output.split(os.EOL);
+            
+            if (lines.length == 0) {
+                return new Promise<AttachItem[]>((resolve, reject) => {
+                    reject(new Error("Pipe transport failed to get OS and processes."));
+                });
+            }
+            else {
+                let remoteOS = lines[0].replace(/[\r\n]+/g, '').toLowerCase();
+                
+                if (remoteOS != "linux" && remoteOS != "darwin") {
+                    return new Promise<AttachItem[]>((resolve, reject) => {
+                        reject(new Error("Pipe Transport attach could not determine os. " + remoteOS));
+                    }); 
+                }
+                
+                // Only got OS from uname
+                if (lines.length == 1) {
+                    return RemoteAttachPicker.getRemoteProcesses(pipeCmd, remoteOS);
+                } else {
+                    let processes = lines.slice(1);
+                    return sortProcessEntries(PsOutputParser.parseProcessFromPsArray(processes), remoteOS);
+                }
+            }
+        });
     }
 
     public static getRemoteProcesses(pipeCmd: string, os: string) : Promise<AttachItem[]> {
@@ -103,26 +139,6 @@ export class RemoteAttachPicker {
         return execChildProcess(pipeCmd + ' ' + psCommand, null).then(output => {
             return sortProcessEntries(PsOutputParser.parseProcessFromPs(output), os);
         });
-    }
-
-    public static getRemoteOS(pipeCmd : string) : Promise<string> { 
-        return execChildProcess(pipeCmd + ' "uname"', null).then(output => {
-            // Clean string of newlines
-            let cleanOutput : string = output.replace(/[\r\n]+/g, '').toLowerCase();
-
-            switch(cleanOutput) {
-                case "darwin":
-                case "linux":
-                    return cleanOutput;
-                // Failure case. TODO: test for windows machine
-                default:
-                    return new Promise<string>((resolve, reject) => {
-                        reject(new Error("Could not determine OS. " + output));
-                    }); 
-            }
-        });
-
-
     }
 }
 
@@ -224,6 +240,25 @@ export class PsOutputParser {
     // Only public for tests.
     public static parseProcessFromPs(processes: string): Process[] {
         let lines = processes.split(os.EOL);
+        let processEntries: Process[] = [];
+
+        // lines[0] is the header of the table
+        for (let i = 1; i < lines.length; i++) {
+            let line = lines[i];
+            if (!line) {
+                continue;
+            }
+
+            let process = this.parseLineFromPs(line);
+            if (process) {
+                processEntries.push(process);
+            }
+        }
+
+        return processEntries;
+    }
+    
+    public static parseProcessFromPsArray(lines: string[]): Process[] {
         let processEntries: Process[] = [];
 
         // lines[0] is the header of the table
