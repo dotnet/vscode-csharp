@@ -28,9 +28,8 @@ function convertOSReleaseTextToMap(text : string) : Map<string, string> {
         line = line.trim();
 
         let equalsIndex = line.indexOf('=');
-        let key = line.substring(0, equalsIndex);
-
         if (equalsIndex >= 0) {
+            let key = line.substring(0, equalsIndex);
             let value = line.substring(equalsIndex + 1);
 
             // Strip double quotes if necessary
