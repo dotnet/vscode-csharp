@@ -73,14 +73,23 @@ export class RemoteAttachPicker {
             });
         }
 
-        if (!config.pipeTransport) {
-            // Missing PipeTransport, prompt if user wanted to just do local attach.
+        if (!config.pipeTransport || !config.pipeTransport.debuggerPath) {
+            // Missing PipeTransport and debuggerPath, prompt if user wanted to just do local attach.
             return new Promise<string>((resolve, reject) => {
                 reject(new Error("Configuration \"" + args.name + "\" in launch.json does not have a " + 
-                "pipeTransport argument for pickRemoteProcess. Use pickProcess for local attach."));
+                "pipeTransport argument with debuggerPath for pickRemoteProcess. Use pickProcess for local attach."));
             });
         } else {
-            let pipeCmd : string = config.pipeTransport.pipeProgram + " " + config.pipeTransport.pipeArgs.join(" ");
+            let pipeProgram = config.pipeTransport.pipeProgram;
+            let pipeArgs = config.pipeTransport.pipeArgs;
+            let platformSpecificPipeTransportOptions = RemoteAttachPicker.getPlatformSpecificPipeTransportOptions(config);
+            
+            if (platformSpecificPipeTransportOptions) {
+                pipeProgram = platformSpecificPipeTransportOptions.pipeProgram || pipeProgram;
+                pipeArgs= platformSpecificPipeTransportOptions.pipeArgs || pipeArgs;
+            }
+
+            let pipeCmd : string = pipeProgram + " " + pipeArgs.join(" ");
             return RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd).then(processes => {
                 let attachPickOptions: vscode.QuickPickOptions = {
                     matchOnDescription: true,
@@ -92,6 +101,20 @@ export class RemoteAttachPicker {
                 });
             });
         }
+    }
+    
+    private static getPlatformSpecificPipeTransportOptions(config) {
+        const osPlatform = os.platform();
+        
+        if (osPlatform == "darwin" && config.pipeTransport.osx) {
+            return config.pipeTransport.osx;
+        } else if (osPlatform == "linux" && config.pipeTransport.linux) {
+            return config.pipeTransport.linux;
+        } else if (osPlatform == "win32" && config.pipeTransport.windows) {
+            return config.pipeTransport.windows;
+        }
+        
+        return null;
     }
     
     public static getRemoteOSAndProcesses(pipeCmd :string) : Promise<AttachItem[]> {
@@ -113,17 +136,19 @@ export class RemoteAttachPicker {
                 });
             }
             else {
-                let remoteOS = lines[0].replace(/[\r\n]+/g, '').toLowerCase();
+                let remoteOS = lines[0].replace(/[\r\n]+/g, '');
                 
-                if (remoteOS != "linux" && remoteOS != "darwin") {
+                if (remoteOS != "Linux" && remoteOS != "Darwin") {
                     return new Promise<AttachItem[]>((resolve, reject) => {
-                        reject(new Error("Pipe Transport attach could not determine os. " + remoteOS));
+                        reject(new Error("Could not determine operating system or operating system not supported. " + remoteOS));
                     }); 
                 }
                 
                 // Only got OS from uname
                 if (lines.length == 1) {
-                    return RemoteAttachPicker.getRemoteProcesses(pipeCmd, remoteOS);
+                    return new Promise<AttachItem[]>((resolve, reject) => {
+                        reject(new Error("Transport attach could not obtain processes list.")); 
+                    }); 
                 } else {
                     let processes = lines.slice(1);
                     return sortProcessEntries(PsOutputParser.parseProcessFromPsArray(processes), remoteOS);
