@@ -20,25 +20,29 @@ export enum Platform {
     Ubuntu16
 }
 
-function getValue(name: string, lines: string[]) {
+function convertOSReleaseTextToMap(text : string) : Map<string, string> {
+    let ret: Map<string, string> = new Map<string, string>();
+    const lines: string[] = text.split('\n');
+
     for (let line of lines) {
         line = line.trim();
-        if (line.startsWith(name)) {
-            const equalsIndex = line.indexOf('=');
-            if (equalsIndex >= 0) {
-                let value = line.substring(equalsIndex + 1);
 
-                // Strip double quotes if necessary
-                if (value.length > 1 && value.startsWith('"') && value.endsWith('"')) {
-                    value = value.substring(1, value.length - 1);
-                }
+        let equalsIndex = line.indexOf('=');
+        let key = line.substring(0, equalsIndex);
 
-                return value;
+        if (equalsIndex >= 0) {
+            let value = line.substring(equalsIndex + 1);
+
+            // Strip double quotes if necessary
+            if (value.length > 1 && value.startsWith('"') && value.endsWith('"')) {
+                value = value.substring(1, value.length - 1);
             }
+
+            ret.set(key, value);
         }
     }
 
-    return undefined;
+    return ret;
 }
 
 
@@ -54,14 +58,14 @@ export function getCurrentPlatform() {
         // For details: https://www.freedesktop.org/software/systemd/man/os-release.html
         // When any new distro or version is added, please update GetClrDbg.sh in MIEngine or inform the contributers of MIEngine.
         const text = child_process.execSync('cat /etc/os-release').toString();
-        const lines = text.split('\n');
+        const osReleaseMap = convertOSReleaseTextToMap(text);
 
-        const id = getValue("ID", lines);
+        const id = osReleaseMap.get("ID");
 
         switch (id)
         {
             case 'ubuntu':
-                const versionId = getValue("VERSION_ID", lines);
+                const versionId = osReleaseMap.get("VERSION_ID");
                 if (versionId.startsWith("14")) {
                     // This also works for Linux Mint
                     return Platform.Ubuntu14;
@@ -85,7 +89,7 @@ export function getCurrentPlatform() {
                 // Oracle Linux is binary compatible with CentOS
                 return Platform.CentOS;
             case 'elementary OS':
-                const eOSVersionId = getValue("VERSION_ID", lines);
+                const eOSVersionId = osReleaseMap.get("VERSION_ID");
                 if (eOSVersionId.startsWith("0.3")) {
                     // Elementary OS 0.3 Freya is binary compatible with Ubuntu 14.04
                     return Platform.Ubuntu14;
@@ -97,7 +101,7 @@ export function getCurrentPlatform() {
 
                 break;
             case 'linuxmint':
-                const lmVersionId = getValue("VERSION_ID", lines);
+                const lmVersionId = osReleaseMap.get("VERSION_ID");
                 if (lmVersionId.startsWith("18")) {
                     // Linux Mint 18 is binary compatible with Ubuntu 16.04
                     return Platform.Ubuntu16;
