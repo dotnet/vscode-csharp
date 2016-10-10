@@ -26,7 +26,7 @@ export class AttachPicker {
                 let attachPickOptions: vscode.QuickPickOptions = {
                     matchOnDescription: true,
                     matchOnDetail: true,
-                    placeHolder: "Select the process to attach to"                    
+                    placeHolder: "Select the process to attach to"
                 };
 
                 return vscode.window.showQuickPick(processEntries, attachPickOptions)
@@ -38,63 +38,61 @@ export class AttachPicker {
 }
 
 export class RemoteAttachPicker {
-    public static ShowAttachEntries(args : any): Promise<string> {
+    public static get commColumnTitle() { return Array(PsOutputParser.secondColumnCharacters).join("a"); }
+    public static get linuxPsCommand() { return `ps -axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args=`; }
+    public static get osxPsCommand() { return `ps -axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args= -c`; }
+
+    public static ShowAttachEntries(args: any): Promise<string> {
         // Grab selected name from UI
-        let name : string = args.name;
+        let name: string = args.name;
 
         if (!name) {
             // Config name not found. 
-            return new Promise<string>((resolve, reject) => {
-                reject(new Error("Name not defined in current configuration."));
-            });
+            return Promise.reject<string>(new Error("Name not defined in current configuration."));
         }
 
         // Build path for launch.json to find pipeTransport
-        const vscodeFolder : string = path.join(vscode.workspace.rootPath, '.vscode');
-        let launchJsonPath : string = path.join(vscodeFolder, 'launch.json');
+        const vscodeFolder: string = path.join(vscode.workspace.rootPath, '.vscode');
+        let launchJsonPath: string = path.join(vscodeFolder, 'launch.json');
 
         // Read launch.json
-        let json : any = JSON.parse(fs.readFileSync(launchJsonPath).toString());
+        let json: any = JSON.parse(fs.readFileSync(launchJsonPath).toString());
 
         // Find correct pipeTransport via selected name
-        let config; 
-        let configIdx : number;
+        let config;
+        let configIdx: number;
         for (configIdx = 0; configIdx < json.configurations.length; ++configIdx) {
             if (json.configurations[configIdx].name === name) {
                 config = json.configurations[configIdx];
-                break; 
+                break;
             }
         }
 
         if (configIdx == json.configurations.length) {
             // Name not found in list of given configurations. 
-            return new Promise<string>((resolve, reject) => {
-                reject(new Error("Could not find configuration that matches given name"));
-            });
+            return Promise.reject<string>(new Error(name + " could not be found in configurations."));
         }
 
         if (!config.pipeTransport || !config.pipeTransport.debuggerPath) {
             // Missing PipeTransport and debuggerPath, prompt if user wanted to just do local attach.
-            return new Promise<string>((resolve, reject) => {
-                reject(new Error("Configuration \"" + args.name + "\" in launch.json does not have a " + 
+            return Promise.reject<string>(new Error("Configuration \"" + name + "\" in launch.json does not have a " +
                 "pipeTransport argument with debuggerPath for pickRemoteProcess. Use pickProcess for local attach."));
-            });
         } else {
             let pipeProgram = config.pipeTransport.pipeProgram;
             let pipeArgs = config.pipeTransport.pipeArgs;
             let platformSpecificPipeTransportOptions = RemoteAttachPicker.getPlatformSpecificPipeTransportOptions(config);
-            
+
             if (platformSpecificPipeTransportOptions) {
                 pipeProgram = platformSpecificPipeTransportOptions.pipeProgram || pipeProgram;
-                pipeArgs= platformSpecificPipeTransportOptions.pipeArgs || pipeArgs;
+                pipeArgs = platformSpecificPipeTransportOptions.pipeArgs || pipeArgs;
             }
 
-            let pipeCmd : string = pipeProgram + " " + pipeArgs.join(" ");
+            let pipeCmd: string = pipeProgram + " " + pipeArgs.join(" ");
             return RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd).then(processes => {
                 let attachPickOptions: vscode.QuickPickOptions = {
                     matchOnDescription: true,
                     matchOnDetail: true,
-                    placeHolder: "Select the process to attach to"                    
+                    placeHolder: "Select the process to attach to"
                 };
                 return vscode.window.showQuickPick(processes, attachPickOptions).then(item => {
                     return item ? item.id : null;
@@ -102,10 +100,10 @@ export class RemoteAttachPicker {
             });
         }
     }
-    
+
     private static getPlatformSpecificPipeTransportOptions(config) {
         const osPlatform = os.platform();
-        
+
         if (osPlatform == "darwin" && config.pipeTransport.osx) {
             return config.pipeTransport.osx;
         } else if (osPlatform == "linux" && config.pipeTransport.linux) {
@@ -113,42 +111,34 @@ export class RemoteAttachPicker {
         } else if (osPlatform == "win32" && config.pipeTransport.windows) {
             return config.pipeTransport.windows;
         }
-        
+
         return null;
     }
-    
-    public static getRemoteOSAndProcesses(pipeCmd :string) : Promise<AttachItem[]> {
-        const commColumnTitle = Array(PsOutputParser.secondColumnCharacters).join("a");
-        // Commands to get OS and processes
-        const linuxPsCommand = `ps -axww -o pid=,comm=${commColumnTitle},args=`;
-        const osxPsCommand = `ps -axww -o pid=,comm=${commColumnTitle},args= -c`;
-        const command = `uname && if [ $(uname) == "Linux" ] ; then ` + linuxPsCommand + `; elif [ $(uname) == "Darwin" ] ; ` + 
-         `then ` + osxPsCommand + `; fi`;
 
-        return execChildProcess(pipeCmd + ' "' + command + '"', null).then(output => {
+    public static getRemoteOSAndProcesses(pipeCmd: string): Promise<AttachItem[]> {
+        // Commands to get OS and processes
+        const command = `uname && if [ $(uname) == "Linux" ] ; then ${RemoteAttachPicker.linuxPsCommand} ; elif [ $(uname) == "Darwin" ] ; ` +
+            `then ${RemoteAttachPicker.osxPsCommand}; fi`;
+
+        return execChildProcess(`${pipeCmd} "${command}"`, null).then(output => {
             // OS will be on first line
             // Processess will follow if listed
             let lines = output.split(os.EOL);
-            
+
             if (lines.length == 0) {
-                return new Promise<AttachItem[]>((resolve, reject) => {
-                    reject(new Error("Pipe transport failed to get OS and processes."));
-                });
+                return Promise.reject<AttachItem[]>(new Error("Pipe transport failed to get OS and processes."));
             }
             else {
                 let remoteOS = lines[0].replace(/[\r\n]+/g, '');
-                
+
                 if (remoteOS != "Linux" && remoteOS != "Darwin") {
-                    return new Promise<AttachItem[]>((resolve, reject) => {
-                        reject(new Error("Could not determine operating system or operating system not supported. " + remoteOS));
-                    }); 
+                    return Promise.reject<AttachItem[]>(new Error("Could not determine operating system " +
+                        "or operating system not supported. " + remoteOS));
                 }
-                
+
                 // Only got OS from uname
                 if (lines.length == 1) {
-                    return new Promise<AttachItem[]>((resolve, reject) => {
-                        reject(new Error("Transport attach could not obtain processes list.")); 
-                    }); 
+                    return Promise.reject<AttachItem[]>(new Error("Transport attach could not obtain processes list."));
                 } else {
                     let processes = lines.slice(1);
                     return sortProcessEntries(PsOutputParser.parseProcessFromPsArray(processes), remoteOS);
@@ -157,11 +147,10 @@ export class RemoteAttachPicker {
         });
     }
 
-    public static getRemoteProcesses(pipeCmd: string, os: string) : Promise<AttachItem[]> {
-        const commColumnTitle = Array(PsOutputParser.secondColumnCharacters).join("a");
-        const psCommand = `ps -axww -o pid=,comm=${commColumnTitle},args=` + (os === 'darwin' ? ' -c' : '');
+    public static getRemoteProcesses(pipeCmd: string, os: string): Promise<AttachItem[]> {
+        const psCommand = os === 'darwin' ? RemoteAttachPicker.osxPsCommand : RemoteAttachPicker.linuxPsCommand;
 
-        return execChildProcess(pipeCmd + ' ' + psCommand, null).then(output => {
+        return execChildProcess(`${pipeCmd} ${psCommand}`, null).then(output => {
             return sortProcessEntries(PsOutputParser.parseProcessFromPs(output), os);
         });
     }
@@ -201,7 +190,7 @@ abstract class DotNetAttachItemsProvider implements AttachItemsProvider {
     }
 }
 
-function sortProcessEntries(processEntries : Process[], osPlatform : string) : AttachItem[] {
+function sortProcessEntries(processEntries: Process[], osPlatform: string): AttachItem[] {
     // localeCompare is significantly slower than < and > (2000 ms vs 80 ms for 10,000 elements)
     // We can change to localeCompare if this becomes an issue
     let dotnetProcessName = (osPlatform === 'win32') ? 'dotnet.exe' : 'dotnet';
@@ -223,13 +212,12 @@ function sortProcessEntries(processEntries : Process[], osPlatform : string) : A
 
 export class PsAttachItemsProvider extends DotNetAttachItemsProvider {
     protected getInternalProcessEntries(): Promise<Process[]> {
-        const commColumnTitle = Array(PsOutputParser.secondColumnCharacters).join("a");
         // the BSD version of ps uses '-c' to have 'comm' only output the executable name and not
         // the full path. The Linux version of ps has 'comm' to only display the name of the executable
         // Note that comm on Linux systems is truncated to 16 characters:
         // https://bugzilla.redhat.com/show_bug.cgi?id=429565
         // Since 'args' contains the full path to the executable, even if truncated, searching will work as desired.
-        const psCommand = `ps -axww -o pid=,comm=${commColumnTitle},args=` + (os.platform() === 'darwin' ? ' -c' : '');
+        const psCommand = os.platform() === 'darwin' ? RemoteAttachPicker.osxPsCommand : RemoteAttachPicker.linuxPsCommand;
         return execChildProcess(psCommand, null).then(processes => {
             return PsOutputParser.parseProcessFromPs(processes);
         });
@@ -282,7 +270,7 @@ export class PsOutputParser {
 
         return processEntries;
     }
-    
+
     public static parseProcessFromPsArray(lines: string[]): Process[] {
         let processEntries: Process[] = [];
 
