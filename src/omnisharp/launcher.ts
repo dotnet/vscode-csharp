@@ -162,7 +162,7 @@ export interface LaunchResult {
 export function launchOmniSharp(details: LaunchDetails): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
         try {
-            return launch(details).then(result => {
+            launch(details).then(result => {
                 // async error - when target not not ENEOT
                 result.process.on('error', reject);
 
@@ -212,7 +212,7 @@ function launchWindows(details: LaunchDetails): Promise<LaunchResult> {
             cwd: details.cwd
         });
 
-        return resolve({
+        resolve({
             process,
             command: details.serverPath,
             usingMono: false
@@ -239,7 +239,7 @@ function launchNixCoreCLR(details: LaunchDetails): Promise<LaunchResult> {
             cwd: details.cwd
         });
 
-        return resolve({
+        resolve({
             process,
             command: details.serverPath,
             usingMono: false
@@ -249,7 +249,7 @@ function launchNixCoreCLR(details: LaunchDetails): Promise<LaunchResult> {
 
 function launchNixMono(details: LaunchDetails): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        return canLaunchMono().then(() => {
+        canLaunchMono().then(() => {
             let args = details.args.slice(0); // create copy of details.args
             args.unshift(details.serverPath);
 
@@ -271,10 +271,10 @@ function canLaunchMono(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         hasMono('>=4.0.1').then(success => {
             if (success) {
-                return resolve();
+                resolve();
             }
             else {
-                return reject(new Error('Cannot start Omnisharp because Mono version >=4.0.1 is required.'));
+                reject(new Error('Cannot start Omnisharp because Mono version >=4.0.1 is required.'));
             }
         });
     });
