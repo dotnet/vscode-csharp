@@ -429,3 +429,85 @@ export function addAssetsIfNecessary(server: OmnisharpServer): Promise<AddAssetR
             reject(err));
     });
 }
+
+function doAssetsExists(paths: Paths) {
+    return new Promise<boolean>((resolve, reject) => {
+        fs.existsAsync(paths.launchJsonPath).then(res => {
+            if (res) {
+                resolve(true);
+            }
+            else {
+                fs.existsAsync(paths.tasksJsonPath).then(res => {
+                    resolve(res);
+                });
+            }
+        });
+    });
+}
+
+function deleteAsset(path: string) {
+    return new Promise<void>((resolve, reject) => {
+        fs.existsAsync(path).then(res => {
+            if (res) {
+                // TODO: Should we check after unlinking to see if the file still exists?
+                fs.unlinkAsync(path).then(() => {
+                    resolve();
+                });
+            }
+        });
+    });
+}
+
+function deleteAssets(paths: Paths) {
+    return Promise.all([
+        deleteAsset(paths.launchJsonPath),
+        deleteAsset(paths.tasksJsonPath)
+    ]);
+}
+
+function shouldGenerateAssets(paths: Paths) {
+    return new Promise<boolean>((resolve, reject) => {
+        doAssetsExists(paths).then(res => {
+            if (res) {
+                const yesItem = { title: 'Yes' };
+                const cancelItem = { title: 'Cancel', isCloseAffordance: true };
+
+                vscode.window.showWarningMessage('Replace existing build and debug assets?', cancelItem, yesItem)
+                    .then(selection => {
+                        if (selection === yesItem) {
+                            deleteAssets(paths).then(_ => resolve(true));
+                        }
+                        else {
+                            // The user clicked cancel
+                            resolve(false);
+                        }
+                    });
+            }
+            else {
+                // The assets don't exist, so we're good to go.
+                resolve(true);
+            }
+        });
+
+    });
+}
+
+export function generateAssets(server: OmnisharpServer) {
+    serverUtils.requestWorkspaceInformation(server).then(info => {
+        if (info.DotNet && info.DotNet.Projects.length > 0) {
+            getOperations().then(operations => {
+                if (hasOperations(operations)) {
+                    const paths = getPaths();
+                    shouldGenerateAssets(paths).then(res => {
+                        if (res) {
+                            fs.ensureDirAsync(paths.vscodeFolder).then(() => {
+                                const data = findTargetProjectData(info.DotNet.Projects);
+                                addAssets(data, paths, operations);
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+}
