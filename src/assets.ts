@@ -430,7 +430,7 @@ export function addAssetsIfNecessary(server: OmnisharpServer): Promise<AddAssetR
     });
 }
 
-function doAssetsExists(paths: Paths) {
+function doesAnyAssetExist(paths: Paths) {
     return new Promise<boolean>((resolve, reject) => {
         fs.existsAsync(paths.launchJsonPath).then(res => {
             if (res) {
@@ -467,7 +467,7 @@ function deleteAssets(paths: Paths) {
 
 function shouldGenerateAssets(paths: Paths) {
     return new Promise<boolean>((resolve, reject) => {
-        doAssetsExists(paths).then(res => {
+        doesAnyAssetExist(paths).then(res => {
             if (res) {
                 const yesItem = { title: 'Yes' };
                 const cancelItem = { title: 'Cancel', isCloseAffordance: true };
@@ -508,6 +508,9 @@ export function generateAssets(server: OmnisharpServer) {
                     });
                 }
             });
+        }
+        else {
+            vscode.window.showErrorMessage("Could not locate .NET Core project. Assets were not generated.");
         }
     });
 }
