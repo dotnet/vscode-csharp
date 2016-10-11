@@ -41,15 +41,17 @@ export class RemoteAttachPicker {
     public static get commColumnTitle() { return Array(PsOutputParser.secondColumnCharacters).join("a"); }
     public static get linuxPsCommand() { return `ps -axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args=`; }
     public static get osxPsCommand() { return `ps -axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args= -c`; }
-    
+
     private static _channel: vscode.OutputChannel = null;
 
     public static ShowAttachEntries(args: any): Promise<string> {
         // Create remote attach output channel for errors.
         if (!RemoteAttachPicker._channel) {
             RemoteAttachPicker._channel = vscode.window.createOutputChannel('remote-attach');
+        } else {
+            RemoteAttachPicker._channel.clear();
         }
-        
+
         // Grab selected name from UI
         // Args may be null if ran with F1
         let name: string = args ? args.name : null;
@@ -421,24 +423,33 @@ function execChildProcess(process: string, workingDirectory: string): Promise<st
 }
 
 function execChildProcessAndOutputErrorToChannel(process: string, workingDirectory: string, channel: vscode.OutputChannel): Promise<string> {
+    channel.appendLine(`Executing: ${process}`);
     return new Promise<string>((resolve, reject) => {
         child_process.exec(process, { cwd: workingDirectory, maxBuffer: 500 * 1024 }, (error: Error, stdout: string, stderr: string) => {
-            if (error) {
-                reject(new Error("See remote-attach output."));
-                channel.append(error.message);
-                channel.show();
-                return;
+            let channelOutput = "";
+            
+            if (stdout && stdout.length > 0) {
+                channelOutput.concat(stdout);
             }
 
             if (stderr && stderr.length > 0) {
-                reject(new Error("See remote-attach output"));
-                channel.append(stderr);
+                channelOutput.concat(stderr);
+            }
+
+            if (error) {
+                channelOutput.concat(error.message);
+            }
+
+
+            if (error || (stderr && stderr.length > 0)) {
+                channel.append(channelOutput);
                 channel.show();
+                reject(new Error("See remote-attach output"));
                 return;
             }
 
             resolve(stdout);
         });
     });
-    
+
 }
