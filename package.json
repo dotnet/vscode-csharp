@@ -140,6 +140,11 @@
         "category": "OmniSharp"
       },
       {
+        "command": "dotnet.generateAssets",
+        "title": "Generate Assets for Build and Debug",
+        "category": ".NET"
+      },
+      {
         "command": "dotnet.restore",
         "title": "Restore Packages",
         "category": "dotnet"

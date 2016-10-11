@@ -14,7 +14,8 @@ import * as path from 'path';
 import * as protocol from '../omnisharp/protocol';
 import * as vscode from 'vscode';
 import * as dotnetTest from './dotnetTest'
-import {DotNetAttachItemsProviderFactory, AttachPicker} from './processPicker'
+import {DotNetAttachItemsProviderFactory, AttachPicker} from './processPicker';
+import {generateAssets} from '../assets';
 
 let channel = vscode.window.createOutputChannel('.NET');
 
@@ -37,7 +38,10 @@ export default function registerCommands(server: OmnisharpServer, extensionPath:
     let attacher = new AttachPicker(attachItemsProvider);
     let d8 = vscode.commands.registerCommand('csharp.listProcess', () => attacher.ShowAttachEntries());
 
-    return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8);
+    // Register command for generating tasks.json and launch.json assets.
+    let d9 = vscode.commands.registerCommand('dotnet.generateAssets', () => generateAssets(server));
+
+    return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8, d9);
 }
 
 function restartOmniSharp(server: OmnisharpServer) {

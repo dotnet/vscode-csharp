@@ -24,7 +24,7 @@ import {readOptions} from './omnisharp/options';
 import forwardChanges from './features/changeForwarding';
 import reportStatus from './features/status';
 import * as coreclrdebug from './coreclr-debug/activate';
-import {addAssetsIfNecessary} from './assets';
+import {addAssetsIfNecessary, AddAssetResult} from './assets';
 import * as vscode from 'vscode';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import {DefinitionMetadataDocumentProvider} from './features/definitionMetadataDocumentProvider';
@@ -81,10 +81,16 @@ export function activate(context: vscode.ExtensionContext): any {
     disposables.push(registerCommands(server, context.extensionPath));
     disposables.push(reportStatus(server));
 
-    disposables.push(server.onServerStart(() => {
-        // Update or add tasks.json and launch.json
-        addAssetsIfNecessary(server);
-    }));
+    if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
+        disposables.push(server.onServerStart(() => {
+            // Update or add tasks.json and launch.json
+            addAssetsIfNecessary(server).then(result => {
+                if (result === AddAssetResult.Disable) {
+                    context.workspaceState.update('assetPromptDisabled', true);
+                }
+            });
+        }));
+    }
 
     // read and store last solution or folder path
     disposables.push(server.onBeforeServerStart(path => context.workspaceState.update('lastSolutionPathOrFolder', path)));

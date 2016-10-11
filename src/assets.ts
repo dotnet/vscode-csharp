@@ -76,15 +76,15 @@ interface Operations {
 
 function hasOperations(operations: Operations) {
     return operations.addLaunchJson ||
-           operations.updateTasksJson ||
-           operations.addLaunchJson;
+        operations.updateTasksJson ||
+        operations.addLaunchJson;
 }
 
 function getOperations() {
     const paths = getPaths();
 
     return getBuildOperations(paths.tasksJsonPath).then(operations =>
-           getLaunchOperations(paths.launchJsonPath, operations));
+        getLaunchOperations(paths.launchJsonPath, operations));
 }
 
 function getBuildOperations(tasksJsonPath: string) {
@@ -120,15 +120,27 @@ function getLaunchOperations(launchJsonPath: string, operations: Operations) {
     });
 }
 
-function promptToAddAssets() {
-    return new Promise<boolean>((resolve, reject) => {
-        const item = { title: 'Yes' }
+enum PromptResult {
+    Yes,
+    No,
+    Disable
+}
 
-        vscode.window.showInformationMessage('Required assets to build and debug are missing from your project. Add them?', item).then(selection => {
-            return selection
-                ? resolve(true)
-                : resolve(false);
-        });
+interface PromptItem extends vscode.MessageItem {
+    result: PromptResult
+}
+
+function promptToAddAssets() {
+    return new Promise<PromptResult>((resolve, reject) => {
+        const yesItem: PromptItem = { title: 'Yes', result: PromptResult.Yes };
+        const noItem: PromptItem = { title: 'Not Now', result: PromptResult.No, isCloseAffordance: true }
+        const disableItem: PromptItem = { title: "Don't Ask Again", result: PromptResult.Disable };
+
+        const projectName = path.basename(vscode.workspace.rootPath);
+
+        vscode.window.showWarningMessage(
+            `Required assets to build and debug are missing from '${projectName}'. Add them?`, disableItem, noItem, yesItem)
+            .then(selection => resolve(selection.result));
     });
 }
 
@@ -208,8 +220,8 @@ function createAttachConfiguration(): AttachConfiguration {
 }
 
 function createLaunchJson(projectData: TargetProjectData, isWebProject: boolean): any {
-    let version =  '0.2.0';
-     if (!isWebProject) {
+    let version = '0.2.0';
+    if (!isWebProject) {
         return {
             version: version,
             configurations: [
@@ -249,7 +261,7 @@ function createTasksConfiguration(projectData: TargetProjectData): tasks.TaskCon
         command: 'dotnet',
         isShellCommand: true,
         args: [],
-        tasks: [ createBuildTaskDescription(projectData) ]
+        tasks: [createBuildTaskDescription(projectData)]
     };
 }
 
@@ -365,35 +377,140 @@ function addLaunchJsonIfNecessary(projectData: TargetProjectData, paths: Paths, 
     });
 }
 
-export function addAssetsIfNecessary(server: OmnisharpServer) {
-    if (!vscode.workspace.rootPath) {
-        return;
-    }
+function addAssets(data: TargetProjectData, paths: Paths, operations: Operations) {
+    const promises = [
+        addTasksJsonIfNecessary(data, paths, operations),
+        addLaunchJsonIfNecessary(data, paths, operations)
+    ];
 
-    return serverUtils.requestWorkspaceInformation(server).then(info => {
-        // If there are no .NET Core projects, we won't bother offering to add assets.
-        if ('DotNet' in info && info.DotNet.Projects.length > 0) {
-            return getOperations().then(operations => {
-                if (!hasOperations(operations)) {
-                    return;
-                }
+    return Promise.all(promises);
+}
 
-                promptToAddAssets().then(addAssets => {
-                    if (!addAssets) {
-                        return;
+export enum AddAssetResult {
+    NotApplicable,
+    Done,
+    Disable,
+    Cancelled
+}
+
+export function addAssetsIfNecessary(server: OmnisharpServer): Promise<AddAssetResult> {
+    return new Promise<AddAssetResult>((resolve, reject) => {
+        if (!vscode.workspace.rootPath) {
+            return resolve(AddAssetResult.NotApplicable);
+        }
+
+        serverUtils.requestWorkspaceInformation(server).then(info => {
+            // If there are no .NET Core projects, we won't bother offering to add assets.
+            if (info.DotNet && info.DotNet.Projects.length > 0) {
+                return getOperations().then(operations => {
+                    if (!hasOperations(operations)) {
+                        return resolve(AddAssetResult.NotApplicable);
                     }
 
-                    const data = findTargetProjectData(info.DotNet.Projects);
-                    const paths = getPaths();
+                    promptToAddAssets().then(result => {
+                        if (result === PromptResult.Disable) {
+                            return resolve(AddAssetResult.Disable);
+                        }
 
-                    return fs.ensureDirAsync(paths.vscodeFolder).then(() => {
-                        return Promise.all([
-                            addTasksJsonIfNecessary(data, paths, operations),
-                            addLaunchJsonIfNecessary(data, paths, operations)
-                        ]);
+                        if (result !== PromptResult.Yes) {
+                            return resolve(AddAssetResult.Cancelled);
+                        }
+
+                        const data = findTargetProjectData(info.DotNet.Projects);
+                        const paths = getPaths();
+
+                        return fs.ensureDirAsync(paths.vscodeFolder).then(() =>
+                            addAssets(data, paths, operations).then(() =>
+                            resolve(AddAssetResult.Done)));
                     });
                 });
+            }
+        }).catch(err =>
+            reject(err));
+    });
+}
+
+function doesAnyAssetExist(paths: Paths) {
+    return new Promise<boolean>((resolve, reject) => {
+        fs.existsAsync(paths.launchJsonPath).then(res => {
+            if (res) {
+                resolve(true);
+            }
+            else {
+                fs.existsAsync(paths.tasksJsonPath).then(res => {
+                    resolve(res);
+                });
+            }
+        });
+    });
+}
+
+function deleteAsset(path: string) {
+    return new Promise<void>((resolve, reject) => {
+        fs.existsAsync(path).then(res => {
+            if (res) {
+                // TODO: Should we check after unlinking to see if the file still exists?
+                fs.unlinkAsync(path).then(() => {
+                    resolve();
+                });
+            }
+        });
+    });
+}
+
+function deleteAssets(paths: Paths) {
+    return Promise.all([
+        deleteAsset(paths.launchJsonPath),
+        deleteAsset(paths.tasksJsonPath)
+    ]);
+}
+
+function shouldGenerateAssets(paths: Paths) {
+    return new Promise<boolean>((resolve, reject) => {
+        doesAnyAssetExist(paths).then(res => {
+            if (res) {
+                const yesItem = { title: 'Yes' };
+                const cancelItem = { title: 'Cancel', isCloseAffordance: true };
+
+                vscode.window.showWarningMessage('Replace existing build and debug assets?', cancelItem, yesItem)
+                    .then(selection => {
+                        if (selection === yesItem) {
+                            deleteAssets(paths).then(_ => resolve(true));
+                        }
+                        else {
+                            // The user clicked cancel
+                            resolve(false);
+                        }
+                    });
+            }
+            else {
+                // The assets don't exist, so we're good to go.
+                resolve(true);
+            }
+        });
+
+    });
+}
+
+export function generateAssets(server: OmnisharpServer) {
+    serverUtils.requestWorkspaceInformation(server).then(info => {
+        if (info.DotNet && info.DotNet.Projects.length > 0) {
+            getOperations().then(operations => {
+                if (hasOperations(operations)) {
+                    const paths = getPaths();
+                    shouldGenerateAssets(paths).then(res => {
+                        if (res) {
+                            fs.ensureDirAsync(paths.vscodeFolder).then(() => {
+                                const data = findTargetProjectData(info.DotNet.Projects);
+                                addAssets(data, paths, operations);
+                            });
+                        }
+                    });
+                }
             });
+        }
+        else {
+            vscode.window.showErrorMessage("Could not locate .NET Core project. Assets were not generated.");
         }
     });
 }
