@@ -299,10 +299,9 @@ export abstract class OmnisharpServer {
                 this._telemetryIntervalId = setInterval(() => this._reportTelemetry(), TelemetryReportingDelay);
             }).then(() => {
                 this._processQueue();
-            }, err => {
+            }).catch(err => {
                 this._fireEvent(Events.ServerError, err);
-                this._setState(ServerState.Stopped);
-                throw err;
+                return this.stop();
             });
         });
     }
@@ -311,7 +310,7 @@ export abstract class OmnisharpServer {
 
     public stop(): Promise<void> {
 
-        let ret: Promise<void>;
+        let cleanupPromise: Promise<void>;
 
         if (this._telemetryIntervalId !== undefined) {
             // Stop reporting telemetry
@@ -322,13 +321,13 @@ export abstract class OmnisharpServer {
 
         if (!this._serverProcess) {
             // nothing to kill
-            ret = Promise.resolve();
+            cleanupPromise = Promise.resolve();
         }
         else if (process.platform === 'win32') {
             // when killing a process in windows its child
             // processes are *not* killed but become root
             // processes. Therefore we use TASKKILL.EXE
-            ret = new Promise<void>((resolve, reject) => {
+            cleanupPromise = new Promise<void>((resolve, reject) => {
                 const killer = exec(`taskkill /F /T /PID ${this._serverProcess.pid}`, (err, stdout, stderr) => {
                     if (err) {
                         return reject(err);
@@ -342,14 +341,13 @@ export abstract class OmnisharpServer {
         else {
             // Kill Unix process
             this._serverProcess.kill('SIGTERM');
-            ret = Promise.resolve();
+            cleanupPromise = Promise.resolve();
         }
 
-        return ret.then(() => {
+        return cleanupPromise.then(() => {
             this._serverProcess = null;
             this._setState(ServerState.Stopped);
             this._fireEvent(Events.ServerStop, this);
-            return;
         });
     }
 
