@@ -685,7 +685,7 @@
                   },
                   "debuggerPath" : {
                     "type" : "string",
-                    "description" : "The full path to the debugger",
+                    "description" : "The full path to the debugger on the target machine.",
                     "default" : "~/clrdbg/clrdbg"
                   },
                   "pipeEnv": {

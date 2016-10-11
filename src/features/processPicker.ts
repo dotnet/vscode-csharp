@@ -41,10 +41,18 @@ export class RemoteAttachPicker {
     public static get commColumnTitle() { return Array(PsOutputParser.secondColumnCharacters).join("a"); }
     public static get linuxPsCommand() { return `ps -axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args=`; }
     public static get osxPsCommand() { return `ps -axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args= -c`; }
+    
+    private static _channel: vscode.OutputChannel = null;
 
     public static ShowAttachEntries(args: any): Promise<string> {
+        // Create remote attach output channel for errors.
+        if (!RemoteAttachPicker._channel) {
+            RemoteAttachPicker._channel = vscode.window.createOutputChannel('remote-attach');
+        }
+        
         // Grab selected name from UI
-        let name: string = args.name;
+        // Args may be null if ran with F1
+        let name: string = args ? args.name : null;
 
         if (!name) {
             // Config name not found. 
@@ -87,7 +95,9 @@ export class RemoteAttachPicker {
                 pipeArgs = platformSpecificPipeTransportOptions.pipeArgs || pipeArgs;
             }
 
-            let pipeCmd: string = pipeProgram + " " + pipeArgs.join(" ");
+
+            let argList = RemoteAttachPicker.createArgumentList(pipeArgs);
+            let pipeCmd: string = `"${pipeProgram}" ${argList}`;
             return RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd).then(processes => {
                 let attachPickOptions: vscode.QuickPickOptions = {
                     matchOnDescription: true,
@@ -99,6 +109,19 @@ export class RemoteAttachPicker {
                 });
             });
         }
+    }
+
+    private static createArgumentList(args: string[]): string {
+        let ret = "";
+
+        for (let arg of args) {
+            if (ret) {
+                ret += " ";
+            }
+            ret += `"${arg}"`;
+        }
+
+        return ret;
     }
 
     private static getPlatformSpecificPipeTransportOptions(config) {
@@ -120,7 +143,7 @@ export class RemoteAttachPicker {
         const command = `uname && if [ $(uname) == "Linux" ] ; then ${RemoteAttachPicker.linuxPsCommand} ; elif [ $(uname) == "Darwin" ] ; ` +
             `then ${RemoteAttachPicker.osxPsCommand}; fi`;
 
-        return execChildProcess(`${pipeCmd} "${command}"`, null).then(output => {
+        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} "${command}"`, null, RemoteAttachPicker._channel).then(output => {
             // OS will be on first line
             // Processess will follow if listed
             let lines = output.split(os.EOL);
@@ -132,8 +155,7 @@ export class RemoteAttachPicker {
                 let remoteOS = lines[0].replace(/[\r\n]+/g, '');
 
                 if (remoteOS != "Linux" && remoteOS != "Darwin") {
-                    return Promise.reject<AttachItem[]>(new Error("Could not determine operating system " +
-                        "or operating system not supported. " + remoteOS));
+                    return Promise.reject<AttachItem[]>(new Error(`Operating system "${remoteOS}"" not supported.`));
                 }
 
                 // Only got OS from uname
@@ -150,7 +172,7 @@ export class RemoteAttachPicker {
     public static getRemoteProcesses(pipeCmd: string, os: string): Promise<AttachItem[]> {
         const psCommand = os === 'darwin' ? RemoteAttachPicker.osxPsCommand : RemoteAttachPicker.linuxPsCommand;
 
-        return execChildProcess(`${pipeCmd} ${psCommand}`, null).then(output => {
+        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} ${psCommand}`, null, RemoteAttachPicker._channel).then(output => {
             return sortProcessEntries(PsOutputParser.parseProcessFromPs(output), os);
         });
     }
@@ -396,4 +418,27 @@ function execChildProcess(process: string, workingDirectory: string): Promise<st
             resolve(stdout);
         });
     });
+}
+
+function execChildProcessAndOutputErrorToChannel(process: string, workingDirectory: string, channel: vscode.OutputChannel): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        child_process.exec(process, { cwd: workingDirectory, maxBuffer: 500 * 1024 }, (error: Error, stdout: string, stderr: string) => {
+            if (error) {
+                reject(new Error("See remote-attach output."));
+                channel.append(error.message);
+                channel.show();
+                return;
+            }
+
+            if (stderr && stderr.length > 0) {
+                reject(new Error("See remote-attach output"));
+                channel.append(stderr);
+                channel.show();
+                return;
+            }
+
+            resolve(stdout);
+        });
+    });
+    
 }
