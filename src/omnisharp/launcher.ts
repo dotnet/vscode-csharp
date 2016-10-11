@@ -161,21 +161,15 @@ export interface LaunchResult {
 
 export function launchOmniSharp(details: LaunchDetails): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        try {
-            launch(details).then(result => {
-                // async error - when target not not ENEOT
-                result.process.on('error', reject);
+        launch(details).then(result => {
+            // async error - when target not not ENEOT
+            result.process.on('error', reject);
 
-                // success after a short freeing event loop
-                setTimeout(function () {
-                    resolve(result);
-                }, 0);
-            }, err => {
-                reject(err);
-            });
-        } catch (err) {
-            reject(err);
-        }
+            // success after a short freeing event loop
+            setTimeout(function () {
+                resolve(result);
+            }, 0);
+        });
     });
 }
 
@@ -189,34 +183,31 @@ function launch(details: LaunchDetails): Promise<LaunchResult> {
 }
 
 function launchWindows(details: LaunchDetails): Promise<LaunchResult> {
-    return new Promise<LaunchResult>(resolve => {
+    function escapeIfNeeded(arg: string) {
+        const hasSpaceWithoutQuotes = /^[^"].* .*[^"]/;
+        return hasSpaceWithoutQuotes.test(arg)
+            ? `"${arg}"`
+            : arg;
+    }
 
-        function escapeIfNeeded(arg: string) {
-            const hasSpaceWithoutQuotes = /^[^"].* .*[^"]/;
-            return hasSpaceWithoutQuotes.test(arg)
-                ? `"${arg}"`
-                : arg;
-        }
+    let args = details.args.slice(0); // create copy of details.args
+    args.unshift(details.serverPath);
+    args = [[
+        '/s',
+        '/c',
+        '"' + args.map(escapeIfNeeded).join(' ') + '"'
+    ].join(' ')];
 
-        let args = details.args.slice(0); // create copy of details.args
-        args.unshift(details.serverPath);
-        args = [[
-            '/s',
-            '/c',
-            '"' + args.map(escapeIfNeeded).join(' ') + '"'
-        ].join(' ')];
+    let process = spawn('cmd', args, <any>{
+        windowsVerbatimArguments: true,
+        detached: false,
+        cwd: details.cwd
+    });
 
-        let process = spawn('cmd', args, <any>{
-            windowsVerbatimArguments: true,
-            detached: false,
-            cwd: details.cwd
-        });
-
-        resolve({
-            process,
-            command: details.serverPath,
-            usingMono: false
-        });
+    return Promise.resolve({
+        process,
+        command: details.serverPath,
+        usingMono: false
     });
 }
 
@@ -233,37 +224,33 @@ function launchNix(details: LaunchDetails): Promise<LaunchResult> {
 }
 
 function launchNixCoreCLR(details: LaunchDetails): Promise<LaunchResult> {
-    return new Promise<LaunchResult>(resolve => {
-        let process = spawn(details.serverPath, details.args, {
-            detached: false,
-            cwd: details.cwd
-        });
+    let process = spawn(details.serverPath, details.args, {
+        detached: false,
+        cwd: details.cwd
+    });
 
-        resolve({
-            process,
-            command: details.serverPath,
-            usingMono: false
-        });
+    return Promise.resolve({
+        process,
+        command: details.serverPath,
+        usingMono: false
     });
 }
 
 function launchNixMono(details: LaunchDetails): Promise<LaunchResult> {
-    return new Promise<LaunchResult>((resolve, reject) => {
-        canLaunchMono().then(() => {
-            let args = details.args.slice(0); // create copy of details.args
-            args.unshift(details.serverPath);
+    return canLaunchMono().then(() => {
+        let args = details.args.slice(0); // create copy of details.args
+        args.unshift(details.serverPath);
 
-            let process = spawn('mono', args, {
-                detached: false,
-                cwd: details.cwd
-            });
-
-            return resolve({
-                process,
-                command: details.serverPath,
-                usingMono: true
-            });
+        let process = spawn('mono', args, {
+            detached: false,
+            cwd: details.cwd
         });
+
+        return {
+            process,
+            command: details.serverPath,
+            usingMono: true
+        };
     });
 }
 
