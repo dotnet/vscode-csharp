@@ -39,7 +39,7 @@ function serializeProtocolEvent(message: DebugProtocol.ProtocolMessage): string 
 // This proxy will still be called and launch OpenDebugAD7 as a child process.
 // During subsequent code sessions, the rewritten manifest will be loaded and this proxy will no longer be called. 
 function proxy() {
-    let util = new CoreClrDebugUtil(path.resolve(__dirname, '../../'));
+    let util = new CoreClrDebugUtil(path.resolve(__dirname, '../../../'));
     
     if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {
         if (CoreClrDebugUtil.existsSync(util.installBeginFilePath())) {
