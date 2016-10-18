@@ -87,6 +87,7 @@ export function getCurrentPlatform() {
             case 'ol':
                 // Oracle Linux is binary compatible with CentOS
                 return Platform.CentOS;
+            case 'elementary':
             case 'elementary OS':
                 const eOSVersionId = osReleaseMap.get("VERSION_ID");
                 if (eOSVersionId.startsWith("0.3")) {
