@@ -12,8 +12,6 @@ import * as omnisharp from './omnisharp';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-const platform = getCurrentPlatform();
-
 export enum LaunchTargetKind {
     Solution,
     ProjectJson,
@@ -34,7 +32,7 @@ export interface LaunchTarget {
 export function getDefaultFlavor(kind: LaunchTargetKind) {
     // Default to desktop (for Windows) or mono (for OSX/Linux) for solution files; otherwise, CoreCLR.
     if (kind === LaunchTargetKind.Solution) {
-        if (platform === Platform.Windows) {
+        if (process.platform === 'win32') {
             return omnisharp.Flavor.Desktop;
         }
 
@@ -174,12 +172,14 @@ export function launchOmniSharp(details: LaunchDetails): Promise<LaunchResult> {
 }
 
 function launch(details: LaunchDetails): Promise<LaunchResult> {
-    if (platform === Platform.Windows) {
-        return launchWindows(details);
-    }
-    else {
-        return launchNix(details);
-    }
+    return getCurrentPlatform().then(platform => {
+        if (platform === Platform.Windows) {
+            return launchWindows(details);
+        }
+        else {
+            return launchNix(details);
+        }
+    });
 }
 
 function launchWindows(details: LaunchDetails): Promise<LaunchResult> {

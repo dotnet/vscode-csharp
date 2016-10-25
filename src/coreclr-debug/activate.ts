@@ -39,15 +39,18 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         let installer = new debugInstall.DebugInstaller(_util);
         _util.createInstallLog();
 
-        let runtimeId = getPlatformRuntimeId();
-
         let statusBarMessage = vscode.window.setStatusBarMessage("Downloading and configuring the .NET Core Debugger...");
 
+        let runtimeId: string = '';
         let installStage: string = "installBegin";
         let installError: string = '';
         let moreErrors: string = '';
 
-        writeInstallBeginFile().then(() => {
+        getPlatformRuntimeId().then(rid => {
+            runtimeId = rid;
+        }).then(() => {
+            return writeInstallBeginFile();
+        }).then(() => {
             return installer.install(runtimeId);
         }).then(() => {
             installStage = "completeSuccess";
@@ -162,32 +165,34 @@ function deleteInstallBeginFile() {
     }
 }
 
-function getPlatformRuntimeId() : string {
+function getPlatformRuntimeId(): Promise<string> {
     switch (process.platform) {
         case 'win32':
-            return 'win7-x64';
+            return Promise.resolve('win7-x64');
         case 'darwin':
-            return 'osx.10.11-x64';
+            return Promise.resolve('osx.10.11-x64');
         case 'linux':
-            switch (getCurrentPlatform())
-            {
-                case Platform.CentOS:
-                    return 'centos.7-x64';
-                case Platform.Fedora:
-                    return 'fedora.23-x64';
-                case Platform.OpenSUSE:
-                    return 'opensuse.13.2-x64';
-                case Platform.RHEL:
-                    return 'rhel.7-x64';
-                case Platform.Debian:
-                    return 'debian.8-x64';
-                case Platform.Ubuntu14:
-                    return 'ubuntu.14.04-x64';
-                case Platform.Ubuntu16:
-                    return 'ubuntu.16.04-x64';
-                default:
-                    throw Error('Error: Unsupported linux platform');
-            }
+            return getCurrentPlatform().then(platform => {
+                switch (platform)
+                {
+                    case Platform.CentOS:
+                        return 'centos.7-x64';
+                    case Platform.Fedora:
+                        return 'fedora.23-x64';
+                    case Platform.OpenSUSE:
+                        return 'opensuse.13.2-x64';
+                    case Platform.RHEL:
+                        return 'rhel.7-x64';
+                    case Platform.Debian:
+                        return 'debian.8-x64';
+                    case Platform.Ubuntu14:
+                        return 'ubuntu.14.04-x64';
+                    case Platform.Ubuntu16:
+                        return 'ubuntu.16.04-x64';
+                    default:
+                        throw Error('Error: Unsupported linux platform');
+                }
+            });
         default:
             _util.log('Error: Unsupported platform ' + process.platform);
             throw Error('Unsupported platform ' + process.platform);

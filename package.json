@@ -21,7 +21,7 @@
   "scripts": {
     "compile": "node ./node_modules/vscode/bin/compile -p ./",
     "watch": "node ./node_modules/vscode/bin/compile -watch -p ./",
-    "test": "mocha --timeout 15000 -u tdd ./out/test/**/*.tests.js",
+    "test": "mocha --timeout 15000 -u tdd ./out/test/*.tests.js ./out/test/**/*.tests.js",
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {

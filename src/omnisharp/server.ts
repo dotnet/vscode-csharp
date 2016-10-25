@@ -423,32 +423,33 @@ export abstract class OmnisharpServer {
         }).catch(err => {
             return omnisharp.findServerPath(installDirectory);
         }).catch(err => {
-            const platform = getCurrentPlatform();
-            if (platform == Platform.Unknown && process.platform === 'linux') {
-                this._channel.appendLine("[ERROR] Could not locate an OmniSharp server that supports your Linux distribution.");
-                this._channel.appendLine("");
-                this._channel.appendLine("OmniSharp provides a richer C# editing experience, with features like IntelliSense and Find All References.");
-                this._channel.appendLine("It is recommend that you download the version of OmniSharp that runs on Mono using the following steps:");
-                this._channel.appendLine("    1. If it's not already installed, download and install Mono (https://www.mono-project.com)");
-                this._channel.appendLine("    2. Download and untar the latest OmniSharp Mono release from  https://github.com/OmniSharp/omnisharp-roslyn/releases/");
-                this._channel.appendLine("    3. In Visual Studio Code, select Preferences->User Settings to open settings.json.");
-                this._channel.appendLine("    4. In settings.json, add a new setting: \"omnisharp.path\": \"/path/to/omnisharp/OmniSharp.exe\"");
-                this._channel.appendLine("    5. In settings.json, add a new setting: \"omnisharp.useMono\": true");
-                this._channel.appendLine("    6. Restart Visual Studio Code.");
-                this._channel.show();
+            return getCurrentPlatform().then(platform => {
+                if (platform === Platform.Unknown && process.platform === 'linux') {
+                    this._channel.appendLine("[ERROR] Could not locate an OmniSharp server that supports your Linux distribution.");
+                    this._channel.appendLine("");
+                    this._channel.appendLine("OmniSharp provides a richer C# editing experience, with features like IntelliSense and Find All References.");
+                    this._channel.appendLine("It is recommend that you download the version of OmniSharp that runs on Mono using the following steps:");
+                    this._channel.appendLine("    1. If it's not already installed, download and install Mono (https://www.mono-project.com)");
+                    this._channel.appendLine("    2. Download and untar the latest OmniSharp Mono release from  https://github.com/OmniSharp/omnisharp-roslyn/releases/");
+                    this._channel.appendLine("    3. In Visual Studio Code, select Preferences->User Settings to open settings.json.");
+                    this._channel.appendLine("    4. In settings.json, add a new setting: \"omnisharp.path\": \"/path/to/omnisharp/OmniSharp.exe\"");
+                    this._channel.appendLine("    5. In settings.json, add a new setting: \"omnisharp.useMono\": true");
+                    this._channel.appendLine("    6. Restart Visual Studio Code.");
+                    this._channel.show();
 
-                throw err;
-            }
+                    throw err;
+                }
 
-            const config = vscode.workspace.getConfiguration();
-            const proxy = config.get<string>('http.proxy');
-            const strictSSL = config.get('http.proxyStrictSSL', true);
-            const logger = (message: string) => { this._logger.appendLine(message); };
+                const config = vscode.workspace.getConfiguration();
+                const proxy = config.get<string>('http.proxy');
+                const strictSSL = config.get('http.proxyStrictSSL', true);
+                const logger = (message: string) => { this._logger.appendLine(message); };
 
-            this._fireEvent(Events.BeforeServerInstall, this);
+                this._fireEvent(Events.BeforeServerInstall, this);
 
-            return download.go(flavor, platform, this._logger, proxy, strictSSL).then(_ => {
-                return omnisharp.findServerPath(installDirectory);
+                return download.go(flavor, platform, this._logger, proxy, strictSSL).then(_ => {
+                    return omnisharp.findServerPath(installDirectory);
+                });
             });
         });
     }
