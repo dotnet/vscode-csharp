@@ -17,7 +17,7 @@ import {readOptions} from './options';
 import {Logger} from './logger';
 import {DelayTracker} from './delayTracker';
 import {LaunchTarget, findLaunchTargets, getDefaultFlavor} from './launcher';
-import {Platform, getCurrentPlatform} from '../platform';
+import {PlatformInformation, OperatingSystem} from '../platform';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import * as vscode from 'vscode';
 
@@ -423,8 +423,8 @@ export abstract class OmnisharpServer {
         }).catch(err => {
             return omnisharp.findServerPath(installDirectory);
         }).catch(err => {
-            return getCurrentPlatform().then(platform => {
-                if (platform === Platform.Unknown && process.platform === 'linux') {
+            return PlatformInformation.GetCurrent().then(platform => {
+                if (platform.operatingSystem === OperatingSystem.Linux && !platform.hasCoreClrFlavor()) {
                     this._channel.appendLine("[ERROR] Could not locate an OmniSharp server that supports your Linux distribution.");
                     this._channel.appendLine("");
                     this._channel.appendLine("OmniSharp provides a richer C# editing experience, with features like IntelliSense and Find All References.");
@@ -447,7 +447,7 @@ export abstract class OmnisharpServer {
 
                 this._fireEvent(Events.BeforeServerInstall, this);
 
-                return download.go(flavor, platform, this._logger, proxy, strictSSL).then(_ => {
+                return download.go(flavor, platform.getCoreClrFlavor(), this._logger, proxy, strictSSL).then(_ => {
                     return omnisharp.findServerPath(installDirectory);
                 });
             });

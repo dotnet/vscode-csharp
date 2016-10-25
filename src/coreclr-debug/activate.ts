@@ -9,7 +9,7 @@ import * as fs from 'fs';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { CoreClrDebugUtil } from './util';
 import * as debugInstall from './install';
-import { Platform, getCurrentPlatform } from './../platform';
+import { PlatformInformation, OperatingSystem, CoreClrFlavor } from './../platform';
 import * as semver from 'semver';
 
 const MINIMUM_SUPPORTED_DOTNET_CLI: string = '1.0.0-preview2-003121';
@@ -166,35 +166,34 @@ function deleteInstallBeginFile() {
 }
 
 function getPlatformRuntimeId(): Promise<string> {
-    switch (process.platform) {
-        case 'win32':
-            return Promise.resolve('win7-x64');
-        case 'darwin':
-            return Promise.resolve('osx.10.11-x64');
-        case 'linux':
-            return getCurrentPlatform().then(platform => {
-                switch (platform)
-                {
-                    case Platform.CentOS:
-                        return 'centos.7-x64';
-                    case Platform.Fedora:
-                        return 'fedora.23-x64';
-                    case Platform.OpenSUSE:
-                        return 'opensuse.13.2-x64';
-                    case Platform.RHEL:
-                        return 'rhel.7-x64';
-                    case Platform.Debian:
-                        return 'debian.8-x64';
-                    case Platform.Ubuntu14:
-                        return 'ubuntu.14.04-x64';
-                    case Platform.Ubuntu16:
-                        return 'ubuntu.16.04-x64';
-                    default:
-                        throw Error('Error: Unsupported linux platform');
+    return PlatformInformation.GetCurrent().then(info => {
+        switch (info.getCoreClrFlavor()) {
+            case CoreClrFlavor.Windows:
+                return 'win7-x64';
+            case CoreClrFlavor.OSX:
+                return 'osx.10.11-x64';
+            case CoreClrFlavor.CentOS:
+                return 'centos.7-x64';
+            case CoreClrFlavor.Fedora:
+                return 'fedora.23-x64';
+            case CoreClrFlavor.OpenSUSE:
+                return 'opensuse.13.2-x64';
+            case CoreClrFlavor.RHEL:
+                return 'rhel.7-x64';
+            case CoreClrFlavor.Debian:
+                return 'debian.8-x64';
+            case CoreClrFlavor.Ubuntu14:
+                return 'ubuntu.14.04-x64';
+            case CoreClrFlavor.Ubuntu16:
+                return 'ubuntu.16.04-x64';
+
+            default:
+                if (info.operatingSystem == OperatingSystem.Linux) {
+                    throw new Error('Error: Unsupported linux platform');
                 }
-            });
-        default:
-            _util.log('Error: Unsupported platform ' + process.platform);
-            throw Error('Unsupported platform ' + process.platform);
-    }
+
+                _util.log('Error: Unsupported platform ' + process.platform);
+                throw Error('Unsupported platform ' + process.platform);
+        }
+    });
 }

@@ -7,7 +7,7 @@
 
 import {spawn, ChildProcess} from 'child_process';
 import {satisfies} from 'semver';
-import {Platform, getCurrentPlatform} from '../platform';
+import {PlatformInformation, OperatingSystem} from '../platform';
 import * as omnisharp from './omnisharp';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -172,8 +172,8 @@ export function launchOmniSharp(details: LaunchDetails): Promise<LaunchResult> {
 }
 
 function launch(details: LaunchDetails): Promise<LaunchResult> {
-    return getCurrentPlatform().then(platform => {
-        if (platform === Platform.Windows) {
+    return PlatformInformation.GetCurrent().then(platform => {
+        if (platform.operatingSystem === OperatingSystem.Windows) {
             return launchWindows(details);
         }
         else {

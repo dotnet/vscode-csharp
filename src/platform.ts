@@ -3,10 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import * as fs from 'fs';
 import * as os from 'os';
+import * as util from './common';
+
+const unknown = 'unknown';
 
 /**
  * There is no standard way on Linux to find the distribution name and version.
@@ -15,14 +16,16 @@ import * as os from 'os';
  * https://www.freedesktop.org/software/systemd/man/os-release.html
  */
 export class LinuxDistribution {
-    constructor(public name: string, public version: string) { }
+    constructor(
+        public name: string,
+        public version: string) { }
 
     public static GetCurrent(): Promise<LinuxDistribution> {
         // Try /etc/os-release and fallback to /usr/lib/os-release per the synopsis
         // at https://www.freedesktop.org/software/systemd/man/os-release.html.
         return LinuxDistribution.FromFilePath('/etc/os-release')
             .catch(() => LinuxDistribution.FromFilePath('/usr/lib/os-release'))
-            .catch(() => Promise.resolve(new LinuxDistribution('unknown', 'unknown')));
+            .catch(() => Promise.resolve(new LinuxDistribution(unknown, unknown)));
     }
 
     private static FromFilePath(filePath: string): Promise<LinuxDistribution> {
@@ -39,8 +42,8 @@ export class LinuxDistribution {
     }
 
     public static FromReleaseInfo(releaseInfo: string): LinuxDistribution {
-        let name = 'unknown';
-        let version = 'unknown';
+        let name = unknown;
+        let version = unknown;
 
         const lines = releaseInfo.split(os.EOL);
         for (let line of lines) {
@@ -63,7 +66,7 @@ export class LinuxDistribution {
                     version = value;
                 }
 
-                if (name !== 'unknown' && version !== 'unknown') {
+                if (name !== unknown && version !== unknown) {
                     break;
                 }
             }
@@ -73,8 +76,14 @@ export class LinuxDistribution {
     }
 }
 
-export enum Platform {
-    Unknown,
+export enum OperatingSystem {
+    Windows,
+    MacOS,
+    Linux
+}
+
+export enum CoreClrFlavor {
+    None,
     Windows,
     OSX,
     CentOS,
@@ -86,62 +95,126 @@ export enum Platform {
     Ubuntu16
 }
 
-export function getCurrentPlatform(): Promise<Platform> {
-    if (process.platform === 'win32') {
-        return Promise.resolve(Platform.Windows);
-    }
-    else if (process.platform === 'darwin') {
-        return Promise.resolve(Platform.OSX);
-    }
-    else if (process.platform === 'linux') {
-        return LinuxDistribution.GetCurrent().then(distro => {
-            switch (distro.name)
-            {
-                case 'ubuntu':
-                    if (distro.version.startsWith("14")) {
-                        // This also works for Linux Mint
-                        return Platform.Ubuntu14;
-                    }
-                    else if (distro.version.startsWith("16")) {
-                        return Platform.Ubuntu16;
-                    }
+export class PlatformInformation {
+    constructor(
+        public operatingSystem: OperatingSystem,
+        public architecture: string,
+        public distribution: LinuxDistribution) { }
 
-                    break;
-                case 'centos':
-                    return Platform.CentOS;
-                case 'fedora':
-                    return Platform.Fedora;
-                case 'opensuse':
-                    return Platform.OpenSUSE;
-                case 'rhel':
-                    return Platform.RHEL;
-                case 'debian':
-                    return Platform.Debian;
-                case 'ol':
-                    // Oracle Linux is binary compatible with CentOS
-                    return Platform.CentOS;
-                case 'elementary':
-                case 'elementary OS':
-                    if (distro.version.startsWith("0.3")) {
-                        // Elementary OS 0.3 Freya is binary compatible with Ubuntu 14.04
-                        return Platform.Ubuntu14;
-                    }
-                    else if (distro.version.startsWith("0.4")) {
-                        // Elementary OS 0.4 Loki is binary compatible with Ubuntu 16.04
-                        return Platform.Ubuntu16;
-                    }
+    public static GetCurrent(): Promise<PlatformInformation> {
+        let operatingSystem: OperatingSystem;
+        let architecturePromise: Promise<string>;
+        let distributionPromise: Promise<LinuxDistribution>;
 
-                    break;
-                case 'linuxmint':
-                    if (distro.version.startsWith("18")) {
-                        // Linux Mint 18 is binary compatible with Ubuntu 16.04
-                        return Platform.Ubuntu16;
-                    }
+        switch (os.platform()) {
+            case 'win32':
+                operatingSystem = OperatingSystem.Windows;
+                architecturePromise = PlatformInformation.GetWindowsArchitecture();
+                distributionPromise = Promise.resolve(null);
+                break;
 
-                    break;
-            }
-        });
+            case 'darwin':
+                operatingSystem = OperatingSystem.MacOS;
+                architecturePromise = PlatformInformation.GetUnixArchitecture();
+                distributionPromise = Promise.resolve(null);
+                break;
+
+            case 'linux':
+                operatingSystem = OperatingSystem.Linux; 
+                architecturePromise = PlatformInformation.GetUnixArchitecture();
+                distributionPromise = LinuxDistribution.GetCurrent();
+                break;
+        }
+
+        return Promise.all([architecturePromise, distributionPromise])
+            .then(([arch, distro]) => {
+                return new PlatformInformation(operatingSystem, arch, distro)
+            });
     }
 
-    return Promise.resolve(Platform.Unknown);
+    private static GetWindowsArchitecture(): Promise<string> {
+        return util.execChildProcess('wmic os get osarchitecture')
+            .then(architecture => {
+                if (architecture) {
+                    let archArray: string[] = architecture.split(os.EOL);
+                    if (archArray.length >= 2) {
+                        return archArray[1].trim();
+                    }
+                }
+
+                return unknown;
+            }).catch((error) => {
+                return unknown;
+            });
+    }
+
+    private static GetUnixArchitecture(): Promise<string> {
+        return util.execChildProcess('uname -m')
+            .then(architecture => {
+                if (architecture) {
+                    return architecture.trim();
+                }
+
+                return null;
+            });
+    }
+
+    public hasCoreClrFlavor(): boolean {
+        return this.getCoreClrFlavor() !== CoreClrFlavor.None;
+    }
+
+    public getCoreClrFlavor(): CoreClrFlavor {
+        switch (this.operatingSystem) {
+            case OperatingSystem.Windows: return CoreClrFlavor.Windows;
+            case OperatingSystem.MacOS: return CoreClrFlavor.OSX;
+            case OperatingSystem.Linux:
+                const distro = this.distribution;
+                switch (distro.name) {
+                    case 'ubuntu':
+                        if (distro.version.startsWith("14")) {
+                            // This also works for Linux Mint
+                            return CoreClrFlavor.Ubuntu14;
+                        }
+                        else if (distro.version.startsWith("16")) {
+                            return CoreClrFlavor.Ubuntu16;
+                        }
+
+                        break;
+                    case 'centos':
+                        return CoreClrFlavor.CentOS;
+                    case 'fedora':
+                        return CoreClrFlavor.Fedora;
+                    case 'opensuse':
+                        return CoreClrFlavor.OpenSUSE;
+                    case 'rhel':
+                        return CoreClrFlavor.RHEL;
+                    case 'debian':
+                        return CoreClrFlavor.Debian;
+                    case 'ol':
+                        // Oracle Linux is binary compatible with CentOS
+                        return CoreClrFlavor.CentOS;
+                    case 'elementary':
+                    case 'elementary OS':
+                        if (distro.version.startsWith("0.3")) {
+                            // Elementary OS 0.3 Freya is binary compatible with Ubuntu 14.04
+                            return CoreClrFlavor.Ubuntu14;
+                        }
+                        else if (distro.version.startsWith("0.4")) {
+                            // Elementary OS 0.4 Loki is binary compatible with Ubuntu 16.04
+                            return CoreClrFlavor.Ubuntu16;
+                        }
+
+                        break;
+                    case 'linuxmint':
+                        if (distro.version.startsWith("18")) {
+                            // Linux Mint 18 is binary compatible with Ubuntu 16.04
+                            return CoreClrFlavor.Ubuntu16;
+                        }
+
+                        break;
+                }
+        }
+
+        return CoreClrFlavor.None;
+    }
 }

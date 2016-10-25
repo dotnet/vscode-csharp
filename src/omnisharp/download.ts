@@ -8,8 +8,6 @@
  * to be usable outside of VS Code. 
  */
 
-'use strict';
-
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 import * as https from 'https';
@@ -17,7 +15,7 @@ import * as stream from 'stream';
 import * as tmp from 'tmp';
 import {parse} from 'url';
 import {Flavor, getInstallDirectory} from './omnisharp';
-import {Platform} from '../platform';
+import {PlatformInformation, CoreClrFlavor} from '../platform';
 import {getProxyAgent} from '../proxy';
 import {Logger} from './logger';
 
@@ -28,46 +26,44 @@ const OmniSharpVersion = '1.9-beta18';
 
 tmp.setGracefulCleanup();
 
-function getDownloadFileName(flavor: Flavor, platform: Platform): string {
+function getDownloadFileName(flavor: Flavor, coreClrFlavor: CoreClrFlavor): string {
     let fileName = `omnisharp-${OmniSharpVersion}-`;
 
     if (flavor === Flavor.CoreCLR) {
-        switch (platform) {
-            case Platform.Windows:
+        switch (coreClrFlavor) {
+            case CoreClrFlavor.Windows:
                 fileName += 'win-x64-netcoreapp1.0.zip';
                 break;
-            case Platform.OSX:
+            case CoreClrFlavor.OSX:
                 fileName += 'osx-x64-netcoreapp1.0.tar.gz';
                 break;
-            case Platform.CentOS:
+            case CoreClrFlavor.CentOS:
                 fileName += 'centos-x64-netcoreapp1.0.tar.gz';
                 break;
-            case Platform.Debian:
+            case CoreClrFlavor.Debian:
                 fileName += 'debian-x64-netcoreapp1.0.tar.gz';
                 break;
-            case Platform.Fedora:
+            case CoreClrFlavor.Fedora:
                 fileName += 'fedora-x64-netcoreapp1.0.tar.gz';
                 break;
-            case Platform.OpenSUSE:
+            case CoreClrFlavor.OpenSUSE:
                 fileName += 'opensuse-x64-netcoreapp1.0.tar.gz';
                 break;
-            case Platform.RHEL:
+            case CoreClrFlavor.RHEL:
                 fileName += 'rhel-x64-netcoreapp1.0.tar.gz';
                 break;
-            case Platform.Ubuntu14:
+            case CoreClrFlavor.Ubuntu14:
                 fileName += 'ubuntu14-x64-netcoreapp1.0.tar.gz';
                 break;
-            case Platform.Ubuntu16:
+            case CoreClrFlavor.Ubuntu16:
                 fileName += 'ubuntu16-x64-netcoreapp1.0.tar.gz';
                 break;
-   
             default:
                 if (process.platform === 'linux') {
-                    throw new Error(`Unsupported linux distribution`);
+                    throw new Error('Unsupported linux distribution');
                 }
-                else {
-                    throw new Error(`Unsupported platform: ${process.platform}`);
-                }
+   
+                throw new Error(`Unsupported platform: ${process.platform}`);
         }
     }
     else if (flavor === Flavor.Desktop) {
@@ -109,9 +105,9 @@ function download(urlString: string, proxy?: string, strictSSL?: boolean): Promi
     });
 }
 
-export function go(flavor: Flavor, platform: Platform, logger: Logger, proxy?: string, strictSSL?: boolean) {
+export function go(flavor: Flavor, coreClrFlavor: CoreClrFlavor, logger: Logger, proxy?: string, strictSSL?: boolean) {
     return new Promise<boolean>((resolve, reject) => {
-        const fileName = getDownloadFileName(flavor, platform);
+        const fileName = getDownloadFileName(flavor, coreClrFlavor);
         const installDirectory = getInstallDirectory(flavor);
 
         logger.appendLine(`Installing OmniSharp to ${installDirectory}`);
