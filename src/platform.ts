@@ -124,6 +124,9 @@ export class PlatformInformation {
                 architecturePromise = PlatformInformation.GetUnixArchitecture();
                 distributionPromise = LinuxDistribution.GetCurrent();
                 break;
+
+            default:
+                throw new Error(`Unsupported operating system: ${os.platform()}`);
         }
 
         return Promise.all([architecturePromise, distributionPromise])
