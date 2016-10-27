@@ -72,7 +72,12 @@ function installRuntimeDependencies(extension: vscode.Extension<any>): Promise<v
             logger.appendLine();
 
             installationStage = 'downloadPackages';
-            return packageManager.DownloadPackages(logger, status);
+
+            const config = vscode.workspace.getConfiguration();
+            const proxy = config.get<string>('http.proxy');
+            const strictSSL = config.get('http.proxyStrictSSL', true);
+
+            return packageManager.DownloadPackages(logger, status, proxy, strictSSL);
         })
         .then(() => {
             logger.appendLine();

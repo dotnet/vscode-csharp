@@ -40,10 +40,10 @@ export class PackageManager {
         tmp.setGracefulCleanup();
     }
 
-    public DownloadPackages(logger: Logger, status: Status): Promise<void> {
+    public DownloadPackages(logger: Logger, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
         return this.GetPackages()
             .then(packages => {
-                return util.buildPromiseChain(packages, pkg => downloadPackage(pkg, logger, status));
+                return util.buildPromiseChain(packages, pkg => downloadPackage(pkg, logger, status, proxy, strictSSL));
             });
     }
 
