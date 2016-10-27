@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import DefinitionProvider from './features/definitionProvider';
 import CodeLensProvider from './features/codeLensProvider';
 import DocumentHighlightProvider from './features/documentHighlightProvider';
@@ -29,6 +27,9 @@ import * as vscode from 'vscode';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import {DefinitionMetadataDocumentProvider} from './features/definitionMetadataDocumentProvider';
 import * as util from './common';
+import { Logger } from './logger';
+import { PackageManager, Status } from './packages';
+import { PlatformInformation } from './platform';
 
 export function activate(context: vscode.ExtensionContext): any {
 
@@ -36,11 +37,21 @@ export function activate(context: vscode.ExtensionContext): any {
     const extension = vscode.extensions.getExtension(extensionId);
     const extensionVersion = extension.packageJSON.version;
     const aiKey = extension.packageJSON.contributes.debuggers[0].aiKey;
+    const reporter = new TelemetryReporter(extensionId, extensionVersion, aiKey);
 
     util.setExtensionPath(extension.extensionPath);
 
-    const reporter = new TelemetryReporter(extensionId, extensionVersion, aiKey);
+    ensureRuntimeDependencies(extension)
+        .then(() => {
+            // activate language services
+            activateLanguageServices(context, reporter);
 
+            // activate coreclr-debug
+            coreclrdebug.activate(context, reporter);
+        });
+}
+
+function activateLanguageServices(context: vscode.ExtensionContext, reporter: TelemetryReporter) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
         scheme: 'file' // only files from disk
@@ -109,9 +120,72 @@ export function activate(context: vscode.ExtensionContext): any {
         server.stop();
     }));
 
-    // activate coreclr-debug
-    coreclrdebug.activate(context, reporter);
-
     context.subscriptions.push(...disposables);
 }
 
+function ensureRuntimeDependencies(extension: vscode.Extension<any>): Promise<void> {
+    return util.lockFileExists().then(exists => {
+        if (!exists) {
+            return installRuntimeDependencies(extension);
+        }
+    });
+}
+
+function installRuntimeDependencies(extension: vscode.Extension<any>): Promise<void> {
+    let channel = vscode.window.createOutputChannel('C#');
+    channel.show();
+
+    let logger = new Logger(text => channel.append(text));
+    logger.appendLine('Updating C# dependencies...');
+
+    let statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
+    let status: Status = {
+        setMessage: text => {
+            statusItem.text = text;
+            statusItem.show();
+        },
+        setDetail: text => {
+            statusItem.tooltip = text;
+            statusItem.show();
+        }
+    }
+
+    let platformInfo: PlatformInformation;
+    let packageManager: PackageManager;
+    let installationStage = 'getPlatformInfo';
+    let errorMessage = '';
+
+    return PlatformInformation.GetCurrent()
+        .then(info => {
+            platformInfo = info;
+            packageManager = new PackageManager(info, extension.packageJSON);
+            logger.appendLine();
+
+            installationStage = 'downloadPackages';
+            return packageManager.DownloadPackages(logger, status);
+        })
+        .then(() => {
+            logger.appendLine();
+
+            installationStage = 'installPackages';
+            return packageManager.InstallPackages(logger, status);
+        })
+        .then(() => {
+            installationStage = 'touchLockFile';
+            return util.touchLockFile();
+        })
+        .catch(error => {
+            errorMessage = error.toString();
+            logger.appendLine(`Failed at stage: ${installationStage}`);
+            logger.appendLine(errorMessage);
+        })
+        .then(() => {
+            logger.appendLine();
+            installationStage = '';
+            logger.appendLine('Finished');
+
+            // TODO: Send telemetry event
+
+            statusItem.dispose();
+        });
+}
