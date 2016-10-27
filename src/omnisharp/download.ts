@@ -17,7 +17,7 @@ import {parse} from 'url';
 import {Flavor, getInstallDirectory} from './omnisharp';
 import {PlatformInformation, CoreClrFlavor} from '../platform';
 import {getProxyAgent} from '../proxy';
-import {Logger} from './logger';
+import {Logger} from '../logger';
 
 const decompress = require('decompress');
 
