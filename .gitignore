@@ -3,4 +3,6 @@ node_modules
 out
 .omnisharp
 
+install.lock
+
 *.vsix
