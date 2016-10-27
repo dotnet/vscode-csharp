@@ -23,7 +23,8 @@ const platform = require('./out/src/platform');
 const child_process = require('child_process');
 
 const Flavor = omnisharp.Flavor;
-const Platform = platform.Platform;
+const CoreClrFlavor = platform.CoreClrFlavor;
+const PlatformInformation = platform.PlatformInformation;
 
 /// used in offline packaging run so does not clean .vsix
 function clean() {
@@ -31,7 +32,7 @@ function clean() {
     return cleanOmnisharp();
 }
 
-gulp.task('clean', ['omnisharp:clean',  'debugger:clean', 'package:clean'], () => {
+gulp.task('clean', ['omnisharp:clean', 'debugger:clean', 'package:clean'], () => {
 
 });
 
@@ -40,7 +41,7 @@ function installOmnisharp(omnisharps) {
     const promises = omnisharps.map((omni, index) => {
         const log = new logger.Logger(message => process.stdout.write(message), index.toString());
 
-        return download.go(omni.flavor, omni.platform, log);
+        return download.go(omni.flavor, omni.coreClrFlavor, log);
     });
 
     return Promise.all(promises);
@@ -56,9 +57,11 @@ gulp.task('omnisharp:clean', () => {
 
 gulp.task('omnisharp:install', ['omnisharp:clean'], () => {
     const flavor = gulpUtil.env.flavor || Flavor.CoreCLR;
-    const platform = gulpUtil.env.platform || platform.getCurrentPlatform();
 
-    return installOmnisharp([{flavor, platform}]);
+    return PlatformInformation.GetCurrent().then(info => {
+        const coreClrFlavor = gulpUtil.env.coreClrFlavor || info.getCoreClrFlavor();
+        return installOmnisharp([{ flavor, coreClrFlavor }]);
+    });
 });
 
 /// Debugger Tasks
@@ -134,15 +137,15 @@ gulp.task('package:offline', ['clean'], () => {
     var packageName = name + '.' + version;
 
     var packages = [];
-    packages.push({rid: 'win7-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.Windows}, {flavor: Flavor.Desktop, platform: Platform.Windows}]});
-    packages.push({rid: 'osx.10.11-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.OSX}]});
-    packages.push({rid: 'centos.7-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.CentOS}]});
-    packages.push({rid: 'debian.8-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.Debian}]});
-    packages.push({rid: 'fedora.23-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.Fedora}]});
-    packages.push({rid: 'opensuse.13.2-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.OpenSUSE}]});
-    packages.push({rid: 'rhel.7.2-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.RHEL}]});
-    packages.push({rid: 'ubuntu.14.04-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.Ubuntu14}]});
-    packages.push({rid: 'ubuntu.16.04-x64', omnisharps: [{flavor: Flavor.CoreCLR, platform: Platform.Ubuntu16}]});
+    packages.push({ rid: 'win7-x64', omnisharps: [{ flavor: Flavor.CoreCLR, coreClrFlavor: CoreClrFlavor.Windows }, { flavor: Flavor.Desktop, coreClrFlavor: CoreClrFlavor.Windows }] });
+    packages.push({ rid: 'osx.10.11-x64', omnisharps: [{ flavor: Flavor.CoreCLR, coreClrFlavor: CoreClrFlavor.OSX }] });
+    packages.push({ rid: 'centos.7-x64', omnisharps: [{ flavor: Flavor.CoreCLR, coreClrFlavor: CoreClrFlavor.CentOS }] });
+    packages.push({ rid: 'debian.8-x64', omnisharps: [{ flavor: Flavor.CoreCLR, coreClrFlavor: CoreClrFlavor.Debian }] });
+    packages.push({ rid: 'fedora.23-x64', omnisharps: [{ flavor: Flavor.CoreCLR, coreClrFlavor: CoreClrFlavor.Fedora }] });
+    packages.push({ rid: 'opensuse.13.2-x64', omnisharps: [{ flavor: Flavor.CoreCLR, coreClrFlavor: CoreClrFlavor.OpenSUSE }] });
+    packages.push({ rid: 'rhel.7.2-x64', omnisharps: [{ flavor: Flavor.CoreCLR, coreClrFlavor: CoreClrFlavor.RHEL }] });
+    packages.push({ rid: 'ubuntu.14.04-x64', omnisharps: [{ flavor: Flavor.CoreCLR, coreClrFlavor: CoreClrFlavor.Ubuntu14 }] });
+    packages.push({ rid: 'ubuntu.16.04-x64', omnisharps: [{ flavor: Flavor.CoreCLR, coreClrFlavor: CoreClrFlavor.Ubuntu16 }] });
 
     var promise = Promise.resolve();
 
@@ -158,7 +161,7 @@ gulp.task('package:offline', ['clean'], () => {
 /// Test Task
 gulp.task('test', () => {
     gulp.src('out/test/**/*.tests.js')
-        .pipe(mocha({ui: "tdd"}))
+        .pipe(mocha({ ui: "tdd" }))
         .once('error', () => {
             process.exit(1);
         })
@@ -175,17 +178,17 @@ const allTypeScript = [
 ];
 
 const lintReporter = (output, file, options) => {
-	//emits: src/helloWorld.c:5:3: warning: implicit declaration of function ‘prinft’
-	var relativeBase = file.base.substring(file.cwd.length + 1).replace('\\', '/');
-	output.forEach(e => {
-		var message = relativeBase + e.name + ':' + (e.startPosition.line + 1) + ':' + (e.startPosition.character + 1) + ': ' + e.failure;
-		console.log('[tslint] ' + message);
-	});
+    //emits: src/helloWorld.c:5:3: warning: implicit declaration of function ‘prinft’
+    var relativeBase = file.base.substring(file.cwd.length + 1).replace('\\', '/');
+    output.forEach(e => {
+        var message = relativeBase + e.name + ':' + (e.startPosition.line + 1) + ':' + (e.startPosition.character + 1) + ': ' + e.failure;
+        console.log('[tslint] ' + message);
+    });
 };
 
 gulp.task('tslint', () => {
-	gulp.src(allTypeScript)
-	    .pipe(tslint({
+    gulp.src(allTypeScript)
+        .pipe(tslint({
             rulesDirectory: "node_modules/tslint-microsoft-contrib"
         }))
         .pipe(tslint.report(lintReporter, {

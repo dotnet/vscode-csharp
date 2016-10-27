@@ -3,12 +3,87 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as util from './common';
 
-import * as child_process from 'child_process';
+const unknown = 'unknown';
 
-export enum Platform {
-    Unknown,
+/**
+ * There is no standard way on Linux to find the distribution name and version.
+ * Recently, systemd has pushed to standardize the os-release file. This has
+ * seen adoption in "recent" versions of all major distributions.
+ * https://www.freedesktop.org/software/systemd/man/os-release.html
+ */
+export class LinuxDistribution {
+    constructor(
+        public name: string,
+        public version: string) { }
+
+    public static GetCurrent(): Promise<LinuxDistribution> {
+        // Try /etc/os-release and fallback to /usr/lib/os-release per the synopsis
+        // at https://www.freedesktop.org/software/systemd/man/os-release.html.
+        return LinuxDistribution.FromFilePath('/etc/os-release')
+            .catch(() => LinuxDistribution.FromFilePath('/usr/lib/os-release'))
+            .catch(() => Promise.resolve(new LinuxDistribution(unknown, unknown)));
+    }
+
+    private static FromFilePath(filePath: string): Promise<LinuxDistribution> {
+        return new Promise<LinuxDistribution>((resolve, reject) => {
+            fs.readFile(filePath, 'utf8', (error, data) => {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    resolve(LinuxDistribution.FromReleaseInfo(data));
+                }
+            });
+        });
+    }
+
+    public static FromReleaseInfo(releaseInfo: string): LinuxDistribution {
+        let name = unknown;
+        let version = unknown;
+
+        const lines = releaseInfo.split(os.EOL);
+        for (let line of lines) {
+            line = line.trim();
+
+            let equalsIndex = line.indexOf('=');
+            if (equalsIndex >= 0) {
+                let key = line.substring(0, equalsIndex);
+                let value = line.substring(equalsIndex + 1);
+
+                // Strip double quotes if necessary
+                if (value.length > 1 && value.startsWith('"') && value.endsWith('"')) {
+                    value = value.substring(1, value.length - 1);
+                }
+
+                if (key === 'ID') {
+                    name = value;
+                }
+                else if (key === 'VERSION_ID') {
+                    version = value;
+                }
+
+                if (name !== unknown && version !== unknown) {
+                    break;
+                }
+            }
+        }
+
+        return new LinuxDistribution(name, version);
+    }
+}
+
+export enum OperatingSystem {
+    Windows,
+    MacOS,
+    Linux
+}
+
+export enum CoreClrFlavor {
+    None,
     Windows,
     OSX,
     CentOS,
@@ -20,96 +95,129 @@ export enum Platform {
     Ubuntu16
 }
 
-function convertOSReleaseTextToMap(text : string) : Map<string, string> {
-    let ret: Map<string, string> = new Map<string, string>();
-    const lines: string[] = text.split('\n');
+export class PlatformInformation {
+    constructor(
+        public operatingSystem: OperatingSystem,
+        public architecture: string,
+        public distribution: LinuxDistribution) { }
 
-    for (let line of lines) {
-        line = line.trim();
+    public static GetCurrent(): Promise<PlatformInformation> {
+        let operatingSystem: OperatingSystem;
+        let architecturePromise: Promise<string>;
+        let distributionPromise: Promise<LinuxDistribution>;
 
-        let equalsIndex = line.indexOf('=');
-        if (equalsIndex >= 0) {
-            let key = line.substring(0, equalsIndex);
-            let value = line.substring(equalsIndex + 1);
+        switch (os.platform()) {
+            case 'win32':
+                operatingSystem = OperatingSystem.Windows;
+                architecturePromise = PlatformInformation.GetWindowsArchitecture();
+                distributionPromise = Promise.resolve(null);
+                break;
 
-            // Strip double quotes if necessary
-            if (value.length > 1 && value.startsWith('"') && value.endsWith('"')) {
-                value = value.substring(1, value.length - 1);
-            }
+            case 'darwin':
+                operatingSystem = OperatingSystem.MacOS;
+                architecturePromise = PlatformInformation.GetUnixArchitecture();
+                distributionPromise = Promise.resolve(null);
+                break;
 
-            ret.set(key, value);
+            case 'linux':
+                operatingSystem = OperatingSystem.Linux; 
+                architecturePromise = PlatformInformation.GetUnixArchitecture();
+                distributionPromise = LinuxDistribution.GetCurrent();
+                break;
+
+            default:
+                throw new Error(`Unsupported operating system: ${os.platform()}`);
         }
+
+        return Promise.all([architecturePromise, distributionPromise])
+            .then(([arch, distro]) => {
+                return new PlatformInformation(operatingSystem, arch, distro)
+            });
     }
 
-    return ret;
-}
+    private static GetWindowsArchitecture(): Promise<string> {
+        return util.execChildProcess('wmic os get osarchitecture')
+            .then(architecture => {
+                if (architecture) {
+                    let archArray: string[] = architecture.split(os.EOL);
+                    if (archArray.length >= 2) {
+                        return archArray[1].trim();
+                    }
+                }
 
-
-export function getCurrentPlatform() {
-    if (process.platform === 'win32') {
-        return Platform.Windows;
+                return unknown;
+            }).catch((error) => {
+                return unknown;
+            });
     }
-    else if (process.platform === 'darwin') {
-        return Platform.OSX;
+
+    private static GetUnixArchitecture(): Promise<string> {
+        return util.execChildProcess('uname -m')
+            .then(architecture => {
+                if (architecture) {
+                    return architecture.trim();
+                }
+
+                return null;
+            });
     }
-    else if (process.platform === 'linux') {
-        // Get the text of /etc/os-release to discover which Linux distribution we're running on.
-        // For details: https://www.freedesktop.org/software/systemd/man/os-release.html
-        // When any new distro or version is added, please update GetClrDbg.sh in MIEngine or inform the contributers of MIEngine.
-        const text = child_process.execSync('cat /etc/os-release').toString();
-        const osReleaseMap = convertOSReleaseTextToMap(text);
 
-        const id = osReleaseMap.get("ID");
+    public hasCoreClrFlavor(): boolean {
+        return this.getCoreClrFlavor() !== CoreClrFlavor.None;
+    }
 
-        switch (id)
-        {
-            case 'ubuntu':
-                const versionId = osReleaseMap.get("VERSION_ID");
-                if (versionId.startsWith("14")) {
-                    // This also works for Linux Mint
-                    return Platform.Ubuntu14;
-                }
-                else if (versionId.startsWith("16")) {
-                    return Platform.Ubuntu16;
-                }
+    public getCoreClrFlavor(): CoreClrFlavor {
+        switch (this.operatingSystem) {
+            case OperatingSystem.Windows: return CoreClrFlavor.Windows;
+            case OperatingSystem.MacOS: return CoreClrFlavor.OSX;
+            case OperatingSystem.Linux:
+                const distro = this.distribution;
+                switch (distro.name) {
+                    case 'ubuntu':
+                        if (distro.version.startsWith("14")) {
+                            // This also works for Linux Mint
+                            return CoreClrFlavor.Ubuntu14;
+                        }
+                        else if (distro.version.startsWith("16")) {
+                            return CoreClrFlavor.Ubuntu16;
+                        }
 
-                break;
-            case 'centos':
-                return Platform.CentOS;
-            case 'fedora':
-                return Platform.Fedora;
-            case 'opensuse':
-                return Platform.OpenSUSE;
-            case 'rhel':
-                return Platform.RHEL;
-            case 'debian':
-                return Platform.Debian;
-            case 'ol':
-                // Oracle Linux is binary compatible with CentOS
-                return Platform.CentOS;
-            case 'elementary':
-            case 'elementary OS':
-                const eOSVersionId = osReleaseMap.get("VERSION_ID");
-                if (eOSVersionId.startsWith("0.3")) {
-                    // Elementary OS 0.3 Freya is binary compatible with Ubuntu 14.04
-                    return Platform.Ubuntu14;
-                }
-                else if (eOSVersionId.startsWith("0.4")) {
-                    // Elementary OS 0.4 Loki is binary compatible with Ubuntu 16.04
-                    return Platform.Ubuntu16;
-                }
+                        break;
+                    case 'centos':
+                        return CoreClrFlavor.CentOS;
+                    case 'fedora':
+                        return CoreClrFlavor.Fedora;
+                    case 'opensuse':
+                        return CoreClrFlavor.OpenSUSE;
+                    case 'rhel':
+                        return CoreClrFlavor.RHEL;
+                    case 'debian':
+                        return CoreClrFlavor.Debian;
+                    case 'ol':
+                        // Oracle Linux is binary compatible with CentOS
+                        return CoreClrFlavor.CentOS;
+                    case 'elementary':
+                    case 'elementary OS':
+                        if (distro.version.startsWith("0.3")) {
+                            // Elementary OS 0.3 Freya is binary compatible with Ubuntu 14.04
+                            return CoreClrFlavor.Ubuntu14;
+                        }
+                        else if (distro.version.startsWith("0.4")) {
+                            // Elementary OS 0.4 Loki is binary compatible with Ubuntu 16.04
+                            return CoreClrFlavor.Ubuntu16;
+                        }
 
-                break;
-            case 'linuxmint':
-                const lmVersionId = osReleaseMap.get("VERSION_ID");
-                if (lmVersionId.startsWith("18")) {
-                    // Linux Mint 18 is binary compatible with Ubuntu 16.04
-                    return Platform.Ubuntu16;
-                }
+                        break;
+                    case 'linuxmint':
+                        if (distro.version.startsWith("18")) {
+                            // Linux Mint 18 is binary compatible with Ubuntu 16.04
+                            return CoreClrFlavor.Ubuntu16;
+                        }
 
-                break;
+                        break;
+                }
         }
-    }
 
-    return Platform.Unknown;
+        return CoreClrFlavor.None;
+    }
 }

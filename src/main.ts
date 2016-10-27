@@ -28,6 +28,7 @@ import {addAssetsIfNecessary, AddAssetResult} from './assets';
 import * as vscode from 'vscode';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import {DefinitionMetadataDocumentProvider} from './features/definitionMetadataDocumentProvider';
+import * as util from './common';
 
 export function activate(context: vscode.ExtensionContext): any {
 
@@ -36,9 +37,11 @@ export function activate(context: vscode.ExtensionContext): any {
     const extensionVersion = extension.packageJSON.version;
     const aiKey = extension.packageJSON.contributes.debuggers[0].aiKey;
 
+    util.setExtensionPath(extension.extensionPath);
+
     const reporter = new TelemetryReporter(extensionId, extensionVersion, aiKey);
 
-    const _selector: vscode.DocumentSelector = {
+    const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
         scheme: 'file' // only files from disk
     };
@@ -54,21 +57,21 @@ export function activate(context: vscode.ExtensionContext): any {
         definitionMetadataDocumentProvider.register();
         localDisposables.push(definitionMetadataDocumentProvider);
 
-        localDisposables.push(vscode.languages.registerDefinitionProvider(_selector, new DefinitionProvider(server, definitionMetadataDocumentProvider)));
-        localDisposables.push(vscode.languages.registerCodeLensProvider(_selector, new CodeLensProvider(server)));
-        localDisposables.push(vscode.languages.registerDocumentHighlightProvider(_selector, new DocumentHighlightProvider(server)));
-        localDisposables.push(vscode.languages.registerDocumentSymbolProvider(_selector, new DocumentSymbolProvider(server)));
-        localDisposables.push(vscode.languages.registerReferenceProvider(_selector, new ReferenceProvider(server)));
-        localDisposables.push(vscode.languages.registerHoverProvider(_selector, new HoverProvider(server)));
-        localDisposables.push(vscode.languages.registerRenameProvider(_selector, new RenameProvider(server)));
-        localDisposables.push(vscode.languages.registerDocumentRangeFormattingEditProvider(_selector, new FormatProvider(server)));
-        localDisposables.push(vscode.languages.registerOnTypeFormattingEditProvider(_selector, new FormatProvider(server), '}', ';'));
-        localDisposables.push(vscode.languages.registerCompletionItemProvider(_selector, new CompletionItemProvider(server), '.', '<'));
+        localDisposables.push(vscode.languages.registerDefinitionProvider(documentSelector, new DefinitionProvider(server, definitionMetadataDocumentProvider)));
+        localDisposables.push(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server)));
+        localDisposables.push(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server)));
+        localDisposables.push(vscode.languages.registerDocumentSymbolProvider(documentSelector, new DocumentSymbolProvider(server)));
+        localDisposables.push(vscode.languages.registerReferenceProvider(documentSelector, new ReferenceProvider(server)));
+        localDisposables.push(vscode.languages.registerHoverProvider(documentSelector, new HoverProvider(server)));
+        localDisposables.push(vscode.languages.registerRenameProvider(documentSelector, new RenameProvider(server)));
+        localDisposables.push(vscode.languages.registerDocumentRangeFormattingEditProvider(documentSelector, new FormatProvider(server)));
+        localDisposables.push(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new FormatProvider(server), '}', ';'));
+        localDisposables.push(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionItemProvider(server), '.', '<'));
         localDisposables.push(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server)));
-        localDisposables.push(vscode.languages.registerSignatureHelpProvider(_selector, new SignatureHelpProvider(server), '(', ','));
+        localDisposables.push(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server), '(', ','));
         const codeActionProvider = new CodeActionProvider(server);
         localDisposables.push(codeActionProvider);
-        localDisposables.push(vscode.languages.registerCodeActionsProvider(_selector, codeActionProvider));
+        localDisposables.push(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
         localDisposables.push(reportDiagnostics(server, advisor));
         localDisposables.push(forwardChanges(server));
     }));
