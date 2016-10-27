@@ -97,16 +97,18 @@ export enum CoreClrFlavor {
 
 export class PlatformInformation {
     constructor(
+        public platform: string,
         public operatingSystem: OperatingSystem,
         public architecture: string,
         public distribution: LinuxDistribution) { }
 
     public static GetCurrent(): Promise<PlatformInformation> {
+        let platform = os.platform();
         let operatingSystem: OperatingSystem;
         let architecturePromise: Promise<string>;
         let distributionPromise: Promise<LinuxDistribution>;
 
-        switch (os.platform()) {
+        switch (platform) {
             case 'win32':
                 operatingSystem = OperatingSystem.Windows;
                 architecturePromise = PlatformInformation.GetWindowsArchitecture();
@@ -131,7 +133,7 @@ export class PlatformInformation {
 
         return Promise.all([architecturePromise, distributionPromise])
             .then(([arch, distro]) => {
-                return new PlatformInformation(operatingSystem, arch, distro)
+                return new PlatformInformation(platform, operatingSystem, arch, distro)
             });
     }
 

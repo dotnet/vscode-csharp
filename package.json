@@ -31,11 +31,13 @@
     "http-proxy-agent": "^1.0.0",
     "https-proxy-agent": "^1.0.0",
     "lodash.debounce": "^4.0.8",
+    "mkdirp": "^0.5.1",
     "open": "*",
     "semver": "*",
     "tmp": "0.0.28",
     "vscode-debugprotocol": "^1.6.1",
-    "vscode-extension-telemetry": "0.0.4"
+    "vscode-extension-telemetry": "0.0.4",
+    "yauzl": "^2.7.0"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
@@ -50,6 +52,33 @@
     "chai": "^3.5.0",
     "vscode-textmate": "^2.1.1"
   },
+  "runtimeDependencies": [
+    {
+      "description": "Mono Framework Assemblies",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/framework-4.6.1.tar.gz",
+      "platforms": [ "linux", "darwin" ]
+    },
+    {
+      "description": "Mono Runtime (Linux / x86)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.linux-x86-4.6.1.tar.gz",
+      "platforms": [ "linux" ],
+      "architectures": [ "x86" ],
+      "binaries": [ "./bin/mono.linux-x86" ]
+    },
+    {
+      "description": "Mono Runtime (Linux / x64)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.linux-x86_64-4.6.1.tar.gz",
+      "platforms": [ "linux" ],
+      "architectures": [ "x86_64" ],
+      "binaries": [ "./bin/mono.linux-x86_64" ]
+    },
+    {
+      "description": "Mono Runtime (macOS)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.osx-4.6.1.tar.gz",
+      "platforms": [ "darwin" ],
+      "binaries": [ "./bin/mono.osx" ]
+    }
+  ],
   "engines": {
     "vscode": "^1.3.0"
   },

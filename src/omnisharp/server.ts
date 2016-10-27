@@ -14,7 +14,7 @@ import * as protocol from './protocol';
 import * as omnisharp from './omnisharp';
 import * as download from './download';
 import {readOptions} from './options';
-import {Logger} from './logger';
+import {Logger} from '../logger';
 import {DelayTracker} from './delayTracker';
 import {LaunchTarget, findLaunchTargets, getDefaultFlavor} from './launcher';
 import {PlatformInformation, OperatingSystem} from '../platform';
