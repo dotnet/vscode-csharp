@@ -41,11 +41,11 @@ export class LinuxDistribution {
         });
     }
 
-    public static FromReleaseInfo(releaseInfo: string): LinuxDistribution {
+    public static FromReleaseInfo(releaseInfo: string, eol: string = os.EOL): LinuxDistribution {
         let name = unknown;
         let version = unknown;
 
-        const lines = releaseInfo.split(os.EOL);
+        const lines = releaseInfo.split(eol);
         for (let line of lines) {
             line = line.trim();
 

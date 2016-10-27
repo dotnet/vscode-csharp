@@ -22,7 +22,7 @@ HOME_URL="http://www.ubuntu.com/"
 SUPPORT_URL="http://help.ubuntu.com/"
 BUG_REPORT_URL="http://bugs.launchpad.net/ubuntu/"`;
 
-        const dist = LinuxDistribution.FromReleaseInfo(input);
+        const dist = LinuxDistribution.FromReleaseInfo(input, '\n');
 
         dist.name.should.equal('ubuntu');
         dist.version.should.equal('14.04');
@@ -48,7 +48,7 @@ PRIVACY_POLICY_URL=https://fedoraproject.org/wiki/Legal:PrivacyPolicy
 VARIANT="Workstation Edition"
 VARIANT_ID=workstation`;
 
-        const dist = LinuxDistribution.FromReleaseInfo(input);
+        const dist = LinuxDistribution.FromReleaseInfo(input, '\n');
 
         dist.name.should.equal('fedora');
         dist.version.should.equal('23');
@@ -66,7 +66,7 @@ HOME_URL="http://www.debian.org/"
 SUPPORT_URL="http://www.debian.org/support"
 BUG_REPORT_URL="https://bugs.debian.org/"`;
 
-        const dist = LinuxDistribution.FromReleaseInfo(input);
+        const dist = LinuxDistribution.FromReleaseInfo(input, '\n');
 
         dist.name.should.equal('debian');
         dist.version.should.equal('8');
@@ -91,7 +91,7 @@ CENTOS_MANTISBT_PROJECT_VERSION="7"
 REDHAT_SUPPORT_PRODUCT="centos"
 REDHAT_SUPPORT_PRODUCT_VERSION="7"`;
 
-        const dist = LinuxDistribution.FromReleaseInfo(input);
+        const dist = LinuxDistribution.FromReleaseInfo(input, '\n');
 
         dist.name.should.equal('centos');
         dist.version.should.equal('7');
