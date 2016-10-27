@@ -4,6 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as cp from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
 
 let extensionPath: string;
 
@@ -37,6 +39,34 @@ export function execChildProcess(command: string, workingDirectory: string = get
             else {
                 resolve(stdout);
             }
+        });
+    });
+}
+
+export function fileExists(filePath: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+        fs.stat(filePath, (err, stats) => {
+            resolve(stats && stats.isFile());
+        });
+    });
+}
+
+function getInstallLockFilePath(): string {
+    return path.resolve(getExtensionPath(), 'install.lock');
+}
+
+export function lockFileExists(): Promise<boolean> {
+    return fileExists(getInstallLockFilePath());
+}
+
+export function touchLockFile(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        fs.writeFile(getInstallLockFilePath(), '', err => {
+            if (err) {
+                return reject(err);
+            }
+
+            resolve();
         });
     });
 }
