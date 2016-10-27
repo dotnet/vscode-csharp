@@ -46,7 +46,12 @@ export function execChildProcess(command: string, workingDirectory: string = get
 export function fileExists(filePath: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
         fs.stat(filePath, (err, stats) => {
-            resolve(stats && stats.isFile());
+            if (stats && stats.isFile()) {
+                resolve(true);
+            }
+            else {
+                resolve(false);
+            }
         });
     });
 }

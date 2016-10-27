@@ -122,7 +122,7 @@ function downloadPackage(pkg: Package, logger: Logger, status?: Status, proxy?: 
     }).then(tmpResult => {
         pkg.tmpFile = tmpResult;
 
-        return this.DownloadFile(pkg.url, pkg, logger, status)
+        return downloadFile(pkg.url, pkg, logger, status)
             .then(() => logger.appendLine(' Done!'));
     });
 }
@@ -141,23 +141,23 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
             return reject(new Error("Package file unavailable"));
         }
 
-        let request = https.request(options, res => {
-            if (res.statusCode === 301 || res.statusCode === 302) {
+        let request = https.request(options, response => {
+            if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
-                return this.DownloadFile(res.headers.location, pkg, logger, status)
+                return downloadFile(response.headers.location, pkg, logger, status)
                     .then(
                         () => resolve(),
                         err => reject(err));
             }
 
-            if (res.statusCode != 200) {
+            if (response.statusCode != 200) {
                 // Download failed - print error message
-                logger.appendLine(`failed (error code '${res.statusCode}')`);
-                return reject(new Error(res.statusCode.toString()));
+                logger.appendLine(`failed (error code '${response.statusCode}')`);
+                return reject(new Error(response.statusCode.toString()));
             }
             
             // Downloading - hook up events
-            let packageSize = parseInt(res.headers['content-length'], 10);
+            let packageSize = parseInt(response.headers['content-length'], 10);
             let downloadedBytes = 0;
             let downloadPercentage = 0;
             let dots = 0;
@@ -165,7 +165,7 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
 
             logger.append(` (${Math.ceil(packageSize / 1024)} KB) `);
 
-            res.on('data', data => {
+            response.on('data', data => {
                 downloadedBytes += data.length;
 
                 // Update status bar item with percentage
@@ -183,13 +183,24 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
                 }
             });
 
-            res.on('end', () => resolve());
+            response.on('end', () => {
+                resolve();
+            });
 
-            res.on('error', err => reject(err));
+            response.on('error', err => {
+                reject(err)
+            });
 
             // Begin piping data from the response to the package file
-            res.pipe(tmpFile, { end: false });
+            response.pipe(tmpFile, { end: false });
         });
+
+        request.on('error', error => {
+            reject(error);
+        });
+
+        // Execute the request
+        request.end();
     });
 }
 

@@ -37,7 +37,7 @@
     "tmp": "0.0.28",
     "vscode-debugprotocol": "^1.6.1",
     "vscode-extension-telemetry": "0.0.4",
-    "yauzl": "^2.7.0"
+    "yauzl": "^2.5.0"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
@@ -55,28 +55,54 @@
   "runtimeDependencies": [
     {
       "description": "Mono Framework Assemblies",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/framework-4.6.1.tar.gz",
-      "platforms": [ "linux", "darwin" ]
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/framework-4.6.1.zip",
+      "platforms": [
+        "linux",
+        "darwin"
+      ]
     },
     {
       "description": "Mono Runtime (Linux / x86)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.linux-x86-4.6.1.tar.gz",
-      "platforms": [ "linux" ],
-      "architectures": [ "x86" ],
-      "binaries": [ "./bin/mono.linux-x86" ]
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.linux-x86-4.6.1.zip",
+      "platforms": [
+        "linux"
+      ],
+      "architectures": [
+        "x86"
+      ],
+      "binaries": [
+        "./bin/mono.linux-x86"
+      ]
     },
     {
       "description": "Mono Runtime (Linux / x64)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.linux-x86_64-4.6.1.tar.gz",
-      "platforms": [ "linux" ],
-      "architectures": [ "x86_64" ],
-      "binaries": [ "./bin/mono.linux-x86_64" ]
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.linux-x86_64-4.6.1.zip",
+      "platforms": [
+        "linux"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "binaries": [
+        "./bin/mono.linux-x86_64"
+      ]
     },
     {
       "description": "Mono Runtime (macOS)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.osx-4.6.1.tar.gz",
-      "platforms": [ "darwin" ],
-      "binaries": [ "./bin/mono.osx" ]
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.osx-4.6.1.zip",
+      "platforms": [
+        "darwin"
+      ],
+      "binaries": [
+        "./bin/mono.osx"
+      ]
+    },
+    {
+      "description": "OmniSharp (.NET 4.6)",
+      "url": " https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-1.9-beta19.zip",
+      "platforms": [
+        "win32"
+      ]
     }
   ],
   "engines": {
@@ -227,12 +253,10 @@
             "razor"
           ]
         },
-        "runtime": "node",
         "runtimeArgs": [],
         "variables": {
           "pickProcess": "csharp.listProcess"
         },
-        "program": "./out/src/coreclr-debug/proxy.js",
         "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
         "configurationAttributes": {
           "launch": {
@@ -724,7 +748,16 @@
             "request": "attach",
             "processId": "${command.pickProcess}"
           }
-        ]
+        ],
+        "windows": {
+          "program": "./coreclr-debug/debugAdapters/OpenDebugAD7.exe"
+        },
+        "osx": {
+          "program": "./coreclr-debug/debugAdapters/OpenDebugAD7"
+        },
+        "linux": {
+          "program": "./coreclr-debug/debugAdapters/OpenDebugAD7"
+        }
       }
     ]
   }
