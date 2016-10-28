@@ -31,19 +31,6 @@ export interface LaunchTarget {
     kind: LaunchTargetKind;
 }
 
-export function getDefaultFlavor(kind: LaunchTargetKind) {
-    // Default to desktop (for Windows) or mono (for OSX/Linux) for solution files; otherwise, CoreCLR.
-    if (kind === LaunchTargetKind.Solution) {
-        if (process.platform === 'win32') {
-            return omnisharp.Flavor.Desktop;
-        }
-
-        return omnisharp.Flavor.Mono;
-    }
-
-    return omnisharp.Flavor.CoreCLR;
-}
-
 /**
  * Returns a list of potential targets on which OmniSharp can be launched.
  * This includes `project.json` files, `*.sln` files (if any `*.csproj` files are found), and the root folder
