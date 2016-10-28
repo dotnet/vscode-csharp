@@ -212,8 +212,8 @@ export class DebugInstaller {
             },
             dependencies: {
                 "Microsoft.VisualStudio.clrdbg": "15.0.25626-preview-3219185",
-                "Microsoft.VisualStudio.clrdbg.MIEngine": "14.0.30822-preview-1",
-                "Microsoft.VisualStudio.OpenDebugAD7": "1.0.20822-preview-1",
+                "Microsoft.VisualStudio.clrdbg.MIEngine": "14.0.31028-preview-1",
+                "Microsoft.VisualStudio.OpenDebugAD7": "1.0.21028-preview-2",
                 "NETStandard.Library": "1.6.0",
                 "Newtonsoft.Json": "7.0.1",
                 "Microsoft.VisualStudio.Debugger.Interop.Portable": "1.0.1",
