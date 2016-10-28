@@ -21,6 +21,10 @@ export function getExtensionPath() {
     return extensionPath;
 }
 
+export function getBinPath() {
+    return path.resolve(getExtensionPath(), "bin");
+}
+
 export function buildPromiseChain<T, TResult>(array: T[], builder: (item: T) => Promise<TResult>): Promise<TResult> {
     return array.reduce(
         (promise, n) => promise.then(() => builder(n)),

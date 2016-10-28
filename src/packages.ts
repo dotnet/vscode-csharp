@@ -163,7 +163,7 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
             let dots = 0;
             let tmpFile = fs.createWriteStream(null, { fd: pkg.tmpFile.fd });
 
-            logger.append(` (${Math.ceil(packageSize / 1024)} KB) `);
+            logger.append(`(${Math.ceil(packageSize / 1024)} KB) `);
 
             response.on('data', data => {
                 downloadedBytes += data.length;

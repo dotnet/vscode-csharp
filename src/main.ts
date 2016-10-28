@@ -3,6 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as fs from 'fs';
+import * as path from 'path';
 import * as vscode from 'vscode';
 import TelemetryReporter from 'vscode-extension-telemetry';
 
@@ -11,7 +13,7 @@ import * as OmniSharp from './omnisharp/extension';
 import * as util from './common';
 import { Logger } from './logger';
 import { PackageManager, Status } from './packages';
-import { PlatformInformation } from './platform';
+import { PlatformInformation, OperatingSystem } from './platform';
 
 export function activate(context: vscode.ExtensionContext): any {
 
@@ -34,11 +36,12 @@ export function activate(context: vscode.ExtensionContext): any {
 }
 
 function ensureRuntimeDependencies(extension: vscode.Extension<any>): Promise<void> {
-    return util.lockFileExists().then(exists => {
-        if (!exists) {
-            return installRuntimeDependencies(extension);
-        }
-    });
+    return util.lockFileExists()
+        .then(exists => {
+            if (!exists) {
+                return installRuntimeDependencies(extension);
+            }
+        });
 }
 
 function installRuntimeDependencies(extension: vscode.Extension<any>): Promise<void> {
@@ -86,6 +89,10 @@ function installRuntimeDependencies(extension: vscode.Extension<any>): Promise<v
             return packageManager.InstallPackages(logger, status);
         })
         .then(() => {
+            installationStage = 'makeBinariesExecutable';
+            return allowExecution(path.resolve(util.getBinPath(), "run"), platformInfo, logger);
+        })
+        .then(() => {
             installationStage = 'touchLockFile';
             return util.touchLockFile();
         })
@@ -103,4 +110,31 @@ function installRuntimeDependencies(extension: vscode.Extension<any>): Promise<v
 
             statusItem.dispose();
         });
+}
+
+function allowExecution(filePath: string, platformInfo: PlatformInformation, logger: Logger): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        if (platformInfo.operatingSystem !== OperatingSystem.Windows) {
+            util.fileExists(filePath)
+                .then(exists => {
+                    if (!exists) {
+                        fs.chmod(filePath, '755', err => {
+                            if (err) {
+                                return reject(err);
+                            }
+
+                            resolve();
+                        });
+                    }
+                    else {
+                        logger.appendLine();
+                        logger.appendLine(`Warning: Expected file '${filePath}' is missing.`);
+                        resolve();
+                    }
+                });
+        }
+        else {
+            resolve();
+        }
+    });
 }
