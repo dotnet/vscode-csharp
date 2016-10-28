@@ -24,7 +24,7 @@ import registerCommands from '../features/commands';
 import forwardChanges from '../features/changeForwarding';
 import reportStatus from '../features/status';
 import {StdioOmnisharpServer} from './server';
-import {readOptions} from './options';
+import {Options} from './options';
 import {addAssetsIfNecessary, AddAssetResult} from '../assets';
 
 export function activate(context: vscode.ExtensionContext, reporter: TelemetryReporter) {
@@ -85,7 +85,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
     // read and store last solution or folder path
     disposables.push(server.onBeforeServerStart(path => context.workspaceState.update('lastSolutionPathOrFolder', path)));
 
-    const options = readOptions();
+    const options = Options.Read();
     if (options.autoStart) {
         server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder'));
     }
