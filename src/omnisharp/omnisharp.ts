@@ -10,40 +10,12 @@
 
 'use strict';
 
-import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 
 export enum Flavor {
     CoreCLR,
     Mono,
     Desktop
-}
-
-/**
- * Given a file path, returns the path to the OmniSharp launch file.
- */
-export function findServerPath(filePath: string): Promise<string> {
-    return fs.lstatAsync(filePath).then(stats => {
-        // If a file path was passed, assume its the launch file.
-        if (stats.isFile()) {
-            return filePath;
-        }
-
-        // Otherwise, search the specified folder.
-        let candidate: string;
-        
-        candidate = path.join(filePath, 'OmniSharp.exe');
-        if (fs.existsSync(candidate)) {
-            return candidate;
-        }
-        
-        candidate = path.join(filePath, 'OmniSharp');
-        if (fs.existsSync(candidate)) {
-            return candidate;
-        }
-        
-        throw new Error(`Could not find OmniSharp launch file in ${filePath}.`);
-    });
 }
 
 export function getInstallDirectory(flavor: Flavor): string {
