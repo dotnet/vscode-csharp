@@ -90,7 +90,7 @@ function installRuntimeDependencies(extension: vscode.Extension<any>): Promise<v
         })
         .then(() => {
             installationStage = 'makeBinariesExecutable';
-            return allowExecution(path.resolve(util.getBinPath(), "run"), platformInfo, logger);
+            return allowExecution(path.resolve(util.getBinPath(), 'run'), platformInfo, logger);
         })
         .then(() => {
             installationStage = 'touchLockFile';
@@ -117,7 +117,7 @@ function allowExecution(filePath: string, platformInfo: PlatformInformation, log
         if (platformInfo.operatingSystem !== OperatingSystem.Windows) {
             util.fileExists(filePath)
                 .then(exists => {
-                    if (!exists) {
+                    if (exists) {
                         fs.chmod(filePath, '755', err => {
                             if (err) {
                                 return reject(err);
