@@ -9,7 +9,6 @@ const fs = require('fs');
 const path = require('path');
 const del = require('del');
 const gulp = require('gulp');
-const gulpUtil = require('gulp-util');
 const mocha = require('gulp-mocha');
 const tslint = require('gulp-tslint');
 const vsce = require('vsce');
