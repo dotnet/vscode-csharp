@@ -101,6 +101,8 @@
       "description": "OmniSharp (.NET 4.6)",
       "url": " https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-1.9-beta19.zip",
       "platforms": [
+        "darwin",
+        "linux",
         "win32"
       ]
     }
