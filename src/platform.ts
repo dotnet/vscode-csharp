@@ -104,9 +104,17 @@ export class PlatformInformation {
         public distribution: LinuxDistribution)
     {
         switch (platform) {
-            case 'win32': this.operatingSystem = OperatingSystem.Windows;
-            case 'darwin': this.operatingSystem = OperatingSystem.MacOS;
-            case 'linux': this.operatingSystem = OperatingSystem.Linux;
+            case 'win32':
+                this.operatingSystem = OperatingSystem.Windows;
+                break;
+
+            case 'darwin':
+                this.operatingSystem = OperatingSystem.MacOS;
+                break;
+
+            case 'linux':
+                this.operatingSystem = OperatingSystem.Linux;
+                break;
         }
     }
 
