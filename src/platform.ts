@@ -96,44 +96,48 @@ export enum CoreClrFlavor {
 }
 
 export class PlatformInformation {
-    constructor(
+    public operatingSystem: OperatingSystem;
+
+    public constructor(
         public platform: string,
-        public operatingSystem: OperatingSystem,
         public architecture: string,
-        public distribution: LinuxDistribution) { }
+        public distribution: LinuxDistribution)
+    {
+        switch (platform) {
+            case 'win32': this.operatingSystem = OperatingSystem.Windows;
+            case 'darwin': this.operatingSystem = OperatingSystem.MacOS;
+            case 'linux': this.operatingSystem = OperatingSystem.Linux;
+        }
+    }
 
     public static GetCurrent(): Promise<PlatformInformation> {
         let platform = os.platform();
-        let operatingSystem: OperatingSystem;
         let architecturePromise: Promise<string>;
         let distributionPromise: Promise<LinuxDistribution>;
 
         switch (platform) {
             case 'win32':
-                operatingSystem = OperatingSystem.Windows;
                 architecturePromise = PlatformInformation.GetWindowsArchitecture();
                 distributionPromise = Promise.resolve(null);
                 break;
 
             case 'darwin':
-                operatingSystem = OperatingSystem.MacOS;
                 architecturePromise = PlatformInformation.GetUnixArchitecture();
                 distributionPromise = Promise.resolve(null);
                 break;
 
             case 'linux':
-                operatingSystem = OperatingSystem.Linux; 
                 architecturePromise = PlatformInformation.GetUnixArchitecture();
                 distributionPromise = LinuxDistribution.GetCurrent();
                 break;
 
             default:
-                throw new Error(`Unsupported operating system: ${os.platform()}`);
+                throw new Error(`Unsupported operating system: ${platform}`);
         }
 
         return Promise.all([architecturePromise, distributionPromise])
             .then(([arch, distro]) => {
-                return new PlatformInformation(platform, operatingSystem, arch, distro)
+                return new PlatformInformation(platform, arch, distro)
             });
     }
 

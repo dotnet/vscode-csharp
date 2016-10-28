@@ -11,8 +11,6 @@ import {dirname} from 'path';
 import {ReadLine, createInterface} from 'readline';
 import {launchOmniSharp} from './launcher';
 import * as protocol from './protocol';
-import * as omnisharp from './omnisharp';
-import * as download from './download';
 import {Options} from './options';
 import {Logger} from '../logger';
 import {DelayTracker} from './delayTracker';
