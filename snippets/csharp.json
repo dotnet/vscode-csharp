@@ -526,9 +526,9 @@
 
 		"prefix": "ctor",
 		"body": [
-			"${1:public} ${2:ClassName} (${3:Parameters})",
+			"${1:public} ${2:ClassName}(${3:Parameters})",
 			"{",
-			"  ${0}",
+			"	${0}",
 			"}"
 		],
 		"description": "constructor"
