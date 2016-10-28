@@ -13,7 +13,7 @@ import {launchOmniSharp} from './launcher';
 import * as protocol from './protocol';
 import * as omnisharp from './omnisharp';
 import * as download from './download';
-import {readOptions} from './options';
+import {Options} from './options';
 import {Logger} from '../logger';
 import {DelayTracker} from './delayTracker';
 import {LaunchTarget, findLaunchTargets, getDefaultFlavor} from './launcher';
@@ -230,79 +230,69 @@ export abstract class OmnisharpServer {
     // --- start, stop, and connect
 
     private _start(launchTarget: LaunchTarget): Promise<void> {
-        const options = readOptions();
+        this._setState(ServerState.Starting);
+        this._launchTarget = launchTarget;
 
-        let flavor: omnisharp.Flavor;
-        if (options.path !== undefined && options.useMono === true) {
-            flavor = omnisharp.Flavor.Mono;
+        const solutionPath = launchTarget.target;
+        const cwd = dirname(solutionPath);
+        let args = [
+            '-s', solutionPath,
+            '--hostPID', process.pid.toString(),
+            'DotNet:enablePackageRestore=false',
+            '--encoding', 'utf-8'
+        ];
+
+        const options = Options.Read();
+
+        if (options.loggingLevel === 'verbose') {
+            args.push('-v');
         }
-        else {
-            flavor = getDefaultFlavor(launchTarget.kind);
-        }
 
-        return this._getServerPath(flavor).then(serverPath => {
-            this._setState(ServerState.Starting);
-            this._launchTarget = launchTarget;
+        args = args.concat(this._extraArgs);
 
-            const solutionPath = launchTarget.target;
-            const cwd = dirname(solutionPath);
-            let args = [
-                '-s', solutionPath,
-                '--hostPID', process.pid.toString(),
-                'DotNet:enablePackageRestore=false',
-                '--encoding', 'utf-8'
-            ];
+        this._logger.appendLine(`Starting OmniSharp server at ${new Date().toLocaleString()}`);
+        this._logger.increaseIndent();
+        this._logger.appendLine(`Target: ${solutionPath}`);
+        this._logger.decreaseIndent();
+        this._logger.appendLine();
 
-            if (options.loggingLevel === 'verbose') {
-                args.push('-v');
+        this._fireEvent(Events.BeforeServerStart, solutionPath);
+
+        return launchOmniSharp(cwd, args).then(value => {
+            if (value.usingMono) {
+                this._logger.appendLine(`OmniSharp server started wth Mono`);
+            }
+            else {
+                this._logger.appendLine(`OmniSharp server started`);
             }
 
-            args = args.concat(this._extraArgs);
-
-            this._logger.appendLine(`Starting OmniSharp server at ${new Date().toLocaleString()}`);
             this._logger.increaseIndent();
-            this._logger.appendLine(`Target: ${solutionPath}`);
+            this._logger.appendLine(`Path: ${value.command}`);
+            this._logger.appendLine(`PID: ${value.process.pid}`);
             this._logger.decreaseIndent();
             this._logger.appendLine();
 
-            this._fireEvent(Events.BeforeServerStart, solutionPath);
+            this._serverProcess = value.process;
+            this._delayTrackers = {};
+            this._setState(ServerState.Started);
+            this._fireEvent(Events.ServerStart, solutionPath);
 
-            return launchOmniSharp({serverPath, flavor, cwd, args}).then(value => {
-                if (value.usingMono) {
-                    this._logger.appendLine(`OmniSharp server started wth Mono`);
-                }
-                else {
-                    this._logger.appendLine(`OmniSharp server started`);
-                }
-
-                this._logger.increaseIndent();
-                this._logger.appendLine(`Path: ${value.command}`);
-                this._logger.appendLine(`PID: ${value.process.pid}`);
-                this._logger.decreaseIndent();
-                this._logger.appendLine();
-
-                this._serverProcess = value.process;
-                this._delayTrackers = {};
-                this._setState(ServerState.Started);
-                this._fireEvent(Events.ServerStart, solutionPath);
-
-                return this._doConnect();
-            }).then(() => {
-                return vscode.commands.getCommands()
-                    .then(commands => {
-                        if (commands.find(c => c === 'vscode.startDebug')) {
-                            this._isDebugEnable = true;
-                        }
-                    });
-            }).then(() => {
-                // Start telemetry reporting
-                this._telemetryIntervalId = setInterval(() => this._reportTelemetry(), TelemetryReportingDelay);
-            }).then(() => {
-                this._processQueue();
-            }).catch(err => {
-                this._fireEvent(Events.ServerError, err);
-                return this.stop();
-            });
+            return this._doConnect();
+        }).then(() => {
+            return vscode.commands.getCommands()
+                .then(commands => {
+                    if (commands.find(c => c === 'vscode.startDebug')) {
+                        this._isDebugEnable = true;
+                    }
+                });
+        }).then(() => {
+            // Start telemetry reporting
+            this._telemetryIntervalId = setInterval(() => this._reportTelemetry(), TelemetryReportingDelay);
+        }).then(() => {
+            this._processQueue();
+        }).catch(err => {
+            this._fireEvent(Events.ServerError, err);
+            return this.stop();
         });
     }
 
@@ -399,58 +389,6 @@ export abstract class OmnisharpServer {
 
             // If there's only one target, just start
             return this.restart(launchTargets[0]);
-        });
-    }
-
-    private _getServerPath(flavor: omnisharp.Flavor): Promise<string> {
-        // Attempt to find launch file path first from options, and then from the default install location.
-        // If OmniSharp can't be found, download it.
-
-        const options = readOptions();
-        const installDirectory = omnisharp.getInstallDirectory(flavor);
-
-        return new Promise<string>((resolve, reject) => {
-            if (options.path) {
-                return omnisharp.findServerPath(options.path).then(serverPath => {
-                    return resolve(serverPath);
-                }).catch(err => {
-                    vscode.window.showWarningMessage(`Invalid value specified for "omnisharp.path" ('${options.path}).`);
-                    return reject(err);
-                });
-            }
-
-            return reject('No option specified.');
-        }).catch(err => {
-            return omnisharp.findServerPath(installDirectory);
-        }).catch(err => {
-            return PlatformInformation.GetCurrent().then(platform => {
-                if (platform.operatingSystem === OperatingSystem.Linux && !platform.hasCoreClrFlavor()) {
-                    this._channel.appendLine("[ERROR] Could not locate an OmniSharp server that supports your Linux distribution.");
-                    this._channel.appendLine("");
-                    this._channel.appendLine("OmniSharp provides a richer C# editing experience, with features like IntelliSense and Find All References.");
-                    this._channel.appendLine("It is recommend that you download the version of OmniSharp that runs on Mono using the following steps:");
-                    this._channel.appendLine("    1. If it's not already installed, download and install Mono (https://www.mono-project.com)");
-                    this._channel.appendLine("    2. Download and untar the latest OmniSharp Mono release from  https://github.com/OmniSharp/omnisharp-roslyn/releases/");
-                    this._channel.appendLine("    3. In Visual Studio Code, select Preferences->User Settings to open settings.json.");
-                    this._channel.appendLine("    4. In settings.json, add a new setting: \"omnisharp.path\": \"/path/to/omnisharp/OmniSharp.exe\"");
-                    this._channel.appendLine("    5. In settings.json, add a new setting: \"omnisharp.useMono\": true");
-                    this._channel.appendLine("    6. Restart Visual Studio Code.");
-                    this._channel.show();
-
-                    throw err;
-                }
-
-                const config = vscode.workspace.getConfiguration();
-                const proxy = config.get<string>('http.proxy');
-                const strictSSL = config.get('http.proxyStrictSSL', true);
-                const logger = (message: string) => { this._logger.appendLine(message); };
-
-                this._fireEvent(Events.BeforeServerInstall, this);
-
-                return download.go(flavor, platform.getCoreClrFlavor(), this._logger, proxy, strictSSL).then(_ => {
-                    return omnisharp.findServerPath(installDirectory);
-                });
-            });
         });
     }
 
