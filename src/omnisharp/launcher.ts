@@ -172,6 +172,11 @@ export function launchOmniSharp(cwd: string, args: string[]): Promise<LaunchResu
 function launch(cwd: string, args: string[]): Promise<LaunchResult> {
     return PlatformInformation.GetCurrent().then(platformInfo => {
         const options = Options.Read();
+
+        if (options.path && options.useMono) {
+            return launchNixMono(options.path, cwd, args);
+        }
+
         const launchPath = options.path || getLaunchPath(platformInfo);
 
         if (platformInfo.operatingSystem === OperatingSystem.Windows) {
@@ -231,6 +236,25 @@ function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResul
         command: launchPath,
         usingMono: true
     };
+}
+
+function launchNixMono(launchPath: string, cwd: string, args: string[]): Promise<LaunchResult> {
+    return canLaunchMono()
+        .then(() => {
+            let argsCopy = args.slice(0); // create copy of details args
+            args.unshift(launchPath);
+
+            let process = spawn('mono', args, {
+                detached: false,
+                cwd: cwd
+            });
+
+            return {
+                process,
+                command: launchPath,
+                usingMono: true
+            };
+        });
 }
 
 function canLaunchMono(): Promise<void> {
