@@ -16,8 +16,9 @@ const debugUtil = require('./out/src/coreclr-debug/util');
 const debugInstall = require('./out/src/coreclr-debug/install');
 const fs_extra = require('fs-extra-promise');
 const packages = require('./out/src/packages');
-const logger = require('./out/src/omnisharp/logger');
+const logger = require('./out/src/logger');
 const platform = require('./out/src/platform');
+const util = require('./out/src/common');
 const child_process = require('child_process');
 
 const Logger = logger.Logger;
@@ -46,7 +47,7 @@ function installOmnisharp(platform, packageJSON) {
 }
 
 function cleanOmnisharp() {
-    return del('.omnisharp');
+    return del('bin');
 }
 
 gulp.task('omnisharp:clean', () => {
@@ -136,6 +137,8 @@ gulp.task('package:online', ['clean'], () => {
 });
 
 gulp.task('package:offline', ['clean'], () => {
+    util.setExtensionPath(__dirname);
+
     var packageJSON = getPackageJSON();
     var name = packageJSON.name;
     var version = packageJSON.version;
