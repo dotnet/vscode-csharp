@@ -97,8 +97,23 @@
       ]
     },
     {
-      "description": "OmniSharp (.NET 4.6)",
-      "url": " https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-1.9-beta19.zip",
+      "description": "OmniSharp (.NET 4.6 / x86)",
+      "url": " https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-x86-1.9-beta19.zip",
+      "architectures": [
+        "x86", "32-bit"
+      ],
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ]
+    },
+    {
+      "description": "OmniSharp (.NET 4.6 / x64)",
+      "url": " https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-x64-1.9-beta19.zip",
+      "architectures": [
+        "x86_64", "64-bit"
+      ],
       "platforms": [
         "darwin",
         "linux",
