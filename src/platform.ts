@@ -16,7 +16,7 @@ const unknown = 'unknown';
  * https://www.freedesktop.org/software/systemd/man/os-release.html
  */
 export class LinuxDistribution {
-    constructor(
+    public constructor(
         public name: string,
         public version: string) { }
 
@@ -93,7 +93,7 @@ export class PlatformInformation {
     public constructor(
         public platform: string,
         public architecture: string,
-        public distribution: LinuxDistribution)
+        public distribution: LinuxDistribution = null)
     {
         switch (platform) {
             case 'win32':
@@ -202,6 +202,9 @@ export class PlatformInformation {
      * is available at https://github.com/dotnet/corefx/tree/master/pkg/Microsoft.NETCore.Platforms.
      */
     private static getRuntimeId(platform: string, architecture: string, distribution: LinuxDistribution): string {
+        // Note: We could do much better here. Currently, we only return a limited number of RIDs that
+        // are officially supported.
+
         switch (platform) {
             case 'win32':
                 switch (architecture) {
@@ -213,6 +216,7 @@ export class PlatformInformation {
 
             case 'darwin':
                 if (architecture === 'x86_64') {
+                    // Note: We return the El Capitan RID for Sierra
                     return 'osx.10.11-x64';
                 }
 
