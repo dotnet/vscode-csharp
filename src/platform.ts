@@ -80,12 +80,6 @@ export class LinuxDistribution {
     }
 }
 
-export enum OperatingSystem {
-    Windows,
-    MacOS,
-    Linux
-}
-
 export class PlatformInformation {
     public runtimeId: string;
 
