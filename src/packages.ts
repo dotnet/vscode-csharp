@@ -19,6 +19,7 @@ export interface Package {
     description: string;
     url: string;
     platforms: string[];
+    runtimeIds: string[];
     architectures: string[];
     binaries: string[];
     tmpFile: tmp.SynchrounousResult;
@@ -81,6 +82,10 @@ export class PackageManager {
         return this.GetAllPackages()
             .then(list => {
                 return list.filter(pkg => {
+                    if (pkg.runtimeIds && this.platformInfo.runtimeId && pkg.runtimeIds.indexOf(this.platformInfo.runtimeId) === -1) {
+                        return false;
+                    }
+
                     if (pkg.architectures && pkg.architectures.indexOf(this.platformInfo.architecture) === -1) {
                         return false;
                     }
