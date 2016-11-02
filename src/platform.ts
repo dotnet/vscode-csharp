@@ -82,19 +82,6 @@ export enum OperatingSystem {
     Linux
 }
 
-export enum CoreClrFlavor {
-    None,
-    Windows,
-    OSX,
-    CentOS,
-    Debian,
-    Fedora,
-    OpenSUSE,
-    RHEL,
-    Ubuntu14,
-    Ubuntu16
-}
-
 export class PlatformInformation {
     public operatingSystem: OperatingSystem;
 
@@ -140,7 +127,7 @@ export class PlatformInformation {
                 break;
 
             default:
-                throw new Error(`Unsupported operating system: ${platform}`);
+                throw new Error(`Unsupported platform: ${platform}`);
         }
 
         return Promise.all([architecturePromise, distributionPromise])
@@ -176,62 +163,84 @@ export class PlatformInformation {
             });
     }
 
-    public hasCoreClrFlavor(): boolean {
-        return this.getCoreClrFlavor() !== CoreClrFlavor.None;
-    }
-
-    public getCoreClrFlavor(): CoreClrFlavor {
+    /**
+     * Returns a supported .NET Core Runtime ID (RID) for the current platform. The list of Runtime IDs
+     * is available at https://github.com/dotnet/corefx/tree/master/pkg/Microsoft.NETCore.Platforms.
+     */
+    public toRuntimeId(): string {
         switch (this.operatingSystem) {
-            case OperatingSystem.Windows: return CoreClrFlavor.Windows;
-            case OperatingSystem.MacOS: return CoreClrFlavor.OSX;
+            case OperatingSystem.Windows:
+                switch (this.architecture) {
+                    case '32-bit': return 'win7-x86';
+                    case '64-bit': return 'win7-x64';
+                }
+
+                break;
+
+            case OperatingSystem.MacOS:
+                // Note: We assume 64-bit for OSX and return the El Capitan RID on Sierra.
+                return 'osx.10.11-x64';
+
             case OperatingSystem.Linux:
+                const centos_7 = 'centos.7-x64';
+                const debian_8 = 'debian.8-x64';
+                const fedora_23 = 'fedora.23-x64';
+                const opensuse_13_2 = 'opensuse.13.2-x64';
+                const rhel_7 = 'rhel.7-x64';
+                const ubuntu_14_04 = 'ubuntu.14.04-x64';
+                const ubuntu_16_04 = 'ubuntu.16.04-x64';
+
                 const distro = this.distribution;
                 switch (distro.name) {
                     case 'ubuntu':
                         if (distro.version.startsWith("14")) {
                             // This also works for Linux Mint
-                            return CoreClrFlavor.Ubuntu14;
+                            return ubuntu_14_04;
                         }
                         else if (distro.version.startsWith("16")) {
-                            return CoreClrFlavor.Ubuntu16;
+                            return ubuntu_16_04;
                         }
 
                         break;
-                    case 'centos':
-                        return CoreClrFlavor.CentOS;
-                    case 'fedora':
-                        return CoreClrFlavor.Fedora;
-                    case 'opensuse':
-                        return CoreClrFlavor.OpenSUSE;
-                    case 'rhel':
-                        return CoreClrFlavor.RHEL;
-                    case 'debian':
-                        return CoreClrFlavor.Debian;
-                    case 'ol':
-                        // Oracle Linux is binary compatible with CentOS
-                        return CoreClrFlavor.CentOS;
                     case 'elementary':
                     case 'elementary OS':
                         if (distro.version.startsWith("0.3")) {
                             // Elementary OS 0.3 Freya is binary compatible with Ubuntu 14.04
-                            return CoreClrFlavor.Ubuntu14;
+                            return ubuntu_14_04;
                         }
                         else if (distro.version.startsWith("0.4")) {
                             // Elementary OS 0.4 Loki is binary compatible with Ubuntu 16.04
-                            return CoreClrFlavor.Ubuntu16;
+                            return ubuntu_16_04;
                         }
 
                         break;
                     case 'linuxmint':
                         if (distro.version.startsWith("18")) {
                             // Linux Mint 18 is binary compatible with Ubuntu 16.04
-                            return CoreClrFlavor.Ubuntu16;
+                            return ubuntu_16_04;
                         }
 
                         break;
+                    case 'centos':
+                    case 'ol':
+                        // Oracle Linux is binary compatible with CentOS
+                       return centos_7;
+                    case 'fedora':
+                        return fedora_23;
+                    case 'opensuse':
+                        return opensuse_13_2;
+                    case 'rhel':
+                        return rhel_7;
+                    case 'debian':
+                        return debian_8;
                 }
+
+                // If we got here, this is not a Linux distro that we currently support.
+                throw new Error(`Unsupported linux platform: ${distro.name}, ${distro.version}`);
         }
 
-        return CoreClrFlavor.None;
+        // If we got here, we've ended up with a platform we don't support  like 'freebsd' or 'sunos'.
+        // Chances are, VS Code doesn't support these platforms either.
+        throw Error('Unsupported platform ' + this.platform);
     }
 }
