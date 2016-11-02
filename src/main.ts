@@ -89,10 +89,6 @@ function installRuntimeDependencies(extension: vscode.Extension<any>): Promise<v
             return packageManager.InstallPackages(logger, status);
         })
         .then(() => {
-            installationStage = 'makeBinariesExecutable';
-            return allowExecution(path.resolve(util.getBinPath(), 'run'), platformInfo, logger);
-        })
-        .then(() => {
             installationStage = 'touchLockFile';
             return util.touchLockFile();
         })

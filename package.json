@@ -74,6 +74,9 @@
       "installPath": ".omnisharp-coreclr",
       "runtimeIds": [
         "win7-x86"
+      ],
+      "binaries": [
+        "./.omnisharp-coreclr/OmniSharp"
       ]
     },
     {
@@ -82,6 +85,9 @@
       "installPath": ".omnisharp-coreclr",
       "runtimeIds": [
         "win7-x64"
+      ],
+      "binaries": [
+        "./.omnisharp-coreclr/OmniSharp"
       ]
     },
     {
@@ -90,6 +96,9 @@
       "installPath": ".omnisharp-coreclr",
       "runtimeIds": [
         "osx.10.11-x64"
+      ],
+      "binaries": [
+        "./.omnisharp-coreclr/OmniSharp"
       ]
     },
     {
@@ -98,6 +107,9 @@
       "installPath": ".omnisharp-coreclr",
       "runtimeIds": [
         "centos.7-x64"
+      ],
+      "binaries": [
+        "./.omnisharp-coreclr/OmniSharp"
       ]
     },
     {
@@ -106,6 +118,9 @@
       "installPath": ".omnisharp-coreclr",
       "runtimeIds": [
         "debian.8-x64"
+      ],
+      "binaries": [
+        "./.omnisharp-coreclr/OmniSharp"
       ]
     },
     {
@@ -114,6 +129,9 @@
       "installPath": ".omnisharp-coreclr",
       "runtimeIds": [
         "fedora.23-x64"
+      ],
+      "binaries": [
+        "./.omnisharp-coreclr/OmniSharp"
       ]
     },
     {
@@ -122,6 +140,9 @@
       "installPath": ".omnisharp-coreclr",
       "runtimeIds": [
         "opensuse.13.2-x64"
+      ],
+      "binaries": [
+        "./.omnisharp-coreclr/OmniSharp"
       ]
     },
     {
@@ -130,6 +151,9 @@
       "installPath": ".omnisharp-coreclr",
       "runtimeIds": [
         "rhel.7-x64"
+      ],
+      "binaries": [
+        "./.omnisharp-coreclr/OmniSharp"
       ]
     },
     {
@@ -138,6 +162,9 @@
       "installPath": ".omnisharp-coreclr",
       "runtimeIds": [
         "ubuntu.14.04-x64"
+      ],
+      "binaries": [
+        "./.omnisharp-coreclr/OmniSharp"
       ]
     },
     {
@@ -146,6 +173,9 @@
       "installPath": ".omnisharp-coreclr",
       "runtimeIds": [
         "ubuntu.16.04-x64"
+      ],
+      "binaries": [
+        "./.omnisharp-coreclr/OmniSharp"
       ]
     },
     {

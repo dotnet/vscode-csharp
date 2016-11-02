@@ -180,10 +180,16 @@ function getLaunchPath(platformInfo: PlatformInformation, kind: LaunchTargetKind
             return path.join(util.getExtensionPath(), '.omnisharp-desktop', 'OmniSharp.exe');
         }
 
-        return path.join(util.getExtensionPath(), '.omnisharp-mono', "OmniSharp.exe");
+        return path.join(util.getExtensionPath(), '.omnisharp-mono', 'OmniSharp.exe');
     }
 
-    return path.join(util.getExtensionPath(), '.omnisharp-coreclr', "OmniSharp.exe");
+    let basePath = path.join(util.getExtensionPath(), '.omnisharp-coreclr');
+    if (platformInfo.operatingSystem === OperatingSystem.Windows) {
+        return path.join(basePath, 'OmniSharp.exe');
+    }
+    else {
+        return path.join(basePath, 'OmniSharp');
+    }
 }
 
 function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchResult {
