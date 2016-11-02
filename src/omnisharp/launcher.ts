@@ -5,9 +5,9 @@
 
 'use strict';
 
-import {spawn, ChildProcess} from 'child_process';
-import {satisfies} from 'semver';
-import {PlatformInformation, OperatingSystem} from '../platform';
+import { spawn, ChildProcess } from 'child_process';
+import { satisfies } from 'semver';
+import { PlatformInformation } from '../platform';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as util from '../common';
@@ -165,7 +165,7 @@ function launch(cwd: string, args: string[], kind: LaunchTargetKind): Promise<La
 
         const launchPath = options.path || getLaunchPath(platformInfo, kind);
 
-        if (platformInfo.operatingSystem === OperatingSystem.Windows) {
+        if (platformInfo.isWindows()) {
             return launchWindows(launchPath, cwd, args);
         }
         else {
@@ -176,14 +176,20 @@ function launch(cwd: string, args: string[], kind: LaunchTargetKind): Promise<La
 
 function getLaunchPath(platformInfo: PlatformInformation, kind: LaunchTargetKind): string {
     if (kind === LaunchTargetKind.Solution) {
-        if (platformInfo.operatingSystem === OperatingSystem.Windows) {
+        if (platformInfo.isWindows()) {
             return path.join(util.getExtensionPath(), '.omnisharp-desktop', 'OmniSharp.exe');
         }
 
-        return path.join(util.getExtensionPath(), '.omnisharp-mono', "OmniSharp.exe");
+        return path.join(util.getExtensionPath(), '.omnisharp-mono', 'OmniSharp.exe');
     }
 
-    return path.join(util.getExtensionPath(), '.omnisharp-coreclr', "OmniSharp.exe");
+    let basePath = path.join(util.getExtensionPath(), '.omnisharp-coreclr');
+    if (platformInfo.isWindows()) {
+        return path.join(basePath, 'OmniSharp.exe');
+    }
+    else {
+        return path.join(basePath, 'OmniSharp');
+    }
 }
 
 function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchResult {

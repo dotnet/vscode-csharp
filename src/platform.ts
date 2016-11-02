@@ -87,7 +87,6 @@ export enum OperatingSystem {
 }
 
 export class PlatformInformation {
-    public operatingSystem: OperatingSystem;
     public runtimeId: string;
 
     public constructor(
@@ -95,26 +94,24 @@ export class PlatformInformation {
         public architecture: string,
         public distribution: LinuxDistribution = null)
     {
-        switch (platform) {
-            case 'win32':
-                this.operatingSystem = OperatingSystem.Windows;
-                break;
-
-            case 'darwin':
-                this.operatingSystem = OperatingSystem.MacOS;
-                break;
-
-            case 'linux':
-                this.operatingSystem = OperatingSystem.Linux;
-                break;
-        }
-
         try {
             this.runtimeId = PlatformInformation.getRuntimeId(platform, architecture, distribution);
         }
         catch (err) {
             this.runtimeId = null;
         }
+    }
+
+    public isWindows(): boolean {
+        return this.platform === 'win32';
+    }
+
+    public isMacOS(): boolean {
+        return this.platform === 'darwin';
+    }
+
+    public isLinux(): boolean {
+        return this.platform === 'linux';
     }
 
     public toString(): string {

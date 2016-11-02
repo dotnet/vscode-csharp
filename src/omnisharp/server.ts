@@ -15,7 +15,7 @@ import {Options} from './options';
 import {Logger} from '../logger';
 import {DelayTracker} from './delayTracker';
 import {LaunchTarget, findLaunchTargets} from './launcher';
-import {PlatformInformation, OperatingSystem} from '../platform';
+import {PlatformInformation} from '../platform';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import * as vscode from 'vscode';
 
