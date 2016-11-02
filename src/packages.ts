@@ -18,6 +18,7 @@ import { getProxyAgent } from './proxy';
 export interface Package {
     description: string;
     url: string;
+    installPath?: string;
     platforms: string[];
     runtimeIds: string[];
     architectures: string[];
@@ -230,7 +231,12 @@ function installPackage(pkg: Package, logger: Logger, status?: Status): Promise<
             zipFile.readEntry();
 
             zipFile.on('entry', (entry: yauzl.Entry) => {
-                let absoluteEntryPath = path.resolve(util.getExtensionPath(), entry.fileName);
+                let basePath = util.getExtensionPath();
+                if (pkg.installPath) {
+                    basePath = path.join(basePath, pkg.installPath);
+                }
+
+                let absoluteEntryPath = path.resolve(basePath, entry.fileName);
 
                 if (entry.fileName.endsWith('/')) {
                     // Directory - create it
