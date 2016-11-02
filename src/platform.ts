@@ -16,7 +16,7 @@ const unknown = 'unknown';
  * https://www.freedesktop.org/software/systemd/man/os-release.html
  */
 export class LinuxDistribution {
-    constructor(
+    public constructor(
         public name: string,
         public version: string) { }
 
@@ -26,6 +26,10 @@ export class LinuxDistribution {
         return LinuxDistribution.FromFilePath('/etc/os-release')
             .catch(() => LinuxDistribution.FromFilePath('/usr/lib/os-release'))
             .catch(() => Promise.resolve(new LinuxDistribution(unknown, unknown)));
+    }
+
+    public toString(): string {
+        return `name=${this.name}, version=${this.version}`;
     }
 
     private static FromFilePath(filePath: string): Promise<LinuxDistribution> {
@@ -41,11 +45,11 @@ export class LinuxDistribution {
         });
     }
 
-    public static FromReleaseInfo(releaseInfo: string): LinuxDistribution {
+    public static FromReleaseInfo(releaseInfo: string, eol: string = os.EOL): LinuxDistribution {
         let name = unknown;
         let version = unknown;
 
-        const lines = releaseInfo.split(os.EOL);
+        const lines = releaseInfo.split(eol);
         for (let line of lines) {
             line = line.trim();
 
@@ -82,56 +86,87 @@ export enum OperatingSystem {
     Linux
 }
 
-export enum CoreClrFlavor {
-    None,
-    Windows,
-    OSX,
-    CentOS,
-    Debian,
-    Fedora,
-    OpenSUSE,
-    RHEL,
-    Ubuntu14,
-    Ubuntu16
-}
-
 export class PlatformInformation {
-    constructor(
-        public operatingSystem: OperatingSystem,
+    public operatingSystem: OperatingSystem;
+    public runtimeId: string;
+
+    public constructor(
+        public platform: string,
         public architecture: string,
-        public distribution: LinuxDistribution) { }
+        public distribution: LinuxDistribution = null)
+    {
+        switch (platform) {
+            case 'win32':
+                this.operatingSystem = OperatingSystem.Windows;
+                break;
+
+            case 'darwin':
+                this.operatingSystem = OperatingSystem.MacOS;
+                break;
+
+            case 'linux':
+                this.operatingSystem = OperatingSystem.Linux;
+                break;
+        }
+
+        try {
+            this.runtimeId = PlatformInformation.getRuntimeId(platform, architecture, distribution);
+        }
+        catch (err) {
+            this.runtimeId = null;
+        }
+    }
+
+    public toString(): string {
+        let result = this.platform;
+
+        if (this.architecture) {
+            if (result) {
+                result += ', ';
+            }
+
+            result += this.architecture;
+        }
+
+        if (this.distribution) {
+            if (result) {
+                result += ', ';
+            }
+
+            result += this.distribution.toString();
+        }
+
+        return result;
+    }
 
     public static GetCurrent(): Promise<PlatformInformation> {
-        let operatingSystem: OperatingSystem;
+        let platform = os.platform();
         let architecturePromise: Promise<string>;
         let distributionPromise: Promise<LinuxDistribution>;
 
-        switch (os.platform()) {
+        switch (platform) {
             case 'win32':
-                operatingSystem = OperatingSystem.Windows;
                 architecturePromise = PlatformInformation.GetWindowsArchitecture();
                 distributionPromise = Promise.resolve(null);
                 break;
 
             case 'darwin':
-                operatingSystem = OperatingSystem.MacOS;
                 architecturePromise = PlatformInformation.GetUnixArchitecture();
                 distributionPromise = Promise.resolve(null);
                 break;
 
             case 'linux':
-                operatingSystem = OperatingSystem.Linux; 
                 architecturePromise = PlatformInformation.GetUnixArchitecture();
                 distributionPromise = LinuxDistribution.GetCurrent();
                 break;
 
             default:
-                throw new Error(`Unsupported operating system: ${os.platform()}`);
+                throw new Error(`Unsupported platform: ${platform}`);
         }
 
         return Promise.all([architecturePromise, distributionPromise])
             .then(([arch, distro]) => {
-                return new PlatformInformation(operatingSystem, arch, distro)
+                return new PlatformInformation(platform, arch, distro)
             });
     }
 
@@ -162,62 +197,92 @@ export class PlatformInformation {
             });
     }
 
-    public hasCoreClrFlavor(): boolean {
-        return this.getCoreClrFlavor() !== CoreClrFlavor.None;
-    }
+    /**
+     * Returns a supported .NET Core Runtime ID (RID) for the current platform. The list of Runtime IDs
+     * is available at https://github.com/dotnet/corefx/tree/master/pkg/Microsoft.NETCore.Platforms.
+     */
+    private static getRuntimeId(platform: string, architecture: string, distribution: LinuxDistribution): string {
+        // Note: We could do much better here. Currently, we only return a limited number of RIDs that
+        // are officially supported.
 
-    public getCoreClrFlavor(): CoreClrFlavor {
-        switch (this.operatingSystem) {
-            case OperatingSystem.Windows: return CoreClrFlavor.Windows;
-            case OperatingSystem.MacOS: return CoreClrFlavor.OSX;
-            case OperatingSystem.Linux:
-                const distro = this.distribution;
-                switch (distro.name) {
-                    case 'ubuntu':
-                        if (distro.version.startsWith("14")) {
-                            // This also works for Linux Mint
-                            return CoreClrFlavor.Ubuntu14;
-                        }
-                        else if (distro.version.startsWith("16")) {
-                            return CoreClrFlavor.Ubuntu16;
-                        }
-
-                        break;
-                    case 'centos':
-                        return CoreClrFlavor.CentOS;
-                    case 'fedora':
-                        return CoreClrFlavor.Fedora;
-                    case 'opensuse':
-                        return CoreClrFlavor.OpenSUSE;
-                    case 'rhel':
-                        return CoreClrFlavor.RHEL;
-                    case 'debian':
-                        return CoreClrFlavor.Debian;
-                    case 'ol':
-                        // Oracle Linux is binary compatible with CentOS
-                        return CoreClrFlavor.CentOS;
-                    case 'elementary':
-                    case 'elementary OS':
-                        if (distro.version.startsWith("0.3")) {
-                            // Elementary OS 0.3 Freya is binary compatible with Ubuntu 14.04
-                            return CoreClrFlavor.Ubuntu14;
-                        }
-                        else if (distro.version.startsWith("0.4")) {
-                            // Elementary OS 0.4 Loki is binary compatible with Ubuntu 16.04
-                            return CoreClrFlavor.Ubuntu16;
-                        }
-
-                        break;
-                    case 'linuxmint':
-                        if (distro.version.startsWith("18")) {
-                            // Linux Mint 18 is binary compatible with Ubuntu 16.04
-                            return CoreClrFlavor.Ubuntu16;
-                        }
-
-                        break;
+        switch (platform) {
+            case 'win32':
+                switch (architecture) {
+                    case '32-bit': return 'win7-x86';
+                    case '64-bit': return 'win7-x64';
                 }
+
+                throw new Error(`Unsupported Windows architecture: ${architecture}`);
+
+            case 'darwin':
+                if (architecture === 'x86_64') {
+                    // Note: We return the El Capitan RID for Sierra
+                    return 'osx.10.11-x64';
+                }
+
+                throw new Error(`Unsupported macOS architecture: ${architecture}`);
+
+            case 'linux':
+                if (architecture === 'x86_64') {
+                    const centos_7 = 'centos.7-x64';
+                    const debian_8 = 'debian.8-x64';
+                    const fedora_23 = 'fedora.23-x64';
+                    const opensuse_13_2 = 'opensuse.13.2-x64';
+                    const rhel_7 = 'rhel.7-x64';
+                    const ubuntu_14_04 = 'ubuntu.14.04-x64';
+                    const ubuntu_16_04 = 'ubuntu.16.04-x64';
+
+                    switch (distribution.name) {
+                        case 'ubuntu':
+                            if (distribution.version.startsWith("14")) {
+                                // This also works for Linux Mint
+                                return ubuntu_14_04;
+                            }
+                            else if (distribution.version.startsWith("16")) {
+                                return ubuntu_16_04;
+                            }
+
+                            break;
+                        case 'elementary':
+                        case 'elementary OS':
+                            if (distribution.version.startsWith("0.3")) {
+                                // Elementary OS 0.3 Freya is binary compatible with Ubuntu 14.04
+                                return ubuntu_14_04;
+                            }
+                            else if (distribution.version.startsWith("0.4")) {
+                                // Elementary OS 0.4 Loki is binary compatible with Ubuntu 16.04
+                                return ubuntu_16_04;
+                            }
+
+                            break;
+                        case 'linuxmint':
+                            if (distribution.version.startsWith("18")) {
+                                // Linux Mint 18 is binary compatible with Ubuntu 16.04
+                                return ubuntu_16_04;
+                            }
+
+                            break;
+                        case 'centos':
+                        case 'ol':
+                            // Oracle Linux is binary compatible with CentOS
+                        return centos_7;
+                        case 'fedora':
+                            return fedora_23;
+                        case 'opensuse':
+                            return opensuse_13_2;
+                        case 'rhel':
+                            return rhel_7;
+                        case 'debian':
+                            return debian_8;
+                    }
+                }
+
+                // If we got here, this is not a Linux distro or architecture that we currently support.
+                throw new Error(`Unsupported Linux distro: ${distribution.name}, ${distribution.version}, ${architecture}`);
         }
 
-        return CoreClrFlavor.None;
+        // If we got here, we've ended up with a platform we don't support  like 'freebsd' or 'sunos'.
+        // Chances are, VS Code doesn't support these platforms either.
+        throw Error('Unsupported platform ' + platform);
     }
 }

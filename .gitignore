@@ -1,6 +1,8 @@
 bin
 node_modules
 out
-.omnisharp
+.omnisharp-*/
+
+install.lock
 
 *.vsix

@@ -9,7 +9,7 @@ import * as fs from 'fs';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { CoreClrDebugUtil } from './util';
 import * as debugInstall from './install';
-import { PlatformInformation, OperatingSystem, CoreClrFlavor } from './../platform';
+import { PlatformInformation } from './../platform';
 import * as semver from 'semver';
 
 const MINIMUM_SUPPORTED_DOTNET_CLI: string = '1.0.0-preview2-003121';
@@ -167,33 +167,13 @@ function deleteInstallBeginFile() {
 
 function getPlatformRuntimeId(): Promise<string> {
     return PlatformInformation.GetCurrent().then(info => {
-        switch (info.getCoreClrFlavor()) {
-            case CoreClrFlavor.Windows:
-                return 'win7-x64';
-            case CoreClrFlavor.OSX:
-                return 'osx.10.11-x64';
-            case CoreClrFlavor.CentOS:
-                return 'centos.7-x64';
-            case CoreClrFlavor.Fedora:
-                return 'fedora.23-x64';
-            case CoreClrFlavor.OpenSUSE:
-                return 'opensuse.13.2-x64';
-            case CoreClrFlavor.RHEL:
-                return 'rhel.7-x64';
-            case CoreClrFlavor.Debian:
-                return 'debian.8-x64';
-            case CoreClrFlavor.Ubuntu14:
-                return 'ubuntu.14.04-x64';
-            case CoreClrFlavor.Ubuntu16:
-                return 'ubuntu.16.04-x64';
-
-            default:
-                if (info.operatingSystem == OperatingSystem.Linux) {
-                    throw new Error('Error: Unsupported linux platform');
-                }
-
-                _util.log('Error: Unsupported platform ' + process.platform);
-                throw Error('Unsupported platform ' + process.platform);
+        if (info.runtimeId) {
+            return info.runtimeId;
         }
+
+        // If we got here, this isn't a support runtime ID.
+        const message = `Unsupported platform: ${info.toString()}`
+        _util.log(`Error: ${message}`);
+        throw new Error(message);
     });
 }

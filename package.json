@@ -25,19 +25,20 @@
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
-    "decompress": "^4.0.0",
-    "del": "^2.0.2",
     "fs-extra-promise": "^0.3.1",
     "http-proxy-agent": "^1.0.0",
     "https-proxy-agent": "^1.0.0",
     "lodash.debounce": "^4.0.8",
+    "mkdirp": "^0.5.1",
     "open": "*",
     "semver": "*",
     "tmp": "0.0.28",
     "vscode-debugprotocol": "^1.6.1",
-    "vscode-extension-telemetry": "0.0.4"
+    "vscode-extension-telemetry": "0.0.4",
+    "yauzl": "^2.5.0"
   },
   "devDependencies": {
+    "del": "^2.0.2",
     "gulp": "^3.9.1",
     "gulp-mocha": "^2.1.3",
     "gulp-tslint": "^4.3.0",
@@ -50,6 +51,117 @@
     "chai": "^3.5.0",
     "vscode-textmate": "^2.1.1"
   },
+  "runtimeDependencies": [
+    {
+      "description": "OmniSharp (Windows / x86)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-1.9-beta19-win-x86-net46.zip",
+      "installPath": ".omnisharp-desktop",
+      "runtimeIds": [
+        "win7-x86"
+      ]
+    },
+    {
+      "description": "OmniSharp (Windows / x64)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-1.9-beta19-win-x64-net46.zip",
+      "installPath": ".omnisharp-desktop",
+      "runtimeIds": [
+        "win7-x64"
+      ]
+    },
+    {
+      "description": "OmniSharp (.NET Core - Windows / x86)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-1.9-beta19-win-x86-netcoreapp1.0.zip",
+      "installPath": ".omnisharp-coreclr",
+      "runtimeIds": [
+        "win7-x86"
+      ]
+    },
+    {
+      "description": "OmniSharp (.NET Core - Windows / x64)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-1.9-beta19-win-x64-netcoreapp1.0.zip",
+      "installPath": ".omnisharp-coreclr",
+      "runtimeIds": [
+        "win7-x64"
+      ]
+    },
+    {
+      "description": "OmniSharp (.NET Core - OSX / x64)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-1.9-beta19-osx-x64-netcoreapp1.0.zip",
+      "installPath": ".omnisharp-coreclr",
+      "runtimeIds": [
+        "osx.10.11-x64"
+      ]
+    },
+    {
+      "description": "OmniSharp (.NET Core - CentOS / x64)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-1.9-beta19-centos-x64-netcoreapp1.0.zip",
+      "installPath": ".omnisharp-coreclr",
+      "runtimeIds": [
+        "centos.7-x64"
+      ]
+    },
+    {
+      "description": "OmniSharp (.NET Core - Debian / x64)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-1.9-beta19-debian-x64-netcoreapp1.0.zip",
+      "installPath": ".omnisharp-coreclr",
+      "runtimeIds": [
+        "debian.8-x64"
+      ]
+    },
+    {
+      "description": "OmniSharp (.NET Core - Fedora / x64)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-1.9-beta19-fedora-x64-netcoreapp1.0.zip",
+      "installPath": ".omnisharp-coreclr",
+      "runtimeIds": [
+        "fedora.23-x64"
+      ]
+    },
+    {
+      "description": "OmniSharp (.NET Core - OpenSUSE / x64)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-1.9-beta19-opensuse-x64-netcoreapp1.0.zip",
+      "installPath": ".omnisharp-coreclr",
+      "runtimeIds": [
+        "opensuse.13.2-x64"
+      ]
+    },
+    {
+      "description": "OmniSharp (.NET Core - RHEL / x64)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-1.9-beta19-rhel-x64-netcoreapp1.0.zip",
+      "installPath": ".omnisharp-coreclr",
+      "runtimeIds": [
+        "rhel.7-x64"
+      ]
+    },
+    {
+      "description": "OmniSharp (.NET Core - Ubuntu 14 / x64)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-1.9-beta19-ubuntu14-x64-netcoreapp1.0.zip",
+      "installPath": ".omnisharp-coreclr",
+      "runtimeIds": [
+        "ubuntu.14.04-x64"
+      ]
+    },
+    {
+      "description": "OmniSharp (.NET Core - Ubuntu 16 / x64)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-1.9-beta19-ubuntu16-x64-netcoreapp1.0.zip",
+      "installPath": ".omnisharp-coreclr",
+      "runtimeIds": [
+        "ubuntu.16.04-x64"
+      ]
+    },
+    {
+      "description": "OmniSharp (Mono)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-1.9-beta19-mono.zip",
+      "installPath": ".omnisharp-mono",
+      "architectures": [
+        "x86",
+        "x86_64"
+      ],
+      "platforms": [
+        "darwin",
+        "linux"
+      ]
+    }
+  ],
   "engines": {
     "vscode": "^1.3.0"
   },

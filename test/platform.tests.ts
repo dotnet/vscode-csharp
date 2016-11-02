@@ -4,14 +4,103 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { LinuxDistribution } from '../src/platform';
+import { LinuxDistribution, PlatformInformation, OperatingSystem } from '../src/platform';
 
 suite("Platform", () => {
     before(() => should());
 
     test("Retrieve correct information for Ubuntu 14.04", () => {
-        // Copied from /etc/os-release on Ubuntu 14.04
-        const input = `
+        const dist = distro_ubuntu_14_04();
+
+        dist.name.should.equal('ubuntu');
+        dist.version.should.equal('14.04');
+    });
+
+    test("Retrieve correct information for Fedora 23", () => {
+        const dist = distro_fedora_23();
+
+        dist.name.should.equal('fedora');
+        dist.version.should.equal('23');
+    });
+
+    test("Retrieve correct information for Debian 8", () => {
+        const dist = distro_debian_8();
+
+        dist.name.should.equal('debian');
+        dist.version.should.equal('8');
+    });
+
+    test("Retrieve correct information for CentOS 7", () => {
+        const dist = distro_centos_7();
+
+        dist.name.should.equal('centos');
+        dist.version.should.equal('7');
+    });
+
+    test("Compute correct RID for Windows 32-bit", () => {
+        const platformInfo = new PlatformInformation('win32', '32-bit');
+
+        platformInfo.runtimeId.should.equal('win7-x86');
+    })
+
+    test("Compute correct RID for Windows 64-bit", () => {
+        const platformInfo = new PlatformInformation('win32', '64-bit');
+
+        platformInfo.runtimeId.should.equal('win7-x64');
+    })
+
+    test("Compute no RID for Windows with bad architecture", () => {
+        const platformInfo = new PlatformInformation('win32', 'bad');
+
+        should().equal(platformInfo.runtimeId, null);
+    })
+
+    test("Compute correct RID for OSX", () => {
+        const platformInfo = new PlatformInformation('darwin', 'x86_64');
+
+        platformInfo.runtimeId.should.equal('osx.10.11-x64');
+    })
+
+    test("Compute no RID for OSX with 32-bit architecture", () => {
+        const platformInfo = new PlatformInformation('darwin', 'x86');
+
+        should().equal(platformInfo.runtimeId, null);
+    })
+
+    test("Compute correct RID for Ubuntu 14.04", () => {
+        const platformInfo = new PlatformInformation('linux', 'x86_64', distro_ubuntu_14_04());
+
+        platformInfo.runtimeId.should.equal('ubuntu.14.04-x64');
+    })
+
+    test("Compute correct RID for Fedora 23", () => {
+        const platformInfo = new PlatformInformation('linux', 'x86_64', distro_fedora_23());
+
+        platformInfo.runtimeId.should.equal('fedora.23-x64');
+    })
+
+    test("Compute correct RID for Debian 8", () => {
+        const platformInfo = new PlatformInformation('linux', 'x86_64', distro_debian_8());
+
+        platformInfo.runtimeId.should.equal('debian.8-x64');
+    })
+
+    test("Compute correct RID for CentOS 7", () => {
+        const platformInfo = new PlatformInformation('linux', 'x86_64', distro_centos_7());
+
+        platformInfo.runtimeId.should.equal('centos.7-x64');
+    })
+
+    test("Compute no RID for CentOS 7 with 32-bit architecture", () => {
+        const platformInfo = new PlatformInformation('linux', 'x86', distro_centos_7());
+
+        should().equal(platformInfo.runtimeId, null);
+    })
+});
+
+function distro_ubuntu_14_04(): LinuxDistribution {
+    // Copied from /etc/os-release on Ubuntu 14.04
+    const input = `
 NAME="Ubuntu"
 VERSION="14.04.5 LTS, Trusty Tahr"
 ID=ubuntu
@@ -22,15 +111,12 @@ HOME_URL="http://www.ubuntu.com/"
 SUPPORT_URL="http://help.ubuntu.com/"
 BUG_REPORT_URL="http://bugs.launchpad.net/ubuntu/"`;
 
-        const dist = LinuxDistribution.FromReleaseInfo(input);
+    return LinuxDistribution.FromReleaseInfo(input, '\n');
+}
 
-        dist.name.should.equal('ubuntu');
-        dist.version.should.equal('14.04');
-    });
-
-    test("Retrieve correct information for Fedora 23", () => {
-        // Copied from /etc/os-release on Fedora 23
-        const input = `
+function distro_fedora_23(): LinuxDistribution {
+    // Copied from /etc/os-release on Fedora 23
+    const input = `
 NAME=Fedora
 VERSION="23 (Workstation Edition)"
 ID=fedora
@@ -48,15 +134,12 @@ PRIVACY_POLICY_URL=https://fedoraproject.org/wiki/Legal:PrivacyPolicy
 VARIANT="Workstation Edition"
 VARIANT_ID=workstation`;
 
-        const dist = LinuxDistribution.FromReleaseInfo(input);
+    return LinuxDistribution.FromReleaseInfo(input, '\n');
+}
 
-        dist.name.should.equal('fedora');
-        dist.version.should.equal('23');
-    });
-
-    test("Retrieve correct information for Debian 8", () => {
-        // Copied from /etc/os-release on Debian 8
-        const input = `
+function distro_debian_8(): LinuxDistribution {
+    // Copied from /etc/os-release on Debian 8
+    const input = `
 PRETTY_NAME="Debian GNU/Linux 8 (jessie)"
 NAME="Debian GNU/Linux"
 VERSION_ID="8"
@@ -66,15 +149,12 @@ HOME_URL="http://www.debian.org/"
 SUPPORT_URL="http://www.debian.org/support"
 BUG_REPORT_URL="https://bugs.debian.org/"`;
 
-        const dist = LinuxDistribution.FromReleaseInfo(input);
+    return LinuxDistribution.FromReleaseInfo(input, '\n');
+}
 
-        dist.name.should.equal('debian');
-        dist.version.should.equal('8');
-    });
-
-    test("Retrieve correct information for CentOS 7", () => {
-        // Copied from /etc/os-release on CentOS 7
-        const input = `
+function distro_centos_7(): LinuxDistribution {
+    // Copied from /etc/os-release on CentOS 7
+    const input = `
 NAME="CentOS Linux"
 VERSION="7 (Core)"
 ID="centos"
@@ -91,9 +171,5 @@ CENTOS_MANTISBT_PROJECT_VERSION="7"
 REDHAT_SUPPORT_PRODUCT="centos"
 REDHAT_SUPPORT_PRODUCT_VERSION="7"`;
 
-        const dist = LinuxDistribution.FromReleaseInfo(input);
-
-        dist.name.should.equal('centos');
-        dist.version.should.equal('7');
-    });
-});
+    return LinuxDistribution.FromReleaseInfo(input, '\n');
+}
