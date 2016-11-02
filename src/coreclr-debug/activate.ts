@@ -167,12 +167,13 @@ function deleteInstallBeginFile() {
 
 function getPlatformRuntimeId(): Promise<string> {
     return PlatformInformation.GetCurrent().then(info => {
-        try {
-            return info.toRuntimeId();
+        if (info.runtimeId) {
+            return info.runtimeId;
         }
-        catch (err) {
-            _util.log(`Error: ${err.message}`);
-            throw err;
-        }
+
+        // If we got here, this isn't a support runtime ID.
+        const message = `Unsupported platform: ${info.toString()}`
+        _util.log(`Error: ${message}`);
+        throw new Error(message);
     });
 }
