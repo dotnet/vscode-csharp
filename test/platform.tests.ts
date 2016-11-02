@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { LinuxDistribution, PlatformInformation, OperatingSystem } from '../src/platform';
+import { LinuxDistribution, PlatformInformation } from '../src/platform';
 
 suite("Platform", () => {
     before(() => should());

@@ -13,7 +13,7 @@ import * as OmniSharp from './omnisharp/extension';
 import * as util from './common';
 import { Logger } from './logger';
 import { PackageManager, Status } from './packages';
-import { PlatformInformation, OperatingSystem } from './platform';
+import { PlatformInformation } from './platform';
 
 export function activate(context: vscode.ExtensionContext): any {
 
@@ -110,7 +110,7 @@ function installRuntimeDependencies(extension: vscode.Extension<any>): Promise<v
 
 function allowExecution(filePath: string, platformInfo: PlatformInformation, logger: Logger): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-        if (platformInfo.operatingSystem !== OperatingSystem.Windows) {
+        if (!platformInfo.isWindows()) {
             util.fileExists(filePath)
                 .then(exists => {
                     if (exists) {
