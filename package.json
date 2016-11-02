@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.5.0-beta3",
+  "version": "1.5.0-beta4",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -21,7 +21,7 @@
   "scripts": {
     "compile": "node ./node_modules/vscode/bin/compile -p ./",
     "watch": "node ./node_modules/vscode/bin/compile -watch -p ./",
-    "test": "mocha --timeout 15000 -u tdd ./out/test/**/*.tests.js",
+    "test": "mocha --timeout 15000 -u tdd ./out/test/*.tests.js ./out/test/**/*.tests.js",
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
