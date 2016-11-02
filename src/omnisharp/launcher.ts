@@ -138,9 +138,9 @@ export interface LaunchResult {
     usingMono: boolean;
 }
 
-export function launchOmniSharp(cwd: string, args: string[]): Promise<LaunchResult> {
+export function launchOmniSharp(cwd: string, args: string[], kind: LaunchTargetKind): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        launch(cwd, args)
+        launch(cwd, args, kind)
             .then(result => {
                 // async error - when target not not ENEOT
                 result.process.on('error', err => {
@@ -155,7 +155,7 @@ export function launchOmniSharp(cwd: string, args: string[]): Promise<LaunchResu
     });
 }
 
-function launch(cwd: string, args: string[]): Promise<LaunchResult> {
+function launch(cwd: string, args: string[], kind: LaunchTargetKind): Promise<LaunchResult> {
     return PlatformInformation.GetCurrent().then(platformInfo => {
         const options = Options.Read();
 
@@ -163,7 +163,7 @@ function launch(cwd: string, args: string[]): Promise<LaunchResult> {
             return launchNixMono(options.path, cwd, args);
         }
 
-        const launchPath = options.path || getLaunchPath(platformInfo);
+        const launchPath = options.path || getLaunchPath(platformInfo, kind);
 
         if (platformInfo.operatingSystem === OperatingSystem.Windows) {
             return launchWindows(launchPath, cwd, args);
@@ -174,12 +174,16 @@ function launch(cwd: string, args: string[]): Promise<LaunchResult> {
     });
 }
 
-function getLaunchPath(platformInfo: PlatformInformation): string {
-    const binPath = util.getBinPath();
+function getLaunchPath(platformInfo: PlatformInformation, kind: LaunchTargetKind): string {
+    if (kind === LaunchTargetKind.Solution) {
+        if (platformInfo.operatingSystem === OperatingSystem.Windows) {
+            return path.join(util.getExtensionPath(), '.omnisharp-desktop', 'OmniSharp.exe');
+        }
 
-    return platformInfo.operatingSystem === OperatingSystem.Windows
-        ? path.join(path.join(binPath, 'omnisharp'), 'OmniSharp.exe')
-        : path.join(binPath, 'run');
+        return path.join(util.getExtensionPath(), '.omnisharp-mono', "OmniSharp.exe");
+    }
+
+    return path.join(util.getExtensionPath(), '.omnisharp-coreclr', "OmniSharp.exe");
 }
 
 function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchResult {
