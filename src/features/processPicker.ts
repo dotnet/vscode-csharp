@@ -6,6 +6,8 @@
 import * as os from 'os';
 import * as vscode from 'vscode';
 import * as child_process from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export interface AttachItem extends vscode.QuickPickItem {
     id: string;
@@ -24,7 +26,7 @@ export class AttachPicker {
                 let attachPickOptions: vscode.QuickPickOptions = {
                     matchOnDescription: true,
                     matchOnDetail: true,
-                    placeHolder: "Select the process to attach to"                    
+                    placeHolder: "Select the process to attach to"
                 };
 
                 return vscode.window.showQuickPick(processEntries, attachPickOptions)
@@ -32,6 +34,149 @@ export class AttachPicker {
                         return chosenProcess ? chosenProcess.id : null;
                     });
             });
+    }
+}
+
+export class RemoteAttachPicker {
+    public static get commColumnTitle() { return Array(PsOutputParser.secondColumnCharacters).join("a"); }
+    public static get linuxPsCommand() { return `ps -axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args=`; }
+    public static get osxPsCommand() { return `ps -axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args= -c`; }
+
+    private static _channel: vscode.OutputChannel = null;
+
+    public static ShowAttachEntries(args: any): Promise<string> {
+        // Create remote attach output channel for errors.
+        if (!RemoteAttachPicker._channel) {
+            RemoteAttachPicker._channel = vscode.window.createOutputChannel('remote-attach');
+        } else {
+            RemoteAttachPicker._channel.clear();
+        }
+
+        // Grab selected name from UI
+        // Args may be null if ran with F1
+        let name: string = args ? args.name : null;
+
+        if (!name) {
+            // Config name not found. 
+            return Promise.reject<string>(new Error("Name not defined in current configuration."));
+        }
+
+        // Build path for launch.json to find pipeTransport
+        const vscodeFolder: string = path.join(vscode.workspace.rootPath, '.vscode');
+        let launchJsonPath: string = path.join(vscodeFolder, 'launch.json');
+
+        // Read launch.json
+        let json: any = JSON.parse(fs.readFileSync(launchJsonPath).toString());
+
+        // Find correct pipeTransport via selected name
+        let config;
+        let configIdx: number;
+        for (configIdx = 0; configIdx < json.configurations.length; ++configIdx) {
+            if (json.configurations[configIdx].name === name) {
+                config = json.configurations[configIdx];
+                break;
+            }
+        }
+
+        if (configIdx == json.configurations.length) {
+            // Name not found in list of given configurations. 
+            return Promise.reject<string>(new Error(name + " could not be found in configurations."));
+        }
+
+        if (!config.pipeTransport || !config.pipeTransport.debuggerPath) {
+            // Missing PipeTransport and debuggerPath, prompt if user wanted to just do local attach.
+            return Promise.reject<string>(new Error("Configuration \"" + name + "\" in launch.json does not have a " +
+                "pipeTransport argument with debuggerPath for pickRemoteProcess. Use pickProcess for local attach."));
+        } else {
+            let pipeProgram = config.pipeTransport.pipeProgram;
+            let pipeArgs = config.pipeTransport.pipeArgs;
+            let platformSpecificPipeTransportOptions = RemoteAttachPicker.getPlatformSpecificPipeTransportOptions(config);
+
+            if (platformSpecificPipeTransportOptions) {
+                pipeProgram = platformSpecificPipeTransportOptions.pipeProgram || pipeProgram;
+                pipeArgs = platformSpecificPipeTransportOptions.pipeArgs || pipeArgs;
+            }
+
+
+            let argList = RemoteAttachPicker.createArgumentList(pipeArgs);
+            let pipeCmd: string = `"${pipeProgram}" ${argList}`;
+            return RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd).then(processes => {
+                let attachPickOptions: vscode.QuickPickOptions = {
+                    matchOnDescription: true,
+                    matchOnDetail: true,
+                    placeHolder: "Select the process to attach to"
+                };
+                return vscode.window.showQuickPick(processes, attachPickOptions).then(item => {
+                    return item ? item.id : null;
+                });
+            });
+        }
+    }
+
+    private static createArgumentList(args: string[]): string {
+        let ret = "";
+
+        for (let arg of args) {
+            if (ret) {
+                ret += " ";
+            }
+            ret += `"${arg}"`;
+        }
+
+        return ret;
+    }
+
+    private static getPlatformSpecificPipeTransportOptions(config) {
+        const osPlatform = os.platform();
+
+        if (osPlatform == "darwin" && config.pipeTransport.osx) {
+            return config.pipeTransport.osx;
+        } else if (osPlatform == "linux" && config.pipeTransport.linux) {
+            return config.pipeTransport.linux;
+        } else if (osPlatform == "win32" && config.pipeTransport.windows) {
+            return config.pipeTransport.windows;
+        }
+
+        return null;
+    }
+
+    public static getRemoteOSAndProcesses(pipeCmd: string): Promise<AttachItem[]> {
+        // Commands to get OS and processes
+        const command = `uname && if [ $(uname) == "Linux" ] ; then ${RemoteAttachPicker.linuxPsCommand} ; elif [ $(uname) == "Darwin" ] ; ` +
+            `then ${RemoteAttachPicker.osxPsCommand}; fi`;
+
+        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} "${command}"`, null, RemoteAttachPicker._channel).then(output => {
+            // OS will be on first line
+            // Processess will follow if listed
+            let lines = output.split(os.EOL);
+
+            if (lines.length == 0) {
+                return Promise.reject<AttachItem[]>(new Error("Pipe transport failed to get OS and processes."));
+            }
+            else {
+                let remoteOS = lines[0].replace(/[\r\n]+/g, '');
+
+                if (remoteOS != "Linux" && remoteOS != "Darwin") {
+                    return Promise.reject<AttachItem[]>(new Error(`Operating system "${remoteOS}"" not supported.`));
+                }
+
+                // Only got OS from uname
+                if (lines.length == 1) {
+                    return Promise.reject<AttachItem[]>(new Error("Transport attach could not obtain processes list."));
+                } else {
+                    let processes = lines.slice(1);
+                    return sortProcessEntries(PsOutputParser.parseProcessFromPsArray(processes), remoteOS);
+                }
+            }
+        });
+    }
+
+    public static getRemoteProcesses(pipeCmd: string, os: string): Promise<AttachItem[]> {
+        const psCommand = os === 'darwin' ? RemoteAttachPicker.osxPsCommand : RemoteAttachPicker.linuxPsCommand;
+
+        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} ${psCommand}`, null, RemoteAttachPicker._channel).then(output => {
+            return sortProcessEntries(PsOutputParser.parseProcessFromPs(output), os);
+        });
     }
 }
 
@@ -64,28 +209,46 @@ abstract class DotNetAttachItemsProvider implements AttachItemsProvider {
 
     getAttachItems(): Promise<AttachItem[]> {
         return this.getInternalProcessEntries().then(processEntries => {
-            // localeCompare is significantly slower than < and > (2000 ms vs 80 ms for 10,000 elements)
-            // We can change to localeCompare if this becomes an issue
-            let dotnetProcessName = (os.platform() === 'win32') ? 'dotnet.exe' : 'dotnet';
-            processEntries = processEntries.sort((a, b) => {
-                if (a.name.toLowerCase() === dotnetProcessName && b.name.toLowerCase() === dotnetProcessName) {
-                    return a.commandLine.toLowerCase() < b.commandLine.toLowerCase() ? -1 : 1;
-                } else if (a.name.toLowerCase() === dotnetProcessName) {
-                    return -1;
-                } else if (b.name.toLowerCase() === dotnetProcessName) {
-                    return 1;
-                } else {
-                    return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
-                }
-            });
-            
-            let attachItems = processEntries.map(p => p.toAttachItem());
-            return attachItems;
+            return sortProcessEntries(processEntries, os.platform());
         });
     }
 }
 
+function sortProcessEntries(processEntries: Process[], osPlatform: string): AttachItem[] {
+    // localeCompare is significantly slower than < and > (2000 ms vs 80 ms for 10,000 elements)
+    // We can change to localeCompare if this becomes an issue
+    let dotnetProcessName = (osPlatform === 'win32') ? 'dotnet.exe' : 'dotnet';
+    processEntries = processEntries.sort((a, b) => {
+        if (a.name.toLowerCase() === dotnetProcessName && b.name.toLowerCase() === dotnetProcessName) {
+            return a.commandLine.toLowerCase() < b.commandLine.toLowerCase() ? -1 : 1;
+        } else if (a.name.toLowerCase() === dotnetProcessName) {
+            return -1;
+        } else if (b.name.toLowerCase() === dotnetProcessName) {
+            return 1;
+        } else {
+            return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+        }
+    });
+
+    let attachItems = processEntries.map(p => p.toAttachItem());
+    return attachItems;
+}
+
 export class PsAttachItemsProvider extends DotNetAttachItemsProvider {
+    protected getInternalProcessEntries(): Promise<Process[]> {
+        // the BSD version of ps uses '-c' to have 'comm' only output the executable name and not
+        // the full path. The Linux version of ps has 'comm' to only display the name of the executable
+        // Note that comm on Linux systems is truncated to 16 characters:
+        // https://bugzilla.redhat.com/show_bug.cgi?id=429565
+        // Since 'args' contains the full path to the executable, even if truncated, searching will work as desired.
+        const psCommand = os.platform() === 'darwin' ? RemoteAttachPicker.osxPsCommand : RemoteAttachPicker.linuxPsCommand;
+        return execChildProcess(psCommand, null).then(processes => {
+            return PsOutputParser.parseProcessFromPs(processes);
+        });
+    }
+}
+
+export class PsOutputParser {
     // Perf numbers:
     // OS X 10.10
     // | # of processes | Time (ms) |
@@ -109,23 +272,10 @@ export class PsAttachItemsProvider extends DotNetAttachItemsProvider {
     // the column header to 50 a's so that the second column will have at least that many
     // characters. 50 was chosen because that's the maximum length of a "label" in the
     // QuickPick UI in VSCode.
-    private static get secondColumnCharacters() { return 50; }
-
-    protected getInternalProcessEntries(): Promise<Process[]> {
-        const commColumnTitle = Array(PsAttachItemsProvider.secondColumnCharacters).join("a");
-        // the BSD version of ps uses '-c' to have 'comm' only output the executable name and not
-        // the full path. The Linux version of ps has 'comm' to only display the name of the executable
-        // Note that comm on Linux systems is truncated to 16 characters:
-        // https://bugzilla.redhat.com/show_bug.cgi?id=429565
-        // Since 'args' contains the full path to the executable, even if truncated, searching will work as desired.
-        const psCommand = `ps -axww -o pid=,comm=${commColumnTitle},args=` + (os.platform() === 'darwin' ? ' -c' : '');
-        return execChildProcess(psCommand, null).then(processes => {
-            return this.parseProcessFromPs(processes);
-        });
-    }
+    public static get secondColumnCharacters() { return 50; }
 
     // Only public for tests.
-    public parseProcessFromPs(processes: string): Process[] {
+    public static parseProcessFromPs(processes: string): Process[] {
         let lines = processes.split(os.EOL);
         let processEntries: Process[] = [];
 
@@ -137,13 +287,34 @@ export class PsAttachItemsProvider extends DotNetAttachItemsProvider {
             }
 
             let process = this.parseLineFromPs(line);
-            processEntries.push(process);
+            if (process) {
+                processEntries.push(process);
+            }
         }
 
         return processEntries;
     }
 
-    private parseLineFromPs(line: string): Process {
+    public static parseProcessFromPsArray(lines: string[]): Process[] {
+        let processEntries: Process[] = [];
+
+        // lines[0] is the header of the table
+        for (let i = 1; i < lines.length; i++) {
+            let line = lines[i];
+            if (!line) {
+                continue;
+            }
+
+            let process = this.parseLineFromPs(line);
+            if (process) {
+                processEntries.push(process);
+            }
+        }
+
+        return processEntries;
+    }
+
+    private static parseLineFromPs(line: string): Process {
         // Explanation of the regex:
         //   - any leading whitespace
         //   - PID
@@ -152,7 +323,7 @@ export class PsAttachItemsProvider extends DotNetAttachItemsProvider {
         //     for the whitespace separator
         //   - whitespace
         //   - args (might be empty)
-        const psEntry = new RegExp(`^\\s*([0-9]+)\\s+(.{${PsAttachItemsProvider.secondColumnCharacters - 1}})\\s+(.*)$`);
+        const psEntry = new RegExp(`^\\s*([0-9]+)\\s+(.{${PsOutputParser.secondColumnCharacters - 1}})\\s+(.*)$`);
         const matches = psEntry.exec(line);
         if (matches && matches.length === 4) {
             const pid = matches[1].trim();
@@ -164,6 +335,15 @@ export class PsAttachItemsProvider extends DotNetAttachItemsProvider {
 }
 
 export class WmicAttachItemsProvider extends DotNetAttachItemsProvider {
+    protected getInternalProcessEntries(): Promise<Process[]> {
+        const wmicCommand = 'wmic process get Name,ProcessId,CommandLine /FORMAT:list';
+        return execChildProcess(wmicCommand, null).then(processes => {
+            return WmicOutputParser.parseProcessFromWmic(processes);
+        });
+    }
+}
+
+export class WmicOutputParser {
     // Perf numbers on Win10:
     // | # of processes | Time (ms) |
     // |----------------+-----------|
@@ -176,15 +356,8 @@ export class WmicAttachItemsProvider extends DotNetAttachItemsProvider {
     private static get wmicCommandLineTitle() { return 'CommandLine'; }
     private static get wmicPidTitle() { return 'ProcessId'; }
 
-    protected getInternalProcessEntries(): Promise<Process[]> {
-        const wmicCommand = 'wmic process get Name,ProcessId,CommandLine /FORMAT:list';
-        return execChildProcess(wmicCommand, null).then(processes => {
-            return this.parseProcessFromWmic(processes);
-        });
-    }
-
     // Only public for tests.
-    public parseProcessFromWmic(processes: string): Process[] {
+    public static parseProcessFromWmic(processes: string): Process[] {
         let lines = processes.split(os.EOL);
         let currentProcess: Process = new Process(null, null, null);
         let processEntries: Process[] = [];
@@ -198,7 +371,7 @@ export class WmicAttachItemsProvider extends DotNetAttachItemsProvider {
             this.parseLineFromWmic(line, currentProcess);
 
             // Each entry of processes has ProcessId as the last line
-            if (line.startsWith(WmicAttachItemsProvider.wmicPidTitle)) {
+            if (line.startsWith(WmicOutputParser.wmicPidTitle)) {
                 processEntries.push(currentProcess);
                 currentProcess = new Process(null, null, null);
             }
@@ -207,18 +380,18 @@ export class WmicAttachItemsProvider extends DotNetAttachItemsProvider {
         return processEntries;
     }
 
-    private parseLineFromWmic(line: string, process: Process) {
+    private static parseLineFromWmic(line: string, process: Process) {
         let splitter = line.indexOf('=');
         if (splitter >= 0) {
             let key = line.slice(0, line.indexOf('='));
             let value = line.slice(line.indexOf('=') + 1);
-            if (key === WmicAttachItemsProvider.wmicNameTitle) {
+            if (key === WmicOutputParser.wmicNameTitle) {
                 process.name = value.trim();
             }
-            else if (key === WmicAttachItemsProvider.wmicPidTitle) {
+            else if (key === WmicOutputParser.wmicPidTitle) {
                 process.pid = value.trim();
             }
-            else if (key === WmicAttachItemsProvider.wmicCommandLineTitle) {
+            else if (key === WmicOutputParser.wmicCommandLineTitle) {
                 const extendedLengthPath = '\\??\\';
                 if (value.startsWith(extendedLengthPath)) {
                     value = value.slice(extendedLengthPath.length).trim();
@@ -228,6 +401,7 @@ export class WmicAttachItemsProvider extends DotNetAttachItemsProvider {
             }
         }
     }
+
 }
 
 function execChildProcess(process: string, workingDirectory: string): Promise<string> {
@@ -246,4 +420,36 @@ function execChildProcess(process: string, workingDirectory: string): Promise<st
             resolve(stdout);
         });
     });
+}
+
+function execChildProcessAndOutputErrorToChannel(process: string, workingDirectory: string, channel: vscode.OutputChannel): Promise<string> {
+    channel.appendLine(`Executing: ${process}`);
+    return new Promise<string>((resolve, reject) => {
+        child_process.exec(process, { cwd: workingDirectory, maxBuffer: 500 * 1024 }, (error: Error, stdout: string, stderr: string) => {
+            let channelOutput = "";
+            
+            if (stdout && stdout.length > 0) {
+                channelOutput.concat(stdout);
+            }
+
+            if (stderr && stderr.length > 0) {
+                channelOutput.concat(stderr);
+            }
+
+            if (error) {
+                channelOutput.concat(error.message);
+            }
+
+
+            if (error || (stderr && stderr.length > 0)) {
+                channel.append(channelOutput);
+                channel.show();
+                reject(new Error("See remote-attach output"));
+                return;
+            }
+
+            resolve(stdout);
+        });
+    });
+
 }
