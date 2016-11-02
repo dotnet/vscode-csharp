@@ -23,6 +23,7 @@ const child_process = require('child_process');
 
 const Logger = logger.Logger;
 const PackageManager = packages.PackageManager;
+const LinuxDistribution = platform.LinuxDistribution;
 const PlatformInformation = platform.PlatformInformation;
 
 /// used in offline packaging run so does not clean .vsix
@@ -36,8 +37,8 @@ gulp.task('clean', ['omnisharp:clean', 'debugger:clean', 'package:clean'], () =>
 });
 
 /// Omnisharp Tasks
-function installOmnisharp(platform, packageJSON) {
-    const packageManager = new PackageManager(platform, packageJSON);
+function installOmnisharp(platformInfo, packageJSON) {
+    const packageManager = new PackageManager(platformInfo, packageJSON);
     const logger = new Logger(message => process.stdout.write(message));
 
     return packageManager.DownloadPackages(logger)
@@ -47,7 +48,7 @@ function installOmnisharp(platform, packageJSON) {
 }
 
 function cleanOmnisharp() {
-    return del('bin');
+    return del('.omnisharp-*');
 }
 
 gulp.task('omnisharp:clean', () => {
@@ -111,16 +112,16 @@ function doPackageSync(packageName) {
     }
 }
 
-function doOfflinePackage(runtimeId, platform, packageName, packageJSON) {
+function doOfflinePackage(platformInfo, packageName, packageJSON) {
     return clean()
         .then(() => {
-            return installDebugger(runtimeId);
+            return installDebugger(platformInfo.runtimeId);
         })
         .then(() => {
-            return installOmnisharp(platform, packageJSON);
+            return installOmnisharp(platformInfo, packageJSON);
         })
         .then(() => {
-            doPackageSync(packageName + '-' + runtimeId + '.vsix');
+            doPackageSync(packageName + '-' + platformInfo.runtimeId + '.vsix');
         });
 }
 
@@ -145,22 +146,22 @@ gulp.task('package:offline', ['clean'], () => {
     var packageName = name + '.' + version;
 
     var packages = [];
-    packages.push({ rid: 'win7-x64', platform: new PlatformInformation('win32') });
-    packages.push({ rid: 'osx.10.11-x64', platform: new PlatformInformation('darwin', 'x86_64') });
-    packages.push({ rid: 'centos.7-x64', platform: new PlatformInformation('linux', 'x86_64') });
-    packages.push({ rid: 'debian.8-x64', platform: new PlatformInformation('linux', 'x86_64') });
-    packages.push({ rid: 'fedora.23-x64', platform: new PlatformInformation('linux', 'x86_64') });
-    packages.push({ rid: 'opensuse.13.2-x64', platform: new PlatformInformation('linux', 'x86_64') });
-    packages.push({ rid: 'rhel.7.2-x64', platform: new PlatformInformation('linux', 'x86_64') });
-    packages.push({ rid: 'ubuntu.14.04-x64', platform: new PlatformInformation('linux', 'x86_64') });
-    packages.push({ rid: 'ubuntu.16.04-x64', platform: new PlatformInformation('linux', 'x86_64') });
+    packages.push(new PlatformInformation('win32', '64-bit'));
+    packages.push(new PlatformInformation('darwin', 'x86_64'));
+    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('centos', '7')));
+    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('debian', '8')));
+    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('fedora', '23')));
+    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('opensuse', '13.2')));
+    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('rhel', '7.2')));
+    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('ubuntu', '14.04')));
+    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('ubuntu', '16.04')));
 
     var promise = Promise.resolve();
 
-    packages.forEach(data => {
+    packages.forEach(platformInfo => {
         promise = promise
             .then(() => {
-                return doOfflinePackage(data.rid, data.platform, packageName, packageJSON);
+                return doOfflinePackage(platformInfo, packageName, packageJSON);
             });
     });
 
