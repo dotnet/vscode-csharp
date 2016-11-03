@@ -76,7 +76,7 @@
         "win7-x86"
       ],
       "binaries": [
-        "./.omnisharp-coreclr/OmniSharp"
+        "./OmniSharp"
       ]
     },
     {
@@ -87,7 +87,7 @@
         "win7-x64"
       ],
       "binaries": [
-        "./.omnisharp-coreclr/OmniSharp"
+        "./OmniSharp"
       ]
     },
     {
@@ -98,7 +98,7 @@
         "osx.10.11-x64"
       ],
       "binaries": [
-        "./.omnisharp-coreclr/OmniSharp"
+        "./OmniSharp"
       ]
     },
     {
@@ -109,7 +109,7 @@
         "centos.7-x64"
       ],
       "binaries": [
-        "./.omnisharp-coreclr/OmniSharp"
+        "./OmniSharp"
       ]
     },
     {
@@ -120,7 +120,7 @@
         "debian.8-x64"
       ],
       "binaries": [
-        "./.omnisharp-coreclr/OmniSharp"
+        "./OmniSharp"
       ]
     },
     {
@@ -131,7 +131,7 @@
         "fedora.23-x64"
       ],
       "binaries": [
-        "./.omnisharp-coreclr/OmniSharp"
+        "./OmniSharp"
       ]
     },
     {
@@ -142,7 +142,7 @@
         "opensuse.13.2-x64"
       ],
       "binaries": [
-        "./.omnisharp-coreclr/OmniSharp"
+        "./OmniSharp"
       ]
     },
     {
@@ -153,7 +153,7 @@
         "rhel.7-x64"
       ],
       "binaries": [
-        "./.omnisharp-coreclr/OmniSharp"
+        "./.OmniSharp"
       ]
     },
     {
@@ -164,7 +164,7 @@
         "ubuntu.14.04-x64"
       ],
       "binaries": [
-        "./.omnisharp-coreclr/OmniSharp"
+        "./OmniSharp"
       ]
     },
     {
@@ -175,7 +175,7 @@
         "ubuntu.16.04-x64"
       ],
       "binaries": [
-        "./.omnisharp-coreclr/OmniSharp"
+        "./OmniSharp"
       ]
     },
     {

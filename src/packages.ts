@@ -67,7 +67,8 @@ export class PackageManager {
                 // Convert relative binary paths to absolute
                 for (let pkg of this.allPackages) {
                     if (pkg.binaries) {
-                        pkg.binaries = pkg.binaries.map(value => path.resolve(util.getExtensionPath(), value));
+                        let basePath = util.getExtensionPath();
+                        pkg.binaries = pkg.binaries.map(value => path.resolve(getBaseInstallPath(pkg), value));
                     }
                 }
 
@@ -99,6 +100,15 @@ export class PackageManager {
                 });
             });
     }
+}
+
+function getBaseInstallPath(pkg: Package): string {
+    let basePath = util.getExtensionPath();
+    if (pkg.installPath) {
+        basePath = path.join(basePath, pkg.installPath);
+    }
+
+    return basePath;
 }
 
 function getNoopStatus(): Status {
@@ -231,12 +241,7 @@ function installPackage(pkg: Package, logger: Logger, status?: Status): Promise<
             zipFile.readEntry();
 
             zipFile.on('entry', (entry: yauzl.Entry) => {
-                let basePath = util.getExtensionPath();
-                if (pkg.installPath) {
-                    basePath = path.join(basePath, pkg.installPath);
-                }
-
-                let absoluteEntryPath = path.resolve(basePath, entry.fileName);
+                let absoluteEntryPath = path.resolve(getBaseInstallPath(pkg), entry.fileName);
 
                 if (entry.fileName.endsWith('/')) {
                     // Directory - create it
