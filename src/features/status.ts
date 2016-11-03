@@ -243,14 +243,16 @@ export function reportServerStatus(server: OmnisharpServer): vscode.Disposable{
     });
 
     let d3 = server.onUnresolvedDependencies(message => {
+        let csharpConfig = vscode.workspace.getConfiguration('csharp');
+        if (!csharpConfig.get<boolean>('suppressDotnetRestoreNotification')) {
+            let info = `There are unresolved dependencies from '${vscode.workspace.asRelativePath(message.FileName) }'. Please execute the restore command to continue.`;
 
-        let info = `There are unresolved dependencies from '${vscode.workspace.asRelativePath(message.FileName) }'. Please execute the restore command to continue.`;
-
-        return vscode.window.showInformationMessage(info, 'Restore').then(value => {
-            if (value) {
-                dotnetRestoreForProject(server, message.FileName);
-            }
-        });
+            return vscode.window.showInformationMessage(info, 'Restore').then(value => {
+                if (value) {
+                    dotnetRestoreForProject(server, message.FileName);
+                }
+            });
+        }
     });
 
     return vscode.Disposable.from(d0, d1, d2, d3);

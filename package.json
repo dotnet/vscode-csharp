@@ -228,6 +228,11 @@
           "default": false,
           "description": "Suppress the warning that the .NET CLI is not on the path."
         },
+        "csharp.suppressDotnetRestoreNotification": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress the notification window to perform a 'dotnet restore' when dependencies can't be resolved."
+        },
         "omnisharp.path": {
           "type": [
             "string",
