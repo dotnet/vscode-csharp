@@ -29,11 +29,11 @@ const PlatformInformation = platform.PlatformInformation;
 /// used in offline packaging run so does not clean .vsix
 function clean() {
     cleanDebugger();
-    return cleanOmnisharp();
+    cleanOmnisharp();
 }
 
 gulp.task('clean', ['omnisharp:clean', 'debugger:clean', 'package:clean'], () => {
-
+    del.sync('install.*');
 });
 
 /// Omnisharp Tasks
@@ -48,11 +48,11 @@ function installOmnisharp(platformInfo, packageJSON) {
 }
 
 function cleanOmnisharp() {
-    return del('.omnisharp-*');
+    del.sync('.omnisharp-*');
 }
 
 gulp.task('omnisharp:clean', () => {
-    return cleanOmnisharp();
+    cleanOmnisharp();
 });
 
 gulp.task('omnisharp:install', ['omnisharp:clean'], () => {
@@ -72,12 +72,7 @@ function installDebugger(runtimeId) {
 }
 
 function cleanDebugger() {
-    try {
-        getDebugInstaller().clean();
-        console.log('Cleaned Succesfully');
-    } catch (error) {
-        console.error(error);
-    }
+    del.sync('.debugger');
 }
 
 gulp.task('debugger:install', ['debugger:clean'], () => {
@@ -130,7 +125,7 @@ function getPackageJSON() {
 }
 
 gulp.task('package:clean', () => {
-    return del('*.vsix');
+    del.sync('*.vsix');
 });
 
 gulp.task('package:online', ['clean'], () => {

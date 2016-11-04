@@ -21,10 +21,6 @@ export function getExtensionPath() {
     return extensionPath;
 }
 
-export function getBinPath() {
-    return path.resolve(getExtensionPath(), "bin");
-}
-
 export function buildPromiseChain<T, TResult>(array: T[], builder: (item: T) => Promise<TResult>): Promise<TResult> {
     return array.reduce(
         (promise, n) => promise.then(() => builder(n)),
@@ -60,19 +56,37 @@ export function fileExists(filePath: string): Promise<boolean> {
     });
 }
 
-function getInstallLockFilePath(): string {
-    return path.resolve(getExtensionPath(), 'install.lock');
+export enum InstallFileType {
+    Begin,
+    Lock
 }
 
-export function lockFileExists(): Promise<boolean> {
-    return fileExists(getInstallLockFilePath());
+function getInstallFilePath(type: InstallFileType): string {
+    let installFile = 'install.' + InstallFileType[type];
+    return path.resolve(getExtensionPath(), installFile);
 }
 
-export function touchLockFile(): Promise<void> {
+export function installFileExists(type: InstallFileType): Promise<boolean> {
+    return fileExists(getInstallFilePath(type));
+}
+
+export function touchInstallFile(type: InstallFileType): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-        fs.writeFile(getInstallLockFilePath(), '', err => {
+        fs.writeFile(getInstallFilePath(type), '', err => {
             if (err) {
-                return reject(err);
+                reject(err);
+            }
+
+            resolve();
+        });
+    });
+}
+
+export function deleteInstallFile(type: InstallFileType): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        fs.unlink(getInstallFilePath(type), err => {
+            if (err) {
+                reject(err);
             }
 
             resolve();
