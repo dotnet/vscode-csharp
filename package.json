@@ -91,6 +91,7 @@
     {
       "description": "Mono Framework Assemblies",
       "url": "https://omnisharpdownload.blob.core.windows.net/ext/framework-4.6.1.zip",
+      "installPath": "./bin",
       "platforms": [
         "darwin",
         "linux"
@@ -100,8 +101,6 @@
       "description": "OmniSharp (.NET 4.6 / x86)",
       "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-x86-1.9-beta19.zip",
       "platforms": [
-        "darwin",
-        "linux",
         "win32"
       ],
       "architectures": [
@@ -116,8 +115,6 @@
       "description": "OmniSharp (.NET 4.6 / x64)",
       "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-x64-1.9-beta19.zip",
       "platforms": [
-        "darwin",
-        "linux",
         "win32"
       ],
       "architectures": [
@@ -126,6 +123,18 @@
       ],
       "binaries": [
         "./bin/run"
+      ]
+    },
+    {
+      "description": "OmniSharp (Mono)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-mono-1.9-beta19.zip",
+      "installPath": "./bin",
+      "platforms": [
+        "darwin",
+        "linux"
+      ],
+      "binaries": [
+        "./run"
       ]
     },
     {
