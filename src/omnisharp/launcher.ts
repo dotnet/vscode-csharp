@@ -169,7 +169,12 @@ function launch(cwd: string, args: string[], kind: LaunchTargetKind): Promise<La
             return launchWindows(launchPath, cwd, args);
         }
         else {
-            return launchNix(launchPath, cwd, args);
+            if (kind === LaunchTargetKind.Solution) {
+                return launchNixMono(launchPath, cwd, args);
+            }
+            else {
+                return launchNix(launchPath, cwd, args);
+            }
         }
     });
 }
