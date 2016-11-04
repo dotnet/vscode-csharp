@@ -84,7 +84,7 @@ export class CoreClrDebugUtil
     {
         let dotnetInfo = new DotnetInfo();
 
-        return this.spawnChildProcess('dotnet', ['--info'], this.debugAdapterDir(), (data: Buffer) => {
+        return this.spawnChildProcess('dotnet', ['--info'], process.cwd(), (data: Buffer) => {
             let lines: string[] = data.toString().replace(/\r/mg, '').split('\n');
             lines.forEach(line => {
                 let match: RegExpMatchArray;
