@@ -543,7 +543,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
                     listener.dispose();
                 }
 
-                reject(new Error('Failed to start OmniSharp'));
+                reject(new Error("OmniSharp server load timed out. Use the 'omnisharp.projectLoadTimeout' setting to override the default delay (one minute)."));
             }, timeoutDuration);
 
             // handle started-event
