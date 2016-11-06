@@ -10,7 +10,8 @@ export class Options {
         public path?: string,
         public useMono?: boolean,
         public loggingLevel?: string,
-        public autoStart?: boolean) { }
+        public autoStart?: boolean,
+        public projectLoadTimeout?: number) { }
 
     public static Read(): Options {
         // Extra effort is taken below to ensure that legacy versions of options
@@ -33,6 +34,8 @@ export class Options {
         const loggingLevel = omnisharpConfig.get<string>('loggingLevel');
         const autoStart = omnisharpConfig.get<boolean>('autoStart', true);
 
-        return new Options(path, useMono, loggingLevel, autoStart);
+        const projectLoadTimeout = omnisharpConfig.get<number>('projectLoadTimeout', 60);
+
+        return new Options(path, useMono, loggingLevel, autoStart, projectLoadTimeout);
     }
 }

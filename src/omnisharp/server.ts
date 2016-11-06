@@ -82,6 +82,7 @@ export abstract class OmnisharpServer {
 
     protected _serverProcess: ChildProcess;
     protected _extraArgs: string[];
+    protected _options: Options;
 
     constructor(reporter: TelemetryReporter) {
         this._extraArgs = [];
@@ -240,9 +241,9 @@ export abstract class OmnisharpServer {
             '--encoding', 'utf-8'
         ];
 
-        const options = Options.Read();
+        this._options = Options.Read();
 
-        if (options.loggingLevel === 'verbose') {
+        if (this._options.loggingLevel === 'verbose') {
             args.push('-v');
         }
 
@@ -498,7 +499,6 @@ namespace WireProtocol {
 export class StdioOmnisharpServer extends OmnisharpServer {
 
     private static _seqPool = 1;
-    private static StartupTimeout = 1000 * 60;
 
     private _rl: ReadLine;
     private _activeRequest: { [seq: number]: { onSuccess: Function; onError: Function; } } = Object.create(null);
@@ -534,6 +534,9 @@ export class StdioOmnisharpServer extends OmnisharpServer {
         const p = new Promise<void>((resolve, reject) => {
             let listener: vscode.Disposable;
 
+            // Convert the timeout from the seconds to microseconds, which is required by setTimeout().
+            const timeoutDuration = this._options.projectLoadTimeout * 1000
+
             // timeout logic
             const handle = setTimeout(() => {
                 if (listener) {
@@ -541,7 +544,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
                 }
 
                 reject(new Error('Failed to start OmniSharp'));
-            }, StdioOmnisharpServer.StartupTimeout);
+            }, timeoutDuration);
 
             // handle started-event
             listener = this.onOmnisharpStart(() => {
