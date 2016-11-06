@@ -534,7 +534,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
         const p = new Promise<void>((resolve, reject) => {
             let listener: vscode.Disposable;
 
-            // Convert the timeout from the seconds to microseconds, which is required by setTimeout().
+            // Convert the timeout from the seconds to milliseconds, which is required by setTimeout().
             const timeoutDuration = this._options.projectLoadTimeout * 1000
 
             // timeout logic
