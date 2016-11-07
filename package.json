@@ -91,7 +91,7 @@
       ]
     },
     {
-      "description": "OmniSharp (.NET Core - OSX / x64)",
+      "description": "OmniSharp (.NET Core - macOS / x64)",
       "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-1.9-beta19-osx-x64-netcoreapp1.0.zip",
       "installPath": ".omnisharp-coreclr",
       "runtimeIds": [
@@ -200,7 +200,7 @@
       ]
     },
     {
-      "description": ".NET Core Debugger (OSX / x64)",
+      "description": ".NET Core Debugger (macOS / x64)",
       "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-osx.10.11-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [

@@ -12,23 +12,23 @@ import * as debugInstall from './install';
 import * as path from 'path';
 import { Logger } from './../logger'
 
-let _util: CoreClrDebugUtil = null;
+let _debugUtil: CoreClrDebugUtil = null;
 let _reporter: TelemetryReporter = null;
 let _logger: Logger = null;
 
 export function activate(context: vscode.ExtensionContext, reporter: TelemetryReporter, logger: Logger) {
-    _util = new CoreClrDebugUtil(context.extensionPath, logger);
+    _debugUtil = new CoreClrDebugUtil(context.extensionPath, logger);
     _reporter = reporter;
     _logger = logger;
 
-    if (!CoreClrDebugUtil.existsSync(_util.debugAdapterDir())) {
+    if (!CoreClrDebugUtil.existsSync(_debugUtil.debugAdapterDir())) {
         // We have been activated but it looks like our package was not installed. This is bad.
         logger.appendLine("[ERROR]: C# Extension failed to install the debugger package");
         showInstallErrorMessage();
-    } else if (!CoreClrDebugUtil.existsSync(_util.installCompleteFilePath())) {
-        _util.checkDotNetCli()
+    } else if (!CoreClrDebugUtil.existsSync(_debugUtil.installCompleteFilePath())) {
+        _debugUtil.checkDotNetCli()
             .then((dotnetInfo: DotnetInfo) => {
-                let installer = new debugInstall.DebugInstaller(_util);
+                let installer = new debugInstall.DebugInstaller(_debugUtil);
                 installer.finishInstall()
                     .then(() => {
                         vscode.window.setStatusBarMessage('Successfully installed .NET Core Debugger.');
@@ -42,7 +42,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
             }, (err) => {
                 // Check for dotnet tools failed. pop the UI
                 // err is a DotNetCliError but use defaults in the unexpected case that it's not
-                showDotnetToolsWarning(err.ErrorMessage || _util.defaultDotNetCliErrorMessage());
+                showDotnetToolsWarning(err.ErrorMessage || _debugUtil.defaultDotNetCliErrorMessage());
                 _logger.appendLine(err.ErrorString || err);
                 // TODO: log telemetry?
             });

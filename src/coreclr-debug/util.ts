@@ -9,6 +9,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as semver from 'semver';
+import { execChildProcess } from './../common'
 import { Logger } from './../logger'
 
 const MINIMUM_SUPPORTED_DOTNET_CLI: string = '1.0.0-preview2-003121';
@@ -79,13 +80,14 @@ export class CoreClrDebugUtil
     // This function checks for the presence of dotnet on the path and ensures the Version
     // is new enough for us. 
     // Returns: a promise that returns a DotnetInfo class
-    // Throws: An CotNetCliError() from the return promise if either dotnet does not exist or is too old. 
+    // Throws: An DotNetCliError() from the return promise if either dotnet does not exist or is too old. 
     public checkDotNetCli(): Promise<DotnetInfo>
     {
         let dotnetInfo = new DotnetInfo();
 
-        return this.spawnChildProcess('dotnet', ['--info'], process.cwd(), (data: Buffer) => {
-            let lines: string[] = data.toString().replace(/\r/mg, '').split('\n');
+        return execChildProcess('dotnet --info', process.cwd())
+        .then((data: string) => {
+            let lines: string[] = data.replace(/\r/mg, '').split('\n');
             lines.forEach(line => {
                 let match: RegExpMatchArray;
                 if (match = /^\ Version:\s*([^\s].*)$/.exec(line)) {
@@ -114,38 +116,6 @@ export class CoreClrDebugUtil
 
             return dotnetInfo;
         });
-    }
-
-    public spawnChildProcess(process: string, args: string[], workingDirectory: string, onStdout?: (data: Buffer) => void, onStderr?: (data: Buffer) => void): Promise<void> {
-        const promise = new Promise<void>((resolve, reject) => {
-            const child = child_process.spawn(process, args, { cwd: workingDirectory });
-
-            if (!onStdout) {
-                onStdout = (data) => { console.log(`${data}`); };
-            }
-            child.stdout.on('data', onStdout);
-
-            if (!onStderr) {
-                onStderr = (data) => { console.error(`${data}`); };
-            }
-            child.stderr.on('data', onStderr);
-
-            child.on('close', (code: number) => {
-                if (code != 0) {
-                    console.log(`${process} exited with error code ${code}`);;
-                    reject(new Error(code.toString()));
-                }
-                else {
-                    resolve();
-                }
-            });
-
-            child.on('error', (error: Error) => {
-                reject(error);
-            });
-        });
-
-        return promise;
     }
 
     public static existsSync(path: string) : boolean {

@@ -42,7 +42,6 @@ export class InstallError extends Error {
 
 export class DebugInstaller {
     private _util: CoreClrDebugUtil = null;
-//     private _isOffline;
 
     constructor(util: CoreClrDebugUtil) {
         this._util = util;

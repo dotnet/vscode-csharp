@@ -21,6 +21,10 @@ export function getExtensionPath() {
     return extensionPath;
 }
 
+export function getBinPath() {
+    return path.resolve(getExtensionPath(), "bin");
+}
+
 export function buildPromiseChain<T, TResult>(array: T[], builder: (item: T) => Promise<TResult>): Promise<TResult> {
     return array.reduce(
         (promise, n) => promise.then(() => builder(n)),
@@ -75,6 +79,7 @@ export function touchInstallFile(type: InstallFileType): Promise<void> {
         fs.writeFile(getInstallFilePath(type), '', err => {
             if (err) {
                 reject(err);
+                return;
             }
 
             resolve();
@@ -87,6 +92,7 @@ export function deleteInstallFile(type: InstallFileType): Promise<void> {
         fs.unlink(getInstallFilePath(type), err => {
             if (err) {
                 reject(err);
+                return;
             }
 
             resolve();

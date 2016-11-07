@@ -14,7 +14,6 @@ const tslint = require('gulp-tslint');
 const vsce = require('vsce');
 const debugUtil = require('./out/src/coreclr-debug/util');
 const debugInstall = require('./out/src/coreclr-debug/install');
-const fs_extra = require('fs-extra-promise');
 const packages = require('./out/src/packages');
 const logger = require('./out/src/logger');
 const platform = require('./out/src/platform');

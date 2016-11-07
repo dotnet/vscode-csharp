@@ -101,10 +101,6 @@ function installRuntimeDependencies(extension: vscode.Extension<any>, logger: Lo
             installationStage = 'touchLockFile';
             return util.touchInstallFile(util.InstallFileType.Lock);
         })
-        .then(() => {
-            installationStage = 'deleteBeginFile';
-            return util.deleteInstallFile(util.InstallFileType.Begin)
-        })
         .catch(error => {
             errorMessage = error.toString();
             logger.appendLine(`Failed at stage: ${installationStage}`);
@@ -118,6 +114,11 @@ function installRuntimeDependencies(extension: vscode.Extension<any>, logger: Lo
             // TODO: Send telemetry event
 
             statusItem.dispose();
+        })
+        .then(() => {
+            // We do this step at the end so that we clean up the begin file in the case that we hit above catch block
+            // Attach a an empty catch to this so that errors here do not propogate
+            return util.deleteInstallFile(util.InstallFileType.Begin).catch((error) => { });
         });
 }
 
