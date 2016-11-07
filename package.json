@@ -259,6 +259,11 @@
           "type": "boolean",
           "default": true,
           "description": "Specifies whether the OmniSharp server will be automatically started or not. If false, OmniSharp can be started with the 'Restart OmniSharp' command"
+        },
+        "omnisharp.projectLoadTimeout": {
+          "type": "number",
+          "default": 60,
+          "description": "The time Visual Studio Code will wait for the OmniSharp server to start. Time is expressed in seconds."
         }
       }
     },
