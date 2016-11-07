@@ -15,6 +15,8 @@ import { Logger } from './logger';
 import { PackageManager, Status } from './packages';
 import { PlatformInformation } from './platform';
 
+let _channel: vscode.OutputChannel = null;
+
 export function activate(context: vscode.ExtensionContext): any {
 
     const extensionId = 'ms-vscode.csharp';
@@ -25,31 +27,34 @@ export function activate(context: vscode.ExtensionContext): any {
 
     util.setExtensionPath(extension.extensionPath);
 
-    ensureRuntimeDependencies(extension)
+    _channel = vscode.window.createOutputChannel('C#');
+
+    let logger = new Logger(text => _channel.append(text));
+
+    ensureRuntimeDependencies(extension, logger)
         .then(() => {
             // activate language services
             OmniSharp.activate(context, reporter);
 
             // activate coreclr-debug
-            coreclrdebug.activate(context, reporter);
+            coreclrdebug.activate(context, reporter, logger);
         });
 }
 
-function ensureRuntimeDependencies(extension: vscode.Extension<any>): Promise<void> {
-    return util.lockFileExists()
+function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger): Promise<void> {
+    return util.installFileExists(util.InstallFileType.Lock)
         .then(exists => {
             if (!exists) {
-                return installRuntimeDependencies(extension);
+                return util.touchInstallFile(util.InstallFileType.Begin).then(() => {
+                    return installRuntimeDependencies(extension, logger);
+                });
             }
         });
 }
 
-function installRuntimeDependencies(extension: vscode.Extension<any>): Promise<void> {
-    let channel = vscode.window.createOutputChannel('C#');
-    channel.show();
-
-    let logger = new Logger(text => channel.append(text));
-    logger.appendLine('Updating C# dependencies...');
+function installRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger): Promise<void> {
+    logger.append('Updating C# dependencies...');
+    _channel.show();
 
     let statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
     let status: Status = {
@@ -65,10 +70,14 @@ function installRuntimeDependencies(extension: vscode.Extension<any>): Promise<v
 
     let platformInfo: PlatformInformation;
     let packageManager: PackageManager;
-    let installationStage = 'getPlatformInfo';
+    let installationStage = 'touchBeginFile';
     let errorMessage = '';
 
-    return PlatformInformation.GetCurrent()
+    return util.touchInstallFile(util.InstallFileType.Begin)
+        .then(() => {
+            installationStage = 'getPlatformInfo';
+            return PlatformInformation.GetCurrent()
+        })
         .then(info => {
             platformInfo = info;
             packageManager = new PackageManager(info, extension.packageJSON);
@@ -90,7 +99,7 @@ function installRuntimeDependencies(extension: vscode.Extension<any>): Promise<v
         })
         .then(() => {
             installationStage = 'touchLockFile';
-            return util.touchLockFile();
+            return util.touchInstallFile(util.InstallFileType.Lock);
         })
         .catch(error => {
             errorMessage = error.toString();
@@ -105,6 +114,11 @@ function installRuntimeDependencies(extension: vscode.Extension<any>): Promise<v
             // TODO: Send telemetry event
 
             statusItem.dispose();
+        })
+        .then(() => {
+            // We do this step at the end so that we clean up the begin file in the case that we hit above catch block
+            // Attach a an empty catch to this so that errors here do not propogate
+            return util.deleteInstallFile(util.InstallFileType.Begin).catch((error) => { });
         });
 }
 

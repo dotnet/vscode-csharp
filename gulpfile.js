@@ -14,7 +14,6 @@ const tslint = require('gulp-tslint');
 const vsce = require('vsce');
 const debugUtil = require('./out/src/coreclr-debug/util');
 const debugInstall = require('./out/src/coreclr-debug/install');
-const fs_extra = require('fs-extra-promise');
 const packages = require('./out/src/packages');
 const logger = require('./out/src/logger');
 const platform = require('./out/src/platform');
@@ -26,75 +25,49 @@ const PackageManager = packages.PackageManager;
 const LinuxDistribution = platform.LinuxDistribution;
 const PlatformInformation = platform.PlatformInformation;
 
-/// used in offline packaging run so does not clean .vsix
-function clean() {
-    cleanDebugger();
-    return cleanOmnisharp();
+function cleanSync(deleteVsix) {
+    del.sync('install.*');
+    del.sync('.omnisharp-*');
+    del.sync('.debugger');
+
+    if (deleteVsix) {
+        del.sync('*.vsix');
+    }
 }
 
-gulp.task('clean', ['omnisharp:clean', 'debugger:clean', 'package:clean'], () => {
-
+gulp.task('clean', () => {
+    cleanSync(true);
 });
 
-/// Omnisharp Tasks
-function installOmnisharp(platformInfo, packageJSON) {
+// Install Tasks
+function install(platformInfo, packageJSON) {
     const packageManager = new PackageManager(platformInfo, packageJSON);
     const logger = new Logger(message => process.stdout.write(message));
+    const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'), logger);
+    const debugInstaller = new debugInstall.DebugInstaller(debuggerUtil);
 
     return packageManager.DownloadPackages(logger)
         .then(() => {
             return packageManager.InstallPackages(logger);
+        })
+        .then(() => {
+            return util.touchInstallFile(util.InstallFileType.Lock)
+        })
+        .then(() => {
+            return debugInstaller.finishInstall();
         });
 }
 
-function cleanOmnisharp() {
-    return del('.omnisharp-*');
-}
+gulp.task('install', ['clean'], () => {
+    util.setExtensionPath(__dirname);
 
-gulp.task('omnisharp:clean', () => {
-    return cleanOmnisharp();
-});
-
-gulp.task('omnisharp:install', ['omnisharp:clean'], () => {
     return PlatformInformation.GetCurrent()
         .then(platformInfo => {
-            return installOmnisharp(platformInfo, getPackageJSON());
+            return install(platformInfo, getPackageJSON());
         });
 });
 
-/// Debugger Tasks
-function getDebugInstaller() {
-    return new debugInstall.DebugInstaller(new debugUtil.CoreClrDebugUtil(path.resolve('.')), true);
-}
-
-function installDebugger(runtimeId) {
-    return getDebugInstaller().install(runtimeId);
-}
-
-function cleanDebugger() {
-    try {
-        getDebugInstaller().clean();
-        console.log('Cleaned Succesfully');
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-gulp.task('debugger:install', ['debugger:clean'], () => {
-    installDebugger(gulp.env.runtimeId)
-        .then(() => {
-            console.log('Installed Succesfully');
-        })
-        .catch((error) => {
-            console.error(error);
-        });
-});
-
-gulp.task('debugger:clean', () => {
-    cleanDebugger();
-});
-
-/// Packaging Tasks
+/// Packaging (VSIX) Tasks
 function doPackageSync(packageName) {
 
     var vsceArgs = [];
@@ -113,13 +86,12 @@ function doPackageSync(packageName) {
 }
 
 function doOfflinePackage(platformInfo, packageName, packageJSON) {
-    return clean()
-        .then(() => {
-            return installDebugger(platformInfo.runtimeId);
-        })
-        .then(() => {
-            return installOmnisharp(platformInfo, packageJSON);
-        })
+    if (process.platform === 'win32') {
+        throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
+    }
+
+    cleanSync(false);
+    return install(platformInfo, packageJSON)
         .then(() => {
             doPackageSync(packageName + '-' + platformInfo.runtimeId + '.vsix');
         });
@@ -130,7 +102,7 @@ function getPackageJSON() {
 }
 
 gulp.task('package:clean', () => {
-    return del('*.vsix');
+    del.sync('*.vsix');
 });
 
 gulp.task('package:online', ['clean'], () => {

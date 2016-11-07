@@ -1,7 +1,0 @@
-bin
-obj
-project.lock.json
-debugAdapters
-install.log
-extension.log
-project.json

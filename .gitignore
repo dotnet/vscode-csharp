@@ -2,7 +2,8 @@ bin
 node_modules
 out
 .omnisharp-*/
+.debugger
 
-install.lock
+install.*
 
 *.vsix
