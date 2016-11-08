@@ -23,7 +23,7 @@ import SignatureHelpProvider from '../features/signatureHelpProvider';
 import registerCommands from '../features/commands';
 import forwardChanges from '../features/changeForwarding';
 import reportStatus from '../features/status';
-import {OmnisharpServer} from './server';
+import {OmniSharpServer} from './server';
 import {Options} from './options';
 import {addAssetsIfNecessary, AddAssetResult} from '../assets';
 
@@ -33,7 +33,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         scheme: 'file' // only files from disk
     };
 
-    const server = new OmnisharpServer(reporter);
+    const server = new OmniSharpServer(reporter);
     const advisor = new Advisor(server); // create before server is started
     const disposables: vscode.Disposable[] = [];
     const localDisposables: vscode.Disposable[] = [];

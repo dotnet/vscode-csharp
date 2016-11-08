@@ -5,15 +5,15 @@
 
 'use strict';
 
-import {OmnisharpServer} from '../omnisharp/server';
+import {OmniSharpServer} from '../omnisharp/server';
 import {Disposable} from 'vscode';
 
 export default class AbstractProvider {
 
-    protected _server: OmnisharpServer;
+    protected _server: OmniSharpServer;
     protected _disposables: Disposable[];
 
-    constructor(server: OmnisharpServer) {
+    constructor(server: OmniSharpServer) {
         this._server = server;
         this._disposables = [];
     }

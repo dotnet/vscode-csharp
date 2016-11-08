@@ -5,7 +5,7 @@
 
 'use strict';
 
-import {OmnisharpServer} from '../omnisharp/server';
+import {OmniSharpServer} from '../omnisharp/server';
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
@@ -15,11 +15,11 @@ import {Disposable, Uri, CancellationTokenSource, TextDocument, Diagnostic, Diag
 export class Advisor {
 
     private _disposable: Disposable;
-    private _server: OmnisharpServer;
+    private _server: OmniSharpServer;
     private _packageRestoreCounter: number = 0;
     private _projectSourceFileCounts: { [path: string]: number } = Object.create(null);
 
-    constructor(server: OmnisharpServer) {
+    constructor(server: OmniSharpServer) {
         this._server = server;
 
         let d1 = server.onProjectChange(this._onProjectChange, this);
@@ -112,7 +112,7 @@ export class Advisor {
     }
 }
 
-export default function reportDiagnostics(server: OmnisharpServer, advisor: Advisor): Disposable {
+export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor): Disposable {
     return new DiagnosticsProvider(server, advisor);
 }
 
@@ -124,7 +124,7 @@ class DiagnosticsProvider extends AbstractSupport {
     private _projectValidation: CancellationTokenSource;
     private _diagnostics: DiagnosticCollection;
 
-    constructor(server: OmnisharpServer, validationAdvisor: Advisor) {
+    constructor(server: OmniSharpServer, validationAdvisor: Advisor) {
         super(server);
         this._validationAdvisor = validationAdvisor;
         this._diagnostics = languages.createDiagnosticCollection('csharp');
