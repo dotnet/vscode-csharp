@@ -63,7 +63,14 @@ module Events {
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 
-export abstract class OmnisharpServer {
+export class OmnisharpServer {
+
+    private static _nextId = 1;
+    private static StartupTimeout = 1000 * 60;
+
+    private _readLine: ReadLine;
+    private _activeRequests: { [seq: number]: { onSuccess: Function; onError: Function; } } = Object.create(null);
+    private _callOnStop: Function[] = [];
 
     private _reporter: TelemetryReporter;
     private _delayTrackers: { [requestName: string]: DelayTracker };
@@ -75,16 +82,14 @@ export abstract class OmnisharpServer {
     private _queue: Request[] = [];
     private _isProcessingQueue = false;
     private _channel: vscode.OutputChannel;
-    protected _logger: Logger;
+    private _logger: Logger;
 
     private _isDebugEnable: boolean = false;
 
-    protected _serverProcess: ChildProcess;
-    protected _extraArgs: string[];
-    protected _options: Options;
+    private _serverProcess: ChildProcess;
+    private _options: Options;
 
     constructor(reporter: TelemetryReporter) {
-        this._extraArgs = [];
         this._reporter = reporter;
 
         this._channel = vscode.window.createOutputChannel('OmniSharp Log');
@@ -236,6 +241,7 @@ export abstract class OmnisharpServer {
         let args = [
             '-s', solutionPath,
             '--hostPID', process.pid.toString(),
+            '--stdio',
             'DotNet:enablePackageRestore=false',
             '--encoding', 'utf-8'
         ];
@@ -245,8 +251,6 @@ export abstract class OmnisharpServer {
         if (this._options.loggingLevel === 'verbose') {
             args.push('-v');
         }
-
-        args = args.concat(this._extraArgs);
 
         this._logger.appendLine(`Starting OmniSharp server at ${new Date().toLocaleString()}`);
         this._logger.increaseIndent();
@@ -294,9 +298,12 @@ export abstract class OmnisharpServer {
         });
     }
 
-    protected abstract _doConnect(): Promise<void>;
-
     public stop(): Promise<void> {
+
+        while (this._callOnStop.length) {
+            let methodToCall = this._callOnStop.pop();
+            methodToCall();
+        }
 
         let cleanupPromise: Promise<void>;
 
@@ -466,35 +473,7 @@ export abstract class OmnisharpServer {
         });
     }
 
-    protected abstract _makeNextRequest(path: string, data: any): Promise<any>;
-}
-
-export class StdioOmnisharpServer extends OmnisharpServer {
-
-    private static _nextId = 1;
-    private static StartupTimeout = 1000 * 60;
-
-    private _readLine: ReadLine;
-    private _activeRequests: { [seq: number]: { onSuccess: Function; onError: Function; } } = Object.create(null);
-    private _callOnStop: Function[] = [];
-
-    constructor(reporter: TelemetryReporter) {
-        super(reporter);
-
-        // extra argv
-        this._extraArgs.push('--stdio');
-    }
-
-    public stop(): Promise<void> {
-        while (this._callOnStop.length) {
-            let method = this._callOnStop.pop();
-            method();
-        }
-
-        return super.stop();
-    }
-
-    protected _doConnect(): Promise<void> {
+    private _doConnect(): Promise<void> {
 
         this._serverProcess.stderr.on('data', (data: any) => {
             this._fireEvent('stderr', String(data));
@@ -609,9 +588,9 @@ export class StdioOmnisharpServer extends OmnisharpServer {
         }
     }
 
-    protected _makeNextRequest(path: string, data: any): Promise<any> {
+    private _makeNextRequest(path: string, data: any): Promise<any> {
 
-        const id = StdioOmnisharpServer._nextId++;
+        const id = OmnisharpServer._nextId++;
 
         const thisRequestPacket: protocol.WireProtocol.RequestPacket = {
             Type: 'request',
