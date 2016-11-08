@@ -398,6 +398,8 @@ export abstract class OmnisharpServer {
             return Promise.reject<TResponse>('server has been stopped or not started');
         }
 
+        console.log(`makeRequest: path=${path}`);
+
         let startTime: number;
         let request: Request;
 
@@ -441,7 +443,6 @@ export abstract class OmnisharpServer {
     }
 
     private _processQueue(): void {
-
         if (this._queue.length === 0) {
             // nothing to do
             this._isProcessingQueue = false;
@@ -468,39 +469,13 @@ export abstract class OmnisharpServer {
     protected abstract _makeNextRequest(path: string, data: any): Promise<any>;
 }
 
-namespace WireProtocol {
-
-    export interface Packet {
-        Type: string;
-        Seq: number;
-    }
-
-    export interface RequestPacket extends Packet {
-        Command: string;
-        Arguments: any;
-    }
-
-    export interface ResponsePacket extends Packet {
-        Command: string;
-        Request_seq: number;
-        Running: boolean;
-        Success: boolean;
-        Message: string;
-        Body: any;
-    }
-
-    export interface EventPacket extends Packet {
-        Event: string;
-        Body: any;
-    }
-}
-
 export class StdioOmnisharpServer extends OmnisharpServer {
 
-    private static _seqPool = 1;
+    private static _nextId = 1;
+    private static StartupTimeout = 1000 * 60;
 
-    private _rl: ReadLine;
-    private _activeRequest: { [seq: number]: { onSuccess: Function; onError: Function; } } = Object.create(null);
+    private _readLine: ReadLine;
+    private _activeRequests: { [seq: number]: { onSuccess: Function; onError: Function; } } = Object.create(null);
     private _callOnStop: Function[] = [];
 
     constructor(reporter: TelemetryReporter) {
@@ -512,7 +487,8 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 
     public stop(): Promise<void> {
         while (this._callOnStop.length) {
-            this._callOnStop.pop()();
+            let method = this._callOnStop.pop();
+            method();
         }
 
         return super.stop();
@@ -524,7 +500,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
             this._fireEvent('stderr', String(data));
         });
 
-        this._rl = createInterface({
+        this._readLine = createInterface({
             input: this._serverProcess.stdout,
             output: this._serverProcess.stdin,
             terminal: false
@@ -568,7 +544,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
                 return;
             }
 
-            let packet: WireProtocol.Packet;
+            let packet: protocol.WireProtocol.Packet;
             try {
                 packet = JSON.parse(line);
             }
@@ -584,10 +560,10 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 
             switch (packet.Type) {
                 case 'response':
-                    this._handleResponsePacket(<WireProtocol.ResponsePacket>packet);
+                    this._handleResponsePacket(<protocol.WireProtocol.ResponsePacket>packet);
                     break;
                 case 'event':
-                    this._handleEventPacket(<WireProtocol.EventPacket>packet);
+                    this._handleEventPacket(<protocol.WireProtocol.EventPacket>packet);
                     break;
                 default:
                     console.warn('unknown packet: ', packet);
@@ -595,21 +571,23 @@ export class StdioOmnisharpServer extends OmnisharpServer {
             }
         };
 
-        this._rl.addListener('line', onLineReceived);
-        this._callOnStop.push(() => this._rl.removeListener('line', onLineReceived));
+        this._readLine.addListener('line', onLineReceived);
+        this._callOnStop.push(() => this._readLine.removeListener('line', onLineReceived));
     }
 
-    private _handleResponsePacket(packet: WireProtocol.ResponsePacket): void {
+    private _handleResponsePacket(packet: protocol.WireProtocol.ResponsePacket): void {
 
-        const requestSeq = packet.Request_seq,
-            entry = this._activeRequest[requestSeq];
+        const id = packet.Request_seq;
+        const entry = this._activeRequests[id];
 
         if (!entry) {
             console.warn('Received a response WITHOUT a request', packet);
             return;
         }
 
-        delete this._activeRequest[requestSeq];
+        console.log(`Handling response: ${packet.Command} (${id})`);
+
+        delete this._activeRequests[id];
 
         if (packet.Success) {
             entry.onSuccess(packet.Body);
@@ -618,7 +596,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
         }
     }
 
-    private _handleEventPacket(packet: WireProtocol.EventPacket): void {
+    private _handleEventPacket(packet: protocol.WireProtocol.EventPacket): void {
 
         if (packet.Event === 'log') {
             // handle log events
@@ -633,16 +611,20 @@ export class StdioOmnisharpServer extends OmnisharpServer {
 
     protected _makeNextRequest(path: string, data: any): Promise<any> {
 
-        const thisRequestPacket: WireProtocol.RequestPacket = {
+        const id = StdioOmnisharpServer._nextId++;
+
+        const thisRequestPacket: protocol.WireProtocol.RequestPacket = {
             Type: 'request',
-            Seq: StdioOmnisharpServer._seqPool++,
+            Seq: id,
             Command: path,
             Arguments: data
         };
 
+        console.log(`Making request: ${path} (${id})`);
+
         return new Promise<any>((resolve, reject) => {
 
-            this._activeRequest[thisRequestPacket.Seq] = {
+            this._activeRequests[thisRequestPacket.Seq] = {
                 onSuccess: value => resolve(value),
                 onError: err => reject(err)
             };
