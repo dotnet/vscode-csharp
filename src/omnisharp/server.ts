@@ -64,7 +64,7 @@ module Events {
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 
-export class OmnisharpServer {
+export class OmniSharpServer {
 
     private static _nextId = 1;
     private static StartupTimeout = 1000 * 60;
@@ -591,7 +591,7 @@ export class OmnisharpServer {
 
     private _makeNextRequest(path: string, data: any): Promise<any> {
 
-        const id = OmnisharpServer._nextId++;
+        const id = OmniSharpServer._nextId++;
 
         const thisRequestPacket: protocol.WireProtocol.RequestPacket = {
             Type: 'request',

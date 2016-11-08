@@ -9,7 +9,7 @@ import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as tasks from 'vscode-tasks';
-import {OmnisharpServer} from './omnisharp/server';
+import {OmniSharpServer} from './omnisharp/server';
 import * as serverUtils from './omnisharp/utils';
 import * as protocol from './omnisharp/protocol'
 
@@ -393,7 +393,7 @@ export enum AddAssetResult {
     Cancelled
 }
 
-export function addAssetsIfNecessary(server: OmnisharpServer): Promise<AddAssetResult> {
+export function addAssetsIfNecessary(server: OmniSharpServer): Promise<AddAssetResult> {
     return new Promise<AddAssetResult>((resolve, reject) => {
         if (!vscode.workspace.rootPath) {
             return resolve(AddAssetResult.NotApplicable);
@@ -492,7 +492,7 @@ function shouldGenerateAssets(paths: Paths) {
     });
 }
 
-export function generateAssets(server: OmnisharpServer) {
+export function generateAssets(server: OmniSharpServer) {
     serverUtils.requestWorkspaceInformation(server).then(info => {
         if (info.DotNet && info.DotNet.Projects.length > 0) {
             getOperations().then(operations => {
