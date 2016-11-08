@@ -32,6 +32,7 @@ export interface Status {
 }
 
 export class PackageError extends Error {
+    // Do not put PII (personally identifiable information) in the 'message' field as it will be logged to telemetry
     constructor(public message: string, 
                 public pkg: Package = null, 
                 public innerError: any = null) {
@@ -167,7 +168,7 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
         let request = https.request(options, response => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
-                resolve(downloadFile(response.headers.location, pkg, logger, status));
+                return resolve(downloadFile(response.headers.location, pkg, logger, status));
             }
 
             if (response.statusCode != 200) {
