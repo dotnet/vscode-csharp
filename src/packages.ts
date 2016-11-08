@@ -31,6 +31,14 @@ export interface Status {
     setDetail: (text: string) => void;
 }
 
+export class PackageError extends Error {
+    constructor(public message: string, 
+                public pkg: Package = null, 
+                public innerError: any = null) {
+        super(message);
+    }
+}
+
 export class PackageManager {
     private allPackages: Package[];
 
@@ -75,7 +83,7 @@ export class PackageManager {
                 resolve(this.allPackages);
             }
             else {
-                reject(new Error("Package manifest does not exist"));
+                reject(new PackageError("Package manifest does not exist."));
             }
         });
     }
@@ -129,8 +137,7 @@ function downloadPackage(pkg: Package, logger: Logger, status?: Status, proxy?: 
     return new Promise<tmp.SynchrounousResult>((resolve, reject) => {
         tmp.file({ prefix: 'package-' }, (err, path, fd, cleanupCallback) => {
             if (err) {
-                reject(err);
-                return;
+                return reject(new PackageError('Error from tmp.file', pkg, err));
             }
 
             resolve(<tmp.SynchrounousResult>{ name: path, fd: fd, removeCallback: cleanupCallback })
@@ -154,22 +161,19 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
 
     return new Promise<void>((resolve, reject) => {
         if (!pkg.tmpFile || pkg.tmpFile.fd == 0) {
-            return reject(new Error("Package file unavailable"));
+            return reject(new PackageError("Temporary package file unavailable", pkg));
         }
 
         let request = https.request(options, response => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
-                return downloadFile(response.headers.location, pkg, logger, status)
-                    .then(
-                        () => resolve(),
-                        err => reject(err));
+                resolve(downloadFile(response.headers.location, pkg, logger, status));
             }
 
             if (response.statusCode != 200) {
                 // Download failed - print error message
                 logger.appendLine(`failed (error code '${response.statusCode}')`);
-                return reject(new Error(response.statusCode.toString()));
+                return reject(new PackageError(response.statusCode.toString(), pkg));
             }
             
             // Downloading - hook up events
@@ -204,7 +208,7 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
             });
 
             response.on('error', err => {
-                reject(err)
+                reject(new PackageError(`Reponse error: ${err.code || 'NONE'}`, pkg, err));
             });
 
             // Begin piping data from the response to the package file
@@ -212,7 +216,7 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
         });
 
         request.on('error', error => {
-            reject(error);
+            reject(new PackageError(`Request error: ${error.code || 'NONE'}`, pkg, error));
         });
 
         // Execute the request
@@ -230,12 +234,12 @@ function installPackage(pkg: Package, logger: Logger, status?: Status): Promise<
 
     return new Promise<void>((resolve, reject) => {
         if (!pkg.tmpFile || pkg.tmpFile.fd == 0) {
-            return reject(new Error('Downloaded file unavailable'));
+            return reject(new PackageError('Downloaded file unavailable', pkg));
         }
 
         yauzl.fromFd(pkg.tmpFile.fd, { lazyEntries: true }, (err, zipFile) => {
             if (err) {
-                return reject(err);
+                return reject(new PackageError('Immediate zip file error', pkg, err));
             }
 
             zipFile.readEntry();
@@ -247,7 +251,7 @@ function installPackage(pkg: Package, logger: Logger, status?: Status): Promise<
                     // Directory - create it
                     mkdirp(absoluteEntryPath, { mode: 0o775 }, err => {
                         if (err) {
-                            return reject(err);
+                            return reject(new PackageError('Error creating directory for zip directory entry:' + err.code || '', pkg, err));
                         }
 
                         zipFile.readEntry();
@@ -257,12 +261,12 @@ function installPackage(pkg: Package, logger: Logger, status?: Status): Promise<
                     // File - extract it
                     zipFile.openReadStream(entry, (err, readStream) => {
                         if (err) {
-                            return reject(err);
+                            return reject(new PackageError('Error reading zip stream', pkg, err));
                         }
 
                         mkdirp(path.dirname(absoluteEntryPath), { mode: 0o775 }, err => {
                             if (err) {
-                                return reject(err);
+                                return reject(new PackageError('Error creating directory for zip file entry', pkg, err));
                             }
 
                             // Make sure executable files have correct permissions when extracted
@@ -282,7 +286,7 @@ function installPackage(pkg: Package, logger: Logger, status?: Status): Promise<
             });
 
             zipFile.on('error', err => {
-                reject(err);
+                reject(new PackageError('Zip File Error:' + err.code || '', pkg, err));
             })
         });
     }).then(() => {

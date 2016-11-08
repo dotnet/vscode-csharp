@@ -12,7 +12,7 @@ import * as coreclrdebug from './coreclr-debug/activate';
 import * as OmniSharp from './omnisharp/extension';
 import * as util from './common';
 import { Logger } from './logger';
-import { PackageManager, Status } from './packages';
+import { PackageManager, Status, PackageError } from './packages';
 import { PlatformInformation } from './platform';
 
 let _channel: vscode.OutputChannel = null;
@@ -31,7 +31,7 @@ export function activate(context: vscode.ExtensionContext): any {
 
     let logger = new Logger(text => _channel.append(text));
 
-    ensureRuntimeDependencies(extension, logger)
+    ensureRuntimeDependencies(extension, logger, reporter)
         .then(() => {
             // activate language services
             OmniSharp.activate(context, reporter);
@@ -41,18 +41,18 @@ export function activate(context: vscode.ExtensionContext): any {
         });
 }
 
-function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger): Promise<void> {
+function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger, reporter: TelemetryReporter): Promise<void> {
     return util.installFileExists(util.InstallFileType.Lock)
         .then(exists => {
             if (!exists) {
                 return util.touchInstallFile(util.InstallFileType.Begin).then(() => {
-                    return installRuntimeDependencies(extension, logger);
+                    return installRuntimeDependencies(extension, logger, reporter);
                 });
             }
         });
 }
 
-function installRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger): Promise<void> {
+function installRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger, reporter: TelemetryReporter): Promise<void> {
     logger.append('Updating C# dependencies...');
     _channel.show();
 
@@ -72,6 +72,8 @@ function installRuntimeDependencies(extension: vscode.Extension<any>, logger: Lo
     let packageManager: PackageManager;
     let installationStage = 'touchBeginFile';
     let errorMessage = '';
+
+    let telemetryProps: any = {};
 
     return util.touchInstallFile(util.InstallFileType.Begin)
         .then(() => {
@@ -101,17 +103,46 @@ function installRuntimeDependencies(extension: vscode.Extension<any>, logger: Lo
             installationStage = 'touchLockFile';
             return util.touchInstallFile(util.InstallFileType.Lock);
         })
+        .then(() => {
+            installationStage = 'completeSuccess';
+        })
         .catch(error => {
-            errorMessage = error.toString();
+            if (error instanceof PackageError) {
+                // we can log the message in a PackageError to telemetry as we do not put PII in PackageError messages
+                telemetryProps['error.message'] = error.message;
+
+                if (error.innerError) {
+                    errorMessage = error.innerError.toString();
+                } else {
+                    errorMessage = error.message;
+                }
+
+                if (error.pkg) {
+                    telemetryProps['error.packageUrl'] = error.pkg.url; 
+                }
+
+            } else {
+                // do not log raw errorMessage in telemetry as it is likely to contain PII.
+                errorMessage = error.toString();
+            }
+
             logger.appendLine(`Failed at stage: ${installationStage}`);
             logger.appendLine(errorMessage);
         })
         .then(() => {
+            telemetryProps['installStage'] = installationStage;
+            telemetryProps['platform.architecture'] = platformInfo.architecture;
+            telemetryProps['platform.platform'] = platformInfo.platform;
+            telemetryProps['platform.runtimeId'] = platformInfo.runtimeId;
+            if (platformInfo.distribution) { 
+                telemetryProps['platform.distribution'] = platformInfo.distribution.toString();
+            }
+
+            reporter.sendTelemetryEvent('Acquisition', telemetryProps);
+
             logger.appendLine();
             installationStage = '';
             logger.appendLine('Finished');
-
-            // TODO: Send telemetry event
 
             statusItem.dispose();
         })
