@@ -91,8 +91,20 @@ suite("Platform", () => {
         platformInfo.runtimeId.should.equal('centos.7-x64');
     })
 
+    test("Compute correct RID for KDE neon", () => {
+        const platformInfo = new PlatformInformation('linux', 'x86_64', distro_kde_neon_5_8());
+
+        platformInfo.runtimeId.should.equal('ubuntu.16.04-x64');
+    })
+
     test("Compute no RID for CentOS 7 with 32-bit architecture", () => {
         const platformInfo = new PlatformInformation('linux', 'x86', distro_centos_7());
+
+        should().equal(platformInfo.runtimeId, null);
+    })
+
+    test("Compute no RID for fake distro with no ID_LIKE", () => {
+        const platformInfo = new PlatformInformation('linux', 'x86_64', distro_unknown_no_id_like());
 
         should().equal(platformInfo.runtimeId, null);
     })
@@ -170,6 +182,35 @@ CENTOS_MANTISBT_PROJECT="CentOS-7"
 CENTOS_MANTISBT_PROJECT_VERSION="7"
 REDHAT_SUPPORT_PRODUCT="centos"
 REDHAT_SUPPORT_PRODUCT_VERSION="7"`;
+
+    return LinuxDistribution.FromReleaseInfo(input, '\n');
+}
+
+function distro_kde_neon_5_8(): LinuxDistribution {
+    // Copied from /etc/os-release on KDE Neon 5.8
+    const input = `
+NAME="KDE neon"
+VERSION="5.8"
+ID=neon                                                                                                             
+ID_LIKE="ubuntu debian"                                                                                             
+PRETTY_NAME="KDE neon User Edition 5.8"
+VERSION_ID="16.04"
+HOME_URL="http://neon.kde.org/"
+SUPPORT_URL="http://neon.kde.org/"
+BUG_REPORT_URL="http://bugs.kde.org/"
+VERSION_CODENAME=xenial
+UBUNTU_CODENAME=xenial`;
+
+    return LinuxDistribution.FromReleaseInfo(input, '\n');
+}
+
+function distro_unknown_no_id_like(): LinuxDistribution {
+    const input = `
+PRETTY_NAME="Make believe 1.0"
+NAME="Make believe"
+VERSION_ID="1.0"
+VERSION="1.0 (rogers)"
+ID=MakeBelieve`;
 
     return LinuxDistribution.FromReleaseInfo(input, '\n');
 }
