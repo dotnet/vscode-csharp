@@ -278,17 +278,11 @@ function showMessageSoon() {
 function forwardOutput(server: OmniSharpServer) {
 
     const logChannel = server.getChannel();
-    const timing200Pattern = /^\[INFORMATION:OmniSharp.Middleware.LoggingMiddleware\] \/\w+: 200 \d+ms/;
 
     function forward(message: string) {
-        // strip stuff like: /codecheck: 200 339ms
-        if(!timing200Pattern.test(message)) {
-            logChannel.append(message);
-        }
+        logChannel.append(message);
     }
 
     return vscode.Disposable.from(
-        server.onStdout(forward),
         server.onStderr(forward));
 }
-

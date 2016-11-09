@@ -3,34 +3,25 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
-import {EventEmitter} from 'events';
-import {ChildProcess, exec} from 'child_process';
-import {dirname} from 'path';
-import {ReadLine, createInterface} from 'readline';
-import {launchOmniSharp} from './launcher';
-import * as protocol from './protocol';
-import {Options} from './options';
-import {Logger} from '../logger';
-import {DelayTracker} from './delayTracker';
-import {LaunchTarget, findLaunchTargets} from './launcher';
-import {PlatformInformation} from '../platform';
-import { Queue } from './queue';
+import { EventEmitter } from 'events';
+import { ChildProcess, exec } from 'child_process';
+import { ReadLine, createInterface } from 'readline';
+import { launchOmniSharp } from './launcher';
+import { Options } from './options';
+import { Logger } from '../logger';
+import { DelayTracker } from './delayTracker';
+import { LaunchTarget, findLaunchTargets } from './launcher';
+import { PlatformInformation } from '../platform';
+import { Request, RequestQueueCollection } from './requestQueue';
 import TelemetryReporter from 'vscode-extension-telemetry';
+import * as path from 'path';
+import * as protocol from './protocol';
 import * as vscode from 'vscode';
 
 enum ServerState {
     Starting,
     Started,
     Stopped
-}
-
-interface Request {
-    command: string;
-    data?: any;
-    onSuccess(value: any): void;
-    onError(err: any): void;
 }
 
 module Events {
@@ -79,7 +70,7 @@ export class OmniSharpServer {
     private _eventBus = new EventEmitter();
     private _state: ServerState = ServerState.Stopped;
     private _launchTarget: LaunchTarget;
-    private _requestQueue: Queue;
+    private _requestQueue: RequestQueueCollection;
     private _channel: vscode.OutputChannel;
     private _logger: Logger;
 
@@ -93,7 +84,7 @@ export class OmniSharpServer {
 
         this._channel = vscode.window.createOutputChannel('OmniSharp Log');
         this._logger = new Logger(message => this._channel.append(message));
-        this._requestQueue = new Queue(this._logger, 8, request => this._makeRequest(request));
+        this._requestQueue = new RequestQueueCollection(this._logger, 8, request => this._makeRequest(request));
     }
 
     public isRunning(): boolean {
@@ -124,9 +115,9 @@ export class OmniSharpServer {
     private _reportTelemetry() {
         const delayTrackers = this._delayTrackers;
 
-        for (const path in delayTrackers) {
-            const tracker = delayTrackers[path];
-            const eventName = 'omnisharp' + path;
+        for (const requestName in delayTrackers) {
+            const tracker = delayTrackers[requestName];
+            const eventName = 'omnisharp' + requestName;
             if (tracker.hasMeasures()) {
                 const measures = tracker.getMeasures();
                 tracker.clearMeasures();
@@ -237,7 +228,7 @@ export class OmniSharpServer {
         this._launchTarget = launchTarget;
 
         const solutionPath = launchTarget.target;
-        const cwd = dirname(solutionPath);
+        const cwd = path.dirname(solutionPath);
         let args = [
             '-s', solutionPath,
             '--hostPID', process.pid.toString(),
@@ -473,6 +464,7 @@ export class OmniSharpServer {
                 if (listener) {
                     listener.dispose();
                 }
+
                 clearTimeout(handle);
                 resolve();
             });
@@ -523,24 +515,25 @@ export class OmniSharpServer {
     }
 
     private _handleResponsePacket(packet: protocol.WireProtocol.ResponsePacket) {
-        if (!this._requestQueue.dequeue(packet.Command, packet.Request_seq)) {
+        const request = this._requestQueue.dequeue(packet.Command, packet.Request_seq);
+
+        if (!request) {
             this._logger.appendLine(`Received response for ${packet.Command} but could not find request.`);
             return;
         }
 
         if (packet.Success) {
-            // Handle success
+            request.onSuccess(packet.Body);
         }
         else {
-            // Handle failure
+            request.onError(packet.Message || packet.Body);
         }
     }
 
     private _handleEventPacket(packet: protocol.WireProtocol.EventPacket): void {
         if (packet.Event === 'log') {
-            // handle log events
             const entry = <{ LogLevel: string; Name: string; Message: string; }>packet.Body;
-            this._logger.appendLine(`[${entry.LogLevel}:${entry.Name}] ${entry.Message}`);
+            this._logOutput(entry.LogLevel, entry.Name, entry.Message);
         } 
         else {
             // fwd all other events
@@ -558,10 +551,21 @@ export class OmniSharpServer {
             Arguments: request.data
         };
 
-        console.log(`Making request: ${request.command} (${id})`);
+        this._logger.appendLine(`Making request: ${request.command} (${id})`);
 
         this._serverProcess.stdin.write(JSON.stringify(requestPacket) + '\n');
 
-        return requestPacket;
+        return id;
+    }
+
+    private _logOutput(logLevel: string, name: string, message: string) {
+        const timing200Pattern = /^\[INFORMATION:OmniSharp.Middleware.LoggingMiddleware\] \/[\/\w]+: 200 \d+ms/;
+
+        const output = `[${logLevel}:${name}] ${message}`;
+        
+        // strip stuff like: /codecheck: 200 339ms
+        if (!timing200Pattern.test(output)) {
+            this._logger.appendLine(output);
+        }
     }
 }

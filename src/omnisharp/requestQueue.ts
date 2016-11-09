@@ -7,11 +7,13 @@ import { Logger } from '../logger';
 import * as protocol from './protocol';
 import * as prioritization from './prioritization';
 
-interface Request {
+export interface Request {
     command: string;
     data?: any;
     onSuccess(value: any): void;
     onError(err: any): void;
+    startTime?: number;
+    endTime?: number;
 }
 
 /**
@@ -20,37 +22,47 @@ interface Request {
  */
 class RequestQueue {
     private _pending: Request[] = [];
-    private _waiting: Map<number, protocol.WireProtocol.RequestPacket> = new Map<number, protocol.WireProtocol.RequestPacket>();
+    private _waiting: Map<number, Request> = new Map<number, Request>();
 
     public constructor(
         private _name: string,
         private _maxSize: number,
         private _logger: Logger,
-        private _makeRequest: (request: Request) => protocol.WireProtocol.RequestPacket) {
+        private _makeRequest: (request: Request) => number) {
     }
 
     /**
      * Enqueue a new request.
      */
     public enqueue(request: Request) {
-        this._logger.appendLine(`Enqueuing request for ${request.command}.`);
+        this._logger.appendLine(`Enqueue request for ${request.command}.`);
         this._pending.push(request);
     }
 
-    public dequeue(seq: number) {
-        return this._waiting.delete(seq);
+    /**
+     * Dequeue a request that has completed.
+     */
+    public dequeue(id: number) {
+        const request = this._waiting.get(id);
+
+        if (request) {
+            this._waiting.delete(id);
+            this._logger.appendLine(`Dequeue request for ${request.command}.`);
+        }
+
+        return request;
     }
 
-    public delete(request: Request) {
+    public cancelRequest(request: Request) {
         let index = this._pending.indexOf(request);
         if (index !== -1) {
             this._pending.splice(index, 1);
 
-            // Do something better here.
-            let err = new Error('Canceled');
-            err.message = 'Canceled';
-            request.onError(err);
+            // Note: This calls reject() on the promise returned by OmniSharpServer.makeRequest
+            request.onError(new Error(`Pending request cancelled: ${request.command}`));
         }
+
+        // TODO: Handle cancellation of a request already waiting on the OmniSharp server.
     }
 
     /**
@@ -79,8 +91,10 @@ class RequestQueue {
 
         for (let i = 0; i < slots && this._pending.length > 0; i++) {
             const item = this._pending.shift();
-            const request = this._makeRequest(item);
-            this._waiting.set(request.Seq, request);
+            item.startTime = Date.now();
+
+            const id = this._makeRequest(item);
+            this._waiting.set(id, item);
 
             if (this.isFull()) {
                 return;
@@ -89,7 +103,7 @@ class RequestQueue {
     }
 }
 
-export class Queue {
+export class RequestQueueCollection {
     private _logger: Logger;
     private _isProcessing: boolean;
     private _priorityQueue: RequestQueue;
@@ -99,7 +113,7 @@ export class Queue {
     public constructor(
         logger: Logger,
         concurrency: number,
-        makeRequest: (request: Request) => protocol.WireProtocol.RequestPacket
+        makeRequest: (request: Request) => number
     ) {
         this._priorityQueue = new RequestQueue('Priority', 1, logger, makeRequest);
         this._normalQueue = new RequestQueue('Normal', concurrency, logger, makeRequest);
@@ -132,7 +146,7 @@ export class Queue {
 
     public cancelRequest(request: Request) {
         const queue = this.getQueue(request.command);
-        queue.delete(request);
+        queue.cancelRequest(request);
     }
 
     public drain() {
