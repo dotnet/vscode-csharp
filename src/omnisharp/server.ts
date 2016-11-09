@@ -60,6 +60,8 @@ export class OmniSharpServer {
     private static _nextId = 1;
     private static StartupTimeout = 1000 * 60;
 
+    private _debugMode: boolean = false;
+
     private _readLine: ReadLine;
     private _disposables: vscode.Disposable[] = [];
 
@@ -84,7 +86,12 @@ export class OmniSharpServer {
 
         this._channel = vscode.window.createOutputChannel('OmniSharp Log');
         this._logger = new Logger(message => this._channel.append(message));
-        this._requestQueue = new RequestQueueCollection(this._logger, 8, request => this._makeRequest(request));
+
+        const logger = this._debugMode
+            ? this._logger
+            : new Logger(message => { });
+
+        this._requestQueue = new RequestQueueCollection(logger, 8, request => this._makeRequest(request));
     }
 
     public isRunning(): boolean {
@@ -448,7 +455,7 @@ export class OmniSharpServer {
             let listener: vscode.Disposable;
 
             // Convert the timeout from the seconds to milliseconds, which is required by setTimeout().
-            const timeoutDuration = this._options.projectLoadTimeout * 10000
+            const timeoutDuration = this._options.projectLoadTimeout * 1000
 
             // timeout logic
             const handle = setTimeout(() => {
@@ -551,7 +558,9 @@ export class OmniSharpServer {
             Arguments: request.data
         };
 
-        this._logger.appendLine(`Making request: ${request.command} (${id})`);
+        if (this._debugMode) {
+            this._logger.appendLine(`Making request: ${request.command} (${id})`);
+        }
 
         this._serverProcess.stdin.write(JSON.stringify(requestPacket) + '\n');
 
@@ -564,7 +573,7 @@ export class OmniSharpServer {
         const output = `[${logLevel}:${name}] ${message}`;
         
         // strip stuff like: /codecheck: 200 339ms
-        if (!timing200Pattern.test(output)) {
+        if (this._debugMode || !timing200Pattern.test(output)) {
             this._logger.appendLine(output);
         }
     }
