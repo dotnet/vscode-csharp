@@ -35,7 +35,7 @@ class RequestQueue {
      * Enqueue a new request.
      */
     public enqueue(request: Request) {
-        this._logger.appendLine(`Enqueue request for ${request.command}.`);
+        this._logger.appendLine(`Enqueue ${this._name} request for ${request.command}.`);
         this._pending.push(request);
     }
 
@@ -47,7 +47,7 @@ class RequestQueue {
 
         if (request) {
             this._waiting.delete(id);
-            this._logger.appendLine(`Dequeue request for ${request.command}.`);
+            this._logger.appendLine(`Dequeue ${this._name} request for ${request.command} (${id}).`);
         }
 
         return request;
@@ -87,6 +87,9 @@ class RequestQueue {
             return;
         }
 
+        this._logger.appendLine(`Processing ${this._name} queue`);
+        this._logger.increaseIndent();
+
         const slots = this._maxSize - this._waiting.size;
 
         for (let i = 0; i < slots && this._pending.length > 0; i++) {
@@ -97,9 +100,11 @@ class RequestQueue {
             this._waiting.set(id, item);
 
             if (this.isFull()) {
-                return;
+                break;
             }
         }
+
+        this._logger.decreaseIndent();
     }
 }
 
