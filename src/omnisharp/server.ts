@@ -16,6 +16,7 @@ import {Logger} from '../logger';
 import {DelayTracker} from './delayTracker';
 import {LaunchTarget, findLaunchTargets} from './launcher';
 import {PlatformInformation} from '../platform';
+import { Queue } from './queue';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import * as vscode from 'vscode';
 
@@ -26,11 +27,10 @@ enum ServerState {
 }
 
 interface Request {
-    path: string;
+    command: string;
     data?: any;
     onSuccess(value: any): void;
     onError(err: any): void;
-    _enqueued: number;
 }
 
 module Events {
@@ -70,8 +70,7 @@ export class OmniSharpServer {
     private static StartupTimeout = 1000 * 60;
 
     private _readLine: ReadLine;
-    private _activeRequests: { [seq: number]: { onSuccess: Function; onError: Function; } } = Object.create(null);
-    private _callOnStop: Function[] = [];
+    private _disposables: vscode.Disposable[] = [];
 
     private _reporter: TelemetryReporter;
     private _delayTrackers: { [requestName: string]: DelayTracker };
@@ -80,8 +79,7 @@ export class OmniSharpServer {
     private _eventBus = new EventEmitter();
     private _state: ServerState = ServerState.Stopped;
     private _launchTarget: LaunchTarget;
-    private _queue: Request[] = [];
-    private _isProcessingQueue = false;
+    private _requestQueue: Queue;
     private _channel: vscode.OutputChannel;
     private _logger: Logger;
 
@@ -95,6 +93,7 @@ export class OmniSharpServer {
 
         this._channel = vscode.window.createOutputChannel('OmniSharp Log');
         this._logger = new Logger(message => this._channel.append(message));
+        this._requestQueue = new Queue(this._logger, 8, request => this._makeRequest(request));
     }
 
     public isRunning(): boolean {
@@ -292,7 +291,7 @@ export class OmniSharpServer {
             // Start telemetry reporting
             this._telemetryIntervalId = setInterval(() => this._reportTelemetry(), TelemetryReportingDelay);
         }).then(() => {
-            this._processQueue();
+            this._requestQueue.drain();
         }).catch(err => {
             this._fireEvent(Events.ServerError, err);
             return this.stop();
@@ -301,9 +300,8 @@ export class OmniSharpServer {
 
     public stop(): Promise<void> {
 
-        while (this._callOnStop.length) {
-            let methodToCall = this._callOnStop.pop();
-            methodToCall();
+        while (this._disposables.length) {
+            this._disposables.pop().dispose();
         }
 
         let cleanupPromise: Promise<void>;
@@ -400,13 +398,13 @@ export class OmniSharpServer {
 
     // --- requests et al
 
-    public makeRequest<TResponse>(path: string, data?: any, token?: vscode.CancellationToken): Promise<TResponse> {
+    public makeRequest<TResponse>(command: string, data?: any, token?: vscode.CancellationToken): Promise<TResponse> {
 
         if (this._getState() !== ServerState.Started) {
             return Promise.reject<TResponse>('server has been stopped or not started');
         }
 
-        console.log(`makeRequest: path=${path}`);
+        console.log(`makeRequest: command=${command}`);
 
         let startTime: number;
         let request: Request;
@@ -415,62 +413,31 @@ export class OmniSharpServer {
             startTime = Date.now();
 
             request = {
-                path,
+                command,
                 data,
                 onSuccess: value => resolve(value),
-                onError: err => reject(err),
-                _enqueued: Date.now()
+                onError: err => reject(err)
             };
 
-            this._queue.push(request);
+            this._requestQueue.enqueue(request);
 
-            if (this._getState() === ServerState.Started && !this._isProcessingQueue) {
-                this._processQueue();
+            if (this._getState() === ServerState.Started) {
+                this._requestQueue.drain();
             }
         });
 
         if (token) {
             token.onCancellationRequested(() => {
-                let idx = this._queue.indexOf(request);
-                if (idx !== -1) {
-                    this._queue.splice(idx, 1);
-                    let err = new Error('Canceled');
-                    err.message = 'Canceled';
-                    request.onError(err);
-                }
+                this._requestQueue.cancelRequest(request);
             });
         }
 
         return promise.then(response => {
             let endTime = Date.now();
             let elapsedTime = endTime - startTime;
-            this._recordRequestDelay(path, elapsedTime);
+            this._recordRequestDelay(command, elapsedTime);
 
             return response;
-        });
-    }
-
-    private _processQueue(): void {
-        if (this._queue.length === 0) {
-            // nothing to do
-            this._isProcessingQueue = false;
-            return;
-        }
-
-        // signal that we are working on it
-        this._isProcessingQueue = true;
-
-        // send next request and recurse when done
-        const thisRequest = this._queue.shift();
-        this._makeNextRequest(thisRequest.path, thisRequest.data).then(value => {
-            thisRequest.onSuccess(value);
-            this._processQueue();
-        }, err => {
-            thisRequest.onError(err);
-            this._processQueue();
-        }).catch(err => {
-            console.error(err);
-            this._processQueue();
         });
     }
 
@@ -486,11 +453,11 @@ export class OmniSharpServer {
             terminal: false
         });
 
-        const p = new Promise<void>((resolve, reject) => {
+        const promise = new Promise<void>((resolve, reject) => {
             let listener: vscode.Disposable;
 
             // Convert the timeout from the seconds to milliseconds, which is required by setTimeout().
-            const timeoutDuration = this._options.projectLoadTimeout * 1000
+            const timeoutDuration = this._options.projectLoadTimeout * 10000
 
             // timeout logic
             const handle = setTimeout(() => {
@@ -511,105 +478,90 @@ export class OmniSharpServer {
             });
         });
 
-        this._startListening();
+        const lineReceived = this._onLineReceived.bind(this);
 
-        return p;
+        this._readLine.addListener('line', lineReceived);
+
+        this._disposables.push(new vscode.Disposable(() => {
+            this._readLine.removeListener('line', lineReceived);
+        }));
+
+        return promise;
     }
 
-    private _startListening(): void {
-
-        const onLineReceived = (line: string) => {
-            if (line[0] !== '{') {
-                this._logger.appendLine(line);
-                return;
-            }
-
-            let packet: protocol.WireProtocol.Packet;
-            try {
-                packet = JSON.parse(line);
-            }
-            catch (e) {
-                // not json
-                return;
-            }
-
-            if (!packet.Type) {
-                // bogous packet
-                return;
-            }
-
-            switch (packet.Type) {
-                case 'response':
-                    this._handleResponsePacket(<protocol.WireProtocol.ResponsePacket>packet);
-                    break;
-                case 'event':
-                    this._handleEventPacket(<protocol.WireProtocol.EventPacket>packet);
-                    break;
-                default:
-                    console.warn('unknown packet: ', packet);
-                    break;
-            }
-        };
-
-        this._readLine.addListener('line', onLineReceived);
-        this._callOnStop.push(() => this._readLine.removeListener('line', onLineReceived));
-    }
-
-    private _handleResponsePacket(packet: protocol.WireProtocol.ResponsePacket): void {
-
-        const id = packet.Request_seq;
-        const entry = this._activeRequests[id];
-
-        if (!entry) {
-            console.warn('Received a response WITHOUT a request', packet);
+    private _onLineReceived(line: string) {
+        if (line[0] !== '{') {
+            this._logger.appendLine(line);
             return;
         }
 
-        console.log(`Handling response: ${packet.Command} (${id})`);
+        let packet: protocol.WireProtocol.Packet;
+        try {
+            packet = JSON.parse(line);
+        }
+        catch (err) {
+            // This isn't JSON
+            return;
+        }
 
-        delete this._activeRequests[id];
+        if (!packet.Type) {
+            // Bogus packet
+            return;
+        }
+
+        switch (packet.Type) {
+            case 'response':
+                this._handleResponsePacket(<protocol.WireProtocol.ResponsePacket>packet);
+                break;
+            case 'event':
+                this._handleEventPacket(<protocol.WireProtocol.EventPacket>packet);
+                break;
+            default:
+                console.warn(`Unknown packet type: ${packet.Type}`);
+                break;
+        }
+    }
+
+    private _handleResponsePacket(packet: protocol.WireProtocol.ResponsePacket) {
+        if (!this._requestQueue.dequeue(packet.Command, packet.Request_seq)) {
+            this._logger.appendLine(`Received response for ${packet.Command} but could not find request.`);
+            return;
+        }
 
         if (packet.Success) {
-            entry.onSuccess(packet.Body);
-        } else {
-            entry.onError(packet.Message || packet.Body);
+            // Handle success
+        }
+        else {
+            // Handle failure
         }
     }
 
     private _handleEventPacket(packet: protocol.WireProtocol.EventPacket): void {
-
         if (packet.Event === 'log') {
             // handle log events
             const entry = <{ LogLevel: string; Name: string; Message: string; }>packet.Body;
             this._logger.appendLine(`[${entry.LogLevel}:${entry.Name}] ${entry.Message}`);
-            return;
-        } else {
+        } 
+        else {
             // fwd all other events
             this._fireEvent(packet.Event, packet.Body);
         }
     }
 
-    private _makeNextRequest(path: string, data: any): Promise<any> {
-
+    private _makeRequest(request: Request) {
         const id = OmniSharpServer._nextId++;
 
-        const thisRequestPacket: protocol.WireProtocol.RequestPacket = {
+        const requestPacket: protocol.WireProtocol.RequestPacket = {
             Type: 'request',
             Seq: id,
-            Command: path,
-            Arguments: data
+            Command: request.command,
+            Arguments: request.data
         };
 
-        console.log(`Making request: ${path} (${id})`);
+        console.log(`Making request: ${request.command} (${id})`);
 
-        return new Promise<any>((resolve, reject) => {
+        this._serverProcess.stdin.write(JSON.stringify(requestPacket) + '\n');
 
-            this._activeRequests[thisRequestPacket.Seq] = {
-                onSuccess: value => resolve(value),
-                onError: err => reject(err)
-            };
-
-            this._serverProcess.stdin.write(JSON.stringify(thisRequestPacket) + '\n');
-        });
+        return requestPacket;
     }
 }
