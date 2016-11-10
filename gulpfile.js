@@ -9,92 +9,65 @@ const fs = require('fs');
 const path = require('path');
 const del = require('del');
 const gulp = require('gulp');
-const gulpUtil = require('gulp-util');
 const mocha = require('gulp-mocha');
 const tslint = require('gulp-tslint');
 const vsce = require('vsce');
 const debugUtil = require('./out/src/coreclr-debug/util');
 const debugInstall = require('./out/src/coreclr-debug/install');
-const fs_extra = require('fs-extra-promise');
-const omnisharp = require('./out/src/omnisharp/omnisharp');
-const download = require('./out/src/omnisharp/download');
-const logger = require('./out/src/omnisharp/logger');
+const packages = require('./out/src/packages');
+const logger = require('./out/src/logger');
 const platform = require('./out/src/platform');
+const util = require('./out/src/common');
 const child_process = require('child_process');
 
-const Flavor = omnisharp.Flavor;
-const CoreClrFlavor = platform.CoreClrFlavor;
+const Logger = logger.Logger;
+const PackageManager = packages.PackageManager;
+const LinuxDistribution = platform.LinuxDistribution;
 const PlatformInformation = platform.PlatformInformation;
 
-/// used in offline packaging run so does not clean .vsix
-function clean() {
-    cleanDebugger();
-    return cleanOmnisharp();
-}
+function cleanSync(deleteVsix) {
+    del.sync('install.*');
+    del.sync('.omnisharp-*');
+    del.sync('.debugger');
 
-gulp.task('clean', ['omnisharp:clean', 'debugger:clean', 'package:clean'], () => {
-
-});
-
-/// Omnisharp Tasks
-function installOmnisharp(omnisharps) {
-    const promises = omnisharps.map((omni, index) => {
-        const log = new logger.Logger(message => process.stdout.write(message), index.toString());
-
-        return download.go(omni.flavor, omni.coreClrFlavor, log);
-    });
-
-    return Promise.all(promises);
-}
-
-function cleanOmnisharp() {
-    return del('.omnisharp');
-}
-
-gulp.task('omnisharp:clean', () => {
-    return cleanOmnisharp();
-});
-
-gulp.task('omnisharp:install', ['omnisharp:clean'], () => {
-    const flavor = gulpUtil.env.flavor || Flavor.CoreCLR;
-
-    return PlatformInformation.GetCurrent().then(info => {
-        const coreClrFlavor = gulpUtil.env.coreClrFlavor || info.getCoreClrFlavor();
-        return installOmnisharp([{ flavor, coreClrFlavor }]);
-    });
-});
-
-/// Debugger Tasks
-function getDebugInstaller() {
-    return new debugInstall.DebugInstaller(new debugUtil.CoreClrDebugUtil(path.resolve('.')), true);
-}
-
-function installDebugger(runtimeId) {
-    return getDebugInstaller().install(runtimeId);
-}
-
-function cleanDebugger() {
-    try {
-        getDebugInstaller().clean();
-        console.log('Cleaned Succesfully');
-    } catch (error) {
-        console.error(error);
+    if (deleteVsix) {
+        del.sync('*.vsix');
     }
 }
 
-gulp.task('debugger:install', ['debugger:clean'], () => {
-    installDebugger(gulp.env.runtimeId).then(() => {
-        console.log('Installed Succesfully');
-    }).catch((error) => {
-        console.error(error);
-    });
+gulp.task('clean', () => {
+    cleanSync(true);
 });
 
-gulp.task('debugger:clean', () => {
-    cleanDebugger();
+// Install Tasks
+function install(platformInfo, packageJSON) {
+    const packageManager = new PackageManager(platformInfo, packageJSON);
+    const logger = new Logger(message => process.stdout.write(message));
+    const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'), logger);
+    const debugInstaller = new debugInstall.DebugInstaller(debuggerUtil);
+
+    return packageManager.DownloadPackages(logger)
+        .then(() => {
+            return packageManager.InstallPackages(logger);
+        })
+        .then(() => {
+            return util.touchInstallFile(util.InstallFileType.Lock)
+        })
+        .then(() => {
+            return debugInstaller.finishInstall();
+        });
+}
+
+gulp.task('install', ['clean'], () => {
+    util.setExtensionPath(__dirname);
+
+    return PlatformInformation.GetCurrent()
+        .then(platformInfo => {
+            return install(platformInfo, getPackageJSON());
+        });
 });
 
-/// Packaging Tasks
+/// Packaging (VSIX) Tasks
 function doPackageSync(packageName) {
 
     var vsceArgs = [];
@@ -112,18 +85,24 @@ function doPackageSync(packageName) {
     }
 }
 
-function doOfflinePackage(runtimeId, omnisharps, packageName) {
-    return clean().then(() => {
-        return installDebugger(runtimeId);
-    }).then(() => {
-        return installOmnisharp(omnisharps);
-    }).then(() => {
-        doPackageSync(packageName + '-' + runtimeId + '.vsix');
-    });
+function doOfflinePackage(platformInfo, packageName, packageJSON) {
+    if (process.platform === 'win32') {
+        throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
+    }
+
+    cleanSync(false);
+    return install(platformInfo, packageJSON)
+        .then(() => {
+            doPackageSync(packageName + '-' + platformInfo.runtimeId + '.vsix');
+        });
+}
+
+function getPackageJSON() {
+    return JSON.parse(fs.readFileSync('package.json'));
 }
 
 gulp.task('package:clean', () => {
-    return del('*.vsix');
+    del.sync('*.vsix');
 });
 
 gulp.task('package:online', ['clean'], () => {
@@ -131,28 +110,31 @@ gulp.task('package:online', ['clean'], () => {
 });
 
 gulp.task('package:offline', ['clean'], () => {
-    var json = JSON.parse(fs.readFileSync('package.json'));
-    var name = json.name;
-    var version = json.version;
+    util.setExtensionPath(__dirname);
+
+    var packageJSON = getPackageJSON();
+    var name = packageJSON.name;
+    var version = packageJSON.version;
     var packageName = name + '.' + version;
 
     var packages = [];
-    packages.push({ rid: 'win7-x64', omnisharps: [{ flavor: Flavor.CoreCLR, coreClrFlavor: CoreClrFlavor.Windows }, { flavor: Flavor.Desktop, coreClrFlavor: CoreClrFlavor.Windows }] });
-    packages.push({ rid: 'osx.10.11-x64', omnisharps: [{ flavor: Flavor.CoreCLR, coreClrFlavor: CoreClrFlavor.OSX }] });
-    packages.push({ rid: 'centos.7-x64', omnisharps: [{ flavor: Flavor.CoreCLR, coreClrFlavor: CoreClrFlavor.CentOS }] });
-    packages.push({ rid: 'debian.8-x64', omnisharps: [{ flavor: Flavor.CoreCLR, coreClrFlavor: CoreClrFlavor.Debian }] });
-    packages.push({ rid: 'fedora.23-x64', omnisharps: [{ flavor: Flavor.CoreCLR, coreClrFlavor: CoreClrFlavor.Fedora }] });
-    packages.push({ rid: 'opensuse.13.2-x64', omnisharps: [{ flavor: Flavor.CoreCLR, coreClrFlavor: CoreClrFlavor.OpenSUSE }] });
-    packages.push({ rid: 'rhel.7.2-x64', omnisharps: [{ flavor: Flavor.CoreCLR, coreClrFlavor: CoreClrFlavor.RHEL }] });
-    packages.push({ rid: 'ubuntu.14.04-x64', omnisharps: [{ flavor: Flavor.CoreCLR, coreClrFlavor: CoreClrFlavor.Ubuntu14 }] });
-    packages.push({ rid: 'ubuntu.16.04-x64', omnisharps: [{ flavor: Flavor.CoreCLR, coreClrFlavor: CoreClrFlavor.Ubuntu16 }] });
+    packages.push(new PlatformInformation('win32', '64-bit'));
+    packages.push(new PlatformInformation('darwin', 'x86_64'));
+    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('centos', '7')));
+    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('debian', '8')));
+    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('fedora', '23')));
+    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('opensuse', '13.2')));
+    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('rhel', '7.2')));
+    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('ubuntu', '14.04')));
+    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('ubuntu', '16.04')));
 
     var promise = Promise.resolve();
 
-    packages.forEach(data => {
-        promise = promise.then(() => {
-            return doOfflinePackage(data.rid, data.omnisharps, packageName);
-        })
+    packages.forEach(platformInfo => {
+        promise = promise
+            .then(() => {
+                return doOfflinePackage(platformInfo, packageName, packageJSON);
+            });
     });
 
     return promise;

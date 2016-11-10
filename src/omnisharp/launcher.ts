@@ -5,12 +5,13 @@
 
 'use strict';
 
-import {spawn, ChildProcess} from 'child_process';
-import {satisfies} from 'semver';
-import {PlatformInformation, OperatingSystem} from '../platform';
-import * as omnisharp from './omnisharp';
+import { spawn, ChildProcess } from 'child_process';
+import { satisfies } from 'semver';
+import { PlatformInformation } from '../platform';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import * as util from '../common';
+import { Options } from './options';
 
 export enum LaunchTargetKind {
     Solution,
@@ -27,19 +28,6 @@ export interface LaunchTarget {
     directory: string;
     target: string;
     kind: LaunchTargetKind;
-}
-
-export function getDefaultFlavor(kind: LaunchTargetKind) {
-    // Default to desktop (for Windows) or mono (for OSX/Linux) for solution files; otherwise, CoreCLR.
-    if (kind === LaunchTargetKind.Solution) {
-        if (process.platform === 'win32') {
-            return omnisharp.Flavor.Desktop;
-        }
-
-        return omnisharp.Flavor.Mono;
-    }
-
-    return omnisharp.Flavor.CoreCLR;
 }
 
 /**
@@ -144,45 +132,72 @@ function isProjectJson(resource: vscode.Uri): boolean {
     return /\project.json$/i.test(resource.fsPath);
 }
 
-export interface LaunchDetails {
-    serverPath: string;
-    flavor: omnisharp.Flavor;
-    cwd: string;
-    args: string[];
-}
-
 export interface LaunchResult {
     process: ChildProcess;
     command: string;
     usingMono: boolean;
 }
 
-export function launchOmniSharp(details: LaunchDetails): Promise<LaunchResult> {
+export function launchOmniSharp(cwd: string, args: string[], kind: LaunchTargetKind): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        launch(details).then(result => {
-            // async error - when target not not ENEOT
-            result.process.on('error', reject);
+        launch(cwd, args, kind)
+            .then(result => {
+                // async error - when target not not ENEOT
+                result.process.on('error', err => {
+                    reject(err)
+                });
 
-            // success after a short freeing event loop
-            setTimeout(function () {
-                resolve(result);
-            }, 0);
-        });
+                // success after a short freeing event loop
+                setTimeout(function () {
+                    resolve(result);
+                }, 0);
+            });
     });
 }
 
-function launch(details: LaunchDetails): Promise<LaunchResult> {
-    return PlatformInformation.GetCurrent().then(platform => {
-        if (platform.operatingSystem === OperatingSystem.Windows) {
-            return launchWindows(details);
+function launch(cwd: string, args: string[], kind: LaunchTargetKind): Promise<LaunchResult> {
+    return PlatformInformation.GetCurrent().then(platformInfo => {
+        const options = Options.Read();
+
+        if (options.path && options.useMono) {
+            return launchNixMono(options.path, cwd, args);
+        }
+
+        const launchPath = options.path || getLaunchPath(platformInfo, kind);
+
+        if (platformInfo.isWindows()) {
+            return launchWindows(launchPath, cwd, args);
         }
         else {
-            return launchNix(details);
+            if (kind === LaunchTargetKind.Solution) {
+                return launchNixMono(launchPath, cwd, args);
+            }
+            else {
+                return launchNix(launchPath, cwd, args);
+            }
         }
     });
 }
 
-function launchWindows(details: LaunchDetails): Promise<LaunchResult> {
+function getLaunchPath(platformInfo: PlatformInformation, kind: LaunchTargetKind): string {
+    if (kind === LaunchTargetKind.Solution) {
+        if (platformInfo.isWindows()) {
+            return path.join(util.getExtensionPath(), '.omnisharp-desktop', 'OmniSharp.exe');
+        }
+
+        return path.join(util.getExtensionPath(), '.omnisharp-mono', 'OmniSharp.exe');
+    }
+
+    let basePath = path.join(util.getExtensionPath(), '.omnisharp-coreclr');
+    if (platformInfo.isWindows()) {
+        return path.join(basePath, 'OmniSharp.exe');
+    }
+    else {
+        return path.join(basePath, 'OmniSharp');
+    }
+}
+
+function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchResult {
     function escapeIfNeeded(arg: string) {
         const hasSpaceWithoutQuotes = /^[^"].* .*[^"]/;
         return hasSpaceWithoutQuotes.test(arg)
@@ -190,73 +205,62 @@ function launchWindows(details: LaunchDetails): Promise<LaunchResult> {
             : arg;
     }
 
-    let args = details.args.slice(0); // create copy of details.args
-    args.unshift(details.serverPath);
-    args = [[
+    let argsCopy = args.slice(0); // create copy of args
+    argsCopy.unshift(launchPath);
+    argsCopy = [[
         '/s',
         '/c',
-        '"' + args.map(escapeIfNeeded).join(' ') + '"'
+        '"' + argsCopy.map(escapeIfNeeded).join(' ') + '"'
     ].join(' ')];
 
-    let process = spawn('cmd', args, <any>{
+    let process = spawn('cmd', argsCopy, <any>{
         windowsVerbatimArguments: true,
         detached: false,
-        cwd: details.cwd
+        cwd: cwd
     });
 
-    return Promise.resolve({
+    return {
         process,
-        command: details.serverPath,
+        command: launchPath,
         usingMono: false
-    });
+    };
 }
 
-function launchNix(details: LaunchDetails): Promise<LaunchResult> {
-    if (details.flavor === omnisharp.Flavor.CoreCLR) {
-        return launchNixCoreCLR(details);
-    }
-    else if (details.flavor === omnisharp.Flavor.Mono) {
-        return launchNixMono(details);
-    }
-    else {
-        throw new Error(`Unexpected OmniSharp flavor: ${details.flavor}`);
-    }
-}
-
-function launchNixCoreCLR(details: LaunchDetails): Promise<LaunchResult> {
-    let process = spawn(details.serverPath, details.args, {
+function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResult {
+    let process = spawn(launchPath, args, {
         detached: false,
-        cwd: details.cwd
+        cwd: cwd
     });
 
-    return Promise.resolve({
+    return {
         process,
-        command: details.serverPath,
-        usingMono: false
-    });
+        command: launchPath,
+        usingMono: true
+    };
 }
 
-function launchNixMono(details: LaunchDetails): Promise<LaunchResult> {
-    return canLaunchMono().then(() => {
-        let args = details.args.slice(0); // create copy of details.args
-        args.unshift(details.serverPath);
+function launchNixMono(launchPath: string, cwd: string, args: string[]): Promise<LaunchResult> {
+    return canLaunchMono()
+        .then(() => {
+            let argsCopy = args.slice(0); // create copy of details args
+            args.unshift(launchPath);
 
-        let process = spawn('mono', args, {
-            detached: false,
-            cwd: details.cwd
+            let process = spawn('mono', args, {
+                detached: false,
+                cwd: cwd
+            });
+
+            return {
+                process,
+                command: launchPath,
+                usingMono: true
+            };
         });
-
-        return {
-            process,
-            command: details.serverPath,
-            usingMono: true
-        };
-    });
 }
 
 function canLaunchMono(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-        hasMono('>=4.0.1').then(success => {
+        hasMono('>=4.6.0').then(success => {
             if (success) {
                 resolve();
             }

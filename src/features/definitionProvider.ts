@@ -10,7 +10,7 @@ import {MetadataRequest, GoToDefinitionRequest, MetadataSource} from '../omnisha
 import * as serverUtils from '../omnisharp/utils';
 import {createRequest, toLocation} from '../omnisharp/typeConvertion';
 import {Uri, TextDocument, Position, Location, CancellationToken, DefinitionProvider} from 'vscode';
-import {DefinitionMetadataDocumentProvider} from './definitionMetadataDocumentProvider';
+import DefinitionMetadataDocumentProvider from './definitionMetadataDocumentProvider';
 
 
 export default class CSharpDefinitionProvider extends AbstractSupport implements DefinitionProvider {

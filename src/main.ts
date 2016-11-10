@@ -3,32 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
-import DefinitionProvider from './features/definitionProvider';
-import CodeLensProvider from './features/codeLensProvider';
-import DocumentHighlightProvider from './features/documentHighlightProvider';
-import DocumentSymbolProvider from './features/documentSymbolProvider';
-import CodeActionProvider from './features/codeActionProvider';
-import ReferenceProvider from './features/referenceProvider';
-import HoverProvider from './features/hoverProvider';
-import RenameProvider from './features/renameProvider';
-import FormatProvider from './features/formattingEditProvider';
-import CompletionItemProvider from './features/completionItemProvider';
-import WorkspaceSymbolProvider from './features/workspaceSymbolProvider';
-import reportDiagnostics, {Advisor} from './features/diagnosticsProvider';
-import SignatureHelpProvider from './features/signatureHelpProvider';
-import registerCommands from './features/commands';
-import {StdioOmnisharpServer} from './omnisharp/server';
-import {readOptions} from './omnisharp/options';
-import forwardChanges from './features/changeForwarding';
-import reportStatus from './features/status';
-import * as coreclrdebug from './coreclr-debug/activate';
-import {addAssetsIfNecessary, AddAssetResult} from './assets';
+import * as fs from 'fs';
+import * as path from 'path';
 import * as vscode from 'vscode';
 import TelemetryReporter from 'vscode-extension-telemetry';
-import {DefinitionMetadataDocumentProvider} from './features/definitionMetadataDocumentProvider';
+
+import * as coreclrdebug from './coreclr-debug/activate';
+import * as OmniSharp from './omnisharp/extension';
 import * as util from './common';
+import { Logger } from './logger';
+import { PackageManager, Status, PackageError } from './packages';
+import { PlatformInformation } from './platform';
+
+let _channel: vscode.OutputChannel = null;
 
 export function activate(context: vscode.ExtensionContext): any {
 
@@ -36,82 +23,159 @@ export function activate(context: vscode.ExtensionContext): any {
     const extension = vscode.extensions.getExtension(extensionId);
     const extensionVersion = extension.packageJSON.version;
     const aiKey = extension.packageJSON.contributes.debuggers[0].aiKey;
+    const reporter = new TelemetryReporter(extensionId, extensionVersion, aiKey);
 
     util.setExtensionPath(extension.extensionPath);
 
-    const reporter = new TelemetryReporter(extensionId, extensionVersion, aiKey);
+    _channel = vscode.window.createOutputChannel('C#');
 
-    const documentSelector: vscode.DocumentSelector = {
-        language: 'csharp',
-        scheme: 'file' // only files from disk
-    };
+    let logger = new Logger(text => _channel.append(text));
 
-    const server = new StdioOmnisharpServer(reporter);
-    const advisor = new Advisor(server); // create before server is started
-    const disposables: vscode.Disposable[] = [];
-    const localDisposables: vscode.Disposable[] = [];
+    ensureRuntimeDependencies(extension, logger, reporter)
+        .then(() => {
+            // activate language services
+            OmniSharp.activate(context, reporter);
 
-    disposables.push(server.onServerStart(() => {
-        // register language feature provider on start
-        const definitionMetadataDocumentProvider = new DefinitionMetadataDocumentProvider();
-        definitionMetadataDocumentProvider.register();
-        localDisposables.push(definitionMetadataDocumentProvider);
-
-        localDisposables.push(vscode.languages.registerDefinitionProvider(documentSelector, new DefinitionProvider(server, definitionMetadataDocumentProvider)));
-        localDisposables.push(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server)));
-        localDisposables.push(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server)));
-        localDisposables.push(vscode.languages.registerDocumentSymbolProvider(documentSelector, new DocumentSymbolProvider(server)));
-        localDisposables.push(vscode.languages.registerReferenceProvider(documentSelector, new ReferenceProvider(server)));
-        localDisposables.push(vscode.languages.registerHoverProvider(documentSelector, new HoverProvider(server)));
-        localDisposables.push(vscode.languages.registerRenameProvider(documentSelector, new RenameProvider(server)));
-        localDisposables.push(vscode.languages.registerDocumentRangeFormattingEditProvider(documentSelector, new FormatProvider(server)));
-        localDisposables.push(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new FormatProvider(server), '}', ';'));
-        localDisposables.push(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionItemProvider(server), '.', '<'));
-        localDisposables.push(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server)));
-        localDisposables.push(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server), '(', ','));
-        const codeActionProvider = new CodeActionProvider(server);
-        localDisposables.push(codeActionProvider);
-        localDisposables.push(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
-        localDisposables.push(reportDiagnostics(server, advisor));
-        localDisposables.push(forwardChanges(server));
-    }));
-
-    disposables.push(server.onServerStop(() => {
-        // remove language feature providers on stop
-        vscode.Disposable.from(...localDisposables).dispose();
-    }));
-
-    disposables.push(registerCommands(server, context.extensionPath));
-    disposables.push(reportStatus(server));
-
-    if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
-        disposables.push(server.onServerStart(() => {
-            // Update or add tasks.json and launch.json
-            addAssetsIfNecessary(server).then(result => {
-                if (result === AddAssetResult.Disable) {
-                    context.workspaceState.update('assetPromptDisabled', true);
-                }
-            });
-        }));
-    }
-
-    // read and store last solution or folder path
-    disposables.push(server.onBeforeServerStart(path => context.workspaceState.update('lastSolutionPathOrFolder', path)));
-
-    const options = readOptions();
-    if (options.autoStart) {
-        server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder'));
-    }
-
-    // stop server on deactivate
-    disposables.push(new vscode.Disposable(() => {
-        advisor.dispose();
-        server.stop();
-    }));
-
-    // activate coreclr-debug
-    coreclrdebug.activate(context, reporter);
-
-    context.subscriptions.push(...disposables);
+            // activate coreclr-debug
+            coreclrdebug.activate(context, reporter, logger);
+        });
 }
 
+function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger, reporter: TelemetryReporter): Promise<void> {
+    return util.installFileExists(util.InstallFileType.Lock)
+        .then(exists => {
+            if (!exists) {
+                return util.touchInstallFile(util.InstallFileType.Begin).then(() => {
+                    return installRuntimeDependencies(extension, logger, reporter);
+                });
+            }
+        });
+}
+
+function installRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger, reporter: TelemetryReporter): Promise<void> {
+    logger.append('Updating C# dependencies...');
+    _channel.show();
+
+    let statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
+    let status: Status = {
+        setMessage: text => {
+            statusItem.text = text;
+            statusItem.show();
+        },
+        setDetail: text => {
+            statusItem.tooltip = text;
+            statusItem.show();
+        }
+    }
+
+    let platformInfo: PlatformInformation;
+    let packageManager: PackageManager;
+    let installationStage = 'touchBeginFile';
+    let errorMessage = '';
+
+    let telemetryProps: any = {};
+
+    return util.touchInstallFile(util.InstallFileType.Begin)
+        .then(() => {
+            installationStage = 'getPlatformInfo';
+            return PlatformInformation.GetCurrent()
+        })
+        .then(info => {
+            platformInfo = info;
+            packageManager = new PackageManager(info, extension.packageJSON);
+            logger.appendLine();
+
+            installationStage = 'downloadPackages';
+
+            const config = vscode.workspace.getConfiguration();
+            const proxy = config.get<string>('http.proxy');
+            const strictSSL = config.get('http.proxyStrictSSL', true);
+
+            return packageManager.DownloadPackages(logger, status, proxy, strictSSL);
+        })
+        .then(() => {
+            logger.appendLine();
+
+            installationStage = 'installPackages';
+            return packageManager.InstallPackages(logger, status);
+        })
+        .then(() => {
+            installationStage = 'touchLockFile';
+            return util.touchInstallFile(util.InstallFileType.Lock);
+        })
+        .then(() => {
+            installationStage = 'completeSuccess';
+        })
+        .catch(error => {
+            if (error instanceof PackageError) {
+                // we can log the message in a PackageError to telemetry as we do not put PII in PackageError messages
+                telemetryProps['error.message'] = error.message;
+
+                if (error.innerError) {
+                    errorMessage = error.innerError.toString();
+                } else {
+                    errorMessage = error.message;
+                }
+
+                if (error.pkg) {
+                    telemetryProps['error.packageUrl'] = error.pkg.url; 
+                }
+
+            } else {
+                // do not log raw errorMessage in telemetry as it is likely to contain PII.
+                errorMessage = error.toString();
+            }
+
+            logger.appendLine(`Failed at stage: ${installationStage}`);
+            logger.appendLine(errorMessage);
+        })
+        .then(() => {
+            telemetryProps['installStage'] = installationStage;
+            telemetryProps['platform.architecture'] = platformInfo.architecture;
+            telemetryProps['platform.platform'] = platformInfo.platform;
+            telemetryProps['platform.runtimeId'] = platformInfo.runtimeId;
+            if (platformInfo.distribution) { 
+                telemetryProps['platform.distribution'] = platformInfo.distribution.toString();
+            }
+
+            reporter.sendTelemetryEvent('Acquisition', telemetryProps);
+
+            logger.appendLine();
+            installationStage = '';
+            logger.appendLine('Finished');
+
+            statusItem.dispose();
+        })
+        .then(() => {
+            // We do this step at the end so that we clean up the begin file in the case that we hit above catch block
+            // Attach a an empty catch to this so that errors here do not propogate
+            return util.deleteInstallFile(util.InstallFileType.Begin).catch((error) => { });
+        });
+}
+
+function allowExecution(filePath: string, platformInfo: PlatformInformation, logger: Logger): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        if (!platformInfo.isWindows()) {
+            util.fileExists(filePath)
+                .then(exists => {
+                    if (exists) {
+                        fs.chmod(filePath, '755', err => {
+                            if (err) {
+                                return reject(err);
+                            }
+
+                            resolve();
+                        });
+                    }
+                    else {
+                        logger.appendLine();
+                        logger.appendLine(`Warning: Expected file '${filePath}' is missing.`);
+                        resolve();
+                    }
+                });
+        }
+        else {
+            resolve();
+        }
+    });
+}

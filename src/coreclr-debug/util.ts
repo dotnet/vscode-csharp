@@ -8,32 +8,37 @@ import * as child_process from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
-import * as vscode from 'vscode';
+import * as semver from 'semver';
+import { execChildProcess } from './../common'
+import { Logger } from './../logger'
+
+const MINIMUM_SUPPORTED_DOTNET_CLI: string = '1.0.0-preview2-003121';
+
+export class DotnetInfo
+{
+    public Version: string;
+    public OsVersion: string;
+    public RuntimeId: string;
+}
+
+export class DotNetCliError extends Error {
+    public ErrorMessage: string; // the message to display to the user
+    public ErrorString: string; // the string to log for this error
+}
 
 export class CoreClrDebugUtil
 {
     private _extensionDir: string = '';
-    private _coreClrDebugDir: string = '';
     private _debugAdapterDir: string = '';
-    private _installLogPath: string = '';
-    private _installBeginFilePath: string = '';
     private _installCompleteFilePath: string = '';
 
-    private _installLog: fs.WriteStream = null;
-    private _channel: vscode.OutputChannel = null;
-
-    constructor(extensionDir: string, channel?: vscode.OutputChannel) {
+    constructor(extensionDir: string, logger: Logger) {
         this._extensionDir = extensionDir;
-        this._coreClrDebugDir = path.join(this._extensionDir, 'coreclr-debug');
-        this._debugAdapterDir = path.join(this._coreClrDebugDir, 'debugAdapters');
-        this._installLogPath = path.join(this._coreClrDebugDir, 'install.log');
-        this._installBeginFilePath = path.join(this._coreClrDebugDir, 'install.begin');
+        this._debugAdapterDir = path.join(this._extensionDir, '.debugger');
         this._installCompleteFilePath = path.join(this._debugAdapterDir, 'install.complete');
-
-        this._channel = channel;
     }
 
-    extensionDir(): string {
+    public extensionDir(): string {
         if (this._extensionDir === '')
         {
             throw new Error('Failed to set extension directory');
@@ -41,35 +46,14 @@ export class CoreClrDebugUtil
         return this._extensionDir;
     }
 
-    coreClrDebugDir(): string {
-        if (this._coreClrDebugDir === '') {
-            throw new Error('Failed to set coreclrdebug directory');
-        }
-        return this._coreClrDebugDir;
-    }
-
-    debugAdapterDir(): string {
+    public debugAdapterDir(): string {
         if (this._debugAdapterDir === '') {
             throw new Error('Failed to set debugadpter directory');
         }
         return this._debugAdapterDir;
     }
 
-    installLogPath(): string {
-        if (this._installLogPath === '') {
-            throw new Error('Failed to set install log path');
-        }
-        return this._installLogPath;
-    }
-
-    installBeginFilePath(): string {
-        if (this._installBeginFilePath === '') {
-            throw new Error('Failed to set install begin file path');
-        }
-        return this._installBeginFilePath;
-    }
-
-    installCompleteFilePath(): string {
+    public installCompleteFilePath(): string {
         if (this._installCompleteFilePath === '')
         {
             throw new Error('Failed to set install complete file path');
@@ -77,41 +61,7 @@ export class CoreClrDebugUtil
         return this._installCompleteFilePath;
     }
 
-    createInstallLog(): void {
-        this._installLog = fs.createWriteStream(this.installLogPath());
-    }
-
-    closeInstallLog(): void {
-        if (this._installLog !== null) {
-            this._installLog.close();
-        }
-    }
-
-    logRaw(message: string): void {
-        console.log(message);
-
-        if (this._installLog != null) {
-            this._installLog.write(message);
-        }
-
-        if (this._channel != null) {
-            this._channel.append(message);
-        }
-    }
-
-    log(message: string): void {
-        console.log(message);
-
-        if (this._installLog != null) {
-            this._installLog.write(message);
-        }
-
-        if (this._channel != null) {
-            this._channel.appendLine(message);
-        }
-    }
-
-    static writeEmptyFile(path: string) : Promise<void> {
+    public static writeEmptyFile(path: string) : Promise<void> {
         return new Promise<void>((resolve, reject) => {
             fs.writeFile(path, '', (err) => {
                 if (err) {
@@ -123,39 +73,52 @@ export class CoreClrDebugUtil
         });
     }
 
-    public spawnChildProcess(process: string, args: string[], workingDirectory: string, onStdout?: (data: Buffer) => void, onStderr?: (data: Buffer) => void): Promise<void> {
-        const promise = new Promise<void>((resolve, reject) => {
-            const child = child_process.spawn(process, args, { cwd: workingDirectory });
-
-            if (!onStdout) {
-                onStdout = (data) => { this.logRaw(`${data}`); };
-            }
-            child.stdout.on('data', onStdout);
-
-            if (!onStderr) {
-                onStderr = (data) => { this.logRaw(`${data}`); };
-            }
-            child.stderr.on('data', onStderr);
-
-            child.on('close', (code: number) => {
-                if (code != 0) {
-                    this.log(`${process} exited with error code ${code}`);;
-                    reject(new Error(code.toString()));
-                }
-                else {
-                    resolve();
-                }
-            });
-
-            child.on('error', (error: Error) => {
-                reject(error);
-            });
-        });
-
-        return promise;
+    public defaultDotNetCliErrorMessage(): string {
+        return 'Failed to find up to date dotnet cli on the path.';
     }
 
-    static existsSync(path: string) : boolean {
+    // This function checks for the presence of dotnet on the path and ensures the Version
+    // is new enough for us. 
+    // Returns: a promise that returns a DotnetInfo class
+    // Throws: An DotNetCliError() from the return promise if either dotnet does not exist or is too old. 
+    public checkDotNetCli(): Promise<DotnetInfo>
+    {
+        let dotnetInfo = new DotnetInfo();
+
+        return execChildProcess('dotnet --info', process.cwd())
+        .then((data: string) => {
+            let lines: string[] = data.replace(/\r/mg, '').split('\n');
+            lines.forEach(line => {
+                let match: RegExpMatchArray;
+                if (match = /^\ Version:\s*([^\s].*)$/.exec(line)) {
+                    dotnetInfo.Version = match[1];
+                } else if (match = /^\ OS Version:\s*([^\s].*)$/.exec(line)) {
+                    dotnetInfo.OsVersion = match[1];
+                } else if (match = /^\ RID:\s*([\w\-\.]+)$/.exec(line)) {
+                    dotnetInfo.RuntimeId = match[1];
+                }
+            });
+        }).catch((error) => {
+            // something went wrong with spawning 'dotnet --info'
+            let dotnetError = new DotNetCliError();
+            dotnetError.ErrorMessage = 'The .NET CLI tools cannot be located. .NET Core debugging will not be enabled. Make sure .NET CLI tools are installed and are on the path.';
+            dotnetError.ErrorString = "Failed to spawn 'dotnet --info'";
+            throw dotnetError;
+        }).then(() => {
+            // succesfully spawned 'dotnet --info', check the Version
+            if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_DOTNET_CLI))
+            {
+                let dotnetError = new DotNetCliError();
+                dotnetError.ErrorMessage = 'The .NET CLI tools on the path are too old. .NET Core debugging will not be enabled. The minimum supported version is ' + MINIMUM_SUPPORTED_DOTNET_CLI + '.';
+                dotnetError.ErrorString = "dotnet cli is too old";
+                throw dotnetError;
+            }
+
+            return dotnetInfo;
+        });
+    }
+
+    public static existsSync(path: string) : boolean {
         try {
             fs.accessSync(path, fs.F_OK);
             return true;
@@ -168,30 +131,11 @@ export class CoreClrDebugUtil
         }
     }
 
-    static getPlatformExeExtension() : string {
+    public static getPlatformExeExtension() : string {
         if (process.platform === 'win32') {
             return '.exe';
         }
 
         return '';
-    }
-
-    static getPlatformLibExtension() : string {
-        switch (process.platform) {
-            case 'win32':
-                return '.dll';
-            case 'darwin':
-                return '.dylib';
-            case 'linux':
-                return '.so';
-            default:
-                throw Error('Unsupported platform ' + process.platform);
-        }
-    }
-
-    /** Used for diagnostics only */
-    logToFile(message: string): void {
-        let logFolder = path.resolve(this.coreClrDebugDir(), "extension.log");
-        fs.writeFileSync(logFolder, `${message}${os.EOL}`, { flag: 'a' });
     }
 }
