@@ -13,7 +13,7 @@ import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 import * as protocol from '../omnisharp/protocol';
 import * as vscode from 'vscode';
-import * as dotnetTest from './dotnetTest'
+import * as dotnetTest from './dotnetTest';
 import {DotNetAttachItemsProviderFactory, AttachPicker} from './processPicker';
 import {generateAssets} from '../assets';
 
@@ -183,7 +183,7 @@ function dotnetRestore(cwd: string, fileName?: string) {
 
         dotnet.on('error', err => {
             channel.appendLine(`ERROR: ${err}`);
-            reject(err)
+            reject(err);
         });
     });
 }

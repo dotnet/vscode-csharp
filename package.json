@@ -19,7 +19,7 @@
   ],
   "main": "./out/src/main",
   "scripts": {
-    "compile": "node ./node_modules/vscode/bin/compile -p ./",
+    "compile": "node ./node_modules/vscode/bin/compile -p ./ && gulp tslint",
     "watch": "node ./node_modules/vscode/bin/compile -watch -p ./",
     "test": "mocha --timeout 15000 -u tdd ./out/test/*.tests.js ./out/test/**/*.tests.js",
     "postinstall": "node ./node_modules/vscode/bin/install"

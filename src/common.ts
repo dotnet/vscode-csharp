@@ -28,7 +28,7 @@ export function getBinPath() {
 export function buildPromiseChain<T, TResult>(array: T[], builder: (item: T) => Promise<TResult>): Promise<TResult> {
     return array.reduce(
         (promise, n) => promise.then(() => builder(n)),
-        Promise.resolve<TResult>(null))
+        Promise.resolve<TResult>(null));
 }
 
 export function execChildProcess(command: string, workingDirectory: string = getExtensionPath()): Promise<string> {

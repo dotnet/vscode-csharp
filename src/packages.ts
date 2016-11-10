@@ -75,7 +75,6 @@ export class PackageManager {
                 // Convert relative binary paths to absolute
                 for (let pkg of this.allPackages) {
                     if (pkg.binaries) {
-                        let basePath = util.getExtensionPath();
                         pkg.binaries = pkg.binaries.map(value => path.resolve(getBaseInstallPath(pkg), value));
                     }
                 }
@@ -123,7 +122,7 @@ function getNoopStatus(): Status {
     return {
         setMessage: text => { },
         setDetail: text => { }
-    }
+    };
 }
 
 function downloadPackage(pkg: Package, logger: Logger, status?: Status, proxy?: string, strictSSL?: boolean): Promise<void> {
@@ -140,7 +139,7 @@ function downloadPackage(pkg: Package, logger: Logger, status?: Status, proxy?: 
                 return reject(new PackageError('Error from tmp.file', pkg, err));
             }
 
-            resolve(<tmp.SynchrounousResult>{ name: path, fd: fd, removeCallback: cleanupCallback })
+            resolve(<tmp.SynchrounousResult>{ name: path, fd: fd, removeCallback: cleanupCallback });
         });
     }).then(tmpResult => {
         pkg.tmpFile = tmpResult;
@@ -287,7 +286,7 @@ function installPackage(pkg: Package, logger: Logger, status?: Status): Promise<
 
             zipFile.on('error', err => {
                 reject(new PackageError('Zip File Error:' + err.code || '', pkg, err));
-            })
+            });
         });
     }).then(() => {
         // Clean up temp file

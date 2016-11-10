@@ -53,7 +53,7 @@ export class DebugInstaller {
         return Promise.resolve().then(() => {
             errorBuilder.installStage = 'rewriteManifest';
             this.rewriteManifest();
-            errorBuilder.installStage = 'writeCompletionFile'
+            errorBuilder.installStage = 'writeCompletionFile';
             return CoreClrDebugUtil.writeEmptyFile(this._util.installCompleteFilePath());
          }).catch((err) => {
             if (errorBuilder.errorMessage === null) {
