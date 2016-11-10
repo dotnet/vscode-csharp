@@ -416,10 +416,6 @@ export class OmniSharpServer {
             };
 
             this._requestQueue.enqueue(request);
-
-            if (this._getState() === ServerState.Started) {
-                this._requestQueue.drain();
-            }
         });
 
         if (token) {
@@ -533,6 +529,8 @@ export class OmniSharpServer {
         else {
             request.onError(packet.Message || packet.Body);
         }
+
+        this._requestQueue.drain();
     }
 
     private _handleEventPacket(packet: protocol.WireProtocol.EventPacket): void {
