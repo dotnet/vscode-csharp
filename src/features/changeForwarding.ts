@@ -6,10 +6,10 @@
 'use strict';
 
 import {Disposable, Uri, workspace} from 'vscode';
-import {OmnisharpServer} from '../omnisharp/server';
+import {OmniSharpServer} from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
 
-function forwardDocumentChanges(server: OmnisharpServer): Disposable {
+function forwardDocumentChanges(server: OmniSharpServer): Disposable {
 
     return workspace.onDidChangeTextDocument(event => {
 
@@ -29,7 +29,7 @@ function forwardDocumentChanges(server: OmnisharpServer): Disposable {
     });
 }
 
-function forwardFileChanges(server: OmnisharpServer): Disposable {
+function forwardFileChanges(server: OmniSharpServer): Disposable {
 
     function onFileSystemEvent(uri: Uri): void {
         if (!server.isRunning()) {
@@ -52,7 +52,7 @@ function forwardFileChanges(server: OmnisharpServer): Disposable {
     return Disposable.from(watcher, d1, d2, d3);
 }
 
-export default function forwardChanges(server: OmnisharpServer): Disposable {
+export default function forwardChanges(server: OmniSharpServer): Disposable {
 
     // combine file watching and text document watching
     return Disposable.from(

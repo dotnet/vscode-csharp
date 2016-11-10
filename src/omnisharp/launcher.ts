@@ -144,7 +144,7 @@ export function launchOmniSharp(cwd: string, args: string[]): Promise<LaunchResu
             .then(result => {
                 // async error - when target not not ENEOT
                 result.process.on('error', err => {
-                    reject(err)
+                    reject(err);
                 });
 
                 // success after a short freeing event loop
@@ -228,9 +228,9 @@ function launchNixMono(launchPath: string, cwd: string, args: string[]): Promise
     return canLaunchMono()
         .then(() => {
             let argsCopy = args.slice(0); // create copy of details args
-            args.unshift(launchPath);
+            argsCopy.unshift(launchPath);
 
-            let process = spawn('mono', args, {
+            let process = spawn('mono', argsCopy, {
                 detached: false,
                 cwd: cwd
             });

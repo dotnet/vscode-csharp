@@ -6,7 +6,7 @@
 'use strict';
 
 import {CodeActionProvider, CodeActionContext, Command, CancellationToken, TextDocument, WorkspaceEdit, TextEdit, Range, Uri, workspace, commands} from 'vscode';
-import {OmnisharpServer} from '../omnisharp/server';
+import {OmniSharpServer} from '../omnisharp/server';
 import AbstractProvider from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import {toRange2} from '../omnisharp/typeConvertion';
@@ -17,7 +17,7 @@ export default class OmnisharpCodeActionProvider extends AbstractProvider implem
     private _disabled: boolean;
     private _commandId: string;
 
-    constructor(server: OmnisharpServer) {
+    constructor(server: OmniSharpServer) {
         super(server);
         this._commandId = 'omnisharp.runCodeAction';
 
