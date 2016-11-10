@@ -157,7 +157,7 @@ export class PlatformInformation {
 
         return Promise.all([architecturePromise, distributionPromise])
             .then(([arch, distro]) => {
-                return new PlatformInformation(platform, arch, distro)
+                return new PlatformInformation(platform, arch, distro);
             });
     }
 

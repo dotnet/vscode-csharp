@@ -11,45 +11,45 @@ import * as vscode from 'vscode';
 import * as tasks from 'vscode-tasks';
 import {OmnisharpServer} from './omnisharp/server';
 import * as serverUtils from './omnisharp/utils';
-import * as protocol from './omnisharp/protocol'
+import * as protocol from './omnisharp/protocol';
 
 interface DebugConfiguration {
-    name: string,
-    type: string,
-    request: string,
-    internalConsoleOptions?: string,
-    sourceFileMap?: any,
+    name: string;
+    type: string;
+    request: string;
+    internalConsoleOptions?: string;
+    sourceFileMap?: any;
 }
 
 interface ConsoleLaunchConfiguration extends DebugConfiguration {
-    preLaunchTask: string,
-    program: string,
-    args: string[],
-    cwd: string,
-    stopAtEntry: boolean,
-    env?: any,
-    externalConsole?: boolean
+    preLaunchTask: string;
+    program: string;
+    args: string[];
+    cwd: string;
+    stopAtEntry: boolean;
+    env?: any;
+    externalConsole?: boolean;
 }
 
 interface CommandLine {
-    command: string,
-    args?: string
+    command: string;
+    args?: string;
 }
 
 interface LaunchBrowserConfiguration {
-    enabled: boolean,
-    args: string,
-    windows?: CommandLine,
-    osx: CommandLine,
-    linux: CommandLine
+    enabled: boolean;
+    args: string;
+    windows?: CommandLine;
+    osx: CommandLine;
+    linux: CommandLine;
 }
 
 interface WebLaunchConfiguration extends ConsoleLaunchConfiguration {
-    launchBrowser: LaunchBrowserConfiguration
+    launchBrowser: LaunchBrowserConfiguration;
 }
 
 interface AttachConfiguration extends DebugConfiguration {
-    processId: string
+    processId: string;
 }
 
 interface Paths {
@@ -65,13 +65,13 @@ function getPaths(): Paths {
         vscodeFolder: vscodeFolder,
         tasksJsonPath: path.join(vscodeFolder, 'tasks.json'),
         launchJsonPath: path.join(vscodeFolder, 'launch.json')
-    }
+    };
 }
 
 interface Operations {
-    addTasksJson?: boolean,
-    updateTasksJson?: boolean,
-    addLaunchJson?: boolean
+    addTasksJson?: boolean;
+    updateTasksJson?: boolean;
+    addLaunchJson?: boolean;
 }
 
 function hasOperations(operations: Operations) {
@@ -127,13 +127,13 @@ enum PromptResult {
 }
 
 interface PromptItem extends vscode.MessageItem {
-    result: PromptResult
+    result: PromptResult;
 }
 
 function promptToAddAssets() {
     return new Promise<PromptResult>((resolve, reject) => {
         const yesItem: PromptItem = { title: 'Yes', result: PromptResult.Yes };
-        const noItem: PromptItem = { title: 'Not Now', result: PromptResult.No, isCloseAffordance: true }
+        const noItem: PromptItem = { title: 'Not Now', result: PromptResult.No, isCloseAffordance: true };
         const disableItem: PromptItem = { title: "Don't Ask Again", result: PromptResult.Disable };
 
         const projectName = path.basename(vscode.workspace.rootPath);
@@ -147,7 +147,7 @@ function promptToAddAssets() {
 function computeProgramPath(projectData: TargetProjectData) {
     if (!projectData) {
         // If there's no target project data, use a placeholder for the path.
-        return '${workspaceRoot}/bin/Debug/<target-framework>/<project-name.dll>'
+        return '${workspaceRoot}/bin/Debug/<target-framework>/<project-name.dll>';
     }
 
     let result = '${workspaceRoot}';
@@ -173,7 +173,7 @@ function createLaunchConfiguration(projectData: TargetProjectData): ConsoleLaunc
         externalConsole: false,
         stopAtEntry: false,
         internalConsoleOptions: "openOnSessionStart"
-    }
+    };
 }
 
 function createWebLaunchConfiguration(projectData: TargetProjectData): WebLaunchConfiguration {
@@ -207,7 +207,7 @@ function createWebLaunchConfiguration(projectData: TargetProjectData): WebLaunch
         sourceFileMap: {
             "/Views": "${workspaceRoot}/Views"
         }
-    }
+    };
 }
 
 function createAttachConfiguration(): AttachConfiguration {
@@ -216,7 +216,7 @@ function createAttachConfiguration(): AttachConfiguration {
         type: 'coreclr',
         request: 'attach',
         processId: "${command.pickProcess}"
-    }
+    };
 }
 
 function createLaunchJson(projectData: TargetProjectData, isWebProject: boolean): any {
@@ -228,7 +228,7 @@ function createLaunchJson(projectData: TargetProjectData, isWebProject: boolean)
                 createLaunchConfiguration(projectData),
                 createAttachConfiguration()
             ]
-        }
+        };
     }
     else {
         return {
@@ -237,7 +237,7 @@ function createLaunchJson(projectData: TargetProjectData, isWebProject: boolean)
                 createWebLaunchConfiguration(projectData),
                 createAttachConfiguration()
             ]
-        }
+        };
     }
 }
 
@@ -354,7 +354,7 @@ function hasWebServerDependency(targetProjectData: TargetProjectData): boolean {
         return false;
     }
 
-    for (var key in projectJsonObject.dependencies) {
+    for (let key in projectJsonObject.dependencies) {
         if (key.toLowerCase().startsWith("microsoft.aspnetcore.server")) {
             return true;
         }

@@ -5,12 +5,10 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import * as fs from 'fs';
 import TelemetryReporter from 'vscode-extension-telemetry';
-import { CoreClrDebugUtil, DotnetInfo, DotNetCliError } from './util';
+import { CoreClrDebugUtil, DotnetInfo, } from './util';
 import * as debugInstall from './install';
-import * as path from 'path';
-import { Logger } from './../logger'
+import { Logger } from './../logger';
 
 let _debugUtil: CoreClrDebugUtil = null;
 let _reporter: TelemetryReporter = null;
@@ -34,7 +32,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
                         vscode.window.setStatusBarMessage('Successfully installed .NET Core Debugger.');
                     })
                     .catch((err) => {
-                        logger.appendLine("[ERROR]: An error occured while installing the .NET Core Debugger:")
+                        logger.appendLine("[ERROR]: An error occured while installing the .NET Core Debugger:");
                         logger.appendLine(err);
                         showInstallErrorMessage();
                         // TODO: log telemetry?
@@ -70,11 +68,5 @@ function showDotnetToolsWarning(message: string) : void
                     vscode.commands.executeCommand('workbench.action.openGlobalSettings');
                 }
             });
-    }
-}
-
-function logTelemetry(eventName: string, properties?: {[prop: string]: string}): void {
-    if (_reporter !== null) {
-        _reporter.sendTelemetryEvent('coreclr-debug/' + eventName, properties);
     }
 }

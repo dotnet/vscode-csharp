@@ -15,7 +15,6 @@ import {Options} from './options';
 import {Logger} from '../logger';
 import {DelayTracker} from './delayTracker';
 import {LaunchTarget, findLaunchTargets} from './launcher';
-import {PlatformInformation} from '../platform';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import * as vscode from 'vscode';
 
@@ -535,7 +534,7 @@ export class StdioOmnisharpServer extends OmnisharpServer {
             let listener: vscode.Disposable;
 
             // Convert the timeout from the seconds to milliseconds, which is required by setTimeout().
-            const timeoutDuration = this._options.projectLoadTimeout * 1000
+            const timeoutDuration = this._options.projectLoadTimeout * 1000;
 
             // timeout logic
             const handle = setTimeout(() => {

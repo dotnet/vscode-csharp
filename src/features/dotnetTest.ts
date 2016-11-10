@@ -68,7 +68,7 @@ export function debugDotnetTest(testMethod: string, fileName: string, server: Om
             }
         ).then(
             response => { },
-            reason => { vscode.window.showErrorMessage(`Failed to start debugger on test because ${reason}.`) });
+            reason => { vscode.window.showErrorMessage(`Failed to start debugger on test because ${reason}.`); });
     });
 }
 

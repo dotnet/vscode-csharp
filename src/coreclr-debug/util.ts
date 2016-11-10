@@ -4,13 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 
-import * as child_process from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as os from 'os';
 import * as semver from 'semver';
-import { execChildProcess } from './../common'
-import { Logger } from './../logger'
+import { execChildProcess } from './../common';
+import { Logger } from './../logger';
 
 const MINIMUM_SUPPORTED_DOTNET_CLI: string = '1.0.0-preview2-003121';
 
