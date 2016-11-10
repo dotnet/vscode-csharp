@@ -55,6 +55,7 @@
     {
       "description": "Mono Runtime (Linux / x86)",
       "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.linux-x86-4.6.1.zip",
+      "installPath": "./bin",
       "platforms": [
         "linux"
       ],
@@ -62,12 +63,14 @@
         "x86"
       ],
       "binaries": [
-        "./bin/mono.linux-x86"
+        "./mono.linux-x86",
+        "./run"
       ]
     },
     {
       "description": "Mono Runtime (Linux / x64)",
       "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.linux-x86_64-4.6.1.zip",
+      "installPath": "./bin",
       "platforms": [
         "linux"
       ],
@@ -75,23 +78,26 @@
         "x86_64"
       ],
       "binaries": [
-        "./bin/mono.linux-x86_64"
+        "./mono.linux-x86_64",
+        "./run"
       ]
     },
     {
       "description": "Mono Runtime (macOS)",
       "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.osx-4.6.1.zip",
+      "installPath": "./bin",
       "platforms": [
         "darwin"
       ],
       "binaries": [
-        "./bin/mono.osx"
+        "./mono.osx",
+        "./run"
       ]
     },
     {
       "description": "Mono Framework Assemblies",
       "url": "https://omnisharpdownload.blob.core.windows.net/ext/framework-4.6.1.zip",
-      "installPath": "./bin",
+      "installPath": "./bin/framework",
       "platforms": [
         "darwin",
         "linux"
@@ -99,42 +105,35 @@
     },
     {
       "description": "OmniSharp (.NET 4.6 / x86)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-x86-1.9-beta19.zip",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.9-beta19.zip",
+      "installPath": "./bin/omnisharp",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86",
         "32-bit"
-      ],
-      "binaries": [
-        "./bin/run"
       ]
     },
     {
       "description": "OmniSharp (.NET 4.6 / x64)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-x64-1.9-beta19.zip",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.9-beta19.zip",
+      "installPath": "./bin/omnisharp",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86_64",
         "64-bit"
-      ],
-      "binaries": [
-        "./bin/run"
       ]
     },
     {
-      "description": "OmniSharp (Mono)",
+      "description": "OmniSharp (Mono 4.6)",
       "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-mono-1.9-beta19.zip",
-      "installPath": "./bin",
+      "installPath": "./bin/omnisharp",
       "platforms": [
         "darwin",
         "linux"
-      ],
-      "binaries": [
-        "./run"
       ]
     },
     {
