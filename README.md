@@ -9,7 +9,7 @@ Welcome to the C# extension for Visual Studio Code! This preview provides the fo
 * Lightweight development tools for [.NET Core](https://dotnet.github.io).
 * Great C# editing support, including Syntax Highlighting, IntelliSense, Go to Definition, Find All References, etc.
 * Debugging support for .NET Core (CoreCLR). NOTE: Mono and Desktop CLR debugging is not supported.
-* Support for project.json projects on Windows, macOS and Linux, and csproj projects on Windows.
+* Support for project.json and csproj projects on Windows, macOS and Linux.
 
 The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnisharp-roslyn).
 
@@ -18,56 +18,64 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-with-VS-Code-using-CSharp-and-NET-Core)
 
-### What's New in 1.4
+### What's New in 1.5
 
-#### Metadata as Source
+#### Initial support for C# 7
 
-* Go to Definition (<kbd>F12</kbd>) can now show a C#-like view for APIs that do not appear in your project's source code. ([#165](https://github.com/OmniSharp/omnisharp-vscode/issues/165))
+* New C# 7 features like pattern-matching and tuples are now supported in VS Code editor. Note: To use tuples, you will need a reference to [this NuGet package](https://www.nuget.org/packages/System.ValueTuple).
+
+#### Initial support for CSProj .NET Core Projects
+
+* With the .NET Core SDK moving to embrace MSBuild and .csproj files over project.json, we've made sure the C# extension can handle the new format. This support is preliminary and there are still several features coming to smooth out the experience.
+
+#### Broader OS Support for C# Code Editing
+
+* This release dramatically changes the runtime that OmniSharp runs on, which allows it to be run an many more operating systems than before:
+
+  * Windows: OmniSharp runs on the installed .NET Framework. In addition, OmniSharp now runs on 32-bit Windows!
+  * macOS/Linux: OmniSharp runs on a custom embedded Mono runtime. Note: Mono does not need to be installed on the system for this to work.
 
 #### Debugger
 
-* Applications can now be launched without attaching the debugger with <kbd>Ctrl+F5</kbd>.
-* Support for new "embedded portable PDB" debug format.
-* The launch.json file generator now automatically sets the option to show a console window by default (`"internalConsoleOptions": "openOnSessionStart"`).
+* Preliminary support for .NET Core CLI Preview 4.
+* Remote debugging is now supported for attach by using the `pipeTransport` launch.json option.
+* Reolved issue with setting breakpoints when there are multple files with the same name (e.g. two 'Program.cs' files).
+
+#### New Dependency Acquisition System
+
+* This improves the acquisition and reliability of platform-specific OmniSharp and debugger dependencies.
 
 #### New Settings
 
 Several new settings have been added:
 
-* `csharp.suppressDotnetInstallWarning`: Suppress the warning that the .NET CLI is not on the path.
-* `omnisharp.autoStart`: Used to control whether the OmniSharp server will be automatically launched when a folder containing a project or solution is opened. The default value for this setting is `true`.
-* `omnisharp.path`: Can be used to specify a file path to a different OmniSharp server than the one that will be used by default. Previously, this option was controlled by `csharp.omnisharp`, which is now deprecated.
-* `omnisharp.useMono`: When `omnisharp.path` is specified, this controls whether OmniSharp will be launched with Mono or not. Previously, this option was controlled by `csharp.omnisharpUsesMono`, wich is now deprecated.
-* `omnisharp.loggingLevel`: Used to control the level of logging output from the OmniSharp server. Legal values are `"default"` or `"verbose"`.
+* `csharp.suppressDotnetRestoreNotification`: Suppress the notification window to perform a 'dotnet restore' when dependencies can't be resolved.
+* `omnisharp.projectLoadTimeout`: The time Visual Studio Code will wait for the OmniSharp server to start. Time is expressed in seconds. _(Contributed by [@wjk](https://github.com/wjk))_
 
 #### Colorizer
 
-There have been several fixes to the colorizer grammar resulting in much smoother syntax highlighting, with better support for C# 6.0. Special thanks go to [@ivanz](https://github.com/ivanz) and [@seraku24](https://github.com/seraku24) for contributing most of the fixes below!
-
-* Expression-bodied members ([#638](https://github.com/OmniSharp/omnisharp-vscode/issues/638), [#403](https://github.com/OmniSharp/omnisharp-vscode/issues/403), [#679](https://github.com/OmniSharp/omnisharp-vscode/issues/679), [#249](https://github.com/OmniSharp/omnisharp-vscode/issues/249))
-* Escaped keyword identifiers ([#614](https://github.com/OmniSharp/omnisharp-vscode/issues/614))
-* Using directives and nested namespaces ([#282](https://github.com/OmniSharp/omnisharp-vscode/issues/282), [#381](https://github.com/OmniSharp/omnisharp-vscode/issues/381))
-* Field and local variable type names ([#717](https://github.com/OmniSharp/omnisharp-vscode/issues/717), [#719](https://github.com/OmniSharp/omnisharp-vscode/issues/719))
-* Multi-dimensional arrays in parameters ([#657](https://github.com/OmniSharp/omnisharp-vscode/issues/657))
+* A new unit testing framework for testing the colorizer grammer ([#742](https://github.com/OmniSharp/omnisharp-vscode/pull/742)) _(Contributed by [@ivanz](https://github.com/ivanz))_
+* Single-line comments after preprocessor directives ([#762](https://github.com/OmniSharp/omnisharp-vscode/pull/762)) _(Contributed by [damieng](https://github.com/damieng))_
 
 #### Performance
 
-* Improvements have been made in processing diagnostics (i.e. errors and warnings).
-* Full solution diagnostics are no longer computed for large solutions (e.g. solutions with >1000 files across all projects). However, diagnostics are still computed for open files.
+* Major improvements have been made to editor performance. The communication with the OmniSharp server has been rewritten to allow long-running operations (such as gathering all errors and warnings) to queue while high priority operations (such as text buffer changes) run serially. ([#902](https://github.com/OmniSharp/omnisharp-vscode/pull/902)) _(Thanks to [@david-driscoll](https://github.com/david-driscoll) for his help with this change!)_ 
 
 #### Other Improvements
 
-* Multibyte characters are now properly encoded, resulting in proper display in tooltips and fixing crashes in the OmniSharp server. ([#4](https://github.com/OmniSharp/omnisharp-vscode/4), [#140](https://github.com/OmniSharp/omnisharp-vscode/140), [#427](https://github.com/OmniSharp/omnisharp-vscode/427))
-* Will no longer attempt to install a CoreCLR flavor of OmniSharp on Ubuntu versions other than 14 and 16. ([#655](https://github.com/OmniSharp/omnisharp-vscode/issues/655))
-* Opening a solution or csproj no longer results in '0 projects' displayed in the status bar. ([#723](https://github.com/OmniSharp/omnisharp-vscode/issues/723))
+* The prompt to generate assets for building and debugging can now be dismissed for a workspace permanently. In addition, a new `dotnet.generateAssets` command has been added to force regeneration of the assets. ([#635](https://github.com/OmniSharp/omnisharp-vscode/issues/635))
+* Fix "running forever" issue for folder with multple .NET Core projects. ([#735](https://github.com/OmniSharp/omnisharp-vscode/issues/735)) _(Contributed by [@eamodio](https://github.com/eamodio))_
+* `ctor` snippet is now more consistent with other code snippets. ([#849](https://github.com/OmniSharp/omnisharp-vscode/pull/849)) _(Contibuted by [@Eibx](https://github.com/Eibx))_
+* Ampersands in file names are now properly escaped on Windows ([#909](https://github.com/OmniSharp/omnisharp-vscode/pull/909)) _(Contributed by [@filipw](https://github.com/filipw))_
 
-### Supported Operating Systems
+### Supported Operating Systems for Debugging
 
-* Currently, the C# extension supports the following operatings systems:
+* Currently, the C# debugger supports the following operatings systems:
+
   * Windows (64-bit only)
   * macOS
-  * Ubuntu 14.04 / Linux Mint 17
-  * Ubuntu 16.04
+  * Ubuntu 14.04 / Linux Mint 17 / Linux Mint 18 / Elementary OS 0.3
+  * Ubuntu 16.04 / Elementary OS 0.4
   * Debian 8.2
   * CentOS 7.1 / Oracle Linux 7
   * Red Hat Enterprise Linux (RHEL)
@@ -91,6 +99,7 @@ In case you get a *node-gyp* error [follow the instrutions here](https://github.
 To **run and develop** do the following:
 
 * Run `npm i`
+* Run `npm run compile`
 * Open in Visual Studio Code (`code .`)
 * *Optional:* run `tsc -w`, make code changes (on Windows, try `start node ".\node_modules\typescript\bin\tsc -w"`)
 * Press <kbd>F5</kbd> to debug
