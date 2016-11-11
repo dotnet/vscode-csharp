@@ -92,8 +92,10 @@ export class PackageManager {
         return this.GetAllPackages()
             .then(list => {
                 return list.filter(pkg => {
-                    if (pkg.runtimeIds && this.platformInfo.runtimeId && pkg.runtimeIds.indexOf(this.platformInfo.runtimeId) === -1) {
-                        return false;
+                    if (pkg.runtimeIds) {
+                        if (!this.platformInfo.runtimeId || pkg.runtimeIds.indexOf(this.platformInfo.runtimeId) === -1) {
+                            return false;
+                        }
                     }
 
                     if (pkg.architectures && pkg.architectures.indexOf(this.platformInfo.architecture) === -1) {
