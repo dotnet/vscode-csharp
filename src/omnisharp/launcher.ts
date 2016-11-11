@@ -202,7 +202,7 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
         const hasSpaceWithoutQuotes = /^[^"].* .*[^"]/;
         return hasSpaceWithoutQuotes.test(arg)
             ? `"${arg}"`
-            : arg;
+            : arg.replace("&","^&");
     }
 
     let argsCopy = args.slice(0); // create copy of args
