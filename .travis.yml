@@ -1,15 +1,21 @@
-sudo: false
 language: node_js
 
 node_js:
 - "5.1"
 
-os:
-  -osx
-  -linux
+env:
+  - CXX=g++-4.8
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
 
 install:
 - npm install
+- npm run compile
 - npm install -g vsce
 - vsce package
 

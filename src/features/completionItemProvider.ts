@@ -14,68 +14,68 @@ import {CompletionItemProvider, CompletionItem, CompletionItemKind, Cancellation
 
 export default class OmniSharpCompletionItemProvider extends AbstractSupport implements CompletionItemProvider {
 
-	public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken): Promise<CompletionItem[]> {
+    public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken): Promise<CompletionItem[]> {
 
-		let wordToComplete = '';
-		let range = document.getWordRangeAtPosition(position);
-		if (range) {
-			wordToComplete = document.getText(new Range(range.start, position));
-		}
+        let wordToComplete = '';
+        let range = document.getWordRangeAtPosition(position);
+        if (range) {
+            wordToComplete = document.getText(new Range(range.start, position));
+        }
 
-		let req = createRequest<protocol.AutoCompleteRequest>(document, position);
-		req.WordToComplete = wordToComplete;
-		req.WantDocumentationForEveryCompletionResult = true;
-		req.WantKind = true;
-		req.WantReturnType = true;
+        let req = createRequest<protocol.AutoCompleteRequest>(document, position);
+        req.WordToComplete = wordToComplete;
+        req.WantDocumentationForEveryCompletionResult = true;
+        req.WantKind = true;
+        req.WantReturnType = true;
 
-		return serverUtils.autoComplete(this._server, req).then(values => {
+        return serverUtils.autoComplete(this._server, req).then(values => {
 
-			if (!values) {
-				return;
-			}
+            if (!values) {
+                return;
+            }
 
-			let result: CompletionItem[] = [];
-			let completions: { [c: string]: CompletionItem[] } = Object.create(null);
+            let result: CompletionItem[] = [];
+            let completions: { [c: string]: CompletionItem[] } = Object.create(null);
 
-			// transform AutoCompleteResponse to CompletionItem and
-			// group by code snippet
-			for (let value of values) {
-				let completion = new CompletionItem(value.CompletionText.replace(/\(|\)|<|>/g, ''));
-				completion.detail = value.ReturnType ? `${value.ReturnType} ${value.DisplayText}` : value.DisplayText;
-				completion.documentation = extractSummaryText(value.Description);
-				completion.kind = _kinds[value.Kind] || CompletionItemKind.Property;
+            // transform AutoCompleteResponse to CompletionItem and
+            // group by code snippet
+            for (let value of values) {
+                let completion = new CompletionItem(value.CompletionText.replace(/\(|\)|<|>/g, ''));
+                completion.detail = value.ReturnType ? `${value.ReturnType} ${value.DisplayText}` : value.DisplayText;
+                completion.documentation = extractSummaryText(value.Description);
+                completion.kind = _kinds[value.Kind] || CompletionItemKind.Property;
 
-				let array = completions[completion.label];
-				if (!array) {
-					completions[completion.label] = [completion];
-				}
-				else {
-					array.push(completion);
-				}
-			}
+                let array = completions[completion.label];
+                if (!array) {
+                    completions[completion.label] = [completion];
+                }
+                else {
+                    array.push(completion);
+                }
+            }
 
-			// per suggestion group, select on and indicate overloads
-			for (let key in completions) {
+            // per suggestion group, select on and indicate overloads
+            for (let key in completions) {
 
-				let suggestion = completions[key][0],
-					overloadCount = completions[key].length - 1;
+                let suggestion = completions[key][0],
+                    overloadCount = completions[key].length - 1;
 
-				if (overloadCount === 0) {
-					// remove non overloaded items
-					delete completions[key];
+                if (overloadCount === 0) {
+                    // remove non overloaded items
+                    delete completions[key];
 
-				}
-				else {
-					// indicate that there is more
-					suggestion.detail = `${suggestion.detail} (+ ${overloadCount} overload(s))`;
-				}
-				
-				result.push(suggestion);
-			}
+                }
+                else {
+                    // indicate that there is more
+                    suggestion.detail = `${suggestion.detail} (+ ${overloadCount} overload(s))`;
+                }
+                
+                result.push(suggestion);
+            }
 
-			return result;
-		});
-	}
+            return result;
+        });
+    }
 }
 
 const _kinds: { [kind: string]: CompletionItemKind; } = Object.create(null);

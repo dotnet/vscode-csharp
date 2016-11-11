@@ -1,13 +1,13 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.4.1",
+  "version": "1.5.0-beta8",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
   "license": "SEE LICENSE IN RuntimeLicenses/license.txt",
   "icon": "images/csharpIcon.png",
-  "preview": "true",
+  "preview": true,
   "bugs": {
     "url": "https://github.com/OmniSharp/omnisharp-vscode/issues"
   },
@@ -17,31 +17,230 @@
     "Linters",
     "Snippets"
   ],
-  "main": "./out/main",
+  "main": "./out/src/main",
   "scripts": {
-    "postinstall": "node ./node_modules/vscode/bin/install && tsc"
+    "compile": "node ./node_modules/vscode/bin/compile -p ./ && gulp tslint",
+    "watch": "node ./node_modules/vscode/bin/compile -watch -p ./",
+    "test": "mocha --timeout 15000 -u tdd ./out/test/*.tests.js ./out/test/**/*.tests.js",
+    "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
-    "decompress": "^4.0.0",
-    "del": "^2.0.2",
     "fs-extra-promise": "^0.3.1",
     "http-proxy-agent": "^1.0.0",
     "https-proxy-agent": "^1.0.0",
+    "lodash.debounce": "^4.0.8",
+    "mkdirp": "^0.5.1",
     "open": "*",
     "semver": "*",
     "tmp": "0.0.28",
     "vscode-debugprotocol": "^1.6.1",
-    "vscode-extension-telemetry": "0.0.4"
+    "vscode-extension-telemetry": "0.0.4",
+    "yauzl": "^2.5.0"
   },
   "devDependencies": {
+    "del": "^2.0.2",
     "gulp": "^3.9.1",
+    "gulp-mocha": "^2.1.3",
     "gulp-tslint": "^4.3.0",
-    "tslint": "^3.3.0",
-    "tslint-microsoft-contrib": "^2.0.0",
-    "typescript": "^1.7.3",
+    "mocha": "^2.2.5",
+    "tslint": "^3.15.1",
+    "tslint-microsoft-contrib": "^2.0.12",
+    "typescript": "^2.0.3",
     "vscode": "^0.11.13",
-    "vsce": "^1.7.0"
+    "vsce": "^1.7.0",
+    "chai": "^3.5.0",
+    "vscode-textmate": "^2.1.1"
   },
+  "runtimeDependencies": [
+    {
+      "description": "Mono Runtime (Linux / x86)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.linux-x86-4.6.1.zip",
+      "installPath": "./bin",
+      "platforms": [
+        "linux"
+      ],
+      "architectures": [
+        "x86"
+      ],
+      "binaries": [
+        "./mono.linux-x86",
+        "./run"
+      ]
+    },
+    {
+      "description": "Mono Runtime (Linux / x64)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.linux-x86_64-4.6.1.zip",
+      "installPath": "./bin",
+      "platforms": [
+        "linux"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "binaries": [
+        "./mono.linux-x86_64",
+        "./run"
+      ]
+    },
+    {
+      "description": "Mono Runtime (macOS)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.osx-4.6.1.zip",
+      "installPath": "./bin",
+      "platforms": [
+        "darwin"
+      ],
+      "binaries": [
+        "./mono.osx",
+        "./run"
+      ]
+    },
+    {
+      "description": "Mono Framework Assemblies",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/framework-4.6.1.zip",
+      "installPath": "./bin/framework",
+      "platforms": [
+        "darwin",
+        "linux"
+      ]
+    },
+    {
+      "description": "OmniSharp (.NET 4.6 / x86)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.9-beta19.zip",
+      "installPath": "./bin/omnisharp",
+      "platforms": [
+        "win32"
+      ],
+      "architectures": [
+        "x86",
+        "32-bit"
+      ]
+    },
+    {
+      "description": "OmniSharp (.NET 4.6 / x64)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.9-beta19.zip",
+      "installPath": "./bin/omnisharp",
+      "platforms": [
+        "win32"
+      ],
+      "architectures": [
+        "x86_64",
+        "64-bit"
+      ]
+    },
+    {
+      "description": "OmniSharp (Mono 4.6)",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-mono-1.9-beta19.zip",
+      "installPath": "./bin/omnisharp",
+      "platforms": [
+        "darwin",
+        "linux"
+      ]
+    },
+    {
+      "description": ".NET Core Debugger (Windows / x64)",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-win7-x64.zip",
+      "installPath": ".debugger",
+      "runtimeIds": [
+        "win7-x64"
+      ]
+    },
+    {
+      "description": ".NET Core Debugger (macOS / x64)",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-osx.10.11-x64.zip",
+      "installPath": ".debugger",
+      "runtimeIds": [
+        "osx.10.11-x64"
+      ],
+      "binaries": [
+        "./OpenDebugAD7",
+        "./clrdbg"
+      ]
+    },
+    {
+      "description": ".NET Core Debugger (CentOS / x64)",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-centos.7-x64.zip",
+      "installPath": ".debugger",
+      "runtimeIds": [
+        "centos.7-x64"
+      ],
+      "binaries": [
+        "./OpenDebugAD7",
+        "./clrdbg"
+      ]
+    },
+    {
+      "description": ".NET Core Debugger (Debian / x64)",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-debian.8-x64.zip",
+      "installPath": ".debugger",
+      "runtimeIds": [
+        "debian.8-x64"
+      ],
+      "binaries": [
+        "./OpenDebugAD7",
+        "./clrdbg"
+      ]
+    },
+    {
+      "description": ".NET Core Debugger (Fedora / x64)",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-fedora.23-x64.zip",
+      "installPath": ".debugger",
+      "runtimeIds": [
+        "fedora.23-x64"
+      ],
+      "binaries": [
+        "./OpenDebugAD7",
+        "./clrdbg"
+      ]
+    },
+    {
+      "description": ".NET Core Debugger (OpenSUSE / x64)",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-opensuse.13.2-x64.zip",
+      "installPath": ".debugger",
+      "runtimeIds": [
+        "opensuse.13.2-x64"
+      ],
+      "binaries": [
+        "./OpenDebugAD7",
+        "./clrdbg"
+      ]
+    },
+    {
+      "description": ".NET Core Debugger (RHEL / x64)",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-rhel.7.2-x64.zip",
+      "installPath": ".debugger",
+      "runtimeIds": [
+        "rhel.7-x64"
+      ],
+      "binaries": [
+        "./OpenDebugAD7",
+        "./clrdbg"
+      ]
+    },
+    {
+      "description": ".NET Core Debugger (Ubuntu 14 / x64)",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-ubuntu.14.04-x64.zip",
+      "installPath": ".debugger",
+      "runtimeIds": [
+        "ubuntu.14.04-x64"
+      ],
+      "binaries": [
+        "./OpenDebugAD7",
+        "./clrdbg"
+      ]
+    },
+    {
+      "description": ".NET Core Debugger (Ubuntu 16 / x64)",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-ubuntu.16.04-x64.zip",
+      "installPath": ".debugger",
+      "runtimeIds": [
+        "ubuntu.16.04-x64"
+      ],
+      "binaries": [
+        "./OpenDebugAD7",
+        "./clrdbg"
+      ]
+    }
+  ],
   "engines": {
     "vscode": "^1.3.0"
   },
@@ -78,6 +277,11 @@
           "default": false,
           "description": "Suppress the warning that the .NET CLI is not on the path."
         },
+        "csharp.suppressDotnetRestoreNotification": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress the notification window to perform a 'dotnet restore' when dependencies can't be resolved."
+        },
         "omnisharp.path": {
           "type": [
             "string",
@@ -104,6 +308,11 @@
           "type": "boolean",
           "default": true,
           "description": "Specifies whether the OmniSharp server will be automatically started or not. If false, OmniSharp can be started with the 'Restart OmniSharp' command"
+        },
+        "omnisharp.projectLoadTimeout": {
+          "type": "number",
+          "default": 60,
+          "description": "The time Visual Studio Code will wait for the OmniSharp server to start. Time is expressed in seconds."
         }
       }
     },
@@ -132,6 +341,11 @@
         "category": "OmniSharp"
       },
       {
+        "command": "dotnet.generateAssets",
+        "title": "Generate Assets for Build and Debug",
+        "category": ".NET"
+      },
+      {
         "command": "dotnet.restore",
         "title": "Restore Packages",
         "category": "dotnet"
@@ -144,7 +358,7 @@
       {
         "command": "csharp.listProcess",
         "title": "List process for attach",
-        "category": "CSharp" 
+        "category": "CSharp"
       }
     ],
     "keybindings": [
@@ -190,7 +404,7 @@
         "variables": {
           "pickProcess": "csharp.listProcess"
         },
-        "program": "./out/coreclr-debug/proxy.js",
+        "program": "./out/src/coreclr-debug/proxy.js",
         "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
         "configurationAttributes": {
           "launch": {
@@ -312,9 +526,11 @@
               },
               "env": {
                 "type": "object",
-                "additionalProperties": { "type": "string" },
+                "additionalProperties": {
+                  "type": "string"
+                },
                 "description": "Environment variables passed to the program.",
-                "default": { }
+                "default": {}
               },
               "externalConsole": {
                 "type": "boolean",
@@ -358,34 +574,34 @@
                 "description": "Optional flags to determine what types of messages should be logged to the output window.",
                 "properties": {
                   "exceptions": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether exception messages should be logged to the output window.",
-                      "default": true
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether exception messages should be logged to the output window.",
+                    "default": true
                   },
                   "moduleLoad": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether module load events should be logged to the output window.",
-                      "default": true
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether module load events should be logged to the output window.",
+                    "default": true
                   },
                   "programOutput": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
-                      "default": true
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
+                    "default": true
                   },
                   "engineLogging": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
-                      "default": false
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
+                    "default": false
                   },
                   "trace": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether diagnostic adapter command tracing should be logged to the output window.",
-                      "default": false
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether diagnostic adapter command tracing should be logged to the output window.",
+                    "default": false
                   },
                   "traceResponse": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether diagnostic adapter command and response tracing should be logged to the output window.",
-                      "default": false
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether diagnostic adapter command and response tracing should be logged to the output window.",
+                    "default": false
                   }
                 }
               },
@@ -397,7 +613,7 @@
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
                   "pipeArgs": []
                 },
-                "properties" : {
+                "properties": {
                   "pipeCwd": {
                     "type": "string",
                     "description": "The fully qualified path to the working directory for the pipe program.",
@@ -418,9 +634,11 @@
                   },
                   "pipeEnv": {
                     "type": "object",
-                    "additionalProperties": { "type": "string" },
+                    "additionalProperties": {
+                      "type": "string"
+                    },
                     "description": "Environment variables passed to the pipe program.",
-                    "default": { }
+                    "default": {}
                   },
                   "windows": {
                     "type": "object",
@@ -451,9 +669,11 @@
                       },
                       "pipeEnv": {
                         "type": "object",
-                        "additionalProperties": { "type": "string" },
+                        "additionalProperties": {
+                          "type": "string"
+                        },
                         "description": "Environment variables passed to the pipe program.",
-                        "default": { }
+                        "default": {}
                       }
                     }
                   },
@@ -486,10 +706,12 @@
                       },
                       "pipeEnv": {
                         "type": "object",
-                        "additionalProperties": { "type": "string" },
+                        "additionalProperties": {
+                          "type": "string"
+                        },
                         "description": "Environment variables passed to the pipe program.",
-                        "default": { }
-                      }                      
+                        "default": {}
+                      }
                     }
                   },
                   "linux": {
@@ -521,9 +743,11 @@
                       },
                       "pipeEnv": {
                         "type": "object",
-                        "additionalProperties": { "type": "string" },
+                        "additionalProperties": {
+                          "type": "string"
+                        },
                         "description": "Environment variables passed to the pipe program.",
-                        "default": { }
+                        "default": {}
                       }
                     }
                   }
@@ -540,18 +764,18 @@
                 "default": "The process name to attach to. If this is used, 'processId' should not be used."
               },
               "processId": {
-                "anyOf": [ 
-                    {
-                      "type": "string",
-                      "description": "The process id to attach to. Use \"${command.pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
-                      "default": "${command.pickProcess}"
-                    }, 
-                    {
-                      "type": "integer",
-                      "description": "The process id to attach to. Use \"${command.pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
-                      "default": 0
-                    }
-                ]                
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "description": "The process id to attach to. Use \"${command.pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                    "default": "${command.pickProcess}"
+                  },
+                  {
+                    "type": "integer",
+                    "description": "The process id to attach to. Use \"${command.pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                    "default": 0
+                  }
+                ]
               },
               "sourceFileMap": {
                 "type": "object",
@@ -590,34 +814,34 @@
                 "description": "Optional flags to determine what types of messages should be logged to the output window.",
                 "properties": {
                   "exceptions": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether exception messages should be logged to the output window.",
-                      "default": true
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether exception messages should be logged to the output window.",
+                    "default": true
                   },
                   "moduleLoad": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether module load events should be logged to the output window.",
-                      "default": true
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether module load events should be logged to the output window.",
+                    "default": true
                   },
                   "programOutput": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
-                      "default": true
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
+                    "default": true
                   },
                   "engineLogging": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
-                      "default": false
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
+                    "default": false
                   },
                   "trace": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether diagnostic adapter command tracing should be logged to the output window.",
-                      "default": false
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether diagnostic adapter command tracing should be logged to the output window.",
+                    "default": false
                   },
                   "traceResponse": {
-                      "type": "boolean",
-                      "description": "Optional flag to determine whether diagnostic adapter command and response tracing should be logged to the output window.",
-                      "default": false
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether diagnostic adapter command and response tracing should be logged to the output window.",
+                    "default": false
                   }
                 }
               }
@@ -663,7 +887,7 @@
               "ASPNETCORE_ENVIRONMENT": "Development"
             },
             "sourceFileMap": {
-                "/Views": "${workspaceRoot}/Views"
+              "/Views": "${workspaceRoot}/Views"
             }
           },
           {

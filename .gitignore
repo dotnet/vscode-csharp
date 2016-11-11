@@ -1,6 +1,9 @@
 bin
 node_modules
 out
-.omnisharp
+.omnisharp-*/
+.debugger
+
+install.*
 
 *.vsix

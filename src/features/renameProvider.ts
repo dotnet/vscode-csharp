@@ -13,29 +13,29 @@ import {RenameProvider, WorkspaceEdit, TextDocument, Uri, CancellationToken, Pos
 
 export default class OmnisharpRenameProvider extends AbstractSupport implements RenameProvider {
 
-	public provideRenameEdits(document: TextDocument, position: Position, newName: string, token: CancellationToken): Promise<WorkspaceEdit> {
+    public provideRenameEdits(document: TextDocument, position: Position, newName: string, token: CancellationToken): Promise<WorkspaceEdit> {
 
-		let req = createRequest<protocol.RenameRequest>(document, position);
-		req.WantsTextChanges = true;
-		req.RenameTo = newName;
+        let req = createRequest<protocol.RenameRequest>(document, position);
+        req.WantsTextChanges = true;
+        req.RenameTo = newName;
 
-		return serverUtils.rename(this._server, req, token).then(response => {
+        return serverUtils.rename(this._server, req, token).then(response => {
 
-			if (!response) {
-				return;
-			}
+            if (!response) {
+                return;
+            }
 
-			const edit = new WorkspaceEdit();
-			response.Changes.forEach(change => {
-				const uri = Uri.file(change.FileName);
-				change.Changes.forEach(change => {
-					edit.replace(uri,
-						new Range(change.StartLine - 1, change.StartColumn - 1, change.EndLine - 1, change.EndColumn - 1),
-						change.NewText);
-				});
-			});
+            const edit = new WorkspaceEdit();
+            response.Changes.forEach(change => {
+                const uri = Uri.file(change.FileName);
+                change.Changes.forEach(change => {
+                    edit.replace(uri,
+                        new Range(change.StartLine - 1, change.StartColumn - 1, change.EndLine - 1, change.EndColumn - 1),
+                        change.NewText);
+                });
+            });
 
-			return edit;
-		});
-	}
+            return edit;
+        });
+    }
 }

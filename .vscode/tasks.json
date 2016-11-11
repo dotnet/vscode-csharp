@@ -4,6 +4,11 @@
 	"isShellCommand": true,
 	"tasks": [
 		{
+			"taskName": "test",
+			"showOutput": "always",
+			"isTestCommand": true
+		},
+		{
 			"taskName": "tslint",
 			"args": [],
 			"problemMatcher": {
