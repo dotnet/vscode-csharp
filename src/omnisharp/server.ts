@@ -256,7 +256,7 @@ export abstract class OmnisharpServer {
 
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
-        return launchOmniSharp(cwd, args, launchTarget.kind).then(value => {
+        return launchOmniSharp(cwd, args).then(value => {
             if (value.usingMono) {
                 this._logger.appendLine(`OmniSharp server started wth Mono`);
             }
