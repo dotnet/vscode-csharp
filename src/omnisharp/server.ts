@@ -11,7 +11,6 @@ import { Options } from './options';
 import { Logger } from '../logger';
 import { DelayTracker } from './delayTracker';
 import { LaunchTarget, findLaunchTargets } from './launcher';
-import { PlatformInformation } from '../platform';
 import { Request, RequestQueueCollection } from './requestQueue';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import * as path from 'path';
@@ -58,7 +57,6 @@ const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 export class OmniSharpServer {
 
     private static _nextId = 1;
-    private static StartupTimeout = 1000 * 60;
 
     private _debugMode: boolean = false;
 

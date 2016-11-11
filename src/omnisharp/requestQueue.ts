@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Logger } from '../logger';
-import * as protocol from './protocol';
 import * as prioritization from './prioritization';
 
 export interface Request {
@@ -109,7 +108,6 @@ class RequestQueue {
 }
 
 export class RequestQueueCollection {
-    private _logger: Logger;
     private _isProcessing: boolean;
     private _priorityQueue: RequestQueue;
     private _normalQueue: RequestQueue;
