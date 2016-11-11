@@ -5,7 +5,7 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import {OmnisharpServer} from '../omnisharp/server';
+import {OmniSharpServer} from '../omnisharp/server';
 import {dotnetRestoreForProject} from './commands';
 import {basename} from 'path';
 import * as protocol from '../omnisharp/protocol';
@@ -13,7 +13,7 @@ import * as serverUtils from '../omnisharp/utils';
 
 const debounce = require('lodash.debounce');
 
-export default function reportStatus(server: OmnisharpServer) {
+export default function reportStatus(server: OmniSharpServer) {
     return vscode.Disposable.from(
         reportServerStatus(server),
         forwardOutput(server),
@@ -41,7 +41,7 @@ class Status {
     }
 }
 
-export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable {
+export function reportDocumentStatus(server: OmniSharpServer): vscode.Disposable {
 
     let disposables: vscode.Disposable[] = [];
     let localDisposables: vscode.Disposable[];
@@ -202,7 +202,7 @@ export function reportDocumentStatus(server: OmnisharpServer): vscode.Disposable
 
 // ---- server status
 
-export function reportServerStatus(server: OmnisharpServer): vscode.Disposable{
+export function reportServerStatus(server: OmniSharpServer): vscode.Disposable{
 
     function appendLine(value: string = '') {
         server.getChannel().appendLine(value);
@@ -275,20 +275,14 @@ function showMessageSoon() {
 
 // --- mirror output in channel
 
-function forwardOutput(server: OmnisharpServer) {
+function forwardOutput(server: OmniSharpServer) {
 
     const logChannel = server.getChannel();
-    const timing200Pattern = /^\[INFORMATION:OmniSharp.Middleware.LoggingMiddleware\] \/\w+: 200 \d+ms/;
 
     function forward(message: string) {
-        // strip stuff like: /codecheck: 200 339ms
-        if(!timing200Pattern.test(message)) {
-            logChannel.append(message);
-        }
+        logChannel.append(message);
     }
 
     return vscode.Disposable.from(
-        server.onStdout(forward),
         server.onStderr(forward));
 }
-
