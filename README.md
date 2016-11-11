@@ -37,7 +37,6 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 
 #### Debugger
 
-* Preliminary support for .NET Core CLI Preview 4.
 * Remote debugging is now supported for attach by using the `pipeTransport` launch.json option.
 * Reolved issue with setting breakpoints when there are multple files with the same name (e.g. two 'Program.cs' files).
 
