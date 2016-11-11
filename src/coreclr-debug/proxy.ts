@@ -8,6 +8,8 @@ import * as path from 'path';
 import { DebugProtocol } from 'vscode-debugprotocol';
 import * as child_process from 'child_process';
 import { CoreClrDebugUtil } from './util';
+import * as common from './../common';
+import { Logger } from './../logger';
 
 class ProxyErrorResponse implements DebugProtocol.ErrorResponse {
     public body: { error?: DebugProtocol.Message };
@@ -32,6 +34,18 @@ function serializeProtocolEvent(message: DebugProtocol.ProtocolMessage): string 
     return finalPayload;
 }
 
+function sendErrorMessage(message: string) {
+    process.stdout.write(serializeProtocolEvent(new ProxyErrorResponse(message)));
+}
+
+function sendStillDownloadingMessage() {
+    sendErrorMessage('The .NET Core Debugger is still being downloaded. See the C# Output Window for more information.');
+}
+
+function sendDownloadingNotStartedMessage() {
+    sendErrorMessage('Run \'Debug: Download .NET Core Debugger\' in the Command Palette or open a .NET project directory to download the .NET Core Debugger');
+}
+
 // The default extension manifest calls this proxy as the debugger program
 // When installation of the debugger components finishes, the extension manifest is rewritten so that this proxy is no longer called
 // If the debugger components have not finished downloading, the proxy displays an error message to the user
@@ -39,17 +53,53 @@ function serializeProtocolEvent(message: DebugProtocol.ProtocolMessage): string 
 // This proxy will still be called and launch OpenDebugAD7 as a child process.
 // During subsequent code sessions, the rewritten manifest will be loaded and this proxy will no longer be called. 
 function proxy() {
-    let util = new CoreClrDebugUtil(path.resolve(__dirname, '../../'));
+    let extensionPath = path.resolve(__dirname, '../../../');
+    common.setExtensionPath(extensionPath);
+
+    let logger = new Logger((text) => { console.log(text); });
+    let util = new CoreClrDebugUtil(extensionPath, logger);
     
     if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {
-        if (CoreClrDebugUtil.existsSync(util.installBeginFilePath())) {
-            process.stdout.write(serializeProtocolEvent(new ProxyErrorResponse('The .NET Core Debugger is still being downloaded. See the Status Bar for more information.')));
-        } else {
-            process.stdout.write(serializeProtocolEvent(new ProxyErrorResponse('Run \'Debug: Download .NET Core Debugger\' in the Command Palette or open a .NET project directory to download the .NET Core Debugger')));
-        }
+        // our install.complete file does not exist yet, meaning we have not rewritten our manifest yet. Try to figure out what if anything the package manager is doing
+        // the order in which files are dealt with is this:
+        // 1. install.Begin is created
+        // 2. install.Lock is created
+        // 3. install.Begin is deleted
+        // 4. install.complete is created
+
+        //first check if dotnet is on the path and new enough
+        util.checkDotNetCli()
+            .then((dotnetInfo) => {
+                // next check if we have begun installing packages
+                common.installFileExists(common.InstallFileType.Begin)
+                    .then((beginExists: boolean) => {
+                        if (beginExists) {
+                            // packages manager has begun
+                            sendStillDownloadingMessage();
+                        } else {
+                            // begin doesn't exist. There is a chance we finished downloading and begin had been deleted. Check if lock exists
+                            common.installFileExists(common.InstallFileType.Lock)
+                                .then((lockExists) => {
+                                    if (lockExists) {
+                                        // packages have finished installing but we had not finished rewriting our manifest when F5 came in
+                                        sendStillDownloadingMessage();
+                                    }
+                                    else {
+                                        // no install files existed when we checked. we have likely not been activated
+                                        sendDownloadingNotStartedMessage();
+                                    }
+                                });
+                        }
+                    });
+            }, (err) => {
+                // error from checkDotNetCli
+                sendErrorMessage(err.ErrorMessage || util.defaultDotNetCliErrorMessage());
+            });
     }
     else
     {
+        // debugger has finished install and manifest has been rewritten, kick off our debugger process
+
         new Promise<void>((resolve, reject) => {
             let processPath = path.join(util.debugAdapterDir(), "OpenDebugAD7" + CoreClrDebugUtil.getPlatformExeExtension());
             let args = process.argv.slice(2);
@@ -70,7 +120,7 @@ function proxy() {
             process.stdin.setEncoding('utf8');
             
             child.on('error', data => {
-                util.logToFile(`Child error: ${data}`); 
+                logger.appendLine(`Child error: ${data}`); 
             });
             
             process.on('SIGTERM', () => {
@@ -84,11 +134,11 @@ function proxy() {
             });
             
             process.stdin.on('error', error => {
-                util.logToFile(`process.stdin error: ${error}`);
+                logger.appendLine(`process.stdin error: ${error}`);
             });
             
             process.stdout.on('error', error => {
-                util.logToFile(`process.stdout error: ${error}`); 
+                logger.appendLine(`process.stdout error: ${error}`); 
             });
             
             child.stdout.on('data', data => {
@@ -101,7 +151,7 @@ function proxy() {
             
             process.stdin.resume();
         }).catch(err => {
-           util.logToFile(`Promise failed: ${err}`); 
+           logger.appendLine(err);
         });
     }
 }

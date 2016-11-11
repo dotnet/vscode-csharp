@@ -3,99 +3,315 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as util from './common';
 
-import * as child_process from 'child_process';
+const unknown = 'unknown';
 
-export enum Platform {
-    Unknown,
-    Windows,
-    OSX,
-    CentOS,
-    Debian,
-    Fedora,
-    OpenSUSE,
-    RHEL,
-    Ubuntu14,
-    Ubuntu16
-}
+/**
+ * There is no standard way on Linux to find the distribution name and version.
+ * Recently, systemd has pushed to standardize the os-release file. This has
+ * seen adoption in "recent" versions of all major distributions.
+ * https://www.freedesktop.org/software/systemd/man/os-release.html
+ */
+export class LinuxDistribution {
+    public constructor(
+        public name: string,
+        public version: string,
+        public idLike?: string[]) { }
 
-export function getCurrentPlatform() {
-    if (process.platform === 'win32') {
-        return Platform.Windows;
+    public static GetCurrent(): Promise<LinuxDistribution> {
+        // Try /etc/os-release and fallback to /usr/lib/os-release per the synopsis
+        // at https://www.freedesktop.org/software/systemd/man/os-release.html.
+        return LinuxDistribution.FromFilePath('/etc/os-release')
+            .catch(() => LinuxDistribution.FromFilePath('/usr/lib/os-release'))
+            .catch(() => Promise.resolve(new LinuxDistribution(unknown, unknown)));
     }
-    else if (process.platform === 'darwin') {
-        return Platform.OSX;
+
+    public toString(): string {
+        return `name=${this.name}, version=${this.version}`;
     }
-    else if (process.platform === 'linux') {
-        // Get the text of /etc/os-release to discover which Linux distribution we're running on.
-        // For details: https://www.freedesktop.org/software/systemd/man/os-release.html
-        const text = child_process.execSync('cat /etc/os-release').toString();
-        const lines = text.split('\n');
 
-        function getValue(name: string) {
-            for (let line of lines) {
-                line = line.trim();
-                if (line.startsWith(name)) {
-                    const equalsIndex = line.indexOf('=');
-                    if (equalsIndex >= 0) {
-                        let value = line.substring(equalsIndex + 1);
+    private static FromFilePath(filePath: string): Promise<LinuxDistribution> {
+        return new Promise<LinuxDistribution>((resolve, reject) => {
+            fs.readFile(filePath, 'utf8', (error, data) => {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    resolve(LinuxDistribution.FromReleaseInfo(data));
+                }
+            });
+        });
+    }
 
-                        // Strip double quotes if necessary
-                        if (value.length > 1 && value.startsWith('"') && value.endsWith('"')) {
-                            value = value.substring(1, value.length - 1);
-                        }
+    public static FromReleaseInfo(releaseInfo: string, eol: string = os.EOL): LinuxDistribution {
+        let name = unknown;
+        let version = unknown;
+        let idLike : string[] = null;
 
-                        return value;
-                    }
+        const lines = releaseInfo.split(eol);
+        for (let line of lines) {
+            line = line.trim();
+
+            let equalsIndex = line.indexOf('=');
+            if (equalsIndex >= 0) {
+                let key = line.substring(0, equalsIndex);
+                let value = line.substring(equalsIndex + 1);
+
+                // Strip double quotes if necessary
+                if (value.length > 1 && value.startsWith('"') && value.endsWith('"')) {
+                    value = value.substring(1, value.length - 1);
+                }
+
+                if (key === 'ID') {
+                    name = value;
+                }
+                else if (key === 'VERSION_ID') {
+                    version = value;
+                }
+                else if (key === 'ID_LIKE') {
+                    idLike = value.split(" ");
+                }
+
+                if (name !== unknown && version !== unknown && idLike !== null) {
+                    break;
                 }
             }
-
-            return undefined;
         }
 
-        const id = getValue("ID");
+        return new LinuxDistribution(name, version, idLike);
+    }
+}
 
-        switch (id)
-        {
-            case 'ubuntu':
-                const versionId = getValue("VERSION_ID");
-                if (versionId.startsWith("14")) {
-                    // This also works for Linux Mint
-                    return Platform.Ubuntu14;
+export class PlatformInformation {
+    public runtimeId: string;
+
+    public constructor(
+        public platform: string,
+        public architecture: string,
+        public distribution: LinuxDistribution = null)
+    {
+        try {
+            this.runtimeId = PlatformInformation.getRuntimeId(platform, architecture, distribution);
+        }
+        catch (err) {
+            this.runtimeId = null;
+        }
+    }
+
+    public isWindows(): boolean {
+        return this.platform === 'win32';
+    }
+
+    public isMacOS(): boolean {
+        return this.platform === 'darwin';
+    }
+
+    public isLinux(): boolean {
+        return this.platform === 'linux';
+    }
+
+    public toString(): string {
+        let result = this.platform;
+
+        if (this.architecture) {
+            if (result) {
+                result += ', ';
+            }
+
+            result += this.architecture;
+        }
+
+        if (this.distribution) {
+            if (result) {
+                result += ', ';
+            }
+
+            result += this.distribution.toString();
+        }
+
+        return result;
+    }
+
+    public static GetCurrent(): Promise<PlatformInformation> {
+        let platform = os.platform();
+        let architecturePromise: Promise<string>;
+        let distributionPromise: Promise<LinuxDistribution>;
+
+        switch (platform) {
+            case 'win32':
+                architecturePromise = PlatformInformation.GetWindowsArchitecture();
+                distributionPromise = Promise.resolve(null);
+                break;
+
+            case 'darwin':
+                architecturePromise = PlatformInformation.GetUnixArchitecture();
+                distributionPromise = Promise.resolve(null);
+                break;
+
+            case 'linux':
+                architecturePromise = PlatformInformation.GetUnixArchitecture();
+                distributionPromise = LinuxDistribution.GetCurrent();
+                break;
+
+            default:
+                throw new Error(`Unsupported platform: ${platform}`);
+        }
+
+        return Promise.all([architecturePromise, distributionPromise])
+            .then(([arch, distro]) => {
+                return new PlatformInformation(platform, arch, distro);
+            });
+    }
+
+    private static GetWindowsArchitecture(): Promise<string> {
+        return util.execChildProcess('wmic os get osarchitecture')
+            .then(architecture => {
+                if (architecture) {
+                    let archArray: string[] = architecture.split(os.EOL);
+                    if (archArray.length >= 2) {
+                        return archArray[1].trim();
+                    }
                 }
-                else if (versionId.startsWith("16")) {
-                    return Platform.Ubuntu16;
+
+                return unknown;
+            }).catch((error) => {
+                return unknown;
+            });
+    }
+
+    private static GetUnixArchitecture(): Promise<string> {
+        return util.execChildProcess('uname -m')
+            .then(architecture => {
+                if (architecture) {
+                    return architecture.trim();
+                }
+
+                return null;
+            });
+    }
+
+    /**
+     * Returns a supported .NET Core Runtime ID (RID) for the current platform. The list of Runtime IDs
+     * is available at https://github.com/dotnet/corefx/tree/master/pkg/Microsoft.NETCore.Platforms.
+     */
+    private static getRuntimeId(platform: string, architecture: string, distribution: LinuxDistribution): string {
+        // Note: We could do much better here. Currently, we only return a limited number of RIDs that
+        // are officially supported.
+
+        switch (platform) {
+            case 'win32':
+                switch (architecture) {
+                    case '32-bit': return 'win7-x86';
+                    case '64-bit': return 'win7-x64';
+                }
+
+                throw new Error(`Unsupported Windows architecture: ${architecture}`);
+
+            case 'darwin':
+                if (architecture === 'x86_64') {
+                    // Note: We return the El Capitan RID for Sierra
+                    return 'osx.10.11-x64';
+                }
+
+                throw new Error(`Unsupported macOS architecture: ${architecture}`);
+
+            case 'linux':
+                if (architecture === 'x86_64') {
+
+                    const unknown_distribution = 'unknown_distribution';
+                    const unknown_version = 'unknown_version';
+
+                    // First try the distribution name
+                    let runtimeId = PlatformInformation.getRuntimeIdHelper(distribution.name, distribution.version);
+
+                    // If the distribution isn't one that we understand, but the 'ID_LIKE' field has something that we understand, use that
+                    //
+                    // NOTE: 'ID_LIKE' doesn't specify the version of the 'like' OS. So we will use the 'VERSION_ID' value. This will restrict
+                    // how useful ID_LIKE will be since it requires the version numbers to match up, but it is the best we can do.
+                    if (runtimeId === unknown_distribution && distribution.idLike && distribution.idLike.length > 0) {
+                        for (let id of distribution.idLike) {
+                            runtimeId = PlatformInformation.getRuntimeIdHelper(id, distribution.version);
+                            if (runtimeId !== unknown_distribution) {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (runtimeId !== unknown_distribution && runtimeId !== unknown_version) {
+                        return runtimeId;
+                    }
+                }
+
+                // If we got here, this is not a Linux distro or architecture that we currently support.
+                throw new Error(`Unsupported Linux distro: ${distribution.name}, ${distribution.version}, ${architecture}`);
+        }
+
+        // If we got here, we've ended up with a platform we don't support  like 'freebsd' or 'sunos'.
+        // Chances are, VS Code doesn't support these platforms either.
+        throw Error('Unsupported platform ' + platform);
+    }
+    
+    private static getRuntimeIdHelper(distributionName: string, distributionVersion: string): string {
+        const unknown_distribution = 'unknown_distribution';
+        const unknown_version = 'unknown_version';
+
+        const centos_7 = 'centos.7-x64';
+        const debian_8 = 'debian.8-x64';
+        const fedora_23 = 'fedora.23-x64';
+        const opensuse_13_2 = 'opensuse.13.2-x64';
+        const rhel_7 = 'rhel.7-x64';
+        const ubuntu_14_04 = 'ubuntu.14.04-x64';
+        const ubuntu_16_04 = 'ubuntu.16.04-x64';
+
+        switch (distributionName) {
+            case 'ubuntu':
+                if (distributionVersion.startsWith("14")) {
+                    // This also works for Linux Mint
+                    return ubuntu_14_04;
+                }
+                else if (distributionVersion.startsWith("16")) {
+                    return ubuntu_16_04;
+                }
+
+                break;
+            case 'elementary':
+            case 'elementary OS':
+                if (distributionVersion.startsWith("0.3")) {
+                    // Elementary OS 0.3 Freya is binary compatible with Ubuntu 14.04
+                    return ubuntu_14_04;
+                }
+                else if (distributionVersion.startsWith("0.4")) {
+                    // Elementary OS 0.4 Loki is binary compatible with Ubuntu 16.04
+                    return ubuntu_16_04;
+                }
+
+                break;
+            case 'linuxmint':
+                if (distributionVersion.startsWith("18")) {
+                    // Linux Mint 18 is binary compatible with Ubuntu 16.04
+                    return ubuntu_16_04;
                 }
 
                 break;
             case 'centos':
-                return Platform.CentOS;
-            case 'fedora':
-                return Platform.Fedora;
-            case 'opensuse':
-                return Platform.OpenSUSE;
-            case 'rhel':
-                return Platform.RHEL;
-            case 'debian':
-                return Platform.Debian;
             case 'ol':
                 // Oracle Linux is binary compatible with CentOS
-                return Platform.CentOS;
-            case 'elementary OS':
-                const eOSVersionId = getValue("VERSION_ID");
-                if (eOSVersionId.startsWith("0.3")) {
-                    // Elementary OS 0.3 Freya is binary compatible with Ubuntu 14.04
-                    return Platform.Ubuntu14;
-                }
-                else if (eOSVersionId.startsWith("0.4")) {
-                    // Elementary OS 0.4 Loki is binary compatible with Ubuntu 16.04
-                    return Platform.Ubuntu16;
-                }
-
-                break;
+                return centos_7;
+            case 'fedora':
+                return fedora_23;
+            case 'opensuse':
+                return opensuse_13_2;
+            case 'rhel':
+                return rhel_7;
+            case 'debian':
+                return debian_8;
+            default:
+                return unknown_distribution;
         }
-    }
 
-    return Platform.Unknown;	
+        return unknown_version;
+    }
 }

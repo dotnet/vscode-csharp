@@ -13,16 +13,16 @@ import {ReferenceProvider, Location, TextDocument, CancellationToken, Position} 
 
 export default class OmnisharpReferenceProvider extends AbstractSupport implements ReferenceProvider {
 
-	public provideReferences(document: TextDocument, position: Position, options: { includeDeclaration: boolean;}, token: CancellationToken): Promise<Location[]> {
+    public provideReferences(document: TextDocument, position: Position, options: { includeDeclaration: boolean;}, token: CancellationToken): Promise<Location[]> {
 
-		let req = createRequest<protocol.FindUsagesRequest>(document, position);
-		req.OnlyThisFile = false;
-		req.ExcludeDefinition = false;
+        let req = createRequest<protocol.FindUsagesRequest>(document, position);
+        req.OnlyThisFile = false;
+        req.ExcludeDefinition = false;
 
-		return serverUtils.findUsages(this._server, req, token).then(res => {
-			if (res && Array.isArray(res.QuickFixes)) {
-				return res.QuickFixes.map(toLocation);
-			}
-		});
-	}
+        return serverUtils.findUsages(this._server, req, token).then(res => {
+            if (res && Array.isArray(res.QuickFixes)) {
+                return res.QuickFixes.map(toLocation);
+            }
+        });
+    }
 }

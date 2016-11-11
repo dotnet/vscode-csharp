@@ -1,7 +1,7 @@
 import { workspace, Uri, TextDocument, Disposable, TextDocumentContentProvider} from 'vscode';
 import { MetadataResponse } from '../omnisharp/protocol';
 
-export class DefinitionMetadataDocumentProvider implements TextDocumentContentProvider, Disposable {
+export default class DefinitionMetadataDocumentProvider implements TextDocumentContentProvider, Disposable {
     private _scheme = "omnisharp-metadata";
     private _registration : Disposable;
     private _documents: Map<string, MetadataResponse>;
@@ -9,7 +9,7 @@ export class DefinitionMetadataDocumentProvider implements TextDocumentContentPr
 
     constructor() {
         this._documents = new Map<string, MetadataResponse>();
-        this._documentClosedSubscription = workspace.onDidCloseTextDocument(this.onTextDocumentClosed);
+        this._documentClosedSubscription = workspace.onDidCloseTextDocument(this.onTextDocumentClosed, this);
     }
 
     private onTextDocumentClosed(document: TextDocument) : void {

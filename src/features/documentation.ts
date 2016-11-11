@@ -9,23 +9,23 @@ const summaryStartTag = /<summary>/i;
 const summaryEndTag = /<\/summary>/i;
 
 export function extractSummaryText(xmlDocComment: string): string {
-	if (!xmlDocComment) {
-		return xmlDocComment;
-	}
-	
-	let summary = xmlDocComment;
-	
-	let startIndex = summary.search(summaryStartTag);
-	if (startIndex < 0) {
-		return summary;
-	}
-	
-	summary = summary.slice(startIndex + '<summary>'.length);
-	
-	let endIndex = summary.search(summaryEndTag);
-	if (endIndex < 0) {
-		return summary;
-	}
-	
-	return summary.slice(0, endIndex);
+    if (!xmlDocComment) {
+        return xmlDocComment;
+    }
+
+    let summary = xmlDocComment;
+
+    let startIndex = summary.search(summaryStartTag);
+    if (startIndex < 0) {
+        return summary;
+    }
+
+    summary = summary.slice(startIndex + '<summary>'.length);
+
+    let endIndex = summary.search(summaryEndTag);
+    if (endIndex < 0) {
+        return summary;
+    }
+
+    return summary.slice(0, endIndex);
 }

@@ -1,10 +1,13 @@
-**/*.gitignore
-tsconfig.json
-
+.vscode/**
+typings/**
+out/test/**
+test/**
 src/**
 **/*.map
 
-.vscode/**
+.gitignore
+.travis.yml
+tsconfig.json
 
 **/.nyc_output/**
 **/coverage/**

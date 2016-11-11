@@ -9,47 +9,47 @@ import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as tasks from 'vscode-tasks';
-import {OmnisharpServer} from './omnisharp/server';
+import {OmniSharpServer} from './omnisharp/server';
 import * as serverUtils from './omnisharp/utils';
-import * as protocol from './omnisharp/protocol.ts'
+import * as protocol from './omnisharp/protocol';
 
 interface DebugConfiguration {
-    name: string,
-    type: string,
-    request: string,
-    internalConsoleOptions?: string,
-    sourceFileMap?: any,
+    name: string;
+    type: string;
+    request: string;
+    internalConsoleOptions?: string;
+    sourceFileMap?: any;
 }
 
 interface ConsoleLaunchConfiguration extends DebugConfiguration {
-    preLaunchTask: string,
-    program: string,
-    args: string[],
-    cwd: string,
-    stopAtEntry: boolean,
-    env?: any,
-    externalConsole?: boolean
+    preLaunchTask: string;
+    program: string;
+    args: string[];
+    cwd: string;
+    stopAtEntry: boolean;
+    env?: any;
+    externalConsole?: boolean;
 }
 
 interface CommandLine {
-    command: string,
-    args?: string
+    command: string;
+    args?: string;
 }
 
 interface LaunchBrowserConfiguration {
-    enabled: boolean,
-    args: string,
-    windows?: CommandLine,
-    osx: CommandLine,
-    linux: CommandLine
+    enabled: boolean;
+    args: string;
+    windows?: CommandLine;
+    osx: CommandLine;
+    linux: CommandLine;
 }
 
 interface WebLaunchConfiguration extends ConsoleLaunchConfiguration {
-    launchBrowser: LaunchBrowserConfiguration
+    launchBrowser: LaunchBrowserConfiguration;
 }
 
 interface AttachConfiguration extends DebugConfiguration {
-    processId: string
+    processId: string;
 }
 
 interface Paths {
@@ -60,31 +60,31 @@ interface Paths {
 
 function getPaths(): Paths {
     const vscodeFolder = path.join(vscode.workspace.rootPath, '.vscode');
-    
+
     return {
         vscodeFolder: vscodeFolder,
         tasksJsonPath: path.join(vscodeFolder, 'tasks.json'),
         launchJsonPath: path.join(vscodeFolder, 'launch.json')
-    }
+    };
 }
 
 interface Operations {
-    addTasksJson?: boolean,
-    updateTasksJson?: boolean,
-    addLaunchJson?: boolean
+    addTasksJson?: boolean;
+    updateTasksJson?: boolean;
+    addLaunchJson?: boolean;
 }
 
 function hasOperations(operations: Operations) {
     return operations.addLaunchJson ||
-           operations.updateTasksJson ||
-           operations.addLaunchJson;
+        operations.updateTasksJson ||
+        operations.addLaunchJson;
 }
 
 function getOperations() {
     const paths = getPaths();
 
-    return getBuildOperations(paths.tasksJsonPath).then(operations => 
-           getLaunchOperations(paths.launchJsonPath, operations));
+    return getBuildOperations(paths.tasksJsonPath).then(operations =>
+        getLaunchOperations(paths.launchJsonPath, operations));
 }
 
 function getBuildOperations(tasksJsonPath: string) {
@@ -95,7 +95,7 @@ function getBuildOperations(tasksJsonPath: string) {
                     const text = buffer.toString();
                     const tasksJson: tasks.TaskConfiguration = JSON.parse(text);
                     const buildTask = tasksJson.tasks.find(td => td.taskName === 'build');
-                    
+
                     resolve({ updateTasksJson: (buildTask === undefined) });
                 });
             }
@@ -120,26 +120,38 @@ function getLaunchOperations(launchJsonPath: string, operations: Operations) {
     });
 }
 
+enum PromptResult {
+    Yes,
+    No,
+    Disable
+}
+
+interface PromptItem extends vscode.MessageItem {
+    result: PromptResult;
+}
+
 function promptToAddAssets() {
-    return new Promise<boolean>((resolve, reject) => {
-        const item = { title: 'Yes' }
-        
-        vscode.window.showInformationMessage('Required assets to build and debug are missing from your project. Add them?', item).then(selection => {
-            return selection
-                ? resolve(true)
-                : resolve(false);
-        });
+    return new Promise<PromptResult>((resolve, reject) => {
+        const yesItem: PromptItem = { title: 'Yes', result: PromptResult.Yes };
+        const noItem: PromptItem = { title: 'Not Now', result: PromptResult.No, isCloseAffordance: true };
+        const disableItem: PromptItem = { title: "Don't Ask Again", result: PromptResult.Disable };
+
+        const projectName = path.basename(vscode.workspace.rootPath);
+
+        vscode.window.showWarningMessage(
+            `Required assets to build and debug are missing from '${projectName}'. Add them?`, disableItem, noItem, yesItem)
+            .then(selection => resolve(selection.result));
     });
 }
 
 function computeProgramPath(projectData: TargetProjectData) {
     if (!projectData) {
         // If there's no target project data, use a placeholder for the path.
-        return '${workspaceRoot}/bin/Debug/<target-framework>/<project-name.dll>'
+        return '${workspaceRoot}/bin/Debug/<target-framework>/<project-name.dll>';
     }
 
     let result = '${workspaceRoot}';
-    
+
     if (projectData.projectPath) {
         result = path.join(result, path.relative(vscode.workspace.rootPath, projectData.projectPath.fsPath));
     }
@@ -161,7 +173,7 @@ function createLaunchConfiguration(projectData: TargetProjectData): ConsoleLaunc
         externalConsole: false,
         stopAtEntry: false,
         internalConsoleOptions: "openOnSessionStart"
-    }
+    };
 }
 
 function createWebLaunchConfiguration(projectData: TargetProjectData): WebLaunchConfiguration {
@@ -195,7 +207,7 @@ function createWebLaunchConfiguration(projectData: TargetProjectData): WebLaunch
         sourceFileMap: {
             "/Views": "${workspaceRoot}/Views"
         }
-    }
+    };
 }
 
 function createAttachConfiguration(): AttachConfiguration {
@@ -204,19 +216,19 @@ function createAttachConfiguration(): AttachConfiguration {
         type: 'coreclr',
         request: 'attach',
         processId: "${command.pickProcess}"
-    }
+    };
 }
 
 function createLaunchJson(projectData: TargetProjectData, isWebProject: boolean): any {
-    let version =  '0.2.0';
-     if (!isWebProject) {
+    let version = '0.2.0';
+    if (!isWebProject) {
         return {
             version: version,
             configurations: [
                 createLaunchConfiguration(projectData),
                 createAttachConfiguration()
             ]
-        }
+        };
     }
     else {
         return {
@@ -225,7 +237,7 @@ function createLaunchJson(projectData: TargetProjectData, isWebProject: boolean)
                 createWebLaunchConfiguration(projectData),
                 createAttachConfiguration()
             ]
-        }
+        };
     }
 }
 
@@ -249,7 +261,7 @@ function createTasksConfiguration(projectData: TargetProjectData): tasks.TaskCon
         command: 'dotnet',
         isShellCommand: true,
         args: [],
-        tasks: [ createBuildTaskDescription(projectData) ]
+        tasks: [createBuildTaskDescription(projectData)]
     };
 }
 
@@ -258,10 +270,10 @@ function addTasksJsonIfNecessary(projectData: TargetProjectData, paths: Paths, o
         if (!operations.addTasksJson) {
             return resolve();
         }
-        
+
         const tasksJson = createTasksConfiguration(projectData);
         const tasksJsonText = JSON.stringify(tasksJson, null, '    ');
-        
+
         return fs.writeFileAsync(paths.tasksJsonPath, tasksJsonText);
     });
 }
@@ -341,13 +353,13 @@ function hasWebServerDependency(targetProjectData: TargetProjectData): boolean {
     if (projectJsonObject == null) {
         return false;
     }
-    
-    for (var key in projectJsonObject.dependencies) {
+
+    for (let key in projectJsonObject.dependencies) {
         if (key.toLowerCase().startsWith("microsoft.aspnetcore.server")) {
             return true;
         }
     }
-    
+
     return false;
 }
 
@@ -360,40 +372,145 @@ function addLaunchJsonIfNecessary(projectData: TargetProjectData, paths: Paths, 
         const isWebProject = hasWebServerDependency(projectData);
         const launchJson = createLaunchJson(projectData, isWebProject);
         const launchJsonText = JSON.stringify(launchJson, null, '    ');
-        
+
         return fs.writeFileAsync(paths.launchJsonPath, launchJsonText);
     });
 }
 
-export function addAssetsIfNecessary(server: OmnisharpServer) {
-    if (!vscode.workspace.rootPath) {
-        return;
-    }
-    
-    return serverUtils.requestWorkspaceInformation(server).then(info => {
-        // If there are no .NET Core projects, we won't bother offering to add assets.
-        if ('DotNet' in info && info.DotNet.Projects.length > 0) {
-            return getOperations().then(operations => {
-                if (!hasOperations(operations)) {
-                    return;
-                }
-                
-                promptToAddAssets().then(addAssets => {
-                    if (!addAssets) {
-                        return;
+function addAssets(data: TargetProjectData, paths: Paths, operations: Operations) {
+    const promises = [
+        addTasksJsonIfNecessary(data, paths, operations),
+        addLaunchJsonIfNecessary(data, paths, operations)
+    ];
+
+    return Promise.all(promises);
+}
+
+export enum AddAssetResult {
+    NotApplicable,
+    Done,
+    Disable,
+    Cancelled
+}
+
+export function addAssetsIfNecessary(server: OmniSharpServer): Promise<AddAssetResult> {
+    return new Promise<AddAssetResult>((resolve, reject) => {
+        if (!vscode.workspace.rootPath) {
+            return resolve(AddAssetResult.NotApplicable);
+        }
+
+        serverUtils.requestWorkspaceInformation(server).then(info => {
+            // If there are no .NET Core projects, we won't bother offering to add assets.
+            if (info.DotNet && info.DotNet.Projects.length > 0) {
+                return getOperations().then(operations => {
+                    if (!hasOperations(operations)) {
+                        return resolve(AddAssetResult.NotApplicable);
                     }
-                    
-                    const data = findTargetProjectData(info.DotNet.Projects);
-                    const paths = getPaths();
-                    
-                    return fs.ensureDirAsync(paths.vscodeFolder).then(() => {
-                        return Promise.all([
-                            addTasksJsonIfNecessary(data, paths, operations),
-                            addLaunchJsonIfNecessary(data, paths, operations)
-                        ]);
+
+                    promptToAddAssets().then(result => {
+                        if (result === PromptResult.Disable) {
+                            return resolve(AddAssetResult.Disable);
+                        }
+
+                        if (result !== PromptResult.Yes) {
+                            return resolve(AddAssetResult.Cancelled);
+                        }
+
+                        const data = findTargetProjectData(info.DotNet.Projects);
+                        const paths = getPaths();
+
+                        return fs.ensureDirAsync(paths.vscodeFolder).then(() =>
+                            addAssets(data, paths, operations).then(() =>
+                            resolve(AddAssetResult.Done)));
                     });
                 });
+            }
+        }).catch(err =>
+            reject(err));
+    });
+}
+
+function doesAnyAssetExist(paths: Paths) {
+    return new Promise<boolean>((resolve, reject) => {
+        fs.existsAsync(paths.launchJsonPath).then(res => {
+            if (res) {
+                resolve(true);
+            }
+            else {
+                fs.existsAsync(paths.tasksJsonPath).then(res => {
+                    resolve(res);
+                });
+            }
+        });
+    });
+}
+
+function deleteAsset(path: string) {
+    return new Promise<void>((resolve, reject) => {
+        fs.existsAsync(path).then(res => {
+            if (res) {
+                // TODO: Should we check after unlinking to see if the file still exists?
+                fs.unlinkAsync(path).then(() => {
+                    resolve();
+                });
+            }
+        });
+    });
+}
+
+function deleteAssets(paths: Paths) {
+    return Promise.all([
+        deleteAsset(paths.launchJsonPath),
+        deleteAsset(paths.tasksJsonPath)
+    ]);
+}
+
+function shouldGenerateAssets(paths: Paths) {
+    return new Promise<boolean>((resolve, reject) => {
+        doesAnyAssetExist(paths).then(res => {
+            if (res) {
+                const yesItem = { title: 'Yes' };
+                const cancelItem = { title: 'Cancel', isCloseAffordance: true };
+
+                vscode.window.showWarningMessage('Replace existing build and debug assets?', cancelItem, yesItem)
+                    .then(selection => {
+                        if (selection === yesItem) {
+                            deleteAssets(paths).then(_ => resolve(true));
+                        }
+                        else {
+                            // The user clicked cancel
+                            resolve(false);
+                        }
+                    });
+            }
+            else {
+                // The assets don't exist, so we're good to go.
+                resolve(true);
+            }
+        });
+
+    });
+}
+
+export function generateAssets(server: OmniSharpServer) {
+    serverUtils.requestWorkspaceInformation(server).then(info => {
+        if (info.DotNet && info.DotNet.Projects.length > 0) {
+            getOperations().then(operations => {
+                if (hasOperations(operations)) {
+                    const paths = getPaths();
+                    shouldGenerateAssets(paths).then(res => {
+                        if (res) {
+                            fs.ensureDirAsync(paths.vscodeFolder).then(() => {
+                                const data = findTargetProjectData(info.DotNet.Projects);
+                                addAssets(data, paths, operations);
+                            });
+                        }
+                    });
+                }
             });
+        }
+        else {
+            vscode.window.showErrorMessage("Could not locate .NET Core project. Assets were not generated.");
         }
     });
 }

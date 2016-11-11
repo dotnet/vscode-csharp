@@ -3,37 +3,39 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import * as vscode from 'vscode';
 
-export interface Options {
-    path?: string;
-    useMono?: boolean;
-    loggingLevel?: string;
-    autoStart?: boolean;
-}
+export class Options {
+    constructor(
+        public path?: string,
+        public useMono?: boolean,
+        public loggingLevel?: string,
+        public autoStart?: boolean,
+        public projectLoadTimeout?: number) { }
 
-export function readOptions(): Options {
-    // Extra effort is taken below to ensure that legacy versions of options
-    // are supported below. In particular, these are:
-    //
-    // - "csharp.omnisharp" -> "omnisharp.path"
-    // - "csharp.omnisharpUsesMono" -> "omnisharp.useMono"
+    public static Read(): Options {
+        // Extra effort is taken below to ensure that legacy versions of options
+        // are supported below. In particular, these are:
+        //
+        // - "csharp.omnisharp" -> "omnisharp.path"
+        // - "csharp.omnisharpUsesMono" -> "omnisharp.useMono"
 
-    const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
-    const csharpConfig = vscode.workspace.getConfiguration('csharp');
+        const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
+        const csharpConfig = vscode.workspace.getConfiguration('csharp');
 
-    const path = csharpConfig.has('omnisharp')
-        ? csharpConfig.get<string>('omnisharp')
-        : omnisharpConfig.get<string>('path');
+        const path = csharpConfig.has('omnisharp')
+            ? csharpConfig.get<string>('omnisharp')
+            : omnisharpConfig.get<string>('path');
 
-    const useMono = csharpConfig.has('omnisharpUsesMono')
-        ? csharpConfig.get<boolean>('omnisharpUsesMono')
-        : omnisharpConfig.get<boolean>('useMono');
+        const useMono = csharpConfig.has('omnisharpUsesMono')
+            ? csharpConfig.get<boolean>('omnisharpUsesMono')
+            : omnisharpConfig.get<boolean>('useMono');
 
-    const loggingLevel = omnisharpConfig.get<string>('loggingLevel');
-    const autoStart = omnisharpConfig.get<boolean>('autoStart', true);
+        const loggingLevel = omnisharpConfig.get<string>('loggingLevel');
+        const autoStart = omnisharpConfig.get<boolean>('autoStart', true);
 
-    return { path, useMono, loggingLevel, autoStart };
+        const projectLoadTimeout = omnisharpConfig.get<number>('projectLoadTimeout', 60);
+
+        return new Options(path, useMono, loggingLevel, autoStart, projectLoadTimeout);
+    }
 }

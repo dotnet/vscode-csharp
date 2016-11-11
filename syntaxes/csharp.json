@@ -628,7 +628,7 @@
               "name": "entity.name.function.preprocessor.cs"
             }
           },
-          "match": "^\\s*#\\s*(if|else|elif|endif|define|undef|warning|error|line|pragma|region|endregion)\\b\\s*(.*)",
+          "match": "^\\s*#\\s*(if|else|elif|endif|define|undef|warning|error|line|pragma|region|endregion)\\b\\s*(.*?)(?=$|\\/\\/)",
           "name": "meta.preprocessor.cs"
         }
       ]

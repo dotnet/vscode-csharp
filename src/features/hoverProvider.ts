@@ -14,16 +14,16 @@ import {HoverProvider, Hover, TextDocument, CancellationToken, Position} from 'v
 
 export default class OmniSharpHoverProvider extends AbstractSupport implements HoverProvider {
 
-	public provideHover(document: TextDocument, position: Position, token: CancellationToken): Promise<Hover> {
+    public provideHover(document: TextDocument, position: Position, token: CancellationToken): Promise<Hover> {
 
-		let req = createRequest<protocol.TypeLookupRequest>(document, position);
-		req.IncludeDocumentation = true;
+        let req = createRequest<protocol.TypeLookupRequest>(document, position);
+        req.IncludeDocumentation = true;
 
-		return serverUtils.typeLookup(this._server, req, token).then(value => {
-			if (value && value.Type) {
-				let contents = [extractSummaryText(value.Documentation), { language: 'csharp', value: value.Type }];
-				return new Hover(contents);
-			}
-		});
-	}
+        return serverUtils.typeLookup(this._server, req, token).then(value => {
+            if (value && value.Type) {
+                let contents = [extractSummaryText(value.Documentation), { language: 'csharp', value: value.Type }];
+                return new Hover(contents);
+            }
+        });
+    }
 }

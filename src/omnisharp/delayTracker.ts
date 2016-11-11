@@ -24,8 +24,8 @@ export class DelayTracker {
     private _bigDelays: number = 0;            // 3000+ milliseconds
 
     constructor(name: string) {
-		this._name = name;
-	}
+        this._name = name;
+    }
 
     public reportDelay(elapsedTime: number) {
         if (elapsedTime <= ImmedateDelayMax) {
@@ -65,15 +65,15 @@ export class DelayTracker {
         this._bigDelays = 0;
     }
 
-	public hasMeasures() {
-		return this._immediateDelays > 0
-			|| this._nearImmediateDelays > 0
-			|| this._shortDelays > 0
-			|| this._mediumDelays > 0
-			|| this._idleDelays > 0
-			|| this._nonFocusDelays > 0
-			|| this._bigDelays > 0;
-	}
+    public hasMeasures() {
+        return this._immediateDelays > 0
+            || this._nearImmediateDelays > 0
+            || this._shortDelays > 0
+            || this._mediumDelays > 0
+            || this._idleDelays > 0
+            || this._nonFocusDelays > 0
+            || this._bigDelays > 0;
+    }
 
     public getMeasures(): { [key: string]: number } {
         return {
