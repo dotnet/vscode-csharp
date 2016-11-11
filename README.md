@@ -38,7 +38,7 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 #### Debugger
 
 * Remote debugging is now supported for attach by using the `pipeTransport` launch.json option.
-* Reolved issue with setting breakpoints when there are multple files with the same name (e.g. two 'Program.cs' files).
+* Resolved issue with setting breakpoints when there are multple files with the same name (e.g. two 'Program.cs' files).
 
 #### New Dependency Acquisition System
 
@@ -54,7 +54,7 @@ Several new settings have been added:
 #### Colorizer
 
 * A new unit testing framework for testing the colorizer grammer ([#742](https://github.com/OmniSharp/omnisharp-vscode/pull/742)) _(Contributed by [@ivanz](https://github.com/ivanz))_
-* Single-line comments after preprocessor directives ([#762](https://github.com/OmniSharp/omnisharp-vscode/pull/762)) _(Contributed by [damieng](https://github.com/damieng))_
+* Single-line comments after preprocessor directives ([#762](https://github.com/OmniSharp/omnisharp-vscode/pull/762)) _(Contributed by [@damieng](https://github.com/damieng))_
 
 #### Performance
 
@@ -65,7 +65,7 @@ Several new settings have been added:
 * The prompt to generate assets for building and debugging can now be dismissed for a workspace permanently. In addition, a new `dotnet.generateAssets` command has been added to force regeneration of the assets. ([#635](https://github.com/OmniSharp/omnisharp-vscode/issues/635))
 * Fix "running forever" issue for folder with multple .NET Core projects. ([#735](https://github.com/OmniSharp/omnisharp-vscode/issues/735)) _(Contributed by [@eamodio](https://github.com/eamodio))_
 * `ctor` snippet is now more consistent with other code snippets. ([#849](https://github.com/OmniSharp/omnisharp-vscode/pull/849)) _(Contibuted by [@Eibx](https://github.com/Eibx))_
-* Ampersands in file names are now properly escaped on Windows ([#909](https://github.com/OmniSharp/omnisharp-vscode/pull/909)) _(Contributed by [@filipw](https://github.com/filipw))_
+* Ampersands in file paths are now properly escaped on Windows ([#909](https://github.com/OmniSharp/omnisharp-vscode/pull/909)) _(Contributed by [@filipw](https://github.com/filipw))_
 
 ### Supported Operating Systems for Debugging
 
