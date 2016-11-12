@@ -308,6 +308,11 @@ export class PlatformInformation {
                 return rhel_7;
             case 'debian':
                 return debian_8;
+            case 'galliumos':
+                if (distributionVersion.startsWith("2.0")) {
+                    return ubuntu_16_04;
+                }
+                break;
             default:
                 return unknown_distribution;
         }
