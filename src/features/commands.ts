@@ -5,7 +5,7 @@
 
 'use strict';
 
-import {OmnisharpServer} from '../omnisharp/server';
+import {OmniSharpServer} from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
 import {findLaunchTargets} from '../omnisharp/launcher';
 import * as cp from 'child_process';
@@ -19,7 +19,7 @@ import {generateAssets} from '../assets';
 
 let channel = vscode.window.createOutputChannel('.NET');
 
-export default function registerCommands(server: OmnisharpServer, extensionPath: string) {
+export default function registerCommands(server: OmniSharpServer, extensionPath: string) {
     let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server));
     let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', () => pickProjectAndStart(server));
     let d3 = vscode.commands.registerCommand('o.showOutput', () => server.getChannel().show(vscode.ViewColumn.Three));
@@ -44,7 +44,7 @@ export default function registerCommands(server: OmnisharpServer, extensionPath:
     return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10);
 }
 
-function restartOmniSharp(server: OmnisharpServer) {
+function restartOmniSharp(server: OmniSharpServer) {
     if (server.isRunning()) {
         server.restart();
     }
@@ -53,7 +53,7 @@ function restartOmniSharp(server: OmnisharpServer) {
     }
 }
 
-function pickProjectAndStart(server: OmnisharpServer) {
+function pickProjectAndStart(server: OmniSharpServer) {
 
     return findLaunchTargets().then(targets => {
 
@@ -103,7 +103,7 @@ function projectsToCommands(projects: protocol.DotNetProject[]): Promise<Command
     });
 }
 
-export function dotnetRestoreAllProjects(server: OmnisharpServer) {
+export function dotnetRestoreAllProjects(server: OmniSharpServer) {
 
     if (!server.isRunning()) {
         return Promise.reject('OmniSharp server is not running.');
@@ -127,7 +127,7 @@ export function dotnetRestoreAllProjects(server: OmnisharpServer) {
     });
 }
 
-export function dotnetRestoreForProject(server: OmnisharpServer, fileName: string) {
+export function dotnetRestoreForProject(server: OmniSharpServer, fileName: string) {
 
     if (!server.isRunning()) {
         return Promise.reject('OmniSharp server is not running.');
@@ -183,7 +183,7 @@ function dotnetRestore(cwd: string, fileName?: string) {
 
         dotnet.on('error', err => {
             channel.appendLine(`ERROR: ${err}`);
-            reject(err)
+            reject(err);
         });
     });
 }

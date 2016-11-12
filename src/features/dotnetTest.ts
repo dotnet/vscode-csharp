@@ -5,7 +5,7 @@
 
 'use strict';
 
-import {OmnisharpServer} from '../omnisharp/server';
+import {OmniSharpServer} from '../omnisharp/server';
 import {toRange} from '../omnisharp/typeConvertion';
 import * as vscode from 'vscode';
 import * as serverUtils from "../omnisharp/utils";
@@ -21,20 +21,20 @@ function getTestOutputChannel(): vscode.OutputChannel {
     return _testOutputChannel;
 }
 
-export function registerDotNetTestRunCommand(server: OmnisharpServer): vscode.Disposable {
+export function registerDotNetTestRunCommand(server: OmniSharpServer): vscode.Disposable {
     return vscode.commands.registerCommand(
         'dotnet.test.run',
         (testMethod, fileName) => runDotnetTest(testMethod, fileName, server));
 }
 
-export function registerDotNetTestDebugCommand(server: OmnisharpServer): vscode.Disposable {
+export function registerDotNetTestDebugCommand(server: OmniSharpServer): vscode.Disposable {
     return vscode.commands.registerCommand(
         'dotnet.test.debug',
         (testMethod, fileName) => debugDotnetTest(testMethod, fileName, server));
 }
 
 // Run test through dotnet-test command. This function can be moved to a separate structure
-export function runDotnetTest(testMethod: string, fileName: string, server: OmnisharpServer) {
+export function runDotnetTest(testMethod: string, fileName: string, server: OmniSharpServer) {
     getTestOutputChannel().show();
     getTestOutputChannel().appendLine('Running test ' + testMethod + '...');
     serverUtils
@@ -54,7 +54,7 @@ export function runDotnetTest(testMethod: string, fileName: string, server: Omni
 }
 
 // Run test through dotnet-test command with debugger attached
-export function debugDotnetTest(testMethod: string, fileName: string, server: OmnisharpServer) {
+export function debugDotnetTest(testMethod: string, fileName: string, server: OmniSharpServer) {
     serverUtils.getTestStartInfo(server, { FileName: fileName, MethodName: testMethod }).then(response => {
         vscode.commands.executeCommand(
             'vscode.startDebug', {
@@ -68,7 +68,7 @@ export function debugDotnetTest(testMethod: string, fileName: string, server: Om
             }
         ).then(
             response => { },
-            reason => { vscode.window.showErrorMessage(`Failed to start debugger on test because ${reason}.`) });
+            reason => { vscode.window.showErrorMessage(`Failed to start debugger on test because ${reason}.`); });
     });
 }
 

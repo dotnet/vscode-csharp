@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs';
-import * as path from 'path';
 import * as vscode from 'vscode';
 import TelemetryReporter from 'vscode-extension-telemetry';
 
@@ -66,7 +64,7 @@ function installRuntimeDependencies(extension: vscode.Extension<any>, logger: Lo
             statusItem.tooltip = text;
             statusItem.show();
         }
-    }
+    };
 
     let platformInfo: PlatformInformation;
     let packageManager: PackageManager;
@@ -78,7 +76,7 @@ function installRuntimeDependencies(extension: vscode.Extension<any>, logger: Lo
     return util.touchInstallFile(util.InstallFileType.Begin)
         .then(() => {
             installationStage = 'getPlatformInfo';
-            return PlatformInformation.GetCurrent()
+            return PlatformInformation.GetCurrent();
         })
         .then(info => {
             platformInfo = info;
@@ -151,31 +149,4 @@ function installRuntimeDependencies(extension: vscode.Extension<any>, logger: Lo
             // Attach a an empty catch to this so that errors here do not propogate
             return util.deleteInstallFile(util.InstallFileType.Begin).catch((error) => { });
         });
-}
-
-function allowExecution(filePath: string, platformInfo: PlatformInformation, logger: Logger): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-        if (!platformInfo.isWindows()) {
-            util.fileExists(filePath)
-                .then(exists => {
-                    if (exists) {
-                        fs.chmod(filePath, '755', err => {
-                            if (err) {
-                                return reject(err);
-                            }
-
-                            resolve();
-                        });
-                    }
-                    else {
-                        logger.appendLine();
-                        logger.appendLine(`Warning: Expected file '${filePath}' is missing.`);
-                        resolve();
-                    }
-                });
-        }
-        else {
-            resolve();
-        }
-    });
 }

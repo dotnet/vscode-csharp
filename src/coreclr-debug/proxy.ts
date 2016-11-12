@@ -56,7 +56,7 @@ function proxy() {
     let extensionPath = path.resolve(__dirname, '../../../');
     common.setExtensionPath(extensionPath);
 
-    let logger = new Logger((text) => { console.log(text) });
+    let logger = new Logger((text) => { console.log(text); });
     let util = new CoreClrDebugUtil(extensionPath, logger);
     
     if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {

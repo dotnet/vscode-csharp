@@ -5,12 +5,11 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import * as fs from 'fs';
 import TelemetryReporter from 'vscode-extension-telemetry';
-import { CoreClrDebugUtil, DotnetInfo, DotNetCliError } from './util';
+import { CoreClrDebugUtil, DotnetInfo, } from './util';
 import * as debugInstall from './install';
-import * as path from 'path';
-import { Logger } from './../logger'
+import { Logger } from './../logger';
+import { PlatformInformation } from './../platform';
 
 let _debugUtil: CoreClrDebugUtil = null;
 let _reporter: TelemetryReporter = null;
@@ -22,9 +21,22 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
     _logger = logger;
 
     if (!CoreClrDebugUtil.existsSync(_debugUtil.debugAdapterDir())) {
-        // We have been activated but it looks like our package was not installed. This is bad.
-        logger.appendLine("[ERROR]: C# Extension failed to install the debugger package");
-        showInstallErrorMessage();
+        PlatformInformation.GetCurrent().then((info) => {
+            if (info.runtimeId) {
+                logger.appendLine("[ERROR]: C# Extension failed to install the debugger package");
+                showInstallErrorMessage();
+            } else {
+                if (info.isLinux) { 
+                    logger.appendLine(`[WARNING]: The current Linux distribution '${info.distribution.name}' version '${info.distribution.version}' is not currently supported by the .NET Core debugger. Debugging will not be available.`);
+                } else {
+                    logger.appendLine(`[WARNING]: The current operating system is not currently supported by the .NET Core debugger. Debugging will not be available.`);
+                }
+            }
+        }, (err) => {
+            // Somehow we couldn't figure out the platform we are on
+            logger.appendLine("[ERROR]: C# Extension failed to install the debugger package");
+            showInstallErrorMessage();
+        });
     } else if (!CoreClrDebugUtil.existsSync(_debugUtil.installCompleteFilePath())) {
         _debugUtil.checkDotNetCli()
             .then((dotnetInfo: DotnetInfo) => {
@@ -34,7 +46,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
                         vscode.window.setStatusBarMessage('Successfully installed .NET Core Debugger.');
                     })
                     .catch((err) => {
-                        logger.appendLine("[ERROR]: An error occured while installing the .NET Core Debugger:")
+                        logger.appendLine("[ERROR]: An error occured while installing the .NET Core Debugger:");
                         logger.appendLine(err);
                         showInstallErrorMessage();
                         // TODO: log telemetry?
@@ -70,11 +82,5 @@ function showDotnetToolsWarning(message: string) : void
                     vscode.commands.executeCommand('workbench.action.openGlobalSettings');
                 }
             });
-    }
-}
-
-function logTelemetry(eventName: string, properties?: {[prop: string]: string}): void {
-    if (_reporter !== null) {
-        _reporter.sendTelemetryEvent('coreclr-debug/' + eventName, properties);
     }
 }

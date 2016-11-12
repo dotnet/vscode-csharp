@@ -18,7 +18,8 @@ const unknown = 'unknown';
 export class LinuxDistribution {
     public constructor(
         public name: string,
-        public version: string) { }
+        public version: string,
+        public idLike?: string[]) { }
 
     public static GetCurrent(): Promise<LinuxDistribution> {
         // Try /etc/os-release and fallback to /usr/lib/os-release per the synopsis
@@ -48,6 +49,7 @@ export class LinuxDistribution {
     public static FromReleaseInfo(releaseInfo: string, eol: string = os.EOL): LinuxDistribution {
         let name = unknown;
         let version = unknown;
+        let idLike : string[] = null;
 
         const lines = releaseInfo.split(eol);
         for (let line of lines) {
@@ -69,14 +71,17 @@ export class LinuxDistribution {
                 else if (key === 'VERSION_ID') {
                     version = value;
                 }
+                else if (key === 'ID_LIKE') {
+                    idLike = value.split(" ");
+                }
 
-                if (name !== unknown && version !== unknown) {
+                if (name !== unknown && version !== unknown && idLike !== null) {
                     break;
                 }
             }
         }
 
-        return new LinuxDistribution(name, version);
+        return new LinuxDistribution(name, version, idLike);
     }
 }
 
@@ -157,7 +162,7 @@ export class PlatformInformation {
 
         return Promise.all([architecturePromise, distributionPromise])
             .then(([arch, distro]) => {
-                return new PlatformInformation(platform, arch, distro)
+                return new PlatformInformation(platform, arch, distro);
             });
     }
 
@@ -215,56 +220,28 @@ export class PlatformInformation {
 
             case 'linux':
                 if (architecture === 'x86_64') {
-                    const centos_7 = 'centos.7-x64';
-                    const debian_8 = 'debian.8-x64';
-                    const fedora_23 = 'fedora.23-x64';
-                    const opensuse_13_2 = 'opensuse.13.2-x64';
-                    const rhel_7 = 'rhel.7-x64';
-                    const ubuntu_14_04 = 'ubuntu.14.04-x64';
-                    const ubuntu_16_04 = 'ubuntu.16.04-x64';
 
-                    switch (distribution.name) {
-                        case 'ubuntu':
-                            if (distribution.version.startsWith("14")) {
-                                // This also works for Linux Mint
-                                return ubuntu_14_04;
-                            }
-                            else if (distribution.version.startsWith("16")) {
-                                return ubuntu_16_04;
-                            }
+                    const unknown_distribution = 'unknown_distribution';
+                    const unknown_version = 'unknown_version';
 
-                            break;
-                        case 'elementary':
-                        case 'elementary OS':
-                            if (distribution.version.startsWith("0.3")) {
-                                // Elementary OS 0.3 Freya is binary compatible with Ubuntu 14.04
-                                return ubuntu_14_04;
-                            }
-                            else if (distribution.version.startsWith("0.4")) {
-                                // Elementary OS 0.4 Loki is binary compatible with Ubuntu 16.04
-                                return ubuntu_16_04;
-                            }
+                    // First try the distribution name
+                    let runtimeId = PlatformInformation.getRuntimeIdHelper(distribution.name, distribution.version);
 
-                            break;
-                        case 'linuxmint':
-                            if (distribution.version.startsWith("18")) {
-                                // Linux Mint 18 is binary compatible with Ubuntu 16.04
-                                return ubuntu_16_04;
+                    // If the distribution isn't one that we understand, but the 'ID_LIKE' field has something that we understand, use that
+                    //
+                    // NOTE: 'ID_LIKE' doesn't specify the version of the 'like' OS. So we will use the 'VERSION_ID' value. This will restrict
+                    // how useful ID_LIKE will be since it requires the version numbers to match up, but it is the best we can do.
+                    if (runtimeId === unknown_distribution && distribution.idLike && distribution.idLike.length > 0) {
+                        for (let id of distribution.idLike) {
+                            runtimeId = PlatformInformation.getRuntimeIdHelper(id, distribution.version);
+                            if (runtimeId !== unknown_distribution) {
+                                break;
                             }
+                        }
+                    }
 
-                            break;
-                        case 'centos':
-                        case 'ol':
-                            // Oracle Linux is binary compatible with CentOS
-                        return centos_7;
-                        case 'fedora':
-                            return fedora_23;
-                        case 'opensuse':
-                            return opensuse_13_2;
-                        case 'rhel':
-                            return rhel_7;
-                        case 'debian':
-                            return debian_8;
+                    if (runtimeId !== unknown_distribution && runtimeId !== unknown_version) {
+                        return runtimeId;
                     }
                 }
 
@@ -275,5 +252,66 @@ export class PlatformInformation {
         // If we got here, we've ended up with a platform we don't support  like 'freebsd' or 'sunos'.
         // Chances are, VS Code doesn't support these platforms either.
         throw Error('Unsupported platform ' + platform);
+    }
+    
+    private static getRuntimeIdHelper(distributionName: string, distributionVersion: string): string {
+        const unknown_distribution = 'unknown_distribution';
+        const unknown_version = 'unknown_version';
+
+        const centos_7 = 'centos.7-x64';
+        const debian_8 = 'debian.8-x64';
+        const fedora_23 = 'fedora.23-x64';
+        const opensuse_13_2 = 'opensuse.13.2-x64';
+        const rhel_7 = 'rhel.7-x64';
+        const ubuntu_14_04 = 'ubuntu.14.04-x64';
+        const ubuntu_16_04 = 'ubuntu.16.04-x64';
+
+        switch (distributionName) {
+            case 'ubuntu':
+                if (distributionVersion.startsWith("14")) {
+                    // This also works for Linux Mint
+                    return ubuntu_14_04;
+                }
+                else if (distributionVersion.startsWith("16")) {
+                    return ubuntu_16_04;
+                }
+
+                break;
+            case 'elementary':
+            case 'elementary OS':
+                if (distributionVersion.startsWith("0.3")) {
+                    // Elementary OS 0.3 Freya is binary compatible with Ubuntu 14.04
+                    return ubuntu_14_04;
+                }
+                else if (distributionVersion.startsWith("0.4")) {
+                    // Elementary OS 0.4 Loki is binary compatible with Ubuntu 16.04
+                    return ubuntu_16_04;
+                }
+
+                break;
+            case 'linuxmint':
+                if (distributionVersion.startsWith("18")) {
+                    // Linux Mint 18 is binary compatible with Ubuntu 16.04
+                    return ubuntu_16_04;
+                }
+
+                break;
+            case 'centos':
+            case 'ol':
+                // Oracle Linux is binary compatible with CentOS
+                return centos_7;
+            case 'fedora':
+                return fedora_23;
+            case 'opensuse':
+                return opensuse_13_2;
+            case 'rhel':
+                return rhel_7;
+            case 'debian':
+                return debian_8;
+            default:
+                return unknown_distribution;
+        }
+
+        return unknown_version;
     }
 }

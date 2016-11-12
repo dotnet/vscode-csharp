@@ -32,6 +32,7 @@ export interface Status {
 }
 
 export class PackageError extends Error {
+    // Do not put PII (personally identifiable information) in the 'message' field as it will be logged to telemetry
     constructor(public message: string, 
                 public pkg: Package = null, 
                 public innerError: any = null) {
@@ -75,7 +76,6 @@ export class PackageManager {
                 // Convert relative binary paths to absolute
                 for (let pkg of this.allPackages) {
                     if (pkg.binaries) {
-                        let basePath = util.getExtensionPath();
                         pkg.binaries = pkg.binaries.map(value => path.resolve(getBaseInstallPath(pkg), value));
                     }
                 }
@@ -92,8 +92,10 @@ export class PackageManager {
         return this.GetAllPackages()
             .then(list => {
                 return list.filter(pkg => {
-                    if (pkg.runtimeIds && this.platformInfo.runtimeId && pkg.runtimeIds.indexOf(this.platformInfo.runtimeId) === -1) {
-                        return false;
+                    if (pkg.runtimeIds) {
+                        if (!this.platformInfo.runtimeId || pkg.runtimeIds.indexOf(this.platformInfo.runtimeId) === -1) {
+                            return false;
+                        }
                     }
 
                     if (pkg.architectures && pkg.architectures.indexOf(this.platformInfo.architecture) === -1) {
@@ -123,7 +125,7 @@ function getNoopStatus(): Status {
     return {
         setMessage: text => { },
         setDetail: text => { }
-    }
+    };
 }
 
 function downloadPackage(pkg: Package, logger: Logger, status?: Status, proxy?: string, strictSSL?: boolean): Promise<void> {
@@ -140,7 +142,7 @@ function downloadPackage(pkg: Package, logger: Logger, status?: Status, proxy?: 
                 return reject(new PackageError('Error from tmp.file', pkg, err));
             }
 
-            resolve(<tmp.SynchrounousResult>{ name: path, fd: fd, removeCallback: cleanupCallback })
+            resolve(<tmp.SynchrounousResult>{ name: path, fd: fd, removeCallback: cleanupCallback });
         });
     }).then(tmpResult => {
         pkg.tmpFile = tmpResult;
@@ -167,7 +169,7 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
         let request = https.request(options, response => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
-                resolve(downloadFile(response.headers.location, pkg, logger, status));
+                return resolve(downloadFile(response.headers.location, pkg, logger, status));
             }
 
             if (response.statusCode != 200) {
@@ -287,7 +289,7 @@ function installPackage(pkg: Package, logger: Logger, status?: Status): Promise<
 
             zipFile.on('error', err => {
                 reject(new PackageError('Zip File Error:' + err.code || '', pkg, err));
-            })
+            });
         });
     }).then(() => {
         // Clean up temp file
