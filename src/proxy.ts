@@ -32,7 +32,9 @@ export function getProxyAgent(requestURL: Url, proxy?: string, strictSSL?: boole
         return null;
     }
 
-    strictSSL = strictSSL || true;
+    if (strictSSL === undefined) {
+        strictSSL = true;
+    }
 
     const opts = {
         host: proxyEndpoint.hostname,
