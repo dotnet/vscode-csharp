@@ -147,7 +147,7 @@ function downloadPackage(pkg: Package, logger: Logger, status?: Status, proxy?: 
     }).then(tmpResult => {
         pkg.tmpFile = tmpResult;
 
-        return downloadFile(pkg.url, pkg, logger, status)
+        return downloadFile(pkg.url, pkg, logger, status, proxy, strictSSL)
             .then(() => logger.appendLine(' Done!'));
     });
 }
@@ -169,7 +169,7 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
         let request = https.request(options, response => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
-                return resolve(downloadFile(response.headers.location, pkg, logger, status));
+                return resolve(downloadFile(response.headers.location, pkg, logger, status, proxy, strictSSL));
             }
 
             if (response.statusCode != 200) {
