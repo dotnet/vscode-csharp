@@ -128,7 +128,7 @@ function getNoopStatus(): Status {
     };
 }
 
-function downloadPackage(pkg: Package, logger: Logger, status?: Status, proxy?: string, strictSSL?: boolean): Promise<void> {
+function downloadPackage(pkg: Package, logger: Logger, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
     status = status || getNoopStatus();
 
     logger.append(`Downloading package '${pkg.description}' `);
@@ -152,7 +152,7 @@ function downloadPackage(pkg: Package, logger: Logger, status?: Status, proxy?: 
     });
 }
 
-function downloadFile(urlString: string, pkg: Package, logger: Logger, status: Status, proxy?: string, strictSSL?: boolean): Promise<void> {
+function downloadFile(urlString: string, pkg: Package, logger: Logger, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
     const url = parseUrl(urlString);
 
     const options: https.RequestOptions = {

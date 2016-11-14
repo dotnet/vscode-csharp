@@ -19,7 +19,7 @@ function getSystemProxyURL(requestURL: Url): string {
     return null;
 }
 
-export function getProxyAgent(requestURL: Url, proxy?: string, strictSSL?: boolean): any {
+export function getProxyAgent(requestURL: Url, proxy: string, strictSSL: boolean): any {
     const proxyURL = proxy || getSystemProxyURL(requestURL);
 
     if (!proxyURL) {
