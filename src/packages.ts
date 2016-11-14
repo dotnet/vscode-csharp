@@ -128,7 +128,7 @@ function getNoopStatus(): Status {
     };
 }
 
-function downloadPackage(pkg: Package, logger: Logger, status?: Status, proxy?: string, strictSSL?: boolean): Promise<void> {
+function downloadPackage(pkg: Package, logger: Logger, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
     status = status || getNoopStatus();
 
     logger.append(`Downloading package '${pkg.description}' `);
@@ -147,12 +147,12 @@ function downloadPackage(pkg: Package, logger: Logger, status?: Status, proxy?: 
     }).then(tmpResult => {
         pkg.tmpFile = tmpResult;
 
-        return downloadFile(pkg.url, pkg, logger, status)
+        return downloadFile(pkg.url, pkg, logger, status, proxy, strictSSL)
             .then(() => logger.appendLine(' Done!'));
     });
 }
 
-function downloadFile(urlString: string, pkg: Package, logger: Logger, status: Status, proxy?: string, strictSSL?: boolean): Promise<void> {
+function downloadFile(urlString: string, pkg: Package, logger: Logger, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
     const url = parseUrl(urlString);
 
     const options: https.RequestOptions = {
@@ -169,7 +169,7 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
         let request = https.request(options, response => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
-                return resolve(downloadFile(response.headers.location, pkg, logger, status));
+                return resolve(downloadFile(response.headers.location, pkg, logger, status, proxy, strictSSL));
             }
 
             if (response.statusCode != 200) {
