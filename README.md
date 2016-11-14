@@ -14,9 +14,13 @@ Welcome to the C# extension for Visual Studio Code! This preview provides the fo
 The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnisharp-roslyn).
 
 
-### Get Started Writing C&#35; in VS Code
+### Get Started Writing C# in VS Code
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-with-VS-Code-using-CSharp-and-NET-Core)
+
+### What's New in 1.5.1
+
+* Fix to properly support `http.proxy` and `http.proxyStrictSSL` settings. ([#930](https://github.com/OmniSharp/omnisharp-vscode/issues/930))
 
 ### What's New in 1.5
 
