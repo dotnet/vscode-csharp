@@ -18,6 +18,7 @@ import { getProxyAgent } from './proxy';
 export interface Package {
     description: string;
     url: string;
+    fallbackUrl?: string;
     installPath?: string;
     platforms: string[];
     runtimeIds: string[];
@@ -147,8 +148,22 @@ function downloadPackage(pkg: Package, logger: Logger, status: Status, proxy: st
     }).then(tmpResult => {
         pkg.tmpFile = tmpResult;
 
-        return downloadFile(pkg.url, pkg, logger, status, proxy, strictSSL)
+        let result = downloadFile(pkg.url, pkg, logger, status, proxy, strictSSL)
             .then(() => logger.appendLine(' Done!'));
+
+        // If the package has a fallback Url, and downloading from the primary Url failed, try again from 
+        // the fallback. This is used for debugger packages as some users have had issues downloading from
+        // the CDN link.
+        if (pkg.fallbackUrl) {
+            result = result.catch((primaryUrlError) => {
+                logger.append(`\tRetrying from '${pkg.fallbackUrl}' `);
+                return downloadFile(pkg.fallbackUrl, pkg, logger, status, proxy, strictSSL)
+                    .then(() => logger.appendLine(' Done!'))
+                    .catch(() => primaryUrlError);
+            });
+        }
+
+        return result;
     });
 }
 
