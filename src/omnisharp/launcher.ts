@@ -41,10 +41,12 @@ export function findLaunchTargets(): Thenable<LaunchTarget[]> {
         return Promise.resolve([]);
     }
 
+    const options = Options.Read();
+
     return vscode.workspace.findFiles(
         /*include*/ '{**/*.sln,**/*.csproj,**/project.json}', 
         /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
-        /*maxResults*/ 100)
+        /*maxResults*/ options.maxProjectResults)
     .then(resources => {
         return select(resources, vscode.workspace.rootPath);
     });
