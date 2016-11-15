@@ -400,8 +400,6 @@ export class OmniSharpServer {
             return Promise.reject<TResponse>('server has been stopped or not started');
         }
 
-        console.log(`makeRequest: command=${command}`);
-
         let startTime: number;
         let request: Request;
 
@@ -523,6 +521,10 @@ export class OmniSharpServer {
             return;
         }
 
+        if (this._debugMode) {
+            this._logger.appendLine(`handleResponse: ${packet.Command} (${packet.Request_seq})`);
+        }
+
         if (packet.Success) {
             request.onSuccess(packet.Body);
         }
@@ -555,7 +557,11 @@ export class OmniSharpServer {
         };
 
         if (this._debugMode) {
-            this._logger.appendLine(`Making request: ${request.command} (${id})`);
+            this._logger.append(`makeRequest: ${request.command} (${id})`);
+            if (request.data) {
+                this._logger.append(`, data=${JSON.stringify(request.data)}`);
+            }
+            this._logger.appendLine();
         }
 
         this._serverProcess.stdin.write(JSON.stringify(requestPacket) + '\n');
