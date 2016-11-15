@@ -133,6 +133,14 @@ class DiagnosticsProvider extends AbstractSupport {
         let d3 = vscode.workspace.onDidChangeTextDocument(event => this._onDocumentAddOrChange(event.document), this);
         let d5 = vscode.workspace.onDidCloseTextDocument(this._onDocumentRemove, this);
         this._disposable = vscode.Disposable.from(this._diagnostics, d1, d2, d3, d4, d5);
+
+        // Go ahead and check for diagnostics in the currently visible editors.
+        for (let editor of vscode.window.visibleTextEditors) {
+            let document = editor.document;
+            if (document.languageId === 'csharp' && document.uri.scheme === 'file') {
+                this._validateDocument(document);
+            }
+        }
     }
 
     public dispose(): void {
@@ -173,7 +181,6 @@ class DiagnosticsProvider extends AbstractSupport {
     }
 
     private _validateDocument(document: vscode.TextDocument): void {
-
         // If we've already started computing for this document, cancel that work.
         let key = document.uri.toString();
         if (this._documentValidations[key]) {
