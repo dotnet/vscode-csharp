@@ -314,6 +314,11 @@
           "type": "number",
           "default": 60,
           "description": "The time Visual Studio Code will wait for the OmniSharp server to start. Time is expressed in seconds."
+        },
+        "omnisharp.maxProjectResults": {
+          "type": "number",
+          "default": 250,
+          "description": "The maximum number of projects to be shown in the 'Select Project' dropdown (maximum 250)."
         }
       }
     },
