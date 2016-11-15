@@ -83,6 +83,16 @@ function installRuntimeDependencies(extension: vscode.Extension<any>, logger: Lo
             packageManager = new PackageManager(info, extension.packageJSON);
             logger.appendLine();
 
+            // Displa y platform information and RID followed by a blank line
+            logger.append(`Platform: ${info.toString()}`);
+            if (info.runtimeId) {
+                logger.appendLine(` (${info.runtimeId})`);
+            }
+            else {
+                logger.appendLine();
+            }
+            logger.appendLine();
+
             installationStage = 'downloadPackages';
 
             const config = vscode.workspace.getConfiguration();
