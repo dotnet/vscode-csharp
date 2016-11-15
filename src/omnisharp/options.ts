@@ -36,7 +36,7 @@ export class Options {
         const autoStart = omnisharpConfig.get<boolean>('autoStart', true);
 
         const projectLoadTimeout = omnisharpConfig.get<number>('projectLoadTimeout', 60);
-        const maxProjectResults = omnisharpConfig.get<number>('maxProjectResults', 100);
+        const maxProjectResults = omnisharpConfig.get<number>('maxProjectResults', 250);
 
         return new Options(path, useMono, loggingLevel, autoStart, projectLoadTimeout, maxProjectResults);
     }

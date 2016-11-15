@@ -317,7 +317,7 @@
         },
         "omnisharp.maxProjectResults": {
           "type": "number",
-          "default": 100,
+          "default": 250,
           "description": "The amount of projects to be shown in the 'Select Project' dropdown, discovered in the descendant folders of the working folder. Once the limit is reached, the extension will stop searching for projects."
         }
       }
