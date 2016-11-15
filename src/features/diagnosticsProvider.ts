@@ -245,6 +245,13 @@ class DiagnosticsProvider extends AbstractSupport {
                     }
                 }
 
+                // Clear diagnostics for files that no longer have any diagnostics.
+                this._diagnostics.forEach((uri, diagnostics) => {
+                    if (!entries.find(tuple => tuple[0].toString() === uri.toString())) {
+                        this._diagnostics.delete(uri);
+                    }
+                });
+
                 // replace all entries
                 this._diagnostics.set(entries);
             });
