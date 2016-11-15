@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.5.0",
+  "version": "1.5.2",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -111,8 +111,7 @@
         "win32"
       ],
       "architectures": [
-        "x86",
-        "32-bit"
+        "x86"
       ]
     },
     {
@@ -123,8 +122,7 @@
         "win32"
       ],
       "architectures": [
-        "x86_64",
-        "64-bit"
+        "x86_64"
       ]
     },
     {
@@ -139,6 +137,7 @@
     {
       "description": ".NET Core Debugger (Windows / x64)",
       "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-5-0/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "win7-x64"
@@ -147,6 +146,7 @@
     {
       "description": ".NET Core Debugger (macOS / x64)",
       "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-osx.10.11-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-5-0/coreclr-debug-osx.10.11-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "osx.10.11-x64"
@@ -159,6 +159,7 @@
     {
       "description": ".NET Core Debugger (CentOS / x64)",
       "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-centos.7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-5-0/coreclr-debug-centos.7-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "centos.7-x64"
@@ -171,6 +172,7 @@
     {
       "description": ".NET Core Debugger (Debian / x64)",
       "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-debian.8-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-5-0/coreclr-debug-debian.8-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "debian.8-x64"
@@ -183,6 +185,7 @@
     {
       "description": ".NET Core Debugger (Fedora / x64)",
       "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-fedora.23-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-5-0/coreclr-debug-fedora.23-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "fedora.23-x64"
@@ -195,6 +198,7 @@
     {
       "description": ".NET Core Debugger (OpenSUSE / x64)",
       "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-opensuse.13.2-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-5-0/coreclr-debug-opensuse.13.2-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "opensuse.13.2-x64"
@@ -207,6 +211,7 @@
     {
       "description": ".NET Core Debugger (RHEL / x64)",
       "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-rhel.7.2-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-5-0/coreclr-debug-rhel.7.2-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "rhel.7-x64"
@@ -219,6 +224,7 @@
     {
       "description": ".NET Core Debugger (Ubuntu 14 / x64)",
       "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-ubuntu.14.04-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-5-0/coreclr-debug-ubuntu.14.04-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "ubuntu.14.04-x64"
@@ -231,6 +237,7 @@
     {
       "description": ".NET Core Debugger (Ubuntu 16 / x64)",
       "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-5-0/coreclr-debug-ubuntu.16.04-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-5-0/coreclr-debug-ubuntu.16.04-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "ubuntu.16.04-x64"
