@@ -3,18 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
-import {OmniSharpServer} from '../omnisharp/server';
+import { OmniSharpServer } from '../omnisharp/server';
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import {toRange} from '../omnisharp/typeConvertion';
-import {Disposable, Uri, CancellationTokenSource, TextDocument, Diagnostic, DiagnosticCollection, DiagnosticSeverity, workspace, languages} from 'vscode';
+import { toRange } from '../omnisharp/typeConvertion';
+import * as vscode from 'vscode';
 
 export class Advisor {
 
-    private _disposable: Disposable;
+    private _disposable: vscode.Disposable;
     private _server: OmniSharpServer;
     private _packageRestoreCounter: number = 0;
     private _projectSourceFileCounts: { [path: string]: number } = Object.create(null);
@@ -27,7 +25,7 @@ export class Advisor {
         let d3 = server.onProjectRemoved(this._onProjectRemoved, this);
         let d4 = server.onBeforePackageRestore(this._onBeforePackageRestore, this);
         let d5 = server.onPackageRestore(this._onPackageRestore, this);
-        this._disposable = Disposable.from(d1, d2, d3, d4, d5);
+        this._disposable = vscode.Disposable.from(d1, d2, d3, d4, d5);
     }
 
     public dispose() {
@@ -112,29 +110,37 @@ export class Advisor {
     }
 }
 
-export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor): Disposable {
+export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor): vscode.Disposable {
     return new DiagnosticsProvider(server, advisor);
 }
 
 class DiagnosticsProvider extends AbstractSupport {
 
     private _validationAdvisor: Advisor;
-    private _disposable: Disposable;
-    private _documentValidations: { [uri: string]: CancellationTokenSource } = Object.create(null);
-    private _projectValidation: CancellationTokenSource;
-    private _diagnostics: DiagnosticCollection;
+    private _disposable: vscode.Disposable;
+    private _documentValidations: { [uri: string]: vscode.CancellationTokenSource } = Object.create(null);
+    private _projectValidation: vscode.CancellationTokenSource;
+    private _diagnostics: vscode.DiagnosticCollection;
 
     constructor(server: OmniSharpServer, validationAdvisor: Advisor) {
         super(server);
         this._validationAdvisor = validationAdvisor;
-        this._diagnostics = languages.createDiagnosticCollection('csharp');
+        this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
 
         let d1 = this._server.onPackageRestore(this._validateProject, this);
         let d2 = this._server.onProjectChange(this._validateProject, this);
-        let d4 = workspace.onDidOpenTextDocument(event => this._onDocumentAddOrChange(event), this);
-        let d3 = workspace.onDidChangeTextDocument(event => this._onDocumentAddOrChange(event.document), this);
-        let d5 = workspace.onDidCloseTextDocument(this._onDocumentRemove, this);
-        this._disposable = Disposable.from(this._diagnostics, d1, d2, d3, d4, d5);
+        let d4 = vscode.workspace.onDidOpenTextDocument(event => this._onDocumentAddOrChange(event), this);
+        let d3 = vscode.workspace.onDidChangeTextDocument(event => this._onDocumentAddOrChange(event.document), this);
+        let d5 = vscode.workspace.onDidCloseTextDocument(this._onDocumentRemove, this);
+        this._disposable = vscode.Disposable.from(this._diagnostics, d1, d2, d3, d4, d5);
+
+        // Go ahead and check for diagnostics in the currently visible editors.
+        for (let editor of vscode.window.visibleTextEditors) {
+            let document = editor.document;
+            if (document.languageId === 'csharp' && document.uri.scheme === 'file') {
+                this._validateDocument(document);
+            }
+        }
     }
 
     public dispose(): void {
@@ -149,14 +155,14 @@ class DiagnosticsProvider extends AbstractSupport {
         this._disposable.dispose();
     }
 
-    private _onDocumentAddOrChange(document: TextDocument): void {
+    private _onDocumentAddOrChange(document: vscode.TextDocument): void {
         if (document.languageId === 'csharp' && document.uri.scheme === 'file') {
             this._validateDocument(document);
             this._validateProject();
         }
     }
 
-    private _onDocumentRemove(document: TextDocument) {
+    private _onDocumentRemove(document: vscode.TextDocument) {
         let key = document.uri.toString();
         let didChange = false;
         if (this._diagnostics[key]) {
@@ -174,8 +180,7 @@ class DiagnosticsProvider extends AbstractSupport {
         }
     }
 
-    private _validateDocument(document: TextDocument): void {
-
+    private _validateDocument(document: vscode.TextDocument): void {
         // If we've already started computing for this document, cancel that work.
         let key = document.uri.toString();
         if (this._documentValidations[key]) {
@@ -186,9 +191,10 @@ class DiagnosticsProvider extends AbstractSupport {
             return;
         }
 
-        let source = new CancellationTokenSource();
+        let source = new vscode.CancellationTokenSource();
         let handle = setTimeout(() => {
             serverUtils.codeCheck(this._server, { Filename: document.fileName }, source.token).then(value => {
+
                 // Easy case: If there are no diagnostics in the file, we can clear it quickly. 
                 if (value.QuickFixes.length === 0) {
                     if (this._diagnostics.has(document.uri)) {
@@ -197,7 +203,7 @@ class DiagnosticsProvider extends AbstractSupport {
 
                     return;
                 }
-                
+
                 // (re)set new diagnostics for this document
                 let diagnostics = value.QuickFixes.map(DiagnosticsProvider._asDiagnostic);
 
@@ -219,19 +225,19 @@ class DiagnosticsProvider extends AbstractSupport {
             return;
         }
 
-        this._projectValidation = new CancellationTokenSource();
+        this._projectValidation = new vscode.CancellationTokenSource();
         let handle = setTimeout(() => {
 
             serverUtils.codeCheck(this._server, { Filename: null }, this._projectValidation.token).then(value => {
 
                 let quickFixes = value.QuickFixes.sort((a, b) => a.FileName.localeCompare(b.FileName));
-                let entries: [Uri, Diagnostic[]][] = [];
-                let lastEntry: [Uri, Diagnostic[]];
+                let entries: [vscode.Uri, vscode.Diagnostic[]][] = [];
+                let lastEntry: [vscode.Uri, vscode.Diagnostic[]];
 
                 for (let quickFix of quickFixes) {
 
                     let diag = DiagnosticsProvider._asDiagnostic(quickFix);
-                    let uri = Uri.file(quickFix.FileName);
+                    let uri = vscode.Uri.file(quickFix.FileName);
 
                     if (lastEntry && lastEntry[0].toString() === uri.toString()) {
                         lastEntry[1].push(diag);
@@ -265,21 +271,21 @@ class DiagnosticsProvider extends AbstractSupport {
 
     // --- data converter
 
-    private static _asDiagnostic(quickFix: protocol.QuickFix): Diagnostic {
+    private static _asDiagnostic(quickFix: protocol.QuickFix): vscode.Diagnostic {
         let severity = DiagnosticsProvider._asDiagnosticSeverity(quickFix.LogLevel);
-        let message = `${quickFix.Text} [${quickFix.Projects.map(n => DiagnosticsProvider._asProjectLabel(n)).join(', ') }]`;
-        return new Diagnostic(toRange(quickFix), message, severity);
+        let message = `${quickFix.Text} [${quickFix.Projects.map(n => DiagnosticsProvider._asProjectLabel(n)).join(', ')}]`;
+        return new vscode.Diagnostic(toRange(quickFix), message, severity);
     }
 
-    private static _asDiagnosticSeverity(logLevel: string): DiagnosticSeverity {
+    private static _asDiagnosticSeverity(logLevel: string): vscode.DiagnosticSeverity {
         switch (logLevel.toLowerCase()) {
             case 'warning':
             case 'warn':
-                return DiagnosticSeverity.Warning;
+                return vscode.DiagnosticSeverity.Warning;
             case 'hidden':
-                return DiagnosticSeverity.Information;
+                return vscode.DiagnosticSeverity.Information;
             default:
-                return DiagnosticSeverity.Error;
+                return vscode.DiagnosticSeverity.Error;
         }
     }
 
