@@ -25,6 +25,10 @@ export function getBinPath() {
     return path.resolve(getExtensionPath(), "bin");
 }
 
+export function isBoolean(obj: any): obj is boolean {
+    return obj === true || obj === false;
+}
+
 export function buildPromiseChain<T, TResult>(array: T[], builder: (item: T) => Promise<TResult>): Promise<TResult> {
     return array.reduce(
         (promise, n) => promise.then(() => builder(n)),
