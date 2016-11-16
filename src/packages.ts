@@ -173,7 +173,8 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
     const options: https.RequestOptions = {
         host: url.host,
         path: url.path,
-        agent: getProxyAgent(url, proxy, strictSSL)
+        agent: getProxyAgent(url, proxy, strictSSL),
+        rejectUnauthorized: util.isBoolean(strictSSL) ? strictSSL : true
     };
 
     return new Promise<void>((resolve, reject) => {
