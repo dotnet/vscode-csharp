@@ -6,6 +6,7 @@
 'use strict';
 
 import { Url, parse as parseUrl } from 'url';
+import { isBoolean } from './common';
 import HttpProxyAgent = require('http-proxy-agent');
 import HttpsProxyAgent = require('https-proxy-agent');
 
@@ -32,15 +33,11 @@ export function getProxyAgent(requestURL: Url, proxy: string, strictSSL: boolean
         return null;
     }
 
-    if (strictSSL === undefined) {
-        strictSSL = true;
-    }
-
     const opts = {
         host: proxyEndpoint.hostname,
         port: Number(proxyEndpoint.port),
         auth: proxyEndpoint.auth,
-        rejectUnauthorized: strictSSL
+        rejectUnauthorized: isBoolean(strictSSL) ? strictSSL : true
     };
 
     return requestURL.protocol === 'http:' ? new HttpProxyAgent(opts) : new HttpsProxyAgent(opts);
