@@ -1,3 +1,12 @@
+## 1.6.0 _(Not Yet Released)_
+
+* Properly support `<NoWarn>` in MSBuild projects and specifically ignore the `CS1701` warning in .NET Core MSBuild projects ([#967](https://github.com/OmniSharp/omnisharp-vscode/issues/967))
+* Fix global.json-based project search to also the top-level folders specified by the `"projects"` property and not just their children. ([#904](https://github.com/OmniSharp/omnisharp-vscode/issues/904) and [#962](https://github.com/OmniSharp/omnisharp-vscode/issues/962))
+* Fix exception thrown when sending `/autocomplete` request to OmniSharp server in location where no completion items are available ([#980](https://github.com/OmniSharp/omnisharp-vscode/issues/980))
+* Add `omnisharp.maxProjectResults` setting to control the maximum number of projects to display in the 'Select Project' dropdown. The default is 250. ([#875](https://github.com/OmniSharp/omnisharp-vscode/issues/875)) _(Contributed by [@filipw](https://github.com/filipw))_
+* Improve display of hover tool tips for nested classes ([#394](https://github.com/OmniSharp/omnisharp-vscode/issues/394)) _(Contributed by [@filipw](https://github.com/filipw))_
+* Fix spacing in hover tool tips around `<paramref/>` in XML doc comments ([#672](https://github.com/OmniSharp/omnisharp-vscode/issues/672)) _(Contributed by [@filipw](https://github.com/filipw))_
+
 ## 1.5.3 (November 21, 2016)
 
 * Use value of `http.proxyStrictSSL` even when `http.proxy` is not set. ([#957](https://github.com/OmniSharp/omnisharp-vscode/issues/957))
