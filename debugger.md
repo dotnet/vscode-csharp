@@ -155,3 +155,7 @@ Select the '.NET Core Attach' configuration. Clicking the play button (or pressi
 #### Docker Support
 
 Using Visual Studio Code and the C# extension it is also possible to debug your code running in a [Docker container](https://en.wikipedia.org/wiki/Docker_(software)). To do so, follow instructions to install and run [yo docker](https://github.com/Microsoft/generator-docker#generator-docker). This will add files to your project to build a container, and it will add a new debug launch configuration which will invoke a container build, and then debug your app in the container.
+
+#### Remote Debugging
+
+In addition to Docker, it is also possible to setup the debugger to remotely attach or launch using other transports (ex: SSH). See [Attaching to remote processes](https://github.com/OmniSharp/omnisharp-vscode/wiki/Attaching-to-remote-processes) in the wiki for more information.
