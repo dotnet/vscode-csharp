@@ -3,7 +3,7 @@ import * as fs from 'fs';
 function AppendFieldsToObject(reference, obj) {
     
     if (typeof obj == 'object') {
-        for (var referenceKey in reference) {
+        for (let referenceKey in reference) {
             // If key exists in original object
             if (obj.hasOwnProperty(referenceKey)) {
                 obj[referenceKey] = AppendFieldsToObject(reference[referenceKey], obj[referenceKey]);
@@ -20,11 +20,11 @@ function AppendFieldsToObject(reference, obj) {
 function MergeDefaults(parentDefault, childDefault) {
     let newDefault = {};
 
-    for (var attrname in childDefault) { 
+    for (let attrname in childDefault) { 
         newDefault[attrname] = childDefault[attrname]; 
     }
 
-    for (var attrname in parentDefault) { 
+    for (let attrname in parentDefault) { 
         newDefault[attrname] = parentDefault[attrname]; 
     }
 
@@ -33,7 +33,7 @@ function MergeDefaults(parentDefault, childDefault) {
 
 function UpdateDefaults(object, defaults) {
     if (defaults != null) {
-        for (var key in object) {
+        for (let key in object) {
             if (object[key].hasOwnProperty('type') && object[key].type == "object" && object[key].properties != null) {
                 object[key].properties = UpdateDefaults(object[key].properties, MergeDefaults(defaults, object[key].default));
             } else if (key in defaults) {
@@ -46,25 +46,25 @@ function UpdateDefaults(object, defaults) {
 }
 
 function ReplaceReferences(definitions, objects) {	
-	for (var key in objects) {
+	for (let key in objects) {
 		if (objects[key].hasOwnProperty('$ref')) {
             // $ref is formatted as "#/definitions/ObjectName"
-			var referenceStringArray = objects[key]['$ref'].split('/');
+			let referenceStringArray = objects[key]['$ref'].split('/');
 
             // Getting "ObjectName"
-			var referenceName = referenceStringArray[referenceStringArray.length -1];
+			let referenceName = referenceStringArray[referenceStringArray.length -1];
 
 			// Make sure reference has replaced its own $ref fields and hope there are no recursive references.
 			definitions[referenceName] = ReplaceReferences(definitions, definitions[referenceName]);
 
             // Retrieve ObjectName from definitions. (TODO: Does not retrieve inner objects)
             // Need to deep copy, there are no functions in these objects.
-			var reference = JSON.parse(JSON.stringify(definitions[referenceName]));
+			let reference = JSON.parse(JSON.stringify(definitions[referenceName]));
 
 			objects[key] = AppendFieldsToObject(reference, objects[key]);
 
 			// Remove $ref field
-			delete objects[key]['$ref']
+			delete objects[key]['$ref'];
 		}
 
 		if (objects[key].hasOwnProperty('type') && objects[key].type == "object" && objects[key].properties != null){
@@ -73,7 +73,7 @@ function ReplaceReferences(definitions, objects) {
 		}
 	}
 
-	return objects
+	return objects;
 }
 
 export function GenerateOptionsSchema() {
