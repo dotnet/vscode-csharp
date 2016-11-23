@@ -362,8 +362,8 @@
         "category": "CSharp"
       },
       {
-        "command" : "csharp.listRemoteProcess",
-        "title" : "List processes on remote connection for attach",
+        "command": "csharp.listRemoteProcess",
+        "title": "List processes on remote connection for attach",
         "category": "CSharp"
       }
     ],
@@ -415,6 +415,7 @@
         "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
         "configurationAttributes": {
           "launch": {
+            "type": "object",
             "required": [
               "program",
               "cwd"
@@ -444,7 +445,6 @@
                 "default": false
               },
               "launchBrowser": {
-                "type": "object",
                 "description": "Describes options to launch a web browser as part of launch",
                 "default": {
                   "enabled": true,
@@ -460,6 +460,7 @@
                     "command": "xdg-open"
                   }
                 },
+                "type": "object",
                 "properties": {
                   "enabled": {
                     "type": "boolean",
@@ -472,11 +473,11 @@
                     "default": "${auto-detect-url}"
                   },
                   "osx": {
-                    "type": "object",
                     "description": "OSX-specific web launch configuration options",
                     "default": {
                       "command": "open"
                     },
+                    "type": "object",
                     "properties": {
                       "command": {
                         "type": "string",
@@ -491,11 +492,11 @@
                     }
                   },
                   "linux": {
-                    "type": "object",
                     "description": "Linux-specific web launch configuration options",
                     "default": {
                       "command": "xdg-open"
                     },
+                    "type": "object",
                     "properties": {
                       "command": {
                         "type": "string",
@@ -510,12 +511,12 @@
                     }
                   },
                   "windows": {
-                    "type": "object",
                     "description": "Windows-specific web launch configuration options",
                     "default": {
                       "command": "cmd.exe",
                       "args": "/C start ${auto-detect-url}"
                     },
+                    "type": "object",
                     "properties": {
                       "command": {
                         "type": "string",
@@ -525,7 +526,7 @@
                       "args": {
                         "type": "string",
                         "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
-                        "default": "/C start ${auto-detect-url}"
+                        "default": "${auto-detect-url}"
                       }
                     }
                   }
@@ -575,10 +576,10 @@
                 "default": true
               },
               "logging": {
+                "description": "Optional flags to determine what types of messages should be logged to the output window.",
                 "type": "object",
                 "required": [],
                 "default": {},
-                "description": "Optional flags to determine what types of messages should be logged to the output window.",
                 "properties": {
                   "exceptions": {
                     "type": "boolean",
@@ -613,14 +614,14 @@
                 }
               },
               "pipeTransport": {
-                "type": "object",
-                "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (clrdbg).",
+                "description": "Platform-specific pipe launch configuration options",
                 "default": {
                   "pipeCwd": "${workspaceRoot}",
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
                   "pipeArgs": [],
-                  "debuggerPath" : "enter the path for the debugger on the target machine, for example ~/clrdbg/clrdbg"
+                  "debuggerPath": "enter the path for the debugger on the target machine, for example ~/clrdbg/clrdbg"
                 },
+                "type": "object",
                 "properties": {
                   "pipeCwd": {
                     "type": "string",
@@ -640,10 +641,10 @@
                     },
                     "default": []
                   },
-                  "debuggerPath" : {
-                    "type" : "string",
-                    "description" : "The full path to the debugger on the target machine.",
-                    "default" : "~/clrdbg/clrdbg"
+                  "debuggerPath": {
+                    "type": "string",
+                    "description": "The full path to the debugger on the target machine.",
+                    "default": "enter the path for the debugger on the target machine, for example ~/clrdbg/clrdbg"
                   },
                   "pipeEnv": {
                     "type": "object",
@@ -654,13 +655,13 @@
                     "default": {}
                   },
                   "windows": {
-                    "type": "object",
                     "description": "Windows-specific pipe launch configuration options",
                     "default": {
                       "pipeCwd": "${workspaceRoot}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
                       "pipeArgs": []
                     },
+                    "type": "object",
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
@@ -691,13 +692,13 @@
                     }
                   },
                   "osx": {
-                    "type": "object",
                     "description": "OSX-specific pipe launch configuration options",
                     "default": {
                       "pipeCwd": "${workspaceRoot}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
+                    "type": "object",
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
@@ -707,7 +708,7 @@
                       "pipeProgram": {
                         "type": "string",
                         "description": "The fully qualified pipe command to execute.",
-                        "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
+                        "default": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'"
                       },
                       "pipeArgs": {
                         "type": "array",
@@ -728,13 +729,13 @@
                     }
                   },
                   "linux": {
-                    "type": "object",
                     "description": "Linux-specific pipe launch configuration options",
                     "default": {
                       "pipeCwd": "${workspaceRoot}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
+                    "type": "object",
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
@@ -744,7 +745,7 @@
                       "pipeProgram": {
                         "type": "string",
                         "description": "The fully qualified pipe command to execute.",
-                        "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
+                        "default": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'"
                       },
                       "pipeArgs": {
                         "type": "array",
@@ -769,6 +770,7 @@
             }
           },
           "attach": {
+            "type": "object",
             "required": [],
             "properties": {
               "processName": {
@@ -821,10 +823,10 @@
                 "default": true
               },
               "logging": {
+                "description": "Optional flags to determine what types of messages should be logged to the output window.",
                 "type": "object",
                 "required": [],
                 "default": {},
-                "description": "Optional flags to determine what types of messages should be logged to the output window.",
                 "properties": {
                   "exceptions": {
                     "type": "boolean",
@@ -859,17 +861,17 @@
                 }
               },
               "pipeTransport": {
-                "type": "object",
                 "required": [
-                    "debuggerPath"
+                  "debuggerPath"
                 ],
                 "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (clrdbg).",
                 "default": {
                   "pipeCwd": "${workspaceRoot}",
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
                   "pipeArgs": [],
-                  "debuggerPath" : "enter the path for the debugger, for example ~/clrdbg/clrdbg"
+                  "debuggerPath": "enter the path for the debugger, for example ~/clrdbg/clrdbg"
                 },
+                "type": "object",
                 "properties": {
                   "pipeCwd": {
                     "type": "string",
@@ -889,10 +891,10 @@
                     },
                     "default": []
                   },
-                  "debuggerPath" : {
-                    "type" : "string",
-                    "description" : "The full path to the debugger on the target machine.",
-                    "default" : "~/clrdbg/clrdbg"
+                  "debuggerPath": {
+                    "type": "string",
+                    "description": "The full path to the debugger on the target machine.",
+                    "default": "enter the path for the debugger, for example ~/clrdbg/clrdbg"
                   },
                   "pipeEnv": {
                     "type": "object",
@@ -903,13 +905,13 @@
                     "default": {}
                   },
                   "windows": {
-                    "type": "object",
                     "description": "Windows-specific pipe launch configuration options",
                     "default": {
                       "pipeCwd": "${workspaceRoot}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
                       "pipeArgs": []
                     },
+                    "type": "object",
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
@@ -940,13 +942,13 @@
                     }
                   },
                   "osx": {
-                    "type": "object",
                     "description": "OSX-specific pipe launch configuration options",
                     "default": {
                       "pipeCwd": "${workspaceRoot}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
+                    "type": "object",
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
@@ -956,7 +958,7 @@
                       "pipeProgram": {
                         "type": "string",
                         "description": "The fully qualified pipe command to execute.",
-                        "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
+                        "default": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'"
                       },
                       "pipeArgs": {
                         "type": "array",
@@ -977,13 +979,13 @@
                     }
                   },
                   "linux": {
-                    "type": "object",
                     "description": "Linux-specific pipe launch configuration options",
                     "default": {
                       "pipeCwd": "${workspaceRoot}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
+                    "type": "object",
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
@@ -993,7 +995,7 @@
                       "pipeProgram": {
                         "type": "string",
                         "description": "The fully qualified pipe command to execute.",
-                        "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
+                        "default": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'"
                       },
                       "pipeArgs": {
                         "type": "array",

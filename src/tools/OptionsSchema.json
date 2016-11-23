@@ -262,7 +262,7 @@
                         "linux": {
                             "command": "xdg-open"
                         }
-                    },
+                    }
                 },
                 "env": {
                     "type": "object",
@@ -309,7 +309,7 @@
                 },
                 "logging": {
                     "$ref": "#/definitions/Logging",
-                    "description": "Optional flags to determine what types of messages should be logged to the output window.",
+                    "description": "Optional flags to determine what types of messages should be logged to the output window."
                 },
                 "pipeTransport": {
                     "$ref": "#/definitions/PipeTransport",
@@ -318,7 +318,7 @@
                         "pipeCwd": "${workspaceRoot}",
                         "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
                         "pipeArgs": []
-                    },
+                    }
                 }
             }
         },
@@ -376,11 +376,11 @@
                     "default": true
                 },
                 "logging": {
-                  "$ref": "#/definitions/Logging",
-                  "description": "Optional flags to determine what types of messages should be logged to the output window."
+                    "$ref": "#/definitions/Logging",
+                    "description": "Optional flags to determine what types of messages should be logged to the output window."
                 },
                 "pipeTransport": {
-                  "$ref": "#/definitions/PipeTransport",
+                    "$ref": "#/definitions/PipeTransport",
                     "required": [
                         "debuggerPath"
                     ],

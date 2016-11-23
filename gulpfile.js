@@ -19,6 +19,7 @@ const logger = require('./out/src/logger');
 const platform = require('./out/src/platform');
 const util = require('./out/src/common');
 const child_process = require('child_process');
+const optionsSchemaGenerator = require('./out/src/tools/generateOptionsSchema');
 
 const Logger = logger.Logger;
 const PackageManager = packages.PackageManager;
@@ -37,6 +38,10 @@ function cleanSync(deleteVsix) {
 
 gulp.task('clean', () => {
     cleanSync(true);
+});
+
+gulp.task('generateOptionsSchema', () => {
+    optionsSchemaGenerator.GenerateOptionsSchema();
 });
 
 // Install Tasks
