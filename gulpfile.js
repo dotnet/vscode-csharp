@@ -123,7 +123,7 @@ gulp.task('package:offline', ['clean'], () => {
     var packageName = name + '.' + version;
 
     var packages = [];
-    packages.push(new PlatformInformation('win32', '64-bit'));
+    packages.push(new PlatformInformation('win32', 'x86_64'));
     packages.push(new PlatformInformation('darwin', 'x86_64'));
     packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('centos', '7')));
     packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('debian', '8')));

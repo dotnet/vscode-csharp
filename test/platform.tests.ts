@@ -38,13 +38,13 @@ suite("Platform", () => {
     });
 
     test("Compute correct RID for Windows 32-bit", () => {
-        const platformInfo = new PlatformInformation('win32', '32-bit');
+        const platformInfo = new PlatformInformation('win32', 'x86');
 
         platformInfo.runtimeId.should.equal('win7-x86');
     })
 
     test("Compute correct RID for Windows 64-bit", () => {
-        const platformInfo = new PlatformInformation('win32', '64-bit');
+        const platformInfo = new PlatformInformation('win32', 'x86_64');
 
         platformInfo.runtimeId.should.equal('win7-x64');
     })

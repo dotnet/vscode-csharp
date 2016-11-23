@@ -13,8 +13,8 @@ import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 import * as protocol from '../omnisharp/protocol';
 import * as vscode from 'vscode';
-import * as dotnetTest from './dotnetTest'
-import {DotNetAttachItemsProviderFactory, AttachPicker, RemoteAttachPicker} from './processPicker'
+import * as dotnetTest from './dotnetTest';
+import {DotNetAttachItemsProviderFactory, AttachPicker, RemoteAttachPicker} from './processPicker';
 import {generateAssets} from '../assets';
 
 let channel = vscode.window.createOutputChannel('.NET');

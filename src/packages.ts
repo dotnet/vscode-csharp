@@ -18,6 +18,7 @@ import { getProxyAgent } from './proxy';
 export interface Package {
     description: string;
     url: string;
+    fallbackUrl?: string;
     installPath?: string;
     platforms: string[];
     runtimeIds: string[];
@@ -128,7 +129,7 @@ function getNoopStatus(): Status {
     };
 }
 
-function downloadPackage(pkg: Package, logger: Logger, status?: Status, proxy?: string, strictSSL?: boolean): Promise<void> {
+function downloadPackage(pkg: Package, logger: Logger, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
     status = status || getNoopStatus();
 
     logger.append(`Downloading package '${pkg.description}' `);
@@ -147,18 +148,33 @@ function downloadPackage(pkg: Package, logger: Logger, status?: Status, proxy?: 
     }).then(tmpResult => {
         pkg.tmpFile = tmpResult;
 
-        return downloadFile(pkg.url, pkg, logger, status)
+        let result = downloadFile(pkg.url, pkg, logger, status, proxy, strictSSL)
             .then(() => logger.appendLine(' Done!'));
+
+        // If the package has a fallback Url, and downloading from the primary Url failed, try again from 
+        // the fallback. This is used for debugger packages as some users have had issues downloading from
+        // the CDN link.
+        if (pkg.fallbackUrl) {
+            result = result.catch((primaryUrlError) => {
+                logger.append(`\tRetrying from '${pkg.fallbackUrl}' `);
+                return downloadFile(pkg.fallbackUrl, pkg, logger, status, proxy, strictSSL)
+                    .then(() => logger.appendLine(' Done!'))
+                    .catch(() => primaryUrlError);
+            });
+        }
+
+        return result;
     });
 }
 
-function downloadFile(urlString: string, pkg: Package, logger: Logger, status: Status, proxy?: string, strictSSL?: boolean): Promise<void> {
+function downloadFile(urlString: string, pkg: Package, logger: Logger, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
     const url = parseUrl(urlString);
 
     const options: https.RequestOptions = {
         host: url.host,
         path: url.path,
-        agent: getProxyAgent(url, proxy, strictSSL)
+        agent: getProxyAgent(url, proxy, strictSSL),
+        rejectUnauthorized: util.isBoolean(strictSSL) ? strictSSL : true
     };
 
     return new Promise<void>((resolve, reject) => {
@@ -169,7 +185,7 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
         let request = https.request(options, response => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
-                return resolve(downloadFile(response.headers.location, pkg, logger, status));
+                return resolve(downloadFile(response.headers.location, pkg, logger, status, proxy, strictSSL));
             }
 
             if (response.statusCode != 200) {

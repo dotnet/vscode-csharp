@@ -172,7 +172,15 @@ export class PlatformInformation {
                 if (architecture) {
                     let archArray: string[] = architecture.split(os.EOL);
                     if (archArray.length >= 2) {
-                        return archArray[1].trim();
+                        let arch = archArray[1].trim();
+
+                        // Note: This string can be localized. So, we'll just check to see if it contains 32 or 64.
+                        if (arch.indexOf('64') >= 0) {
+                            return "x86_64";
+                        }
+                        else if (arch.indexOf('32') >= 0) {
+                            return "x86";
+                        }
                     }
                 }
 
@@ -204,8 +212,8 @@ export class PlatformInformation {
         switch (platform) {
             case 'win32':
                 switch (architecture) {
-                    case '32-bit': return 'win7-x86';
-                    case '64-bit': return 'win7-x64';
+                    case 'x86': return 'win7-x86';
+                    case 'x86_64': return 'win7-x64';
                 }
 
                 throw new Error(`Unsupported Windows architecture: ${architecture}`);
@@ -308,6 +316,11 @@ export class PlatformInformation {
                 return rhel_7;
             case 'debian':
                 return debian_8;
+            case 'galliumos':
+                if (distributionVersion.startsWith("2.0")) {
+                    return ubuntu_16_04;
+                }
+                break;
             default:
                 return unknown_distribution;
         }
