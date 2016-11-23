@@ -19,7 +19,7 @@ const logger = require('./out/src/logger');
 const platform = require('./out/src/platform');
 const util = require('./out/src/common');
 const child_process = require('child_process');
-const optionsSchemaGenerator = require('./out/src/tools/generateOptionsSchema');
+const optionsSchemaGenerator = require('./out/src/tools/GenerateOptionsSchema');
 
 const Logger = logger.Logger;
 const PackageManager = packages.PackageManager;
