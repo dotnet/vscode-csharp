@@ -35,7 +35,7 @@ export function activate(context: vscode.ExtensionContext): any {
             OmniSharp.activate(context, reporter);
 
             // activate coreclr-debug
-            coreclrdebug.activate(context, reporter, logger);
+            coreclrdebug.activate(context, reporter, logger, _channel);
         });
 }
 

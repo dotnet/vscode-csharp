@@ -6,6 +6,7 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
+import * as os from 'os';
 import * as semver from 'semver';
 import { execChildProcess } from './../common';
 import { Logger } from './../logger';
@@ -73,6 +74,25 @@ export class CoreClrDebugUtil
 
     public defaultDotNetCliErrorMessage(): string {
         return 'Failed to find up to date dotnet cli on the path.';
+    }
+
+    public checkOpenSSLInstalledIfRequired(): Promise<boolean> {
+        if (os.platform() !== "darwin") {
+            // We only need special handling on OSX
+            return Promise.resolve(true);
+        }
+
+        return new Promise<boolean>((resolve, reject) => {
+            fs.access("/usr/local/lib/libcrypto.1.0.0.dylib", (err1) => {
+                if (err1) {
+                    resolve(false);
+                } else {
+                    fs.access("/usr/local/lib/libssl.1.0.0.dylib", (err2) => {
+                        resolve(!err2);
+                    });
+                }
+            });
+        });
     }
 
     // This function checks for the presence of dotnet on the path and ensures the Version
