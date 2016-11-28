@@ -1,10 +1,11 @@
 import * as fs from 'fs';
 
-function AppendFieldsToObject(reference, obj) {
-    
+function AppendFieldsToObject(reference: any, obj: any) {
+
+    // Make sure it is an object type
     if (typeof obj == 'object') {
         for (let referenceKey in reference) {
-            // If key exists in original object
+            // If key exists in original object and is an object. 
             if (obj.hasOwnProperty(referenceKey)) {
                 obj[referenceKey] = AppendFieldsToObject(reference[referenceKey], obj[referenceKey]);
             } else {
@@ -14,27 +15,28 @@ function AppendFieldsToObject(reference, obj) {
         }
     }
 
-	return obj;
+    return obj;
 }
 
-function MergeDefaults(parentDefault, childDefault) {
-    let newDefault = {};
+// Combines two object's fields, giving the parentDefault a higher precedence. 
+function MergeDefaults(parentDefault: any, childDefault: any) {
+    let newDefault: any = {};
 
-    for (let attrname in childDefault) { 
-        newDefault[attrname] = childDefault[attrname]; 
+    for (let attrname in childDefault) {
+        newDefault[attrname] = childDefault[attrname];
     }
 
-    for (let attrname in parentDefault) { 
-        newDefault[attrname] = parentDefault[attrname]; 
+    for (let attrname in parentDefault) {
+        newDefault[attrname] = parentDefault[attrname];
     }
 
     return newDefault;
 }
 
-function UpdateDefaults(object, defaults) {
+function UpdateDefaults(object: any, defaults: any) {
     if (defaults != null) {
         for (let key in object) {
-            if (object[key].hasOwnProperty('type') && object[key].type == "object" && object[key].properties != null) {
+            if (object[key].hasOwnProperty('type') && object[key].type === 'object' && object[key].properties !== null) {
                 object[key].properties = UpdateDefaults(object[key].properties, MergeDefaults(defaults, object[key].default));
             } else if (key in defaults) {
                 object[key].default = defaults[key];
@@ -45,45 +47,47 @@ function UpdateDefaults(object, defaults) {
     return object;
 }
 
-function ReplaceReferences(definitions, objects) {	
-	for (let key in objects) {
-		if (objects[key].hasOwnProperty('$ref')) {
+function ReplaceReferences(definitions: any, objects: any) {
+    for (let key in objects) {
+        if (objects[key].hasOwnProperty('$ref')) {
             // $ref is formatted as "#/definitions/ObjectName"
-			let referenceStringArray = objects[key]['$ref'].split('/');
+            let referenceStringArray: string[] = objects[key]['$ref'].split('/');
 
             // Getting "ObjectName"
-			let referenceName = referenceStringArray[referenceStringArray.length -1];
+            let referenceName: string = referenceStringArray[referenceStringArray.length - 1];
 
-			// Make sure reference has replaced its own $ref fields and hope there are no recursive references.
-			definitions[referenceName] = ReplaceReferences(definitions, definitions[referenceName]);
+            // Make sure reference has replaced its own $ref fields and hope there are no recursive references.
+            definitions[referenceName] = ReplaceReferences(definitions, definitions[referenceName]);
 
             // Retrieve ObjectName from definitions. (TODO: Does not retrieve inner objects)
             // Need to deep copy, there are no functions in these objects.
-			let reference = JSON.parse(JSON.stringify(definitions[referenceName]));
+            let reference: any = JSON.parse(JSON.stringify(definitions[referenceName]));
 
-			objects[key] = AppendFieldsToObject(reference, objects[key]);
+            objects[key] = AppendFieldsToObject(reference, objects[key]);
 
-			// Remove $ref field
-			delete objects[key]['$ref'];
-		}
+            // Remove $ref field
+            delete objects[key]['$ref'];
+        }
 
-		if (objects[key].hasOwnProperty('type') && objects[key].type == "object" && objects[key].properties != null){
-			objects[key].properties = ReplaceReferences(definitions, objects[key].properties);  
+        // Recursively replace references if this object has properties. 
+        if (objects[key].hasOwnProperty('type') && objects[key].type === 'object' && objects[key].properties !== null) {
+            objects[key].properties = ReplaceReferences(definitions, objects[key].properties);
             objects[key].properties = UpdateDefaults(objects[key].properties, objects[key].default);
-		}
-	}
+        }
+    }
 
-	return objects;
+    return objects;
 }
 
 export function GenerateOptionsSchema() {
-    let packageJSON = JSON.parse(fs.readFileSync('package.json').toString());
-    let schemaJSON = JSON.parse(fs.readFileSync('src/tools/OptionsSchema.json').toString());
+    let packageJSON: any = JSON.parse(fs.readFileSync('package.json').toString());
+    let schemaJSON: any = JSON.parse(fs.readFileSync('src/tools/OptionsSchema.json').toString());
 
-	schemaJSON.definitions = ReplaceReferences(schemaJSON.definitions, schemaJSON.definitions);
+    schemaJSON.definitions = ReplaceReferences(schemaJSON.definitions, schemaJSON.definitions);
 
-	packageJSON.contributes.debuggers[0].configurationAttributes.launch = schemaJSON.definitions.LaunchOptions;
-	packageJSON.contributes.debuggers[0].configurationAttributes.attach = schemaJSON.definitions.AttachOptions;
+    // Hard Code adding in configurationAttributes launch and attach.
+    packageJSON.contributes.debuggers[0].configurationAttributes.launch = schemaJSON.definitions.LaunchOptions;
+    packageJSON.contributes.debuggers[0].configurationAttributes.attach = schemaJSON.definitions.AttachOptions;
 
-	fs.writeFileSync('package.json', JSON.stringify(packageJSON, null, 2));
+    fs.writeFileSync('package.json', JSON.stringify(packageJSON, null, 2));
 }
