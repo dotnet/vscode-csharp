@@ -23,8 +23,12 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
     if (!CoreClrDebugUtil.existsSync(_debugUtil.debugAdapterDir())) {
         PlatformInformation.GetCurrent().then((info) => {
             if (info.runtimeId) {
-                logger.appendLine("[ERROR]: C# Extension failed to install the debugger package");
-                showInstallErrorMessage(channel);
+                if (info.runtimeId === 'win7-x86') {
+                    logger.appendLine(`[WARNING]: x86 Windows is not currently supported by the .NET Core debugger. Debugging will not be available.`);
+                } else {
+                    logger.appendLine("[ERROR]: C# Extension failed to install the debugger package");
+                    showInstallErrorMessage(channel);
+                }
             } else {
                 if (info.isLinux) { 
                     logger.appendLine(`[WARNING]: The current Linux distribution '${info.distribution.name}' version '${info.distribution.version}' is not currently supported by the .NET Core debugger. Debugging will not be available.`);
