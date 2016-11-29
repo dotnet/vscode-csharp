@@ -560,6 +560,9 @@
               "sourceFileMap": {
                 "type": "object",
                 "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
+                "additionalProperties": {
+                  "type": "string"
+                },
                 "default": {
                   "<source-path>": "<target-path>"
                 }
@@ -807,6 +810,9 @@
               "sourceFileMap": {
                 "type": "object",
                 "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
+                "additionalProperties": {
+                  "type": "string"
+                },
                 "default": {
                   "<source-path>": "<target-path>"
                 }
