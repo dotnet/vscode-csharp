@@ -150,7 +150,7 @@
                 }
             }
         },
-        "LaunchConfigurations": {
+        "LaunchBrowserPlatformOptions": {
             "type": "object",
             "properties": {
                 "command": {
@@ -194,21 +194,21 @@
                     "default": "${auto-detect-url}"
                 },
                 "osx": {
-                    "$ref": "#/definitions/LaunchConfigurations",
+                    "$ref": "#/definitions/LaunchBrowserPlatformOptions",
                     "description": "OSX-specific web launch configuration options",
                     "default": {
                         "command": "open"
                     }
                 },
                 "linux": {
-                    "$ref": "#/definitions/LaunchConfigurations",
+                    "$ref": "#/definitions/LaunchBrowserPlatformOptions",
                     "description": "Linux-specific web launch configuration options",
                     "default": {
                         "command": "xdg-open"
                     }
                 },
                 "windows": {
-                    "$ref": "#/definitions/LaunchConfigurations",
+                    "$ref": "#/definitions/LaunchBrowserPlatformOptions",
                     "description": "Windows-specific web launch configuration options",
                     "default": {
                         "command": "cmd.exe",
