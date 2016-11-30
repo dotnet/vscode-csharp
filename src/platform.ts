@@ -269,19 +269,25 @@ export class PlatformInformation {
         const centos_7 = 'centos.7-x64';
         const debian_8 = 'debian.8-x64';
         const fedora_23 = 'fedora.23-x64';
+        const fedora_24 = 'fedora.24-x64';
         const opensuse_13_2 = 'opensuse.13.2-x64';
+        const opensuse_42_1 = 'opensuse.42.1-x64';
         const rhel_7 = 'rhel.7-x64';
         const ubuntu_14_04 = 'ubuntu.14.04-x64';
         const ubuntu_16_04 = 'ubuntu.16.04-x64';
+        const ubuntu_16_10 = 'ubuntu.16.10-x64';
 
         switch (distributionName) {
             case 'ubuntu':
-                if (distributionVersion.startsWith("14")) {
+                if (distributionVersion === "14.04") {
                     // This also works for Linux Mint
                     return ubuntu_14_04;
                 }
-                else if (distributionVersion.startsWith("16")) {
+                else if (distributionVersion === "16.04") {
                     return ubuntu_16_04;
+                }
+                else if (distributionVersion === "16.10") {
+                    return ubuntu_16_10;
                 }
 
                 break;
@@ -309,9 +315,21 @@ export class PlatformInformation {
                 // Oracle Linux is binary compatible with CentOS
                 return centos_7;
             case 'fedora':
-                return fedora_23;
+                if (distributionVersion === "23") {
+                    return fedora_23;
+                } else if (distributionVersion === "24") {
+                    return fedora_24;
+                }
+                break;
+
             case 'opensuse':
-                return opensuse_13_2;
+                if (distributionVersion.startsWith("13.")) {
+                    return opensuse_13_2;
+                } else if (distributionVersion.startsWith("42.")) {
+                    return opensuse_42_1;
+                }
+                break;
+
             case 'rhel':
                 return rhel_7;
             case 'debian':
