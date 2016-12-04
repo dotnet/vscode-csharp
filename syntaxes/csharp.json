@@ -123,6 +123,43 @@
         }
       ]
     },
+    "genericConstraints": {
+      "begin": "(where)\\s*(\\w+)\\s*:",
+      "end": "(?={)",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.other.cs"
+        },
+        "2": {
+          "name": "storage.type.cs"
+        }
+      },
+      "patterns": [
+        {
+          "match": "\\b(class|struct)\\b",
+          "name": "keyword.other.cs"
+        },
+        {
+          "match": "(new)\\s*\\(\\s*\\)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.cs"
+            }
+          }
+        },
+        {
+          "match": "([\\w<>]+)\\s*(?=,|where|{)",
+          "captures": {
+            "1": {
+              "name": "storage.type.cs"
+            }
+          }
+        },
+        {
+          "include": "#genericConstraints"
+        }
+      ]
+    },
     "class": {
       "begin": "(?=\\w?[\\w\\s]*[^@]?(?:class|struct|interface|enum)\\s+\\w+)",
       "end": "}",
@@ -153,17 +190,20 @@
         },
         {
           "begin": ":",
-          "end": "(?={)",
+          "end": "(?={|where)",
           "patterns": [
             {
+              "match": "([\\w<>]+)\\s*",
               "captures": {
                 "1": {
                   "name": "storage.type.cs"
                 }
-              },
-              "match": "\\s*,?([A-Za-z_]\\w*)\\b"
+              }
             }
           ]
+        },
+        {
+          "include": "#genericConstraints"
         },
         {
           "begin": "{",

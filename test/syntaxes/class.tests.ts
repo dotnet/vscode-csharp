@@ -8,7 +8,7 @@ describe("Grammar", function() {
     });
 
     describe("Class", function() {
-        it("has a class keyword, a name and optional storage modifiers", function() {
+        it("class keyword and storage modifiers", function() {
 
 const input = `
 namespace TestNamespace
@@ -72,6 +72,58 @@ namespace TestNamespace
             tokens.should.contain(Tokens.ClassIdentifier("DefaultAbstractClass", 20, 30));
 
         });
+
+        it("inheritance", function() {
+
+const input = `
+namespace TestNamespace
+{
+    class PublicClass    : IInterface,    IInterfaceTwo { }
+    class PublicClass<T> : IInterface<T>, IInterfaceTwo { }
+}`;
+            let tokens: Token[] = TokenizerUtil.tokenize(input);
+
+            tokens.should.contain(Tokens.ClassKeyword("class", 4, 5));
+            tokens.should.contain(Tokens.ClassIdentifier("PublicClass", 4, 11));
+            tokens.should.contain(Tokens.Type("IInterface", 4, 28));
+            tokens.should.contain(Tokens.Type("IInterfaceTwo", 4, 43));
+
+            tokens.should.contain(Tokens.ClassKeyword("class", 5, 5));
+            tokens.should.contain(Tokens.ClassIdentifier("PublicClass", 5, 11));
+            tokens.should.contain(Tokens.Type("IInterface<T>", 5, 28));
+            tokens.should.contain(Tokens.Type("IInterfaceTwo", 5, 43));
+        });
+
+        it("generic constraints", function() {
+
+const input = `
+namespace TestNamespace
+{
+    class PublicClass<T> where T : ISomething { }
+    class PublicClass<T, X> : List<T>, ISomething where T : ICar, new() where X : struct { }
+}`;
+            let tokens: Token[] = TokenizerUtil.tokenize(input);
+
+            tokens.should.contain(Tokens.ClassKeyword("class", 4, 5));
+            tokens.should.contain(Tokens.ClassIdentifier("PublicClass", 4, 11));
+            tokens.should.contain(Tokens.Keyword("where", 4, 26));
+            tokens.should.contain(Tokens.Type("T", 4, 32));
+            tokens.should.contain(Tokens.Type("ISomething", 4, 36));
+
+            tokens.should.contain(Tokens.ClassKeyword("class", 5, 5));
+            tokens.should.contain(Tokens.ClassIdentifier("PublicClass", 5, 11));
+            tokens.should.contain(Tokens.Type("List<T>", 5, 31));
+            tokens.should.contain(Tokens.Type("ISomething", 5, 40));
+            tokens.should.contain(Tokens.Keyword("where", 5, 51));
+            tokens.should.contain(Tokens.Type("T", 5, 57));
+            tokens.should.contain(Tokens.Type("ICar", 5, 61));
+            tokens.should.contain(Tokens.Keyword("new", 5, 67));
+            tokens.should.contain(Tokens.Keyword("where", 5, 73));
+            tokens.should.contain(Tokens.Type("X", 5, 79));
+            tokens.should.contain(Tokens.Keyword("struct", 5, 83));
+
+        });
+
 
     });
 });

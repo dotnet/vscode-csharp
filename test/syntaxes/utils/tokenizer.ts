@@ -73,5 +73,10 @@ export namespace Tokens {
     export const StorageModifierKeyword = (text: string, line?: number, column?: number) =>
         createToken(text, "storage.modifier.cs", line, column);
 
+    export const Type = (text: string, line?: number, column?: number) =>
+        createToken(text, "storage.type.cs", line, column);
+
+    export const Keyword = (text: string, line?: number, column?: number) =>
+        createToken(text, "keyword.other.cs", line, column);
 }
 
