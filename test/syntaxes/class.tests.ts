@@ -100,7 +100,7 @@ const input = `
 namespace TestNamespace
 {
     class PublicClass<T> where T : ISomething { }
-    class PublicClass<T, X> : List<T>, ISomething where T : ICar, new() where X : struct { }
+    class PublicClass<T, X> : Dictionary<T, List<string>[]>, ISomething where T : ICar, new() where X : struct { }
 }`;
             let tokens: Token[] = TokenizerUtil.tokenize(input);
 
@@ -112,15 +112,15 @@ namespace TestNamespace
 
             tokens.should.contain(Tokens.ClassKeyword("class", 5, 5));
             tokens.should.contain(Tokens.ClassIdentifier("PublicClass", 5, 11));
-            tokens.should.contain(Tokens.Type("List<T>", 5, 31));
-            tokens.should.contain(Tokens.Type("ISomething", 5, 40));
-            tokens.should.contain(Tokens.Keyword("where", 5, 51));
-            tokens.should.contain(Tokens.Type("T", 5, 57));
-            tokens.should.contain(Tokens.Type("ICar", 5, 61));
-            tokens.should.contain(Tokens.Keyword("new", 5, 67));
+            tokens.should.contain(Tokens.Type("Dictionary<T, List<string>[]>", 5, 31));
+            tokens.should.contain(Tokens.Type("ISomething", 5, 62));
             tokens.should.contain(Tokens.Keyword("where", 5, 73));
-            tokens.should.contain(Tokens.Type("X", 5, 79));
-            tokens.should.contain(Tokens.Keyword("struct", 5, 83));
+            tokens.should.contain(Tokens.Type("T", 5, 79));
+            tokens.should.contain(Tokens.Type("ICar", 5, 83));
+            tokens.should.contain(Tokens.Keyword("new", 5, 89));
+            tokens.should.contain(Tokens.Keyword("where", 5, 95));
+            tokens.should.contain(Tokens.Type("X", 5, 101));
+            tokens.should.contain(Tokens.Keyword("struct", 5, 105));
 
         });
 

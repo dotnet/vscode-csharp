@@ -71,6 +71,43 @@
         }
       ]
     },
+    "field-declaration": {
+      "patterns": [
+        {
+          "begin": "(?=(?:(?:(?:private|public|volatile|internal|protected|static|readonly|const)\\s*)*)(?:[\\w\\s,<>\\[\\]]+?)(?:[\\w]+)\\s*(?:;|=|=>))",
+          "end": "(?=;)",
+          "patterns": [
+            {
+              "match": "^\\s*((?:(?:private|public|volatile|internal|protected|static|readonly|const)\\s*)*)\\s*([\\w\\s,<>\\[\\]]+?)\\s*([\\w]+)\\s*(?=;|=)",
+              "captures": {
+                "1" : {
+                  "patterns": [
+                    {
+                      "include": "#storage-modifiers"
+                    }
+                  ]
+                },
+                "2" : {
+                  "name": "storage.type.cs"
+                },
+                "3": {
+                  "name": "entity.name.variable.cs"
+                }
+              }
+            },
+            {
+              "begin": "(?==>?)",
+              "end": "(?=;)",
+              "patterns": [
+                {
+                  "include": "#code"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
     "variable": {
       "patterns": [
         {
@@ -123,8 +160,8 @@
         }
       ]
     },
-    "genericConstraints": {
-      "begin": "(where)\\s*(\\w+)\\s*:",
+    "generic-constraints": {
+      "begin": "(where)\\s+(\\w+)\\s*:",
       "end": "(?={)",
       "beginCaptures": {
         "1": {
@@ -148,7 +185,7 @@
           }
         },
         {
-          "match": "([\\w<>]+)\\s*(?=,|where|{)",
+          "match": "([\\w<>,\\[\\]]+)\\s*(?=,|where|{)",
           "captures": {
             "1": {
               "name": "storage.type.cs"
@@ -156,7 +193,7 @@
           }
         },
         {
-          "include": "#genericConstraints"
+          "include": "#generic-constraints"
         }
       ]
     },
@@ -203,7 +240,7 @@
           ]
         },
         {
-          "include": "#genericConstraints"
+          "include": "#generic-constraints"
         },
         {
           "begin": "{",
@@ -216,12 +253,22 @@
           "name": "meta.class.body.cs",
           "patterns": [
             {
-              "include": "#method"
-            },
-            {
-              "include": "#code"
+              "include": "#type-body"
             }
           ]
+        }
+      ]
+    },
+    "type-body": {
+      "patterns": [
+        {
+          "include": "#field-declaration"
+        },
+        {
+          "include": "#method"
+        },
+        {
+          "include": "#code"
         }
       ]
     },
