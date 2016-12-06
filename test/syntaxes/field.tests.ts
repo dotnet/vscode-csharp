@@ -50,7 +50,8 @@ const input = `
 public class Tester
 {
     private static readonly List _field;
-    readonly string _field;
+    readonly string _field2;
+    string _field3;
 }`;
 
             let tokens: Token[] = TokenizerUtil.tokenize(input);
@@ -60,6 +61,10 @@ public class Tester
             tokens.should.contain(Tokens.StorageModifierKeyword("readonly", 4, 20));
             tokens.should.contain(Tokens.Type("List", 4, 29));
             tokens.should.contain(Tokens.FieldIdentifier("_field", 4, 34));
+
+            tokens.should.contain(Tokens.FieldIdentifier("_field2", 5, 21));
+
+            tokens.should.contain(Tokens.FieldIdentifier("_field3", 6, 12));
         });
 
         it("types", function() {
