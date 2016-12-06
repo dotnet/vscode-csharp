@@ -28,6 +28,21 @@ public class Tester
             tokens.should.contain(Tokens.FieldIdentifier("field123", 6, 18));
         });
 
+        it("generic", function () {
+
+            const input = `
+public class Tester
+{
+    private Dictionary< List<T>, Dictionary<T, D>> _field;
+}`;
+
+            let tokens: Token[] = TokenizerUtil.tokenize(input);
+
+            tokens.should.contain(Tokens.StorageModifierKeyword("private", 4, 5));
+            tokens.should.contain(Tokens.Type("Dictionary< List<T>, Dictionary<T, D>>", 4, 13));
+            tokens.should.contain(Tokens.FieldIdentifier("_field", 4, 52));
+        });
+
 
         it("modifiers", function() {
 

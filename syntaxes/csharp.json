@@ -78,7 +78,7 @@
           "end": "(?=;)",
           "patterns": [
             {
-              "match": "^\\s*((?:(?:private|public|volatile|internal|protected|static|readonly|const)\\s*)*)\\s*([\\w\\s,<>\\[\\]]+?)\\s*([\\w]+)\\s*(?=;|=)",
+              "match": "^\\s*((?:(?:private|public|volatile|internal|protected|static|readonly|const)\\s*)*)\\s*(.+?)\\s*([\\w]+)\\s*(?=;|=)",
               "captures": {
                 "1" : {
                   "patterns": [
@@ -88,7 +88,11 @@
                   ]
                 },
                 "2" : {
-                  "name": "storage.type.cs"
+                  "patterns": [
+                    {
+                      "include": "#type"
+                    }
+                  ]
                 },
                 "3": {
                   "name": "entity.name.variable.cs"
