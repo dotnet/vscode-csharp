@@ -13,3 +13,7 @@ trim_trailing_whitespace = true
 [{.travis.yml},package.json]
 indent_style = space
 indent_size = 2
+
+[syntaxes/csharp.json]
+indent_style = space
+indent_size = 2

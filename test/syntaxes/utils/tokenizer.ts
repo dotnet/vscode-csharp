@@ -68,10 +68,23 @@ export namespace Tokens {
         createToken(text, "storage.modifier.cs", line, column);
 
     export const ClassIdentifier = (text: string, line?: number, column?: number) =>
-        createToken(text, "entity.name.type.class.cs", line, column);
+        createToken(text, "storage.type.cs", line, column);
 
     export const StorageModifierKeyword = (text: string, line?: number, column?: number) =>
         createToken(text, "storage.modifier.cs", line, column);
 
-}
+    export const Type = (text: string, line?: number, column?: number) =>
+        createToken(text, "storage.type.cs", line, column);
 
+    export const Keyword = (text: string, line?: number, column?: number) =>
+        createToken(text, "keyword.other.cs", line, column);
+
+    export const FieldIdentifier = (text: string, line?: number, column?: number) =>
+        createToken(text, "entity.name.variable.cs", line, column);
+
+    export const StringQuoted = (text: string, line?: number, column?: number) =>
+        createToken(text, "string.quoted.double.cs", line, column);
+
+    export const LanguageConstant = (text: string, line?: number, column?: number) =>
+        createToken(text, "constant.language.cs", line, column);
+}

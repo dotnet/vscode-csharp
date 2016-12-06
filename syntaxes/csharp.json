@@ -71,6 +71,47 @@
         }
       ]
     },
+    "field-declaration": {
+      "patterns": [
+        {
+          "begin": "(?=(?:(?:(?:private|public|volatile|internal|protected|static|readonly|const)\\s*)*)(?:[\\w\\s,<>\\[\\]]+?)(?:[\\w]+)\\s*(?:;|=|=>))",
+          "end": "(?=;)",
+          "patterns": [
+            {
+              "match": "^\\s*((?:(?:private|public|volatile|internal|protected|static|readonly|const)\\s*)*)\\s*(.+?)\\s*([\\w]+)\\s*(?=;|=)",
+              "captures": {
+                "1" : {
+                  "patterns": [
+                    {
+                      "include": "#storage-modifiers"
+                    }
+                  ]
+                },
+                "2" : {
+                  "patterns": [
+                    {
+                      "include": "#type"
+                    }
+                  ]
+                },
+                "3": {
+                  "name": "entity.name.variable.cs"
+                }
+              }
+            },
+            {
+              "begin": "(?==>?)",
+              "end": "(?=;)",
+              "patterns": [
+                {
+                  "include": "#code"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
     "variable": {
       "patterns": [
         {
@@ -123,6 +164,60 @@
         }
       ]
     },
+    "type": {
+      "patterns": [
+        {
+          "match": "(\\w+\\s*<(?:[\\w\\s,\\.`\\[\\]\\*]+|\\g<1>)+>(?:\\s*\\[\\s*\\])?)",
+          "comment": "generic type",
+          "captures": {
+            "1": {
+              "name": "storage.type.cs"
+            }
+          }
+        },
+        {
+          "match": "\\b([a-zA-Z]+[\\w]*\\b(?:\\s*\\[\\s*\\])?\\*?)",
+          "comment": "non-generic type",
+          "captures": {
+            "1": {
+              "name": "storage.type.cs"
+            }
+          }
+        }
+      ]
+    },
+    "generic-constraints": {
+      "begin": "(where)\\s+(\\w+)\\s*:",
+      "end": "(?=where|{|$)",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.other.cs"
+        },
+        "2": {
+          "name": "storage.type.cs"
+        }
+      },
+      "patterns": [
+        {
+          "match": "\\b(class|struct)\\b",
+          "name": "keyword.other.cs"
+        },
+        {
+          "match": "(new)\\s*\\(\\s*\\)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.cs"
+            }
+          }
+        },
+        {
+          "include": "#type"
+        },
+        {
+          "include": "#generic-constraints"
+        }
+      ]
+    },
     "class": {
       "begin": "(?=\\w?[\\w\\s]*[^@]?(?:class|struct|interface|enum)\\s+\\w+)",
       "end": "}",
@@ -140,30 +235,39 @@
           "include": "#comments"
         },
         {
-          "captures": {
+          "begin": "(class|struct|interface|enum)\\s+",
+          "end": "(?={|:|$|where)",
+          "name": "meta.class.identifier.cs",
+          "beginCaptures": {
             "1": {
               "name": "storage.modifier.cs"
-            },
-            "2": {
-              "name": "entity.name.type.class.cs"
             }
           },
-          "match": "(class|struct|interface|enum)\\s+(\\w+)",
-          "name": "meta.class.identifier.cs"
+          "patterns": [
+            {
+              "include": "#type"
+            }
+          ]
         },
         {
           "begin": ":",
-          "end": "(?={)",
+          "end": "(?={|where)",
           "patterns": [
             {
+              "include": "#type"
+            },
+            {
+              "match": "([\\w<>]+)\\s*",
               "captures": {
                 "1": {
                   "name": "storage.type.cs"
                 }
-              },
-              "match": "\\s*,?([A-Za-z_]\\w*)\\b"
+              }
             }
           ]
+        },
+        {
+          "include": "#generic-constraints"
         },
         {
           "begin": "{",
@@ -176,12 +280,22 @@
           "name": "meta.class.body.cs",
           "patterns": [
             {
-              "include": "#method"
-            },
-            {
-              "include": "#code"
+              "include": "#type-body"
             }
           ]
+        }
+      ]
+    },
+    "type-body": {
+      "patterns": [
+        {
+          "include": "#field-declaration"
+        },
+        {
+          "include": "#method"
+        },
+        {
+          "include": "#code"
         }
       ]
     },
