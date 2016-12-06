@@ -68,7 +68,7 @@ export namespace Tokens {
         createToken(text, "storage.modifier.cs", line, column);
 
     export const ClassIdentifier = (text: string, line?: number, column?: number) =>
-        createToken(text, "entity.name.type.class.cs", line, column);
+        createToken(text, "storage.type.cs", line, column);
 
     export const StorageModifierKeyword = (text: string, line?: number, column?: number) =>
         createToken(text, "storage.modifier.cs", line, column);

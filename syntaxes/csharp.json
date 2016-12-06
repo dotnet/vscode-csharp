@@ -160,9 +160,31 @@
         }
       ]
     },
+    "type": {
+      "patterns": [
+        {
+          "match": "(\\w+\\s*<(?:[\\w\\s,\\.`\\[\\]\\*]+|\\g<1>)+>(?:\\s*\\[\\s*\\])?)",
+          "comment": "generic type",
+          "captures": {
+            "1": {
+              "name": "storage.type.cs"
+            }
+          }
+        },
+        {
+          "match": "\\b([a-zA-Z]+[\\w]*\\b(?:\\s*\\[\\s*\\])?\\*?)",
+          "comment": "non-generic type",
+          "captures": {
+            "1": {
+              "name": "storage.type.cs"
+            }
+          }
+        }
+      ]
+    },
     "generic-constraints": {
       "begin": "(where)\\s+(\\w+)\\s*:",
-      "end": "(?={)",
+      "end": "(?=where|{|$)",
       "beginCaptures": {
         "1": {
           "name": "keyword.other.cs"
@@ -185,12 +207,7 @@
           }
         },
         {
-          "match": "([\\w<>,\\[\\]]+)\\s*(?=,|where|{)",
-          "captures": {
-            "1": {
-              "name": "storage.type.cs"
-            }
-          }
+          "include": "#type"
         },
         {
           "include": "#generic-constraints"
@@ -214,21 +231,27 @@
           "include": "#comments"
         },
         {
-          "captures": {
+          "begin": "(class|struct|interface|enum)\\s+",
+          "end": "(?={|:|$|where)",
+          "name": "meta.class.identifier.cs",
+          "beginCaptures": {
             "1": {
               "name": "storage.modifier.cs"
-            },
-            "2": {
-              "name": "entity.name.type.class.cs"
             }
           },
-          "match": "(class|struct|interface|enum)\\s+(\\w+)",
-          "name": "meta.class.identifier.cs"
+          "patterns": [
+            {
+              "include": "#type"
+            }
+          ]
         },
         {
           "begin": ":",
           "end": "(?={|where)",
           "patterns": [
+            {
+              "include": "#type"
+            },
             {
               "match": "([\\w<>]+)\\s*",
               "captures": {

@@ -73,6 +73,19 @@ namespace TestNamespace
 
         });
 
+        it("generics in identifier", function () {
+
+            const input = `
+namespace TestNamespace
+{
+    class Dictionary<T, Dictionary<string, string>> { }
+}`;
+            let tokens: Token[] = TokenizerUtil.tokenize(input);
+
+            tokens.should.contain(Tokens.ClassKeyword("class", 4, 5));
+            tokens.should.contain(Tokens.ClassIdentifier("Dictionary<T, Dictionary<string, string>>", 4, 11));
+        });
+
         it("inheritance", function() {
 
 const input = `
@@ -80,6 +93,7 @@ namespace TestNamespace
 {
     class PublicClass    : IInterface,    IInterfaceTwo { }
     class PublicClass<T> : IInterface<T>, IInterfaceTwo { }
+    class PublicClass<T> : Dictionary<T, Dictionary<string, string>>, IMap<T, Dictionary<string, string>> { }
 }`;
             let tokens: Token[] = TokenizerUtil.tokenize(input);
 
@@ -89,9 +103,12 @@ namespace TestNamespace
             tokens.should.contain(Tokens.Type("IInterfaceTwo", 4, 43));
 
             tokens.should.contain(Tokens.ClassKeyword("class", 5, 5));
-            tokens.should.contain(Tokens.ClassIdentifier("PublicClass", 5, 11));
+            tokens.should.contain(Tokens.ClassIdentifier("PublicClass<T>", 5, 11));
             tokens.should.contain(Tokens.Type("IInterface<T>", 5, 28));
             tokens.should.contain(Tokens.Type("IInterfaceTwo", 5, 43));
+
+            tokens.should.contain(Tokens.Type("Dictionary<T, Dictionary<string, string>>", 6, 28));
+            tokens.should.contain(Tokens.Type("IMap<T, Dictionary<string, string>>", 6, 71));
         });
 
         it("generic constraints", function() {
@@ -105,13 +122,13 @@ namespace TestNamespace
             let tokens: Token[] = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.ClassKeyword("class", 4, 5));
-            tokens.should.contain(Tokens.ClassIdentifier("PublicClass", 4, 11));
+            tokens.should.contain(Tokens.ClassIdentifier("PublicClass<T>", 4, 11));
             tokens.should.contain(Tokens.Keyword("where", 4, 26));
             tokens.should.contain(Tokens.Type("T", 4, 32));
             tokens.should.contain(Tokens.Type("ISomething", 4, 36));
 
             tokens.should.contain(Tokens.ClassKeyword("class", 5, 5));
-            tokens.should.contain(Tokens.ClassIdentifier("PublicClass", 5, 11));
+            tokens.should.contain(Tokens.ClassIdentifier("PublicClass<T, X>", 5, 11));
             tokens.should.contain(Tokens.Type("Dictionary<T, List<string>[]>", 5, 31));
             tokens.should.contain(Tokens.Type("ISomething", 5, 62));
             tokens.should.contain(Tokens.Keyword("where", 5, 73));
