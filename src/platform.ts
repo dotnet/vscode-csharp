@@ -339,6 +339,10 @@ export class PlatformInformation {
                     return ubuntu_16_04;
                 }
                 break;
+            case 'arch':
+                // NOTE: currently Arch Linux seems to be compatible enough with Ubuntu 16 that this works,
+                // though in the future this may need to change as Arch follows a rolling release model.
+                return ubuntu_16_04;
             default:
                 return unknown_distribution;
         }
