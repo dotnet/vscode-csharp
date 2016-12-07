@@ -74,11 +74,11 @@
     "field-declaration": {
       "patterns": [
         {
-          "begin": "(?=(?:(?:(?:private|public|volatile|internal|protected|static|readonly|const)\\s*)*)(?:[\\w\\s,<>\\[\\]]+?)(?:[\\w]+)\\s*(?:;|=|=>))",
+          "begin": "(?=(?:(?:(?:private|public|volatile|internal|protected|static|readonly|const|event)\\s*)*)(?:[\\w\\s,<>\\[\\]]+?)(?:[\\w]+)\\s*(?:;|=|=>))",
           "end": "(?=;)",
           "patterns": [
             {
-              "match": "^\\s*((?:(?:private|public|volatile|internal|protected|static|readonly|const)\\s*)*)\\s*(.+?)\\s*([\\w]+)\\s*(?=;|=)",
+              "match": "^\\s*((?:(?:private|public|volatile|internal|protected|static|readonly|const|event)\\s*)*)\\s*(.+?)\\s*([\\w]+)\\s*(?=;|=)",
               "captures": {
                 "1" : {
                   "patterns": [

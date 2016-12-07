@@ -85,6 +85,9 @@ export namespace Tokens {
     export const StringQuoted = (text: string, line?: number, column?: number) =>
         createToken(text, "string.quoted.double.cs", line, column);
 
+    export const EventIdentifier = (text: string, line?: number, column?: number) =>
+        createToken(text, "entity.name.variable.cs", line, column);
+
     export const LanguageConstant = (text: string, line?: number, column?: number) =>
         createToken(text, "constant.language.cs", line, column);
 }
