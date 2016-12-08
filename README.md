@@ -91,12 +91,13 @@ Several new settings have been added:
   * Windows (64-bit only)
   * macOS
   * Ubuntu 14.04 / Linux Mint 17 / Linux Mint 18 / Elementary OS 0.3
-  * Ubuntu 16.04 / Elementary OS 0.4
+  * Ubuntu 16.04 / Elementary OS 0.4 / Arch
+  * Ubuntu 16.10
   * Debian 8.2
   * CentOS 7.1 / Oracle Linux 7
   * Red Hat Enterprise Linux (RHEL)
-  * Fedora 23
-  * OpenSUSE 13.2
+  * Fedora 23 / 24
+  * OpenSUSE 13 / 42
 
 ### Found a Bug?
 Please file any issues at https://github.com/OmniSharp/omnisharp-vscode/issues.

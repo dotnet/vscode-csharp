@@ -10,6 +10,11 @@
 * Fix spacing in hover tool tips around `<paramref/>` in XML doc comments. ([#672](https://github.com/OmniSharp/omnisharp-vscode/issues/672)) _(Contributed by [@filipw](https://github.com/filipw))_
 * Fix syntax highlighting for field declarations. ([#757](https://github.com/OmniSharp/omnisharp-vscode/issues/757)) _(Contributed by [@ivanz](https://github.com/ivanz))_
 * Fix syntax highlighting for generic types with multiple type parameters. ([#960](https://github.com/OmniSharp/omnisharp-vscode/issues/960)) _(Contributed by [@ivanz](https://github.com/ivanz))_
+* Update the debugger so that the debugger itself runs on .NET Core 1.1. This change:
+    * Enables debugger support for additional Linux distributions - Ubuntu 16.10, openSUSE 42, Fedora 24
+    * Brings support for running all supported distros on top of Linux Kernel >= 4.6
+* Enable debugger support for Arch Linux ([#564](https://github.com/OmniSharp/omnisharp-vscode/issues/564))
+* Improve debugger install errors for -- macOS without openSSL symlinks ([#986](https://github.com/OmniSharp/omnisharp-vscode/pull/986)), and x86 Windows ([#998](https://github.com/OmniSharp/omnisharp-vscode/pull/998)).
 
 ## 1.5.3 (November 21, 2016)
 
