@@ -90,4 +90,7 @@ export namespace Tokens {
 
     export const LanguageConstant = (text: string, line?: number, column?: number) =>
         createToken(text, "constant.language.cs", line, column);
+
+    export const PropertyIdentifier = (text: string, line?: number, column?: number) =>
+        createToken(text, "entity.name.function.cs", line, column);
 }
