@@ -35,7 +35,7 @@ class Tester
 const input = `
 class Tester
 {
-    public IBooom Property { get { return null; } set { something = value; } }
+    public IBooom Property { get { return null; } private set { something = value; } }
 }`;
             let tokens: Token[] = TokenizerUtil.tokenize(input);
 
@@ -43,7 +43,8 @@ class Tester
             tokens.should.contain(Tokens.Type("IBooom", 4, 12));
             tokens.should.contain(Tokens.PropertyIdentifier("Property", 4, 19));
             tokens.should.contain(Tokens.Keyword("get", 4, 30));
-            tokens.should.contain(Tokens.Keyword("set", 4, 51));
+            tokens.should.contain(Tokens.StorageModifierKeyword("private", 4, 51));
+            tokens.should.contain(Tokens.Keyword("set", 4, 59));
         });
 
 

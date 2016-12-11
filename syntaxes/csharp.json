@@ -115,7 +115,7 @@
     "variable": {
       "patterns": [
         {
-          "match": "\\b(var)\\s+(.*?)(?=(=|;))",
+          "match": "^\\s*\\b(var)\\s+(.*?)(?=(=|;))",
           "captures": {
             "1": {
               "name": "keyword.other.var.cs"
@@ -123,7 +123,7 @@
           }
         },
         {
-          "match": "\\b(?!var|return|yield|throw)([\\w<>*?\\[\\]]+)\\s+([\\w]+)\\s*(?=(=(?!=)|;))",
+          "match": "^\\s*\\b(?!var|return|yield|throw)([\\w<>*?\\[\\]]+)\\s+([\\w]+)\\s*(?=(=(?!=)|;))",
           "captures": {
             "1": {
               "name": "storage.type.variable.cs"
