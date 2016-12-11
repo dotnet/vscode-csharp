@@ -218,7 +218,7 @@
         }
       ]
     },
-    "class": {
+    "type-declaration": {
       "begin": "(?=\\w?[\\w\\s]*[^@]?(?:class|struct|interface|enum)\\s+\\w+)",
       "end": "}",
       "endCaptures": {
@@ -289,6 +289,9 @@
     "type-body": {
       "patterns": [
         {
+          "include": "type-declaration"
+        },
+        {
           "include": "#field-declaration"
         },
         {
@@ -314,7 +317,7 @@
           "include": "#comments"
         },
         {
-          "include": "#class"
+          "include": "#type-declaration"
         },
         {
           "include": "#variable"
@@ -481,7 +484,7 @@
       ]
     },
     "property-declaration": {
-      "begin": "^\\s*((?:\\w+\\s+)*?)(?!(?:private|public|internal|protected|static|new|virtual|override))(\\w.+?)\\s+(\\w+)\\s*(?={|$)",
+      "begin": "^\\s*(?!.*\\b(?:class|interface|struct)\\b)((?:\\w+\\s+)*?)(?!(?:private|public|internal|protected|static|new|virtual|override))(\\w.+?)\\s+(\\w+)\\s*(?={|$)",
       "end": "}|;|$",
       "beginCaptures": {
           "1" : {

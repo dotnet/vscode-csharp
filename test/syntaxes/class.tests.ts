@@ -141,7 +141,28 @@ namespace TestNamespace
 
         });
 
+        it("nested class", function() {
 
+const input = `
+namespace TestNamespace
+{
+    class Klass
+    {
+        public class Nested
+        {
+
+        }
+    }
+}`;
+            let tokens: Token[] = TokenizerUtil.tokenize(input);
+
+            tokens.should.contain(Tokens.ClassKeyword("class", 4, 5));
+            tokens.should.contain(Tokens.ClassIdentifier("Klass", 4, 11));
+
+            tokens.should.contain(Tokens.StorageModifierKeyword("public", 6, 9));
+            tokens.should.contain(Tokens.ClassKeyword("class", 6, 16));
+            tokens.should.contain(Tokens.ClassIdentifier("Nested", 6, 22));
+        });
     });
 });
 
