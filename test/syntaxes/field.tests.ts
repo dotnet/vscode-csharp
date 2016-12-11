@@ -99,7 +99,7 @@ public class Tester
             tokens.should.contain(Tokens.StorageModifierKeyword("private", 4, 5));
             tokens.should.contain(Tokens.Type("string", 4, 13));
             tokens.should.contain(Tokens.FieldIdentifier("field", 4, 20));
-            tokens.should.contain(Tokens.StringQuoted("hello", 4, 29));
+            tokens.should.contain(Tokens.StringDoubleQuoted("hello", 4, 29));
 
             tokens.should.contain(Tokens.StorageModifierKeyword("const", 5, 5));
             tokens.should.contain(Tokens.Type("bool", 5, 13));
@@ -121,7 +121,7 @@ public class Tester
             tokens.should.contain(Tokens.StorageModifierKeyword("private", 4, 5));
             tokens.should.contain(Tokens.Type("string", 4, 13));
             tokens.should.contain(Tokens.FieldIdentifier("field", 4, 20));
-            tokens.should.contain(Tokens.StringQuoted("hello", 4, 30));
+            tokens.should.contain(Tokens.StringDoubleQuoted("hello", 4, 30));
 
             tokens.should.contain(Tokens.StorageModifierKeyword("const", 5, 5));
             tokens.should.contain(Tokens.Type("bool", 5, 13));
