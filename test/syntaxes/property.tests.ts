@@ -21,8 +21,6 @@ class Tester
 }`;
             let tokens: Token[] = TokenizerUtil.tokenize(input);
 
-            console.log(JSON.stringify(tokens));
-
             tokens.should.contain(Tokens.StorageModifierKeyword("public", 4, 5));
             tokens.should.contain(Tokens.Type("IBooom", 4, 12));
             tokens.should.contain(Tokens.PropertyIdentifier("Property", 4, 19));
