@@ -481,6 +481,7 @@ export namespace V2 {
     export interface GetTestStartInfoRequest {
         FileName: string;
         MethodName: string;
+        TestFrameworkName: string;
     }
 
     export interface GetTestStartInfoResponse {
@@ -491,6 +492,7 @@ export namespace V2 {
     export interface RunDotNetTestRequest {
         FileName: string;
         MethodName: string;
+        TestFrameworkName: string;
     }
 
     export interface RunDotNetTestResponse {
