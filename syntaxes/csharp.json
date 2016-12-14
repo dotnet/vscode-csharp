@@ -74,11 +74,11 @@
     "field-declaration": {
       "patterns": [
         {
-          "begin": "(?=(?:(?:(?:private|public|volatile|internal|protected|static|readonly|const)\\s*)*)(?:[\\w\\s,<>\\[\\]]+?)(?:[\\w]+)\\s*(?:;|=|=>))",
+          "begin": "(?=(?:(?:(?:private|public|volatile|internal|protected|static|readonly|const|event)\\s*)*)(?:[\\w\\s,<>\\[\\]]+?)(?:[\\w]+)\\s*(?:;|=|=>))",
           "end": "(?=;)",
           "patterns": [
             {
-              "match": "^\\s*((?:(?:private|public|volatile|internal|protected|static|readonly|const)\\s*)*)\\s*(.+?)\\s*([\\w]+)\\s*(?=;|=)",
+              "match": "^\\s*((?:(?:private|public|volatile|internal|protected|static|readonly|const|event)\\s*)*)\\s*(.+?)\\s*([\\w]+)\\s*(?=;|=)",
               "captures": {
                 "1" : {
                   "patterns": [
@@ -101,7 +101,7 @@
             },
             {
               "begin": "(?==>?)",
-              "end": "(?=;)",
+              "end": "(?=;|$)",
               "patterns": [
                 {
                   "include": "#code"
@@ -115,7 +115,7 @@
     "variable": {
       "patterns": [
         {
-          "match": "\\b(var)\\s+(.*?)(?=(=|;))",
+          "match": "^\\s*\\b(var)\\s+(.*?)(?=(=|;))",
           "captures": {
             "1": {
               "name": "keyword.other.var.cs"
@@ -123,7 +123,7 @@
           }
         },
         {
-          "match": "\\b(?!var|return|yield|throw)([\\w<>*?\\[\\]]+)\\s+([\\w]+)\\s*(?=(=(?!=)|;))",
+          "match": "^\\s*\\b(?!var|return|yield|throw)([\\w<>*?\\[\\]]+)\\s+([\\w]+)\\s*(?=(=(?!=)|;))",
           "captures": {
             "1": {
               "name": "storage.type.variable.cs"
@@ -167,7 +167,7 @@
     "type": {
       "patterns": [
         {
-          "match": "(\\w+\\s*<(?:[\\w\\s,\\.`\\[\\]\\*]+|\\g<1>)+>(?:\\s*\\[\\s*\\])?)",
+          "match": "([\\w\\.]+\\s*<(?:[\\w\\s,\\.`\\[\\]\\*]+|\\g<1>)+>(?:\\s*\\[\\s*\\])?)",
           "comment": "generic type",
           "captures": {
             "1": {
@@ -176,7 +176,7 @@
           }
         },
         {
-          "match": "\\b([a-zA-Z]+[\\w]*\\b(?:\\s*\\[\\s*\\])?\\*?)",
+          "match": "\\b([a-zA-Z]+[\\w\\.]*\\b(?:\\s*\\[\\s*\\])?\\*?)",
           "comment": "non-generic type",
           "captures": {
             "1": {
@@ -218,7 +218,7 @@
         }
       ]
     },
-    "class": {
+    "type-declaration": {
       "begin": "(?=\\w?[\\w\\s]*[^@]?(?:class|struct|interface|enum)\\s+\\w+)",
       "end": "}",
       "endCaptures": {
@@ -289,10 +289,19 @@
     "type-body": {
       "patterns": [
         {
+          "include": "type-declaration"
+        },
+        {
           "include": "#field-declaration"
         },
         {
+          "include": "#property-declaration"
+        },
+        {
           "include": "#method"
+        },
+        {
+          "include": "#storage-modifiers"
         },
         {
           "include": "#code"
@@ -308,7 +317,7 @@
           "include": "#comments"
         },
         {
-          "include": "#class"
+          "include": "#type-declaration"
         },
         {
           "include": "#variable"
@@ -375,15 +384,109 @@
         }
       ]
     },
-    "constants": {
+    "string-interpolated": {
       "patterns": [
         {
-          "match": "\\b(true|false|null|this|base)\\b",
-          "name": "constant.language.cs"
+          "begin": "\\$\"",
+          "end": "\"|$",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.cs"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.cs"
+            }
+          },
+          "patterns": [
+            {
+              "begin": "([^{}]+?)(?={|\"|$)",
+              "end": "(?={|\"|$)",
+              "beginCaptures": {
+                "1": {
+                  "name": "string.quoted.double.cs"
+                }
+              }
+            },
+            {
+              "begin": "{",
+              "end": "}",
+              "name": "meta.interpolated.expression.cs",
+              "patterns":[
+                {
+                  "include":"#code"
+                }
+              ]
+            },
+            {
+              "begin": "([^{}]+?)(?={|\"|$)",
+              "end": "(?={|\"|$)",
+              "beginCaptures": {
+                "1": {
+                  "name": "string.quoted.double.cs"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "string-interpolated-verbatim": {
+      "patterns": [
+        {
+          "begin": "\\$@\"",
+          "end": "\"",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.cs"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.cs"
+            }
+          },
+          "patterns": [
+            {
+              "begin": "([^{}]+?)(?={|\"|$)",
+              "end": "(?={|\"|$)",
+              "beginCaptures": {
+                "1": {
+                  "name": "string.quoted.double.literal.cs"
+                }
+              }
+            },
+            {
+              "begin": "{",
+              "end": "}",
+              "name": "meta.interpolated.expression.cs",
+              "patterns":[
+                {
+                  "include":"#code"
+                }
+              ]
+            },
+            {
+              "begin": "([^{}]+?)(?={|\"|$)",
+              "end": "(?={|\"|$)",
+              "beginCaptures": {
+                "1": {
+                  "name": "string.quoted.double.literal.cs"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "string": {
+      "patterns":[
+        {
+          "include": "#string-interpolated-verbatim"
         },
         {
-          "match": "\\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\\.?[0-9]*)|(\\.[0-9]+))((e|E)(\\+|-)?[0-9]+)?)(L|l|UL|ul|u|U|F|f|ll|LL|ull|ULL)?\\b",
-          "name": "constant.numeric.cs"
+          "include": "#string-interpolated"
         },
         {
           "captures": {
@@ -438,6 +541,21 @@
         }
       ]
     },
+    "constants": {
+      "patterns": [
+        {
+          "match": "\\b(true|false|null|this|base)\\b",
+          "name": "constant.language.cs"
+        },
+        {
+          "match": "\\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\\.?[0-9]*)|(\\.[0-9]+))((e|E)(\\+|-)?[0-9]+)?)(L|l|UL|ul|u|U|F|f|ll|LL|ull|ULL)?\\b",
+          "name": "constant.numeric.cs"
+        },
+        {
+          "include": "#string"
+        }
+      ]
+    },
     "keywords": {
       "patterns": [
         {
@@ -458,23 +576,64 @@
         }
       ]
     },
+    "attribute": {
+      "begin": "\\[",
+      "end": "\\]",
+      "name": "meta.method.annotation.cs",
+      "patterns": [
+        {
+          "include": "#constants"
+        },
+        {
+          "include": "#preprocessor"
+        },
+        {
+          "include": "#builtinTypes"
+        }
+      ]
+    },
+    "property-declaration": {
+      "begin": "^\\s*(?!.*\\b(?:class|interface|struct)\\b)((?:\\w+\\s+)*?)(?!(?:private|public|internal|protected|static|new|virtual|override))(\\w.+?)\\s+(\\w+)\\s*(?={|$)",
+      "end": "}|;|$",
+      "beginCaptures": {
+          "1" : {
+              "patterns": [
+                {
+                  "include": "#storage-modifiers"
+                }
+              ]
+            },
+            "2" : {
+              "patterns": [
+                {
+                  "include": "#type"
+                }
+              ]
+            },
+            "3": {
+              "name": "entity.name.function.cs"
+            }
+      },
+      "name": "meta.property.cs",
+      "patterns": [
+        {
+          "include": "#block"
+        },
+        {
+          "begin": "=",
+          "end": "(?=;)",
+          "patterns":[
+            {
+              "include": "#code"
+            }
+          ]
+        }
+      ]
+    },
     "method": {
       "patterns": [
         {
-          "begin": "\\[",
-          "end": "\\]",
-          "name": "meta.method.annotation.cs",
-          "patterns": [
-            {
-              "include": "#constants"
-            },
-            {
-              "include": "#preprocessor"
-            },
-            {
-              "include": "#builtinTypes"
-            }
-          ]
+          "include": "attribute"
         },
         {
           "begin": "(?=\\bnew\\s+)(?=[\\w<].*\\s+)(?=[^=]+\\()",
@@ -562,106 +721,6 @@
               "beginCaptures": {
                 "0": {
                   "name": "punctuation.section.method.begin.cs"
-                }
-              },
-              "end": "(?=})",
-              "name": "meta.method.body.cs",
-              "patterns": [
-                {
-                  "include": "#code"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "begin": "(?!new)(?=[\\w<].*\\s+)(?=[^\\(]+=>)",
-          "end": ";",
-          "endCaptures": {
-            "0": {
-              "name": "punctuation.section.property.end.cs"
-            }
-          },
-          "name": "meta.property.cs",
-          "patterns": [
-            {
-              "include": "#storage-modifiers"
-            },
-            {
-              "begin": "(?=([\\w.]+)\\s*=>)",
-              "captures": {
-                "1": {
-                  "name": "entity.name.function.cs"
-                }
-              },
-              "end": "(?==>)",
-              "name": "meta.method.identifier.cs"
-            },
-            {
-              "begin": "(?=\\w.*\\s+[\\w.]+\\s*=>)",
-              "end": "(?=[\\w.]+\\s*=>)",
-              "name": "meta.method.return-type.cs",
-              "patterns": [
-                {
-                  "include": "#builtinTypes"
-                }
-              ]
-            },
-            {
-              "begin": "=>",
-              "beginCaptures": {
-                "0": {
-                  "name": "punctuation.section.property.begin.cs"
-                }
-              },
-              "end": "(?=;)",
-              "name": "meta.method.body.cs",
-              "patterns": [
-                {
-                  "include": "#code"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "begin": "(?!new)(?=[\\w<].*\\s+)(?=[^=\\(]+\\{)",
-          "end": "}",
-          "endCaptures": {
-            "0": {
-              "name": "punctuation.section.property.end.cs"
-            }
-          },
-          "name": "meta.property.cs",
-          "patterns": [
-            {
-              "include": "#storage-modifiers"
-            },
-            {
-              "begin": "([\\w.]+)\\s*(?={)",
-              "captures": {
-                "1": {
-                  "name": "entity.name.function.cs"
-                }
-              },
-              "end": "(?={)",
-              "name": "meta.method.identifier.cs"
-            },
-            {
-              "begin": "(?=\\w.*\\s+[\\w.]+\\s*\\{)",
-              "end": "(?=[\\w.]+\\s*\\{)",
-              "name": "meta.method.return-type.cs",
-              "patterns": [
-                {
-                  "include": "#builtinTypes"
-                }
-              ]
-            },
-            {
-              "begin": "{",
-              "beginCaptures": {
-                "0": {
-                  "name": "punctuation.section.property.begin.cs"
                 }
               },
               "end": "(?=})",

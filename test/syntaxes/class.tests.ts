@@ -92,7 +92,7 @@ const input = `
 namespace TestNamespace
 {
     class PublicClass    : IInterface,    IInterfaceTwo { }
-    class PublicClass<T> : IInterface<T>, IInterfaceTwo { }
+    class PublicClass<T> : Root.IInterface<Something.Nested>, Something.IInterfaceTwo { }
     class PublicClass<T> : Dictionary<T, Dictionary<string, string>>, IMap<T, Dictionary<string, string>> { }
 }`;
             let tokens: Token[] = TokenizerUtil.tokenize(input);
@@ -104,8 +104,8 @@ namespace TestNamespace
 
             tokens.should.contain(Tokens.ClassKeyword("class", 5, 5));
             tokens.should.contain(Tokens.ClassIdentifier("PublicClass<T>", 5, 11));
-            tokens.should.contain(Tokens.Type("IInterface<T>", 5, 28));
-            tokens.should.contain(Tokens.Type("IInterfaceTwo", 5, 43));
+            tokens.should.contain(Tokens.Type("Root.IInterface<Something.Nested>", 5, 28));
+            tokens.should.contain(Tokens.Type("Something.IInterfaceTwo", 5, 63));
 
             tokens.should.contain(Tokens.Type("Dictionary<T, Dictionary<string, string>>", 6, 28));
             tokens.should.contain(Tokens.Type("IMap<T, Dictionary<string, string>>", 6, 71));
@@ -141,7 +141,28 @@ namespace TestNamespace
 
         });
 
+        it("nested class", function() {
 
+const input = `
+namespace TestNamespace
+{
+    class Klass
+    {
+        public class Nested
+        {
+
+        }
+    }
+}`;
+            let tokens: Token[] = TokenizerUtil.tokenize(input);
+
+            tokens.should.contain(Tokens.ClassKeyword("class", 4, 5));
+            tokens.should.contain(Tokens.ClassIdentifier("Klass", 4, 11));
+
+            tokens.should.contain(Tokens.StorageModifierKeyword("public", 6, 9));
+            tokens.should.contain(Tokens.ClassKeyword("class", 6, 16));
+            tokens.should.contain(Tokens.ClassIdentifier("Nested", 6, 22));
+        });
     });
 });
 

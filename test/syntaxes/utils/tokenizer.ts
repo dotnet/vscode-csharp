@@ -82,9 +82,27 @@ export namespace Tokens {
     export const FieldIdentifier = (text: string, line?: number, column?: number) =>
         createToken(text, "entity.name.variable.cs", line, column);
 
-    export const StringQuoted = (text: string, line?: number, column?: number) =>
+    export const StringDoubleQuoted = (text: string, line?: number, column?: number) =>
         createToken(text, "string.quoted.double.cs", line, column);
+
+    export const StringDoubleQuotedVerbatim = (text: string, line?: number, column?: number) =>
+        createToken(text, "string.quoted.double.literal.cs", line, column);
+
+    export const EventIdentifier = (text: string, line?: number, column?: number) =>
+        createToken(text, "entity.name.variable.cs", line, column);
 
     export const LanguageConstant = (text: string, line?: number, column?: number) =>
         createToken(text, "constant.language.cs", line, column);
+
+    export const PropertyIdentifier = (text: string, line?: number, column?: number) =>
+        createToken(text, "entity.name.function.cs", line, column);
+
+    export const StringInterpolatedExpression = (text: string, line?: number, column?: number) =>
+        createToken(text, "meta.interpolated.expression.cs", line, column);
+
+    export const StringStart = (text: string, line?: number, column?: number) =>
+        createToken(text, "punctuation.definition.string.begin.cs", line, column);
+
+    export const StringEnd = (text: string, line?: number, column?: number) =>
+        createToken(text, "punctuation.definition.string.end.cs", line, column);
 }

@@ -50,7 +50,8 @@ const input = `
 public class Tester
 {
     private static readonly List _field;
-    readonly string _field;
+    readonly string _field2;
+    string _field3;
 }`;
 
             let tokens: Token[] = TokenizerUtil.tokenize(input);
@@ -60,6 +61,10 @@ public class Tester
             tokens.should.contain(Tokens.StorageModifierKeyword("readonly", 4, 20));
             tokens.should.contain(Tokens.Type("List", 4, 29));
             tokens.should.contain(Tokens.FieldIdentifier("_field", 4, 34));
+
+            tokens.should.contain(Tokens.FieldIdentifier("_field2", 5, 21));
+
+            tokens.should.contain(Tokens.FieldIdentifier("_field3", 6, 12));
         });
 
         it("types", function() {
@@ -94,7 +99,7 @@ public class Tester
             tokens.should.contain(Tokens.StorageModifierKeyword("private", 4, 5));
             tokens.should.contain(Tokens.Type("string", 4, 13));
             tokens.should.contain(Tokens.FieldIdentifier("field", 4, 20));
-            tokens.should.contain(Tokens.StringQuoted("hello", 4, 29));
+            tokens.should.contain(Tokens.StringDoubleQuoted("hello", 4, 29));
 
             tokens.should.contain(Tokens.StorageModifierKeyword("const", 5, 5));
             tokens.should.contain(Tokens.Type("bool", 5, 13));
@@ -116,7 +121,7 @@ public class Tester
             tokens.should.contain(Tokens.StorageModifierKeyword("private", 4, 5));
             tokens.should.contain(Tokens.Type("string", 4, 13));
             tokens.should.contain(Tokens.FieldIdentifier("field", 4, 20));
-            tokens.should.contain(Tokens.StringQuoted("hello", 4, 30));
+            tokens.should.contain(Tokens.StringDoubleQuoted("hello", 4, 30));
 
             tokens.should.contain(Tokens.StorageModifierKeyword("const", 5, 5));
             tokens.should.contain(Tokens.Type("bool", 5, 13));
