@@ -183,3 +183,8 @@ gulp.task('tslint', () => {
             emitError: false
         }))
 });
+
+gulp.task('updateGrammar', () => {
+    gulp.src("node_modules/csharp-textmate-grammar/grammars/csharp.json")
+        .pipe(gulp.dest("syntaxes/"))
+});

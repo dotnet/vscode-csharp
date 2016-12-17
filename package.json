@@ -22,7 +22,8 @@
     "compile": "node ./node_modules/vscode/bin/compile -p ./ && gulp tslint",
     "watch": "node ./node_modules/vscode/bin/compile -watch -p ./",
     "test": "mocha --timeout 15000 -u tdd ./out/test/*.tests.js ./out/test/**/*.tests.js",
-    "postinstall": "node ./node_modules/vscode/bin/install"
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "update-grammar": "npm update csharp-textmate-grammar && gulp updateGrammar"
   },
   "dependencies": {
     "fs-extra-promise": "^0.3.1",
@@ -38,6 +39,7 @@
     "yauzl": "^2.5.0"
   },
   "devDependencies": {
+    "csharp-textmate-grammar": "*",
     "del": "^2.0.2",
     "gulp": "^3.9.1",
     "gulp-mocha": "^2.1.3",
