@@ -48,8 +48,7 @@
     "typescript": "^2.0.3",
     "vscode": "^0.11.13",
     "vsce": "^1.7.0",
-    "chai": "^3.5.0",
-    "vscode-textmate": "^2.1.1"
+    "chai": "^3.5.0"
   },
   "runtimeDependencies": [
     {
