@@ -202,7 +202,7 @@ function launchWindows(launchPath: string, cwd: string, args: string[], envVars:
     }
 
     let argsCopy = args.slice(0); // create copy of args
-    argsCopy.push('--debug');
+    //argsCopy.push('--debug');
     argsCopy.unshift(launchPath);
     argsCopy = [[
         '/s',
