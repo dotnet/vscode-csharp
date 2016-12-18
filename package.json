@@ -365,6 +365,11 @@
           "type": "number",
           "default": 250,
           "description": "The maximum number of projects to be shown in the 'Select Project' dropdown (maximum 250)."
+        },
+        "omnisharp.useEditorFormattingSettings": {
+          "type": "boolean",
+          "default": true,
+          "description": "Specifes whether OmniSharp should use VS Code editor settings for C# code formatting (use of tabs, indentation size)."
         }
       }
     },
