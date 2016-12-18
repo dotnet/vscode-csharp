@@ -161,17 +161,25 @@ function launch(cwd: string, args: string[]): Promise<LaunchResult> {
     return PlatformInformation.GetCurrent().then(platformInfo => {
         const options = Options.Read();
 
+        let editorConfig = vscode.workspace.getConfiguration('editor');
+
+        let envVars = {
+            'formattingOptions:useTabs': !editorConfig.get('insertSpaces', true),
+            'formattingOptions:tabSize': editorConfig.get('tabSize', 4),
+            'formattingOptions:indentationSize': editorConfig.get('tabSize', 4)
+        };
+
         if (options.path && options.useMono) {
-            return launchNixMono(options.path, cwd, args);
+            return launchNixMono(options.path, cwd, args, envVars);
         }
 
         const launchPath = options.path || getLaunchPath(platformInfo);
 
         if (platformInfo.isWindows()) {
-            return launchWindows(launchPath, cwd, args);
+            return launchWindows(launchPath, cwd, args, envVars);
         }
         else {
-            return launchNix(launchPath, cwd, args);
+            return launchNix(launchPath, cwd, args, envVars);
         }
     });
 }
@@ -184,7 +192,7 @@ function getLaunchPath(platformInfo: PlatformInformation): string {
         : path.join(binPath, 'run');
 }
 
-function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchResult {
+function launchWindows(launchPath: string, cwd: string, args: string[], envVars: any): LaunchResult {
     function escapeIfNeeded(arg: string) {
         const hasSpaceWithoutQuotes = /^[^"].* .*[^"]/;
         return hasSpaceWithoutQuotes.test(arg)
@@ -193,6 +201,7 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
     }
 
     let argsCopy = args.slice(0); // create copy of args
+    argsCopy.push('--debug');
     argsCopy.unshift(launchPath);
     argsCopy = [[
         '/s',
@@ -203,7 +212,8 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
     let process = spawn('cmd', argsCopy, <any>{
         windowsVerbatimArguments: true,
         detached: false,
-        cwd: cwd
+        cwd: cwd, 
+        env: envVars
     });
 
     return {
@@ -213,10 +223,11 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
     };
 }
 
-function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResult {
+function launchNix(launchPath: string, cwd: string, args: string[], envVars: any): LaunchResult {
     let process = spawn(launchPath, args, {
         detached: false,
-        cwd: cwd
+        cwd: cwd,
+        env: envVars
     });
 
     return {
@@ -226,7 +237,7 @@ function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResul
     };
 }
 
-function launchNixMono(launchPath: string, cwd: string, args: string[]): Promise<LaunchResult> {
+function launchNixMono(launchPath: string, cwd: string, args: string[], envVars: any): Promise<LaunchResult> {
     return canLaunchMono()
         .then(() => {
             let argsCopy = args.slice(0); // create copy of details args
@@ -234,7 +245,8 @@ function launchNixMono(launchPath: string, cwd: string, args: string[]): Promise
 
             let process = spawn('mono', argsCopy, {
                 detached: false,
-                cwd: cwd
+                cwd: cwd,
+                env: envVars
             });
 
             return {
