@@ -138,7 +138,7 @@ export class CoreClrDebugUtil
 
     public static existsSync(path: string) : boolean {
         try {
-            fs.accessSync(path, fs.F_OK);
+            fs.accessSync(path, fs.constants.F_OK);
             return true;
         } catch (err) {
             if (err.code === 'ENOENT' || err.code === 'ENOTDIR') {

@@ -3,6 +3,7 @@ node_modules
 out
 .omnisharp-*/
 .debugger
+.vscode-test
 
 install.*
 

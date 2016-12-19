@@ -9,7 +9,7 @@ import {OmniSharpServer} from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
 import {findLaunchTargets} from '../omnisharp/launcher';
 import * as cp from 'child_process';
-import * as fs from 'fs-extra-promise';
+import * as fs from 'fs';
 import * as path from 'path';
 import * as protocol from '../omnisharp/protocol';
 import * as vscode from 'vscode';
@@ -87,18 +87,24 @@ function projectsToCommands(projects: protocol.DotNetProject[]): Promise<Command
     return projects.map(project => {
         let projectDirectory = project.Path;
 
-        return fs.lstatAsync(projectDirectory).then(stats => {
-            if (stats.isFile()) {
-                projectDirectory = path.dirname(projectDirectory);
-            }
-
-            return {
-                label: `dotnet restore - (${project.Name || path.basename(project.Path)})`,
-                description: projectDirectory,
-                execute() {
-                    return dotnetRestore(projectDirectory);
+        return new Promise<Command>((resolve, reject) => {
+            fs.lstat(projectDirectory, (err, stats) => {
+                if (err) {
+                    return reject(err);
                 }
-            };
+
+                if (stats.isFile()) {
+                    projectDirectory = path.dirname(projectDirectory);
+                }
+
+                resolve({
+                    label: `dotnet restore - (${project.Name || path.basename(project.Path)})`,
+                    description: projectDirectory,
+                    execute() {
+                        return dotnetRestore(projectDirectory);
+                    }
+                });
+            });
         });
     });
 }

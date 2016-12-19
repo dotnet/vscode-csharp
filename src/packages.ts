@@ -5,7 +5,7 @@
 
 import * as fs from 'fs';
 import * as https from 'https';
-import { mkdirp } from 'mkdirp';
+import * as mkdirp from 'mkdirp';
 import * as path from 'path';
 import * as tmp from 'tmp';
 import { parse as parseUrl } from 'url';
@@ -226,15 +226,15 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
             });
 
             response.on('error', err => {
-                reject(new PackageError(`Reponse error: ${err.code || 'NONE'}`, pkg, err));
+                reject(new PackageError(`Reponse error: ${err.message || 'NONE'}`, pkg, err));
             });
 
             // Begin piping data from the response to the package file
             response.pipe(tmpFile, { end: false });
         });
 
-        request.on('error', error => {
-            reject(new PackageError(`Request error: ${error.code || 'NONE'}`, pkg, error));
+        request.on('error', err => {
+            reject(new PackageError(`Request error: ${err.message || 'NONE'}`, pkg, err));
         });
 
         // Execute the request
