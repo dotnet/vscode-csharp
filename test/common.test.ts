@@ -7,7 +7,7 @@ import { should } from 'chai';
 import { buildPromiseChain } from '../src/common';
 
 suite("Common", () => {
-    before(() => should);
+    suiteSetup(() => should());
 
     test("buildPromiseChain produces a sequence of promises", () => {
         let array: number[] = [];

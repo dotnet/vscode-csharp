@@ -4,20 +4,25 @@ node_js:
 - "6"
 
 env:
-  - CXX=g++-4.8
+  - CXX=g++-4.9
 
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
     packages:
-      - g++-4.8
+      - g++-4.9
 
 install:
 - npm install
+- npm run vscode:prepublish
 - npm run compile
 - npm install -g vsce
 - vsce package
+
+script:
+  - npm test --silent
+  - npm run test-syntax
 
 deploy:
   provider: releases
