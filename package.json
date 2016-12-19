@@ -22,7 +22,7 @@
     "vscode:prepublish": "tsc -p ./",
     "compile": "tsc -p ./ && gulp tslint",
     "watch": "tsc -watch -p ./",
-    "test": "mocha --timeout 15000 -u tdd ./out/test/*.tests.js ./out/test/**/*.tests.js",
+    "test": "mocha --timeout 15000 -u tdd ./out/test/*.test.js ./out/test/**/*.test.js",
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
