@@ -7,18 +7,14 @@ import { should } from 'chai';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { createLaunchJson, createTasksConfiguration, Paths, TargetProjectData } from '../src/assets';
+import { AssetGenerator, TargetProjectData } from '../src/assets';
 
 suite("Asset generation", () => {
     suiteSetup(() => should());
 
     test("Create tasks.json for project opened in workspace", () => {
         let rootPath = path.resolve('testRoot');
-        let vscodeFolder = path.join(rootPath, '.vscode');
-        let tasksJsonPath = path.join(vscodeFolder, 'tasks.json');
-        let launchJsonPath = path.join(vscodeFolder, 'launch.json');
-
-        let paths: Paths = { rootPath, vscodeFolder, tasksJsonPath, launchJsonPath };
+        let generator = new AssetGenerator(rootPath);
 
         let projectData: TargetProjectData = {
             projectPath: vscode.Uri.file(rootPath),
@@ -28,7 +24,7 @@ suite("Asset generation", () => {
             configurationName: 'Debug'
         };
 
-        let tasksJson = createTasksConfiguration(projectData, paths);
+        let tasksJson = generator.createTasksConfiguration(projectData);
 
         let buildPath = tasksJson.tasks[0].args[0];
 
@@ -39,11 +35,7 @@ suite("Asset generation", () => {
 
     test("Create tasks.json for nested project opened in workspace", () => {
         let rootPath = path.resolve('testRoot');
-        let vscodeFolder = path.join(rootPath, '.vscode');
-        let tasksJsonPath = path.join(vscodeFolder, 'tasks.json');
-        let launchJsonPath = path.join(vscodeFolder, 'launch.json');
-
-        let paths: Paths = { rootPath, vscodeFolder, tasksJsonPath, launchJsonPath };
+        let generator = new AssetGenerator(rootPath);
 
         let projectData: TargetProjectData = {
             projectPath: vscode.Uri.file(path.join(rootPath, 'nested')),
@@ -53,7 +45,7 @@ suite("Asset generation", () => {
             configurationName: 'Debug'
         };
 
-        let tasksJson = createTasksConfiguration(projectData, paths);
+        let tasksJson = generator.createTasksConfiguration(projectData);
 
         let buildPath = tasksJson.tasks[0].args[0];
 
@@ -64,11 +56,7 @@ suite("Asset generation", () => {
 
     test("Create launch.json for project opened in workspace", () => {
         let rootPath = path.resolve('testRoot');
-        let vscodeFolder = path.join(rootPath, '.vscode');
-        let tasksJsonPath = path.join(vscodeFolder, 'tasks.json');
-        let launchJsonPath = path.join(vscodeFolder, 'launch.json');
-
-        let paths: Paths = { rootPath, vscodeFolder, tasksJsonPath, launchJsonPath };
+        let generator = new AssetGenerator(rootPath);
 
         let projectData: TargetProjectData = {
             projectPath: vscode.Uri.file(path.join(rootPath)),
@@ -78,7 +66,7 @@ suite("Asset generation", () => {
             configurationName: 'Debug'
         };
 
-        let launchJson = createLaunchJson(projectData, paths, /*isWebProject*/ false);
+        let launchJson = generator.createLaunchJson(projectData, /*isWebProject*/ false);
 
         let programPath = launchJson.configurations[0].program;
 
@@ -89,11 +77,7 @@ suite("Asset generation", () => {
 
     test("Create launch.json for nested project opened in workspace", () => {
         let rootPath = path.resolve('testRoot');
-        let vscodeFolder = path.join(rootPath, '.vscode');
-        let tasksJsonPath = path.join(vscodeFolder, 'tasks.json');
-        let launchJsonPath = path.join(vscodeFolder, 'launch.json');
-
-        let paths: Paths = { rootPath, vscodeFolder, tasksJsonPath, launchJsonPath };
+        let generator = new AssetGenerator(rootPath);
 
         let projectData: TargetProjectData = {
             projectPath: vscode.Uri.file(path.join(rootPath, 'nested')),
@@ -103,7 +87,7 @@ suite("Asset generation", () => {
             configurationName: 'Debug'
         };
 
-        let launchJson = createLaunchJson(projectData, paths, /*isWebProject*/ false);
+        let launchJson = generator.createLaunchJson(projectData, /*isWebProject*/ false);
 
         let programPath = launchJson.configurations[0].program;
 
@@ -114,11 +98,7 @@ suite("Asset generation", () => {
 
     test("Create launch.json for web project opened in workspace", () => {
         let rootPath = path.resolve('testRoot');
-        let vscodeFolder = path.join(rootPath, '.vscode');
-        let tasksJsonPath = path.join(vscodeFolder, 'tasks.json');
-        let launchJsonPath = path.join(vscodeFolder, 'launch.json');
-
-        let paths: Paths = { rootPath, vscodeFolder, tasksJsonPath, launchJsonPath };
+        let generator = new AssetGenerator(rootPath);
 
         let projectData: TargetProjectData = {
             projectPath: vscode.Uri.file(path.join(rootPath)),
@@ -128,7 +108,7 @@ suite("Asset generation", () => {
             configurationName: 'Debug'
         };
 
-        let launchJson = createLaunchJson(projectData, paths, /*isWebProject*/ true);
+        let launchJson = generator.createLaunchJson(projectData, /*isWebProject*/ true);
 
         let programPath = launchJson.configurations[0].program;
 
@@ -139,11 +119,7 @@ suite("Asset generation", () => {
 
     test("Create launch.json for nested web project opened in workspace", () => {
         let rootPath = path.resolve('testRoot');
-        let vscodeFolder = path.join(rootPath, '.vscode');
-        let tasksJsonPath = path.join(vscodeFolder, 'tasks.json');
-        let launchJsonPath = path.join(vscodeFolder, 'launch.json');
-
-        let paths: Paths = { rootPath, vscodeFolder, tasksJsonPath, launchJsonPath };
+        let generator = new AssetGenerator(rootPath);
 
         let projectData: TargetProjectData = {
             projectPath: vscode.Uri.file(path.join(rootPath, 'nested')),
@@ -153,7 +129,7 @@ suite("Asset generation", () => {
             configurationName: 'Debug'
         };
 
-        let launchJson = createLaunchJson(projectData, paths, /*isWebProject*/ true);
+        let launchJson = generator.createLaunchJson(projectData, /*isWebProject*/ true);
 
         let programPath = launchJson.configurations[0].program;
 
