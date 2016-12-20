@@ -269,9 +269,9 @@ export interface ProjectInformationResponse {
 }
 
 export interface WorkspaceInformationResponse {
-    MsBuild: MsBuildWorkspaceInformation;
-    DotNet: DotNetWorkspaceInformation;
-    ScriptCs: ScriptCsContext;
+    MsBuild?: MsBuildWorkspaceInformation;
+    DotNet?: DotNetWorkspaceInformation;
+    ScriptCs?: ScriptCsContext;
 }
 
 export interface MsBuildWorkspaceInformation {

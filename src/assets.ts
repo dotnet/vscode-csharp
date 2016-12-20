@@ -50,13 +50,22 @@ interface AttachConfiguration extends DebugConfiguration {
     processId: string;
 }
 
+interface TargetProjectData {
+    projectPath: vscode.Uri;
+    projectJsonPath: vscode.Uri;
+    targetFramework: string;
+    executableName: string;
+    configurationName: string;
+}
+
 export class AssetGenerator {
     public rootPath: string;
     public vscodeFolder: string;
     public tasksJsonPath: string;
     public launchJsonPath: string;
+    public targetProjectData: TargetProjectData;
 
-    public constructor(rootPath: string = vscode.workspace.rootPath) {
+    public constructor(workspaceInformation: protocol.WorkspaceInformationResponse, rootPath: string = vscode.workspace.rootPath) {
         if (rootPath === null || rootPath === undefined) {
             throw new Error('rootPath must set.');
         }
@@ -65,32 +74,79 @@ export class AssetGenerator {
         this.vscodeFolder = path.join(this.rootPath, '.vscode');
         this.tasksJsonPath = path.join(this.vscodeFolder, 'tasks.json');
         this.launchJsonPath = path.join(this.vscodeFolder, 'launch.json');
+
+        this.targetProjectData = this.findTargetProjectData(workspaceInformation.DotNet.Projects);
     }
 
-    private computeProgramPath(projectData: TargetProjectData) {
-        if (!projectData) {
+    private findTargetProjectData(projects: protocol.DotNetProject[]): TargetProjectData {
+        // TODO: For now, assume the Debug configuration. Eventually, we'll need to revisit
+        // this when we allow selecting configurations.
+        const configurationName = 'Debug';
+
+        const executableProjects = this.findExecutableProjects(projects, configurationName);
+
+        // TODO: We arbitrarily pick the first executable projec that we find. This will need
+        // revisiting when we project a "start up project" selector.
+        const targetProject = executableProjects.length > 0
+            ? executableProjects[0]
+            : undefined;
+
+        if (targetProject && targetProject.Frameworks.length > 0) {
+            const config = targetProject.Configurations.find(c => c.Name === configurationName);
+            if (config) {
+                return {
+                    projectPath: targetProject.Path ? vscode.Uri.file(targetProject.Path) : undefined,
+                    projectJsonPath: vscode.Uri.file(path.join(targetProject.Path, 'project.json')),
+                    targetFramework: targetProject.Frameworks[0].ShortName,
+                    executableName: path.basename(config.CompilationOutputAssemblyFile),
+                    configurationName
+                };
+            }
+        }
+
+        return undefined;
+    }
+
+    private findExecutableProjects(projects: protocol.DotNetProject[], configName: string) {
+        let result: protocol.DotNetProject[] = [];
+
+        projects.forEach(project => {
+            project.Configurations.forEach(configuration => {
+                if (configuration.Name === configName && configuration.EmitEntryPoint === true) {
+                    if (project.Frameworks.length > 0) {
+                        result.push(project);
+                    }
+                }
+            });
+        });
+
+        return result;
+    }
+
+    private computeProgramPath() {
+        if (!this.targetProjectData) {
             // If there's no target project data, use a placeholder for the path.
             return '${workspaceRoot}/bin/Debug/<target-framework>/<project-name.dll>';
         }
 
         let result = '${workspaceRoot}';
 
-        if (projectData.projectPath) {
-            result = path.join(result, path.relative(this.rootPath, projectData.projectPath.fsPath));
+        if (this.targetProjectData.projectPath) {
+            result = path.join(result, path.relative(this.rootPath, this.targetProjectData.projectPath.fsPath));
         }
 
-        result = path.join(result, `bin/${projectData.configurationName}/${projectData.targetFramework}/${projectData.executableName}`);
+        result = path.join(result, `bin/${this.targetProjectData.configurationName}/${this.targetProjectData.targetFramework}/${this.targetProjectData.executableName}`);
 
         return result;
     }
 
-    private createLaunchConfiguration(projectData: TargetProjectData): ConsoleLaunchConfiguration {
+    private createLaunchConfiguration(): ConsoleLaunchConfiguration {
         return {
             name: '.NET Core Launch (console)',
             type: 'coreclr',
             request: 'launch',
             preLaunchTask: 'build',
-            program: this.computeProgramPath(projectData),
+            program: this.computeProgramPath(),
             args: [],
             cwd: '${workspaceRoot}',
             externalConsole: false,
@@ -99,13 +155,13 @@ export class AssetGenerator {
         };
     }
 
-    private createWebLaunchConfiguration(projectData: TargetProjectData): WebLaunchConfiguration {
+    private createWebLaunchConfiguration(): WebLaunchConfiguration {
         return {
             name: '.NET Core Launch (web)',
             type: 'coreclr',
             request: 'launch',
             preLaunchTask: 'build',
-            program: this.computeProgramPath(projectData),
+            program: this.computeProgramPath(),
             args: [],
             cwd: '${workspaceRoot}',
             stopAtEntry: false,
@@ -142,13 +198,13 @@ export class AssetGenerator {
         };
     }
 
-    public createLaunchJson(projectData: TargetProjectData, isWebProject: boolean): any {
+    public createLaunchJson(isWebProject: boolean): any {
         let version = '0.2.0';
         if (!isWebProject) {
             return {
                 version: version,
                 configurations: [
-                    this.createLaunchConfiguration(projectData),
+                    this.createLaunchConfiguration(),
                     this.createAttachConfiguration()
                 ]
             };
@@ -157,17 +213,17 @@ export class AssetGenerator {
             return {
                 version: version,
                 configurations: [
-                    this.createWebLaunchConfiguration(projectData),
+                    this.createWebLaunchConfiguration(),
                     this.createAttachConfiguration()
                 ]
             };
         }
     }
 
-    private createBuildTaskDescription(projectData: TargetProjectData): tasks.TaskDescription {
+    private createBuildTaskDescription(): tasks.TaskDescription {
         let buildPath = '';
-        if (projectData) {
-            buildPath = path.join('${workspaceRoot}', path.relative(this.rootPath, projectData.projectJsonPath.fsPath));
+        if (this.targetProjectData) {
+            buildPath = path.join('${workspaceRoot}', path.relative(this.rootPath, this.targetProjectData.projectJsonPath.fsPath));
         }
 
         return {
@@ -178,13 +234,13 @@ export class AssetGenerator {
         };
     }
 
-    public createTasksConfiguration(projectData: TargetProjectData): tasks.TaskConfiguration {
+    public createTasksConfiguration(): tasks.TaskConfiguration {
         return {
             version: '0.1.0',
             command: 'dotnet',
             isShellCommand: true,
             args: [],
-            tasks: [this.createBuildTaskDescription(projectData)]
+            tasks: [this.createBuildTaskDescription()]
         };
     }
 }
@@ -267,13 +323,13 @@ function promptToAddAssets() {
     });
 }
 
-function addTasksJsonIfNecessary(projectData: TargetProjectData, generator: AssetGenerator, operations: Operations) {
+function addTasksJsonIfNecessary(generator: AssetGenerator, operations: Operations) {
     return new Promise<void>((resolve, reject) => {
         if (!operations.addTasksJson) {
             return resolve();
         }
 
-        const tasksJson = generator.createTasksConfiguration(projectData);
+        const tasksJson = generator.createTasksConfiguration();
         const tasksJsonText = JSON.stringify(tasksJson, null, '    ');
 
         fs.writeFile(generator.tasksJsonPath, tasksJsonText, err => {
@@ -284,59 +340,6 @@ function addTasksJsonIfNecessary(projectData: TargetProjectData, generator: Asse
             resolve();
         });
     });
-}
-
-export interface TargetProjectData {
-    projectPath: vscode.Uri;
-    projectJsonPath: vscode.Uri;
-    targetFramework: string;
-    executableName: string;
-    configurationName: string;
-}
-
-function findTargetProjectData(projects: protocol.DotNetProject[]): TargetProjectData {
-    // TODO: For now, assume the Debug configuration. Eventually, we'll need to revisit
-    // this when we allow selecting configurations.
-    const configurationName = 'Debug';
-
-    const executableProjects = findExecutableProjects(projects, configurationName);
-
-    // TODO: We arbitrarily pick the first executable projec that we find. This will need
-    // revisiting when we project a "start up project" selector.
-    const targetProject = executableProjects.length > 0
-        ? executableProjects[0]
-        : undefined;
-
-    if (targetProject && targetProject.Frameworks.length > 0) {
-        const config = targetProject.Configurations.find(c => c.Name === configurationName);
-        if (config) {
-            return {
-                projectPath: targetProject.Path ? vscode.Uri.file(targetProject.Path) : undefined,
-                projectJsonPath: vscode.Uri.file(path.join(targetProject.Path, 'project.json')),
-                targetFramework: targetProject.Frameworks[0].ShortName,
-                executableName: path.basename(config.CompilationOutputAssemblyFile),
-                configurationName
-            };
-        }
-    }
-
-    return undefined;
-}
-
-function findExecutableProjects(projects: protocol.DotNetProject[], configName: string) {
-    let result: protocol.DotNetProject[] = [];
-
-    projects.forEach(project => {
-        project.Configurations.forEach(configuration => {
-            if (configuration.Name === configName && configuration.EmitEntryPoint === true) {
-                if (project.Frameworks.length > 0) {
-                    result.push(project);
-                }
-            }
-        });
-    });
-
-    return result;
 }
 
 function hasWebServerDependency(targetProjectData: TargetProjectData): boolean {
@@ -371,14 +374,14 @@ function hasWebServerDependency(targetProjectData: TargetProjectData): boolean {
     return false;
 }
 
-function addLaunchJsonIfNecessary(projectData: TargetProjectData, generator: AssetGenerator, operations: Operations) {
+function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: Operations) {
     return new Promise<void>((resolve, reject) => {
         if (!operations.addLaunchJson) {
             return resolve();
         }
 
-        const isWebProject = hasWebServerDependency(projectData);
-        const launchJson = generator.createLaunchJson(projectData, isWebProject);
+        const isWebProject = hasWebServerDependency(generator.targetProjectData);
+        const launchJson = generator.createLaunchJson(isWebProject);
         const launchJsonText = JSON.stringify(launchJson, null, '    ');
 
         fs.writeFile(generator.launchJsonPath, launchJsonText, err => {
@@ -391,10 +394,10 @@ function addLaunchJsonIfNecessary(projectData: TargetProjectData, generator: Ass
     });
 }
 
-function addAssets(data: TargetProjectData, generator: AssetGenerator, operations: Operations) {
+function addAssets(generator: AssetGenerator, operations: Operations) {
     const promises = [
-        addTasksJsonIfNecessary(data, generator, operations),
-        addLaunchJsonIfNecessary(data, generator, operations)
+        addTasksJsonIfNecessary(generator, operations),
+        addLaunchJsonIfNecessary(generator, operations)
     ];
 
     return Promise.all(promises);
@@ -416,7 +419,7 @@ export function addAssetsIfNecessary(server: OmniSharpServer): Promise<AddAssetR
         serverUtils.requestWorkspaceInformation(server).then(info => {
             // If there are no .NET Core projects, we won't bother offering to add assets.
             if (info.DotNet && info.DotNet.Projects.length > 0) {
-                const generator = new AssetGenerator();
+                const generator = new AssetGenerator(info);
                 return getOperations(generator).then(operations => {
                     if (!hasOperations(operations)) {
                         return resolve(AddAssetResult.NotApplicable);
@@ -431,10 +434,8 @@ export function addAssetsIfNecessary(server: OmniSharpServer): Promise<AddAssetR
                             return resolve(AddAssetResult.Cancelled);
                         }
 
-                        const data = findTargetProjectData(info.DotNet.Projects);
-
                         fs.ensureDir(generator.vscodeFolder, err => {
-                            addAssets(data, generator, operations).then(() =>
+                            addAssets(generator, operations).then(() =>
                                 resolve(AddAssetResult.Done));
                         });
                     });
@@ -514,14 +515,13 @@ function shouldGenerateAssets(generator: AssetGenerator) {
 export function generateAssets(server: OmniSharpServer) {
     serverUtils.requestWorkspaceInformation(server).then(info => {
         if (info.DotNet && info.DotNet.Projects.length > 0) {
-            const generator = new AssetGenerator();
+            const generator = new AssetGenerator(info);
             getOperations(generator).then(operations => {
                 if (hasOperations(operations)) {
                     shouldGenerateAssets(generator).then(res => {
                         if (res) {
                             fs.ensureDir(generator.vscodeFolder, err => {
-                                const data = findTargetProjectData(info.DotNet.Projects);
-                                addAssets(data, generator, operations);
+                                addAssets(generator, operations);
                             });
                         }
                     });
