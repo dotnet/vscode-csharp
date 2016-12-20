@@ -160,7 +160,7 @@ export class PlatformInformation {
                 throw new Error(`Unsupported platform: ${platform}`);
         }
 
-        return Promise.all([architecturePromise, distributionPromise])
+        return Promise.all<any>([architecturePromise, distributionPromise])
             .then(([arch, distro]) => {
                 return new PlatformInformation(platform, arch, distro);
             });

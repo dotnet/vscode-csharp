@@ -7,7 +7,7 @@ import { should } from 'chai';
 import { LinuxDistribution, PlatformInformation } from '../src/platform';
 
 suite("Platform", () => {
-    before(() => should());
+    suiteSetup(() => should());
 
     test("Retrieve correct information for Ubuntu 14.04", () => {
         const dist = distro_ubuntu_14_04();
