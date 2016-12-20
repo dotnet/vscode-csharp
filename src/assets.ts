@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs-extra-promise';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as tasks from 'vscode-tasks';
@@ -208,9 +208,13 @@ function getOperations(generator: AssetGenerator) {
 
 function getBuildOperations(tasksJsonPath: string) {
     return new Promise<Operations>((resolve, reject) => {
-        return fs.existsAsync(tasksJsonPath).then(exists => {
+        fs.exists(tasksJsonPath, exists => {
             if (exists) {
-                fs.readFileAsync(tasksJsonPath).then(buffer => {
+                fs.readFile(tasksJsonPath, (err, buffer) => {
+                    if (err) {
+                        return reject(err);
+                    }
+
                     const text = buffer.toString();
                     const tasksJson: tasks.TaskConfiguration = JSON.parse(text);
                     const buildTask = tasksJson.tasks.find(td => td.taskName === 'build');
@@ -227,7 +231,7 @@ function getBuildOperations(tasksJsonPath: string) {
 
 function getLaunchOperations(launchJsonPath: string, operations: Operations) {
     return new Promise<Operations>((resolve, reject) => {
-        return fs.existsAsync(launchJsonPath).then(exists => {
+        return fs.exists(launchJsonPath, exists => {
             if (exists) {
                 resolve(operations);
             }
@@ -272,7 +276,13 @@ function addTasksJsonIfNecessary(projectData: TargetProjectData, generator: Asse
         const tasksJson = generator.createTasksConfiguration(projectData);
         const tasksJsonText = JSON.stringify(tasksJson, null, '    ');
 
-        return fs.writeFileAsync(generator.tasksJsonPath, tasksJsonText);
+        fs.writeFile(generator.tasksJsonPath, tasksJsonText, err => {
+            if (err) {
+                return reject(err);
+            }
+
+            resolve();
+        });
     });
 }
 
@@ -371,7 +381,13 @@ function addLaunchJsonIfNecessary(projectData: TargetProjectData, generator: Ass
         const launchJson = generator.createLaunchJson(projectData, isWebProject);
         const launchJsonText = JSON.stringify(launchJson, null, '    ');
 
-        return fs.writeFileAsync(generator.launchJsonPath, launchJsonText);
+        fs.writeFile(generator.launchJsonPath, launchJsonText, err => {
+            if (err) {
+                return reject(err);
+            }
+
+            resolve();
+        });
     });
 }
 
@@ -417,9 +433,10 @@ export function addAssetsIfNecessary(server: OmniSharpServer): Promise<AddAssetR
 
                         const data = findTargetProjectData(info.DotNet.Projects);
 
-                        return fs.ensureDirAsync(generator.vscodeFolder).then(() =>
+                        fs.ensureDir(generator.vscodeFolder, err => {
                             addAssets(data, generator, operations).then(() =>
-                                resolve(AddAssetResult.Done)));
+                                resolve(AddAssetResult.Done));
+                        });
                     });
                 });
             }
@@ -430,13 +447,13 @@ export function addAssetsIfNecessary(server: OmniSharpServer): Promise<AddAssetR
 
 function doesAnyAssetExist(generator: AssetGenerator) {
     return new Promise<boolean>((resolve, reject) => {
-        fs.existsAsync(generator.launchJsonPath).then(res => {
-            if (res) {
+        fs.exists(generator.launchJsonPath, exists => {
+            if (exists) {
                 resolve(true);
             }
             else {
-                fs.existsAsync(generator.tasksJsonPath).then(res => {
-                    resolve(res);
+                fs.exists(generator.tasksJsonPath, exists => {
+                    resolve(exists);
                 });
             }
         });
@@ -445,10 +462,14 @@ function doesAnyAssetExist(generator: AssetGenerator) {
 
 function deleteAsset(path: string) {
     return new Promise<void>((resolve, reject) => {
-        fs.existsAsync(path).then(res => {
-            if (res) {
+        fs.exists(path, exists => {
+            if (exists) {
                 // TODO: Should we check after unlinking to see if the file still exists?
-                fs.unlinkAsync(path).then(() => {
+                fs.unlink(path, err => {
+                    if (err) {
+                        return reject(err);
+                    }
+
                     resolve();
                 });
             }
@@ -498,7 +519,7 @@ export function generateAssets(server: OmniSharpServer) {
                 if (hasOperations(operations)) {
                     shouldGenerateAssets(generator).then(res => {
                         if (res) {
-                            fs.ensureDirAsync(generator.vscodeFolder).then(() => {
+                            fs.ensureDir(generator.vscodeFolder, err => {
                                 const data = findTargetProjectData(info.DotNet.Projects);
                                 addAssets(data, generator, operations);
                             });
