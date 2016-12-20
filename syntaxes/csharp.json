@@ -25,6 +25,37 @@
           "name": "keyword.other.using.cs"
         }
       },
+      "patterns": [
+        {
+          "match": "\\s*static\\b",
+          "name": "keyword.other.static.cs"
+        },
+        {
+          "include": "#comments"
+        },
+        {
+          "begin": "(\\w+)\\s*=\\s*",
+          "beginCaptures": {
+            "1": {
+              "name": "entity.name.alias.namespace.cs"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "match": "[\\w.]+",
+              "name": "entity.name.type.namespace.cs"
+            }
+          ],
+          "end": "\\s+"
+        },
+        {
+          "match": "[\\w.]+",
+          "name": "entity.name.type.namespace.cs"
+        }
+      ],
       "end": "\\s*(?:$|;)"
     },
     "namespace": {
@@ -75,7 +106,7 @@
       "patterns": [
         {
           "begin": "(?=(?:(?:(?:private|public|volatile|internal|protected|static|readonly|const|event)\\s*)*)(?:[\\w\\s,<>\\[\\]]+?)(?:[\\w]+)\\s*(?:;|=|=>))",
-          "end": "(?=;)",
+          "end": "(?=;)|$",
           "patterns": [
             {
               "match": "^\\s*((?:(?:private|public|volatile|internal|protected|static|readonly|const|event)\\s*)*)\\s*(.+?)\\s*([\\w]+)\\s*(?=;|=)",
@@ -101,7 +132,7 @@
             },
             {
               "begin": "(?==>?)",
-              "end": "(?=;|$)",
+              "end": "(?=;)|$",
               "patterns": [
                 {
                   "include": "#code"
@@ -123,7 +154,7 @@
           }
         },
         {
-          "match": "^\\s*\\b(?!var|return|yield|throw)([\\w<>*?\\[\\]]+)\\s+([\\w]+)\\s*(?=(=(?!=)|;))",
+          "match": "^\\s*\\b(?!var|return|yield|throw|private|public|internal|protected)([\\w<>*?\\[\\]]+)\\s+([\\w]+)\\s*(?=(=(?!=)|;))",
           "captures": {
             "1": {
               "name": "storage.type.variable.cs"
@@ -289,7 +320,7 @@
     "type-body": {
       "patterns": [
         {
-          "include": "type-declaration"
+          "include": "#type-declaration"
         },
         {
           "include": "#field-declaration"
@@ -548,7 +579,7 @@
           "name": "constant.language.cs"
         },
         {
-          "match": "\\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\\.?[0-9]*)|(\\.[0-9]+))((e|E)(\\+|-)?[0-9]+)?)(L|l|UL|ul|u|U|F|f|ll|LL|ull|ULL)?\\b",
+          "match": "\\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\\.?[0-9]*)|(\\.[0-9]+))((e|E)(\\+|-)?[0-9]+)?)(?i:f|d|m|u|l|ul|lu)?\\b",
           "name": "constant.numeric.cs"
         },
         {
@@ -589,6 +620,9 @@
         },
         {
           "include": "#builtinTypes"
+        },
+        {
+          "include": "#comments"
         }
       ]
     },
@@ -633,7 +667,7 @@
     "method": {
       "patterns": [
         {
-          "include": "attribute"
+          "include": "#attribute"
         },
         {
           "begin": "(?=\\bnew\\s+)(?=[\\w<].*\\s+)(?=[^=]+\\()",
@@ -673,6 +707,9 @@
                 },
                 {
                   "include": "#constants"
+                },
+                {
+                  "include": "#comments"
                 }
               ]
             },
@@ -700,6 +737,9 @@
                   "include": "#builtinTypes"
                 }
               ]
+            },
+            {
+              "include": "#comments"
             },
             {
               "begin": "=>",
@@ -797,11 +837,14 @@
       "patterns": [
         {
           "captures": {
-            "2": {
-              "name": "entity.name.function.preprocessor.cs"
+            "1": {
+              "name": "meta.directive.preprocessor.cs"
+            },
+            "3": {
+              "name": "entity.name.preprocessor.cs"
             }
           },
-          "match": "^\\s*#\\s*(if|else|elif|endif|define|undef|warning|error|line|pragma|region|endregion)\\b\\s*(.*?)(?=$|\\/\\/)",
+          "match": "^\\s*(#\\s*(if|else|elif|endif|define|undef|warning|error|line|pragma|region|endregion))\\b\\s*(.*?)(?=$|\\/\\/)",
           "name": "meta.preprocessor.cs"
         }
       ]
