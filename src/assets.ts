@@ -50,22 +50,21 @@ interface AttachConfiguration extends DebugConfiguration {
     processId: string;
 }
 
-interface TargetProjectData {
-    projectPath: vscode.Uri;
-    projectJsonPath: vscode.Uri;
-    targetFramework: string;
-    executableName: string;
-    configurationName: string;
-}
 
 export class AssetGenerator {
     public rootPath: string;
     public vscodeFolder: string;
     public tasksJsonPath: string;
     public launchJsonPath: string;
-    public targetProjectData: TargetProjectData;
 
-    public constructor(workspaceInformation: protocol.WorkspaceInformationResponse, rootPath: string = vscode.workspace.rootPath) {
+    private hasProject: boolean;
+    private projectPath: string;
+    private projectJsonPath: string;
+    private targetFramework: string;
+    private executableName: string;
+    private configurationName: string;
+
+    public constructor(workspaceInfo: protocol.WorkspaceInformationResponse, rootPath: string = vscode.workspace.rootPath) {
         if (rootPath === null || rootPath === undefined) {
             throw new Error('rootPath must set.');
         }
@@ -75,15 +74,15 @@ export class AssetGenerator {
         this.tasksJsonPath = path.join(this.vscodeFolder, 'tasks.json');
         this.launchJsonPath = path.join(this.vscodeFolder, 'launch.json');
 
-        this.targetProjectData = this.findTargetProjectData(workspaceInformation.DotNet.Projects);
+        this.initializeProjectData(workspaceInfo);
     }
 
-    private findTargetProjectData(projects: protocol.DotNetProject[]): TargetProjectData {
+    private initializeProjectData(workspaceInfo: protocol.WorkspaceInformationResponse) {
         // TODO: For now, assume the Debug configuration. Eventually, we'll need to revisit
         // this when we allow selecting configurations.
         const configurationName = 'Debug';
 
-        const executableProjects = this.findExecutableProjects(projects, configurationName);
+        const executableProjects = this.findExecutableProjects(workspaceInfo.DotNet.Projects, configurationName);
 
         // TODO: We arbitrarily pick the first executable projec that we find. This will need
         // revisiting when we project a "start up project" selector.
@@ -94,13 +93,12 @@ export class AssetGenerator {
         if (targetProject && targetProject.Frameworks.length > 0) {
             const config = targetProject.Configurations.find(c => c.Name === configurationName);
             if (config) {
-                return {
-                    projectPath: targetProject.Path ? vscode.Uri.file(targetProject.Path) : undefined,
-                    projectJsonPath: vscode.Uri.file(path.join(targetProject.Path, 'project.json')),
-                    targetFramework: targetProject.Frameworks[0].ShortName,
-                    executableName: path.basename(config.CompilationOutputAssemblyFile),
-                    configurationName
-                };
+                this.hasProject = true;
+                this.projectPath = targetProject.Path;
+                this.projectJsonPath = path.join(targetProject.Path, 'project.json');
+                this.targetFramework = targetProject.Frameworks[0].ShortName;
+                this.executableName = path.basename(config.CompilationOutputAssemblyFile);
+                this.configurationName = configurationName;
             }
         }
 
@@ -123,19 +121,51 @@ export class AssetGenerator {
         return result;
     }
 
+    public hasWebServerDependency(): boolean {
+        if (!this.projectJsonPath) {
+            return false;
+        }
+
+        let projectJson = fs.readFileSync(this.projectJsonPath, 'utf8');
+        projectJson = projectJson.replace(/^\uFEFF/, '');
+
+        let projectJsonObject: any;
+
+        try {
+            // TODO: This error should be surfaced to the user. If the JSON can't be parsed
+            // (maybe due to a syntax error like an extra comma), the user should be notified
+            // to fix up their project.json.
+            projectJsonObject = JSON.parse(projectJson);
+        } catch (error) {
+            projectJsonObject = null;
+        }
+
+        if (projectJsonObject == null) {
+            return false;
+        }
+
+        for (let key in projectJsonObject.dependencies) {
+            if (key.toLowerCase().startsWith("microsoft.aspnetcore.server")) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private computeProgramPath() {
-        if (!this.targetProjectData) {
+        if (!this.hasProject) {
             // If there's no target project data, use a placeholder for the path.
             return '${workspaceRoot}/bin/Debug/<target-framework>/<project-name.dll>';
         }
 
         let result = '${workspaceRoot}';
 
-        if (this.targetProjectData.projectPath) {
-            result = path.join(result, path.relative(this.rootPath, this.targetProjectData.projectPath.fsPath));
+        if (this.projectPath) {
+            result = path.join(result, path.relative(this.rootPath, this.projectPath));
         }
 
-        result = path.join(result, `bin/${this.targetProjectData.configurationName}/${this.targetProjectData.targetFramework}/${this.targetProjectData.executableName}`);
+        result = path.join(result, `bin/${this.configurationName}/${this.targetFramework}/${this.executableName}`);
 
         return result;
     }
@@ -222,8 +252,8 @@ export class AssetGenerator {
 
     private createBuildTaskDescription(): tasks.TaskDescription {
         let buildPath = '';
-        if (this.targetProjectData) {
-            buildPath = path.join('${workspaceRoot}', path.relative(this.rootPath, this.targetProjectData.projectJsonPath.fsPath));
+        if (this.hasProject) {
+            buildPath = path.join('${workspaceRoot}', path.relative(this.rootPath, this.projectJsonPath));
         }
 
         return {
@@ -342,45 +372,13 @@ function addTasksJsonIfNecessary(generator: AssetGenerator, operations: Operatio
     });
 }
 
-function hasWebServerDependency(targetProjectData: TargetProjectData): boolean {
-    if (!targetProjectData || !targetProjectData.projectJsonPath) {
-        return false;
-    }
-
-    let projectJson = fs.readFileSync(targetProjectData.projectJsonPath.fsPath, 'utf8');
-    projectJson = projectJson.replace(/^\uFEFF/, '');
-
-    let projectJsonObject: any;
-
-    try {
-        // TODO: This error should be surfaced to the user. If the JSON can't be parsed
-        // (maybe due to a syntax error like an extra comma), the user should be notified
-        // to fix up their project.json.
-        projectJsonObject = JSON.parse(projectJson);
-    } catch (error) {
-        projectJsonObject = null;
-    }
-
-    if (projectJsonObject == null) {
-        return false;
-    }
-
-    for (let key in projectJsonObject.dependencies) {
-        if (key.toLowerCase().startsWith("microsoft.aspnetcore.server")) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: Operations) {
     return new Promise<void>((resolve, reject) => {
         if (!operations.addLaunchJson) {
             return resolve();
         }
 
-        const isWebProject = hasWebServerDependency(generator.targetProjectData);
+        const isWebProject = generator.hasWebServerDependency();
         const launchJson = generator.createLaunchJson(isWebProject);
         const launchJsonText = JSON.stringify(launchJson, null, '    ');
 

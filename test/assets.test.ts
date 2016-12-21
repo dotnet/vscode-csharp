@@ -84,7 +84,7 @@ suite("Asset generation", () => {
     });
 });
 
-function createDotNetWorkspaceInformation(projectPath: string, compilationOutputAssemblyFile: string, targetFrameworkShortName: string) : protocol.WorkspaceInformationResponse {
+function createDotNetWorkspaceInformation(projectPath: string, compilationOutputAssemblyFile: string, targetFrameworkShortName: string, emitEntryPoint: boolean = true) : protocol.WorkspaceInformationResponse {
     return {
         DotNet: {
             Projects: [
@@ -98,7 +98,7 @@ function createDotNetWorkspaceInformation(projectPath: string, compilationOutput
                             CompilationOutputPath: '',
                             CompilationOutputAssemblyFile: compilationOutputAssemblyFile,
                             CompilationOutputPdbFile: '',
-                            EmitEntryPoint: true
+                            EmitEntryPoint: emitEntryPoint
                         }
                     ],
                     Frameworks: [
