@@ -70,27 +70,33 @@ function proxy() {
         //first check if dotnet is on the path and new enough
         util.checkDotNetCli()
             .then((dotnetInfo) => {
-                // next check if we have begun installing packages
-                common.installFileExists(common.InstallFileType.Begin)
-                    .then((beginExists: boolean) => {
-                        if (beginExists) {
-                            // packages manager has begun
-                            sendStillDownloadingMessage();
-                        } else {
-                            // begin doesn't exist. There is a chance we finished downloading and begin had been deleted. Check if lock exists
-                            common.installFileExists(common.InstallFileType.Lock)
-                                .then((lockExists) => {
-                                    if (lockExists) {
-                                        // packages have finished installing but we had not finished rewriting our manifest when F5 came in
-                                        sendStillDownloadingMessage();
-                                    }
-                                    else {
-                                        // no install files existed when we checked. we have likely not been activated
-                                        sendDownloadingNotStartedMessage();
-                                    }
-                                });
-                        }
-                    });
+                util.checkOpenSSLInstalledIfRequired().then((isInstalled) => {
+                    if (isInstalled) {
+                        // next check if we have begun installing packages
+                        common.installFileExists(common.InstallFileType.Begin)
+                            .then((beginExists: boolean) => {
+                                if (beginExists) {
+                                    // packages manager has begun
+                                    sendStillDownloadingMessage();
+                                } else {
+                                    // begin doesn't exist. There is a chance we finished downloading and begin had been deleted. Check if lock exists
+                                    common.installFileExists(common.InstallFileType.Lock)
+                                        .then((lockExists) => {
+                                            if (lockExists) {
+                                                // packages have finished installing but we had not finished rewriting our manifest when F5 came in
+                                                sendStillDownloadingMessage();
+                                            }
+                                            else {
+                                                // no install files existed when we checked. we have likely not been activated
+                                                sendDownloadingNotStartedMessage();
+                                            }
+                                        });
+                                }
+                            });
+                    } else {
+                        sendErrorMessage("The .NET Core debugger cannot be started. OpenSSL is not correctly configured. See the C# output channel for details.");
+                    }
+                });
             }, (err) => {
                 // error from checkDotNetCli
                 sendErrorMessage(err.ErrorMessage || util.defaultDotNetCliErrorMessage());

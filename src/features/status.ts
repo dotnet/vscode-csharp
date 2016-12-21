@@ -111,7 +111,10 @@ export function reportDocumentStatus(server: OmniSharpServer): vscode.Disposable
         projectStatus = undefined;
         defaultStatus.text = undefined;
 
-        vscode.Disposable.from(...localDisposables).dispose();
+        if (localDisposables) {
+            vscode.Disposable.from(...localDisposables).dispose();
+        }
+        
         localDisposables = undefined;
     }));
 

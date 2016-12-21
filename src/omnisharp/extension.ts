@@ -18,14 +18,16 @@ import RenameProvider from '../features/renameProvider';
 import FormatProvider from '../features/formattingEditProvider';
 import CompletionItemProvider from '../features/completionItemProvider';
 import WorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
-import reportDiagnostics, {Advisor} from '../features/diagnosticsProvider';
+import reportDiagnostics, { Advisor } from '../features/diagnosticsProvider';
 import SignatureHelpProvider from '../features/signatureHelpProvider';
 import registerCommands from '../features/commands';
 import forwardChanges from '../features/changeForwarding';
 import reportStatus from '../features/status';
-import {OmniSharpServer} from './server';
-import {Options} from './options';
-import {addAssetsIfNecessary, AddAssetResult} from '../assets';
+import { OmniSharpServer } from './server';
+import { Options } from './options';
+import { addAssetsIfNecessary, AddAssetResult } from '../assets';
+import { sum, safeLength } from '../common';
+import * as utils from './utils';
 
 export function activate(context: vscode.ExtensionContext, reporter: TelemetryReporter) {
     const documentSelector: vscode.DocumentSelector = {
@@ -81,6 +83,30 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
             });
         }));
     }
+
+    // Send telemetry about the sorts of projects the server was started on.
+    disposables.push(server.onServerStart(() => {
+        let measures: { [key: string]: number } = {};
+
+         utils.requestWorkspaceInformation(server)
+            .then(workspaceInfo => {
+                if (workspaceInfo.DotNet && workspaceInfo.DotNet.Projects.length > 0) {
+                    measures['projectjson.projectcount'] = workspaceInfo.DotNet.Projects.length;
+                    measures['projectjson.filecount'] = sum(workspaceInfo.DotNet.Projects, p => safeLength(p.SourceFiles));
+                }
+
+                if (workspaceInfo.MsBuild && workspaceInfo.MsBuild.Projects.length > 0) {
+                    measures['msbuild.projectcount'] = workspaceInfo.MsBuild.Projects.length;
+                    measures['msbuild.filecount'] = sum(workspaceInfo.MsBuild.Projects, p => safeLength(p.SourceFiles));
+                    measures['msbuild.unityprojectcount'] = sum(workspaceInfo.MsBuild.Projects, p => p.IsUnityProject ? 1 : 0);
+                    measures['msbuild.netcoreprojectcount'] = sum(workspaceInfo.MsBuild.Projects, p => utils.isNetCoreProject(p) ? 1 : 0);
+                }
+
+                // TODO: Add measurements for script.
+
+                reporter.sendTelemetryEvent('OmniSharp.Start', null, measures);
+            });
+    }));
 
     // read and store last solution or folder path
     disposables.push(server.onBeforeServerStart(path => context.workspaceState.update('lastSolutionPathOrFolder', path)));

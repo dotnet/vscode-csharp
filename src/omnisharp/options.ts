@@ -11,7 +11,9 @@ export class Options {
         public useMono?: boolean,
         public loggingLevel?: string,
         public autoStart?: boolean,
-        public projectLoadTimeout?: number) { }
+        public projectLoadTimeout?: number,
+        public maxProjectResults?: number,
+        public useEditorFormattingSettings?: boolean) { }
 
     public static Read(): Options {
         // Extra effort is taken below to ensure that legacy versions of options
@@ -35,7 +37,9 @@ export class Options {
         const autoStart = omnisharpConfig.get<boolean>('autoStart', true);
 
         const projectLoadTimeout = omnisharpConfig.get<number>('projectLoadTimeout', 60);
+        const maxProjectResults = omnisharpConfig.get<number>('maxProjectResults', 250);
+        const useEditorFormattingSettings = omnisharpConfig.get<boolean>('useEditorFormattingSettings', true);
 
-        return new Options(path, useMono, loggingLevel, autoStart, projectLoadTimeout);
+        return new Options(path, useMono, loggingLevel, autoStart, projectLoadTimeout, maxProjectResults, useEditorFormattingSettings);
     }
 }
