@@ -59,7 +59,7 @@ export class AssetGenerator {
 
     private hasProject: boolean;
     private projectPath: string;
-    private projectJsonPath: string;
+    private projectFilePath: string;
     private targetFramework: string;
     private executableName: string;
     private configurationName: string;
@@ -82,9 +82,29 @@ export class AssetGenerator {
         // this when we allow selecting configurations.
         const configurationName = 'Debug';
 
-        const executableProjects = this.findExecutableProjects(workspaceInfo.DotNet.Projects, configurationName);
+        // First, we'll check for .NET Core .csproj projects.
+        if (workspaceInfo.MsBuild && workspaceInfo.MsBuild.Projects) {
+            const executableMSBuildProjects = findExecutableMSBuildProjects(workspaceInfo.MsBuild.Projects);
 
-        // TODO: We arbitrarily pick the first executable projec that we find. This will need
+            const targetMSBuildProject = executableMSBuildProjects.length > 0
+                ? executableMSBuildProjects[0]
+                : undefined;
+
+            if (targetMSBuildProject) {
+                this.hasProject = true;
+                this.projectPath = path.dirname(targetMSBuildProject.Path);
+                this.projectFilePath = targetMSBuildProject.Path;
+                this.targetFramework = findNetCoreAppTargetFramework(targetMSBuildProject).ShortName;
+                this.executableName = targetMSBuildProject.AssemblyName + ".dll";
+                this.configurationName = configurationName;
+                return;
+            }
+        }
+
+        // Next, we'll try looking for project.json projects.
+        const executableProjects = findExecutableProjectJsonProjects(workspaceInfo.DotNet.Projects, configurationName);
+
+        // TODO: We arbitrarily pick the first executable project that we find. This will need
         // revisiting when we project a "start up project" selector.
         const targetProject = executableProjects.length > 0
             ? executableProjects[0]
@@ -95,7 +115,7 @@ export class AssetGenerator {
             if (config) {
                 this.hasProject = true;
                 this.projectPath = targetProject.Path;
-                this.projectJsonPath = path.join(targetProject.Path, 'project.json');
+                this.projectFilePath = path.join(targetProject.Path, 'project.json');
                 this.targetFramework = targetProject.Frameworks[0].ShortName;
                 this.executableName = path.basename(config.CompilationOutputAssemblyFile);
                 this.configurationName = configurationName;
@@ -105,28 +125,14 @@ export class AssetGenerator {
         return undefined;
     }
 
-    private findExecutableProjects(projects: protocol.DotNetProject[], configName: string) {
-        let result: protocol.DotNetProject[] = [];
-
-        projects.forEach(project => {
-            project.Configurations.forEach(configuration => {
-                if (configuration.Name === configName && configuration.EmitEntryPoint === true) {
-                    if (project.Frameworks.length > 0) {
-                        result.push(project);
-                    }
-                }
-            });
-        });
-
-        return result;
-    }
-
     public hasWebServerDependency(): boolean {
-        if (!this.projectJsonPath) {
+        // TODO: Update to handle .NET Core projects.
+
+        if (!this.projectFilePath || path.extname(this.projectFilePath) !== 'json') {
             return false;
         }
 
-        let projectJson = fs.readFileSync(this.projectJsonPath, 'utf8');
+        let projectJson = fs.readFileSync(this.projectFilePath, 'utf8');
         projectJson = projectJson.replace(/^\uFEFF/, '');
 
         let projectJsonObject: any;
@@ -253,7 +259,7 @@ export class AssetGenerator {
     private createBuildTaskDescription(): tasks.TaskDescription {
         let buildPath = '';
         if (this.hasProject) {
-            buildPath = path.join('${workspaceRoot}', path.relative(this.rootPath, this.projectJsonPath));
+            buildPath = path.join('${workspaceRoot}', path.relative(this.rootPath, this.projectFilePath));
         }
 
         return {
@@ -274,6 +280,49 @@ export class AssetGenerator {
         };
     }
 }
+
+function findNetCoreAppTargetFramework(project: protocol.MSBuildProject) {
+    return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp'));
+}
+
+function findExecutableMSBuildProjects(projects: protocol.MSBuildProject[]) {
+    let result: protocol.MSBuildProject[] = [];
+
+    projects.forEach(project => {
+        if (project.IsExe && findNetCoreAppTargetFramework(project) !== undefined) {
+            result.push(project);
+        }
+    });
+
+    return result;
+}
+
+function findExecutableProjectJsonProjects(projects: protocol.DotNetProject[], configurationName: string) {
+    let result: protocol.DotNetProject[] = [];
+
+    projects.forEach(project => {
+        project.Configurations.forEach(configuration => {
+            if (configuration.Name === configurationName && configuration.EmitEntryPoint === true) {
+                if (project.Frameworks.length > 0) {
+                    result.push(project);
+                }
+            }
+        });
+    });
+
+    return result;
+}
+
+function containsDotNetCoreProjects(workspaceInfo: protocol.WorkspaceInformationResponse) {
+    if (workspaceInfo.DotNet && findExecutableProjectJsonProjects(workspaceInfo.DotNet.Projects, 'Debug').length > 0) {
+        return true;
+    }
+
+    if (workspaceInfo.MsBuild && findExecutableMSBuildProjects(workspaceInfo.MsBuild.Projects).length > 0) {
+        return true;
+    }
+}
+
 
 interface Operations {
     addTasksJson?: boolean;
@@ -416,7 +465,7 @@ export function addAssetsIfNecessary(server: OmniSharpServer): Promise<AddAssetR
 
         serverUtils.requestWorkspaceInformation(server).then(info => {
             // If there are no .NET Core projects, we won't bother offering to add assets.
-            if (info.DotNet && info.DotNet.Projects.length > 0) {
+            if (containsDotNetCoreProjects(info)) {
                 const generator = new AssetGenerator(info);
                 return getOperations(generator).then(operations => {
                     if (!hasOperations(operations)) {
@@ -512,7 +561,7 @@ function shouldGenerateAssets(generator: AssetGenerator) {
 
 export function generateAssets(server: OmniSharpServer) {
     serverUtils.requestWorkspaceInformation(server).then(info => {
-        if (info.DotNet && info.DotNet.Projects.length > 0) {
+        if (containsDotNetCoreProjects(info)) {
             const generator = new AssetGenerator(info);
             getOperations(generator).then(operations => {
                 if (hasOperations(operations)) {
