@@ -128,35 +128,39 @@ export class AssetGenerator {
     public hasWebServerDependency(): boolean {
         // TODO: Update to handle .NET Core projects.
 
-        if (!this.projectFilePath || path.extname(this.projectFilePath) !== 'json') {
+        if (!this.projectFilePath) {
             return false;
         }
 
-        let projectJson = fs.readFileSync(this.projectFilePath, 'utf8');
-        projectJson = projectJson.replace(/^\uFEFF/, '');
+        let projectFileText = fs.readFileSync(this.projectFilePath, 'utf8');
+        projectFileText = projectFileText.replace(/^\uFEFF/, '');
 
-        let projectJsonObject: any;
+        if (path.basename(this.projectFilePath).toLowerCase() === 'project.json') {
+            let projectJsonObject: any;
 
-        try {
-            // TODO: This error should be surfaced to the user. If the JSON can't be parsed
-            // (maybe due to a syntax error like an extra comma), the user should be notified
-            // to fix up their project.json.
-            projectJsonObject = JSON.parse(projectJson);
-        } catch (error) {
-            projectJsonObject = null;
-        }
+            try {
+                // TODO: This error should be surfaced to the user. If the JSON can't be parsed
+                // (maybe due to a syntax error like an extra comma), the user should be notified
+                // to fix up their project.json.
+                projectJsonObject = JSON.parse(projectFileText);
+            } catch (error) {
+                projectJsonObject = null;
+            }
 
-        if (projectJsonObject == null) {
-            return false;
-        }
+            if (projectJsonObject == null) {
+                return false;
+            }
 
-        for (let key in projectJsonObject.dependencies) {
-            if (key.toLowerCase().startsWith("microsoft.aspnetcore.server")) {
-                return true;
+            for (let key in projectJsonObject.dependencies) {
+                if (key.toLowerCase().startsWith("microsoft.aspnetcore.server")) {
+                    return true;
+                }
             }
         }
 
-        return false;
+        // Assume that this is an MSBuild project. In that case, look for the 'Sdk="Microsoft.NET.Sdk.Web"' attribute.
+        // TODO: Have OmniSharp provide the list of SDKs used by a project and check that list instead.
+        return projectFileText.toLowerCase().indexOf('sdk="microsoft.net.sdk.web"') >= 0;
     }
 
     private computeProgramPath() {
