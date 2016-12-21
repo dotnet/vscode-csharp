@@ -285,7 +285,7 @@ export class AssetGenerator {
     }
 }
 
-function findNetCoreAppTargetFramework(project: protocol.MSBuildProject) {
+function findNetCoreAppTargetFramework(project: protocol.MSBuildProject): protocol.TargetFramework {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp'));
 }
 
@@ -325,6 +325,8 @@ function containsDotNetCoreProjects(workspaceInfo: protocol.WorkspaceInformation
     if (workspaceInfo.MsBuild && findExecutableMSBuildProjects(workspaceInfo.MsBuild.Projects).length > 0) {
         return true;
     }
+
+    return false;
 }
 
 
