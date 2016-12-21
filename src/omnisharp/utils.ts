@@ -84,3 +84,7 @@ export function getTestStartInfo(server: OmniSharpServer, request: protocol.V2.G
 export function runDotNetTest(server: OmniSharpServer, request: protocol.V2.RunDotNetTestRequest) {
     return server.makeRequest<protocol.V2.RunDotNetTestResponse>(protocol.V2.Requests.RunDotNetTest, request);
 }
+
+export function isNetCoreProject(project: protocol.MSBuildProject) {
+    return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp') || tf.ShortName.startsWith('netstandard')) !== undefined;
+}
