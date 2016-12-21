@@ -1,4 +1,4 @@
-## 1.6.0 _(Not Yet Released)_
+## 1.6.0 (December 21, 2016)
 
 #### C# Scripting
 
