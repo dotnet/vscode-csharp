@@ -121,31 +121,31 @@ suite("Asset generation: csproj", () => {
 
     test("Create tasks.json for project opened in workspace", () => {
         let rootPath = path.resolve('testRoot');
-        let info = createMSBuildWorkspaceInformation(rootPath, 'testApp.dll', 'netcoreapp1.0');
+        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netcoreapp1.0');
         let generator = new AssetGenerator(info, rootPath);
         let tasksJson = generator.createTasksConfiguration();
         let buildPath = tasksJson.tasks[0].args[0];
 
         // ${workspaceRoot}/project.json
         let segments = buildPath.split(path.sep);
-        segments.should.deep.equal(['${workspaceRoot}', 'project.json']);
+        segments.should.deep.equal(['${workspaceRoot}', 'testApp.csproj']);
     });
 
     test("Create tasks.json for nested project opened in workspace", () => {
         let rootPath = path.resolve('testRoot');
-        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'nested'), 'testApp.dll', 'netcoreapp1.0');
+        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'nested', 'testApp.csproj'), 'testApp', 'netcoreapp1.0');
         let generator = new AssetGenerator(info, rootPath);
         let tasksJson = generator.createTasksConfiguration();
         let buildPath = tasksJson.tasks[0].args[0];
 
         // ${workspaceRoot}/nested/project.json
         let segments = buildPath.split(path.sep);
-        segments.should.deep.equal(['${workspaceRoot}', 'nested', 'project.json']);
+        segments.should.deep.equal(['${workspaceRoot}', 'nested', 'testApp.csproj']);
     });
 
     test("Create launch.json for project opened in workspace", () => {
         let rootPath = path.resolve('testRoot');
-        let info = createMSBuildWorkspaceInformation(rootPath, 'testApp.dll', 'netcoreapp1.0');
+        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netcoreapp1.0');
         let generator = new AssetGenerator(info, rootPath);
         let launchJson = generator.createLaunchJson(/*isWebProject*/ false);
         let programPath = launchJson.configurations[0].program;
@@ -157,7 +157,7 @@ suite("Asset generation: csproj", () => {
 
     test("Create launch.json for nested project opened in workspace", () => {
         let rootPath = path.resolve('testRoot');
-        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'nested'), 'testApp.dll', 'netcoreapp1.0');
+        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'nested', 'testApp.csproj'), 'testApp', 'netcoreapp1.0');
         let generator = new AssetGenerator(info, rootPath);
         let launchJson = generator.createLaunchJson(/*isWebProject*/ false);
         let programPath = launchJson.configurations[0].program;
@@ -169,7 +169,7 @@ suite("Asset generation: csproj", () => {
 
     test("Create launch.json for web project opened in workspace", () => {
         let rootPath = path.resolve('testRoot');
-        let info = createMSBuildWorkspaceInformation(rootPath, 'testApp.dll', 'netcoreapp1.0');
+        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netcoreapp1.0');
         let generator = new AssetGenerator(info, rootPath);
         let launchJson = generator.createLaunchJson(/*isWebProject*/ true);
         let programPath = launchJson.configurations[0].program;
@@ -181,7 +181,7 @@ suite("Asset generation: csproj", () => {
 
     test("Create launch.json for nested web project opened in workspace", () => {
         let rootPath = path.resolve('testRoot');
-        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'nested'), 'testApp.dll', 'netcoreapp1.0');
+        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'nested', 'testApp.csproj'), 'testApp', 'netcoreapp1.0');
         let generator = new AssetGenerator(info, rootPath);
         let launchJson = generator.createLaunchJson(/*isWebProject*/ true);
         let programPath = launchJson.configurations[0].program;
@@ -192,34 +192,30 @@ suite("Asset generation: csproj", () => {
     });
 });
 
-function createMSBuildWorkspaceInformation(projectPath: string, compilationOutputAssemblyFile: string, targetFrameworkShortName: string, emitEntryPoint: boolean = true) : protocol.WorkspaceInformationResponse {
+function createMSBuildWorkspaceInformation(projectPath: string, assemblyName: string, targetFrameworkShortName: string, isExe: boolean = true) : protocol.WorkspaceInformationResponse {
     return {
-        DotNet: {
+        MsBuild: {
+            SolutionPath: '',
             Projects: [
                 {
+                    ProjectGuid: '',
                     Path: projectPath,
-                    Name: '',
-                    ProjectSearchPaths: [],
-                    Configurations: [
-                        {
-                            Name: 'Debug',
-                            CompilationOutputPath: '',
-                            CompilationOutputAssemblyFile: compilationOutputAssemblyFile,
-                            CompilationOutputPdbFile: '',
-                            EmitEntryPoint: emitEntryPoint
-                        }
-                    ],
-                    Frameworks: [
+                    AssemblyName: assemblyName,
+                    TargetPath: '',
+                    TargetFramework: '',
+                    SourceFiles: [],
+                    TargetFrameworks: [
                         {
                             Name: '',
                             FriendlyName: '',
                             ShortName: targetFrameworkShortName
                         }
                     ],
-                    SourceFiles: []
+                    OutputPath: '',
+                    IsExe: isExe,
+                    IsUnityProject: false
                 }
             ],
-            RuntimePath: ''
         }
     };
 }
