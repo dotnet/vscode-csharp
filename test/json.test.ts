@@ -267,4 +267,23 @@ suite("JSON", () => {
 
         result.should.equal(expected);
     });
+
+    test("ignore trailing comma in object member list with leading and trailing whitespace", () => {
+        const text =
+            `{
+    "obj": { "a" : 1 , }
+}`;
+
+        const expected =
+            `{
+    "obj": {
+        "a": 1
+    }
+}`;
+
+        let json = tolerantParse(text);
+        let result = JSON.stringify(json, null, 4);
+
+        result.should.equal(expected);
+    });
 });
