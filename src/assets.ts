@@ -10,6 +10,7 @@ import * as tasks from 'vscode-tasks';
 import { OmniSharpServer } from './omnisharp/server';
 import * as serverUtils from './omnisharp/utils';
 import * as protocol from './omnisharp/protocol';
+import { tolerantParse } from './json';
 
 interface DebugConfiguration {
     name: string;
@@ -142,7 +143,7 @@ export class AssetGenerator {
                 // TODO: This error should be surfaced to the user. If the JSON can't be parsed
                 // (maybe due to a syntax error like an extra comma), the user should be notified
                 // to fix up their project.json.
-                projectJsonObject = JSON.parse(projectFileText);
+                projectJsonObject = tolerantParse(projectFileText);
             } catch (error) {
                 projectJsonObject = null;
             }
@@ -357,7 +358,7 @@ function getBuildOperations(tasksJsonPath: string) {
                     }
 
                     const text = buffer.toString();
-                    const tasksJson: tasks.TaskConfiguration = JSON.parse(text);
+                    const tasksJson: tasks.TaskConfiguration = tolerantParse(text);
                     const buildTask = tasksJson.tasks.find(td => td.taskName === 'build');
 
                     resolve({ updateTasksJson: (buildTask === undefined) });
