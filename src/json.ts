@@ -73,7 +73,7 @@ function isWhitespace(code: number) {
         || code === CharCode.byteOrderMark;
 }
 
-function stripComments(text: string) {
+function cleanJsonText(text: string) {
 
     let parts: string[] = [];
     let partStart = 0;
@@ -212,6 +212,6 @@ function stripComments(text: string) {
 }
 
 export function tolerantParse(text: string) {
-    text = stripComments(text);
+    text = cleanJsonText(text);
     return JSON.parse(text);
 }
