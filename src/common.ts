@@ -29,6 +29,15 @@ export function isBoolean(obj: any): obj is boolean {
     return obj === true || obj === false;
 }
 
+export function sum<T>(arr: T[], selector: (item: T) => number): number {
+    return arr.reduce((prev, curr) => prev + selector(curr), 0);
+}
+
+/** Retrieve the length of an array. Returns 0 if the array is `undefined`. */
+export function safeLength<T>(arr: T[] | undefined) {
+    return arr ? arr.length : 0;
+}
+
 export function buildPromiseChain<T, TResult>(array: T[], builder: (item: T) => Promise<TResult>): Promise<TResult> {
     return array.reduce(
         (promise, n) => promise.then(() => builder(n)),

@@ -161,6 +161,14 @@ function launch(cwd: string, args: string[]): Promise<LaunchResult> {
     return PlatformInformation.GetCurrent().then(platformInfo => {
         const options = Options.Read();
 
+        if (options.useEditorFormattingSettings) 
+        {
+            let editorConfig = vscode.workspace.getConfiguration('editor');
+            args.push(`formattingOptions:useTabs=${!editorConfig.get('insertSpaces', true)}`);
+            args.push(`formattingOptions:tabSize=${editorConfig.get('tabSize', 4)}`);
+            args.push(`formattingOptions:indentationSize=${editorConfig.get('tabSize',4)}`);
+        }
+
         if (options.path && options.useMono) {
             return launchNixMono(options.path, cwd, args);
         }

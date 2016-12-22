@@ -269,9 +269,9 @@ export interface ProjectInformationResponse {
 }
 
 export interface WorkspaceInformationResponse {
-    MsBuild: MsBuildWorkspaceInformation;
-    DotNet: DotNetWorkspaceInformation;
-    ScriptCs: ScriptCsContext;
+    MsBuild?: MsBuildWorkspaceInformation;
+    DotNet?: DotNetWorkspaceInformation;
+    ScriptCs?: ScriptCsContext;
 }
 
 export interface MsBuildWorkspaceInformation {
@@ -294,6 +294,16 @@ export interface MSBuildProject {
     TargetPath: string;
     TargetFramework: string;
     SourceFiles: string[];
+    TargetFrameworks: TargetFramework[];
+    OutputPath: string;
+    IsExe: boolean;
+    IsUnityProject: boolean;
+}
+
+export interface TargetFramework {
+    Name: string;
+    FriendlyName: string;
+    ShortName: string;
 }
 
 export interface DotNetWorkspaceInformation {
