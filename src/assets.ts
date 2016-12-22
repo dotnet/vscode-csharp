@@ -139,11 +139,10 @@ export class AssetGenerator {
             let projectJsonObject: any;
 
             try {
-                // TODO: This error should be surfaced to the user. If the JSON can't be parsed
-                // (maybe due to a syntax error like an extra comma), the user should be notified
-                // to fix up their project.json.
                 projectJsonObject = tolerantParse(projectFileText);
-            } catch (error) {
+            }
+            catch (error) {
+                vscode.window.showErrorMessage('Failed to parse project.json file');
                 projectJsonObject = null;
             }
 
@@ -360,13 +359,11 @@ function getBuildOperations(tasksJsonPath: string) {
 
                     let buildTask: tasks.TaskDescription;
 
-                    try
-                    {
+                    try {
                         const tasksJson: tasks.TaskConfiguration = tolerantParse(text);
                         buildTask = tasksJson.tasks.find(td => td.taskName === 'build');
                     }
-                    catch (error)
-                    {
+                    catch (error) {
                         vscode.window.showErrorMessage(`Failed to parse tasks.json file`);
                         buildTask = undefined;
                     }
