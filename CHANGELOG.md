@@ -1,3 +1,7 @@
+## 1.6.1 (December 22, 2016)
+
+* Fix crash when tasks.json contains comments. ([#1074](https://github.com/OmniSharp/omnisharp-vscode/issues/1074))
+
 ## 1.6.0 (December 21, 2016)
 
 #### C# Scripting
