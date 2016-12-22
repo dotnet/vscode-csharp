@@ -357,8 +357,19 @@ function getBuildOperations(tasksJsonPath: string) {
                     }
 
                     const text = buffer.toString();
-                    const tasksJson: tasks.TaskConfiguration = tolerantParse(text);
-                    const buildTask = tasksJson.tasks.find(td => td.taskName === 'build');
+
+                    let buildTask: tasks.TaskDescription;
+
+                    try
+                    {
+                        const tasksJson: tasks.TaskConfiguration = tolerantParse(text);
+                        buildTask = tasksJson.tasks.find(td => td.taskName === 'build');
+                    }
+                    catch (error)
+                    {
+                        vscode.window.showErrorMessage(`Failed to parse tasks.json file`);
+                        buildTask = undefined;
+                    }
 
                     resolve({ updateTasksJson: (buildTask === undefined) });
                 });
