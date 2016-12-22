@@ -221,4 +221,50 @@ suite("JSON", () => {
 
         result.should.equal(expected);
     });
+
+    test("ignore trailing comma in object member list", () => {
+        const text =
+            `{
+    "obj": {
+        "hello": "world",
+        "from": "json",
+    }
+}`;
+
+        const expected =
+            `{
+    "obj": {
+        "hello": "world",
+        "from": "json"
+    }
+}`;
+
+        let json = tolerantParse(text);
+        let result = JSON.stringify(json, null, 4);
+
+        result.should.equal(expected);
+    });
+
+    test("ignore trailing comma in array element list", () => {
+        const text =
+            `{
+    "array": [
+        "element1",
+        "element2",
+    ]
+}`;
+
+        const expected =
+            `{
+    "array": [
+        "element1",
+        "element2"
+    ]
+}`;
+
+        let json = tolerantParse(text);
+        let result = JSON.stringify(json, null, 4);
+
+        result.should.equal(expected);
+    });
 });
