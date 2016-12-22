@@ -13,6 +13,8 @@ const enum CharCode {
     backSlash = 0x5c,
     doubleQuote = 0x22,
     slash = 0x2f,
+
+    byteOrderMark = 0xfeff,
 }
 
 function isLineBreak(code: number) {
@@ -75,6 +77,12 @@ function stripComments(text: string) {
         let code = next();
 
         switch (code) {
+            // byte-order mark
+            case CharCode.byteOrderMark:
+                // We just skip the byte-order mark
+                parts.push(text.substring(partStart, index - 1));
+                partStart = index;
+
             // strings
             case CharCode.doubleQuote:
                 scanString();

@@ -134,7 +134,6 @@ export class AssetGenerator {
         }
 
         let projectFileText = fs.readFileSync(this.projectFilePath, 'utf8');
-        projectFileText = projectFileText.replace(/^\uFEFF/, '');
 
         if (path.basename(this.projectFilePath).toLowerCase() === 'project.json') {
             let projectJsonObject: any;

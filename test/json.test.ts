@@ -11,7 +11,7 @@ suite("JSON", () => {
 
     test("no comments", () => {
         const text =
-`{
+            `{
     "hello": "world"
 }`;
 
@@ -23,10 +23,10 @@ suite("JSON", () => {
 
     test("no comments (minified)", () => {
         const text =
-`{"hello":"world","from":"json"}`;
+            `{"hello":"world","from":"json"}`;
 
         const expected =
-`{
+            `{
     "hello": "world",
     "from": "json"
 }`;
@@ -39,13 +39,13 @@ suite("JSON", () => {
 
     test("single-line comment before JSON", () => {
         const text =
-`// comment
+            `// comment
 {
     "hello": "world\\"" // comment
 }`;
 
         const expected =
-`{
+            `{
     "hello": "world\\""
 }`;
 
@@ -57,13 +57,13 @@ suite("JSON", () => {
 
     test("single-line comment on separate line", () => {
         const text =
-`{
+            `{
     // comment
     "hello": "world"
 }`;
 
         const expected =
-`{
+            `{
     "hello": "world"
 }`;
 
@@ -75,12 +75,12 @@ suite("JSON", () => {
 
     test("single-line comment at end of line", () => {
         const text =
-`{
+            `{
     "hello": "world" // comment
 }`;
 
         const expected =
-`{
+            `{
     "hello": "world"
 }`;
 
@@ -92,12 +92,12 @@ suite("JSON", () => {
 
     test("single-line comment at end of text", () => {
         const text =
-`{
+            `{
     "hello": "world"
 } // comment`;
 
         const expected =
-`{
+            `{
     "hello": "world"
 }`;
 
@@ -109,7 +109,7 @@ suite("JSON", () => {
 
     test("ignore single-line comment inside string", () => {
         const text =
-`{
+            `{
     "hello": "world // comment"
 }`;
 
@@ -121,12 +121,12 @@ suite("JSON", () => {
 
     test("single-line comment after string with escaped double quote", () => {
         const text =
-`{
+            `{
     "hello": "world\\"" // comment
 }`;
 
         const expected =
-`{
+            `{
     "hello": "world\\""
 }`;
 
@@ -138,12 +138,12 @@ suite("JSON", () => {
 
     test("multi-line comment at start of text", () => {
         const text =
-`/**/{
+            `/**/{
     "hello": "world"
 }`;
 
         const expected =
-`{
+            `{
     "hello": "world"
 }`;
 
@@ -155,13 +155,13 @@ suite("JSON", () => {
 
     test("comment out key/value pair", () => {
         const text =
-`{
+            `{
     /*"hello": "world"*/
     "from": "json"
 }`;
 
         const expected =
-`{
+            `{
     "from": "json"
 }`;
 
@@ -170,15 +170,15 @@ suite("JSON", () => {
 
         result.should.equal(expected);
     });
-    
+
     test("multi-line comment at end of text", () => {
         const text =
-`{
+            `{
     "hello": "world"
 }/**/`;
 
         const expected =
-`{
+            `{
     "hello": "world"
 }`;
 
@@ -187,16 +187,33 @@ suite("JSON", () => {
 
         result.should.equal(expected);
     });
-    
+
     test("ignore multi-line comment inside string", () => {
         const text =
-`{
+            `{
     "hello": "wo/**/rld"
 }`;
 
         const expected =
-`{
+            `{
     "hello": "wo/**/rld"
+}`;
+
+        let json = tolerantParse(text);
+        let result = JSON.stringify(json, null, 4);
+
+        result.should.equal(expected);
+    });
+
+    test("ignore BOM", () => {
+        const text =
+            `\uFEFF{
+    "hello": "world"
+}`;
+
+        const expected =
+            `{
+    "hello": "world"
 }`;
 
         let json = tolerantParse(text);
