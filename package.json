@@ -394,10 +394,14 @@
       }
     ],
     "jsonValidation": [
-      {
-        "fileMatch": "project.json",
-        "url": "http://json.schemastore.org/project"
-      }
+		{
+			"fileMatch": "project.json",
+			"url": "http://json.schemastore.org/project"
+		},
+		{
+			"fileMatch": "omnisharp.json",
+			"url": "http://json.schemastore.org/omnisharp"
+		}
     ],
     "commands": [
       {
