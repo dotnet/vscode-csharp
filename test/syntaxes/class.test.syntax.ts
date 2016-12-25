@@ -83,7 +83,11 @@ namespace TestNamespace
             let tokens: Token[] = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.ClassKeyword("class", 4, 5));
-            tokens.should.contain(Tokens.ClassIdentifier("Dictionary<T, Dictionary<string, string>>", 4, 11));
+
+            // OLD: tokens.should.contain(Tokens.ClassIdentifier("Dictionary<T, Dictionary<string, string>>", 4, 11));
+            tokens.should.contain(Tokens.ClassIdentifier("Dictionary", 4, 11));
+            tokens.should.contain(Tokens.ClassIdentifier("T", 4, 22));
+            tokens.should.contain(Tokens.ClassIdentifier("Dictionary<string, string>", 4, 25));
         });
 
         it("inheritance", function() {
@@ -106,9 +110,10 @@ namespace TestNamespace
             tokens.should.contain(Tokens.ClassIdentifier("PublicClass<T>", 5, 11));
             tokens.should.contain(Tokens.Type("Root.IInterface<Something.Nested>", 5, 28));
             tokens.should.contain(Tokens.Type("Something.IInterfaceTwo", 5, 63));
-
-            tokens.should.contain(Tokens.Type("Dictionary<T, Dictionary<string, string>>", 6, 28));
-            tokens.should.contain(Tokens.Type("IMap<T, Dictionary<string, string>>", 6, 71));
+            tokens.should.contain(Tokens.Type("Dictionary", 6, 28));
+            tokens.should.contain(Tokens.Type("Dictionary<string, string>", 6, 42));
+            tokens.should.contain(Tokens.Type("IMap", 6, 71));
+            tokens.should.contain(Tokens.Type("Dictionary<string, string>", 6, 79));
         });
 
         it("generic constraints", function() {
@@ -129,7 +134,8 @@ namespace TestNamespace
 
             tokens.should.contain(Tokens.ClassKeyword("class", 5, 5));
             tokens.should.contain(Tokens.ClassIdentifier("PublicClass<T, X>", 5, 11));
-            tokens.should.contain(Tokens.Type("Dictionary<T, List<string>[]>", 5, 31));
+            tokens.should.contain(Tokens.Type("Dictionary", 5, 31));
+            tokens.should.contain(Tokens.Type("List<string>[]", 5, 45));
             tokens.should.contain(Tokens.Type("ISomething", 5, 62));
             tokens.should.contain(Tokens.Keyword("where", 5, 73));
             tokens.should.contain(Tokens.Type("T", 5, 79));
