@@ -36,7 +36,9 @@ public class Tester
 
             tokens.should.contain(Tokens.StorageModifierKeyword("public", 4, 5));
             tokens.should.contain(Tokens.StorageModifierKeyword("event", 4, 12));
-            tokens.should.contain(Tokens.Type("EventHandler<List<T>, Dictionary<T, D>>", 4, 18));
+            tokens.should.contain(Tokens.Type("EventHandler", 4, 18));
+            tokens.should.contain(Tokens.Type("List<T>", 4, 31));
+            tokens.should.contain(Tokens.Type("Dictionary<T, D>", 4, 40));
             tokens.should.contain(Tokens.EventIdentifier("Event", 4, 58));
         });
     });
