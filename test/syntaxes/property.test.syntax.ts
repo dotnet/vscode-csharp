@@ -105,7 +105,9 @@ class Tester
             let tokens: Token[] = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.StorageModifierKeyword("public", 4, 5));
-            tokens.should.contain(Tokens.Type("Dictionary<string, List<T>[]>", 4, 12));
+            tokens.should.contain(Tokens.Type("Dictionary", 4, 12));
+            tokens.should.contain(Tokens.Type("string", 4, 23));
+            tokens.should.contain(Tokens.Type("List<T>[]", 4, 31));
             tokens.should.contain(Tokens.PropertyIdentifier("Property", 4, 42));
             tokens.should.contain(Tokens.Keyword("get", 4, 53));
             tokens.should.contain(Tokens.Keyword("set", 4, 58));
@@ -122,7 +124,9 @@ class Tester
             let tokens: Token[] = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.StorageModifierKeyword("public", 4, 5));
-            tokens.should.contain(Tokens.Type("Dictionary<string, List<T>[]>", 4, 12));
+            tokens.should.contain(Tokens.Type("Dictionary", 4, 12));
+            tokens.should.contain(Tokens.Type("string", 4, 23));
+            tokens.should.contain(Tokens.Type("List<T>[]", 4, 31));
             tokens.should.contain(Tokens.PropertyIdentifier("Property", 4, 42));
             tokens.should.contain(Tokens.Keyword("get", 4, 53));
             tokens.should.contain(Tokens.StorageModifierKeyword("new", 4, 62));
