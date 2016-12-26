@@ -16,6 +16,9 @@
         "directives": {
             "patterns": [
                 {
+                    "include": "#extern-alias-directive"
+                },
+                {
                     "include": "#using-directive"
                 },
                 {
@@ -23,10 +26,25 @@
                 }
             ]
         },
+        "extern-alias-directive": {
+            "begin": "\\s*(extern)\\b\\s*(alias)\\b\\s*([_$[:alpha:]][_$[:alnum:]]*)",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.other.extern.cs"
+                },
+                "2": {
+                    "name": "keyword.other.alias.cs"
+                },
+                "3": {
+                    "name": "variable.other.alias.cs"
+                }
+            },
+            "end": "(?=;)"
+        },
         "using-directive": {
             "patterns": [
                 {
-                    "begin": "^\\s*(using)\\b\\s*(static)*",
+                    "begin": "\\s*(using)\\b\\s*(static)*",
                     "beginCaptures": {
                         "1": {
                             "name": "keyword.other.using.cs"

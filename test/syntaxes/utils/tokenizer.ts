@@ -79,6 +79,12 @@ export namespace Tokens {
     }
 
     export namespace Keywords {
+        export const Alias = (line?: number, column?: number) =>
+            createToken("alias", "keyword.other.alias.cs", line, column);
+
+        export const Extern = (line?: number, column?: number) =>
+            createToken("extern", "keyword.other.extern.cs", line, column);
+
         export const Static = (line?: number, column?: number) =>
             createToken("static", "keyword.other.static.cs", line, column);
 
@@ -112,6 +118,11 @@ export namespace Tokens {
 
         export const TypeParametersEnd = (line?: number, column?: number) =>
             createToken(">", "punctuation.definition.typeparameters.end.cs", line, column);
+    }
+
+    export namespace Variables {
+        export const Alias = (text: string, line?: number, column?: number) =>
+            createToken(text, "variable.other.alias.cs", line, column);
     }
 
     export const NamespaceKeyword = (text: string, line?: number, column?: number) =>
