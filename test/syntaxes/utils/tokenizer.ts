@@ -88,6 +88,9 @@ export namespace Tokens {
         export const Extern = (line?: number, column?: number) =>
             createToken("extern", "keyword.other.extern.cs", line, column);
 
+        export const Namespace = (line?: number, column?: number) =>
+            createToken("namespace", "keyword.other.namespace.cs", line, column);
+
         export const Static = (line?: number, column?: number) =>
             createToken("static", "keyword.other.static.cs", line, column);
 
@@ -96,6 +99,9 @@ export namespace Tokens {
     }
 
     export namespace Identifiers {
+        export const NamespaceName = (text: string, line?: number, column?: number) =>
+            createToken(text, "entity.name.type.namespace.cs", line, column);
+            
         export const PropertyName = (text: string, line?: number, column?: number) =>
             createToken(text, "entity.name.function.cs", line, column);
     }
@@ -180,12 +186,6 @@ export namespace Tokens {
         export const Alias = (text: string, line?: number, column?: number) =>
             createToken(text, "variable.other.alias.cs", line, column);
     }
-
-    export const NamespaceKeyword = (text: string, line?: number, column?: number) =>
-        createToken(text, "keyword.other.namespace.cs", line, column);
-
-    export const NamespaceIdentifier = (text: string, line?: number, column?: number) =>
-        createToken(text, "entity.name.type.namespace.cs", line, column);
 
     export const UsingKeyword = (text: string, line?: number, column?: number) =>
         createToken(text, "keyword.other.using.cs", line, column);

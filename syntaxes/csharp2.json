@@ -10,6 +10,9 @@
         },
         {
             "include": "#directives"
+        },
+        {
+            "include": "#declarations"
         }
     ],
     "repository": {
@@ -148,6 +151,59 @@
                 },
                 {
                     "include": "#expression"
+                }
+            ]
+        },
+        "declarations": {
+            "patterns": [
+                {
+                    "include": "#namespace-declaration"
+                }
+            ]
+        },
+        "namespace-declaration": {
+            "begin": "\\b(namespace)\\s+",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.other.namespace.cs"
+                }
+            },
+            "end": "(?<=\\})",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "name": "entity.name.type.namespace.cs",
+                    "match": "[_$[:alpha:]][_$[:alnum:]]*"
+                },
+                {
+                    "include": "#punctuation-accessor"
+                },
+                {
+                    "begin": "\\{",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.block.cs"
+                        }
+                    },
+                    "end": "\\}",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.block.cs"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#declarations"
+                        },
+                        {
+                            "include": "#using-directive"
+                        },
+                        {
+                            "include": "#punctuation-semicolon"
+                        }
+                    ]
                 }
             ]
         },
