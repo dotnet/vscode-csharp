@@ -95,6 +95,11 @@ export namespace Tokens {
             createToken("using", "keyword.other.using.cs", line, column);
     }
 
+    export namespace Identifiers {
+        export const PropertyName = (text: string, line?: number, column?: number) =>
+            createToken(text, "entity.name.function.cs", line, column);
+    }
+
     export namespace Literals {
         export namespace Boolean {
             export const False = (line?: number, column?: number) =>
@@ -103,6 +108,9 @@ export namespace Tokens {
             export const True = (line?: number, column?: number) =>
                 createToken("true", "constant.language.boolean.true.cs", line, column);
         }
+
+        export const Null = (line?: number, column?: number) =>
+            createToken("null", "constant.language.null.cs", line, column);
 
         export namespace Numeric {
             export const Binary = (text: string, line?: number, column?: number) =>
