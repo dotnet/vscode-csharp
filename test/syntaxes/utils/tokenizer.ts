@@ -1,8 +1,7 @@
-import {ITokenizeLineResult, Registry, IGrammar, StackElement} from 'vscode-textmate';
+import { ITokenizeLineResult, Registry, IGrammar, StackElement } from 'vscode-textmate';
 
-export class Tokenizer
-{
-    private _grammar : IGrammar;
+export class Tokenizer {
+    private _grammar: IGrammar;
 
     constructor(grammarFilePath: string) {
         this._grammar = new Registry().loadGrammarFromPathSync(grammarFilePath);
@@ -12,9 +11,9 @@ export class Tokenizer
         let tokens: Token[] = [];
 
         // ensure consistent line-endings irrelevant of OS
-        input = input.replace("\r\n","\n");
+        input = input.replace("\r\n", "\n");
 
-        let previousStack : StackElement = null;
+        let previousStack: StackElement = null;
 
         const lines: string[] = input.split("\n");
 
@@ -26,8 +25,8 @@ export class Tokenizer
 
             for (const token of result.tokens) {
                 const text = line.substring(token.startIndex, token.endIndex);
-                const type : string = token.scopes[token.scopes.length - 1];
-                tokens.push(new Token(text, type, lineIndex+1, token.startIndex + 1));
+                const type: string = token.scopes[token.scopes.length - 1];
+                tokens.push(new Token(text, type, lineIndex + 1, token.startIndex + 1));
             }
         }
 
@@ -51,8 +50,68 @@ export class Token {
 
 export namespace Tokens {
 
-    function createToken(text: string, type: string, line?: number, column?: number) : Token {
+    function createToken(text: string, type: string, line?: number, column?: number): Token {
         return new Token(text, type, line, column);
+    }
+
+    export namespace Comment {
+        export const LeadingWhitespace = (text: string, line?: number, column?: number) =>
+            createToken(text, "punctuation.whitespace.comment.leading.cs", line, column);
+
+        export namespace MultiLine {
+            export const End = (line?: number, column?: number) =>
+                createToken("*/", "punctuation.definition.comment.cs", line, column);
+
+            export const Start = (line?: number, column?: number) =>
+                createToken("/*", "punctuation.definition.comment.cs", line, column);
+
+            export const Text = (text: string, line?: number, column?: number) =>
+                createToken(text, "comment.block.cs", line, column);
+        }
+
+        export namespace SingleLine {
+            export const Start = (line?: number, column?: number) =>
+                createToken("//", "punctuation.definition.comment.cs", line, column);
+
+            export const Text = (text: string, line?: number, column?: number) =>
+                createToken(text, "comment.line.double-slash.cs", line, column);
+        }
+    }
+
+    export namespace Keywords {
+        export const Static = (line?: number, column?: number) =>
+            createToken("static", "keyword.other.static.cs", line, column);
+
+        export const Using = (line?: number, column?: number) =>
+            createToken("using", "keyword.other.using.cs", line, column);
+    }
+
+    export namespace Operators {
+        export const Assignment = (line?: number, column?: number) =>
+            createToken("=", "keyword.operator.assignment.cs", line, column);
+    }
+
+    export namespace Puncuation {
+        export const Accessor = (line?: number, column?: number) =>
+            createToken(".", "punctuation.accessor.cs", line, column);
+
+        export const Comma = (line?: number, column?: number) =>
+            createToken(",", "punctuation.separator.comma.cs", line, column);
+
+        export const Semicolon = (line?: number, column?: number) =>
+            createToken(";", "punctuation.terminator.statement.cs", line, column);
+
+        export const SquareBracketClose = (line?: number, column?: number) =>
+            createToken("[", "punctuation.squarebracket.close.cs");
+
+        export const SquareBracketOpen = (line?: number, column?: number) =>
+            createToken("[", "punctuation.squarebracket.open.cs");
+
+        export const TypeParametersBegin = (line?: number, column?: number) =>
+            createToken("<", "punctuation.definition.typeparameters.begin.cs", line, column);
+
+        export const TypeParametersEnd = (line?: number, column?: number) =>
+            createToken(">", "punctuation.definition.typeparameters.end.cs", line, column);
     }
 
     export const NamespaceKeyword = (text: string, line?: number, column?: number) =>

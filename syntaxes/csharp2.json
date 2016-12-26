@@ -1,0 +1,199 @@
+{
+    "name": "C#",
+    "scopeName": "source.cs",
+    "fileTypes": [
+        "cs"
+    ],
+    "patterns": [
+        {
+            "include": "#comment"
+        },
+        {
+            "include": "#directives"
+        }
+    ],
+    "repository": {
+        "directives": {
+            "patterns": [
+                {
+                    "include": "#using-directive"
+                },
+                {
+                    "include": "#punctuation-semicolon"
+                }
+            ]
+        },
+        "using-directive": {
+            "patterns": [
+                {
+                    "begin": "^\\s*(using)\\b\\s*(static)*",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "keyword.other.using.cs"
+                        },
+                        "2": {
+                            "name": "keyword.other.static.cs"
+                        }
+                    },
+                    "end": "(?=;)",
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        },
+                        {
+                            "include": "#operator-assignment"
+                        }
+                    ]
+                }
+            ]
+        },
+        "type": {
+            "name": "meta.type.cs",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "include": "#type-builtin"
+                },
+                {
+                    "include": "#type-name"
+                },
+                {
+                    "include": "#type-parameters"
+                },
+                {
+                    "include": "#type-array-suffix"
+                }
+            ]
+        },
+        "type-builtin": {
+            "patterns": [
+                {
+                    "match": "\\b(bool|byte|char|decimal|double|float|int|long|object|sbyte|short|string|uint|ulong|ushort)\\b",
+                    "name": "storage.type.cs"
+                }
+            ]
+        },
+        "type-name": {
+            "patterns": [
+                {
+                    "match": "([_$[:alpha:]][_$[:alnum:]]*)\\s*(\\.)",
+                    "captures": {
+                        "1": {
+                            "name": "storage.type.cs"
+                        },
+                        "2": {
+                            "name": "punctuation.accessor.cs"
+                        }
+                    }
+                },
+                {
+                    "name": "storage.type.cs",
+                    "match": "[_$[:alpha:]][_$[:alnum:]]*"
+                }
+            ]
+        },
+        "type-parameters": {
+            "name": "meta.type.parameters.cs",
+            "begin": "(<)",
+            "beginCaptures": {
+                "1": {
+                    "name": "punctuation.definition.typeparameters.begin.cs"
+                }
+            },
+            "end": "(>)",
+            "endCaptures": {
+                "1": {
+                    "name": "punctuation.definition.typeparameters.end.cs"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "include": "#type"
+                },
+                {
+                    "include": "#punctuation-comma"
+                }
+            ]
+        },
+        "type-array-suffix": {
+            "begin": "(\\[)",
+            "beginCaptures": {
+                "1": {
+                    "name": "punctuation.squarebracket.open.cs"
+                }
+            },
+            "end": "(\\])",
+            "endCaptures": {
+                "1": {
+                    "name": "punctuation.squarebracket.close.cs"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#punctuation-comma"
+                }
+            ]
+        },
+        "operator-assignment": {
+            "name": "keyword.operator.assignment.cs",
+            "match": "\\="
+        },
+        "punctuation-comma": {
+            "name": "punctuation.separator.comma.cs",
+            "match": ","
+        },
+        "punctuation-semicolon": {
+            "name": "punctuation.terminator.statement.cs",
+            "match": ";"
+        },
+        "punctuation-accessor": {
+            "name": "punctuation.accessor.cs",
+            "match": "\\."
+        },
+        "comment": {
+            "patterns": [
+                {
+                    "name": "comment.block.cs",
+                    "begin": "/\\*",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.cs"
+                        }
+                    },
+                    "end": "\\*/",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.cs"
+                        }
+                    }
+                },
+                {
+                    "begin": "(^[ \\t]+)?(?=//)",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "punctuation.whitespace.comment.leading.cs"
+                        }
+                    },
+                    "end": "(?=$)",
+                    "patterns": [
+                        {
+                            "name": "comment.line.double-slash.cs",
+                            "begin": "//",
+                            "beginCaptures": {
+                                "0": {
+                                    "name": "punctuation.definition.comment.cs"
+                                }
+                            },
+                            "end": "(?=$)"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
