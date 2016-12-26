@@ -99,9 +99,12 @@ export namespace Tokens {
     }
 
     export namespace Identifiers {
+        export const AliasName = (text: string, line?: number, column?: number) =>
+            createToken(text, "entity.name.type.alias.cs", line, column);
+
         export const NamespaceName = (text: string, line?: number, column?: number) =>
             createToken(text, "entity.name.type.namespace.cs", line, column);
-            
+
         export const PropertyName = (text: string, line?: number, column?: number) =>
             createToken(text, "entity.name.function.cs", line, column);
     }
@@ -147,6 +150,14 @@ export namespace Tokens {
 
         export const Comma = (line?: number, column?: number) =>
             createToken(",", "punctuation.separator.comma.cs", line, column);
+
+        export namespace CurlyBrace {
+            export const Close = (line?: number, column?: number) =>
+                createToken("}", "punctuation.curlybrace.close.cs", line, column);
+
+            export const Open = (line?: number, column?: number) =>
+                createToken("{", "punctuation.curlybrace.open.cs", line, column);
+        }
 
         export namespace Parenthesis {
             export const Close = (line?: number, column?: number) =>
