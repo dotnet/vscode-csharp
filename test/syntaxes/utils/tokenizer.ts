@@ -82,6 +82,9 @@ export namespace Tokens {
         export const Alias = (line?: number, column?: number) =>
             createToken("alias", "keyword.other.alias.cs", line, column);
 
+        export const AttributeSpecifier = (text: string, line?: number, column?: number) =>
+            createToken(text, "keyword.other.attribute-specifier.cs", line, column);
+
         export const Extern = (line?: number, column?: number) =>
             createToken("extern", "keyword.other.extern.cs", line, column);
 
@@ -90,6 +93,27 @@ export namespace Tokens {
 
         export const Using = (line?: number, column?: number) =>
             createToken("using", "keyword.other.using.cs", line, column);
+    }
+
+    export namespace Literals {
+        export namespace Boolean {
+            export const False = (line?: number, column?: number) =>
+                createToken("false", "constant.language.boolean.false.cs", line, column);
+
+            export const True = (line?: number, column?: number) =>
+                createToken("true", "constant.language.boolean.true.cs", line, column);
+        }
+
+        export namespace Numeric {
+            export const Binary = (text: string, line?: number, column?: number) =>
+                createToken(text, "constant.numeric.binary.cs", line, column);
+
+            export const Decimal = (text: string, line?: number, column?: number) =>
+                createToken(text, "constant.numeric.decimal.cs", line, column);
+
+            export const Hexadecimal = (text: string, line?: number, column?: number) =>
+                createToken(text, "constant.numeric.hex.cs", line, column);
+        }
     }
 
     export namespace Operators {
@@ -101,17 +125,30 @@ export namespace Tokens {
         export const Accessor = (line?: number, column?: number) =>
             createToken(".", "punctuation.accessor.cs", line, column);
 
+        export const Colon = (line?: number, column?: number) =>
+            createToken(":", "punctuation.separator.colon.cs", line, column);
+
         export const Comma = (line?: number, column?: number) =>
             createToken(",", "punctuation.separator.comma.cs", line, column);
+
+        export namespace Parenthesis {
+            export const Close = (line?: number, column?: number) =>
+                createToken(")", "punctuation.parenthesis.close.cs", line, column);
+
+            export const Open = (line?: number, column?: number) =>
+                createToken("(", "punctuation.parenthesis.open.cs", line, column);
+        }
 
         export const Semicolon = (line?: number, column?: number) =>
             createToken(";", "punctuation.terminator.statement.cs", line, column);
 
-        export const SquareBracketClose = (line?: number, column?: number) =>
-            createToken("[", "punctuation.squarebracket.close.cs");
+        export namespace SquareBracket {
+            export const Close = (line?: number, column?: number) =>
+                createToken("]", "punctuation.squarebracket.close.cs", line, column);
 
-        export const SquareBracketOpen = (line?: number, column?: number) =>
-            createToken("[", "punctuation.squarebracket.open.cs");
+            export const Open = (line?: number, column?: number) =>
+                createToken("[", "punctuation.squarebracket.open.cs", line, column);
+        }
 
         export const TypeParametersBegin = (line?: number, column?: number) =>
             createToken("<", "punctuation.definition.typeparameters.begin.cs", line, column);

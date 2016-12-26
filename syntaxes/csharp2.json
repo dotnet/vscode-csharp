@@ -22,6 +22,9 @@
                     "include": "#using-directive"
                 },
                 {
+                    "include": "#attribute-section"
+                },
+                {
                     "include": "#punctuation-semicolon"
                 }
             ]
@@ -62,6 +65,132 @@
                             "include": "#operator-assignment"
                         }
                     ]
+                }
+            ]
+        },
+        "attribute-section": {
+            "begin": "(\\[)(assembly|module|field|event|method|param|property|return|type)*(\\:)*",
+            "beginCaptures": {
+                "1": {
+                    "name": "punctuation.squarebracket.open.cs"
+                },
+                "2": {
+                    "name": "keyword.other.attribute-specifier.cs"
+                },
+                "3": {
+                    "name": "punctuation.separator.colon.cs"
+                }
+            },
+            "end": "(\\])",
+            "endCaptures": {
+                "1": {
+                    "name": "punctuation.squarebracket.close.cs"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "include": "#attribute"
+                },
+                {
+                    "include": "#punctuation-comma"
+                }
+            ]
+        },
+        "attribute": {
+            "patterns": [
+                {
+                    "include": "#type-name"
+                },
+                {
+                    "include": "#attribute-arguments"
+                }
+            ]
+        },
+        "attribute-arguments": {
+            "begin": "(\\()",
+            "beginCaptures": {
+                "1": {
+                    "name": "punctuation.parenthesis.open.cs"
+                }
+            },
+            "end": "(\\))",
+            "endCaptures": {
+                "1": {
+                    "name": "punctuation.parenthesis.close.cs"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#expression"
+                },
+                {
+                    "include": "#punctuation-comma"
+                }
+            ]
+        },
+        "expression": {
+            "patterns": [
+                {
+                    "include": "#literal"
+                }
+            ]
+        },
+        "literal": {
+            "patterns": [
+                {
+                    "include": "#boolean-literal"
+                },
+                {
+                    "include": "#numeric-literal"
+                }
+            ]
+        },
+        "boolean-literal": {
+            "patterns": [
+                {
+                    "name": "constant.language.boolean.true.cs",
+                    "match": "(?<!\\.)\\btrue\\b"
+                },
+                {
+                    "name": "constant.language.boolean.false.cs",
+                    "match": "(?<!\\.)\\bfalse\\b"
+                }
+            ]
+        },
+        "numeric-literal": {
+            "patterns": [
+                {
+                    "comment": "C# grammar: 0x hex-digits integer-type-suffix[opt] OR 0X hex-digits integer-type-suffix[opt]",
+                    "name": "constant.numeric.hex.cs",
+                    "match": "\\b0(x|X)[0-9a-fA-F_]+(U|u|L|l|UL|Ul|uL|ul|LU|Lu|lU|lu)?\\b"
+                },
+                {
+                    "comment": "C# grammar: 0b binary-digits integer-type-suffix[opt] OR 0B binary-digits integer-type-suffix[opt]",
+                    "name": "constant.numeric.binary.cs",
+                    "match": "\\b0(b|B)[01_]+(U|u|L|l|UL|Ul|uL|ul|LU|Lu|lU|lu)?\\b"
+                },
+                {
+                    "comment": "C# grammar: decimal-digits integer-type-suffix[opt]",
+                    "name": "constant.numeric.decimal.cs",
+                    "match": "\\b[0-9_]+(U|u|L|l|UL|Ul|uL|ul|LU|Lu|lU|lu)?\\b"
+                },
+                {
+                    "comment": "C# grammar: decimal-digits . decimal-digits exponent-part[opt] real-type-suffix[opt] OR . decimal-digits exponent-part[opt] real-type-suffix[opt]",
+                    "name": "constant.numeric.decimal.cs",
+                    "match": "\\b([0-9_]+)?\\.[0-9_]+((e|E)[0-9]+)?(F|f|D|d|M|m)?"
+                },
+                {
+                    "comment": "C# grammar: decimal-digits exponent-part real-type-suffix[opt]",
+                    "name": "constant.numeric.decimal.cs",
+                    "match": "\\b[0-9_]+(e|E)[0-9_]+(F|f|D|d|M|m)?"
+                },
+                {
+                    "comment": "C# grammar: decimal-digits real-type-suffix",
+                    "name": "constant.numeric.decimal.cs",
+                    "match": "\\b[0-9_]+(F|f|D|d|M|m)"
                 }
             ]
         },
