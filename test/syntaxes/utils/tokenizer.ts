@@ -114,6 +114,9 @@ export namespace Tokens {
             export const Hexadecimal = (text: string, line?: number, column?: number) =>
                 createToken(text, "constant.numeric.hex.cs", line, column);
         }
+
+        export const String = (text: string, line?: number, column?: number) =>
+            createToken(text, "string.quoted.double.cs", line, column);
     }
 
     export namespace Operators {
@@ -148,6 +151,14 @@ export namespace Tokens {
 
             export const Open = (line?: number, column?: number) =>
                 createToken("[", "punctuation.squarebracket.open.cs", line, column);
+        }
+
+        export namespace String {
+            export const Begin = (line?: number, column?: number) =>
+                createToken('"', "punctuation.definition.string.begin.cs", line, column);
+
+            export const End = (line?: number, column?: number) =>
+                createToken('"', "punctuation.definition.string.end.cs", line, column); 
         }
 
         export const TypeParametersBegin = (line?: number, column?: number) =>

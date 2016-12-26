@@ -144,7 +144,13 @@
                     "include": "#boolean-literal"
                 },
                 {
+                    "include": "#null-literal"
+                },
+                {
                     "include": "#numeric-literal"
+                },
+                {
+                    "include": "#string-literal"
                 }
             ]
         },
@@ -159,6 +165,9 @@
                     "match": "(?<!\\.)\\bfalse\\b"
                 }
             ]
+        },
+        "null-literal": {
+
         },
         "numeric-literal": {
             "patterns": [
@@ -193,6 +202,33 @@
                     "match": "\\b[0-9_]+(F|f|D|d|M|m)"
                 }
             ]
+        },
+        "string-literal": {
+            "name": "string.quoted.double.cs",
+            "begin": "\"",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.begin.cs"
+                }
+            },
+            "end": "(\")|((?:[^\\\\\\n])$)",
+            "endCaptures": {
+                "1": {
+                    "name": "punctuation.definition.string.end.cs"
+                },
+                "2": {
+                    "name": "invalid.illegal.newline.cs"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#string-character-escape"
+                }
+            ]
+        },
+        "string-character-escape": {
+            "name": "constant.character.escape.cs",
+            "match": "\\\\."
         },
         "type": {
             "name": "meta.type.cs",

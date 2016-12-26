@@ -83,7 +83,7 @@ describe("Grammar", () => {
             tokens.should.contain(Tokens.Puncuation.SquareBracket.Close(2, 11));
         });
 
-        it("Global attribute with two argument", () => {
+        it("Global attribute with two arguments", () => {
 
             const input = `
 [Foo(true, 42)]`;
@@ -98,6 +98,27 @@ describe("Grammar", () => {
             tokens.should.contain(Tokens.Literals.Numeric.Decimal("42", 2, 12));
             tokens.should.contain(Tokens.Puncuation.Parenthesis.Close(2, 14));
             tokens.should.contain(Tokens.Puncuation.SquareBracket.Close(2, 15));
+        });
+
+        it("Global attribute with three arguments", () => {
+
+            const input = `
+[Foo(true, 42, "text")]`;
+
+            let tokens: Token[] = TokenizerUtil.tokenize2(input);
+
+            tokens.should.contain(Tokens.Puncuation.SquareBracket.Open(2, 1));
+            tokens.should.contain(Tokens.Type("Foo", 2, 2));
+            tokens.should.contain(Tokens.Puncuation.Parenthesis.Open(2, 5));
+            tokens.should.contain(Tokens.Literals.Boolean.True(2, 6));
+            tokens.should.contain(Tokens.Puncuation.Comma(2, 10));
+            tokens.should.contain(Tokens.Literals.Numeric.Decimal("42", 2, 12));
+            tokens.should.contain(Tokens.Puncuation.Comma(2, 14));
+            tokens.should.contain(Tokens.Puncuation.String.Begin(2, 16));
+            tokens.should.contain(Tokens.Literals.String("text", 2, 17));
+            tokens.should.contain(Tokens.Puncuation.String.End(2, 21));
+            tokens.should.contain(Tokens.Puncuation.Parenthesis.Close(2, 22));
+            tokens.should.contain(Tokens.Puncuation.SquareBracket.Close(2, 23));
         });
     });
 });
