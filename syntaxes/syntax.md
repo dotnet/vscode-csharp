@@ -10,6 +10,11 @@ Important regular expressions:
 * Expression: `([_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)`
 * Matches: `System.Collections.Generic.Dictionary`
 
+#### Simple generic name
+
+* Expression: `(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)(?:\s*<\s*\g<identifier>(?:\s*,\s*\g<identifier>)*\s*>\s*)?`
+* Matches: `C<T, U, X>`
+
 #### Generic name
 
 * Expression: `(?<generic-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<generic-name>)(?:\s*,\s*\g<generic-name>)*\s*>\s*)?)`
@@ -32,7 +37,7 @@ Important regular expressions:
 
 #### Field declaratiosn
 
-The strategy for field declarations is to match up to the end of the field name. Note that this is the first field name in the case of multiple declarators.
+Note that fields can have multiple declarators with initializers. Our strategy is to match up to the end of the field name.
 Further field names are matched by looking for identifiers, #punctuation-comma, and #variable-initializer.
 
 * Expression: `(?=\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|readonly|volatile|const)\s+)*)\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?)\s+(?<first-field-name>[_$[:alpha:]][_$[:alnum:]]*)\s*(?!=>)(?:;|=))`
@@ -51,3 +56,16 @@ Further field names are matched by looking for identifiers, #punctuation-comma, 
     * Type name: `\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?)`
     * Event name(s): `\s+(?<event-names>[_$[:alpha:]][_$[:alnum:]]*(?:\s*,\s*[_$[:alpha:]][_$[:alnum:]]*)*)`
     * End: `\s*(?=\{|;|$)`
+
+#### Property declarations
+
+Note that properties can easily match other declarations unintentially. For example, "public class C {" looks a lot like the start of a property
+if you consider that regular expressions don't know that "class" is a keyword. To handle this situation, we must use look ahead.
+
+* Expression: `(?!.*\b(?:class|interface|struct|enum|event)\b)(?=\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\s+)*)\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?)\s+(?<property-name>[_$[:alpha:]][_$[:alnum:]]*)\s*(?:\{|=>|$))`
+* Break down:
+    * Don't match other declarations! `(?!.*\b(?:class|interface|struct|enum|event)\b)`
+    * Storage modifiers: `\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\s+)*)`
+    * Type name: `\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?)`
+    * Property name: `\s+(?<property-name>[_$[:alpha:]][_$[:alnum:]]*)`
+    * End: `\s*(?:\{|=>|$))`
