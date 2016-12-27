@@ -32,6 +32,95 @@
                 }
             ]
         },
+        "declarations": {
+            "patterns": [
+                {
+                    "include": "#namespace-declaration"
+                },
+                {
+                    "include": "#type-declarations"
+                },
+                {
+                    "include": "#punctuation-semicolon"
+                }
+            ]
+        },
+        "type-declarations": {
+            "patterns": [
+                {
+                    "include": "#class-declaration"
+                },
+                {
+                    "include": "#delegate-declaration"
+                },
+                {
+                    "include": "#enum-declaration"
+                },
+                {
+                    "include": "#interface-declaration"
+                },
+                {
+                    "include": "#struct-declaration"
+                }
+            ]
+        },
+        "class-members": {
+            "patterns": [
+                {
+                    "include": "#type-declarations"
+                },
+                {
+                    "include": "#event-declaration"
+                },
+                {
+                    "include": "#property-declaration"
+                },
+                {
+                    "include": "#variable-initializer"
+                },
+                {
+                    "include": "#field-declaration"
+                },
+                {
+                    "include": "#punctuation-semicolon"
+                }
+            ]
+        },
+        "struct-members": {
+            "patterns": [
+                {
+                    "include": "#type-declarations"
+                },
+                {
+                    "include": "#event-declaration"
+                },
+                {
+                    "include": "#property-declaration"
+                },
+                {
+                    "include": "#variable-initializer"
+                },
+                {
+                    "include": "#field-declaration"
+                },
+                {
+                    "include": "#punctuation-semicolon"
+                }
+            ]
+        },
+        "statements": {
+            "patterns": []
+        },
+        "expressions": {
+            "patterns": [
+                {
+                    "include": "#literal"
+                },
+                {
+                    "include": "#object-creation-expression"
+                }
+            ]
+        },
         "extern-alias-directive": {
             "begin": "\\s*(extern)\\b\\s*(alias)\\b\\s*([_$[:alpha:]][_$[:alnum:]]*)",
             "beginCaptures": {
@@ -171,7 +260,7 @@
                     "include": "#attribute-named-argument"
                 },
                 {
-                    "include": "#expression"
+                    "include": "#expressions"
                 },
                 {
                     "include": "#punctuation-comma"
@@ -191,20 +280,7 @@
                     "include": "#operator-assignment"
                 },
                 {
-                    "include": "#expression"
-                }
-            ]
-        },
-        "declarations": {
-            "patterns": [
-                {
-                    "include": "#namespace-declaration"
-                },
-                {
-                    "include": "#type-declaration"
-                },
-                {
-                    "include": "#punctuation-semicolon"
+                    "include": "#expressions"
                 }
             ]
         },
@@ -251,25 +327,6 @@
                             "include": "#punctuation-semicolon"
                         }
                     ]
-                }
-            ]
-        },
-        "type-declaration": {
-            "patterns": [
-                {
-                    "include": "#class-declaration"
-                },
-                {
-                    "include": "#delegate-declaration"
-                },
-                {
-                    "include": "#enum-declaration"
-                },
-                {
-                    "include": "#interface-declaration"
-                },
-                {
-                    "include": "#struct-declaration"
                 }
             ]
         },
@@ -337,19 +394,7 @@
                     },
                     "patterns": [
                         {
-                            "include": "#type-declaration"
-                        },
-                        {
-                            "include": "#property-declaration"
-                        },
-                        {
-                            "include": "#variable-initializer"
-                        },
-                        {
-                            "include": "#field-declaration"
-                        },
-                        {
-                            "include": "#punctuation-semicolon"
+                            "include": "#class-members"
                         }
                     ]
                 }
@@ -618,19 +663,7 @@
                     },
                     "patterns": [
                         {
-                            "include": "#type-declaration"
-                        },
-                        {
-                            "include": "#property-declaration"
-                        },
-                        {
-                            "include": "#variable-initializer"
-                        },
-                        {
-                            "include": "#field-declaration"
-                        },
-                        {
-                            "include": "#punctuation-semicolon"
+                            "include": "#struct-members"
                         }
                     ]
                 }
@@ -685,7 +718,7 @@
             ]
         },
         "field-declaration": {
-            "begin": "(?=(?:\\b(?:new|public|protected|internal|private|static|readonly|volatile|const)\\b)*(?:[_$[:alnum:]\\.\\*\\[\\]<>,\\s]+?)\\s+(?:[_$[:alpha:]][_$[:alnum:]]*)\\s*(?!=>)(?:;|=))",
+            "begin": "(?!.*\\b(?:event)\\b)(?=(?:\\b(?:new|public|protected|internal|private|static|readonly|volatile|const)\\b)*\\s*(?:[_$[:alnum:]\\.\\*\\[\\]<>,\\s]+?)\\s+(?:[_$[:alpha:]][_$[:alnum:]]*)\\s*(?!=>)(?:;|=))",
             "end": "(?=;)",
             "patterns": [
                 {
@@ -727,7 +760,7 @@
             ]
         },
         "property-declaration": {
-            "begin": "(?=(?!.*\\b(?:class|interface|struct|enum)\\b)(?:\\b(?:new|public|protected|internal|private|static|readonly|volatile|const)\\b)*(?:[_$[:alnum:]\\.\\*\\[\\]<>,\\s]+?)\\s+(?:[_$[:alpha:]][_$[:alnum:]]*)\\s*(?:\\{|=>|$))",
+            "begin": "(?!.*\\b(?:class|interface|struct|enum|event)\\b)(?=(?:\\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\b)*\\s*(?:[_$[:alnum:]\\.\\*\\[\\]<>,\\s]+?)\\s+(?:[_$[:alpha:]][_$[:alnum:]]*)\\s*(?:\\{|=>|$))",
             "end": "(?=\\}|;)",
             "patterns": [
                 {
@@ -815,6 +848,9 @@
                         "3": {
                             "patterns": [
                                 {
+                                    "include": "#statements"
+                                },
+                                {
                                     "include": "#punctuation-semicolon"
                                 }
                             ]
@@ -866,6 +902,133 @@
                 }
             ]
         },
+        "event-declaration": {
+            "begin": "(?=\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\b)*)\\s*\\b(?<event-keyword>event)\\b\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<event-names>[_$[:alpha:]][_$[:alnum:]]*(?:\\s*,\\s*[_$[:alpha:]][_$[:alnum:]]*)*)\\s*(?:\\{|;|$))",
+            "end": "(?=\\}|;)",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "match": "\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\b)*)\\s*\\b(?<event-keyword>event)\\b\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<event-names>[_$[:alpha:]][_$[:alnum:]]*(?:\\s*,\\s*[_$[:alpha:]][_$[:alnum:]]*)*)\\s*(?=\\{|;|$)",
+                    "captures": {
+                        "1": {
+                            "patterns": [
+                                {
+                                    "match": "\\b(new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\b",
+                                    "captures": {
+                                        "1": {
+                                            "name": "storage.modifier.cs"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "2": {
+                            "name": "keyword.other.event.cs"
+                        },
+                        "3": {
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ]
+                        },
+                        "4": {
+                            "patterns": [
+                                {
+                                    "match": "[_$[:alpha:]][_$[:alnum:]]*",
+                                    "name": "entity.name.variable.event.cs"
+                                },
+                                {
+                                    "include": "#punctuation-comma"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "include": "#event-accessors"
+                },
+                {
+                    "include": "#punctuation-comma"
+                }
+            ]
+        },
+        "event-accessors": {
+            "begin": "\\{",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.curlybrace.open.cs"
+                }
+            },
+            "end": "\\}",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.curlybrace.close.cs"
+                }
+            },
+            "patterns": [
+                {
+                    "match": "\\b(add|remove)\\s*(;)",
+                    "captures": {
+                        "1": {
+                            "patterns": [
+                                {
+                                    "match": "add",
+                                    "name": "keyword.other.add.cs"
+                                },
+                                {
+                                    "match": "remove",
+                                    "name": "keyword.other.remove.cs"
+                                }
+                            ]
+                        },
+                        "2": {
+                            "patterns": [
+                                {
+                                    "include": "#punctuation-semicolon"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "begin": "\\b(add|remove)\\b\\s*(\\{)",
+                    "beginCaptures": {
+                        "1": {
+                            "patterns": [
+                                {
+                                    "match": "add",
+                                    "name": "keyword.other.add.cs"
+                                },
+                                {
+                                    "match": "remove",
+                                    "name": "keyword.other.remove.cs"
+                                }
+                            ]
+                        },
+                        "2": {
+                            "name": "punctuation.curlybrace.open.cs"
+                        }
+                    },
+                    "end": "\\}",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.curlybrace.close.cs"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#statements"
+                        },
+                        {
+                            "include": "#punctuation-semicolon"
+                        }
+                    ]
+                }
+            ]
+        },
         "variable-initializer": {
             "begin": "(?<!=|!)(=)(?!=|>)",
             "beginCaptures": {
@@ -876,7 +1039,7 @@
             "end": "(?=[,\\);}])",
             "patterns": [
                 {
-                    "include": "#expression"
+                    "include": "#expressions"
                 }
             ]
         },
@@ -890,17 +1053,7 @@
             "end": "(?=[,\\);}])",
             "patterns": [
                 {
-                    "include": "#expression"
-                }
-            ]
-        },
-        "expression": {
-            "patterns": [
-                {
-                    "include": "#literal"
-                },
-                {
-                    "include": "#object-creation-expression"
+                    "include": "#expressions"
                 }
             ]
         },

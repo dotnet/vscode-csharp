@@ -102,6 +102,9 @@ export namespace Tokens {
         export const EnumName = (text: string, line?: number, column?: number) =>
             createToken(text, 'entity.name.type.enum.cs', line, column);
 
+        export const EventName = (text: string, line?: number, column?: number) =>
+            createToken(text, 'entity.name.variable.event.cs', line, column);
+
         export const FieldName = (text: string, line?: number, column?: number) =>
             createToken(text, 'entity.name.variable.field.cs', line, column);
 
@@ -163,6 +166,9 @@ export namespace Tokens {
                 createToken('static', 'storage.modifier.cs', line, column);
         }
 
+        export const Add = (line?: number, column?: number) =>
+            createToken('add', 'keyword.other.add.cs', line, column);
+
         export const Alias = (line?: number, column?: number) =>
             createToken('alias', 'keyword.other.alias.cs', line, column);
 
@@ -178,6 +184,9 @@ export namespace Tokens {
         export const Enum = (line?: number, column?: number) =>
             createToken('enum', 'keyword.other.enum.cs', line, column);
 
+        export const Event = (line?: number, column?: number) =>
+            createToken('event', 'keyword.other.event.cs', line, column);
+
         export const Extern = (line?: number, column?: number) =>
             createToken('extern', 'keyword.other.extern.cs', line, column);
 
@@ -192,6 +201,9 @@ export namespace Tokens {
 
         export const New = (line?: number, column?: number) =>
             createToken('new', 'keyword.other.new.cs', line, column);
+
+        export const Remove = (line?: number, column?: number) =>
+            createToken('remove', 'keyword.other.remove.cs', line, column);
 
         export const Set = (line?: number, column?: number) =>
             createToken('set', 'keyword.other.set.cs', line, column);
@@ -309,9 +321,6 @@ export namespace Tokens {
             createToken(text, 'variable.parameter.cs', line, column);
     }
 
-    export const StorageModifierKeyword = (text: string, line?: number, column?: number) =>
-        createToken(text, 'storage.modifier.cs', line, column);
-
     export const Type = (text: string, line?: number, column?: number) =>
         createToken(text, 'storage.type.cs', line, column);
 
@@ -320,9 +329,6 @@ export namespace Tokens {
 
     export const StringDoubleQuotedVerbatim = (text: string, line?: number, column?: number) =>
         createToken(text, 'string.quoted.double.literal.cs', line, column);
-
-    export const EventIdentifier = (text: string, line?: number, column?: number) =>
-        createToken(text, 'entity.name.variable.cs', line, column);
 
     export const StringInterpolatedExpression = (text: string, line?: number, column?: number) =>
         createToken(text, 'meta.interpolated.expression.cs', line, column);

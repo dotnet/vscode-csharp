@@ -188,7 +188,7 @@ public class Tester
                 Tokens.Puncuation.CurlyBrace.Close(6, 1)]);
         });
 
-        it("multiple field declarators", () => {
+        it("declaration with multiple declarators", () => {
 
             const input = `
 public class Tester

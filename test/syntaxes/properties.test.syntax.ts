@@ -78,7 +78,6 @@ class Tester
                 Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
         });
 
-
         it("declaration without modifiers", () => {
 
             const input = `
@@ -128,6 +127,34 @@ class Tester
                 Tokens.Keywords.Set(4, 35),
                 Tokens.Puncuation.Semicolon(4, 38),
                 Tokens.Puncuation.CurlyBrace.Close(4, 40),
+
+                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
+        });
+
+        it("auto-property single line (protected internal)", function () {
+
+            const input = `
+class Tester
+{
+    protected internal IBooom Property { get; set; }
+}`;
+            let tokens = TokenizerUtil.tokenize2(input);
+
+            tokens.should.deep.equal([
+                Tokens.Keywords.Class(2, 1),
+                Tokens.Identifiers.ClassName("Tester", 2, 7),
+                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+
+                Tokens.Keywords.Modifiers.Protected(4, 5),
+                Tokens.Keywords.Modifiers.Internal(4, 15),
+                Tokens.Type("IBooom", 4, 24),
+                Tokens.Identifiers.PropertyName("Property", 4, 31),
+                Tokens.Puncuation.CurlyBrace.Open(4, 40),
+                Tokens.Keywords.Get(4, 42),
+                Tokens.Puncuation.Semicolon(4, 45),
+                Tokens.Keywords.Set(4, 47),
+                Tokens.Puncuation.Semicolon(4, 50),
+                Tokens.Puncuation.CurlyBrace.Close(4, 52),
 
                 Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
         });
