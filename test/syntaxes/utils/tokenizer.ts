@@ -104,6 +104,9 @@ export namespace Tokens {
 
         export const PropertyName = (text: string, line?: number, column?: number) =>
             createToken(text, 'entity.name.function.cs', line, column);
+
+        export const StructName = (text: string, line?: number, column?: number) =>
+            createToken(text, 'entity.name.type.struct.cs', line, column);
     }
 
     export namespace Keywords {

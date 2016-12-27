@@ -205,6 +205,9 @@
                 },
                 {
                     "include": "#interface-declaration"
+                },
+                {
+                    "include": "#struct-declaration"
                 }
             ]
         },
@@ -389,6 +392,92 @@
                         },
                         "2": {
                             "name": "entity.name.type.interface.cs"
+                        }
+                    }
+                },
+                {
+                    "include": "#generic-constraints"
+                },
+                {
+                    "begin": ":",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.separator.colon.cs"
+                        }
+                    },
+                    "end": "(?=\\{|where)",
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        },
+                        {
+                            "include": "#punctuation-comma"
+                        }
+                    ]
+                }
+            ]
+        },
+        "struct-declaration": {
+            "begin": "(?=(?:((new|public|protected|internal|private|partial)\\s+)*)(?:struct)\\s+)",
+            "end": "(?<=\\})",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "name": "storage.modifier.cs",
+                    "match": "\\b(new|public|protected|internal|private|partial)\\b"
+                },
+                {
+                    "begin": "(?=struct)",
+                    "end": "(?=\\{)",
+                    "patterns": [
+                        {
+                            "include": "#struct-header"
+                        }
+                    ]
+                },
+                {
+                    "begin": "\\{",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.curlybrace.open.cs"
+                        }
+                    },
+                    "end": "\\}",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.curlybrace.close.cs"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#class-declaration"
+                        },
+                        {
+                            "include": "#interface-declaration"
+                        },
+                        {
+                            "include": "#struct-declaration"
+                        },
+                        {
+                            "include": "#punctuation-semicolon"
+                        }
+                    ]
+                }
+            ]
+        },
+        "struct-header": {
+            "patterns": [
+                {
+                    "comment": "C# grammar: struct identifier type-parameter-list[opt]",
+                    "match": "(struct)\\s+([_$[:alpha:]][_$[:alnum:]]*(\\s*<\\s*(?:[_$[:alpha:]][_$[:alnum:]]*\\s*,\\s*)*(?:[_$[:alpha:]][_$[:alnum:]]*)\\s*>)?)",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.other.struct.cs"
+                        },
+                        "2": {
+                            "name": "entity.name.type.struct.cs"
                         }
                     }
                 },
