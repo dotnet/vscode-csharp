@@ -710,6 +710,9 @@
                             "patterns": [
                                 {
                                     "include": "#type"
+                                },
+                                {
+                                    "include": "#punctuation-comma"
                                 }
                             ]
                         },

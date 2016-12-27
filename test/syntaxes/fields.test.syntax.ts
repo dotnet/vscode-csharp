@@ -187,6 +187,39 @@ public class Tester
 
                 Tokens.Puncuation.CurlyBrace.Close(6, 1)]);
         });
+
+        it("multiple field declarators", () => {
+
+            const input = `
+public class Tester
+{
+    int x = 19, y = 23, z = 42;
+}`;
+
+            let tokens = TokenizerUtil.tokenize2(input);
+
+            tokens.should.deep.equal([
+                Tokens.Keywords.Modifiers.Public(2, 1),
+                Tokens.Keywords.Class(2, 8),
+                Tokens.Identifiers.ClassName("Tester", 2, 14),
+                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+
+                Tokens.Type("int", 4, 5),
+                Tokens.Identifiers.FieldName("x", 4, 9),
+                Tokens.Operators.Assignment(4, 11),
+                Tokens.Literals.Numeric.Decimal("19", 4, 13),
+                Tokens.Puncuation.Comma(4, 15),
+                Tokens.Identifiers.FieldName("y", 4, 17),
+                Tokens.Operators.Assignment(4, 19),
+                Tokens.Literals.Numeric.Decimal("23", 4, 21),
+                Tokens.Puncuation.Comma(4, 23),
+                Tokens.Identifiers.FieldName("z", 4, 25),
+                Tokens.Operators.Assignment(4, 27),
+                Tokens.Literals.Numeric.Decimal("42", 4, 29),
+                Tokens.Puncuation.Semicolon(4, 31),
+
+                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
+        });
     });
 });
 
