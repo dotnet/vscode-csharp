@@ -1,5 +1,10 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import { should } from 'chai';
-import { Tokens, Token } from './utils/tokenizer';
+import { Tokens } from './utils/tokenizer';
 import { TokenizerUtil } from'./utils/tokenizerUtil';
 
 describe("Grammar", function() {
@@ -19,7 +24,7 @@ class Tester
         set { something = value; }
     }
 }`;
-            let tokens: Token[] = TokenizerUtil.tokenize(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.StorageModifierKeyword("public", 4, 5));
             tokens.should.contain(Tokens.Type("IBooom", 4, 12));
@@ -35,7 +40,7 @@ class Tester
 {
     public IBooom Property { get { return null; } private set { something = value; } }
 }`;
-            let tokens: Token[] = TokenizerUtil.tokenize(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.StorageModifierKeyword("public", 4, 5));
             tokens.should.contain(Tokens.Type("IBooom", 4, 12));
@@ -53,7 +58,7 @@ class Tester
 {
     IBooom Property {get; set;}
 }`;
-            let tokens: Token[] = TokenizerUtil.tokenize(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.Type("IBooom", 4, 5));
             tokens.should.contain(Tokens.PropertyIdentifier("Property", 4, 12));
@@ -66,7 +71,7 @@ class Tester
 {
     public IBooom Property { get; set; }
 }`;
-            let tokens: Token[] = TokenizerUtil.tokenize(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.StorageModifierKeyword("public", 4, 5));
             tokens.should.contain(Tokens.Type("IBooom", 4, 12));
@@ -86,7 +91,7 @@ class Tester
         set;
     }
 }`;
-            let tokens: Token[] = TokenizerUtil.tokenize(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.StorageModifierKeyword("public", 4, 5));
             tokens.should.contain(Tokens.Type("IBooom", 4, 12));
@@ -102,7 +107,7 @@ class Tester
 {
     public Dictionary<string, List<T>[]> Property { get; set; }
 }`;
-            let tokens: Token[] = TokenizerUtil.tokenize(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.StorageModifierKeyword("public", 4, 5));
             tokens.should.contain(Tokens.Type("Dictionary", 4, 12));
@@ -121,7 +126,7 @@ class Tester
     public Dictionary<string, List<T>[]> Property { get; } = new Dictionary<string, List<T>[]>();
 }`;
 
-            let tokens: Token[] = TokenizerUtil.tokenize(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.StorageModifierKeyword("public", 4, 5));
             tokens.should.contain(Tokens.Type("Dictionary", 4, 12));

@@ -1,5 +1,10 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import { should } from 'chai';
-import { Tokens, Token } from './utils/tokenizer';
+import { Tokens } from './utils/tokenizer';
 import { TokenizerUtil } from './utils/tokenizerUtil';
 
 describe("Grammar", () => {
@@ -11,10 +16,11 @@ describe("Grammar", () => {
             const input = `
 // foo`;
 
-            let tokens: Token[] = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize2(input);
 
-            tokens.should.contain(Tokens.Comment.SingleLine.Start(2, 1));
-            tokens.should.contain(Tokens.Comment.SingleLine.Text(" foo", 2, 3));
+            tokens.should.deep.equal([
+                Tokens.Comment.SingleLine.Start(2, 1),
+                Tokens.Comment.SingleLine.Text(" foo", 2, 3)]);
         });
 
         it("single-line comment after whitespace", () => {
@@ -22,11 +28,12 @@ describe("Grammar", () => {
             const input = `
     // foo`;
 
-            let tokens: Token[] = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize2(input);
 
-            tokens.should.contain(Tokens.Comment.LeadingWhitespace("    ", 2, 1));
-            tokens.should.contain(Tokens.Comment.SingleLine.Start(2, 5));
-            tokens.should.contain(Tokens.Comment.SingleLine.Text(" foo", 2, 7));
+            tokens.should.deep.equal([
+                Tokens.Comment.LeadingWhitespace("    ", 2, 1),
+                Tokens.Comment.SingleLine.Start(2, 5),
+                Tokens.Comment.SingleLine.Text(" foo", 2, 7)]);
         });
 
         it("multi-line comment", () => {
@@ -34,11 +41,12 @@ describe("Grammar", () => {
             const input = `
 /* foo */`;
 
-            let tokens: Token[] = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize2(input);
 
-            tokens.should.contain(Tokens.Comment.MultiLine.Start(2, 1));
-            tokens.should.contain(Tokens.Comment.MultiLine.Text(" foo ", 2, 3));
-            tokens.should.contain(Tokens.Comment.MultiLine.End(2, 8));
+            tokens.should.deep.equal([
+                Tokens.Comment.MultiLine.Start(2, 1),
+                Tokens.Comment.MultiLine.Text(" foo ", 2, 3),
+                Tokens.Comment.MultiLine.End(2, 8)]);
         });
     });
 });

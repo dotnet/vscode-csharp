@@ -1,5 +1,10 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import { should } from 'chai';
-import { Tokens, Token } from './utils/tokenizer';
+import { Tokens } from './utils/tokenizer';
 import { TokenizerUtil } from'./utils/tokenizerUtil';
 
 describe("Grammar", function() {
@@ -16,7 +21,7 @@ public class Tester
     string test = $"hello {one} world {two}!";
 }`;
 
-            let tokens: Token[] = TokenizerUtil.tokenize(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.StringStart('$"', 4, 19));
             tokens.should.contain(Tokens.StringDoubleQuoted("hello ", 4, 21));
@@ -36,7 +41,7 @@ public class Tester
     string test = $"hello world!";
 }`;
 
-            let tokens: Token[] = TokenizerUtil.tokenize(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.StringStart('$"', 4, 19));
             tokens.should.contain(Tokens.StringDoubleQuoted("hello world!", 4, 21));
@@ -52,7 +57,7 @@ public class Tester
 world!";
 }`;
 
-            let tokens: Token[] = TokenizerUtil.tokenize(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.StringStart('$"', 4, 19));
             tokens.should.contain(Tokens.StringDoubleQuoted("hello", 4, 21));
@@ -69,7 +74,7 @@ public class Tester
     string test = $@"hello {one} world {two}!";
 }`;
 
-            let tokens: Token[] = TokenizerUtil.tokenize(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.StringStart('$@"', 4, 19));
             tokens.should.contain(Tokens.StringDoubleQuotedVerbatim("hello ", 4, 22));
@@ -90,7 +95,7 @@ public class Tester
     world {two}!";
 }`;
 
-            let tokens: Token[] = TokenizerUtil.tokenize(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.StringStart('$@"', 4, 19));
             tokens.should.contain(Tokens.StringDoubleQuotedVerbatim("hello ", 4, 22));
@@ -110,7 +115,7 @@ public class Tester
     world!";
 }`;
 
-            let tokens: Token[] = TokenizerUtil.tokenize(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.StringStart('$@"', 4, 19));
             tokens.should.contain(Tokens.StringDoubleQuotedVerbatim("hello", 4, 22));

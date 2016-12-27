@@ -1,5 +1,10 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import { should } from 'chai';
-import { Tokens, Token } from './utils/tokenizer';
+import { Tokens } from './utils/tokenizer';
 import { TokenizerUtil } from './utils/tokenizerUtil';
 
 describe("Grammar", () => {
@@ -15,9 +20,14 @@ class C {
     }
 }`;
 
-            let tokens: Token[] = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize2(input);
 
-            tokens.should.contain(Tokens.Literals.Boolean.True(4, 17));
+            tokens.should.deep.equal([
+                Tokens.Keywords.Class(2, 1),
+                Tokens.Identifiers.ClassName("C", 2, 7),
+                Tokens.Puncuation.CurlyBrace.Open(2, 9),
+                Tokens.Literals.Boolean.True(4, 17),
+                Tokens.Puncuation.CurlyBrace.Close(6, 1)]);
         });
 
         it("false", () => {
@@ -29,9 +39,14 @@ class C {
     }
 }`;
 
-            let tokens: Token[] = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize2(input);
 
-            tokens.should.contain(Tokens.Literals.Boolean.False(4, 17));
+            tokens.should.deep.equal([
+                Tokens.Keywords.Class(2, 1),
+                Tokens.Identifiers.ClassName("C", 2, 7),
+                Tokens.Puncuation.CurlyBrace.Open(2, 9),
+                Tokens.Literals.Boolean.False(4, 17),
+                Tokens.Puncuation.CurlyBrace.Close(6, 1)]);
         });
     });
 });
