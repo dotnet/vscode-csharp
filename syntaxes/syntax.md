@@ -69,3 +69,12 @@ if you consider that regular expressions don't know that "class" is a keyword. T
     * Type name: `\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?)`
     * Property name: `\s+(?<property-name>[_$[:alpha:]][_$[:alnum:]]*)`
     * End: `\s*(?:\{|=>|$))`
+
+#### Indexer declarations
+
+* Expression: `(?=\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\s+)*)\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?)\s+(?<indexer-name>this)\s*(?:\[))`
+* Break down:
+    * Storage modifiers: `\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\s+)*)`
+    * Type name: `\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?)`
+    * Property name: `\s+(?<indexer-name>this)`
+    * End: `\s*(?:\[))`

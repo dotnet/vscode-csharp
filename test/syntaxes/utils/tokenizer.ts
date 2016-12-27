@@ -214,6 +214,9 @@ export namespace Tokens {
         export const Struct = (line?: number, column?: number) =>
             createToken('struct', 'keyword.other.struct.cs', line, column);
 
+        export const This = (line?: number, column?: number) =>
+            createToken('this', 'keyword.other.this.cs', line, column);
+
         export const Using = (line?: number, column?: number) =>
             createToken('using', 'keyword.other.using.cs', line, column);
 

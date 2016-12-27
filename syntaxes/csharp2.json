@@ -79,6 +79,9 @@
                     "include": "#variable-initializer"
                 },
                 {
+                    "include": "#indexer-declaration"
+                },
+                {
                     "include": "#field-declaration"
                 },
                 {
@@ -98,10 +101,13 @@
                     "include": "#property-declaration"
                 },
                 {
-                    "include": "#variable-initializer"
+                    "include": "#indexer-declaration"
                 },
                 {
                     "include": "#field-declaration"
+                },
+                {
+                    "include": "#variable-initializer"
                 },
                 {
                     "include": "#punctuation-semicolon"
@@ -912,6 +918,60 @@
                 }
             ]
         },
+        "indexer-declaration": {
+            "begin": "(?=\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<indexer-name>this)\\s*(?:\\[))",
+            "end": "(?=\\}|;)",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "match": "\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<indexer-name>this)\\s*(?=\\[)",
+                    "captures": {
+                        "1": {
+                            "patterns": [
+                                {
+                                    "match": "\\b(new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\\b",
+                                    "captures": {
+                                        "1": {
+                                            "name": "storage.modifier.cs"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "2": {
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ]
+                        },
+                        "3": {
+                            "name": "keyword.other.this.cs"
+                        }
+                    }
+                },
+                {
+                    "begin": "(?=\\[)",
+                    "end": "(?=\\])",
+                    "patterns": [
+                        {
+                            "include": "#bracketed-parameter-list"
+                        }
+                    ]
+                },
+                {
+                    "include": "#property-accessors"
+                },
+                {
+                    "include": "#expression-body"
+                },
+                {
+                    "include": "#variable-initializer"
+                }
+            ]
+        },
         "event-declaration": {
             "begin": "(?=\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\s+)*)\\s*\\b(?<event-keyword>event)\\b\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<event-names>[_$[:alpha:]][_$[:alnum:]]*(?:\\s*,\\s*[_$[:alpha:]][_$[:alnum:]]*)*)\\s*(?:\\{|;|$))",
             "end": "(?=\\}|;)",
@@ -1151,6 +1211,57 @@
             "patterns": [
                 {
                     "include": "#parenthesized-parameter-list"
+                }
+            ]
+        },
+        "bracketed-parameter-list": {
+            "begin": "(?=(\\[))",
+            "beginCaptures": {
+                "1": {
+                    "name": "punctuation.squarebracket.open.cs"
+                }
+            },
+            "end": "(?=(\\]))",
+            "endCaptures": {
+                "1": {
+                    "name": "punctuation.squarebracket.close.cs"
+                }
+            },
+            "patterns": [
+                {
+                    "comment": "Note: We have to be careful here to skip the [. Otherwise, attributes will conflict.",
+                    "begin": "(?<=\\[)",
+                    "end": "(?=\\])",
+                    "patterns": [
+                        {
+                            "include": "#comment"
+                        },
+                        {
+                            "include": "#attribute-section"
+                        },
+                        {
+                            "match": "\\b(ref|params|out)\\b",
+                            "name": "storage.modifier.cs"
+                        },
+                        {
+                            "comment": "parameter name",
+                            "match": "\\s+([_$[:alpha:]][_$[:alnum:]]*)\\s*(?=[,\\]])",
+                            "captures": {
+                                "1": {
+                                    "name": "variable.parameter.cs"
+                                }
+                            }
+                        },
+                        {
+                            "include": "#variable-initializer"
+                        },
+                        {
+                            "include": "#type"
+                        },
+                        {
+                            "include": "#punctuation-comma"
+                        }
+                    ]
                 }
             ]
         },
