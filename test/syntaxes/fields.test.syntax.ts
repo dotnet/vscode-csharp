@@ -187,44 +187,6 @@ public class Tester
 
                 Tokens.Puncuation.CurlyBrace.Close(6, 1)]);
         });
-
-        it("expression body", () => {
-
-            // TODO: Make this a property rather a field. Also, 'const' isn't legal since this is actually a property.
-
-            const input = `
-public class Tester
-{
-    private string field => "hello";
-    const   bool   field => true;
-}`;
-
-            let tokens = TokenizerUtil.tokenize2(input);
-
-            tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public(2, 1),
-                Tokens.Keywords.Class(2, 8),
-                Tokens.Identifiers.ClassName("Tester", 2, 14),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
-
-                Tokens.Keywords.Modifiers.Private(4, 5),
-                Tokens.Type("string", 4, 13),
-                Tokens.Identifiers.FieldName("field", 4, 20),
-                Tokens.Operators.Arrow(4, 26),
-                Tokens.Puncuation.String.Begin(4, 29),
-                Tokens.Literals.String("hello", 4, 30),
-                Tokens.Puncuation.String.End(4, 35),
-                Tokens.Puncuation.Semicolon(4, 36),
-
-                Tokens.Keywords.Modifiers.Const(5, 5),
-                Tokens.Type("bool", 5, 13),
-                Tokens.Identifiers.FieldName("field", 5, 20),
-                Tokens.Operators.Arrow(5, 26),
-                Tokens.Literals.Boolean.True(5, 29),
-                Tokens.Puncuation.Semicolon(5, 33),
-
-                Tokens.Puncuation.CurlyBrace.Close(6, 1)]);
-        });
     });
 });
 

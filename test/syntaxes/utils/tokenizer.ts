@@ -112,7 +112,7 @@ export namespace Tokens {
             createToken(text, 'entity.name.type.namespace.cs', line, column);
 
         export const PropertyName = (text: string, line?: number, column?: number) =>
-            createToken(text, 'entity.name.function.cs', line, column);
+            createToken(text, 'entity.name.variable.property.cs', line, column);
 
         export const StructName = (text: string, line?: number, column?: number) =>
             createToken(text, 'entity.name.type.struct.cs', line, column);
@@ -181,6 +181,9 @@ export namespace Tokens {
         export const Extern = (line?: number, column?: number) =>
             createToken('extern', 'keyword.other.extern.cs', line, column);
 
+        export const Get = (line?: number, column?: number) =>
+            createToken('get', 'keyword.other.get.cs', line, column);
+
         export const Interface = (line?: number, column?: number) =>
             createToken('interface', 'keyword.other.interface.cs', line, column);
 
@@ -189,6 +192,9 @@ export namespace Tokens {
 
         export const New = (line?: number, column?: number) =>
             createToken('new', 'keyword.other.new.cs', line, column);
+
+        export const Set = (line?: number, column?: number) =>
+            createToken('set', 'keyword.other.set.cs', line, column);
 
         export const Static = (line?: number, column?: number) =>
             createToken('static', 'keyword.other.static.cs', line, column);
@@ -309,9 +315,6 @@ export namespace Tokens {
     export const Type = (text: string, line?: number, column?: number) =>
         createToken(text, 'storage.type.cs', line, column);
 
-    export const Keyword = (text: string, line?: number, column?: number) =>
-        createToken(text, 'keyword.other.cs', line, column);
-
     export const StringDoubleQuoted = (text: string, line?: number, column?: number) =>
         createToken(text, 'string.quoted.double.cs', line, column);
 
@@ -320,9 +323,6 @@ export namespace Tokens {
 
     export const EventIdentifier = (text: string, line?: number, column?: number) =>
         createToken(text, 'entity.name.variable.cs', line, column);
-
-    export const PropertyIdentifier = (text: string, line?: number, column?: number) =>
-        createToken(text, 'entity.name.function.cs', line, column);
 
     export const StringInterpolatedExpression = (text: string, line?: number, column?: number) =>
         createToken(text, 'meta.interpolated.expression.cs', line, column);

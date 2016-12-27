@@ -182,7 +182,7 @@
             "begin": "([_$[:alpha:]][_$[:alnum:]]*)\\s*(?==)",
             "beginCaptures": {
                 "1": {
-                    "name": "entity.name.function.cs"
+                    "name": "entity.name.variable.property.cs"
                 }
             },
             "end": "(?=(,|\\)))",
@@ -338,6 +338,12 @@
                     "patterns": [
                         {
                             "include": "#type-declaration"
+                        },
+                        {
+                            "include": "#property-declaration"
+                        },
+                        {
+                            "include": "#variable-initializer"
                         },
                         {
                             "include": "#field-declaration"
@@ -615,6 +621,12 @@
                             "include": "#type-declaration"
                         },
                         {
+                            "include": "#property-declaration"
+                        },
+                        {
+                            "include": "#variable-initializer"
+                        },
+                        {
                             "include": "#field-declaration"
                         },
                         {
@@ -673,7 +685,7 @@
             ]
         },
         "field-declaration": {
-            "begin": "(?=(?:\\b(?:new|public|protected|internal|private|static|readonly|volatile|const)\\b)*(?:[_$[:alnum:]\\.\\*\\[\\]<>,\\s]+?)\\s+(?:[_$[:alpha:]][_$[:alnum:]]*)\\s*(?:;|=))",
+            "begin": "(?=(?:\\b(?:new|public|protected|internal|private|static|readonly|volatile|const)\\b)*(?:[_$[:alnum:]\\.\\*\\[\\]<>,\\s]+?)\\s+(?:[_$[:alpha:]][_$[:alnum:]]*)\\s*(?!=>)(?:;|=))",
             "end": "(?=;)",
             "patterns": [
                 {
@@ -708,9 +720,146 @@
                 },
                 {
                     "include": "#variable-initializer"
+                }
+            ]
+        },
+        "property-declaration": {
+            "begin": "(?=(?!.*\\b(?:class|interface|struct|enum)\\b)(?:\\b(?:new|public|protected|internal|private|static|readonly|volatile|const)\\b)*(?:[_$[:alnum:]\\.\\*\\[\\]<>,\\s]+?)\\s+(?:[_$[:alpha:]][_$[:alnum:]]*)\\s*(?:\\{|=>|$))",
+            "end": "(?=\\}|;)",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "match": "\\b((?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\s+)*)\\s*([_$[:alnum:]\\.\\*\\[\\]<>,\\s]+?)\\s*([_$[:alpha:]][_$[:alnum:]]*)\\s*(?=(\\{|=>|$))",
+                    "captures": {
+                        "1": {
+                            "patterns": [
+                                {
+                                    "match": "\\b(new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\b",
+                                    "captures": {
+                                        "1": {
+                                            "name": "storage.modifier.cs"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "2": {
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ]
+                        },
+                        "3": {
+                            "name": "entity.name.variable.property.cs"
+                        }
+                    }
+                },
+                {
+                    "include": "#property-accessors"
                 },
                 {
                     "include": "#expression-body"
+                },
+                {
+                    "include": "#variable-initializer"
+                }
+            ]
+        },
+        "property-accessors": {
+            "begin": "\\{",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.curlybrace.open.cs"
+                }
+            },
+            "end": "\\}",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.curlybrace.close.cs"
+                }
+            },
+            "patterns": [
+                {
+                    "match": "\\b((?:(?:private|protected|internal)\\s+)*)\\b(get|set)\\s*(;)",
+                    "captures": {
+                        "1": {
+                            "patterns": [
+                                {
+                                    "match": "\\b(private|protected|internal)\\b",
+                                    "captures": {
+                                        "1": {
+                                            "name": "storage.modifier.cs"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "2": {
+                            "patterns": [
+                                {
+                                    "match": "get",
+                                    "name": "keyword.other.get.cs"
+                                },
+                                {
+                                    "match": "set",
+                                    "name": "keyword.other.set.cs"
+                                }
+                            ]
+                        },
+                        "3": {
+                            "patterns": [
+                                {
+                                    "include": "#punctuation-semicolon"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "begin": "\\b((?:(?:private|protected|internal)\\s+)*)\\b(get|set)\\b\\s*(\\{)",
+                    "beginCaptures": {
+                        "1": {
+                            "patterns": [
+                                {
+                                    "match": "\\b(private|protected|internal)\\b",
+                                    "captures": {
+                                        "1": {
+                                            "name": "storage.modifier.cs"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "2": {
+                            "patterns": [
+                                {
+                                    "match": "get",
+                                    "name": "keyword.other.get.cs"
+                                },
+                                {
+                                    "match": "set",
+                                    "name": "keyword.other.set.cs"
+                                }
+                            ]
+                        },
+                        "3": {
+                            "name": "punctuation.curlybrace.open.cs"
+                        }
+                    },
+                    "end": "\\}",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.curlybrace.close.cs"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#punctuation-semicolon"
+                        }
+                    ]
                 }
             ]
         },
@@ -746,6 +895,9 @@
             "patterns": [
                 {
                     "include": "#literal"
+                },
+                {
+                    "include": "#object-creation-expression"
                 }
             ]
         },
@@ -815,7 +967,28 @@
                 }
             ]
         },
-                "parenthesized-parameter-list": {
+        "object-creation-expression": {
+            "begin": "(new)\\s+([_$[:alnum:]\\.\\*\\[\\]<>,\\s]+?)\\s*(?=\\()",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.other.new.cs"
+                },
+                "2": {
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        }
+                    ]
+                }
+            },
+            "end": "(?<=\\))",
+            "patterns": [
+                {
+                    "include": "#parenthesized-parameter-list"
+                }
+            ]
+        },
+        "parenthesized-parameter-list": {
             "begin": "(?=(\\())",
             "beginCaptures": {
                 "1": {
