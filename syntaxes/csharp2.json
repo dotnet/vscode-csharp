@@ -202,6 +202,9 @@
                 },
                 {
                     "include": "#type-declaration"
+                },
+                {
+                    "include": "#punctuation-semicolon"
                 }
             ]
         },
@@ -255,6 +258,9 @@
             "patterns": [
                 {
                     "include": "#class-declaration"
+                },
+                {
+                    "include": "#delegate-declaration"
                 },
                 {
                     "include": "#enum-declaration"
@@ -337,6 +343,48 @@
                             "include": "#punctuation-semicolon"
                         }
                     ]
+                }
+            ]
+        },
+        "delegate-declaration": {
+            "begin": "(?=(?:((new|public|protected|internal|private)\\s+)*)(?:delegate)\\s+)",
+            "end": "(?=;)",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "name": "storage.modifier.cs",
+                    "match": "\\b(new|public|protected|internal|private)\\b"
+                },
+                {
+                    "begin": "\\b(delegate)\\b\\s+",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "keyword.other.delegate.cs"
+                        }
+                    },
+                    "end": "(?=\\()",
+                    "patterns": [
+                        {
+                            "comment": "C# grammar: identifier variant-type-parameter-list[opt] (",
+                            "match": "\\s+([_$[:alpha:]][_$[:alnum:]]*(\\s*<\\s*(?:((in|out)\\s+)?[_$[:alpha:]][_$[:alnum:]]*\\s*,\\s*)*(?:((in|out)\\s+)?[_$[:alpha:]][_$[:alnum:]]*)\\s*>)?)\\s*(?=\\()",
+                            "captures": {
+                                "1": {
+                                    "name": "entity.name.type.delegate.cs"
+                                }
+                            }
+                        },
+                        {
+                            "include": "#type"
+                        }
+                    ]
+                },
+                {
+                    "include": "#parenthesized-parameter-list"
+                },
+                {
+                    "include": "#generic-constraints"
                 }
             ]
         },
@@ -583,7 +631,7 @@
                     "name": "punctuation.separator.colon.cs"
                 }
             },
-            "end": "(?=\\{|where)",
+            "end": "(?=\\{|where|;)",
             "patterns": [
                 {
                     "name": "keyword.other.class.cs",
@@ -702,6 +750,50 @@
                     "comment": "C# grammar: decimal-digits real-type-suffix",
                     "name": "constant.numeric.decimal.cs",
                     "match": "\\b[0-9_]+(F|f|D|d|M|m)"
+                }
+            ]
+        },
+                "parenthesized-parameter-list": {
+            "begin": "(?=(\\())",
+            "beginCaptures": {
+                "1": {
+                    "name": "punctuation.parenthesis.open.cs"
+                }
+            },
+            "end": "(?=(\\)))",
+            "endCaptures": {
+                "1": {
+                    "name": "punctuation.parenthesis.close.cs"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "include": "#attribute-section"
+                },
+                {
+                    "match": "\\b(ref|params|out)\\b",
+                    "name": "storage.modifier.cs"
+                },
+                {
+                    "comment": "parameter name",
+                    "match": "\\s+([_$[:alpha:]][_$[:alnum:]]*)\\s*(?=[,)])",
+                    "captures": {
+                        "1": {
+                            "name": "variable.parameter.cs"
+                        }
+                    }
+                },
+                {
+                    "include": "#variable-initializer"
+                },
+                {
+                    "include": "#type"
+                },
+                {
+                    "include": "#punctuation-comma"
                 }
             ]
         },

@@ -96,6 +96,9 @@ export namespace Tokens {
         export const ClassName = (text: string, line?: number, column?: number) =>
             createToken(text, 'entity.name.type.class.cs', line, column);
 
+        export const DelegateName = (text: string, line?: number, column?: number) =>
+            createToken(text, 'entity.name.type.delegate.cs', line, column);
+
         export const EnumName = (text: string, line?: number, column?: number) =>
             createToken(text, 'entity.name.type.enum.cs', line, column);
 
@@ -123,6 +126,12 @@ export namespace Tokens {
             export const New = (line?: number, column?: number) =>
                 createToken('new', 'storage.modifier.cs', line, column);
 
+            export const Out = (line?: number, column?: number) =>
+                createToken('out', 'storage.modifier.cs', line, column);
+
+            export const Params = (line?: number, column?: number) =>
+                createToken('params', 'storage.modifier.cs', line, column);
+
             export const Partial = (line?: number, column?: number) =>
                 createToken('partial', 'storage.modifier.cs', line, column);
 
@@ -134,6 +143,9 @@ export namespace Tokens {
 
             export const Public = (line?: number, column?: number) =>
                 createToken('public', 'storage.modifier.cs', line, column);
+
+            export const Ref = (line?: number, column?: number) =>
+                createToken('ref', 'storage.modifier.cs', line, column);
 
             export const Sealed = (line?: number, column?: number) =>
                 createToken('sealed', 'storage.modifier.cs', line, column);
@@ -150,6 +162,9 @@ export namespace Tokens {
 
         export const Class = (line?: number, column?: number) =>
             createToken('class', 'keyword.other.class.cs', line, column);
+
+        export const Delegate = (line?: number, column?: number) =>
+            createToken('delegate', 'keyword.other.delegate.cs', line, column);
 
         export const Enum = (line?: number, column?: number) =>
             createToken('enum', 'keyword.other.enum.cs', line, column);
@@ -268,9 +283,12 @@ export namespace Tokens {
     export namespace Variables {
         export const Alias = (text: string, line?: number, column?: number) =>
             createToken(text, 'variable.other.alias.cs', line, column);
-            
+
         export const EnumMember = (text: string, line?: number, column?: number) =>
             createToken(text, 'variable.other.enummember.cs', line, column);
+
+        export const Parameter = (text: string, line?: number, column?: number) =>
+            createToken(text, 'variable.parameter.cs', line, column);
     }
 
     export const StorageModifierKeyword = (text: string, line?: number, column?: number) =>
