@@ -71,11 +71,11 @@ namespace TestNamespace
 }`;
             let tokens: Token[] = TokenizerUtil.tokenize2(input);
 
-            tokens.should.contain(Tokens.UsingKeyword("using", 2, 1));
+            tokens.should.contain(Tokens.Keywords.Using(2, 1));
             tokens.should.contain(Tokens.Identifiers.NamespaceName("UsingOne", 2, 7));
             tokens.should.contain(Tokens.Puncuation.Semicolon(2, 15));
 
-            tokens.should.contain(Tokens.UsingKeyword("using", 3, 1));
+            tokens.should.contain(Tokens.Keywords.Using(3, 1));
             tokens.should.contain(Tokens.Identifiers.AliasName("one", 3, 7));
             tokens.should.contain(Tokens.Operators.Assignment(3, 11));
             tokens.should.contain(Tokens.Type("UsingOne", 3, 13));
@@ -86,11 +86,11 @@ namespace TestNamespace
             tokens.should.contain(Tokens.Keywords.Namespace(5, 1));
             tokens.should.contain(Tokens.Identifiers.NamespaceName("TestNamespace", 5, 11));
 
-            tokens.should.contain(Tokens.UsingKeyword("using", 7, 5));
+            tokens.should.contain(Tokens.Keywords.Using(7, 5));
             tokens.should.contain(Tokens.Identifiers.NamespaceName("UsingTwo", 7, 11));
             tokens.should.contain(Tokens.Puncuation.Semicolon(7, 19));
 
-            tokens.should.contain(Tokens.UsingKeyword("using", 8, 5));
+            tokens.should.contain(Tokens.Keywords.Using(8, 5));
             tokens.should.contain(Tokens.Identifiers.AliasName("two", 8, 11));
             tokens.should.contain(Tokens.Operators.Assignment(8, 15));
             tokens.should.contain(Tokens.Type("UsingTwo", 8, 17));
@@ -101,11 +101,11 @@ namespace TestNamespace
             tokens.should.contain(Tokens.Keywords.Namespace(10, 5));
             tokens.should.contain(Tokens.Identifiers.NamespaceName("NestedNamespace", 10, 15));
 
-            tokens.should.contain(Tokens.UsingKeyword("using", 12, 9));
+            tokens.should.contain(Tokens.Keywords.Using(12, 9));
             tokens.should.contain(Tokens.Identifiers.NamespaceName("UsingThree", 12, 15));
             tokens.should.contain(Tokens.Puncuation.Semicolon(12, 25));
 
-            tokens.should.contain(Tokens.UsingKeyword("using", 13, 9));
+            tokens.should.contain(Tokens.Keywords.Using(13, 9));
             tokens.should.contain(Tokens.Identifiers.AliasName("three", 13, 15));
             tokens.should.contain(Tokens.Operators.Assignment(13, 21));
             tokens.should.contain(Tokens.Type("UsingThree", 13, 23));

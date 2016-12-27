@@ -199,6 +199,9 @@
             "patterns": [
                 {
                     "include": "#namespace-declaration"
+                },
+                {
+                    "include": "#type-declaration"
                 }
             ]
         },
@@ -245,6 +248,134 @@
                             "include": "#punctuation-semicolon"
                         }
                     ]
+                }
+            ]
+        },
+        "type-declaration": {
+            "begin": "(?=(?:((new|public|protected|internal|private|abstract|sealed|static|partial)\\s+)*)(?:class|struct|interface|enum)\\s+)",
+            "end": "(?<=\\})",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "name": "storage.modifier.cs",
+                    "match": "\\b(new|public|protected|internal|private|abstract|sealed|static|partial)\\b"
+                },
+                {
+                    "begin": "(?=class)",
+                    "end": "(?=\\{)",
+                    "patterns": [
+                        {
+                            "include": "#class-header"
+                        }
+                    ]
+                },
+                {
+                    "begin": "\\{",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.curlybrace.open.cs"
+                        }
+                    },
+                    "end": "\\}",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.curlybrace.close.cs"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#type-declaration"
+                        },
+                        {
+                            "include": "#punctuation-semicolon"
+                        }
+                    ]
+                }
+            ]
+        },
+        "class-header": {
+            "patterns": [
+                {
+                    "comment": "C# grammar: class identifier type-parameter-list[opt]",
+                    "match": "(class)\\s+([_$[:alpha:]][_$[:alnum:]]*(\\s*<\\s*(?:[_$[:alpha:]][_$[:alnum:]]*\\s*,\\s*)*(?:[_$[:alpha:]][_$[:alnum:]]*)\\s*>)?)",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.other.class.cs"
+                        },
+                        "2": {
+                            "name": "entity.name.type.class.cs"
+                        }
+                    }
+                },
+                {
+                    "include": "#generic-constraints"
+                },
+                {
+                    "begin": "(?=:)",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.separator.colon.cs"
+                        }
+                    },
+                    "end": "(?=\\{|where)",
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        },
+                        {
+                            "include": "#punctuation-comma"
+                        }
+                    ]
+                }
+            ]
+        },
+        "generic-constraints": {
+            "begin": "(where)\\s+(\\w+)\\s*(:)",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.other.where.cs"
+                },
+                "2": {
+                    "name": "storage.type.cs"
+                },
+                "3": {
+                    "name": "punctuation.separator.colon.cs"
+                }
+            },
+            "end": "(?=\\{|where)",
+            "patterns": [
+                {
+                    "name": "keyword.other.class.cs",
+                    "match": "\\bclass\\b"
+                },
+                {
+                    "name": "keyword.other.struct.cs",
+                    "match": "\\bstruct\\b"
+                },
+                {
+                    "match": "(new)\\s*(\\()\\s*(\\))",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.other.new.cs"
+                        },
+                        "2": {
+                            "name": "punctuation.parenthesis.open.cs"
+                        },
+                        "3": {
+                            "name": "punctuation.parenthesis.close.cs"
+                        }
+                    }
+                },
+                {
+                    "include": "#type"
+                },
+                {
+                    "include": "#punctuation-comma"
+                },
+                {
+                    "include": "#generic-constraints"
                 }
             ]
         },

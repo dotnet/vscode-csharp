@@ -78,12 +78,58 @@ export namespace Tokens {
         }
     }
 
+    export namespace Identifiers {
+        export const AliasName = (text: string, line?: number, column?: number) =>
+            createToken(text, "entity.name.type.alias.cs", line, column);
+
+        export const ClassName = (text: string, line?: number, column?: number) =>
+            createToken(text, "entity.name.type.class.cs", line, column);
+
+        export const NamespaceName = (text: string, line?: number, column?: number) =>
+            createToken(text, "entity.name.type.namespace.cs", line, column);
+
+        export const PropertyName = (text: string, line?: number, column?: number) =>
+            createToken(text, "entity.name.function.cs", line, column);
+    }
+
     export namespace Keywords {
+        export namespace Modifiers {
+            export const Abstract = (line?: number, column?: number) =>
+                createToken("abstract", "storage.modifier.cs", line, column);
+
+            export const Internal = (line?: number, column?: number) =>
+                createToken("internal", "storage.modifier.cs", line, column);
+
+            export const New = (line?: number, column?: number) =>
+                createToken("new", "storage.modifier.cs", line, column);
+
+            export const Partial = (line?: number, column?: number) =>
+                createToken("partial", "storage.modifier.cs", line, column);
+
+            export const Private = (line?: number, column?: number) =>
+                createToken("private", "storage.modifier.cs", line, column);
+
+            export const Protected = (line?: number, column?: number) =>
+                createToken("protected", "storage.modifier.cs", line, column);
+
+            export const Public = (line?: number, column?: number) =>
+                createToken("public", "storage.modifier.cs", line, column);
+
+            export const Sealed = (line?: number, column?: number) =>
+                createToken("sealed", "storage.modifier.cs", line, column);
+
+            export const Static = (line?: number, column?: number) =>
+                createToken("static", "storage.modifier.cs", line, column);
+        }
+
         export const Alias = (line?: number, column?: number) =>
             createToken("alias", "keyword.other.alias.cs", line, column);
 
         export const AttributeSpecifier = (text: string, line?: number, column?: number) =>
             createToken(text, "keyword.other.attribute-specifier.cs", line, column);
+
+        export const Class = (line?: number, column?: number) =>
+            createToken("class", "keyword.other.class.cs", line, column);
 
         export const Extern = (line?: number, column?: number) =>
             createToken("extern", "keyword.other.extern.cs", line, column);
@@ -91,22 +137,20 @@ export namespace Tokens {
         export const Namespace = (line?: number, column?: number) =>
             createToken("namespace", "keyword.other.namespace.cs", line, column);
 
+        export const New = (line?: number, column?: number) =>
+            createToken("new", "keyword.other.new.cs", line, column);
+
         export const Static = (line?: number, column?: number) =>
             createToken("static", "keyword.other.static.cs", line, column);
 
+        export const Struct = (line?: number, column?: number) =>
+            createToken("struct", "keyword.other.struct.cs", line, column);
+
         export const Using = (line?: number, column?: number) =>
             createToken("using", "keyword.other.using.cs", line, column);
-    }
 
-    export namespace Identifiers {
-        export const AliasName = (text: string, line?: number, column?: number) =>
-            createToken(text, "entity.name.type.alias.cs", line, column);
-
-        export const NamespaceName = (text: string, line?: number, column?: number) =>
-            createToken(text, "entity.name.type.namespace.cs", line, column);
-
-        export const PropertyName = (text: string, line?: number, column?: number) =>
-            createToken(text, "entity.name.function.cs", line, column);
+        export const Where = (line?: number, column?: number) =>
+            createToken("where", "keyword.other.where.cs", line, column);
     }
 
     export namespace Literals {
@@ -183,7 +227,7 @@ export namespace Tokens {
                 createToken('"', "punctuation.definition.string.begin.cs", line, column);
 
             export const End = (line?: number, column?: number) =>
-                createToken('"', "punctuation.definition.string.end.cs", line, column); 
+                createToken('"', "punctuation.definition.string.end.cs", line, column);
         }
 
         export const TypeParametersBegin = (line?: number, column?: number) =>
@@ -197,15 +241,6 @@ export namespace Tokens {
         export const Alias = (text: string, line?: number, column?: number) =>
             createToken(text, "variable.other.alias.cs", line, column);
     }
-
-    export const UsingKeyword = (text: string, line?: number, column?: number) =>
-        createToken(text, "keyword.other.using.cs", line, column);
-
-    export const ClassKeyword = (text: string, line?: number, column?: number) =>
-        createToken(text, "storage.modifier.cs", line, column);
-
-    export const ClassIdentifier = (text: string, line?: number, column?: number) =>
-        createToken(text, "storage.type.cs", line, column);
 
     export const StorageModifierKeyword = (text: string, line?: number, column?: number) =>
         createToken(text, "storage.modifier.cs", line, column);
