@@ -201,13 +201,7 @@
                     "include": "#namespace-declaration"
                 },
                 {
-                    "include": "#class-declaration"
-                },
-                {
-                    "include": "#interface-declaration"
-                },
-                {
-                    "include": "#struct-declaration"
+                    "include": "#type-declaration"
                 }
             ]
         },
@@ -257,6 +251,22 @@
                 }
             ]
         },
+        "type-declaration": {
+            "patterns": [
+                {
+                    "include": "#class-declaration"
+                },
+                {
+                    "include": "#enum-declaration"
+                },
+                {
+                    "include": "#interface-declaration"
+                },
+                {
+                    "include": "#struct-declaration"
+                }
+            ]
+        },
         "class-declaration": {
             "begin": "(?=(?:((new|public|protected|internal|private|abstract|sealed|static|partial)\\s+)*)(?:class)\\s+)",
             "end": "(?<=\\})",
@@ -273,7 +283,36 @@
                     "end": "(?=\\{)",
                     "patterns": [
                         {
-                            "include": "#class-header"
+                            "comment": "C# grammar: class identifier type-parameter-list[opt]",
+                            "match": "(class)\\s+([_$[:alpha:]][_$[:alnum:]]*(\\s*<\\s*(?:[_$[:alpha:]][_$[:alnum:]]*\\s*,\\s*)*(?:[_$[:alpha:]][_$[:alnum:]]*)\\s*>)?)",
+                            "captures": {
+                                "1": {
+                                    "name": "keyword.other.class.cs"
+                                },
+                                "2": {
+                                    "name": "entity.name.type.class.cs"
+                                }
+                            }
+                        },
+                        {
+                            "include": "#generic-constraints"
+                        },
+                        {
+                            "begin": ":",
+                            "beginCaptures": {
+                                "0": {
+                                    "name": "punctuation.separator.colon.cs"
+                                }
+                            },
+                            "end": "(?=\\{|where)",
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                },
+                                {
+                                    "include": "#punctuation-comma"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -292,10 +331,7 @@
                     },
                     "patterns": [
                         {
-                            "include": "#class-declaration"
-                        },
-                        {
-                            "include": "#interface-declaration"
+                            "include": "#type-declaration"
                         },
                         {
                             "include": "#punctuation-semicolon"
@@ -304,37 +340,88 @@
                 }
             ]
         },
-        "class-header": {
+        "enum-declaration": {
+            "begin": "(?=(?:((new|public|protected|internal|private)\\s+)*)(?:enum)\\s+)",
+            "end": "(?<=\\})",
             "patterns": [
                 {
-                    "comment": "C# grammar: class identifier type-parameter-list[opt]",
-                    "match": "(class)\\s+([_$[:alpha:]][_$[:alnum:]]*(\\s*<\\s*(?:[_$[:alpha:]][_$[:alnum:]]*\\s*,\\s*)*(?:[_$[:alpha:]][_$[:alnum:]]*)\\s*>)?)",
-                    "captures": {
-                        "1": {
-                            "name": "keyword.other.class.cs"
-                        },
-                        "2": {
-                            "name": "entity.name.type.class.cs"
-                        }
-                    }
+                    "include": "#comment"
                 },
                 {
-                    "include": "#generic-constraints"
+                    "name": "storage.modifier.cs",
+                    "match": "\\b(new|public|protected|internal|private)\\b"
                 },
                 {
-                    "begin": ":",
-                    "beginCaptures": {
-                        "0": {
-                            "name": "punctuation.separator.colon.cs"
-                        }
-                    },
-                    "end": "(?=\\{|where)",
+                    "begin": "(?=enum)",
+                    "end": "(?=\\{)",
                     "patterns": [
                         {
-                            "include": "#type"
+                            "comment": "C# grammar: enum identifier",
+                            "match": "(enum)\\s+([_$[:alpha:]][_$[:alnum:]]*)",
+                            "captures": {
+                                "1": {
+                                    "name": "keyword.other.enum.cs"
+                                },
+                                "2": {
+                                    "name": "entity.name.type.enum.cs"
+                                }
+                            }
+                        },
+                        {
+                            "begin": ":",
+                            "beginCaptures": {
+                                "0": {
+                                    "name": "punctuation.separator.colon.cs"
+                                }
+                            },
+                            "end": "(?=\\{)",
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "begin": "\\{",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.curlybrace.open.cs"
+                        }
+                    },
+                    "end": "\\}",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.curlybrace.close.cs"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#comment"
+                        },
+                        {
+                            "include": "#attribute-section"
                         },
                         {
                             "include": "#punctuation-comma"
+                        },
+                        {
+                            "begin": "[_$[:alpha:]][_$[:alnum:]]*",
+                            "beginCaptures": {
+                                "0": {
+                                    "name": "variable.other.enummember.cs"
+                                }
+                            },
+                            "end": "(?=(,|\\}))",
+                            "patterns": [
+                                {
+                                    "include": "#comment"
+                                },
+                                {
+                                    "include": "#variable-initializer"
+                                }
+                            ]
                         }
                     ]
                 }
@@ -356,7 +443,36 @@
                     "end": "(?=\\{)",
                     "patterns": [
                         {
-                            "include": "#interface-header"
+                            "comment": "C# grammar: interface identifier variant-type-parameter-list[opt]",
+                            "match": "(interface)\\s+([_$[:alpha:]][_$[:alnum:]]*(\\s*<\\s*(?:((in|out)\\s+)?[_$[:alpha:]][_$[:alnum:]]*\\s*,\\s*)*(?:((in|out)\\s+)?[_$[:alpha:]][_$[:alnum:]]*)\\s*>)?)",
+                            "captures": {
+                                "1": {
+                                    "name": "keyword.other.interface.cs"
+                                },
+                                "2": {
+                                    "name": "entity.name.type.interface.cs"
+                                }
+                            }
+                        },
+                        {
+                            "include": "#generic-constraints"
+                        },
+                        {
+                            "begin": ":",
+                            "beginCaptures": {
+                                "0": {
+                                    "name": "punctuation.separator.colon.cs"
+                                }
+                            },
+                            "end": "(?=\\{|where)",
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                },
+                                {
+                                    "include": "#punctuation-comma"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -376,42 +492,6 @@
                     "patterns": [
                         {
                             "include": "#punctuation-semicolon"
-                        }
-                    ]
-                }
-            ]
-        },
-        "interface-header": {
-            "patterns": [
-                {
-                    "comment": "C# grammar: interface identifier variant-type-parameter-list[opt]",
-                    "match": "(interface)\\s+([_$[:alpha:]][_$[:alnum:]]*(\\s*<\\s*(?:((in|out)\\s+)?[_$[:alpha:]][_$[:alnum:]]*\\s*,\\s*)*(?:((in|out)\\s+)?[_$[:alpha:]][_$[:alnum:]]*)\\s*>)?)",
-                    "captures": {
-                        "1": {
-                            "name": "keyword.other.interface.cs"
-                        },
-                        "2": {
-                            "name": "entity.name.type.interface.cs"
-                        }
-                    }
-                },
-                {
-                    "include": "#generic-constraints"
-                },
-                {
-                    "begin": ":",
-                    "beginCaptures": {
-                        "0": {
-                            "name": "punctuation.separator.colon.cs"
-                        }
-                    },
-                    "end": "(?=\\{|where)",
-                    "patterns": [
-                        {
-                            "include": "#type"
-                        },
-                        {
-                            "include": "#punctuation-comma"
                         }
                     ]
                 }
@@ -433,7 +513,36 @@
                     "end": "(?=\\{)",
                     "patterns": [
                         {
-                            "include": "#struct-header"
+                            "comment": "C# grammar: struct identifier type-parameter-list[opt]",
+                            "match": "(struct)\\s+([_$[:alpha:]][_$[:alnum:]]*(\\s*<\\s*(?:[_$[:alpha:]][_$[:alnum:]]*\\s*,\\s*)*(?:[_$[:alpha:]][_$[:alnum:]]*)\\s*>)?)",
+                            "captures": {
+                                "1": {
+                                    "name": "keyword.other.struct.cs"
+                                },
+                                "2": {
+                                    "name": "entity.name.type.struct.cs"
+                                }
+                            }
+                        },
+                        {
+                            "include": "#generic-constraints"
+                        },
+                        {
+                            "begin": ":",
+                            "beginCaptures": {
+                                "0": {
+                                    "name": "punctuation.separator.colon.cs"
+                                }
+                            },
+                            "end": "(?=\\{|where)",
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                },
+                                {
+                                    "include": "#punctuation-comma"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -452,52 +561,10 @@
                     },
                     "patterns": [
                         {
-                            "include": "#class-declaration"
-                        },
-                        {
-                            "include": "#interface-declaration"
-                        },
-                        {
-                            "include": "#struct-declaration"
+                            "include": "#type-declaration"
                         },
                         {
                             "include": "#punctuation-semicolon"
-                        }
-                    ]
-                }
-            ]
-        },
-        "struct-header": {
-            "patterns": [
-                {
-                    "comment": "C# grammar: struct identifier type-parameter-list[opt]",
-                    "match": "(struct)\\s+([_$[:alpha:]][_$[:alnum:]]*(\\s*<\\s*(?:[_$[:alpha:]][_$[:alnum:]]*\\s*,\\s*)*(?:[_$[:alpha:]][_$[:alnum:]]*)\\s*>)?)",
-                    "captures": {
-                        "1": {
-                            "name": "keyword.other.struct.cs"
-                        },
-                        "2": {
-                            "name": "entity.name.type.struct.cs"
-                        }
-                    }
-                },
-                {
-                    "include": "#generic-constraints"
-                },
-                {
-                    "begin": ":",
-                    "beginCaptures": {
-                        "0": {
-                            "name": "punctuation.separator.colon.cs"
-                        }
-                    },
-                    "end": "(?=\\{|where)",
-                    "patterns": [
-                        {
-                            "include": "#type"
-                        },
-                        {
-                            "include": "#punctuation-comma"
                         }
                     ]
                 }
@@ -548,6 +615,20 @@
                 },
                 {
                     "include": "#generic-constraints"
+                }
+            ]
+        },
+        "variable-initializer": {
+            "begin": "(?<!=|!)(=)(?!=)",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.operator.assignment.cs"
+                }
+            },
+            "end": "(?=[,\\);}])",
+            "patterns": [
+                {
+                    "include": "#expression"
                 }
             ]
         },
@@ -745,7 +826,7 @@
         },
         "operator-assignment": {
             "name": "keyword.operator.assignment.cs",
-            "match": "\\="
+            "match": "(?<!=|!)(=)(?!=)"
         },
         "punctuation-comma": {
             "name": "punctuation.separator.comma.cs",

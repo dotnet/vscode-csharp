@@ -96,6 +96,9 @@ export namespace Tokens {
         export const ClassName = (text: string, line?: number, column?: number) =>
             createToken(text, 'entity.name.type.class.cs', line, column);
 
+        export const EnumName = (text: string, line?: number, column?: number) =>
+            createToken(text, 'entity.name.type.enum.cs', line, column);
+
         export const InterfaceName = (text: string, line?: number, column?: number) =>
             createToken(text, 'entity.name.type.interface.cs', line, column);
 
@@ -147,6 +150,9 @@ export namespace Tokens {
 
         export const Class = (line?: number, column?: number) =>
             createToken('class', 'keyword.other.class.cs', line, column);
+
+        export const Enum = (line?: number, column?: number) =>
+            createToken('enum', 'keyword.other.enum.cs', line, column);
 
         export const Extern = (line?: number, column?: number) =>
             createToken('extern', 'keyword.other.extern.cs', line, column);
@@ -262,6 +268,9 @@ export namespace Tokens {
     export namespace Variables {
         export const Alias = (text: string, line?: number, column?: number) =>
             createToken(text, 'variable.other.alias.cs', line, column);
+            
+        export const EnumMember = (text: string, line?: number, column?: number) =>
+            createToken(text, 'variable.other.enummember.cs', line, column);
     }
 
     export const StorageModifierKeyword = (text: string, line?: number, column?: number) =>

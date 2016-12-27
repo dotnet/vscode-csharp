@@ -11,7 +11,7 @@ describe("Grammar", () => {
     before(() => should());
 
     describe("Structs", () => {
-        it("simple simple", () => {
+        it("simple struct", () => {
 
             const input = `
 struct S { }
