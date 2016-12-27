@@ -156,10 +156,6 @@ namespace TestNamespace
 }`;
             let tokens: Token[] = TokenizerUtil.tokenize2(input);
 
-            for (let t of tokens) {
-                console.log(t);
-            }
-
             tokens.should.contain(Tokens.Keywords.Class(4, 5));
             tokens.should.contain(Tokens.Identifiers.ClassName("PublicClass<T>", 4, 11));
             tokens.should.contain(Tokens.Keywords.Where(4, 26));

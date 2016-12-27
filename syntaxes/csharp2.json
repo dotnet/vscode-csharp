@@ -272,6 +272,15 @@
                     ]
                 },
                 {
+                    "begin": "(?=interface)",
+                    "end": "(?=\\{)",
+                    "patterns": [
+                        {
+                            "include": "#interface-header"
+                        }
+                    ]
+                },
+                {
                     "begin": "\\{",
                     "beginCaptures": {
                         "0": {
@@ -313,7 +322,43 @@
                     "include": "#generic-constraints"
                 },
                 {
-                    "begin": "(?=:)",
+                    "begin": ":",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.separator.colon.cs"
+                        }
+                    },
+                    "end": "(?=\\{|where)",
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        },
+                        {
+                            "include": "#punctuation-comma"
+                        }
+                    ]
+                }
+            ]
+        },
+        "interface-header": {
+            "patterns": [
+                {
+                    "comment": "C# grammar: interface identifier variant-type-parameter-list[opt]",
+                    "match": "(interface)\\s+([_$[:alpha:]][_$[:alnum:]]*(\\s*<\\s*(?:((in|out)\\s+)?[_$[:alpha:]][_$[:alnum:]]*\\s*,\\s*)*(?:((in|out)\\s+)?[_$[:alpha:]][_$[:alnum:]]*)\\s*>)?)",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.other.interface.cs"
+                        },
+                        "2": {
+                            "name": "entity.name.type.interface.cs"
+                        }
+                    }
+                },
+                {
+                    "include": "#generic-constraints"
+                },
+                {
+                    "begin": ":",
                     "beginCaptures": {
                         "0": {
                             "name": "punctuation.separator.colon.cs"

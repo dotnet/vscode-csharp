@@ -85,6 +85,9 @@ export namespace Tokens {
         export const ClassName = (text: string, line?: number, column?: number) =>
             createToken(text, "entity.name.type.class.cs", line, column);
 
+        export const InterfaceName = (text: string, line?: number, column?: number) =>
+            createToken(text, "entity.name.type.interface.cs", line, column);
+
         export const NamespaceName = (text: string, line?: number, column?: number) =>
             createToken(text, "entity.name.type.namespace.cs", line, column);
 
@@ -133,6 +136,9 @@ export namespace Tokens {
 
         export const Extern = (line?: number, column?: number) =>
             createToken("extern", "keyword.other.extern.cs", line, column);
+
+        export const Interface = (line?: number, column?: number) =>
+            createToken("interface", "keyword.other.interface.cs", line, column);
 
         export const Namespace = (line?: number, column?: number) =>
             createToken("namespace", "keyword.other.namespace.cs", line, column);
