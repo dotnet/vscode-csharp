@@ -718,15 +718,15 @@
             ]
         },
         "field-declaration": {
-            "begin": "(?!.*\\b(?:event)\\b)(?=(?:\\b(?:new|public|protected|internal|private|static|readonly|volatile|const)\\b)*\\s*(?:[_$[:alnum:]\\.\\*\\[\\]<>,\\s]+?)\\s+(?:[_$[:alpha:]][_$[:alnum:]]*)\\s*(?!=>)(?:;|=))",
+            "begin": "(?=\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|readonly|volatile|const)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<first-field-name>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?!=>)(?:;|=))",
             "end": "(?=;)",
             "patterns": [
                 {
                     "include": "#comment"
                 },
                 {
-                    "match": "\\b((?:(?:new|public|protected|internal|private|static|readonly|volatile|const)\\s+)*)\\s*([_$[:alnum:]\\.\\*\\[\\]<>,\\s]+?)\\s*([_$[:alpha:]][_$[:alnum:]]*)\\s*(?=;|=)",
-                    "captures": {
+                    "begin": "\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|readonly|volatile|const)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<first-field-name>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?!=>)(?=;|=)",
+                    "beginCaptures": {
                         "1": {
                             "patterns": [
                                 {
@@ -743,16 +743,26 @@
                             "patterns": [
                                 {
                                     "include": "#type"
-                                },
-                                {
-                                    "include": "#punctuation-comma"
                                 }
                             ]
                         },
                         "3": {
                             "name": "entity.name.variable.field.cs"
                         }
-                    }
+                    },
+                    "end": "(?=;)",
+                    "patterns": [
+                        {
+                            "match": "[_$[:alpha:]][_$[:alnum:]]*",
+                            "name": "entity.name.variable.field.cs"
+                        },
+                        {
+                            "include": "#punctuation-comma"
+                        },
+                        {
+                            "include": "#variable-initializer"
+                        }
+                    ]
                 },
                 {
                     "include": "#variable-initializer"
@@ -903,14 +913,14 @@
             ]
         },
         "event-declaration": {
-            "begin": "(?=\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\b)*)\\s*\\b(?<event-keyword>event)\\b\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<event-names>[_$[:alpha:]][_$[:alnum:]]*(?:\\s*,\\s*[_$[:alpha:]][_$[:alnum:]]*)*)\\s*(?:\\{|;|$))",
+            "begin": "(?=\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\s+)*)\\s*\\b(?<event-keyword>event)\\b\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<event-names>[_$[:alpha:]][_$[:alnum:]]*(?:\\s*,\\s*[_$[:alpha:]][_$[:alnum:]]*)*)\\s*(?:\\{|;|$))",
             "end": "(?=\\}|;)",
             "patterns": [
                 {
                     "include": "#comment"
                 },
                 {
-                    "match": "\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\b)*)\\s*\\b(?<event-keyword>event)\\b\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<event-names>[_$[:alpha:]][_$[:alnum:]]*(?:\\s*,\\s*[_$[:alpha:]][_$[:alnum:]]*)*)\\s*(?=\\{|;|$)",
+                    "match": "\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\s+)*)\\s*\\b(?<event-keyword>event)\\b\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<event-names>[_$[:alpha:]][_$[:alnum:]]*(?:\\s*,\\s*[_$[:alpha:]][_$[:alnum:]]*)*)\\s*(?=\\{|;|$)",
                     "captures": {
                         "1": {
                             "patterns": [

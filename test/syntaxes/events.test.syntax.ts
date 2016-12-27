@@ -36,6 +36,32 @@ public class Tester
                 Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
         });
 
+        it("declaration with multiple modifiers", () => {
+
+            const input = `
+public class Tester
+{
+    protected internal event Type Event;
+}`;
+
+            let tokens = TokenizerUtil.tokenize2(input);
+
+            tokens.should.deep.equal([
+                Tokens.Keywords.Modifiers.Public(2, 1),
+                Tokens.Keywords.Class(2, 8),
+                Tokens.Identifiers.ClassName("Tester", 2, 14),
+                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+
+                Tokens.Keywords.Modifiers.Protected(4, 5),
+                Tokens.Keywords.Modifiers.Internal(4, 15),
+                Tokens.Keywords.Event(4, 24),
+                Tokens.Type("Type", 4, 30),
+                Tokens.Identifiers.EventName("Event", 4, 35),
+                Tokens.Puncuation.Semicolon(4, 40),
+
+                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
+        });
+
         it("declaration with multiple declarators", () => {
 
             const input = `
