@@ -9,13 +9,13 @@ export class Tokenizer {
     private _registry: Registry;
     private _grammar: IGrammar;
 
-    private static readonly _excludedTypes: string[] = [ 'source.cs', 'meta.type.parameters.cs' ];
+    private static readonly _excludedTypes: string[] = ['source.cs', 'meta.type.parameters.cs'];
 
     constructor(grammarFilePath: string) {
         this._grammar = new Registry().loadGrammarFromPathSync(grammarFilePath);
     }
 
-    public tokenize(input: string): Token[] {
+    public tokenize(input: string, excludeTypes?: boolean): Token[] {
         let tokens: Token[] = [];
 
         // ensure consistent line-endings irrelevant of OS
@@ -35,7 +35,7 @@ export class Tokenizer {
                 const text = line.substring(token.startIndex, token.endIndex);
                 const type: string = token.scopes[token.scopes.length - 1];
 
-                if (Tokenizer._excludedTypes.indexOf(type) < 0) {
+                if (excludeTypes === false || Tokenizer._excludedTypes.indexOf(type) < 0) {
                     tokens.push(new Token(text, type, lineIndex + 1, token.startIndex + 1));
                 }
             }
@@ -102,6 +102,9 @@ export namespace Tokens {
         export const EnumName = (text: string, line?: number, column?: number) =>
             createToken(text, 'entity.name.type.enum.cs', line, column);
 
+        export const FieldName = (text: string, line?: number, column?: number) =>
+            createToken(text, 'entity.name.variable.field.cs', line, column);
+
         export const InterfaceName = (text: string, line?: number, column?: number) =>
             createToken(text, 'entity.name.type.interface.cs', line, column);
 
@@ -119,6 +122,9 @@ export namespace Tokens {
         export namespace Modifiers {
             export const Abstract = (line?: number, column?: number) =>
                 createToken('abstract', 'storage.modifier.cs', line, column);
+
+            export const Const = (line?: number, column?: number) =>
+                createToken('const', 'storage.modifier.cs', line, column);
 
             export const Internal = (line?: number, column?: number) =>
                 createToken('internal', 'storage.modifier.cs', line, column);
@@ -143,6 +149,9 @@ export namespace Tokens {
 
             export const Public = (line?: number, column?: number) =>
                 createToken('public', 'storage.modifier.cs', line, column);
+
+            export const ReadOnly = (line?: number, column?: number) =>
+                createToken('readonly', 'storage.modifier.cs', line, column);
 
             export const Ref = (line?: number, column?: number) =>
                 createToken('ref', 'storage.modifier.cs', line, column);
@@ -222,6 +231,9 @@ export namespace Tokens {
     }
 
     export namespace Operators {
+        export const Arrow = (line?: number, column?: number) =>
+            createToken('=>', 'keyword.operator.arrow.cs', line, column);
+
         export const Assignment = (line?: number, column?: number) =>
             createToken('=', 'keyword.operator.assignment.cs', line, column);
     }
@@ -300,9 +312,6 @@ export namespace Tokens {
     export const Keyword = (text: string, line?: number, column?: number) =>
         createToken(text, 'keyword.other.cs', line, column);
 
-    export const FieldIdentifier = (text: string, line?: number, column?: number) =>
-        createToken(text, 'entity.name.variable.cs', line, column);
-
     export const StringDoubleQuoted = (text: string, line?: number, column?: number) =>
         createToken(text, 'string.quoted.double.cs', line, column);
 
@@ -311,9 +320,6 @@ export namespace Tokens {
 
     export const EventIdentifier = (text: string, line?: number, column?: number) =>
         createToken(text, 'entity.name.variable.cs', line, column);
-
-    export const LanguageConstant = (text: string, line?: number, column?: number) =>
-        createToken(text, 'constant.language.cs', line, column);
 
     export const PropertyIdentifier = (text: string, line?: number, column?: number) =>
         createToken(text, 'entity.name.function.cs', line, column);

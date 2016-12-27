@@ -340,6 +340,9 @@
                             "include": "#type-declaration"
                         },
                         {
+                            "include": "#field-declaration"
+                        },
+                        {
                             "include": "#punctuation-semicolon"
                         }
                     ]
@@ -612,6 +615,9 @@
                             "include": "#type-declaration"
                         },
                         {
+                            "include": "#field-declaration"
+                        },
+                        {
                             "include": "#punctuation-semicolon"
                         }
                     ]
@@ -666,11 +672,67 @@
                 }
             ]
         },
+        "field-declaration": {
+            "begin": "(?=(?:\\b(?:new|public|protected|internal|private|static|readonly|volatile|const)\\b)*(?:[_$[:alnum:]\\.\\*\\[\\]<>,\\s]+?)\\s+(?:[_$[:alpha:]][_$[:alnum:]]*)\\s*(?:;|=))",
+            "end": "(?=;)",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "match": "\\b((?:(?:new|public|protected|internal|private|static|readonly|volatile|const)\\s+)*)\\s*([_$[:alnum:]\\.\\*\\[\\]<>,\\s]+?)\\s*([_$[:alpha:]][_$[:alnum:]]*)\\s*(?=;|=)",
+                    "captures": {
+                        "1": {
+                            "patterns": [
+                                {
+                                    "match": "\\b(new|public|protected|internal|private|static|readonly|volatile|const)\\b",
+                                    "captures": {
+                                        "1": {
+                                            "name": "storage.modifier.cs"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "2": {
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ]
+                        },
+                        "3": {
+                            "name": "entity.name.variable.field.cs"
+                        }
+                    }
+                },
+                {
+                    "include": "#variable-initializer"
+                },
+                {
+                    "include": "#expression-body"
+                }
+            ]
+        },
         "variable-initializer": {
-            "begin": "(?<!=|!)(=)(?!=)",
+            "begin": "(?<!=|!)(=)(?!=|>)",
             "beginCaptures": {
                 "1": {
                     "name": "keyword.operator.assignment.cs"
+                }
+            },
+            "end": "(?=[,\\);}])",
+            "patterns": [
+                {
+                    "include": "#expression"
+                }
+            ]
+        },
+        "expression-body": {
+            "begin": "(=>)",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.operator.arrow.cs"
                 }
             },
             "end": "(?=[,\\);}])",
