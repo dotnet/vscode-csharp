@@ -201,7 +201,10 @@
                     "include": "#namespace-declaration"
                 },
                 {
-                    "include": "#type-declaration"
+                    "include": "#class-declaration"
+                },
+                {
+                    "include": "#interface-declaration"
                 }
             ]
         },
@@ -251,8 +254,8 @@
                 }
             ]
         },
-        "type-declaration": {
-            "begin": "(?=(?:((new|public|protected|internal|private|abstract|sealed|static|partial)\\s+)*)(?:class|struct|interface|enum)\\s+)",
+        "class-declaration": {
+            "begin": "(?=(?:((new|public|protected|internal|private|abstract|sealed|static|partial)\\s+)*)(?:class)\\s+)",
             "end": "(?<=\\})",
             "patterns": [
                 {
@@ -272,15 +275,6 @@
                     ]
                 },
                 {
-                    "begin": "(?=interface)",
-                    "end": "(?=\\{)",
-                    "patterns": [
-                        {
-                            "include": "#interface-header"
-                        }
-                    ]
-                },
-                {
                     "begin": "\\{",
                     "beginCaptures": {
                         "0": {
@@ -295,7 +289,10 @@
                     },
                     "patterns": [
                         {
-                            "include": "#type-declaration"
+                            "include": "#class-declaration"
+                        },
+                        {
+                            "include": "#interface-declaration"
                         },
                         {
                             "include": "#punctuation-semicolon"
@@ -335,6 +332,47 @@
                         },
                         {
                             "include": "#punctuation-comma"
+                        }
+                    ]
+                }
+            ]
+        },
+        "interface-declaration": {
+            "begin": "(?=(?:((new|public|protected|internal|private|partial)\\s+)*)(?:interface)\\s+)",
+            "end": "(?<=\\})",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "name": "storage.modifier.cs",
+                    "match": "\\b(new|public|protected|internal|private|partial)\\b"
+                },
+                {
+                    "begin": "(?=interface)",
+                    "end": "(?=\\{)",
+                    "patterns": [
+                        {
+                            "include": "#interface-header"
+                        }
+                    ]
+                },
+                {
+                    "begin": "\\{",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.curlybrace.open.cs"
+                        }
+                    },
+                    "end": "\\}",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.curlybrace.close.cs"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#punctuation-semicolon"
                         }
                     ]
                 }
