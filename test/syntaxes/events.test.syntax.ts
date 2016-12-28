@@ -21,18 +21,18 @@ public class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public(2, 1),
-                Tokens.Keywords.Class(2, 8),
-                Tokens.Identifiers.ClassName("Tester", 2, 14),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Keywords.Modifiers.Public(4, 5),
-                Tokens.Keywords.Event(4, 12),
-                Tokens.Type("Type", 4, 18),
-                Tokens.Identifiers.EventName("Event", 4, 23),
-                Tokens.Puncuation.Semicolon(4, 28),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Keywords.Event,
+                Tokens.Type("Type"),
+                Tokens.Identifiers.EventName("Event"),
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("declaration with multiple modifiers", () => {
@@ -46,19 +46,19 @@ public class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public(2, 1),
-                Tokens.Keywords.Class(2, 8),
-                Tokens.Identifiers.ClassName("Tester", 2, 14),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Keywords.Modifiers.Protected(4, 5),
-                Tokens.Keywords.Modifiers.Internal(4, 15),
-                Tokens.Keywords.Event(4, 24),
-                Tokens.Type("Type", 4, 30),
-                Tokens.Identifiers.EventName("Event", 4, 35),
-                Tokens.Puncuation.Semicolon(4, 40),
+                Tokens.Keywords.Modifiers.Protected,
+                Tokens.Keywords.Modifiers.Internal,
+                Tokens.Keywords.Event,
+                Tokens.Type("Type"),
+                Tokens.Identifiers.EventName("Event"),
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("declaration with multiple declarators", () => {
@@ -72,20 +72,20 @@ public class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public(2, 1),
-                Tokens.Keywords.Class(2, 8),
-                Tokens.Identifiers.ClassName("Tester", 2, 14),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Keywords.Modifiers.Public(4, 5),
-                Tokens.Keywords.Event(4, 12),
-                Tokens.Type("Type", 4, 18),
-                Tokens.Identifiers.EventName("Event1", 4, 23),
-                Tokens.Puncuation.Comma(4, 29),
-                Tokens.Identifiers.EventName("Event2", 4, 31),
-                Tokens.Puncuation.Semicolon(4, 37),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Keywords.Event,
+                Tokens.Type("Type"),
+                Tokens.Identifiers.EventName("Event1"),
+                Tokens.Puncuation.Comma,
+                Tokens.Identifiers.EventName("Event2"),
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("generic", () => {
@@ -99,31 +99,31 @@ public class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public(2, 1),
-                Tokens.Keywords.Class(2, 8),
-                Tokens.Identifiers.ClassName("Tester", 2, 14),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Keywords.Modifiers.Public(4, 5),
-                Tokens.Keywords.Event(4, 12),
-                Tokens.Type("EventHandler", 4, 18),
-                Tokens.Puncuation.TypeParameters.Begin(4, 30),
-                Tokens.Type("List", 4, 31),
-                Tokens.Puncuation.TypeParameters.Begin(4, 35),
-                Tokens.Type("T", 4, 36),
-                Tokens.Puncuation.TypeParameters.End(4, 37),
-                Tokens.Puncuation.Comma(4, 38),
-                Tokens.Type("Dictionary", 4, 40),
-                Tokens.Puncuation.TypeParameters.Begin(4, 50),
-                Tokens.Type("T", 4, 51),
-                Tokens.Puncuation.Comma(4, 52),
-                Tokens.Type("D", 4, 54),
-                Tokens.Puncuation.TypeParameters.End(4, 55),
-                Tokens.Puncuation.TypeParameters.End(4, 56),
-                Tokens.Identifiers.EventName("Event", 4, 58),
-                Tokens.Puncuation.Semicolon(4, 63),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Keywords.Event,
+                Tokens.Type("EventHandler"),
+                Tokens.Puncuation.TypeParameters.Begin,
+                Tokens.Type("List"),
+                Tokens.Puncuation.TypeParameters.Begin,
+                Tokens.Type("T"),
+                Tokens.Puncuation.TypeParameters.End,
+                Tokens.Puncuation.Comma,
+                Tokens.Type("Dictionary"),
+                Tokens.Puncuation.TypeParameters.Begin,
+                Tokens.Type("T"),
+                Tokens.Puncuation.Comma,
+                Tokens.Type("D"),
+                Tokens.Puncuation.TypeParameters.End,
+                Tokens.Puncuation.TypeParameters.End,
+                Tokens.Identifiers.EventName("Event"),
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("declaration with accessors", () => {
@@ -141,25 +141,25 @@ public class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public(2, 1),
-                Tokens.Keywords.Class(2, 8),
-                Tokens.Identifiers.ClassName("Tester", 2, 14),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Keywords.Modifiers.Public(4, 5),
-                Tokens.Keywords.Event(4, 12),
-                Tokens.Type("Type", 4, 18),
-                Tokens.Identifiers.EventName("Event", 4, 23),
-                Tokens.Puncuation.CurlyBrace.Open(5, 5),
-                Tokens.Keywords.Add(6, 9),
-                Tokens.Puncuation.CurlyBrace.Open(6, 13),
-                Tokens.Puncuation.CurlyBrace.Close(6, 15),
-                Tokens.Keywords.Remove(7, 9),
-                Tokens.Puncuation.CurlyBrace.Open(7, 16),
-                Tokens.Puncuation.CurlyBrace.Close(7, 18),
-                Tokens.Puncuation.CurlyBrace.Close(8, 5),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Keywords.Event,
+                Tokens.Type("Type"),
+                Tokens.Identifiers.EventName("Event"),
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Keywords.Add,
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Puncuation.CurlyBrace.Close,
+                Tokens.Keywords.Remove,
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Puncuation.CurlyBrace.Close,
+                Tokens.Puncuation.CurlyBrace.Close,
 
-                Tokens.Puncuation.CurlyBrace.Close(9, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
     });
 });

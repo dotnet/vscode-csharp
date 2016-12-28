@@ -20,17 +20,17 @@ class C {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class(2, 1),
-                Tokens.Identifiers.ClassName("C", 2, 7),
-                Tokens.Puncuation.CurlyBrace.Open(2, 9),
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("C"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Type("int", 3, 5),
-                Tokens.Identifiers.FieldName("x", 3, 9),
-                Tokens.Operators.Assignment(3, 11),
-                Tokens.Literals.Numeric.Decimal("0", 3, 13),
-                Tokens.Puncuation.Semicolon(3, 14),
+                Tokens.Type("int"),
+                Tokens.Identifiers.FieldName("x"),
+                Tokens.Operators.Assignment,
+                Tokens.Literals.Numeric.Decimal("0"),
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Puncuation.CurlyBrace.Close(4, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("hexadecimal zero", () => {
@@ -43,17 +43,17 @@ class C {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class(2, 1),
-                Tokens.Identifiers.ClassName("C", 2, 7),
-                Tokens.Puncuation.CurlyBrace.Open(2, 9),
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("C"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Type("int", 3, 5),
-                Tokens.Identifiers.FieldName("x", 3, 9),
-                Tokens.Operators.Assignment(3, 11),
-                Tokens.Literals.Numeric.Hexadecimal("0x0", 3, 13),
-                Tokens.Puncuation.Semicolon(3, 16),
+                Tokens.Type("int"),
+                Tokens.Identifiers.FieldName("x"),
+                Tokens.Operators.Assignment,
+                Tokens.Literals.Numeric.Hexadecimal("0x0"),
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Puncuation.CurlyBrace.Close(4, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("binary zero", () => {
@@ -66,17 +66,17 @@ class C {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class(2, 1),
-                Tokens.Identifiers.ClassName("C", 2, 7),
-                Tokens.Puncuation.CurlyBrace.Open(2, 9),
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("C"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Type("int", 3, 5),
-                Tokens.Identifiers.FieldName("x", 3, 9),
-                Tokens.Operators.Assignment(3, 11),
-                Tokens.Literals.Numeric.Binary("0b0", 3, 13),
-                Tokens.Puncuation.Semicolon(3, 16),
+                Tokens.Type("int"),
+                Tokens.Identifiers.FieldName("x"),
+                Tokens.Operators.Assignment,
+                Tokens.Literals.Numeric.Binary("0b0"),
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Puncuation.CurlyBrace.Close(4, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("floating-point zero", () => {
@@ -89,17 +89,17 @@ class C {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class(2, 1),
-                Tokens.Identifiers.ClassName("C", 2, 7),
-                Tokens.Puncuation.CurlyBrace.Open(2, 9),
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("C"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Type("float", 3, 5),
-                Tokens.Identifiers.FieldName("x", 3, 11),
-                Tokens.Operators.Assignment(3, 13),
-                Tokens.Literals.Numeric.Decimal("0.0", 3, 15),
-                Tokens.Puncuation.Semicolon(3, 18),
+                Tokens.Type("float"),
+                Tokens.Identifiers.FieldName("x"),
+                Tokens.Operators.Assignment,
+                Tokens.Literals.Numeric.Decimal("0.0"),
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Puncuation.CurlyBrace.Close(4, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
     });
 });

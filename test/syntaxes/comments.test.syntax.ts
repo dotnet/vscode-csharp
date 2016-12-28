@@ -18,8 +18,8 @@ describe("Grammar", () => {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Comment.SingleLine.Start(2, 1),
-                Tokens.Comment.SingleLine.Text(" foo", 2, 3)]);
+                Tokens.Comment.SingleLine.Start,
+                Tokens.Comment.SingleLine.Text(" foo")]);
         });
 
         it("single-line comment after whitespace", () => {
@@ -30,9 +30,9 @@ describe("Grammar", () => {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Comment.LeadingWhitespace("    ", 2, 1),
-                Tokens.Comment.SingleLine.Start(2, 5),
-                Tokens.Comment.SingleLine.Text(" foo", 2, 7)]);
+                Tokens.Comment.LeadingWhitespace("    "),
+                Tokens.Comment.SingleLine.Start,
+                Tokens.Comment.SingleLine.Text(" foo")]);
         });
 
         it("multi-line comment", () => {
@@ -43,9 +43,9 @@ describe("Grammar", () => {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Comment.MultiLine.Start(2, 1),
-                Tokens.Comment.MultiLine.Text(" foo ", 2, 3),
-                Tokens.Comment.MultiLine.End(2, 8)]);
+                Tokens.Comment.MultiLine.Start,
+                Tokens.Comment.MultiLine.Text(" foo "),
+                Tokens.Comment.MultiLine.End]);
         });
     });
 });

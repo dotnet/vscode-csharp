@@ -19,12 +19,12 @@ delegate void D();
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Delegate(2, 1),
-                Tokens.Type("void", 2, 10),
-                Tokens.Identifiers.DelegateName("D", 2, 15),
-                Tokens.Puncuation.Parenthesis.Open(2, 16),
-                Tokens.Puncuation.Parenthesis.Close(2, 17),
-                Tokens.Puncuation.Semicolon(2, 18)]);
+                Tokens.Keywords.Delegate,
+                Tokens.Type("void"),
+                Tokens.Identifiers.DelegateName("D"),
+                Tokens.Puncuation.Parenthesis.Open,
+                Tokens.Puncuation.Parenthesis.Close,
+                Tokens.Puncuation.Semicolon]);
         });
 
         it("generic delegate with variance", () => {
@@ -36,14 +36,14 @@ delegate TResult D<in T, out TResult>(T arg1);
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Delegate(2, 1),
-                Tokens.Type("TResult", 2, 10),
-                Tokens.Identifiers.DelegateName("D<in T, out TResult>", 2, 18),
-                Tokens.Puncuation.Parenthesis.Open(2, 38),
-                Tokens.Type("T", 2, 39),
-                Tokens.Variables.Parameter("arg1", 2, 41),
-                Tokens.Puncuation.Parenthesis.Close(2, 45),
-                Tokens.Puncuation.Semicolon(2, 46)]);
+                Tokens.Keywords.Delegate,
+                Tokens.Type("TResult"),
+                Tokens.Identifiers.DelegateName("D<in T, out TResult>"),
+                Tokens.Puncuation.Parenthesis.Open,
+                Tokens.Type("T"),
+                Tokens.Variables.Parameter("arg1"),
+                Tokens.Puncuation.Parenthesis.Close,
+                Tokens.Puncuation.Semicolon]);
         });
 
         it("generic delegate with constraints", () => {
@@ -56,16 +56,16 @@ delegate void D<T1, T2>()
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Delegate(2, 1),
-                Tokens.Type("void", 2, 10),
-                Tokens.Identifiers.DelegateName("D<T1, T2>", 2, 15),
-                Tokens.Puncuation.Parenthesis.Open(2, 24),
-                Tokens.Puncuation.Parenthesis.Close(2, 25),
-                Tokens.Keywords.Where(3, 5),
-                Tokens.Type("T1", 3, 11),
-                Tokens.Puncuation.Colon(3, 14),
-                Tokens.Type("T2", 3, 16),
-                Tokens.Puncuation.Semicolon(3, 18)]);
+                Tokens.Keywords.Delegate,
+                Tokens.Type("void"),
+                Tokens.Identifiers.DelegateName("D<T1, T2>"),
+                Tokens.Puncuation.Parenthesis.Open,
+                Tokens.Puncuation.Parenthesis.Close,
+                Tokens.Keywords.Where,
+                Tokens.Type("T1"),
+                Tokens.Puncuation.Colon,
+                Tokens.Type("T2"),
+                Tokens.Puncuation.Semicolon]);
         });
 
         it("delegate with multiple parameters", () => {
@@ -77,25 +77,25 @@ delegate int D(ref string x, out int y, params object[] z);
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Delegate(2, 1),
-                Tokens.Type("int", 2, 10),
-                Tokens.Identifiers.DelegateName("D", 2, 14),
-                Tokens.Puncuation.Parenthesis.Open(2, 15),
-                Tokens.Keywords.Modifiers.Ref(2, 16),
-                Tokens.Type("string", 2, 20),
-                Tokens.Variables.Parameter("x", 2, 27),
-                Tokens.Puncuation.Comma(2, 28),
-                Tokens.Keywords.Modifiers.Out(2, 30),
-                Tokens.Type("int", 2, 34),
-                Tokens.Variables.Parameter("y", 2, 38),
-                Tokens.Puncuation.Comma(2, 39),
-                Tokens.Keywords.Modifiers.Params(2, 41),
-                Tokens.Type("object", 2, 48),
-                Tokens.Puncuation.SquareBracket.Open(2, 54),
-                Tokens.Puncuation.SquareBracket.Close(2, 55),
-                Tokens.Variables.Parameter("z", 2, 57),
-                Tokens.Puncuation.Parenthesis.Close(2, 58),
-                Tokens.Puncuation.Semicolon(2, 59)]);
+                Tokens.Keywords.Delegate,
+                Tokens.Type("int"),
+                Tokens.Identifiers.DelegateName("D"),
+                Tokens.Puncuation.Parenthesis.Open,
+                Tokens.Keywords.Modifiers.Ref,
+                Tokens.Type("string"),
+                Tokens.Variables.Parameter("x"),
+                Tokens.Puncuation.Comma,
+                Tokens.Keywords.Modifiers.Out,
+                Tokens.Type("int"),
+                Tokens.Variables.Parameter("y"),
+                Tokens.Puncuation.Comma,
+                Tokens.Keywords.Modifiers.Params,
+                Tokens.Type("object"),
+                Tokens.Puncuation.SquareBracket.Open,
+                Tokens.Puncuation.SquareBracket.Close,
+                Tokens.Variables.Parameter("z"),
+                Tokens.Puncuation.Parenthesis.Close,
+                Tokens.Puncuation.Semicolon]);
         });
     });
 });

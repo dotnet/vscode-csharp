@@ -23,27 +23,27 @@ public class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public(2, 1),
-                Tokens.Keywords.Class(2, 8),
-                Tokens.Identifiers.ClassName("Tester", 2, 14),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Keywords.Modifiers.Private(4, 5),
-                Tokens.Type("List", 4, 13),
-                Tokens.Identifiers.FieldName("_field", 4, 18),
-                Tokens.Puncuation.Semicolon(4, 24),
+                Tokens.Keywords.Modifiers.Private,
+                Tokens.Type("List"),
+                Tokens.Identifiers.FieldName("_field"),
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Keywords.Modifiers.Private(5, 5),
-                Tokens.Type("List", 5, 13),
-                Tokens.Identifiers.FieldName("field", 5, 18),
-                Tokens.Puncuation.Semicolon(5, 23),
+                Tokens.Keywords.Modifiers.Private,
+                Tokens.Type("List"),
+                Tokens.Identifiers.FieldName("field"),
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Keywords.Modifiers.Private(6, 5),
-                Tokens.Type("List", 6, 13),
-                Tokens.Identifiers.FieldName("field123", 6, 18),
-                Tokens.Puncuation.Semicolon(6, 26),
+                Tokens.Keywords.Modifiers.Private,
+                Tokens.Type("List"),
+                Tokens.Identifiers.FieldName("field123"),
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Puncuation.CurlyBrace.Close(7, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("generic", () => {
@@ -57,30 +57,30 @@ public class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public(2, 1),
-                Tokens.Keywords.Class(2, 8),
-                Tokens.Identifiers.ClassName("Tester", 2, 14),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Keywords.Modifiers.Private(4, 5),
-                Tokens.Type("Dictionary", 4, 13),
-                Tokens.Puncuation.TypeParameters.Begin(4, 23),
-                Tokens.Type("List", 4, 25),
-                Tokens.Puncuation.TypeParameters.Begin(4, 29),
-                Tokens.Type("T", 4, 30),
-                Tokens.Puncuation.TypeParameters.End(4, 31),
-                Tokens.Puncuation.Comma(4, 32),
-                Tokens.Type("Dictionary", 4, 34),
-                Tokens.Puncuation.TypeParameters.Begin(4, 44),
-                Tokens.Type("T", 4, 45),
-                Tokens.Puncuation.Comma(4, 46),
-                Tokens.Type("D", 4, 48),
-                Tokens.Puncuation.TypeParameters.End(4, 49),
-                Tokens.Puncuation.TypeParameters.End(4, 50),
-                Tokens.Identifiers.FieldName("_field", 4, 52),
-                Tokens.Puncuation.Semicolon(4, 58),
+                Tokens.Keywords.Modifiers.Private,
+                Tokens.Type("Dictionary"),
+                Tokens.Puncuation.TypeParameters.Begin,
+                Tokens.Type("List"),
+                Tokens.Puncuation.TypeParameters.Begin,
+                Tokens.Type("T"),
+                Tokens.Puncuation.TypeParameters.End,
+                Tokens.Puncuation.Comma,
+                Tokens.Type("Dictionary"),
+                Tokens.Puncuation.TypeParameters.Begin,
+                Tokens.Type("T"),
+                Tokens.Puncuation.Comma,
+                Tokens.Type("D"),
+                Tokens.Puncuation.TypeParameters.End,
+                Tokens.Puncuation.TypeParameters.End,
+                Tokens.Identifiers.FieldName("_field"),
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
 
@@ -97,28 +97,28 @@ public class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public(2, 1),
-                Tokens.Keywords.Class(2, 8),
-                Tokens.Identifiers.ClassName("Tester", 2, 14),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Keywords.Modifiers.Private(4, 5),
-                Tokens.Keywords.Modifiers.Static(4, 13),
-                Tokens.Keywords.Modifiers.ReadOnly(4, 20),
-                Tokens.Type("List", 4, 29),
-                Tokens.Identifiers.FieldName("_field", 4, 34),
-                Tokens.Puncuation.Semicolon(4, 40),
+                Tokens.Keywords.Modifiers.Private,
+                Tokens.Keywords.Modifiers.Static,
+                Tokens.Keywords.Modifiers.ReadOnly,
+                Tokens.Type("List"),
+                Tokens.Identifiers.FieldName("_field"),
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Keywords.Modifiers.ReadOnly(5, 5),
-                Tokens.Type("string", 5, 14),
-                Tokens.Identifiers.FieldName("_field2", 5, 21),
-                Tokens.Puncuation.Semicolon(5, 28),
+                Tokens.Keywords.Modifiers.ReadOnly,
+                Tokens.Type("string"),
+                Tokens.Identifiers.FieldName("_field2"),
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Type("string", 6, 5),
-                Tokens.Identifiers.FieldName("_field3", 6, 12),
-                Tokens.Puncuation.Semicolon(6, 19),
+                Tokens.Type("string"),
+                Tokens.Identifiers.FieldName("_field3"),
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Puncuation.CurlyBrace.Close(7, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("types", () => {
@@ -133,22 +133,22 @@ public class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public(2, 1),
-                Tokens.Keywords.Class(2, 8),
-                Tokens.Identifiers.ClassName("Tester", 2, 14),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Type("string", 4, 5),
-                Tokens.Identifiers.FieldName("field123", 4, 12),
-                Tokens.Puncuation.Semicolon(4, 20),
+                Tokens.Type("string"),
+                Tokens.Identifiers.FieldName("field123"),
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Type("string", 5, 5),
-                Tokens.Puncuation.SquareBracket.Open(5, 11),
-                Tokens.Puncuation.SquareBracket.Close(5, 12),
-                Tokens.Identifiers.FieldName("field123", 5, 14),
-                Tokens.Puncuation.Semicolon(5, 22),
+                Tokens.Type("string"),
+                Tokens.Puncuation.SquareBracket.Open,
+                Tokens.Puncuation.SquareBracket.Close,
+                Tokens.Identifiers.FieldName("field123"),
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Puncuation.CurlyBrace.Close(6, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("assignment", () => {
@@ -163,28 +163,28 @@ public class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public(2, 1),
-                Tokens.Keywords.Class(2, 8),
-                Tokens.Identifiers.ClassName("Tester", 2, 14),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Keywords.Modifiers.Private(4, 5),
-                Tokens.Type("string", 4, 13),
-                Tokens.Identifiers.FieldName("field", 4, 20),
-                Tokens.Operators.Assignment(4, 26),
-                Tokens.Puncuation.String.Begin(4, 28),
-                Tokens.Literals.String("hello", 4, 29),
-                Tokens.Puncuation.String.End(4, 34),
-                Tokens.Puncuation.Semicolon(4, 35),
+                Tokens.Keywords.Modifiers.Private,
+                Tokens.Type("string"),
+                Tokens.Identifiers.FieldName("field"),
+                Tokens.Operators.Assignment,
+                Tokens.Puncuation.String.Begin,
+                Tokens.Literals.String("hello"),
+                Tokens.Puncuation.String.End,
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Keywords.Modifiers.Const(5, 5),
-                Tokens.Type("bool", 5, 13),
-                Tokens.Identifiers.FieldName("field", 5, 20),
-                Tokens.Operators.Assignment(5, 26),
-                Tokens.Literals.Boolean.True(5, 28),
-                Tokens.Puncuation.Semicolon(5, 32),
+                Tokens.Keywords.Modifiers.Const,
+                Tokens.Type("bool"),
+                Tokens.Identifiers.FieldName("field"),
+                Tokens.Operators.Assignment,
+                Tokens.Literals.Boolean.True,
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Puncuation.CurlyBrace.Close(6, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("declaration with multiple declarators", () => {
@@ -198,26 +198,26 @@ public class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public(2, 1),
-                Tokens.Keywords.Class(2, 8),
-                Tokens.Identifiers.ClassName("Tester", 2, 14),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Type("int", 4, 5),
-                Tokens.Identifiers.FieldName("x", 4, 9),
-                Tokens.Operators.Assignment(4, 11),
-                Tokens.Literals.Numeric.Decimal("19", 4, 13),
-                Tokens.Puncuation.Comma(4, 15),
-                Tokens.Identifiers.FieldName("y", 4, 17),
-                Tokens.Operators.Assignment(4, 19),
-                Tokens.Literals.Numeric.Decimal("23", 4, 21),
-                Tokens.Puncuation.Comma(4, 23),
-                Tokens.Identifiers.FieldName("z", 4, 25),
-                Tokens.Operators.Assignment(4, 27),
-                Tokens.Literals.Numeric.Decimal("42", 4, 29),
-                Tokens.Puncuation.Semicolon(4, 31),
+                Tokens.Type("int"),
+                Tokens.Identifiers.FieldName("x"),
+                Tokens.Operators.Assignment,
+                Tokens.Literals.Numeric.Decimal("19"),
+                Tokens.Puncuation.Comma,
+                Tokens.Identifiers.FieldName("y"),
+                Tokens.Operators.Assignment,
+                Tokens.Literals.Numeric.Decimal("23"),
+                Tokens.Puncuation.Comma,
+                Tokens.Identifiers.FieldName("z"),
+                Tokens.Operators.Assignment,
+                Tokens.Literals.Numeric.Decimal("42"),
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
     });
 });

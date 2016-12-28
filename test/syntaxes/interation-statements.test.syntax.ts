@@ -19,18 +19,18 @@ while (true) { }
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class(2, 1),
-                Tokens.Identifiers.ClassName("Tester", 2, 7),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Type("void", 4, 5),
-                Tokens.Identifiers.MethodName("Foo", 4, 10),
-                Tokens.Puncuation.Parenthesis.Open(4, 13),
-                Tokens.Puncuation.Parenthesis.Close(4, 14),
-                Tokens.Puncuation.CurlyBrace.Open(5, 5),
-                Tokens.Puncuation.CurlyBrace.Close(7, 5),
+                Tokens.Type("void"),
+                Tokens.Identifiers.MethodName("Foo"),
+                Tokens.Puncuation.Parenthesis.Open,
+                Tokens.Puncuation.Parenthesis.Close,
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Puncuation.CurlyBrace.Close,
 
-                Tokens.Puncuation.CurlyBrace.Close(8, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
     });
 });

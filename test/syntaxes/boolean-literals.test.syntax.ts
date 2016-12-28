@@ -20,17 +20,17 @@ class C {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class(2, 1),
-                Tokens.Identifiers.ClassName("C", 2, 7),
-                Tokens.Puncuation.CurlyBrace.Open(2, 9),
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("C"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Type("bool", 3, 5),
-                Tokens.Identifiers.FieldName("x", 3, 10),
-                Tokens.Operators.Assignment(3, 12),
-                Tokens.Literals.Boolean.True(3, 14),
-                Tokens.Puncuation.Semicolon(3, 18),
+                Tokens.Type("bool"),
+                Tokens.Identifiers.FieldName("x"),
+                Tokens.Operators.Assignment,
+                Tokens.Literals.Boolean.True,
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Puncuation.CurlyBrace.Close(4, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("false", () => {
@@ -43,17 +43,17 @@ class C {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class(2, 1),
-                Tokens.Identifiers.ClassName("C", 2, 7),
-                Tokens.Puncuation.CurlyBrace.Open(2, 9),
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("C"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Type("bool", 3, 5),
-                Tokens.Identifiers.FieldName("x", 3, 10),
-                Tokens.Operators.Assignment(3, 12),
-                Tokens.Literals.Boolean.False(3, 14),
-                Tokens.Puncuation.Semicolon(3, 19),
+                Tokens.Type("bool"),
+                Tokens.Identifiers.FieldName("x"),
+                Tokens.Operators.Assignment,
+                Tokens.Literals.Boolean.False,
+                Tokens.Puncuation.Semicolon,
                 
-                Tokens.Puncuation.CurlyBrace.Close(4, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
     });
 });

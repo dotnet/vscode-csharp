@@ -37,7 +37,7 @@ export function tokenize(input: string | Input, excludeTypes: boolean = true): T
             const type = token.scopes[token.scopes.length - 1];
 
             if (excludeTypes === false || excludedTypes.indexOf(type) < 0) {
-                tokens.push(new Token(text, type, lineIndex + 1, token.startIndex + 1));
+                tokens.push(new Token(text, type));
             }
         }
     }
@@ -98,324 +98,168 @@ class Tester {
 export class Token {
     constructor(
         public text: string,
-        public type: string,
-        public line?: number,
-        public column?: number) { }
+        public type: string) { }
 }
 
 export namespace Tokens {
 
-    function createToken(text: string, type: string, line?: number, column?: number): Token {
-        return new Token(text, type, line, column);
+    function createToken(text: string, type: string): Token {
+        return new Token(text, type);
     }
 
     export namespace Comment {
-        export const LeadingWhitespace = (text: string, line?: number, column?: number) =>
-            createToken(text, 'punctuation.whitespace.comment.leading.cs', line, column);
+        export const LeadingWhitespace = (text: string) => createToken(text, 'punctuation.whitespace.comment.leading.cs');
 
         export namespace MultiLine {
-            export const End = (line?: number, column?: number) =>
-                createToken('*/', 'punctuation.definition.comment.cs', line, column);
+            export const End = createToken('*/', 'punctuation.definition.comment.cs');
+            export const Start = createToken('/*', 'punctuation.definition.comment.cs');
 
-            export const Start = (line?: number, column?: number) =>
-                createToken('/*', 'punctuation.definition.comment.cs', line, column);
-
-            export const Text = (text: string, line?: number, column?: number) =>
-                createToken(text, 'comment.block.cs', line, column);
+            export const Text = (text: string) => createToken(text, 'comment.block.cs');
         }
 
         export namespace SingleLine {
-            export const Start = (line?: number, column?: number) =>
-                createToken('//', 'punctuation.definition.comment.cs', line, column);
+            export const Start = createToken('//', 'punctuation.definition.comment.cs');
 
-            export const Text = (text: string, line?: number, column?: number) =>
-                createToken(text, 'comment.line.double-slash.cs', line, column);
+            export const Text = (text: string) => createToken(text, 'comment.line.double-slash.cs');
         }
     }
 
     export namespace Identifiers {
-        export const AliasName = (text: string, line?: number, column?: number) =>
-            createToken(text, 'entity.name.type.alias.cs', line, column);
-
-        export const ClassName = (text: string, line?: number, column?: number) =>
-            createToken(text, 'entity.name.type.class.cs', line, column);
-
-        export const DelegateName = (text: string, line?: number, column?: number) =>
-            createToken(text, 'entity.name.type.delegate.cs', line, column);
-
-        export const EnumName = (text: string, line?: number, column?: number) =>
-            createToken(text, 'entity.name.type.enum.cs', line, column);
-
-        export const EventName = (text: string, line?: number, column?: number) =>
-            createToken(text, 'entity.name.variable.event.cs', line, column);
-
-        export const FieldName = (text: string, line?: number, column?: number) =>
-            createToken(text, 'entity.name.variable.field.cs', line, column);
-
-        export const InterfaceName = (text: string, line?: number, column?: number) =>
-            createToken(text, 'entity.name.type.interface.cs', line, column);
-
-        export const MethodName = (text: string, line?: number, column?: number) =>
-            createToken(text, 'entity.name.function.cs', line, column);
-
-        export const NamespaceName = (text: string, line?: number, column?: number) =>
-            createToken(text, 'entity.name.type.namespace.cs', line, column);
-
-        export const PropertyName = (text: string, line?: number, column?: number) =>
-            createToken(text, 'entity.name.variable.property.cs', line, column);
-
-        export const StructName = (text: string, line?: number, column?: number) =>
-            createToken(text, 'entity.name.type.struct.cs', line, column);
+        export const AliasName = (text: string) => createToken(text, 'entity.name.type.alias.cs');
+        export const ClassName = (text: string) => createToken(text, 'entity.name.type.class.cs');
+        export const DelegateName = (text: string) => createToken(text, 'entity.name.type.delegate.cs');
+        export const EnumName = (text: string) => createToken(text, 'entity.name.type.enum.cs');
+        export const EventName = (text: string) => createToken(text, 'entity.name.variable.event.cs');
+        export const FieldName = (text: string) => createToken(text, 'entity.name.variable.field.cs');
+        export const InterfaceName = (text: string) => createToken(text, 'entity.name.type.interface.cs');
+        export const MethodName = (text: string) => createToken(text, 'entity.name.function.cs');
+        export const NamespaceName = (text: string) => createToken(text, 'entity.name.type.namespace.cs');
+        export const PropertyName = (text: string) => createToken(text, 'entity.name.variable.property.cs');
+        export const StructName = (text: string) => createToken(text, 'entity.name.type.struct.cs');
     }
 
     export namespace Keywords {
         export namespace Modifiers {
-            export const Abstract = (line?: number, column?: number) =>
-                createToken('abstract', 'storage.modifier.cs', line, column);
-
-            export const Const = (line?: number, column?: number) =>
-                createToken('const', 'storage.modifier.cs', line, column);
-
-            export const Internal = (line?: number, column?: number) =>
-                createToken('internal', 'storage.modifier.cs', line, column);
-
-            export const New = (line?: number, column?: number) =>
-                createToken('new', 'storage.modifier.cs', line, column);
-
-            export const Out = (line?: number, column?: number) =>
-                createToken('out', 'storage.modifier.cs', line, column);
-
-            export const Params = (line?: number, column?: number) =>
-                createToken('params', 'storage.modifier.cs', line, column);
-
-            export const Partial = (line?: number, column?: number) =>
-                createToken('partial', 'storage.modifier.cs', line, column);
-
-            export const Private = (line?: number, column?: number) =>
-                createToken('private', 'storage.modifier.cs', line, column);
-
-            export const Protected = (line?: number, column?: number) =>
-                createToken('protected', 'storage.modifier.cs', line, column);
-
-            export const Public = (line?: number, column?: number) =>
-                createToken('public', 'storage.modifier.cs', line, column);
-
-            export const ReadOnly = (line?: number, column?: number) =>
-                createToken('readonly', 'storage.modifier.cs', line, column);
-
-            export const Ref = (line?: number, column?: number) =>
-                createToken('ref', 'storage.modifier.cs', line, column);
-
-            export const Sealed = (line?: number, column?: number) =>
-                createToken('sealed', 'storage.modifier.cs', line, column);
-
-            export const Static = (line?: number, column?: number) =>
-                createToken('static', 'storage.modifier.cs', line, column);
+            export const Abstract = createToken('abstract', 'storage.modifier.cs');
+            export const Const = createToken('const', 'storage.modifier.cs');
+            export const Internal = createToken('internal', 'storage.modifier.cs');
+            export const New = createToken('new', 'storage.modifier.cs');
+            export const Out = createToken('out', 'storage.modifier.cs');
+            export const Params = createToken('params', 'storage.modifier.cs');
+            export const Partial = createToken('partial', 'storage.modifier.cs');
+            export const Private = createToken('private', 'storage.modifier.cs');
+            export const Protected = createToken('protected', 'storage.modifier.cs');
+            export const Public =  createToken('public', 'storage.modifier.cs');
+            export const ReadOnly = createToken('readonly', 'storage.modifier.cs');
+            export const Ref = createToken('ref', 'storage.modifier.cs');
+            export const Sealed = createToken('sealed', 'storage.modifier.cs');
+            export const Static = createToken('static', 'storage.modifier.cs');
         }
 
-        export const Add = (line?: number, column?: number) =>
-            createToken('add', 'keyword.other.add.cs', line, column);
-
-        export const Alias = (line?: number, column?: number) =>
-            createToken('alias', 'keyword.other.alias.cs', line, column);
-
-        export const AttributeSpecifier = (text: string, line?: number, column?: number) =>
-            createToken(text, 'keyword.other.attribute-specifier.cs', line, column);
-
-        export const Class = (line?: number, column?: number) =>
-            createToken('class', 'keyword.other.class.cs', line, column);
-
-        export const Delegate = (line?: number, column?: number) =>
-            createToken('delegate', 'keyword.other.delegate.cs', line, column);
-
-        export const Enum = (line?: number, column?: number) =>
-            createToken('enum', 'keyword.other.enum.cs', line, column);
-
-        export const Event = (line?: number, column?: number) =>
-            createToken('event', 'keyword.other.event.cs', line, column);
-
-        export const Extern = (line?: number, column?: number) =>
-            createToken('extern', 'keyword.other.extern.cs', line, column);
-
-        export const Get = (line?: number, column?: number) =>
-            createToken('get', 'keyword.other.get.cs', line, column);
-
-        export const Interface = (line?: number, column?: number) =>
-            createToken('interface', 'keyword.other.interface.cs', line, column);
-
-        export const Namespace = (line?: number, column?: number) =>
-            createToken('namespace', 'keyword.other.namespace.cs', line, column);
-
-        export const New = (line?: number, column?: number) =>
-            createToken('new', 'keyword.other.new.cs', line, column);
-
-        export const Remove = (line?: number, column?: number) =>
-            createToken('remove', 'keyword.other.remove.cs', line, column);
-
-        export const Return = (line?: number, column?: number) =>
-            createToken('return', 'keyword.control.flow.cs', line, column);
-
-        export const Set = (line?: number, column?: number) =>
-            createToken('set', 'keyword.other.set.cs', line, column);
-
-        export const Static = (line?: number, column?: number) =>
-            createToken('static', 'keyword.other.static.cs', line, column);
-
-        export const Struct = (line?: number, column?: number) =>
-            createToken('struct', 'keyword.other.struct.cs', line, column);
-
-        export const This = (line?: number, column?: number) =>
-            createToken('this', 'keyword.other.this.cs', line, column);
-
-        export const Using = (line?: number, column?: number) =>
-            createToken('using', 'keyword.other.using.cs', line, column);
-
-        export const Where = (line?: number, column?: number) =>
-            createToken('where', 'keyword.other.where.cs', line, column);
+        export const Add = createToken('add', 'keyword.other.add.cs');
+        export const Alias = createToken('alias', 'keyword.other.alias.cs');
+        export const AttributeSpecifier = (text: string) => createToken(text, 'keyword.other.attribute-specifier.cs');
+        export const Class = createToken('class', 'keyword.other.class.cs');
+        export const Delegate = createToken('delegate', 'keyword.other.delegate.cs');
+        export const Enum = createToken('enum', 'keyword.other.enum.cs');
+        export const Event = createToken('event', 'keyword.other.event.cs');
+        export const Extern = createToken('extern', 'keyword.other.extern.cs');
+        export const Get = createToken('get', 'keyword.other.get.cs');
+        export const Interface = createToken('interface', 'keyword.other.interface.cs');
+        export const Namespace = createToken('namespace', 'keyword.other.namespace.cs');
+        export const New = createToken('new', 'keyword.other.new.cs');
+        export const Remove = createToken('remove', 'keyword.other.remove.cs');
+        export const Return = createToken('return', 'keyword.control.flow.cs');
+        export const Set = createToken('set', 'keyword.other.set.cs');
+        export const Static = createToken('static', 'keyword.other.static.cs');
+        export const Struct = createToken('struct', 'keyword.other.struct.cs');
+        export const This = createToken('this', 'keyword.other.this.cs');
+        export const Using = createToken('using', 'keyword.other.using.cs');
+        export const Where = createToken('where', 'keyword.other.where.cs');
     }
 
     export namespace Literals {
         export namespace Boolean {
-            export const False = (line?: number, column?: number) =>
-                createToken('false', 'constant.language.boolean.false.cs', line, column);
-
-            export const True = (line?: number, column?: number) =>
-                createToken('true', 'constant.language.boolean.true.cs', line, column);
+            export const False = createToken('false', 'constant.language.boolean.false.cs');
+            export const True = createToken('true', 'constant.language.boolean.true.cs');
         }
 
-        export const Null = (line?: number, column?: number) =>
-            createToken('null', 'constant.language.null.cs', line, column);
+        export const Null = createToken('null', 'constant.language.null.cs');
 
         export namespace Numeric {
-            export const Binary = (text: string, line?: number, column?: number) =>
-                createToken(text, 'constant.numeric.binary.cs', line, column);
-
-            export const Decimal = (text: string, line?: number, column?: number) =>
-                createToken(text, 'constant.numeric.decimal.cs', line, column);
-
-            export const Hexadecimal = (text: string, line?: number, column?: number) =>
-                createToken(text, 'constant.numeric.hex.cs', line, column);
+            export const Binary = (text: string) => createToken(text, 'constant.numeric.binary.cs');
+            export const Decimal = (text: string) => createToken(text, 'constant.numeric.decimal.cs');
+            export const Hexadecimal = (text: string) => createToken(text, 'constant.numeric.hex.cs');
         }
 
-        export const String = (text: string, line?: number, column?: number) =>
-            createToken(text, 'string.quoted.double.cs', line, column);
+        export const String = (text: string) => createToken(text, 'string.quoted.double.cs');
     }
 
     export namespace Operators {
-        export const Arrow = (line?: number, column?: number) =>
-            createToken('=>', 'keyword.operator.arrow.cs', line, column);
+        export const Arrow = createToken('=>', 'keyword.operator.arrow.cs');
 
         export namespace Arithmetic {
-            export const Addition = (line?: number, column?: number) =>
-                createToken('+', 'keyword.operator.arithmetic.cs', line, column);
-
-            export const Division = (line?: number, column?: number) =>
-                createToken('/', 'keyword.operator.arithmetic.cs', line, column);
-
-            export const Multiplication = (line?: number, column?: number) =>
-                createToken('*', 'keyword.operator.arithmetic.cs', line, column);
-
-            export const Remainder = (line?: number, column?: number) =>
-                createToken('%', 'keyword.operator.arithmetic.cs', line, column);
-
-            export const Subtraction = (line?: number, column?: number) =>
-                createToken('-', 'keyword.operator.arithmetic.cs', line, column);
+            export const Addition = createToken('+', 'keyword.operator.arithmetic.cs');
+            export const Division = createToken('/', 'keyword.operator.arithmetic.cs');
+            export const Multiplication = createToken('*', 'keyword.operator.arithmetic.cs');
+            export const Remainder = createToken('%', 'keyword.operator.arithmetic.cs');
+            export const Subtraction = createToken('-', 'keyword.operator.arithmetic.cs');
         }
 
-        export const Assignment = (line?: number, column?: number) =>
-            createToken('=', 'keyword.operator.assignment.cs', line, column);
+        export const Assignment = createToken('=', 'keyword.operator.assignment.cs');
     }
 
     export namespace Puncuation {
-        export const Accessor = (line?: number, column?: number) =>
-            createToken('.', 'punctuation.accessor.cs', line, column);
-
-        export const Colon = (line?: number, column?: number) =>
-            createToken(':', 'punctuation.separator.colon.cs', line, column);
-
-        export const Comma = (line?: number, column?: number) =>
-            createToken(',', 'punctuation.separator.comma.cs', line, column);
+        export const Accessor = createToken('.', 'punctuation.accessor.cs');
+        export const Colon = createToken(':', 'punctuation.separator.colon.cs');
+        export const Comma = createToken(',', 'punctuation.separator.comma.cs');
 
         export namespace CurlyBrace {
-            export const Close = (line?: number, column?: number) =>
-                createToken('}', 'punctuation.curlybrace.close.cs', line, column);
-
-            export const Open = (line?: number, column?: number) =>
-                createToken('{', 'punctuation.curlybrace.open.cs', line, column);
+            export const Close = createToken('}', 'punctuation.curlybrace.close.cs');
+            export const Open = createToken('{', 'punctuation.curlybrace.open.cs');
         }
 
         export namespace Interpolation {
-            export const Begin = (line?: number, column?: number) =>
-                createToken('{', 'punctuation.definition.interpolation.begin.cs', line, column);
-
-            export const End = (line?: number, column?: number) =>
-                createToken('}', 'punctuation.definition.interpolation.end.cs', line, column);
+            export const Begin = createToken('{', 'punctuation.definition.interpolation.begin.cs');
+            export const End = createToken('}', 'punctuation.definition.interpolation.end.cs');
         }
 
         export namespace InterpolatedString {
-            export const Begin = (line?: number, column?: number) =>
-                createToken('$"', 'punctuation.definition.string.begin.cs', line, column);
-
-            export const End = (line?: number, column?: number) =>
-                createToken('"', 'punctuation.definition.string.end.cs', line, column);
-
-            export const VerbatimBegin = (line?: number, column?: number) =>
-                createToken('$@"', 'punctuation.definition.string.begin.cs', line, column);
+            export const Begin = createToken('$"', 'punctuation.definition.string.begin.cs');
+            export const End = createToken('"', 'punctuation.definition.string.end.cs');
+            export const VerbatimBegin = createToken('$@"', 'punctuation.definition.string.begin.cs');
         }
 
         export namespace Parenthesis {
-            export const Close = (line?: number, column?: number) =>
-                createToken(')', 'punctuation.parenthesis.close.cs', line, column);
-
-            export const Open = (line?: number, column?: number) =>
-                createToken('(', 'punctuation.parenthesis.open.cs', line, column);
+            export const Close = createToken(')', 'punctuation.parenthesis.close.cs');
+            export const Open = createToken('(', 'punctuation.parenthesis.open.cs');
         }
 
-        export const Semicolon = (line?: number, column?: number) =>
-            createToken(';', 'punctuation.terminator.statement.cs', line, column);
+        export const Semicolon = createToken(';', 'punctuation.terminator.statement.cs');
 
         export namespace SquareBracket {
-            export const Close = (line?: number, column?: number) =>
-                createToken(']', 'punctuation.squarebracket.close.cs', line, column);
-
-            export const Open = (line?: number, column?: number) =>
-                createToken('[', 'punctuation.squarebracket.open.cs', line, column);
+            export const Close = createToken(']', 'punctuation.squarebracket.close.cs');
+            export const Open = createToken('[', 'punctuation.squarebracket.open.cs');
         }
 
         export namespace String {
-            export const Begin = (line?: number, column?: number) =>
-                createToken('"', 'punctuation.definition.string.begin.cs', line, column);
-
-            export const End = (line?: number, column?: number) =>
-                createToken('"', 'punctuation.definition.string.end.cs', line, column);
+            export const Begin = createToken('"', 'punctuation.definition.string.begin.cs');
+            export const End = createToken('"', 'punctuation.definition.string.end.cs');
         }
 
         export namespace TypeParameters {
-            export const Begin = (line?: number, column?: number) =>
-                createToken('<', 'punctuation.definition.typeparameters.begin.cs', line, column);
-
-            export const End = (line?: number, column?: number) =>
-                createToken('>', 'punctuation.definition.typeparameters.end.cs', line, column);
+            export const Begin = createToken('<', 'punctuation.definition.typeparameters.begin.cs');
+            export const End = createToken('>', 'punctuation.definition.typeparameters.end.cs');
         }
     }
 
     export namespace Variables {
-        export const Alias = (text: string, line?: number, column?: number) =>
-            createToken(text, 'variable.other.alias.cs', line, column);
-
-        export const EnumMember = (text: string, line?: number, column?: number) =>
-            createToken(text, 'variable.other.enummember.cs', line, column);
-
-        export const Parameter = (text: string, line?: number, column?: number) =>
-            createToken(text, 'variable.parameter.cs', line, column);
-
-        export const ReadWrite = (text: string, line?: number, column?: number) =>
-            createToken(text, 'variable.other.readwrite.cs', line, column);
+        export const Alias = (text: string) => createToken(text, 'variable.other.alias.cs');
+        export const EnumMember = (text: string) => createToken(text, 'variable.other.enummember.cs');
+        export const Parameter = (text: string) => createToken(text, 'variable.parameter.cs');
+        export const ReadWrite = (text: string) => createToken(text, 'variable.other.readwrite.cs');
     }
 
-    export const IllegalNewLine = (text: string, line?: number, column?: number) =>
-        createToken(text, 'invalid.illegal.newline.cs', line, column);
-
-    export const Type = (text: string, line?: number, column?: number) =>
-        createToken(text, 'storage.type.cs', line, column);
+    export const IllegalNewLine = (text: string) => createToken(text, 'invalid.illegal.newline.cs');
+    export const Type = (text: string) => createToken(text, 'storage.type.cs');
 }

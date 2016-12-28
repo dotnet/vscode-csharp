@@ -19,14 +19,14 @@ extern alias Y;`;
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Extern(2, 1),
-                Tokens.Keywords.Alias(2, 8),
-                Tokens.Variables.Alias("X", 2, 14),
-                Tokens.Puncuation.Semicolon(2, 15),
-                Tokens.Keywords.Extern(3, 1),
-                Tokens.Keywords.Alias(3, 8),
-                Tokens.Variables.Alias("Y", 3, 14),
-                Tokens.Puncuation.Semicolon(3, 15)]);
+                Tokens.Keywords.Extern,
+                Tokens.Keywords.Alias,
+                Tokens.Variables.Alias("X"),
+                Tokens.Puncuation.Semicolon,
+                Tokens.Keywords.Extern,
+                Tokens.Keywords.Alias,
+                Tokens.Variables.Alias("Y"),
+                Tokens.Puncuation.Semicolon]);
         });
     });
 });

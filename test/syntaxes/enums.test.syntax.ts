@@ -19,10 +19,10 @@ enum E { }
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Enum(2, 1),
-                Tokens.Identifiers.EnumName("E", 2, 6),
-                Tokens.Puncuation.CurlyBrace.Open(2, 8),
-                Tokens.Puncuation.CurlyBrace.Close(2, 10)]);
+                Tokens.Keywords.Enum,
+                Tokens.Identifiers.EnumName("E"),
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("enum with base type", () => {
@@ -34,12 +34,12 @@ enum E : byte { }
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Enum(2, 1),
-                Tokens.Identifiers.EnumName("E", 2, 6),
-                Tokens.Puncuation.Colon(2, 8),
-                Tokens.Type("byte", 2, 10),
-                Tokens.Puncuation.CurlyBrace.Open(2, 15),
-                Tokens.Puncuation.CurlyBrace.Close(2, 17)]);
+                Tokens.Keywords.Enum,
+                Tokens.Identifiers.EnumName("E"),
+                Tokens.Puncuation.Colon,
+                Tokens.Type("byte"),
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("enum with single member", () => {
@@ -51,11 +51,11 @@ enum E { M1 }
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Enum(2, 1),
-                Tokens.Identifiers.EnumName("E", 2, 6),
-                Tokens.Puncuation.CurlyBrace.Open(2, 8),
-                Tokens.Variables.EnumMember("M1", 2, 10),
-                Tokens.Puncuation.CurlyBrace.Close(2, 13)]);
+                Tokens.Keywords.Enum,
+                Tokens.Identifiers.EnumName("E"),
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Variables.EnumMember("M1"),
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("enum with multiple members", () => {
@@ -67,15 +67,15 @@ enum Color { Red, Green, Blue }
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Enum(2, 1),
-                Tokens.Identifiers.EnumName("Color", 2, 6),
-                Tokens.Puncuation.CurlyBrace.Open(2, 12),
-                Tokens.Variables.EnumMember("Red", 2, 14),
-                Tokens.Puncuation.Comma(2, 17),
-                Tokens.Variables.EnumMember("Green", 2, 19),
-                Tokens.Puncuation.Comma(2, 24),
-                Tokens.Variables.EnumMember("Blue", 2, 26),
-                Tokens.Puncuation.CurlyBrace.Close(2, 31)]);
+                Tokens.Keywords.Enum,
+                Tokens.Identifiers.EnumName("Color"),
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Variables.EnumMember("Red"),
+                Tokens.Puncuation.Comma,
+                Tokens.Variables.EnumMember("Green"),
+                Tokens.Puncuation.Comma,
+                Tokens.Variables.EnumMember("Blue"),
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("enum with initialized member", () => {
@@ -92,17 +92,17 @@ enum E
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Enum(2, 1),
-                Tokens.Identifiers.EnumName("E", 2, 6),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
-                Tokens.Variables.EnumMember("Value1", 4, 5),
-                Tokens.Operators.Assignment(4, 12),
-                Tokens.Literals.Numeric.Decimal("1", 4, 14),
-                Tokens.Puncuation.Comma(4, 15),
-                Tokens.Variables.EnumMember("Value2", 5, 5),
-                Tokens.Puncuation.Comma(5, 11),
-                Tokens.Variables.EnumMember("Value3", 6, 5),
-                Tokens.Puncuation.CurlyBrace.Close(7, 1)]);
+                Tokens.Keywords.Enum,
+                Tokens.Identifiers.EnumName("E"),
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Variables.EnumMember("Value1"),
+                Tokens.Operators.Assignment,
+                Tokens.Literals.Numeric.Decimal("1"),
+                Tokens.Puncuation.Comma,
+                Tokens.Variables.EnumMember("Value2"),
+                Tokens.Puncuation.Comma,
+                Tokens.Variables.EnumMember("Value3"),
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
     });
 });

@@ -18,9 +18,9 @@ using System;`;
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Using(2, 1),
-                Tokens.Identifiers.NamespaceName("System", 2, 7),
-                Tokens.Puncuation.Semicolon(2, 13)]);
+                Tokens.Keywords.Using,
+                Tokens.Identifiers.NamespaceName("System"),
+                Tokens.Puncuation.Semicolon]);
         });
 
         it("using static type", () => {
@@ -31,12 +31,12 @@ using static System.Console;`;
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Using(2, 1),
-                Tokens.Keywords.Static(2, 7),
-                Tokens.Type("System", 2, 14),
-                Tokens.Puncuation.Accessor(2, 20),
-                Tokens.Type("Console", 2, 21),
-                Tokens.Puncuation.Semicolon(2, 28)]);
+                Tokens.Keywords.Using,
+                Tokens.Keywords.Static,
+                Tokens.Type("System"),
+                Tokens.Puncuation.Accessor,
+                Tokens.Type("Console"),
+                Tokens.Puncuation.Semicolon]);
         });
 
         it("namespace alias", () => {
@@ -47,11 +47,11 @@ using S = System;`;
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Using(2, 1),
-                Tokens.Identifiers.AliasName("S", 2, 7),
-                Tokens.Operators.Assignment(2, 9),
-                Tokens.Type("System", 2, 11),
-                Tokens.Puncuation.Semicolon(2, 17)]);
+                Tokens.Keywords.Using,
+                Tokens.Identifiers.AliasName("S"),
+                Tokens.Operators.Assignment,
+                Tokens.Type("System"),
+                Tokens.Puncuation.Semicolon]);
         });
 
         it("type alias", () => {
@@ -62,13 +62,13 @@ using C = System.Console;`;
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Using(2, 1),
-                Tokens.Identifiers.AliasName("C", 2, 7),
-                Tokens.Operators.Assignment(2, 9),
-                Tokens.Type("System", 2, 11),
-                Tokens.Puncuation.Accessor(2, 17),
-                Tokens.Type("Console", 2, 18),
-                Tokens.Puncuation.Semicolon(2, 25)]);
+                Tokens.Keywords.Using,
+                Tokens.Identifiers.AliasName("C"),
+                Tokens.Operators.Assignment,
+                Tokens.Type("System"),
+                Tokens.Puncuation.Accessor,
+                Tokens.Type("Console"),
+                Tokens.Puncuation.Semicolon]);
         });
 
         it("type alias with generic type", () => {
@@ -79,22 +79,22 @@ using IntList = System.Collections.Generic.List<System.Int32>;`;
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Using(2, 1),
-                Tokens.Identifiers.AliasName("IntList", 2, 7),
-                Tokens.Operators.Assignment(2, 15),
-                Tokens.Type("System", 2, 17),
-                Tokens.Puncuation.Accessor(2, 23),
-                Tokens.Type("Collections", 2, 24),
-                Tokens.Puncuation.Accessor(2, 35),
-                Tokens.Type("Generic", 2, 36),
-                Tokens.Puncuation.Accessor(2, 43),
-                Tokens.Type("List", 2, 44),
-                Tokens.Puncuation.TypeParameters.Begin(2, 48),
-                Tokens.Type("System", 2, 49),
-                Tokens.Puncuation.Accessor(2, 55),
-                Tokens.Type("Int32", 2, 56),
-                Tokens.Puncuation.TypeParameters.End(2, 61),
-                Tokens.Puncuation.Semicolon(2, 62)]);
+                Tokens.Keywords.Using,
+                Tokens.Identifiers.AliasName("IntList"),
+                Tokens.Operators.Assignment,
+                Tokens.Type("System"),
+                Tokens.Puncuation.Accessor,
+                Tokens.Type("Collections"),
+                Tokens.Puncuation.Accessor,
+                Tokens.Type("Generic"),
+                Tokens.Puncuation.Accessor,
+                Tokens.Type("List"),
+                Tokens.Puncuation.TypeParameters.Begin,
+                Tokens.Type("System"),
+                Tokens.Puncuation.Accessor,
+                Tokens.Type("Int32"),
+                Tokens.Puncuation.TypeParameters.End,
+                Tokens.Puncuation.Semicolon]);
         });
 
         it("type alias with nested generic types", () => {
@@ -105,35 +105,35 @@ using X = System.Collections.Generic.Dictionary<System.Int32, System.Collections
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Using(2, 1),
-                Tokens.Identifiers.AliasName("X", 2, 7),
-                Tokens.Operators.Assignment(2, 9),
-                Tokens.Type("System", 2, 11),
-                Tokens.Puncuation.Accessor(2, 17),
-                Tokens.Type("Collections", 2, 18),
-                Tokens.Puncuation.Accessor(2, 29),
-                Tokens.Type("Generic", 2, 30),
-                Tokens.Puncuation.Accessor(2, 37),
-                Tokens.Type("Dictionary", 2, 38),
-                Tokens.Puncuation.TypeParameters.Begin(2, 48),
-                Tokens.Type("System", 2, 49),
-                Tokens.Puncuation.Accessor(2, 55),
-                Tokens.Type("Int32", 2, 56),
-                Tokens.Puncuation.Comma(2, 61),
-                Tokens.Type("System", 2, 63),
-                Tokens.Puncuation.Accessor(2, 69),
-                Tokens.Type("Collections", 2, 70),
-                Tokens.Puncuation.Accessor(2, 81),
-                Tokens.Type("Generic", 2, 82),
-                Tokens.Puncuation.Accessor(2, 89),
-                Tokens.Type("List", 2, 90),
-                Tokens.Puncuation.TypeParameters.Begin(2, 94),
-                Tokens.Type("System", 2, 95),
-                Tokens.Puncuation.Accessor(2, 101),
-                Tokens.Type("String", 2, 102),
-                Tokens.Puncuation.TypeParameters.End(2, 108),
-                Tokens.Puncuation.TypeParameters.End(2, 109),
-                Tokens.Puncuation.Semicolon(2, 110)]);
+                Tokens.Keywords.Using,
+                Tokens.Identifiers.AliasName("X"),
+                Tokens.Operators.Assignment,
+                Tokens.Type("System"),
+                Tokens.Puncuation.Accessor,
+                Tokens.Type("Collections"),
+                Tokens.Puncuation.Accessor,
+                Tokens.Type("Generic"),
+                Tokens.Puncuation.Accessor,
+                Tokens.Type("Dictionary"),
+                Tokens.Puncuation.TypeParameters.Begin,
+                Tokens.Type("System"),
+                Tokens.Puncuation.Accessor,
+                Tokens.Type("Int32"),
+                Tokens.Puncuation.Comma,
+                Tokens.Type("System"),
+                Tokens.Puncuation.Accessor,
+                Tokens.Type("Collections"),
+                Tokens.Puncuation.Accessor,
+                Tokens.Type("Generic"),
+                Tokens.Puncuation.Accessor,
+                Tokens.Type("List"),
+                Tokens.Puncuation.TypeParameters.Begin,
+                Tokens.Type("System"),
+                Tokens.Puncuation.Accessor,
+                Tokens.Type("String"),
+                Tokens.Puncuation.TypeParameters.End,
+                Tokens.Puncuation.TypeParameters.End,
+                Tokens.Puncuation.Semicolon]);
         });
         
         it("type alias with nested generic types and comments interspersed", () => {
@@ -144,41 +144,41 @@ using X =/**/Dictionary/**/</**/int/**/,/**/List/**/</**/string/**/>/**/>/**/;//
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Using(2, 1),
-                Tokens.Identifiers.AliasName("X", 2, 7),
-                Tokens.Operators.Assignment(2, 9),
-                Tokens.Comment.MultiLine.Start(2, 10),
-                Tokens.Comment.MultiLine.End(2, 12),
-                Tokens.Type("Dictionary", 2, 14),
-                Tokens.Comment.MultiLine.Start(2, 24),
-                Tokens.Comment.MultiLine.End(2, 26),
-                Tokens.Puncuation.TypeParameters.Begin(2, 28),
-                Tokens.Comment.MultiLine.Start(2, 29),
-                Tokens.Comment.MultiLine.End(2, 31),
-                Tokens.Type("int", 2, 33),
-                Tokens.Comment.MultiLine.Start(2, 36),
-                Tokens.Comment.MultiLine.End(2, 38),
-                Tokens.Puncuation.Comma(2, 40),
-                Tokens.Comment.MultiLine.Start(2, 41),
-                Tokens.Comment.MultiLine.End(2, 43),
-                Tokens.Type("List", 2, 45),
-                Tokens.Comment.MultiLine.Start(2, 49),
-                Tokens.Comment.MultiLine.End(2, 51),
-                Tokens.Puncuation.TypeParameters.Begin(2, 53),
-                Tokens.Comment.MultiLine.Start(2, 54),
-                Tokens.Comment.MultiLine.End(2, 56),
-                Tokens.Type("string", 2, 58),
-                Tokens.Comment.MultiLine.Start(2, 64),
-                Tokens.Comment.MultiLine.End(2, 66),
-                Tokens.Puncuation.TypeParameters.End(2, 68),
-                Tokens.Comment.MultiLine.Start(2, 69),
-                Tokens.Comment.MultiLine.End(2, 71),
-                Tokens.Puncuation.TypeParameters.End(2, 73),
-                Tokens.Comment.MultiLine.Start(2, 74),
-                Tokens.Comment.MultiLine.End(2, 76),
-                Tokens.Puncuation.Semicolon(2, 78),
-                Tokens.Comment.SingleLine.Start(2, 79),
-                Tokens.Comment.SingleLine.Text("end", 2, 81)]);
+                Tokens.Keywords.Using,
+                Tokens.Identifiers.AliasName("X"),
+                Tokens.Operators.Assignment,
+                Tokens.Comment.MultiLine.Start,
+                Tokens.Comment.MultiLine.End,
+                Tokens.Type("Dictionary"),
+                Tokens.Comment.MultiLine.Start,
+                Tokens.Comment.MultiLine.End,
+                Tokens.Puncuation.TypeParameters.Begin,
+                Tokens.Comment.MultiLine.Start,
+                Tokens.Comment.MultiLine.End,
+                Tokens.Type("int"),
+                Tokens.Comment.MultiLine.Start,
+                Tokens.Comment.MultiLine.End,
+                Tokens.Puncuation.Comma,
+                Tokens.Comment.MultiLine.Start,
+                Tokens.Comment.MultiLine.End,
+                Tokens.Type("List"),
+                Tokens.Comment.MultiLine.Start,
+                Tokens.Comment.MultiLine.End,
+                Tokens.Puncuation.TypeParameters.Begin,
+                Tokens.Comment.MultiLine.Start,
+                Tokens.Comment.MultiLine.End,
+                Tokens.Type("string"),
+                Tokens.Comment.MultiLine.Start,
+                Tokens.Comment.MultiLine.End,
+                Tokens.Puncuation.TypeParameters.End,
+                Tokens.Comment.MultiLine.Start,
+                Tokens.Comment.MultiLine.End,
+                Tokens.Puncuation.TypeParameters.End,
+                Tokens.Comment.MultiLine.Start,
+                Tokens.Comment.MultiLine.End,
+                Tokens.Puncuation.Semicolon,
+                Tokens.Comment.SingleLine.Start,
+                Tokens.Comment.SingleLine.Text("end")]);
         });
     });
 });

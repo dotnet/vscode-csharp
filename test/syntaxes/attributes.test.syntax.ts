@@ -18,9 +18,9 @@ describe("Grammar", () => {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Puncuation.SquareBracket.Open(2, 1),
-                Tokens.Type("Foo", 2, 2),
-                Tokens.Puncuation.SquareBracket.Close(2, 5)]);
+                Tokens.Puncuation.SquareBracket.Open,
+                Tokens.Type("Foo"),
+                Tokens.Puncuation.SquareBracket.Close]);
         });
 
         it("global attribute with specifier", () => {
@@ -31,11 +31,11 @@ describe("Grammar", () => {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Puncuation.SquareBracket.Open(2, 1),
-                Tokens.Keywords.AttributeSpecifier("assembly", 2, 2),
-                Tokens.Puncuation.Colon(2, 10),
-                Tokens.Type("Foo", 2, 12),
-                Tokens.Puncuation.SquareBracket.Close(2, 15)]);
+                Tokens.Puncuation.SquareBracket.Open,
+                Tokens.Keywords.AttributeSpecifier("assembly"),
+                Tokens.Puncuation.Colon,
+                Tokens.Type("Foo"),
+                Tokens.Puncuation.SquareBracket.Close]);
         });
 
         it("Two global attributes in same section with specifier", () => {
@@ -46,13 +46,13 @@ describe("Grammar", () => {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Puncuation.SquareBracket.Open(2, 1),
-                Tokens.Keywords.AttributeSpecifier("module", 2, 2),
-                Tokens.Puncuation.Colon(2, 8),
-                Tokens.Type("Foo", 2, 10),
-                Tokens.Puncuation.Comma(2, 13),
-                Tokens.Type("Bar", 2, 15),
-                Tokens.Puncuation.SquareBracket.Close(2, 18)]);
+                Tokens.Puncuation.SquareBracket.Open,
+                Tokens.Keywords.AttributeSpecifier("module"),
+                Tokens.Puncuation.Colon,
+                Tokens.Type("Foo"),
+                Tokens.Puncuation.Comma,
+                Tokens.Type("Bar"),
+                Tokens.Puncuation.SquareBracket.Close]);
         });
 
         it("Two global attributes in same section with specifier and empty argument lists", () => {
@@ -63,17 +63,17 @@ describe("Grammar", () => {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Puncuation.SquareBracket.Open(2, 1),
-                Tokens.Keywords.AttributeSpecifier("module", 2, 2),
-                Tokens.Puncuation.Colon(2, 8),
-                Tokens.Type("Foo", 2, 10),
-                Tokens.Puncuation.Parenthesis.Open(2, 13),
-                Tokens.Puncuation.Parenthesis.Close(2, 14),
-                Tokens.Puncuation.Comma(2, 15),
-                Tokens.Type("Bar", 2, 17),
-                Tokens.Puncuation.Parenthesis.Open(2, 20),
-                Tokens.Puncuation.Parenthesis.Close(2, 21),
-                Tokens.Puncuation.SquareBracket.Close(2, 22)]);
+                Tokens.Puncuation.SquareBracket.Open,
+                Tokens.Keywords.AttributeSpecifier("module"),
+                Tokens.Puncuation.Colon,
+                Tokens.Type("Foo"),
+                Tokens.Puncuation.Parenthesis.Open,
+                Tokens.Puncuation.Parenthesis.Close,
+                Tokens.Puncuation.Comma,
+                Tokens.Type("Bar"),
+                Tokens.Puncuation.Parenthesis.Open,
+                Tokens.Puncuation.Parenthesis.Close,
+                Tokens.Puncuation.SquareBracket.Close]);
         });
 
         it("Global attribute with one argument", () => {
@@ -84,12 +84,12 @@ describe("Grammar", () => {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Puncuation.SquareBracket.Open(2, 1),
-                Tokens.Type("Foo", 2, 2),
-                Tokens.Puncuation.Parenthesis.Open(2, 5),
-                Tokens.Literals.Boolean.True(2, 6),
-                Tokens.Puncuation.Parenthesis.Close(2, 10),
-                Tokens.Puncuation.SquareBracket.Close(2, 11)]);
+                Tokens.Puncuation.SquareBracket.Open,
+                Tokens.Type("Foo"),
+                Tokens.Puncuation.Parenthesis.Open,
+                Tokens.Literals.Boolean.True,
+                Tokens.Puncuation.Parenthesis.Close,
+                Tokens.Puncuation.SquareBracket.Close]);
         });
 
         it("Global attribute with two arguments", () => {
@@ -100,14 +100,14 @@ describe("Grammar", () => {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Puncuation.SquareBracket.Open(2, 1),
-                Tokens.Type("Foo", 2, 2),
-                Tokens.Puncuation.Parenthesis.Open(2, 5),
-                Tokens.Literals.Boolean.True(2, 6),
-                Tokens.Puncuation.Comma(2, 10),
-                Tokens.Literals.Numeric.Decimal("42", 2, 12),
-                Tokens.Puncuation.Parenthesis.Close(2, 14),
-                Tokens.Puncuation.SquareBracket.Close(2, 15)]);
+                Tokens.Puncuation.SquareBracket.Open,
+                Tokens.Type("Foo"),
+                Tokens.Puncuation.Parenthesis.Open,
+                Tokens.Literals.Boolean.True,
+                Tokens.Puncuation.Comma,
+                Tokens.Literals.Numeric.Decimal("42"),
+                Tokens.Puncuation.Parenthesis.Close,
+                Tokens.Puncuation.SquareBracket.Close]);
         });
 
         it("Global attribute with three arguments", () => {
@@ -118,18 +118,18 @@ describe("Grammar", () => {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Puncuation.SquareBracket.Open(2, 1),
-                Tokens.Type("Foo", 2, 2),
-                Tokens.Puncuation.Parenthesis.Open(2, 5),
-                Tokens.Literals.Boolean.True(2, 6),
-                Tokens.Puncuation.Comma(2, 10),
-                Tokens.Literals.Numeric.Decimal("42", 2, 12),
-                Tokens.Puncuation.Comma(2, 14),
-                Tokens.Puncuation.String.Begin(2, 16),
-                Tokens.Literals.String("text", 2, 17),
-                Tokens.Puncuation.String.End(2, 21),
-                Tokens.Puncuation.Parenthesis.Close(2, 22),
-                Tokens.Puncuation.SquareBracket.Close(2, 23)]);
+                Tokens.Puncuation.SquareBracket.Open,
+                Tokens.Type("Foo"),
+                Tokens.Puncuation.Parenthesis.Open,
+                Tokens.Literals.Boolean.True,
+                Tokens.Puncuation.Comma,
+                Tokens.Literals.Numeric.Decimal("42"),
+                Tokens.Puncuation.Comma,
+                Tokens.Puncuation.String.Begin,
+                Tokens.Literals.String("text"),
+                Tokens.Puncuation.String.End,
+                Tokens.Puncuation.Parenthesis.Close,
+                Tokens.Puncuation.SquareBracket.Close]);
         });
 
         it("Global attribute with named argument", () => {
@@ -140,14 +140,14 @@ describe("Grammar", () => {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Puncuation.SquareBracket.Open(2, 1),
-                Tokens.Type("Foo", 2, 2),
-                Tokens.Puncuation.Parenthesis.Open(2, 5),
-                Tokens.Identifiers.PropertyName("Bar", 2, 6),
-                Tokens.Operators.Assignment(2, 10),
-                Tokens.Literals.Numeric.Decimal("42", 2, 12),
-                Tokens.Puncuation.Parenthesis.Close(2, 14),
-                Tokens.Puncuation.SquareBracket.Close(2, 15)]);
+                Tokens.Puncuation.SquareBracket.Open,
+                Tokens.Type("Foo"),
+                Tokens.Puncuation.Parenthesis.Open,
+                Tokens.Identifiers.PropertyName("Bar"),
+                Tokens.Operators.Assignment,
+                Tokens.Literals.Numeric.Decimal("42"),
+                Tokens.Puncuation.Parenthesis.Close,
+                Tokens.Puncuation.SquareBracket.Close]);
         });
 
         it("Global attribute with one positional argument and one named argument", () => {
@@ -158,16 +158,16 @@ describe("Grammar", () => {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Puncuation.SquareBracket.Open(2, 1),
-                Tokens.Type("Foo", 2, 2),
-                Tokens.Puncuation.Parenthesis.Open(2, 5),
-                Tokens.Literals.Boolean.True(2, 6),
-                Tokens.Puncuation.Comma(2, 10),
-                Tokens.Identifiers.PropertyName("Bar", 2, 12),
-                Tokens.Operators.Assignment(2, 16),
-                Tokens.Literals.Numeric.Decimal("42", 2, 18),
-                Tokens.Puncuation.Parenthesis.Close(2, 20),
-                Tokens.Puncuation.SquareBracket.Close(2, 21)]);
+                Tokens.Puncuation.SquareBracket.Open,
+                Tokens.Type("Foo"),
+                Tokens.Puncuation.Parenthesis.Open,
+                Tokens.Literals.Boolean.True,
+                Tokens.Puncuation.Comma,
+                Tokens.Identifiers.PropertyName("Bar"),
+                Tokens.Operators.Assignment,
+                Tokens.Literals.Numeric.Decimal("42"),
+                Tokens.Puncuation.Parenthesis.Close,
+                Tokens.Puncuation.SquareBracket.Close]);
         });
 
         it("Global attribute with specifier, one positional argument, and two named arguments", () => {
@@ -178,24 +178,24 @@ describe("Grammar", () => {
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Puncuation.SquareBracket.Open(2, 1),
-                Tokens.Keywords.AttributeSpecifier("module", 2, 2),
-                Tokens.Puncuation.Colon(2, 8),
-                Tokens.Type("Foo", 2, 10),
-                Tokens.Puncuation.Parenthesis.Open(2, 13),
-                Tokens.Literals.Boolean.True(2, 14),
-                Tokens.Puncuation.Comma(2, 18),
-                Tokens.Identifiers.PropertyName("Bar", 2, 20),
-                Tokens.Operators.Assignment(2, 24),
-                Tokens.Literals.Numeric.Decimal("42", 2, 26),
-                Tokens.Puncuation.Comma(2, 28),
-                Tokens.Identifiers.PropertyName("Baz", 2, 30),
-                Tokens.Operators.Assignment(2, 34),
-                Tokens.Puncuation.String.Begin(2, 36),
-                Tokens.Literals.String("hello", 2, 37),
-                Tokens.Puncuation.String.End(2, 42),
-                Tokens.Puncuation.Parenthesis.Close(2, 43),
-                Tokens.Puncuation.SquareBracket.Close(2, 44)]);
+                Tokens.Puncuation.SquareBracket.Open,
+                Tokens.Keywords.AttributeSpecifier("module"),
+                Tokens.Puncuation.Colon,
+                Tokens.Type("Foo"),
+                Tokens.Puncuation.Parenthesis.Open,
+                Tokens.Literals.Boolean.True,
+                Tokens.Puncuation.Comma,
+                Tokens.Identifiers.PropertyName("Bar"),
+                Tokens.Operators.Assignment,
+                Tokens.Literals.Numeric.Decimal("42"),
+                Tokens.Puncuation.Comma,
+                Tokens.Identifiers.PropertyName("Baz"),
+                Tokens.Operators.Assignment,
+                Tokens.Puncuation.String.Begin,
+                Tokens.Literals.String("hello"),
+                Tokens.Puncuation.String.End,
+                Tokens.Puncuation.Parenthesis.Close,
+                Tokens.Puncuation.SquareBracket.Close]);
         });
     });
 });

@@ -24,30 +24,30 @@ class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class(2, 1),
-                Tokens.Identifiers.ClassName("Tester", 2, 7),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Keywords.Modifiers.Public(4, 5),
-                Tokens.Type("IBooom", 4, 12),
-                Tokens.Identifiers.PropertyName("Property", 4, 19),
-                Tokens.Puncuation.CurlyBrace.Open(5, 5),
-                Tokens.Keywords.Get(6, 9),
-                Tokens.Puncuation.CurlyBrace.Open(6, 13),
-                Tokens.Keywords.Return(6, 15),
-                Tokens.Literals.Null(6, 22),
-                Tokens.Puncuation.Semicolon(6, 26),
-                Tokens.Puncuation.CurlyBrace.Close(6, 28),
-                Tokens.Keywords.Set(7, 9),
-                Tokens.Puncuation.CurlyBrace.Open(7, 13),
-                Tokens.Variables.ReadWrite("something", 7, 15),
-                Tokens.Operators.Assignment(7, 25),
-                Tokens.Variables.ReadWrite("value", 7, 27),
-                Tokens.Puncuation.Semicolon(7, 32),
-                Tokens.Puncuation.CurlyBrace.Close(7, 34),
-                Tokens.Puncuation.CurlyBrace.Close(8, 5),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Type("IBooom"),
+                Tokens.Identifiers.PropertyName("Property"),
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Keywords.Get,
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Keywords.Return,
+                Tokens.Literals.Null,
+                Tokens.Puncuation.Semicolon,
+                Tokens.Puncuation.CurlyBrace.Close,
+                Tokens.Keywords.Set,
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Variables.ReadWrite("something"),
+                Tokens.Operators.Assignment,
+                Tokens.Variables.ReadWrite("value"),
+                Tokens.Puncuation.Semicolon,
+                Tokens.Puncuation.CurlyBrace.Close,
+                Tokens.Puncuation.CurlyBrace.Close,
 
-                Tokens.Puncuation.CurlyBrace.Close(9, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("declaration single line", () => {
@@ -60,31 +60,31 @@ class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class(2, 1),
-                Tokens.Identifiers.ClassName("Tester", 2, 7),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Keywords.Modifiers.Public(4, 5),
-                Tokens.Type("IBooom", 4, 12),
-                Tokens.Identifiers.PropertyName("Property", 4, 19),
-                Tokens.Puncuation.CurlyBrace.Open(4, 28),
-                Tokens.Keywords.Get(4, 30),
-                Tokens.Puncuation.CurlyBrace.Open(4, 34),
-                Tokens.Keywords.Return(4, 36),
-                Tokens.Literals.Null(4, 43),
-                Tokens.Puncuation.Semicolon(4, 47),
-                Tokens.Puncuation.CurlyBrace.Close(4, 49),
-                Tokens.Keywords.Modifiers.Private(4, 51),
-                Tokens.Keywords.Set(4, 59),
-                Tokens.Puncuation.CurlyBrace.Open(4, 63),
-                Tokens.Variables.ReadWrite("something", 4, 65),
-                Tokens.Operators.Assignment(4, 75),
-                Tokens.Variables.ReadWrite("value", 4, 77),
-                Tokens.Puncuation.Semicolon(4, 82),
-                Tokens.Puncuation.CurlyBrace.Close(4, 84),
-                Tokens.Puncuation.CurlyBrace.Close(4, 86),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Type("IBooom"),
+                Tokens.Identifiers.PropertyName("Property"),
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Keywords.Get,
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Keywords.Return,
+                Tokens.Literals.Null,
+                Tokens.Puncuation.Semicolon,
+                Tokens.Puncuation.CurlyBrace.Close,
+                Tokens.Keywords.Modifiers.Private,
+                Tokens.Keywords.Set,
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Variables.ReadWrite("something"),
+                Tokens.Operators.Assignment,
+                Tokens.Variables.ReadWrite("value"),
+                Tokens.Puncuation.Semicolon,
+                Tokens.Puncuation.CurlyBrace.Close,
+                Tokens.Puncuation.CurlyBrace.Close,
 
-                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("declaration without modifiers", () => {
@@ -97,20 +97,20 @@ class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class(2, 1),
-                Tokens.Identifiers.ClassName("Tester", 2, 7),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Type("IBooom", 4, 5),
-                Tokens.Identifiers.PropertyName("Property", 4, 12),
-                Tokens.Puncuation.CurlyBrace.Open(4, 21),
-                Tokens.Keywords.Get(4, 22),
-                Tokens.Puncuation.Semicolon(4, 25),
-                Tokens.Keywords.Set(4, 27),
-                Tokens.Puncuation.Semicolon(4, 30),
-                Tokens.Puncuation.CurlyBrace.Close(4, 31),
+                Tokens.Type("IBooom"),
+                Tokens.Identifiers.PropertyName("Property"),
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Keywords.Get,
+                Tokens.Puncuation.Semicolon,
+                Tokens.Keywords.Set,
+                Tokens.Puncuation.Semicolon,
+                Tokens.Puncuation.CurlyBrace.Close,
 
-                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("auto-property single line", function () {
@@ -123,21 +123,21 @@ class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class(2, 1),
-                Tokens.Identifiers.ClassName("Tester", 2, 7),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Keywords.Modifiers.Public(4, 5),
-                Tokens.Type("IBooom", 4, 12),
-                Tokens.Identifiers.PropertyName("Property", 4, 19),
-                Tokens.Puncuation.CurlyBrace.Open(4, 28),
-                Tokens.Keywords.Get(4, 30),
-                Tokens.Puncuation.Semicolon(4, 33),
-                Tokens.Keywords.Set(4, 35),
-                Tokens.Puncuation.Semicolon(4, 38),
-                Tokens.Puncuation.CurlyBrace.Close(4, 40),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Type("IBooom"),
+                Tokens.Identifiers.PropertyName("Property"),
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Keywords.Get,
+                Tokens.Puncuation.Semicolon,
+                Tokens.Keywords.Set,
+                Tokens.Puncuation.Semicolon,
+                Tokens.Puncuation.CurlyBrace.Close,
 
-                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("auto-property single line (protected internal)", function () {
@@ -150,22 +150,22 @@ class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class(2, 1),
-                Tokens.Identifiers.ClassName("Tester", 2, 7),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Keywords.Modifiers.Protected(4, 5),
-                Tokens.Keywords.Modifiers.Internal(4, 15),
-                Tokens.Type("IBooom", 4, 24),
-                Tokens.Identifiers.PropertyName("Property", 4, 31),
-                Tokens.Puncuation.CurlyBrace.Open(4, 40),
-                Tokens.Keywords.Get(4, 42),
-                Tokens.Puncuation.Semicolon(4, 45),
-                Tokens.Keywords.Set(4, 47),
-                Tokens.Puncuation.Semicolon(4, 50),
-                Tokens.Puncuation.CurlyBrace.Close(4, 52),
+                Tokens.Keywords.Modifiers.Protected,
+                Tokens.Keywords.Modifiers.Internal,
+                Tokens.Type("IBooom"),
+                Tokens.Identifiers.PropertyName("Property"),
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Keywords.Get,
+                Tokens.Puncuation.Semicolon,
+                Tokens.Keywords.Set,
+                Tokens.Puncuation.Semicolon,
+                Tokens.Puncuation.CurlyBrace.Close,
 
-                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("auto-property", () => {
@@ -182,21 +182,21 @@ class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class(2, 1),
-                Tokens.Identifiers.ClassName("Tester", 2, 7),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Keywords.Modifiers.Public(4, 5),
-                Tokens.Type("IBooom", 4, 12),
-                Tokens.Identifiers.PropertyName("Property", 4, 19),
-                Tokens.Puncuation.CurlyBrace.Open(5, 5),
-                Tokens.Keywords.Get(6, 9),
-                Tokens.Puncuation.Semicolon(6, 12),
-                Tokens.Keywords.Set(7, 9),
-                Tokens.Puncuation.Semicolon(7, 12),
-                Tokens.Puncuation.CurlyBrace.Close(8, 5),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Type("IBooom"),
+                Tokens.Identifiers.PropertyName("Property"),
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Keywords.Get,
+                Tokens.Puncuation.Semicolon,
+                Tokens.Keywords.Set,
+                Tokens.Puncuation.Semicolon,
+                Tokens.Puncuation.CurlyBrace.Close,
 
-                Tokens.Puncuation.CurlyBrace.Close(9, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("generic auto-property", () => {
@@ -209,31 +209,31 @@ class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class(2, 1),
-                Tokens.Identifiers.ClassName("Tester", 2, 7),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Keywords.Modifiers.Public(4, 5),
-                Tokens.Type("Dictionary", 4, 12),
-                Tokens.Puncuation.TypeParameters.Begin(4, 22),
-                Tokens.Type("string", 4, 23),
-                Tokens.Puncuation.Comma(4, 29),
-                Tokens.Type("List", 4, 31),
-                Tokens.Puncuation.TypeParameters.Begin(4, 35),
-                Tokens.Type("T", 4, 36),
-                Tokens.Puncuation.TypeParameters.End(4, 37),
-                Tokens.Puncuation.SquareBracket.Open(4, 38),
-                Tokens.Puncuation.SquareBracket.Close(4, 39),
-                Tokens.Puncuation.TypeParameters.End(4, 40),
-                Tokens.Identifiers.PropertyName("Property", 4, 42),
-                Tokens.Puncuation.CurlyBrace.Open(4, 51),
-                Tokens.Keywords.Get(4, 53),
-                Tokens.Puncuation.Semicolon(4, 56),
-                Tokens.Keywords.Set(4, 58),
-                Tokens.Puncuation.Semicolon(4, 61),
-                Tokens.Puncuation.CurlyBrace.Close(4, 63),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Type("Dictionary"),
+                Tokens.Puncuation.TypeParameters.Begin,
+                Tokens.Type("string"),
+                Tokens.Puncuation.Comma,
+                Tokens.Type("List"),
+                Tokens.Puncuation.TypeParameters.Begin,
+                Tokens.Type("T"),
+                Tokens.Puncuation.TypeParameters.End,
+                Tokens.Puncuation.SquareBracket.Open,
+                Tokens.Puncuation.SquareBracket.Close,
+                Tokens.Puncuation.TypeParameters.End,
+                Tokens.Identifiers.PropertyName("Property"),
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Keywords.Get,
+                Tokens.Puncuation.Semicolon,
+                Tokens.Keywords.Set,
+                Tokens.Puncuation.Semicolon,
+                Tokens.Puncuation.CurlyBrace.Close,
 
-                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("auto-property initializer", () => {
@@ -247,45 +247,45 @@ class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class(2, 1),
-                Tokens.Identifiers.ClassName("Tester", 2, 7),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Keywords.Modifiers.Public(4, 5),
-                Tokens.Type("Dictionary", 4, 12),
-                Tokens.Puncuation.TypeParameters.Begin(4, 22),
-                Tokens.Type("string", 4, 23),
-                Tokens.Puncuation.Comma(4, 29),
-                Tokens.Type("List", 4, 31),
-                Tokens.Puncuation.TypeParameters.Begin(4, 35),
-                Tokens.Type("T", 4, 36),
-                Tokens.Puncuation.TypeParameters.End(4, 37),
-                Tokens.Puncuation.SquareBracket.Open(4, 38),
-                Tokens.Puncuation.SquareBracket.Close(4, 39),
-                Tokens.Puncuation.TypeParameters.End(4, 40),
-                Tokens.Identifiers.PropertyName("Property", 4, 42),
-                Tokens.Puncuation.CurlyBrace.Open(4, 51),
-                Tokens.Keywords.Get(4, 53),
-                Tokens.Puncuation.Semicolon(4, 56),
-                Tokens.Puncuation.CurlyBrace.Close(4, 58),
-                Tokens.Operators.Assignment(4, 60),
-                Tokens.Keywords.New(4, 62),
-                Tokens.Type("Dictionary", 4, 66),
-                Tokens.Puncuation.TypeParameters.Begin(4, 76),
-                Tokens.Type("string", 4, 77),
-                Tokens.Puncuation.Comma(4, 83),
-                Tokens.Type("List", 4, 85),
-                Tokens.Puncuation.TypeParameters.Begin(4, 89),
-                Tokens.Type("T", 4, 90),
-                Tokens.Puncuation.TypeParameters.End(4, 91),
-                Tokens.Puncuation.SquareBracket.Open(4, 92),
-                Tokens.Puncuation.SquareBracket.Close(4, 93),
-                Tokens.Puncuation.TypeParameters.End(4, 94),
-                Tokens.Puncuation.Parenthesis.Open(4, 95),
-                Tokens.Puncuation.Parenthesis.Close(4, 96),
-                Tokens.Puncuation.Semicolon(4, 97),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Type("Dictionary"),
+                Tokens.Puncuation.TypeParameters.Begin,
+                Tokens.Type("string"),
+                Tokens.Puncuation.Comma,
+                Tokens.Type("List"),
+                Tokens.Puncuation.TypeParameters.Begin,
+                Tokens.Type("T"),
+                Tokens.Puncuation.TypeParameters.End,
+                Tokens.Puncuation.SquareBracket.Open,
+                Tokens.Puncuation.SquareBracket.Close,
+                Tokens.Puncuation.TypeParameters.End,
+                Tokens.Identifiers.PropertyName("Property"),
+                Tokens.Puncuation.CurlyBrace.Open,
+                Tokens.Keywords.Get,
+                Tokens.Puncuation.Semicolon,
+                Tokens.Puncuation.CurlyBrace.Close,
+                Tokens.Operators.Assignment,
+                Tokens.Keywords.New,
+                Tokens.Type("Dictionary"),
+                Tokens.Puncuation.TypeParameters.Begin,
+                Tokens.Type("string"),
+                Tokens.Puncuation.Comma,
+                Tokens.Type("List"),
+                Tokens.Puncuation.TypeParameters.Begin,
+                Tokens.Type("T"),
+                Tokens.Puncuation.TypeParameters.End,
+                Tokens.Puncuation.SquareBracket.Open,
+                Tokens.Puncuation.SquareBracket.Close,
+                Tokens.Puncuation.TypeParameters.End,
+                Tokens.Puncuation.Parenthesis.Open,
+                Tokens.Puncuation.Parenthesis.Close,
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("expression body", () => {
@@ -300,28 +300,28 @@ public class Tester
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public(2, 1),
-                Tokens.Keywords.Class(2, 8),
-                Tokens.Identifiers.ClassName("Tester", 2, 14),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+                Tokens.Keywords.Modifiers.Public,
+                Tokens.Keywords.Class,
+                Tokens.Identifiers.ClassName("Tester"),
+                Tokens.Puncuation.CurlyBrace.Open,
 
-                Tokens.Keywords.Modifiers.Private(4, 5),
-                Tokens.Type("string", 4, 13),
-                Tokens.Identifiers.PropertyName("prop1", 4, 20),
-                Tokens.Operators.Arrow(4, 26),
-                Tokens.Puncuation.String.Begin(4, 29),
-                Tokens.Literals.String("hello", 4, 30),
-                Tokens.Puncuation.String.End(4, 35),
-                Tokens.Puncuation.Semicolon(4, 36),
+                Tokens.Keywords.Modifiers.Private,
+                Tokens.Type("string"),
+                Tokens.Identifiers.PropertyName("prop1"),
+                Tokens.Operators.Arrow,
+                Tokens.Puncuation.String.Begin,
+                Tokens.Literals.String("hello"),
+                Tokens.Puncuation.String.End,
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Keywords.Modifiers.Private(5, 5),
-                Tokens.Type("bool", 5, 13),
-                Tokens.Identifiers.PropertyName("prop2", 5, 20),
-                Tokens.Operators.Arrow(5, 26),
-                Tokens.Literals.Boolean.True(5, 29),
-                Tokens.Puncuation.Semicolon(5, 33),
+                Tokens.Keywords.Modifiers.Private,
+                Tokens.Type("bool"),
+                Tokens.Identifiers.PropertyName("prop2"),
+                Tokens.Operators.Arrow,
+                Tokens.Literals.Boolean.True,
+                Tokens.Puncuation.Semicolon,
 
-                Tokens.Puncuation.CurlyBrace.Close(6, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close]);
         });
     });
 });
