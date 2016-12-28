@@ -61,10 +61,46 @@ class Tester
                 Tokens.Variables.Parameter("y", 4, 24),
                 Tokens.Puncuation.Parenthesis.Close(4, 25),
                 Tokens.Puncuation.CurlyBrace.Open(5, 5),
+                Tokens.Keywords.Return(6, 9),
+                Tokens.Variables.ReadWrite("x", 6, 16),
+                Tokens.Operators.Arithmetic.Addition(6, 18),
+                Tokens.Variables.ReadWrite("y", 6, 20),
                 Tokens.Puncuation.Semicolon(6, 21),
                 Tokens.Puncuation.CurlyBrace.Close(7, 5),
 
                 Tokens.Puncuation.CurlyBrace.Close(8, 1)]);
+        });
+
+        it("expression body", () => {
+
+            const input = `
+class Tester
+{
+    int Add(int x, int y) => x + y;
+}`;
+            let tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Tokens.Keywords.Class(2, 1),
+                Tokens.Identifiers.ClassName("Tester", 2, 7),
+                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+
+                Tokens.Type("int", 4, 5),
+                Tokens.Identifiers.MethodName("Add", 4, 9),
+                Tokens.Puncuation.Parenthesis.Open(4, 12),
+                Tokens.Type("int", 4, 13),
+                Tokens.Variables.Parameter("x", 4, 17),
+                Tokens.Puncuation.Comma(4, 18),
+                Tokens.Type("int", 4, 20),
+                Tokens.Variables.Parameter("y", 4, 24),
+                Tokens.Puncuation.Parenthesis.Close(4, 25),
+                Tokens.Operators.Arrow(4, 27),
+                Tokens.Variables.ReadWrite("x", 4, 30),
+                Tokens.Operators.Arithmetic.Addition(4, 32),
+                Tokens.Variables.ReadWrite("y", 4, 34),
+                Tokens.Puncuation.Semicolon(4, 35),
+
+                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
         });
     });
 });

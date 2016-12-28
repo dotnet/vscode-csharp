@@ -120,14 +120,15 @@
                 }
             ]
         },
-        "statements": {
-            "patterns": []
-        },
-        "expressions": {
+        "statement": {
             "patterns": [
                 {
-                    "include": "#object-creation-expression"
-                },
+                    "include": "#return-statement"
+                }
+            ]
+        },
+        "expression": {
+            "patterns": [
                 {
                     "include": "#interpolated-string"
                 },
@@ -136,6 +137,12 @@
                 },
                 {
                     "include": "#literal"
+                },
+                {
+                    "include": "#expression-operators"
+                },
+                {
+                    "include": "#object-creation-expression"
                 },
                 {
                     "include": "#identifier"
@@ -281,7 +288,7 @@
                     "include": "#attribute-named-argument"
                 },
                 {
-                    "include": "#expressions"
+                    "include": "#expression"
                 },
                 {
                     "include": "#punctuation-comma"
@@ -301,7 +308,7 @@
                     "include": "#operator-assignment"
                 },
                 {
-                    "include": "#expressions"
+                    "include": "#expression"
                 }
             ]
         },
@@ -1078,7 +1085,7 @@
             },
             "patterns": [
                 {
-                    "include": "#statements"
+                    "include": "#statement"
                 },
                 {
                     "include": "#punctuation-semicolon"
@@ -1095,7 +1102,7 @@
             "end": "(?=[,\\);}])",
             "patterns": [
                 {
-                    "include": "#expressions"
+                    "include": "#expression"
                 }
             ]
         },
@@ -1109,7 +1116,21 @@
             "end": "(?=[,\\);}])",
             "patterns": [
                 {
-                    "include": "#expressions"
+                    "include": "#expression"
+                }
+            ]
+        },
+        "return-statement": {
+            "begin": "\\b(return)\\b",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.other.return.cs"
+                }
+            },
+            "end": "(?=;)",
+            "patterns": [
+                {
+                    "include": "#expression"
                 }
             ]
         },
@@ -1175,7 +1196,7 @@
             },
             "patterns": [
                 {
-                    "include": "#expressions"
+                    "include": "#expression"
                 }
             ]
         },
@@ -1271,6 +1292,14 @@
         "string-character-escape": {
             "name": "constant.character.escape.cs",
             "match": "\\\\."
+        },
+        "expression-operators": {
+            "patterns": [
+                {
+                    "name": "keyword.operator.arithmetic.cs",
+                    "match": "%|\\*|/|-|\\+"
+                }
+            ]
         },
         "identifier": {
             "name": "variable.other.readwrite.cs",

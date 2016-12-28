@@ -201,6 +201,9 @@ export namespace Tokens {
         export const Remove = (line?: number, column?: number) =>
             createToken('remove', 'keyword.other.remove.cs', line, column);
 
+        export const Return = (line?: number, column?: number) =>
+            createToken('return', 'keyword.other.return.cs', line, column);
+
         export const Set = (line?: number, column?: number) =>
             createToken('set', 'keyword.other.set.cs', line, column);
 
@@ -251,9 +254,26 @@ export namespace Tokens {
         export const Arrow = (line?: number, column?: number) =>
             createToken('=>', 'keyword.operator.arrow.cs', line, column);
 
+        export namespace Arithmetic {
+            export const Addition = (line?: number, column?: number) =>
+                createToken('+', 'keyword.operator.arithmetic.cs', line, column);
+
+            export const Division = (line?: number, column?: number) =>
+                createToken('/', 'keyword.operator.arithmetic.cs', line, column);
+
+            export const Multiplication = (line?: number, column?: number) =>
+                createToken('*', 'keyword.operator.arithmetic.cs', line, column);
+
+            export const Remainder = (line?: number, column?: number) =>
+                createToken('%', 'keyword.operator.arithmetic.cs', line, column);
+
+            export const Subtraction = (line?: number, column?: number) =>
+                createToken('-', 'keyword.operator.arithmetic.cs', line, column);
+        }
+ 
         export const Assignment = (line?: number, column?: number) =>
             createToken('=', 'keyword.operator.assignment.cs', line, column);
-    }
+   }
 
     export namespace Puncuation {
         export const Accessor = (line?: number, column?: number) =>
