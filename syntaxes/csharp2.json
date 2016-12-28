@@ -120,10 +120,19 @@
         "expressions": {
             "patterns": [
                 {
+                    "include": "#object-creation-expression"
+                },
+                {
+                    "include": "#interpolated-string"
+                },
+                {
+                    "include": "#verbatim-interpolated-string"
+                },
+                {
                     "include": "#literal"
                 },
                 {
-                    "include": "#object-creation-expression"
+                    "include": "#identifier"
                 }
             ]
         },
@@ -1127,6 +1136,69 @@
                 }
             ]
         },
+        "interpolated-string": {
+            "name": "string.quoted.double.cs",
+            "begin": "\\$\"",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.begin.cs"
+                }
+            },
+            "end": "(\")|((?:[^\\\\\\n])$)",
+            "endCaptures": {
+                "1": {
+                    "name": "punctuation.definition.string.end.cs"
+                },
+                "2": {
+                    "name": "invalid.illegal.newline.cs"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#interpolation"
+                }
+            ]
+        },
+        "verbatim-interpolated-string": {
+            "name": "string.quoted.double.cs",
+            "begin": "\\$@\"",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.begin.cs"
+                }
+            },
+            "end": "\"",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.end.cs"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#interpolation"
+                }
+            ]
+        },
+        "interpolation": {
+            "name": "meta.interpolation.cs",
+            "begin": "(?<=[^\\{])(?:\\{\\{)*(\\{)(?=[^\\{])",
+            "beginCaptures": {
+                "1": {
+                    "name": "punctuation.definition.interpolation.begin.cs"
+                }
+            },
+            "end": "\\}",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.definition.interpolation.end.cs"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#expressions"
+                }
+            ]
+        },
         "literal": {
             "patterns": [
                 {
@@ -1192,6 +1264,37 @@
                     "match": "\\b[0-9_]+(F|f|D|d|M|m)"
                 }
             ]
+        },
+        "string-literal": {
+            "name": "string.quoted.double.cs",
+            "begin": "\"",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.begin.cs"
+                }
+            },
+            "end": "(\")|((?:[^\\\\\\n])$)",
+            "endCaptures": {
+                "1": {
+                    "name": "punctuation.definition.string.end.cs"
+                },
+                "2": {
+                    "name": "invalid.illegal.newline.cs"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#string-character-escape"
+                }
+            ]
+        },
+        "string-character-escape": {
+            "name": "constant.character.escape.cs",
+            "match": "\\\\."
+        },
+        "identifier": {
+            "name": "variable.other.readwrite.cs",
+            "match": "[_$[:alpha:]][_$[:alnum:]]*"
         },
         "object-creation-expression": {
             "begin": "(new)\\s+([_$[:alnum:]\\.\\*\\[\\]<>,\\s]+?)\\s*(?=\\()",
@@ -1308,33 +1411,6 @@
                     "include": "#punctuation-comma"
                 }
             ]
-        },
-        "string-literal": {
-            "name": "string.quoted.double.cs",
-            "begin": "\"",
-            "beginCaptures": {
-                "0": {
-                    "name": "punctuation.definition.string.begin.cs"
-                }
-            },
-            "end": "(\")|((?:[^\\\\\\n])$)",
-            "endCaptures": {
-                "1": {
-                    "name": "punctuation.definition.string.end.cs"
-                },
-                "2": {
-                    "name": "invalid.illegal.newline.cs"
-                }
-            },
-            "patterns": [
-                {
-                    "include": "#string-character-escape"
-                }
-            ]
-        },
-        "string-character-escape": {
-            "name": "constant.character.escape.cs",
-            "match": "\\\\."
         },
         "type": {
             "name": "meta.type.cs",

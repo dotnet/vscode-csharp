@@ -9,7 +9,7 @@ export class Tokenizer {
     private _registry: Registry;
     private _grammar: IGrammar;
 
-    private static readonly _excludedTypes: string[] = ['source.cs', 'meta.type.parameters.cs'];
+    private static readonly _excludedTypes: string[] = ['source.cs', 'meta.interpolation.cs', 'meta.type.parameters.cs'];
 
     constructor(grammarFilePath: string) {
         this._grammar = new Registry().loadGrammarFromPathSync(grammarFilePath);
@@ -277,6 +277,25 @@ export namespace Tokens {
                 createToken('{', 'punctuation.curlybrace.open.cs', line, column);
         }
 
+        export namespace Interpolation {
+            export const Begin = (line?: number, column?: number) =>
+                createToken('{', 'punctuation.definition.interpolation.begin.cs', line, column);
+
+            export const End = (line?: number, column?: number) =>
+                createToken('}', 'punctuation.definition.interpolation.end.cs', line, column);
+        }
+
+        export namespace InterpolatedString {
+            export const Begin = (line?: number, column?: number) =>
+                createToken('$"', 'punctuation.definition.string.begin.cs', line, column);
+
+            export const End = (line?: number, column?: number) =>
+                createToken('"', 'punctuation.definition.string.end.cs', line, column);
+
+            export const VerbatimBegin = (line?: number, column?: number) =>
+                createToken('$@"', 'punctuation.definition.string.begin.cs', line, column);
+        }
+
         export namespace Parenthesis {
             export const Close = (line?: number, column?: number) =>
                 createToken(')', 'punctuation.parenthesis.close.cs', line, column);
@@ -322,23 +341,14 @@ export namespace Tokens {
 
         export const Parameter = (text: string, line?: number, column?: number) =>
             createToken(text, 'variable.parameter.cs', line, column);
+
+        export const ReadWrite = (text: string, line?: number, column?: number) =>
+            createToken(text, 'variable.other.readwrite.cs', line, column);
     }
+
+    export const IllegalNewLine = (text: string, line?: number, column?: number) =>
+        createToken(text, 'invalid.illegal.newline.cs', line, column);
 
     export const Type = (text: string, line?: number, column?: number) =>
         createToken(text, 'storage.type.cs', line, column);
-
-    export const StringDoubleQuoted = (text: string, line?: number, column?: number) =>
-        createToken(text, 'string.quoted.double.cs', line, column);
-
-    export const StringDoubleQuotedVerbatim = (text: string, line?: number, column?: number) =>
-        createToken(text, 'string.quoted.double.literal.cs', line, column);
-
-    export const StringInterpolatedExpression = (text: string, line?: number, column?: number) =>
-        createToken(text, 'meta.interpolated.expression.cs', line, column);
-
-    export const StringStart = (text: string, line?: number, column?: number) =>
-        createToken(text, 'punctuation.definition.string.begin.cs', line, column);
-
-    export const StringEnd = (text: string, line?: number, column?: number) =>
-        createToken(text, 'punctuation.definition.string.end.cs', line, column);
 }
