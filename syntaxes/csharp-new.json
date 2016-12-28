@@ -132,6 +132,9 @@
                     "include": "#expression"
                 },
                 {
+                    "include": "#block"
+                },
+                {
                     "include": "#punctuation-semicolon"
                 }
             ]
@@ -152,6 +155,9 @@
                 },
                 {
                     "include": "#object-creation-expression"
+                },
+                {
+                    "include": "#parenthesized-expression"
                 },
                 {
                     "include": "#identifier"
@@ -1129,6 +1135,10 @@
         "control-statement": {
             "patterns": [
                 {
+                    "name": "keyword.control.loop.cs",
+                    "match": "(?<!\\.)\\b(do|while)\\b"
+                },
+                {
                     "name": "keyword.control.flow.cs",
                     "match": "(?<!\\.)\\b(return)\\b"
                 }
@@ -1302,6 +1312,25 @@
                 {
                     "name": "keyword.operator.arithmetic.cs",
                     "match": "%|\\*|/|-|\\+"
+                }
+            ]
+        },
+        "parenthesized-expression": {
+            "begin": "\\(",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.parenthesis.open.cs"
+                }
+            },
+            "end": "\\)",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.parenthesis.close.cs"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#expression"
                 }
             ]
         },

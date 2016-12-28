@@ -34,6 +34,8 @@ public string this[int index]
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("index"),
                 Token.Variables.ReadWrite("ToString"),
+                Token.Puncuation.Parenthesis.Open,
+                Token.Puncuation.Parenthesis.Close,
                 Token.Puncuation.Semicolon,
                 Token.Puncuation.CurlyBrace.Close,
                 Token.Puncuation.CurlyBrace.Close]);

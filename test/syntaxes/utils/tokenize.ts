@@ -171,6 +171,7 @@ export namespace Token {
         export const AttributeSpecifier = (text: string) => createToken(text, 'keyword.other.attribute-specifier.cs');
         export const Class = createToken('class', 'keyword.other.class.cs');
         export const Delegate = createToken('delegate', 'keyword.other.delegate.cs');
+        export const Do = createToken('do', 'keyword.control.loop.cs');
         export const Enum = createToken('enum', 'keyword.other.enum.cs');
         export const Event = createToken('event', 'keyword.other.event.cs');
         export const Extern = createToken('extern', 'keyword.other.extern.cs');
@@ -186,6 +187,7 @@ export namespace Token {
         export const This = createToken('this', 'keyword.other.this.cs');
         export const Using = createToken('using', 'keyword.other.using.cs');
         export const Where = createToken('where', 'keyword.other.where.cs');
+        export const While = createToken('while', 'keyword.control.loop.cs');
     }
 
     export namespace Literals {
