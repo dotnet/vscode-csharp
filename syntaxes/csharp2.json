@@ -733,14 +733,14 @@
             ]
         },
         "field-declaration": {
-            "begin": "(?=\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|readonly|volatile|const)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<first-field-name>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?!=>)(?:;|=))",
+            "begin": "(?=\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|readonly|volatile|const)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\.\\g<type-name>)?)\\s+(?<first-field-name>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?!=>)(?:;|=))",
             "end": "(?=;)",
             "patterns": [
                 {
                     "include": "#comment"
                 },
                 {
-                    "begin": "\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|readonly|volatile|const)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<first-field-name>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?!=>)(?=;|=)",
+                    "begin": "\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|readonly|volatile|const)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\.\\g<type-name>)?)\\s+(?<first-field-name>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?!=>)(?=;|=)",
                     "beginCaptures": {
                         "1": {
                             "patterns": [
@@ -785,14 +785,14 @@
             ]
         },
         "property-declaration": {
-            "begin": "(?!.*\\b(?:class|interface|struct|enum|event)\\b)(?=\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<property-name>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?:\\{|=>|$))",
+            "begin": "(?!.*\\b(?:class|interface|struct|enum|event)\\b)(?=\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\.\\g<type-name>)?)\\s+(?<property-name>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?:\\{|=>|$))",
             "end": "(?=\\}|;)",
             "patterns": [
                 {
                     "include": "#comment"
                 },
                 {
-                    "match": "\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<property-name>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?=\\{|=>|$)",
+                    "match": "\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\.\\g<type-name>)?)\\s+(?<property-name>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?=\\{|=>|$)",
                     "captures": {
                         "1": {
                             "patterns": [
@@ -928,14 +928,14 @@
             ]
         },
         "indexer-declaration": {
-            "begin": "(?=\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<indexer-name>this)\\s*(?:\\[))",
+            "begin": "(?=\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\.\\g<type-name>)?)\\s+(?<indexer-name>this)\\s*(?:\\[))",
             "end": "(?=\\}|;)",
             "patterns": [
                 {
                     "include": "#comment"
                 },
                 {
-                    "match": "\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<indexer-name>this)\\s*(?=\\[)",
+                    "match": "\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\.\\g<type-name>)?)\\s+(?<indexer-name>this)\\s*(?=\\[)",
                     "captures": {
                         "1": {
                             "patterns": [
@@ -982,14 +982,14 @@
             ]
         },
         "event-declaration": {
-            "begin": "(?=\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\s+)*)\\s*\\b(?<event-keyword>event)\\b\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<event-names>[_$[:alpha:]][_$[:alnum:]]*(?:\\s*,\\s*[_$[:alpha:]][_$[:alnum:]]*)*)\\s*(?:\\{|;|$))",
+            "begin": "(?=\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\s+)*)\\s*\\b(?<event-keyword>event)\\b\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\.\\g<type-name>)?)\\s+(?<event-names>[_$[:alpha:]][_$[:alnum:]]*(?:\\s*,\\s*[_$[:alpha:]][_$[:alnum:]]*)*)\\s*(?:\\{|;|$))",
             "end": "(?=\\}|;)",
             "patterns": [
                 {
                     "include": "#comment"
                 },
                 {
-                    "match": "\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\s+)*)\\s*\\b(?<event-keyword>event)\\b\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?)\\s+(?<event-names>[_$[:alpha:]][_$[:alnum:]]*(?:\\s*,\\s*[_$[:alpha:]][_$[:alnum:]]*)*)\\s*(?=\\{|;|$)",
+                    "match": "\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\s+)*)\\s*\\b(?<event-keyword>event)\\b\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\.\\g<type-name>)?)\\s+(?<event-names>[_$[:alpha:]][_$[:alnum:]]*(?:\\s*,\\s*[_$[:alpha:]][_$[:alnum:]]*)*)\\s*(?=\\{|;|$)",
                     "captures": {
                         "1": {
                             "patterns": [
