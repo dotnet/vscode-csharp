@@ -1,4 +1,15 @@
-Important regular expressions:
+## TODO List:
+
+* Declaratiosn:
+    * Explicitly-implemented interface members
+    * Constructor declarations
+    * Destructor declarations
+    * Method declarations
+    * Operator declarations
+    * Conversion operator declarations
+    * Interface members
+
+## Important regular expressions:
 
 #### Identifier
 
