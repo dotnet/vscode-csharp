@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { tokenize, Tokens } from './utils/tokenizer';
+import { tokenize, Input, Tokens } from './utils/tokenizer';
 
 describe("Grammar", () => {
     before(() => should());
@@ -12,22 +12,15 @@ describe("Grammar", () => {
     describe("Property", () => {
         it("declaration", () => {
 
-            const input = `
-class Tester
+            const input = Input.InClass(`
+public IBooom Property
 {
-    public IBooom Property
-    {
-        get { return null; }
-        set { something = value; }
-    }
-}`;
-            let tokens = tokenize(input);
+    get { return null; }
+    set { something = value; }
+}`);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class,
-                Tokens.Identifiers.ClassName("Tester"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Keywords.Modifiers.Public,
                 Tokens.Type("IBooom"),
                 Tokens.Identifiers.PropertyName("Property"),
@@ -45,25 +38,15 @@ class Tester
                 Tokens.Variables.ReadWrite("value"),
                 Tokens.Puncuation.Semicolon,
                 Tokens.Puncuation.CurlyBrace.Close,
-                Tokens.Puncuation.CurlyBrace.Close,
-
                 Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("declaration single line", () => {
 
-            const input = `
-class Tester
-{
-    public IBooom Property { get { return null; } private set { something = value; } }
-}`;
-            let tokens = tokenize(input);
+            const input = Input.InClass(`public IBooom Property { get { return null; } private set { something = value; } }`);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class,
-                Tokens.Identifiers.ClassName("Tester"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Keywords.Modifiers.Public,
                 Tokens.Type("IBooom"),
                 Tokens.Identifiers.PropertyName("Property"),
@@ -82,25 +65,15 @@ class Tester
                 Tokens.Variables.ReadWrite("value"),
                 Tokens.Puncuation.Semicolon,
                 Tokens.Puncuation.CurlyBrace.Close,
-                Tokens.Puncuation.CurlyBrace.Close,
-
                 Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("declaration without modifiers", () => {
 
-            const input = `
-class Tester
-{
-    IBooom Property {get; set;}
-}`;
-            let tokens = tokenize(input);
+            const input = Input.InClass(`IBooom Property {get; set;}`);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class,
-                Tokens.Identifiers.ClassName("Tester"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Type("IBooom"),
                 Tokens.Identifiers.PropertyName("Property"),
                 Tokens.Puncuation.CurlyBrace.Open,
@@ -108,25 +81,15 @@ class Tester
                 Tokens.Puncuation.Semicolon,
                 Tokens.Keywords.Set,
                 Tokens.Puncuation.Semicolon,
-                Tokens.Puncuation.CurlyBrace.Close,
-
                 Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("auto-property single line", function () {
 
-            const input = `
-class Tester
-{
-    public IBooom Property { get; set; }
-}`;
-            let tokens = tokenize(input);
+            const input = Input.InClass(`public IBooom Property { get; set; }`);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class,
-                Tokens.Identifiers.ClassName("Tester"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Keywords.Modifiers.Public,
                 Tokens.Type("IBooom"),
                 Tokens.Identifiers.PropertyName("Property"),
@@ -135,25 +98,15 @@ class Tester
                 Tokens.Puncuation.Semicolon,
                 Tokens.Keywords.Set,
                 Tokens.Puncuation.Semicolon,
-                Tokens.Puncuation.CurlyBrace.Close,
-
                 Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("auto-property single line (protected internal)", function () {
 
-            const input = `
-class Tester
-{
-    protected internal IBooom Property { get; set; }
-}`;
-            let tokens = tokenize(input);
+            const input = Input.InClass(`protected internal IBooom Property { get; set; }`);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class,
-                Tokens.Identifiers.ClassName("Tester"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Keywords.Modifiers.Protected,
                 Tokens.Keywords.Modifiers.Internal,
                 Tokens.Type("IBooom"),
@@ -163,29 +116,20 @@ class Tester
                 Tokens.Puncuation.Semicolon,
                 Tokens.Keywords.Set,
                 Tokens.Puncuation.Semicolon,
-                Tokens.Puncuation.CurlyBrace.Close,
-
                 Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("auto-property", () => {
 
-            const input = `
-class Tester
+            const input = Input.InClass(`
+public IBooom Property
 {
-    public IBooom Property
-    {
-        get;
-        set;
-    }
-}`;
-            let tokens = tokenize(input);
+    get;
+    set;
+}`);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class,
-                Tokens.Identifiers.ClassName("Tester"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Keywords.Modifiers.Public,
                 Tokens.Type("IBooom"),
                 Tokens.Identifiers.PropertyName("Property"),
@@ -194,25 +138,15 @@ class Tester
                 Tokens.Puncuation.Semicolon,
                 Tokens.Keywords.Set,
                 Tokens.Puncuation.Semicolon,
-                Tokens.Puncuation.CurlyBrace.Close,
-
                 Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("generic auto-property", () => {
 
-            const input = `
-class Tester
-{
-    public Dictionary<string, List<T>[]> Property { get; set; }
-}`;
-            let tokens = tokenize(input);
+            const input = Input.InClass(`public Dictionary<string, List<T>[]> Property { get; set; }`);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class,
-                Tokens.Identifiers.ClassName("Tester"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Keywords.Modifiers.Public,
                 Tokens.Type("Dictionary"),
                 Tokens.Puncuation.TypeParameters.Begin,
@@ -231,26 +165,15 @@ class Tester
                 Tokens.Puncuation.Semicolon,
                 Tokens.Keywords.Set,
                 Tokens.Puncuation.Semicolon,
-                Tokens.Puncuation.CurlyBrace.Close,
-
                 Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("auto-property initializer", () => {
 
-            const input = `
-class Tester
-{
-    public Dictionary<string, List<T>[]> Property { get; } = new Dictionary<string, List<T>[]>();
-}`;
-
-            let tokens = tokenize(input);
+            const input = Input.InClass(`public Dictionary<string, List<T>[]> Property { get; } = new Dictionary<string, List<T>[]>();`);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class,
-                Tokens.Identifiers.ClassName("Tester"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Keywords.Modifiers.Public,
                 Tokens.Type("Dictionary"),
                 Tokens.Puncuation.TypeParameters.Begin,
@@ -283,28 +206,17 @@ class Tester
                 Tokens.Puncuation.TypeParameters.End,
                 Tokens.Puncuation.Parenthesis.Open,
                 Tokens.Puncuation.Parenthesis.Close,
-                Tokens.Puncuation.Semicolon,
-
-                Tokens.Puncuation.CurlyBrace.Close]);
+                Tokens.Puncuation.Semicolon]);
         });
 
         it("expression body", () => {
 
-            const input = `
-public class Tester
-{
-    private string prop1 => "hello";
-    private bool   prop2 => true;
-}`;
-
-            let tokens = tokenize(input);
+            const input = Input.InClass(`
+private string prop1 => "hello";
+private bool   prop2 => true;`);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public,
-                Tokens.Keywords.Class,
-                Tokens.Identifiers.ClassName("Tester"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Keywords.Modifiers.Private,
                 Tokens.Type("string"),
                 Tokens.Identifiers.PropertyName("prop1"),
@@ -319,9 +231,7 @@ public class Tester
                 Tokens.Identifiers.PropertyName("prop2"),
                 Tokens.Operators.Arrow,
                 Tokens.Literals.Boolean.True,
-                Tokens.Puncuation.Semicolon,
-
-                Tokens.Puncuation.CurlyBrace.Close]);
+                Tokens.Puncuation.Semicolon]);
         });
     });
 });

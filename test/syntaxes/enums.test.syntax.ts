@@ -12,11 +12,8 @@ describe("Grammar", () => {
     describe("Enums", () => {
         it("simple enum", () => {
 
-            const input = `
-enum E { }
-`;
-
-            let tokens = tokenize(input);
+            const input = `enum E { }`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Enum,
@@ -27,11 +24,8 @@ enum E { }
 
         it("enum with base type", () => {
 
-            const input = `
-enum E : byte { }
-`;
-
-            let tokens = tokenize(input);
+            const input = `enum E : byte { }`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Enum,
@@ -44,11 +38,8 @@ enum E : byte { }
 
         it("enum with single member", () => {
 
-            const input = `
-enum E { M1 }
-`;
-
-            let tokens = tokenize(input);
+            const input = `enum E { M1 }`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Enum,
@@ -60,11 +51,8 @@ enum E { M1 }
 
         it("enum with multiple members", () => {
 
-            const input = `
-enum Color { Red, Green, Blue }
-`;
-
-            let tokens = tokenize(input);
+            const input = `enum Color { Red, Green, Blue }`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Enum,
@@ -89,7 +77,7 @@ enum E
 }
 `;
 
-            let tokens = tokenize(input);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Enum,

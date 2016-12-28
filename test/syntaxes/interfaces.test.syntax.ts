@@ -12,11 +12,8 @@ describe("Grammar", () => {
     describe("Interfaces", () => {
         it("simple interface", () => {
 
-            const input = `
-interface IFoo { }
-`;
-
-            let tokens = tokenize(input);
+            const input = `interface IFoo { }`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Interface,
@@ -32,7 +29,7 @@ interface IFoo { }
 interface IBar : IFoo { }
 `;
 
-            let tokens = tokenize(input);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Interface,
@@ -49,11 +46,8 @@ interface IBar : IFoo { }
 
         it("generic interface", () => {
 
-            const input = `
-interface IFoo<T1, T2> { }
-`;
-
-            let tokens = tokenize(input);
+            const input = `interface IFoo<T1, T2> { }`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Interface,
@@ -64,11 +58,8 @@ interface IFoo<T1, T2> { }
 
         it("generic interface with variance", () => {
 
-            const input = `
-interface IFoo<in T1, out T2> { }
-`;
-
-            let tokens = tokenize(input);
+            const input = `interface IFoo<in T1, out T2> { }`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Interface,
@@ -79,11 +70,8 @@ interface IFoo<in T1, out T2> { }
 
         it("generic interface with constraints", () => {
 
-            const input = `
-interface IFoo<T1, T2> where T1 : T2 { }
-`;
-
-            let tokens = tokenize(input);
+            const input = `interface IFoo<T1, T2> where T1 : T2 { }`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Interface,

@@ -12,10 +12,8 @@ describe("Grammar", () => {
     describe("Attributes", () => {
         it("global attribute", () => {
 
-            const input = `
-[Foo]`;
-
-            let tokens = tokenize(input);
+            const input = `[Foo]`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open,
@@ -25,10 +23,8 @@ describe("Grammar", () => {
 
         it("global attribute with specifier", () => {
 
-            const input = `
-[assembly: Foo]`;
-
-            let tokens = tokenize(input);
+            const input = `[assembly: Foo]`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open,
@@ -40,10 +36,8 @@ describe("Grammar", () => {
 
         it("Two global attributes in same section with specifier", () => {
 
-            const input = `
-[module: Foo, Bar]`;
-
-            let tokens = tokenize(input);
+            const input = `[module: Foo, Bar]`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open,
@@ -57,10 +51,8 @@ describe("Grammar", () => {
 
         it("Two global attributes in same section with specifier and empty argument lists", () => {
 
-            const input = `
-[module: Foo(), Bar()]`;
-
-            let tokens = tokenize(input);
+            const input = `[module: Foo(), Bar()]`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open,
@@ -78,10 +70,8 @@ describe("Grammar", () => {
 
         it("Global attribute with one argument", () => {
 
-            const input = `
-[Foo(true)]`;
-
-            let tokens = tokenize(input);
+            const input = `[Foo(true)]`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open,
@@ -94,10 +84,8 @@ describe("Grammar", () => {
 
         it("Global attribute with two arguments", () => {
 
-            const input = `
-[Foo(true, 42)]`;
-
-            let tokens = tokenize(input);
+            const input = `[Foo(true, 42)]`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open,
@@ -112,10 +100,8 @@ describe("Grammar", () => {
 
         it("Global attribute with three arguments", () => {
 
-            const input = `
-[Foo(true, 42, "text")]`;
-
-            let tokens = tokenize(input);
+            const input = `[Foo(true, 42, "text")]`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open,
@@ -134,10 +120,8 @@ describe("Grammar", () => {
 
         it("Global attribute with named argument", () => {
 
-            const input = `
-[Foo(Bar = 42)]`;
-
-            let tokens = tokenize(input);
+            const input = `[Foo(Bar = 42)]`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open,
@@ -152,10 +136,8 @@ describe("Grammar", () => {
 
         it("Global attribute with one positional argument and one named argument", () => {
 
-            const input = `
-[Foo(true, Bar = 42)]`;
-
-            let tokens = tokenize(input);
+            const input = `[Foo(true, Bar = 42)]`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open,
@@ -172,10 +154,8 @@ describe("Grammar", () => {
 
         it("Global attribute with specifier, one positional argument, and two named arguments", () => {
 
-            const input = `
-[module: Foo(true, Bar = 42, Baz = "hello")]`;
-
-            let tokens = tokenize(input);
+            const input = `[module: Foo(true, Bar = 42, Baz = "hello")]`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open,

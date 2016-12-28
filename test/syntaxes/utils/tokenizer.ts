@@ -68,7 +68,7 @@ export class Input {
 
     public static InClass(input: string) {
         let text = `
-class Tester {
+class TestClass {
     ${input}
 }`;
 
@@ -81,8 +81,8 @@ class Tester {
 
     public static InMethod(input: string) {
         let text = `
-class Tester {
-    void M() {
+class TestClass {
+    void TestMethod() {
         ${input}
     }
 }`;
@@ -92,6 +92,19 @@ class Tester {
         let lines = text.split('\n');
 
         return new Input(lines, new Span(3, 8, lines.length - 2, 0));
+    }
+
+    public static InNamespace(input: string) {
+        let text = `
+namespace TestNamespace {
+    ${input}
+}`;
+
+        // ensure consistent line-endings irrelevant of OS
+        text = text.replace('\r\n', '\n');
+        let lines = text.split('\n');
+
+        return new Input(lines, new Span(2, 4, lines.length - 1, 0));
     }
 }
 

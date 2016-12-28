@@ -12,10 +12,8 @@ describe("Grammar", () => {
     describe("Comments", () => {
         it("single-line comment", () => {
 
-            const input = `
-// foo`;
-
-            let tokens = tokenize(input);
+            const input = `// foo`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Comment.SingleLine.Start,
@@ -24,10 +22,8 @@ describe("Grammar", () => {
 
         it("single-line comment after whitespace", () => {
 
-            const input = `
-    // foo`;
-
-            let tokens = tokenize(input);
+            const input = `    // foo`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Comment.LeadingWhitespace("    "),
@@ -37,10 +33,8 @@ describe("Grammar", () => {
 
         it("multi-line comment", () => {
 
-            const input = `
-/* foo */`;
-
-            let tokens = tokenize(input);
+            const input = `/* foo */`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Comment.MultiLine.Start,

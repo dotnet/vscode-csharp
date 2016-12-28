@@ -12,11 +12,8 @@ describe("Grammar", () => {
     describe("Delegates", () => {
         it("void delegate with no parameters", () => {
 
-            const input = `
-delegate void D();
-`;
-
-            let tokens = tokenize(input);
+            const input = `delegate void D();`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Delegate,
@@ -29,11 +26,8 @@ delegate void D();
 
         it("generic delegate with variance", () => {
 
-            const input = `
-delegate TResult D<in T, out TResult>(T arg1);
-`;
-
-            let tokens = tokenize(input);
+            const input = `delegate TResult D<in T, out TResult>(T arg1);`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Delegate,
@@ -53,7 +47,7 @@ delegate void D<T1, T2>()
     where T1 : T2;
 `;
 
-            let tokens = tokenize(input);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Delegate,
@@ -70,11 +64,8 @@ delegate void D<T1, T2>()
 
         it("delegate with multiple parameters", () => {
 
-            const input = `
-delegate int D(ref string x, out int y, params object[] z);
-`;
-
-            let tokens = tokenize(input);
+            const input = `delegate int D(ref string x, out int y, params object[] z);`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Delegate,

@@ -12,10 +12,8 @@ describe("Grammar", () => {
     describe("Using directives", () => {
         it("using namespace", () => {
 
-            const input = `
-using System;`;
-
-            let tokens = tokenize(input);
+            const input = `using System;`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Using,
@@ -25,10 +23,8 @@ using System;`;
 
         it("using static type", () => {
 
-            const input = `
-using static System.Console;`;
-
-            let tokens = tokenize(input);
+            const input = `using static System.Console;`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Using,
@@ -41,10 +37,8 @@ using static System.Console;`;
 
         it("namespace alias", () => {
 
-            const input = `
-using S = System;`;
-
-            let tokens = tokenize(input);
+            const input = `using S = System;`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Using,
@@ -56,10 +50,8 @@ using S = System;`;
 
         it("type alias", () => {
 
-            const input = `
-using C = System.Console;`;
-
-            let tokens = tokenize(input);
+            const input = `using C = System.Console;`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Using,
@@ -73,10 +65,8 @@ using C = System.Console;`;
 
         it("type alias with generic type", () => {
 
-            const input = `
-using IntList = System.Collections.Generic.List<System.Int32>;`;
-
-            let tokens = tokenize(input);
+            const input = `using IntList = System.Collections.Generic.List<System.Int32>;`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Using,
@@ -99,10 +89,8 @@ using IntList = System.Collections.Generic.List<System.Int32>;`;
 
         it("type alias with nested generic types", () => {
 
-            const input = `
-using X = System.Collections.Generic.Dictionary<System.Int32, System.Collections.Generic.List<System.String>>;`;
-
-            let tokens = tokenize(input);
+            const input = `using X = System.Collections.Generic.Dictionary<System.Int32, System.Collections.Generic.List<System.String>>;`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Using,
@@ -138,10 +126,8 @@ using X = System.Collections.Generic.Dictionary<System.Int32, System.Collections
         
         it("type alias with nested generic types and comments interspersed", () => {
 
-            const input = `
-using X =/**/Dictionary/**/</**/int/**/,/**/List/**/</**/string/**/>/**/>/**/;//end`;
-
-            let tokens = tokenize(input);
+            const input = `using X =/**/Dictionary/**/</**/int/**/,/**/List/**/</**/string/**/>/**/>/**/;//end`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Using,

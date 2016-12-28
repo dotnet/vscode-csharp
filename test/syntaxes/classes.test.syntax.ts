@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { tokenize, Tokens } from './utils/tokenizer';
+import { tokenize, Input, Tokens } from './utils/tokenizer';
 
 describe("Grammar", () => {
     before(() => should());
@@ -12,34 +12,28 @@ describe("Grammar", () => {
     describe("Class", () => {
         it("class keyword and storage modifiers", () => {
 
-            const input = `
-namespace TestNamespace
-{
-    public             class PublicClass { }
+            const input = Input.InNamespace(`
+public             class PublicClass { }
 
-                       class DefaultClass { }
+                    class DefaultClass { }
 
-    internal           class InternalClass { }
+internal           class InternalClass { }
 
-              static   class DefaultStaticClass { }
+            static   class DefaultStaticClass { }
 
-    public    static   class PublicStaticClass { }
+public    static   class PublicStaticClass { }
 
-              sealed   class DefaultSealedClass { }
+            sealed   class DefaultSealedClass { }
 
-    public    sealed   class PublicSealedClass { }
+public    sealed   class PublicSealedClass { }
 
-    public    abstract class PublicAbstractClass { }
+public    abstract class PublicAbstractClass { }
 
-              abstract class DefaultAbstractClass { }
-}`;
-            let tokens = tokenize(input);
+            abstract class DefaultAbstractClass { }`);
+
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Namespace,
-                Tokens.Identifiers.NamespaceName("TestNamespace"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Keywords.Modifiers.Public,
                 Tokens.Keywords.Class,
                 Tokens.Identifiers.ClassName("PublicClass"),
@@ -94,49 +88,31 @@ namespace TestNamespace
                 Tokens.Keywords.Class,
                 Tokens.Identifiers.ClassName("DefaultAbstractClass"),
                 Tokens.Puncuation.CurlyBrace.Open,
-                Tokens.Puncuation.CurlyBrace.Close,
-
                 Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("generics in identifier", () => {
 
-            const input = `
-namespace TestNamespace
-{
-    class Dictionary<TKey, TValue> { }
-}`;
-            let tokens = tokenize(input);
+            const input = Input.InNamespace(`class Dictionary<TKey, TValue> { }`);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Namespace,
-                Tokens.Identifiers.NamespaceName("TestNamespace"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Keywords.Class,
                 Tokens.Identifiers.ClassName("Dictionary<TKey, TValue>"),
                 Tokens.Puncuation.CurlyBrace.Open,
-                Tokens.Puncuation.CurlyBrace.Close,
-
                 Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("inheritance", () => {
 
-            const input = `
-namespace TestNamespace
-{
-    class PublicClass    : IInterface,    IInterfaceTwo { }
-    class PublicClass<T> : Root.IInterface<Something.Nested>, Something.IInterfaceTwo { }
-    class PublicClass<T> : Dictionary<T, Dictionary<string, string>>, IMap<T, Dictionary<string, string>> { }
-}`;
-            let tokens = tokenize(input);
+            const input = Input.InNamespace(`
+class PublicClass    : IInterface,    IInterfaceTwo { }
+class PublicClass<T> : Root.IInterface<Something.Nested>, Something.IInterfaceTwo { }
+class PublicClass<T> : Dictionary<T, Dictionary<string, string>>, IMap<T, Dictionary<string, string>> { }`);
+
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Namespace,
-                Tokens.Identifiers.NamespaceName("TestNamespace"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Keywords.Class,
                 Tokens.Identifiers.ClassName("PublicClass"),
                 Tokens.Puncuation.Colon,
@@ -191,30 +167,21 @@ namespace TestNamespace
                 Tokens.Puncuation.TypeParameters.End,
                 Tokens.Puncuation.TypeParameters.End,
                 Tokens.Puncuation.CurlyBrace.Open,
-                Tokens.Puncuation.CurlyBrace.Close,
-
                 Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("generic constraints", () => {
 
-            const input = `
-namespace TestNamespace
+            const input = Input.InNamespace(`
+class PublicClass<T> where T : ISomething { }
+class PublicClass<T, X> : Dictionary<T, List<string>[]>, ISomething
+    where T : ICar, new()
+    where X : struct
 {
-    class PublicClass<T> where T : ISomething { }
-    class PublicClass<T, X> : Dictionary<T, List<string>[]>, ISomething
-        where T : ICar, new()
-        where X : struct
-    {
-    }
-}`;
-            let tokens = tokenize(input);
+}`);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Namespace,
-                Tokens.Identifiers.NamespaceName("TestNamespace"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Keywords.Class,
                 Tokens.Identifiers.ClassName("PublicClass<T>"),
                 Tokens.Keywords.Where,
@@ -253,31 +220,22 @@ namespace TestNamespace
                 Tokens.Puncuation.Colon,
                 Tokens.Keywords.Struct,
                 Tokens.Puncuation.CurlyBrace.Open,
-                Tokens.Puncuation.CurlyBrace.Close,
-
                 Tokens.Puncuation.CurlyBrace.Close]);
         });
 
         it("nested class", () => {
 
-            const input = `
-namespace TestNamespace
+            const input = Input.InNamespace(`
+class Klass
 {
-    class Klass
+    public class Nested
     {
-        public class Nested
-        {
 
-        }
     }
-}`;
-            let tokens = tokenize(input);
+}`);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Namespace,
-                Tokens.Identifiers.NamespaceName("TestNamespace"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Keywords.Class,
                 Tokens.Identifiers.ClassName("Klass"),
                 Tokens.Puncuation.CurlyBrace.Open,
@@ -288,8 +246,6 @@ namespace TestNamespace
                 Tokens.Puncuation.CurlyBrace.Open,
                 Tokens.Puncuation.CurlyBrace.Close,
 
-                Tokens.Puncuation.CurlyBrace.Close,
-                
                 Tokens.Puncuation.CurlyBrace.Close]);
         });
     });

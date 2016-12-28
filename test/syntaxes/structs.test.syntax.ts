@@ -12,11 +12,8 @@ describe("Grammar", () => {
     describe("Structs", () => {
         it("simple struct", () => {
 
-            const input = `
-struct S { }
-`;
-
-            let tokens = tokenize(input);
+            const input = `struct S { }`;
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Struct,
@@ -31,8 +28,7 @@ struct S { }
 interface IFoo { }
 struct S : IFoo { }
 `;
-
-            let tokens = tokenize(input);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Interface,
@@ -52,8 +48,7 @@ struct S : IFoo { }
             const input = `
 struct S<T1, T2> { }
 `;
-
-            let tokens = tokenize(input);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Struct,
@@ -67,8 +62,7 @@ struct S<T1, T2> { }
             const input = `
 struct S<T1, T2> where T1 : T2 { }
 `;
-
-            let tokens = tokenize(input);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Struct,

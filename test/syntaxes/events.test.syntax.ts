@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { tokenize, Tokens } from './utils/tokenizer';
+import { tokenize, Input, Tokens } from './utils/tokenizer';
 
 describe("Grammar", () => {
     before(() => should());
@@ -12,98 +12,52 @@ describe("Grammar", () => {
     describe("Events", () => {
         it("declaration", () => {
 
-            const input = `
-public class Tester
-{
-    public event Type Event;
-}`;
-
-            let tokens = tokenize(input);
+            const input = Input.InClass(`public event Type Event;`);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public,
-                Tokens.Keywords.Class,
-                Tokens.Identifiers.ClassName("Tester"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Keywords.Modifiers.Public,
                 Tokens.Keywords.Event,
                 Tokens.Type("Type"),
                 Tokens.Identifiers.EventName("Event"),
-                Tokens.Puncuation.Semicolon,
-
-                Tokens.Puncuation.CurlyBrace.Close]);
+                Tokens.Puncuation.Semicolon]);
         });
 
         it("declaration with multiple modifiers", () => {
 
-            const input = `
-public class Tester
-{
-    protected internal event Type Event;
-}`;
-
-            let tokens = tokenize(input);
+            const input = Input.InClass(`protected internal event Type Event;`);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public,
-                Tokens.Keywords.Class,
-                Tokens.Identifiers.ClassName("Tester"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Keywords.Modifiers.Protected,
                 Tokens.Keywords.Modifiers.Internal,
                 Tokens.Keywords.Event,
                 Tokens.Type("Type"),
                 Tokens.Identifiers.EventName("Event"),
-                Tokens.Puncuation.Semicolon,
-
-                Tokens.Puncuation.CurlyBrace.Close]);
+                Tokens.Puncuation.Semicolon]);
         });
 
         it("declaration with multiple declarators", () => {
 
-            const input = `
-public class Tester
-{
-    public event Type Event1, Event2;
-}`;
-
-            let tokens = tokenize(input);
+            const input = Input.InClass(`public event Type Event1, Event2;`);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public,
-                Tokens.Keywords.Class,
-                Tokens.Identifiers.ClassName("Tester"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Keywords.Modifiers.Public,
                 Tokens.Keywords.Event,
                 Tokens.Type("Type"),
                 Tokens.Identifiers.EventName("Event1"),
                 Tokens.Puncuation.Comma,
                 Tokens.Identifiers.EventName("Event2"),
-                Tokens.Puncuation.Semicolon,
-
-                Tokens.Puncuation.CurlyBrace.Close]);
+                Tokens.Puncuation.Semicolon]);
         });
 
         it("generic", () => {
 
-            const input = `
-public class Tester
-{
-    public event EventHandler<List<T>, Dictionary<T, D>> Event;
-}`;
-
-            let tokens = tokenize(input);
+            const input = Input.InClass(`public event EventHandler<List<T>, Dictionary<T, D>> Event;`);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public,
-                Tokens.Keywords.Class,
-                Tokens.Identifiers.ClassName("Tester"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Keywords.Modifiers.Public,
                 Tokens.Keywords.Event,
                 Tokens.Type("EventHandler"),
@@ -121,31 +75,21 @@ public class Tester
                 Tokens.Puncuation.TypeParameters.End,
                 Tokens.Puncuation.TypeParameters.End,
                 Tokens.Identifiers.EventName("Event"),
-                Tokens.Puncuation.Semicolon,
-
-                Tokens.Puncuation.CurlyBrace.Close]);
+                Tokens.Puncuation.Semicolon]);
         });
 
         it("declaration with accessors", () => {
 
-            const input = `
-public class Tester
+            const input = Input.InClass(`
+public event Type Event
 {
-    public event Type Event
-    {
-        add { }
-        remove { }
-    }
-}`;
+    add { }
+    remove { }
+}`);
 
-            let tokens = tokenize(input);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public,
-                Tokens.Keywords.Class,
-                Tokens.Identifiers.ClassName("Tester"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Keywords.Modifiers.Public,
                 Tokens.Keywords.Event,
                 Tokens.Type("Type"),
@@ -157,8 +101,6 @@ public class Tester
                 Tokens.Keywords.Remove,
                 Tokens.Puncuation.CurlyBrace.Open,
                 Tokens.Puncuation.CurlyBrace.Close,
-                Tokens.Puncuation.CurlyBrace.Close,
-
                 Tokens.Puncuation.CurlyBrace.Close]);
         });
     });

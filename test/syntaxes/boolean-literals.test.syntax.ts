@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { tokenize, Tokens } from './utils/tokenizer';
+import { tokenize, Input, Tokens } from './utils/tokenizer';
 
 describe("Grammar", () => {
     before(() => should());
@@ -12,48 +12,28 @@ describe("Grammar", () => {
     describe("Literals - boolean", () => {
         it("true", () => {
 
-            const input = `
-class C {
-    bool x = true;
-}`;
-
-            let tokens = tokenize(input);
+            const input = Input.InClass(`bool x = true;`);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class,
-                Tokens.Identifiers.ClassName("C"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Type("bool"),
                 Tokens.Identifiers.FieldName("x"),
                 Tokens.Operators.Assignment,
                 Tokens.Literals.Boolean.True,
-                Tokens.Puncuation.Semicolon,
-
-                Tokens.Puncuation.CurlyBrace.Close]);
+                Tokens.Puncuation.Semicolon]);
         });
 
         it("false", () => {
 
-            const input = `
-class C {
-    bool x = false;
-}`;
-
-            let tokens = tokenize(input);
+            const input = Input.InClass(`bool x = false;`);
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class,
-                Tokens.Identifiers.ClassName("C"),
-                Tokens.Puncuation.CurlyBrace.Open,
-
                 Tokens.Type("bool"),
                 Tokens.Identifiers.FieldName("x"),
                 Tokens.Operators.Assignment,
                 Tokens.Literals.Boolean.False,
-                Tokens.Puncuation.Semicolon,
-                
-                Tokens.Puncuation.CurlyBrace.Close]);
+                Tokens.Puncuation.Semicolon]);
         });
     });
 });
