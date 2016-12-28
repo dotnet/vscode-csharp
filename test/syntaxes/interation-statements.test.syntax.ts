@@ -12,7 +12,7 @@ describe("Grammar", () => {
     describe.skip("Iteration statements (loops)", () => {
         it("single-line declaration with no parameters", () => {
 
-            const input = Input.InMethodBody(`
+            const input = Input.InMethod(`
 while (true) { }
 `);
 

@@ -66,7 +66,20 @@ export class Input {
         return new Input(lines, new Span(0, 0, lines.length - 1, lines[lines.length - 1].length));
     }
 
-    public static InMethodBody(input: string) {
+    public static InClass(input: string) {
+        let text = `
+class Tester {
+    ${input}
+}`;
+
+        // ensure consistent line-endings irrelevant of OS
+        text = text.replace('\r\n', '\n');
+        let lines = text.split('\n');
+
+        return new Input(lines, new Span(2, 4, lines.length - 1, 0));
+    }
+
+    public static InMethod(input: string) {
         let text = `
 class Tester {
     void M() {
@@ -78,7 +91,7 @@ class Tester {
         text = text.replace('\r\n', '\n');
         let lines = text.split('\n');
 
-        return new Input(lines, new Span(3, 8, lines.length - 1, 0));
+        return new Input(lines, new Span(3, 8, lines.length - 2, 0));
     }
 }
 

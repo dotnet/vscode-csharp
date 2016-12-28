@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { tokenize, Tokens } from './utils/tokenizer';
+import { tokenize, Input, Tokens } from './utils/tokenizer';
 
 describe("Grammar", () => {
     before(() => should());
@@ -12,21 +12,15 @@ describe("Grammar", () => {
     describe("Indexers", () => {
         it("declaration", () => {
 
-            const input = `
-class Tester
-{
+            const input = Input.InClass(`
     public string this[int index]
     {
         get { return index.ToString(); }
-    }
-}`;
-            let tokens = tokenize(input);
+    }`);
+
+            const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Class(2, 1),
-                Tokens.Identifiers.ClassName("Tester", 2, 7),
-                Tokens.Puncuation.CurlyBrace.Open(3, 1),
-
                 Tokens.Keywords.Modifiers.Public(4, 5),
                 Tokens.Type("string", 4, 12),
                 Tokens.Keywords.This(4, 19),
@@ -42,9 +36,7 @@ class Tester
                 Tokens.Variables.ReadWrite("ToString", 6, 28),
                 Tokens.Puncuation.Semicolon(6, 38),
                 Tokens.Puncuation.CurlyBrace.Close(6, 40),
-                Tokens.Puncuation.CurlyBrace.Close(7, 5),
-
-                Tokens.Puncuation.CurlyBrace.Close(8, 1)]);
+                Tokens.Puncuation.CurlyBrace.Close(7, 5)]);
         });
     });
 });
