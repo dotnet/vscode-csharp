@@ -17,7 +17,7 @@ describe("Grammar", () => {
 extern alias X;
 extern alias Y;`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Extern(2, 1),

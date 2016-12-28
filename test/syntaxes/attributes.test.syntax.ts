@@ -16,7 +16,7 @@ describe("Grammar", () => {
             const input = `
 [Foo]`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open(2, 1),
@@ -29,7 +29,7 @@ describe("Grammar", () => {
             const input = `
 [assembly: Foo]`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open(2, 1),
@@ -44,7 +44,7 @@ describe("Grammar", () => {
             const input = `
 [module: Foo, Bar]`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open(2, 1),
@@ -61,7 +61,7 @@ describe("Grammar", () => {
             const input = `
 [module: Foo(), Bar()]`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open(2, 1),
@@ -82,7 +82,7 @@ describe("Grammar", () => {
             const input = `
 [Foo(true)]`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open(2, 1),
@@ -98,7 +98,7 @@ describe("Grammar", () => {
             const input = `
 [Foo(true, 42)]`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open(2, 1),
@@ -116,7 +116,7 @@ describe("Grammar", () => {
             const input = `
 [Foo(true, 42, "text")]`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open(2, 1),
@@ -138,7 +138,7 @@ describe("Grammar", () => {
             const input = `
 [Foo(Bar = 42)]`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open(2, 1),
@@ -156,7 +156,7 @@ describe("Grammar", () => {
             const input = `
 [Foo(true, Bar = 42)]`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open(2, 1),
@@ -176,7 +176,7 @@ describe("Grammar", () => {
             const input = `
 [module: Foo(true, Bar = 42, Baz = "hello")]`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Puncuation.SquareBracket.Open(2, 1),

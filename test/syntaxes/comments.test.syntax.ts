@@ -16,7 +16,7 @@ describe("Grammar", () => {
             const input = `
 // foo`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Comment.SingleLine.Start(2, 1),
@@ -28,7 +28,7 @@ describe("Grammar", () => {
             const input = `
     // foo`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Comment.LeadingWhitespace("    ", 2, 1),
@@ -41,7 +41,7 @@ describe("Grammar", () => {
             const input = `
 /* foo */`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Comment.MultiLine.Start(2, 1),

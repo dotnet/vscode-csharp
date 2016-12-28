@@ -19,7 +19,7 @@ public class Tester
     public event Type Event;
 }`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Modifiers.Public(2, 1),
@@ -44,7 +44,7 @@ public class Tester
     protected internal event Type Event;
 }`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Modifiers.Public(2, 1),
@@ -70,7 +70,7 @@ public class Tester
     public event Type Event1, Event2;
 }`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Modifiers.Public(2, 1),
@@ -97,7 +97,7 @@ public class Tester
     public event EventHandler<List<T>, Dictionary<T, D>> Event;
 }`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Modifiers.Public(2, 1),
@@ -139,7 +139,7 @@ public class Tester
     }
 }`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Modifiers.Public(2, 1),

@@ -20,7 +20,7 @@ class C {
     }
 }`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.Puncuation.SquareBracket.Open(2, 1));
             tokens.should.contain(Tokens.Type("Foo", 2, 2));

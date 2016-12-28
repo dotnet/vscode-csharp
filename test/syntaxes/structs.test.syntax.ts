@@ -17,7 +17,7 @@ describe("Grammar", () => {
 struct S { }
 `;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Struct(2, 1),
@@ -33,7 +33,7 @@ interface IFoo { }
 struct S : IFoo { }
 `;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Interface(2, 1),
@@ -54,7 +54,7 @@ struct S : IFoo { }
 struct S<T1, T2> { }
 `;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Struct(2, 1),
@@ -69,7 +69,7 @@ struct S<T1, T2> { }
 struct S<T1, T2> where T1 : T2 { }
 `;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Struct(2, 1),

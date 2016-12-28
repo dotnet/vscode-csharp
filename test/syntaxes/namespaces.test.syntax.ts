@@ -17,7 +17,7 @@ describe("Grammar", () => {
 namespace TestNamespace
 {
 }`;
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Namespace(2, 1),
@@ -32,7 +32,7 @@ namespace TestNamespace
 namespace Test.Namespace
 {
 }`;
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Namespace(2, 1),
@@ -52,7 +52,7 @@ namespace TestNamespace
 
     }
 }`;
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Namespace(2, 1),
@@ -84,7 +84,7 @@ namespace TestNamespace
         using three = UsingThree.Something;
     }
 }`;
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Using(2, 1),

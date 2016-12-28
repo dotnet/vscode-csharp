@@ -17,7 +17,7 @@ describe("Grammar", () => {
 delegate void D();
 `;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Delegate(2, 1),
@@ -34,7 +34,7 @@ delegate void D();
 delegate TResult D<in T, out TResult>(T arg1);
 `;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Delegate(2, 1),
@@ -54,7 +54,7 @@ delegate void D<T1, T2>()
     where T1 : T2;
 `;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Delegate(2, 1),
@@ -75,7 +75,7 @@ delegate void D<T1, T2>()
 delegate int D(ref string x, out int y, params object[] z);
 `;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Delegate(2, 1),

@@ -34,7 +34,7 @@ namespace TestNamespace
 
               abstract class DefaultAbstractClass { }
 }`;
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Namespace(2, 1),
@@ -107,7 +107,7 @@ namespace TestNamespace
 {
     class Dictionary<TKey, TValue> { }
 }`;
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Namespace(2, 1),
@@ -131,7 +131,7 @@ namespace TestNamespace
     class PublicClass<T> : Root.IInterface<Something.Nested>, Something.IInterfaceTwo { }
     class PublicClass<T> : Dictionary<T, Dictionary<string, string>>, IMap<T, Dictionary<string, string>> { }
 }`;
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Namespace(2, 1),
@@ -209,7 +209,7 @@ namespace TestNamespace
     {
     }
 }`;
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Namespace(2, 1),
@@ -272,7 +272,7 @@ namespace TestNamespace
         }
     }
 }`;
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Namespace(2, 1),

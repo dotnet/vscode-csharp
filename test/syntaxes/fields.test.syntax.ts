@@ -21,7 +21,7 @@ public class Tester
     private List field123;
 }`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Modifiers.Public(2, 1),
@@ -55,7 +55,7 @@ public class Tester
     private Dictionary< List<T>, Dictionary<T, D>> _field;
 }`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Modifiers.Public(2, 1),
@@ -95,7 +95,7 @@ public class Tester
     string _field3;
 }`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Modifiers.Public(2, 1),
@@ -131,7 +131,7 @@ public class Tester
     string[] field123;
 }`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Modifiers.Public(2, 1),
@@ -161,7 +161,7 @@ public class Tester
     const   bool   field = true;
 }`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Modifiers.Public(2, 1),
@@ -196,7 +196,7 @@ public class Tester
     int x = 19, y = 23, z = 42;
 }`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Modifiers.Public(2, 1),

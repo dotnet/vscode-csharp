@@ -22,7 +22,7 @@ class Tester
         set { something = value; }
     }
 }`;
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Class(2, 1),
@@ -53,7 +53,7 @@ class Tester
 {
     public IBooom Property { get { return null; } private set { something = value; } }
 }`;
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Class(2, 1),
@@ -85,7 +85,7 @@ class Tester
 {
     IBooom Property {get; set;}
 }`;
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Class(2, 1),
@@ -111,7 +111,7 @@ class Tester
 {
     public IBooom Property { get; set; }
 }`;
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Class(2, 1),
@@ -138,7 +138,7 @@ class Tester
 {
     protected internal IBooom Property { get; set; }
 }`;
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Class(2, 1),
@@ -170,7 +170,7 @@ class Tester
         set;
     }
 }`;
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Class(2, 1),
@@ -197,7 +197,7 @@ class Tester
 {
     public Dictionary<string, List<T>[]> Property { get; set; }
 }`;
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Class(2, 1),
@@ -235,7 +235,7 @@ class Tester
     public Dictionary<string, List<T>[]> Property { get; } = new Dictionary<string, List<T>[]>();
 }`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Class(2, 1),
@@ -288,7 +288,7 @@ public class Tester
     private bool   prop2 => true;
 }`;
 
-            let tokens = TokenizerUtil.tokenize2(input);
+            let tokens = TokenizerUtil.tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Modifiers.Public(2, 1),
