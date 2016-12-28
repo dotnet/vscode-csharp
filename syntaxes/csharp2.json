@@ -123,7 +123,16 @@
         "statement": {
             "patterns": [
                 {
-                    "include": "#return-statement"
+                    "include": "#comment"
+                },
+                {
+                    "include": "#control-statement"
+                },
+                {
+                    "include": "#expression"
+                },
+                {
+                    "include": "#punctuation-semicolon"
                 }
             ]
         },
@@ -1086,9 +1095,6 @@
             "patterns": [
                 {
                     "include": "#statement"
-                },
-                {
-                    "include": "#punctuation-semicolon"
                 }
             ]
         },
@@ -1120,17 +1126,11 @@
                 }
             ]
         },
-        "return-statement": {
-            "begin": "\\b(return)\\b",
-            "beginCaptures": {
-                "1": {
-                    "name": "keyword.other.return.cs"
-                }
-            },
-            "end": "(?=;)",
+        "control-statement": {
             "patterns": [
                 {
-                    "include": "#expression"
+                    "name": "keyword.control.flow.cs",
+                    "match": "(?<!\\.)\\b(return)\\b"
                 }
             ]
         },
@@ -1295,6 +1295,10 @@
         },
         "expression-operators": {
             "patterns": [
+                {
+                    "name": "keyword.operator.assignment.cs",
+                    "match": "\\="
+                },
                 {
                     "name": "keyword.operator.arithmetic.cs",
                     "match": "%|\\*|/|-|\\+"

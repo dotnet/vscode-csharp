@@ -9,23 +9,30 @@ const registry = new Registry();
 const grammar = registry.loadGrammarFromPathSync('syntaxes/csharp2.json');
 const excludedTypes = ['source.cs', 'meta.interpolation.cs', 'meta.type.parameters.cs']
 
-export function tokenize(input: string, excludeTypes: boolean = true): Token[] {
+export function tokenize(input: string | Input, excludeTypes: boolean = true): Token[] {
+    if (typeof input === "string") {
+        input = Input.FromText(input);
+    }
+
     let tokens: Token[] = [];
-
-    // ensure consistent line-endings irrelevant of OS
-    input = input.replace('\r\n', '\n');
-
     let previousStack: StackElement = null;
 
-    const lines = input.split('\n');
-
-    for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-        const line = lines[lineIndex];
+    for (let lineIndex = 0; lineIndex < input.lines.length; lineIndex++) {
+        const line = input.lines[lineIndex];
 
         let lineResult = grammar.tokenizeLine(line, previousStack);
         previousStack = lineResult.ruleStack;
 
+        if (lineIndex < input.span.startLine || lineIndex > input.span.endLine) {
+            continue;
+        }
+
         for (const token of lineResult.tokens) {
+            if ((lineIndex === input.span.startLine && token.startIndex < input.span.startIndex) ||
+                (lineIndex === input.span.endLine && token.endIndex > input.span.endIndex)) {
+                continue;
+            }
+
             const text = line.substring(token.startIndex, token.endIndex);
             const type = token.scopes[token.scopes.length - 1];
 
@@ -38,18 +45,49 @@ export function tokenize(input: string, excludeTypes: boolean = true): Token[] {
     return tokens;
 }
 
-export class Token {
-    constructor(text: string, type: string, line?: number, column?: number) {
-        this.text = text;
-        this.type = type;
-        this.column = column;
-        this.line = line;
+export class Span {
+    constructor(
+        public startLine: number,
+        public startIndex: number,
+        public endLine: number,
+        public endIndex: number) { }
+}
+
+export class Input {
+    private constructor(
+        public lines: string[],
+        public span: Span) { }
+
+    public static FromText(text: string) {
+        // ensure consistent line-endings irrelevant of OS
+        text = text.replace('\r\n', '\n');
+        let lines = text.split('\n');
+
+        return new Input(lines, new Span(0, 0, lines.length - 1, lines[lines.length - 1].length));
     }
 
-    public text: string;
-    public type: string;
-    public line: number;
-    public column: number;
+    public static InMethodBody(input: string) {
+        let text = `
+class Tester {
+    void M() {
+        ${input}
+    }
+}`;
+
+        // ensure consistent line-endings irrelevant of OS
+        text = text.replace('\r\n', '\n');
+        let lines = text.split('\n');
+
+        return new Input(lines, new Span(3, 8, lines.length - 1, 0));
+    }
+}
+
+export class Token {
+    constructor(
+        public text: string,
+        public type: string,
+        public line?: number,
+        public column?: number) { }
 }
 
 export namespace Tokens {
@@ -202,7 +240,7 @@ export namespace Tokens {
             createToken('remove', 'keyword.other.remove.cs', line, column);
 
         export const Return = (line?: number, column?: number) =>
-            createToken('return', 'keyword.other.return.cs', line, column);
+            createToken('return', 'keyword.control.flow.cs', line, column);
 
         export const Set = (line?: number, column?: number) =>
             createToken('set', 'keyword.other.set.cs', line, column);
@@ -270,10 +308,10 @@ export namespace Tokens {
             export const Subtraction = (line?: number, column?: number) =>
                 createToken('-', 'keyword.operator.arithmetic.cs', line, column);
         }
- 
+
         export const Assignment = (line?: number, column?: number) =>
             createToken('=', 'keyword.operator.assignment.cs', line, column);
-   }
+    }
 
     export namespace Puncuation {
         export const Accessor = (line?: number, column?: number) =>

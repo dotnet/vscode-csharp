@@ -4,7 +4,6 @@
     * Explicitly-implemented interface members
     * Constructor declarations
     * Destructor declarations
-    * Method declarations
     * Operator declarations
     * Conversion operator declarations
     * Interface members
