@@ -104,6 +104,9 @@ export namespace Tokens {
         export const InterfaceName = (text: string, line?: number, column?: number) =>
             createToken(text, 'entity.name.type.interface.cs', line, column);
 
+        export const MethodName = (text: string, line?: number, column?: number) =>
+            createToken(text, 'entity.name.function.cs', line, column);
+
         export const NamespaceName = (text: string, line?: number, column?: number) =>
             createToken(text, 'entity.name.type.namespace.cs', line, column);
 

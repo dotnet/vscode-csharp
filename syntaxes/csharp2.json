@@ -85,6 +85,9 @@
                     "include": "#field-declaration"
                 },
                 {
+                    "include": "#method-declaration"
+                },
+                {
                     "include": "#punctuation-semicolon"
                 }
             ]
@@ -108,6 +111,9 @@
                 },
                 {
                     "include": "#variable-initializer"
+                },
+                {
+                    "include": "#method-declaration"
                 },
                 {
                     "include": "#punctuation-semicolon"
@@ -829,104 +835,6 @@
                 }
             ]
         },
-        "property-accessors": {
-            "begin": "\\{",
-            "beginCaptures": {
-                "0": {
-                    "name": "punctuation.curlybrace.open.cs"
-                }
-            },
-            "end": "\\}",
-            "endCaptures": {
-                "0": {
-                    "name": "punctuation.curlybrace.close.cs"
-                }
-            },
-            "patterns": [
-                {
-                    "match": "\\b((?:(?:private|protected|internal)\\s+)*)\\b(get|set)\\s*(;)",
-                    "captures": {
-                        "1": {
-                            "patterns": [
-                                {
-                                    "match": "\\b(private|protected|internal)\\b",
-                                    "captures": {
-                                        "1": {
-                                            "name": "storage.modifier.cs"
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        "2": {
-                            "patterns": [
-                                {
-                                    "match": "get",
-                                    "name": "keyword.other.get.cs"
-                                },
-                                {
-                                    "match": "set",
-                                    "name": "keyword.other.set.cs"
-                                }
-                            ]
-                        },
-                        "3": {
-                            "patterns": [
-                                {
-                                    "include": "#statements"
-                                },
-                                {
-                                    "include": "#punctuation-semicolon"
-                                }
-                            ]
-                        }
-                    }
-                },
-                {
-                    "begin": "\\b((?:(?:private|protected|internal)\\s+)*)\\b(get|set)\\b\\s*(\\{)",
-                    "beginCaptures": {
-                        "1": {
-                            "patterns": [
-                                {
-                                    "match": "\\b(private|protected|internal)\\b",
-                                    "captures": {
-                                        "1": {
-                                            "name": "storage.modifier.cs"
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        "2": {
-                            "patterns": [
-                                {
-                                    "match": "get",
-                                    "name": "keyword.other.get.cs"
-                                },
-                                {
-                                    "match": "set",
-                                    "name": "keyword.other.set.cs"
-                                }
-                            ]
-                        },
-                        "3": {
-                            "name": "punctuation.curlybrace.open.cs"
-                        }
-                    },
-                    "end": "\\}",
-                    "endCaptures": {
-                        "0": {
-                            "name": "punctuation.curlybrace.close.cs"
-                        }
-                    },
-                    "patterns": [
-                        {
-                            "include": "#punctuation-semicolon"
-                        }
-                    ]
-                }
-            ]
-        },
         "indexer-declaration": {
             "begin": "(?=\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\.\\g<type-name>)?)\\s+(?<indexer-name>this)\\s*(?:\\[))",
             "end": "(?=\\}|;)",
@@ -1034,6 +942,40 @@
                 }
             ]
         },
+        "property-accessors": {
+            "begin": "\\{",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.curlybrace.open.cs"
+                }
+            },
+            "end": "\\}",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.curlybrace.close.cs"
+                }
+            },
+            "patterns": [
+                {
+                    "match": "\\b(private|protected|internal)\\b",
+                    "name": "storage.modifier.cs"
+                },
+                {
+                    "match": "\\b(get)\\b",
+                    "name": "keyword.other.get.cs"
+                },
+                {
+                    "match": "\\b(set)\\b",
+                    "name": "keyword.other.set.cs"
+                },
+                {
+                    "include": "#block"
+                },
+                {
+                    "include": "#punctuation-semicolon"
+                }
+            ]
+        },
         "event-accessors": {
             "begin": "\\{",
             "beginCaptures": {
@@ -1049,62 +991,97 @@
             },
             "patterns": [
                 {
-                    "match": "\\b(add|remove)\\s*(;)",
+                    "match": "\\b(add)\\b",
+                    "name": "keyword.other.add.cs"
+                },
+                {
+                    "match": "\\b(remove)\\b",
+                    "name": "keyword.other.remove.cs"
+                },
+                {
+                    "include": "#block"
+                },
+                {
+                    "include": "#punctuation-semicolon"
+                }
+            ]
+        },
+        "method-declaration": {
+            "begin": "(?=\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\.\\g<type-name>)?)\\s+(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)(?:\\s*<\\s*\\g<identifier>(?:\\s*,\\s*\\g<identifier>)*\\s*>\\s*)?\\s*(?:\\())",
+            "end": "(?=\\}|;)",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "match": "\\b(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\\s+)*)\\s*(?<type-name>(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\.\\g<type-name>)?)\\s+(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)(?:\\s*<\\s*\\g<identifier>(?:\\s*,\\s*\\g<identifier>)*\\s*>\\s*)?\\s*(?=\\()",
                     "captures": {
                         "1": {
                             "patterns": [
                                 {
-                                    "match": "add",
-                                    "name": "keyword.other.add.cs"
-                                },
-                                {
-                                    "match": "remove",
-                                    "name": "keyword.other.remove.cs"
+                                    "match": "\\b(new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\\b",
+                                    "captures": {
+                                        "1": {
+                                            "name": "storage.modifier.cs"
+                                        }
+                                    }
                                 }
                             ]
                         },
                         "2": {
                             "patterns": [
                                 {
-                                    "include": "#punctuation-semicolon"
+                                    "include": "#type"
                                 }
                             ]
+                        },
+                        "3": {
+                            "name": "entity.name.function.cs"
                         }
                     }
                 },
                 {
-                    "begin": "\\b(add|remove)\\b\\s*(\\{)",
-                    "beginCaptures": {
-                        "1": {
-                            "patterns": [
-                                {
-                                    "match": "add",
-                                    "name": "keyword.other.add.cs"
-                                },
-                                {
-                                    "match": "remove",
-                                    "name": "keyword.other.remove.cs"
-                                }
-                            ]
-                        },
-                        "2": {
-                            "name": "punctuation.curlybrace.open.cs"
-                        }
-                    },
-                    "end": "\\}",
-                    "endCaptures": {
-                        "0": {
-                            "name": "punctuation.curlybrace.close.cs"
-                        }
-                    },
+                    "begin": "(?=\\()",
+                    "end": "(?=\\))",
                     "patterns": [
                         {
-                            "include": "#statements"
-                        },
-                        {
-                            "include": "#punctuation-semicolon"
+                            "include": "#parenthesized-parameter-list"
                         }
                     ]
+                },
+                {
+                    "include": "#expression-body"
+                },
+                {
+                    "begin": "(?=\\{)",
+                    "end": "(?=\\})",
+                    "patterns": [
+                        {
+                            "include": "#block"
+                        }
+                    ]
+                }
+            ]
+        },
+        "block": {
+            "begin": "\\{",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.curlybrace.open.cs"
+                }
+            },
+            "end": "\\}",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.curlybrace.close.cs"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#statements"
+                },
+                {
+                    "include": "#punctuation-semicolon"
                 }
             ]
         },
