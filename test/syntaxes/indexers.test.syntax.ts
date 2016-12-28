@@ -4,8 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { Tokens } from './utils/tokenizer';
-import { TokenizerUtil } from './utils/tokenizerUtil';
+import { tokenize, Tokens } from './utils/tokenizer';
 
 describe("Grammar", () => {
     before(() => should());
@@ -21,7 +20,7 @@ class Tester
         get { return index.ToString(); }
     }
 }`;
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Class(2, 1),

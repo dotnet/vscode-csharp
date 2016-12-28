@@ -4,8 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { Tokens } from './utils/tokenizer';
-import { TokenizerUtil } from './utils/tokenizerUtil';
+import { tokenize, Tokens } from './utils/tokenizer';
 
 describe("Grammar", () => {
     before(() => should());
@@ -19,7 +18,7 @@ public class Tester
     string test = $"hello {one} world {two}!";
 }`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Modifiers.Public(2, 1),
@@ -54,7 +53,7 @@ public class Tester
     string test = $"hello world!";
 }`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Modifiers.Public(2, 1),
@@ -82,7 +81,7 @@ public class Tester
 world!";
 }`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Modifiers.Public(2, 1),
@@ -111,7 +110,7 @@ public class Tester
     string test = $@"hello {one} world {two}!";
 }`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Modifiers.Public(2, 1),
@@ -147,7 +146,7 @@ public class Tester
     world {two}!";
 }`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Modifiers.Public(2, 1),
@@ -183,7 +182,7 @@ public class Tester
     world!";
 }`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Modifiers.Public(2, 1),
@@ -204,5 +203,3 @@ public class Tester
         });
     });
 });
-
-

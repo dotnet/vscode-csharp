@@ -4,8 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { Tokens } from './utils/tokenizer';
-import { TokenizerUtil } from './utils/tokenizerUtil';
+import { tokenize, Tokens } from './utils/tokenizer';
 
 describe("Grammar", () => {
     before(() => should());
@@ -17,7 +16,7 @@ describe("Grammar", () => {
 interface IFoo { }
 `;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Interface(2, 1),
@@ -33,7 +32,7 @@ interface IFoo { }
 interface IBar : IFoo { }
 `;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Interface(2, 1),
@@ -54,7 +53,7 @@ interface IBar : IFoo { }
 interface IFoo<T1, T2> { }
 `;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Interface(2, 1),
@@ -69,7 +68,7 @@ interface IFoo<T1, T2> { }
 interface IFoo<in T1, out T2> { }
 `;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Interface(2, 1),
@@ -84,7 +83,7 @@ interface IFoo<in T1, out T2> { }
 interface IFoo<T1, T2> where T1 : T2 { }
 `;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Interface(2, 1),
@@ -98,5 +97,3 @@ interface IFoo<T1, T2> where T1 : T2 { }
         });
     });
 });
-
-

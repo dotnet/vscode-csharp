@@ -3,46 +3,39 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ITokenizeLineResult, Registry, IGrammar, StackElement } from 'vscode-textmate';
+import { ITokenizeLineResult, Registry, StackElement } from 'vscode-textmate';
 
-export class Tokenizer {
-    private _registry: Registry;
-    private _grammar: IGrammar;
+const registry = new Registry();
+const grammar = registry.loadGrammarFromPathSync('syntaxes/csharp2.json');
+const excludedTypes = ['source.cs', 'meta.interpolation.cs', 'meta.type.parameters.cs']
 
-    private static readonly _excludedTypes: string[] = ['source.cs', 'meta.interpolation.cs', 'meta.type.parameters.cs'];
+export function tokenize(input: string, excludeTypes: boolean = true): Token[] {
+    let tokens: Token[] = [];
 
-    constructor(grammarFilePath: string) {
-        this._grammar = new Registry().loadGrammarFromPathSync(grammarFilePath);
-    }
+    // ensure consistent line-endings irrelevant of OS
+    input = input.replace('\r\n', '\n');
 
-    public tokenize(input: string, excludeTypes?: boolean): Token[] {
-        let tokens: Token[] = [];
+    let previousStack: StackElement = null;
 
-        // ensure consistent line-endings irrelevant of OS
-        input = input.replace('\r\n', '\n');
+    const lines = input.split('\n');
 
-        let previousStack: StackElement = null;
+    for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+        const line = lines[lineIndex];
 
-        const lines: string[] = input.split('\n');
+        let lineResult = grammar.tokenizeLine(line, previousStack);
+        previousStack = lineResult.ruleStack;
 
-        for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-            const line = lines[lineIndex];
+        for (const token of lineResult.tokens) {
+            const text = line.substring(token.startIndex, token.endIndex);
+            const type = token.scopes[token.scopes.length - 1];
 
-            let result: ITokenizeLineResult = this._grammar.tokenizeLine(line, previousStack);
-            previousStack = result.ruleStack;
-
-            for (const token of result.tokens) {
-                const text = line.substring(token.startIndex, token.endIndex);
-                const type: string = token.scopes[token.scopes.length - 1];
-
-                if (excludeTypes === false || Tokenizer._excludedTypes.indexOf(type) < 0) {
-                    tokens.push(new Token(text, type, lineIndex + 1, token.startIndex + 1));
-                }
+            if (excludeTypes === false || excludedTypes.indexOf(type) < 0) {
+                tokens.push(new Token(text, type, lineIndex + 1, token.startIndex + 1));
             }
         }
-
-        return tokens;
     }
+
+    return tokens;
 }
 
 export class Token {

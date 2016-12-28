@@ -4,8 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { Tokens } from './utils/tokenizer';
-import { TokenizerUtil } from './utils/tokenizerUtil';
+import { tokenize, Tokens } from './utils/tokenizer';
 
 describe("Grammar", () => {
     before(() => should());
@@ -17,7 +16,7 @@ describe("Grammar", () => {
 namespace TestNamespace
 {
 }`;
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Namespace(2, 1),
@@ -32,7 +31,7 @@ namespace TestNamespace
 namespace Test.Namespace
 {
 }`;
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Namespace(2, 1),
@@ -52,7 +51,7 @@ namespace TestNamespace
 
     }
 }`;
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Namespace(2, 1),
@@ -84,7 +83,7 @@ namespace TestNamespace
         using three = UsingThree.Something;
     }
 }`;
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Using(2, 1),
@@ -136,5 +135,3 @@ namespace TestNamespace
         });
     });
 });
-
-

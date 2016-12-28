@@ -4,8 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { Tokens } from './utils/tokenizer';
-import { TokenizerUtil } from './utils/tokenizerUtil';
+import { tokenize, Tokens } from './utils/tokenizer';
 
 describe("Grammar", () => {
     before(() => should());
@@ -17,7 +16,7 @@ describe("Grammar", () => {
 extern alias X;
 extern alias Y;`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Extern(2, 1),

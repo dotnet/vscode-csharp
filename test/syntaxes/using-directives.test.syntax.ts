@@ -4,8 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { Tokens } from './utils/tokenizer';
-import { TokenizerUtil } from './utils/tokenizerUtil';
+import { tokenize, Tokens } from './utils/tokenizer';
 
 describe("Grammar", () => {
     before(() => should());
@@ -16,7 +15,7 @@ describe("Grammar", () => {
             const input = `
 using System;`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Using(2, 1),
@@ -29,7 +28,7 @@ using System;`;
             const input = `
 using static System.Console;`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Using(2, 1),
@@ -45,7 +44,7 @@ using static System.Console;`;
             const input = `
 using S = System;`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Using(2, 1),
@@ -60,7 +59,7 @@ using S = System;`;
             const input = `
 using C = System.Console;`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Using(2, 1),
@@ -77,7 +76,7 @@ using C = System.Console;`;
             const input = `
 using IntList = System.Collections.Generic.List<System.Int32>;`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Using(2, 1),
@@ -103,7 +102,7 @@ using IntList = System.Collections.Generic.List<System.Int32>;`;
             const input = `
 using X = System.Collections.Generic.Dictionary<System.Int32, System.Collections.Generic.List<System.String>>;`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Using(2, 1),
@@ -142,7 +141,7 @@ using X = System.Collections.Generic.Dictionary<System.Int32, System.Collections
             const input = `
 using X =/**/Dictionary/**/</**/int/**/,/**/List/**/</**/string/**/>/**/>/**/;//end`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Using(2, 1),

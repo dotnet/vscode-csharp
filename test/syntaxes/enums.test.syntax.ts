@@ -4,8 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { Tokens } from './utils/tokenizer';
-import { TokenizerUtil } from './utils/tokenizerUtil';
+import { tokenize, Tokens } from './utils/tokenizer';
 
 describe("Grammar", () => {
     before(() => should());
@@ -17,7 +16,7 @@ describe("Grammar", () => {
 enum E { }
 `;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Enum(2, 1),
@@ -32,7 +31,7 @@ enum E { }
 enum E : byte { }
 `;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Enum(2, 1),
@@ -49,7 +48,7 @@ enum E : byte { }
 enum E { M1 }
 `;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Enum(2, 1),
@@ -65,7 +64,7 @@ enum E { M1 }
 enum Color { Red, Green, Blue }
 `;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Enum(2, 1),
@@ -90,7 +89,7 @@ enum E
 }
 `;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Enum(2, 1),
@@ -107,5 +106,3 @@ enum E
         });
     });
 });
-
-

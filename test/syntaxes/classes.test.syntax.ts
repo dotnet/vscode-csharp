@@ -4,8 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { Tokens } from './utils/tokenizer';
-import { TokenizerUtil } from './utils/tokenizerUtil';
+import { tokenize, Tokens } from './utils/tokenizer';
 
 describe("Grammar", () => {
     before(() => should());
@@ -34,7 +33,7 @@ namespace TestNamespace
 
               abstract class DefaultAbstractClass { }
 }`;
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Namespace(2, 1),
@@ -107,7 +106,7 @@ namespace TestNamespace
 {
     class Dictionary<TKey, TValue> { }
 }`;
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Namespace(2, 1),
@@ -131,7 +130,7 @@ namespace TestNamespace
     class PublicClass<T> : Root.IInterface<Something.Nested>, Something.IInterfaceTwo { }
     class PublicClass<T> : Dictionary<T, Dictionary<string, string>>, IMap<T, Dictionary<string, string>> { }
 }`;
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Namespace(2, 1),
@@ -209,7 +208,7 @@ namespace TestNamespace
     {
     }
 }`;
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Namespace(2, 1),
@@ -272,7 +271,7 @@ namespace TestNamespace
         }
     }
 }`;
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Namespace(2, 1),
@@ -295,5 +294,3 @@ namespace TestNamespace
         });
     });
 });
-
-

@@ -4,49 +4,56 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { Tokens } from './utils/tokenizer';
-import { TokenizerUtil } from './utils/tokenizerUtil';
+import { tokenize, Tokens } from './utils/tokenizer';
 
 describe("Grammar", () => {
     before(() => should());
 
-    describe.skip("Literals - boolean", () => {
+    describe("Literals - boolean", () => {
         it("true", () => {
 
             const input = `
 class C {
-    method M() {
-        var x = true;
-    }
+    bool x = true;
 }`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Class(2, 1),
                 Tokens.Identifiers.ClassName("C", 2, 7),
                 Tokens.Puncuation.CurlyBrace.Open(2, 9),
-                Tokens.Literals.Boolean.True(4, 17),
-                Tokens.Puncuation.CurlyBrace.Close(6, 1)]);
+
+                Tokens.Type("bool", 3, 5),
+                Tokens.Identifiers.FieldName("x", 3, 10),
+                Tokens.Operators.Assignment(3, 12),
+                Tokens.Literals.Boolean.True(3, 14),
+                Tokens.Puncuation.Semicolon(3, 18),
+
+                Tokens.Puncuation.CurlyBrace.Close(4, 1)]);
         });
 
         it("false", () => {
 
             const input = `
 class C {
-    method M() {
-        var x = false;
-    }
+    bool x = false;
 }`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Class(2, 1),
                 Tokens.Identifiers.ClassName("C", 2, 7),
                 Tokens.Puncuation.CurlyBrace.Open(2, 9),
-                Tokens.Literals.Boolean.False(4, 17),
-                Tokens.Puncuation.CurlyBrace.Close(6, 1)]);
+
+                Tokens.Type("bool", 3, 5),
+                Tokens.Identifiers.FieldName("x", 3, 10),
+                Tokens.Operators.Assignment(3, 12),
+                Tokens.Literals.Boolean.False(3, 14),
+                Tokens.Puncuation.Semicolon(3, 19),
+                
+                Tokens.Puncuation.CurlyBrace.Close(4, 1)]);
         });
     });
 });

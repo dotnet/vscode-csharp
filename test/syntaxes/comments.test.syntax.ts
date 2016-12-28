@@ -4,8 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { Tokens } from './utils/tokenizer';
-import { TokenizerUtil } from './utils/tokenizerUtil';
+import { tokenize, Tokens } from './utils/tokenizer';
 
 describe("Grammar", () => {
     before(() => should());
@@ -16,7 +15,7 @@ describe("Grammar", () => {
             const input = `
 // foo`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Comment.SingleLine.Start(2, 1),
@@ -28,7 +27,7 @@ describe("Grammar", () => {
             const input = `
     // foo`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Comment.LeadingWhitespace("    ", 2, 1),
@@ -41,7 +40,7 @@ describe("Grammar", () => {
             const input = `
 /* foo */`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Comment.MultiLine.Start(2, 1),

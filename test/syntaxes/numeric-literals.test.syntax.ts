@@ -4,27 +4,33 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { Tokens } from './utils/tokenizer';
-import { TokenizerUtil } from './utils/tokenizerUtil';
+import { tokenize, Tokens } from './utils/tokenizer';
 
 describe("Grammar", () => {
     before(() => should());
 
-    describe.skip("Literals - numeric", () => {
+    describe("Literals - numeric", () => {
         it("decimal zero", () => {
 
             const input = `
 class C {
-    method M() {
-        var x = 0;
-    }
+    int x = 0;
 }`;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
-            tokens.should.contain(Tokens.Puncuation.SquareBracket.Open(2, 1));
-            tokens.should.contain(Tokens.Type("Foo", 2, 2));
-            tokens.should.contain(Tokens.Puncuation.SquareBracket.Close(2, 5));
+            tokens.should.deep.equal([
+                Tokens.Keywords.Class(2, 1),
+                Tokens.Identifiers.ClassName("C", 2, 7),
+                Tokens.Puncuation.CurlyBrace.Open(2, 9),
+
+                Tokens.Type("int", 3, 5),
+                Tokens.Identifiers.FieldName("x", 3, 9),
+                Tokens.Operators.Assignment(3, 11),
+                Tokens.Literals.Numeric.Decimal("0", 3, 13),
+                Tokens.Puncuation.Semicolon(3, 14),
+
+                Tokens.Puncuation.CurlyBrace.Close(4, 1)]);
         });
     });
 });

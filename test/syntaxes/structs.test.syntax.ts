@@ -4,8 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { Tokens } from './utils/tokenizer';
-import { TokenizerUtil } from './utils/tokenizerUtil';
+import { tokenize, Tokens } from './utils/tokenizer';
 
 describe("Grammar", () => {
     before(() => should());
@@ -17,7 +16,7 @@ describe("Grammar", () => {
 struct S { }
 `;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Struct(2, 1),
@@ -33,7 +32,7 @@ interface IFoo { }
 struct S : IFoo { }
 `;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Interface(2, 1),
@@ -54,7 +53,7 @@ struct S : IFoo { }
 struct S<T1, T2> { }
 `;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Struct(2, 1),
@@ -69,7 +68,7 @@ struct S<T1, T2> { }
 struct S<T1, T2> where T1 : T2 { }
 `;
 
-            let tokens = TokenizerUtil.tokenize(input);
+            let tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Tokens.Keywords.Struct(2, 1),
@@ -83,5 +82,3 @@ struct S<T1, T2> where T1 : T2 { }
         });
     });
 });
-
-
