@@ -72,6 +72,97 @@ public class Tester
                 Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
         });
 
+        it("no interpolations due to escaped braces", () => {
+
+            const input = `
+public class Tester
+{
+    string test = $"hello {{one}} world {{two}}!";
+}`;
+
+            let tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Tokens.Keywords.Modifiers.Public(2, 1),
+                Tokens.Keywords.Class(2, 8),
+                Tokens.Identifiers.ClassName("Tester", 2, 14),
+                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+
+                Tokens.Type("string", 4, 5),
+                Tokens.Identifiers.FieldName("test", 4, 12),
+                Tokens.Operators.Assignment(4, 17),
+                Tokens.Puncuation.InterpolatedString.Begin(4, 19),
+                Tokens.Literals.String("hello {{one}} world {{two}}!", 4, 21),
+                Tokens.Puncuation.InterpolatedString.End(4, 49),
+                Tokens.Puncuation.Semicolon(4, 50),
+
+                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
+        });
+
+        it("two interpolations with escaped braces", () => {
+
+            const input = `
+public class Tester
+{
+    string test = $"hello {{{one}}} world {{{two}}}!";
+}`;
+
+            let tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Tokens.Keywords.Modifiers.Public(2, 1),
+                Tokens.Keywords.Class(2, 8),
+                Tokens.Identifiers.ClassName("Tester", 2, 14),
+                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+
+                Tokens.Type("string", 4, 5),
+                Tokens.Identifiers.FieldName("test", 4, 12),
+                Tokens.Operators.Assignment(4, 17),
+                Tokens.Puncuation.InterpolatedString.Begin(4, 19),
+                Tokens.Literals.String("hello ", 4, 21),
+                Tokens.Literals.String("{{", 4, 27),
+                Tokens.Puncuation.Interpolation.Begin(4, 29),
+                Tokens.Variables.ReadWrite("one", 4, 30),
+                Tokens.Puncuation.Interpolation.End(4, 33),
+                Tokens.Literals.String("}} world ", 4, 34),
+                Tokens.Literals.String("{{", 4, 43),
+                Tokens.Puncuation.Interpolation.Begin(4, 45),
+                Tokens.Variables.ReadWrite("two", 4, 46),
+                Tokens.Puncuation.Interpolation.End(4, 49),
+                Tokens.Literals.String("}}!", 4, 50),
+                Tokens.Puncuation.InterpolatedString.End(4, 53),
+                Tokens.Puncuation.Semicolon(4, 54),
+
+                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
+        });
+
+        it("no interpolations due to double-escaped braces", () => {
+
+            const input = `
+public class Tester
+{
+    string test = $"hello {{{{one}}}} world {{{{two}}}}!";
+}`;
+
+            let tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Tokens.Keywords.Modifiers.Public(2, 1),
+                Tokens.Keywords.Class(2, 8),
+                Tokens.Identifiers.ClassName("Tester", 2, 14),
+                Tokens.Puncuation.CurlyBrace.Open(3, 1),
+
+                Tokens.Type("string", 4, 5),
+                Tokens.Identifiers.FieldName("test", 4, 12),
+                Tokens.Operators.Assignment(4, 17),
+                Tokens.Puncuation.InterpolatedString.Begin(4, 19),
+                Tokens.Literals.String("hello {{{{one}}}} world {{{{two}}}}!", 4, 21),
+                Tokens.Puncuation.InterpolatedString.End(4, 57),
+                Tokens.Puncuation.Semicolon(4, 58),
+
+                Tokens.Puncuation.CurlyBrace.Close(5, 1)]);
+        });
+
         it("break across two lines (non-verbatim)", () => {
 
             const input = `
