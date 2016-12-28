@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { tokenize, Tokens } from './utils/tokenizer';
+import { tokenize, Token } from './utils/tokenize';
 
 describe("Grammar", () => {
     before(() => should());
@@ -16,10 +16,10 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Interface,
-                Tokens.Identifiers.InterfaceName("IFoo"),
-                Tokens.Puncuation.CurlyBrace.Open,
-                Tokens.Puncuation.CurlyBrace.Close]);
+                Token.Keywords.Interface,
+                Token.Identifiers.InterfaceName("IFoo"),
+                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.CurlyBrace.Close]);
         });
 
         it("interface inheritance", () => {
@@ -32,16 +32,16 @@ interface IBar : IFoo { }
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Interface,
-                Tokens.Identifiers.InterfaceName("IFoo"),
-                Tokens.Puncuation.CurlyBrace.Open,
-                Tokens.Puncuation.CurlyBrace.Close,
-                Tokens.Keywords.Interface,
-                Tokens.Identifiers.InterfaceName("IBar"),
-                Tokens.Puncuation.Colon,
-                Tokens.Type("IFoo"),
-                Tokens.Puncuation.CurlyBrace.Open,
-                Tokens.Puncuation.CurlyBrace.Close]);
+                Token.Keywords.Interface,
+                Token.Identifiers.InterfaceName("IFoo"),
+                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.CurlyBrace.Close,
+                Token.Keywords.Interface,
+                Token.Identifiers.InterfaceName("IBar"),
+                Token.Puncuation.Colon,
+                Token.Type("IFoo"),
+                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.CurlyBrace.Close]);
         });
 
         it("generic interface", () => {
@@ -50,10 +50,10 @@ interface IBar : IFoo { }
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Interface,
-                Tokens.Identifiers.InterfaceName("IFoo<T1, T2>"),
-                Tokens.Puncuation.CurlyBrace.Open,
-                Tokens.Puncuation.CurlyBrace.Close]);
+                Token.Keywords.Interface,
+                Token.Identifiers.InterfaceName("IFoo<T1, T2>"),
+                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.CurlyBrace.Close]);
         });
 
         it("generic interface with variance", () => {
@@ -62,10 +62,10 @@ interface IBar : IFoo { }
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Interface,
-                Tokens.Identifiers.InterfaceName("IFoo<in T1, out T2>"),
-                Tokens.Puncuation.CurlyBrace.Open,
-                Tokens.Puncuation.CurlyBrace.Close]);
+                Token.Keywords.Interface,
+                Token.Identifiers.InterfaceName("IFoo<in T1, out T2>"),
+                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.CurlyBrace.Close]);
         });
 
         it("generic interface with constraints", () => {
@@ -74,14 +74,14 @@ interface IBar : IFoo { }
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Interface,
-                Tokens.Identifiers.InterfaceName("IFoo<T1, T2>"),
-                Tokens.Keywords.Where,
-                Tokens.Type("T1"),
-                Tokens.Puncuation.Colon,
-                Tokens.Type("T2"),
-                Tokens.Puncuation.CurlyBrace.Open,
-                Tokens.Puncuation.CurlyBrace.Close]);
+                Token.Keywords.Interface,
+                Token.Identifiers.InterfaceName("IFoo<T1, T2>"),
+                Token.Keywords.Where,
+                Token.Type("T1"),
+                Token.Puncuation.Colon,
+                Token.Type("T2"),
+                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.CurlyBrace.Close]);
         });
     });
 });

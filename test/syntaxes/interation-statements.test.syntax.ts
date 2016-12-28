@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { tokenize, Input, Tokens } from './utils/tokenizer';
+import { tokenize, Input, Token } from './utils/tokenize';
 
 describe("Grammar", () => {
     before(() => should());

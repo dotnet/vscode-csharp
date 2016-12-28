@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { tokenize, Input, Tokens } from './utils/tokenizer';
+import { tokenize, Input, Token } from './utils/tokenize';
 
 describe("Grammar", () => {
     before(() => should());
@@ -16,11 +16,11 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Type("bool"),
-                Tokens.Identifiers.FieldName("x"),
-                Tokens.Operators.Assignment,
-                Tokens.Literals.Boolean.True,
-                Tokens.Puncuation.Semicolon]);
+                Token.Type("bool"),
+                Token.Identifiers.FieldName("x"),
+                Token.Operators.Assignment,
+                Token.Literals.Boolean.True,
+                Token.Puncuation.Semicolon]);
         });
 
         it("false", () => {
@@ -29,11 +29,11 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Type("bool"),
-                Tokens.Identifiers.FieldName("x"),
-                Tokens.Operators.Assignment,
-                Tokens.Literals.Boolean.False,
-                Tokens.Puncuation.Semicolon]);
+                Token.Type("bool"),
+                Token.Identifiers.FieldName("x"),
+                Token.Operators.Assignment,
+                Token.Literals.Boolean.False,
+                Token.Puncuation.Semicolon]);
         });
     });
 });

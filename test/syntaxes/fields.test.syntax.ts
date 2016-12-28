@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { tokenize, Input, Tokens } from './utils/tokenizer';
+import { tokenize, Input, Token } from './utils/tokenize';
 
 describe("Grammar", () => {
     before(() => should());
@@ -20,20 +20,20 @@ private List field123;`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Private,
-                Tokens.Type("List"),
-                Tokens.Identifiers.FieldName("_field"),
-                Tokens.Puncuation.Semicolon,
+                Token.Keywords.Modifiers.Private,
+                Token.Type("List"),
+                Token.Identifiers.FieldName("_field"),
+                Token.Puncuation.Semicolon,
 
-                Tokens.Keywords.Modifiers.Private,
-                Tokens.Type("List"),
-                Tokens.Identifiers.FieldName("field"),
-                Tokens.Puncuation.Semicolon,
+                Token.Keywords.Modifiers.Private,
+                Token.Type("List"),
+                Token.Identifiers.FieldName("field"),
+                Token.Puncuation.Semicolon,
 
-                Tokens.Keywords.Modifiers.Private,
-                Tokens.Type("List"),
-                Tokens.Identifiers.FieldName("field123"),
-                Tokens.Puncuation.Semicolon]);
+                Token.Keywords.Modifiers.Private,
+                Token.Type("List"),
+                Token.Identifiers.FieldName("field123"),
+                Token.Puncuation.Semicolon]);
         });
 
         it("generic", () => {
@@ -42,23 +42,23 @@ private List field123;`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Private,
-                Tokens.Type("Dictionary"),
-                Tokens.Puncuation.TypeParameters.Begin,
-                Tokens.Type("List"),
-                Tokens.Puncuation.TypeParameters.Begin,
-                Tokens.Type("T"),
-                Tokens.Puncuation.TypeParameters.End,
-                Tokens.Puncuation.Comma,
-                Tokens.Type("Dictionary"),
-                Tokens.Puncuation.TypeParameters.Begin,
-                Tokens.Type("T"),
-                Tokens.Puncuation.Comma,
-                Tokens.Type("D"),
-                Tokens.Puncuation.TypeParameters.End,
-                Tokens.Puncuation.TypeParameters.End,
-                Tokens.Identifiers.FieldName("_field"),
-                Tokens.Puncuation.Semicolon]);
+                Token.Keywords.Modifiers.Private,
+                Token.Type("Dictionary"),
+                Token.Puncuation.TypeParameters.Begin,
+                Token.Type("List"),
+                Token.Puncuation.TypeParameters.Begin,
+                Token.Type("T"),
+                Token.Puncuation.TypeParameters.End,
+                Token.Puncuation.Comma,
+                Token.Type("Dictionary"),
+                Token.Puncuation.TypeParameters.Begin,
+                Token.Type("T"),
+                Token.Puncuation.Comma,
+                Token.Type("D"),
+                Token.Puncuation.TypeParameters.End,
+                Token.Puncuation.TypeParameters.End,
+                Token.Identifiers.FieldName("_field"),
+                Token.Puncuation.Semicolon]);
         });
 
 
@@ -72,21 +72,21 @@ string _field3;`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Private,
-                Tokens.Keywords.Modifiers.Static,
-                Tokens.Keywords.Modifiers.ReadOnly,
-                Tokens.Type("List"),
-                Tokens.Identifiers.FieldName("_field"),
-                Tokens.Puncuation.Semicolon,
+                Token.Keywords.Modifiers.Private,
+                Token.Keywords.Modifiers.Static,
+                Token.Keywords.Modifiers.ReadOnly,
+                Token.Type("List"),
+                Token.Identifiers.FieldName("_field"),
+                Token.Puncuation.Semicolon,
 
-                Tokens.Keywords.Modifiers.ReadOnly,
-                Tokens.Type("string"),
-                Tokens.Identifiers.FieldName("_field2"),
-                Tokens.Puncuation.Semicolon,
+                Token.Keywords.Modifiers.ReadOnly,
+                Token.Type("string"),
+                Token.Identifiers.FieldName("_field2"),
+                Token.Puncuation.Semicolon,
 
-                Tokens.Type("string"),
-                Tokens.Identifiers.FieldName("_field3"),
-                Tokens.Puncuation.Semicolon]);
+                Token.Type("string"),
+                Token.Identifiers.FieldName("_field3"),
+                Token.Puncuation.Semicolon]);
         });
 
         it("types", () => {
@@ -98,15 +98,15 @@ string[] field123;`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Type("string"),
-                Tokens.Identifiers.FieldName("field123"),
-                Tokens.Puncuation.Semicolon,
+                Token.Type("string"),
+                Token.Identifiers.FieldName("field123"),
+                Token.Puncuation.Semicolon,
 
-                Tokens.Type("string"),
-                Tokens.Puncuation.SquareBracket.Open,
-                Tokens.Puncuation.SquareBracket.Close,
-                Tokens.Identifiers.FieldName("field123"),
-                Tokens.Puncuation.Semicolon]);
+                Token.Type("string"),
+                Token.Puncuation.SquareBracket.Open,
+                Token.Puncuation.SquareBracket.Close,
+                Token.Identifiers.FieldName("field123"),
+                Token.Puncuation.Semicolon]);
         });
 
         it("assignment", () => {
@@ -118,21 +118,21 @@ const   bool   field = true;`);
             let tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Private,
-                Tokens.Type("string"),
-                Tokens.Identifiers.FieldName("field"),
-                Tokens.Operators.Assignment,
-                Tokens.Puncuation.String.Begin,
-                Tokens.Literals.String("hello"),
-                Tokens.Puncuation.String.End,
-                Tokens.Puncuation.Semicolon,
+                Token.Keywords.Modifiers.Private,
+                Token.Type("string"),
+                Token.Identifiers.FieldName("field"),
+                Token.Operators.Assignment,
+                Token.Puncuation.String.Begin,
+                Token.Literals.String("hello"),
+                Token.Puncuation.String.End,
+                Token.Puncuation.Semicolon,
 
-                Tokens.Keywords.Modifiers.Const,
-                Tokens.Type("bool"),
-                Tokens.Identifiers.FieldName("field"),
-                Tokens.Operators.Assignment,
-                Tokens.Literals.Boolean.True,
-                Tokens.Puncuation.Semicolon]);
+                Token.Keywords.Modifiers.Const,
+                Token.Type("bool"),
+                Token.Identifiers.FieldName("field"),
+                Token.Operators.Assignment,
+                Token.Literals.Boolean.True,
+                Token.Puncuation.Semicolon]);
         });
 
         it("declaration with multiple declarators", () => {
@@ -141,19 +141,19 @@ const   bool   field = true;`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Type("int"),
-                Tokens.Identifiers.FieldName("x"),
-                Tokens.Operators.Assignment,
-                Tokens.Literals.Numeric.Decimal("19"),
-                Tokens.Puncuation.Comma,
-                Tokens.Identifiers.FieldName("y"),
-                Tokens.Operators.Assignment,
-                Tokens.Literals.Numeric.Decimal("23"),
-                Tokens.Puncuation.Comma,
-                Tokens.Identifiers.FieldName("z"),
-                Tokens.Operators.Assignment,
-                Tokens.Literals.Numeric.Decimal("42"),
-                Tokens.Puncuation.Semicolon]);
+                Token.Type("int"),
+                Token.Identifiers.FieldName("x"),
+                Token.Operators.Assignment,
+                Token.Literals.Numeric.Decimal("19"),
+                Token.Puncuation.Comma,
+                Token.Identifiers.FieldName("y"),
+                Token.Operators.Assignment,
+                Token.Literals.Numeric.Decimal("23"),
+                Token.Puncuation.Comma,
+                Token.Identifiers.FieldName("z"),
+                Token.Operators.Assignment,
+                Token.Literals.Numeric.Decimal("42"),
+                Token.Puncuation.Semicolon]);
         });
     });
 });

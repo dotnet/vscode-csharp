@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { tokenize, Tokens } from './utils/tokenizer';
+import { tokenize, Token } from './utils/tokenize';
 
 describe("Grammar", () => {
     before(() => should());
@@ -19,14 +19,14 @@ extern alias Y;`;
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Extern,
-                Tokens.Keywords.Alias,
-                Tokens.Variables.Alias("X"),
-                Tokens.Puncuation.Semicolon,
-                Tokens.Keywords.Extern,
-                Tokens.Keywords.Alias,
-                Tokens.Variables.Alias("Y"),
-                Tokens.Puncuation.Semicolon]);
+                Token.Keywords.Extern,
+                Token.Keywords.Alias,
+                Token.Variables.Alias("X"),
+                Token.Puncuation.Semicolon,
+                Token.Keywords.Extern,
+                Token.Keywords.Alias,
+                Token.Variables.Alias("Y"),
+                Token.Puncuation.Semicolon]);
         });
     });
 });

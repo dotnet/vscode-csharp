@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { tokenize, Input, Tokens } from './utils/tokenizer';
+import { tokenize, Input, Token } from './utils/tokenize';
 
 describe("Grammar", () => {
     before(() => should());
@@ -21,22 +21,22 @@ public string this[int index]
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public,
-                Tokens.Type("string"),
-                Tokens.Keywords.This,
-                Tokens.Puncuation.SquareBracket.Open,
-                Tokens.Type("int"),
-                Tokens.Variables.Parameter("index"),
-                Tokens.Puncuation.SquareBracket.Close,
-                Tokens.Puncuation.CurlyBrace.Open,
-                Tokens.Keywords.Get,
-                Tokens.Puncuation.CurlyBrace.Open,
-                Tokens.Keywords.Return,
-                Tokens.Variables.ReadWrite("index"),
-                Tokens.Variables.ReadWrite("ToString"),
-                Tokens.Puncuation.Semicolon,
-                Tokens.Puncuation.CurlyBrace.Close,
-                Tokens.Puncuation.CurlyBrace.Close]);
+                Token.Keywords.Modifiers.Public,
+                Token.Type("string"),
+                Token.Keywords.This,
+                Token.Puncuation.SquareBracket.Open,
+                Token.Type("int"),
+                Token.Variables.Parameter("index"),
+                Token.Puncuation.SquareBracket.Close,
+                Token.Puncuation.CurlyBrace.Open,
+                Token.Keywords.Get,
+                Token.Puncuation.CurlyBrace.Open,
+                Token.Keywords.Return,
+                Token.Variables.ReadWrite("index"),
+                Token.Variables.ReadWrite("ToString"),
+                Token.Puncuation.Semicolon,
+                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.CurlyBrace.Close]);
         });
     });
 });

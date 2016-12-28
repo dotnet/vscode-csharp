@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { tokenize, Input, Tokens } from './utils/tokenizer';
+import { tokenize, Input, Token } from './utils/tokenize';
 
 describe("Grammar", () => {
     before(() => should());
@@ -16,11 +16,11 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public,
-                Tokens.Keywords.Event,
-                Tokens.Type("Type"),
-                Tokens.Identifiers.EventName("Event"),
-                Tokens.Puncuation.Semicolon]);
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Event,
+                Token.Type("Type"),
+                Token.Identifiers.EventName("Event"),
+                Token.Puncuation.Semicolon]);
         });
 
         it("declaration with multiple modifiers", () => {
@@ -29,12 +29,12 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Protected,
-                Tokens.Keywords.Modifiers.Internal,
-                Tokens.Keywords.Event,
-                Tokens.Type("Type"),
-                Tokens.Identifiers.EventName("Event"),
-                Tokens.Puncuation.Semicolon]);
+                Token.Keywords.Modifiers.Protected,
+                Token.Keywords.Modifiers.Internal,
+                Token.Keywords.Event,
+                Token.Type("Type"),
+                Token.Identifiers.EventName("Event"),
+                Token.Puncuation.Semicolon]);
         });
 
         it("declaration with multiple declarators", () => {
@@ -43,13 +43,13 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public,
-                Tokens.Keywords.Event,
-                Tokens.Type("Type"),
-                Tokens.Identifiers.EventName("Event1"),
-                Tokens.Puncuation.Comma,
-                Tokens.Identifiers.EventName("Event2"),
-                Tokens.Puncuation.Semicolon]);
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Event,
+                Token.Type("Type"),
+                Token.Identifiers.EventName("Event1"),
+                Token.Puncuation.Comma,
+                Token.Identifiers.EventName("Event2"),
+                Token.Puncuation.Semicolon]);
         });
 
         it("generic", () => {
@@ -58,24 +58,24 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public,
-                Tokens.Keywords.Event,
-                Tokens.Type("EventHandler"),
-                Tokens.Puncuation.TypeParameters.Begin,
-                Tokens.Type("List"),
-                Tokens.Puncuation.TypeParameters.Begin,
-                Tokens.Type("T"),
-                Tokens.Puncuation.TypeParameters.End,
-                Tokens.Puncuation.Comma,
-                Tokens.Type("Dictionary"),
-                Tokens.Puncuation.TypeParameters.Begin,
-                Tokens.Type("T"),
-                Tokens.Puncuation.Comma,
-                Tokens.Type("D"),
-                Tokens.Puncuation.TypeParameters.End,
-                Tokens.Puncuation.TypeParameters.End,
-                Tokens.Identifiers.EventName("Event"),
-                Tokens.Puncuation.Semicolon]);
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Event,
+                Token.Type("EventHandler"),
+                Token.Puncuation.TypeParameters.Begin,
+                Token.Type("List"),
+                Token.Puncuation.TypeParameters.Begin,
+                Token.Type("T"),
+                Token.Puncuation.TypeParameters.End,
+                Token.Puncuation.Comma,
+                Token.Type("Dictionary"),
+                Token.Puncuation.TypeParameters.Begin,
+                Token.Type("T"),
+                Token.Puncuation.Comma,
+                Token.Type("D"),
+                Token.Puncuation.TypeParameters.End,
+                Token.Puncuation.TypeParameters.End,
+                Token.Identifiers.EventName("Event"),
+                Token.Puncuation.Semicolon]);
         });
 
         it("declaration with accessors", () => {
@@ -90,18 +90,18 @@ public event Type Event
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Keywords.Modifiers.Public,
-                Tokens.Keywords.Event,
-                Tokens.Type("Type"),
-                Tokens.Identifiers.EventName("Event"),
-                Tokens.Puncuation.CurlyBrace.Open,
-                Tokens.Keywords.Add,
-                Tokens.Puncuation.CurlyBrace.Open,
-                Tokens.Puncuation.CurlyBrace.Close,
-                Tokens.Keywords.Remove,
-                Tokens.Puncuation.CurlyBrace.Open,
-                Tokens.Puncuation.CurlyBrace.Close,
-                Tokens.Puncuation.CurlyBrace.Close]);
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Event,
+                Token.Type("Type"),
+                Token.Identifiers.EventName("Event"),
+                Token.Puncuation.CurlyBrace.Open,
+                Token.Keywords.Add,
+                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.CurlyBrace.Close,
+                Token.Keywords.Remove,
+                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.CurlyBrace.Close]);
         });
     });
 });

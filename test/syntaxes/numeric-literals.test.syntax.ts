@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { tokenize, Input, Tokens } from './utils/tokenizer';
+import { tokenize, Input, Token } from './utils/tokenize';
 
 describe("Grammar", () => {
     before(() => should());
@@ -16,11 +16,11 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Type("int"),
-                Tokens.Identifiers.FieldName("x"),
-                Tokens.Operators.Assignment,
-                Tokens.Literals.Numeric.Decimal("0"),
-                Tokens.Puncuation.Semicolon]);
+                Token.Type("int"),
+                Token.Identifiers.FieldName("x"),
+                Token.Operators.Assignment,
+                Token.Literals.Numeric.Decimal("0"),
+                Token.Puncuation.Semicolon]);
         });
 
         it("hexadecimal zero", () => {
@@ -29,11 +29,11 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Type("int"),
-                Tokens.Identifiers.FieldName("x"),
-                Tokens.Operators.Assignment,
-                Tokens.Literals.Numeric.Hexadecimal("0x0"),
-                Tokens.Puncuation.Semicolon]);
+                Token.Type("int"),
+                Token.Identifiers.FieldName("x"),
+                Token.Operators.Assignment,
+                Token.Literals.Numeric.Hexadecimal("0x0"),
+                Token.Puncuation.Semicolon]);
         });
 
         it("binary zero", () => {
@@ -42,11 +42,11 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Type("int"),
-                Tokens.Identifiers.FieldName("x"),
-                Tokens.Operators.Assignment,
-                Tokens.Literals.Numeric.Binary("0b0"),
-                Tokens.Puncuation.Semicolon]);
+                Token.Type("int"),
+                Token.Identifiers.FieldName("x"),
+                Token.Operators.Assignment,
+                Token.Literals.Numeric.Binary("0b0"),
+                Token.Puncuation.Semicolon]);
         });
 
         it("floating-point zero", () => {
@@ -55,11 +55,11 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Type("float"),
-                Tokens.Identifiers.FieldName("x"),
-                Tokens.Operators.Assignment,
-                Tokens.Literals.Numeric.Decimal("0.0"),
-                Tokens.Puncuation.Semicolon]);
+                Token.Type("float"),
+                Token.Identifiers.FieldName("x"),
+                Token.Operators.Assignment,
+                Token.Literals.Numeric.Decimal("0.0"),
+                Token.Puncuation.Semicolon]);
         });
     });
 });

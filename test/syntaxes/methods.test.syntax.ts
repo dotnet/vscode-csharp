@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { tokenize, Input, Tokens } from './utils/tokenizer';
+import { tokenize, Input, Token } from './utils/tokenize';
 
 describe("Grammar", () => {
     before(() => should());
@@ -16,12 +16,12 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Type("void"),
-                Tokens.Identifiers.MethodName("Foo"),
-                Tokens.Puncuation.Parenthesis.Open,
-                Tokens.Puncuation.Parenthesis.Close,
-                Tokens.Puncuation.CurlyBrace.Open,
-                Tokens.Puncuation.CurlyBrace.Close]);
+                Token.Type("void"),
+                Token.Identifiers.MethodName("Foo"),
+                Token.Puncuation.Parenthesis.Open,
+                Token.Puncuation.Parenthesis.Close,
+                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.CurlyBrace.Close]);
         });
 
         it("declaration with two parameters", () => {
@@ -34,22 +34,22 @@ int Add(int x, int y)
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Type("int"),
-                Tokens.Identifiers.MethodName("Add"),
-                Tokens.Puncuation.Parenthesis.Open,
-                Tokens.Type("int"),
-                Tokens.Variables.Parameter("x"),
-                Tokens.Puncuation.Comma,
-                Tokens.Type("int"),
-                Tokens.Variables.Parameter("y"),
-                Tokens.Puncuation.Parenthesis.Close,
-                Tokens.Puncuation.CurlyBrace.Open,
-                Tokens.Keywords.Return,
-                Tokens.Variables.ReadWrite("x"),
-                Tokens.Operators.Arithmetic.Addition,
-                Tokens.Variables.ReadWrite("y"),
-                Tokens.Puncuation.Semicolon,
-                Tokens.Puncuation.CurlyBrace.Close]);
+                Token.Type("int"),
+                Token.Identifiers.MethodName("Add"),
+                Token.Puncuation.Parenthesis.Open,
+                Token.Type("int"),
+                Token.Variables.Parameter("x"),
+                Token.Puncuation.Comma,
+                Token.Type("int"),
+                Token.Variables.Parameter("y"),
+                Token.Puncuation.Parenthesis.Close,
+                Token.Puncuation.CurlyBrace.Open,
+                Token.Keywords.Return,
+                Token.Variables.ReadWrite("x"),
+                Token.Operators.Arithmetic.Addition,
+                Token.Variables.ReadWrite("y"),
+                Token.Puncuation.Semicolon,
+                Token.Puncuation.CurlyBrace.Close]);
         });
 
         it("expression body", () => {
@@ -58,20 +58,20 @@ int Add(int x, int y)
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Type("int"),
-                Tokens.Identifiers.MethodName("Add"),
-                Tokens.Puncuation.Parenthesis.Open,
-                Tokens.Type("int"),
-                Tokens.Variables.Parameter("x"),
-                Tokens.Puncuation.Comma,
-                Tokens.Type("int"),
-                Tokens.Variables.Parameter("y"),
-                Tokens.Puncuation.Parenthesis.Close,
-                Tokens.Operators.Arrow,
-                Tokens.Variables.ReadWrite("x"),
-                Tokens.Operators.Arithmetic.Addition,
-                Tokens.Variables.ReadWrite("y"),
-                Tokens.Puncuation.Semicolon]);
+                Token.Type("int"),
+                Token.Identifiers.MethodName("Add"),
+                Token.Puncuation.Parenthesis.Open,
+                Token.Type("int"),
+                Token.Variables.Parameter("x"),
+                Token.Puncuation.Comma,
+                Token.Type("int"),
+                Token.Variables.Parameter("y"),
+                Token.Puncuation.Parenthesis.Close,
+                Token.Operators.Arrow,
+                Token.Variables.ReadWrite("x"),
+                Token.Operators.Arithmetic.Addition,
+                Token.Variables.ReadWrite("y"),
+                Token.Puncuation.Semicolon]);
         });
     });
 });

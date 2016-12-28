@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { tokenize, Tokens } from './utils/tokenizer';
+import { tokenize, Token } from './utils/tokenize';
 
 describe("Grammar", () => {
     before(() => should());
@@ -16,8 +16,8 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Comment.SingleLine.Start,
-                Tokens.Comment.SingleLine.Text(" foo")]);
+                Token.Comment.SingleLine.Start,
+                Token.Comment.SingleLine.Text(" foo")]);
         });
 
         it("single-line comment after whitespace", () => {
@@ -26,9 +26,9 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Comment.LeadingWhitespace("    "),
-                Tokens.Comment.SingleLine.Start,
-                Tokens.Comment.SingleLine.Text(" foo")]);
+                Token.Comment.LeadingWhitespace("    "),
+                Token.Comment.SingleLine.Start,
+                Token.Comment.SingleLine.Text(" foo")]);
         });
 
         it("multi-line comment", () => {
@@ -37,9 +37,9 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Tokens.Comment.MultiLine.Start,
-                Tokens.Comment.MultiLine.Text(" foo "),
-                Tokens.Comment.MultiLine.End]);
+                Token.Comment.MultiLine.Start,
+                Token.Comment.MultiLine.Text(" foo "),
+                Token.Comment.MultiLine.End]);
         });
     });
 });
