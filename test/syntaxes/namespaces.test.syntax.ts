@@ -21,8 +21,8 @@ namespace TestNamespace
             tokens.should.deep.equal([
                 Token.Keywords.Namespace,
                 Token.Identifiers.NamespaceName("TestNamespace"),
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace]);
         });
 
         it("has a namespace keyword and a dotted name", () => {
@@ -38,8 +38,8 @@ namespace Test.Namespace
                 Token.Identifiers.NamespaceName("Test"),
                 Token.Puncuation.Accessor,
                 Token.Identifiers.NamespaceName("Namespace"),
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace]);
         });
 
         it("can be nested", () => {
@@ -56,14 +56,14 @@ namespace TestNamespace
             tokens.should.deep.equal([
                 Token.Keywords.Namespace,
                 Token.Identifiers.NamespaceName("TestNamespace"),
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
 
                 Token.Keywords.Namespace,
                 Token.Identifiers.NamespaceName("NestedNamespace"),
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
 
-                Token.Puncuation.CurlyBrace.Close,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.CloseBrace,
+                Token.Puncuation.CloseBrace]);
         });
 
         it("can contain using statements", () => {
@@ -100,7 +100,7 @@ namespace TestNamespace
 
                 Token.Keywords.Namespace,
                 Token.Identifiers.NamespaceName("TestNamespace"),
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
 
                 Token.Keywords.Using,
                 Token.Identifiers.NamespaceName("UsingTwo"),
@@ -116,7 +116,7 @@ namespace TestNamespace
 
                 Token.Keywords.Namespace,
                 Token.Identifiers.NamespaceName("NestedNamespace"),
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
 
                 Token.Keywords.Using,
                 Token.Identifiers.NamespaceName("UsingThree"),
@@ -130,8 +130,8 @@ namespace TestNamespace
                 Token.Type("Something"),
                 Token.Puncuation.Semicolon,
 
-                Token.Puncuation.CurlyBrace.Close,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.CloseBrace,
+                Token.Puncuation.CloseBrace]);
         });
     });
 });

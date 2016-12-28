@@ -103,8 +103,8 @@ string[] field123;`);
                 Token.Puncuation.Semicolon,
 
                 Token.Type("string"),
-                Token.Puncuation.SquareBracket.Open,
-                Token.Puncuation.SquareBracket.Close,
+                Token.Puncuation.OpenBracket,
+                Token.Puncuation.CloseBracket,
                 Token.Identifiers.FieldName("field123"),
                 Token.Puncuation.Semicolon]);
         });

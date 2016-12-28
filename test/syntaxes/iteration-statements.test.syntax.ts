@@ -16,11 +16,11 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Keywords.While,
-                Token.Puncuation.Parenthesis.Open,
+                Token.Puncuation.OpenParen,
                 Token.Literals.Boolean.True,
-                Token.Puncuation.Parenthesis.Close,
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace
             ]);
         });
 
@@ -31,12 +31,12 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Keywords.Do,
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace,
                 Token.Keywords.While,
-                Token.Puncuation.Parenthesis.Open,
+                Token.Puncuation.OpenParen,
                 Token.Literals.Boolean.True,
-                Token.Puncuation.Parenthesis.Close,
+                Token.Puncuation.CloseParen,
                 Token.Puncuation.Semicolon
             ]);
         });

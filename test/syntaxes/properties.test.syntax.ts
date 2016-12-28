@@ -24,21 +24,21 @@ public IBooom Property
                 Token.Keywords.Modifiers.Public,
                 Token.Type("IBooom"),
                 Token.Identifiers.PropertyName("Property"),
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
                 Token.Keywords.Get,
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Literals.Null,
                 Token.Puncuation.Semicolon,
-                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.CloseBrace,
                 Token.Keywords.Set,
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
                 Token.Variables.ReadWrite("something"),
                 Token.Operators.Assignment,
                 Token.Variables.ReadWrite("value"),
                 Token.Puncuation.Semicolon,
-                Token.Puncuation.CurlyBrace.Close,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.CloseBrace,
+                Token.Puncuation.CloseBrace]);
         });
 
         it("declaration single line", () => {
@@ -50,22 +50,22 @@ public IBooom Property
                 Token.Keywords.Modifiers.Public,
                 Token.Type("IBooom"),
                 Token.Identifiers.PropertyName("Property"),
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
                 Token.Keywords.Get,
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Literals.Null,
                 Token.Puncuation.Semicolon,
-                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.CloseBrace,
                 Token.Keywords.Modifiers.Private,
                 Token.Keywords.Set,
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
                 Token.Variables.ReadWrite("something"),
                 Token.Operators.Assignment,
                 Token.Variables.ReadWrite("value"),
                 Token.Puncuation.Semicolon,
-                Token.Puncuation.CurlyBrace.Close,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.CloseBrace,
+                Token.Puncuation.CloseBrace]);
         });
 
         it("declaration without modifiers", () => {
@@ -76,12 +76,12 @@ public IBooom Property
             tokens.should.deep.equal([
                 Token.Type("IBooom"),
                 Token.Identifiers.PropertyName("Property"),
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
                 Token.Keywords.Get,
                 Token.Puncuation.Semicolon,
                 Token.Keywords.Set,
                 Token.Puncuation.Semicolon,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.CloseBrace]);
         });
 
         it("auto-property single line", function () {
@@ -93,12 +93,12 @@ public IBooom Property
                 Token.Keywords.Modifiers.Public,
                 Token.Type("IBooom"),
                 Token.Identifiers.PropertyName("Property"),
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
                 Token.Keywords.Get,
                 Token.Puncuation.Semicolon,
                 Token.Keywords.Set,
                 Token.Puncuation.Semicolon,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.CloseBrace]);
         });
 
         it("auto-property single line (protected internal)", function () {
@@ -111,12 +111,12 @@ public IBooom Property
                 Token.Keywords.Modifiers.Internal,
                 Token.Type("IBooom"),
                 Token.Identifiers.PropertyName("Property"),
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
                 Token.Keywords.Get,
                 Token.Puncuation.Semicolon,
                 Token.Keywords.Set,
                 Token.Puncuation.Semicolon,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.CloseBrace]);
         });
 
         it("auto-property", () => {
@@ -133,12 +133,12 @@ public IBooom Property
                 Token.Keywords.Modifiers.Public,
                 Token.Type("IBooom"),
                 Token.Identifiers.PropertyName("Property"),
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
                 Token.Keywords.Get,
                 Token.Puncuation.Semicolon,
                 Token.Keywords.Set,
                 Token.Puncuation.Semicolon,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.CloseBrace]);
         });
 
         it("generic auto-property", () => {
@@ -156,16 +156,16 @@ public IBooom Property
                 Token.Puncuation.TypeParameters.Begin,
                 Token.Type("T"),
                 Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.SquareBracket.Open,
-                Token.Puncuation.SquareBracket.Close,
+                Token.Puncuation.OpenBracket,
+                Token.Puncuation.CloseBracket,
                 Token.Puncuation.TypeParameters.End,
                 Token.Identifiers.PropertyName("Property"),
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
                 Token.Keywords.Get,
                 Token.Puncuation.Semicolon,
                 Token.Keywords.Set,
                 Token.Puncuation.Semicolon,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.CloseBrace]);
         });
 
         it("auto-property initializer", () => {
@@ -183,14 +183,14 @@ public IBooom Property
                 Token.Puncuation.TypeParameters.Begin,
                 Token.Type("T"),
                 Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.SquareBracket.Open,
-                Token.Puncuation.SquareBracket.Close,
+                Token.Puncuation.OpenBracket,
+                Token.Puncuation.CloseBracket,
                 Token.Puncuation.TypeParameters.End,
                 Token.Identifiers.PropertyName("Property"),
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
                 Token.Keywords.Get,
                 Token.Puncuation.Semicolon,
-                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.CloseBrace,
                 Token.Operators.Assignment,
                 Token.Keywords.New,
                 Token.Type("Dictionary"),
@@ -201,11 +201,11 @@ public IBooom Property
                 Token.Puncuation.TypeParameters.Begin,
                 Token.Type("T"),
                 Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.SquareBracket.Open,
-                Token.Puncuation.SquareBracket.Close,
+                Token.Puncuation.OpenBracket,
+                Token.Puncuation.CloseBracket,
                 Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.Parenthesis.Open,
-                Token.Puncuation.Parenthesis.Close,
+                Token.Puncuation.OpenParen,
+                Token.Puncuation.CloseParen,
                 Token.Puncuation.Semicolon]);
         });
 

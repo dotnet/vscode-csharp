@@ -24,21 +24,21 @@ public string this[int index]
                 Token.Keywords.Modifiers.Public,
                 Token.Type("string"),
                 Token.Keywords.This,
-                Token.Puncuation.SquareBracket.Open,
+                Token.Puncuation.OpenBracket,
                 Token.Type("int"),
                 Token.Variables.Parameter("index"),
-                Token.Puncuation.SquareBracket.Close,
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.CloseBracket,
+                Token.Puncuation.OpenBrace,
                 Token.Keywords.Get,
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("index"),
                 Token.Variables.ReadWrite("ToString"),
-                Token.Puncuation.Parenthesis.Open,
-                Token.Puncuation.Parenthesis.Close,
+                Token.Puncuation.OpenParen,
+                Token.Puncuation.CloseParen,
                 Token.Puncuation.Semicolon,
-                Token.Puncuation.CurlyBrace.Close,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.CloseBrace,
+                Token.Puncuation.CloseBrace]);
         });
     });
 });

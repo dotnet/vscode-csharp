@@ -16,9 +16,9 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Puncuation.SquareBracket.Open,
+                Token.Puncuation.OpenBracket,
                 Token.Type("Foo"),
-                Token.Puncuation.SquareBracket.Close]);
+                Token.Puncuation.CloseBracket]);
         });
 
         it("global attribute with specifier", () => {
@@ -27,11 +27,11 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Puncuation.SquareBracket.Open,
+                Token.Puncuation.OpenBracket,
                 Token.Keywords.AttributeSpecifier("assembly"),
                 Token.Puncuation.Colon,
                 Token.Type("Foo"),
-                Token.Puncuation.SquareBracket.Close]);
+                Token.Puncuation.CloseBracket]);
         });
 
         it("Two global attributes in same section with specifier", () => {
@@ -40,13 +40,13 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Puncuation.SquareBracket.Open,
+                Token.Puncuation.OpenBracket,
                 Token.Keywords.AttributeSpecifier("module"),
                 Token.Puncuation.Colon,
                 Token.Type("Foo"),
                 Token.Puncuation.Comma,
                 Token.Type("Bar"),
-                Token.Puncuation.SquareBracket.Close]);
+                Token.Puncuation.CloseBracket]);
         });
 
         it("Two global attributes in same section with specifier and empty argument lists", () => {
@@ -55,17 +55,17 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Puncuation.SquareBracket.Open,
+                Token.Puncuation.OpenBracket,
                 Token.Keywords.AttributeSpecifier("module"),
                 Token.Puncuation.Colon,
                 Token.Type("Foo"),
-                Token.Puncuation.Parenthesis.Open,
-                Token.Puncuation.Parenthesis.Close,
+                Token.Puncuation.OpenParen,
+                Token.Puncuation.CloseParen,
                 Token.Puncuation.Comma,
                 Token.Type("Bar"),
-                Token.Puncuation.Parenthesis.Open,
-                Token.Puncuation.Parenthesis.Close,
-                Token.Puncuation.SquareBracket.Close]);
+                Token.Puncuation.OpenParen,
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.CloseBracket]);
         });
 
         it("Global attribute with one argument", () => {
@@ -74,12 +74,12 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Puncuation.SquareBracket.Open,
+                Token.Puncuation.OpenBracket,
                 Token.Type("Foo"),
-                Token.Puncuation.Parenthesis.Open,
+                Token.Puncuation.OpenParen,
                 Token.Literals.Boolean.True,
-                Token.Puncuation.Parenthesis.Close,
-                Token.Puncuation.SquareBracket.Close]);
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.CloseBracket]);
         });
 
         it("Global attribute with two arguments", () => {
@@ -88,14 +88,14 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Puncuation.SquareBracket.Open,
+                Token.Puncuation.OpenBracket,
                 Token.Type("Foo"),
-                Token.Puncuation.Parenthesis.Open,
+                Token.Puncuation.OpenParen,
                 Token.Literals.Boolean.True,
                 Token.Puncuation.Comma,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.Parenthesis.Close,
-                Token.Puncuation.SquareBracket.Close]);
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.CloseBracket]);
         });
 
         it("Global attribute with three arguments", () => {
@@ -104,9 +104,9 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Puncuation.SquareBracket.Open,
+                Token.Puncuation.OpenBracket,
                 Token.Type("Foo"),
-                Token.Puncuation.Parenthesis.Open,
+                Token.Puncuation.OpenParen,
                 Token.Literals.Boolean.True,
                 Token.Puncuation.Comma,
                 Token.Literals.Numeric.Decimal("42"),
@@ -114,8 +114,8 @@ describe("Grammar", () => {
                 Token.Puncuation.String.Begin,
                 Token.Literals.String("text"),
                 Token.Puncuation.String.End,
-                Token.Puncuation.Parenthesis.Close,
-                Token.Puncuation.SquareBracket.Close]);
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.CloseBracket]);
         });
 
         it("Global attribute with named argument", () => {
@@ -124,14 +124,14 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Puncuation.SquareBracket.Open,
+                Token.Puncuation.OpenBracket,
                 Token.Type("Foo"),
-                Token.Puncuation.Parenthesis.Open,
+                Token.Puncuation.OpenParen,
                 Token.Identifiers.PropertyName("Bar"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.Parenthesis.Close,
-                Token.Puncuation.SquareBracket.Close]);
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.CloseBracket]);
         });
 
         it("Global attribute with one positional argument and one named argument", () => {
@@ -140,16 +140,16 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Puncuation.SquareBracket.Open,
+                Token.Puncuation.OpenBracket,
                 Token.Type("Foo"),
-                Token.Puncuation.Parenthesis.Open,
+                Token.Puncuation.OpenParen,
                 Token.Literals.Boolean.True,
                 Token.Puncuation.Comma,
                 Token.Identifiers.PropertyName("Bar"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.Parenthesis.Close,
-                Token.Puncuation.SquareBracket.Close]);
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.CloseBracket]);
         });
 
         it("Global attribute with specifier, one positional argument, and two named arguments", () => {
@@ -158,11 +158,11 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Puncuation.SquareBracket.Open,
+                Token.Puncuation.OpenBracket,
                 Token.Keywords.AttributeSpecifier("module"),
                 Token.Puncuation.Colon,
                 Token.Type("Foo"),
-                Token.Puncuation.Parenthesis.Open,
+                Token.Puncuation.OpenParen,
                 Token.Literals.Boolean.True,
                 Token.Puncuation.Comma,
                 Token.Identifiers.PropertyName("Bar"),
@@ -174,8 +174,8 @@ describe("Grammar", () => {
                 Token.Puncuation.String.Begin,
                 Token.Literals.String("hello"),
                 Token.Puncuation.String.End,
-                Token.Puncuation.Parenthesis.Close,
-                Token.Puncuation.SquareBracket.Close]);
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.CloseBracket]);
         });
     });
 });

@@ -18,10 +18,10 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Type("void"),
                 Token.Identifiers.MethodName("Foo"),
-                Token.Puncuation.Parenthesis.Open,
-                Token.Puncuation.Parenthesis.Close,
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.OpenParen,
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace]);
         });
 
         it("declaration with two parameters", () => {
@@ -36,20 +36,20 @@ int Add(int x, int y)
             tokens.should.deep.equal([
                 Token.Type("int"),
                 Token.Identifiers.MethodName("Add"),
-                Token.Puncuation.Parenthesis.Open,
+                Token.Puncuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
                 Token.Puncuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.Parenthesis.Close,
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Arithmetic.Addition,
                 Token.Variables.ReadWrite("y"),
                 Token.Puncuation.Semicolon,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.CloseBrace]);
         });
 
         it("expression body", () => {
@@ -60,13 +60,13 @@ int Add(int x, int y)
             tokens.should.deep.equal([
                 Token.Type("int"),
                 Token.Identifiers.MethodName("Add"),
-                Token.Puncuation.Parenthesis.Open,
+                Token.Puncuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
                 Token.Puncuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.Parenthesis.Close,
+                Token.Puncuation.CloseParen,
                 Token.Operators.Arrow,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Arithmetic.Addition,

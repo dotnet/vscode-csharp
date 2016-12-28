@@ -37,58 +37,58 @@ public    abstract class PublicAbstractClass { }
                 Token.Keywords.Modifiers.Public,
                 Token.Keywords.Class,
                 Token.Identifiers.ClassName("PublicClass"),
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace,
 
                 Token.Keywords.Class,
                 Token.Identifiers.ClassName("DefaultClass"),
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace,
 
                 Token.Keywords.Modifiers.Internal,
                 Token.Keywords.Class,
                 Token.Identifiers.ClassName("InternalClass"),
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace,
 
                 Token.Keywords.Modifiers.Static,
                 Token.Keywords.Class,
                 Token.Identifiers.ClassName("DefaultStaticClass"),
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace,
 
                 Token.Keywords.Modifiers.Public,
                 Token.Keywords.Modifiers.Static,
                 Token.Keywords.Class,
                 Token.Identifiers.ClassName("PublicStaticClass"),
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace,
 
                 Token.Keywords.Modifiers.Sealed,
                 Token.Keywords.Class,
                 Token.Identifiers.ClassName("DefaultSealedClass"),
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace,
 
                 Token.Keywords.Modifiers.Public,
                 Token.Keywords.Modifiers.Sealed,
                 Token.Keywords.Class,
                 Token.Identifiers.ClassName("PublicSealedClass"),
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace,
 
                 Token.Keywords.Modifiers.Public,
                 Token.Keywords.Modifiers.Abstract,
                 Token.Keywords.Class,
                 Token.Identifiers.ClassName("PublicAbstractClass"),
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace,
 
                 Token.Keywords.Modifiers.Abstract,
                 Token.Keywords.Class,
                 Token.Identifiers.ClassName("DefaultAbstractClass"),
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace]);
         });
 
         it("generics in identifier", () => {
@@ -99,8 +99,8 @@ public    abstract class PublicAbstractClass { }
             tokens.should.deep.equal([
                 Token.Keywords.Class,
                 Token.Identifiers.ClassName("Dictionary<TKey, TValue>"),
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace]);
         });
 
         it("inheritance", () => {
@@ -119,8 +119,8 @@ class PublicClass<T> : Dictionary<T, Dictionary<string, string>>, IMap<T, Dictio
                 Token.Type("IInterface"),
                 Token.Puncuation.Comma,
                 Token.Type("IInterfaceTwo"),
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace,
 
                 Token.Keywords.Class,
                 Token.Identifiers.ClassName("PublicClass<T>"),
@@ -137,8 +137,8 @@ class PublicClass<T> : Dictionary<T, Dictionary<string, string>>, IMap<T, Dictio
                 Token.Type("Something"),
                 Token.Puncuation.Accessor,
                 Token.Type("IInterfaceTwo"),
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace,
 
                 Token.Keywords.Class,
                 Token.Identifiers.ClassName("PublicClass<T>"),
@@ -166,8 +166,8 @@ class PublicClass<T> : Dictionary<T, Dictionary<string, string>>, IMap<T, Dictio
                 Token.Type("string"),
                 Token.Puncuation.TypeParameters.End,
                 Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace]);
         });
 
         it("generic constraints", () => {
@@ -188,8 +188,8 @@ class PublicClass<T, X> : Dictionary<T, List<string>[]>, ISomething
                 Token.Type("T"),
                 Token.Puncuation.Colon,
                 Token.Type("ISomething"),
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace,
 
                 Token.Keywords.Class,
                 Token.Identifiers.ClassName("PublicClass<T, X>"),
@@ -202,8 +202,8 @@ class PublicClass<T, X> : Dictionary<T, List<string>[]>, ISomething
                 Token.Puncuation.TypeParameters.Begin,
                 Token.Type("string"),
                 Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.SquareBracket.Open,
-                Token.Puncuation.SquareBracket.Close,
+                Token.Puncuation.OpenBracket,
+                Token.Puncuation.CloseBracket,
                 Token.Puncuation.TypeParameters.End,
                 Token.Puncuation.Comma,
                 Token.Type("ISomething"),
@@ -213,14 +213,14 @@ class PublicClass<T, X> : Dictionary<T, List<string>[]>, ISomething
                 Token.Type("ICar"),
                 Token.Puncuation.Comma,
                 Token.Keywords.New,
-                Token.Puncuation.Parenthesis.Open,
-                Token.Puncuation.Parenthesis.Close,
+                Token.Puncuation.OpenParen,
+                Token.Puncuation.CloseParen,
                 Token.Keywords.Where,
                 Token.Type("X"),
                 Token.Puncuation.Colon,
                 Token.Keywords.Struct,
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace]);
         });
 
         it("nested class", () => {
@@ -238,15 +238,15 @@ class Klass
             tokens.should.deep.equal([
                 Token.Keywords.Class,
                 Token.Identifiers.ClassName("Klass"),
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
 
                 Token.Keywords.Modifiers.Public,
                 Token.Keywords.Class,
                 Token.Identifiers.ClassName("Nested"),
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace,
 
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.CloseBrace]);
         });
     });
 });

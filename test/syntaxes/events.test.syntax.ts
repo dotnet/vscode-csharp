@@ -94,14 +94,14 @@ public event Type Event
                 Token.Keywords.Event,
                 Token.Type("Type"),
                 Token.Identifiers.EventName("Event"),
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
                 Token.Keywords.Add,
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace,
                 Token.Keywords.Remove,
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace,
+                Token.Puncuation.CloseBrace]);
         });
     });
 });

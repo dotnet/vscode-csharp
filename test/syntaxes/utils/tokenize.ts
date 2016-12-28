@@ -223,13 +223,14 @@ export namespace Token {
 
     export namespace Puncuation {
         export const Accessor = createToken('.', 'punctuation.accessor.cs');
+        export const CloseBrace = createToken('}', 'punctuation.curlybrace.close.cs');
+        export const CloseBracket = createToken(']', 'punctuation.squarebracket.close.cs');
+        export const CloseParen = createToken(')', 'punctuation.parenthesis.close.cs');
         export const Colon = createToken(':', 'punctuation.separator.colon.cs');
         export const Comma = createToken(',', 'punctuation.separator.comma.cs');
-
-        export namespace CurlyBrace {
-            export const Close = createToken('}', 'punctuation.curlybrace.close.cs');
-            export const Open = createToken('{', 'punctuation.curlybrace.open.cs');
-        }
+        export const OpenBrace = createToken('{', 'punctuation.curlybrace.open.cs');
+        export const OpenBracket = createToken('[', 'punctuation.squarebracket.open.cs');
+        export const OpenParen = createToken('(', 'punctuation.parenthesis.open.cs');
 
         export namespace Interpolation {
             export const Begin = createToken('{', 'punctuation.definition.interpolation.begin.cs');
@@ -242,17 +243,7 @@ export namespace Token {
             export const VerbatimBegin = createToken('$@"', 'punctuation.definition.string.begin.cs');
         }
 
-        export namespace Parenthesis {
-            export const Close = createToken(')', 'punctuation.parenthesis.close.cs');
-            export const Open = createToken('(', 'punctuation.parenthesis.open.cs');
-        }
-
         export const Semicolon = createToken(';', 'punctuation.terminator.statement.cs');
-
-        export namespace SquareBracket {
-            export const Close = createToken(']', 'punctuation.squarebracket.close.cs');
-            export const Open = createToken('[', 'punctuation.squarebracket.open.cs');
-        }
 
         export namespace String {
             export const Begin = createToken('"', 'punctuation.definition.string.begin.cs');

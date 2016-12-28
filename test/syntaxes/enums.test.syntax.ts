@@ -18,8 +18,8 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Keywords.Enum,
                 Token.Identifiers.EnumName("E"),
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace]);
         });
 
         it("enum with base type", () => {
@@ -32,8 +32,8 @@ describe("Grammar", () => {
                 Token.Identifiers.EnumName("E"),
                 Token.Puncuation.Colon,
                 Token.Type("byte"),
-                Token.Puncuation.CurlyBrace.Open,
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace]);
         });
 
         it("enum with single member", () => {
@@ -44,9 +44,9 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Keywords.Enum,
                 Token.Identifiers.EnumName("E"),
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
                 Token.Variables.EnumMember("M1"),
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.CloseBrace]);
         });
 
         it("enum with multiple members", () => {
@@ -57,13 +57,13 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Keywords.Enum,
                 Token.Identifiers.EnumName("Color"),
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
                 Token.Variables.EnumMember("Red"),
                 Token.Puncuation.Comma,
                 Token.Variables.EnumMember("Green"),
                 Token.Puncuation.Comma,
                 Token.Variables.EnumMember("Blue"),
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.CloseBrace]);
         });
 
         it("enum with initialized member", () => {
@@ -82,7 +82,7 @@ enum E
             tokens.should.deep.equal([
                 Token.Keywords.Enum,
                 Token.Identifiers.EnumName("E"),
-                Token.Puncuation.CurlyBrace.Open,
+                Token.Puncuation.OpenBrace,
                 Token.Variables.EnumMember("Value1"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("1"),
@@ -90,7 +90,7 @@ enum E
                 Token.Variables.EnumMember("Value2"),
                 Token.Puncuation.Comma,
                 Token.Variables.EnumMember("Value3"),
-                Token.Puncuation.CurlyBrace.Close]);
+                Token.Puncuation.CloseBrace]);
         });
     });
 });
