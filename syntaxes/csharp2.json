@@ -1244,11 +1244,6 @@
                     "match": "\\b0(b|B)[01_]+(U|u|L|l|UL|Ul|uL|ul|LU|Lu|lU|lu)?\\b"
                 },
                 {
-                    "comment": "C# grammar: decimal-digits integer-type-suffix[opt]",
-                    "name": "constant.numeric.decimal.cs",
-                    "match": "\\b[0-9_]+(U|u|L|l|UL|Ul|uL|ul|LU|Lu|lU|lu)?\\b"
-                },
-                {
                     "comment": "C# grammar: decimal-digits . decimal-digits exponent-part[opt] real-type-suffix[opt] OR . decimal-digits exponent-part[opt] real-type-suffix[opt]",
                     "name": "constant.numeric.decimal.cs",
                     "match": "\\b([0-9_]+)?\\.[0-9_]+((e|E)[0-9]+)?(F|f|D|d|M|m)?"
@@ -1262,6 +1257,11 @@
                     "comment": "C# grammar: decimal-digits real-type-suffix",
                     "name": "constant.numeric.decimal.cs",
                     "match": "\\b[0-9_]+(F|f|D|d|M|m)"
+                },
+                {
+                    "comment": "C# grammar: decimal-digits integer-type-suffix[opt]",
+                    "name": "constant.numeric.decimal.cs",
+                    "match": "\\b[0-9_]+(U|u|L|l|UL|Ul|uL|ul|LU|Lu|lU|lu)?\\b"
                 }
             ]
         },
