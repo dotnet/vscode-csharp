@@ -261,6 +261,7 @@ export namespace Token {
         export const EnumMember = (text: string) => createToken(text, 'variable.other.enummember.cs');
         export const Parameter = (text: string) => createToken(text, 'variable.parameter.cs');
         export const ReadWrite = (text: string) => createToken(text, 'variable.other.readwrite.cs');
+        export const Tuple = (text: string) => createToken(text, 'entity.name.variable.tuple.cs');
     }
 
     export const IllegalNewLine = (text: string) => createToken(text, 'invalid.illegal.newline.cs');
