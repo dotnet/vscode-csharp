@@ -120,6 +120,7 @@ world!";`);
                 // Note: Because the string ended prematurely, the rest of this line and the contents of the next are junk.
                 Token.IllegalNewLine("o"),
                 Token.Variables.ReadWrite("world"),
+                Token.Operators.Logical.Not,
                 Token.Puncuation.String.Begin,
                 Token.IllegalNewLine(";")]);
         });

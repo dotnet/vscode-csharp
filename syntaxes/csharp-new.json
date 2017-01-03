@@ -94,6 +94,9 @@
                     "include": "#destructor-declaration"
                 },
                 {
+                    "include": "#operator-declaration"
+                },
+                {
                     "include": "#punctuation-semicolon"
                 }
             ]
@@ -126,6 +129,9 @@
                 },
                 {
                     "include": "#destructor-declaration"
+                },
+                {
+                    "include": "#operator-declaration"
                 },
                 {
                     "include": "#punctuation-semicolon"
@@ -776,14 +782,14 @@
             ]
         },
         "field-declaration": {
-            "begin": "(?=(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|readonly|volatile|const)\\s+)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?<first-field-name>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?!=>)(?:;|=))",
+            "begin": "(?=(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|readonly|volatile|const)\\s+)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?<first-field-name>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?!=>|==)(?:;|=))",
             "end": "(?=;)",
             "patterns": [
                 {
                     "include": "#comment"
                 },
                 {
-                    "begin": "(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|readonly|volatile|const)\\s+)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?<first-field-name>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?!=>)(?=;|=)",
+                    "begin": "(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|readonly|volatile|const)\\s+)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?<first-field-name>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?!=>|==)(?=;|=)",
                     "beginCaptures": {
                         "1": {
                             "patterns": [
@@ -1163,6 +1169,54 @@
                 }
             ]
         },
+        "operator-declaration": {
+            "begin": "(?=(?<storage-modifiers>(?:(?:public|static|extern)\\s+)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s*(?<operator-keyword>(?:\\b(?:operator)))\\s*(?<operator>(?:\\+|-|\\*|/|%|&|\\||\\^|\\<\\<|\\>\\>|==|!=|\\>|\\<|\\>=|\\<=|!|~|\\+\\+|--|true|false))\\s*(?:\\())",
+            "end": "(?=\\}|;)",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "match": "(?<storage-modifiers>(?:(?:public|static|extern)\\s+)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s*(?<operator-keyword>(?:\\b(?:operator)))\\s*(?<operator>(?:\\+|-|\\*|/|%|&|\\||\\^|\\<\\<|\\>\\>|==|!=|\\>|\\<|\\>=|\\<=|!|~|\\+\\+|--|true|false))\\s*(?=\\()",
+                    "captures": {
+                        "1": {
+                            "patterns": [
+                                {
+                                    "match": "\\b(public|static|extern)\\b",
+                                    "captures": {
+                                        "1": {
+                                            "name": "storage.modifier.cs"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "2": {
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ]
+                        },
+                        "3": {
+                            "name": "keyword.other.operator.cs"
+                        },
+                        "4": {
+                            "name": "entity.name.function.cs"
+                        }
+                    }
+                },
+                {
+                    "include": "#parenthesized-parameter-list"
+                },
+                {
+                    "include": "#expression-body"
+                },
+                {
+                    "include": "#block"
+                }
+            ]
+        },
         "block": {
             "begin": "\\{",
             "beginCaptures": {
@@ -1384,8 +1438,36 @@
         "expression-operators": {
             "patterns": [
                 {
+                    "name": "keyword.operator.bitwise.shift.cs",
+                    "match": "<<|>>"
+                },
+                {
+                    "name": "keyword.operator.comparison.cs",
+                    "match": "==|!="
+                },
+                {
+                    "name": "keyword.operator.relational.cs",
+                    "match": "<=|>=|<|>"
+                },
+                {
+                    "name": "keyword.operator.logical.cs",
+                    "match": "\\!|&&|\\|\\|"
+                },
+                {
+                    "name": "keyword.operator.bitwise.cs",
+                    "match": "\\&|~|\\^|\\|"
+                },
+                {
                     "name": "keyword.operator.assignment.cs",
                     "match": "\\="
+                },
+                {
+                    "name": "keyword.operator.decrement.cs",
+                    "match": "--"
+                },
+                {
+                    "name": "keyword.operator.increment.cs",
+                    "match": "\\+\\+"
                 },
                 {
                     "name": "keyword.operator.arithmetic.cs",

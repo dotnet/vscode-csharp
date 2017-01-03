@@ -179,6 +179,7 @@ export namespace Token {
         export const Interface = createToken('interface', 'keyword.other.interface.cs');
         export const Namespace = createToken('namespace', 'keyword.other.namespace.cs');
         export const New = createToken('new', 'keyword.other.new.cs');
+        export const Operator = createToken('operator', 'keyword.other.operator.cs');
         export const Remove = createToken('remove', 'keyword.other.remove.cs');
         export const Return = createToken('return', 'keyword.control.flow.cs');
         export const Set = createToken('set', 'keyword.other.set.cs');
@@ -219,6 +220,34 @@ export namespace Token {
         }
 
         export const Assignment = createToken('=', 'keyword.operator.assignment.cs');
+
+        export namespace Bitwise {
+            export const And = createToken('&', 'keyword.operator.bitwise.cs');
+            export const BitwiseComplement = createToken('~', 'keyword.operator.bitwise.cs');
+            export const ExclusiveOr = createToken('^', 'keyword.operator.bitwise.cs');
+            export const Or = createToken('|', 'keyword.operator.bitwise.cs');
+            export const ShiftLeft = createToken('<<', 'keyword.operator.bitwise.shift.cs');
+            export const ShiftRight = createToken('>>', 'keyword.operator.bitwise.shift.cs');
+       }
+
+        export const Decrement = createToken('--', 'keyword.operator.decrement.cs');
+        export const Increment = createToken('++', 'keyword.operator.increment.cs');
+
+        export namespace Logical {
+            export const And = createToken('&&', 'keyword.operator.logical.cs');
+            export const Not = createToken('!', 'keyword.operator.logical.cs');
+            export const Or = createToken('||', 'keyword.operator.logical.cs');
+       }
+
+        export namespace Relational {
+            export const Equals = createToken('==', 'keyword.operator.comparison.cs');
+            export const NotEqual = createToken('!=', 'keyword.operator.comparison.cs');
+
+            export const LessThan = createToken('<', 'keyword.operator.relational.cs');
+            export const LessThanOrEqual = createToken('<=', 'keyword.operator.relational.cs');
+            export const GreaterThan = createToken('>', 'keyword.operator.relational.cs');
+            export const GreaterThanOrEqual = createToken('>=', 'keyword.operator.relational.cs');
+       }
     }
 
     export namespace Puncuation {
