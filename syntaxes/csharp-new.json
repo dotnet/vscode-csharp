@@ -88,6 +88,9 @@
                     "include": "#method-declaration"
                 },
                 {
+                    "include": "#constructor-declaration"
+                },
+                {
                     "include": "#punctuation-semicolon"
                 }
             ]
@@ -114,6 +117,9 @@
                 },
                 {
                     "include": "#method-declaration"
+                },
+                {
+                    "include": "#constructor-declaration"
                 },
                 {
                     "include": "#punctuation-semicolon"
@@ -1072,13 +1078,53 @@
                     "include": "#expression-body"
                 },
                 {
-                    "begin": "(?=\\{)",
-                    "end": "(?=\\})",
-                    "patterns": [
-                        {
-                            "include": "#block"
+                    "include": "#block"
+                }
+            ]
+        },
+        "constructor-declaration": {
+            "begin": "(?=(?:(?<storage-modifiers>(?:(?:public|protected|internal|private|extern|static)\\s+)+)\\s*(?:[_$[:alpha:]][_$[:alnum:]]*)|(?:[_$[:alpha:]][_$[:alnum:]]*))\\s*(?:\\())",
+            "end": "(?=\\}|;)",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "match": "(?<storage-modifiers>(?:(?:public|protected|internal|private|extern|static)\\s+)+)\\s*(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?=\\()",
+                    "captures": {
+                        "1": {
+                            "patterns": [
+                                {
+                                    "match": "\\b(public|protected|internal|private|extern|static)\\b",
+                                    "captures": {
+                                        "1": {
+                                            "name": "storage.modifier.cs"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "2": {
+                            "name": "entity.name.function.cs"
                         }
-                    ]
+                    }
+                },
+                {
+                    "match": "([_$[:alpha:]][_$[:alnum:]]*)\\s*(?=\\()",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.function.cs"
+                        }
+                    }
+                },
+                {
+                    "include": "#parenthesized-parameter-list"
+                },
+                {
+                    "include": "#expression-body"
+                },
+                {
+                    "include": "#block"
                 }
             ]
         },
@@ -1493,7 +1539,7 @@
                         {
                             "match": "(?<type-name>(?:(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\.\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(?:\\s+(?<tuple-name>[_$[:alpha:]][_$[:alnum:]]*))?",
                             "captures": {
-                                "1":{
+                                "1": {
                                     "patterns": [
                                         {
                                             "include": "#type"

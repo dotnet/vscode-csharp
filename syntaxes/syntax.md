@@ -103,4 +103,16 @@ if you consider that regular expressions don't know that "class" is a keyword. T
     * Storage modifiers: `(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\s+)*)`
     * Type name: `\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\s*\:\:\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?(?:\s*\.\s*\g<type-name>)*)|(?:\s*\(\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\s*,\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\s*\)\s*))(?:(?:\[,*\])*)?)`
     * Method name and type parameters: `\s+(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)(?:\s*<\s*\g<identifier>(?:\s*,\s*\g<identifier>)*\s*>\s*)?`
-    * End: `\s*(?:\[))`
+    * End: `\s*(?:\())`
+
+#### Constructor declarations
+
+Note that the match for constructor declarations contains an `|`. This allows for constructors with and without storage modifiers.
+If the storage modifiers are optional (i.e. using a `*` rather than a `+`), this match conflicts with fields where there is a modifier
+followed by a tuple type (e.g. `private (int, int) x;`).
+
+* Expression: `(?=(?:(?<storage-modifiers>(?:(?:public|protected|internal|private|extern|static)\s+)+)\s*(?:[_$[:alpha:]][_$[:alnum:]]*)|(?:[_$[:alpha:]][_$[:alnum:]]*))\s*(?:\())`
+* Break down:
+    * Storage modifiers: `(?<storage-modifiers>(?:(?:public|protected|internal|private|extern|static)\s+)*)`
+    * Name: `\s+[_$[:alpha:]][_$[:alnum:]]*`
+    * End: `\s*(?:\())`
