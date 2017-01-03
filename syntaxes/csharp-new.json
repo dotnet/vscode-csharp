@@ -1366,6 +1366,9 @@
             },
             "patterns": [
                 {
+                    "include": "#string-character-escape"
+                },
+                {
                     "include": "#interpolation"
                 }
             ]
@@ -1378,13 +1381,16 @@
                     "name": "punctuation.definition.string.begin.cs"
                 }
             },
-            "end": "\"",
+            "end": "\"(?=[^\"])",
             "endCaptures": {
                 "0": {
                     "name": "punctuation.definition.string.end.cs"
                 }
             },
             "patterns": [
+                {
+                    "include": "#verbatim-string-character-escape"
+                },
                 {
                     "include": "#interpolation"
                 }
@@ -1426,6 +1432,9 @@
                 },
                 {
                     "include": "#string-literal"
+                },
+                {
+                    "include": "#verbatim-string-literal"
                 }
             ]
         },
@@ -1481,7 +1490,7 @@
         },
         "string-literal": {
             "name": "string.quoted.double.cs",
-            "begin": "\"",
+            "begin": "(?<!@)\"",
             "beginCaptures": {
                 "0": {
                     "name": "punctuation.definition.string.begin.cs"
@@ -1502,9 +1511,33 @@
                 }
             ]
         },
+        "verbatim-string-literal": {
+            "name": "string.quoted.double.cs",
+            "begin": "@\"",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.begin.cs"
+                }
+            },
+            "end": "\"(?=[^\"])",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.end.cs"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#verbatim-string-character-escape"
+                }
+            ]
+        },
         "string-character-escape": {
             "name": "constant.character.escape.cs",
             "match": "\\\\."
+        },
+        "verbatim-string-character-escape": {
+            "name": "constant.character.escape.cs",
+            "match": "\"\""
         },
         "expression-operators": {
             "patterns": [

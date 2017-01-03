@@ -148,6 +148,33 @@ world!";`);
                 Token.Puncuation.Semicolon]);
         });
 
+        it("verbatim with two interpolations and escaped double-quotes", () => {
+
+            const input = Input.InClass(`string test = $@"hello {one} ""world"" {two}!";`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("string"),
+                Token.Identifiers.FieldName("test"),
+                Token.Operators.Assignment,
+                Token.Puncuation.InterpolatedString.VerbatimBegin,
+                Token.Literals.String("hello "),
+                Token.Puncuation.Interpolation.Begin,
+                Token.Variables.ReadWrite("one"),
+                Token.Puncuation.Interpolation.End,
+                Token.Literals.String(" "),
+                Token.Literals.CharacterEscape("\"\""),
+                Token.Literals.String("world"),
+                Token.Literals.CharacterEscape("\"\""),
+                Token.Literals.String(" "),
+                Token.Puncuation.Interpolation.Begin,
+                Token.Variables.ReadWrite("two"),
+                Token.Puncuation.Interpolation.End,
+                Token.Literals.String("!"),
+                Token.Puncuation.InterpolatedString.End,
+                Token.Puncuation.Semicolon]);
+        });
+
         it("break across two lines with two interpolations (verbatim)", () => {
 
             const input = Input.InClass(`

@@ -207,6 +207,7 @@ export namespace Token {
             export const Hexadecimal = (text: string) => createToken(text, 'constant.numeric.hex.cs');
         }
 
+        export const CharacterEscape = (text: string) => createToken(text, 'constant.character.escape.cs');
         export const String = (text: string) => createToken(text, 'string.quoted.double.cs');
     }
 
@@ -280,6 +281,7 @@ export namespace Token {
         export namespace String {
             export const Begin = createToken('"', 'punctuation.definition.string.begin.cs');
             export const End = createToken('"', 'punctuation.definition.string.end.cs');
+            export const VerbatimBegin = createToken('@"', 'punctuation.definition.string.begin.cs');
         }
 
         export namespace TypeParameters {
