@@ -227,6 +227,7 @@ export namespace Token {
         export const CloseBracket = createToken(']', 'punctuation.squarebracket.close.cs');
         export const CloseParen = createToken(')', 'punctuation.parenthesis.close.cs');
         export const Colon = createToken(':', 'punctuation.separator.colon.cs');
+        export const ColonColon = createToken('::', 'punctuation.separator.coloncolon.cs');
         export const Comma = createToken(',', 'punctuation.separator.comma.cs');
         export const OpenBrace = createToken('{', 'punctuation.curlybrace.open.cs');
         export const OpenBracket = createToken('[', 'punctuation.squarebracket.open.cs');
