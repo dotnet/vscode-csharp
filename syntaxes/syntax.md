@@ -2,7 +2,6 @@
 
 * Declarations:
     * Explicitly-implemented interface members
-    * Conversion operator declarations
     * Interface members
 
 * Statements/Expressions:
@@ -141,3 +140,14 @@ Note that structs do not allow destructor declarations, but we'll try to highlig
     * Type name: `\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\s*\:\:\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?(?:\s*\.\s*\g<type-name>)*)|(?:\s*\(\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\s*,\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\s*\)\s*))(?:(?:\[,*\])*)?)`
     * Operator keyword: `\s*(?<operator-keyword>(?:\b(?:operator)))`
     * Operator: `\s*(?<operator>(?:\+|-|\*|\/|%|&|\\||\^|\<\<|\>\>|==|!=|\>|\<|\>=|\<=|!|~|\+\+|--|true|false))`
+    * End: `\s*(?:\())`
+
+#### Conversion operator declarations
+
+* Expression: `(?=(?<storage-modifiers>(?:(?:public|static|extern)\s+)*)\s*(?<explicit-or-implicit-keyword>(?:\b(?:explicit|implicit)))\s*(?<operator-keyword>(?:\b(?:operator)))\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\s*\:\:\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?(?:\s*\.\s*\g<type-name>)*)|(?:\s*\(\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\s*,\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\s*\)\s*))(?:(?:\[,*\])*)?)\s*(?:\())`
+* Break down:
+    * Storage modifiers: `(?<storage-modifiers>(?:(?:public|static|extern)\s+)*)`
+    * Explicit or implicit: `\s*(?<explicit-or-implicit-keyword>(?:\b(?:explicit|implicit)))`
+    * Operator keyword: `\s*(?<operator-keyword>(?:\b(?:operator)))`
+    * Type name: `\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\s*\:\:\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?(?:\s*\.\s*\g<type-name>)*)|(?:\s*\(\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\s*,\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\s*\)\s*))(?:(?:\[,*\])*)?)`
+    * End: `\s*(?:\())`

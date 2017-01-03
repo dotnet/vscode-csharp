@@ -174,8 +174,10 @@ export namespace Token {
         export const Do = createToken('do', 'keyword.control.loop.cs');
         export const Enum = createToken('enum', 'keyword.other.enum.cs');
         export const Event = createToken('event', 'keyword.other.event.cs');
+        export const Explicit = createToken('explicit', 'keyword.other.explicit.cs');
         export const Extern = createToken('extern', 'keyword.other.extern.cs');
         export const Get = createToken('get', 'keyword.other.get.cs');
+        export const Implicit = createToken('implicit', 'keyword.other.implicit.cs');
         export const Interface = createToken('interface', 'keyword.other.interface.cs');
         export const Namespace = createToken('namespace', 'keyword.other.namespace.cs');
         export const New = createToken('new', 'keyword.other.new.cs');

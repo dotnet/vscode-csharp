@@ -629,6 +629,54 @@ describe("Grammar", () => {
                 Token.Puncuation.CloseBrace]);
         });
 
+        it("implicit conversion", () => {
+
+            const input = Input.InClass(`public static implicit operator bool(int x) { return x != 0; }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Modifiers.Static,
+                Token.Keywords.Implicit,
+                Token.Keywords.Operator,
+                Token.Type("bool"),
+                Token.Puncuation.OpenParen,
+                Token.Type("int"),
+                Token.Variables.Parameter("x"),
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.OpenBrace,
+                Token.Keywords.Return,
+                Token.Variables.ReadWrite("x"),
+                Token.Operators.Relational.NotEqual,
+                Token.Literals.Numeric.Decimal("0"),
+                Token.Puncuation.Semicolon,
+                Token.Puncuation.CloseBrace]);
+        });
+
+        it("explicit conversion", () => {
+
+            const input = Input.InClass(`public static explicit operator bool(int x) { return x != 0; }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Modifiers.Static,
+                Token.Keywords.Explicit,
+                Token.Keywords.Operator,
+                Token.Type("bool"),
+                Token.Puncuation.OpenParen,
+                Token.Type("int"),
+                Token.Variables.Parameter("x"),
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.OpenBrace,
+                Token.Keywords.Return,
+                Token.Variables.ReadWrite("x"),
+                Token.Operators.Relational.NotEqual,
+                Token.Literals.Numeric.Decimal("0"),
+                Token.Puncuation.Semicolon,
+                Token.Puncuation.CloseBrace]);
+        });
+
         it("with expression body", () => {
 
             const input = Input.InClass(`public static int operator +(int value) => +value;`);

@@ -97,6 +97,9 @@
                     "include": "#operator-declaration"
                 },
                 {
+                    "include": "#conversion-operator-declaration"
+                },
+                {
                     "include": "#punctuation-semicolon"
                 }
             ]
@@ -132,6 +135,9 @@
                 },
                 {
                     "include": "#operator-declaration"
+                },
+                {
+                    "include": "#conversion-operator-declaration"
                 },
                 {
                     "include": "#punctuation-semicolon"
@@ -1203,6 +1209,71 @@
                         },
                         "4": {
                             "name": "entity.name.function.cs"
+                        }
+                    }
+                },
+                {
+                    "include": "#parenthesized-parameter-list"
+                },
+                {
+                    "include": "#expression-body"
+                },
+                {
+                    "include": "#block"
+                }
+            ]
+        },
+        "conversion-operator-declaration": {
+            "begin": "(?=(?<storage-modifiers>(?:(?:public|static|extern)\\s+)*)\\s*(?<explicit-or-implicit-keyword>(?:\\b(?:explicit|implicit)))\\s*(?<operator-keyword>(?:\\b(?:operator)))\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s*(?:\\())",
+            "end": "(?=\\}|;)",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "match": "(?<storage-modifiers>(?:(?:public|static|extern)\\s+)*)\\s*(?<explicit-or-implicit-keyword>(?:\\b(?:explicit|implicit)))\\s*(?<operator-keyword>(?:\\b(?:operator)))\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s*(?=\\()",
+                    "captures": {
+                        "1": {
+                            "patterns": [
+                                {
+                                    "match": "\\b(public|static|extern)\\b",
+                                    "captures": {
+                                        "1": {
+                                            "name": "storage.modifier.cs"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "2": {
+                            "patterns": [
+                                {
+                                    "match": "\\b(explicit)\\b",
+                                    "captures": {
+                                        "1": {
+                                            "name": "keyword.other.explicit.cs"
+                                        }
+                                    }
+                                },
+                                {
+                                    "match": "\\b(implicit)\\b",
+                                    "captures": {
+                                        "1": {
+                                            "name": "keyword.other.implicit.cs"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "3": {
+                            "name": "keyword.other.operator.cs"
+                        },
+                        "4": {
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ]
                         }
                     }
                 },
