@@ -255,6 +255,8 @@ export namespace Token {
             export const Begin = createToken('<', 'punctuation.definition.typeparameters.begin.cs');
             export const End = createToken('>', 'punctuation.definition.typeparameters.end.cs');
         }
+
+        export const Tilde = createToken('~', 'punctuation.tilde.cs');
     }
 
     export namespace Variables {

@@ -1,12 +1,20 @@
 ## TODO List:
 
-* Declaratiosn:
+* Declarations:
     * Explicitly-implemented interface members
-    * Constructor declarations
-    * Destructor declarations
     * Operator declarations
     * Conversion operator declarations
     * Interface members
+
+* Statements/Expressions:
+    * Local variable declarations
+    * Method calls
+    * Element access
+    * LINQ
+    * switch
+    * for loops
+    * foreach loops
+    * lambda expressions
 
 * Lots of refinement and tests to ensure proper highlighting while typing
 
@@ -115,4 +123,13 @@ followed by a tuple type (e.g. `private (int, int) x;`).
 * Break down:
     * Storage modifiers: `(?<storage-modifiers>(?:(?:public|protected|internal|private|extern|static)\s+)*)`
     * Name: `\s+[_$[:alpha:]][_$[:alnum:]]*`
+    * End: `\s*(?:\())`
+
+#### Destructor declarations
+
+Note that structs do not allow destructor declarations, but we'll try to highlight them anyway.
+
+* Expression: `(?=~(?:[_$[:alpha:]][_$[:alnum:]]*)\s*(?:\())`
+* Break down:
+    * Name: `~(?:[_$[:alpha:]][_$[:alnum:]]*)`
     * End: `\s*(?:\())`
