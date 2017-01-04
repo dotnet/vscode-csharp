@@ -78,6 +78,19 @@ class TestClass {
         return new Input(lines, { startLine: 2, startIndex: 4, endLine: lines.length - 1, endIndex: 0 });
     }
 
+    public static InInterface(input: string) {
+        let text = `
+interface TestInterface {
+    ${input}
+}`;
+
+        // ensure consistent line-endings irrelevant of OS
+        text = text.replace('\r\n', '\n');
+        let lines = text.split('\n');
+
+        return new Input(lines, { startLine: 2, startIndex: 4, endLine: lines.length - 1, endIndex: 0 });
+    }
+
     public static InMethod(input: string) {
         let text = `
 class TestClass {

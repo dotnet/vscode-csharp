@@ -125,5 +125,17 @@ public event Type Event
                 Token.Puncuation.Semicolon,
                 Token.Puncuation.CloseBrace]);
         });
+
+        it("declaration in interface", () => {
+
+            const input = Input.InInterface(`event EventHandler Event;`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Event,
+                Token.Type("EventHandler"),
+                Token.Identifiers.EventName("Event"),
+                Token.Puncuation.Semicolon]);
+        });
     });
 });

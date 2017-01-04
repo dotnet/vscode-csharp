@@ -1,7 +1,6 @@
 ## TODO List:
 
 * Declarations:
-    * Interface members
     * Constructor initializers
 
 * Statements/Expressions:
@@ -117,13 +116,13 @@ if you consider that regular expressions don't know that "class" is a keyword. T
 
 #### Method declarations
 
-* Expression: `(?=(?<storage-modifiers>(?:\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\b\s*)*)\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\s*\:\:\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?(?:\s*\.\s*\g<type-name>)*)|(?:\s*\(\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\s*,\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\s*\)\s*))(?:(?:\[,*\])*)?)\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\s*\:\:\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<interface-name>)(?:\s*,\s*\g<interface-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?(?:\s*\.\s*\g<interface-name>)*)|(?:\s*\(\s*(?:\g<interface-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\s*,\s*(?:\g<interface-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\s*\)\s*))(?:(?:\[,*\])*)?)(\s*\.\s*))?(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)(?:\s*<\s*\g<identifier>(?:\s*,\s*\g<identifier>)*\s*>\s*)?\s*(?:\())`
+* Expression: `(?=(?<storage-modifiers>(?:\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\b\s*)*)\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\s*\:\:\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?(?:\s*\.\s*\g<type-name>)*)|(?:\s*\(\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\s*,\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\s*\)\s*))(?:(?:\[,*\])*)?)\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\s*\:\:\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<interface-name>)(?:\s*,\s*\g<interface-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?(?:\s*\.\s*\g<interface-name>)*)|(?:\s*\(\s*(?:\g<interface-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\s*,\s*(?:\g<interface-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\s*\)\s*))(?:(?:\[,*\])*)?)(\s*\.\s*))?(?<method-name>(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)(?:\s*<\s*\g<identifier>(?:\s*,\s*\g<identifier>)*\s*>\s*)?)\s*(?:\())`
 
 * Break down:
     * Storage modifiers: `(?<storage-modifiers>(?:\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\b\s*)*)`
     * Type name: `\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\s*\:\:\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?(?:\s*\.\s*\g<type-name>)*)|(?:\s*\(\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\s*,\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\s*\)\s*))(?:(?:\[,*\])*)?)`
     * Interface name: `\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\s*\:\:\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<interface-name>)(?:\s*,\s*\g<interface-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?(?:\s*\.\s*\g<interface-name>)*)|(?:\s*\(\s*(?:\g<interface-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\s*,\s*(?:\g<interface-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\s*\)\s*))(?:(?:\[,*\])*)?)(\s*\.\s*))?`
-    * Method name and type parameters: `(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)(?:\s*<\s*\g<identifier>(?:\s*,\s*\g<identifier>)*\s*>\s*)?`
+    * Method name and type parameters: `(?<method-name>(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)(?:\s*<\s*\g<identifier>(?:\s*,\s*\g<identifier>)*\s*>\s*)?)`
     * End: `\s*(?:\()`
 
 #### Constructor declarations

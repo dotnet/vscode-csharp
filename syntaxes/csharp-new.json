@@ -61,6 +61,9 @@
                 },
                 {
                     "include": "#struct-declaration"
+                },
+                {
+                    "include": "#punctuation-semicolon"
                 }
             ]
         },
@@ -138,6 +141,25 @@
                 },
                 {
                     "include": "#conversion-operator-declaration"
+                },
+                {
+                    "include": "#punctuation-semicolon"
+                }
+            ]
+        },
+        "interface-members": {
+            "patterns": [
+                {
+                    "include": "#event-declaration"
+                },
+                {
+                    "include": "#property-declaration"
+                },
+                {
+                    "include": "#indexer-declaration"
+                },
+                {
+                    "include": "#method-declaration"
                 },
                 {
                     "include": "#punctuation-semicolon"
@@ -663,7 +685,7 @@
                     },
                     "patterns": [
                         {
-                            "include": "#punctuation-semicolon"
+                            "include": "#interface-members"
                         }
                     ]
                 }
@@ -1098,14 +1120,14 @@
             ]
         },
         "method-declaration": {
-            "begin": "(?=(?<storage-modifiers>(?:\\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\\b\\s*)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<interface-name>)(?:\\s*,\\s*\\g<interface-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<interface-name>)*)|(?:\\s*\\(\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(\\s*\\.\\s*))?(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)(?:\\s*<\\s*\\g<identifier>(?:\\s*,\\s*\\g<identifier>)*\\s*>\\s*)?\\s*(?:\\())",
+            "begin": "(?=(?<storage-modifiers>(?:\\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\\b\\s*)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<interface-name>)(?:\\s*,\\s*\\g<interface-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<interface-name>)*)|(?:\\s*\\(\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(\\s*\\.\\s*))?(?<method-name>(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)(?:\\s*<\\s*\\g<identifier>(?:\\s*,\\s*\\g<identifier>)*\\s*>\\s*)?)\\s*(?:\\())",
             "end": "(?=\\}|;)",
             "patterns": [
                 {
                     "include": "#comment"
                 },
                 {
-                    "match": "(?<storage-modifiers>(?:\\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\\b\\s*)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<interface-name>)(?:\\s*,\\s*\\g<interface-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<interface-name>)*)|(?:\\s*\\(\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(\\s*\\.\\s*))?(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)(?:\\s*<\\s*\\g<identifier>(?:\\s*,\\s*\\g<identifier>)*\\s*>\\s*)?\\s*(?=\\()",
+                    "match": "(?<storage-modifiers>(?:\\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\\b\\s*)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<interface-name>)(?:\\s*,\\s*\\g<interface-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<interface-name>)*)|(?:\\s*\\(\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(\\s*\\.\\s*))?(?<method-name>(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)(?:\\s*<\\s*\\g<identifier>(?:\\s*,\\s*\\g<identifier>)*\\s*>\\s*)?)\\s*(?=\\()",
                     "captures": {
                         "1": {
                             "patterns": [
@@ -1147,6 +1169,9 @@
                 },
                 {
                     "include": "#parenthesized-parameter-list"
+                },
+                {
+                    "include": "#generic-constraints"
                 },
                 {
                     "include": "#expression-body"

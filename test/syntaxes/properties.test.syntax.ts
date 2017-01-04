@@ -254,5 +254,49 @@ private bool   prop2 => true;`);
                 Token.Puncuation.Semicolon,
                 Token.Puncuation.CloseBrace]);
         });
+
+        it("declaration in interface", () => {
+
+            const input = Input.InInterface(`string Bar { get; set; }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("string"),
+                Token.Identifiers.PropertyName("Bar"),
+                Token.Puncuation.OpenBrace,
+                Token.Keywords.Get,
+                Token.Puncuation.Semicolon,
+                Token.Keywords.Set,
+                Token.Puncuation.Semicolon,
+                Token.Puncuation.CloseBrace]);
+        });
+
+        it("declaration in interface (read-only)", () => {
+
+            const input = Input.InInterface(`string Bar { get; }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("string"),
+                Token.Identifiers.PropertyName("Bar"),
+                Token.Puncuation.OpenBrace,
+                Token.Keywords.Get,
+                Token.Puncuation.Semicolon,
+                Token.Puncuation.CloseBrace]);
+        });
+
+        it("declaration in interface (write-only)", () => {
+
+            const input = Input.InInterface(`string Bar { set; }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("string"),
+                Token.Identifiers.PropertyName("Bar"),
+                Token.Puncuation.OpenBrace,
+                Token.Keywords.Set,
+                Token.Puncuation.Semicolon,
+                Token.Puncuation.CloseBrace]);
+        });
     });
 });

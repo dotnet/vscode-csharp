@@ -60,5 +60,61 @@ public string this[int index]
                 Token.Puncuation.CloseBracket,
                 Token.Puncuation.Semicolon]);
         });
+
+        it("declaration in interface", () => {
+
+            const input = Input.InInterface(`string this[int index] { get; set; }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("string"),
+                Token.Keywords.This,
+                Token.Puncuation.OpenBracket,
+                Token.Type("int"),
+                Token.Variables.Parameter("index"),
+                Token.Puncuation.CloseBracket,
+                Token.Puncuation.OpenBrace,
+                Token.Keywords.Get,
+                Token.Puncuation.Semicolon,
+                Token.Keywords.Set,
+                Token.Puncuation.Semicolon,
+                Token.Puncuation.CloseBrace]);
+        });
+
+        it("declaration in interface (read-only)", () => {
+
+            const input = Input.InInterface(`string this[int index] { get; }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("string"),
+                Token.Keywords.This,
+                Token.Puncuation.OpenBracket,
+                Token.Type("int"),
+                Token.Variables.Parameter("index"),
+                Token.Puncuation.CloseBracket,
+                Token.Puncuation.OpenBrace,
+                Token.Keywords.Get,
+                Token.Puncuation.Semicolon,
+                Token.Puncuation.CloseBrace]);
+        });
+
+        it("declaration in interface (write-only)", () => {
+
+            const input = Input.InInterface(`string this[int index] { set; }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("string"),
+                Token.Keywords.This,
+                Token.Puncuation.OpenBracket,
+                Token.Type("int"),
+                Token.Variables.Parameter("index"),
+                Token.Puncuation.CloseBracket,
+                Token.Puncuation.OpenBrace,
+                Token.Keywords.Set,
+                Token.Puncuation.Semicolon,
+                Token.Puncuation.CloseBrace]);
+        });
     });
 });

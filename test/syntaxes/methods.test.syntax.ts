@@ -52,6 +52,26 @@ int Add(int x, int y)
                 Token.Puncuation.CloseBrace]);
         });
 
+        it("declaration in with generic constraints", () => {
+
+            const input = Input.InClass(`TResult GetString<T, TResult>(T arg) where T : TResult { }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("TResult"),
+                Token.Identifiers.MethodName("GetString<T, TResult>"),
+                Token.Puncuation.OpenParen,
+                Token.Type("T"),
+                Token.Variables.Parameter("arg"),
+                Token.Puncuation.CloseParen,
+                Token.Keywords.Where,
+                Token.Type("T"),
+                Token.Puncuation.Colon,
+                Token.Type("TResult"),
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace]);
+        });
+
         it("expression body", () => {
 
             const input = Input.InClass(`int Add(int x, int y) => x + y;`);
@@ -89,6 +109,59 @@ int Add(int x, int y)
                 Token.Identifiers.MethodName("GetString"),
                 Token.Puncuation.OpenParen,
                 Token.Puncuation.CloseParen,
+                Token.Puncuation.Semicolon]);
+        });
+
+        it("declaration in interface", () => {
+
+            const input = Input.InInterface(`string GetString();`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("string"),
+                Token.Identifiers.MethodName("GetString"),
+                Token.Puncuation.OpenParen,
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.Semicolon]);
+        });
+
+        it("declaration in interface with parameters", () => {
+
+            const input = Input.InInterface(`string GetString(string format, params object[] args);`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("string"),
+                Token.Identifiers.MethodName("GetString"),
+                Token.Puncuation.OpenParen,
+                Token.Type("string"),
+                Token.Variables.Parameter("format"),
+                Token.Puncuation.Comma,
+                Token.Keywords.Modifiers.Params,
+                Token.Type("object"),
+                Token.Puncuation.OpenBracket,
+                Token.Puncuation.CloseBracket,
+                Token.Variables.Parameter("args"),
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.Semicolon]);
+        });
+
+        it("declaration in interface with generic constraints", () => {
+
+            const input = Input.InInterface(`TResult GetString<T, TResult>(T arg) where T : TResult;`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("TResult"),
+                Token.Identifiers.MethodName("GetString<T, TResult>"),
+                Token.Puncuation.OpenParen,
+                Token.Type("T"),
+                Token.Variables.Parameter("arg"),
+                Token.Puncuation.CloseParen,
+                Token.Keywords.Where,
+                Token.Type("T"),
+                Token.Puncuation.Colon,
+                Token.Type("TResult"),
                 Token.Puncuation.Semicolon]);
         });
     });
