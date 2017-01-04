@@ -74,7 +74,7 @@ int Add(int x, int y)
                 Token.Puncuation.Semicolon]);
         });
 
-        it("explicitly-implemented interface method", () => {
+        it("explicitly-implemented interface member", () => {
 
             const input = Input.InClass(`string IFoo<string>.GetString();`);
             const tokens = tokenize(input);

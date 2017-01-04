@@ -1,7 +1,7 @@
 ## TODO List:
 
 * Declarations:
-    * Explicitly-implemented interface members (properties, events, indexers)
+    * Explicitly-implemented interface members (properties, events)
     * Interface members
     * Constructor initializers
 
@@ -106,11 +106,12 @@ if you consider that regular expressions don't know that "class" is a keyword. T
 
 #### Indexer declarations
 
-* Expression: `(?=(?<storage-modifiers>(?:(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\s+)*)\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\s*\:\:\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?(?:\s*\.\s*\g<type-name>)*)|(?:\s*\(\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\s*,\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\s*\)\s*))(?:(?:\[,*\])*)?)\s+(?<indexer-name>this)\s*(?:\[))`
+* Expression: `(?=(?<storage-modifiers>(?:\b(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\b)*)\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\s*\:\:\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?(?:\s*\.\s*\g<type-name>)*)|(?:\s*\(\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\s*,\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\s*\)\s*))(?:(?:\[,*\])*)?)\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\s*\:\:\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<interface-name>)(?:\s*,\s*\g<interface-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?(?:\s*\.\s*\g<interface-name>)*)|(?:\s*\(\s*(?:\g<interface-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\s*,\s*(?:\g<interface-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\s*\)\s*))(?:(?:\[,*\])*)?)(\s*\.\s*))?(?<indexer-name>this)\s*(?:\[))`
 * Break down:
     * Storage modifiers: `(?<storage-modifiers>(?:(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\s+)*)`
     * Type name: `\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\s*\:\:\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?(?:\s*\.\s*\g<type-name>)*)|(?:\s*\(\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\s*,\s*(?:\g<type-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\s*\)\s*))(?:(?:\[,*\])*)?)`
-    * Property name: `\s+(?<indexer-name>this)`
+    * Interface name: `\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\s*\:\:\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\s*<\s*(?:\g<interface-name>)(?:\s*,\s*\g<interface-name>)*\s*>\s*)?(?:(?:\*)*)?(?:(?:\[,*\])*)?(?:\s*\.\s*\g<interface-name>)*)|(?:\s*\(\s*(?:\g<interface-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\s*,\s*(?:\g<interface-name>)(?:\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\s*\)\s*))(?:(?:\[,*\])*)?)(\s*\.\s*))?`
+    * Indexer name: `(?<indexer-name>this)`
     * End: `\s*(?:\[)`
 
 #### Method declarations

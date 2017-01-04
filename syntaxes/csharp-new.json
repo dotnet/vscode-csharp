@@ -885,14 +885,14 @@
             ]
         },
         "indexer-declaration": {
-            "begin": "(?=(?<storage-modifiers>(?:(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\\s+)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?<indexer-name>this)\\s*(?:\\[))",
+            "begin": "(?=(?<storage-modifiers>(?:\\b(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\\b)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<interface-name>)(?:\\s*,\\s*\\g<interface-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<interface-name>)*)|(?:\\s*\\(\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(\\s*\\.\\s*))?(?<indexer-name>this)\\s*(?:\\[))",
             "end": "(?=\\}|;)",
             "patterns": [
                 {
                     "include": "#comment"
                 },
                 {
-                    "match": "(?<storage-modifiers>(?:(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\\s+)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?<indexer-name>this)\\s*(?=\\[)",
+                    "match": "(?<storage-modifiers>(?:\\b(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\\b)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<interface-name>)(?:\\s*,\\s*\\g<interface-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<interface-name>)*)|(?:\\s*\\(\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(\\s*\\.\\s*))?(?<indexer-name>this)\\s*(?=\\[)",
                     "captures": {
                         "1": {
                             "patterns": [
@@ -914,6 +914,20 @@
                             ]
                         },
                         "3": {
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ]
+                        },
+                        "4": {
+                            "patterns": [
+                                {
+                                    "include": "#punctuation-accessor"
+                                }
+                            ]
+                        },
+                        "5": {
                             "name": "keyword.other.this.cs"
                         }
                     }

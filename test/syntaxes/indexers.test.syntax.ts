@@ -40,5 +40,25 @@ public string this[int index]
                 Token.Puncuation.CloseBrace,
                 Token.Puncuation.CloseBrace]);
         });
+        
+        it("explicitly-implemented interface member", () => {
+
+            const input = Input.InClass(`string IFoo<string>.this[int index];`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("string"),
+                Token.Type("IFoo"),
+                Token.Puncuation.TypeParameters.Begin,
+                Token.Type("string"),
+                Token.Puncuation.TypeParameters.End,
+                Token.Puncuation.Accessor,
+                Token.Keywords.This,
+                Token.Puncuation.OpenBracket,
+                Token.Type("int"),
+                Token.Variables.Parameter("index"),
+                Token.Puncuation.CloseBracket,
+                Token.Puncuation.Semicolon]);
+        });
     });
 });
