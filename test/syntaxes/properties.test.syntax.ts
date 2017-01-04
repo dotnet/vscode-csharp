@@ -233,5 +233,26 @@ private bool   prop2 => true;`);
                 Token.Literals.Boolean.True,
                 Token.Puncuation.Semicolon]);
         });
+
+        it("explicitly-implemented interface member", () => {
+
+            const input = Input.InClass(`string IFoo<string>.Bar { get; set; }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("string"),
+                Token.Type("IFoo"),
+                Token.Puncuation.TypeParameters.Begin,
+                Token.Type("string"),
+                Token.Puncuation.TypeParameters.End,
+                Token.Puncuation.Accessor,
+                Token.Identifiers.PropertyName("Bar"),
+                Token.Puncuation.OpenBrace,
+                Token.Keywords.Get,
+                Token.Puncuation.Semicolon,
+                Token.Keywords.Set,
+                Token.Puncuation.Semicolon,
+                Token.Puncuation.CloseBrace]);
+        });
     });
 });

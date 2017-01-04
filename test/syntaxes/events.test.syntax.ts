@@ -103,5 +103,27 @@ public event Type Event
                 Token.Puncuation.CloseBrace,
                 Token.Puncuation.CloseBrace]);
         });
+
+        it("explicitly-implemented interface member", () => {
+
+            const input = Input.InClass(`event EventHandler IFoo<string>.Event { add; remove; }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Event,
+                Token.Type("EventHandler"),
+                Token.Type("IFoo"),
+                Token.Puncuation.TypeParameters.Begin,
+                Token.Type("string"),
+                Token.Puncuation.TypeParameters.End,
+                Token.Puncuation.Accessor,
+                Token.Identifiers.EventName("Event"),
+                Token.Puncuation.OpenBrace,
+                Token.Keywords.Add,
+                Token.Puncuation.Semicolon,
+                Token.Keywords.Remove,
+                Token.Puncuation.Semicolon,
+                Token.Puncuation.CloseBrace]);
+        });
     });
 });

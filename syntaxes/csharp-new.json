@@ -840,14 +840,14 @@
             ]
         },
         "property-declaration": {
-            "begin": "(?!.*\\b(?:class|interface|struct|enum|event)\\b)(?=(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\s+)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?<property-name>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?:\\{|=>|$))",
+            "begin": "(?!.*\\b(?:class|interface|struct|enum|event)\\b)(?=(?<storage-modifiers>(?:\\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\b\\s*)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<interface-name>)(?:\\s*,\\s*\\g<interface-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<interface-name>)*)|(?:\\s*\\(\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(\\s*\\.\\s*))?(?<property-name>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?:\\{|=>|$))",
             "end": "(?=\\}|;)",
             "patterns": [
                 {
                     "include": "#comment"
                 },
                 {
-                    "match": "(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\s+)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?<property-name>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?=\\{|=>|$)",
+                    "match": "(?<storage-modifiers>(?:\\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\b\\s*)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<interface-name>)(?:\\s*,\\s*\\g<interface-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<interface-name>)*)|(?:\\s*\\(\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(\\s*\\.\\s*))?(?<property-name>[_$[:alpha:]][_$[:alnum:]]*)\\s*(?=\\{|=>|$)",
                     "captures": {
                         "1": {
                             "patterns": [
@@ -869,6 +869,20 @@
                             ]
                         },
                         "3": {
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ]
+                        },
+                        "4": {
+                            "patterns": [
+                                {
+                                    "include": "#punctuation-accessor"
+                                }
+                            ]
+                        },
+                        "5": {
                             "name": "entity.name.variable.property.cs"
                         }
                     }
@@ -885,14 +899,14 @@
             ]
         },
         "indexer-declaration": {
-            "begin": "(?=(?<storage-modifiers>(?:\\b(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\\b)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<interface-name>)(?:\\s*,\\s*\\g<interface-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<interface-name>)*)|(?:\\s*\\(\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(\\s*\\.\\s*))?(?<indexer-name>this)\\s*(?:\\[))",
+            "begin": "(?=(?<storage-modifiers>(?:\\b(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\\b\\s*)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<interface-name>)(?:\\s*,\\s*\\g<interface-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<interface-name>)*)|(?:\\s*\\(\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(\\s*\\.\\s*))?(?<indexer-name>this)\\s*(?:\\[))",
             "end": "(?=\\}|;)",
             "patterns": [
                 {
                     "include": "#comment"
                 },
                 {
-                    "match": "(?<storage-modifiers>(?:\\b(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\\b)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<interface-name>)(?:\\s*,\\s*\\g<interface-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<interface-name>)*)|(?:\\s*\\(\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(\\s*\\.\\s*))?(?<indexer-name>this)\\s*(?=\\[)",
+                    "match": "(?<storage-modifiers>(?:\\b(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\\b\\s*)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<interface-name>)(?:\\s*,\\s*\\g<interface-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<interface-name>)*)|(?:\\s*\\(\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(\\s*\\.\\s*))?(?<indexer-name>this)\\s*(?=\\[)",
                     "captures": {
                         "1": {
                             "patterns": [
@@ -953,14 +967,14 @@
             ]
         },
         "event-declaration": {
-            "begin": "(?=(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\s+)*)\\s*\\b(?<event-keyword>event)\\b\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?<event-names>[_$[:alpha:]][_$[:alnum:]]*(?:\\s*,\\s*[_$[:alpha:]][_$[:alnum:]]*)*)\\s*(?:\\{|;|$))",
+            "begin": "(?=(?<storage-modifiers>(?:\\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\b\\s*)*)\\s*\\b(?<event-keyword>event)\\b\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<interface-name>)(?:\\s*,\\s*\\g<interface-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<interface-name>)*)|(?:\\s*\\(\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(\\s*\\.\\s*))?(?<event-names>[_$[:alpha:]][_$[:alnum:]]*(?:\\s*,\\s*[_$[:alpha:]][_$[:alnum:]]*)*)\\s*(?:\\{|;|$))",
             "end": "(?=\\}|;)",
             "patterns": [
                 {
                     "include": "#comment"
                 },
                 {
-                    "match": "(?<storage-modifiers>(?:(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\s+)*)\\s*\\b(?<event-keyword>event)\\b\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?<event-names>[_$[:alpha:]][_$[:alnum:]]*(?:\\s*,\\s*[_$[:alpha:]][_$[:alnum:]]*)*)\\s*(?=\\{|;|$)",
+                    "match": "(?<storage-modifiers>(?:\\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\\b\\s*)*)\\s*\\b(?<event-keyword>event)\\b\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<interface-name>)(?:\\s*,\\s*\\g<interface-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<interface-name>)*)|(?:\\s*\\(\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(\\s*\\.\\s*))?(?<event-names>[_$[:alpha:]][_$[:alnum:]]*(?:\\s*,\\s*[_$[:alpha:]][_$[:alnum:]]*)*)\\s*(?=\\{|;|$)",
                     "captures": {
                         "1": {
                             "patterns": [
@@ -985,6 +999,20 @@
                             ]
                         },
                         "4": {
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ]
+                        },
+                        "5": {
+                            "patterns": [
+                                {
+                                    "include": "#punctuation-accessor"
+                                }
+                            ]
+                        },
+                        "6": {
                             "patterns": [
                                 {
                                     "match": "[_$[:alpha:]][_$[:alnum:]]*",
@@ -1070,14 +1098,14 @@
             ]
         },
         "method-declaration": {
-            "begin": "(?=(?<storage-modifiers>(?:\\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\\b)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<interface-name>)(?:\\s*,\\s*\\g<interface-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<interface-name>)*)|(?:\\s*\\(\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(\\s*\\.\\s*))?(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)(?:\\s*<\\s*\\g<identifier>(?:\\s*,\\s*\\g<identifier>)*\\s*>\\s*)?\\s*(?:\\())",
+            "begin": "(?=(?<storage-modifiers>(?:\\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\\b\\s*)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<interface-name>)(?:\\s*,\\s*\\g<interface-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<interface-name>)*)|(?:\\s*\\(\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(\\s*\\.\\s*))?(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)(?:\\s*<\\s*\\g<identifier>(?:\\s*,\\s*\\g<identifier>)*\\s*>\\s*)?\\s*(?:\\())",
             "end": "(?=\\}|;)",
             "patterns": [
                 {
                     "include": "#comment"
                 },
                 {
-                    "match": "(?<storage-modifiers>(?:\\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\\b)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<interface-name>)(?:\\s*,\\s*\\g<interface-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<interface-name>)*)|(?:\\s*\\(\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(\\s*\\.\\s*))?(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)(?:\\s*<\\s*\\g<identifier>(?:\\s*,\\s*\\g<identifier>)*\\s*>\\s*)?\\s*(?=\\()",
+                    "match": "(?<storage-modifiers>(?:\\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\\b\\s*)*)\\s*(?<type-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<type-name>)(?:\\s*,\\s*\\g<type-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<type-name>)*)|(?:\\s*\\(\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<type-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)\\s+(?:(?<interface-name>(?:(?:[_$[:alpha:]][_$[:alnum:]]*\\s*\\:\\:\\s*)?(?:(?:[_$[:alpha:]][_$[:alnum:]]*(?:\\s*\\.\\s*[_$[:alpha:]][_$[:alnum:]]*)*)(?:\\s*<\\s*(?:\\g<interface-name>)(?:\\s*,\\s*\\g<interface-name>)*\\s*>\\s*)?(?:(?:\\*)*)?(?:(?:\\[,*\\])*)?(?:\\s*\\.\\s*\\g<interface-name>)*)|(?:\\s*\\(\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?(?:\\s*,\\s*(?:\\g<interface-name>)(?:\\s+[_$[:alpha:]][_$[:alnum:]]*)?)*\\s*\\)\\s*))(?:(?:\\[,*\\])*)?)(\\s*\\.\\s*))?(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)(?:\\s*<\\s*\\g<identifier>(?:\\s*,\\s*\\g<identifier>)*\\s*>\\s*)?\\s*(?=\\()",
                     "captures": {
                         "1": {
                             "patterns": [

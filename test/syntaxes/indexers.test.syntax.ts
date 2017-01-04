@@ -40,7 +40,7 @@ public string this[int index]
                 Token.Puncuation.CloseBrace,
                 Token.Puncuation.CloseBrace]);
         });
-        
+
         it("explicitly-implemented interface member", () => {
 
             const input = Input.InClass(`string IFoo<string>.this[int index];`);
