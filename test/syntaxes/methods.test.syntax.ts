@@ -73,5 +73,23 @@ int Add(int x, int y)
                 Token.Variables.ReadWrite("y"),
                 Token.Puncuation.Semicolon]);
         });
+
+        it("explicitly-implemented interface method", () => {
+
+            const input = Input.InClass(`string IFoo<string>.GetString();`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("string"),
+                Token.Type("IFoo"),
+                Token.Puncuation.TypeParameters.Begin,
+                Token.Type("string"),
+                Token.Puncuation.TypeParameters.End,
+                Token.Puncuation.Accessor,
+                Token.Identifiers.MethodName("GetString"),
+                Token.Puncuation.OpenParen,
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.Semicolon]);
+        });
     });
 });
