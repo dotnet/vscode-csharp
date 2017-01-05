@@ -1,0 +1,1150 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+---
+name: C#
+scopeName: source.cs
+fileTypes: [cs]
+uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
+
+patterns:
+- include: '#comment'
+- include: '#directives'
+- include: '#declarations'
+
+repository:
+  directives:
+    patterns:
+    - include: '#extern-alias-directive'
+    - include: '#using-directive'
+    - include: '#attribute-section'
+    - include: '#punctuation-semicolon'
+
+  declarations:
+    patterns:
+    - include: '#namespace-declaration'
+    - include: '#type-declarations'
+    - include: '#punctuation-semicolon'
+
+  type-declarations:
+    patterns:
+    - include: '#class-declaration'
+    - include: '#delegate-declaration'
+    - include: '#enum-declaration'
+    - include: '#interface-declaration'
+    - include: '#struct-declaration'
+    - include: '#punctuation-semicolon'
+
+  class-members:
+    patterns:
+    - include: '#type-declarations'
+    - include: '#event-declaration'
+    - include: '#property-declaration'
+    - include: '#indexer-declaration'
+    - include: '#field-declaration'
+    - include: '#variable-initializer'
+    - include: '#method-declaration'
+    - include: '#constructor-declaration'
+    - include: '#destructor-declaration'
+    - include: '#operator-declaration'
+    - include: '#conversion-operator-declaration'
+    - include: '#punctuation-semicolon'
+
+  struct-members:
+    patterns:
+    - include: '#type-declarations'
+    - include: '#event-declaration'
+    - include: '#property-declaration'
+    - include: '#indexer-declaration'
+    - include: '#field-declaration'
+    - include: '#variable-initializer'
+    - include: '#method-declaration'
+    - include: '#constructor-declaration'
+    - include: '#destructor-declaration'
+    - include: '#operator-declaration'
+    - include: '#conversion-operator-declaration'
+    - include: '#punctuation-semicolon'
+
+  interface-members:
+    patterns:
+    - include: '#event-declaration'
+    - include: '#property-declaration'
+    - include: '#indexer-declaration'
+    - include: '#method-declaration'
+    - include: '#punctuation-semicolon'
+
+  statement:
+    patterns:
+    - include: '#comment'
+    - include: '#control-statement'
+    - include: '#expression'
+    - include: '#block'
+    - include: '#punctuation-semicolon'
+
+  expression:
+    patterns:
+    - include: '#interpolated-string'
+    - include: '#verbatim-interpolated-string'
+    - include: '#literal'
+    - include: '#expression-operators'
+    - include: '#object-creation-expression'
+    - include: '#parenthesized-expression'
+    - include: '#identifier'
+
+  extern-alias-directive:
+    begin: \s*(extern)\b\s*(alias)\b\s*([_$[:alpha:]][_$[:alnum:]]*)
+    beginCaptures:
+      '1': { name: keyword.other.extern.cs }
+      '2': { name: keyword.other.alias.cs }
+      '3': { name: variable.other.alias.cs }
+    end: (?=;)
+
+  using-directive:
+    patterns:
+    - begin: \b(using)\b\s+(static)\s+
+      beginCaptures:
+        '1': { name: keyword.other.using.cs }
+        '2': { name: keyword.other.static.cs }
+      end: (?=;)
+      patterns:
+      - include: '#type'
+    - begin: \b(using)\s+(?=([_$[:alpha:]][_$[:alnum:]]*)\s*=)
+      beginCaptures:
+        '1': { name: keyword.other.using.cs }
+        '2': { name: entity.name.type.alias.cs }
+      end: (?=;)
+      patterns:
+      - include: '#comment'
+      - include: '#type'
+      - include: '#operator-assignment'
+    - begin: \b(using)\s*
+      beginCaptures:
+        '1': { name: keyword.other.using.cs }
+      end: (?=;)
+      patterns:
+      - include: '#comment'
+      - name: entity.name.type.namespace.cs
+        match: '[_$[:alpha:]][_$[:alnum:]]*'
+      - include: '#operator-assignment'
+
+  attribute-section:
+    begin: (\[)(assembly|module|field|event|method|param|property|return|type)?(\:)?
+    beginCaptures:
+      '1': { name: punctuation.squarebracket.open.cs }
+      '2': { name: keyword.other.attribute-specifier.cs }
+      '3': { name: punctuation.separator.colon.cs }
+    end: (\])
+    endCaptures:
+      '1': { name: punctuation.squarebracket.close.cs }
+    patterns:
+    - include: '#comment'
+    - include: '#attribute'
+    - include: '#punctuation-comma'
+
+  attribute:
+    patterns:
+    - include: '#type-name'
+    - include: '#attribute-arguments'
+
+  attribute-arguments:
+    begin: (\()
+    beginCaptures:
+      '1': { name: punctuation.parenthesis.open.cs }
+    end: (\))
+    endCaptures:
+      '1': { name: punctuation.parenthesis.close.cs }
+    patterns:
+    - include: '#attribute-named-argument'
+    - include: '#expression'
+    - include: '#punctuation-comma'
+
+  attribute-named-argument:
+    begin: ([_$[:alpha:]][_$[:alnum:]]*)\s*(?==)
+    beginCaptures:
+      '1': { name: entity.name.variable.property.cs }
+    end: (?=(,|\)))
+    patterns:
+    - include: '#operator-assignment'
+    - include: '#expression'
+
+  namespace-declaration:
+    begin: \b(namespace)\s+
+    beginCaptures:
+      '1': { name: keyword.other.namespace.cs }
+    end: (?<=\})
+    patterns:
+    - include: '#comment'
+    - name: entity.name.type.namespace.cs
+      match: '[_$[:alpha:]][_$[:alnum:]]*'
+    - include: '#punctuation-accessor'
+    - begin: \{
+      beginCaptures:
+        '0': { name: punctuation.curlybrace.open.cs }
+      end: \}
+      endCaptures:
+        '0': { name: punctuation.curlybrace.close.cs }
+      patterns:
+      - include: '#declarations'
+      - include: '#using-directive'
+      - include: '#punctuation-semicolon'
+
+  class-declaration:
+    begin: (?=(?:((new|public|protected|internal|private|abstract|sealed|static|partial)\s+)*)(?:class)\s+)
+    end: (?<=\})
+    patterns:
+    - include: '#comment'
+    - name: storage.modifier.cs
+      match: \b(new|public|protected|internal|private|abstract|sealed|static|partial)\b
+    - begin: (?=class)
+      end: (?=\{)
+      patterns:
+      # C# grammar: class identifier type-parameter-list[opt]
+      - match: (class)\s+([_$[:alpha:]][_$[:alnum:]]*(\s*<\s*(?:[_$[:alpha:]][_$[:alnum:]]*\s*,\s*)*(?:[_$[:alpha:]][_$[:alnum:]]*)\s*>)?)
+        captures:
+          '1': { name: keyword.other.class.cs }
+          '2': { name: entity.name.type.class.cs }
+      - include: '#generic-constraints'
+      - begin: ':'
+        beginCaptures:
+          '0': { name: punctuation.separator.colon.cs }
+        end: (?=\{|where)
+        patterns:
+        - include: '#type'
+        - include: '#punctuation-comma'
+    - begin: \{
+      beginCaptures:
+        '0': { name: punctuation.curlybrace.open.cs }
+      end: \}
+      endCaptures:
+        '0': { name: punctuation.curlybrace.close.cs }
+      patterns:
+      - include: '#class-members'
+
+  delegate-declaration:
+    begin: |-
+      (?x)
+      (?<storage-modifiers>(?:\b(?:new|public|protected|internal|private)\b\s+)*)
+      (?<delegate-keyword>(?:\b(?:delegate)\b))\s+
+      (?<type-name>(?:
+        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:
+          (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
+          (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
+          (?:(?:\*)*)?(?:(?:\[,*\])*)?(?:\s*\.\s*\g<type-name>)*
+        )|
+        (?:\s*\(\s*(?:\g<type-name>)(?:\s+\g<identifier>)?(?:\s*,\s*(?:\g<type-name>)(?:\s+\g<identifier>)?)*\s*\)\s*))
+        (?:(?:\[,*\])*)?
+      )\s+
+      (?<delegate-name>
+        (?:
+          \g<identifier>
+          (?:\s*<\s*(?:(?:(?:in|out)\s+)?\g<identifier>)(?:,\s*(?:(?:in|out)\s+)?\g<identifier>)*\s*>\s*)?
+        )
+      )\s*
+      (?=\()
+    beginCaptures:
+      '1':
+        patterns:
+        - match: \b(new|public|protected|internal|private)\b
+          captures:
+            '1': { name: storage.modifier.cs }
+      '2': { name: keyword.other.delegate.cs }
+      '3':
+        patterns:
+        - include: '#type'
+      # '4': ?<identifier> is a sub-expression. It's final value is not considered.
+      '5': { name: entity.name.type.delegate.cs }
+    end: (?=;)
+    patterns:
+    - include: '#comment'
+    - include: '#parenthesized-parameter-list'
+    - include: '#generic-constraints'
+
+  enum-declaration:
+    begin: (?=(?:((new|public|protected|internal|private)\s+)*)(?:enum)\s+)
+    end: (?<=\})
+    patterns:
+    - include: '#comment'
+    - name: storage.modifier.cs
+      match: \b(new|public|protected|internal|private)\b
+    - begin: (?=enum)
+      end: (?=\{)
+      patterns:
+      # C# grammar: enum identifier
+      - match: (enum)\s+([_$[:alpha:]][_$[:alnum:]]*)
+        captures:
+          '1': { name: keyword.other.enum.cs }
+          '2': { name: entity.name.type.enum.cs }
+      - begin: ':'
+        beginCaptures:
+          '0': { name: punctuation.separator.colon.cs }
+        end: (?=\{)
+        patterns:
+        - include: '#type'
+    - begin: \{
+      beginCaptures:
+        '0': { name: punctuation.curlybrace.open.cs }
+      end: \}
+      endCaptures:
+        '0': { name: punctuation.curlybrace.close.cs }
+      patterns:
+      - include: '#comment'
+      - include: '#attribute-section'
+      - include: '#punctuation-comma'
+      - begin: '[_$[:alpha:]][_$[:alnum:]]*'
+        beginCaptures:
+          '0': { name: variable.other.enummember.cs }
+        end: (?=(,|\}))
+        patterns:
+        - include: '#comment'
+        - include: '#variable-initializer'
+
+  interface-declaration:
+    begin: (?=(?:((new|public|protected|internal|private|partial)\s+)*)(?:interface)\s+)
+    end: (?<=\})
+    patterns:
+    - include: '#comment'
+    - name: storage.modifier.cs
+      match: \b(new|public|protected|internal|private|partial)\b
+    - begin: (?=interface)
+      end: (?=\{)
+      patterns:
+      # C# grammar: interface identifier variant-type-parameter-list[opt]
+      - match: |-
+          (?x)
+          (interface)\s+
+          (
+            (?<identifier>[_$[:alpha:]][_$[:alnum:]]*)
+            (\s*<\s*(?:(?:(?:in|out)\s+)?\g<identifier>\s*,\s*)*(?:(?:in|out)\s+)?\g<identifier>\s*>)?
+          )
+        captures:
+          '1': { name: keyword.other.interface.cs }
+          '2': { name: entity.name.type.interface.cs }
+      - include: '#generic-constraints'
+      - begin: ':'
+        beginCaptures:
+          '0': { name: punctuation.separator.colon.cs }
+        end: (?=\{|where)
+        patterns:
+        - include: '#type'
+        - include: '#punctuation-comma'
+    - begin: \{
+      beginCaptures:
+        '0': { name: punctuation.curlybrace.open.cs }
+      end: \}
+      endCaptures:
+        '0': { name: punctuation.curlybrace.close.cs }
+      patterns:
+      - include: '#interface-members'
+
+  struct-declaration:
+    begin: (?=(?:((new|public|protected|internal|private|partial)\s+)*)(?:struct)\s+)
+    end: (?<=\})
+    patterns:
+    - include: '#comment'
+    - name: storage.modifier.cs
+      match: \b(new|public|protected|internal|private|partial)\b
+    - begin: (?=struct)
+      end: (?=\{)
+      patterns:
+      # C# grammar: struct identifier type-parameter-list[opt]
+      - match: |-
+          (?x)
+          (struct)\s+
+          (
+            (?<identifier>[_$[:alpha:]][_$[:alnum:]]*)
+            (\s*<\s*(?:\g<identifier>\s*,\s*)*\g<identifier>\s*>)?
+          )
+        captures:
+          '1': { name: keyword.other.struct.cs }
+          '2': { name: entity.name.type.struct.cs }
+      - include: '#generic-constraints'
+      - begin: ':'
+        beginCaptures:
+          '0': { name: punctuation.separator.colon.cs }
+        end: (?=\{|where)
+        patterns:
+        - include: '#type'
+        - include: '#punctuation-comma'
+    - begin: \{
+      beginCaptures:
+        '0': { name: punctuation.curlybrace.open.cs }
+      end: \}
+      endCaptures:
+        '0': { name: punctuation.curlybrace.close.cs }
+      patterns:
+      - include: '#struct-members'
+
+  generic-constraints:
+    begin: (where)\s+([_$[:alpha:]][_$[:alnum:]]*)\s*(:)
+    beginCaptures:
+      '1': { name: keyword.other.where.cs }
+      '2': { name: storage.type.cs }
+      '3': { name: punctuation.separator.colon.cs }
+    end: (?=\{|where|;)
+    patterns:
+    - name: keyword.other.class.cs
+      match: \bclass\b
+    - name: keyword.other.struct.cs
+      match: \bstruct\b
+    - match: (new)\s*(\()\s*(\))
+      captures:
+        '1': { name: keyword.other.new.cs }
+        '2': { name: punctuation.parenthesis.open.cs }
+        '3': { name: punctuation.parenthesis.close.cs }
+    - include: '#type'
+    - include: '#punctuation-comma'
+    - include: '#generic-constraints'
+
+  field-declaration:
+    begin: |-
+      (?x)
+      (?<storage-modifiers>(?:\b(?:new|public|protected|internal|private|static|readonly|volatile|const)\b\s+)*)\s*
+      (?<type-name>(?:
+        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:
+          (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
+          (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
+          (?:(?:\*)*)?
+          (?:(?:\[,*\])*)?
+          (?:\s*\.\s*\g<type-name>)*
+        )|
+        (?:\s*\(\s*(?:\g<type-name>)(?:\s+\g<identifier>)?(?:\s*,\s*(?:\g<type-name>)(?:\s+\g<identifier>)?)*\s*\)\s*))
+        (?:(?:\[,*\])*)?
+      )\s+
+      (?<first-field-name>\g<identifier>)\s*
+      (?!=>|==)(?=;|=)
+    beginCaptures:
+      '1':
+        patterns:
+        - match: \b(new|public|protected|internal|private|static|readonly|volatile|const)\b
+          captures:
+            '1': { name: storage.modifier.cs }
+      '2':
+        patterns:
+        - include: '#type'
+      '3': { name: entity.name.variable.field.cs }
+    end: (?=;)
+    patterns:
+    - name: entity.name.variable.field.cs
+      match: '[_$[:alpha:]][_$[:alnum:]]*'
+    - include: '#punctuation-comma'
+    - include: '#comment'
+    - include: '#variable-initializer'
+
+  property-declaration:
+    begin: |-
+      (?x)
+      (?!.*\b(?:class|interface|struct|enum|event)\b)
+      (?<storage-modifiers>(?:\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\b\s*)*)\s*
+      (?<return-type>
+        (?<type-name>(?:
+          (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+          (?:
+            (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
+            (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
+            (?:(?:\*)*)?
+            (?:(?:\[,*\])*)?
+            (?:\s*\.\s*\g<type-name>)*
+          )|
+          (?:\s*\(\s*(?:\g<type-name>)(?:\s+\g<identifier>)?(?:\s*,\s*(?:\g<type-name>)(?:\s+\g<identifier>)?)*\s*\)\s*))
+          (?:(?:\[,*\])*)?
+        )\s+
+      )
+      (?<interface-name>\g<type-name>\s*\.\s*)?
+      (?<property-name>\g<identifier>)\s*
+      (?=\{|=>|$)
+    beginCaptures:
+      '1':
+        patterns:
+        - match: \b(new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\b
+          captures:
+            '1': { name: storage.modifier.cs }
+      '2':
+        patterns:
+        - include: '#type'
+      # '3': ?<type-name> is a sub-expression. It's final value is not considered.
+      # '4': ?<identifier> is a sub-expression. It's final value is not considered.
+      '5':
+        patterns:
+        - include: '#type'
+        - include: '#punctuation-accessor'
+      '6': { name: entity.name.variable.property.cs }
+    end: (?=\}|;)
+    patterns:
+    - include: '#comment'
+    - include: '#property-accessors'
+    - include: '#expression-body'
+    - include: '#variable-initializer'
+
+  indexer-declaration:
+    begin: |-
+      (?x)
+      (?<storage-modifiers>(?:\b(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\b\s*)*)\s*
+      (?<return-type>
+        (?<type-name>(?:
+          (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+          (?:
+            (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
+            (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
+            (?:(?:\*)*)?
+            (?:(?:\[,*\])*)?
+            (?:\s*\.\s*\g<type-name>)*
+          )|
+          (?:\s*\(\s*(?:\g<type-name>)(?:\s+\g<identifier>)?(?:\s*,\s*(?:\g<type-name>)(?:\s+\g<identifier>)?)*\s*\)\s*))
+          (?:(?:\[,*\])*)?
+        )\s+
+      )
+      (?<interface-name>\g<type-name>\s*\.\s*)?
+      (?<indexer-name>this)\s*
+      (?=\[)
+    beginCaptures:
+      '1':
+        patterns:
+        - match: \b(new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\b
+          captures:
+            '1': { name: storage.modifier.cs }
+      '2':
+        patterns:
+        - include: '#type'
+      # '3': ?<type-name> is a sub-expression. It's final value is not considered.
+      # '4': ?<identifier> is a sub-expression. It's final value is not considered.
+      '5':
+        patterns:
+        - include: '#type'
+        - include: '#punctuation-accessor'
+      '6':
+        name: keyword.other.this.cs
+    end: (?=\}|;)
+    patterns:
+    - include: '#comment'
+    - include: '#bracketed-parameter-list'
+    - include: '#property-accessors'
+    - include: '#expression-body'
+    - include: '#variable-initializer'
+
+  event-declaration:
+    begin: |-
+      (?x)
+      (?<storage-modifiers>(?:\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\b\s*)*)\s*
+      \b(?<event-keyword>event)\b\s*
+      (?<return-type>
+        (?<type-name>(?:
+          (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+          (?:
+            (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
+            (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
+            (?:(?:\*)*)?
+            (?:(?:\[,*\])*)?
+            (?:\s*\.\s*\g<type-name>)*
+          )|
+          (?:\s*\(\s*(?:\g<type-name>)(?:\s+\g<identifier>)?(?:\s*,\s*(?:\g<type-name>)(?:\s+\g<identifier>)?)*\s*\)\s*))
+          (?:(?:\[,*\])*)?
+        )\s+
+      )
+      (?<interface-name>\g<type-name>\s*\.\s*)?
+      (?<event-names>\g<identifier>(?:\s*,\s*\g<identifier>)*)\s*
+      (?=\{|;|$)
+    beginCaptures:
+      '1':
+        patterns:
+        - match: \b(new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\b
+          captures:
+            '1': { name: storage.modifier.cs }
+      '2': { name: keyword.other.event.cs }
+      '3':
+        patterns:
+        - include: '#type'
+      # '4': ?<type-name> is a sub-expression. It's final value is not considered.
+      # '5': ?<identifier> is a sub-expression. It's final value is not considered.
+      '6':
+        patterns:
+        - include: '#type'
+        - include: '#punctuation-accessor'
+      '7':
+        patterns:
+        - name: entity.name.variable.event.cs
+          match: '[_$[:alpha:]][_$[:alnum:]]*'
+        - include: '#punctuation-comma'
+    end: (?=\}|;)
+    patterns:
+    - include: '#comment'
+    - include: '#event-accessors'
+    - include: '#punctuation-comma'
+
+  property-accessors:
+    begin: \{
+    beginCaptures:
+      '0': { name: punctuation.curlybrace.open.cs }
+    end: \}
+    endCaptures:
+      '0': { name: punctuation.curlybrace.close.cs }
+    patterns:
+    - name: storage.modifier.cs
+      match: \b(private|protected|internal)\b
+    - name: keyword.other.get.cs
+      match: \b(get)\b
+    - name: keyword.other.set.cs
+      match: \b(set)\b
+    - include: '#block'
+    - include: '#punctuation-semicolon'
+
+  event-accessors:
+    begin: \{
+    beginCaptures:
+      '0': { name: punctuation.curlybrace.open.cs }
+    end: \}
+    endCaptures:
+      '0': { name: punctuation.curlybrace.close.cs }
+    patterns:
+    - name: keyword.other.add.cs
+      match: \b(add)\b
+    - name: keyword.other.remove.cs
+      match: \b(remove)\b
+    - include: '#block'
+    - include: '#punctuation-semicolon'
+
+  method-declaration:
+    begin: |-
+      (?x)
+      (?<storage-modifiers>(?:\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\b\s*)*)\s*
+      (?<return-type>
+        (?<type-name>(?:
+          (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+          (?:
+            (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
+            (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
+            (?:(?:\*)*)?
+            (?:(?:\[,*\])*)?
+            (?:\s*\.\s*\g<type-name>)*
+          )|
+          (?:\s*\(\s*(?:\g<type-name>)(?:\s+\g<identifier>)?(?:\s*,\s*(?:\g<type-name>)(?:\s+\g<identifier>)?)*\s*\)\s*))
+          (?:(?:\[,*\])*)?
+        )\s+
+      )
+      (?<interface-name>\g<type-name>\s*\.\s*)?
+      (?<method-name>\g<identifier>(?:\s*<\s*\g<identifier>(?:\s*,\s*\g<identifier>)*\s*>\s*)?)\s*
+      (?=\()
+    beginCaptures:
+      '1':
+        patterns:
+        - match: \b(new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\b
+          captures:
+            '1': { name: storage.modifier.cs }
+      '2':
+        patterns:
+        - include: '#type'
+      # '3': ?<type-name> is a sub-expression. It's final value is not considered.
+      # '4': ?<identifier> is a sub-expression. It's final value is not considered.
+      '5':
+        patterns:
+        - include: '#type'
+        - include: '#punctuation-accessor'
+      '6':
+        name: entity.name.function.cs
+    end: (?=\}|;)
+    patterns:
+    - include: '#comment'
+    - include: '#parenthesized-parameter-list'
+    - include: '#generic-constraints'
+    - include: '#expression-body'
+    - include: '#block'
+
+  constructor-declaration:
+    begin: |-
+      (?x)
+      (?=
+        # We're a extra careful here to avoid matching field declarations of the shape 'private (int i) x'
+        (?:
+          (?<storage-modifiers>(?:(?:public|protected|internal|private|extern|static)\s+)+)\s*
+          (?<identifier>[_$[:alpha:]][_$[:alnum:]]*)|
+          (?:\g<identifier>)
+        )\s*
+        (?:\()
+      )
+    end: (?=\}|;)
+    patterns:
+    - match: |-
+        (?x)
+        (?<storage-modifiers>(?:(?:public|protected|internal|private|extern|static)\s+)+)\s*
+        (?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*
+        (?=\()
+      captures:
+        '1':
+          patterns:
+          - match: \b(public|protected|internal|private|extern|static)\b
+            captures:
+              '1': { name: storage.modifier.cs }
+        '2':
+          name: entity.name.function.cs
+    - match: ([_$[:alpha:]][_$[:alnum:]]*)\s*(?=\()
+      captures:
+        '1': { name: entity.name.function.cs }
+    - include: '#comment'
+    - include: '#parenthesized-parameter-list'
+    - include: '#expression-body'
+    - include: '#block'
+
+  destructor-declaration:
+    begin: (~)([_$[:alpha:]][_$[:alnum:]]*)\s*(?=\()
+    beginCaptures:
+      '1': { name: punctuation.tilde.cs }
+      '2': { name: entity.name.function.cs }
+    end: (?=\}|;)
+    patterns:
+    - include: '#comment'
+    - include: '#parenthesized-parameter-list'
+    - include: '#expression-body'
+    - include: '#block'
+
+  operator-declaration:
+    begin: |-
+      (?x)
+      (?<storage-modifiers>(?:(?:public|static|extern)\s+)*)\s*
+      (?<type-name>(?:
+        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:
+          (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
+          (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
+          (?:(?:\*)*)?
+          (?:(?:\[,*\])*)?
+          (?:\s*\.\s*\g<type-name>)*
+        )|
+        (?:\s*\(\s*(?:\g<type-name>)(?:\s+\g<identifier>)?(?:\s*,\s*(?:\g<type-name>)(?:\s+\g<identifier>)?)*\s*\)\s*))
+        (?:(?:\[,*\])*)?
+      )\s*
+      (?<operator-keyword>(?:\b(?:operator)))\s*
+      (?<operator>(?:\+|-|\*|/|%|&|\||\^|\<\<|\>\>|==|!=|\>|\<|\>=|\<=|!|~|\+\+|--|true|false))\s*
+      (?=\()
+    beginCaptures:
+      '1':
+        patterns:
+        - match: \b(public|static|extern)\b
+          captures:
+            '1': { name: storage.modifier.cs }
+      '2':
+        patterns:
+        - include: '#type'
+      # '3': ?<identifier> is a sub-expression. It's final value is not considered.
+      '4': { name: keyword.other.operator.cs }
+      '5': { name: entity.name.function.cs }
+    end: (?=\}|;)
+    patterns:
+    - include: '#comment'
+    - include: '#parenthesized-parameter-list'
+    - include: '#expression-body'
+    - include: '#block'
+
+  conversion-operator-declaration:
+    begin: |-
+      (?x)
+      (?<storage-modifiers>(?:(?:public|static|extern)\s+)*)\s*
+      (?<explicit-or-implicit-keyword>(?:\b(?:explicit|implicit)))\s*
+      (?<operator-keyword>(?:\b(?:operator)))\s*
+      (?<type-name>(?:
+        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:
+          (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
+          (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
+          (?:(?:\*)*)?
+          (?:(?:\[,*\])*)?
+          (?:\s*\.\s*\g<type-name>)*
+        )|
+        (?:\s*\(\s*(?:\g<type-name>)(?:\s+\g<identifier>)?(?:\s*,\s*(?:\g<type-name>)(?:\s+\g<identifier>)?)*\s*\)\s*))
+        (?:(?:\[,*\])*)?
+      )\s*
+      (?=\()
+    beginCaptures:
+      '1':
+        patterns:
+        - match: \b(public|static|extern)\b
+          captures:
+            '1': { name: storage.modifier.cs }
+      '2':
+        patterns:
+        - match: \b(explicit)\b
+          captures:
+            '1': { name: keyword.other.explicit.cs }
+        - match: \b(implicit)\b
+          captures:
+            '1': { name: keyword.other.implicit.cs }
+      '3': { name: keyword.other.operator.cs }
+      '4':
+        patterns:
+        - include: '#type'
+    end: (?=\}|;)
+    patterns:
+    - include: '#comment'
+    - include: '#parenthesized-parameter-list'
+    - include: '#expression-body'
+    - include: '#block'
+
+  block:
+    begin: \{
+    beginCaptures:
+      '0': { name: punctuation.curlybrace.open.cs }
+    end: \}
+    endCaptures:
+      '0': { name: punctuation.curlybrace.close.cs }
+    patterns:
+    - include: '#statement'
+
+  variable-initializer:
+    begin: (?<!=|!)(=)(?!=|>)
+    beginCaptures:
+      '1': { name: keyword.operator.assignment.cs }
+    end: (?=[,\);}])
+    patterns:
+    - include: '#expression'
+
+  expression-body:
+    begin: =>
+    beginCaptures:
+      '0': { name: keyword.operator.arrow.cs }
+    end: (?=[,\);}])
+    patterns:
+    - include: '#expression'
+
+  control-statement:
+    patterns:
+    - name: keyword.control.loop.cs
+      match: (?<!\.)\b(do|while)\b
+    - name: keyword.control.flow.cs
+      match: (?<!\.)\b(return)\b
+
+  interpolated-string:
+    name: string.quoted.double.cs
+    begin: '\$"'
+    beginCaptures:
+      '0': { name: punctuation.definition.string.begin.cs }
+    end: (")|((?:[^\\\n])$)
+    endCaptures:
+      '1': { name: punctuation.definition.string.end.cs }
+      '2': { name: invalid.illegal.newline.cs }
+    patterns:
+    - include: '#string-character-escape'
+    - include: '#interpolation'
+
+  verbatim-interpolated-string:
+    name: string.quoted.double.cs
+    begin: '\$@"'
+    beginCaptures:
+      '0': { name: punctuation.definition.string.begin.cs }
+    end: '"(?=[^"])'
+    endCaptures:
+      '0': { name: punctuation.definition.string.end.cs }
+    patterns:
+    - include: '#verbatim-string-character-escape'
+    - include: '#interpolation'
+
+  interpolation:
+    name: meta.interpolation.cs
+    begin: (?<=[^\{])((?:\{\{)*)(\{)(?=[^\{])
+    beginCaptures:
+      '1': { name: string.quoted.double.cs }
+      '2': { name: punctuation.definition.interpolation.begin.cs }
+    end: \}
+    endCaptures:
+      '0': { name: punctuation.definition.interpolation.end.cs }
+    patterns:
+    - include: '#expression'
+
+  literal:
+    patterns:
+    - include: '#boolean-literal'
+    - include: '#null-literal'
+    - include: '#numeric-literal'
+    - include: '#string-literal'
+    - include: '#verbatim-string-literal'
+
+  boolean-literal:
+    patterns:
+    - name: constant.language.boolean.true.cs
+      match: (?<!\.)\btrue\b
+    - name: constant.language.boolean.false.cs
+      match: (?<!\.)\bfalse\b
+  
+  null-literal:
+    name: constant.language.null.cs
+    match: (?<!\.)\bnull\b
+
+  numeric-literal:
+    patterns:
+    # C# grammar: 0x hex-digits integer-type-suffix[opt] OR 0X hex-digits integer-type-suffix[opt]
+    - name: constant.numeric.hex.cs
+      match: \b0(x|X)[0-9a-fA-F_]+(U|u|L|l|UL|Ul|uL|ul|LU|Lu|lU|lu)?\b
+    # C# grammar: 0b binary-digits integer-type-suffix[opt] OR 0B binary-digits integer-type-suffix[opt]
+    - name: constant.numeric.binary.cs
+      match: \b0(b|B)[01_]+(U|u|L|l|UL|Ul|uL|ul|LU|Lu|lU|lu)?\b
+    # C# grammar: decimal-digits . decimal-digits exponent-part[opt] real-type-suffix[opt] OR . decimal-digits exponent-part[opt] real-type-suffix[opt]
+    - name: constant.numeric.decimal.cs
+      match: \b([0-9_]+)?\.[0-9_]+((e|E)[0-9]+)?(F|f|D|d|M|m)?\b
+    #  C# grammar: decimal-digits exponent-part real-type-suffix[opt]
+    - name: constant.numeric.decimal.cs
+      match: \b[0-9_]+(e|E)[0-9_]+(F|f|D|d|M|m)?\b
+    # C# grammar: decimal-digits real-type-suffix
+    - name: constant.numeric.decimal.cs
+      match: \b[0-9_]+(F|f|D|d|M|m)\b
+    # C# grammar: decimal-digits integer-type-suffix[opt]
+    - name: constant.numeric.decimal.cs
+      match: \b[0-9_]+(U|u|L|l|UL|Ul|uL|ul|LU|Lu|lU|lu)?\b
+  
+  string-literal:
+    name: string.quoted.double.cs
+    begin: '(?<!@)"'
+    beginCaptures:
+      '0': { name: punctuation.definition.string.begin.cs }
+    end: (")|((?:[^\\\n])$)
+    endCaptures:
+      '1': { name: punctuation.definition.string.end.cs }
+      '2': { name: invalid.illegal.newline.cs }
+    patterns:
+    - include: '#string-character-escape'
+
+  string-character-escape:
+    name: constant.character.escape.cs
+    match: \\.
+
+  verbatim-string-literal:
+    name: string.quoted.double.cs
+    begin: '@"'
+    beginCaptures:
+      '0': { name: punctuation.definition.string.begin.cs }
+    end: '"(?=[^"])'
+    endCaptures:
+      '0': { name: punctuation.definition.string.end.cs }
+    patterns:
+    - include: '#verbatim-string-character-escape'
+
+  verbatim-string-character-escape:
+    name: constant.character.escape.cs
+    match: '""'
+
+  expression-operators:
+    patterns:
+    - name: keyword.operator.bitwise.shift.cs
+      match: <<|>>
+    - name: keyword.operator.comparison.cs
+      match: ==|!=
+    - name: keyword.operator.relational.cs
+      match: <=|>=|<|>
+    - name: keyword.operator.logical.cs
+      match: \!|&&|\|\|
+    - name: keyword.operator.bitwise.cs
+      match: \&|~|\^|\|
+    - name: keyword.operator.assignment.cs
+      match: \=
+    - name: keyword.operator.decrement.cs
+      match: --
+    - name: keyword.operator.increment.cs
+      match: \+\+
+    - name: keyword.operator.arithmetic.cs
+      match: '%|\*|/|-|\+'
+
+  parenthesized-expression:
+    begin: \(
+    beginCaptures:
+      '0': { name: punctuation.parenthesis.open.cs }
+    end: \)
+    endCaptures:
+      '0': { name: punctuation.parenthesis.close.cs }
+    patterns:
+    - include: '#expression'
+
+  identifier:
+    name: variable.other.readwrite.cs
+    match: '[_$[:alpha:]][_$[:alnum:]]*'
+
+  object-creation-expression:
+    begin: |-
+      (?x)
+      (new)\s+
+      (?<type-name>(?:
+        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:
+          (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
+          (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
+          (?:(?:\*)*)?
+          (?:(?:\[,*\])*)?
+          (?:\s*\.\s*\g<type-name>)*
+        )|
+        (?:\s*\(\s*(?:\g<type-name>)(?:\s+\g<identifier>)?(?:\s*,\s*(?:\g<type-name>)(?:\s+\g<identifier>)?)*\s*\)\s*))
+        (?:(?:\[,*\])*)?
+      )\s*
+      (?=\()
+    beginCaptures:
+      '1': { name: keyword.other.new.cs }
+      '2':
+        patterns:
+        - include: '#type'
+    end: (?<=\))
+    patterns:
+    - include: '#parenthesized-parameter-list'
+
+  bracketed-parameter-list:
+    begin: (?=(\[))
+    beginCaptures:
+      '1': { name: punctuation.squarebracket.open.cs }
+    end: (?=(\]))
+    endCaptures:
+      '1': { name: punctuation.squarebracket.close.cs }
+    patterns:
+    # Note: We have to be careful here to skip the [. Otherwise, attributes will conflict.
+    - begin: (?<=\[)
+      end: (?=\])
+      patterns:
+      - include: '#comment'
+      - include: '#attribute-section'
+      - name: storage.modifier.cs
+        match: \b(ref|params|out)\b
+      # parameter name
+      - match: \s+([_$[:alpha:]][_$[:alnum:]]*)\s*(?=[,\]])
+        captures:
+          '1': { name: variable.parameter.cs }
+      - include: '#variable-initializer'
+      - include: '#type'
+      - include: '#punctuation-comma'
+
+  parenthesized-parameter-list:
+    begin: (\()
+    beginCaptures:
+      '0': { name: punctuation.parenthesis.open.cs }
+    end: (\))
+    endCaptures:
+      '0': { name: punctuation.parenthesis.close.cs }
+    patterns:
+    - include: '#comment'
+    - include: '#attribute-section'
+    - name: storage.modifier.cs
+      match: \b(ref|params|out)\b
+    # parameter name
+    - match: \s+([_$[:alpha:]][_$[:alnum:]]*)\s*(?=[,)])
+      captures:
+        '1': { name: variable.parameter.cs }
+    - include: '#variable-initializer'
+    - include: '#type'
+    - include: '#punctuation-comma'
+
+  type:
+    name: meta.type.cs
+    patterns:
+    - include: '#comment'
+    - include: '#tuple-type'
+    - include: '#type-builtin'
+    - include: '#type-name'
+    - include: '#type-parameters'
+    - include: '#type-array-suffix'
+
+  tuple-type:
+    patterns:
+    - begin: \(
+      beginCaptures:
+        '0': { name: punctuation.parenthesis.open.cs }
+      end: \)
+      endCaptures:
+        '0': { name: punctuation.parenthesis.close.cs }
+      patterns:
+      - include: '#tuple-element'
+      - include: '#punctuation-comma'
+
+  tuple-element:
+    match: |-
+      (?x)
+      (?<type-name>(?:
+        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:
+          (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
+          (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
+          (?:(?:\*)*)?
+          (?:(?:\[,*\])*)?
+          (?:\s*\.\s*\g<type-name>)*
+        )|
+        (?:\s*\(\s*(?:\g<type-name>)(?:\s+\g<identifier>)?(?:\s*,\s*(?:\g<type-name>)(?:\s+\g<identifier>)?)*\s*\)\s*))
+        (?:(?:\[,*\])*)?
+      )
+      (?:\s+(?<tuple-name>\g<identifier>))?
+    captures:
+      '1':
+        patterns:
+        - include: '#type'
+      # '2': ?<identifier> is a sub-expression. It's final value is not considered.
+      '3': { name: entity.name.variable.tuple.cs }
+
+  type-builtin:
+    match: \b(bool|byte|char|decimal|double|float|int|long|object|sbyte|short|string|uint|ulong|ushort)\b
+    captures:
+      '1': { name: storage.type.cs }
+
+  type-name:
+    patterns:
+    - match: ([_$[:alpha:]][_$[:alnum:]]*)\s*(\:\:)
+      captures:
+        '1': { name: entity.name.type.alias.cs }
+        '2': { name: punctuation.separator.coloncolon.cs }
+    - match: ([_$[:alpha:]][_$[:alnum:]]*)\s*(\.)
+      captures:
+        '1': { name: storage.type.cs }
+        '2': { name: punctuation.accessor.cs }
+    - match: (\.)\s*([_$[:alpha:]][_$[:alnum:]]*)
+      captures:
+        '1': { name: punctuation.accessor.cs }
+        '2': { name: storage.type.cs }
+    - name: storage.type.cs
+      match: '[_$[:alpha:]][_$[:alnum:]]*'
+
+  type-parameters:
+    name: meta.type.parameters.cs
+    begin: '<'
+    beginCaptures:
+      '0': { name: punctuation.definition.typeparameters.begin.cs }
+    end: '>'
+    endCaptures:
+      '0': { name: punctuation.definition.typeparameters.end.cs }
+    patterns:
+    - include: '#comment'
+    - include: '#type'
+    - include: '#punctuation-comma'
+
+  type-array-suffix:
+    begin: \[
+    beginCaptures:
+      '0': { name: punctuation.squarebracket.open.cs }
+    end: \]
+    endCaptures:
+      '0': { name: punctuation.squarebracket.close.cs }
+    patterns:
+    - include: '#punctuation-comma'
+
+  operator-assignment:
+    name: keyword.operator.assignment.cs
+    match: (?<!=|!)(=)(?!=)
+
+  punctuation-comma:
+    name: punctuation.separator.comma.cs
+    match: ','
+
+  punctuation-semicolon:
+    name: punctuation.terminator.statement.cs
+    match: ;
+
+  punctuation-accessor:
+    name: punctuation.accessor.cs
+    match: \.
+
+  comment:
+    patterns:
+    - name: comment.block.cs
+      begin: /\*
+      beginCaptures:
+        '0': { name: punctuation.definition.comment.cs }
+      end: \*/
+      endCaptures:
+        '0': { name: punctuation.definition.comment.cs }
+    - begin: (^[ \t]+)?(?=//)
+      beginCaptures:
+        '1': { name: punctuation.whitespace.comment.leading.cs }
+      end: (?=$)
+      patterns:
+      - name: comment.line.double-slash.cs
+        begin: //
+        beginCaptures:
+          '0': { name: punctuation.definition.comment.cs }
+        end: (?=$)
