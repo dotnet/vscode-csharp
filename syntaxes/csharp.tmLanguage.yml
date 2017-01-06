@@ -816,6 +816,8 @@ repository:
       match: (?<!\.)\b(do|while)\b
     - name: keyword.control.flow.cs
       match: (?<!\.)\b(return)\b
+    - name: keyword.control.conditional.cs
+      match: (?<!\.)\b(else|if)\b
 
   labeled-statement:
     match: '([_$[:alpha:]][_$[:alnum:]]*)\s*(:)'

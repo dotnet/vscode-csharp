@@ -11,7 +11,6 @@
     * array, collection and object initializers
     * casts
     * compound assignement
-    * label statements
     * jump statements (break, continue, goto, throw)
     * try statements
     * checked and unchecked statements and expressions

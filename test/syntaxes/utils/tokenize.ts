@@ -187,11 +187,13 @@ export namespace Token {
         export const Class = createToken('class', 'keyword.other.class.cs');
         export const Delegate = createToken('delegate', 'keyword.other.delegate.cs');
         export const Do = createToken('do', 'keyword.control.loop.cs');
+        export const Else = createToken('else', 'keyword.control.conditional.cs');
         export const Enum = createToken('enum', 'keyword.other.enum.cs');
         export const Event = createToken('event', 'keyword.other.event.cs');
         export const Explicit = createToken('explicit', 'keyword.other.explicit.cs');
         export const Extern = createToken('extern', 'keyword.other.extern.cs');
         export const Get = createToken('get', 'keyword.other.get.cs');
+        export const If = createToken('if', 'keyword.control.conditional.cs');
         export const Implicit = createToken('implicit', 'keyword.other.implicit.cs');
         export const Interface = createToken('interface', 'keyword.other.interface.cs');
         export const Namespace = createToken('namespace', 'keyword.other.namespace.cs');

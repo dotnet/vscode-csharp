@@ -2199,6 +2199,12 @@
             <key>match</key>
             <string>(?&lt;!\.)\b(return)\b</string>
           </dict>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.conditional.cs</string>
+            <key>match</key>
+            <string>(?&lt;!\.)\b(else|if)\b</string>
+          </dict>
         </array>
       </dict>
       <key>labeled-statement</key>
