@@ -81,6 +81,8 @@ repository:
     - include: '#do-statement'
     - include: '#for-statement'
     - include: '#foreach-statement'
+    - include: '#if-statement'
+    - include: '#else-part'
     - include: '#switch-statement'
     - include: '#goto-statement'
     - include: '#return-statement'
@@ -91,7 +93,6 @@ repository:
     - include: '#checked-unchecked-statement'
     - include: '#lock-statement'
     - include: '#using-statement'
-    - include: '#control-statement'
     - include: '#labeled-statement'
     - include: '#local-declaration'
     - include: '#expression'
@@ -825,50 +826,6 @@ repository:
     patterns:
     - include: '#expression'
 
-  control-statement:
-    patterns:
-    - name: keyword.control.conditional.cs
-      match: (?<!\.)\b(else|if)\b
-
-  switch-statement:
-    begin: (?<!\.)\b(switch)\b\s*(?=\()
-    beginCaptures:
-      '1': { name: keyword.control.switch.cs }
-    end: (?=\})
-    patterns:
-    - begin: \(
-      beginCaptures:
-        '0': { name: punctuation.parenthesis.open.cs }
-      end: \)
-      endCaptures:
-        '0': { name: punctuation.parenthesis.close.cs }
-      patterns:
-      - include: '#expression'
-    - begin: \{
-      beginCaptures:
-        '0': { name: punctuation.curlybrace.open.cs }
-      end: \}
-      endCaptures:
-        '0': { name: punctuation.curlybrace.close.cs }
-      patterns:
-      - include: '#switch-label'
-      - include: '#statement'
-
-  switch-label:
-    patterns:
-    - begin: (?<!\.)\b(case)\b\s+
-      beginCaptures:
-        '1': { name: keyword.control.case.cs }
-      end: ':'
-      endCaptures:
-        '0': { name: punctuation.separator.colon.cs }
-      patterns:
-      - include: '#expression'
-    - match: (?<!\.)\b(default)\b\s*(:)
-      captures:
-        '1': { name: keyword.control.default.cs }
-        '2': { name: punctuation.separator.colon.cs }
-
   goto-statement:
     begin: (?<!\.)\b(goto)\b
     beginCaptures:
@@ -928,6 +885,61 @@ repository:
     captures:
       '1': { name: keyword.control.flow.yield.cs }
       '2': { name: keyword.control.flow.break.cs }
+
+  if-statement:
+    begin: (?<!\.)\b(if)\b
+    beginCaptures:
+      '1': { name: keyword.control.conditional.if.cs }
+    end: (?=;|})
+    patterns:
+    - include: '#statement'
+
+  else-part:
+    begin: (?<!\.)\b(else)\b
+    beginCaptures:
+      '1': { name: keyword.control.conditional.else.cs }
+    end: (?=;|})
+    patterns:
+    - include: '#statement'
+
+  switch-statement:
+    begin: (?<!\.)\b(switch)\b\s*(?=\()
+    beginCaptures:
+      '1': { name: keyword.control.switch.cs }
+    end: (?=\})
+    patterns:
+    - begin: \(
+      beginCaptures:
+        '0': { name: punctuation.parenthesis.open.cs }
+      end: \)
+      endCaptures:
+        '0': { name: punctuation.parenthesis.close.cs }
+      patterns:
+      - include: '#expression'
+    - begin: \{
+      beginCaptures:
+        '0': { name: punctuation.curlybrace.open.cs }
+      end: \}
+      endCaptures:
+        '0': { name: punctuation.curlybrace.close.cs }
+      patterns:
+      - include: '#switch-label'
+      - include: '#statement'
+
+  switch-label:
+    patterns:
+    - begin: (?<!\.)\b(case)\b\s+
+      beginCaptures:
+        '1': { name: keyword.control.case.cs }
+      end: ':'
+      endCaptures:
+        '0': { name: punctuation.separator.colon.cs }
+      patterns:
+      - include: '#expression'
+    - match: (?<!\.)\b(default)\b\s*(:)
+      captures:
+        '1': { name: keyword.control.default.cs }
+        '2': { name: punctuation.separator.colon.cs }
 
   do-statement:
     begin: (?<!\.)\b(do)\b

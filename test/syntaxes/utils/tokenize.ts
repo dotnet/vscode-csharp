@@ -193,7 +193,7 @@ export namespace Token {
         export const Default = createToken('default', 'keyword.control.default.cs');
         export const Delegate = createToken('delegate', 'keyword.other.delegate.cs');
         export const Do = createToken('do', 'keyword.control.loop.do.cs');
-        export const Else = createToken('else', 'keyword.control.conditional.cs');
+        export const Else = createToken('else', 'keyword.control.conditional.else.cs');
         export const Enum = createToken('enum', 'keyword.other.enum.cs');
         export const Event = createToken('event', 'keyword.other.event.cs');
         export const Explicit = createToken('explicit', 'keyword.other.explicit.cs');
@@ -203,7 +203,7 @@ export namespace Token {
         export const ForEach = createToken('foreach', 'keyword.control.loop.foreach.cs');
         export const Get = createToken('get', 'keyword.other.get.cs');
         export const Goto = createToken('goto', 'keyword.control.goto.cs');
-        export const If = createToken('if', 'keyword.control.conditional.cs');
+        export const If = createToken('if', 'keyword.control.conditional.if.cs');
         export const Implicit = createToken('implicit', 'keyword.other.implicit.cs');
         export const In = createToken('in', 'keyword.control.loop.in.cs');
         export const Interface = createToken('interface', 'keyword.other.interface.cs');
