@@ -155,6 +155,7 @@ export namespace Token {
         export const EventName = (text: string) => createToken(text, 'entity.name.variable.event.cs');
         export const FieldName = (text: string) => createToken(text, 'entity.name.variable.field.cs');
         export const InterfaceName = (text: string) => createToken(text, 'entity.name.type.interface.cs');
+        export const LabelName = (text: string) => createToken(text, 'entity.name.label.cs');
         export const MethodName = (text: string) => createToken(text, 'entity.name.function.cs');
         export const NamespaceName = (text: string) => createToken(text, 'entity.name.type.namespace.cs');
         export const PropertyName = (text: string) => createToken(text, 'entity.name.variable.property.cs');

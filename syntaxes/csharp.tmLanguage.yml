@@ -5,6 +5,9 @@ scopeName: source.cs
 fileTypes: [cs]
 uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 
+# Important patterns:
+# Identifier: [_$[:alpha:]][_$[:alnum:]]*
+
 patterns:
 - include: '#comment'
 - include: '#directives'
@@ -75,6 +78,7 @@ repository:
     patterns:
     - include: '#comment'
     - include: '#control-statement'
+    - include: '#labeled-statement'
     - include: '#expression'
     - include: '#block'
     - include: '#punctuation-semicolon'
@@ -811,6 +815,12 @@ repository:
       match: (?<!\.)\b(do|while)\b
     - name: keyword.control.flow.cs
       match: (?<!\.)\b(return)\b
+
+  labeled-statement:
+    match: '([_$[:alpha:]][_$[:alnum:]]*)\s*(:)'
+    captures:
+      '1': { name: entity.name.label.cs }
+      '2': { name: punctuation.separator.colon.cs }
 
   interpolated-string:
     name: string.quoted.double.cs

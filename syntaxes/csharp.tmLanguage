@@ -247,6 +247,10 @@
           </dict>
           <dict>
             <key>include</key>
+            <string>#labeled-statement</string>
+          </dict>
+          <dict>
+            <key>include</key>
             <string>#expression</string>
           </dict>
           <dict>
@@ -2192,6 +2196,24 @@
             <string>(?&lt;!\.)\b(return)\b</string>
           </dict>
         </array>
+      </dict>
+      <key>labeled-statement</key>
+      <dict>
+        <key>match</key>
+        <string>([_$[:alpha:]][_$[:alnum:]]*)\s*(:)</string>
+        <key>captures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.label.cs</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.separator.colon.cs</string>
+          </dict>
+        </dict>
       </dict>
       <key>interpolated-string</key>
       <dict>
