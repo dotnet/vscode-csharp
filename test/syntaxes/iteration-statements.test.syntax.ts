@@ -40,5 +40,30 @@ describe("Grammar", () => {
                 Token.Puncuation.Semicolon
             ]);
         });
+
+        it("single-line for loop", () => {
+
+            const input = Input.InMethod(`for (int i = 0; i < 42; i++) { }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.For,
+                Token.Puncuation.OpenParen,
+                Token.Type("int"),
+                Token.Variables.Local("i"),
+                Token.Operators.Assignment,
+                Token.Literals.Numeric.Decimal("0"),
+                Token.Puncuation.Semicolon,
+                Token.Variables.ReadWrite("i"),
+                Token.Operators.Relational.LessThan,
+                Token.Literals.Numeric.Decimal("42"),
+                Token.Puncuation.Semicolon,
+                Token.Variables.ReadWrite("i"),
+                Token.Operators.Increment,
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace,
+            ]);
+        });
     });
 });

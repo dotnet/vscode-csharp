@@ -198,6 +198,7 @@ export namespace Token {
         export const Explicit = createToken('explicit', 'keyword.other.explicit.cs');
         export const Extern = createToken('extern', 'keyword.other.extern.cs');
         export const Finally = createToken('finally', 'keyword.control.trycatch.cs');
+        export const For = createToken('for', 'keyword.control.loop.for.cs');
         export const Get = createToken('get', 'keyword.other.get.cs');
         export const Goto = createToken('goto', 'keyword.control.goto.cs');
         export const If = createToken('if', 'keyword.control.conditional.cs');

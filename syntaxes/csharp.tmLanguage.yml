@@ -79,6 +79,7 @@ repository:
     - include: '#comment'
     - include: '#while-statement'
     - include: '#do-statement'
+    - include: '#for-statement'
     - include: '#switch-statement'
     - include: '#goto-statement'
     - include: '#return-statement'
@@ -911,6 +912,25 @@ repository:
         '0': { name: punctuation.parenthesis.close.cs }
       patterns:
       - include: '#expression'
+    - include: '#statement'
+
+  for-statement:
+    begin: (?<!\.)\b(for)\b
+    beginCaptures:
+      '1': { name: keyword.control.loop.for.cs }
+    end: (?=\;|})
+    patterns:
+    - begin: \(
+      beginCaptures:
+        '0': { name: punctuation.parenthesis.open.cs }
+      end: \)
+      endCaptures:
+        '0': { name: punctuation.parenthesis.close.cs }
+      patterns:
+      - include: '#local-variable-declaration'
+      - include: '#expression'
+      - include: '#punctuation-comma'
+      - include: '#punctuation-semicolon'
     - include: '#statement'
 
   labeled-statement:

@@ -251,6 +251,10 @@
           </dict>
           <dict>
             <key>include</key>
+            <string>#for-statement</string>
+          </dict>
+          <dict>
+            <key>include</key>
             <string>#switch-statement</string>
           </dict>
           <dict>
@@ -2502,6 +2506,69 @@
               <dict>
                 <key>include</key>
                 <string>#expression</string>
+              </dict>
+            </array>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#statement</string>
+          </dict>
+        </array>
+      </dict>
+      <key>for-statement</key>
+      <dict>
+        <key>begin</key>
+        <string>(?&lt;!\.)\b(for)\b</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.loop.for.cs</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=\;|})</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>begin</key>
+            <string>\(</string>
+            <key>beginCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.parenthesis.open.cs</string>
+              </dict>
+            </dict>
+            <key>end</key>
+            <string>\)</string>
+            <key>endCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.parenthesis.close.cs</string>
+              </dict>
+            </dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#local-variable-declaration</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#expression</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#punctuation-comma</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#punctuation-semicolon</string>
               </dict>
             </array>
           </dict>
