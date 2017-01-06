@@ -84,6 +84,7 @@ repository:
     - include: '#switch-statement'
     - include: '#goto-statement'
     - include: '#return-statement'
+    - include: '#try-statement'
     - include: '#control-statement'
     - include: '#labeled-statement'
     - include: '#local-declaration'
@@ -819,8 +820,6 @@ repository:
 
   control-statement:
     patterns:
-    - name: keyword.control.trycatch.cs
-      match: (?<!\.)\b(catch|finally|throw|try)\b
     - name: keyword.control.loop.cs
       match: (?<!\.)\b(break|continue)\b
     - name: keyword.control.conditional.cs
@@ -972,6 +971,73 @@ repository:
           '4': { name: keyword.control.loop.in.cs }
       - include: '#expression'
     - include: '#statement'
+
+  try-statement:
+    begin: (?<!\.)\b(try)\b
+    beginCaptures:
+      '1': { name: keyword.control.try.cs }
+    end: (?=\})
+    patterns:
+    - include: '#block'
+    - include: '#catch-clause'
+    - include: '#finally-clause'
+
+  finally-clause:
+    begin: (?<!\.)\b(finally)\b
+    beginCaptures:
+      '1': { name: keyword.control.try.finally.cs }
+    end: (?=\})
+    patterns:
+    - include: '#block'
+
+  catch-clause:
+    begin: (?<!\.)\b(catch)\b
+    beginCaptures:
+      '1': { name: keyword.control.try.catch.cs }
+    end: (?=\})
+    patterns:
+    - begin: \(
+      beginCaptures:
+        '0': { name: punctuation.parenthesis.open.cs }
+      end: \)
+      endCaptures:
+        '0': { name: punctuation.parenthesis.close.cs }
+      patterns:
+      - match: |-
+          (?x)
+          (?<type-name>(?:
+            (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+            (?:
+              (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
+              (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
+              (?:(?:\*)*)?
+              (?:(?:\[,*\])*)?
+              (?:\s*\.\s*\g<type-name>)*
+            )|
+            (?:\s*\(\s*(?:\g<type-name>)(?:\s+\g<identifier>)?(?:\s*,\s*(?:\g<type-name>)(?:\s+\g<identifier>)?)*\s*\)\s*))
+            (?:(?:\[,*\])*)?
+          )
+          (?:\s+\b(?<local-name>\g<identifier>)\b)?
+        captures:
+          '1':
+            patterns:
+            - include: '#type'
+          # '2': ?<identifier> is a sub-expression. It's final value is not considered.
+          '3': { name: variable.local.cs }
+    - include: '#when-clause'
+    - include: '#block'
+    - include: '#finally-clause'
+
+  when-clause:
+    begin: (?<!\.)\b(when)\b\s*(\()
+    beginCaptures:
+      '1': { name: keyword.control.try.when.cs }
+      '2': { name: punctuation.parenthesis.open.cs }
+    end: \)
+    endCaptures:
+      '0': { name: punctuation.parenthesis.close.cs }
+    patterns:
+    - include: '#expression'
 
   labeled-statement:
     match: '([_$[:alpha:]][_$[:alnum:]]*)\s*(:)'

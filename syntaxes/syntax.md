@@ -9,7 +9,6 @@
     * casts
     * compound assignement
     * jump statements (break, continue, throw)
-    * try statements
     * checked and unchecked statements and expressions
     * lock statements
     * using statements
