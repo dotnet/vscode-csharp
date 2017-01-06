@@ -87,6 +87,7 @@ repository:
     - include: '#try-statement'
     - include: '#checked-unchecked-statement'
     - include: '#lock-statement'
+    - include: '#using-statement'
     - include: '#control-statement'
     - include: '#labeled-statement'
     - include: '#local-declaration'
@@ -1067,6 +1068,23 @@ repository:
       - include: '#expression'
     - include: '#statement'
 
+  using-statement:
+    begin: (?<!\.)\b(using)\b
+    beginCaptures:
+      '1': { name: keyword.other.using.cs }
+    end: (?=\;|})
+    patterns:
+    - begin: \(
+      beginCaptures:
+        '0': { name: punctuation.parenthesis.open.cs }
+      end: \)
+      endCaptures:
+        '0': { name: punctuation.parenthesis.close.cs }
+      patterns:
+      - include: '#local-variable-declaration'
+      - include: '#expression'
+    - include: '#statement'
+
   labeled-statement:
     match: '([_$[:alpha:]][_$[:alnum:]]*)\s*(:)'
     captures:
@@ -1094,13 +1112,13 @@ repository:
         (?:(?:\[,*\])*)?
       )\s+
       (?<first-local-name>\g<identifier>)\s*
-      (?=,|;|=)
+      (?=,|;|=|\))
     beginCaptures:
       '1':
         patterns:
         - include: '#type'
       '2': { name: variable.local.cs }
-    end: (?=;)
+    end: (?=;|\))
     patterns:
     - name: variable.local.cs
       match: '[_$[:alpha:]][_$[:alnum:]]*'
