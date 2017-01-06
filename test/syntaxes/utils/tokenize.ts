@@ -187,6 +187,7 @@ export namespace Token {
         export const Break = createToken('break', 'keyword.control.loop.cs');
         export const Case = createToken('case', 'keyword.control.case.cs');
         export const Catch = createToken('catch', 'keyword.control.try.catch.cs');
+        export const Checked = createToken('checked', 'keyword.other.checked.cs');
         export const Class = createToken('class', 'keyword.other.class.cs');
         export const Continue = createToken('continue', 'keyword.control.loop.cs');
         export const Default = createToken('default', 'keyword.control.default.cs');
@@ -218,6 +219,7 @@ export namespace Token {
         export const This = createToken('this', 'keyword.other.this.cs');
         export const Throw = createToken('throw', 'keyword.control.throw.cs');
         export const Try = createToken('try', 'keyword.control.try.cs');
+        export const Unchecked = createToken('unchecked', 'keyword.other.unchecked.cs');
         export const Using = createToken('using', 'keyword.other.using.cs');
         export const When = createToken('when', 'keyword.control.try.when.cs');
         export const Where = createToken('where', 'keyword.other.where.cs');

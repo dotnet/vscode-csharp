@@ -9,10 +9,11 @@
     * casts
     * compound assignement
     * jump statements (break, continue, throw)
-    * checked and unchecked statements and expressions
     * lock statements
     * using statements
     * yield statement
+    * unsafe code
+    * XML doc comments
 
 * Lots of refinement and tests to ensure proper highlighting while typing
 

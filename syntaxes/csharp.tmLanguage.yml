@@ -85,6 +85,7 @@ repository:
     - include: '#goto-statement'
     - include: '#return-statement'
     - include: '#try-statement'
+    - include: '#checked-unchecked-statement'
     - include: '#control-statement'
     - include: '#labeled-statement'
     - include: '#local-declaration'
@@ -94,6 +95,7 @@ repository:
 
   expression:
     patterns:
+    - include: '#checked-unchecked-expression'
     - include: '#interpolated-string'
     - include: '#verbatim-interpolated-string'
     - include: '#literal'
@@ -1039,6 +1041,15 @@ repository:
     patterns:
     - include: '#expression'
 
+  checked-unchecked-statement:
+    begin: (?<!\.)\b(?:(checked)|(unchecked))\b
+    beginCaptures:
+      '1': { name: keyword.other.checked.cs }
+      '2': { name: keyword.other.unchecked.cs }
+    end: (?=\})
+    patterns:
+    - include: '#block'
+
   labeled-statement:
     match: '([_$[:alpha:]][_$[:alnum:]]*)\s*(:)'
     captures:
@@ -1111,6 +1122,18 @@ repository:
     - include: '#punctuation-comma'
     - include: '#comment'
     - include: '#variable-initializer'
+
+  checked-unchecked-expression:
+    begin: (?<!\.)\b(?:(checked)|(unchecked))\b\s*(\()
+    beginCaptures:
+      '1': { name: keyword.other.checked.cs }
+      '2': { name: keyword.other.unchecked.cs }
+      '3': { name: punctuation.parenthesis.open.cs }
+    end: \)
+    endCaptures:
+      '0': { name: punctuation.parenthesis.close.cs }
+    patterns:
+    - include: '#expression'
 
   interpolated-string:
     name: string.quoted.double.cs
