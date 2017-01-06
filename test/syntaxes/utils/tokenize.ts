@@ -199,10 +199,12 @@ export namespace Token {
         export const Extern = createToken('extern', 'keyword.other.extern.cs');
         export const Finally = createToken('finally', 'keyword.control.trycatch.cs');
         export const For = createToken('for', 'keyword.control.loop.for.cs');
+        export const ForEach = createToken('foreach', 'keyword.control.loop.foreach.cs');
         export const Get = createToken('get', 'keyword.other.get.cs');
         export const Goto = createToken('goto', 'keyword.control.goto.cs');
         export const If = createToken('if', 'keyword.control.conditional.cs');
         export const Implicit = createToken('implicit', 'keyword.other.implicit.cs');
+        export const In = createToken('in', 'keyword.control.loop.in.cs');
         export const Interface = createToken('interface', 'keyword.other.interface.cs');
         export const Namespace = createToken('namespace', 'keyword.other.namespace.cs');
         export const New = createToken('new', 'keyword.other.new.cs');

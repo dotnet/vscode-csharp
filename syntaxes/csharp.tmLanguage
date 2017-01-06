@@ -255,6 +255,10 @@
           </dict>
           <dict>
             <key>include</key>
+            <string>#foreach-statement</string>
+          </dict>
+          <dict>
+            <key>include</key>
             <string>#switch-statement</string>
           </dict>
           <dict>
@@ -2569,6 +2573,98 @@
               <dict>
                 <key>include</key>
                 <string>#punctuation-semicolon</string>
+              </dict>
+            </array>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#statement</string>
+          </dict>
+        </array>
+      </dict>
+      <key>foreach-statement</key>
+      <dict>
+        <key>begin</key>
+        <string>(?&lt;!\.)\b(foreach)\b</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.loop.foreach.cs</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=\;|})</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>begin</key>
+            <string>\(</string>
+            <key>beginCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.parenthesis.open.cs</string>
+              </dict>
+            </dict>
+            <key>end</key>
+            <string>\)</string>
+            <key>endCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.parenthesis.close.cs</string>
+              </dict>
+            </dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>match</key>
+                <string>(?x)
+(?&lt;type-name&gt;(?:
+  (?:(?&lt;identifier&gt;[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+  (?:
+    (?:\g&lt;identifier&gt;(?:\s*\.\s*\g&lt;identifier&gt;)*)
+    (?:\s*&lt;\s*(?:\g&lt;type-name&gt;)(?:\s*,\s*\g&lt;type-name&gt;)*\s*&gt;\s*)?
+    (?:(?:\*)*)?
+    (?:(?:\[,*\])*)?
+    (?:\s*\.\s*\g&lt;type-name&gt;)*
+  )|
+  (?:\s*\(\s*(?:\g&lt;type-name&gt;)(?:\s+\g&lt;identifier&gt;)?(?:\s*,\s*(?:\g&lt;type-name&gt;)(?:\s+\g&lt;identifier&gt;)?)*\s*\)\s*))
+  (?:(?:\[,*\])*)?
+)\s+
+(?&lt;local-name&gt;\g&lt;identifier&gt;)\s+
+\b(?&lt;in-keyword&gt;in)\b</string>
+                <key>captures</key>
+                <dict>
+                  <key>1</key>
+                  <dict>
+                    <key>patterns</key>
+                    <array>
+                      <dict>
+                        <key>include</key>
+                        <string>#type</string>
+                      </dict>
+                    </array>
+                  </dict>
+                  <key>3</key>
+                  <dict>
+                    <key>name</key>
+                    <string>variable.local.cs</string>
+                  </dict>
+                  <key>4</key>
+                  <dict>
+                    <key>name</key>
+                    <string>keyword.control.loop.in.cs</string>
+                  </dict>
+                </dict>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#expression</string>
               </dict>
             </array>
           </dict>

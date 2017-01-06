@@ -80,6 +80,7 @@ repository:
     - include: '#while-statement'
     - include: '#do-statement'
     - include: '#for-statement'
+    - include: '#foreach-statement'
     - include: '#switch-statement'
     - include: '#goto-statement'
     - include: '#return-statement'
@@ -931,6 +932,45 @@ repository:
       - include: '#expression'
       - include: '#punctuation-comma'
       - include: '#punctuation-semicolon'
+    - include: '#statement'
+
+  foreach-statement:
+    begin: (?<!\.)\b(foreach)\b
+    beginCaptures:
+      '1': { name: keyword.control.loop.foreach.cs }
+    end: (?=\;|})
+    patterns:
+    - begin: \(
+      beginCaptures:
+        '0': { name: punctuation.parenthesis.open.cs }
+      end: \)
+      endCaptures:
+        '0': { name: punctuation.parenthesis.close.cs }
+      patterns:
+      - match: |-
+          (?x)
+          (?<type-name>(?:
+            (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+            (?:
+              (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
+              (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
+              (?:(?:\*)*)?
+              (?:(?:\[,*\])*)?
+              (?:\s*\.\s*\g<type-name>)*
+            )|
+            (?:\s*\(\s*(?:\g<type-name>)(?:\s+\g<identifier>)?(?:\s*,\s*(?:\g<type-name>)(?:\s+\g<identifier>)?)*\s*\)\s*))
+            (?:(?:\[,*\])*)?
+          )\s+
+          (?<local-name>\g<identifier>)\s+
+          \b(?<in-keyword>in)\b
+        captures:
+          '1':
+            patterns:
+            - include: '#type'
+          # '2': ?<identifier> is a sub-expression. It's final value is not considered.
+          '3': { name: variable.local.cs }
+          '4': { name: keyword.control.loop.in.cs }
+      - include: '#expression'
     - include: '#statement'
 
   labeled-statement:

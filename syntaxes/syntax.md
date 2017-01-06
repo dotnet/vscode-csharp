@@ -4,8 +4,6 @@
     * Method calls
     * Element access
     * query expressions
-    * for loops
-    * foreach loops
     * lambda expressions and anonymous functions
     * array, collection and object initializers
     * casts

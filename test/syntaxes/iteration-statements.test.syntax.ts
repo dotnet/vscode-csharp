@@ -65,5 +65,23 @@ describe("Grammar", () => {
                 Token.Puncuation.CloseBrace,
             ]);
         });
+
+        it("single-line foreach loop", () => {
+
+            const input = Input.InMethod(`foreach (int i in numbers) { }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.ForEach,
+                Token.Puncuation.OpenParen,
+                Token.Type("int"),
+                Token.Variables.Local("i"),
+                Token.Keywords.In,
+                Token.Variables.ReadWrite("numbers"),
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace,
+            ]);
+        });
     });
 });
