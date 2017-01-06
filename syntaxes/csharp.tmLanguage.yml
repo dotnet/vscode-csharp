@@ -84,6 +84,9 @@ repository:
     - include: '#switch-statement'
     - include: '#goto-statement'
     - include: '#return-statement'
+    - include: '#break-continue-statement'
+    - include: '#throw-statement'
+    - include: '#yield-statement'
     - include: '#try-statement'
     - include: '#checked-unchecked-statement'
     - include: '#lock-statement'
@@ -824,8 +827,6 @@ repository:
 
   control-statement:
     patterns:
-    - name: keyword.control.loop.cs
-      match: (?<!\.)\b(break|continue)\b
     - name: keyword.control.conditional.cs
       match: (?<!\.)\b(else|if)\b
 
@@ -889,10 +890,44 @@ repository:
   return-statement:
     begin: (?<!\.)\b(return)\b
     beginCaptures:
-      '1': { name: keyword.control.flow.cs }
+      '1': { name: keyword.control.flow.return.cs }
     end: (?=;)
     patterns:
     - include: '#expression'
+
+  break-continue-statement:
+    match: (?<!\.)\b(?:(break)|(continue))\b
+    captures:
+      '1': { name: keyword.control.flow.break.cs }
+      '2': { name: keyword.control.flow.continue.cs }
+
+  throw-statement:
+    begin: (?<!\.)\b(throw)\b
+    beginCaptures:
+      '1': { name: keyword.control.flow.throw.cs }
+    end: (?=;)
+    patterns:
+    - include: '#expression'
+
+  yield-statement:
+    patterns:
+    - include: '#yield-return-statement'
+    - include: '#yield-break-statement'
+
+  yield-return-statement:
+    begin: (?<!\.)\b(yield)\b\s*\b(return)\b
+    beginCaptures:
+      '1': { name: keyword.control.flow.yield.cs }
+      '2': { name: keyword.control.flow.return.cs }
+    end: (?=;)
+    patterns:
+    - include: '#expression'
+
+  yield-break-statement:
+    match: (?<!\.)\b(yield)\b\s*\b(break)\b
+    captures:
+      '1': { name: keyword.control.flow.yield.cs }
+      '2': { name: keyword.control.flow.break.cs }
 
   do-statement:
     begin: (?<!\.)\b(do)\b

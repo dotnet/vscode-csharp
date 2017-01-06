@@ -249,5 +249,56 @@ default:
                 Token.Puncuation.CloseBrace
             ]);
         });
+
+        it("switch statement with blocks", () => {
+            const input = Input.InMethod(`
+switch (i) {
+    case 0:
+    {
+        goto case 1;
+    }
+    case 1:
+    {
+        goto default;
+    }
+    default:
+    {
+        break;
+    }
+}`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Switch,
+                Token.Puncuation.OpenParen,
+                Token.Variables.ReadWrite("i"),
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.OpenBrace,
+                Token.Keywords.Case,
+                Token.Literals.Numeric.Decimal("0"),
+                Token.Puncuation.Colon,
+                Token.Puncuation.OpenBrace,
+                Token.Keywords.Goto,
+                Token.Keywords.Case,
+                Token.Literals.Numeric.Decimal("1"),
+                Token.Puncuation.Semicolon,
+                Token.Puncuation.CloseBrace,
+                Token.Keywords.Case,
+                Token.Literals.Numeric.Decimal("1"),
+                Token.Puncuation.Colon,
+                Token.Puncuation.OpenBrace,
+                Token.Keywords.Goto,
+                Token.Keywords.Default,
+                Token.Puncuation.Semicolon,
+                Token.Puncuation.CloseBrace,
+                Token.Keywords.Default,
+                Token.Puncuation.Colon,
+                Token.Puncuation.OpenBrace,
+                Token.Keywords.Break,
+                Token.Puncuation.Semicolon,
+                Token.Puncuation.CloseBrace,
+                Token.Puncuation.CloseBrace
+            ]);
+        });
     });
 });

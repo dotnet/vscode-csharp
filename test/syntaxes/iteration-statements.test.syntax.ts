@@ -66,6 +66,68 @@ describe("Grammar", () => {
             ]);
         });
 
+        it("for loop with break", () => {
+
+            const input = Input.InMethod(`
+for (int i = 0; i < 42; i++)
+{
+    break;
+}`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.For,
+                Token.Puncuation.OpenParen,
+                Token.Type("int"),
+                Token.Variables.Local("i"),
+                Token.Operators.Assignment,
+                Token.Literals.Numeric.Decimal("0"),
+                Token.Puncuation.Semicolon,
+                Token.Variables.ReadWrite("i"),
+                Token.Operators.Relational.LessThan,
+                Token.Literals.Numeric.Decimal("42"),
+                Token.Puncuation.Semicolon,
+                Token.Variables.ReadWrite("i"),
+                Token.Operators.Increment,
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.OpenBrace,
+                Token.Keywords.Break,
+                Token.Puncuation.Semicolon,
+                Token.Puncuation.CloseBrace,
+            ]);
+        });
+
+        it("for loop with continue", () => {
+
+            const input = Input.InMethod(`
+for (int i = 0; i < 42; i++)
+{
+    continue;
+}`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.For,
+                Token.Puncuation.OpenParen,
+                Token.Type("int"),
+                Token.Variables.Local("i"),
+                Token.Operators.Assignment,
+                Token.Literals.Numeric.Decimal("0"),
+                Token.Puncuation.Semicolon,
+                Token.Variables.ReadWrite("i"),
+                Token.Operators.Relational.LessThan,
+                Token.Literals.Numeric.Decimal("42"),
+                Token.Puncuation.Semicolon,
+                Token.Variables.ReadWrite("i"),
+                Token.Operators.Increment,
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.OpenBrace,
+                Token.Keywords.Continue,
+                Token.Puncuation.Semicolon,
+                Token.Puncuation.CloseBrace,
+            ]);
+        });
+
         it("single-line foreach loop", () => {
 
             const input = Input.InMethod(`foreach (int i in numbers) { }`);

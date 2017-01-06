@@ -184,12 +184,12 @@ export namespace Token {
         export const Alias = createToken('alias', 'keyword.other.alias.cs');
         export const AttributeSpecifier = (text: string) => createToken(text, 'keyword.other.attribute-specifier.cs');
         export const Base = createToken('base', 'keyword.other.base.cs');
-        export const Break = createToken('break', 'keyword.control.loop.cs');
+        export const Break = createToken('break', 'keyword.control.flow.break.cs');
         export const Case = createToken('case', 'keyword.control.case.cs');
         export const Catch = createToken('catch', 'keyword.control.try.catch.cs');
         export const Checked = createToken('checked', 'keyword.other.checked.cs');
         export const Class = createToken('class', 'keyword.other.class.cs');
-        export const Continue = createToken('continue', 'keyword.control.loop.cs');
+        export const Continue = createToken('continue', 'keyword.control.flow.continue.cs');
         export const Default = createToken('default', 'keyword.control.default.cs');
         export const Delegate = createToken('delegate', 'keyword.other.delegate.cs');
         export const Do = createToken('do', 'keyword.control.loop.do.cs');
@@ -212,19 +212,20 @@ export namespace Token {
         export const New = createToken('new', 'keyword.other.new.cs');
         export const Operator = createToken('operator', 'keyword.other.operator.cs');
         export const Remove = createToken('remove', 'keyword.other.remove.cs');
-        export const Return = createToken('return', 'keyword.control.flow.cs');
+        export const Return = createToken('return', 'keyword.control.flow.return.cs');
         export const Set = createToken('set', 'keyword.other.set.cs');
         export const Static = createToken('static', 'keyword.other.static.cs');
         export const Struct = createToken('struct', 'keyword.other.struct.cs');
         export const Switch = createToken('switch', 'keyword.control.switch.cs');
         export const This = createToken('this', 'keyword.other.this.cs');
-        export const Throw = createToken('throw', 'keyword.control.throw.cs');
+        export const Throw = createToken('throw', 'keyword.control.flow.throw.cs');
         export const Try = createToken('try', 'keyword.control.try.cs');
         export const Unchecked = createToken('unchecked', 'keyword.other.unchecked.cs');
         export const Using = createToken('using', 'keyword.other.using.cs');
         export const When = createToken('when', 'keyword.control.try.when.cs');
         export const Where = createToken('where', 'keyword.other.where.cs');
         export const While = createToken('while', 'keyword.control.loop.while.cs');
+        export const Yield = createToken('yield', 'keyword.control.flow.yield.cs');
     }
 
     export namespace Literals {

@@ -127,6 +127,7 @@ catch (Exception ex)
             const input = Input.InMethod(`
 try
 {
+    throw new Exception();
 }
 catch when (true)
 {
@@ -136,6 +137,12 @@ catch when (true)
             tokens.should.deep.equal([
                 Token.Keywords.Try,
                 Token.Puncuation.OpenBrace,
+                Token.Keywords.Throw,
+                Token.Keywords.New,
+                Token.Type("Exception"),
+                Token.Puncuation.OpenParen,
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.Semicolon,
                 Token.Puncuation.CloseBrace,
                 Token.Keywords.Catch,
                 Token.Keywords.When,

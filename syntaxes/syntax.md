@@ -8,8 +8,6 @@
     * array, collection and object initializers
     * casts
     * compound assignement
-    * jump statements (break, continue, throw)
-    * yield statement
     * unsafe code
     * XML doc comments
 
