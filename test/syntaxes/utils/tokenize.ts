@@ -184,7 +184,12 @@ export namespace Token {
         export const Alias = createToken('alias', 'keyword.other.alias.cs');
         export const AttributeSpecifier = (text: string) => createToken(text, 'keyword.other.attribute-specifier.cs');
         export const Base = createToken('base', 'keyword.other.base.cs');
+        export const Break = createToken('break', 'keyword.control.loop.cs');
+        export const Case = createToken('case', 'keyword.control.case.cs');
+        export const Catch = createToken('catch', 'keyword.control.trycatch.cs');
         export const Class = createToken('class', 'keyword.other.class.cs');
+        export const Continue = createToken('continue', 'keyword.control.loop.cs');
+        export const Default = createToken('default', 'keyword.control.default.cs');
         export const Delegate = createToken('delegate', 'keyword.other.delegate.cs');
         export const Do = createToken('do', 'keyword.control.loop.cs');
         export const Else = createToken('else', 'keyword.control.conditional.cs');
@@ -192,7 +197,9 @@ export namespace Token {
         export const Event = createToken('event', 'keyword.other.event.cs');
         export const Explicit = createToken('explicit', 'keyword.other.explicit.cs');
         export const Extern = createToken('extern', 'keyword.other.extern.cs');
+        export const Finally = createToken('finally', 'keyword.control.trycatch.cs');
         export const Get = createToken('get', 'keyword.other.get.cs');
+        export const Goto = createToken('goto', 'keyword.control.loop.cs');
         export const If = createToken('if', 'keyword.control.conditional.cs');
         export const Implicit = createToken('implicit', 'keyword.other.implicit.cs');
         export const Interface = createToken('interface', 'keyword.other.interface.cs');
@@ -204,7 +211,10 @@ export namespace Token {
         export const Set = createToken('set', 'keyword.other.set.cs');
         export const Static = createToken('static', 'keyword.other.static.cs');
         export const Struct = createToken('struct', 'keyword.other.struct.cs');
+        export const Switch = createToken('switch', 'keyword.control.switch.cs');
         export const This = createToken('this', 'keyword.other.this.cs');
+        export const Throw = createToken('throw', 'keyword.control.trycatch.cs');
+        export const Try = createToken('try', 'keyword.control.trycatch.cs');
         export const Using = createToken('using', 'keyword.other.using.cs');
         export const Where = createToken('where', 'keyword.other.where.cs');
         export const While = createToken('while', 'keyword.control.loop.cs');

@@ -243,11 +243,19 @@
           </dict>
           <dict>
             <key>include</key>
-            <string>#labeled-statement</string>
+            <string>#switch-statement</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#goto-statement</string>
           </dict>
           <dict>
             <key>include</key>
             <string>#control-statement</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#labeled-statement</string>
           </dict>
           <dict>
             <key>include</key>
@@ -2189,9 +2197,15 @@
         <array>
           <dict>
             <key>name</key>
+            <string>keyword.control.trycatch.cs</string>
+            <key>match</key>
+            <string>(?&lt;!\.)\b(catch|finally|throw|try)\b</string>
+          </dict>
+          <dict>
+            <key>name</key>
             <string>keyword.control.loop.cs</string>
             <key>match</key>
-            <string>(?&lt;!\.)\b(do|while)\b</string>
+            <string>(?&lt;!\.)\b(break|continue|do|while)\b</string>
           </dict>
           <dict>
             <key>name</key>
@@ -2204,6 +2218,195 @@
             <string>keyword.control.conditional.cs</string>
             <key>match</key>
             <string>(?&lt;!\.)\b(else|if)\b</string>
+          </dict>
+        </array>
+      </dict>
+      <key>switch-statement</key>
+      <dict>
+        <key>begin</key>
+        <string>\b(switch)\b\s*(?=\()</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.switch.cs</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=\})</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>begin</key>
+            <string>\(</string>
+            <key>beginCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.parenthesis.open.cs</string>
+              </dict>
+            </dict>
+            <key>end</key>
+            <string>\)</string>
+            <key>endCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.parenthesis.close.cs</string>
+              </dict>
+            </dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#expression</string>
+              </dict>
+            </array>
+          </dict>
+          <dict>
+            <key>begin</key>
+            <string>\{</string>
+            <key>beginCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.curlybrace.open.cs</string>
+              </dict>
+            </dict>
+            <key>end</key>
+            <string>\}</string>
+            <key>endCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.curlybrace.close.cs</string>
+              </dict>
+            </dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#switch-label</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#statement</string>
+              </dict>
+            </array>
+          </dict>
+        </array>
+      </dict>
+      <key>switch-label</key>
+      <dict>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>begin</key>
+            <string>\b(case)\b\s+</string>
+            <key>beginCaptures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>keyword.control.case.cs</string>
+              </dict>
+            </dict>
+            <key>end</key>
+            <string>:</string>
+            <key>endCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.separator.colon.cs</string>
+              </dict>
+            </dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#expression</string>
+              </dict>
+            </array>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>\b(default)\b\s*(:)</string>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>keyword.control.default.cs</string>
+              </dict>
+              <key>2</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.separator.colon.cs</string>
+              </dict>
+            </dict>
+          </dict>
+        </array>
+      </dict>
+      <key>goto-statement</key>
+      <dict>
+        <key>begin</key>
+        <string>\b(goto)\b</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.loop.cs</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=;)</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>begin</key>
+            <string>\b(case)\b</string>
+            <key>beginCaptures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>keyword.control.case.cs</string>
+              </dict>
+            </dict>
+            <key>end</key>
+            <string>(?=;)</string>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#expression</string>
+              </dict>
+            </array>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>\b(default)\b</string>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>keyword.control.default.cs</string>
+              </dict>
+            </dict>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>entity.name.label.cs</string>
+            <key>match</key>
+            <string>[_$[:alpha]][_$[:alnum:]]*</string>
           </dict>
         </array>
       </dict>

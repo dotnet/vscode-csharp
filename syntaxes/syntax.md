@@ -4,14 +4,13 @@
     * Method calls
     * Element access
     * query expressions
-    * switch
     * for loops
     * foreach loops
     * lambda expressions and anonymous functions
     * array, collection and object initializers
     * casts
     * compound assignement
-    * jump statements (break, continue, goto, throw)
+    * jump statements (break, continue, throw)
     * try statements
     * checked and unchecked statements and expressions
     * lock statements

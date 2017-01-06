@@ -77,8 +77,10 @@ repository:
   statement:
     patterns:
     - include: '#comment'
-    - include: '#labeled-statement'
+    - include: '#switch-statement'
+    - include: '#goto-statement'
     - include: '#control-statement'
+    - include: '#labeled-statement'
     - include: '#local-declaration'
     - include: '#expression'
     - include: '#block'
@@ -812,12 +814,71 @@ repository:
 
   control-statement:
     patterns:
+    - name: keyword.control.trycatch.cs
+      match: (?<!\.)\b(catch|finally|throw|try)\b
     - name: keyword.control.loop.cs
-      match: (?<!\.)\b(do|while)\b
+      match: (?<!\.)\b(break|continue|do|while)\b
     - name: keyword.control.flow.cs
       match: (?<!\.)\b(return)\b
     - name: keyword.control.conditional.cs
       match: (?<!\.)\b(else|if)\b
+
+  switch-statement:
+    begin: \b(switch)\b\s*(?=\()
+    beginCaptures:
+      '1': { name: keyword.control.switch.cs }
+    end: (?=\})
+    patterns:
+    - begin: \(
+      beginCaptures:
+        '0': { name: punctuation.parenthesis.open.cs }
+      end: \)
+      endCaptures:
+        '0': { name: punctuation.parenthesis.close.cs }
+      patterns:
+      - include: '#expression'
+    - begin: \{
+      beginCaptures:
+        '0': { name: punctuation.curlybrace.open.cs }
+      end: \}
+      endCaptures:
+        '0': { name: punctuation.curlybrace.close.cs }
+      patterns:
+      - include: '#switch-label'
+      - include: '#statement'
+
+  switch-label:
+    patterns:
+    - begin: \b(case)\b\s+
+      beginCaptures:
+        '1': { name: keyword.control.case.cs }
+      end: ':'
+      endCaptures:
+        '0': { name: punctuation.separator.colon.cs }
+      patterns:
+      - include: '#expression'
+    - match: \b(default)\b\s*(:)
+      captures:
+        '1': { name: keyword.control.default.cs }
+        '2': { name: punctuation.separator.colon.cs }
+
+  goto-statement:
+    begin: \b(goto)\b
+    beginCaptures:
+      '1': { name: keyword.control.loop.cs }
+    end: (?=;)
+    patterns:
+    - begin: \b(case)\b
+      beginCaptures:
+        '1': { name: keyword.control.case.cs }
+      end: (?=;)
+      patterns:
+      - include: '#expression'
+    - match: \b(default)\b
+      captures:
+        '1': { name: keyword.control.default.cs }
+    - name: entity.name.label.cs
+      match: '[_$[:alpha]][_$[:alnum:]]*'
 
   labeled-statement:
     match: '([_$[:alpha:]][_$[:alnum:]]*)\s*(:)'
