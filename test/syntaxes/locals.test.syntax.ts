@@ -63,5 +63,37 @@ describe("Grammar", () => {
                 Token.Puncuation.Semicolon
             ]);
         });
+
+        it("const declaration", () => {
+            const input = Input.InMethod(`const int x = 42;`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Const,
+                Token.Type("int"),
+                Token.Variables.Local("x"),
+                Token.Operators.Assignment,
+                Token.Literals.Numeric.Decimal("42"),
+                Token.Puncuation.Semicolon
+            ]);
+        });
+
+        it("const with multiple declarators", () => {
+            const input = Input.InMethod(`const int x = 19, y = 23;`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Const,
+                Token.Type("int"),
+                Token.Variables.Local("x"),
+                Token.Operators.Assignment,
+                Token.Literals.Numeric.Decimal("19"),
+                Token.Puncuation.Comma,
+                Token.Variables.Local("y"),
+                Token.Operators.Assignment,
+                Token.Literals.Numeric.Decimal("23"),
+                Token.Puncuation.Semicolon
+            ]);
+        });
     });
 });

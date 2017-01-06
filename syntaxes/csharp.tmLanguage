@@ -2221,6 +2221,20 @@
       </dict>
       <key>local-declaration</key>
       <dict>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#local-constant-declaration</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#local-variable-declaration</string>
+          </dict>
+        </array>
+      </dict>
+      <key>local-variable-declaration</key>
+      <dict>
         <key>begin</key>
         <string>(?x)
 (?&lt;type-name&gt;(?:
@@ -2250,6 +2264,72 @@
             </array>
           </dict>
           <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>variable.local.cs</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=;)</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>name</key>
+            <string>variable.local.cs</string>
+            <key>match</key>
+            <string>[_$[:alpha:]][_$[:alnum:]]*</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#punctuation-comma</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#comment</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#variable-initializer</string>
+          </dict>
+        </array>
+      </dict>
+      <key>local-constant-declaration</key>
+      <dict>
+        <key>begin</key>
+        <string>(?x)
+(?&lt;const-keyword&gt;\b(?:const)\b)\s*
+(?&lt;type-name&gt;(?:
+  (?:(?&lt;identifier&gt;[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+  (?:
+    (?:\g&lt;identifier&gt;(?:\s*\.\s*\g&lt;identifier&gt;)*)
+    (?:\s*&lt;\s*(?:\g&lt;type-name&gt;)(?:\s*,\s*\g&lt;type-name&gt;)*\s*&gt;\s*)?
+    (?:(?:\*)*)?
+    (?:(?:\[,*\])*)?
+    (?:\s*\.\s*\g&lt;type-name&gt;)*
+  )|
+  (?:\s*\(\s*(?:\g&lt;type-name&gt;)(?:\s+\g&lt;identifier&gt;)?(?:\s*,\s*(?:\g&lt;type-name&gt;)(?:\s+\g&lt;identifier&gt;)?)*\s*\)\s*))
+  (?:(?:\[,*\])*)?
+)\s+
+(?&lt;first-local-name&gt;\g&lt;identifier&gt;)\s*
+(?=,|;|=)</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>storage.modifier.cs</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#type</string>
+              </dict>
+            </array>
+          </dict>
+          <key>3</key>
           <dict>
             <key>name</key>
             <string>variable.local.cs</string>
