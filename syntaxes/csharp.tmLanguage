@@ -251,6 +251,10 @@
           </dict>
           <dict>
             <key>include</key>
+            <string>#return-statement</string>
+          </dict>
+          <dict>
+            <key>include</key>
             <string>#control-statement</string>
           </dict>
           <dict>
@@ -2209,12 +2213,6 @@
           </dict>
           <dict>
             <key>name</key>
-            <string>keyword.control.flow.cs</string>
-            <key>match</key>
-            <string>(?&lt;!\.)\b(return)\b</string>
-          </dict>
-          <dict>
-            <key>name</key>
             <string>keyword.control.conditional.cs</string>
             <key>match</key>
             <string>(?&lt;!\.)\b(else|if)\b</string>
@@ -2224,7 +2222,7 @@
       <key>switch-statement</key>
       <dict>
         <key>begin</key>
-        <string>\b(switch)\b\s*(?=\()</string>
+        <string>(?&lt;!\.)\b(switch)\b\s*(?=\()</string>
         <key>beginCaptures</key>
         <dict>
           <key>1</key>
@@ -2307,7 +2305,7 @@
         <array>
           <dict>
             <key>begin</key>
-            <string>\b(case)\b\s+</string>
+            <string>(?&lt;!\.)\b(case)\b\s+</string>
             <key>beginCaptures</key>
             <dict>
               <key>1</key>
@@ -2336,7 +2334,7 @@
           </dict>
           <dict>
             <key>match</key>
-            <string>\b(default)\b\s*(:)</string>
+            <string>(?&lt;!\.)\b(default)\b\s*(:)</string>
             <key>captures</key>
             <dict>
               <key>1</key>
@@ -2356,7 +2354,7 @@
       <key>goto-statement</key>
       <dict>
         <key>begin</key>
-        <string>\b(goto)\b</string>
+        <string>(?&lt;!\.)\b(goto)\b</string>
         <key>beginCaptures</key>
         <dict>
           <key>1</key>
@@ -2407,6 +2405,28 @@
             <string>entity.name.label.cs</string>
             <key>match</key>
             <string>[_$[:alpha]][_$[:alnum:]]*</string>
+          </dict>
+        </array>
+      </dict>
+      <key>return-statement</key>
+      <dict>
+        <key>begin</key>
+        <string>(?&lt;!\.)\b(return)\b</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.flow.cs</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=;)</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#expression</string>
           </dict>
         </array>
       </dict>

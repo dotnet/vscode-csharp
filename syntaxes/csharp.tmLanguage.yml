@@ -79,6 +79,7 @@ repository:
     - include: '#comment'
     - include: '#switch-statement'
     - include: '#goto-statement'
+    - include: '#return-statement'
     - include: '#control-statement'
     - include: '#labeled-statement'
     - include: '#local-declaration'
@@ -818,13 +819,11 @@ repository:
       match: (?<!\.)\b(catch|finally|throw|try)\b
     - name: keyword.control.loop.cs
       match: (?<!\.)\b(break|continue|do|while)\b
-    - name: keyword.control.flow.cs
-      match: (?<!\.)\b(return)\b
     - name: keyword.control.conditional.cs
       match: (?<!\.)\b(else|if)\b
 
   switch-statement:
-    begin: \b(switch)\b\s*(?=\()
+    begin: (?<!\.)\b(switch)\b\s*(?=\()
     beginCaptures:
       '1': { name: keyword.control.switch.cs }
     end: (?=\})
@@ -849,7 +848,7 @@ repository:
 
   switch-label:
     patterns:
-    - begin: \b(case)\b\s+
+    - begin: (?<!\.)\b(case)\b\s+
       beginCaptures:
         '1': { name: keyword.control.case.cs }
       end: ':'
@@ -857,13 +856,13 @@ repository:
         '0': { name: punctuation.separator.colon.cs }
       patterns:
       - include: '#expression'
-    - match: \b(default)\b\s*(:)
+    - match: (?<!\.)\b(default)\b\s*(:)
       captures:
         '1': { name: keyword.control.default.cs }
         '2': { name: punctuation.separator.colon.cs }
 
   goto-statement:
-    begin: \b(goto)\b
+    begin: (?<!\.)\b(goto)\b
     beginCaptures:
       '1': { name: keyword.control.loop.cs }
     end: (?=;)
@@ -879,6 +878,14 @@ repository:
         '1': { name: keyword.control.default.cs }
     - name: entity.name.label.cs
       match: '[_$[:alpha]][_$[:alnum:]]*'
+
+  return-statement:
+    begin: (?<!\.)\b(return)\b
+    beginCaptures:
+      '1': { name: keyword.control.flow.cs }
+    end: (?=;)
+    patterns:
+    - include: '#expression'
 
   labeled-statement:
     match: '([_$[:alpha:]][_$[:alnum:]]*)\s*(:)'
