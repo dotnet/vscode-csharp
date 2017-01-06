@@ -212,15 +212,6 @@ repository:
       patterns:
       - include: '#class-members'
 
-  base-types:
-    begin: ':'
-    beginCaptures:
-      '0': { name: punctuation.separator.colon.cs }
-    end: (?=\{|where)
-    patterns:
-    - include: '#type'
-    - include: '#punctuation-comma'
-
   delegate-declaration:
     begin: |-
       (?x)
@@ -363,6 +354,15 @@ repository:
         '0': { name: punctuation.curlybrace.close.cs }
       patterns:
       - include: '#struct-members'
+
+  base-types:
+    begin: ':'
+    beginCaptures:
+      '0': { name: punctuation.separator.colon.cs }
+    end: (?=\{|where)
+    patterns:
+    - include: '#type'
+    - include: '#punctuation-comma'
 
   generic-constraints:
     begin: (where)\s+([_$[:alpha:]][_$[:alnum:]]*)\s*(:)
@@ -672,7 +672,18 @@ repository:
     - include: '#comment'
     - include: '#parenthesized-parameter-list'
     - include: '#expression-body'
+    - include: '#constructor-initializer'
     - include: '#block'
+
+  constructor-initializer:
+    begin: (:)\s*\b(?:(base)|(this))\b\s*(?=\()
+    beginCaptures:
+      '1': { name: punctuation.separator.colon.cs }
+      '2': { name: keyword.other.base.cs }
+      '3': { name: keyword.other.this.cs }
+    end: (?=\{|;)
+    patterns:
+    - include: "#argument-list"
 
   destructor-declaration:
     begin: (~)([_$[:alpha:]][_$[:alnum:]]*)\s*(?=\()
@@ -968,7 +979,7 @@ repository:
         - include: '#type'
     end: (?<=\))
     patterns:
-    - include: '#parenthesized-parameter-list'
+    - include: '#argument-list'
 
   bracketed-parameter-list:
     begin: (?=(\[))
@@ -1013,6 +1024,33 @@ repository:
     - include: '#variable-initializer'
     - include: '#type'
     - include: '#punctuation-comma'
+
+  argument-list:
+    begin: \(
+    beginCaptures:
+      '0': { name: punctuation.parenthesis.open.cs }
+    end: \)
+    endCaptures:
+      '0': { name: punctuation.parenthesis.close.cs }
+    patterns:
+    - include: '#named-argument'
+    - include: '#argument'
+    - include: '#punctuation-comma'
+
+  named-argument:
+    begin: ([_$[:alpha:]][_$[:alnum:]]*)\s*(:)
+    beginCaptures:
+      '1': { name: variable.parameter.cs }
+      '2': { name: punctuation.separator.colon.cs }
+    end: (?=(,|\)))
+    patterns:
+    - include: '#expression'
+
+  argument:
+    patterns:
+    - name: storage.modifier.cs
+      match: \b(ref|out)\b
+    - include: '#expression'
 
   type:
     name: meta.type.cs

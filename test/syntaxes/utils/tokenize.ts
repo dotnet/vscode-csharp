@@ -182,6 +182,7 @@ export namespace Token {
         export const Add = createToken('add', 'keyword.other.add.cs');
         export const Alias = createToken('alias', 'keyword.other.alias.cs');
         export const AttributeSpecifier = (text: string) => createToken(text, 'keyword.other.attribute-specifier.cs');
+        export const Base = createToken('base', 'keyword.other.base.cs');
         export const Class = createToken('class', 'keyword.other.class.cs');
         export const Delegate = createToken('delegate', 'keyword.other.delegate.cs');
         export const Do = createToken('do', 'keyword.control.loop.cs');

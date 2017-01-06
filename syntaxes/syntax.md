@@ -1,8 +1,5 @@
 ## TODO List:
 
-* Declarations:
-    * Constructor initializers
-
 * Statements/Expressions:
     * Local variable declarations
     * Method calls

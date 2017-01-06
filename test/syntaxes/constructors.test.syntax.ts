@@ -77,5 +77,84 @@ TestClass(int x, int y)
                 Token.Puncuation.OpenBrace,
                 Token.Puncuation.CloseBrace]);
         });
+
+        it("instance constructor with 'this' initializer", () => {
+
+            const input = Input.InClass(`TestClass() : this(42) { }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Identifiers.MethodName("TestClass"),
+                Token.Puncuation.OpenParen,
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.Colon,
+                Token.Keywords.This,
+                Token.Puncuation.OpenParen,
+                Token.Literals.Numeric.Decimal("42"),
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace]);
+        });
+
+        it("instance constructor with 'this' initializer with ref parameter", () => {
+
+            const input = Input.InClass(`TestClass(int x) : this(ref x) { }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Identifiers.MethodName("TestClass"),
+                Token.Puncuation.OpenParen,
+                Token.Type("int"),
+                Token.Variables.Parameter("x"),
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.Colon,
+                Token.Keywords.This,
+                Token.Puncuation.OpenParen,
+                Token.Keywords.Modifiers.Ref,
+                Token.Variables.ReadWrite("x"),
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace]);
+        });
+
+        it("instance constructor with 'this' initializer with named parameter", () => {
+
+            const input = Input.InClass(`TestClass(int x) : this(y: x) { }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Identifiers.MethodName("TestClass"),
+                Token.Puncuation.OpenParen,
+                Token.Type("int"),
+                Token.Variables.Parameter("x"),
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.Colon,
+                Token.Keywords.This,
+                Token.Puncuation.OpenParen,
+                Token.Variables.Parameter("y"),
+                Token.Puncuation.Colon,
+                Token.Variables.ReadWrite("x"),
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace]);
+        });
+
+        it("instance constructor with 'base' initializer", () => {
+
+            const input = Input.InClass(`TestClass() : base(42) { }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Identifiers.MethodName("TestClass"),
+                Token.Puncuation.OpenParen,
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.Colon,
+                Token.Keywords.Base,
+                Token.Puncuation.OpenParen,
+                Token.Literals.Numeric.Decimal("42"),
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.OpenBrace,
+                Token.Puncuation.CloseBrace]);
+        });
     });
 });

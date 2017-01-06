@@ -693,32 +693,6 @@
           </dict>
         </array>
       </dict>
-      <key>base-types</key>
-      <dict>
-        <key>begin</key>
-        <string>:</string>
-        <key>beginCaptures</key>
-        <dict>
-          <key>0</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.separator.colon.cs</string>
-          </dict>
-        </dict>
-        <key>end</key>
-        <string>(?=\{|where)</string>
-        <key>patterns</key>
-        <array>
-          <dict>
-            <key>include</key>
-            <string>#type</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#punctuation-comma</string>
-          </dict>
-        </array>
-      </dict>
       <key>delegate-declaration</key>
       <dict>
         <key>begin</key>
@@ -1103,6 +1077,32 @@
                 <string>#struct-members</string>
               </dict>
             </array>
+          </dict>
+        </array>
+      </dict>
+      <key>base-types</key>
+      <dict>
+        <key>begin</key>
+        <string>:</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>0</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.separator.colon.cs</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=\{|where)</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#type</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#punctuation-comma</string>
           </dict>
         </array>
       </dict>
@@ -1831,7 +1831,43 @@
           </dict>
           <dict>
             <key>include</key>
+            <string>#constructor-initializer</string>
+          </dict>
+          <dict>
+            <key>include</key>
             <string>#block</string>
+          </dict>
+        </array>
+      </dict>
+      <key>constructor-initializer</key>
+      <dict>
+        <key>begin</key>
+        <string>(:)\s*\b(?:(base)|(this))\b\s*(?=\()</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.separator.colon.cs</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.base.cs</string>
+          </dict>
+          <key>3</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.this.cs</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=\{|;)</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#argument-list</string>
           </dict>
         </array>
       </dict>
@@ -2586,7 +2622,7 @@
         <array>
           <dict>
             <key>include</key>
-            <string>#parenthesized-parameter-list</string>
+            <string>#argument-list</string>
           </dict>
         </array>
       </dict>
@@ -2724,6 +2760,87 @@
           <dict>
             <key>include</key>
             <string>#punctuation-comma</string>
+          </dict>
+        </array>
+      </dict>
+      <key>argument-list</key>
+      <dict>
+        <key>begin</key>
+        <string>\(</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>0</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.parenthesis.open.cs</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>\)</string>
+        <key>endCaptures</key>
+        <dict>
+          <key>0</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.parenthesis.close.cs</string>
+          </dict>
+        </dict>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#named-argument</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#argument</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#punctuation-comma</string>
+          </dict>
+        </array>
+      </dict>
+      <key>named-argument</key>
+      <dict>
+        <key>begin</key>
+        <string>([_$[:alpha:]][_$[:alnum:]]*)\s*(:)</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>variable.parameter.cs</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.separator.colon.cs</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=(,|\)))</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#expression</string>
+          </dict>
+        </array>
+      </dict>
+      <key>argument</key>
+      <dict>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>name</key>
+            <string>storage.modifier.cs</string>
+            <key>match</key>
+            <string>\b(ref|out)\b</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#expression</string>
           </dict>
         </array>
       </dict>
