@@ -191,7 +191,7 @@ export namespace Token {
         export const Continue = createToken('continue', 'keyword.control.loop.cs');
         export const Default = createToken('default', 'keyword.control.default.cs');
         export const Delegate = createToken('delegate', 'keyword.other.delegate.cs');
-        export const Do = createToken('do', 'keyword.control.loop.cs');
+        export const Do = createToken('do', 'keyword.control.loop.do.cs');
         export const Else = createToken('else', 'keyword.control.conditional.cs');
         export const Enum = createToken('enum', 'keyword.other.enum.cs');
         export const Event = createToken('event', 'keyword.other.event.cs');
@@ -199,7 +199,7 @@ export namespace Token {
         export const Extern = createToken('extern', 'keyword.other.extern.cs');
         export const Finally = createToken('finally', 'keyword.control.trycatch.cs');
         export const Get = createToken('get', 'keyword.other.get.cs');
-        export const Goto = createToken('goto', 'keyword.control.loop.cs');
+        export const Goto = createToken('goto', 'keyword.control.goto.cs');
         export const If = createToken('if', 'keyword.control.conditional.cs');
         export const Implicit = createToken('implicit', 'keyword.other.implicit.cs');
         export const Interface = createToken('interface', 'keyword.other.interface.cs');
@@ -217,7 +217,7 @@ export namespace Token {
         export const Try = createToken('try', 'keyword.control.trycatch.cs');
         export const Using = createToken('using', 'keyword.other.using.cs');
         export const Where = createToken('where', 'keyword.other.where.cs');
-        export const While = createToken('while', 'keyword.control.loop.cs');
+        export const While = createToken('while', 'keyword.control.loop.while.cs');
     }
 
     export namespace Literals {

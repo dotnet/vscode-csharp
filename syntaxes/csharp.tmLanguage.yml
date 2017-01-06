@@ -77,6 +77,8 @@ repository:
   statement:
     patterns:
     - include: '#comment'
+    - include: '#while-statement'
+    - include: '#do-statement'
     - include: '#switch-statement'
     - include: '#goto-statement'
     - include: '#return-statement'
@@ -818,7 +820,7 @@ repository:
     - name: keyword.control.trycatch.cs
       match: (?<!\.)\b(catch|finally|throw|try)\b
     - name: keyword.control.loop.cs
-      match: (?<!\.)\b(break|continue|do|while)\b
+      match: (?<!\.)\b(break|continue)\b
     - name: keyword.control.conditional.cs
       match: (?<!\.)\b(else|if)\b
 
@@ -864,7 +866,7 @@ repository:
   goto-statement:
     begin: (?<!\.)\b(goto)\b
     beginCaptures:
-      '1': { name: keyword.control.loop.cs }
+      '1': { name: keyword.control.goto.cs }
     end: (?=;)
     patterns:
     - begin: \b(case)\b
@@ -886,6 +888,30 @@ repository:
     end: (?=;)
     patterns:
     - include: '#expression'
+
+  do-statement:
+    begin: (?<!\.)\b(do)\b
+    beginCaptures:
+      '1': { name: keyword.control.loop.do.cs }
+    end: (?=;|})
+    patterns:
+    - include: '#statement'
+
+  while-statement:
+    begin: (?<!\.)\b(while)\b\s*(?=\()
+    beginCaptures:
+      '1': { name: keyword.control.loop.while.cs }
+    end: (?=;|})
+    patterns:
+    - begin: \(
+      beginCaptures:
+        '0': { name: punctuation.parenthesis.open.cs }
+      end: \)
+      endCaptures:
+        '0': { name: punctuation.parenthesis.close.cs }
+      patterns:
+      - include: '#expression'
+    - include: '#statement'
 
   labeled-statement:
     match: '([_$[:alpha:]][_$[:alnum:]]*)\s*(:)'

@@ -243,6 +243,14 @@
           </dict>
           <dict>
             <key>include</key>
+            <string>#while-statement</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#do-statement</string>
+          </dict>
+          <dict>
+            <key>include</key>
             <string>#switch-statement</string>
           </dict>
           <dict>
@@ -2209,7 +2217,7 @@
             <key>name</key>
             <string>keyword.control.loop.cs</string>
             <key>match</key>
-            <string>(?&lt;!\.)\b(break|continue|do|while)\b</string>
+            <string>(?&lt;!\.)\b(break|continue)\b</string>
           </dict>
           <dict>
             <key>name</key>
@@ -2360,7 +2368,7 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>keyword.control.loop.cs</string>
+            <string>keyword.control.goto.cs</string>
           </dict>
         </dict>
         <key>end</key>
@@ -2427,6 +2435,79 @@
           <dict>
             <key>include</key>
             <string>#expression</string>
+          </dict>
+        </array>
+      </dict>
+      <key>do-statement</key>
+      <dict>
+        <key>begin</key>
+        <string>(?&lt;!\.)\b(do)\b</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.loop.do.cs</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=;|})</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#statement</string>
+          </dict>
+        </array>
+      </dict>
+      <key>while-statement</key>
+      <dict>
+        <key>begin</key>
+        <string>(?&lt;!\.)\b(while)\b\s*(?=\()</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.loop.while.cs</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=;|})</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>begin</key>
+            <string>\(</string>
+            <key>beginCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.parenthesis.open.cs</string>
+              </dict>
+            </dict>
+            <key>end</key>
+            <string>\)</string>
+            <key>endCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.parenthesis.close.cs</string>
+              </dict>
+            </dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#expression</string>
+              </dict>
+            </array>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#statement</string>
           </dict>
         </array>
       </dict>
