@@ -657,29 +657,8 @@
                 <string>#generic-constraints</string>
               </dict>
               <dict>
-                <key>begin</key>
-                <string>:</string>
-                <key>beginCaptures</key>
-                <dict>
-                  <key>0</key>
-                  <dict>
-                    <key>name</key>
-                    <string>punctuation.separator.colon.cs</string>
-                  </dict>
-                </dict>
-                <key>end</key>
-                <string>(?=\{|where)</string>
-                <key>patterns</key>
-                <array>
-                  <dict>
-                    <key>include</key>
-                    <string>#type</string>
-                  </dict>
-                  <dict>
-                    <key>include</key>
-                    <string>#punctuation-comma</string>
-                  </dict>
-                </array>
+                <key>include</key>
+                <string>#base-types</string>
               </dict>
             </array>
           </dict>
@@ -711,6 +690,32 @@
                 <string>#class-members</string>
               </dict>
             </array>
+          </dict>
+        </array>
+      </dict>
+      <key>base-types</key>
+      <dict>
+        <key>begin</key>
+        <string>:</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>0</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.separator.colon.cs</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=\{|where)</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#type</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#punctuation-comma</string>
           </dict>
         </array>
       </dict>
@@ -977,29 +982,8 @@
                 <string>#generic-constraints</string>
               </dict>
               <dict>
-                <key>begin</key>
-                <string>:</string>
-                <key>beginCaptures</key>
-                <dict>
-                  <key>0</key>
-                  <dict>
-                    <key>name</key>
-                    <string>punctuation.separator.colon.cs</string>
-                  </dict>
-                </dict>
-                <key>end</key>
-                <string>(?=\{|where)</string>
-                <key>patterns</key>
-                <array>
-                  <dict>
-                    <key>include</key>
-                    <string>#type</string>
-                  </dict>
-                  <dict>
-                    <key>include</key>
-                    <string>#punctuation-comma</string>
-                  </dict>
-                </array>
+                <key>include</key>
+                <string>#base-types</string>
               </dict>
             </array>
           </dict>
@@ -1086,29 +1070,8 @@
                 <string>#generic-constraints</string>
               </dict>
               <dict>
-                <key>begin</key>
-                <string>:</string>
-                <key>beginCaptures</key>
-                <dict>
-                  <key>0</key>
-                  <dict>
-                    <key>name</key>
-                    <string>punctuation.separator.colon.cs</string>
-                  </dict>
-                </dict>
-                <key>end</key>
-                <string>(?=\{|where)</string>
-                <key>patterns</key>
-                <array>
-                  <dict>
-                    <key>include</key>
-                    <string>#type</string>
-                  </dict>
-                  <dict>
-                    <key>include</key>
-                    <string>#punctuation-comma</string>
-                  </dict>
-                </array>
+                <key>include</key>
+                <string>#base-types</string>
               </dict>
             </array>
           </dict>

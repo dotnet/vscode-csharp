@@ -202,13 +202,7 @@ repository:
           '1': { name: keyword.other.class.cs }
           '2': { name: entity.name.type.class.cs }
       - include: '#generic-constraints'
-      - begin: ':'
-        beginCaptures:
-          '0': { name: punctuation.separator.colon.cs }
-        end: (?=\{|where)
-        patterns:
-        - include: '#type'
-        - include: '#punctuation-comma'
+      - include: '#base-types'
     - begin: \{
       beginCaptures:
         '0': { name: punctuation.curlybrace.open.cs }
@@ -217,6 +211,15 @@ repository:
         '0': { name: punctuation.curlybrace.close.cs }
       patterns:
       - include: '#class-members'
+
+  base-types:
+    begin: ':'
+    beginCaptures:
+      '0': { name: punctuation.separator.colon.cs }
+    end: (?=\{|where)
+    patterns:
+    - include: '#type'
+    - include: '#punctuation-comma'
 
   delegate-declaration:
     begin: |-
@@ -319,13 +322,7 @@ repository:
           '1': { name: keyword.other.interface.cs }
           '2': { name: entity.name.type.interface.cs }
       - include: '#generic-constraints'
-      - begin: ':'
-        beginCaptures:
-          '0': { name: punctuation.separator.colon.cs }
-        end: (?=\{|where)
-        patterns:
-        - include: '#type'
-        - include: '#punctuation-comma'
+      - include: '#base-types'
     - begin: \{
       beginCaptures:
         '0': { name: punctuation.curlybrace.open.cs }
@@ -357,13 +354,7 @@ repository:
           '1': { name: keyword.other.struct.cs }
           '2': { name: entity.name.type.struct.cs }
       - include: '#generic-constraints'
-      - begin: ':'
-        beginCaptures:
-          '0': { name: punctuation.separator.colon.cs }
-        end: (?=\{|where)
-        patterns:
-        - include: '#type'
-        - include: '#punctuation-comma'
+      - include: '#base-types'
     - begin: \{
       beginCaptures:
         '0': { name: punctuation.curlybrace.open.cs }
