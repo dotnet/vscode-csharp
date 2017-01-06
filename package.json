@@ -24,10 +24,10 @@
   "main": "./out/src/main",
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
-    "compile": "tsc -p ./ && gulp tslint",
+    "compile": "tsc -p ./ && gulp tslint && node ./out/buildSyntax.js",
     "watch": "tsc -watch -p ./",
-    "test": "node ./node_modules/vscode/bin/test",
-    "build-syntax": "node ./out/build.js",
+    "test": "node ./node_modules/vscode/bin/test && mocha --timeout 15000 --ui bdd ./out/test/syntaxes/*.test.syntax.js",
+    "build-syntax": "node ./out/buildSyntax.js",
     "test-syntax": "mocha --timeout 15000 --ui bdd ./out/test/syntaxes/*.test.syntax.js",
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
