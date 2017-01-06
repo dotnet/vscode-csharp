@@ -77,8 +77,9 @@ repository:
   statement:
     patterns:
     - include: '#comment'
-    - include: '#control-statement'
     - include: '#labeled-statement'
+    - include: '#control-statement'
+    - include: '#local-declaration'
     - include: '#expression'
     - include: '#block'
     - include: '#punctuation-semicolon'
@@ -406,7 +407,7 @@ repository:
         (?:(?:\[,*\])*)?
       )\s+
       (?<first-field-name>\g<identifier>)\s*
-      (?!=>|==)(?=;|=)
+      (?!=>|==)(?=,|;|=)
     beginCaptures:
       '1':
         patterns:
@@ -821,6 +822,36 @@ repository:
     captures:
       '1': { name: entity.name.label.cs }
       '2': { name: punctuation.separator.colon.cs }
+
+  local-declaration:
+    begin: |-
+      (?x)
+      (?<type-name>(?:
+        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:
+          (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
+          (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
+          (?:(?:\*)*)?
+          (?:(?:\[,*\])*)?
+          (?:\s*\.\s*\g<type-name>)*
+        )|
+        (?:\s*\(\s*(?:\g<type-name>)(?:\s+\g<identifier>)?(?:\s*,\s*(?:\g<type-name>)(?:\s+\g<identifier>)?)*\s*\)\s*))
+        (?:(?:\[,*\])*)?
+      )\s+
+      (?<first-local-name>\g<identifier>)\s*
+      (?=,|;|=)
+    beginCaptures:
+      '1':
+        patterns:
+        - include: '#type'
+      '2': { name: variable.local.cs }
+    end: (?=;)
+    patterns:
+    - name: variable.local.cs
+      match: '[_$[:alpha:]][_$[:alnum:]]*'
+    - include: '#punctuation-comma'
+    - include: '#comment'
+    - include: '#variable-initializer'
 
   interpolated-string:
     name: string.quoted.double.cs

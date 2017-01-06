@@ -243,11 +243,15 @@
           </dict>
           <dict>
             <key>include</key>
+            <string>#labeled-statement</string>
+          </dict>
+          <dict>
+            <key>include</key>
             <string>#control-statement</string>
           </dict>
           <dict>
             <key>include</key>
-            <string>#labeled-statement</string>
+            <string>#local-declaration</string>
           </dict>
           <dict>
             <key>include</key>
@@ -1202,7 +1206,7 @@
   (?:(?:\[,*\])*)?
 )\s+
 (?&lt;first-field-name&gt;\g&lt;identifier&gt;)\s*
-(?!=&gt;|==)(?=;|=)</string>
+(?!=&gt;|==)(?=,|;|=)</string>
         <key>beginCaptures</key>
         <dict>
           <key>1</key>
@@ -2214,6 +2218,66 @@
             <string>punctuation.separator.colon.cs</string>
           </dict>
         </dict>
+      </dict>
+      <key>local-declaration</key>
+      <dict>
+        <key>begin</key>
+        <string>(?x)
+(?&lt;type-name&gt;(?:
+  (?:(?&lt;identifier&gt;[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+  (?:
+    (?:\g&lt;identifier&gt;(?:\s*\.\s*\g&lt;identifier&gt;)*)
+    (?:\s*&lt;\s*(?:\g&lt;type-name&gt;)(?:\s*,\s*\g&lt;type-name&gt;)*\s*&gt;\s*)?
+    (?:(?:\*)*)?
+    (?:(?:\[,*\])*)?
+    (?:\s*\.\s*\g&lt;type-name&gt;)*
+  )|
+  (?:\s*\(\s*(?:\g&lt;type-name&gt;)(?:\s+\g&lt;identifier&gt;)?(?:\s*,\s*(?:\g&lt;type-name&gt;)(?:\s+\g&lt;identifier&gt;)?)*\s*\)\s*))
+  (?:(?:\[,*\])*)?
+)\s+
+(?&lt;first-local-name&gt;\g&lt;identifier&gt;)\s*
+(?=,|;|=)</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#type</string>
+              </dict>
+            </array>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>variable.local.cs</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=;)</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>name</key>
+            <string>variable.local.cs</string>
+            <key>match</key>
+            <string>[_$[:alpha:]][_$[:alnum:]]*</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#punctuation-comma</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#comment</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#variable-initializer</string>
+          </dict>
+        </array>
       </dict>
       <key>interpolated-string</key>
       <dict>

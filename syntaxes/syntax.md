@@ -1,7 +1,6 @@
 ## TODO List:
 
 * Statements/Expressions:
-    * Local variable declarations
     * Method calls
     * Element access
     * query expressions
