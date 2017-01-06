@@ -86,6 +86,7 @@ repository:
     - include: '#return-statement'
     - include: '#try-statement'
     - include: '#checked-unchecked-statement'
+    - include: '#lock-statement'
     - include: '#control-statement'
     - include: '#labeled-statement'
     - include: '#local-declaration'
@@ -1049,6 +1050,22 @@ repository:
     end: (?=\})
     patterns:
     - include: '#block'
+
+  lock-statement:
+    begin: (?<!\.)\b(lock)\b\s*(?=\()
+    beginCaptures:
+      '1': { name: keyword.other.lock.cs }
+    end: (?=;|})
+    patterns:
+    - begin: \(
+      beginCaptures:
+        '0': { name: punctuation.parenthesis.open.cs }
+      end: \)
+      endCaptures:
+        '0': { name: punctuation.parenthesis.close.cs }
+      patterns:
+      - include: '#expression'
+    - include: '#statement'
 
   labeled-statement:
     match: '([_$[:alpha:]][_$[:alnum:]]*)\s*(:)'

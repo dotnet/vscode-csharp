@@ -9,7 +9,6 @@
     * casts
     * compound assignement
     * jump statements (break, continue, throw)
-    * lock statements
     * using statements
     * yield statement
     * unsafe code
