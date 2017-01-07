@@ -145,5 +145,27 @@ for (int i = 0; i < 42; i++)
                 Token.Punctuation.CloseBrace,
             ]);
         });
+
+        it("foreach loop with var (issue #816)", () => {
+
+            const input = Input.InMethod(`
+foreach (var s in myList)
+{
+
+}`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.ForEach,
+                Token.Punctuation.OpenParen,
+                Token.Type("var"),
+                Token.Variables.Local("s"),
+                Token.Keywords.In,
+                Token.Variables.ReadWrite("myList"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
+            ]);
+        });
     });
 });
