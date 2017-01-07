@@ -36,6 +36,7 @@ repository:
 
   type-declarations:
     patterns:
+    - include: '#storage-modifier'
     - include: '#class-declaration'
     - include: '#delegate-declaration'
     - include: '#enum-declaration'
@@ -46,33 +47,35 @@ repository:
 
   class-members:
     patterns:
+    - include: '#storage-modifier'
     - include: '#type-declarations'
     - include: '#event-declaration'
     - include: '#property-declaration'
     - include: '#indexer-declaration'
     - include: '#field-declaration'
     - include: '#variable-initializer'
-    - include: '#method-declaration'
     - include: '#constructor-declaration'
     - include: '#destructor-declaration'
     - include: '#operator-declaration'
     - include: '#conversion-operator-declaration'
+    - include: '#method-declaration'
     - include: '#attribute-section'
     - include: '#punctuation-semicolon'
 
   struct-members:
     patterns:
+    - include: '#storage-modifier'
     - include: '#type-declarations'
     - include: '#event-declaration'
     - include: '#property-declaration'
     - include: '#indexer-declaration'
     - include: '#field-declaration'
     - include: '#variable-initializer'
-    - include: '#method-declaration'
     - include: '#constructor-declaration'
     - include: '#destructor-declaration'
     - include: '#operator-declaration'
     - include: '#conversion-operator-declaration'
+    - include: '#method-declaration'
     - include: '#attribute-section'
     - include: '#punctuation-semicolon'
 
@@ -222,13 +225,15 @@ repository:
       - include: '#using-directive'
       - include: '#punctuation-semicolon'
 
+  storage-modifier:
+    name: 'storage.modifier.cs'
+    match: (?<!\.)\b(new|public|protected|internal|private|abstract|sealed|static|partial|readonly|volatile|const|extern|async)\b
+
   class-declaration:
-    begin: (?=(?:((new|public|protected|internal|private|abstract|sealed|static|partial)\s+)*)(?:class)\s+)
+    begin: (?=class\s+)
     end: (?<=\})
     patterns:
     - include: '#comment'
-    - name: storage.modifier.cs
-      match: \b(new|public|protected|internal|private|abstract|sealed|static|partial)\b
     - begin: (?=class)
       end: (?=\{)
       patterns:
@@ -251,7 +256,6 @@ repository:
   delegate-declaration:
     begin: |-
       (?x)
-      (?<storage-modifiers>(?:\b(?:new|public|protected|internal|private)\b\s+)*)
       (?<delegate-keyword>(?:\b(?:delegate)\b))\s+
       (?<type-name>(?:
         (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
@@ -271,17 +275,12 @@ repository:
       )\s*
       (?=\()
     beginCaptures:
-      '1':
-        patterns:
-        - match: \b(new|public|protected|internal|private)\b
-          captures:
-            '1': { name: storage.modifier.cs }
-      '2': { name: keyword.other.delegate.cs }
-      '3':
+      '1': { name: keyword.other.delegate.cs }
+      '2':
         patterns:
         - include: '#type'
-      # '4': ?<identifier> is a sub-expression. It's final value is not considered.
-      '5': { name: entity.name.type.delegate.cs }
+      # '3': ?<identifier> is a sub-expression. It's final value is not considered.
+      '4': { name: entity.name.type.delegate.cs }
     end: (?=;)
     patterns:
     - include: '#comment'
@@ -289,12 +288,10 @@ repository:
     - include: '#generic-constraints'
 
   enum-declaration:
-    begin: (?=(?:((new|public|protected|internal|private)\s+)*)(?:enum)\s+)
+    begin: (?=enum\s+)
     end: (?<=\})
     patterns:
     - include: '#comment'
-    - name: storage.modifier.cs
-      match: \b(new|public|protected|internal|private)\b
     - begin: (?=enum)
       end: (?=\{)
       patterns:
@@ -328,12 +325,10 @@ repository:
         - include: '#variable-initializer'
 
   interface-declaration:
-    begin: (?=(?:((new|public|protected|internal|private|partial)\s+)*)(?:interface)\s+)
+    begin: (?=interface\s+)
     end: (?<=\})
     patterns:
     - include: '#comment'
-    - name: storage.modifier.cs
-      match: \b(new|public|protected|internal|private|partial)\b
     - begin: (?=interface)
       end: (?=\{)
       patterns:
@@ -360,12 +355,10 @@ repository:
       - include: '#interface-members'
 
   struct-declaration:
-    begin: (?=(?:((new|public|protected|internal|private|partial)\s+)*)(?:struct)\s+)
+    begin: (?=struct\s+)
     end: (?<=\})
     patterns:
     - include: '#comment'
-    - name: storage.modifier.cs
-      match: \b(new|public|protected|internal|private|partial)\b
     - begin: (?=struct)
       end: (?=\{)
       patterns:
@@ -424,7 +417,6 @@ repository:
   field-declaration:
     begin: |-
       (?x)
-      (?<storage-modifiers>(?:\b(?:new|public|protected|internal|private|static|readonly|volatile|const)\b\s+)*)\s*
       (?<type-name>(?:
         (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
         (?:
@@ -442,13 +434,8 @@ repository:
     beginCaptures:
       '1':
         patterns:
-        - match: \b(new|public|protected|internal|private|static|readonly|volatile|const)\b
-          captures:
-            '1': { name: storage.modifier.cs }
-      '2':
-        patterns:
         - include: '#type'
-      '3': { name: entity.name.variable.field.cs }
+      '2': { name: entity.name.variable.field.cs }
     end: (?=;)
     patterns:
     - name: entity.name.variable.field.cs
@@ -460,8 +447,7 @@ repository:
   property-declaration:
     begin: |-
       (?x)
-      (?!.*\b(?:class|interface|struct|enum|event)\b)
-      (?<storage-modifiers>(?:\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\b\s*)*)\s*
+      (?!.*\b(?:class|interface|struct|enum|event)\b)\s*
       (?<return-type>
         (?<type-name>(?:
           (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
@@ -482,19 +468,14 @@ repository:
     beginCaptures:
       '1':
         patterns:
-        - match: \b(new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\b
-          captures:
-            '1': { name: storage.modifier.cs }
-      '2':
-        patterns:
         - include: '#type'
-      # '3': ?<type-name> is a sub-expression. It's final value is not considered.
-      # '4': ?<identifier> is a sub-expression. It's final value is not considered.
-      '5':
+      # '2': ?<type-name> is a sub-expression. It's final value is not considered.
+      # '3': ?<identifier> is a sub-expression. It's final value is not considered.
+      '4':
         patterns:
         - include: '#type'
         - include: '#punctuation-accessor'
-      '6': { name: entity.name.variable.property.cs }
+      '5': { name: entity.name.variable.property.cs }
     end: (?=\}|;)
     patterns:
     - include: '#comment'
@@ -505,7 +486,6 @@ repository:
   indexer-declaration:
     begin: |-
       (?x)
-      (?<storage-modifiers>(?:\b(?:new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\b\s*)*)\s*
       (?<return-type>
         (?<type-name>(?:
           (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
@@ -526,19 +506,14 @@ repository:
     beginCaptures:
       '1':
         patterns:
-        - match: \b(new|public|protected|internal|private|virtual|sealed|override|abstract|extern)\b
-          captures:
-            '1': { name: storage.modifier.cs }
-      '2':
-        patterns:
         - include: '#type'
-      # '3': ?<type-name> is a sub-expression. It's final value is not considered.
-      # '4': ?<identifier> is a sub-expression. It's final value is not considered.
-      '5':
+      # '2': ?<type-name> is a sub-expression. It's final value is not considered.
+      # '3': ?<identifier> is a sub-expression. It's final value is not considered.
+      '4':
         patterns:
         - include: '#type'
         - include: '#punctuation-accessor'
-      '6':
+      '5':
         name: keyword.other.this.cs
     end: (?=\}|;)
     patterns:
@@ -551,7 +526,6 @@ repository:
   event-declaration:
     begin: |-
       (?x)
-      (?<storage-modifiers>(?:\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\b\s*)*)\s*
       \b(?<event-keyword>event)\b\s*
       (?<return-type>
         (?<type-name>(?:
@@ -571,22 +545,17 @@ repository:
       (?<event-names>\g<identifier>(?:\s*,\s*\g<identifier>)*)\s*
       (?=\{|;|$)
     beginCaptures:
-      '1':
-        patterns:
-        - match: \b(new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern)\b
-          captures:
-            '1': { name: storage.modifier.cs }
-      '2': { name: keyword.other.event.cs }
-      '3':
+      '1': { name: keyword.other.event.cs }
+      '2':
         patterns:
         - include: '#type'
-      # '4': ?<type-name> is a sub-expression. It's final value is not considered.
-      # '5': ?<identifier> is a sub-expression. It's final value is not considered.
-      '6':
+      # '3': ?<type-name> is a sub-expression. It's final value is not considered.
+      # '4': ?<identifier> is a sub-expression. It's final value is not considered.
+      '5':
         patterns:
         - include: '#type'
         - include: '#punctuation-accessor'
-      '7':
+      '6':
         patterns:
         - name: entity.name.variable.event.cs
           match: '[_$[:alpha:]][_$[:alnum:]]*'
@@ -632,7 +601,6 @@ repository:
   method-declaration:
     begin: |-
       (?x)
-      (?<storage-modifiers>(?:\b(?:new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\b\s*)*)\s*
       (?<return-type>
         (?<type-name>(?:
           (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
@@ -653,20 +621,14 @@ repository:
     beginCaptures:
       '1':
         patterns:
-        - match: \b(new|public|protected|internal|private|static|virtual|sealed|override|abstract|extern|async|partial)\b
-          captures:
-            '1': { name: storage.modifier.cs }
-      '2':
-        patterns:
         - include: '#type'
-      # '3': ?<type-name> is a sub-expression. It's final value is not considered.
-      # '4': ?<identifier> is a sub-expression. It's final value is not considered.
-      '5':
+      # '2': ?<type-name> is a sub-expression. It's final value is not considered.
+      # '3': ?<identifier> is a sub-expression. It's final value is not considered.
+      '4':
         patterns:
         - include: '#type'
         - include: '#punctuation-accessor'
-      '6':
-        name: entity.name.function.cs
+      '5': { name: entity.name.function.cs }
     end: (?=\}|;)
     patterns:
     - include: '#comment'
@@ -676,35 +638,11 @@ repository:
     - include: '#block'
 
   constructor-declaration:
-    begin: |-
-      (?x)
-      (?=
-        # We're a extra careful here to avoid matching field declarations of the shape 'private (int i) x'
-        (?:
-          (?<storage-modifiers>(?:(?:public|protected|internal|private|extern|static)\s+)+)\s*
-          (?<identifier>[_$[:alpha:]][_$[:alnum:]]*)|
-          (?:\g<identifier>)
-        )\s*
-        (?:\()
-      )
+    begin: ([_$[:alpha:]][_$[:alnum:]]*)\s*(?=\()
+    beginCaptures:
+      '1': { name: entity.name.function.cs }
     end: (?=\}|;)
     patterns:
-    - match: |-
-        (?x)
-        (?<storage-modifiers>(?:(?:public|protected|internal|private|extern|static)\s+)+)\s*
-        (?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*
-        (?=\()
-      captures:
-        '1':
-          patterns:
-          - match: \b(public|protected|internal|private|extern|static)\b
-            captures:
-              '1': { name: storage.modifier.cs }
-        '2':
-          name: entity.name.function.cs
-    - match: ([_$[:alpha:]][_$[:alnum:]]*)\s*(?=\()
-      captures:
-        '1': { name: entity.name.function.cs }
     - include: '#comment'
     - include: '#parenthesized-parameter-list'
     - include: '#expression-body'
@@ -736,7 +674,6 @@ repository:
   operator-declaration:
     begin: |-
       (?x)
-      (?<storage-modifiers>(?:(?:public|static|extern)\s+)*)\s*
       (?<type-name>(?:
         (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
         (?:
@@ -755,15 +692,10 @@ repository:
     beginCaptures:
       '1':
         patterns:
-        - match: \b(public|static|extern)\b
-          captures:
-            '1': { name: storage.modifier.cs }
-      '2':
-        patterns:
         - include: '#type'
-      # '3': ?<identifier> is a sub-expression. It's final value is not considered.
-      '4': { name: keyword.other.operator.cs }
-      '5': { name: entity.name.function.cs }
+      # '2': ?<identifier> is a sub-expression. It's final value is not considered.
+      '3': { name: keyword.other.operator.cs }
+      '4': { name: entity.name.function.cs }
     end: (?=\}|;)
     patterns:
     - include: '#comment'
@@ -774,7 +706,6 @@ repository:
   conversion-operator-declaration:
     begin: |-
       (?x)
-      (?<storage-modifiers>(?:(?:public|static|extern)\s+)*)\s*
       (?<explicit-or-implicit-keyword>(?:\b(?:explicit|implicit)))\s*
       (?<operator-keyword>(?:\b(?:operator)))\s*
       (?<type-name>(?:
@@ -793,19 +724,14 @@ repository:
     beginCaptures:
       '1':
         patterns:
-        - match: \b(public|static|extern)\b
-          captures:
-            '1': { name: storage.modifier.cs }
-      '2':
-        patterns:
         - match: \b(explicit)\b
           captures:
             '1': { name: keyword.other.explicit.cs }
         - match: \b(implicit)\b
           captures:
             '1': { name: keyword.other.implicit.cs }
-      '3': { name: keyword.other.operator.cs }
-      '4':
+      '2': { name: keyword.other.operator.cs }
+      '3':
         patterns:
         - include: '#type'
     end: (?=\}|;)
