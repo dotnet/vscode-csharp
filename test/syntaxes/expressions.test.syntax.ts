@@ -9,8 +9,8 @@ import { tokenize, Input, Token } from './utils/tokenize';
 describe("Grammar", () => {
     before(() => should());
 
-    describe("Array creation expressions", () => {
-        it("passed as argument", () => {
+    describe("Expressions", () => {
+        it("array creation expression passed as argument", () => {
 
             const input = Input.InMethod(`c.abst(ref s, new int[] {1, i, i});`);
             const tokens = tokenize(input);
@@ -31,8 +31,32 @@ describe("Grammar", () => {
                 Token.Literals.Numeric.Decimal("1"),
                 Token.Punctuation.Comma,
                 Token.Variables.ReadWrite("i"),
+                Token.Punctuation.Comma,
                 Token.Variables.ReadWrite("i"),
                 Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
+            ]);
+        });
+
+        it("arithmetic", () => {
+
+            const input = Input.InMethod(`b = this.i != 1 + (2 - 3);`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Variables.ReadWrite("b"),
+                Token.Operators.Assignment,
+                Token.Keywords.This,
+                Token.Punctuation.Accessor,
+                Token.Variables.Property("i"),
+                Token.Operators.Relational.NotEqual,
+                Token.Literals.Numeric.Decimal("1"),
+                Token.Operators.Arithmetic.Addition,
+                Token.Punctuation.OpenParen,
+                Token.Literals.Numeric.Decimal("2"),
+                Token.Operators.Arithmetic.Subtraction,
+                Token.Literals.Numeric.Decimal("3"),
                 Token.Punctuation.CloseParen,
                 Token.Punctuation.Semicolon
             ]);

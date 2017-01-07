@@ -1336,14 +1336,29 @@ repository:
     match: '[_$[:alpha:]][_$[:alnum:]]*'
 
   cast-expression:
-    begin: \(
-    beginCaptures:
-      '0': { name: punctuation.parenthesis.open.cs }
-    end: (\))(?=\s*[_$[:alnum:]\(])
-    endCaptures:
-      '1': { name: punctuation.parenthesis.close.cs }
-    patterns:
-    - include: '#type'
+    match: |-
+      (?x)
+      (\()\s*
+      (?<type-name>(?:
+        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:
+          (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
+          (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
+          (?:(?:\*)*)?
+          (?:(?:\[,*\])*)?
+          (?:\s*\.\s*\g<type-name>)*
+        )|
+        (?:\s*\(\s*(?:\g<type-name>)(?:\s+\g<identifier>)?(?:\s*,\s*(?:\g<type-name>)(?:\s+\g<identifier>)?)*\s*\)\s*))
+        (?:(?:\[,*\])*)?
+      )\s*
+      (\))
+    captures:
+      '1': { name: punctuation.parenthesis.open.cs }
+      '2':
+        patterns:
+        - include: '#type'
+      # '3': ?<identifier> is a sub-expression. It's final value is not considered.
+      '4': { name: punctuation.parenthesis.close.cs }
 
   this-or-base-expression:
     match: \b(?:(base)|(this))\b
