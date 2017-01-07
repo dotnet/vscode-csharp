@@ -32,7 +32,14 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Keywords.Delegate,
                 Token.Type("TResult"),
-                Token.Identifiers.DelegateName("D<in T, out TResult>"),
+                Token.Identifiers.DelegateName("D"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Keywords.Modifiers.In,
+                Token.Identifiers.TypeParameterName("T"),
+                Token.Punctuation.Comma,
+                Token.Keywords.Modifiers.Out,
+                Token.Identifiers.TypeParameterName("TResult"),
+                Token.Punctuation.TypeParameters.End,
                 Token.Punctuation.OpenParen,
                 Token.Type("T"),
                 Token.Variables.Parameter("arg1"),
@@ -52,13 +59,43 @@ delegate void D<T1, T2>()
             tokens.should.deep.equal([
                 Token.Keywords.Delegate,
                 Token.Type("void"),
-                Token.Identifiers.DelegateName("D<T1, T2>"),
+                Token.Identifiers.DelegateName("D"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Identifiers.TypeParameterName("T1"),
+                Token.Punctuation.Comma,
+                Token.Identifiers.TypeParameterName("T2"),
+                Token.Punctuation.TypeParameters.End,
                 Token.Punctuation.OpenParen,
                 Token.Punctuation.CloseParen,
                 Token.Keywords.Where,
                 Token.Type("T1"),
                 Token.Punctuation.Colon,
                 Token.Type("T2"),
+                Token.Punctuation.Semicolon]);
+        });
+
+        it("generic delegate with attributes on type parameters", () => {
+
+            const input = `delegate void D<[Foo] T1, [Bar] T2>();`;
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Delegate,
+                Token.Type("void"),
+                Token.Identifiers.DelegateName("D"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Punctuation.OpenBracket,
+                Token.Type("Foo"),
+                Token.Punctuation.CloseBracket,
+                Token.Identifiers.TypeParameterName("T1"),
+                Token.Punctuation.Comma,
+                Token.Punctuation.OpenBracket,
+                Token.Type("Bar"),
+                Token.Punctuation.CloseBracket,
+                Token.Identifiers.TypeParameterName("T2"),
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
                 Token.Punctuation.Semicolon]);
         });
 

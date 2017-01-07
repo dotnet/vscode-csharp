@@ -98,7 +98,12 @@ public    abstract class PublicAbstractClass { }
 
             tokens.should.deep.equal([
                 Token.Keywords.Class,
-                Token.Identifiers.ClassName("Dictionary<TKey, TValue>"),
+                Token.Identifiers.ClassName("Dictionary"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Identifiers.TypeParameterName("TKey"),
+                Token.Punctuation.Comma,
+                Token.Identifiers.TypeParameterName("TValue"),
+                Token.Punctuation.TypeParameters.End,
                 Token.Punctuation.OpenBrace,
                 Token.Punctuation.CloseBrace]);
         });
@@ -123,7 +128,10 @@ class PublicClass<T> : Dictionary<T, Dictionary<string, string>>, IMap<T, Dictio
                 Token.Punctuation.CloseBrace,
 
                 Token.Keywords.Class,
-                Token.Identifiers.ClassName("PublicClass<T>"),
+                Token.Identifiers.ClassName("PublicClass"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Identifiers.TypeParameterName("T"),
+                Token.Punctuation.TypeParameters.End,
                 Token.Punctuation.Colon,
                 Token.Type("Root"),
                 Token.Punctuation.Accessor,
@@ -141,7 +149,10 @@ class PublicClass<T> : Dictionary<T, Dictionary<string, string>>, IMap<T, Dictio
                 Token.Punctuation.CloseBrace,
 
                 Token.Keywords.Class,
-                Token.Identifiers.ClassName("PublicClass<T>"),
+                Token.Identifiers.ClassName("PublicClass"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Identifiers.TypeParameterName("T"),
+                Token.Punctuation.TypeParameters.End,
                 Token.Punctuation.Colon,
                 Token.Type("Dictionary"),
                 Token.Punctuation.TypeParameters.Begin,
@@ -183,7 +194,10 @@ class PublicClass<T, X> : Dictionary<T, List<string>[]>, ISomething
 
             tokens.should.deep.equal([
                 Token.Keywords.Class,
-                Token.Identifiers.ClassName("PublicClass<T>"),
+                Token.Identifiers.ClassName("PublicClass"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Identifiers.TypeParameterName("T"),
+                Token.Punctuation.TypeParameters.End,
                 Token.Keywords.Where,
                 Token.Type("T"),
                 Token.Punctuation.Colon,
@@ -192,7 +206,12 @@ class PublicClass<T, X> : Dictionary<T, List<string>[]>, ISomething
                 Token.Punctuation.CloseBrace,
 
                 Token.Keywords.Class,
-                Token.Identifiers.ClassName("PublicClass<T, X>"),
+                Token.Identifiers.ClassName("PublicClass"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Identifiers.TypeParameterName("T"),
+                Token.Punctuation.Comma,
+                Token.Identifiers.TypeParameterName("X"),
+                Token.Punctuation.TypeParameters.End,
                 Token.Punctuation.Colon,
                 Token.Type("Dictionary"),
                 Token.Punctuation.TypeParameters.Begin,

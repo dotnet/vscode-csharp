@@ -10,9 +10,11 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 # * Refinement and tests to ensure proper highlighting while typing
 # * query expressions
 # * lambda expressions and anonymous functions
-# * array, collection and object initializers
+# * object creation with object initializer and no parentheses
 # * compound assignement
-# * unsafe code
+# * char literals
+# * verbatim identifiers
+# * unsafe code: fixed, sizeof, unsafe blocks, unsafe keyword
 # * XML doc comments
 
 patterns:
@@ -253,13 +255,16 @@ repository:
     - begin: (?=class)
       end: (?=\{)
       patterns:
-      # C# grammar: class identifier type-parameter-list[opt]
-      - match: (class)\s+([_[:alpha:]][_[:alnum:]]*(\s*<\s*(?:[_[:alpha:]][_[:alnum:]]*\s*,\s*)*(?:[_[:alpha:]][_[:alnum:]]*)\s*>)?)
+      - match: |-
+          (?x)
+          \b(class)\b\s+
+          ([_[:alpha:]][_[:alnum:]]*)\s*
         captures:
           '1': { name: keyword.other.class.cs }
           '2': { name: entity.name.type.class.cs }
-      - include: '#generic-constraints'
+      - include: '#type-parameter-list'
       - include: '#base-types'
+      - include: '#generic-constraints'
     - begin: \{
       beginCaptures:
         '0': { name: punctuation.curlybrace.open.cs }
@@ -283,12 +288,8 @@ repository:
         (?:\s*\(\s*(?:\g<type-name>)(?:\s+\g<identifier>)?(?:\s*,\s*(?:\g<type-name>)(?:\s+\g<identifier>)?)*\s*\)\s*))
         (?:(?:\[,*\])*)?
       )\s+
-      (?<delegate-name>
-        (?:
-          \g<identifier>
-          (?:\s*<\s*(?:(?:(?:in|out)\s+)?\g<identifier>)(?:,\s*(?:(?:in|out)\s+)?\g<identifier>)*\s*>\s*)?
-        )
-      )\s*
+      (\g<identifier>)\s*
+      (<([^<>]+)>)?\s*
       (?=\()
     beginCaptures:
       '1': { name: keyword.other.delegate.cs }
@@ -297,6 +298,9 @@ repository:
         - include: '#type'
       # '3': ?<identifier> is a sub-expression. It's final value is not considered.
       '4': { name: entity.name.type.delegate.cs }
+      '5':
+        patterns:
+        - include: '#type-parameter-list'
     end: (?=;)
     patterns:
     - include: '#comment'
@@ -349,19 +353,16 @@ repository:
     - begin: (?=interface)
       end: (?=\{)
       patterns:
-      # C# grammar: interface identifier variant-type-parameter-list[opt]
       - match: |-
           (?x)
-          (interface)\s+
-          (
-            (?<identifier>[_[:alpha:]][_[:alnum:]]*)
-            (\s*<\s*(?:(?:(?:in|out)\s+)?\g<identifier>\s*,\s*)*(?:(?:in|out)\s+)?\g<identifier>\s*>)?
-          )
+          (interface)\b\s+
+          ([_[:alpha:]][_[:alnum:]]*)
         captures:
           '1': { name: keyword.other.interface.cs }
           '2': { name: entity.name.type.interface.cs }
-      - include: '#generic-constraints'
+      - include: '#type-parameter-list'
       - include: '#base-types'
+      - include: '#generic-constraints'
     - begin: \{
       beginCaptures:
         '0': { name: punctuation.curlybrace.open.cs }
@@ -379,19 +380,16 @@ repository:
     - begin: (?=struct)
       end: (?=\{)
       patterns:
-      # C# grammar: struct identifier type-parameter-list[opt]
       - match: |-
           (?x)
           (struct)\s+
-          (
-            (?<identifier>[_[:alpha:]][_[:alnum:]]*)
-            (\s*<\s*(?:\g<identifier>\s*,\s*)*\g<identifier>\s*>)?
-          )
+          ([_[:alpha:]][_[:alnum:]]*)
         captures:
           '1': { name: keyword.other.struct.cs }
           '2': { name: entity.name.type.struct.cs }
-      - include: '#generic-constraints'
+      - include: '#type-parameter-list'
       - include: '#base-types'
+      - include: '#generic-constraints'
     - begin: \{
       beginCaptures:
         '0': { name: punctuation.curlybrace.open.cs }
@@ -400,6 +398,24 @@ repository:
         '0': { name: punctuation.curlybrace.close.cs }
       patterns:
       - include: '#struct-members'
+
+  type-parameter-list:
+    begin: \<
+    beginCaptures:
+      '0': { name: punctuation.definition.typeparameters.begin.cs }
+    end: \>
+    endCaptures:
+      '0': { name: punctuation.definition.typeparameters.end.cs }
+    patterns:
+    - match: \b(in|out)\b
+      captures:
+        '1': { name: storage.modifier.cs }
+    - match: \b([_[:alpha:]][_[:alnum:]]*)\b
+      captures:
+        '1': { name: entity.name.type.type-parameter.cs }
+    - include: '#comment'
+    - include: '#punctuation-comma'
+    - include: '#attribute-section'
 
   base-types:
     begin: ':'
@@ -633,7 +649,8 @@ repository:
         )\s+
       )
       (?<interface-name>\g<type-name>\s*\.\s*)?
-      (?<method-name>\g<identifier>(?:\s*<\s*\g<identifier>(?:\s*,\s*\g<identifier>)*\s*>\s*)?)\s*
+      (\g<identifier>)\s*
+      (<([^<>]+)>)?\s*
       (?=\()
     beginCaptures:
       '1':
@@ -646,6 +663,9 @@ repository:
         - include: '#type'
         - include: '#punctuation-accessor'
       '5': { name: entity.name.function.cs }
+      '6':
+        patterns:
+        - include: '#type-parameter-list'
     end: (?<=\})|(?=;)
     patterns:
     - include: '#comment'

@@ -187,12 +187,14 @@ export namespace Token {
         export const PreprocessorSymbol = (text: string) => createToken(text, 'entity.name.variable.preprocessor.symbol.cs');
         export const PropertyName = (text: string) => createToken(text, 'entity.name.variable.property.cs');
         export const StructName = (text: string) => createToken(text, 'entity.name.type.struct.cs');
+        export const TypeParameterName = (text: string) => createToken(text, 'entity.name.type.type-parameter.cs');
     }
 
     export namespace Keywords {
         export namespace Modifiers {
             export const Abstract = createToken('abstract', 'storage.modifier.cs');
             export const Const = createToken('const', 'storage.modifier.cs');
+            export const In = createToken('in', 'storage.modifier.cs');
             export const Internal = createToken('internal', 'storage.modifier.cs');
             export const New = createToken('new', 'storage.modifier.cs');
             export const Out = createToken('out', 'storage.modifier.cs');

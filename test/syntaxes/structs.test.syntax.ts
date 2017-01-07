@@ -52,7 +52,12 @@ struct S<T1, T2> { }
 
             tokens.should.deep.equal([
                 Token.Keywords.Struct,
-                Token.Identifiers.StructName("S<T1, T2>"),
+                Token.Identifiers.StructName("S"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Identifiers.TypeParameterName("T1"),
+                Token.Punctuation.Comma,
+                Token.Identifiers.TypeParameterName("T2"),
+                Token.Punctuation.TypeParameters.End,
                 Token.Punctuation.OpenBrace,
                 Token.Punctuation.CloseBrace]);
         });
@@ -66,7 +71,12 @@ struct S<T1, T2> where T1 : T2 { }
 
             tokens.should.deep.equal([
                 Token.Keywords.Struct,
-                Token.Identifiers.StructName("S<T1, T2>"),
+                Token.Identifiers.StructName("S"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Identifiers.TypeParameterName("T1"),
+                Token.Punctuation.Comma,
+                Token.Identifiers.TypeParameterName("T2"),
+                Token.Punctuation.TypeParameters.End,
                 Token.Keywords.Where,
                 Token.Type("T1"),
                 Token.Punctuation.Colon,
