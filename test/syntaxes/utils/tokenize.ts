@@ -184,6 +184,7 @@ export namespace Token {
         export const LabelName = (text: string) => createToken(text, 'entity.name.label.cs');
         export const MethodName = (text: string) => createToken(text, 'entity.name.function.cs');
         export const NamespaceName = (text: string) => createToken(text, 'entity.name.type.namespace.cs');
+        export const PreprocessorSymbol = (text: string) => createToken(text, 'entity.name.variable.preprocessor.symbol.cs');
         export const PropertyName = (text: string) => createToken(text, 'entity.name.variable.property.cs');
         export const StructName = (text: string) => createToken(text, 'entity.name.type.struct.cs');
     }
@@ -206,6 +207,26 @@ export namespace Token {
             export const Sealed = createToken('sealed', 'storage.modifier.cs');
             export const Static = createToken('static', 'storage.modifier.cs');
             export const Virtual = createToken('virtual', 'storage.modifier.cs');
+        }
+
+        export namespace Preprocessor {
+            export const Checksum = createToken('checksum', 'keyword.preprocessor.checksum.cs');
+            export const Default = createToken('default', 'keyword.preprocessor.default.cs');
+            export const Define = createToken('define', 'keyword.preprocessor.define.cs');
+            export const Disable = createToken('disable', 'keyword.preprocessor.disable.cs');
+            export const ElIf = createToken('elif', 'keyword.preprocessor.elif.cs');
+            export const Else = createToken('else', 'keyword.preprocessor.else.cs');
+            export const EndIf = createToken('endif', 'keyword.preprocessor.endif.cs');
+            export const EndRegion = createToken('endregion', 'keyword.preprocessor.endregion.cs');
+            export const Error = createToken('error', 'keyword.preprocessor.error.cs');
+            export const Hidden = createToken('hidden', 'keyword.preprocessor.hidden.cs');
+            export const If = createToken('if', 'keyword.preprocessor.if.cs');
+            export const Line = createToken('line', 'keyword.preprocessor.line.cs');
+            export const Pragma = createToken('pragma', 'keyword.preprocessor.pragma.cs');
+            export const Region = createToken('region', 'keyword.preprocessor.region.cs');
+            export const Restore = createToken('restore', 'keyword.preprocessor.restore.cs');
+            export const Undef = createToken('undef', 'keyword.preprocessor.undef.cs');
+            export const Warning = createToken('warning', 'keyword.preprocessor.warning.cs');
         }
 
         export const Add = createToken('add', 'keyword.other.add.cs');
@@ -325,6 +346,7 @@ export namespace Token {
         export const Colon = createToken(':', 'punctuation.separator.colon.cs');
         export const ColonColon = createToken('::', 'punctuation.separator.coloncolon.cs');
         export const Comma = createToken(',', 'punctuation.separator.comma.cs');
+        export const Hash = createToken('#', 'punctuation.separator.hash.cs')
         export const OpenBrace = createToken('{', 'punctuation.curlybrace.open.cs');
         export const OpenBracket = createToken('[', 'punctuation.squarebracket.open.cs');
         export const OpenParen = createToken('(', 'punctuation.parenthesis.open.cs');

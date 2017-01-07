@@ -14,9 +14,9 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 # * compound assignement
 # * unsafe code
 # * XML doc comments
-# * preprocesser
 
 patterns:
+- include: '#preprocessor'
 - include: '#comment'
 - include: '#directives'
 - include: '#declarations'
@@ -37,6 +37,7 @@ repository:
 
   type-declarations:
     patterns:
+    - include: '#preprocessor'
     - include: '#comment'
     - include: '#storage-modifier'
     - include: '#class-declaration'
@@ -49,6 +50,7 @@ repository:
 
   class-members:
     patterns:
+    - include: '#preprocessor'
     - include: '#comment'
     - include: '#storage-modifier'
     - include: '#type-declarations'
@@ -67,6 +69,7 @@ repository:
 
   struct-members:
     patterns:
+    - include: '#preprocessor'
     - include: '#comment'
     - include: '#storage-modifier'
     - include: '#type-declarations'
@@ -85,6 +88,7 @@ repository:
 
   interface-members:
     patterns:
+    - include: '#preprocessor'
     - include: '#comment'
     - include: '#event-declaration'
     - include: '#property-declaration'
@@ -95,6 +99,7 @@ repository:
 
   statement:
     patterns:
+    - include: '#preprocessor'
     - include: '#comment'
     - include: '#while-statement'
     - include: '#do-statement'
@@ -120,6 +125,8 @@ repository:
 
   expression:
     patterns:
+    - include: '#preprocessor'
+    - include: '#comment'
     - include: '#checked-unchecked-expression'
     - include: '#typeof-expression'
     - include: '#interpolated-string'
@@ -300,6 +307,7 @@ repository:
     begin: (?=enum\s+)
     end: (?<=\})
     patterns:
+    - include: '#preprocessor'
     - include: '#comment'
     - begin: (?=enum)
       end: (?=\{)
@@ -872,7 +880,7 @@ repository:
     begin: (?<!\.)\b(switch)\b\s*(?=\()
     beginCaptures:
       '1': { name: keyword.control.switch.cs }
-    end: (?=\})
+    end: (?<=\})
     patterns:
     - begin: \(
       beginCaptures:
@@ -919,7 +927,7 @@ repository:
     begin: (?<!\.)\b(while)\b\s*(?=\()
     beginCaptures:
       '1': { name: keyword.control.loop.while.cs }
-    end: (?=;|})
+    end: (?<=\})|(?=;)
     patterns:
     - begin: \(
       beginCaptures:
@@ -935,7 +943,7 @@ repository:
     begin: (?<!\.)\b(for)\b
     beginCaptures:
       '1': { name: keyword.control.loop.for.cs }
-    end: (?=\;|})
+    end: (?<=\})|(?=;)
     patterns:
     - begin: \(
       beginCaptures:
@@ -954,7 +962,7 @@ repository:
     begin: (?<!\.)\b(foreach)\b
     beginCaptures:
       '1': { name: keyword.control.loop.foreach.cs }
-    end: (?=\;|})
+    end: (?<=\})|(?=;)
     patterns:
     - begin: \(
       beginCaptures:
@@ -1003,7 +1011,7 @@ repository:
     begin: (?<!\.)\b(finally)\b
     beginCaptures:
       '1': { name: keyword.control.try.finally.cs }
-    end: (?=\})
+    end: (?<=\})
     patterns:
     - include: '#block'
 
@@ -1011,7 +1019,7 @@ repository:
     begin: (?<!\.)\b(catch)\b
     beginCaptures:
       '1': { name: keyword.control.try.catch.cs }
-    end: (?=\})
+    end: (?<=\})
     patterns:
     - begin: \(
       beginCaptures:
@@ -1061,7 +1069,7 @@ repository:
     beginCaptures:
       '1': { name: keyword.other.checked.cs }
       '2': { name: keyword.other.unchecked.cs }
-    end: (?=\})
+    end: (?<=\})
     patterns:
     - include: '#block'
 
@@ -1069,7 +1077,7 @@ repository:
     begin: (?<!\.)\b(lock)\b\s*(?=\()
     beginCaptures:
       '1': { name: keyword.other.lock.cs }
-    end: (?=;|})
+    end: (?<=\})|(?=;)
     patterns:
     - begin: \(
       beginCaptures:
@@ -1685,6 +1693,122 @@ repository:
     name: punctuation.accessor.cs
     match: \.
 
+  preprocessor:
+    begin: ^\s*(\#)\s*
+    beginCaptures:
+      '1': { name: punctuation.separator.hash.cs }
+    end: (?<=$)
+    patterns:
+    - include: '#comment'
+    - include: '#preprocessor-define-or-undef'
+    - include: '#preprocessor-if-or-elif'
+    - include: '#preprocessor-else-or-endif'
+    - include: '#preprocessor-warning-or-error'
+    - include: '#preprocessor-region'
+    - include: '#preprocessor-endregion'
+    - include: '#preprocessor-line'
+    - include: '#preprocessor-pragma-warning'
+    - include: '#preprocessor-pragma-checksum'
+
+  preprocessor-define-or-undef:
+    match: \b(?:(define)|(undef))\b\s*\b([_[:alpha:]][_[:alnum:]]*)\b
+    captures:
+      '1': { name: keyword.preprocessor.define.cs }
+      '2': { name: keyword.preprocessor.undef.cs }
+      '3': { name: entity.name.variable.preprocessor.symbol.cs }
+
+  preprocessor-if-or-elif:
+    begin: \b(?:(if)|(elif))\b
+    beginCaptures:
+      '1': { name: keyword.preprocessor.if.cs }
+      '2': { name: keyword.preprocessor.elif.cs }
+    end: (?=$)
+    patterns:
+    - include: '#comment'
+    - include: '#preprocessor-expression'
+
+  preprocessor-else-or-endif:
+    match: \b(?:(else)|(endif))\b
+    captures:
+      '1': { name: keyword.preprocessor.else.cs }
+      '2': { name: keyword.preprocessor.endif.cs }
+
+  preprocessor-warning-or-error:
+    match: \b(?:(warning)|(error))\b\s*(.*)(?=$)
+    captures:
+      '1': { name: keyword.preprocessor.warning.cs }
+      '2': { name: keyword.preprocessor.error.cs }
+
+  preprocessor-region:
+    match: \b(region)\b\s*(.*)(?=$)
+    captures:
+      '1': { name: keyword.preprocessor.region.cs }
+
+  preprocessor-endregion:
+    match: \b(endregion)\b
+    captures:
+      '1': { name: keyword.preprocessor.endregion.cs }
+
+  preprocessor-line:
+    begin: \b(line)\b
+    beginCaptures:
+      '1': { name: keyword.preprocessor.line.cs }
+    end: (?=$)
+    patterns:
+    - match: \b(?:(default|hidden))
+      captures:
+        '1': { name: keyword.preprocessor.default.cs }
+        '2': { name: keyword.preprocessor.hidden.cs }
+    - match: '[0-9]+'
+      captures:
+        '0': { name: constant.numeric.decimal.cs }
+    - match: \"[^"]*\"
+      captures:
+        '0': { name: string.quoted.double.cs }
+
+  preprocessor-pragma-warning:
+    match: \b(pragma)\b\s*\b(warning)\b\s*\b(?:(disable)|(restore))\b(\s*[0-9]+(?:\s*,\s*[0-9]+)?)?
+    captures:
+      '1': { name: keyword.preprocessor.pragma.cs }
+      '2': { name: keyword.preprocessor.warning.cs }
+      '3': { name: keyword.preprocessor.disable.cs }
+      '4': { name: keyword.preprocessor.restore.cs }
+      '5':
+        patterns:
+        - match: '[0-9]+'
+          captures:
+            '0': { name: constant.numeric.decimal.cs }
+        - include: '#punctuation-comma'
+
+  preprocessor-pragma-checksum:
+    match: \b(pragma)\b\s*\b(checksum)\b\s*(\"[^"]*\")\s*(\"[^"]*\")\s*(\"[^"]*\")
+    captures:
+      '1': { name: keyword.preprocessor.pragma.cs }
+      '2': { name: keyword.preprocessor.checksum.cs }
+      '3': { name: string.quoted.double.cs }
+      '4': { name: string.quoted.double.cs }
+      '5': { name: string.quoted.double.cs }
+
+  preprocessor-expression:
+    patterns:
+    - begin: \(
+      beginCaptures:
+        '0': { name: punctuation.parenthesis.open.cs }
+      end: \)
+      endCaptures:
+        '0': { name: punctuation.parenthesis.close.cs }
+      patterns:
+      - include: '#preprocessor-expression'
+    - match: \b(?:(true)|(false)|([_[:alpha:]][_[:alnum:]]*))\b
+      captures:
+        '1': { name: constant.language.boolean.true.cs }
+        '2': { name: constant.language.boolean.false.cs }
+        '3': { name: entity.name.variable.preprocessor.symbol.cs }
+    - match: (==|!=)|(\!|&&|\|\|)
+      captures:
+        '1': { name: keyword.operator.comparison.cs }
+        '2': { name: keyword.operator.logical.cs }
+
   comment:
     patterns:
     - name: comment.block.cs
@@ -1694,7 +1818,7 @@ repository:
       end: \*/
       endCaptures:
         '0': { name: punctuation.definition.comment.cs }
-    - begin: (^[ \t]+)?(?=//)
+    - begin: (^\s+)?(?=//)
       beginCaptures:
         '1': { name: punctuation.whitespace.comment.leading.cs }
       end: (?=$)
