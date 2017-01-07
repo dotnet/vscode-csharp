@@ -463,6 +463,7 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Punctuation.Hash,
                 Token.Keywords.Preprocessor.Warning,
+                Token.PreprocessorMessage("This is a warning")
             ]);
         });
 
@@ -473,6 +474,7 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Punctuation.Hash,
                 Token.Keywords.Preprocessor.Error,
+                Token.PreprocessorMessage("This is an error")
             ]);
         });
 
@@ -483,6 +485,7 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Punctuation.Hash,
                 Token.Keywords.Preprocessor.Region,
+                Token.PreprocessorMessage("My Region")
             ]);
         });
 
@@ -493,6 +496,7 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Punctuation.Hash,
                 Token.Keywords.Preprocessor.Region,
+                Token.PreprocessorMessage("\"My Region\"")
             ]);
         });
 
@@ -502,7 +506,7 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Punctuation.Hash,
-                Token.Keywords.Preprocessor.EndRegion,
+                Token.Keywords.Preprocessor.EndRegion
             ]);
         });
 
@@ -527,6 +531,57 @@ describe("Grammar", () => {
                 Token.Keywords.Preprocessor.EndRegion,
                 Token.Comment.SingleLine.Start,
                 Token.Comment.SingleLine.Text("Foo")
+            ]);
+        });
+
+        it("region name with double-quotes should be highlighted properly (issue #731)", () => {
+            const input = Input.InClass(`
+#region  " Register / Create New  "
+// GET: /Account/Register
+[Authorize(Roles = UserRoles.SuperUser)]
+public ActionResult Register()
+{
+    RedirectToAction("Application");
+    return View();
+}
+`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Punctuation.Hash,
+                Token.Keywords.Preprocessor.Region,
+                Token.PreprocessorMessage("\" Register / Create New  \""),
+                Token.Comment.SingleLine.Start,
+                Token.Comment.SingleLine.Text(" GET: /Account/Register"),
+                Token.Punctuation.OpenBracket,
+                Token.Type("Authorize"),
+                Token.Punctuation.OpenParen,
+                Token.Identifiers.PropertyName("Roles"),
+                Token.Operators.Assignment,
+                Token.Variables.Object("UserRoles"),
+                Token.Punctuation.Accessor,
+                Token.Variables.Property("SuperUser"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.CloseBracket,
+                Token.Keywords.Modifiers.Public,
+                Token.Type("ActionResult"),
+                Token.Identifiers.MethodName("Register"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Identifiers.MethodName("RedirectToAction"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.String.Begin,
+                Token.Literals.String("Application"),
+                Token.Punctuation.String.End,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Keywords.Return,
+                Token.Identifiers.MethodName("View"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace
             ]);
         });
     });

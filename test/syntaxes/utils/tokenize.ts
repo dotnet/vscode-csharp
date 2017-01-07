@@ -7,7 +7,7 @@ import { ITokenizeLineResult, Registry, StackElement } from 'vscode-textmate';
 
 const registry = new Registry();
 const grammar = registry.loadGrammarFromPathSync('syntaxes/csharp.tmLanguage');
-const excludedTypes = ['source.cs', 'meta.interpolation.cs', 'meta.type.parameters.cs']
+const excludedTypes = ['source.cs', 'meta.interpolation.cs', 'meta.preprocessor.cs', 'meta.type.parameters.cs']
 
 export function tokenize(input: string | Input, excludeTypes: boolean = true): Token[] {
     if (typeof input === "string") {
@@ -390,5 +390,6 @@ export namespace Token {
     }
 
     export const IllegalNewLine = (text: string) => createToken(text, 'invalid.illegal.newline.cs');
+    export const PreprocessorMessage = (text: string) => createToken(text, 'string.unquoted.preprocessor.message.cs');
     export const Type = (text: string) => createToken(text, 'storage.type.cs');
 }

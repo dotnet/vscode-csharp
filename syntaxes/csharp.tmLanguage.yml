@@ -1694,6 +1694,7 @@ repository:
     match: \.
 
   preprocessor:
+    name: meta.preprocessor.cs
     begin: ^\s*(\#)\s*
     beginCaptures:
       '1': { name: punctuation.separator.hash.cs }
@@ -1738,11 +1739,13 @@ repository:
     captures:
       '1': { name: keyword.preprocessor.warning.cs }
       '2': { name: keyword.preprocessor.error.cs }
+      '3': { name: string.unquoted.preprocessor.message.cs }
 
   preprocessor-region:
     match: \b(region)\b\s*(.*)(?=$)
     captures:
       '1': { name: keyword.preprocessor.region.cs }
+      '2': { name: string.unquoted.preprocessor.message.cs }
 
   preprocessor-endregion:
     match: \b(endregion)\b
