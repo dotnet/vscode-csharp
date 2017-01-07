@@ -115,5 +115,86 @@ world!";`);
                 Token.Punctuation.String.End,
                 Token.Punctuation.Semicolon]);
         });
+
+        it("highlight escaped double-quote properly (issue #1078 - repro 1)", () => {
+
+            const input = Input.InMethod(
+`configContent = rgx.Replace(configContent, $"name{suffix}\\"");
+File.WriteAllText(_testConfigFile, configContent);`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Variables.ReadWrite("configContent"),
+                Token.Operators.Assignment,
+                Token.Variables.Object('rgx'),
+                Token.Punctuation.Accessor,
+                Token.Identifiers.MethodName("Replace"),
+                Token.Punctuation.OpenParen,
+                Token.Variables.ReadWrite("configContent"),
+                Token.Punctuation.Comma,
+                Token.Punctuation.InterpolatedString.Begin,
+                Token.Literals.String("name"),
+                Token.Punctuation.Interpolation.Begin,
+                Token.Variables.ReadWrite("suffix"),
+                Token.Punctuation.Interpolation.End,
+                Token.Literals.CharacterEscape("\\\""),
+                Token.Punctuation.String.End,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Variables.Object("File"),
+                Token.Punctuation.Accessor,
+                Token.Identifiers.MethodName("WriteAllText"),
+                Token.Punctuation.OpenParen,
+                Token.Variables.ReadWrite("_testConfigFile"),
+                Token.Punctuation.Comma,
+                Token.Variables.ReadWrite("configContent"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
+            ]);
+        });
+
+        it("highlight escaped double-quote properly (issue #1078 - repro 2)", () => {
+
+            const input = Input.InMethod(
+`throw new InvalidCastException(
+    $"The value \\"{this.Value} is of the type \\"{this.Type}\\". You asked for \\"{typeof(T)}\\".");`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Throw,
+                Token.Keywords.New,
+                Token.Type("InvalidCastException"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.InterpolatedString.Begin,
+                Token.Literals.String("The value "),
+                Token.Literals.CharacterEscape("\\\""),
+                Token.Punctuation.Interpolation.Begin,
+                Token.Keywords.This,
+                Token.Punctuation.Accessor,
+                Token.Variables.Property("Value"),
+                Token.Punctuation.Interpolation.End,
+                Token.Literals.String(" is of the type "),
+                Token.Literals.CharacterEscape("\\\""),
+                Token.Punctuation.Interpolation.Begin,
+                Token.Keywords.This,
+                Token.Punctuation.Accessor,
+                Token.Variables.Property("Type"),
+                Token.Punctuation.Interpolation.End,
+                Token.Literals.CharacterEscape("\\\""),
+                Token.Literals.String(". You asked for "),
+                Token.Literals.CharacterEscape("\\\""),
+                Token.Punctuation.Interpolation.Begin,
+                Token.Keywords.TypeOf,
+                Token.Punctuation.OpenParen,
+                Token.Type("T"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Interpolation.End,
+                Token.Literals.CharacterEscape("\\\""),
+                Token.Literals.String("."),
+                Token.Punctuation.InterpolatedString.End,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
+            ]);
+        });
     });
 });

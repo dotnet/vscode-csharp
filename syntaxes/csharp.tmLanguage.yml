@@ -116,9 +116,11 @@ repository:
   expression:
     patterns:
     - include: '#checked-unchecked-expression'
+    - include: '#typeof-expression'
     - include: '#interpolated-string'
     - include: '#verbatim-interpolated-string'
     - include: '#literal'
+    - include: '#this-or-base-expression'
     - include: '#expression-operators'
     - include: '#cast-expression'
     - include: '#object-creation-expression'
@@ -1174,6 +1176,17 @@ repository:
     patterns:
     - include: '#expression'
 
+  typeof-expression:
+    begin: (?<!\.)\b(typeof)\b\s*(\()
+    beginCaptures:
+      '1': { name: keyword.other.typeof.cs }
+      '2': { name: punctuation.parenthesis.open.cs }
+    end: \)
+    endCaptures:
+      '0': { name: punctuation.parenthesis.close.cs }
+    patterns:
+    - include: '#type'
+
   interpolated-string:
     name: string.quoted.double.cs
     begin: '\$"'
@@ -1327,6 +1340,12 @@ repository:
     patterns:
     - include: '#type'
 
+  this-or-base-expression:
+    match: \b(?:(base)|(this))\b
+    captures:
+      '1': { name: keyword.other.base.cs }
+      '2': { name: keyword.other.this.cs }
+
   invocation-expression:
     begin: |-
       (?x)
@@ -1371,7 +1390,7 @@ repository:
 
   member-access-expression:
     patterns:
-    - match: (\.)\s*([_$[:alpha:]][_$[:alnum:]]*)(?=(\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)|\))
+    - match: (\.)\s*([_$[:alpha:]][_$[:alnum:]]*)(?=(\s*((\.\s*[_$[:alpha:]][_$[:alnum:]]*)|([^_$[:alnum:]\(\[\<]))))
       captures:
         '1': { name: punctuation.accessor.cs }
         '2': { name: variable.other.object.property.cs }

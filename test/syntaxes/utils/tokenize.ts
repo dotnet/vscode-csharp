@@ -220,6 +220,7 @@ export namespace Token {
         export const This = createToken('this', 'keyword.other.this.cs');
         export const Throw = createToken('throw', 'keyword.control.flow.throw.cs');
         export const Try = createToken('try', 'keyword.control.try.cs');
+        export const TypeOf = createToken('typeof', 'keyword.other.typeof.cs');
         export const Unchecked = createToken('unchecked', 'keyword.other.unchecked.cs');
         export const Using = createToken('using', 'keyword.other.using.cs');
         export const When = createToken('when', 'keyword.control.try.when.cs');
