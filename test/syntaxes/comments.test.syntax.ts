@@ -11,7 +11,6 @@ describe("Grammar", () => {
 
     describe("Comments", () => {
         it("single-line comment", () => {
-
             const input = `// foo`;
             const tokens = tokenize(input);
 
@@ -21,7 +20,6 @@ describe("Grammar", () => {
         });
 
         it("single-line comment after whitespace", () => {
-
             const input = `    // foo`;
             const tokens = tokenize(input);
 
@@ -32,7 +30,6 @@ describe("Grammar", () => {
         });
 
         it("multi-line comment", () => {
-
             const input = `/* foo */`;
             const tokens = tokenize(input);
 
@@ -43,7 +40,6 @@ describe("Grammar", () => {
         });
 
         it("in namespace", () => {
-
             const input = Input.InNamespace(`// foo`);
             const tokens = tokenize(input);
 
@@ -53,7 +49,6 @@ describe("Grammar", () => {
         });
 
         it("in class", () => {
-
             const input = Input.InClass(`// foo`);
             const tokens = tokenize(input);
 
@@ -63,7 +58,6 @@ describe("Grammar", () => {
         });
 
         it("in enum", () => {
-
             const input = Input.InEnum(`// foo`);
             const tokens = tokenize(input);
 
@@ -73,7 +67,6 @@ describe("Grammar", () => {
         });
 
         it("in interface", () => {
-
             const input = Input.InInterface(`// foo`);
             const tokens = tokenize(input);
 
@@ -83,7 +76,6 @@ describe("Grammar", () => {
         });
 
         it("in struct", () => {
-
             const input = Input.InStruct(`// foo`);
             const tokens = tokenize(input);
 
@@ -93,13 +85,28 @@ describe("Grammar", () => {
         });
 
         it("in method", () => {
-
             const input = Input.InMethod(`// foo`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
                 Token.Comment.SingleLine.Start,
                 Token.Comment.SingleLine.Text(" foo")]);
+        });
+
+        it("comment should colorize if there isn't a space before it (issue #225)", () => {
+            const input = Input.InClass(`
+private char GetChar()//Метод возвращающий
+`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Private,
+                Token.Type("char"),
+                Token.Identifiers.MethodName("GetChar"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Comment.SingleLine.Start,
+                Token.Comment.SingleLine.Text("Метод возвращающий")]);
         });
     });
 });
