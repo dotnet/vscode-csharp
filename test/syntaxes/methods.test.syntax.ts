@@ -387,5 +387,41 @@ namespace Test
                 Token.Punctuation.CloseBrace
             ]);
         });
+
+        it("shadowed methods are highlighted properly (issue #1084)", () => {
+
+            const input = Input.InClass(`
+private new void foo1() //Correct highlight
+{
+}
+
+new void foo2() //Function name not highlighted
+{
+}
+`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Private,
+                Token.Keywords.Modifiers.New,
+                Token.Type("void"),
+                Token.Identifiers.MethodName("foo1"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Comment.SingleLine.Start,
+                Token.Comment.SingleLine.Text("Correct highlight"),
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
+                Token.Keywords.Modifiers.New,
+                Token.Type("void"),
+                Token.Identifiers.MethodName("foo2"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Comment.SingleLine.Start,
+                Token.Comment.SingleLine.Text("Function name not highlighted"),
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace
+            ]);
+        });
     });
 });
