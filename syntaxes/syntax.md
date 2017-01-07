@@ -1,18 +1,3 @@
-## TODO List:
-
-* Statements/Expressions:
-    * Method calls
-    * Element access
-    * query expressions
-    * lambda expressions and anonymous functions
-    * array, collection and object initializers
-    * casts
-    * compound assignement
-    * unsafe code
-    * XML doc comments
-
-* Lots of refinement and tests to ensure proper highlighting while typing
-
 ## Important regular expressions:
 
 #### Identifier

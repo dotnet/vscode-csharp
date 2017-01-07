@@ -5,8 +5,18 @@ scopeName: source.cs
 fileTypes: [cs]
 uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 
-# Important patterns:
-# Identifier: [_$[:alpha:]][_$[:alnum:]]*
+# TODO List
+#
+# * Refinement and tests to ensure proper highlighting while typing
+# * Method calls
+# * Element access
+# * query expressions
+# * lambda expressions and anonymous functions
+# * array, collection and object initializers
+# * casts
+# * compound assignement
+# * unsafe code
+# * XML doc comments
 
 patterns:
 - include: '#comment'
