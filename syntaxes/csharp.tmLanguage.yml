@@ -11,7 +11,6 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 # * query expressions
 # * lambda expressions and anonymous functions
 # * array, collection and object initializers
-# * casts
 # * compound assignement
 # * unsafe code
 # * XML doc comments
@@ -114,6 +113,7 @@ repository:
     - include: '#verbatim-interpolated-string'
     - include: '#literal'
     - include: '#expression-operators'
+    - include: '#cast-expression'
     - include: '#object-creation-expression'
     - include: '#invocation-expression'
     - include: '#element-access-expression'
@@ -902,6 +902,14 @@ repository:
       '1': { name: keyword.control.conditional.if.cs }
     end: (?=;|})
     patterns:
+    - begin: \(
+      beginCaptures:
+        '0': { name: punctuation.parenthesis.open.cs }
+      end: \)
+      endCaptures:
+        '0': { name: punctuation.parenthesis.close.cs }
+      patterns:
+      - include: '#expression'
     - include: '#statement'
 
   else-part:
@@ -910,6 +918,14 @@ repository:
       '1': { name: keyword.control.conditional.else.cs }
     end: (?=;|})
     patterns:
+    - begin: \(
+      beginCaptures:
+        '0': { name: punctuation.parenthesis.open.cs }
+      end: \)
+      endCaptures:
+        '0': { name: punctuation.parenthesis.close.cs }
+      patterns:
+      - include: '#expression'
     - include: '#statement'
 
   switch-statement:
@@ -1369,6 +1385,16 @@ repository:
   identifier:
     name: variable.other.readwrite.cs
     match: '[_$[:alpha:]][_$[:alnum:]]*'
+
+  cast-expression:
+    begin: \(
+    beginCaptures:
+      '0': { name: punctuation.parenthesis.open.cs }
+    end: (\))(?=\s*[_$[:alnum:]\(])
+    endCaptures:
+      '1': { name: punctuation.parenthesis.close.cs }
+    patterns:
+    - include: '#type'
 
   invocation-expression:
     begin: |-
