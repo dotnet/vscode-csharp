@@ -250,7 +250,99 @@ internal WaitHandle(Task self, TT.Task /*task)
                 Token.Comment.MultiLine.Text("    this.task = task;"),
                 Token.Comment.MultiLine.Text("    this.selff = self;"),
                 Token.Comment.MultiLine.Text("}"),
-                Token.Comment.MultiLine.Text(""),
+                Token.Comment.MultiLine.Text("")
+            ]);
+        });
+
+        it("Highlight properly within base constructor initializer (issue #782)", () => {
+
+            const input = `
+public class A
+{
+    public A() : base(
+            1,
+            "abc"
+            new B<char>(),
+            new B<string>()) {
+        var a = 1;
+        var b = "abc";
+        var c = new B<char>();
+        var c = new B<string>();
+    }
+}
+`;
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Class,
+                Token.Identifiers.ClassName("A"),
+                Token.Punctuation.OpenBrace,
+                Token.Keywords.Modifiers.Public,
+                Token.Identifiers.MethodName("A"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Colon,
+                Token.Keywords.Base,
+                Token.Punctuation.OpenParen,
+                Token.Literals.Numeric.Decimal("1"),
+                Token.Punctuation.Comma,
+                Token.Punctuation.String.Begin,
+                Token.Literals.String("abc"),
+                Token.Punctuation.String.End,
+                Token.Keywords.New,
+                Token.Type("B"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Type("char"),
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Comma,
+                Token.Keywords.New,
+                Token.Type("B"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Type("string"),
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Type("var"),
+                Token.Variables.Local("a"),
+                Token.Operators.Assignment,
+                Token.Literals.Numeric.Decimal("1"),
+                Token.Punctuation.Semicolon,
+                Token.Type("var"),
+                Token.Variables.Local("b"),
+                Token.Operators.Assignment,
+                Token.Punctuation.String.Begin,
+                Token.Literals.String("abc"),
+                Token.Punctuation.String.End,
+                Token.Punctuation.Semicolon,
+                Token.Type("var"),
+                Token.Variables.Local("c"),
+                Token.Operators.Assignment,
+                Token.Keywords.New,
+                Token.Type("B"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Type("char"),
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Type("var"),
+                Token.Variables.Local("c"),
+                Token.Operators.Assignment,
+                Token.Keywords.New,
+                Token.Type("B"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Type("string"),
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseBrace
             ]);
         });
     });
