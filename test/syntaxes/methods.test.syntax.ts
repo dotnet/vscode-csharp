@@ -164,5 +164,30 @@ int Add(int x, int y)
                 Token.Type("TResult"),
                 Token.Punctuation.Semicolon]);
         });
+
+        it("commented parameters are highlighted properly (issue #802)", () => {
+
+            const input = Input.InClass(`public void methodWithParametersCommented(int p1, /*int p2*/, int p3) {}`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Public,
+                Token.Type("void"),
+                Token.Identifiers.MethodName("methodWithParametersCommented"),
+                Token.Punctuation.OpenParen,
+                Token.Type("int"),
+                Token.Variables.Parameter("p1"),
+                Token.Punctuation.Comma,
+                Token.Comment.MultiLine.Start,
+                Token.Comment.MultiLine.Text("int p2"),
+                Token.Comment.MultiLine.End,
+                Token.Punctuation.Comma,
+                Token.Type("int"),
+                Token.Variables.Parameter("p3"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace
+            ]);
+        });
     });
 });
