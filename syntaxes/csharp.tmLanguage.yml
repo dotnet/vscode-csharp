@@ -113,8 +113,8 @@ repository:
     - include: '#using-statement'
     - include: '#labeled-statement'
     - include: '#local-declaration'
-    - include: '#expression'
     - include: '#block'
+    - include: '#expression'
     - include: '#punctuation-semicolon'
 
   expression:
@@ -133,6 +133,7 @@ repository:
     - include: '#element-access-expression'
     - include: '#member-access-expression'
     - include: '#parenthesized-expression'
+    - include: '#initializer-expression'
     - include: '#identifier'
 
   extern-alias-directive:
@@ -1331,6 +1332,17 @@ repository:
     patterns:
     - include: '#expression'
 
+  initializer-expression:
+    begin: \{
+    beginCaptures:
+      '0': { name: punctuation.curlybrace.open.cs }
+    end: \}
+    endCaptures:
+      '0': { name: punctuation.curlybrace.close.cs }
+    patterns:
+    - include: '#expression'
+    - include: '#punctuation-comma'
+
   identifier:
     name: variable.other.readwrite.cs
     match: '[_$[:alpha:]][_$[:alnum:]]*'
@@ -1351,7 +1363,7 @@ repository:
         (?:\s*\(\s*(?:\g<type-name>)(?:\s+\g<identifier>)?(?:\s*,\s*(?:\g<type-name>)(?:\s+\g<identifier>)?)*\s*\)\s*))
         (?:(?:\[,*\])*)?
       )\s*
-      (\))
+      (\))(?=\s*[_$[:alnum:]\(])
     captures:
       '1': { name: punctuation.parenthesis.open.cs }
       '2':

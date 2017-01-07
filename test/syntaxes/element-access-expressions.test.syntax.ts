@@ -156,5 +156,67 @@ describe("Grammar", () => {
                 Token.Punctuation.Semicolon
             ]);
         });
+
+        it("read/write array element", () => {
+            const input = Input.InMethod(`
+object[] a1 = {(null), (this.a), c};
+a1[1] = ((this.a)); a1[2] = (c); a1[1] = (i);
+`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("object"),
+                Token.Punctuation.OpenBracket,
+                Token.Punctuation.CloseBracket,
+                Token.Variables.Local("a1"),
+                Token.Operators.Assignment,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.OpenParen,
+                Token.Literals.Null,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Comma,
+                Token.Punctuation.OpenParen,
+                Token.Keywords.This,
+                Token.Punctuation.Accessor,
+                Token.Variables.Property("a"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Comma,
+                Token.Variables.ReadWrite("c"),
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.Semicolon,
+
+                Token.Variables.Property("a1"),
+                Token.Punctuation.OpenBracket,
+                Token.Literals.Numeric.Decimal("1"),
+                Token.Punctuation.CloseBracket,
+                Token.Operators.Assignment,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.OpenParen,
+                Token.Keywords.This,
+                Token.Punctuation.Accessor,
+                Token.Variables.Property("a"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Variables.Property("a1"),
+                Token.Punctuation.OpenBracket,
+                Token.Literals.Numeric.Decimal("2"),
+                Token.Punctuation.CloseBracket,
+                Token.Operators.Assignment,
+                Token.Punctuation.OpenParen,
+                Token.Variables.ReadWrite("c"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Variables.Property("a1"),
+                Token.Punctuation.OpenBracket,
+                Token.Literals.Numeric.Decimal("1"),
+                Token.Punctuation.CloseBracket,
+                Token.Operators.Assignment,
+                Token.Punctuation.OpenParen,
+                Token.Variables.ReadWrite("i"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+            ]);
+        });
     });
 });
