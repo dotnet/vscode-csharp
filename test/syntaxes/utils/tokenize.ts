@@ -195,6 +195,7 @@ export namespace Token {
             export const Internal = createToken('internal', 'storage.modifier.cs');
             export const New = createToken('new', 'storage.modifier.cs');
             export const Out = createToken('out', 'storage.modifier.cs');
+            export const Override = createToken('override', 'storage.modifier.cs');
             export const Params = createToken('params', 'storage.modifier.cs');
             export const Partial = createToken('partial', 'storage.modifier.cs');
             export const Private = createToken('private', 'storage.modifier.cs');
@@ -204,6 +205,7 @@ export namespace Token {
             export const Ref = createToken('ref', 'storage.modifier.cs');
             export const Sealed = createToken('sealed', 'storage.modifier.cs');
             export const Static = createToken('static', 'storage.modifier.cs');
+            export const Virtual = createToken('virtual', 'storage.modifier.cs');
         }
 
         export const Add = createToken('add', 'keyword.other.add.cs');

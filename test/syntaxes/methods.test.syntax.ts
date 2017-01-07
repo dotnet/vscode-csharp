@@ -165,6 +165,38 @@ int Add(int x, int y)
                 Token.Punctuation.Semicolon]);
         });
 
+        it("public override", () => {
+
+            const input = Input.InClass(`public override M() { }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Modifiers.Override,
+                Token.Identifiers.MethodName("M"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace
+            ]);
+        });
+
+        it("public virtual", () => {
+
+            const input = Input.InClass(`public virtual M() { }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Modifiers.Virtual,
+                Token.Identifiers.MethodName("M"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace
+            ]);
+        });
+
         it("commented parameters are highlighted properly (issue #802)", () => {
 
             const input = Input.InClass(`public void methodWithParametersCommented(int p1, /*int p2*/, int p3) {}`);

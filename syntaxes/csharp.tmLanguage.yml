@@ -234,7 +234,7 @@ repository:
 
   storage-modifier:
     name: 'storage.modifier.cs'
-    match: (?<!\.)\b(new|public|protected|internal|private|abstract|sealed|static|partial|readonly|volatile|const|extern|async)\b
+    match: (?<!\.)\b(new|public|protected|internal|private|abstract|virtual|override|sealed|static|partial|readonly|volatile|const|extern|async)\b
 
   class-declaration:
     begin: (?=class\s+)
