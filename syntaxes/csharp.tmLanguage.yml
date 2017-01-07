@@ -128,6 +128,7 @@ repository:
     - include: '#expression-operators'
     - include: '#cast-expression'
     - include: '#object-creation-expression'
+    - include: '#array-creation-expression'
     - include: '#invocation-expression'
     - include: '#element-access-expression'
     - include: '#member-access-expression'
@@ -1434,6 +1435,32 @@ repository:
     end: (?<=\))
     patterns:
     - include: '#argument-list'
+
+  array-creation-expression:
+    begin: |-
+      (?x)
+      (new)\s+
+      (?<type-name>(?:
+        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:
+          (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
+          (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
+          (?:(?:\*)*)?
+          (?:(?:\[,*\])*)?
+          (?:\s*\.\s*\g<type-name>)*
+        )|
+        (?:\s*\(\s*(?:\g<type-name>)(?:\s+\g<identifier>)?(?:\s*,\s*(?:\g<type-name>)(?:\s+\g<identifier>)?)*\s*\)\s*))
+        (?:(?:\[,*\])*)?
+      )\s*
+      (?=\[)
+    beginCaptures:
+      '1': { name: keyword.other.new.cs }
+      '2':
+        patterns:
+        - include: '#type'
+    end: (?<=\])
+    patterns:
+    - include: '#bracketed-argument-list'
 
   bracketed-parameter-list:
     begin: (?=(\[))
