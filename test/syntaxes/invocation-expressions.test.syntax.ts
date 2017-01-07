@@ -187,7 +187,7 @@ describe("Grammar", () => {
             ]);
         });
 
-        it("store result member of qualified generic with no arguments", () => {
+        it("store result of member of qualified generic with no arguments", () => {
             const input = Input.InMethod(`var o = N.C<int>.M();`);
             const tokens = tokenize(input);
 
@@ -208,7 +208,45 @@ describe("Grammar", () => {
                 Token.Punctuation.Semicolon
             ]);
         });
-        
+
+        it("store result of qualified method with no arguments", () => {
+            const input = Input.InMethod(`var o = N.C.M();`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("var"),
+                Token.Variables.Local("o"),
+                Token.Operators.Assignment,
+                Token.Variables.Object("N"),
+                Token.Punctuation.Accessor,
+                Token.Variables.Property("C"),
+                Token.Punctuation.Accessor,
+                Token.Identifiers.MethodName("M"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
+            ]);
+        });
+
+        it("store result of this.qualified method with no arguments", () => {
+            const input = Input.InMethod(`var o = this.C.M();`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("var"),
+                Token.Variables.Local("o"),
+                Token.Operators.Assignment,
+                Token.Keywords.This,
+                Token.Punctuation.Accessor,
+                Token.Variables.Property("C"),
+                Token.Punctuation.Accessor,
+                Token.Identifiers.MethodName("M"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
+            ]);
+        });
+
         it("store result of invocation with two named arguments", () => {
             const input = Input.InMethod(`var o = M(x: 19, y: 23);`);
             const tokens = tokenize(input);

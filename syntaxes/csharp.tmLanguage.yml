@@ -14,6 +14,7 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 # * compound assignement
 # * unsafe code
 # * XML doc comments
+# * preprocesser
 
 patterns:
 - include: '#comment'
@@ -129,15 +130,15 @@ repository:
     - include: '#cast-expression'
     - include: '#object-creation-expression'
     - include: '#array-creation-expression'
+    - include: '#member-access-expression'
     - include: '#invocation-expression'
     - include: '#element-access-expression'
-    - include: '#member-access-expression'
     - include: '#parenthesized-expression'
     - include: '#initializer-expression'
     - include: '#identifier'
 
   extern-alias-directive:
-    begin: \s*(extern)\b\s*(alias)\b\s*([_$[:alpha:]][_$[:alnum:]]*)
+    begin: \s*(extern)\b\s*(alias)\b\s*([_[:alpha:]][_[:alnum:]]*)
     beginCaptures:
       '1': { name: keyword.other.extern.cs }
       '2': { name: keyword.other.alias.cs }
@@ -153,7 +154,7 @@ repository:
       end: (?=;)
       patterns:
       - include: '#type'
-    - begin: \b(using)\s+(?=([_$[:alpha:]][_$[:alnum:]]*)\s*=)
+    - begin: \b(using)\s+(?=([_[:alpha:]][_[:alnum:]]*)\s*=)
       beginCaptures:
         '1': { name: keyword.other.using.cs }
         '2': { name: entity.name.type.alias.cs }
@@ -169,7 +170,7 @@ repository:
       patterns:
       - include: '#comment'
       - name: entity.name.type.namespace.cs
-        match: '[_$[:alpha:]][_$[:alnum:]]*'
+        match: '[_[:alpha:]][_[:alnum:]]*'
       - include: '#operator-assignment'
 
   attribute-section:
@@ -204,7 +205,7 @@ repository:
     - include: '#punctuation-comma'
 
   attribute-named-argument:
-    begin: ([_$[:alpha:]][_$[:alnum:]]*)\s*(?==)
+    begin: ([_[:alpha:]][_[:alnum:]]*)\s*(?==)
     beginCaptures:
       '1': { name: entity.name.variable.property.cs }
     end: (?=(,|\)))
@@ -220,7 +221,7 @@ repository:
     patterns:
     - include: '#comment'
     - name: entity.name.type.namespace.cs
-      match: '[_$[:alpha:]][_$[:alnum:]]*'
+      match: '[_[:alpha:]][_[:alnum:]]*'
     - include: '#punctuation-accessor'
     - begin: \{
       beginCaptures:
@@ -246,7 +247,7 @@ repository:
       end: (?=\{)
       patterns:
       # C# grammar: class identifier type-parameter-list[opt]
-      - match: (class)\s+([_$[:alpha:]][_$[:alnum:]]*(\s*<\s*(?:[_$[:alpha:]][_$[:alnum:]]*\s*,\s*)*(?:[_$[:alpha:]][_$[:alnum:]]*)\s*>)?)
+      - match: (class)\s+([_[:alpha:]][_[:alnum:]]*(\s*<\s*(?:[_[:alpha:]][_[:alnum:]]*\s*,\s*)*(?:[_[:alpha:]][_[:alnum:]]*)\s*>)?)
         captures:
           '1': { name: keyword.other.class.cs }
           '2': { name: entity.name.type.class.cs }
@@ -266,7 +267,7 @@ repository:
       (?x)
       (?<delegate-keyword>(?:\b(?:delegate)\b))\s+
       (?<type-name>(?:
-        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)?
         (?:
           (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
           (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
@@ -304,7 +305,7 @@ repository:
       end: (?=\{)
       patterns:
       # C# grammar: enum identifier
-      - match: (enum)\s+([_$[:alpha:]][_$[:alnum:]]*)
+      - match: (enum)\s+([_[:alpha:]][_[:alnum:]]*)
         captures:
           '1': { name: keyword.other.enum.cs }
           '2': { name: entity.name.type.enum.cs }
@@ -324,7 +325,7 @@ repository:
       - include: '#comment'
       - include: '#attribute-section'
       - include: '#punctuation-comma'
-      - begin: '[_$[:alpha:]][_$[:alnum:]]*'
+      - begin: '[_[:alpha:]][_[:alnum:]]*'
         beginCaptures:
           '0': { name: variable.other.enummember.cs }
         end: (?=(,|\}))
@@ -345,7 +346,7 @@ repository:
           (?x)
           (interface)\s+
           (
-            (?<identifier>[_$[:alpha:]][_$[:alnum:]]*)
+            (?<identifier>[_[:alpha:]][_[:alnum:]]*)
             (\s*<\s*(?:(?:(?:in|out)\s+)?\g<identifier>\s*,\s*)*(?:(?:in|out)\s+)?\g<identifier>\s*>)?
           )
         captures:
@@ -375,7 +376,7 @@ repository:
           (?x)
           (struct)\s+
           (
-            (?<identifier>[_$[:alpha:]][_$[:alnum:]]*)
+            (?<identifier>[_[:alpha:]][_[:alnum:]]*)
             (\s*<\s*(?:\g<identifier>\s*,\s*)*\g<identifier>\s*>)?
           )
         captures:
@@ -402,7 +403,7 @@ repository:
     - include: '#punctuation-comma'
 
   generic-constraints:
-    begin: (where)\s+([_$[:alpha:]][_$[:alnum:]]*)\s*(:)
+    begin: (where)\s+([_[:alpha:]][_[:alnum:]]*)\s*(:)
     beginCaptures:
       '1': { name: keyword.other.where.cs }
       '2': { name: storage.type.cs }
@@ -426,7 +427,7 @@ repository:
     begin: |-
       (?x)
       (?<type-name>(?:
-        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)?
         (?:
           (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
           (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
@@ -447,7 +448,7 @@ repository:
     end: (?=;)
     patterns:
     - name: entity.name.variable.field.cs
-      match: '[_$[:alpha:]][_$[:alnum:]]*'
+      match: '[_[:alpha:]][_[:alnum:]]*'
     - include: '#punctuation-comma'
     - include: '#comment'
     - include: '#variable-initializer'
@@ -458,7 +459,7 @@ repository:
       (?!.*\b(?:class|interface|struct|enum|event)\b)\s*
       (?<return-type>
         (?<type-name>(?:
-          (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+          (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)?
           (?:
             (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
             (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
@@ -496,7 +497,7 @@ repository:
       (?x)
       (?<return-type>
         (?<type-name>(?:
-          (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+          (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)?
           (?:
             (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
             (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
@@ -537,7 +538,7 @@ repository:
       \b(?<event-keyword>event)\b\s*
       (?<return-type>
         (?<type-name>(?:
-          (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+          (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)?
           (?:
             (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
             (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
@@ -566,7 +567,7 @@ repository:
       '6':
         patterns:
         - name: entity.name.variable.event.cs
-          match: '[_$[:alpha:]][_$[:alnum:]]*'
+          match: '[_[:alpha:]][_[:alnum:]]*'
         - include: '#punctuation-comma'
     end: (?<=\})|(?=;)
     patterns:
@@ -611,7 +612,7 @@ repository:
       (?x)
       (?<return-type>
         (?<type-name>(?:
-          (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+          (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)?
           (?:
             (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
             (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
@@ -646,7 +647,7 @@ repository:
     - include: '#block'
 
   constructor-declaration:
-    begin: ([_$[:alpha:]][_$[:alnum:]]*)\s*(?=\()
+    begin: ([_[:alpha:]][_[:alnum:]]*)\s*(?=\()
     beginCaptures:
       '1': { name: entity.name.function.cs }
     end: (?<=\})|(?=;)
@@ -668,7 +669,7 @@ repository:
     - include: "#argument-list"
 
   destructor-declaration:
-    begin: (~)([_$[:alpha:]][_$[:alnum:]]*)\s*(?=\()
+    begin: (~)([_[:alpha:]][_[:alnum:]]*)\s*(?=\()
     beginCaptures:
       '1': { name: punctuation.tilde.cs }
       '2': { name: entity.name.function.cs }
@@ -683,7 +684,7 @@ repository:
     begin: |-
       (?x)
       (?<type-name>(?:
-        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)?
         (?:
           (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
           (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
@@ -717,7 +718,7 @@ repository:
       (?<explicit-or-implicit-keyword>(?:\b(?:explicit|implicit)))\s*
       (?<operator-keyword>(?:\b(?:operator)))\s*
       (?<type-name>(?:
-        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)?
         (?:
           (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
           (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
@@ -791,7 +792,7 @@ repository:
       captures:
         '1': { name: keyword.control.default.cs }
     - name: entity.name.label.cs
-      match: '[_$[:alpha]][_$[:alnum:]]*'
+      match: '[_[:alpha:]][_[:alnum:]]*'
 
   return-statement:
     begin: (?<!\.)\b(return)\b
@@ -965,7 +966,7 @@ repository:
       - match: |-
           (?x)
           (?<type-name>(?:
-            (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+            (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)?
             (?:
               (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
               (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
@@ -1022,7 +1023,7 @@ repository:
       - match: |-
           (?x)
           (?<type-name>(?:
-            (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+            (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)?
             (?:
               (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
               (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
@@ -1098,7 +1099,7 @@ repository:
     - include: '#statement'
 
   labeled-statement:
-    match: '([_$[:alpha:]][_$[:alnum:]]*)\s*(:)'
+    match: '([_[:alpha:]][_[:alnum:]]*)\s*(:)'
     captures:
       '1': { name: entity.name.label.cs }
       '2': { name: punctuation.separator.colon.cs }
@@ -1112,7 +1113,7 @@ repository:
     begin: |-
       (?x)
       (?<type-name>(?:
-        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)?
         (?:
           (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
           (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
@@ -1133,7 +1134,7 @@ repository:
     end: (?=;|\))
     patterns:
     - name: variable.local.cs
-      match: '[_$[:alpha:]][_$[:alnum:]]*'
+      match: '[_[:alpha:]][_[:alnum:]]*'
     - include: '#punctuation-comma'
     - include: '#comment'
     - include: '#variable-initializer'
@@ -1143,7 +1144,7 @@ repository:
       (?x)
       (?<const-keyword>\b(?:const)\b)\s*
       (?<type-name>(?:
-        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)?
         (?:
           (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
           (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
@@ -1165,7 +1166,7 @@ repository:
     end: (?=;)
     patterns:
     - name: variable.local.cs
-      match: '[_$[:alpha:]][_$[:alnum:]]*'
+      match: '[_[:alpha:]][_[:alnum:]]*'
     - include: '#punctuation-comma'
     - include: '#comment'
     - include: '#variable-initializer'
@@ -1345,14 +1346,14 @@ repository:
 
   identifier:
     name: variable.other.readwrite.cs
-    match: '[_$[:alpha:]][_$[:alnum:]]*'
+    match: '[_[:alpha:]][_[:alnum:]]*'
 
   cast-expression:
     match: |-
       (?x)
       (\()\s*
       (?<type-name>(?:
-        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)?
         (?:
           (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
           (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
@@ -1363,7 +1364,7 @@ repository:
         (?:\s*\(\s*(?:\g<type-name>)(?:\s+\g<identifier>)?(?:\s*,\s*(?:\g<type-name>)(?:\s+\g<identifier>)?)*\s*\)\s*))
         (?:(?:\[,*\])*)?
       )\s*
-      (\))(?=\s*[_$[:alnum:]\(])
+      (\))(?=\s*[_[:alnum:]\(])
     captures:
       '1': { name: punctuation.parenthesis.open.cs }
       '2':
@@ -1381,68 +1382,74 @@ repository:
   invocation-expression:
     begin: |-
       (?x)
-      (?=
-        ( # identifier or type name on left-hand side
-          (?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*
-          (?<type-params><([^<>]|\g<type-params>)+>)? 
-          \s*\.\s*
-        )*
-        (\g<identifier>)\s*   # method name
-        (\g<type-params>)?\s* # type parameters
-        \(                    # open paren of argument list
-      )
+      (\.)?                                                # preceding dot
+      ([_[:alpha:]][_[:alnum:]]*)\s*                       # method name
+      (?<type-params>\s*<([^<>]|\g<type-params>)+>\s*)?\s* # type parameters
+      (?=\()                                               # open paren of argument list
+    beginCaptures:
+      '1': { name: punctuation.accessor.cs }
+      '2': { name: entity.name.function.cs }
+      '3':
+        patterns:
+        - include: '#type-parameters'
     end: (?<=\))
     patterns:
-    - include: '#member-access-expression'
-    - include: '#punctuation-accessor'
-    - name: entity.name.function.cs
-      match: '[_$[:alpha:]][_$[:alnum:]]*'
-    - include: '#type-parameters'
     - include: '#argument-list'
 
   element-access-expression:
     begin: |-
       (?x)
-      (?=
-        ( # identifier or type name on left-hand side
-          (?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*
-          (?<type-params><([^<>]|\g<type-params>)+>)?
-          \s*\.\s*
-        )*
-        (\g<identifier>)\s* # property name
-        \[                  # open square bracket of argument list
-      )
+      (\.)?                          # preceding dot
+      ([_[:alpha:]][_[:alnum:]]*)\s* # property name
+      (?=\[)                         # open paren of argument list
+    beginCaptures:
+      '1': { name: punctuation.accessor.cs }
+      '2': { name: variable.other.object.property.cs }
     end: (?<=\])
     patterns:
-    - include: '#member-access-expression'
-    - include: '#punctuation-accessor'
-    - name: variable.other.object.property.cs
-      match: '[_$[:alpha:]][_$[:alnum:]]*'
     - include: '#bracketed-argument-list'
 
   member-access-expression:
     patterns:
-    - match: (\.)\s*([_$[:alpha:]][_$[:alnum:]]*)(?=(\s*((\.\s*[_$[:alpha:]][_$[:alnum:]]*)|([^_$[:alnum:]\(\[\<]))))
+      # An identifier with no type parameters and a dot to the left should
+      # be treated as a property, so long as it isn't followed by a ( or [.
+    - match:
+        (?x)
+        (\.)\s*
+        ([_[:alpha:]][_[:alnum:]]*)\s*
+        (?![_[:alnum:]]|\(|\[|<)
       captures:
         '1': { name: punctuation.accessor.cs }
         '2': { name: variable.other.object.property.cs }
+      # An identifier with type parameters should be treated as an object,
+      # regardless of whether there is a dot to the left.
     - match: |-
         (?x)
-        ([_$[:alpha:]][_$[:alnum:]]*)
-        (?<type-params><([^<>]|\g<type-params>)+>)?
-        (?=\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)
+        (\.)?\s*
+        ([_[:alpha:]][_[:alnum:]]*)
+        (?<type-params>\s*<([^<>]|\g<type-params>)+>\s*)
+        (?=\s*\.\s*[_[:alpha:]][_[:alnum:]]*)
       captures:
-        '1': { name: variable.other.object.cs }
-        '2':
+        '1': { name: punctuation.accessor.cs }
+        '2': { name: variable.other.object.cs }
+        '3':
           patterns:
           - include: '#type-parameters'
+      # An identifier with no type parameters (and no dot to the left per the
+      # matches above) should be treated as an object.
+    - match: |-
+        (?x)
+        ([_[:alpha:]][_[:alnum:]]*)
+        (?=\s*\.\s*[_[:alpha:]][_[:alnum:]]*)
+      captures:
+        '1': { name: variable.other.object.cs }
 
   object-creation-expression:
     begin: |-
       (?x)
       (new)\s+
       (?<type-name>(?:
-        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)?
         (?:
           (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
           (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
@@ -1468,7 +1475,7 @@ repository:
       (?x)
       (new)\s+
       (?<type-name>(?:
-        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)?
         (?:
           (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
           (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
@@ -1506,7 +1513,7 @@ repository:
       - name: storage.modifier.cs
         match: \b(ref|params|out)\b
       # parameter name
-      - match: \s+([_$[:alpha:]][_$[:alnum:]]*)\s*(?=[,\]])
+      - match: \s+([_[:alpha:]][_[:alnum:]]*)\s*(?=[,\]])
         captures:
           '1': { name: variable.parameter.cs }
       - include: '#variable-initializer'
@@ -1526,7 +1533,7 @@ repository:
     - name: storage.modifier.cs
       match: \b(ref|params|out)\b
     # parameter name
-    - match: \s+([_$[:alpha:]][_$[:alnum:]]*)\s*(?=[,)])
+    - match: \s+([_[:alpha:]][_[:alnum:]]*)\s*(?=[,)])
       captures:
         '1': { name: variable.parameter.cs }
     - include: '#variable-initializer'
@@ -1558,7 +1565,7 @@ repository:
     - include: '#punctuation-comma'
 
   named-argument:
-    begin: ([_$[:alpha:]][_$[:alnum:]]*)\s*(:)
+    begin: ([_[:alpha:]][_[:alnum:]]*)\s*(:)
     beginCaptures:
       '1': { name: variable.parameter.cs }
       '2': { name: punctuation.separator.colon.cs }
@@ -1598,7 +1605,7 @@ repository:
     match: |-
       (?x)
       (?<type-name>(?:
-        (?:(?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*\:\:\s*)?
+        (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)?
         (?:
           (?:\g<identifier>(?:\s*\.\s*\g<identifier>)*)
           (?:\s*<\s*(?:\g<type-name>)(?:\s*,\s*\g<type-name>)*\s*>\s*)?
@@ -1624,20 +1631,20 @@ repository:
 
   type-name:
     patterns:
-    - match: ([_$[:alpha:]][_$[:alnum:]]*)\s*(\:\:)
+    - match: ([_[:alpha:]][_[:alnum:]]*)\s*(\:\:)
       captures:
         '1': { name: entity.name.type.alias.cs }
         '2': { name: punctuation.separator.coloncolon.cs }
-    - match: ([_$[:alpha:]][_$[:alnum:]]*)\s*(\.)
+    - match: ([_[:alpha:]][_[:alnum:]]*)\s*(\.)
       captures:
         '1': { name: storage.type.cs }
         '2': { name: punctuation.accessor.cs }
-    - match: (\.)\s*([_$[:alpha:]][_$[:alnum:]]*)
+    - match: (\.)\s*([_[:alpha:]][_[:alnum:]]*)
       captures:
         '1': { name: punctuation.accessor.cs }
         '2': { name: storage.type.cs }
     - name: storage.type.cs
-      match: '[_$[:alpha:]][_$[:alnum:]]*'
+      match: '[_[:alpha:]][_[:alnum:]]*'
 
   type-parameters:
     name: meta.type.parameters.cs

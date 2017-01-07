@@ -45,8 +45,8 @@ describe("Grammar", () => {
 
         it("line break before close quote", () => {
 
-            const input = Input.InClass(
-`string test = "hello 
+            const input = Input.InClass(`
+string test = "hello 
 world!";`);
             const tokens = tokenize(input);
 
@@ -100,8 +100,8 @@ world!";`);
 
         it("line break before close quote (verbatim)", () => {
 
-            const input = Input.InClass(
-`string test = @"hello 
+            const input = Input.InClass(`
+string test = @"hello 
 world!";`);
             const tokens = tokenize(input);
 
@@ -118,9 +118,10 @@ world!";`);
 
         it("highlight escaped double-quote properly (issue #1078 - repro 1)", () => {
 
-            const input = Input.InMethod(
-`configContent = rgx.Replace(configContent, $"name{suffix}\\"");
-File.WriteAllText(_testConfigFile, configContent);`);
+            const input = Input.InMethod(`
+configContent = rgx.Replace(configContent, $"name{suffix}\\"");
+File.WriteAllText(_testConfigFile, configContent);
+`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
@@ -155,9 +156,10 @@ File.WriteAllText(_testConfigFile, configContent);`);
 
         it("highlight escaped double-quote properly (issue #1078 - repro 2)", () => {
 
-            const input = Input.InMethod(
-`throw new InvalidCastException(
-    $"The value \\"{this.Value} is of the type \\"{this.Type}\\". You asked for \\"{typeof(T)}\\".");`);
+            const input = Input.InMethod(`
+throw new InvalidCastException(
+    $"The value \\"{this.Value} is of the type \\"{this.Type}\\". You asked for \\"{typeof(T)}\\".");
+`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
@@ -194,6 +196,55 @@ File.WriteAllText(_testConfigFile, configContent);`);
                 Token.Punctuation.InterpolatedString.End,
                 Token.Punctuation.CloseParen,
                 Token.Punctuation.Semicolon
+            ]);
+        });
+
+        it("highlight strings containing braces correctly (issue #746)", () => {
+
+            const input = `
+namespace X
+{
+    class Y
+    {
+        public MethodZ()
+        {
+            this.Writer.WriteLine("class CInput{0}Register : public {1}", index, baseClass);
+        }
+    }
+}
+`;
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Namespace,
+                Token.Identifiers.NamespaceName("X"),
+                Token.Punctuation.OpenBrace,
+                Token.Keywords.Class,
+                Token.Identifiers.ClassName("Y"),
+                Token.Punctuation.OpenBrace,
+                Token.Keywords.Modifiers.Public,
+                Token.Identifiers.MethodName("MethodZ"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Keywords.This,
+                Token.Punctuation.Accessor,
+                Token.Variables.Property("Writer"),
+                Token.Punctuation.Accessor,
+                Token.Identifiers.MethodName("WriteLine"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.String.Begin,
+                Token.Literals.String("class CInput{0}Register : public {1}"),
+                Token.Punctuation.String.End,
+                Token.Punctuation.Comma,
+                Token.Variables.ReadWrite("index"),
+                Token.Punctuation.Comma,
+                Token.Variables.ReadWrite("baseClass"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseBrace
             ]);
         });
     });
