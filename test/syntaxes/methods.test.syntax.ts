@@ -228,5 +228,164 @@ public interface test
                 Token.Punctuation.CloseBrace
             ]);
         });
+
+        it("attributes are highlighted properly (issue #829)", () => {
+
+            const input = `
+namespace Test
+{
+    public class TestClass
+    {
+        [HttpPut]
+        [Route("/meetups/{id}/users-going")]
+        public void AddToGoingUsers(Guid id, string user) => _commandSender.Send(new MarkUserAsGoing(id, user.User));
+
+        [HttpPut]
+        [Route("/meetups/{id}/users-not-going")]
+        public void AddToNotGoingUsers(Guid id, string user) => _commandSender.Send(new MarkUserAsNotGoing(id, user.User));
+
+        [HttpPut]
+        [Route("/meetups/{id}/users-not-sure-if-going")]
+        public void AddToNotSureIfGoingUsers(Guid id, string user) => _commandSender.Send(new MarkUserAsNotSureIfGoing(id, user.User));
+    }
+}`;
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Namespace,
+                Token.Identifiers.NamespaceName("Test"),
+                Token.Punctuation.OpenBrace,
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Class,
+                Token.Identifiers.ClassName("TestClass"),
+                Token.Punctuation.OpenBrace,
+
+                // [HttpPut]
+                // [Route("/meetups/{id}/users-going")]
+                // public void AddToGoingUsers(Guid id, string user) => _commandSender.Send(new MarkUserAsGoing(id, user.User));
+                Token.Punctuation.OpenBracket,
+                Token.Type("HttpPut"),
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.OpenBracket,
+                Token.Type("Route"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.String.Begin,
+                Token.Literals.String("/meetups/{id}/users-going"),
+                Token.Punctuation.String.End,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.CloseBracket,
+                Token.Keywords.Modifiers.Public,
+                Token.Type("void"),
+                Token.Identifiers.MethodName("AddToGoingUsers"),
+                Token.Punctuation.OpenParen,
+                Token.Type("Guid"),
+                Token.Variables.Parameter("id"),
+                Token.Punctuation.Comma,
+                Token.Type("string"),
+                Token.Variables.Parameter("user"),
+                Token.Punctuation.CloseParen,
+                Token.Operators.Arrow,
+                Token.Variables.Object("_commandSender"),
+                Token.Punctuation.Accessor,
+                Token.Identifiers.MethodName("Send"),
+                Token.Punctuation.OpenParen,
+                Token.Keywords.New,
+                Token.Type("MarkUserAsGoing"),
+                Token.Punctuation.OpenParen,
+                Token.Variables.ReadWrite("id"),
+                Token.Punctuation.Comma,
+                Token.Variables.Object("user"),
+                Token.Punctuation.Accessor,
+                Token.Variables.Property("User"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+
+                // [HttpPut]
+                // [Route("/meetups/{id}/users-not-going")]
+                // public void AddToNotGoingUsers(Guid id, string user) => _commandSender.Send(new MarkUserAsNotGoing(id, user.User));
+                Token.Punctuation.OpenBracket,
+                Token.Type("HttpPut"),
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.OpenBracket,
+                Token.Type("Route"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.String.Begin,
+                Token.Literals.String("/meetups/{id}/users-not-going"),
+                Token.Punctuation.String.End,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.CloseBracket,
+                Token.Keywords.Modifiers.Public,
+                Token.Type("void"),
+                Token.Identifiers.MethodName("AddToNotGoingUsers"),
+                Token.Punctuation.OpenParen,
+                Token.Type("Guid"),
+                Token.Variables.Parameter("id"),
+                Token.Punctuation.Comma,
+                Token.Type("string"),
+                Token.Variables.Parameter("user"),
+                Token.Punctuation.CloseParen,
+                Token.Operators.Arrow,
+                Token.Variables.Object("_commandSender"),
+                Token.Punctuation.Accessor,
+                Token.Identifiers.MethodName("Send"),
+                Token.Punctuation.OpenParen,
+                Token.Keywords.New,
+                Token.Type("MarkUserAsNotGoing"),
+                Token.Punctuation.OpenParen,
+                Token.Variables.ReadWrite("id"),
+                Token.Punctuation.Comma,
+                Token.Variables.Object("user"),
+                Token.Punctuation.Accessor,
+                Token.Variables.Property("User"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+
+                // [HttpPut]
+                // [Route("/meetups/{id}/users-not-sure-if-going")]
+                // public void AddToNotSureIfGoingUsers(Guid id, string user) => _commandSender.Send(new MarkUserAsNotSureIfGoing(id, user.User));
+                Token.Punctuation.OpenBracket,
+                Token.Type("HttpPut"),
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.OpenBracket,
+                Token.Type("Route"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.String.Begin,
+                Token.Literals.String("/meetups/{id}/users-not-sure-if-going"),
+                Token.Punctuation.String.End,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.CloseBracket,
+                Token.Keywords.Modifiers.Public,
+                Token.Type("void"),
+                Token.Identifiers.MethodName("AddToNotSureIfGoingUsers"),
+                Token.Punctuation.OpenParen,
+                Token.Type("Guid"),
+                Token.Variables.Parameter("id"),
+                Token.Punctuation.Comma,
+                Token.Type("string"),
+                Token.Variables.Parameter("user"),
+                Token.Punctuation.CloseParen,
+                Token.Operators.Arrow,
+                Token.Variables.Object("_commandSender"),
+                Token.Punctuation.Accessor,
+                Token.Identifiers.MethodName("Send"),
+                Token.Punctuation.OpenParen,
+                Token.Keywords.New,
+                Token.Type("MarkUserAsNotSureIfGoing"),
+                Token.Punctuation.OpenParen,
+                Token.Variables.ReadWrite("id"),
+                Token.Punctuation.Comma,
+                Token.Variables.Object("user"),
+                Token.Punctuation.Accessor,
+                Token.Variables.Property("User"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseBrace
+            ]);
+        });
     });
 });

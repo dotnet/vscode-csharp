@@ -41,6 +41,7 @@ repository:
     - include: '#enum-declaration'
     - include: '#interface-declaration'
     - include: '#struct-declaration'
+    - include: '#attribute-section'
     - include: '#punctuation-semicolon'
 
   class-members:
@@ -56,6 +57,7 @@ repository:
     - include: '#destructor-declaration'
     - include: '#operator-declaration'
     - include: '#conversion-operator-declaration'
+    - include: '#attribute-section'
     - include: '#punctuation-semicolon'
 
   struct-members:
@@ -71,6 +73,7 @@ repository:
     - include: '#destructor-declaration'
     - include: '#operator-declaration'
     - include: '#conversion-operator-declaration'
+    - include: '#attribute-section'
     - include: '#punctuation-semicolon'
 
   interface-members:
@@ -79,6 +82,7 @@ repository:
     - include: '#property-declaration'
     - include: '#indexer-declaration'
     - include: '#method-declaration'
+    - include: '#attribute-section'
     - include: '#punctuation-semicolon'
 
   statement:
@@ -117,6 +121,7 @@ repository:
     - include: '#object-creation-expression'
     - include: '#invocation-expression'
     - include: '#element-access-expression'
+    - include: '#member-access-expression'
     - include: '#parenthesized-expression'
     - include: '#identifier'
 
@@ -1440,9 +1445,9 @@ repository:
 
   member-access-expression:
     patterns:
-    - match: (\.)\s*([_$[:alpha:]][_$[:alnum:]]*)(?=\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)
+    - match: (\.)\s*([_$[:alpha:]][_$[:alnum:]]*)(?=(\s*\.\s*[_$[:alpha:]][_$[:alnum:]]*)|\))
       captures:
-        '1': { name: puncuation.accessor.cs }
+        '1': { name: punctuation.accessor.cs }
         '2': { name: variable.other.object.property.cs }
     - match: |-
         (?x)
