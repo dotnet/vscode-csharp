@@ -186,5 +186,49 @@ describe("Grammar", () => {
                 Token.Puncuation.Semicolon
             ]);
         });
+
+        it("store result member of qualified generic with no arguments", () => {
+            const input = Input.InMethod(`var o = N.C<int>.M();`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("var"),
+                Token.Variables.Local("o"),
+                Token.Operators.Assignment,
+                Token.Variables.Object("N"),
+                Token.Puncuation.Accessor,
+                Token.Variables.Object("C"),
+                Token.Puncuation.TypeParameters.Begin,
+                Token.Type("int"),
+                Token.Puncuation.TypeParameters.End,
+                Token.Puncuation.Accessor,
+                Token.Identifiers.MethodName("M"),
+                Token.Puncuation.OpenParen,
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.Semicolon
+            ]);
+        });
+        
+        it("store result of invocation with two named arguments", () => {
+            const input = Input.InMethod(`var o = M(x: 19, y: 23);`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Type("var"),
+                Token.Variables.Local("o"),
+                Token.Operators.Assignment,
+                Token.Identifiers.MethodName("M"),
+                Token.Puncuation.OpenParen,
+                Token.Variables.Parameter("x"),
+                Token.Puncuation.Colon,
+                Token.Literals.Numeric.Decimal("19"),
+                Token.Puncuation.Comma,
+                Token.Variables.Parameter("y"),
+                Token.Puncuation.Colon,
+                Token.Literals.Numeric.Decimal("23"),
+                Token.Puncuation.CloseParen,
+                Token.Puncuation.Semicolon
+            ]);
+        });
     });
 });

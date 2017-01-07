@@ -8,7 +8,6 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 # TODO List
 #
 # * Refinement and tests to ensure proper highlighting while typing
-# * Element access
 # * query expressions
 # * lambda expressions and anonymous functions
 # * array, collection and object initializers
@@ -117,6 +116,7 @@ repository:
     - include: '#expression-operators'
     - include: '#object-creation-expression'
     - include: '#invocation-expression'
+    - include: '#element-access-expression'
     - include: '#parenthesized-expression'
     - include: '#identifier'
 
@@ -1379,9 +1379,9 @@ repository:
           (?<type-params><([^<>]|\g<type-params>)+>)? 
           \s*\.\s*
         )*
-        (\g<identifier>)\s* # method name
-        (\g<type-params>)?  # type parameters
-        \s*\(               # open paren of argument list
+        (\g<identifier>)\s*   # method name
+        (\g<type-params>)?\s* # type parameters
+        \(                    # open paren of argument list
       )
     end: (?<=\))
     patterns:
@@ -1391,6 +1391,26 @@ repository:
       match: '[_$[:alpha:]][_$[:alnum:]]*'
     - include: '#type-parameters'
     - include: '#argument-list'
+
+  element-access-expression:
+    begin: |-
+      (?x)
+      (?=
+        ( # identifier or type name on left-hand side
+          (?<identifier>[_$[:alpha:]][_$[:alnum:]]*)\s*
+          (?<type-params><([^<>]|\g<type-params>)+>)?
+          \s*\.\s*
+        )*
+        (\g<identifier>)\s* # property name
+        \[                  # open square bracket of argument list
+      )
+    end: (?<=\])
+    patterns:
+    - include: '#member-access-expression'
+    - include: '#punctuation-accessor'
+    - name: variable.other.object.property.cs
+      match: '[_$[:alpha:]][_$[:alnum:]]*'
+    - include: '#bracketed-argument-list'
 
   member-access-expression:
     patterns:
@@ -1491,12 +1511,24 @@ repository:
     - include: '#argument'
     - include: '#punctuation-comma'
 
+  bracketed-argument-list:
+    begin: \[
+    beginCaptures:
+      '0': { name: punctuation.squarebracket.open.cs }
+    end: \]
+    endCaptures:
+      '0': { name: punctuation.squarebracket.close.cs }
+    patterns:
+    - include: '#named-argument'
+    - include: '#argument'
+    - include: '#punctuation-comma'
+
   named-argument:
     begin: ([_$[:alpha:]][_$[:alnum:]]*)\s*(:)
     beginCaptures:
       '1': { name: variable.parameter.cs }
       '2': { name: punctuation.separator.colon.cs }
-    end: (?=(,|\)))
+    end: (?=(,|\)|\]))
     patterns:
     - include: '#expression'
 
