@@ -331,6 +331,8 @@ export namespace Token {
         export const Alias = (text: string) => createToken(text, 'variable.other.alias.cs');
         export const EnumMember = (text: string) => createToken(text, 'variable.other.enummember.cs');
         export const Local = (text: string) => createToken(text, 'variable.local.cs');
+        export const Object = (text: string) => createToken(text, 'variable.other.object.cs');
+        export const Property = (text: string) => createToken(text, 'variable.other.object.property.cs');
         export const Parameter = (text: string) => createToken(text, 'variable.parameter.cs');
         export const ReadWrite = (text: string) => createToken(text, 'variable.other.readwrite.cs');
         export const Tuple = (text: string) => createToken(text, 'entity.name.variable.tuple.cs');

@@ -35,7 +35,7 @@ describe("Grammar", () => {
                 Token.Puncuation.OpenParen,
                 Token.Puncuation.CloseParen,
                 Token.Operators.Arrow,
-                Token.Variables.ReadWrite("Foo"),
+                Token.Identifiers.MethodName("Foo"),
                 Token.Puncuation.OpenParen,
                 Token.Puncuation.CloseParen,
                 Token.Puncuation.Semicolon]);
