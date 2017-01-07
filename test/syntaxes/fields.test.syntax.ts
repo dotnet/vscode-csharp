@@ -80,11 +80,11 @@ string _field3;`);
                 Token.Punctuation.Semicolon,
 
                 Token.Keywords.Modifiers.ReadOnly,
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("_field2"),
                 Token.Punctuation.Semicolon,
 
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("_field3"),
                 Token.Punctuation.Semicolon]);
         });
@@ -98,11 +98,11 @@ string[] field123;`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("field123"),
                 Token.Punctuation.Semicolon,
 
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Punctuation.OpenBracket,
                 Token.Punctuation.CloseBracket,
                 Token.Identifiers.FieldName("field123"),
@@ -119,7 +119,7 @@ const   bool   field = true;`);
 
             tokens.should.deep.equal([
                 Token.Keywords.Modifiers.Private,
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("field"),
                 Token.Operators.Assignment,
                 Token.Punctuation.String.Begin,
@@ -128,7 +128,7 @@ const   bool   field = true;`);
                 Token.Punctuation.Semicolon,
 
                 Token.Keywords.Modifiers.Const,
-                Token.Type("bool"),
+                Token.PrimitiveType.Bool,
                 Token.Identifiers.FieldName("field"),
                 Token.Operators.Assignment,
                 Token.Literals.Boolean.True,
@@ -141,7 +141,7 @@ const   bool   field = true;`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Identifiers.FieldName("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("19"),
@@ -163,9 +163,9 @@ const   bool   field = true;`);
 
             tokens.should.deep.equal([
                 Token.Punctuation.OpenParen,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Punctuation.Comma,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Punctuation.CloseParen,
                 Token.Identifiers.FieldName("x"),
                 Token.Punctuation.Semicolon]);
@@ -179,9 +179,9 @@ const   bool   field = true;`);
             tokens.should.deep.equal([
                 Token.Keywords.Modifiers.Private,
                 Token.Punctuation.OpenParen,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Punctuation.Comma,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Punctuation.CloseParen,
                 Token.Identifiers.FieldName("x"),
                 Token.Punctuation.Semicolon]);
@@ -194,10 +194,10 @@ const   bool   field = true;`);
 
             tokens.should.deep.equal([
                 Token.Punctuation.OpenParen,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Tuple("x"),
                 Token.Punctuation.Comma,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Tuple("y"),
                 Token.Punctuation.CloseParen,
                 Token.Identifiers.FieldName("z"),
@@ -212,10 +212,10 @@ const   bool   field = true;`);
             tokens.should.deep.equal([
                 Token.Keywords.Modifiers.Private,
                 Token.Punctuation.OpenParen,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Tuple("x"),
                 Token.Punctuation.Comma,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Tuple("y"),
                 Token.Punctuation.CloseParen,
                 Token.Identifiers.FieldName("z"),
@@ -268,18 +268,18 @@ private readonly Dictionary<string, int> languageToIndex = new Dictionary<string
                 Token.Keywords.Modifiers.ReadOnly,
                 Token.Type("Dictionary"),
                 Token.Punctuation.TypeParameters.Begin,
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Punctuation.Comma,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Punctuation.TypeParameters.End,
                 Token.Identifiers.FieldName("languageToIndex"),
                 Token.Operators.Assignment,
                 Token.Keywords.New,
                 Token.Type("Dictionary"),
                 Token.Punctuation.TypeParameters.Begin,
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Punctuation.Comma,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Punctuation.TypeParameters.End,
                 Token.Punctuation.OpenParen,
                 Token.Punctuation.CloseParen,

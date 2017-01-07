@@ -15,7 +15,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Local("x"),
                 Token.Punctuation.Semicolon
             ]);
@@ -26,7 +26,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Local("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("42"),
@@ -39,7 +39,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Local("x"),
                 Token.Punctuation.Comma,
                 Token.Variables.Local("y"),
@@ -52,7 +52,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Local("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("19"),
@@ -70,7 +70,7 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Keywords.Modifiers.Const,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Local("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("42"),
@@ -84,7 +84,7 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Keywords.Modifiers.Const,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Local("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("19"),

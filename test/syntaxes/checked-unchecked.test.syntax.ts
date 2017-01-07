@@ -43,7 +43,7 @@ unchecked
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Local("x"),
                 Token.Operators.Assignment,
                 Token.Keywords.Checked,
@@ -59,7 +59,7 @@ unchecked
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Local("x"),
                 Token.Operators.Assignment,
                 Token.Keywords.Unchecked,

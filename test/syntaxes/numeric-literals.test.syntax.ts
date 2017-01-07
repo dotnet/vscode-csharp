@@ -16,7 +16,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Identifiers.FieldName("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("0"),
@@ -29,7 +29,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Identifiers.FieldName("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Hexadecimal("0x0"),
@@ -42,7 +42,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Identifiers.FieldName("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Binary("0b0"),
@@ -55,7 +55,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("float"),
+                Token.PrimitiveType.Float,
                 Token.Identifiers.FieldName("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("0.0"),

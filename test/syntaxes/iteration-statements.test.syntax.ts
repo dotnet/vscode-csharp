@@ -49,7 +49,7 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Keywords.For,
                 Token.Punctuation.OpenParen,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Local("i"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("0"),
@@ -78,7 +78,7 @@ for (int i = 0; i < 42; i++)
             tokens.should.deep.equal([
                 Token.Keywords.For,
                 Token.Punctuation.OpenParen,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Local("i"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("0"),
@@ -109,7 +109,7 @@ for (int i = 0; i < 42; i++)
             tokens.should.deep.equal([
                 Token.Keywords.For,
                 Token.Punctuation.OpenParen,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Local("i"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("0"),
@@ -136,7 +136,7 @@ for (int i = 0; i < 42; i++)
             tokens.should.deep.equal([
                 Token.Keywords.ForEach,
                 Token.Punctuation.OpenParen,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Local("i"),
                 Token.Keywords.In,
                 Token.Variables.ReadWrite("numbers"),

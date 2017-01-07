@@ -16,7 +16,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
                 Token.Punctuation.InterpolatedString.Begin,
@@ -39,7 +39,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
                 Token.Punctuation.InterpolatedString.Begin,
@@ -54,7 +54,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
                 Token.Punctuation.InterpolatedString.Begin,
@@ -69,7 +69,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
                 Token.Punctuation.InterpolatedString.Begin,
@@ -94,7 +94,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
                 Token.Punctuation.InterpolatedString.Begin,
@@ -111,7 +111,7 @@ world!";`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
                 Token.Punctuation.InterpolatedString.Begin,
@@ -131,7 +131,7 @@ world!";`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
                 Token.Punctuation.InterpolatedString.VerbatimBegin,
@@ -154,7 +154,7 @@ world!";`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
                 Token.Punctuation.InterpolatedString.VerbatimBegin,
@@ -183,7 +183,7 @@ world {two}!";`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
                 Token.Punctuation.InterpolatedString.VerbatimBegin,
@@ -208,7 +208,7 @@ world!";`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
                 Token.Punctuation.InterpolatedString.VerbatimBegin,

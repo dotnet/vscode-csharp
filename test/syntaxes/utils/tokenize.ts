@@ -340,6 +340,25 @@ export namespace Token {
        }
     }
 
+    export namespace PrimitiveType {
+        export const Bool = createToken('bool', 'keyword.type.cs');
+        export const Byte = createToken('byte', 'keyword.type.cs');
+        export const Char = createToken('char', 'keyword.type.cs');
+        export const Decimal = createToken('decimal', 'keyword.type.cs');
+        export const Double = createToken('double', 'keyword.type.cs');
+        export const Float = createToken('float', 'keyword.type.cs');
+        export const Int = createToken('int', 'keyword.type.cs');
+        export const Long = createToken('long', 'keyword.type.cs');
+        export const Object = createToken('object', 'keyword.type.cs');
+        export const SByte = createToken('sbyte', 'keyword.type.cs');
+        export const Short = createToken('short', 'keyword.type.cs');
+        export const String = createToken('string', 'keyword.type.cs');
+        export const UInt = createToken('uint', 'keyword.type.cs');
+        export const ULong = createToken('ulong', 'keyword.type.cs');
+        export const UShort = createToken('ushort', 'keyword.type.cs');
+        export const Void = createToken('void', 'keyword.type.cs');
+    }
+
     export namespace Punctuation {
         export const Accessor = createToken('.', 'punctuation.accessor.cs');
         export const CloseBrace = createToken('}', 'punctuation.curlybrace.close.cs');

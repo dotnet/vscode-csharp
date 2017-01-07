@@ -12,6 +12,7 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 # * lambda expressions and anonymous functions
 # * object creation with object initializer and no parentheses
 # * compound assignement
+# * nullable types
 # * char literals
 # * verbatim identifiers
 # * unsafe code: fixed, sizeof, unsafe blocks, unsafe keyword
@@ -1653,9 +1654,9 @@ repository:
       '3': { name: entity.name.variable.tuple.cs }
 
   type-builtin:
-    match: \b(bool|byte|char|decimal|double|float|int|long|object|sbyte|short|string|uint|ulong|ushort)\b
+    match: \b(bool|byte|char|decimal|double|float|int|long|object|sbyte|short|string|uint|ulong|ushort|void)\b
     captures:
-      '1': { name: storage.type.cs }
+      '1': { name: keyword.type.cs }
 
   type-name:
     patterns:

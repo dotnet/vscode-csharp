@@ -125,7 +125,7 @@ describe("Grammar", () => {
                 Token.Operators.Assignment,
                 Token.Variables.Object("C"),
                 Token.Punctuation.TypeParameters.Begin,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Punctuation.TypeParameters.End,
                 Token.Punctuation.Accessor,
                 Token.Variables.Property("P"),
@@ -147,7 +147,7 @@ describe("Grammar", () => {
                 Token.Punctuation.Accessor,
                 Token.Variables.Object("C"),
                 Token.Punctuation.TypeParameters.Begin,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Punctuation.TypeParameters.End,
                 Token.Punctuation.Accessor,
                 Token.Variables.Property("P"),
@@ -165,7 +165,7 @@ a1[1] = ((this.a)); a1[2] = (c); a1[1] = (i);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("object"),
+                Token.PrimitiveType.Object,
                 Token.Punctuation.OpenBracket,
                 Token.Punctuation.CloseBracket,
                 Token.Variables.Local("a1"),

@@ -16,7 +16,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("object"),
+                Token.PrimitiveType.Object,
                 Token.Identifiers.FieldName("x"),
                 Token.Punctuation.Semicolon]);
         });
@@ -56,9 +56,9 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Punctuation.OpenParen,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Punctuation.Comma,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Punctuation.CloseParen,
                 Token.Identifiers.FieldName("x"),
                 Token.Punctuation.Semicolon]);
@@ -72,7 +72,7 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Type("List"),
                 Token.Punctuation.TypeParameters.Begin,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Punctuation.TypeParameters.End,
                 Token.Identifiers.FieldName("x"),
                 Token.Punctuation.Semicolon]);
@@ -87,9 +87,9 @@ describe("Grammar", () => {
                 Token.Type("List"),
                 Token.Punctuation.TypeParameters.Begin,
                 Token.Punctuation.OpenParen,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Punctuation.Comma,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Punctuation.CloseParen,
                 Token.Punctuation.TypeParameters.End,
                 Token.Identifiers.FieldName("x"),
@@ -104,9 +104,9 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Type("Dictionary"),
                 Token.Punctuation.TypeParameters.Begin,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Punctuation.Comma,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Punctuation.TypeParameters.End,
                 Token.Identifiers.FieldName("x"),
                 Token.Punctuation.Semicolon]);
@@ -126,7 +126,7 @@ describe("Grammar", () => {
                 Token.Punctuation.Accessor,
                 Token.Type("List"),
                 Token.Punctuation.TypeParameters.Begin,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Punctuation.TypeParameters.End,
                 Token.Identifiers.FieldName("x"),
                 Token.Punctuation.Semicolon]);
@@ -140,7 +140,7 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Type("List"),
                 Token.Punctuation.TypeParameters.Begin,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Punctuation.TypeParameters.End,
                 Token.Punctuation.Accessor,
                 Token.Type("Enumerator"),

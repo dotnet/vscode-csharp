@@ -22,10 +22,10 @@ public string this[int index]
 
             tokens.should.deep.equal([
                 Token.Keywords.Modifiers.Public,
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Keywords.This,
                 Token.Punctuation.OpenBracket,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Parameter("index"),
                 Token.Punctuation.CloseBracket,
                 Token.Punctuation.OpenBrace,
@@ -48,15 +48,15 @@ public string this[int index]
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Type("IFoo"),
                 Token.Punctuation.TypeParameters.Begin,
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Punctuation.TypeParameters.End,
                 Token.Punctuation.Accessor,
                 Token.Keywords.This,
                 Token.Punctuation.OpenBracket,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Parameter("index"),
                 Token.Punctuation.CloseBracket,
                 Token.Punctuation.Semicolon]);
@@ -68,10 +68,10 @@ public string this[int index]
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Keywords.This,
                 Token.Punctuation.OpenBracket,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Parameter("index"),
                 Token.Punctuation.CloseBracket,
                 Token.Punctuation.OpenBrace,
@@ -88,10 +88,10 @@ public string this[int index]
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Keywords.This,
                 Token.Punctuation.OpenBracket,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Parameter("index"),
                 Token.Punctuation.CloseBracket,
                 Token.Punctuation.OpenBrace,
@@ -106,10 +106,10 @@ public string this[int index]
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Keywords.This,
                 Token.Punctuation.OpenBracket,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Parameter("index"),
                 Token.Punctuation.CloseBracket,
                 Token.Punctuation.OpenBrace,

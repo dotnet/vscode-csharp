@@ -24,7 +24,7 @@ describe("Grammar", () => {
                 Token.Variables.ReadWrite("s"),
                 Token.Punctuation.Comma,
                 Token.Keywords.New,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Punctuation.OpenBracket,
                 Token.Punctuation.CloseBracket,
                 Token.Punctuation.OpenBrace,

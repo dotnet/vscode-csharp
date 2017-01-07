@@ -150,7 +150,7 @@ public IBooom Property
                 Token.Keywords.Modifiers.Public,
                 Token.Type("Dictionary"),
                 Token.Punctuation.TypeParameters.Begin,
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Punctuation.Comma,
                 Token.Type("List"),
                 Token.Punctuation.TypeParameters.Begin,
@@ -177,7 +177,7 @@ public IBooom Property
                 Token.Keywords.Modifiers.Public,
                 Token.Type("Dictionary"),
                 Token.Punctuation.TypeParameters.Begin,
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Punctuation.Comma,
                 Token.Type("List"),
                 Token.Punctuation.TypeParameters.Begin,
@@ -195,7 +195,7 @@ public IBooom Property
                 Token.Keywords.New,
                 Token.Type("Dictionary"),
                 Token.Punctuation.TypeParameters.Begin,
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Punctuation.Comma,
                 Token.Type("List"),
                 Token.Punctuation.TypeParameters.Begin,
@@ -218,7 +218,7 @@ private bool   prop2 => true;`);
 
             tokens.should.deep.equal([
                 Token.Keywords.Modifiers.Private,
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.PropertyName("prop1"),
                 Token.Operators.Arrow,
                 Token.Punctuation.String.Begin,
@@ -227,7 +227,7 @@ private bool   prop2 => true;`);
                 Token.Punctuation.Semicolon,
 
                 Token.Keywords.Modifiers.Private,
-                Token.Type("bool"),
+                Token.PrimitiveType.Bool,
                 Token.Identifiers.PropertyName("prop2"),
                 Token.Operators.Arrow,
                 Token.Literals.Boolean.True,
@@ -240,10 +240,10 @@ private bool   prop2 => true;`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Type("IFoo"),
                 Token.Punctuation.TypeParameters.Begin,
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Punctuation.TypeParameters.End,
                 Token.Punctuation.Accessor,
                 Token.Identifiers.PropertyName("Bar"),
@@ -261,7 +261,7 @@ private bool   prop2 => true;`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.PropertyName("Bar"),
                 Token.Punctuation.OpenBrace,
                 Token.Keywords.Get,
@@ -277,7 +277,7 @@ private bool   prop2 => true;`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.PropertyName("Bar"),
                 Token.Punctuation.OpenBrace,
                 Token.Keywords.Get,
@@ -291,7 +291,7 @@ private bool   prop2 => true;`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.PropertyName("Bar"),
                 Token.Punctuation.OpenBrace,
                 Token.Keywords.Set,

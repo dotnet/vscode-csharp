@@ -31,7 +31,7 @@ describe("Grammar", () => {
                 Token.Keywords.Enum,
                 Token.Identifiers.EnumName("E"),
                 Token.Punctuation.Colon,
-                Token.Type("byte"),
+                Token.PrimitiveType.Byte,
                 Token.Punctuation.OpenBrace,
                 Token.Punctuation.CloseBrace]);
         });

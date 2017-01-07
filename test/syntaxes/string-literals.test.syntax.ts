@@ -16,7 +16,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
                 Token.Punctuation.String.Begin,
@@ -31,7 +31,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
                 Token.Punctuation.String.Begin,
@@ -51,7 +51,7 @@ world!";`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
                 Token.Punctuation.String.Begin,
@@ -71,7 +71,7 @@ world!";`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
                 Token.Punctuation.String.VerbatimBegin,
@@ -86,7 +86,7 @@ world!";`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
                 Token.Punctuation.String.VerbatimBegin,
@@ -106,7 +106,7 @@ world!";`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
                 Token.Punctuation.String.VerbatimBegin,

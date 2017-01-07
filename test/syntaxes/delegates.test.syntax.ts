@@ -17,7 +17,7 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Keywords.Delegate,
-                Token.Type("void"),
+                Token.PrimitiveType.Void,
                 Token.Identifiers.DelegateName("D"),
                 Token.Punctuation.OpenParen,
                 Token.Punctuation.CloseParen,
@@ -58,7 +58,7 @@ delegate void D<T1, T2>()
 
             tokens.should.deep.equal([
                 Token.Keywords.Delegate,
-                Token.Type("void"),
+                Token.PrimitiveType.Void,
                 Token.Identifiers.DelegateName("D"),
                 Token.Punctuation.TypeParameters.Begin,
                 Token.Identifiers.TypeParameterName("T1"),
@@ -81,7 +81,7 @@ delegate void D<T1, T2>()
 
             tokens.should.deep.equal([
                 Token.Keywords.Delegate,
-                Token.Type("void"),
+                Token.PrimitiveType.Void,
                 Token.Identifiers.DelegateName("D"),
                 Token.Punctuation.TypeParameters.Begin,
                 Token.Punctuation.OpenBracket,
@@ -106,19 +106,19 @@ delegate void D<T1, T2>()
 
             tokens.should.deep.equal([
                 Token.Keywords.Delegate,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Identifiers.DelegateName("D"),
                 Token.Punctuation.OpenParen,
                 Token.Keywords.Modifiers.Ref,
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Variables.Parameter("x"),
                 Token.Punctuation.Comma,
                 Token.Keywords.Modifiers.Out,
-                Token.Type("int"),
+                Token.PrimitiveType.Int,
                 Token.Variables.Parameter("y"),
                 Token.Punctuation.Comma,
                 Token.Keywords.Modifiers.Params,
-                Token.Type("object"),
+                Token.PrimitiveType.Object,
                 Token.Punctuation.OpenBracket,
                 Token.Punctuation.CloseBracket,
                 Token.Variables.Parameter("z"),

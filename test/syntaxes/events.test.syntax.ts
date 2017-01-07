@@ -114,7 +114,7 @@ public event Type Event
                 Token.Type("EventHandler"),
                 Token.Type("IFoo"),
                 Token.Punctuation.TypeParameters.Begin,
-                Token.Type("string"),
+                Token.PrimitiveType.String,
                 Token.Punctuation.TypeParameters.End,
                 Token.Punctuation.Accessor,
                 Token.Identifiers.EventName("Event"),

@@ -101,7 +101,7 @@ private char GetChar()//Метод возвращающий
 
             tokens.should.deep.equal([
                 Token.Keywords.Modifiers.Private,
-                Token.Type("char"),
+                Token.PrimitiveType.Char,
                 Token.Identifiers.MethodName("GetChar"),
                 Token.Punctuation.OpenParen,
                 Token.Punctuation.CloseParen,
