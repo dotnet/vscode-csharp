@@ -92,5 +92,77 @@ enum E
                 Token.Variables.EnumMember("Value3"),
                 Token.Punctuation.CloseBrace]);
         });
+
+        it("enum members are highligted properly (issue #1108)", () => {
+
+            const input = `
+public enum TestEnum
+{
+    enum1,
+    enum2,
+    enum3,
+    enum4
+}
+
+public class TestClass
+{
+
+}
+
+public enum TestEnum2
+{
+    enum1 = 10,
+    enum2 = 15,
+}
+
+public class TestClass2
+{
+
+}
+`;
+
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Enum,
+                Token.Identifiers.EnumName("TestEnum"),
+                Token.Punctuation.OpenBrace,
+                Token.Variables.EnumMember("enum1"),
+                Token.Punctuation.Comma,
+                Token.Variables.EnumMember("enum2"),
+                Token.Punctuation.Comma,
+                Token.Variables.EnumMember("enum3"),
+                Token.Punctuation.Comma,
+                Token.Variables.EnumMember("enum4"),
+                Token.Punctuation.CloseBrace,
+
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Class,
+                Token.Identifiers.ClassName("TestClass"),
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
+
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Enum,
+                Token.Identifiers.EnumName("TestEnum2"),
+                Token.Punctuation.OpenBrace,
+                Token.Variables.EnumMember("enum1"),
+                Token.Operators.Assignment,
+                Token.Literals.Numeric.Decimal("10"),
+                Token.Punctuation.Comma,
+                Token.Variables.EnumMember("enum2"),
+                Token.Operators.Assignment,
+                Token.Literals.Numeric.Decimal("15"),
+                Token.Punctuation.Comma,
+                Token.Punctuation.CloseBrace,
+
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Class,
+                Token.Identifiers.ClassName("TestClass2"),
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace
+            ]);
+        });
     });
 });
