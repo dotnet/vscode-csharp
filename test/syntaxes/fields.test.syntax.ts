@@ -221,7 +221,33 @@ const   bool   field = true;`);
                 Token.Identifiers.FieldName("z"),
                 Token.Punctuation.Semicolon]);
         });
+
+        it("Fields with fully-qualified names are highlighted properly (issue #1097)", () => {
+
+            const input = Input.InClass(`
+private CanvasGroup[] groups;
+private UnityEngine.UI.Image[] selectedImages;
+`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Private,
+                Token.Type("CanvasGroup"),
+                Token.Punctuation.OpenBracket,
+                Token.Punctuation.CloseBracket,
+                Token.Identifiers.FieldName("groups"),
+                Token.Punctuation.Semicolon,
+                Token.Keywords.Modifiers.Private,
+                Token.Type("UnityEngine"),
+                Token.Punctuation.Accessor,
+                Token.Type("UI"),
+                Token.Punctuation.Accessor,
+                Token.Type("Image"),
+                Token.Punctuation.OpenBracket,
+                Token.Punctuation.CloseBracket,
+                Token.Identifiers.FieldName("selectedImages"),
+                Token.Punctuation.Semicolon
+            ]);
+        });
     });
 });
-
-
