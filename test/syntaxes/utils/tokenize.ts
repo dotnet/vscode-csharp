@@ -65,6 +65,19 @@ export class Input {
         return new Input(lines, { startLine: 0, startIndex: 0, endLine: lines.length - 1, endIndex: lines[lines.length - 1].length });
     }
 
+    public static InEnum(input: string) {
+        let text = `
+enum TestEnum {
+    ${input}
+}`;
+
+        // ensure consistent line-endings irrelevant of OS
+        text = text.replace('\r\n', '\n');
+        let lines = text.split('\n');
+
+        return new Input(lines, { startLine: 2, startIndex: 4, endLine: lines.length - 1, endIndex: 0 });
+    }
+
     public static InClass(input: string) {
         let text = `
 class TestClass {
@@ -109,6 +122,19 @@ class TestClass {
     public static InNamespace(input: string) {
         let text = `
 namespace TestNamespace {
+    ${input}
+}`;
+
+        // ensure consistent line-endings irrelevant of OS
+        text = text.replace('\r\n', '\n');
+        let lines = text.split('\n');
+
+        return new Input(lines, { startLine: 2, startIndex: 4, endLine: lines.length - 1, endIndex: 0 });
+    }
+
+    public static InStruct(input: string) {
+        let text = `
+struct TestStruct {
     ${input}
 }`;
 

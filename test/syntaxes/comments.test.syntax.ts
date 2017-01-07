@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { tokenize, Token } from './utils/tokenize';
+import { tokenize, Input, Token } from './utils/tokenize';
 
 describe("Grammar", () => {
     before(() => should());
@@ -40,6 +40,66 @@ describe("Grammar", () => {
                 Token.Comment.MultiLine.Start,
                 Token.Comment.MultiLine.Text(" foo "),
                 Token.Comment.MultiLine.End]);
+        });
+
+        it("in namespace", () => {
+
+            const input = Input.InNamespace(`// foo`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Comment.SingleLine.Start,
+                Token.Comment.SingleLine.Text(" foo")]);
+        });
+
+        it("in class", () => {
+
+            const input = Input.InClass(`// foo`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Comment.SingleLine.Start,
+                Token.Comment.SingleLine.Text(" foo")]);
+        });
+
+        it("in enum", () => {
+
+            const input = Input.InEnum(`// foo`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Comment.SingleLine.Start,
+                Token.Comment.SingleLine.Text(" foo")]);
+        });
+
+        it("in interface", () => {
+
+            const input = Input.InInterface(`// foo`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Comment.SingleLine.Start,
+                Token.Comment.SingleLine.Text(" foo")]);
+        });
+
+        it("in struct", () => {
+
+            const input = Input.InStruct(`// foo`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Comment.SingleLine.Start,
+                Token.Comment.SingleLine.Text(" foo")]);
+        });
+
+        it("in method", () => {
+
+            const input = Input.InMethod(`// foo`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Comment.SingleLine.Start,
+                Token.Comment.SingleLine.Text(" foo")]);
         });
     });
 });

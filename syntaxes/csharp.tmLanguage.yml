@@ -36,6 +36,7 @@ repository:
 
   type-declarations:
     patterns:
+    - include: '#comment'
     - include: '#storage-modifier'
     - include: '#class-declaration'
     - include: '#delegate-declaration'
@@ -47,6 +48,7 @@ repository:
 
   class-members:
     patterns:
+    - include: '#comment'
     - include: '#storage-modifier'
     - include: '#type-declarations'
     - include: '#event-declaration'
@@ -64,6 +66,7 @@ repository:
 
   struct-members:
     patterns:
+    - include: '#comment'
     - include: '#storage-modifier'
     - include: '#type-declarations'
     - include: '#event-declaration'
@@ -81,6 +84,7 @@ repository:
 
   interface-members:
     patterns:
+    - include: '#comment'
     - include: '#event-declaration'
     - include: '#property-declaration'
     - include: '#indexer-declaration'
