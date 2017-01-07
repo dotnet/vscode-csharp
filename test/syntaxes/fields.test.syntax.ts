@@ -249,5 +249,75 @@ private UnityEngine.UI.Image[] selectedImages;
                 Token.Punctuation.Semicolon
             ]);
         });
+
+        it("Fields with dictionary initializer highlights properly (issue #1096)", () => {
+
+            const input = Input.InClass(`
+private readonly Dictionary<string, int> languageToIndex = new Dictionary<string, int>()
+{
+    {"Simplified Chinese", 0},
+    {"English", 1},
+    {"Japanese", 2},
+    {"Korean", 3}
+};
+`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Private,
+                Token.Keywords.Modifiers.ReadOnly,
+                Token.Type("Dictionary"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Type("string"),
+                Token.Punctuation.Comma,
+                Token.Type("int"),
+                Token.Punctuation.TypeParameters.End,
+                Token.Identifiers.FieldName("languageToIndex"),
+                Token.Operators.Assignment,
+                Token.Keywords.New,
+                Token.Type("Dictionary"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Type("string"),
+                Token.Punctuation.Comma,
+                Token.Type("int"),
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.String.Begin,
+                Token.Literals.String("Simplified Chinese"),
+                Token.Punctuation.String.End,
+                Token.Punctuation.Comma,
+                Token.Literals.Numeric.Decimal("0"),
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.Comma,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.String.Begin,
+                Token.Literals.String("English"),
+                Token.Punctuation.String.End,
+                Token.Punctuation.Comma,
+                Token.Literals.Numeric.Decimal("1"),
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.Comma,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.String.Begin,
+                Token.Literals.String("Japanese"),
+                Token.Punctuation.String.End,
+                Token.Punctuation.Comma,
+                Token.Literals.Numeric.Decimal("2"),
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.Comma,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.String.Begin,
+                Token.Literals.String("Korean"),
+                Token.Punctuation.String.End,
+                Token.Punctuation.Comma,
+                Token.Literals.Numeric.Decimal("3"),
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.Semicolon
+            ]);
+        });
     });
 });
