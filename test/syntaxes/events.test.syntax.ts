@@ -20,7 +20,7 @@ describe("Grammar", () => {
                 Token.Keywords.Event,
                 Token.Type("Type"),
                 Token.Identifiers.EventName("Event"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("declaration with multiple modifiers", () => {
@@ -34,7 +34,7 @@ describe("Grammar", () => {
                 Token.Keywords.Event,
                 Token.Type("Type"),
                 Token.Identifiers.EventName("Event"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("declaration with multiple declarators", () => {
@@ -47,9 +47,9 @@ describe("Grammar", () => {
                 Token.Keywords.Event,
                 Token.Type("Type"),
                 Token.Identifiers.EventName("Event1"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Identifiers.EventName("Event2"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("generic", () => {
@@ -61,21 +61,21 @@ describe("Grammar", () => {
                 Token.Keywords.Modifiers.Public,
                 Token.Keywords.Event,
                 Token.Type("EventHandler"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("List"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("T"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.Comma,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.Comma,
                 Token.Type("Dictionary"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("T"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("D"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.TypeParameters.End,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.TypeParameters.End,
                 Token.Identifiers.EventName("Event"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("declaration with accessors", () => {
@@ -94,14 +94,14 @@ public event Type Event
                 Token.Keywords.Event,
                 Token.Type("Type"),
                 Token.Identifiers.EventName("Event"),
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Add,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
                 Token.Keywords.Remove,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("explicitly-implemented interface member", () => {
@@ -113,17 +113,17 @@ public event Type Event
                 Token.Keywords.Event,
                 Token.Type("EventHandler"),
                 Token.Type("IFoo"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("string"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.Accessor,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.Accessor,
                 Token.Identifiers.EventName("Event"),
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Add,
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Keywords.Remove,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("declaration in interface", () => {
@@ -135,7 +135,7 @@ public event Type Event
                 Token.Keywords.Event,
                 Token.Type("EventHandler"),
                 Token.Identifiers.EventName("Event"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
     });
 });

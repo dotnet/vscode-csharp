@@ -20,7 +20,7 @@ describe("Grammar", () => {
                 Token.Identifiers.FieldName("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Boolean.True,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("false", () => {
@@ -33,7 +33,7 @@ describe("Grammar", () => {
                 Token.Identifiers.FieldName("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Boolean.False,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
     });
 });

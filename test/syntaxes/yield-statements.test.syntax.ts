@@ -18,7 +18,7 @@ describe("Grammar", () => {
                 Token.Keywords.Yield,
                 Token.Keywords.Return,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.Semicolon
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -29,7 +29,7 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Keywords.Yield,
                 Token.Keywords.Break,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.Semicolon
             ]);
         });
     });

@@ -21,8 +21,8 @@ namespace TestNamespace
             tokens.should.deep.equal([
                 Token.Keywords.Namespace,
                 Token.Identifiers.NamespaceName("TestNamespace"),
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("has a namespace keyword and a dotted name", () => {
@@ -36,10 +36,10 @@ namespace Test.Namespace
             tokens.should.deep.equal([
                 Token.Keywords.Namespace,
                 Token.Identifiers.NamespaceName("Test"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Identifiers.NamespaceName("Namespace"),
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("can be nested", () => {
@@ -56,14 +56,14 @@ namespace TestNamespace
             tokens.should.deep.equal([
                 Token.Keywords.Namespace,
                 Token.Identifiers.NamespaceName("TestNamespace"),
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
 
                 Token.Keywords.Namespace,
                 Token.Identifiers.NamespaceName("NestedNamespace"),
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
 
-                Token.Puncuation.CloseBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("can contain using statements", () => {
@@ -88,50 +88,50 @@ namespace TestNamespace
             tokens.should.deep.equal([
                 Token.Keywords.Using,
                 Token.Identifiers.NamespaceName("UsingOne"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
 
                 Token.Keywords.Using,
                 Token.Identifiers.AliasName("one"),
                 Token.Operators.Assignment,
                 Token.Type("UsingOne"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("Something"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
 
                 Token.Keywords.Namespace,
                 Token.Identifiers.NamespaceName("TestNamespace"),
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
 
                 Token.Keywords.Using,
                 Token.Identifiers.NamespaceName("UsingTwo"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
 
                 Token.Keywords.Using,
                 Token.Identifiers.AliasName("two"),
                 Token.Operators.Assignment,
                 Token.Type("UsingTwo"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("Something"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
 
                 Token.Keywords.Namespace,
                 Token.Identifiers.NamespaceName("NestedNamespace"),
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
 
                 Token.Keywords.Using,
                 Token.Identifiers.NamespaceName("UsingThree"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
 
                 Token.Keywords.Using,
                 Token.Identifiers.AliasName("three"),
                 Token.Operators.Assignment,
                 Token.Type("UsingThree"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("Something"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
 
-                Token.Puncuation.CloseBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseBrace]);
         });
     });
 });

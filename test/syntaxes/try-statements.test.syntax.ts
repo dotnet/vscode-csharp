@@ -22,11 +22,11 @@ finally
 
             tokens.should.deep.equal([
                 Token.Keywords.Try,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
                 Token.Keywords.Finally,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace
             ]);
         });
 
@@ -42,11 +42,11 @@ catch
 
             tokens.should.deep.equal([
                 Token.Keywords.Try,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
                 Token.Keywords.Catch,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace
             ]);
         });
 
@@ -65,14 +65,14 @@ finally
 
             tokens.should.deep.equal([
                 Token.Keywords.Try,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
                 Token.Keywords.Catch,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
                 Token.Keywords.Finally,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace
             ]);
         });
 
@@ -88,14 +88,14 @@ catch (Exception)
 
             tokens.should.deep.equal([
                 Token.Keywords.Try,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
                 Token.Keywords.Catch,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("Exception"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace
             ]);
         });
 
@@ -111,15 +111,15 @@ catch (Exception ex)
 
             tokens.should.deep.equal([
                 Token.Keywords.Try,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
                 Token.Keywords.Catch,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("Exception"),
                 Token.Variables.Local("ex"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace
             ]);
         });
 
@@ -136,21 +136,21 @@ catch when (true)
 
             tokens.should.deep.equal([
                 Token.Keywords.Try,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Throw,
                 Token.Keywords.New,
                 Token.Type("Exception"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace,
                 Token.Keywords.Catch,
                 Token.Keywords.When,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Boolean.True,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace
             ]);
         });
 
@@ -166,18 +166,18 @@ catch (Exception) when (true)
 
             tokens.should.deep.equal([
                 Token.Keywords.Try,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
                 Token.Keywords.Catch,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("Exception"),
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Keywords.When,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Boolean.True,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace
             ]);
         });
     });

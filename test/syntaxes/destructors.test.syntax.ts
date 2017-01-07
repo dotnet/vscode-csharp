@@ -16,12 +16,12 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Puncuation.Tilde,
+                Token.Punctuation.Tilde,
                 Token.Identifiers.MethodName("TestClass"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("with expression body", () => {
@@ -30,15 +30,15 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Puncuation.Tilde,
+                Token.Punctuation.Tilde,
                 Token.Identifiers.MethodName("TestClass"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
                 Token.Operators.Arrow,
                 Token.Identifiers.MethodName("Foo"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon]);
         });
     });
 });

@@ -19,10 +19,10 @@ describe("Grammar", () => {
                 Token.Type("string"),
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
-                Token.Puncuation.String.Begin,
+                Token.Punctuation.String.Begin,
                 Token.Literals.String("hello world!"),
-                Token.Puncuation.String.End,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.String.End,
+                Token.Punctuation.Semicolon]);
         });
 
         it("escaped double-quote", () => {
@@ -34,13 +34,13 @@ describe("Grammar", () => {
                 Token.Type("string"),
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
-                Token.Puncuation.String.Begin,
+                Token.Punctuation.String.Begin,
                 Token.Literals.String("hello "),
                 Token.Literals.CharacterEscape("\\\""),
                 Token.Literals.String("world!"),
                 Token.Literals.CharacterEscape("\\\""),
-                Token.Puncuation.String.End,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.String.End,
+                Token.Punctuation.Semicolon]);
         });
 
         it("line break before close quote", () => {
@@ -54,14 +54,14 @@ world!";`);
                 Token.Type("string"),
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
-                Token.Puncuation.String.Begin,
+                Token.Punctuation.String.Begin,
                 Token.Literals.String("hello"),
 
                 // Note: Because the string ended prematurely, the rest of this line and the contents of the next are junk.
                 Token.IllegalNewLine(" "),
                 Token.Variables.ReadWrite("world"),
                 Token.Operators.Logical.Not,
-                Token.Puncuation.String.Begin,
+                Token.Punctuation.String.Begin,
                 Token.IllegalNewLine(";")]);
         });
 
@@ -74,10 +74,10 @@ world!";`);
                 Token.Type("string"),
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
-                Token.Puncuation.String.VerbatimBegin,
+                Token.Punctuation.String.VerbatimBegin,
                 Token.Literals.String("hello world!"),
-                Token.Puncuation.String.End,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.String.End,
+                Token.Punctuation.Semicolon]);
         });
 
         it("escaped double-quote (verbatim)", () => {
@@ -89,13 +89,13 @@ world!";`);
                 Token.Type("string"),
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
-                Token.Puncuation.String.VerbatimBegin,
+                Token.Punctuation.String.VerbatimBegin,
                 Token.Literals.String("hello "),
                 Token.Literals.CharacterEscape("\"\""),
                 Token.Literals.String("world!"),
                 Token.Literals.CharacterEscape("\"\""),
-                Token.Puncuation.String.End,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.String.End,
+                Token.Punctuation.Semicolon]);
         });
 
         it("line break before close quote (verbatim)", () => {
@@ -109,11 +109,11 @@ world!";`);
                 Token.Type("string"),
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
-                Token.Puncuation.String.VerbatimBegin,
+                Token.Punctuation.String.VerbatimBegin,
                 Token.Literals.String("hello "),
                 Token.Literals.String("world!"),
-                Token.Puncuation.String.End,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.String.End,
+                Token.Punctuation.Semicolon]);
         });
     });
 });

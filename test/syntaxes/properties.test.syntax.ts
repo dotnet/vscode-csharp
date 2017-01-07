@@ -24,21 +24,21 @@ public IBooom Property
                 Token.Keywords.Modifiers.Public,
                 Token.Type("IBooom"),
                 Token.Identifiers.PropertyName("Property"),
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Get,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Literals.Null,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace,
                 Token.Keywords.Set,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Variables.ReadWrite("something"),
                 Token.Operators.Assignment,
                 Token.Variables.ReadWrite("value"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("declaration single line", () => {
@@ -50,22 +50,22 @@ public IBooom Property
                 Token.Keywords.Modifiers.Public,
                 Token.Type("IBooom"),
                 Token.Identifiers.PropertyName("Property"),
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Get,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Literals.Null,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace,
                 Token.Keywords.Modifiers.Private,
                 Token.Keywords.Set,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Variables.ReadWrite("something"),
                 Token.Operators.Assignment,
                 Token.Variables.ReadWrite("value"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("declaration without modifiers", () => {
@@ -76,12 +76,12 @@ public IBooom Property
             tokens.should.deep.equal([
                 Token.Type("IBooom"),
                 Token.Identifiers.PropertyName("Property"),
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Get,
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Keywords.Set,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("auto-property single line", function () {
@@ -93,12 +93,12 @@ public IBooom Property
                 Token.Keywords.Modifiers.Public,
                 Token.Type("IBooom"),
                 Token.Identifiers.PropertyName("Property"),
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Get,
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Keywords.Set,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("auto-property single line (protected internal)", function () {
@@ -111,12 +111,12 @@ public IBooom Property
                 Token.Keywords.Modifiers.Internal,
                 Token.Type("IBooom"),
                 Token.Identifiers.PropertyName("Property"),
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Get,
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Keywords.Set,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("auto-property", () => {
@@ -133,12 +133,12 @@ public IBooom Property
                 Token.Keywords.Modifiers.Public,
                 Token.Type("IBooom"),
                 Token.Identifiers.PropertyName("Property"),
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Get,
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Keywords.Set,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("generic auto-property", () => {
@@ -149,23 +149,23 @@ public IBooom Property
             tokens.should.deep.equal([
                 Token.Keywords.Modifiers.Public,
                 Token.Type("Dictionary"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("string"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("List"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("T"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.OpenBracket,
-                Token.Puncuation.CloseBracket,
-                Token.Puncuation.TypeParameters.End,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.OpenBracket,
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.TypeParameters.End,
                 Token.Identifiers.PropertyName("Property"),
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Get,
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Keywords.Set,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("auto-property initializer", () => {
@@ -176,37 +176,37 @@ public IBooom Property
             tokens.should.deep.equal([
                 Token.Keywords.Modifiers.Public,
                 Token.Type("Dictionary"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("string"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("List"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("T"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.OpenBracket,
-                Token.Puncuation.CloseBracket,
-                Token.Puncuation.TypeParameters.End,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.OpenBracket,
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.TypeParameters.End,
                 Token.Identifiers.PropertyName("Property"),
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Get,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace,
                 Token.Operators.Assignment,
                 Token.Keywords.New,
                 Token.Type("Dictionary"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("string"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("List"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("T"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.OpenBracket,
-                Token.Puncuation.CloseBracket,
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.OpenBracket,
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon]);
         });
 
         it("expression body", () => {
@@ -221,17 +221,17 @@ private bool   prop2 => true;`);
                 Token.Type("string"),
                 Token.Identifiers.PropertyName("prop1"),
                 Token.Operators.Arrow,
-                Token.Puncuation.String.Begin,
+                Token.Punctuation.String.Begin,
                 Token.Literals.String("hello"),
-                Token.Puncuation.String.End,
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.String.End,
+                Token.Punctuation.Semicolon,
 
                 Token.Keywords.Modifiers.Private,
                 Token.Type("bool"),
                 Token.Identifiers.PropertyName("prop2"),
                 Token.Operators.Arrow,
                 Token.Literals.Boolean.True,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("explicitly-implemented interface member", () => {
@@ -242,17 +242,17 @@ private bool   prop2 => true;`);
             tokens.should.deep.equal([
                 Token.Type("string"),
                 Token.Type("IFoo"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("string"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.Accessor,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.Accessor,
                 Token.Identifiers.PropertyName("Bar"),
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Get,
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Keywords.Set,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("declaration in interface", () => {
@@ -263,12 +263,12 @@ private bool   prop2 => true;`);
             tokens.should.deep.equal([
                 Token.Type("string"),
                 Token.Identifiers.PropertyName("Bar"),
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Get,
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Keywords.Set,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("declaration in interface (read-only)", () => {
@@ -279,10 +279,10 @@ private bool   prop2 => true;`);
             tokens.should.deep.equal([
                 Token.Type("string"),
                 Token.Identifiers.PropertyName("Bar"),
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Get,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("declaration in interface (write-only)", () => {
@@ -293,10 +293,10 @@ private bool   prop2 => true;`);
             tokens.should.deep.equal([
                 Token.Type("string"),
                 Token.Identifiers.PropertyName("Bar"),
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Set,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
     });
 });

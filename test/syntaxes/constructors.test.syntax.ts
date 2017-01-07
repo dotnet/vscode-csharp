@@ -17,10 +17,10 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("TestClass"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("instance constructor with two parameters", () => {
@@ -33,15 +33,15 @@ TestClass(int x, int y)
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("TestClass"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("instance constructor with expression body", () => {
@@ -51,18 +51,18 @@ TestClass(int x, int y)
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("TestClass"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Operators.Arrow,
                 Token.Identifiers.MethodName("Foo"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon]);
         });
 
         it("static constructor no parameters", () => {
@@ -72,10 +72,10 @@ TestClass(int x, int y)
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("TestClass"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("instance constructor with 'this' initializer", () => {
@@ -85,15 +85,15 @@ TestClass(int x, int y)
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("TestClass"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Colon,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Colon,
                 Token.Keywords.This,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("instance constructor with 'this' initializer with ref parameter", () => {
@@ -103,18 +103,18 @@ TestClass(int x, int y)
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("TestClass"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Colon,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Colon,
                 Token.Keywords.This,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Keywords.Modifiers.Ref,
                 Token.Variables.ReadWrite("x"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("instance constructor with 'this' initializer with named parameter", () => {
@@ -124,19 +124,19 @@ TestClass(int x, int y)
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("TestClass"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Colon,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Colon,
                 Token.Keywords.This,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.Colon,
+                Token.Punctuation.Colon,
                 Token.Variables.ReadWrite("x"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("instance constructor with 'base' initializer", () => {
@@ -146,15 +146,15 @@ TestClass(int x, int y)
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("TestClass"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Colon,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Colon,
                 Token.Keywords.Base,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace]);
         });
     });
 });

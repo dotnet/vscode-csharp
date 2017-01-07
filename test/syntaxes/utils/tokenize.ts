@@ -288,7 +288,7 @@ export namespace Token {
        }
     }
 
-    export namespace Puncuation {
+    export namespace Punctuation {
         export const Accessor = createToken('.', 'punctuation.accessor.cs');
         export const CloseBrace = createToken('}', 'punctuation.curlybrace.close.cs');
         export const CloseBracket = createToken(']', 'punctuation.squarebracket.close.cs');

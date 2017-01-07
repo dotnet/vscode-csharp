@@ -18,8 +18,8 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Keywords.Struct,
                 Token.Identifiers.StructName("S"),
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("struct interface implementation", () => {
@@ -33,14 +33,14 @@ struct S : IFoo { }
             tokens.should.deep.equal([
                 Token.Keywords.Interface,
                 Token.Identifiers.InterfaceName("IFoo"),
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
                 Token.Keywords.Struct,
                 Token.Identifiers.StructName("S"),
-                Token.Puncuation.Colon,
+                Token.Punctuation.Colon,
                 Token.Type("IFoo"),
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("generic struct", () => {
@@ -53,8 +53,8 @@ struct S<T1, T2> { }
             tokens.should.deep.equal([
                 Token.Keywords.Struct,
                 Token.Identifiers.StructName("S<T1, T2>"),
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("generic struct with constraints", () => {
@@ -69,10 +69,10 @@ struct S<T1, T2> where T1 : T2 { }
                 Token.Identifiers.StructName("S<T1, T2>"),
                 Token.Keywords.Where,
                 Token.Type("T1"),
-                Token.Puncuation.Colon,
+                Token.Punctuation.Colon,
                 Token.Type("T2"),
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace]);
         });
     });
 });

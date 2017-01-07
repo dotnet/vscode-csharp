@@ -19,9 +19,9 @@ describe("Grammar", () => {
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Variables.Property("P"),
-                Token.Puncuation.OpenBracket,
-                Token.Puncuation.CloseBracket,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.OpenBracket,
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -34,10 +34,10 @@ describe("Grammar", () => {
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Variables.Property("P"),
-                Token.Puncuation.OpenBracket,
+                Token.Punctuation.OpenBracket,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.CloseBracket,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -50,12 +50,12 @@ describe("Grammar", () => {
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Variables.Property("P"),
-                Token.Puncuation.OpenBracket,
+                Token.Punctuation.OpenBracket,
                 Token.Literals.Numeric.Decimal("19"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Literals.Numeric.Decimal("23"),
-                Token.Puncuation.CloseBracket,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -68,16 +68,16 @@ describe("Grammar", () => {
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Variables.Property("P"),
-                Token.Puncuation.OpenBracket,
+                Token.Punctuation.OpenBracket,
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Colon,
+                Token.Punctuation.Colon,
                 Token.Literals.Numeric.Decimal("19"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.Colon,
+                Token.Punctuation.Colon,
                 Token.Literals.Numeric.Decimal("23"),
-                Token.Puncuation.CloseBracket,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -90,11 +90,11 @@ describe("Grammar", () => {
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Variables.Property("P"),
-                Token.Puncuation.OpenBracket,
+                Token.Punctuation.OpenBracket,
                 Token.Keywords.Modifiers.Ref,
                 Token.Variables.ReadWrite("x"),
-                Token.Puncuation.CloseBracket,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -107,11 +107,11 @@ describe("Grammar", () => {
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Variables.Property("P"),
-                Token.Puncuation.OpenBracket,
+                Token.Punctuation.OpenBracket,
                 Token.Keywords.Modifiers.Out,
                 Token.Variables.ReadWrite("x"),
-                Token.Puncuation.CloseBracket,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -124,14 +124,14 @@ describe("Grammar", () => {
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Variables.Object("C"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("int"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.Accessor,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.Accessor,
                 Token.Variables.Property("P"),
-                Token.Puncuation.OpenBracket,
-                Token.Puncuation.CloseBracket,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.OpenBracket,
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -144,16 +144,16 @@ describe("Grammar", () => {
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Variables.Object("N"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Variables.Object("C"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("int"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.Accessor,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.Accessor,
                 Token.Variables.Property("P"),
-                Token.Puncuation.OpenBracket,
-                Token.Puncuation.CloseBracket,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.OpenBracket,
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.Semicolon
             ]);
         });
     });

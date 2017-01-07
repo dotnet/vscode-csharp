@@ -16,11 +16,11 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Keywords.While,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Boolean.True,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace
             ]);
         });
 
@@ -31,13 +31,13 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Keywords.Do,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
                 Token.Keywords.While,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Boolean.True,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -48,21 +48,21 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Keywords.For,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Local("i"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("0"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Variables.ReadWrite("i"),
                 Token.Operators.Relational.LessThan,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Variables.ReadWrite("i"),
                 Token.Operators.Increment,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
             ]);
         });
 
@@ -77,23 +77,23 @@ for (int i = 0; i < 42; i++)
 
             tokens.should.deep.equal([
                 Token.Keywords.For,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Local("i"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("0"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Variables.ReadWrite("i"),
                 Token.Operators.Relational.LessThan,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Variables.ReadWrite("i"),
                 Token.Operators.Increment,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Break,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace,
             ]);
         });
 
@@ -108,23 +108,23 @@ for (int i = 0; i < 42; i++)
 
             tokens.should.deep.equal([
                 Token.Keywords.For,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Local("i"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("0"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Variables.ReadWrite("i"),
                 Token.Operators.Relational.LessThan,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Variables.ReadWrite("i"),
                 Token.Operators.Increment,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Continue,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace,
             ]);
         });
 
@@ -135,14 +135,14 @@ for (int i = 0; i < 42; i++)
 
             tokens.should.deep.equal([
                 Token.Keywords.ForEach,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Local("i"),
                 Token.Keywords.In,
                 Token.Variables.ReadWrite("numbers"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
             ]);
         });
     });

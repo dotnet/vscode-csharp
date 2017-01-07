@@ -18,10 +18,10 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Type("void"),
                 Token.Identifiers.MethodName("Foo"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("declaration with two parameters", () => {
@@ -36,20 +36,20 @@ int Add(int x, int y)
             tokens.should.deep.equal([
                 Token.Type("int"),
                 Token.Identifiers.MethodName("Add"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Arithmetic.Addition,
                 Token.Variables.ReadWrite("y"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("declaration in with generic constraints", () => {
@@ -60,16 +60,16 @@ int Add(int x, int y)
             tokens.should.deep.equal([
                 Token.Type("TResult"),
                 Token.Identifiers.MethodName("GetString<T, TResult>"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("T"),
                 Token.Variables.Parameter("arg"),
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Keywords.Where,
                 Token.Type("T"),
-                Token.Puncuation.Colon,
+                Token.Punctuation.Colon,
                 Token.Type("TResult"),
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("expression body", () => {
@@ -80,18 +80,18 @@ int Add(int x, int y)
             tokens.should.deep.equal([
                 Token.Type("int"),
                 Token.Identifiers.MethodName("Add"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Operators.Arrow,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Arithmetic.Addition,
                 Token.Variables.ReadWrite("y"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("explicitly-implemented interface member", () => {
@@ -102,14 +102,14 @@ int Add(int x, int y)
             tokens.should.deep.equal([
                 Token.Type("string"),
                 Token.Type("IFoo"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("string"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.Accessor,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.Accessor,
                 Token.Identifiers.MethodName("GetString"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon]);
         });
 
         it("declaration in interface", () => {
@@ -120,9 +120,9 @@ int Add(int x, int y)
             tokens.should.deep.equal([
                 Token.Type("string"),
                 Token.Identifiers.MethodName("GetString"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon]);
         });
 
         it("declaration in interface with parameters", () => {
@@ -133,17 +133,17 @@ int Add(int x, int y)
             tokens.should.deep.equal([
                 Token.Type("string"),
                 Token.Identifiers.MethodName("GetString"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("string"),
                 Token.Variables.Parameter("format"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Keywords.Modifiers.Params,
                 Token.Type("object"),
-                Token.Puncuation.OpenBracket,
-                Token.Puncuation.CloseBracket,
+                Token.Punctuation.OpenBracket,
+                Token.Punctuation.CloseBracket,
                 Token.Variables.Parameter("args"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon]);
         });
 
         it("declaration in interface with generic constraints", () => {
@@ -154,15 +154,15 @@ int Add(int x, int y)
             tokens.should.deep.equal([
                 Token.Type("TResult"),
                 Token.Identifiers.MethodName("GetString<T, TResult>"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("T"),
                 Token.Variables.Parameter("arg"),
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Keywords.Where,
                 Token.Type("T"),
-                Token.Puncuation.Colon,
+                Token.Punctuation.Colon,
                 Token.Type("TResult"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
     });
 });

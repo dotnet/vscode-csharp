@@ -18,11 +18,11 @@ describe("Grammar", () => {
                 Token.Type("var"),
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("object"),
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.Semicolon
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -34,14 +34,14 @@ describe("Grammar", () => {
                 Token.Type("var"),
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("C"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("int"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.CloseParen,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.Semicolon
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -51,13 +51,13 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("M"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -67,16 +67,16 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("M"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("object"),
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
     });

@@ -19,9 +19,9 @@ describe("Grammar", () => {
                 Token.Keywords.Delegate,
                 Token.Type("void"),
                 Token.Identifiers.DelegateName("D"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon]);
         });
 
         it("generic delegate with variance", () => {
@@ -33,11 +33,11 @@ describe("Grammar", () => {
                 Token.Keywords.Delegate,
                 Token.Type("TResult"),
                 Token.Identifiers.DelegateName("D<in T, out TResult>"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("T"),
                 Token.Variables.Parameter("arg1"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon]);
         });
 
         it("generic delegate with constraints", () => {
@@ -53,13 +53,13 @@ delegate void D<T1, T2>()
                 Token.Keywords.Delegate,
                 Token.Type("void"),
                 Token.Identifiers.DelegateName("D<T1, T2>"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
                 Token.Keywords.Where,
                 Token.Type("T1"),
-                Token.Puncuation.Colon,
+                Token.Punctuation.Colon,
                 Token.Type("T2"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("delegate with multiple parameters", () => {
@@ -71,22 +71,22 @@ delegate void D<T1, T2>()
                 Token.Keywords.Delegate,
                 Token.Type("int"),
                 Token.Identifiers.DelegateName("D"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Keywords.Modifiers.Ref,
                 Token.Type("string"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Keywords.Modifiers.Out,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Keywords.Modifiers.Params,
                 Token.Type("object"),
-                Token.Puncuation.OpenBracket,
-                Token.Puncuation.CloseBracket,
+                Token.Punctuation.OpenBracket,
+                Token.Punctuation.CloseBracket,
                 Token.Variables.Parameter("z"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon]);
         });
     });
 });

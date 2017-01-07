@@ -21,16 +21,16 @@ describe("Grammar", () => {
                 Token.Type("int"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("+"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("value"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Operators.Arithmetic.Addition,
                 Token.Variables.ReadWrite("value"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("unary -", () => {
@@ -44,16 +44,16 @@ describe("Grammar", () => {
                 Token.Type("int"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("-"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("value"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Operators.Arithmetic.Subtraction,
                 Token.Variables.ReadWrite("value"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("unary !", () => {
@@ -67,17 +67,17 @@ describe("Grammar", () => {
                 Token.Type("bool"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("!"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("value"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("value"),
                 Token.Operators.Relational.Equals,
                 Token.Literals.Numeric.Decimal("0"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("unary ~", () => {
@@ -91,16 +91,16 @@ describe("Grammar", () => {
                 Token.Type("int"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("~"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("value"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Operators.Bitwise.BitwiseComplement,
                 Token.Variables.ReadWrite("value"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("unary ++", () => {
@@ -114,16 +114,16 @@ describe("Grammar", () => {
                 Token.Type("int"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("++"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("value"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Operators.Increment,
                 Token.Variables.ReadWrite("value"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("unary --", () => {
@@ -137,16 +137,16 @@ describe("Grammar", () => {
                 Token.Type("int"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("--"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("value"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Operators.Decrement,
                 Token.Variables.ReadWrite("value"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("unary true", () => {
@@ -160,17 +160,17 @@ describe("Grammar", () => {
                 Token.Type("int"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("true"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("value"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("value"),
                 Token.Operators.Relational.NotEqual,
                 Token.Literals.Numeric.Decimal("0"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("unary false", () => {
@@ -184,17 +184,17 @@ describe("Grammar", () => {
                 Token.Type("int"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("false"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("value"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("value"),
                 Token.Operators.Relational.Equals,
                 Token.Literals.Numeric.Decimal("0"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("binary +", () => {
@@ -208,20 +208,20 @@ describe("Grammar", () => {
                 Token.Type("int"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("+"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Arithmetic.Addition,
                 Token.Variables.ReadWrite("y"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("binary -", () => {
@@ -235,20 +235,20 @@ describe("Grammar", () => {
                 Token.Type("int"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("-"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Arithmetic.Subtraction,
                 Token.Variables.ReadWrite("y"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("binary *", () => {
@@ -262,20 +262,20 @@ describe("Grammar", () => {
                 Token.Type("int"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("*"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Arithmetic.Multiplication,
                 Token.Variables.ReadWrite("y"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("binary /", () => {
@@ -289,20 +289,20 @@ describe("Grammar", () => {
                 Token.Type("int"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("/"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Arithmetic.Division,
                 Token.Variables.ReadWrite("y"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("binary %", () => {
@@ -316,20 +316,20 @@ describe("Grammar", () => {
                 Token.Type("int"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("%"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Arithmetic.Remainder,
                 Token.Variables.ReadWrite("y"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("binary &", () => {
@@ -343,20 +343,20 @@ describe("Grammar", () => {
                 Token.Type("int"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("&"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Bitwise.And,
                 Token.Variables.ReadWrite("y"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("binary |", () => {
@@ -370,20 +370,20 @@ describe("Grammar", () => {
                 Token.Type("int"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("|"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Bitwise.Or,
                 Token.Variables.ReadWrite("y"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("binary ^", () => {
@@ -397,20 +397,20 @@ describe("Grammar", () => {
                 Token.Type("int"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("^"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Bitwise.ExclusiveOr,
                 Token.Variables.ReadWrite("y"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("binary <<", () => {
@@ -424,20 +424,20 @@ describe("Grammar", () => {
                 Token.Type("int"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("<<"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Bitwise.ShiftLeft,
                 Token.Variables.ReadWrite("y"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("binary >>", () => {
@@ -451,20 +451,20 @@ describe("Grammar", () => {
                 Token.Type("int"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName(">>"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Bitwise.ShiftRight,
                 Token.Variables.ReadWrite("y"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("binary ==", () => {
@@ -478,20 +478,20 @@ describe("Grammar", () => {
                 Token.Type("bool"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("=="),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Relational.Equals,
                 Token.Variables.ReadWrite("y"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("binary !=", () => {
@@ -505,20 +505,20 @@ describe("Grammar", () => {
                 Token.Type("bool"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("!="),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Relational.NotEqual,
                 Token.Variables.ReadWrite("y"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("binary >", () => {
@@ -532,20 +532,20 @@ describe("Grammar", () => {
                 Token.Type("bool"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName(">"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Relational.GreaterThan,
                 Token.Variables.ReadWrite("y"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("binary <", () => {
@@ -559,20 +559,20 @@ describe("Grammar", () => {
                 Token.Type("bool"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("<"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Relational.LessThan,
                 Token.Variables.ReadWrite("y"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("binary >=", () => {
@@ -586,20 +586,20 @@ describe("Grammar", () => {
                 Token.Type("bool"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName(">="),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Relational.GreaterThanOrEqual,
                 Token.Variables.ReadWrite("y"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("binary <=", () => {
@@ -613,20 +613,20 @@ describe("Grammar", () => {
                 Token.Type("bool"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("<="),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Relational.LessThanOrEqual,
                 Token.Variables.ReadWrite("y"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("implicit conversion", () => {
@@ -640,17 +640,17 @@ describe("Grammar", () => {
                 Token.Keywords.Implicit,
                 Token.Keywords.Operator,
                 Token.Type("bool"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Relational.NotEqual,
                 Token.Literals.Numeric.Decimal("0"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("explicit conversion", () => {
@@ -664,17 +664,17 @@ describe("Grammar", () => {
                 Token.Keywords.Explicit,
                 Token.Keywords.Operator,
                 Token.Type("bool"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Relational.NotEqual,
                 Token.Literals.Numeric.Decimal("0"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("with expression body", () => {
@@ -688,14 +688,14 @@ describe("Grammar", () => {
                 Token.Type("int"),
                 Token.Keywords.Operator,
                 Token.Identifiers.MethodName("+"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Parameter("value"),
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Operators.Arrow,
                 Token.Operators.Arithmetic.Addition,
                 Token.Variables.ReadWrite("value"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
     });
 });

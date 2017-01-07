@@ -23,17 +23,17 @@ private List field123;`);
                 Token.Keywords.Modifiers.Private,
                 Token.Type("List"),
                 Token.Identifiers.FieldName("_field"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
 
                 Token.Keywords.Modifiers.Private,
                 Token.Type("List"),
                 Token.Identifiers.FieldName("field"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
 
                 Token.Keywords.Modifiers.Private,
                 Token.Type("List"),
                 Token.Identifiers.FieldName("field123"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("generic", () => {
@@ -44,21 +44,21 @@ private List field123;`);
             tokens.should.deep.equal([
                 Token.Keywords.Modifiers.Private,
                 Token.Type("Dictionary"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("List"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("T"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.Comma,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.Comma,
                 Token.Type("Dictionary"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("T"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("D"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.TypeParameters.End,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.TypeParameters.End,
                 Token.Identifiers.FieldName("_field"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
 
@@ -77,16 +77,16 @@ string _field3;`);
                 Token.Keywords.Modifiers.ReadOnly,
                 Token.Type("List"),
                 Token.Identifiers.FieldName("_field"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
 
                 Token.Keywords.Modifiers.ReadOnly,
                 Token.Type("string"),
                 Token.Identifiers.FieldName("_field2"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
 
                 Token.Type("string"),
                 Token.Identifiers.FieldName("_field3"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("types", () => {
@@ -100,13 +100,13 @@ string[] field123;`);
             tokens.should.deep.equal([
                 Token.Type("string"),
                 Token.Identifiers.FieldName("field123"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
 
                 Token.Type("string"),
-                Token.Puncuation.OpenBracket,
-                Token.Puncuation.CloseBracket,
+                Token.Punctuation.OpenBracket,
+                Token.Punctuation.CloseBracket,
                 Token.Identifiers.FieldName("field123"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("assignment", () => {
@@ -122,17 +122,17 @@ const   bool   field = true;`);
                 Token.Type("string"),
                 Token.Identifiers.FieldName("field"),
                 Token.Operators.Assignment,
-                Token.Puncuation.String.Begin,
+                Token.Punctuation.String.Begin,
                 Token.Literals.String("hello"),
-                Token.Puncuation.String.End,
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.String.End,
+                Token.Punctuation.Semicolon,
 
                 Token.Keywords.Modifiers.Const,
                 Token.Type("bool"),
                 Token.Identifiers.FieldName("field"),
                 Token.Operators.Assignment,
                 Token.Literals.Boolean.True,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("declaration with multiple declarators", () => {
@@ -145,15 +145,15 @@ const   bool   field = true;`);
                 Token.Identifiers.FieldName("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("19"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Identifiers.FieldName("y"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("23"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Identifiers.FieldName("z"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("tuple type with no names and no modifiers", () => {
@@ -162,13 +162,13 @@ const   bool   field = true;`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Identifiers.FieldName("x"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("tuple type with no names and private modifier", () => {
@@ -178,13 +178,13 @@ const   bool   field = true;`);
 
             tokens.should.deep.equal([
                 Token.Keywords.Modifiers.Private,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Identifiers.FieldName("x"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("tuple type with names and no modifiers", () => {
@@ -193,15 +193,15 @@ const   bool   field = true;`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Tuple("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Tuple("y"),
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Identifiers.FieldName("z"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("tuple type with names and private modifier", () => {
@@ -211,15 +211,15 @@ const   bool   field = true;`);
 
             tokens.should.deep.equal([
                 Token.Keywords.Modifiers.Private,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
                 Token.Variables.Tuple("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
                 Token.Variables.Tuple("y"),
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Identifiers.FieldName("z"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
     });
 });

@@ -18,7 +18,7 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Type("object"),
                 Token.Identifiers.FieldName("x"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("qualified name - System.Object", () => {
@@ -28,10 +28,10 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Type("System"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("Object"),
                 Token.Identifiers.FieldName("x"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("globally-qualified name - global::System.Object", () => {
@@ -41,12 +41,12 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Identifiers.AliasName("global"),
-                Token.Puncuation.ColonColon,
+                Token.Punctuation.ColonColon,
                 Token.Type("System"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("Object"),
                 Token.Identifiers.FieldName("x"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("tuple type - (int, int)", () => {
@@ -55,13 +55,13 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Identifiers.FieldName("x"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("generic type - List<int>", () => {
@@ -71,11 +71,11 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Type("List"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("int"),
-                Token.Puncuation.TypeParameters.End,
+                Token.Punctuation.TypeParameters.End,
                 Token.Identifiers.FieldName("x"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("generic type with tuple - List<(int, int)>", () => {
@@ -85,15 +85,15 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Type("List"),
-                Token.Puncuation.TypeParameters.Begin,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Punctuation.OpenParen,
                 Token.Type("int"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.TypeParameters.End,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.TypeParameters.End,
                 Token.Identifiers.FieldName("x"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("generic type with multiple parameters - Dictionary<int, int>", () => {
@@ -103,13 +103,13 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Type("Dictionary"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("int"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("int"),
-                Token.Puncuation.TypeParameters.End,
+                Token.Punctuation.TypeParameters.End,
                 Token.Identifiers.FieldName("x"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("qualified generic type - System.Collections.Generic.List<int>", () => {
@@ -119,17 +119,17 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Type("System"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("Collections"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("Generic"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("List"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("int"),
-                Token.Puncuation.TypeParameters.End,
+                Token.Punctuation.TypeParameters.End,
                 Token.Identifiers.FieldName("x"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("generic type with nested type - List<int>.Enumerator", () => {
@@ -139,13 +139,13 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Type("List"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("int"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.Accessor,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.Accessor,
                 Token.Type("Enumerator"),
                 Token.Identifiers.FieldName("x"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
     });
 });

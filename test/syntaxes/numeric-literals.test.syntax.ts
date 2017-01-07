@@ -20,7 +20,7 @@ describe("Grammar", () => {
                 Token.Identifiers.FieldName("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("0"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("hexadecimal zero", () => {
@@ -33,7 +33,7 @@ describe("Grammar", () => {
                 Token.Identifiers.FieldName("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Hexadecimal("0x0"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("binary zero", () => {
@@ -46,7 +46,7 @@ describe("Grammar", () => {
                 Token.Identifiers.FieldName("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Binary("0b0"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("floating-point zero", () => {
@@ -59,7 +59,7 @@ describe("Grammar", () => {
                 Token.Identifiers.FieldName("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("0.0"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
     });
 });

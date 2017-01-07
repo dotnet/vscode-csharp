@@ -16,13 +16,13 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Keywords.If,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Boolean.True,
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Identifiers.MethodName("Do"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -32,15 +32,15 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Keywords.If,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Boolean.True,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Identifiers.MethodName("Do"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace
             ]);
         });
 
@@ -53,13 +53,13 @@ if (true)
 
             tokens.should.deep.equal([
                 Token.Keywords.If,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Boolean.True,
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Identifiers.MethodName("Do"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -73,15 +73,15 @@ if (true)
 
             tokens.should.deep.equal([
                 Token.Keywords.If,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Boolean.True,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Identifiers.MethodName("Do"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace
             ]);
         });
 
@@ -96,18 +96,18 @@ else
 
             tokens.should.deep.equal([
                 Token.Keywords.If,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Boolean.True,
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Identifiers.MethodName("Do"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
                 Token.Keywords.Else,
                 Token.Identifiers.MethodName("Dont"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -125,22 +125,22 @@ else
 
             tokens.should.deep.equal([
                 Token.Keywords.If,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Boolean.True,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Identifiers.MethodName("Do"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace,
                 Token.Keywords.Else,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Identifiers.MethodName("Dont"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace
             ]);
         });
 
@@ -155,22 +155,22 @@ else if (false)
 
             tokens.should.deep.equal([
                 Token.Keywords.If,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Boolean.True,
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Identifiers.MethodName("Do"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
                 Token.Keywords.Else,
                 Token.Keywords.If,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Boolean.False,
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Identifiers.MethodName("Dont"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -188,26 +188,26 @@ else if (false)
 
             tokens.should.deep.equal([
                 Token.Keywords.If,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Boolean.True,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Identifiers.MethodName("Do"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace,
                 Token.Keywords.Else,
                 Token.Keywords.If,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Boolean.False,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Identifiers.MethodName("Dont"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace
             ]);
         });
 
@@ -225,28 +225,28 @@ default:
 
             tokens.should.deep.equal([
                 Token.Keywords.Switch,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Variables.ReadWrite("i"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Case,
                 Token.Literals.Numeric.Decimal("0"),
-                Token.Puncuation.Colon,
+                Token.Punctuation.Colon,
                 Token.Keywords.Goto,
                 Token.Keywords.Case,
                 Token.Literals.Numeric.Decimal("1"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Keywords.Case,
                 Token.Literals.Numeric.Decimal("1"),
-                Token.Puncuation.Colon,
+                Token.Punctuation.Colon,
                 Token.Keywords.Goto,
                 Token.Keywords.Default,
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Keywords.Default,
-                Token.Puncuation.Colon,
+                Token.Punctuation.Colon,
                 Token.Keywords.Break,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace
             ]);
         });
 
@@ -270,34 +270,34 @@ switch (i) {
 
             tokens.should.deep.equal([
                 Token.Keywords.Switch,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Variables.ReadWrite("i"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Case,
                 Token.Literals.Numeric.Decimal("0"),
-                Token.Puncuation.Colon,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.Colon,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Goto,
                 Token.Keywords.Case,
                 Token.Literals.Numeric.Decimal("1"),
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace,
                 Token.Keywords.Case,
                 Token.Literals.Numeric.Decimal("1"),
-                Token.Puncuation.Colon,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.Colon,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Goto,
                 Token.Keywords.Default,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace,
                 Token.Keywords.Default,
-                Token.Puncuation.Colon,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.Colon,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Break,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseBrace
             ]);
         });
     });

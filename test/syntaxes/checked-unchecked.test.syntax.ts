@@ -19,8 +19,8 @@ checked
 
             tokens.should.deep.equal([
                 Token.Keywords.Checked,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace
             ]);
         });
 
@@ -33,8 +33,8 @@ unchecked
 
             tokens.should.deep.equal([
                 Token.Keywords.Unchecked,
-                Token.Puncuation.OpenBrace,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace
             ]);
         });
 
@@ -47,10 +47,10 @@ unchecked
                 Token.Variables.Local("x"),
                 Token.Operators.Assignment,
                 Token.Keywords.Checked,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -63,10 +63,10 @@ unchecked
                 Token.Variables.Local("x"),
                 Token.Operators.Assignment,
                 Token.Keywords.Unchecked,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
     });

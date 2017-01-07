@@ -22,11 +22,11 @@ extern alias Y;`;
                 Token.Keywords.Extern,
                 Token.Keywords.Alias,
                 Token.Variables.Alias("X"),
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Keywords.Extern,
                 Token.Keywords.Alias,
                 Token.Variables.Alias("Y"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
     });
 });

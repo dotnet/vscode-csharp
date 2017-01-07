@@ -16,16 +16,16 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Keywords.Using,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Keywords.New,
                 Token.Type("object"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Identifiers.MethodName("Do"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -35,18 +35,18 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Keywords.Using,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Keywords.New,
                 Token.Type("object"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Identifiers.MethodName("Do"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace
             ]);
         });
 
@@ -58,16 +58,16 @@ using (new object())
 
             tokens.should.deep.equal([
                 Token.Keywords.Using,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Keywords.New,
                 Token.Type("object"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Identifiers.MethodName("Do"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -81,18 +81,18 @@ using (new object())
 
             tokens.should.deep.equal([
                 Token.Keywords.Using,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Keywords.New,
                 Token.Type("object"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Identifiers.MethodName("Do"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace
             ]);
         });
         
@@ -104,19 +104,19 @@ using (var o = new object())
 
             tokens.should.deep.equal([
                 Token.Keywords.Using,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("var"),
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Keywords.New,
                 Token.Type("object"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.CloseParen,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.CloseParen,
                 Token.Identifiers.MethodName("Do"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -130,21 +130,21 @@ using (var o = new object())
 
             tokens.should.deep.equal([
                 Token.Keywords.Using,
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Type("var"),
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Keywords.New,
                 Token.Type("object"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
                 Token.Identifiers.MethodName("Do"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace
             ]);
         });
     });

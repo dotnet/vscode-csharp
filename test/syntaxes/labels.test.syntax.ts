@@ -16,7 +16,7 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Identifiers.LabelName("Foo"),
-                Token.Puncuation.Colon
+                Token.Punctuation.Colon
             ]);
         });
     });

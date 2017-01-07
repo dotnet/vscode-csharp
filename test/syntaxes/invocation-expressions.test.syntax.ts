@@ -16,9 +16,9 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("M"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -28,10 +28,10 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("M"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -41,12 +41,12 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("M"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Literals.Numeric.Decimal("19"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Literals.Numeric.Decimal("23"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -56,16 +56,16 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("M"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Colon,
+                Token.Punctuation.Colon,
                 Token.Literals.Numeric.Decimal("19"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.Colon,
+                Token.Punctuation.Colon,
                 Token.Literals.Numeric.Decimal("23"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -75,11 +75,11 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("M"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Keywords.Modifiers.Ref,
                 Token.Variables.ReadWrite("x"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -89,11 +89,11 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("M"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Keywords.Modifiers.Out,
                 Token.Variables.ReadWrite("x"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -103,12 +103,12 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("M"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("int"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -118,15 +118,15 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("M"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("T"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("int"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -136,18 +136,18 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Identifiers.MethodName("M"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("T"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("U"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("int"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -157,14 +157,14 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Variables.Object("C"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("int"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.Accessor,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.Accessor,
                 Token.Identifiers.MethodName("M"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -174,16 +174,16 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.Variables.Object("N"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Variables.Object("C"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("int"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.Accessor,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.Accessor,
                 Token.Identifiers.MethodName("M"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -196,16 +196,16 @@ describe("Grammar", () => {
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Variables.Object("N"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Variables.Object("C"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("int"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.Accessor,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.Accessor,
                 Token.Identifiers.MethodName("M"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
         
@@ -218,16 +218,16 @@ describe("Grammar", () => {
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Identifiers.MethodName("M"),
-                Token.Puncuation.OpenParen,
+                Token.Punctuation.OpenParen,
                 Token.Variables.Parameter("x"),
-                Token.Puncuation.Colon,
+                Token.Punctuation.Colon,
                 Token.Literals.Numeric.Decimal("19"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Variables.Parameter("y"),
-                Token.Puncuation.Colon,
+                Token.Punctuation.Colon,
                 Token.Literals.Numeric.Decimal("23"),
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
             ]);
         });
     });

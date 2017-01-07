@@ -19,18 +19,18 @@ describe("Grammar", () => {
                 Token.Type("string"),
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
-                Token.Puncuation.InterpolatedString.Begin,
+                Token.Punctuation.InterpolatedString.Begin,
                 Token.Literals.String("hello "),
-                Token.Puncuation.Interpolation.Begin,
+                Token.Punctuation.Interpolation.Begin,
                 Token.Variables.ReadWrite("one"),
-                Token.Puncuation.Interpolation.End,
+                Token.Punctuation.Interpolation.End,
                 Token.Literals.String(" world "),
-                Token.Puncuation.Interpolation.Begin,
+                Token.Punctuation.Interpolation.Begin,
                 Token.Variables.ReadWrite("two"),
-                Token.Puncuation.Interpolation.End,
+                Token.Punctuation.Interpolation.End,
                 Token.Literals.String("!"),
-                Token.Puncuation.InterpolatedString.End,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.InterpolatedString.End,
+                Token.Punctuation.Semicolon]);
         });
 
         it("no interpolations", () => {
@@ -42,10 +42,10 @@ describe("Grammar", () => {
                 Token.Type("string"),
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
-                Token.Puncuation.InterpolatedString.Begin,
+                Token.Punctuation.InterpolatedString.Begin,
                 Token.Literals.String("hello world!"),
-                Token.Puncuation.InterpolatedString.End,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.InterpolatedString.End,
+                Token.Punctuation.Semicolon]);
         });
 
         it("no interpolations due to escaped braces", () => {
@@ -57,10 +57,10 @@ describe("Grammar", () => {
                 Token.Type("string"),
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
-                Token.Puncuation.InterpolatedString.Begin,
+                Token.Punctuation.InterpolatedString.Begin,
                 Token.Literals.String("hello {{one}} world {{two}}!"),
-                Token.Puncuation.InterpolatedString.End,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.InterpolatedString.End,
+                Token.Punctuation.Semicolon]);
         });
 
         it("two interpolations with escaped braces", () => {
@@ -72,20 +72,20 @@ describe("Grammar", () => {
                 Token.Type("string"),
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
-                Token.Puncuation.InterpolatedString.Begin,
+                Token.Punctuation.InterpolatedString.Begin,
                 Token.Literals.String("hello "),
                 Token.Literals.String("{{"),
-                Token.Puncuation.Interpolation.Begin,
+                Token.Punctuation.Interpolation.Begin,
                 Token.Variables.ReadWrite("one"),
-                Token.Puncuation.Interpolation.End,
+                Token.Punctuation.Interpolation.End,
                 Token.Literals.String("}} world "),
                 Token.Literals.String("{{"),
-                Token.Puncuation.Interpolation.Begin,
+                Token.Punctuation.Interpolation.Begin,
                 Token.Variables.ReadWrite("two"),
-                Token.Puncuation.Interpolation.End,
+                Token.Punctuation.Interpolation.End,
                 Token.Literals.String("}}!"),
-                Token.Puncuation.InterpolatedString.End,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.InterpolatedString.End,
+                Token.Punctuation.Semicolon]);
         });
 
         it("no interpolations due to double-escaped braces", () => {
@@ -97,10 +97,10 @@ describe("Grammar", () => {
                 Token.Type("string"),
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
-                Token.Puncuation.InterpolatedString.Begin,
+                Token.Punctuation.InterpolatedString.Begin,
                 Token.Literals.String("hello {{{{one}}}} world {{{{two}}}}!"),
-                Token.Puncuation.InterpolatedString.End,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.InterpolatedString.End,
+                Token.Punctuation.Semicolon]);
         });
 
         it("break across two lines (non-verbatim)", () => {
@@ -114,14 +114,14 @@ world!";`);
                 Token.Type("string"),
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
-                Token.Puncuation.InterpolatedString.Begin,
+                Token.Punctuation.InterpolatedString.Begin,
                 Token.Literals.String("hell"),
 
                 // Note: Because the string ended prematurely, the rest of this line and the contents of the next are junk.
                 Token.IllegalNewLine("o"),
                 Token.Variables.ReadWrite("world"),
                 Token.Operators.Logical.Not,
-                Token.Puncuation.String.Begin,
+                Token.Punctuation.String.Begin,
                 Token.IllegalNewLine(";")]);
         });
 
@@ -134,18 +134,18 @@ world!";`);
                 Token.Type("string"),
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
-                Token.Puncuation.InterpolatedString.VerbatimBegin,
+                Token.Punctuation.InterpolatedString.VerbatimBegin,
                 Token.Literals.String("hello "),
-                Token.Puncuation.Interpolation.Begin,
+                Token.Punctuation.Interpolation.Begin,
                 Token.Variables.ReadWrite("one"),
-                Token.Puncuation.Interpolation.End,
+                Token.Punctuation.Interpolation.End,
                 Token.Literals.String(" world "),
-                Token.Puncuation.Interpolation.Begin,
+                Token.Punctuation.Interpolation.Begin,
                 Token.Variables.ReadWrite("two"),
-                Token.Puncuation.Interpolation.End,
+                Token.Punctuation.Interpolation.End,
                 Token.Literals.String("!"),
-                Token.Puncuation.InterpolatedString.End,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.InterpolatedString.End,
+                Token.Punctuation.Semicolon]);
         });
 
         it("verbatim with two interpolations and escaped double-quotes", () => {
@@ -157,22 +157,22 @@ world!";`);
                 Token.Type("string"),
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
-                Token.Puncuation.InterpolatedString.VerbatimBegin,
+                Token.Punctuation.InterpolatedString.VerbatimBegin,
                 Token.Literals.String("hello "),
-                Token.Puncuation.Interpolation.Begin,
+                Token.Punctuation.Interpolation.Begin,
                 Token.Variables.ReadWrite("one"),
-                Token.Puncuation.Interpolation.End,
+                Token.Punctuation.Interpolation.End,
                 Token.Literals.String(" "),
                 Token.Literals.CharacterEscape("\"\""),
                 Token.Literals.String("world"),
                 Token.Literals.CharacterEscape("\"\""),
                 Token.Literals.String(" "),
-                Token.Puncuation.Interpolation.Begin,
+                Token.Punctuation.Interpolation.Begin,
                 Token.Variables.ReadWrite("two"),
-                Token.Puncuation.Interpolation.End,
+                Token.Punctuation.Interpolation.End,
                 Token.Literals.String("!"),
-                Token.Puncuation.InterpolatedString.End,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.InterpolatedString.End,
+                Token.Punctuation.Semicolon]);
         });
 
         it("break across two lines with two interpolations (verbatim)", () => {
@@ -186,18 +186,18 @@ world {two}!";`);
                 Token.Type("string"),
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
-                Token.Puncuation.InterpolatedString.VerbatimBegin,
+                Token.Punctuation.InterpolatedString.VerbatimBegin,
                 Token.Literals.String("hello "),
-                Token.Puncuation.Interpolation.Begin,
+                Token.Punctuation.Interpolation.Begin,
                 Token.Variables.ReadWrite("one"),
-                Token.Puncuation.Interpolation.End,
+                Token.Punctuation.Interpolation.End,
                 Token.Literals.String("world "),
-                Token.Puncuation.Interpolation.Begin,
+                Token.Punctuation.Interpolation.Begin,
                 Token.Variables.ReadWrite("two"),
-                Token.Puncuation.Interpolation.End,
+                Token.Punctuation.Interpolation.End,
                 Token.Literals.String("!"),
-                Token.Puncuation.InterpolatedString.End,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.InterpolatedString.End,
+                Token.Punctuation.Semicolon]);
         });
 
         it("break across two lines with no interpolations (verbatim)", () => {
@@ -211,11 +211,11 @@ world!";`);
                 Token.Type("string"),
                 Token.Identifiers.FieldName("test"),
                 Token.Operators.Assignment,
-                Token.Puncuation.InterpolatedString.VerbatimBegin,
+                Token.Punctuation.InterpolatedString.VerbatimBegin,
                 Token.Literals.String("hello"),
                 Token.Literals.String("world!"),
-                Token.Puncuation.InterpolatedString.End,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.InterpolatedString.End,
+                Token.Punctuation.Semicolon]);
         });
     });
 });

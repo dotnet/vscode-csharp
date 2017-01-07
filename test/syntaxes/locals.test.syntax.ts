@@ -17,7 +17,7 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Type("int"),
                 Token.Variables.Local("x"),
-                Token.Puncuation.Semicolon
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -30,7 +30,7 @@ describe("Grammar", () => {
                 Token.Variables.Local("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.Semicolon
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -41,9 +41,9 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Type("int"),
                 Token.Variables.Local("x"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Variables.Local("y"),
-                Token.Puncuation.Semicolon
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -56,11 +56,11 @@ describe("Grammar", () => {
                 Token.Variables.Local("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("19"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Variables.Local("y"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("23"),
-                Token.Puncuation.Semicolon
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -74,7 +74,7 @@ describe("Grammar", () => {
                 Token.Variables.Local("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("42"),
-                Token.Puncuation.Semicolon
+                Token.Punctuation.Semicolon
             ]);
         });
 
@@ -88,11 +88,11 @@ describe("Grammar", () => {
                 Token.Variables.Local("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("19"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Variables.Local("y"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("23"),
-                Token.Puncuation.Semicolon
+                Token.Punctuation.Semicolon
             ]);
         });
     });

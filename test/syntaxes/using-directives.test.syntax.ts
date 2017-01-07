@@ -18,7 +18,7 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Keywords.Using,
                 Token.Identifiers.NamespaceName("System"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("using static type", () => {
@@ -30,9 +30,9 @@ describe("Grammar", () => {
                 Token.Keywords.Using,
                 Token.Keywords.Static,
                 Token.Type("System"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("Console"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("namespace alias", () => {
@@ -45,7 +45,7 @@ describe("Grammar", () => {
                 Token.Identifiers.AliasName("S"),
                 Token.Operators.Assignment,
                 Token.Type("System"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("type alias", () => {
@@ -58,9 +58,9 @@ describe("Grammar", () => {
                 Token.Identifiers.AliasName("C"),
                 Token.Operators.Assignment,
                 Token.Type("System"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("Console"),
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.Semicolon]);
         });
 
         it("type alias with generic type", () => {
@@ -73,18 +73,18 @@ describe("Grammar", () => {
                 Token.Identifiers.AliasName("IntList"),
                 Token.Operators.Assignment,
                 Token.Type("System"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("Collections"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("Generic"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("List"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("System"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("Int32"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.Semicolon]);
         });
 
         it("type alias with nested generic types", () => {
@@ -97,31 +97,31 @@ describe("Grammar", () => {
                 Token.Identifiers.AliasName("X"),
                 Token.Operators.Assignment,
                 Token.Type("System"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("Collections"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("Generic"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("Dictionary"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("System"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("Int32"),
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Type("System"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("Collections"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("Generic"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("List"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("System"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Type("String"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.Semicolon]);
         });
         
         it("type alias with nested generic types and comments interspersed", () => {
@@ -138,31 +138,31 @@ describe("Grammar", () => {
                 Token.Type("Dictionary"),
                 Token.Comment.MultiLine.Start,
                 Token.Comment.MultiLine.End,
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Comment.MultiLine.Start,
                 Token.Comment.MultiLine.End,
                 Token.Type("int"),
                 Token.Comment.MultiLine.Start,
                 Token.Comment.MultiLine.End,
-                Token.Puncuation.Comma,
+                Token.Punctuation.Comma,
                 Token.Comment.MultiLine.Start,
                 Token.Comment.MultiLine.End,
                 Token.Type("List"),
                 Token.Comment.MultiLine.Start,
                 Token.Comment.MultiLine.End,
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Comment.MultiLine.Start,
                 Token.Comment.MultiLine.End,
                 Token.Type("string"),
                 Token.Comment.MultiLine.Start,
                 Token.Comment.MultiLine.End,
-                Token.Puncuation.TypeParameters.End,
+                Token.Punctuation.TypeParameters.End,
                 Token.Comment.MultiLine.Start,
                 Token.Comment.MultiLine.End,
-                Token.Puncuation.TypeParameters.End,
+                Token.Punctuation.TypeParameters.End,
                 Token.Comment.MultiLine.Start,
                 Token.Comment.MultiLine.End,
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Comment.SingleLine.Start,
                 Token.Comment.SingleLine.Text("end")]);
         });

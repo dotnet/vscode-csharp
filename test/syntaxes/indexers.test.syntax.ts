@@ -24,22 +24,22 @@ public string this[int index]
                 Token.Keywords.Modifiers.Public,
                 Token.Type("string"),
                 Token.Keywords.This,
-                Token.Puncuation.OpenBracket,
+                Token.Punctuation.OpenBracket,
                 Token.Type("int"),
                 Token.Variables.Parameter("index"),
-                Token.Puncuation.CloseBracket,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Get,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Return,
                 Token.Variables.Object("index"),
-                Token.Puncuation.Accessor,
+                Token.Punctuation.Accessor,
                 Token.Identifiers.MethodName("ToString"),
-                Token.Puncuation.OpenParen,
-                Token.Puncuation.CloseParen,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("explicitly-implemented interface member", () => {
@@ -50,16 +50,16 @@ public string this[int index]
             tokens.should.deep.equal([
                 Token.Type("string"),
                 Token.Type("IFoo"),
-                Token.Puncuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.Begin,
                 Token.Type("string"),
-                Token.Puncuation.TypeParameters.End,
-                Token.Puncuation.Accessor,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.Accessor,
                 Token.Keywords.This,
-                Token.Puncuation.OpenBracket,
+                Token.Punctuation.OpenBracket,
                 Token.Type("int"),
                 Token.Variables.Parameter("index"),
-                Token.Puncuation.CloseBracket,
-                Token.Puncuation.Semicolon]);
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.Semicolon]);
         });
 
         it("declaration in interface", () => {
@@ -70,16 +70,16 @@ public string this[int index]
             tokens.should.deep.equal([
                 Token.Type("string"),
                 Token.Keywords.This,
-                Token.Puncuation.OpenBracket,
+                Token.Punctuation.OpenBracket,
                 Token.Type("int"),
                 Token.Variables.Parameter("index"),
-                Token.Puncuation.CloseBracket,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Get,
-                Token.Puncuation.Semicolon,
+                Token.Punctuation.Semicolon,
                 Token.Keywords.Set,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("declaration in interface (read-only)", () => {
@@ -90,14 +90,14 @@ public string this[int index]
             tokens.should.deep.equal([
                 Token.Type("string"),
                 Token.Keywords.This,
-                Token.Puncuation.OpenBracket,
+                Token.Punctuation.OpenBracket,
                 Token.Type("int"),
                 Token.Variables.Parameter("index"),
-                Token.Puncuation.CloseBracket,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Get,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
 
         it("declaration in interface (write-only)", () => {
@@ -108,14 +108,14 @@ public string this[int index]
             tokens.should.deep.equal([
                 Token.Type("string"),
                 Token.Keywords.This,
-                Token.Puncuation.OpenBracket,
+                Token.Punctuation.OpenBracket,
                 Token.Type("int"),
                 Token.Variables.Parameter("index"),
-                Token.Puncuation.CloseBracket,
-                Token.Puncuation.OpenBrace,
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.OpenBrace,
                 Token.Keywords.Set,
-                Token.Puncuation.Semicolon,
-                Token.Puncuation.CloseBrace]);
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
         });
     });
 });
