@@ -189,5 +189,44 @@ int Add(int x, int y)
                 Token.Punctuation.CloseBrace
             ]);
         });
+
+        it("return type is highlighted properly in interface (issue #830)", () => {
+
+            const input = `
+public interface test
+{
+    Task test1(List<string> blah);
+    Task test<T>(List<T> blah);
+}`;
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Interface,
+                Token.Identifiers.InterfaceName("test"),
+                Token.Punctuation.OpenBrace,
+                Token.Type("Task"),
+                Token.Identifiers.MethodName("test1"),
+                Token.Punctuation.OpenParen,
+                Token.Type("List"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Type("string"),
+                Token.Punctuation.TypeParameters.End,
+                Token.Variables.Parameter("blah"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Type("Task"),
+                Token.Identifiers.MethodName("test<T>"),
+                Token.Punctuation.OpenParen,
+                Token.Type("List"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Type("T"),
+                Token.Punctuation.TypeParameters.End,
+                Token.Variables.Parameter("blah"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace
+            ]);
+        });
     });
 });
