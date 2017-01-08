@@ -147,5 +147,17 @@ describe("Grammar", () => {
                 Token.Identifiers.FieldName("x"),
                 Token.Punctuation.Semicolon]);
         });
+
+        it("nullable type - int?", () => {
+
+            const input = Input.InClass(`int? x;`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.PrimitiveType.Int,
+                Token.Punctuation.QuestionMark,
+                Token.Identifiers.FieldName("x"),
+                Token.Punctuation.Semicolon]);
+        });
     });
 });

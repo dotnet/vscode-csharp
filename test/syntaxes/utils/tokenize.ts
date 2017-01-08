@@ -360,18 +360,6 @@ export namespace Token {
     }
 
     export namespace Punctuation {
-        export const Accessor = createToken('.', 'punctuation.accessor.cs');
-        export const CloseBrace = createToken('}', 'punctuation.curlybrace.close.cs');
-        export const CloseBracket = createToken(']', 'punctuation.squarebracket.close.cs');
-        export const CloseParen = createToken(')', 'punctuation.parenthesis.close.cs');
-        export const Colon = createToken(':', 'punctuation.separator.colon.cs');
-        export const ColonColon = createToken('::', 'punctuation.separator.coloncolon.cs');
-        export const Comma = createToken(',', 'punctuation.separator.comma.cs');
-        export const Hash = createToken('#', 'punctuation.separator.hash.cs')
-        export const OpenBrace = createToken('{', 'punctuation.curlybrace.open.cs');
-        export const OpenBracket = createToken('[', 'punctuation.squarebracket.open.cs');
-        export const OpenParen = createToken('(', 'punctuation.parenthesis.open.cs');
-
         export namespace Interpolation {
             export const Begin = createToken('{', 'punctuation.definition.interpolation.begin.cs');
             export const End = createToken('}', 'punctuation.definition.interpolation.end.cs');
@@ -382,8 +370,6 @@ export namespace Token {
             export const End = createToken('"', 'punctuation.definition.string.end.cs');
             export const VerbatimBegin = createToken('$@"', 'punctuation.definition.string.begin.cs');
         }
-
-        export const Semicolon = createToken(';', 'punctuation.terminator.statement.cs');
 
         export namespace String {
             export const Begin = createToken('"', 'punctuation.definition.string.begin.cs');
@@ -396,6 +382,19 @@ export namespace Token {
             export const End = createToken('>', 'punctuation.definition.typeparameters.end.cs');
         }
 
+        export const Accessor = createToken('.', 'punctuation.accessor.cs');
+        export const CloseBrace = createToken('}', 'punctuation.curlybrace.close.cs');
+        export const CloseBracket = createToken(']', 'punctuation.squarebracket.close.cs');
+        export const CloseParen = createToken(')', 'punctuation.parenthesis.close.cs');
+        export const Colon = createToken(':', 'punctuation.separator.colon.cs');
+        export const ColonColon = createToken('::', 'punctuation.separator.coloncolon.cs');
+        export const Comma = createToken(',', 'punctuation.separator.comma.cs');
+        export const Hash = createToken('#', 'punctuation.separator.hash.cs')
+        export const OpenBrace = createToken('{', 'punctuation.curlybrace.open.cs');
+        export const OpenBracket = createToken('[', 'punctuation.squarebracket.open.cs');
+        export const OpenParen = createToken('(', 'punctuation.parenthesis.open.cs');
+        export const QuestionMark = createToken('?', 'punctuation.separator.question-mark.cs');
+        export const Semicolon = createToken(';', 'punctuation.terminator.statement.cs');
         export const Tilde = createToken('~', 'punctuation.tilde.cs');
     }
 
