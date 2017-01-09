@@ -69,5 +69,53 @@ unchecked
                 Token.Punctuation.Semicolon
             ]);
         });
+
+        it("", () => {
+            const input = `
+class C
+{
+    void M1()
+    {
+        checked
+        {
+            checked(++i);
+        }
+    }
+    void M2() { }
+}
+`;
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Class,
+                Token.Identifiers.ClassName("C"),
+                Token.Punctuation.OpenBrace,
+                Token.PrimitiveType.Void,
+                Token.Identifiers.MethodName("M1"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+
+                Token.Keywords.Checked,
+                Token.Punctuation.OpenBrace,
+                Token.Keywords.Checked,
+                Token.Punctuation.OpenParen,
+                Token.Operators.Increment,
+                Token.Variables.ReadWrite("i"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace,
+
+                Token.Punctuation.CloseBrace,
+                Token.PrimitiveType.Void,
+                Token.Identifiers.MethodName("M2"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseBrace
+            ]);
+        });
+
     });
 });

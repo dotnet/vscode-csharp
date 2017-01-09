@@ -116,7 +116,7 @@ repository:
     - include: '#switch-statement'
     - include: '#goto-statement'
     - include: '#return-statement'
-    - include: '#break-continue-statement'
+    - include: '#break-or-continue-statement'
     - include: '#throw-statement'
     - include: '#yield-statement'
     - include: '#try-statement'
@@ -140,14 +140,15 @@ repository:
     - include: '#literal'
     - include: '#this-or-base-expression'
     - include: '#expression-operators'
-    - include: '#cast-expression'
     - include: '#query-expression'
     - include: '#anonymous-method-expression'
     - include: '#object-creation-expression'
     - include: '#array-creation-expression'
+    - include: '#anonymous-object-creation-expression'
     - include: '#member-access-expression'
     - include: '#invocation-expression'
     - include: '#element-access-expression'
+    - include: '#cast-expression'
     - include: '#parenthesized-expression'
     - include: '#initializer-expression'
     - include: '#identifier'
@@ -875,7 +876,7 @@ repository:
     patterns:
     - include: '#expression'
 
-  break-continue-statement:
+  break-or-continue-statement:
     match: (?<!\.)\b(?:(break)|(continue))\b
     captures:
       '1': { name: keyword.control.flow.break.cs }
@@ -910,10 +911,10 @@ repository:
       '2': { name: keyword.control.flow.break.cs }
 
   if-statement:
-    begin: (?<!\.)\b(if)\b
+    begin: (?<!\.)\b(if)\b\s*(?=\()
     beginCaptures:
       '1': { name: keyword.control.conditional.if.cs }
-    end: (?=;|})
+    end: (?<=\})|(?=;)
     patterns:
     - begin: \(
       beginCaptures:
@@ -929,16 +930,8 @@ repository:
     begin: (?<!\.)\b(else)\b
     beginCaptures:
       '1': { name: keyword.control.conditional.else.cs }
-    end: (?=;|})
+    end: (?<=\})|(?=;)
     patterns:
-    - begin: \(
-      beginCaptures:
-        '0': { name: punctuation.parenthesis.open.cs }
-      end: \)
-      endCaptures:
-        '0': { name: punctuation.parenthesis.close.cs }
-      patterns:
-      - include: '#expression'
     - include: '#statement'
 
   switch-statement:
@@ -1005,7 +998,7 @@ repository:
     - include: '#statement'
 
   for-statement:
-    begin: (?<!\.)\b(for)\b
+    begin: (?<!\.)\b(for)\b\s*(?=\()
     beginCaptures:
       '1': { name: keyword.control.loop.for.cs }
     end: (?<=\})|(?=;)
@@ -1024,7 +1017,7 @@ repository:
     - include: '#statement'
 
   foreach-statement:
-    begin: (?<!\.)\b(foreach)\b
+    begin: (?<!\.)\b(foreach)\b\s*(?=\()
     beginCaptures:
       '1': { name: keyword.control.loop.foreach.cs }
     end: (?<=\})|(?=;)
@@ -1072,14 +1065,18 @@ repository:
     - include: '#statement'
 
   try-statement:
+    patterns:
+    - include: '#try-block'
+    - include: '#catch-clause'
+    - include: '#finally-clause'
+
+  try-block:
     begin: (?<!\.)\b(try)\b
     beginCaptures:
       '1': { name: keyword.control.try.cs }
-    end: (?=\})
+    end: (?<=\})
     patterns:
     - include: '#block'
-    - include: '#catch-clause'
-    - include: '#finally-clause'
 
   finally-clause:
     begin: (?<!\.)\b(finally)\b
@@ -1092,7 +1089,7 @@ repository:
   catch-clause:
     begin: (?<!\.)\b(catch)\b
     beginCaptures:
-      '1': { name: keyword.control.try.catch.cs }
+        '1': { name: keyword.control.try.catch.cs }
     end: (?<=\})
     patterns:
     - begin: \(
@@ -1130,7 +1127,6 @@ repository:
           '6': { name: variable.local.cs }
     - include: '#when-clause'
     - include: '#block'
-    - include: '#finally-clause'
 
   when-clause:
     begin: (?<!\.)\b(when)\b\s*(\()
@@ -1144,7 +1140,7 @@ repository:
     - include: '#expression'
 
   checked-unchecked-statement:
-    begin: (?<!\.)\b(?:(checked)|(unchecked))\b
+    begin: (?<!\.)\b(?:(checked)|(unchecked))\b\s*(?!\()
     beginCaptures:
       '1': { name: keyword.other.checked.cs }
       '2': { name: keyword.other.unchecked.cs }
@@ -1169,7 +1165,7 @@ repository:
     - include: '#statement'
 
   using-statement:
-    begin: (?<!\.)\b(using)\b
+    begin: (?<!\.)\b(using)\b\s*(?=\()
     beginCaptures:
       '1': { name: keyword.other.using.cs }
     end: (?=\;|})
@@ -1438,6 +1434,13 @@ repository:
     - name: keyword.operator.arithmetic.cs
       match: '%|\*|/|-|\+'
 
+  assignment-expression:
+    match: \.*\s*(=)\s*\.*(?=;)
+    captures:
+      '1': keyword.operator.assignment.cs
+    patterns:
+    - include: '#expression'
+
   parenthesized-expression:
     begin: \(
     beginCaptures:
@@ -1649,6 +1652,14 @@ repository:
     end: (?<=\])
     patterns:
     - include: '#bracketed-argument-list'
+
+  anonymous-object-creation-expression:
+    begin: \b(new)\b\s*(?=\{|$)
+    beginCaptures:
+      '1': { name: keyword.other.new.cs }
+    end: (?=;)
+    patterns:
+    - include: '#initializer-expression'
 
   bracketed-parameter-list:
     begin: (?=(\[))

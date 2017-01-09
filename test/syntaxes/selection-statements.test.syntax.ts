@@ -11,6 +11,20 @@ describe("Grammar", () => {
 
     describe("Selection statements", () => {
         it("single-line if with embedded statement", () => {
+            const input = Input.InMethod(`if (true) return;`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.If,
+                Token.Punctuation.OpenParen,
+                Token.Literals.Boolean.True,
+                Token.Punctuation.CloseParen,
+                Token.Keywords.Return,
+                Token.Punctuation.Semicolon
+            ]);
+        });
+
+        it("single-line if with embedded method call", () => {
             const input = Input.InMethod(`if (true) Do();`);
             const tokens = tokenize(input);
 
@@ -297,6 +311,39 @@ switch (i) {
                 Token.Keywords.Break,
                 Token.Punctuation.Semicolon,
                 Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseBrace
+            ]);
+        });
+
+        it("if statement inside while statment with continue and break", () => {
+            const input = Input.InMethod(`
+while (i < 10)
+{
+    ++i;
+    if (true) continue;
+    break;
+}`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.While,
+                Token.Punctuation.OpenParen,
+                Token.Variables.ReadWrite("i"),
+                Token.Operators.Relational.LessThan,
+                Token.Literals.Numeric.Decimal("10"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Operators.Increment,
+                Token.Variables.ReadWrite("i"),
+                Token.Punctuation.Semicolon,
+                Token.Keywords.If,
+                Token.Punctuation.OpenParen,
+                Token.Literals.Boolean.True,
+                Token.Punctuation.CloseParen,
+                Token.Keywords.Continue,
+                Token.Punctuation.Semicolon,
+                Token.Keywords.Break,
+                Token.Punctuation.Semicolon,
                 Token.Punctuation.CloseBrace
             ]);
         });

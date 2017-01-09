@@ -180,5 +180,29 @@ catch (Exception) when (true)
                 Token.Punctuation.CloseBrace
             ]);
         });
+
+        it("try-finally followed by statement", () => {
+            const input = Input.InMethod(`
+try
+{
+}
+finally
+{
+}
+int x;`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Try,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
+                Token.Keywords.Finally,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
+                Token.PrimitiveType.Int,
+                Token.Variables.Local("x"),
+                Token.Punctuation.Semicolon
+            ]);
+        });
     });
 });
