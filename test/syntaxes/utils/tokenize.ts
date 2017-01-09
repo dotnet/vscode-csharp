@@ -194,6 +194,7 @@ export namespace Token {
     export namespace Keywords {
         export namespace Modifiers {
             export const Abstract = createToken('abstract', 'storage.modifier.cs');
+            export const Async = createToken('async', 'storage.modifier.cs');
             export const Const = createToken('const', 'storage.modifier.cs');
             export const In = createToken('in', 'storage.modifier.cs');
             export const Internal = createToken('internal', 'storage.modifier.cs');
