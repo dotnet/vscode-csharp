@@ -1746,16 +1746,6 @@ repository:
     - include: '#expression'
 
   query-expression:
-    patterns:
-    - include: '#from-clause'
-    - include: '#let-clause'
-    - include: '#where-clause'
-    - include: '#join-clause'
-    - include: '#orderby-clause'
-    - include: '#select-clause'
-    - include: '#group-clause'
-
-  from-clause:
     begin: |-
       (?x)
       \b(from)\b\s*
@@ -1788,7 +1778,17 @@ repository:
       '8': { name: keyword.query.in.cs }
     end: (?=;)
     patterns:
+    - include: '#query-body'
     - include: '#expression'
+
+  query-body:
+    patterns:
+    - include: '#let-clause'
+    - include: '#where-clause'
+    - include: '#join-clause'
+    - include: '#orderby-clause'
+    - include: '#select-clause'
+    - include: '#group-clause'
 
   let-clause:
     begin: |-
@@ -1802,6 +1802,7 @@ repository:
       '3': { name: keyword.operator.assignment.cs }
     end: (?=;)
     patterns:
+    - include: '#query-body'
     - include: '#expression'
 
   where-clause:
@@ -1812,6 +1813,7 @@ repository:
       '1': { name: keyword.query.where.cs }
     end: (?=;)
     patterns:
+    - include: '#query-body'
     - include: '#expression'
 
   join-clause:
@@ -1850,6 +1852,7 @@ repository:
     - include: '#join-on'
     - include: '#join-equals'
     - include: '#join-into'
+    - include: '#query-body'
     - include: '#expression'
 
   join-on:
@@ -1878,6 +1881,7 @@ repository:
     end: (?=;)
     patterns:
     - include: '#ordering-direction'
+    - include: '#query-body'
     - include: '#expression'
     - include: '#punctuation-comma'
 
@@ -1893,6 +1897,7 @@ repository:
       '1': { name: keyword.query.select.cs }
     end: (?=;)
     patterns:
+    - include: '#query-body'
     - include: '#expression'
 
   group-clause:
@@ -1903,6 +1908,7 @@ repository:
     patterns:
     - include: '#group-by'
     - include: '#group-into'
+    - include: '#query-body'
     - include: '#expression'
 
   group-by:
