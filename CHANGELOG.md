@@ -1,3 +1,11 @@
+## 1.6.2 (December 24, 2016)
+
+* Fix performance issue when editing type names containing multiple generic type parameters. ([#1088](https://github.com/OmniSharp/omnisharp-vscode/issues/1088), [#1086](https://github.com/OmniSharp/omnisharp-vscode/issues/1086))
+
+## 1.6.1 (December 22, 2016)
+
+* Fix crash when tasks.json contains comments. ([#1074](https://github.com/OmniSharp/omnisharp-vscode/issues/1074))
+
 ## 1.6.0 (December 21, 2016)
 
 #### C# Scripting

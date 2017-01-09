@@ -39,7 +39,9 @@ public class Tester
             let tokens: Token[] = TokenizerUtil.tokenize(input);
 
             tokens.should.contain(Tokens.StorageModifierKeyword("private", 4, 5));
-            tokens.should.contain(Tokens.Type("Dictionary< List<T>, Dictionary<T, D>>", 4, 13));
+            tokens.should.contain(Tokens.Type("Dictionary", 4, 13));
+            tokens.should.contain(Tokens.Type("List<T>", 4, 25));
+            tokens.should.contain(Tokens.Type("Dictionary<T, D>", 4, 34));
             tokens.should.contain(Tokens.FieldIdentifier("_field", 4, 52));
         });
 
