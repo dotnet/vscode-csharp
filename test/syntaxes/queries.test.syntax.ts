@@ -84,7 +84,7 @@ var q = from c in customers
                 Token.Variables.ReadWrite("orders"),
                 Token.Keywords.Queries.On,
                 Token.Variables.Object("c"),
-                Token.Punctuation.Accessor, 
+                Token.Punctuation.Accessor,
                 Token.Variables.Property("CustomerID"),
                 Token.Keywords.Queries.Equals,
                 Token.Variables.Object("o"),
@@ -114,7 +114,7 @@ var q = from c in customers
                 Token.Variables.ReadWrite("orders"),
                 Token.Keywords.Queries.On,
                 Token.Variables.Object("c"),
-                Token.Punctuation.Accessor, 
+                Token.Punctuation.Accessor,
                 Token.Variables.Property("CustomerID"),
                 Token.Keywords.Queries.Equals,
                 Token.Variables.Object("o"),
@@ -144,7 +144,7 @@ var q = from o in orders
                 Token.Variables.Object("o"),
                 Token.Punctuation.Accessor,
                 Token.Variables.Property("Customer"),
-                Token.Punctuation.Accessor, 
+                Token.Punctuation.Accessor,
                 Token.Variables.Property("Name"),
                 Token.Punctuation.Comma,
                 Token.Variables.Object("o"),
@@ -172,7 +172,7 @@ var q = from o in orders
                 Token.Variables.Object("o"),
                 Token.Punctuation.Accessor,
                 Token.Variables.Property("Customer"),
-                Token.Punctuation.Accessor, 
+                Token.Punctuation.Accessor,
                 Token.Variables.Property("Name"),
                 Token.Keywords.Queries.Ascending,
                 Token.Punctuation.Comma,
@@ -201,7 +201,7 @@ var q = from o in orders
                 Token.Variables.Object("o"),
                 Token.Punctuation.Accessor,
                 Token.Variables.Property("Customer"),
-                Token.Punctuation.Accessor, 
+                Token.Punctuation.Accessor,
                 Token.Variables.Property("Name"),
                 Token.Punctuation.Comma,
                 Token.Variables.Object("o"),
@@ -290,6 +290,159 @@ var q = from c in customers
                 Token.Variables.Property("Country"),
                 Token.Keywords.Queries.Into,
                 Token.Identifiers.RangeVariableName("g")
+            ]);
+        });
+
+        it("highlight complex query properly (issue #1106)", () => {
+            const input = Input.InClass(`
+private static readonly Parser<Node> NodeParser =
+    from name in NodeName.Token()
+    from type in NodeValueType.Token()
+    from eq in Parse.Char('=')
+    from value in QuotedString.Token()
+    from lcurl in Parse.Char('{').Token()
+    from children in Parse.Ref(() => ChildrenNodesParser)
+    from rcurl in Parse.Char('}').Token()
+    select new Node
+        {
+            Name = name,
+            Type = type,
+            Value = value,
+            Children = children
+        };
+`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Private,
+                Token.Keywords.Modifiers.Static,
+                Token.Keywords.Modifiers.ReadOnly,
+                Token.Type("Parser"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Type("Node"),
+                Token.Punctuation.TypeParameters.End,
+                Token.Identifiers.FieldName("NodeParser"),
+                Token.Operators.Assignment,
+
+                // from name in NodeName.Token()
+                Token.Keywords.Queries.From,
+                Token.Identifiers.RangeVariableName("name"),
+                Token.Keywords.Queries.In,
+                Token.Variables.Object("NodeName"),
+                Token.Punctuation.Accessor,
+                Token.Identifiers.MethodName("Token"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+
+                // from type in NodeValueType.Token()
+                Token.Keywords.Queries.From,
+                Token.Identifiers.RangeVariableName("type"),
+                Token.Keywords.Queries.In,
+                Token.Variables.Object("NodeValueType"),
+                Token.Punctuation.Accessor,
+                Token.Identifiers.MethodName("Token"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+
+                // from eq in Parse.Char('=')
+                Token.Keywords.Queries.From,
+                Token.Identifiers.RangeVariableName("eq"),
+                Token.Keywords.Queries.In,
+                Token.Variables.Object("Parse"),
+                Token.Punctuation.Accessor,
+                Token.Identifiers.MethodName("Char"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.Char.Begin,
+                Token.Literals.Char("="),
+                Token.Punctuation.Char.End,
+                Token.Punctuation.CloseParen,
+
+                // from value in QuotedString.Token()
+                Token.Keywords.Queries.From,
+                Token.Identifiers.RangeVariableName("value"),
+                Token.Keywords.Queries.In,
+                Token.Variables.Object("QuotedString"),
+                Token.Punctuation.Accessor,
+                Token.Identifiers.MethodName("Token"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+
+                // from lcurl in Parse.Char('{').Token()
+                Token.Keywords.Queries.From,
+                Token.Identifiers.RangeVariableName("lcurl"),
+                Token.Keywords.Queries.In,
+                Token.Variables.Object("Parse"),
+                Token.Punctuation.Accessor,
+                Token.Identifiers.MethodName("Char"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.Char.Begin,
+                Token.Literals.Char("{"),
+                Token.Punctuation.Char.End,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Accessor,
+                Token.Identifiers.MethodName("Token"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+
+                // from children in Parse.Ref(() => ChildrenNodesParser)
+                Token.Keywords.Queries.From,
+                Token.Identifiers.RangeVariableName("children"),
+                Token.Keywords.Queries.In,
+                Token.Variables.Object("Parse"),
+                Token.Punctuation.Accessor,
+                Token.Identifiers.MethodName("Ref"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Operators.Arrow,
+                Token.Variables.ReadWrite("ChildrenNodesParser"),
+                Token.Punctuation.CloseParen,
+
+                // from rcurl in Parse.Char('}').Token()
+                Token.Keywords.Queries.From,
+                Token.Identifiers.RangeVariableName("rcurl"),
+                Token.Keywords.Queries.In,
+                Token.Variables.Object("Parse"),
+                Token.Punctuation.Accessor,
+                Token.Identifiers.MethodName("Char"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.Char.Begin,
+                Token.Literals.Char("}"),
+                Token.Punctuation.Char.End,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Accessor,
+                Token.Identifiers.MethodName("Token"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+
+                // select new Node
+                // {
+                //     Name = name,
+                //     Type = type,
+                //     Value = value,
+                //     Children = children
+                // };
+                Token.Keywords.Queries.Select,
+                Token.Keywords.New,
+                Token.Type("Node"),
+                Token.Punctuation.OpenBrace,
+                Token.Variables.ReadWrite("Name"),
+                Token.Operators.Assignment,
+                Token.Variables.ReadWrite("name"),
+                Token.Punctuation.Comma,
+                Token.Variables.ReadWrite("Type"),
+                Token.Operators.Assignment,
+                Token.Variables.ReadWrite("type"),
+                Token.Punctuation.Comma,
+                Token.Variables.ReadWrite("Value"),
+                Token.Operators.Assignment,
+                Token.Variables.ReadWrite("value"),
+                Token.Punctuation.Comma,
+                Token.Variables.ReadWrite("Children"),
+                Token.Operators.Assignment,
+                Token.Variables.ReadWrite("children"),
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.Semicolon
             ]);
         });
     });

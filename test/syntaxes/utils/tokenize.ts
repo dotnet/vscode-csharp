@@ -313,6 +313,7 @@ export namespace Token {
             export const Hexadecimal = (text: string) => createToken(text, 'constant.numeric.hex.cs');
         }
 
+        export const Char = (text: string) => createToken(text, 'string.quoted.single.cs');
         export const CharacterEscape = (text: string) => createToken(text, 'constant.character.escape.cs');
         export const String = (text: string) => createToken(text, 'string.quoted.double.cs');
     }
@@ -379,7 +380,12 @@ export namespace Token {
     }
 
     export namespace Punctuation {
-        export namespace Interpolation {
+         export namespace Char {
+            export const Begin = createToken('\'', 'punctuation.definition.char.begin.cs');
+            export const End = createToken('\'', 'punctuation.definition.char.end.cs');
+        }
+
+       export namespace Interpolation {
             export const Begin = createToken('{', 'punctuation.definition.interpolation.begin.cs');
             export const End = createToken('}', 'punctuation.definition.interpolation.end.cs');
         }
