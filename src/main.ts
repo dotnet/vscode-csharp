@@ -66,6 +66,9 @@ function installRuntimeDependencies(extension: vscode.Extension<any>, logger: Lo
         }
     };
 
+    // Sends "AcquisitionStart" telemetry to indicate an acquisition  started.
+    reporter.sendTelemetryEvent("AcquisitionStart");
+
     let platformInfo: PlatformInformation;
     let packageManager: PackageManager;
     let installationStage = 'touchBeginFile';
