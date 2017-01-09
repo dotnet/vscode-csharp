@@ -11,7 +11,6 @@ describe("Grammar", () => {
 
     describe("Constructors", () => {
         it("instance constructor with no parameters", () => {
-
             const input = Input.InClass(`TestClass() { }`);
             const tokens = tokenize(input);
 
@@ -24,7 +23,6 @@ describe("Grammar", () => {
         });
 
         it("public instance constructor with no parameters", () => {
-
             const input = Input.InClass(`public TestClass() { }`);
             const tokens = tokenize(input);
 
@@ -38,7 +36,6 @@ describe("Grammar", () => {
         });
 
         it("public instance constructor with one parameter", () => {
-
             const input = Input.InClass(`public TestClass(int x) { }`);
             const tokens = tokenize(input);
 
@@ -54,7 +51,6 @@ describe("Grammar", () => {
         });
 
         it("public instance constructor with one ref parameter", () => {
-
             const input = Input.InClass(`public TestClass(ref int x) { }`);
             const tokens = tokenize(input);
 
@@ -71,7 +67,6 @@ describe("Grammar", () => {
         });
 
         it("instance constructor with two parameters", () => {
-
             const input = Input.InClass(`
 TestClass(int x, int y)
 {
@@ -92,7 +87,6 @@ TestClass(int x, int y)
         });
 
         it("instance constructor with expression body", () => {
-
             const input = Input.InClass(`TestClass(int x, int y) => Foo();`);
             const tokens = tokenize(input);
 
@@ -113,7 +107,6 @@ TestClass(int x, int y)
         });
 
         it("static constructor no parameters", () => {
-
             const input = Input.InClass(`TestClass() { }`);
             const tokens = tokenize(input);
 
@@ -126,7 +119,6 @@ TestClass(int x, int y)
         });
 
         it("instance constructor with 'this' initializer", () => {
-
             const input = Input.InClass(`TestClass() : this(42) { }`);
             const tokens = tokenize(input);
 
@@ -144,7 +136,6 @@ TestClass(int x, int y)
         });
 
         it("public instance constructor with 'this' initializer", () => {
-
             const input = Input.InClass(`public TestClass() : this(42) { }`);
             const tokens = tokenize(input);
 
@@ -163,7 +154,6 @@ TestClass(int x, int y)
         });
 
         it("instance constructor with 'this' initializer with ref parameter", () => {
-
             const input = Input.InClass(`TestClass(int x) : this(ref x) { }`);
             const tokens = tokenize(input);
 
@@ -184,7 +174,6 @@ TestClass(int x, int y)
         });
 
         it("instance constructor with 'this' initializer with named parameter", () => {
-
             const input = Input.InClass(`TestClass(int x) : this(y: x) { }`);
             const tokens = tokenize(input);
 
@@ -206,7 +195,6 @@ TestClass(int x, int y)
         });
 
         it("instance constructor with 'base' initializer", () => {
-
             const input = Input.InClass(`TestClass() : base(42) { }`);
             const tokens = tokenize(input);
 
@@ -223,8 +211,28 @@ TestClass(int x, int y)
                 Token.Punctuation.CloseBrace]);
         });
 
-        it("Open multiline comment in front of parameter highlights properly (issue #861)", () => {
+        it("instance constructor with 'base' initializer on separate line", () => {
+            const input = Input.InClass(`
+TestClass() :
+    base(42)
+{
+}`);
+            const tokens = tokenize(input);
 
+            tokens.should.deep.equal([
+                Token.Identifiers.MethodName("TestClass"),
+                Token.Punctuation.OpenParen,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Colon,
+                Token.Keywords.Base,
+                Token.Punctuation.OpenParen,
+                Token.Literals.Numeric.Decimal("42"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace]);
+        });
+
+        it("Open multiline comment in front of parameter highlights properly (issue #861)", () => {
             const input = Input.InClass(`
 internal WaitHandle(Task self, TT.Task /*task)
 {
@@ -255,7 +263,6 @@ internal WaitHandle(Task self, TT.Task /*task)
         });
 
         it("Highlight properly within base constructor initializer (issue #782)", () => {
-
             const input = `
 public class A
 {
