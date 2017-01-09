@@ -43,7 +43,7 @@ describe("Grammar", () => {
 
                 tokens.should.deep.equal([
                     Token.Keywords.Var,
-                    Token.Variables.Local("x"),
+                    Token.Identifiers.LocalName("x"),
                     Token.Operators.Assignment,
                     Token.Punctuation.Char.Begin,
                     Token.Punctuation.Char.End,
@@ -56,7 +56,7 @@ describe("Grammar", () => {
 
                 tokens.should.deep.equal([
                     Token.Keywords.Var,
-                    Token.Variables.Local("x"),
+                    Token.Identifiers.LocalName("x"),
                     Token.Operators.Assignment,
                     Token.Punctuation.Char.Begin,
                     Token.Literals.Char("a"),
@@ -70,7 +70,7 @@ describe("Grammar", () => {
 
                 tokens.should.deep.equal([
                     Token.Keywords.Var,
-                    Token.Variables.Local("x"),
+                    Token.Identifiers.LocalName("x"),
                     Token.Operators.Assignment,
                     Token.Punctuation.Char.Begin,
                     Token.Literals.CharacterEscape("\\'"),

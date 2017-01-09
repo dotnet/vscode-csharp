@@ -8,7 +8,7 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 # TODO List
 #
 # * Refinement and tests to ensure proper highlighting while typing
-# * lambda expressions and anonymous functions
+# * anonymous methods
 # * is and as cast expressions
 # * null coalescing operator
 # * null propagating operator
@@ -349,7 +349,7 @@ repository:
       - include: '#punctuation-comma'
       - begin: '[_[:alpha:]][_[:alnum:]]*'
         beginCaptures:
-          '0': { name: variable.other.enummember.cs }
+          '0': { name: entity.name.variable.enum-member.cs }
         end: (?=(,|\}))
         patterns:
         - include: '#comment'
@@ -1064,7 +1064,7 @@ repository:
           # '4': ?<name-and-type-args> is a sub-expression. It's final value is not considered.
           # '5': ?<type-args> is a sub-expression. It's final value is not considered.
           # '6': ?<tuple> is a sub-expression. It's final value is not considered.
-          '7': { name: variable.local.cs }
+          '7': { name: entity.name.variable.local.cs }
           '8': { name: keyword.control.loop.in.cs }
       - include: '#expression'
     - include: '#statement'
@@ -1129,7 +1129,7 @@ repository:
           # '3': ?<name-and-type-args> is a sub-expression. It's final value is not considered.
           # '4': ?<type-args> is a sub-expression. It's final value is not considered.
           # '5': ?<tuple> is a sub-expression. It's final value is not considered.
-          '6': { name: variable.local.cs }
+          '6': { name: entity.name.variable.local.cs }
     - include: '#when-clause'
     - include: '#block'
 
@@ -1228,10 +1228,10 @@ repository:
       # '4': ?<name-and-type-args> is a sub-expression. It's final value is not considered.
       # '5': ?<type-args> is a sub-expression. It's final value is not considered.
       # '6': ?<tuple> is a sub-expression. It's final value is not considered.
-      '7': { name: variable.local.cs }
+      '7': { name: entity.name.variable.local.cs }
     end: (?=;|\))
     patterns:
-    - name: variable.local.cs
+    - name: entity.name.variable.local.cs
       match: '[_[:alpha:]][_[:alnum:]]*'
     - include: '#punctuation-comma'
     - include: '#comment'
@@ -1266,10 +1266,10 @@ repository:
       # '4': ?<name-and-type-args> is a sub-expression. It's final value is not considered.
       # '5': ?<type-args> is a sub-expression. It's final value is not considered.
       # '6': ?<tuple> is a sub-expression. It's final value is not considered.
-      '7': { name: variable.local.cs }
+      '7': { name: entity.name.variable.local.cs }
     end: (?=;)
     patterns:
-    - name: variable.local.cs
+    - name: entity.name.variable.local.cs
       match: '[_[:alpha:]][_[:alnum:]]*'
     - include: '#punctuation-comma'
     - include: '#comment'
@@ -1686,7 +1686,7 @@ repository:
       # parameter name
       - match: \s+([_[:alpha:]][_[:alnum:]]*)\s*(?=[,\]])
         captures:
-          '1': { name: variable.parameter.cs }
+          '1': { name: entity.name.variable.parameter.cs }
       - include: '#variable-initializer'
       - include: '#type'
       - include: '#punctuation-comma'
@@ -1706,7 +1706,7 @@ repository:
     # parameter name
     - match: \s+([_[:alpha:]][_[:alnum:]]*)\s*(?=[,)])
       captures:
-        '1': { name: variable.parameter.cs }
+        '1': { name: entity.name.variable.parameter.cs }
     - include: '#variable-initializer'
     - include: '#type'
     - include: '#punctuation-comma'
@@ -1738,7 +1738,7 @@ repository:
   named-argument:
     begin: ([_[:alpha:]][_[:alnum:]]*)\s*(:)
     beginCaptures:
-      '1': { name: variable.parameter.cs }
+      '1': { name: entity.name.variable.parameter.cs }
       '2': { name: punctuation.separator.colon.cs }
     end: (?=(,|\)|\]))
     patterns:
@@ -1939,7 +1939,7 @@ repository:
         (=>)
       beginCaptures:
         '1': { name: storage.modifier.cs }
-        '2': { name: variable.parameter.cs }
+        '2': { name: entity.name.variable.parameter.cs }
         '3': { name: keyword.operator.arrow.cs }
       end: (?=\)|;)
       patterns:
@@ -2010,7 +2010,7 @@ repository:
       # '3': ?<name-and-type-args> is a sub-expression. It's final value is not considered.
       # '4': ?<type-args> is a sub-expression. It's final value is not considered.
       # '5': ?<tuple> is a sub-expression. It's final value is not considered.
-      '6': { name: entity.name.variable.tuple.cs }
+      '6': { name: entity.name.variable.tuple-element.cs }
 
   type-builtin:
     match: \b(bool|byte|char|decimal|double|float|int|long|object|sbyte|short|string|uint|ulong|ushort|void)\b

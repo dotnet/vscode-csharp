@@ -42,7 +42,7 @@ describe("Grammar", () => {
                 Token.Punctuation.TypeParameters.End,
                 Token.Punctuation.OpenParen,
                 Token.Type("T"),
-                Token.Variables.Parameter("arg1"),
+                Token.Identifiers.ParameterName("arg1"),
                 Token.Punctuation.CloseParen,
                 Token.Punctuation.Semicolon]);
         });
@@ -111,17 +111,17 @@ delegate void D<T1, T2>()
                 Token.Punctuation.OpenParen,
                 Token.Keywords.Modifiers.Ref,
                 Token.PrimitiveType.String,
-                Token.Variables.Parameter("x"),
+                Token.Identifiers.ParameterName("x"),
                 Token.Punctuation.Comma,
                 Token.Keywords.Modifiers.Out,
                 Token.PrimitiveType.Int,
-                Token.Variables.Parameter("y"),
+                Token.Identifiers.ParameterName("y"),
                 Token.Punctuation.Comma,
                 Token.Keywords.Modifiers.Params,
                 Token.PrimitiveType.Object,
                 Token.Punctuation.OpenBracket,
                 Token.Punctuation.CloseBracket,
-                Token.Variables.Parameter("z"),
+                Token.Identifiers.ParameterName("z"),
                 Token.Punctuation.CloseParen,
                 Token.Punctuation.Semicolon]);
         });

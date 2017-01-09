@@ -16,7 +16,7 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.PrimitiveType.Int,
-                Token.Variables.Local("x"),
+                Token.Identifiers.LocalName("x"),
                 Token.Punctuation.Semicolon
             ]);
         });
@@ -27,7 +27,7 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.PrimitiveType.Int,
-                Token.Variables.Local("x"),
+                Token.Identifiers.LocalName("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("42"),
                 Token.Punctuation.Semicolon
@@ -40,9 +40,9 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.PrimitiveType.Int,
-                Token.Variables.Local("x"),
+                Token.Identifiers.LocalName("x"),
                 Token.Punctuation.Comma,
-                Token.Variables.Local("y"),
+                Token.Identifiers.LocalName("y"),
                 Token.Punctuation.Semicolon
             ]);
         });
@@ -53,11 +53,11 @@ describe("Grammar", () => {
 
             tokens.should.deep.equal([
                 Token.PrimitiveType.Int,
-                Token.Variables.Local("x"),
+                Token.Identifiers.LocalName("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("19"),
                 Token.Punctuation.Comma,
-                Token.Variables.Local("y"),
+                Token.Identifiers.LocalName("y"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("23"),
                 Token.Punctuation.Semicolon
@@ -71,7 +71,7 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Keywords.Modifiers.Const,
                 Token.PrimitiveType.Int,
-                Token.Variables.Local("x"),
+                Token.Identifiers.LocalName("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("42"),
                 Token.Punctuation.Semicolon
@@ -85,11 +85,11 @@ describe("Grammar", () => {
             tokens.should.deep.equal([
                 Token.Keywords.Modifiers.Const,
                 Token.PrimitiveType.Int,
-                Token.Variables.Local("x"),
+                Token.Identifiers.LocalName("x"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("19"),
                 Token.Punctuation.Comma,
-                Token.Variables.Local("y"),
+                Token.Identifiers.LocalName("y"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("23"),
                 Token.Punctuation.Semicolon

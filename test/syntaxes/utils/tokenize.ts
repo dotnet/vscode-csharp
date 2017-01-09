@@ -177,17 +177,21 @@ export namespace Token {
         export const AliasName = (text: string) => createToken(text, 'entity.name.type.alias.cs');
         export const ClassName = (text: string) => createToken(text, 'entity.name.type.class.cs');
         export const DelegateName = (text: string) => createToken(text, 'entity.name.type.delegate.cs');
+        export const EnumMemberName = (text: string) => createToken(text, 'entity.name.variable.enum-member.cs');
         export const EnumName = (text: string) => createToken(text, 'entity.name.type.enum.cs');
         export const EventName = (text: string) => createToken(text, 'entity.name.variable.event.cs');
         export const FieldName = (text: string) => createToken(text, 'entity.name.variable.field.cs');
         export const InterfaceName = (text: string) => createToken(text, 'entity.name.type.interface.cs');
         export const LabelName = (text: string) => createToken(text, 'entity.name.label.cs');
+        export const LocalName = (text: string) => createToken(text, 'entity.name.variable.local.cs');
         export const MethodName = (text: string) => createToken(text, 'entity.name.function.cs');
         export const NamespaceName = (text: string) => createToken(text, 'entity.name.type.namespace.cs');
+        export const ParameterName = (text: string) => createToken(text, 'entity.name.variable.parameter.cs');
         export const PreprocessorSymbol = (text: string) => createToken(text, 'entity.name.variable.preprocessor.symbol.cs');
         export const PropertyName = (text: string) => createToken(text, 'entity.name.variable.property.cs');
         export const RangeVariableName = (text: string) => createToken(text, 'entity.name.variable.range-variable.cs');
         export const StructName = (text: string) => createToken(text, 'entity.name.type.struct.cs');
+        export const TupleElementName = (text: string) => createToken(text, 'entity.name.variable.tuple-element.cs');
         export const TypeParameterName = (text: string) => createToken(text, 'entity.name.type.type-parameter.cs');
     }
 
@@ -431,13 +435,9 @@ export namespace Token {
 
     export namespace Variables {
         export const Alias = (text: string) => createToken(text, 'variable.other.alias.cs');
-        export const EnumMember = (text: string) => createToken(text, 'variable.other.enummember.cs');
-        export const Local = (text: string) => createToken(text, 'variable.local.cs');
         export const Object = (text: string) => createToken(text, 'variable.other.object.cs');
         export const Property = (text: string) => createToken(text, 'variable.other.object.property.cs');
-        export const Parameter = (text: string) => createToken(text, 'variable.parameter.cs');
         export const ReadWrite = (text: string) => createToken(text, 'variable.other.readwrite.cs');
-        export const Tuple = (text: string) => createToken(text, 'entity.name.variable.tuple.cs');
     }
 
     export const IllegalNewLine = (text: string) => createToken(text, 'invalid.illegal.newline.cs');

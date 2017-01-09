@@ -195,10 +195,10 @@ const   bool   field = true;`);
             tokens.should.deep.equal([
                 Token.Punctuation.OpenParen,
                 Token.PrimitiveType.Int,
-                Token.Variables.Tuple("x"),
+                Token.Identifiers.TupleElementName("x"),
                 Token.Punctuation.Comma,
                 Token.PrimitiveType.Int,
-                Token.Variables.Tuple("y"),
+                Token.Identifiers.TupleElementName("y"),
                 Token.Punctuation.CloseParen,
                 Token.Identifiers.FieldName("z"),
                 Token.Punctuation.Semicolon]);
@@ -213,10 +213,10 @@ const   bool   field = true;`);
                 Token.Keywords.Modifiers.Private,
                 Token.Punctuation.OpenParen,
                 Token.PrimitiveType.Int,
-                Token.Variables.Tuple("x"),
+                Token.Identifiers.TupleElementName("x"),
                 Token.Punctuation.Comma,
                 Token.PrimitiveType.Int,
-                Token.Variables.Tuple("y"),
+                Token.Identifiers.TupleElementName("y"),
                 Token.Punctuation.CloseParen,
                 Token.Identifiers.FieldName("z"),
                 Token.Punctuation.Semicolon]);

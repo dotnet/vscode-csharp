@@ -45,7 +45,7 @@ describe("Grammar", () => {
                 Token.Keywords.Enum,
                 Token.Identifiers.EnumName("E"),
                 Token.Punctuation.OpenBrace,
-                Token.Variables.EnumMember("M1"),
+                Token.Identifiers.EnumMemberName("M1"),
                 Token.Punctuation.CloseBrace]);
         });
 
@@ -58,11 +58,11 @@ describe("Grammar", () => {
                 Token.Keywords.Enum,
                 Token.Identifiers.EnumName("Color"),
                 Token.Punctuation.OpenBrace,
-                Token.Variables.EnumMember("Red"),
+                Token.Identifiers.EnumMemberName("Red"),
                 Token.Punctuation.Comma,
-                Token.Variables.EnumMember("Green"),
+                Token.Identifiers.EnumMemberName("Green"),
                 Token.Punctuation.Comma,
-                Token.Variables.EnumMember("Blue"),
+                Token.Identifiers.EnumMemberName("Blue"),
                 Token.Punctuation.CloseBrace]);
         });
 
@@ -83,13 +83,13 @@ enum E
                 Token.Keywords.Enum,
                 Token.Identifiers.EnumName("E"),
                 Token.Punctuation.OpenBrace,
-                Token.Variables.EnumMember("Value1"),
+                Token.Identifiers.EnumMemberName("Value1"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("1"),
                 Token.Punctuation.Comma,
-                Token.Variables.EnumMember("Value2"),
+                Token.Identifiers.EnumMemberName("Value2"),
                 Token.Punctuation.Comma,
-                Token.Variables.EnumMember("Value3"),
+                Token.Identifiers.EnumMemberName("Value3"),
                 Token.Punctuation.CloseBrace]);
         });
 
@@ -128,13 +128,13 @@ public class TestClass2
                 Token.Keywords.Enum,
                 Token.Identifiers.EnumName("TestEnum"),
                 Token.Punctuation.OpenBrace,
-                Token.Variables.EnumMember("enum1"),
+                Token.Identifiers.EnumMemberName("enum1"),
                 Token.Punctuation.Comma,
-                Token.Variables.EnumMember("enum2"),
+                Token.Identifiers.EnumMemberName("enum2"),
                 Token.Punctuation.Comma,
-                Token.Variables.EnumMember("enum3"),
+                Token.Identifiers.EnumMemberName("enum3"),
                 Token.Punctuation.Comma,
-                Token.Variables.EnumMember("enum4"),
+                Token.Identifiers.EnumMemberName("enum4"),
                 Token.Punctuation.CloseBrace,
 
                 Token.Keywords.Modifiers.Public,
@@ -147,11 +147,11 @@ public class TestClass2
                 Token.Keywords.Enum,
                 Token.Identifiers.EnumName("TestEnum2"),
                 Token.Punctuation.OpenBrace,
-                Token.Variables.EnumMember("enum1"),
+                Token.Identifiers.EnumMemberName("enum1"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("10"),
                 Token.Punctuation.Comma,
-                Token.Variables.EnumMember("enum2"),
+                Token.Identifiers.EnumMemberName("enum2"),
                 Token.Operators.Assignment,
                 Token.Literals.Numeric.Decimal("15"),
                 Token.Punctuation.Comma,
