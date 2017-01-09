@@ -9,7 +9,6 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 #
 # * Refinement and tests to ensure proper highlighting while typing
 # * lambda expressions and anonymous functions
-# * anonymous object creation expressions
 # * is and as cast expressions
 # * null coalescing operator
 # * null propagating operator
@@ -18,7 +17,7 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 # * compound assignement
 # * verbatim identifiers
 # * hexadecimal and unicode character escape sequences
-# * unsafe code: fixed, sizeof, unsafe blocks, unsafe keyword
+# * unsafe code: fixed, sizeof, unsafe blocks
 # * XML doc comments
 
 patterns:
@@ -252,7 +251,7 @@ repository:
 
   storage-modifier:
     name: 'storage.modifier.cs'
-    match: (?<!\.)\b(new|public|protected|internal|private|abstract|virtual|override|sealed|static|partial|readonly|volatile|const|extern|async)\b
+    match: (?<!\.)\b(new|public|protected|internal|private|abstract|virtual|override|sealed|static|partial|readonly|volatile|const|extern|async|unsafe)\b
 
   class-declaration:
     begin: (?=\bclass\b)

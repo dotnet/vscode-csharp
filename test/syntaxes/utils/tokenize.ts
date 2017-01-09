@@ -209,6 +209,7 @@ export namespace Token {
             export const Ref = createToken('ref', 'storage.modifier.cs');
             export const Sealed = createToken('sealed', 'storage.modifier.cs');
             export const Static = createToken('static', 'storage.modifier.cs');
+            export const Unsafe = createToken('unsafe', 'storage.modifier.cs');
             export const Virtual = createToken('virtual', 'storage.modifier.cs');
         }
 

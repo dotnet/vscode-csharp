@@ -267,5 +267,20 @@ class Klass
 
                 Token.Punctuation.CloseBrace]);
         });
+
+        it("unsafe class", () => {
+            const input = Input.InNamespace(`
+unsafe class C
+{
+}`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Unsafe,
+                Token.Keywords.Class,
+                Token.Identifiers.ClassName("C"),
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace]);
+        });
     });
 });
