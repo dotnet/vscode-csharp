@@ -163,7 +163,7 @@ throw new InvalidCastException(
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Keywords.Throw,
+                Token.Keywords.Control.Throw,
                 Token.Keywords.New,
                 Token.Type("InvalidCastException"),
                 Token.Punctuation.OpenParen,

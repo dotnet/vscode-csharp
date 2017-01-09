@@ -31,7 +31,7 @@ public string this[int index]
                 Token.Punctuation.OpenBrace,
                 Token.Keywords.Get,
                 Token.Punctuation.OpenBrace,
-                Token.Keywords.Return,
+                Token.Keywords.Control.Return,
                 Token.Variables.Object("index"),
                 Token.Punctuation.Accessor,
                 Token.Identifiers.MethodName("ToString"),

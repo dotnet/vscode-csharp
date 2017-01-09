@@ -15,8 +15,8 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Keywords.Yield,
-                Token.Keywords.Return,
+                Token.Keywords.Control.Yield,
+                Token.Keywords.Control.Return,
                 Token.Literals.Numeric.Decimal("42"),
                 Token.Punctuation.Semicolon
             ]);
@@ -27,8 +27,8 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Keywords.Yield,
-                Token.Keywords.Break,
+                Token.Keywords.Control.Yield,
+                Token.Keywords.Control.Break,
                 Token.Punctuation.Semicolon
             ]);
         });

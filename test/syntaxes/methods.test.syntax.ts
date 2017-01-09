@@ -44,7 +44,7 @@ int Add(int x, int y)
                 Token.Variables.Parameter("y"),
                 Token.Punctuation.CloseParen,
                 Token.Punctuation.OpenBrace,
-                Token.Keywords.Return,
+                Token.Keywords.Control.Return,
                 Token.Variables.ReadWrite("x"),
                 Token.Operators.Arithmetic.Addition,
                 Token.Variables.ReadWrite("y"),

@@ -13,7 +13,6 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 # * null coalescing operator
 # * null propagating operator
 # * conditional operator
-# * default expression
 # * compound assignement
 # * verbatim identifiers
 # * hexadecimal and unicode character escape sequences
@@ -133,7 +132,7 @@ repository:
     - include: '#preprocessor'
     - include: '#comment'
     - include: '#checked-unchecked-expression'
-    - include: '#typeof-expression'
+    - include: '#typeof-or-default-expression'
     - include: '#interpolated-string'
     - include: '#verbatim-interpolated-string'
     - include: '#literal'
@@ -1288,11 +1287,12 @@ repository:
     patterns:
     - include: '#expression'
 
-  typeof-expression:
-    begin: (?<!\.)\b(typeof)\b\s*(\()
+  typeof-or-default-expression:
+    begin: (?<!\.)\b(?:(typeof)|(default))\b\s*(\()
     beginCaptures:
       '1': { name: keyword.other.typeof.cs }
-      '2': { name: punctuation.parenthesis.open.cs }
+      '2': { name: keyword.other.default.cs }
+      '3': { name: punctuation.parenthesis.open.cs }
     end: \)
     endCaptures:
       '0': { name: punctuation.parenthesis.close.cs }

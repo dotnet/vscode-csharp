@@ -15,7 +15,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Keywords.While,
+                Token.Keywords.Control.While,
                 Token.Punctuation.OpenParen,
                 Token.Literals.Boolean.True,
                 Token.Punctuation.CloseParen,
@@ -30,10 +30,10 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Keywords.Do,
+                Token.Keywords.Control.Do,
                 Token.Punctuation.OpenBrace,
                 Token.Punctuation.CloseBrace,
-                Token.Keywords.While,
+                Token.Keywords.Control.While,
                 Token.Punctuation.OpenParen,
                 Token.Literals.Boolean.True,
                 Token.Punctuation.CloseParen,
@@ -47,7 +47,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Keywords.For,
+                Token.Keywords.Control.For,
                 Token.Punctuation.OpenParen,
                 Token.PrimitiveType.Int,
                 Token.Variables.Local("i"),
@@ -76,7 +76,7 @@ for (int i = 0; i < 42; i++)
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Keywords.For,
+                Token.Keywords.Control.For,
                 Token.Punctuation.OpenParen,
                 Token.PrimitiveType.Int,
                 Token.Variables.Local("i"),
@@ -91,7 +91,7 @@ for (int i = 0; i < 42; i++)
                 Token.Operators.Increment,
                 Token.Punctuation.CloseParen,
                 Token.Punctuation.OpenBrace,
-                Token.Keywords.Break,
+                Token.Keywords.Control.Break,
                 Token.Punctuation.Semicolon,
                 Token.Punctuation.CloseBrace,
             ]);
@@ -107,7 +107,7 @@ for (int i = 0; i < 42; i++)
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Keywords.For,
+                Token.Keywords.Control.For,
                 Token.Punctuation.OpenParen,
                 Token.PrimitiveType.Int,
                 Token.Variables.Local("i"),
@@ -122,7 +122,7 @@ for (int i = 0; i < 42; i++)
                 Token.Operators.Increment,
                 Token.Punctuation.CloseParen,
                 Token.Punctuation.OpenBrace,
-                Token.Keywords.Continue,
+                Token.Keywords.Control.Continue,
                 Token.Punctuation.Semicolon,
                 Token.Punctuation.CloseBrace,
             ]);
@@ -134,11 +134,11 @@ for (int i = 0; i < 42; i++)
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Keywords.ForEach,
+                Token.Keywords.Control.ForEach,
                 Token.Punctuation.OpenParen,
                 Token.PrimitiveType.Int,
                 Token.Variables.Local("i"),
-                Token.Keywords.In,
+                Token.Keywords.Control.In,
                 Token.Variables.ReadWrite("numbers"),
                 Token.Punctuation.CloseParen,
                 Token.Punctuation.OpenBrace,
@@ -156,11 +156,11 @@ foreach (var s in myList)
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Keywords.ForEach,
+                Token.Keywords.Control.ForEach,
                 Token.Punctuation.OpenParen,
                 Token.Keywords.Var,
                 Token.Variables.Local("s"),
-                Token.Keywords.In,
+                Token.Keywords.Control.In,
                 Token.Variables.ReadWrite("myList"),
                 Token.Punctuation.CloseParen,
                 Token.Punctuation.OpenBrace,

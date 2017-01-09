@@ -621,7 +621,7 @@ public ActionResult Register()
                 Token.Punctuation.String.End,
                 Token.Punctuation.CloseParen,
                 Token.Punctuation.Semicolon,
-                Token.Keywords.Return,
+                Token.Keywords.Control.Return,
                 Token.Identifiers.MethodName("View"),
                 Token.Punctuation.OpenParen,
                 Token.Punctuation.CloseParen,

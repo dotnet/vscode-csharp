@@ -11,7 +11,6 @@ describe("Grammar", () => {
 
     describe("Expressions", () => {
         it("array creation expression passed as argument", () => {
-
             const input = Input.InMethod(`c.abst(ref s, new int[] {1, i, i});`);
             const tokens = tokenize(input);
 
@@ -40,7 +39,6 @@ describe("Grammar", () => {
         });
 
         it("arithmetic", () => {
-
             const input = Input.InMethod(`b = this.i != 1 + (2 - 3);`);
             const tokens = tokenize(input);
 
@@ -57,6 +55,42 @@ describe("Grammar", () => {
                 Token.Literals.Numeric.Decimal("2"),
                 Token.Operators.Arithmetic.Subtraction,
                 Token.Literals.Numeric.Decimal("3"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
+            ]);
+        });
+
+        it("typeof", () => {
+            const input = Input.InMethod(`var t = typeof(List<>);`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Var,
+                Token.Variables.Local("t"),
+                Token.Operators.Assignment,
+                Token.Keywords.TypeOf,
+                Token.Punctuation.OpenParen,
+                Token.Type("List"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon
+            ]);
+        });
+
+        it("default", () => {
+            const input = Input.InMethod(`var t = default(List<>);`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Var,
+                Token.Variables.Local("t"),
+                Token.Operators.Assignment,
+                Token.Keywords.Default,
+                Token.Punctuation.OpenParen,
+                Token.Type("List"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Punctuation.TypeParameters.End,
                 Token.Punctuation.CloseParen,
                 Token.Punctuation.Semicolon
             ]);

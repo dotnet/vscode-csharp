@@ -21,7 +21,7 @@ finally
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Keywords.Try,
+                Token.Keywords.Control.Try,
                 Token.Punctuation.OpenBrace,
                 Token.Punctuation.CloseBrace,
                 Token.Keywords.Finally,
@@ -41,10 +41,10 @@ catch
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Keywords.Try,
+                Token.Keywords.Control.Try,
                 Token.Punctuation.OpenBrace,
                 Token.Punctuation.CloseBrace,
-                Token.Keywords.Catch,
+                Token.Keywords.Control.Catch,
                 Token.Punctuation.OpenBrace,
                 Token.Punctuation.CloseBrace
             ]);
@@ -64,10 +64,10 @@ finally
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Keywords.Try,
+                Token.Keywords.Control.Try,
                 Token.Punctuation.OpenBrace,
                 Token.Punctuation.CloseBrace,
-                Token.Keywords.Catch,
+                Token.Keywords.Control.Catch,
                 Token.Punctuation.OpenBrace,
                 Token.Punctuation.CloseBrace,
                 Token.Keywords.Finally,
@@ -87,10 +87,10 @@ catch (Exception)
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Keywords.Try,
+                Token.Keywords.Control.Try,
                 Token.Punctuation.OpenBrace,
                 Token.Punctuation.CloseBrace,
-                Token.Keywords.Catch,
+                Token.Keywords.Control.Catch,
                 Token.Punctuation.OpenParen,
                 Token.Type("Exception"),
                 Token.Punctuation.CloseParen,
@@ -110,10 +110,10 @@ catch (Exception ex)
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Keywords.Try,
+                Token.Keywords.Control.Try,
                 Token.Punctuation.OpenBrace,
                 Token.Punctuation.CloseBrace,
-                Token.Keywords.Catch,
+                Token.Keywords.Control.Catch,
                 Token.Punctuation.OpenParen,
                 Token.Type("Exception"),
                 Token.Variables.Local("ex"),
@@ -135,17 +135,17 @@ catch when (true)
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Keywords.Try,
+                Token.Keywords.Control.Try,
                 Token.Punctuation.OpenBrace,
-                Token.Keywords.Throw,
+                Token.Keywords.Control.Throw,
                 Token.Keywords.New,
                 Token.Type("Exception"),
                 Token.Punctuation.OpenParen,
                 Token.Punctuation.CloseParen,
                 Token.Punctuation.Semicolon,
                 Token.Punctuation.CloseBrace,
-                Token.Keywords.Catch,
-                Token.Keywords.When,
+                Token.Keywords.Control.Catch,
+                Token.Keywords.Control.When,
                 Token.Punctuation.OpenParen,
                 Token.Literals.Boolean.True,
                 Token.Punctuation.CloseParen,
@@ -165,14 +165,14 @@ catch (Exception) when (true)
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Keywords.Try,
+                Token.Keywords.Control.Try,
                 Token.Punctuation.OpenBrace,
                 Token.Punctuation.CloseBrace,
-                Token.Keywords.Catch,
+                Token.Keywords.Control.Catch,
                 Token.Punctuation.OpenParen,
                 Token.Type("Exception"),
                 Token.Punctuation.CloseParen,
-                Token.Keywords.When,
+                Token.Keywords.Control.When,
                 Token.Punctuation.OpenParen,
                 Token.Literals.Boolean.True,
                 Token.Punctuation.CloseParen,
@@ -193,7 +193,7 @@ int x;`);
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Keywords.Try,
+                Token.Keywords.Control.Try,
                 Token.Punctuation.OpenBrace,
                 Token.Punctuation.CloseBrace,
                 Token.Keywords.Finally,
