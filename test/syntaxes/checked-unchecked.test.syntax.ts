@@ -10,34 +10,6 @@ describe("Grammar", () => {
     before(() => should());
 
     describe("Checked/Unchecked", () => {
-        it("checked statement", () => {
-            const input = Input.InMethod(`
-checked
-{
-}`);
-            const tokens = tokenize(input);
-
-            tokens.should.deep.equal([
-                Token.Keywords.Checked,
-                Token.Punctuation.OpenBrace,
-                Token.Punctuation.CloseBrace
-            ]);
-        });
-
-        it("unchecked statement", () => {
-            const input = Input.InMethod(`
-unchecked
-{
-}`);
-            const tokens = tokenize(input);
-
-            tokens.should.deep.equal([
-                Token.Keywords.Unchecked,
-                Token.Punctuation.OpenBrace,
-                Token.Punctuation.CloseBrace
-            ]);
-        });
-
         it("checked expression", () => {
             const input = Input.InMethod(`int x = checked(42);`);
             const tokens = tokenize(input);
@@ -70,7 +42,7 @@ unchecked
             ]);
         });
 
-        it("", () => {
+        it("checked expression inside checked statement", () => {
             const input = `
 class C
 {
@@ -116,6 +88,5 @@ class C
                 Token.Punctuation.CloseBrace
             ]);
         });
-
     });
 });
