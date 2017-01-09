@@ -18,7 +18,7 @@
         (?:\s*\.\s*\g<name-and-type-args>)* # Are there any more names being dotted into?
         (?:\s*\*\s*)* # pointer suffix?
         (?:\s*\?\s*)? # nullable suffix?
-        (?:\s*\[,*\]\s*)? # array suffix?
+        (?:\s*\[(?:\s*,\s*)*\]\s*)* # array suffix?
     )|
     (?<tuple>\s*\((?:[^\(\)]|\g<tuple>)+\))
 )
