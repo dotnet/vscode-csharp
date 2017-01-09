@@ -534,6 +534,51 @@ describe("Grammar", () => {
             ]);
         });
 
+        it("preprocessor in enum members", () => {
+            const input = `
+public enum E
+{
+    A,
+    B = A,
+    C = 2 + A,
+
+#if DEBUG
+    D,
+#endif
+
+}`;
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Enum,
+                Token.Identifiers.EnumName("E"),
+                Token.Punctuation.OpenBrace,
+                Token.Variables.EnumMember("A"),
+                Token.Punctuation.Comma,
+                Token.Variables.EnumMember("B"),
+                Token.Operators.Assignment,
+                Token.Variables.ReadWrite("A"),
+                Token.Punctuation.Comma,
+                Token.Variables.EnumMember("C"),
+                Token.Operators.Assignment,
+                Token.Literals.Numeric.Decimal("2"),
+                Token.Operators.Arithmetic.Addition,
+                Token.Variables.ReadWrite("A"),
+                Token.Punctuation.Comma,
+
+                Token.Punctuation.Hash,
+                Token.Keywords.Preprocessor.If,
+                Token.Identifiers.PreprocessorSymbol("DEBUG"),
+                Token.Variables.EnumMember("D"),
+                Token.Punctuation.Comma,
+                Token.Punctuation.Hash,
+                Token.Keywords.Preprocessor.EndIf,
+
+                Token.Punctuation.CloseBrace
+            ]);
+        });
+
         it("region name with double-quotes should be highlighted properly (issue #731)", () => {
             const input = Input.InClass(`
 #region  " Register / Create New  "

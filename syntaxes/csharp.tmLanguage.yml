@@ -345,6 +345,7 @@ repository:
       endCaptures:
         '0': { name: punctuation.curlybrace.close.cs }
       patterns:
+      - include: '#preprocessor'
       - include: '#comment'
       - include: '#attribute-section'
       - include: '#punctuation-comma'
