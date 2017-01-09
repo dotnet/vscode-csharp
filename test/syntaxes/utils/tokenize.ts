@@ -186,6 +186,7 @@ export namespace Token {
         export const NamespaceName = (text: string) => createToken(text, 'entity.name.type.namespace.cs');
         export const PreprocessorSymbol = (text: string) => createToken(text, 'entity.name.variable.preprocessor.symbol.cs');
         export const PropertyName = (text: string) => createToken(text, 'entity.name.variable.property.cs');
+        export const RangeVariableName = (text: string) => createToken(text, 'entity.name.variable.range-variable.cs');
         export const StructName = (text: string) => createToken(text, 'entity.name.type.struct.cs');
         export const TypeParameterName = (text: string) => createToken(text, 'entity.name.type.type-parameter.cs');
     }
@@ -229,6 +230,23 @@ export namespace Token {
             export const Restore = createToken('restore', 'keyword.preprocessor.restore.cs');
             export const Undef = createToken('undef', 'keyword.preprocessor.undef.cs');
             export const Warning = createToken('warning', 'keyword.preprocessor.warning.cs');
+        }
+
+        export namespace Queries {
+            export const Ascending = createToken('ascending', 'keyword.query.ascending.cs');
+            export const By = createToken('by', 'keyword.query.by.cs');
+            export const Descending = createToken('descending', 'keyword.query.descending.cs');
+            export const Equals = createToken('equals', 'keyword.query.equals.cs');
+            export const From = createToken('from', 'keyword.query.from.cs');
+            export const Group = createToken('group', 'keyword.query.group.cs');
+            export const In = createToken('in', 'keyword.query.in.cs');
+            export const Into = createToken('into', 'keyword.query.into.cs');
+            export const Join = createToken('join', 'keyword.query.join.cs');
+            export const Let = createToken('let', 'keyword.query.let.cs');
+            export const On = createToken('on', 'keyword.query.on.cs');
+            export const OrderBy = createToken('orderby', 'keyword.query.orderby.cs');
+            export const Select = createToken('select', 'keyword.query.select.cs');
+            export const Where = createToken('where', 'keyword.query.where.cs');
         }
 
         export const Add = createToken('add', 'keyword.other.add.cs');
