@@ -1032,32 +1032,36 @@ repository:
       patterns:
       - match: |-
           (?x)
-          (?<type-name>
-            (?:
-                (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)? # alias-qualification
-                (?<name-and-type-args> # identifier + type arguments (if any)
-                  \g<identifier>\s*
-                  (?<type-args>\s*<(?:[^<>]|\g<type-args>)+>\s*)?
-                )
-                (?:\s*\.\s*\g<name-and-type-args>)* # Are there any more names being dotted into?
-                (?:\s*\*\s*)* # pointer suffix?
-                (?:\s*\?\s*)? # nullable suffix?
-                (?:\s*\[,*\]\s*)? # array suffix?
-            )|
-            (?<tuple>\s*\((?:[^\(\)]|\g<tuple>)+\))
+          (?:
+            (\bvar\b)|
+            (?<type-name>
+              (?:
+                  (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)? # alias-qualification
+                  (?<name-and-type-args> # identifier + type arguments (if any)
+                    \g<identifier>\s*
+                    (?<type-args>\s*<(?:[^<>]|\g<type-args>)+>\s*)?
+                  )
+                  (?:\s*\.\s*\g<name-and-type-args>)* # Are there any more names being dotted into?
+                  (?:\s*\*\s*)* # pointer suffix?
+                  (?:\s*\?\s*)? # nullable suffix?
+                  (?:\s*\[,*\]\s*)? # array suffix?
+              )|
+              (?<tuple>\s*\((?:[^\(\)]|\g<tuple>)+\))
+            )
           )\s+
           (\g<identifier>)\s+
           \b(in)\b
         captures:
-          '1':
+          '1': { name: keyword.other.var.cs }
+          '2':
             patterns:
             - include: '#type'
-          # '2': ?<identifier> is a sub-expression. It's final value is not considered.
-          # '3': ?<name-and-type-args> is a sub-expression. It's final value is not considered.
-          # '4': ?<type-args> is a sub-expression. It's final value is not considered.
-          # '5': ?<tuple> is a sub-expression. It's final value is not considered.
-          '6': { name: variable.local.cs }
-          '7': { name: keyword.control.loop.in.cs }
+          # '3': ?<identifier> is a sub-expression. It's final value is not considered.
+          # '4': ?<name-and-type-args> is a sub-expression. It's final value is not considered.
+          # '5': ?<type-args> is a sub-expression. It's final value is not considered.
+          # '6': ?<tuple> is a sub-expression. It's final value is not considered.
+          '7': { name: variable.local.cs }
+          '8': { name: keyword.control.loop.in.cs }
       - include: '#expression'
     - include: '#statement'
 
@@ -1189,31 +1193,35 @@ repository:
   local-variable-declaration:
     begin: |-
       (?x)
-      (?<type-name>
-        (?:
-            (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)? # alias-qualification
-            (?<name-and-type-args> # identifier + type arguments (if any)
-              \g<identifier>\s*
-              (?<type-args>\s*<(?:[^<>]|\g<type-args>)+>\s*)?
-            )
-            (?:\s*\.\s*\g<name-and-type-args>)* # Are there any more names being dotted into?
-            (?:\s*\*\s*)* # pointer suffix?
-            (?:\s*\?\s*)? # nullable suffix?
-            (?:\s*\[,*\]\s*)? # array suffix?
-        )|
-        (?<tuple>\s*\((?:[^\(\)]|\g<tuple>)+\))
+      (?:
+        (\bvar\b)|
+        (?<type-name>
+          (?:
+              (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)? # alias-qualification
+              (?<name-and-type-args> # identifier + type arguments (if any)
+                \g<identifier>\s*
+                (?<type-args>\s*<(?:[^<>]|\g<type-args>)+>\s*)?
+              )
+              (?:\s*\.\s*\g<name-and-type-args>)* # Are there any more names being dotted into?
+              (?:\s*\*\s*)* # pointer suffix?
+              (?:\s*\?\s*)? # nullable suffix?
+              (?:\s*\[,*\]\s*)? # array suffix?
+          )|
+          (?<tuple>\s*\((?:[^\(\)]|\g<tuple>)+\))
+        )
       )\s+
       (\g<identifier>)\s*
       (?=,|;|=|\))
     beginCaptures:
-      '1':
+      '1': { name: keyword.other.var.cs }
+      '2':
         patterns:
         - include: '#type'
-      # '2': ?<identifier> is a sub-expression. It's final value is not considered.
-      # '3': ?<name-and-type-args> is a sub-expression. It's final value is not considered.
-      # '4': ?<type-args> is a sub-expression. It's final value is not considered.
-      # '5': ?<tuple> is a sub-expression. It's final value is not considered.
-      '6': { name: variable.local.cs }
+      # '3': ?<identifier> is a sub-expression. It's final value is not considered.
+      # '4': ?<name-and-type-args> is a sub-expression. It's final value is not considered.
+      # '5': ?<type-args> is a sub-expression. It's final value is not considered.
+      # '6': ?<tuple> is a sub-expression. It's final value is not considered.
+      '7': { name: variable.local.cs }
     end: (?=;|\))
     patterns:
     - name: variable.local.cs

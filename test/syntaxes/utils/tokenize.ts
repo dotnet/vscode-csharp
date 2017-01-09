@@ -274,6 +274,7 @@ export namespace Token {
         export const TypeOf = createToken('typeof', 'keyword.other.typeof.cs');
         export const Unchecked = createToken('unchecked', 'keyword.other.unchecked.cs');
         export const Using = createToken('using', 'keyword.other.using.cs');
+        export const Var = createToken('var', 'keyword.other.var.cs');
         export const When = createToken('when', 'keyword.control.try.when.cs');
         export const Where = createToken('where', 'keyword.other.where.cs');
         export const While = createToken('while', 'keyword.control.loop.while.cs');

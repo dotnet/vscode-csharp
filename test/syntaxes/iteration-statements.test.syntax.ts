@@ -158,7 +158,7 @@ foreach (var s in myList)
             tokens.should.deep.equal([
                 Token.Keywords.ForEach,
                 Token.Punctuation.OpenParen,
-                Token.Type("var"),
+                Token.Keywords.Var,
                 Token.Variables.Local("s"),
                 Token.Keywords.In,
                 Token.Variables.ReadWrite("myList"),

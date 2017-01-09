@@ -105,7 +105,7 @@ using (var o = new object())
             tokens.should.deep.equal([
                 Token.Keywords.Using,
                 Token.Punctuation.OpenParen,
-                Token.Type("var"),
+                Token.Keywords.Var,
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Keywords.New,
@@ -131,7 +131,7 @@ using (var o = new object())
             tokens.should.deep.equal([
                 Token.Keywords.Using,
                 Token.Punctuation.OpenParen,
-                Token.Type("var"),
+                Token.Keywords.Var,
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Keywords.New,

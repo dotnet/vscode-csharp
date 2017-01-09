@@ -15,7 +15,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("var"),
+                Token.Keywords.Var,
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Punctuation.OpenParen,
@@ -31,7 +31,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("var"),
+                Token.Keywords.Var,
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Punctuation.OpenParen,

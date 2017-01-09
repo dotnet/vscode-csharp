@@ -15,7 +15,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("var"),
+                Token.Keywords.Var,
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Variables.Property("P"),
@@ -30,7 +30,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("var"),
+                Token.Keywords.Var,
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Variables.Property("P"),
@@ -46,7 +46,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("var"),
+                Token.Keywords.Var,
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Variables.Property("P"),
@@ -64,7 +64,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("var"),
+                Token.Keywords.Var,
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Variables.Property("P"),
@@ -86,7 +86,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("var"),
+                Token.Keywords.Var,
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Variables.Property("P"),
@@ -103,7 +103,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("var"),
+                Token.Keywords.Var,
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Variables.Property("P"),
@@ -120,7 +120,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("var"),
+                Token.Keywords.Var,
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Variables.Object("C"),
@@ -140,7 +140,7 @@ describe("Grammar", () => {
             const tokens = tokenize(input);
 
             tokens.should.deep.equal([
-                Token.Type("var"),
+                Token.Keywords.Var,
                 Token.Variables.Local("o"),
                 Token.Operators.Assignment,
                 Token.Variables.Object("N"),
