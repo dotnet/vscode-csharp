@@ -644,6 +644,7 @@ repository:
       match: \b(get)\b
     - name: keyword.other.set.cs
       match: \b(set)\b
+    - include: '#attribute-section'
     - include: '#block'
     - include: '#punctuation-semicolon'
 
@@ -659,6 +660,7 @@ repository:
       match: \b(add)\b
     - name: keyword.other.remove.cs
       match: \b(remove)\b
+    - include: '#attribute-section'
     - include: '#block'
     - include: '#punctuation-semicolon'
 

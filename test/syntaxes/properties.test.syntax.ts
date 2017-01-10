@@ -11,7 +11,6 @@ describe("Grammar", () => {
 
     describe("Property", () => {
         it("declaration", () => {
-
             const input = Input.InClass(`
 public IBooom Property
 {
@@ -42,7 +41,6 @@ public IBooom Property
         });
 
         it("declaration single line", () => {
-
             const input = Input.InClass(`public IBooom Property { get { return null; } private set { something = value; } }`);
             const tokens = tokenize(input);
 
@@ -69,7 +67,6 @@ public IBooom Property
         });
 
         it("declaration without modifiers", () => {
-
             const input = Input.InClass(`IBooom Property {get; set;}`);
             const tokens = tokenize(input);
 
@@ -85,7 +82,6 @@ public IBooom Property
         });
 
         it("auto-property single line", function () {
-
             const input = Input.InClass(`public IBooom Property { get; set; }`);
             const tokens = tokenize(input);
 
@@ -102,7 +98,6 @@ public IBooom Property
         });
 
         it("auto-property single line (protected internal)", function () {
-
             const input = Input.InClass(`protected internal IBooom Property { get; set; }`);
             const tokens = tokenize(input);
 
@@ -120,7 +115,6 @@ public IBooom Property
         });
 
         it("auto-property", () => {
-
             const input = Input.InClass(`
 public IBooom Property
 {
@@ -142,7 +136,6 @@ public IBooom Property
         });
 
         it("generic auto-property", () => {
-
             const input = Input.InClass(`public Dictionary<string, List<T>[]> Property { get; set; }`);
             const tokens = tokenize(input);
 
@@ -169,7 +162,6 @@ public IBooom Property
         });
 
         it("auto-property initializer", () => {
-
             const input = Input.InClass(`public Dictionary<string, List<T>[]> Property { get; } = new Dictionary<string, List<T>[]>();`);
             const tokens = tokenize(input);
 
@@ -210,7 +202,6 @@ public IBooom Property
         });
 
         it("expression body", () => {
-
             const input = Input.InClass(`
 private string prop1 => "hello";
 private bool   prop2 => true;`);
@@ -235,7 +226,6 @@ private bool   prop2 => true;`);
         });
 
         it("explicitly-implemented interface member", () => {
-
             const input = Input.InClass(`string IFoo<string>.Bar { get; set; }`);
             const tokens = tokenize(input);
 
@@ -256,7 +246,6 @@ private bool   prop2 => true;`);
         });
 
         it("declaration in interface", () => {
-
             const input = Input.InInterface(`string Bar { get; set; }`);
             const tokens = tokenize(input);
 
@@ -272,7 +261,6 @@ private bool   prop2 => true;`);
         });
 
         it("declaration in interface (read-only)", () => {
-
             const input = Input.InInterface(`string Bar { get; }`);
             const tokens = tokenize(input);
 
@@ -286,7 +274,6 @@ private bool   prop2 => true;`);
         });
 
         it("declaration in interface (write-only)", () => {
-
             const input = Input.InInterface(`string Bar { set; }`);
             const tokens = tokenize(input);
 
@@ -296,6 +283,41 @@ private bool   prop2 => true;`);
                 Token.Punctuation.OpenBrace,
                 Token.Keywords.Set,
                 Token.Punctuation.Semicolon,
+                Token.Punctuation.CloseBrace]);
+        });
+
+        it("declaration with attributes", () => {
+            const input = Input.InClass(`
+[Obsolete]
+public int P1
+{
+    [Obsolete]
+    get { }
+    [Obsolete]
+    set { }
+}`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Punctuation.OpenBracket,
+                Token.Type("Obsolete"),
+                Token.Punctuation.CloseBracket,
+                Token.Keywords.Modifiers.Public,
+                Token.PrimitiveType.Int,
+                Token.Identifiers.PropertyName("P1"),
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.OpenBracket,
+                Token.Type("Obsolete"),
+                Token.Punctuation.CloseBracket,
+                Token.Keywords.Get,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.OpenBracket,
+                Token.Type("Obsolete"),
+                Token.Punctuation.CloseBracket,
+                Token.Keywords.Set,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
                 Token.Punctuation.CloseBrace]);
         });
     });

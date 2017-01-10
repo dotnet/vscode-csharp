@@ -11,7 +11,6 @@ describe("Grammar", () => {
 
     describe("Events", () => {
         it("declaration", () => {
-
             const input = Input.InClass(`public event Type Event;`);
             const tokens = tokenize(input);
 
@@ -24,7 +23,6 @@ describe("Grammar", () => {
         });
 
         it("declaration with multiple modifiers", () => {
-
             const input = Input.InClass(`protected internal event Type Event;`);
             const tokens = tokenize(input);
 
@@ -38,7 +36,6 @@ describe("Grammar", () => {
         });
 
         it("declaration with multiple declarators", () => {
-
             const input = Input.InClass(`public event Type Event1, Event2;`);
             const tokens = tokenize(input);
 
@@ -53,7 +50,6 @@ describe("Grammar", () => {
         });
 
         it("generic", () => {
-
             const input = Input.InClass(`public event EventHandler<List<T>, Dictionary<T, D>> Event;`);
             const tokens = tokenize(input);
 
@@ -79,7 +75,6 @@ describe("Grammar", () => {
         });
 
         it("declaration with accessors", () => {
-
             const input = Input.InClass(`
 public event Type Event
 {
@@ -105,7 +100,6 @@ public event Type Event
         });
 
         it("explicitly-implemented interface member", () => {
-
             const input = Input.InClass(`event EventHandler IFoo<string>.Event { add; remove; }`);
             const tokens = tokenize(input);
 
@@ -127,7 +121,6 @@ public event Type Event
         });
 
         it("declaration in interface", () => {
-
             const input = Input.InInterface(`event EventHandler Event;`);
             const tokens = tokenize(input);
 
@@ -136,6 +129,52 @@ public event Type Event
                 Token.Type("EventHandler"),
                 Token.Identifiers.EventName("Event"),
                 Token.Punctuation.Semicolon]);
+        });
+
+        it("declaration with attributes", () => {
+            const input = Input.InClass(`
+[event: Test]
+public event Action E1
+{
+    [Obsolete]
+    add { }
+    [Obsolete]
+    [return: Obsolete]
+    remove { }
+}`);
+
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Punctuation.OpenBracket,
+                Token.Keywords.AttributeSpecifier("event"),
+                Token.Punctuation.Colon,
+                Token.Type("Test"),
+                Token.Punctuation.CloseBracket,
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Event,
+                Token.Type("Action"),
+                Token.Identifiers.EventName("E1"),
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.OpenBracket,
+                Token.Type("Obsolete"),
+                Token.Punctuation.CloseBracket,
+                Token.Keywords.Add,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.OpenBracket,
+                Token.Type("Obsolete"),
+                Token.Punctuation.CloseBracket,
+                Token.Punctuation.OpenBracket,
+                Token.Keywords.AttributeSpecifier("return"),
+                Token.Punctuation.Colon,
+                Token.Type("Obsolete"),
+                Token.Punctuation.CloseBracket,
+                Token.Keywords.Remove,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseBrace
+            ]);
         });
     });
 });
