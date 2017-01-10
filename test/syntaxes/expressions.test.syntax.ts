@@ -1943,6 +1943,33 @@ var q = from c in customers
                 ]);
             });
 
+            it("parenthesized", () => {
+                const input = Input.InMethod(`
+var q = (from x in "abc" select x);
+string s;`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Keywords.Var,
+                    Token.Identifiers.LocalName("q"),
+                    Token.Operators.Assignment,
+                    Token.Punctuation.OpenParen,
+                    Token.Keywords.Queries.From,
+                    Token.Identifiers.RangeVariableName("x"),
+                    Token.Keywords.Queries.In,
+                    Token.Punctuation.String.Begin,
+                    Token.Literals.String("abc"),
+                    Token.Punctuation.String.End,
+                    Token.Keywords.Queries.Select,
+                    Token.Variables.ReadWrite("x"),
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon,
+                    Token.PrimitiveType.String,
+                    Token.Identifiers.LocalName("s"),
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
             it("highlight complex query properly (issue #1106)", () => {
                 const input = Input.InClass(`
 private static readonly Parser<Node> NodeParser =

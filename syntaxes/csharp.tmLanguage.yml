@@ -1833,7 +1833,7 @@ repository:
       # '6': ?<tuple> is a sub-expression. It's final value is not considered.
       '7': { name: entity.name.variable.range-variable.cs }
       '8': { name: keyword.query.in.cs }
-    end: (?=;)
+    end: (?=;|\))
     patterns:
     - include: '#query-body'
     - include: '#expression'
@@ -1857,7 +1857,7 @@ repository:
       '1': { name: keyword.query.let.cs }
       '2': { name: entity.name.variable.range-variable.cs }
       '3': { name: keyword.operator.assignment.cs }
-    end: (?=;)
+    end: (?=;|\))
     patterns:
     - include: '#query-body'
     - include: '#expression'
@@ -1868,7 +1868,7 @@ repository:
       \b(where)\b\s*
     beginCaptures:
       '1': { name: keyword.query.where.cs }
-    end: (?=;)
+    end: (?=;|\))
     patterns:
     - include: '#query-body'
     - include: '#expression'
@@ -1904,7 +1904,7 @@ repository:
       # '6': ?<tuple> is a sub-expression. It's final value is not considered.
       '7': { name: entity.name.variable.range-variable.cs }
       '8': { name: keyword.query.in.cs }
-    end: (?=;)
+    end: (?=;|\))
     patterns:
     - include: '#join-on'
     - include: '#join-equals'
@@ -1935,7 +1935,7 @@ repository:
     begin: \b(orderby)\b\s*
     beginCaptures:
       '1': { name: keyword.query.orderby.cs }
-    end: (?=;)
+    end: (?=;|\))
     patterns:
     - include: '#ordering-direction'
     - include: '#query-body'
@@ -1952,7 +1952,7 @@ repository:
     begin: \b(select)\b\s*
     beginCaptures:
       '1': { name: keyword.query.select.cs }
-    end: (?=;)
+    end: (?=;|\))
     patterns:
     - include: '#query-body'
     - include: '#expression'
@@ -1961,7 +1961,7 @@ repository:
     begin: \b(group)\b\s*
     beginCaptures:
       '1': { name: keyword.query.group.cs }
-    end: (?=;)
+    end: (?=;|\))
     patterns:
     - include: '#group-by'
     - include: '#group-into'
