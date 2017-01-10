@@ -13,7 +13,8 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 # * compound assignement
 # * verbatim identifiers
 # * hexadecimal and unicode character escape sequences
-# * unsafe code: fixed, sizeof, unsafe blocks
+# * unsafe code: fixed, sizeof, unsafe blocks, pointer member access
+# * multi-line XML doc comments
 
 patterns:
 - include: '#preprocessor'
@@ -2233,9 +2234,118 @@ repository:
           '0': { name: punctuation.definition.comment.cs }
         end: (?=$)
         patterns:
-        - include: 'text.xml'
+        - include: '#xml-doc-comment'
       - name: comment.line.double-slash.cs
         begin: (?<!/)//(?!/)
         beginCaptures:
           '0': { name: punctuation.definition.comment.cs }
         end: (?=$)
+
+  xml-doc-comment:
+    patterns:
+    - include: '#xml-comment'
+    - include: '#xml-character-entity'
+    - include: '#xml-cdata'
+    - include: '#xml-tag'
+
+  xml-tag:
+    name: meta.tag.cs
+    begin: |-
+      (?x)
+      (</?)
+      (
+        (?:
+          ([-_[:alnum:]]+)
+          (:)
+        )?
+        ([-_[:alnum:]]+)
+      )
+    beginCaptures:
+      '1': { name: punctuation.definition.tag.cs }
+      '2': { name: entity.name.tag.cs }
+      '3': { name: entity.name.tag.namespace.cs }
+      '4': { name: punctuation.separator.colon.cs }
+      '5': { name: entity.name.tag.localname.cs }
+    end: (/?>)
+    endCaptures:
+      '1': { name: punctuation.definition.tag.cs }
+    patterns:
+    - include: '#xml-attribute'
+
+  xml-attribute:
+    patterns:
+    - match: |-
+        (?x)
+        (?:^|\s+)
+        (
+          (?:
+            ([-_[:alnum:]]+)
+            (:)
+          )?
+          ([-_[:alnum:]]+)
+        )
+        (=)
+      captures:
+        '1': { name: entity.other.attribute-name.cs }
+        '2': { name: entity.other.attribute-name.namespace.cs }
+        '3': { name: punctuation.separator.colon.cs }
+        '4': { name: entity.other.attribute-name.localname.cs }
+        '5': { name: punctuation.separator.equals.cs }
+    - include: '#xml-string'
+
+  xml-cdata:
+    name: string.unquoted.cdata.cs
+    begin: <!\[CDATA\[
+    beginCaptures:
+      '0': { name: punctuation.definition.string.begin.cs }
+    end: \]\]>
+    endCaptures:
+      '0': { name: punctuation.definition.string.end.cs }
+
+  xml-string:
+    patterns:
+    - name: string.quoted.single.cs
+      begin: \'
+      beginCaptures:
+        '0': { name: punctuation.definition.string.begin.cs }
+      end: \'
+      endCaptures:
+        '0': { name: punctuation.definition.string.end.cs }
+      patterns:
+      - include: '#xml-character-entity'
+    - name: string.quoted.double.cs
+      begin: \"
+      beginCaptures:
+        '0': { name: punctuation.definition.string.begin.cs }
+      end: \"
+      endCaptures:
+        '0': { name: punctuation.definition.string.end.cs }
+      patterns:
+      - include: '#xml-character-entity'
+
+  xml-character-entity:
+    patterns:
+    - name: constant.character.entity.cs
+      match: |-
+        (?x)
+        (&)
+        (
+          (?:[[:alpha:]:_][[:alnum:]:_.-]*)|
+          (?:\#[[:digit:]]+)|
+          (?:\#x[[:xdigit:]]+)
+        )
+        (;)
+      captures:
+        '1': { name: punctuation.definition.constant.cs }
+        '3': { name: punctuation.definition.constant.cs }
+    - name: invalid.illegal.bad-ampersand.cs
+      match: '&'
+
+  xml-comment:
+    name: comment.block.cs
+    begin: <!--
+    beginCaptures:
+      '0': { name: punctuation.definition.comment.cs }
+    end: -->
+    endCaptures:
+      '0': { name: punctuation.definition.comment.cs }

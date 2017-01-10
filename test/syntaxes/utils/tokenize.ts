@@ -7,7 +7,7 @@ import { ITokenizeLineResult, Registry, StackElement } from 'vscode-textmate';
 
 const registry = new Registry();
 const grammar = registry.loadGrammarFromPathSync('syntaxes/csharp.tmLanguage');
-const excludedTypes = ['source.cs', 'meta.interpolation.cs', 'meta.preprocessor.cs', 'meta.type.parameters.cs']
+const excludedTypes = ['source.cs', 'meta.interpolation.cs', 'meta.preprocessor.cs', 'meta.tag.cs', 'meta.type.parameters.cs']
 
 export function tokenize(input: string | Input, excludeTypes: boolean = true): Token[] {
     if (typeof input === "string") {
@@ -442,6 +442,61 @@ export namespace Token {
         export const Object = (text: string) => createToken(text, 'variable.other.object.cs');
         export const Property = (text: string) => createToken(text, 'variable.other.object.property.cs');
         export const ReadWrite = (text: string) => createToken(text, 'variable.other.readwrite.cs');
+    }
+
+    export namespace XmlDocComments {
+        export namespace Attribute {
+            export const Name = (text: string) => createToken(text, 'entity.other.attribute-name.localname.cs');
+        }
+
+        export namespace CData {
+            export const Begin = createToken('<![CDATA[', 'punctuation.definition.string.begin.cs');
+            export const End = createToken(']]>', 'punctuation.definition.string.end.cs');
+            export const Text = (text: string) => createToken(text, 'string.unquoted.cdata.cs');
+        }
+
+        export namespace CharacterEntity {
+            export const Begin = createToken('&', 'punctuation.definition.constant.cs');
+            export const End = createToken(';', 'punctuation.definition.constant.cs');
+            export const Text = (text: string) => createToken(text, 'constant.character.entity.cs');
+        }
+
+        export namespace Comment {
+            export const Begin = createToken('<!--', 'punctuation.definition.comment.cs')
+            export const End = createToken('-->', 'punctuation.definition.comment.cs')
+            export const Text = (text: string) => createToken(text, 'comment.block.cs')
+        }
+
+        export namespace Tag {
+            // punctuation
+            export const StartTagBegin = createToken('<', 'punctuation.definition.tag.cs');
+            export const StartTagEnd = createToken('>', 'punctuation.definition.tag.cs');
+            export const EndTagBegin = createToken('</', 'punctuation.definition.tag.cs');
+            export const EndTagEnd = createToken('>', 'punctuation.definition.tag.cs');
+            export const EmptyTagBegin = createToken('<', 'punctuation.definition.tag.cs');
+            export const EmptyTagEnd = createToken('/>', 'punctuation.definition.tag.cs');
+
+            export const Name = (text: string) => createToken(text, 'entity.name.tag.localname.cs');
+        }
+
+        export namespace String {
+            export namespace DoubleQuoted {
+                export const Begin = createToken('"', 'punctuation.definition.string.begin.cs');
+                export const End = createToken('"', 'punctuation.definition.string.end.cs');
+                export const Text = (text: string) => createToken(text, 'string.quoted.double.cs');
+            }
+
+            export namespace SingleQuoted {
+                export const Begin = createToken('\'', 'punctuation.definition.string.begin.cs');
+                export const End = createToken('\'', 'punctuation.definition.string.end.cs');
+                export const Text = (text: string) => createToken(text, 'string.quoted.single.cs');
+            }
+        }
+
+        export const Begin = createToken('///', 'punctuation.definition.comment.cs');
+        export const Colon = createToken(':', 'punctuation.separator.colon.cs');
+        export const Equals = createToken('=', 'punctuation.separator.equals.cs');
+        export const Text = (text: string) => createToken(text, 'comment.block.documentation.cs');
     }
 
     export const IllegalNewLine = (text: string) => createToken(text, 'invalid.illegal.newline.cs');
