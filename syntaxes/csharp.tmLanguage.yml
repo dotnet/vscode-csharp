@@ -8,7 +8,6 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 # TODO List
 #
 # * Refinement and tests to ensure proper highlighting while typing
-# * anonymous methods
 # * is and as cast expressions
 # * null coalescing operator
 # * null propagating operator
@@ -1958,6 +1957,18 @@ repository:
         '3': { name: keyword.operator.arrow.cs }
       end: (?=\)|;)
       patterns:
+      - include: '#block'
+      - include: '#expression'
+    - begin: |-
+        (?x)
+        (?:\b(async)\b\s*)?
+        (?:\b(delegate)\b\s*)
+      beginCaptures:
+        '1': { name: storage.modifier.cs }
+        '2': { name: keyword.other.delegate.cs }
+      end: (?=\)|;)
+      patterns:
+      - include: '#parenthesized-parameter-list'
       - include: '#block'
       - include: '#expression'
 

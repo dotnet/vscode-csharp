@@ -28,27 +28,6 @@ describe("Grammar", () => {
                 ]);
             });
 
-            it("async lambda expression with no parameters (assignment)", () => {
-                const input = Input.InMethod(`Func<Task> a = async () => { };`);
-                const tokens = tokenize(input);
-
-                tokens.should.deep.equal([
-                    Token.Type("Func"),
-                    Token.Punctuation.TypeParameters.Begin,
-                    Token.Type("Task"),
-                    Token.Punctuation.TypeParameters.End,
-                    Token.Identifiers.LocalName("a"),
-                    Token.Operators.Assignment,
-                    Token.Keywords.Modifiers.Async,
-                    Token.Punctuation.OpenParen,
-                    Token.Punctuation.CloseParen,
-                    Token.Operators.Arrow,
-                    Token.Punctuation.OpenBrace,
-                    Token.Punctuation.CloseBrace,
-                    Token.Punctuation.Semicolon
-                ]);
-            });
-
             it("lambda expression with single parameter (assignment)", () => {
                 const input = Input.InMethod(`Action<int> a = x => { };`);
                 const tokens = tokenize(input);
@@ -68,28 +47,6 @@ describe("Grammar", () => {
                 ]);
             });
 
-            it("async lambda expression with single parameter (assignment)", () => {
-                const input = Input.InMethod(`Func<int, Task> a = async x => { };`);
-                const tokens = tokenize(input);
-
-                tokens.should.deep.equal([
-                    Token.Type("Func"),
-                    Token.Punctuation.TypeParameters.Begin,
-                    Token.PrimitiveType.Int,
-                    Token.Punctuation.Comma,
-                    Token.Type("Task"),
-                    Token.Punctuation.TypeParameters.End,
-                    Token.Identifiers.LocalName("a"),
-                    Token.Operators.Assignment,
-                    Token.Keywords.Modifiers.Async,
-                    Token.Identifiers.ParameterName("x"),
-                    Token.Operators.Arrow,
-                    Token.Punctuation.OpenBrace,
-                    Token.Punctuation.CloseBrace,
-                    Token.Punctuation.Semicolon
-                ]);
-            });
-
             it("lambda expression with single typed parameter (assignment)", () => {
                 const input = Input.InMethod(`Action<int> a = (int x) => { };`);
                 const tokens = tokenize(input);
@@ -101,31 +58,6 @@ describe("Grammar", () => {
                     Token.Punctuation.TypeParameters.End,
                     Token.Identifiers.LocalName("a"),
                     Token.Operators.Assignment,
-                    Token.Punctuation.OpenParen,
-                    Token.PrimitiveType.Int,
-                    Token.Identifiers.ParameterName("x"),
-                    Token.Punctuation.CloseParen,
-                    Token.Operators.Arrow,
-                    Token.Punctuation.OpenBrace,
-                    Token.Punctuation.CloseBrace,
-                    Token.Punctuation.Semicolon
-                ]);
-            });
-
-            it("async lambda expression with single typed parameter (assignment)", () => {
-                const input = Input.InMethod(`Func<int, Task> a = async (int x) => { };`);
-                const tokens = tokenize(input);
-
-                tokens.should.deep.equal([
-                    Token.Type("Func"),
-                    Token.Punctuation.TypeParameters.Begin,
-                    Token.PrimitiveType.Int,
-                    Token.Punctuation.Comma,
-                    Token.Type("Task"),
-                    Token.Punctuation.TypeParameters.End,
-                    Token.Identifiers.LocalName("a"),
-                    Token.Operators.Assignment,
-                    Token.Keywords.Modifiers.Async,
                     Token.Punctuation.OpenParen,
                     Token.PrimitiveType.Int,
                     Token.Identifiers.ParameterName("x"),
@@ -164,6 +96,74 @@ describe("Grammar", () => {
                 ]);
             });
 
+            it("async lambda expression with no parameters (assignment)", () => {
+                const input = Input.InMethod(`Func<Task> a = async () => { };`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Type("Func"),
+                    Token.Punctuation.TypeParameters.Begin,
+                    Token.Type("Task"),
+                    Token.Punctuation.TypeParameters.End,
+                    Token.Identifiers.LocalName("a"),
+                    Token.Operators.Assignment,
+                    Token.Keywords.Modifiers.Async,
+                    Token.Punctuation.OpenParen,
+                    Token.Punctuation.CloseParen,
+                    Token.Operators.Arrow,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("async lambda expression with single parameter (assignment)", () => {
+                const input = Input.InMethod(`Func<int, Task> a = async x => { };`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Type("Func"),
+                    Token.Punctuation.TypeParameters.Begin,
+                    Token.PrimitiveType.Int,
+                    Token.Punctuation.Comma,
+                    Token.Type("Task"),
+                    Token.Punctuation.TypeParameters.End,
+                    Token.Identifiers.LocalName("a"),
+                    Token.Operators.Assignment,
+                    Token.Keywords.Modifiers.Async,
+                    Token.Identifiers.ParameterName("x"),
+                    Token.Operators.Arrow,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("async lambda expression with single typed parameter (assignment)", () => {
+                const input = Input.InMethod(`Func<int, Task> a = async (int x) => { };`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Type("Func"),
+                    Token.Punctuation.TypeParameters.Begin,
+                    Token.PrimitiveType.Int,
+                    Token.Punctuation.Comma,
+                    Token.Type("Task"),
+                    Token.Punctuation.TypeParameters.End,
+                    Token.Identifiers.LocalName("a"),
+                    Token.Operators.Assignment,
+                    Token.Keywords.Modifiers.Async,
+                    Token.Punctuation.OpenParen,
+                    Token.PrimitiveType.Int,
+                    Token.Identifiers.ParameterName("x"),
+                    Token.Punctuation.CloseParen,
+                    Token.Operators.Arrow,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
             it("async lambda expression with multiple typed parameters (assignment)", () => {
                 const input = Input.InMethod(`Func<int, int, Task> a = async (int x, int y) => { };`);
                 const tokens = tokenize(input);
@@ -194,6 +194,126 @@ describe("Grammar", () => {
                 ]);
             });
 
+            it("anonymous method with no parameter list (assignment)", () => {
+                const input = Input.InMethod(`Action a = delegate { };`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Type("Action"),
+                    Token.Identifiers.LocalName("a"),
+                    Token.Operators.Assignment,
+                    Token.Keywords.Delegate,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("anonymous method with empty parameter list (assignment)", () => {
+                const input = Input.InMethod(`Action a = delegate() { };`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Type("Action"),
+                    Token.Identifiers.LocalName("a"),
+                    Token.Operators.Assignment,
+                    Token.Keywords.Delegate,
+                    Token.Punctuation.OpenParen,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("anonymous method with parameters (assignment)", () => {
+                const input = Input.InMethod(`Action a = delegate(int x, int y) { };`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Type("Action"),
+                    Token.Identifiers.LocalName("a"),
+                    Token.Operators.Assignment,
+                    Token.Keywords.Delegate,
+                    Token.Punctuation.OpenParen,
+                    Token.PrimitiveType.Int,
+                    Token.Identifiers.ParameterName("x"),
+                    Token.Punctuation.Comma,
+                    Token.PrimitiveType.Int,
+                    Token.Identifiers.ParameterName("y"),
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("async anonymous method with no parameter list (assignment)", () => {
+                const input = Input.InMethod(`Func<Task> a = async delegate { };`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Type("Func"),
+                    Token.Punctuation.TypeParameters.Begin,
+                    Token.Type("Task"),
+                    Token.Punctuation.TypeParameters.End,
+                    Token.Identifiers.LocalName("a"),
+                    Token.Operators.Assignment,
+                    Token.Keywords.Modifiers.Async,
+                    Token.Keywords.Delegate,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("async anonymous method with empty parameter list (assignment)", () => {
+                const input = Input.InMethod(`Func<Task> a = async delegate() { };`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Type("Func"),
+                    Token.Punctuation.TypeParameters.Begin,
+                    Token.Type("Task"),
+                    Token.Punctuation.TypeParameters.End,
+                    Token.Identifiers.LocalName("a"),
+                    Token.Operators.Assignment,
+                    Token.Keywords.Modifiers.Async,
+                    Token.Keywords.Delegate,
+                    Token.Punctuation.OpenParen,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("async anonymous method with parameters (assignment)", () => {
+                const input = Input.InMethod(`Func<Task> a = async delegate(int x, int y) { };`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Type("Func"),
+                    Token.Punctuation.TypeParameters.Begin,
+                    Token.Type("Task"),
+                    Token.Punctuation.TypeParameters.End,
+                    Token.Identifiers.LocalName("a"),
+                    Token.Operators.Assignment,
+                    Token.Keywords.Modifiers.Async,
+                    Token.Keywords.Delegate,
+                    Token.Punctuation.OpenParen,
+                    Token.PrimitiveType.Int,
+                    Token.Identifiers.ParameterName("x"),
+                    Token.Punctuation.Comma,
+                    Token.PrimitiveType.Int,
+                    Token.Identifiers.ParameterName("y"),
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
             it("lambda expression with no parameters (passed as argument)", () => {
                 const input = Input.InMethod(`M(() => { });`);
                 const tokens = tokenize(input);
@@ -201,24 +321,6 @@ describe("Grammar", () => {
                 tokens.should.deep.equal([
                     Token.Identifiers.MethodName("M"),
                     Token.Punctuation.OpenParen,
-                    Token.Punctuation.OpenParen,
-                    Token.Punctuation.CloseParen,
-                    Token.Operators.Arrow,
-                    Token.Punctuation.OpenBrace,
-                    Token.Punctuation.CloseBrace,
-                    Token.Punctuation.CloseParen,
-                    Token.Punctuation.Semicolon
-                ]);
-            });
-
-            it("async lambda expression with no parameters (passed as argument)", () => {
-                const input = Input.InMethod(`M(async () => { });`);
-                const tokens = tokenize(input);
-
-                tokens.should.deep.equal([
-                    Token.Identifiers.MethodName("M"),
-                    Token.Punctuation.OpenParen,
-                    Token.Keywords.Modifiers.Async,
                     Token.Punctuation.OpenParen,
                     Token.Punctuation.CloseParen,
                     Token.Operators.Arrow,
@@ -245,23 +347,6 @@ describe("Grammar", () => {
                 ]);
             });
 
-            it("async lambda expression with single parameter (passed as argument)", () => {
-                const input = Input.InMethod(`M(async x => { });`);
-                const tokens = tokenize(input);
-
-                tokens.should.deep.equal([
-                    Token.Identifiers.MethodName("M"),
-                    Token.Punctuation.OpenParen,
-                    Token.Keywords.Modifiers.Async,
-                    Token.Identifiers.ParameterName("x"),
-                    Token.Operators.Arrow,
-                    Token.Punctuation.OpenBrace,
-                    Token.Punctuation.CloseBrace,
-                    Token.Punctuation.CloseParen,
-                    Token.Punctuation.Semicolon
-                ]);
-            });
-
             it("lambda expression with single typed parameter (passed as argument)", () => {
                 const input = Input.InMethod(`M((int x) => { });`);
                 const tokens = tokenize(input);
@@ -269,26 +354,6 @@ describe("Grammar", () => {
                 tokens.should.deep.equal([
                     Token.Identifiers.MethodName("M"),
                     Token.Punctuation.OpenParen,
-                    Token.Punctuation.OpenParen,
-                    Token.PrimitiveType.Int,
-                    Token.Identifiers.ParameterName("x"),
-                    Token.Punctuation.CloseParen,
-                    Token.Operators.Arrow,
-                    Token.Punctuation.OpenBrace,
-                    Token.Punctuation.CloseBrace,
-                    Token.Punctuation.CloseParen,
-                    Token.Punctuation.Semicolon
-                ]);
-            });
-
-            it("async lambda expression with single typed parameter (passed as argument)", () => {
-                const input = Input.InMethod(`M(async (int x) => { });`);
-                const tokens = tokenize(input);
-
-                tokens.should.deep.equal([
-                    Token.Identifiers.MethodName("M"),
-                    Token.Punctuation.OpenParen,
-                    Token.Keywords.Modifiers.Async,
                     Token.Punctuation.OpenParen,
                     Token.PrimitiveType.Int,
                     Token.Identifiers.ParameterName("x"),
@@ -323,6 +388,61 @@ describe("Grammar", () => {
                 ]);
             });
 
+            it("async lambda expression with no parameters (passed as argument)", () => {
+                const input = Input.InMethod(`M(async () => { });`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Identifiers.MethodName("M"),
+                    Token.Punctuation.OpenParen,
+                    Token.Keywords.Modifiers.Async,
+                    Token.Punctuation.OpenParen,
+                    Token.Punctuation.CloseParen,
+                    Token.Operators.Arrow,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("async lambda expression with single parameter (passed as argument)", () => {
+                const input = Input.InMethod(`M(async x => { });`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Identifiers.MethodName("M"),
+                    Token.Punctuation.OpenParen,
+                    Token.Keywords.Modifiers.Async,
+                    Token.Identifiers.ParameterName("x"),
+                    Token.Operators.Arrow,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("async lambda expression with single typed parameter (passed as argument)", () => {
+                const input = Input.InMethod(`M(async (int x) => { });`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Identifiers.MethodName("M"),
+                    Token.Punctuation.OpenParen,
+                    Token.Keywords.Modifiers.Async,
+                    Token.Punctuation.OpenParen,
+                    Token.PrimitiveType.Int,
+                    Token.Identifiers.ParameterName("x"),
+                    Token.Punctuation.CloseParen,
+                    Token.Operators.Arrow,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
             it("async lambda expression with multiple typed parameters (passed as argument)", () => {
                 const input = Input.InMethod(`M(async (int x, int y) => { });`);
                 const tokens = tokenize(input);
@@ -339,6 +459,117 @@ describe("Grammar", () => {
                     Token.Identifiers.ParameterName("y"),
                     Token.Punctuation.CloseParen,
                     Token.Operators.Arrow,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("anonymous method with no parameter list (passed as argument)", () => {
+                const input = Input.InMethod(`M(delegate { });`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Identifiers.MethodName("M"),
+                    Token.Punctuation.OpenParen,
+                    Token.Keywords.Delegate,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("anonymous method with empty parameter list (passed as argument)", () => {
+                const input = Input.InMethod(`M(delegate() { });`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Identifiers.MethodName("M"),
+                    Token.Punctuation.OpenParen,
+                    Token.Keywords.Delegate,
+                    Token.Punctuation.OpenParen,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("anonymous method with parameters (passed as argument)", () => {
+                const input = Input.InMethod(`M(delegate(int x, int y) { });`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Identifiers.MethodName("M"),
+                    Token.Punctuation.OpenParen,
+                    Token.Keywords.Delegate,
+                    Token.Punctuation.OpenParen,
+                    Token.PrimitiveType.Int,
+                    Token.Identifiers.ParameterName("x"),
+                    Token.Punctuation.Comma,
+                    Token.PrimitiveType.Int,
+                    Token.Identifiers.ParameterName("y"),
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("async anonymous method with no parameter list (passed as argument)", () => {
+                const input = Input.InMethod(`M(async delegate { });`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Identifiers.MethodName("M"),
+                    Token.Punctuation.OpenParen,
+                    Token.Keywords.Modifiers.Async,
+                    Token.Keywords.Delegate,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("async anonymous method with empty parameter list (passed as argument)", () => {
+                const input = Input.InMethod(`M(async delegate() { });`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Identifiers.MethodName("M"),
+                    Token.Punctuation.OpenParen,
+                    Token.Keywords.Modifiers.Async,
+                    Token.Keywords.Delegate,
+                    Token.Punctuation.OpenParen,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("async anonymous method with parameters (passed as argument)", () => {
+                const input = Input.InMethod(`M(async delegate(int x, int y) { });`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Identifiers.MethodName("M"),
+                    Token.Punctuation.OpenParen,
+                    Token.Keywords.Modifiers.Async,
+                    Token.Keywords.Delegate,
+                    Token.Punctuation.OpenParen,
+                    Token.PrimitiveType.Int,
+                    Token.Identifiers.ParameterName("x"),
+                    Token.Punctuation.Comma,
+                    Token.PrimitiveType.Int,
+                    Token.Identifiers.ParameterName("y"),
+                    Token.Punctuation.CloseParen,
                     Token.Punctuation.OpenBrace,
                     Token.Punctuation.CloseBrace,
                     Token.Punctuation.CloseParen,
