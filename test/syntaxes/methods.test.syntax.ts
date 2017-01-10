@@ -11,7 +11,6 @@ describe("Grammar", () => {
 
     describe("Methods", () => {
         it("single-line declaration with no parameters", () => {
-
             const input = Input.InClass(`void Foo() { }`);
             const tokens = tokenize(input);
 
@@ -25,7 +24,6 @@ describe("Grammar", () => {
         });
 
         it("declaration with two parameters", () => {
-
             const input = Input.InClass(`
 int Add(int x, int y)
 {
@@ -53,7 +51,6 @@ int Add(int x, int y)
         });
 
         it("declaration in with generic constraints", () => {
-
             const input = Input.InClass(`TResult GetString<T, TResult>(T arg) where T : TResult { }`);
             const tokens = tokenize(input);
 
@@ -78,7 +75,6 @@ int Add(int x, int y)
         });
 
         it("expression body", () => {
-
             const input = Input.InClass(`int Add(int x, int y) => x + y;`);
             const tokens = tokenize(input);
 
@@ -100,7 +96,6 @@ int Add(int x, int y)
         });
 
         it("explicitly-implemented interface member", () => {
-
             const input = Input.InClass(`string IFoo<string>.GetString();`);
             const tokens = tokenize(input);
 
@@ -118,7 +113,6 @@ int Add(int x, int y)
         });
 
         it("declaration in interface", () => {
-
             const input = Input.InInterface(`string GetString();`);
             const tokens = tokenize(input);
 
@@ -131,7 +125,6 @@ int Add(int x, int y)
         });
 
         it("declaration in interface with parameters", () => {
-
             const input = Input.InInterface(`string GetString(string format, params object[] args);`);
             const tokens = tokenize(input);
 
@@ -152,7 +145,6 @@ int Add(int x, int y)
         });
 
         it("declaration in interface with generic constraints", () => {
-
             const input = Input.InInterface(`TResult GetString<T, TResult>(T arg) where T : TResult;`);
             const tokens = tokenize(input);
 
@@ -176,7 +168,6 @@ int Add(int x, int y)
         });
 
         it("public override", () => {
-
             const input = Input.InClass(`public override M() { }`);
             const tokens = tokenize(input);
 
@@ -192,7 +183,6 @@ int Add(int x, int y)
         });
 
         it("public virtual", () => {
-
             const input = Input.InClass(`public virtual M() { }`);
             const tokens = tokenize(input);
 
@@ -208,7 +198,6 @@ int Add(int x, int y)
         });
 
         it("commented parameters are highlighted properly (issue #802)", () => {
-
             const input = Input.InClass(`public void methodWithParametersCommented(int p1, /*int p2*/, int p3) {}`);
             const tokens = tokenize(input);
 
@@ -233,7 +222,6 @@ int Add(int x, int y)
         });
 
         it("return type is highlighted properly in interface (issue #830)", () => {
-
             const input = `
 public interface test
 {
@@ -275,7 +263,6 @@ public interface test
         });
 
         it("attributes are highlighted properly (issue #829)", () => {
-
             const input = `
 namespace Test
 {
@@ -434,7 +421,6 @@ namespace Test
         });
 
         it("shadowed methods are highlighted properly (issue #1084)", () => {
-
             const input = Input.InClass(`
 private new void foo1() //Correct highlight
 {
@@ -466,6 +452,78 @@ new void foo2() //Function name not highlighted
                 Token.Comment.SingleLine.Text("Function name not highlighted"),
                 Token.Punctuation.OpenBrace,
                 Token.Punctuation.CloseBrace
+            ]);
+        });
+
+        it("comment at end of line does not change highlights - 1 (issue #1091)", () => {
+            const input = Input.InClass(`
+public abstract void Notify(PlayerId playerId, ISessionResponse response); //the
+`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Modifiers.Abstract,
+                Token.PrimitiveType.Void,
+                Token.Identifiers.MethodName("Notify"),
+                Token.Punctuation.OpenParen,
+                Token.Type("PlayerId"),
+                Token.Identifiers.ParameterName("playerId"),
+                Token.Punctuation.Comma,
+                Token.Type("ISessionResponse"),
+                Token.Identifiers.ParameterName("response"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Comment.SingleLine.Start,
+                Token.Comment.SingleLine.Text("the")
+            ]);
+        });
+
+        it("comment at end of line does not change highlights - 2 (issue #1091)", () => {
+            const input = Input.InClass(`
+public abstract void Notify(PlayerId playerId, ISessionResponse response); //the 
+`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Modifiers.Abstract,
+                Token.PrimitiveType.Void,
+                Token.Identifiers.MethodName("Notify"),
+                Token.Punctuation.OpenParen,
+                Token.Type("PlayerId"),
+                Token.Identifiers.ParameterName("playerId"),
+                Token.Punctuation.Comma,
+                Token.Type("ISessionResponse"),
+                Token.Identifiers.ParameterName("response"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Comment.SingleLine.Start,
+                Token.Comment.SingleLine.Text("the ")
+            ]);
+        });
+
+        it("comment at end of line does not change highlights - 3 (issue #1091)", () => {
+            const input = Input.InClass(`
+public abstract void Notify(PlayerId playerId, ISessionResponse response); //the a
+`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Modifiers.Abstract,
+                Token.PrimitiveType.Void,
+                Token.Identifiers.MethodName("Notify"),
+                Token.Punctuation.OpenParen,
+                Token.Type("PlayerId"),
+                Token.Identifiers.ParameterName("playerId"),
+                Token.Punctuation.Comma,
+                Token.Type("ISessionResponse"),
+                Token.Identifiers.ParameterName("response"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Comment.SingleLine.Start,
+                Token.Comment.SingleLine.Text("the a")
             ]);
         });
     });
