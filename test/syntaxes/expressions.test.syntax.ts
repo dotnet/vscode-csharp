@@ -784,6 +784,42 @@ class C
             });
         });
 
+        describe("Conditional Operator", () => {
+            it("in assignment", () => {
+                const input = Input.InMethod(`var y = x ? 19 : 23;`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Keywords.Var,
+                    Token.Identifiers.LocalName("y"),
+                    Token.Operators.Assignment,
+                    Token.Variables.ReadWrite("x"),
+                    Token.Operators.Conditional.QuestionMark,
+                    Token.Literals.Numeric.Decimal("19"),
+                    Token.Operators.Conditional.Colon,
+                    Token.Literals.Numeric.Decimal("23"),
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("passed as argument", () => {
+                const input = Input.InMethod(`M(x ? 19 : 23);`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Identifiers.MethodName("M"),
+                    Token.Punctuation.OpenParen,
+                    Token.Variables.ReadWrite("x"),
+                    Token.Operators.Conditional.QuestionMark,
+                    Token.Literals.Numeric.Decimal("19"),
+                    Token.Operators.Conditional.Colon,
+                    Token.Literals.Numeric.Decimal("23"),
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+        });
+
         describe("Element Access", () => {
             it("no arguments", () => {
                 const input = Input.InMethod(`var o = P[];`);

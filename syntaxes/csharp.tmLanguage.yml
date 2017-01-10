@@ -10,7 +10,6 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 # * Refinement and tests to ensure proper highlighting while typing
 # * is and as cast expressions
 # * null propagating operator
-# * conditional operator
 # * compound assignement
 # * verbatim identifiers
 # * hexadecimal and unicode character escape sequences
@@ -135,6 +134,7 @@ repository:
     - include: '#verbatim-interpolated-string'
     - include: '#literal'
     - include: '#this-or-base-expression'
+    - include: '#conditional-operator'
     - include: '#expression-operators'
     - include: '#query-expression'
     - include: '#anonymous-method-expression'
@@ -1440,10 +1440,13 @@ repository:
     - name: keyword.operator.null-coalescing.cs
       match: \?\?
 
-  assignment-expression:
-    match: \.*\s*(=)\s*\.*(?=;)
-    captures:
-      '1': keyword.operator.assignment.cs
+  conditional-operator:
+    begin: (?<!\?)\?(?!\?)
+    beginCaptures:
+      '0': { name: keyword.operator.conditional.question-mark.cs }
+    end: ':'
+    endCaptures:
+      '0': { name: keyword.operator.conditional.colon.cs }
     patterns:
     - include: '#expression'
 

@@ -346,6 +346,11 @@ export namespace Token {
             export const ShiftRight = createToken('>>', 'keyword.operator.bitwise.shift.cs');
        }
 
+       export namespace Conditional {
+            export const QuestionMark = createToken('?', 'keyword.operator.conditional.question-mark.cs');
+            export const Colon = createToken(':', 'keyword.operator.conditional.colon.cs');
+       }
+
         export namespace Logical {
             export const And = createToken('&&', 'keyword.operator.logical.cs');
             export const Not = createToken('!', 'keyword.operator.logical.cs');
