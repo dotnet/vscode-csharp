@@ -14,7 +14,6 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 # * verbatim identifiers
 # * hexadecimal and unicode character escape sequences
 # * unsafe code: fixed, sizeof, unsafe blocks
-# * XML doc comments
 
 patterns:
 - include: '#preprocessor'
@@ -2228,8 +2227,15 @@ repository:
         '1': { name: punctuation.whitespace.comment.leading.cs }
       end: (?=$)
       patterns:
+      - name: comment.block.documentation.cs
+        begin: (?<!/)///(?!/)
+        beginCaptures:
+          '0': { name: punctuation.definition.comment.cs }
+        end: (?=$)
+        patterns:
+        - include: 'text.xml'
       - name: comment.line.double-slash.cs
-        begin: //
+        begin: (?<!/)//(?!/)
         beginCaptures:
           '0': { name: punctuation.definition.comment.cs }
         end: (?=$)
