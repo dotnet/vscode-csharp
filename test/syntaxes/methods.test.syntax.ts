@@ -197,6 +197,24 @@ int Add(int x, int y)
             ]);
         });
 
+        it("extension method", () => {
+            const input = Input.InClass(`public void M(this object o) { }`);
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Public,
+                Token.PrimitiveType.Void,
+                Token.Identifiers.MethodName("M"),
+                Token.Punctuation.OpenParen,
+                Token.Keywords.Modifiers.This,
+                Token.PrimitiveType.Object,
+                Token.Identifiers.ParameterName("o"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Punctuation.CloseBrace
+            ]);
+        });
+
         it("commented parameters are highlighted properly (issue #802)", () => {
             const input = Input.InClass(`public void methodWithParametersCommented(int p1, /*int p2*/, int p3) {}`);
             const tokens = tokenize(input);

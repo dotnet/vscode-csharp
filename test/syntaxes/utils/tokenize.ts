@@ -236,6 +236,7 @@ export namespace Token {
             export const Ref = createToken('ref', 'storage.modifier.cs');
             export const Sealed = createToken('sealed', 'storage.modifier.cs');
             export const Static = createToken('static', 'storage.modifier.cs');
+            export const This = createToken('this', 'storage.modifier.cs');
             export const Unsafe = createToken('unsafe', 'storage.modifier.cs');
             export const Virtual = createToken('virtual', 'storage.modifier.cs');
         }
@@ -344,18 +345,36 @@ export namespace Token {
             export const Or = createToken('|', 'keyword.operator.bitwise.cs');
             export const ShiftLeft = createToken('<<', 'keyword.operator.bitwise.shift.cs');
             export const ShiftRight = createToken('>>', 'keyword.operator.bitwise.shift.cs');
-       }
+        }
 
-       export namespace Conditional {
+        export namespace CompoundAssignment {
+            export namespace Arithmetic {
+                export const Addition = createToken('+=', 'keyword.operator.assignment.compound.ts');
+                export const Division = createToken('/=', 'keyword.operator.assignment.compound.ts');
+                export const Multiplication = createToken('*=', 'keyword.operator.assignment.compound.ts');
+                export const Remainder = createToken('%=', 'keyword.operator.assignment.compound.ts');
+                export const Subtraction = createToken('-=', 'keyword.operator.assignment.compound.ts');
+            }
+
+        export namespace Bitwise {
+            export const And = createToken('&=', 'keyword.operator.assignment.compound.bitwise.ts');
+            export const ExclusiveOr = createToken('^=', 'keyword.operator.assignment.compound.bitwise.ts');
+            export const Or = createToken('|=', 'keyword.operator.assignment.compound.bitwise.ts');
+            export const ShiftLeft = createToken('<<=', 'keyword.operator.assignment.compound.bitwise.ts');
+            export const ShiftRight = createToken('>>=', 'keyword.operator.assignment.compound.bitwise.ts');
+        }
+        }
+
+        export namespace Conditional {
             export const QuestionMark = createToken('?', 'keyword.operator.conditional.question-mark.cs');
             export const Colon = createToken(':', 'keyword.operator.conditional.colon.cs');
-       }
+        }
 
         export namespace Logical {
             export const And = createToken('&&', 'keyword.operator.logical.cs');
             export const Not = createToken('!', 'keyword.operator.logical.cs');
             export const Or = createToken('||', 'keyword.operator.logical.cs');
-       }
+        }
 
         export namespace Relational {
             export const Equals = createToken('==', 'keyword.operator.comparison.cs');
@@ -365,7 +384,7 @@ export namespace Token {
             export const LessThanOrEqual = createToken('<=', 'keyword.operator.relational.cs');
             export const GreaterThan = createToken('>', 'keyword.operator.relational.cs');
             export const GreaterThanOrEqual = createToken('>=', 'keyword.operator.relational.cs');
-       }
+        }
 
         export const Arrow = createToken('=>', 'keyword.operator.arrow.cs');
         export const Assignment = createToken('=', 'keyword.operator.assignment.cs');
@@ -394,12 +413,12 @@ export namespace Token {
     }
 
     export namespace Punctuation {
-         export namespace Char {
+        export namespace Char {
             export const Begin = createToken('\'', 'punctuation.definition.char.begin.cs');
             export const End = createToken('\'', 'punctuation.definition.char.end.cs');
         }
 
-       export namespace Interpolation {
+        export namespace Interpolation {
             export const Begin = createToken('{', 'punctuation.definition.interpolation.begin.cs');
             export const End = createToken('}', 'punctuation.definition.interpolation.end.cs');
         }

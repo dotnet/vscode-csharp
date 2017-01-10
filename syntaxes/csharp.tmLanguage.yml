@@ -11,10 +11,8 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 # * is and as cast expressions
 # * null propagating operator
 # * nameof expressions
-# * 'this' modifier for extension methods
 # * dynamic keyword
 # * field-like events with initializers
-# * compound assignement
 # * verbatim identifiers
 # * hexadecimal and unicode character escape sequences
 # * unsafe code: fixed, sizeof, unsafe blocks, pointer member access
@@ -1433,6 +1431,10 @@ repository:
 
   expression-operators:
     patterns:
+    - name: keyword.operator.assignment.compound.cs
+      match: \*=|/=|%=|\+=|-=
+    - name: keyword.operator.assignment.compound.bitwise.cs
+      match: \&=|\^=|<<=|>>=|\|=
     - name: keyword.operator.bitwise.shift.cs
       match: <<|>>
     - name: keyword.operator.comparison.cs
@@ -1719,7 +1721,7 @@ repository:
     - include: '#comment'
     - include: '#attribute-section'
     - name: storage.modifier.cs
-      match: \b(ref|params|out)\b
+      match: \b(ref|params|out|this)\b
     # parameter name
     - match: \s+([_[:alpha:]][_[:alnum:]]*)\s*(?=[,)])
       captures:
