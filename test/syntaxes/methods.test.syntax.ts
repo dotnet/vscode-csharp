@@ -544,5 +544,70 @@ public abstract void Notify(PlayerId playerId, ISessionResponse response); //the
                 Token.Comment.SingleLine.Text("the a")
             ]);
         });
+
+        it("value is not incorrectly highlighted (issue #268)", () => {
+            const input = `
+namespace x {
+public class ClassA<T>
+{
+   public class ClassAa<TT>
+   {
+      public bool MyMethod(string key, TT value)
+      {
+         return someObject.SomeCall(key, value); // on this line, 'value' is highlighted as though it were the keyword being used in a setter
+      }
+   }
+}
+}
+`;
+            const tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Namespace,
+                Token.Identifiers.NamespaceName("x"),
+                Token.Punctuation.OpenBrace,
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Class,
+                Token.Identifiers.ClassName("ClassA"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Identifiers.TypeParameterName("T"),
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.OpenBrace,
+                Token.Keywords.Modifiers.Public,
+                Token.Keywords.Class,
+                Token.Identifiers.ClassName("ClassAa"),
+                Token.Punctuation.TypeParameters.Begin,
+                Token.Identifiers.TypeParameterName("TT"),
+                Token.Punctuation.TypeParameters.End,
+                Token.Punctuation.OpenBrace,
+                Token.Keywords.Modifiers.Public,
+                Token.PrimitiveType.Bool,
+                Token.Identifiers.MethodName("MyMethod"),
+                Token.Punctuation.OpenParen,
+                Token.PrimitiveType.String,
+                Token.Identifiers.ParameterName("key"),
+                Token.Punctuation.Comma,
+                Token.Type("TT"),
+                Token.Identifiers.ParameterName("value"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.OpenBrace,
+                Token.Keywords.Control.Return,
+                Token.Variables.Object("someObject"),
+                Token.Punctuation.Accessor,
+                Token.Identifiers.MethodName("SomeCall"),
+                Token.Punctuation.OpenParen,
+                Token.Variables.ReadWrite("key"),
+                Token.Punctuation.Comma,
+                Token.Variables.ReadWrite("value"),
+                Token.Punctuation.CloseParen,
+                Token.Punctuation.Semicolon,
+                Token.Comment.SingleLine.Start,
+                Token.Comment.SingleLine.Text(" on this line, 'value' is highlighted as though it were the keyword being used in a setter"),
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseBrace,
+                Token.Punctuation.CloseBrace
+            ]);
+        });
     });
 });
