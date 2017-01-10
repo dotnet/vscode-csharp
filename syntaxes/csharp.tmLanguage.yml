@@ -11,6 +11,7 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 # * is and as cast expressions
 # * dynamic keyword
 # * field-like events with initializers
+# * predefined types on left-side of invocation expressions
 # * verbatim identifiers
 # * hexadecimal and unicode character escape sequences
 # * unsafe code: fixed, sizeof, unsafe blocks, pointer member access
@@ -143,6 +144,9 @@ repository:
     - include: '#verbatim-interpolated-string'
     - include: '#literal'
     - include: '#this-or-base-expression'
+    - include: '#conditional-operator'
+    - include: '#expression-operators'
+    - include: '#await-expression'
     - include: '#query-expression'
     - include: '#anonymous-method-expression'
     - include: '#object-creation-expression'
@@ -151,8 +155,6 @@ repository:
     - include: '#member-access-expression'
     - include: '#invocation-expression'
     - include: '#element-access-expression'
-    - include: '#conditional-operator'
-    - include: '#expression-operators'
     - include: '#cast-expression'
     - include: '#parenthesized-expression'
     - include: '#initializer-expression'
@@ -1478,6 +1480,10 @@ repository:
       '0': { name: keyword.operator.conditional.colon.cs }
     patterns:
     - include: '#expression'
+
+  await-expression:
+    name: keyword.other.await.cs
+    match: (?!\.)\b(await)\b
 
   parenthesized-expression:
     begin: \(

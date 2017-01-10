@@ -281,6 +281,7 @@ export namespace Token {
         export const Add = createToken('add', 'keyword.other.add.cs');
         export const Alias = createToken('alias', 'keyword.other.alias.cs');
         export const AttributeSpecifier = (text: string) => createToken(text, 'keyword.other.attribute-specifier.cs');
+        export const Await = createToken('await', 'keyword.other.await.cs');
         export const Base = createToken('base', 'keyword.other.base.cs');
         export const Checked = createToken('checked', 'keyword.other.checked.cs');
         export const Class = createToken('class', 'keyword.other.class.cs');

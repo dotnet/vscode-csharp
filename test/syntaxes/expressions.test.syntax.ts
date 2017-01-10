@@ -726,6 +726,53 @@ describe("Grammar", () => {
             });
         });
 
+        describe("Await", () => {
+            it("at statement level", () => {
+                const input = Input.InMethod(`await M();`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Keywords.Await,
+                    Token.Identifiers.MethodName("M"),
+                    Token.Punctuation.OpenParen,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("in assignment", () => {
+                const input = Input.InMethod(`var x = await M();`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Keywords.Var,
+                    Token.Identifiers.LocalName("x"),
+                    Token.Operators.Assignment,
+                    Token.Keywords.Await,
+                    Token.Identifiers.MethodName("M"),
+                    Token.Punctuation.OpenParen,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("passed as argument", () => {
+                const input = Input.InMethod(`M1(await M2());`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Identifiers.MethodName("M1"),
+                    Token.Punctuation.OpenParen,
+                    Token.Keywords.Await,
+                    Token.Identifiers.MethodName("M2"),
+                    Token.Punctuation.OpenParen,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+        });
+
         describe("Casts", () => {
             it("cast to built-in type in assignment", () => {
                 const input = Input.InMethod(`var o = (object)42;`);
