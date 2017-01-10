@@ -2046,16 +2046,15 @@ repository:
     - include: '#type-nullable-suffix'
 
   tuple-type:
+    begin: \(
+    beginCaptures:
+      '0': { name: punctuation.parenthesis.open.cs }
+    end: \)
+    endCaptures:
+      '0': { name: punctuation.parenthesis.close.cs }
     patterns:
-    - begin: \(
-      beginCaptures:
-        '0': { name: punctuation.parenthesis.open.cs }
-      end: \)
-      endCaptures:
-        '0': { name: punctuation.parenthesis.close.cs }
-      patterns:
-      - include: '#tuple-element'
-      - include: '#punctuation-comma'
+    - include: '#tuple-element'
+    - include: '#punctuation-comma'
 
   tuple-element:
     match: |-
