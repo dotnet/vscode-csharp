@@ -295,6 +295,7 @@ export namespace Token {
         export const Implicit = createToken('implicit', 'keyword.other.implicit.cs');
         export const Interface = createToken('interface', 'keyword.other.interface.cs');
         export const Lock = createToken('lock', 'keyword.other.lock.cs');
+        export const NameOf = createToken('nameof', 'keyword.other.nameof.cs');
         export const Namespace = createToken('namespace', 'keyword.other.namespace.cs');
         export const New = createToken('new', 'keyword.other.new.cs');
         export const Operator = createToken('operator', 'keyword.other.operator-decl.cs');

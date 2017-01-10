@@ -10,7 +10,6 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 # * Refinement and tests to ensure proper highlighting while typing
 # * is and as cast expressions
 # * null propagating operator
-# * nameof expressions
 # * dynamic keyword
 # * field-like events with initializers
 # * verbatim identifiers
@@ -140,6 +139,7 @@ repository:
     - include: '#comment'
     - include: '#checked-unchecked-expression'
     - include: '#typeof-or-default-expression'
+    - include: '#nameof-expression'
     - include: '#interpolated-string'
     - include: '#verbatim-interpolated-string'
     - include: '#literal'
@@ -1308,6 +1308,17 @@ repository:
       '0': { name: punctuation.parenthesis.close.cs }
     patterns:
     - include: '#type'
+
+  nameof-expression:
+    begin: (?<!\.)\b(nameof)\b\s*(\()
+    beginCaptures:
+      '1': { name: keyword.other.nameof.cs }
+      '2': { name: punctuation.parenthesis.open.cs }
+    end: \)
+    endCaptures:
+      '0': { name: punctuation.parenthesis.close.cs }
+    patterns:
+    - include: '#expression'
 
   interpolated-string:
     name: string.quoted.double.cs

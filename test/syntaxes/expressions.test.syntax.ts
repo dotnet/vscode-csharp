@@ -1386,6 +1386,25 @@ a1[1] = ((this.a)); a1[2] = (c); a1[1] = (i);
             });
         });
 
+        describe("nameof", () => {
+            it("in assignment", () => {
+                const input = Input.InMethod(`const int x = nameof(x);`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Keywords.Modifiers.Const,
+                    Token.PrimitiveType.Int,
+                    Token.Identifiers.LocalName("x"),
+                    Token.Operators.Assignment,
+                    Token.Keywords.NameOf,
+                    Token.Punctuation.OpenParen,
+                    Token.Variables.ReadWrite("x"),
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+        });
+
         describe("Null-coalescing Operator", () => {
             it("in assignment", () => {
                 const input = Input.InMethod(`var y = x ?? new object();`);
