@@ -780,7 +780,7 @@ repository:
       # '3': ?<name-and-type-args> is a sub-expression. It's final value is not considered.
       # '4': ?<type-args> is a sub-expression. It's final value is not considered.
       # '5': ?<tuple> is a sub-expression. It's final value is not considered.
-      '6': { name: keyword.other.operator.cs }
+      '6': { name: keyword.other.operator-decl.cs }
       '7': { name: entity.name.function.cs }
     end: (?<=\})|(?=;)
     patterns:
@@ -818,7 +818,7 @@ repository:
         - match: \b(implicit)\b
           captures:
             '1': { name: keyword.other.implicit.cs }
-      '2': { name: keyword.other.operator.cs }
+      '2': { name: keyword.other.operator-decl.cs }
       '3':
         patterns:
         - include: '#type'
