@@ -69,6 +69,31 @@ describe("Grammar", () => {
                 ]);
             });
 
+            it("lambda expression with multiple parameters (assignment)", () => {
+                const input = Input.InMethod(`Action<int, int> a = (x, y) => { };`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Type("Action"),
+                    Token.Punctuation.TypeParameters.Begin,
+                    Token.PrimitiveType.Int,
+                    Token.Punctuation.Comma,
+                    Token.PrimitiveType.Int,
+                    Token.Punctuation.TypeParameters.End,
+                    Token.Identifiers.LocalName("a"),
+                    Token.Operators.Assignment,
+                    Token.Punctuation.OpenParen,
+                    Token.Identifiers.ParameterName("x"),
+                    Token.Punctuation.Comma,
+                    Token.Identifiers.ParameterName("y"),
+                    Token.Punctuation.CloseParen,
+                    Token.Operators.Arrow,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
             it("lambda expression with multiple typed parameters (assignment)", () => {
                 const input = Input.InMethod(`Action<int, int> a = (int x, int y) => { };`);
                 const tokens = tokenize(input);
@@ -185,6 +210,34 @@ describe("Grammar", () => {
                     Token.Identifiers.ParameterName("x"),
                     Token.Punctuation.Comma,
                     Token.PrimitiveType.Int,
+                    Token.Identifiers.ParameterName("y"),
+                    Token.Punctuation.CloseParen,
+                    Token.Operators.Arrow,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("async lambda expression with multiple parameters (assignment)", () => {
+                const input = Input.InMethod(`Func<int, int, Task> a = async (x, y) => { };`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Type("Func"),
+                    Token.Punctuation.TypeParameters.Begin,
+                    Token.PrimitiveType.Int,
+                    Token.Punctuation.Comma,
+                    Token.PrimitiveType.Int,
+                    Token.Punctuation.Comma,
+                    Token.Type("Task"),
+                    Token.Punctuation.TypeParameters.End,
+                    Token.Identifiers.LocalName("a"),
+                    Token.Operators.Assignment,
+                    Token.Keywords.Modifiers.Async,
+                    Token.Punctuation.OpenParen,
+                    Token.Identifiers.ParameterName("x"),
+                    Token.Punctuation.Comma,
                     Token.Identifiers.ParameterName("y"),
                     Token.Punctuation.CloseParen,
                     Token.Operators.Arrow,
@@ -366,6 +419,26 @@ describe("Grammar", () => {
                 ]);
             });
 
+            it("lambda expression with multiple parameters (passed as argument)", () => {
+                const input = Input.InMethod(`M((x, y) => { });`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Identifiers.MethodName("M"),
+                    Token.Punctuation.OpenParen,
+                    Token.Punctuation.OpenParen,
+                    Token.Identifiers.ParameterName("x"),
+                    Token.Punctuation.Comma,
+                    Token.Identifiers.ParameterName("y"),
+                    Token.Punctuation.CloseParen,
+                    Token.Operators.Arrow,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
             it("lambda expression with multiple typed parameters (passed as argument)", () => {
                 const input = Input.InMethod(`M((int x, int y) => { });`);
                 const tokens = tokenize(input);
@@ -434,6 +507,27 @@ describe("Grammar", () => {
                     Token.Punctuation.OpenParen,
                     Token.PrimitiveType.Int,
                     Token.Identifiers.ParameterName("x"),
+                    Token.Punctuation.CloseParen,
+                    Token.Operators.Arrow,
+                    Token.Punctuation.OpenBrace,
+                    Token.Punctuation.CloseBrace,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("async lambda expression with multiple parameters (passed as argument)", () => {
+                const input = Input.InMethod(`M(async (x, y) => { });`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Identifiers.MethodName("M"),
+                    Token.Punctuation.OpenParen,
+                    Token.Keywords.Modifiers.Async,
+                    Token.Punctuation.OpenParen,
+                    Token.Identifiers.ParameterName("x"),
+                    Token.Punctuation.Comma,
+                    Token.Identifiers.ParameterName("y"),
                     Token.Punctuation.CloseParen,
                     Token.Operators.Arrow,
                     Token.Punctuation.OpenBrace,
