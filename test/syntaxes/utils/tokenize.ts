@@ -282,6 +282,7 @@ export namespace Token {
         export const Alias = createToken('alias', 'keyword.other.alias.cs');
         export const AttributeSpecifier = (text: string) => createToken(text, 'keyword.other.attribute-specifier.cs');
         export const Await = createToken('await', 'keyword.other.await.cs');
+        export const As = createToken('as', 'keyword.other.as.cs');
         export const Base = createToken('base', 'keyword.other.base.cs');
         export const Checked = createToken('checked', 'keyword.other.checked.cs');
         export const Class = createToken('class', 'keyword.other.class.cs');
@@ -295,6 +296,7 @@ export namespace Token {
         export const Get = createToken('get', 'keyword.other.get.cs');
         export const Implicit = createToken('implicit', 'keyword.other.implicit.cs');
         export const Interface = createToken('interface', 'keyword.other.interface.cs');
+        export const Is = createToken('is', 'keyword.other.is.cs');
         export const Lock = createToken('lock', 'keyword.other.lock.cs');
         export const NameOf = createToken('nameof', 'keyword.other.nameof.cs');
         export const Namespace = createToken('namespace', 'keyword.other.namespace.cs');

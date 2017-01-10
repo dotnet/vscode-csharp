@@ -843,6 +843,94 @@ describe("Grammar", () => {
                     Token.Punctuation.Semicolon
                 ]);
             });
+
+            it("as cast of identifier", () => {
+                const input = Input.InMethod(`var x = o as List<Lazy<string>>;`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Keywords.Var,
+                    Token.Identifiers.LocalName("x"),
+                    Token.Operators.Assignment,
+                    Token.Variables.ReadWrite("o"),
+                    Token.Keywords.As,
+                    Token.Type("List"),
+                    Token.Punctuation.TypeParameters.Begin,
+                    Token.Type("Lazy"),
+                    Token.Punctuation.TypeParameters.Begin,
+                    Token.PrimitiveType.String,
+                    Token.Punctuation.TypeParameters.End,
+                    Token.Punctuation.TypeParameters.End,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("as cast of invocation", () => {
+                const input = Input.InMethod(`var x = M() as List<Lazy<string>>;`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Keywords.Var,
+                    Token.Identifiers.LocalName("x"),
+                    Token.Operators.Assignment,
+                    Token.Identifiers.MethodName("M"),
+                    Token.Punctuation.OpenParen,
+                    Token.Punctuation.CloseParen,
+                    Token.Keywords.As,
+                    Token.Type("List"),
+                    Token.Punctuation.TypeParameters.Begin,
+                    Token.Type("Lazy"),
+                    Token.Punctuation.TypeParameters.Begin,
+                    Token.PrimitiveType.String,
+                    Token.Punctuation.TypeParameters.End,
+                    Token.Punctuation.TypeParameters.End,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("is cast of identifier", () => {
+                const input = Input.InMethod(`var x = o is List<Lazy<string>>;`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Keywords.Var,
+                    Token.Identifiers.LocalName("x"),
+                    Token.Operators.Assignment,
+                    Token.Variables.ReadWrite("o"),
+                    Token.Keywords.Is,
+                    Token.Type("List"),
+                    Token.Punctuation.TypeParameters.Begin,
+                    Token.Type("Lazy"),
+                    Token.Punctuation.TypeParameters.Begin,
+                    Token.PrimitiveType.String,
+                    Token.Punctuation.TypeParameters.End,
+                    Token.Punctuation.TypeParameters.End,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("is cast of invocation", () => {
+                const input = Input.InMethod(`var x = M() is List<Lazy<string>>;`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Keywords.Var,
+                    Token.Identifiers.LocalName("x"),
+                    Token.Operators.Assignment,
+                    Token.Identifiers.MethodName("M"),
+                    Token.Punctuation.OpenParen,
+                    Token.Punctuation.CloseParen,
+                    Token.Keywords.Is,
+                    Token.Type("List"),
+                    Token.Punctuation.TypeParameters.Begin,
+                    Token.Type("Lazy"),
+                    Token.Punctuation.TypeParameters.Begin,
+                    Token.PrimitiveType.String,
+                    Token.Punctuation.TypeParameters.End,
+                    Token.Punctuation.TypeParameters.End,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
         });
 
         describe("Checked/Unchecked", () => {

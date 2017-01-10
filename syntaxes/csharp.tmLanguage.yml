@@ -8,7 +8,6 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 # TODO List
 #
 # * Refinement and tests to ensure proper highlighting while typing
-# * is and as cast expressions
 # * dynamic keyword
 # * field-like events with initializers
 # * predefined types on left-side of invocation expressions
@@ -148,6 +147,8 @@ repository:
     - include: '#expression-operators'
     - include: '#await-expression'
     - include: '#query-expression'
+    - include: '#as-expression'
+    - include: '#is-expression'
     - include: '#anonymous-method-expression'
     - include: '#object-creation-expression'
     - include: '#array-creation-expression'
@@ -1539,6 +1540,54 @@ repository:
       # '5': ?<type-args> is a sub-expression. It's final value is not considered.
       # '6': ?<tuple> is a sub-expression. It's final value is not considered.
       '7': { name: punctuation.parenthesis.close.cs }
+
+  as-expression:
+    match: |-
+      (?x)
+      (?<!\.)\b(as)\b\s*
+      (?<type-name>
+        (?:
+            (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)? # alias-qualification
+            (?<name-and-type-args> # identifier + type arguments (if any)
+              \g<identifier>\s*
+              (?<type-args>\s*<(?:[^<>]|\g<type-args>)+>\s*)?
+            )
+            (?:\s*\.\s*\g<name-and-type-args>)* # Are there any more names being dotted into?
+            (?:\s*\*\s*)* # pointer suffix?
+            (?:\s*\?\s*)? # nullable suffix?
+            (?:\s*\[(?:\s*,\s*)*\]\s*)* # array suffix?
+        )|
+        (?<tuple>\s*\((?:[^\(\)]|\g<tuple>)+\))
+      )?
+    captures:
+      '1': { name: keyword.other.as.cs }
+      '2':
+        patterns:
+        - include: '#type'
+
+  is-expression:
+    match: |-
+      (?x)
+      (?<!\.)\b(is)\b\s*
+      (?<type-name>
+        (?:
+            (?:(?<identifier>[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)? # alias-qualification
+            (?<name-and-type-args> # identifier + type arguments (if any)
+              \g<identifier>\s*
+              (?<type-args>\s*<(?:[^<>]|\g<type-args>)+>\s*)?
+            )
+            (?:\s*\.\s*\g<name-and-type-args>)* # Are there any more names being dotted into?
+            (?:\s*\*\s*)* # pointer suffix?
+            (?:\s*\?\s*)? # nullable suffix?
+            (?:\s*\[(?:\s*,\s*)*\]\s*)* # array suffix?
+        )|
+        (?<tuple>\s*\((?:[^\(\)]|\g<tuple>)+\))
+      )?
+    captures:
+      '1': { name: keyword.other.is.cs }
+      '2':
+        patterns:
+        - include: '#type'
 
   this-or-base-expression:
     match: \b(?:(base)|(this))\b
