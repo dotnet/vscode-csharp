@@ -11,7 +11,6 @@ describe("Grammar", () => {
 
     describe("Field", () => {
         it("declaration", () => {
-
             const input = Input.InClass(`
 private List _field;
 private List field;
@@ -37,7 +36,6 @@ private List field123;`);
         });
 
         it("generic", () => {
-
             const input = Input.InClass(`private Dictionary< List<T>, Dictionary<T, D>> _field;`);
             const tokens = tokenize(input);
 
@@ -63,7 +61,6 @@ private List field123;`);
 
 
         it("modifiers", () => {
-
             const input = Input.InClass(`
 private static readonly List _field;
 readonly string _field2;
@@ -90,7 +87,6 @@ string _field3;`);
         });
 
         it("types", () => {
-
             const input = Input.InClass(`
 string field123;
 string[] field123;`);
@@ -110,7 +106,6 @@ string[] field123;`);
         });
 
         it("assignment", () => {
-
             const input = Input.InClass(`
 private string field = "hello";
 const   bool   field = true;`);
@@ -136,7 +131,6 @@ const   bool   field = true;`);
         });
 
         it("declaration with multiple declarators", () => {
-
             const input = Input.InClass(`int x = 19, y = 23, z = 42;`);
             const tokens = tokenize(input);
 
@@ -157,7 +151,6 @@ const   bool   field = true;`);
         });
 
         it("tuple type with no names and no modifiers", () => {
-
             const input = Input.InClass(`(int, int) x;`);
             const tokens = tokenize(input);
 
@@ -172,7 +165,6 @@ const   bool   field = true;`);
         });
 
         it("tuple type with no names and private modifier", () => {
-
             const input = Input.InClass(`private (int, int) x;`);
             const tokens = tokenize(input);
 
@@ -188,7 +180,6 @@ const   bool   field = true;`);
         });
 
         it("tuple type with names and no modifiers", () => {
-
             const input = Input.InClass(`(int x, int y) z;`);
             const tokens = tokenize(input);
 
@@ -205,7 +196,6 @@ const   bool   field = true;`);
         });
 
         it("tuple type with names and private modifier", () => {
-
             const input = Input.InClass(`private (int x, int y) z;`);
             const tokens = tokenize(input);
 
@@ -223,7 +213,6 @@ const   bool   field = true;`);
         });
 
         it("Fields with fully-qualified names are highlighted properly (issue #1097)", () => {
-
             const input = Input.InClass(`
 private CanvasGroup[] groups;
 private UnityEngine.UI.Image[] selectedImages;
@@ -251,7 +240,6 @@ private UnityEngine.UI.Image[] selectedImages;
         });
 
         it("Fields with dictionary initializer highlights properly (issue #1096)", () => {
-
             const input = Input.InClass(`
 private readonly Dictionary<string, int> languageToIndex = new Dictionary<string, int>()
 {
@@ -316,6 +304,30 @@ private readonly Dictionary<string, int> languageToIndex = new Dictionary<string
                 Token.Literals.Numeric.Decimal("3"),
                 Token.Punctuation.CloseBrace,
                 Token.Punctuation.CloseBrace,
+                Token.Punctuation.Semicolon
+            ]);
+        });
+        
+        it("initializer on multiple lines (issue #316)", () => {
+            const input = Input.InClass(`
+private readonly string initSportMessageFormatString = "line1"
+    + "line2";`);
+
+            let tokens = tokenize(input);
+
+            tokens.should.deep.equal([
+                Token.Keywords.Modifiers.Private,
+                Token.Keywords.Modifiers.ReadOnly,
+                Token.PrimitiveType.String,
+                Token.Identifiers.FieldName("initSportMessageFormatString"),
+                Token.Operators.Assignment,
+                Token.Punctuation.String.Begin,
+                Token.Literals.String("line1"),
+                Token.Punctuation.String.End,
+                Token.Operators.Arithmetic.Addition,
+                Token.Punctuation.String.Begin,
+                Token.Literals.String("line2"),
+                Token.Punctuation.String.End,
                 Token.Punctuation.Semicolon
             ]);
         });
