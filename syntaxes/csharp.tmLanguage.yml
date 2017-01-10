@@ -9,7 +9,6 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 #
 # * Refinement and tests to ensure proper highlighting while typing
 # * is and as cast expressions
-# * null propagating operator
 # * dynamic keyword
 # * field-like events with initializers
 # * verbatim identifiers
@@ -144,8 +143,6 @@ repository:
     - include: '#verbatim-interpolated-string'
     - include: '#literal'
     - include: '#this-or-base-expression'
-    - include: '#conditional-operator'
-    - include: '#expression-operators'
     - include: '#query-expression'
     - include: '#anonymous-method-expression'
     - include: '#object-creation-expression'
@@ -154,6 +151,8 @@ repository:
     - include: '#member-access-expression'
     - include: '#invocation-expression'
     - include: '#element-access-expression'
+    - include: '#conditional-operator'
+    - include: '#expression-operators'
     - include: '#cast-expression'
     - include: '#parenthesized-expression'
     - include: '#initializer-expression'
@@ -1468,7 +1467,10 @@ repository:
       match: \?\?
 
   conditional-operator:
-    begin: (?<!\?)\?(?!\?)
+    # Only match ? if:
+    # 1. There isn't a preceding or trailing ? (null-coalescing operator)
+    # 2. There isn't a trailing . or [ (null-conditional operator)
+    begin: (?<!\?)\?(?!\?|\.|\[)
     beginCaptures:
       '0': { name: keyword.operator.conditional.question-mark.cs }
     end: ':'
@@ -1541,14 +1543,16 @@ repository:
   invocation-expression:
     begin: |-
       (?x)
-      (\.)?                                            # preceding dot
+      (?:(\?)\s*)?                                     # preceding null-conditional operator?
+      (?:(\.)\s*)?                                     # preceding dot?
       ([_[:alpha:]][_[:alnum:]]*)\s*                   # method name
       (?<type-args>\s*<([^<>]|\g<type-args>)+>\s*)?\s* # type arguments
       (?=\()                                           # open paren of argument list
     beginCaptures:
-      '1': { name: punctuation.accessor.cs }
-      '2': { name: entity.name.function.cs }
-      '3':
+      '1': { name: keyword.operator.null-conditional.cs }
+      '2': { name: punctuation.accessor.cs }
+      '3': { name: entity.name.function.cs }
+      '4':
         patterns:
         - include: '#type-arguments'
     end: (?<=\))
@@ -1558,12 +1562,16 @@ repository:
   element-access-expression:
     begin: |-
       (?x)
-      (\.)?                          # preceding dot
+      (?:(\?)\s*)?                   # preceding null-conditional operator?
+      (?:(\.)\s*)?                   # preceding dot?
       ([_[:alpha:]][_[:alnum:]]*)\s* # property name
-      (?=\[)                         # open paren of argument list
+      (?:(\?)\s*)?                   # null-conditional operator?
+      (?=\[)                         # open bracket of argument list
     beginCaptures:
-      '1': { name: punctuation.accessor.cs }
-      '2': { name: variable.other.object.property.cs }
+      '1': { name: keyword.operator.null-conditional.cs }
+      '2': { name: punctuation.accessor.cs }
+      '3': { name: variable.other.object.property.cs }
+      '4': { name: keyword.operator.null-conditional.cs }
     end: (?<=\])
     patterns:
     - include: '#bracketed-argument-list'
@@ -1572,14 +1580,16 @@ repository:
     patterns:
       # An identifier with no type parameters and a dot to the left should
       # be treated as a property, so long as it isn't followed by a ( or [.
-    - match:
+    - match: |-
         (?x)
-        (\.)\s*
-        ([_[:alpha:]][_[:alnum:]]*)\s*
-        (?![_[:alnum:]]|\(|\[|<)
+        (?:(\?)\s*)?                   # preceding null-conditional operator?
+        (\.)\s*                        # preceding dot
+        ([_[:alpha:]][_[:alnum:]]*)\s* # property name
+        (?![_[:alnum:]]|\(|(\?)?\[|<)  # next character is not alpha-numeric, nor a (, [, or <. Also, test for ?[
       captures:
-        '1': { name: punctuation.accessor.cs }
-        '2': { name: variable.other.object.property.cs }
+        '1': { name: keyword.operator.null-conditional.cs }
+        '2': { name: punctuation.accessor.cs }
+        '3': { name: variable.other.object.property.cs }
       # An identifier with type parameters should be treated as an object,
       # regardless of whether there is a dot to the left.
     - match: |-
@@ -1587,7 +1597,10 @@ repository:
         (\.)?\s*
         ([_[:alpha:]][_[:alnum:]]*)
         (?<type-params>\s*<([^<>]|\g<type-params>)+>\s*)
-        (?=\s*\.\s*[_[:alpha:]][_[:alnum:]]*)
+        (?=
+          (\s*\?)?
+          \s*\.\s*[_[:alpha:]][_[:alnum:]]*
+        )
       captures:
         '1': { name: punctuation.accessor.cs }
         '2': { name: variable.other.object.cs }
@@ -1599,7 +1612,10 @@ repository:
     - match: |-
         (?x)
         ([_[:alpha:]][_[:alnum:]]*)
-        (?=\s*\.\s*[_[:alpha:]][_[:alnum:]]*)
+        (?=
+          (\s*\?)?
+          \s*\.\s*[_[:alpha:]][_[:alnum:]]*
+        )
       captures:
         '1': { name: variable.other.object.cs }
 

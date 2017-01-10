@@ -392,6 +392,7 @@ export namespace Token {
         export const Decrement = createToken('--', 'keyword.operator.decrement.cs');
         export const Increment = createToken('++', 'keyword.operator.increment.cs');
         export const NullCoalescing = createToken('??', 'keyword.operator.null-coalescing.cs');
+        export const NullConditional = createToken('?', 'keyword.operator.null-conditional.cs');
     }
 
     export namespace PrimitiveType {

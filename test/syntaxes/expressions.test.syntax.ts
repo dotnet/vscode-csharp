@@ -1062,6 +1062,24 @@ class C
                 ]);
             });
 
+            it("member", () => {
+                const input = Input.InMethod(`var a = b.c[0];`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Keywords.Var,
+                    Token.Identifiers.LocalName("a"),
+                    Token.Operators.Assignment,
+                    Token.Variables.Object("b"),
+                    Token.Punctuation.Accessor,
+                    Token.Variables.Property("c"),
+                    Token.Punctuation.OpenBracket,
+                    Token.Literals.Numeric.Decimal("0"),
+                    Token.Punctuation.CloseBracket,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
             it("read/write array element", () => {
                 const input = Input.InMethod(`
 object[] a1 = {(null), (this.a), c};
@@ -1437,6 +1455,119 @@ a1[1] = ((this.a)); a1[2] = (c); a1[1] = (i);
                     Token.PrimitiveType.Object,
                     Token.Punctuation.OpenParen,
                     Token.Punctuation.CloseParen,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+        });
+
+        describe("Null-conditional Operator", () => {
+            it("before dot 1", () => {
+                const input = Input.InMethod(`var a = b?.c;`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Keywords.Var,
+                    Token.Identifiers.LocalName("a"),
+                    Token.Operators.Assignment,
+                    Token.Variables.Object("b"),
+                    Token.Operators.NullConditional,
+                    Token.Punctuation.Accessor,
+                    Token.Variables.Property("c"),
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("before dot 2", () => {
+                const input = Input.InMethod(`var a = b.c?.d;`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Keywords.Var,
+                    Token.Identifiers.LocalName("a"),
+                    Token.Operators.Assignment,
+                    Token.Variables.Object("b"),
+                    Token.Punctuation.Accessor,
+                    Token.Variables.Property("c"),
+                    Token.Operators.NullConditional,
+                    Token.Punctuation.Accessor,
+                    Token.Variables.Property("d"),
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("in element access 1", () => {
+                const input = Input.InMethod(`var a = b.c?[0];`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Keywords.Var,
+                    Token.Identifiers.LocalName("a"),
+                    Token.Operators.Assignment,
+                    Token.Variables.Object("b"),
+                    Token.Punctuation.Accessor,
+                    Token.Variables.Property("c"),
+                    Token.Operators.NullConditional,
+                    Token.Punctuation.OpenBracket,
+                    Token.Literals.Numeric.Decimal("0"),
+                    Token.Punctuation.CloseBracket,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("in element access 2", () => {
+                const input = Input.InMethod(`var a = b.c?.d?[0];`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Keywords.Var,
+                    Token.Identifiers.LocalName("a"),
+                    Token.Operators.Assignment,
+                    Token.Variables.Object("b"),
+                    Token.Punctuation.Accessor,
+                    Token.Variables.Property("c"),
+                    Token.Operators.NullConditional,
+                    Token.Punctuation.Accessor,
+                    Token.Variables.Property("d"),
+                    Token.Operators.NullConditional,
+                    Token.Punctuation.OpenBracket,
+                    Token.Literals.Numeric.Decimal("0"),
+                    Token.Punctuation.CloseBracket,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("before element access", () => {
+                const input = Input.InMethod(`var a = b.c[0];`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Keywords.Var,
+                    Token.Identifiers.LocalName("a"),
+                    Token.Operators.Assignment,
+                    Token.Variables.Object("b"),
+                    Token.Punctuation.Accessor,
+                    Token.Variables.Property("c"),
+                    Token.Punctuation.OpenBracket,
+                    Token.Literals.Numeric.Decimal("0"),
+                    Token.Punctuation.CloseBracket,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("before invocation", () => {
+                const input = Input.InMethod(`var a = b?.c());`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Keywords.Var,
+                    Token.Identifiers.LocalName("a"),
+                    Token.Operators.Assignment,
+                    Token.Variables.Object("b"),
+                    Token.Operators.NullConditional,
+                    Token.Punctuation.Accessor,
+                    Token.Identifiers.MethodName("c"),
+                    Token.Punctuation.OpenParen,
                     Token.Punctuation.CloseParen,
                     Token.Punctuation.Semicolon
                 ]);
