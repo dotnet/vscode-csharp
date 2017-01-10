@@ -1256,6 +1256,44 @@ a1[1] = ((this.a)); a1[2] = (c); a1[1] = (i);
             });
         });
 
+        describe("Null-coalescing Operator", () => {
+            it("in assignment", () => {
+                const input = Input.InMethod(`var y = x ?? new object();`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Keywords.Var,
+                    Token.Identifiers.LocalName("y"),
+                    Token.Operators.Assignment,
+                    Token.Variables.ReadWrite("x"),
+                    Token.Operators.NullCoalescing,
+                    Token.Keywords.New,
+                    Token.PrimitiveType.Object,
+                    Token.Punctuation.OpenParen,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+
+            it("passed as argument", () => {
+                const input = Input.InMethod(`M(x ?? new object());`);
+                const tokens = tokenize(input);
+
+                tokens.should.deep.equal([
+                    Token.Identifiers.MethodName("M"),
+                    Token.Punctuation.OpenParen,
+                    Token.Variables.ReadWrite("x"),
+                    Token.Operators.NullCoalescing,
+                    Token.Keywords.New,
+                    Token.PrimitiveType.Object,
+                    Token.Punctuation.OpenParen,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.CloseParen,
+                    Token.Punctuation.Semicolon
+                ]);
+            });
+        });
+
         describe("Primary", () => {
             it("default", () => {
                 const input = Input.InMethod(`var t = default(List<>);`);

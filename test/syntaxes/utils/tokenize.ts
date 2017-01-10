@@ -329,8 +329,6 @@ export namespace Token {
     }
 
     export namespace Operators {
-        export const Arrow = createToken('=>', 'keyword.operator.arrow.cs');
-
         export namespace Arithmetic {
             export const Addition = createToken('+', 'keyword.operator.arithmetic.cs');
             export const Division = createToken('/', 'keyword.operator.arithmetic.cs');
@@ -338,8 +336,6 @@ export namespace Token {
             export const Remainder = createToken('%', 'keyword.operator.arithmetic.cs');
             export const Subtraction = createToken('-', 'keyword.operator.arithmetic.cs');
         }
-
-        export const Assignment = createToken('=', 'keyword.operator.assignment.cs');
 
         export namespace Bitwise {
             export const And = createToken('&', 'keyword.operator.bitwise.cs');
@@ -349,9 +345,6 @@ export namespace Token {
             export const ShiftLeft = createToken('<<', 'keyword.operator.bitwise.shift.cs');
             export const ShiftRight = createToken('>>', 'keyword.operator.bitwise.shift.cs');
        }
-
-        export const Decrement = createToken('--', 'keyword.operator.decrement.cs');
-        export const Increment = createToken('++', 'keyword.operator.increment.cs');
 
         export namespace Logical {
             export const And = createToken('&&', 'keyword.operator.logical.cs');
@@ -368,6 +361,12 @@ export namespace Token {
             export const GreaterThan = createToken('>', 'keyword.operator.relational.cs');
             export const GreaterThanOrEqual = createToken('>=', 'keyword.operator.relational.cs');
        }
+
+        export const Arrow = createToken('=>', 'keyword.operator.arrow.cs');
+        export const Assignment = createToken('=', 'keyword.operator.assignment.cs');
+        export const Decrement = createToken('--', 'keyword.operator.decrement.cs');
+        export const Increment = createToken('++', 'keyword.operator.increment.cs');
+        export const NullCoalescing = createToken('??', 'keyword.operator.null-coalescing.cs');
     }
 
     export namespace PrimitiveType {

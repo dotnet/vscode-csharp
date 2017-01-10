@@ -9,7 +9,6 @@ uuid: f7de61e2-bdde-4e2a-a139-8221b179584e
 #
 # * Refinement and tests to ensure proper highlighting while typing
 # * is and as cast expressions
-# * null coalescing operator
 # * null propagating operator
 # * conditional operator
 # * compound assignement
@@ -1438,6 +1437,8 @@ repository:
       match: \+\+
     - name: keyword.operator.arithmetic.cs
       match: '%|\*|/|-|\+'
+    - name: keyword.operator.null-coalescing.cs
+      match: \?\?
 
   assignment-expression:
     match: \.*\s*(=)\s*\.*(?=;)
