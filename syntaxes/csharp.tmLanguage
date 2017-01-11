@@ -5634,8 +5634,6 @@
       </dict>
       <key>type-arguments</key>
       <dict>
-        <key>name</key>
-        <string>meta.type.parameters.cs</string>
         <key>begin</key>
         <string>&lt;</string>
         <key>beginCaptures</key>

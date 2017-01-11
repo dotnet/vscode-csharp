@@ -2191,7 +2191,6 @@ repository:
       match: '[_[:alpha:]][_[:alnum:]]*'
 
   type-arguments:
-    name: meta.type.parameters.cs
     begin: '<'
     beginCaptures:
       '0': { name: punctuation.definition.typeparameters.begin.cs }
