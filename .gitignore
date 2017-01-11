@@ -6,6 +6,5 @@ out
 .vscode-test
 
 install.*
-syntaxes/csharp.tmLanguage
 
 *.vsix
