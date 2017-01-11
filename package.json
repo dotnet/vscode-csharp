@@ -478,11 +478,13 @@
             "razor"
           ]
         },
+        "runtime": "node",
         "runtimeArgs": [],
         "variables": {
           "pickProcess": "csharp.listProcess",
           "pickRemoteProcess": "csharp.listRemoteProcess"
         },
+        "program": "./out/src/coreclr-debug/proxy.js",
         "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
         "configurationAttributes": {
           "launch": {
@@ -1142,16 +1144,7 @@
             "request": "attach",
             "processId": "${command.pickProcess}"
           }
-        ],
-        "windows": {
-          "program": "./.debugger/OpenDebugAD7.exe"
-        },
-        "osx": {
-          "program": "./.debugger/OpenDebugAD7"
-        },
-        "linux": {
-          "program": "./.debugger/OpenDebugAD7"
-        }
+        ]
       }
     ]
   }
