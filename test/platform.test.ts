@@ -7,7 +7,7 @@ import { should } from 'chai';
 import { LinuxDistribution, PlatformInformation } from '../src/platform';
 
 suite("Platform", () => {
-    before(() => should());
+    suiteSetup(() => should());
 
     test("Retrieve correct information for Ubuntu 14.04", () => {
         const dist = distro_ubuntu_14_04();
@@ -73,6 +73,18 @@ suite("Platform", () => {
         platformInfo.runtimeId.should.equal('ubuntu.14.04-x64');
     })
 
+    test("Compute correct RID for Ubuntu 16.04", () => {
+        const platformInfo = new PlatformInformation('linux', 'x86_64', distro_ubuntu_16_04());
+
+        platformInfo.runtimeId.should.equal('ubuntu.16.04-x64');
+    })
+
+    test("Compute correct RID for Ubuntu 16.10", () => {
+        const platformInfo = new PlatformInformation('linux', 'x86_64', distro_ubuntu_16_10());
+
+        platformInfo.runtimeId.should.equal('ubuntu.16.10-x64');
+    })
+
     test("Compute correct RID for Fedora 23", () => {
         const platformInfo = new PlatformInformation('linux', 'x86_64', distro_fedora_23());
 
@@ -95,6 +107,18 @@ suite("Platform", () => {
         const platformInfo = new PlatformInformation('linux', 'x86_64', distro_kde_neon_5_8());
 
         platformInfo.runtimeId.should.equal('ubuntu.16.04-x64');
+    })
+
+    test("Compute correct RID for openSUSE 13", () => {
+        const platformInfo = new PlatformInformation('linux', 'x86_64', distro_openSUSE_13_2());
+
+        platformInfo.runtimeId.should.equal('opensuse.13.2-x64');
+    })
+
+    test("Compute correct RID for openSUSE 42", () => {
+        const platformInfo = new PlatformInformation('linux', 'x86_64', distro_openSUSE_42_1());
+
+        platformInfo.runtimeId.should.equal('opensuse.42.1-x64');
     })
 
     test("Compute no RID for CentOS 7 with 32-bit architecture", () => {
@@ -122,6 +146,43 @@ VERSION_ID="14.04"
 HOME_URL="http://www.ubuntu.com/"
 SUPPORT_URL="http://help.ubuntu.com/"
 BUG_REPORT_URL="http://bugs.launchpad.net/ubuntu/"`;
+
+    return LinuxDistribution.FromReleaseInfo(input, '\n');
+}
+
+function distro_ubuntu_16_04(): LinuxDistribution {
+    // Copied from /etc/os-release on Ubuntu 16.04 server
+    const input = `
+NAME="Ubuntu"
+VERSION="16.04.1 LTS (Xenial Xerus)"
+ID=ubuntu
+ID_LIKE=debian
+PRETTY_NAME="Ubuntu 16.04.1 LTS"
+VERSION_ID="16.04"
+HOME_URL="http://www.ubuntu.com/"
+SUPPORT_URL="http://help.ubuntu.com/"
+BUG_REPORT_URL="http://bugs.launchpad.net/ubuntu/"
+VERSION_CODENAME=xenial
+UBUNTU_CODENAME=xenial`;
+
+    return LinuxDistribution.FromReleaseInfo(input, '\n');
+}
+
+function distro_ubuntu_16_10(): LinuxDistribution {
+    // Copied from /etc/os-release on Ubuntu 16.10 server
+    const input = `
+NAME="Ubuntu"
+VERSION="16.10 (Yakkety Yak)"
+ID=ubuntu
+ID_LIKE=debian
+PRETTY_NAME="Ubuntu 16.10"
+VERSION_ID="16.10"
+HOME_URL="http://www.ubuntu.com/"
+SUPPORT_URL="http://help.ubuntu.com/"
+BUG_REPORT_URL="http://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="http://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+VERSION_CODENAME=yakkety
+UBUNTU_CODENAME=yakkety`;
 
     return LinuxDistribution.FromReleaseInfo(input, '\n');
 }
@@ -200,6 +261,38 @@ SUPPORT_URL="http://neon.kde.org/"
 BUG_REPORT_URL="http://bugs.kde.org/"
 VERSION_CODENAME=xenial
 UBUNTU_CODENAME=xenial`;
+
+    return LinuxDistribution.FromReleaseInfo(input, '\n');
+}
+
+function distro_openSUSE_13_2(): LinuxDistribution {
+    const input = `
+NAME=openSUSE
+VERSION="13.2 (Harlequin)"
+VERSION_ID="13.2"
+PRETTY_NAME="openSUSE 13.2 (Harlequin) (x86_64)"
+ID=opensuse
+ANSI_COLOR="0;32"
+CPE_NAME="cpe:/o:opensuse:opensuse:13.2"
+BUG_REPORT_URL="https://bugs.opensuse.org"
+HOME_URL="https://opensuse.org/"
+ID_LIKE="suse"`;
+
+    return LinuxDistribution.FromReleaseInfo(input, '\n');
+}
+
+function distro_openSUSE_42_1(): LinuxDistribution {
+    const input = `
+NAME="openSUSE Leap"
+VERSION="42.1"
+VERSION_ID="42.1"
+PRETTY_NAME="openSUSE Leap 42.1 (x86_64)"
+ID=opensuse
+ANSI_COLOR="0;32"
+CPE_NAME="cpe:/o:opensuse:opensuse:42.1"
+BUG_REPORT_URL="https://bugs.opensuse.org"
+HOME_URL="https://opensuse.org/"
+ID_LIKE="suse"`;
 
     return LinuxDistribution.FromReleaseInfo(input, '\n');
 }
