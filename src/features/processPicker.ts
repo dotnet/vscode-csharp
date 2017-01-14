@@ -147,14 +147,6 @@ export class RemoteAttachPicker {
             }
         });
     }
-
-    public static getRemoteProcesses(pipeCmd: string, os: string): Promise<AttachItem[]> {
-        const psCommand = os === 'darwin' ? RemoteAttachPicker.osxPsCommand : RemoteAttachPicker.linuxPsCommand;
-
-        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} ${psCommand}`, null, RemoteAttachPicker._channel).then(output => {
-            return sortProcessEntries(PsOutputParser.parseProcessFromPs(output), os);
-        });
-    }
 }
 
 class Process {
