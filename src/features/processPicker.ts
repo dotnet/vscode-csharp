@@ -119,13 +119,13 @@ export class RemoteAttachPicker {
 
     public static getRemoteOSAndProcesses(pipeCmd: string): Promise<AttachItem[]> {
         // Commands to get OS and processes
-        const command = `uname && if [ $(uname) == "Linux" ] ; then ${RemoteAttachPicker.linuxPsCommand} ; elif [ $(uname) == "Darwin" ] ; ` +
+        const command = `uname && if [[ $(uname) == "Linux" ]] ; then ${RemoteAttachPicker.linuxPsCommand} ; elif [[ $(uname) == "Darwin" ]] ; ` +
             `then ${RemoteAttachPicker.osxPsCommand}; fi`;
 
         return execChildProcessAndOutputErrorToChannel(`${pipeCmd} "${command}"`, null, RemoteAttachPicker._channel).then(output => {
             // OS will be on first line
             // Processess will follow if listed
-            let lines = output.split(os.EOL);
+            let lines = output.split(/\r?\n/);
 
             if (lines.length == 0) {
                 return Promise.reject<AttachItem[]>(new Error("Pipe transport failed to get OS and processes."));
