@@ -46,6 +46,13 @@ declare module "vscode-tasks" {
         isShellCommand?: boolean;
 
         /**
+         * Specifies whether a global command is watching the filesystem. A task.json
+         * file can either contain a global isWatching property or a tasks property
+         * but not both.
+         */
+        isWatching?: boolean;
+
+        /**
          * The command options used when the command is executed. Can be omitted.
          */
         options?: CommandOptions;
@@ -79,7 +86,7 @@ declare module "vscode-tasks" {
          * prefix (e.g. /t: for msbuild). This property can be used to control such
          * a prefix.
          */
-        taskSelector?:string;
+        taskSelector?: string;
 
         /**
          * The problem matcher to be used if a global command is executed (e.g. no tasks
@@ -110,7 +117,7 @@ declare module "vscode-tasks" {
          * The environment of the executed program or shell. If omitted
          * the parent process' environment is used.
          */
-        env?: { [key:string]:string; };
+        env?: { [key: string]: string; };
     }
 
     /**
@@ -132,12 +139,17 @@ declare module "vscode-tasks" {
         /**
          * Whether this task maps to the default build command.
          */
-        isBuildCommand?:boolean;
+        isBuildCommand?: boolean;
 
         /**
          * Whether this task maps to the default test command.
          */
         isTestCommand?: boolean;
+
+        /**
+         * Whether the executed command is kept alive and is watching the file system.
+         */
+        isWatching?: boolean;
 
         /**
          * Controls whether the output view of the running tasks is brought to front or not.
@@ -209,6 +221,35 @@ declare module "vscode-tasks" {
          * problems spread over multiple lines.
          */
         pattern?: string | ProblemPattern | ProblemPattern[];
+
+        /**
+         * Additional information used to detect when a background task (like a watching task in Gulp)
+         * is active.
+         */
+        watching?: WatchingMatcher;
+    }
+
+    /**
+     * A description to track the start and end of a watching task.
+     */
+    export interface WatchingMatcher {
+
+        /**
+         * If set to true the watcher is in active mode when the task
+         * starts. This is equals of issuing a line that matches the
+         * beginPattern.
+         */
+        activeOnStart?: boolean;
+
+        /**
+         * If matched in the output the start of a watching task is signaled.
+         */
+        beginsPattern?: string;
+
+        /**
+         * If matched in the output the end of a watching task is signaled.
+         */
+        endsPattern?: string;
     }
 
     export interface ProblemPattern {
@@ -221,9 +262,8 @@ declare module "vscode-tasks" {
 
         /**
          * The match group index of the filename.
-         * If omitted 1 is used.
          */
-        file?: number;
+        file: number;
 
         /**
          * The match group index of the problems's location. Valid location
@@ -234,15 +274,12 @@ declare module "vscode-tasks" {
 
         /**
          * The match group index of the problem's line in the source file.
-         *
-         * Defaults to 2.
+         * Can only be omitted if location is specified.
          */
         line?: number;
 
         /**
          * The match group index of the problem's column in the source file.
-         *
-         * Defaults to 3.
          */
         column?: number;
 
@@ -276,10 +313,9 @@ declare module "vscode-tasks" {
         code?: number;
 
         /**
-         * The match group index of the message. If omitted it defaults
-         * to 4 if location is specified. Otherwise it defaults to 5.
+         * The match group index of the message. Defaults to 0.
          */
-        message?: number;
+        message: number;
 
         /**
          * Specifies if the last pattern in a multi line problem matcher should
