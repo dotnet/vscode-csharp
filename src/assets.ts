@@ -346,7 +346,7 @@ function getOperations(generator: AssetGenerator) {
         getLaunchOperations(generator.launchJsonPath, operations));
 }
 
-function getBuildTasks(tasksConfiguration: tasks.TaskConfiguration) {
+function getBuildTasks(tasksConfiguration: tasks.TaskConfiguration): tasks.TaskDescription[] {
     let result: tasks.TaskDescription[] = [];
 
     function findBuildTask(tasksDescriptions: tasks.TaskDescription[]) {
@@ -392,6 +392,7 @@ function getBuildOperations(tasksJsonPath: string) {
                     }
                     catch (error) {
                         vscode.window.showErrorMessage(`Failed to parse tasks.json file`);
+                        return resolve({ updateTasksJson: false });
                     }
 
                     let buildTasks = getBuildTasks(tasksConfiguration);
