@@ -89,3 +89,4 @@ _kinds['Class'] = CompletionItemKind.Class;
 _kinds['Field'] = CompletionItemKind.Field;
 _kinds['EventField'] = CompletionItemKind.File;
 _kinds['Method'] = CompletionItemKind.Method;
+_kinds['Namespace'] = CompletionItemKind.Module;
