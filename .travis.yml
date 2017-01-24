@@ -25,7 +25,6 @@ install:
 
 script:
   - npm test --silent
-  - npm run test-syntax
 
 deploy:
   provider: releases
