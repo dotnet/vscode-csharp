@@ -167,27 +167,14 @@ export class PlatformInformation {
     }
 
     private static GetWindowsArchitecture(): Promise<string> {
-        return util.execChildProcess('wmic os get osarchitecture')
-            .then(architecture => {
-                if (architecture) {
-                    let archArray: string[] = architecture.split(os.EOL);
-                    if (archArray.length >= 2) {
-                        let arch = archArray[1].trim();
-
-                        // Note: This string can be localized. So, we'll just check to see if it contains 32 or 64.
-                        if (arch.indexOf('64') >= 0) {
-                            return "x86_64";
-                        }
-                        else if (arch.indexOf('32') >= 0) {
-                            return "x86";
-                        }
-                    }
-                }
-
-                return unknown;
-            }).catch((error) => {
-                return unknown;
-            });
+        return new Promise<string>((resolve, reject) => {
+            if (process.env.PROCESSOR_ARCHITECTURE === 'x86' && process.env.PROCESSOR_ARCHITEW6432 === undefined) {
+                resolve('x86');
+            }
+            else {
+                resolve('x86_64');
+            }
+        });
     }
 
     private static GetUnixArchitecture(): Promise<string> {
