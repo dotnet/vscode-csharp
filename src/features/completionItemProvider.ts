@@ -79,13 +79,27 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
 }
 
 const _kinds: { [kind: string]: CompletionItemKind; } = Object.create(null);
-_kinds['Variable'] = CompletionItemKind.Variable;
-_kinds['Struct'] = CompletionItemKind.Interface;
-_kinds['Interface'] = CompletionItemKind.Interface;
-_kinds['Enum'] = CompletionItemKind.Enum;
-_kinds['EnumMember'] = CompletionItemKind.Property;
-_kinds['Property'] = CompletionItemKind.Property;
+
+// types
 _kinds['Class'] = CompletionItemKind.Class;
+_kinds['Delegate'] = CompletionItemKind.Class; // need a better option for this.
+_kinds['Enum'] = CompletionItemKind.Enum;
+_kinds['Interface'] = CompletionItemKind.Interface;
+_kinds['Struct'] = CompletionItemKind.Class; // need a better option for this.
+
+// variables
+_kinds['Local'] = CompletionItemKind.Variable;
+_kinds['Parameter'] = CompletionItemKind.Variable;
+_kinds['RangeVariable'] = CompletionItemKind.Variable;
+
+// members
+_kinds['EnumMember'] = CompletionItemKind.Property; // need a better option for this.
+_kinds['Event'] = CompletionItemKind.Field; // need a better option for this.
 _kinds['Field'] = CompletionItemKind.Field;
-_kinds['EventField'] = CompletionItemKind.File;
+_kinds['Property'] = CompletionItemKind.Property;
 _kinds['Method'] = CompletionItemKind.Method;
+
+// other stuff
+_kinds['Label'] = CompletionItemKind.Unit; // need a better option for this.
+_kinds['Keyword'] = CompletionItemKind.Keyword;
+_kinds['Namespace'] = CompletionItemKind.Module;

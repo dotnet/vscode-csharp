@@ -54,8 +54,6 @@ First install:
 * Node.js (newer than 4.3.1)
 * Npm (newer 2.14.12)
 
-In case you get a *node-gyp* error [follow the instrutions here](https://github.com/nodejs/node-gyp/blob/master/README.md) to fix it. The *vscode-textmate* package pulls in a native node dependency and those instructions will set up the node build tool which deals with those.
-
 To **run and develop** do the following:
 
 * Run `npm i`
