@@ -397,7 +397,7 @@ function getBuildOperations(tasksJsonPath: string) {
 
                     let buildTasks = getBuildTasks(tasksConfiguration);
 
-                    resolve({ updateTasksJson: (buildTasks.length > 0) });
+                    resolve({ updateTasksJson: buildTasks.length === 0 });
                 });
             }
             else {
