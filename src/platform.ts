@@ -269,6 +269,7 @@ export class PlatformInformation {
                 if (distributionVersion === "12") {
                     return ubuntu_16_04;
                 }
+                break;
             case 'ubuntu':
                 if (distributionVersion === "14.04") {
                     // This also works for Linux Mint
