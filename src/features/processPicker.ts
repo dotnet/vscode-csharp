@@ -393,17 +393,15 @@ function execChildProcess(process: string, workingDirectory: string): Promise<st
 // VSCode cannot find the path "c:\windows\system32\bash.exe" as bash.exe is only available on 64bit OS. 
 // It can be invoked from "c:\windows\sysnative\bash.exe", so adding "c:\windows\sysnative" to path if we identify
 // VSCode is running in windows and doesn't have it in the path.
-function GetSysNativePathIfNeeded() : Promise<Object> {
+function GetSysNativePathIfNeeded() : Promise<any> {
     return PlatformInformation.GetCurrent().then(platformInfo => { 
         let env = process.env;
         if (platformInfo.isWindows && platformInfo.architecture === "x86_64") {
             let sysnative : String = process.env.WINDIR + "\\sysnative";
             env.Path = process.env.PATH + ";" + sysnative;                   
-            return env;            
         }
-        else {
-            return env;
-        }
+        
+        return env;
     });
 }
 
