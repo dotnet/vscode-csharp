@@ -235,19 +235,16 @@ export class OmniSharpServer {
 
         const solutionPath = launchTarget.target;
         const cwd = path.dirname(solutionPath);
+        this._options = Options.Read();
+        
         let args = [
             '-s', solutionPath,
             '--hostPID', process.pid.toString(),
             '--stdio',
             'DotNet:enablePackageRestore=false',
-            '--encoding', 'utf-8'
+            '--encoding', 'utf-8',
+            '-loglevel', this._options.loggingLevel
         ];
-
-        this._options = Options.Read();
-
-        if (this._options.loggingLevel === 'verbose') {
-            args.push('-v');
-        }
 
         this._logger.appendLine(`Starting OmniSharp server at ${new Date().toLocaleString()}`);
         this._logger.increaseIndent();
