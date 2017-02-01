@@ -243,7 +243,7 @@ export class OmniSharpServer {
             '--stdio',
             'DotNet:enablePackageRestore=false',
             '--encoding', 'utf-8',
-            '-loglevel', this._options.loggingLevel
+            '--loglevel', this._options.loggingLevel
         ];
 
         this._logger.appendLine(`Starting OmniSharp server at ${new Date().toLocaleString()}`);
