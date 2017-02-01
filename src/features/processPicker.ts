@@ -395,18 +395,14 @@ function execChildProcess(process: string, workingDirectory: string): Promise<st
 // VSCode is running in windows and doesn't have it in the path.
 function GetSysNativePathIfNeeded() : Promise<Object> {
     return PlatformInformation.GetCurrent().then(platformInfo => { 
+        let env = process.env;
         if (platformInfo.isWindows && platformInfo.architecture === "x86_64") {
-            let currentPath : String = process.env.PATH;
-            let windir : String = process.env.WINDIR;
-            let sysnative : String = windir.toLowerCase() + "\\sysnative";
-            let paths : String[] = currentPath.split(";");
-            for (let path of paths) {
-                if (path.toLowerCase() === sysnative) {
-                    return {'PATH' : currentPath };
-                }
-            }
-        
-            return {'PATH' : currentPath + ";" + sysnative };            
+            let sysnative : String = process.env.WINDIR + "\\sysnative";
+            env.Path = process.env.PATH + ";" + sysnative;                   
+            return env;            
+        }
+        else {
+            return env;
         }
     });
 }
