@@ -517,6 +517,10 @@ export function findNetCoreAppTargetFramework(project: MSBuildProject): TargetFr
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp'));
 }
 
+export function findNetStandardTargetFramework(project: MSBuildProject): TargetFramework {
+    return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netstandard'));
+}
+
 export interface ProjectDescriptor {
     Name: string;
     Path: string;
@@ -533,7 +537,8 @@ export function getDotNetCoreProjectDescriptors(info: WorkspaceInformationRespon
 
     if (info.MsBuild && info.MsBuild.Projects.length > 0) {
         for (let project of info.MsBuild.Projects) {
-            if (findNetCoreAppTargetFramework(project) !== undefined) {
+            if (findNetCoreAppTargetFramework(project) !== undefined ||
+                findNetStandardTargetFramework(project) !== undefined) {
                 result.push({ Name: path.basename(project.Path), Path: project.Path });
             }
         }
