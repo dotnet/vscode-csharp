@@ -34,7 +34,7 @@ See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/master/C
   * Windows (64-bit only)
   * macOS
   * Ubuntu 14.04 / Linux Mint 17 / Linux Mint 18 / Elementary OS 0.3
-  * Ubuntu 16.04 / Elementary OS 0.4 / Arch
+  * Ubuntu 16.04 / Elementary OS 0.4 / Arch / Zorin OS 12
   * Ubuntu 16.10
   * Debian 8.2
   * CentOS 7.1 / Oracle Linux 7

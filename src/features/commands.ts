@@ -83,7 +83,7 @@ interface Command {
     execute(): Thenable<any>;
 }
 
-function projectsToCommands(projects: protocol.DotNetProject[]): Promise<Command>[] {
+function projectsToCommands(projects: protocol.ProjectDescriptor[]): Promise<Command>[] {
     return projects.map(project => {
         let projectDirectory = project.Path;
 
@@ -117,11 +117,13 @@ export function dotnetRestoreAllProjects(server: OmniSharpServer) {
 
     return serverUtils.requestWorkspaceInformation(server).then(info => {
 
-        if (!info.DotNet || info.DotNet.Projects.length < 1) {
+        let projectDescriptors = protocol.getDotNetCoreProjectDescriptors(info);
+
+        if (projectDescriptors.length === 0) {
             return Promise.reject("No .NET Core projects found");
         }
 
-        let commandPromises = projectsToCommands(info.DotNet.Projects);
+        let commandPromises = projectsToCommands(projectDescriptors);
 
         return Promise.all(commandPromises).then(commands => {
             return vscode.window.showQuickPick(commands);

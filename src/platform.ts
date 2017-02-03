@@ -265,6 +265,11 @@ export class PlatformInformation {
         const ubuntu_16_10 = 'ubuntu.16.10-x64';
 
         switch (distributionName) {
+            case 'Zorin OS':
+                if (distributionVersion === "12") {
+                    return ubuntu_16_04;
+                }
+                break;
             case 'ubuntu':
                 if (distributionVersion === "14.04") {
                     // This also works for Linux Mint

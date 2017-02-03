@@ -33,7 +33,12 @@ export class Options {
             ? csharpConfig.get<boolean>('omnisharpUsesMono')
             : omnisharpConfig.get<boolean>('useMono');
 
-        const loggingLevel = omnisharpConfig.get<string>('loggingLevel');
+        // support the legacy "verbose" level as "debug"
+        let loggingLevel = omnisharpConfig.get<string>('loggingLevel');
+        if (loggingLevel.toLowerCase() === 'verbose') {
+            loggingLevel = 'debug';
+        }
+
         const autoStart = omnisharpConfig.get<boolean>('autoStart', true);
 
         const projectLoadTimeout = omnisharpConfig.get<number>('projectLoadTimeout', 60);

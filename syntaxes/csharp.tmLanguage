@@ -141,7 +141,7 @@
           </dict>
         </array>
       </dict>
-      <key>class-members</key>
+      <key>class-or-struct-members</key>
       <dict>
         <key>patterns</key>
         <array>
@@ -163,73 +163,7 @@
           </dict>
           <dict>
             <key>include</key>
-            <string>#event-declaration</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#property-declaration</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#indexer-declaration</string>
-          </dict>
-          <dict>
-            <key>include</key>
             <string>#field-declaration</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#variable-initializer</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#constructor-declaration</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#destructor-declaration</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#operator-declaration</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#conversion-operator-declaration</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#method-declaration</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#attribute-section</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#punctuation-semicolon</string>
-          </dict>
-        </array>
-      </dict>
-      <key>struct-members</key>
-      <dict>
-        <key>patterns</key>
-        <array>
-          <dict>
-            <key>include</key>
-            <string>#preprocessor</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#comment</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#storage-modifier</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#type-declarations</string>
           </dict>
           <dict>
             <key>include</key>
@@ -242,10 +176,6 @@
           <dict>
             <key>include</key>
             <string>#indexer-declaration</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#field-declaration</string>
           </dict>
           <dict>
             <key>include</key>
@@ -451,10 +381,6 @@
           </dict>
           <dict>
             <key>include</key>
-            <string>#literal</string>
-          </dict>
-          <dict>
-            <key>include</key>
             <string>#this-or-base-expression</string>
           </dict>
           <dict>
@@ -515,7 +441,15 @@
           </dict>
           <dict>
             <key>include</key>
+            <string>#literal</string>
+          </dict>
+          <dict>
+            <key>include</key>
             <string>#parenthesized-expression</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#tuple-deconstruction-assignment</string>
           </dict>
           <dict>
             <key>include</key>
@@ -920,7 +854,7 @@
             <array>
               <dict>
                 <key>include</key>
-                <string>#class-members</string>
+                <string>#class-or-struct-members</string>
               </dict>
             </array>
           </dict>
@@ -1290,7 +1224,7 @@
             <array>
               <dict>
                 <key>include</key>
-                <string>#struct-members</string>
+                <string>#class-or-struct-members</string>
               </dict>
             </array>
           </dict>
@@ -1485,7 +1419,7 @@
   (?&lt;tuple&gt;\s*\((?:[^\(\)]|\g&lt;tuple&gt;)+\))
 )\s+
 (\g&lt;identifier&gt;)\s* # first field name
-(?!=&gt;|==)(?=,|;|=)</string>
+(?!=&gt;|==)(?=,|;|=|$)</string>
         <key>beginCaptures</key>
         <dict>
           <key>1</key>
@@ -1525,6 +1459,10 @@
           <dict>
             <key>include</key>
             <string>#variable-initializer</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#class-or-struct-members</string>
           </dict>
         </array>
       </dict>
@@ -1603,6 +1541,10 @@
           <dict>
             <key>include</key>
             <string>#variable-initializer</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#class-or-struct-members</string>
           </dict>
         </array>
       </dict>
@@ -2945,6 +2887,36 @@
                 </dict>
               </dict>
               <dict>
+                <key>match</key>
+                <string>(?x) # match foreach (var (x, y) in ...)
+(?:\b(var)\b\s*)?
+(?&lt;tuple&gt;\((?:[^\(\)]|\g&lt;tuple&gt;)+\))\s+
+\b(in)\b</string>
+                <key>captures</key>
+                <dict>
+                  <key>1</key>
+                  <dict>
+                    <key>name</key>
+                    <string>keyword.other.var.cs</string>
+                  </dict>
+                  <key>2</key>
+                  <dict>
+                    <key>patterns</key>
+                    <array>
+                      <dict>
+                        <key>include</key>
+                        <string>#tuple-declaration-deconstruction-element-list</string>
+                      </dict>
+                    </array>
+                  </dict>
+                  <key>3</key>
+                  <dict>
+                    <key>name</key>
+                    <string>keyword.control.loop.in.cs</string>
+                  </dict>
+                </dict>
+              </dict>
+              <dict>
                 <key>include</key>
                 <string>#expression</string>
               </dict>
@@ -3304,6 +3276,10 @@
             <key>include</key>
             <string>#local-variable-declaration</string>
           </dict>
+          <dict>
+            <key>include</key>
+            <string>#local-tuple-var-deconstruction</string>
+          </dict>
         </array>
       </dict>
       <key>local-variable-declaration</key>
@@ -3443,6 +3419,224 @@
             <string>#variable-initializer</string>
           </dict>
         </array>
+      </dict>
+      <key>local-tuple-var-deconstruction</key>
+      <dict>
+        <key>begin</key>
+        <string>(?x) # e.g. var (x, y) = GetPoint();
+(?:\b(var)\b\s*)
+(?&lt;tuple&gt;\((?:[^\(\)]|\g&lt;tuple&gt;)+\))\s*
+(?=;|=|\))</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.var.cs</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#tuple-declaration-deconstruction-element-list</string>
+              </dict>
+            </array>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=;|\))</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#comment</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#variable-initializer</string>
+          </dict>
+        </array>
+      </dict>
+      <key>tuple-deconstruction-assignment</key>
+      <dict>
+        <key>match</key>
+        <string>(?x)
+(?&lt;tuple&gt;\s*\((?:[^\(\)]|\g&lt;tuple&gt;)+\))\s*
+(?!=&gt;|==)(?==)</string>
+        <key>captures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#tuple-deconstruction-element-list</string>
+              </dict>
+            </array>
+          </dict>
+        </dict>
+      </dict>
+      <key>tuple-declaration-deconstruction-element-list</key>
+      <dict>
+        <key>begin</key>
+        <string>\(</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>0</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.parenthesis.open.cs</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>\)</string>
+        <key>endCaptures</key>
+        <dict>
+          <key>0</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.parenthesis.close.cs</string>
+          </dict>
+        </dict>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#comment</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#tuple-declaration-deconstruction-element-list</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#declaration-expression</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#punctuation-comma</string>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>(?x) # e.g. x
+\b([_[:alpha:]][_[:alnum:]]*)\b\s*
+(?=[,)])</string>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>entity.name.variable.tuple-element.cs</string>
+              </dict>
+            </dict>
+          </dict>
+        </array>
+      </dict>
+      <key>tuple-deconstruction-element-list</key>
+      <dict>
+        <key>begin</key>
+        <string>\(</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>0</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.parenthesis.open.cs</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>\)</string>
+        <key>endCaptures</key>
+        <dict>
+          <key>0</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.parenthesis.close.cs</string>
+          </dict>
+        </dict>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#comment</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#tuple-deconstruction-element-list</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#declaration-expression</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#punctuation-comma</string>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>(?x) # e.g. x
+\b([_[:alpha:]][_[:alnum:]]*)\b\s*
+(?=[,)])</string>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>variable.other.readwrite.cs</string>
+              </dict>
+            </dict>
+          </dict>
+        </array>
+      </dict>
+      <key>declaration-expression</key>
+      <dict>
+        <key>match</key>
+        <string>(?x) # e.g. int x OR var x
+(?:
+  \b(var)\b|
+  (?&lt;type-name&gt;
+    (?:
+        (?:(?&lt;identifier&gt;[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)? # alias-qualification
+        (?&lt;name-and-type-args&gt; # identifier + type arguments (if any)
+          \g&lt;identifier&gt;\s*
+          (?&lt;type-args&gt;\s*&lt;(?:[^&lt;&gt;]|\g&lt;type-args&gt;)+&gt;\s*)?
+        )
+        (?:\s*\.\s*\g&lt;name-and-type-args&gt;)* # Are there any more names being dotted into?
+        (?:\s*\*\s*)* # pointer suffix?
+        (?:\s*\?\s*)? # nullable suffix?
+        (?:\s*\[(?:\s*,\s*)*\]\s*)* # array suffix?
+    )|
+    (?&lt;tuple&gt;\s*\((?:[^\(\)]|\g&lt;tuple&gt;)+\))
+  )
+)\s+
+\b(\g&lt;identifier&gt;)\b\s*
+(?=[,)])</string>
+        <key>captures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.var.cs</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#type</string>
+              </dict>
+            </array>
+          </dict>
+          <key>7</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.variable.tuple-element.cs</string>
+          </dict>
+        </dict>
       </dict>
       <key>checked-unchecked-expression</key>
       <dict>
@@ -3701,6 +3895,10 @@
             <key>include</key>
             <string>#verbatim-string-literal</string>
           </dict>
+          <dict>
+            <key>include</key>
+            <string>#tuple-literal</string>
+          </dict>
         </array>
       </dict>
       <key>boolean-literal</key>
@@ -3889,6 +4087,73 @@
         <string>constant.character.escape.cs</string>
         <key>match</key>
         <string>""</string>
+      </dict>
+      <key>tuple-literal</key>
+      <dict>
+        <key>begin</key>
+        <string>(\()(?=.*[:,])</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.parenthesis.open.cs</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>\)</string>
+        <key>endCaptures</key>
+        <dict>
+          <key>0</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.parenthesis.close.cs</string>
+          </dict>
+        </dict>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#comment</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#tuple-literal-element</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#punctuation-comma</string>
+          </dict>
+        </array>
+      </dict>
+      <key>tuple-literal-element</key>
+      <dict>
+        <key>begin</key>
+        <string>(?x)
+(?:([_[:alpha:]][_[:alnum:]]*)\s*(:)\s*)?
+(?![,)])</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>0</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.variable.tuple-element.cs</string>
+          </dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.separator.colon.cs</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=[,)])</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#expression</string>
+          </dict>
+        </array>
       </dict>
       <key>expression-operators</key>
       <dict>
