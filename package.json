@@ -356,10 +356,14 @@
         },
         "omnisharp.loggingLevel": {
           "type": "string",
-          "default": "default",
+          "default": "information",
           "enum": [
-            "default",
-            "verbose"
+            "trace",
+            "debug",
+            "information",
+            "warning",
+            "error",
+            "critical"
           ],
           "description": "Specifies the level of logging output from the OmniSharp server."
         },
