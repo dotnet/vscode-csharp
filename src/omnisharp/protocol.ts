@@ -5,6 +5,8 @@
 
 'use strict';
 
+import * as path from 'path';
+
 export module Requests {
     export const AddToProject = '/addtoproject';
     export const AutoComplete = '/autocomplete';
@@ -509,4 +511,33 @@ export namespace V2 {
         Failure: string;
         Pass: boolean;
     }
+}
+
+export function findNetCoreAppTargetFramework(project: MSBuildProject): TargetFramework {
+    return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp'));
+}
+
+export interface ProjectDescriptor {
+    Name: string;
+    Path: string;
+}
+
+export function getDotNetCoreProjectDescriptors(info: WorkspaceInformationResponse): ProjectDescriptor[] {
+    let result = [];
+
+    if (info.DotNet && info.DotNet.Projects.length > 0) {
+        for (let project of info.DotNet.Projects) {
+            result.push({ Name: project.Name, Path: project.Path });
+        }
+    }
+
+    if (info.MsBuild && info.MsBuild.Projects.length > 0) {
+        for (let project of info.MsBuild.Projects) {
+            if (findNetCoreAppTargetFramework(project) !== undefined) {
+                result.push({ Name: path.basename(project.Path), Path: project.Path });
+            }
+        }
+    }
+
+    return result;
 }
