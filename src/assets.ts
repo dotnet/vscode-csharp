@@ -95,7 +95,7 @@ export class AssetGenerator {
                 this.hasProject = true;
                 this.projectPath = path.dirname(targetMSBuildProject.Path);
                 this.projectFilePath = targetMSBuildProject.Path;
-                this.targetFramework = findNetCoreAppTargetFramework(targetMSBuildProject).ShortName;
+                this.targetFramework = protocol.findNetCoreAppTargetFramework(targetMSBuildProject).ShortName;
                 this.executableName = targetMSBuildProject.AssemblyName + ".dll";
                 this.configurationName = configurationName;
                 return;
@@ -284,15 +284,11 @@ export class AssetGenerator {
     }
 }
 
-function findNetCoreAppTargetFramework(project: protocol.MSBuildProject): protocol.TargetFramework {
-    return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp'));
-}
-
 function findExecutableMSBuildProjects(projects: protocol.MSBuildProject[]) {
     let result: protocol.MSBuildProject[] = [];
 
     projects.forEach(project => {
-        if (project.IsExe && findNetCoreAppTargetFramework(project) !== undefined) {
+        if (project.IsExe && protocol.findNetCoreAppTargetFramework(project) !== undefined) {
             result.push(project);
         }
     });

@@ -421,7 +421,7 @@
       {
         "command": "dotnet.restore",
         "title": "Restore Packages",
-        "category": "dotnet"
+        "category": ".NET"
       },
       {
         "command": "csharp.downloadDebugger",
