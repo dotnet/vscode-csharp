@@ -143,14 +143,16 @@ export function dotnetRestoreForProject(server: OmniSharpServer, fileName: strin
 
     return serverUtils.requestWorkspaceInformation(server).then(info => {
 
-        if (!info.DotNet || info.DotNet.Projects.length < 1) {
+        let projectDescriptors = protocol.getDotNetCoreProjectDescriptors(info);
+
+        if (projectDescriptors.length === 0) {
             return Promise.reject("No .NET Core projects found");
         }
 
         let directory = path.dirname(fileName);
 
-        for (let project of info.DotNet.Projects) {
-            if (project.Path === directory) {
+        for (let projectDescriptor of projectDescriptors) {
+            if (projectDescriptor.Path === directory) {
                 return dotnetRestore(directory, fileName);
             }
         }
