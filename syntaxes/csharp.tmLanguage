@@ -1324,6 +1324,10 @@
             <key>include</key>
             <string>#punctuation-comma</string>
           </dict>
+          <dict>
+            <key>include</key>
+            <string>#preprocessor</string>
+          </dict>
         </array>
       </dict>
       <key>generic-constraints</key>
@@ -2246,7 +2250,7 @@
           </dict>
         </dict>
         <key>end</key>
-        <string>(?=[,\);}])</string>
+        <string>(?=[,\)\];}])</string>
         <key>patterns</key>
         <array>
           <dict>
@@ -4869,7 +4873,7 @@
               </dict>
               <dict>
                 <key>match</key>
-                <string>\s+([_[:alpha:]][_[:alnum:]]*)\s*(?=[,\]])</string>
+                <string>\s+([_[:alpha:]][_[:alnum:]]*)\s*(?=[=,\]])</string>
                 <key>captures</key>
                 <dict>
                   <key>1</key>
@@ -4935,7 +4939,7 @@
           </dict>
           <dict>
             <key>match</key>
-            <string>\s+([_[:alpha:]][_[:alnum:]]*)\s*(?=[,)])</string>
+            <string>\b([_[:alpha:]][_[:alnum:]]*)\s*(?=[=,)])</string>
             <key>captures</key>
             <dict>
               <key>1</key>
@@ -5532,7 +5536,7 @@
               </dict>
             </dict>
             <key>end</key>
-            <string>(?=\)|;)</string>
+            <string>(?=\)|;|})</string>
             <key>patterns</key>
             <array>
               <dict>
@@ -5575,7 +5579,7 @@
               </dict>
             </dict>
             <key>end</key>
-            <string>(?=\)|;)</string>
+            <string>(?=\)|;|})</string>
             <key>patterns</key>
             <array>
               <dict>
@@ -5607,7 +5611,7 @@
               </dict>
             </dict>
             <key>end</key>
-            <string>(?=\)|;)</string>
+            <string>(?=\)|;|})</string>
             <key>patterns</key>
             <array>
               <dict>
