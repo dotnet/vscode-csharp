@@ -145,18 +145,6 @@ gulp.task('package:offline', ['clean'], () => {
     return promise;
 });
 
-/// Test Task
-gulp.task('test', () => {
-    gulp.src('out/test/**/*.tests.js')
-        .pipe(mocha({ ui: "tdd" }))
-        .once('error', () => {
-            process.exit(1);
-        })
-        .once('end', () => {
-            process.exit();
-        });
-});
-
 /// Misc Tasks
 const allTypeScript = [
     'src/**/*.ts',
