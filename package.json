@@ -117,7 +117,7 @@
     },
     {
       "description": "OmniSharp (.NET 4.6 / x86)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.9-beta24.zip",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.9-beta25.zip",
       "installPath": "./bin/omnisharp",
       "platforms": [
         "win32"
@@ -128,7 +128,7 @@
     },
     {
       "description": "OmniSharp (.NET 4.6 / x64)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.9-beta24.zip",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.9-beta25.zip",
       "installPath": "./bin/omnisharp",
       "platforms": [
         "win32"
@@ -139,7 +139,7 @@
     },
     {
       "description": "OmniSharp (Mono 4.6)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-mono-1.9-beta24.zip",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-mono-1.9-beta25.zip",
       "installPath": "./bin/omnisharp",
       "platforms": [
         "darwin",
