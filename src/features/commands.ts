@@ -152,7 +152,7 @@ export function dotnetRestoreForProject(server: OmniSharpServer, fileName: strin
         let directory = path.dirname(fileName);
 
         for (let projectDescriptor of projectDescriptors) {
-            if (projectDescriptor.Path === directory) {
+            if (projectDescriptor.Path === fileName) {
                 return dotnetRestore(directory, fileName);
             }
         }
