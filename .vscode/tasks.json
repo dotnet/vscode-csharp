@@ -1,8 +1,14 @@
 {
 	"version": "0.1.0",
-	"command": "gulp",
-	"isShellCommand": true,
 	"tasks": [
+		{
+			"taskName": "build",
+			"command": "npm",
+			"isShellCommand": true,
+			"args": ["run", "compile"],
+			"showOutput": "always",
+			"isBuildCommand": true
+		},
 		{
 			"taskName": "test",
 			"showOutput": "always",
@@ -10,7 +16,9 @@
 		},
 		{
 			"taskName": "tslint",
-			"args": [],
+			"command": "gulp",
+			"isShellCommand": true,
+			"args": ["tslint"],
 			"problemMatcher": {
 				"owner": "tslint",
 				"fileLocation": [
