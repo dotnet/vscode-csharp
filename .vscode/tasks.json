@@ -1,16 +1,27 @@
 {
 	"version": "0.1.0",
-	"command": "gulp",
-	"isShellCommand": true,
 	"tasks": [
 		{
-			"taskName": "test",
+			"taskName": "build",
+			"command": "npm",
+			"isShellCommand": true,
+			"args": ["run", "compile"],
 			"showOutput": "always",
+			"isBuildCommand": true
+		},
+		{
+			"taskName": "test",
+			"command": "echo",
+			"showOutput": "always",
+			"isShellCommand": true,
+			"args": ["Run tests in VS Code by launching the debugg with the 'Launch Tests' configuration."],
 			"isTestCommand": true
 		},
 		{
 			"taskName": "tslint",
-			"args": [],
+			"command": "gulp",
+			"isShellCommand": true,
+			"args": ["tslint"],
 			"problemMatcher": {
 				"owner": "tslint",
 				"fileLocation": [

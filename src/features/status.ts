@@ -241,7 +241,10 @@ export function reportServerStatus(server: OmniSharpServer): vscode.Disposable{
             message.Errors.forEach(error => asErrorMessage);
             message.Warnings.forEach(warning => asWarningMessage);
             appendLine();
-            showMessageSoon();
+
+            if (message.Errors.length > 0) {
+                showMessageSoon();
+            }
         }
     });
 
