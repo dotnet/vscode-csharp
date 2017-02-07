@@ -523,7 +523,8 @@ export function findNetStandardTargetFramework(project: MSBuildProject): TargetF
 
 export interface ProjectDescriptor {
     Name: string;
-    Path: string;
+    Directory: string;
+    FilePath: string;
 }
 
 export function getDotNetCoreProjectDescriptors(info: WorkspaceInformationResponse): ProjectDescriptor[] {
@@ -531,7 +532,11 @@ export function getDotNetCoreProjectDescriptors(info: WorkspaceInformationRespon
 
     if (info.DotNet && info.DotNet.Projects.length > 0) {
         for (let project of info.DotNet.Projects) {
-            result.push({ Name: project.Name, Path: project.Path });
+            result.push({
+                Name: project.Name,
+                Directory: project.Path,
+                FilePath: path.join(project.Path, 'project.json')
+            });
         }
     }
 
@@ -539,7 +544,11 @@ export function getDotNetCoreProjectDescriptors(info: WorkspaceInformationRespon
         for (let project of info.MsBuild.Projects) {
             if (findNetCoreAppTargetFramework(project) !== undefined ||
                 findNetStandardTargetFramework(project) !== undefined) {
-                result.push({ Name: path.basename(project.Path), Path: project.Path });
+                result.push({
+                    Name: path.basename(project.Path),
+                    Directory: path.dirname(project.Path),
+                    FilePath: project.Path
+                });
             }
         }
     }

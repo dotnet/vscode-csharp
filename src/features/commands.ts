@@ -85,7 +85,7 @@ interface Command {
 
 function projectsToCommands(projects: protocol.ProjectDescriptor[]): Promise<Command>[] {
     return projects.map(project => {
-        let projectDirectory = project.Path;
+        let projectDirectory = project.Directory;
 
         return new Promise<Command>((resolve, reject) => {
             fs.lstat(projectDirectory, (err, stats) => {
@@ -98,7 +98,7 @@ function projectsToCommands(projects: protocol.ProjectDescriptor[]): Promise<Com
                 }
 
                 resolve({
-                    label: `dotnet restore - (${project.Name || path.basename(project.Path)})`,
+                    label: `dotnet restore - (${project.Name || path.basename(project.Directory)})`,
                     description: projectDirectory,
                     execute() {
                         return dotnetRestore(projectDirectory);
@@ -117,13 +117,13 @@ export function dotnetRestoreAllProjects(server: OmniSharpServer) {
 
     return serverUtils.requestWorkspaceInformation(server).then(info => {
 
-        let projectDescriptors = protocol.getDotNetCoreProjectDescriptors(info);
+        let descriptors = protocol.getDotNetCoreProjectDescriptors(info);
 
-        if (projectDescriptors.length === 0) {
+        if (descriptors.length === 0) {
             return Promise.reject("No .NET Core projects found");
         }
 
-        let commandPromises = projectsToCommands(projectDescriptors);
+        let commandPromises = projectsToCommands(descriptors);
 
         return Promise.all(commandPromises).then(commands => {
             return vscode.window.showQuickPick(commands);
@@ -135,7 +135,7 @@ export function dotnetRestoreAllProjects(server: OmniSharpServer) {
     });
 }
 
-export function dotnetRestoreForProject(server: OmniSharpServer, fileName: string) {
+export function dotnetRestoreForProject(server: OmniSharpServer, filePath: string) {
 
     if (!server.isRunning()) {
         return Promise.reject('OmniSharp server is not running.');
@@ -143,23 +143,21 @@ export function dotnetRestoreForProject(server: OmniSharpServer, fileName: strin
 
     return serverUtils.requestWorkspaceInformation(server).then(info => {
 
-        let projectDescriptors = protocol.getDotNetCoreProjectDescriptors(info);
+        let descriptors = protocol.getDotNetCoreProjectDescriptors(info);
 
-        if (projectDescriptors.length === 0) {
+        if (descriptors.length === 0) {
             return Promise.reject("No .NET Core projects found");
         }
 
-        let directory = path.dirname(fileName);
-
-        for (let projectDescriptor of projectDescriptors) {
-            if (projectDescriptor.Path === fileName) {
-                return dotnetRestore(directory, fileName);
+        for (let descriptor of descriptors) {
+            if (descriptor.FilePath === filePath) {
+                return dotnetRestore(descriptor.Directory, filePath);
             }
         }
     });
 }
 
-function dotnetRestore(cwd: string, fileName?: string) {
+function dotnetRestore(cwd: string, filePath?: string) {
     return new Promise<void>((resolve, reject) => {
         channel.clear();
         channel.show();
@@ -167,8 +165,8 @@ function dotnetRestore(cwd: string, fileName?: string) {
         let cmd = 'dotnet';
         let args = ['restore'];
 
-        if (fileName) {
-            args.push(fileName);
+        if (filePath) {
+            args.push(filePath);
         }
 
         let dotnet = cp.spawn(cmd, args, { cwd: cwd, env: process.env });
