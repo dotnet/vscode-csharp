@@ -18,14 +18,15 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-with-VS-Code-using-CSharp-and-NET-Core)
 
-### What's New in 1.6.0
+### What's New in 1.7.0
 
-* Better support for .NET Core .csproj projects, including .NET Core projects created with [Visual Studio 2017 RC](https://www.visualstudio.com/vs/visual-studio-2017-rc/).
-* Improved debugger performance and support for debugging on more Linux distros.
-* Roslyn scripting support with CSX files.
+* A brand new TextMate grammar written from scratch that provides much more robust C# syntax highlighting
+* Better support for .NET Core .csproj projects, including .NET Core projects created with the latest [Visual Studio 2017 RC](https://www.visualstudio.com/vs/visual-studio-2017-rc/).
+* Support for restoring NuGet packages in .NET Core .csproj projects.
+* Improved code action support, including fixes like "Move Type to File" and "Generate Type".
 * Lot's more!
 
-See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/master/CHANGELOG.md) for all of the updates.
+See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.7.0/CHANGELOG.md) for all of the updates.
 
 ### Supported Operating Systems for Debugging
 
@@ -62,7 +63,7 @@ To **run and develop** do the following:
 * *Optional:* run `tsc -w`, make code changes (on Windows, try `start node ".\node_modules\typescript\bin\tsc -w"`)
 * Press <kbd>F5</kbd> to debug
 
-To **test** do the following: `npm run test`
+To **test** do the following: `npm run test` or <kbd>F5</kbd> in VS Code with the "Launch Tests" debug configuration.
 
 ### License
 The Microsoft C# extension is subject to [these license terms](RuntimeLicenses/license.txt).
