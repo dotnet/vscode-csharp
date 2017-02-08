@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.6.2",
+  "version": "1.7.0-beta5",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -27,7 +27,6 @@
     "compile": "tsc -p ./ && gulp tslint",
     "watch": "tsc -watch -p ./",
     "test": "node ./node_modules/vscode/bin/test",
-    "test-syntax": "mocha --timeout 15000 --ui bdd ./out/test/syntaxes/*.test.syntax.js",
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
@@ -57,17 +56,17 @@
     "gulp-mocha": "^2.1.3",
     "gulp-tslint": "^4.3.0",
     "mocha": "^2.3.3",
+    "plist": "^2.0.1",
     "tslint": "^3.15.1",
     "tslint-microsoft-contrib": "^2.0.12",
     "typescript": "^2.0.3",
     "vsce": "^1.7.0",
-    "vscode": "^1.0.0",
-    "vscode-textmate": "^2.1.1"
+    "vscode": "^1.0.0"
   },
   "runtimeDependencies": [
     {
       "description": "Mono Runtime (Linux / x86)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.linux-x86-4.6.1.zip",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.linux-x86-4.8.0.478.zip",
       "installPath": "./bin",
       "platforms": [
         "linux"
@@ -82,7 +81,7 @@
     },
     {
       "description": "Mono Runtime (Linux / x64)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.linux-x86_64-4.6.1.zip",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.linux-x86_64-4.8.0.478.zip",
       "installPath": "./bin",
       "platforms": [
         "linux"
@@ -97,7 +96,7 @@
     },
     {
       "description": "Mono Runtime (macOS)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.osx-4.6.1.zip",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/mono.osx-4.8.0.478.zip",
       "installPath": "./bin",
       "platforms": [
         "darwin"
@@ -109,7 +108,7 @@
     },
     {
       "description": "Mono Framework Assemblies",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/framework-4.6.1.zip",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/framework-4.8.0.478.zip",
       "installPath": "./bin/framework",
       "platforms": [
         "darwin",
@@ -118,7 +117,7 @@
     },
     {
       "description": "OmniSharp (.NET 4.6 / x86)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.9-beta22.zip",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.9-beta25.zip",
       "installPath": "./bin/omnisharp",
       "platforms": [
         "win32"
@@ -129,7 +128,7 @@
     },
     {
       "description": "OmniSharp (.NET 4.6 / x64)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.9-beta22.zip",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.9-beta25.zip",
       "installPath": "./bin/omnisharp",
       "platforms": [
         "win32"
@@ -140,7 +139,7 @@
     },
     {
       "description": "OmniSharp (Mono 4.6)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-mono-1.9-beta22.zip",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-mono-1.9-beta25.zip",
       "installPath": "./bin/omnisharp",
       "platforms": [
         "darwin",
@@ -149,8 +148,8 @@
     },
     {
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-6-3/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-6-3/coreclr-debug-win7-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "win7-x64"
@@ -158,8 +157,8 @@
     },
     {
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-6-3/coreclr-debug-osx.10.11-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-6-3/coreclr-debug-osx.10.11-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-osx.10.11-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-osx.10.11-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "osx.10.11-x64"
@@ -171,8 +170,8 @@
     },
     {
       "description": ".NET Core Debugger (CentOS / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-6-3/coreclr-debug-centos.7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-6-3/coreclr-debug-centos.7-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-centos.7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-centos.7-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "centos.7-x64"
@@ -184,8 +183,8 @@
     },
     {
       "description": ".NET Core Debugger (Debian / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-6-3/coreclr-debug-debian.8-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-6-3/coreclr-debug-debian.8-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-debian.8-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-debian.8-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "debian.8-x64"
@@ -197,8 +196,8 @@
     },
     {
       "description": ".NET Core Debugger (Fedora 23 / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-6-3/coreclr-debug-fedora.23-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-6-3/coreclr-debug-fedora.23-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-fedora.23-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-fedora.23-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "fedora.23-x64"
@@ -210,8 +209,8 @@
     },
     {
       "description": ".NET Core Debugger (Fedora 24 / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-6-3/coreclr-debug-fedora.24-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-6-3/coreclr-debug-fedora.24-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-fedora.24-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-fedora.24-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "fedora.24-x64"
@@ -223,8 +222,8 @@
     },
     {
       "description": ".NET Core Debugger (OpenSUSE 13 / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-6-3/coreclr-debug-opensuse.13.2-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-6-3/coreclr-debug-opensuse.13.2-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-opensuse.13.2-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-opensuse.13.2-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "opensuse.13.2-x64"
@@ -236,8 +235,8 @@
     },
     {
       "description": ".NET Core Debugger (OpenSUSE 42 / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-6-3/coreclr-debug-opensuse.42.1-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-6-3/coreclr-debug-opensuse.42.1-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-opensuse.42.1-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-opensuse.42.1-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "opensuse.42.1-x64"
@@ -249,8 +248,8 @@
     },
     {
       "description": ".NET Core Debugger (RHEL / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-6-3/coreclr-debug-rhel.7.2-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-6-3/coreclr-debug-rhel.7.2-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-rhel.7.2-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-rhel.7.2-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "rhel.7-x64"
@@ -262,8 +261,8 @@
     },
     {
       "description": ".NET Core Debugger (Ubuntu 14.04 / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-6-3/coreclr-debug-ubuntu.14.04-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-6-3/coreclr-debug-ubuntu.14.04-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-ubuntu.14.04-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-ubuntu.14.04-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "ubuntu.14.04-x64"
@@ -275,8 +274,8 @@
     },
     {
       "description": ".NET Core Debugger (Ubuntu 16.04 / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-6-3/coreclr-debug-ubuntu.16.04-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-6-3/coreclr-debug-ubuntu.16.04-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-ubuntu.16.04-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-ubuntu.16.04-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "ubuntu.16.04-x64"
@@ -288,8 +287,8 @@
     },
     {
       "description": ".NET Core Debugger (Ubuntu 16.10 / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-6-3/coreclr-debug-ubuntu.16.10-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-6-3/coreclr-debug-ubuntu.16.10-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-ubuntu.16.10-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-ubuntu.16.10-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "ubuntu.16.10-x64"
@@ -357,10 +356,14 @@
         },
         "omnisharp.loggingLevel": {
           "type": "string",
-          "default": "default",
+          "default": "information",
           "enum": [
-            "default",
-            "verbose"
+            "trace",
+            "debug",
+            "information",
+            "warning",
+            "error",
+            "critical"
           ],
           "description": "Specifies the level of logging output from the OmniSharp server."
         },
@@ -390,13 +393,17 @@
       {
         "language": "csharp",
         "scopeName": "source.cs",
-        "path": "./syntaxes/csharp.json"
+        "path": "./syntaxes/csharp.tmLanguage"
       }
     ],
     "jsonValidation": [
       {
         "fileMatch": "project.json",
         "url": "http://json.schemastore.org/project"
+      },
+      {
+        "fileMatch": "omnisharp.json",
+        "url": "http://json.schemastore.org/omnisharp"
       }
     ],
     "commands": [
@@ -418,7 +425,7 @@
       {
         "command": "dotnet.restore",
         "title": "Restore Packages",
-        "category": "dotnet"
+        "category": ".NET"
       },
       {
         "command": "csharp.downloadDebugger",
@@ -707,7 +714,7 @@
                   },
                   "pipeArgs": {
                     "type": "array",
-                    "description": "Command line arguments passed to the pipe program.",
+                    "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                     "items": {
                       "type": "string"
                     },
@@ -747,7 +754,7 @@
                       },
                       "pipeArgs": {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program.",
+                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "items": {
                           "type": "string"
                         },
@@ -784,7 +791,7 @@
                       },
                       "pipeArgs": {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program.",
+                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "items": {
                           "type": "string"
                         },
@@ -821,7 +828,7 @@
                       },
                       "pipeArgs": {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program.",
+                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "items": {
                           "type": "string"
                         },
@@ -957,7 +964,7 @@
                   },
                   "pipeArgs": {
                     "type": "array",
-                    "description": "Command line arguments passed to the pipe program.",
+                    "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                     "items": {
                       "type": "string"
                     },
@@ -997,7 +1004,7 @@
                       },
                       "pipeArgs": {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program.",
+                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "items": {
                           "type": "string"
                         },
@@ -1034,7 +1041,7 @@
                       },
                       "pipeArgs": {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program.",
+                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "items": {
                           "type": "string"
                         },
@@ -1071,7 +1078,7 @@
                       },
                       "pipeArgs": {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program.",
+                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "items": {
                           "type": "string"
                         },

@@ -13,6 +13,7 @@ import { DelayTracker } from './delayTracker';
 import { LaunchTarget, findLaunchTargets } from './launcher';
 import { Request, RequestQueueCollection } from './requestQueue';
 import TelemetryReporter from 'vscode-extension-telemetry';
+import * as os from 'os';
 import * as path from 'path';
 import * as protocol from './protocol';
 import * as vscode from 'vscode';
@@ -234,19 +235,16 @@ export class OmniSharpServer {
 
         const solutionPath = launchTarget.target;
         const cwd = path.dirname(solutionPath);
+        this._options = Options.Read();
+        
         let args = [
             '-s', solutionPath,
             '--hostPID', process.pid.toString(),
             '--stdio',
             'DotNet:enablePackageRestore=false',
-            '--encoding', 'utf-8'
+            '--encoding', 'utf-8',
+            '--loglevel', this._options.loggingLevel
         ];
-
-        this._options = Options.Read();
-
-        if (this._options.loggingLevel === 'verbose') {
-            args.push('-v');
-        }
 
         this._logger.appendLine(`Starting OmniSharp server at ${new Date().toLocaleString()}`);
         this._logger.increaseIndent();
@@ -539,7 +537,7 @@ export class OmniSharpServer {
         if (packet.Event === 'log') {
             const entry = <{ LogLevel: string; Name: string; Message: string; }>packet.Body;
             this._logOutput(entry.LogLevel, entry.Name, entry.Message);
-        } 
+        }
         else {
             // fwd all other events
             this._fireEvent(packet.Event, packet.Body);
@@ -569,13 +567,34 @@ export class OmniSharpServer {
         return id;
     }
 
-    private _logOutput(logLevel: string, name: string, message: string) {
-        const timing200Pattern = /^\[INFORMATION:OmniSharp.Middleware.LoggingMiddleware\] \/[\/\w]+: 200 \d+ms/;
+    private static getLogLevelPrefix(logLevel: string) {
+        switch (logLevel) {
+            case "TRACE": return "trce";
+            case "DEBUG": return "dbug";
+            case "INFORMATION": return "info";
+            case "WARNING": return "warn";
+            case "ERROR": return "fail";
+            case "CRITICAL": return "crit";
+            default: throw new Error(`Unknown log level value: ${logLevel}`);
+        }
+    }
 
-        const output = `[${logLevel}:${name}] ${message}`;
-        
-        // strip stuff like: /codecheck: 200 339ms
-        if (this._debugMode || !timing200Pattern.test(output)) {
+    private _isFilterableOutput(logLevel: string, name: string, message: string) {
+        // filter messages like: /codecheck: 200 339ms
+        const timing200Pattern = /^\/[\/\w]+: 200 \d+ms/;
+
+        return logLevel === "INFORMATION"
+            && name === "OmniSharp.Middleware.LoggingMiddleware"
+            && timing200Pattern.test(message);
+    }
+
+    private _logOutput(logLevel: string, name: string, message: string) {
+        if (this._debugMode || !this._isFilterableOutput(logLevel, name, message)) {
+            let output = `[${OmniSharpServer.getLogLevelPrefix(logLevel)}]: ${name}${os.EOL}${message}`;
+
+            const newLinePlusPadding = os.EOL + "        ";
+            output = output.replace(os.EOL, newLinePlusPadding);
+
             this._logger.appendLine(output);
         }
     }

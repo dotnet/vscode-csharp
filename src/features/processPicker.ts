@@ -6,8 +6,7 @@
 import * as os from 'os';
 import * as vscode from 'vscode';
 import * as child_process from 'child_process';
-import * as fs from 'fs';
-import * as path from 'path';
+import { PlatformInformation } from '../platform';
 
 export interface AttachItem extends vscode.QuickPickItem {
     id: string;
@@ -61,42 +60,19 @@ export class RemoteAttachPicker {
             return Promise.reject<string>(new Error("Name not defined in current configuration."));
         }
 
-        // Build path for launch.json to find pipeTransport
-        const vscodeFolder: string = path.join(vscode.workspace.rootPath, '.vscode');
-        let launchJsonPath: string = path.join(vscodeFolder, 'launch.json');
-
-        // Read launch.json
-        let json: any = JSON.parse(fs.readFileSync(launchJsonPath).toString());
-
-        // Find correct pipeTransport via selected name
-        let config;
-        let configIdx: number;
-        for (configIdx = 0; configIdx < json.configurations.length; ++configIdx) {
-            if (json.configurations[configIdx].name === name) {
-                config = json.configurations[configIdx];
-                break;
-            }
-        }
-
-        if (configIdx == json.configurations.length) {
-            // Name not found in list of given configurations. 
-            return Promise.reject<string>(new Error(name + " could not be found in configurations."));
-        }
-
-        if (!config.pipeTransport || !config.pipeTransport.debuggerPath) {
+        if (!args.pipeTransport || !args.pipeTransport.debuggerPath) {
             // Missing PipeTransport and debuggerPath, prompt if user wanted to just do local attach.
             return Promise.reject<string>(new Error("Configuration \"" + name + "\" in launch.json does not have a " +
                 "pipeTransport argument with debuggerPath for pickRemoteProcess. Use pickProcess for local attach."));
         } else {
-            let pipeProgram = config.pipeTransport.pipeProgram;
-            let pipeArgs = config.pipeTransport.pipeArgs;
-            let platformSpecificPipeTransportOptions = RemoteAttachPicker.getPlatformSpecificPipeTransportOptions(config);
+            let pipeProgram = args.pipeTransport.pipeProgram;
+            let pipeArgs = args.pipeTransport.pipeArgs;
+            let platformSpecificPipeTransportOptions = RemoteAttachPicker.getPlatformSpecificPipeTransportOptions(args);
 
             if (platformSpecificPipeTransportOptions) {
                 pipeProgram = platformSpecificPipeTransportOptions.pipeProgram || pipeProgram;
                 pipeArgs = platformSpecificPipeTransportOptions.pipeArgs || pipeArgs;
             }
-
 
             let argList = RemoteAttachPicker.createArgumentList(pipeArgs);
             let pipeCmd: string = `"${pipeProgram}" ${argList}`;
@@ -107,7 +83,7 @@ export class RemoteAttachPicker {
                     placeHolder: "Select the process to attach to"
                 };
                 return vscode.window.showQuickPick(processes, attachPickOptions).then(item => {
-                    return item ? item.id : null;
+                    return item ? item.id : Promise.reject<string>(new Error("Could not find a process id to attach."));
                 });
             });
         }
@@ -142,13 +118,13 @@ export class RemoteAttachPicker {
 
     public static getRemoteOSAndProcesses(pipeCmd: string): Promise<AttachItem[]> {
         // Commands to get OS and processes
-        const command = `uname && if [ $(uname) == "Linux" ] ; then ${RemoteAttachPicker.linuxPsCommand} ; elif [ $(uname) == "Darwin" ] ; ` +
-            `then ${RemoteAttachPicker.osxPsCommand}; fi`;
+        const command = `bash -c 'uname && if [ $(uname) == "Linux" ] ; then ${RemoteAttachPicker.linuxPsCommand} ; elif [ $(uname) == "Darwin" ] ; ` +
+            `then ${RemoteAttachPicker.osxPsCommand}; fi'`;
 
         return execChildProcessAndOutputErrorToChannel(`${pipeCmd} "${command}"`, null, RemoteAttachPicker._channel).then(output => {
             // OS will be on first line
             // Processess will follow if listed
-            let lines = output.split(os.EOL);
+            let lines = output.split(/\r?\n/);
 
             if (lines.length == 0) {
                 return Promise.reject<AttachItem[]>(new Error("Pipe transport failed to get OS and processes."));
@@ -168,14 +144,6 @@ export class RemoteAttachPicker {
                     return sortProcessEntries(PsOutputParser.parseProcessFromPsArray(processes), remoteOS);
                 }
             }
-        });
-    }
-
-    public static getRemoteProcesses(pipeCmd: string, os: string): Promise<AttachItem[]> {
-        const psCommand = os === 'darwin' ? RemoteAttachPicker.osxPsCommand : RemoteAttachPicker.linuxPsCommand;
-
-        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} ${psCommand}`, null, RemoteAttachPicker._channel).then(output => {
-            return sortProcessEntries(PsOutputParser.parseProcessFromPs(output), os);
         });
     }
 }
@@ -422,33 +390,51 @@ function execChildProcess(process: string, workingDirectory: string): Promise<st
     });
 }
 
+// VSCode cannot find the path "c:\windows\system32\bash.exe" as bash.exe is only available on 64bit OS. 
+// It can be invoked from "c:\windows\sysnative\bash.exe", so adding "c:\windows\sysnative" to path if we identify
+// VSCode is running in windows and doesn't have it in the path.
+function GetSysNativePathIfNeeded() : Promise<any> {
+    return PlatformInformation.GetCurrent().then(platformInfo => { 
+        let env = process.env;
+        if (platformInfo.isWindows && platformInfo.architecture === "x86_64") {
+            let sysnative : String = process.env.WINDIR + "\\sysnative";
+            env.Path = process.env.PATH + ";" + sysnative;                   
+        }
+        
+        return env;
+    });
+}
+
 function execChildProcessAndOutputErrorToChannel(process: string, workingDirectory: string, channel: vscode.OutputChannel): Promise<string> {
-    channel.appendLine(`Executing: ${process}`);
+    channel.appendLine(`Executing: ${process}`);    
+
     return new Promise<string>((resolve, reject) => {
-        child_process.exec(process, { cwd: workingDirectory, maxBuffer: 500 * 1024 }, (error: Error, stdout: string, stderr: string) => {
-            let channelOutput = "";
-            
-            if (stdout && stdout.length > 0) {
-                channelOutput.concat(stdout);
-            }
+        return GetSysNativePathIfNeeded().then(newEnv => {
+            child_process.exec(process, { cwd: workingDirectory, env: newEnv, maxBuffer: 500 * 1024 }, (error: Error, stdout: string, stderr: string) => {
+                let channelOutput = "";
+                
+                if (stdout && stdout.length > 0) {
+                    channelOutput.concat(stdout);
+                }
 
-            if (stderr && stderr.length > 0) {
-                channelOutput.concat(stderr);
-            }
+                if (stderr && stderr.length > 0) {
+                    channelOutput.concat(stderr);
+                }
 
-            if (error) {
-                channelOutput.concat(error.message);
-            }
+                if (error) {
+                    channelOutput.concat(error.message);
+                }
 
 
-            if (error || (stderr && stderr.length > 0)) {
-                channel.append(channelOutput);
-                channel.show();
-                reject(new Error("See remote-attach output"));
-                return;
-            }
+                if (error || (stderr && stderr.length > 0)) {
+                    channel.append(channelOutput);
+                    channel.show();
+                    reject(new Error("See remote-attach output"));
+                    return;
+                }
 
-            resolve(stdout);
+                resolve(stdout);
+            });
         });
     });
 

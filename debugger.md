@@ -14,7 +14,7 @@ File bugs and feature requests [here](https://github.com/OmniSharp/omnisharp-vsc
 
 ###First Time setup
 ##### 1: Get Visual Studio Code
-Install Visual Studio Code (VSC). Pick the latest VSC version from here: https://code.visualstudio.com Make sure it is at least 0.10.10. 
+Install Visual Studio Code (VSC). Pick the latest VSC version from here: https://code.visualstudio.com Make sure it is at least 1.5. 
 
 If you are not sure what version you have, you can see your version of VS Code:
 
@@ -29,7 +29,7 @@ Install the .NET Core command line tools (CLI) by following the installation par
 ##### 3: Install C# Extension for VS Code
 Open the command palette in VS Code (F1) and type "ext install C#" to trigger the installation of the extension. VS Code will show a message that the extension has been installed and it will restart.
 
-If you have previously installed the C# extension, make sure that you have version 1.2 or newer. You can check this by opening the command palette (F1) and running 'Extensions: Show Installed Extensions'.
+If you have previously installed the C# extension, make sure that you have a recent version. You can check this by opening the command palette (F1) and running 'Extensions: Show Installed Extensions'.
 
 ##### 4: Wait for download of platform-specific files 
 The first time that C# code is opened in VS Code, the extension will download the platform-specific files needed for debugging and editing. Debugging and editor features will not work until these steps finish.
@@ -47,19 +47,10 @@ You can start from scratch by creating an empty project with `dotnet new`:
     dotnet new
     dotnet restore
 
-You can also find some example projects on https://github.com/aspnet/cli-samples
+If you want a web project (ASP.NET project) pass `-t web`. For web projects, makes sure to run `bower install` before running so that they can restore assets.
 
 ##### 2: Open the directory in VS Code
 Go to File->Open and open the directory in Visual Studio Code. If this is the first time that the C# extension has been activated, it will now download additional platform-specific dependencies.
-
-**Troubleshooting 'Error while installing .NET Core Debugger':** If the debugger is failing to download its platform-specific dependencies, first verify that you have the 1.0.0-preview2-003121 or newer build of the .NET CLI installed, and it is functioning. You can check this by starting a bash/command prompt and running 'dotnet --info'. 
-
-If the CLI is installed, here are a few additional suggestions:
-
-* If clicking on 'View Log' doesn't show a log this means that running the 'dotnet --info' command failed. If it succeeds in bash/command prompt, but fails from VS Code, this likely means that your computer once had an older build of .NET CLI installed, and there are still remnants of it which cause VS Code and other processes besides bash to use the older version instead of the current version. You can resolve this issue by uninstalling the .NET Core CLI, and reinstalling the version you want (see below for macOS).
-* If 'dotnet restore' is failing, make sure you have an internet connection to nuget.org, and make sure that if additional NuGet.Config files are being used, they have valid content. The log will indicate what NuGet.Config files were used. Try removing the files other than the one coming from the extension itself.
-
-MacOS .NET CLI Reinstall Instructions: macOS doesn't have uninstall for pkg files (see [known issue](https://github.com/dotnet/core/blob/master/cli/known-issues.md#uninstallingreinstalling-the-pkg-on-os-x)), one option is to remove the dotnet cli directory with `sudo rm -rf /usr/local/share/dotnet` and then install the pkg again.
 
 ##### 3: Add VS Code configuration files to the workspace
 VS Code needs to be configured so it understands how to build your project and debug it. For this there are two files which need to be added -- .vscode/tasks.json and .vscode/launch.json. 
@@ -86,24 +77,15 @@ If your code has multiple projects or you would rather generate these files by h
 			...
 			"program": "${workspaceRoot}/MyLaunchingProject/bin/Debug/netcoreapp1.0/MyLaunchingProject.dll",
 
-##### 4: Windows Only: Enable Portable PDBs
-In the future, this step will go away, but for now you need to [change the project.json to use portable PDBs](https://github.com/OmniSharp/omnisharp-vscode/wiki/Portable-PDBs#net-cli-projects-projectjson).
-
-##### 5: Pick your debug configuration
-
-The default launch.json offers several different launch configurations depending on what kind of app you are building -- one for command line, one for web, and one for attaching to a running process. 
-
-To configure which configuration you want, bring up the Debug view by clicking on the Debugging icon in the View Bar on the side of VS Code.
-
-![Debug view icon](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/images/debugging_debugicon.png)
-
-Now open the configuration drop down from the top and select the one you want.
-
-![Debug launch configuration drop down](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/images/debug-launch-configurations.png)
+##### 4: Start debugging
+Your project is now all set. Set a breakpoint or two where you want to stop, click the debugger play button (or hit F5) and you are off.
 
 ###Debugging Code compiled on another computer
-* If the target binary is built on Linux / OSX, dotnet CLI will produce portable pdbs by default so no action is necessary.
-* On Windows, you will need to take additional steps to build [portable PDBs](https://github.com/OmniSharp/omnisharp-vscode/wiki/Portable-PDBs#how-to-generate-portable-pdbs).
+If your code was built on a different computer from where you would like to run in there are a few things to keep in mind --
+
+* **Source Maps**: Unless your local source code is at exactly the same path as where the code was originally built you will need to add a [sourceFileMap](#source-file-map) to launch.json.
+* **Portable PDBs**: If the code was built on Windows, it might have been built using Windows PDBs instead of portable PDBs, but the C# extension only supports portable PDBs. See the [portable PDB documentation](https://github.com/OmniSharp/omnisharp-vscode/wiki/Portable-PDBs#how-to-generate-portable-pdbs) for more information.
+* **Debug vs. Release**: It is much easier to debug code which has been compiled in the 'Debug' configuration. So unless the issue you are looking at only reproduces with optimizations, it is much better to use Debug bits. If you do need to debug optimized code, you will need to disable [justMyCode](#just-my-code) in launch.json.
 
 ####More things to configure In launch.json
 #####Just My Code
@@ -126,7 +108,7 @@ You can optionally configure a file by file mapping by providing map following t
 #####Symbol Path
 You can optionally provide paths to symbols following this schema:
 
-    "symbolPath":"[ \"/Volumes/symbols\"]"
+    "symbolPath": [ "/Volumes/symbols" ]
 
 #####Environment variables
 Environment variables may be passed to your program using this schema:

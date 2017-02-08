@@ -34,7 +34,7 @@ See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/master/C
   * Windows (64-bit only)
   * macOS
   * Ubuntu 14.04 / Linux Mint 17 / Linux Mint 18 / Elementary OS 0.3
-  * Ubuntu 16.04 / Elementary OS 0.4 / Arch
+  * Ubuntu 16.04 / Elementary OS 0.4 / Arch / Zorin OS 12
   * Ubuntu 16.10
   * Debian 8.2
   * CentOS 7.1 / Oracle Linux 7
@@ -53,8 +53,6 @@ The C# extension now supports basic debugging capabilities! See http://aka.ms/vs
 First install:
 * Node.js (newer than 4.3.1)
 * Npm (newer 2.14.12)
-
-In case you get a *node-gyp* error [follow the instrutions here](https://github.com/nodejs/node-gyp/blob/master/README.md) to fix it. The *vscode-textmate* package pulls in a native node dependency and those instructions will set up the node build tool which deals with those.
 
 To **run and develop** do the following:
 

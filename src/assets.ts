@@ -95,7 +95,7 @@ export class AssetGenerator {
                 this.hasProject = true;
                 this.projectPath = path.dirname(targetMSBuildProject.Path);
                 this.projectFilePath = targetMSBuildProject.Path;
-                this.targetFramework = findNetCoreAppTargetFramework(targetMSBuildProject).ShortName;
+                this.targetFramework = protocol.findNetCoreAppTargetFramework(targetMSBuildProject).ShortName;
                 this.executableName = targetMSBuildProject.AssemblyName + ".dll";
                 this.configurationName = configurationName;
                 return;
@@ -284,15 +284,11 @@ export class AssetGenerator {
     }
 }
 
-function findNetCoreAppTargetFramework(project: protocol.MSBuildProject): protocol.TargetFramework {
-    return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp'));
-}
-
 function findExecutableMSBuildProjects(projects: protocol.MSBuildProject[]) {
     let result: protocol.MSBuildProject[] = [];
 
     projects.forEach(project => {
-        if (project.IsExe && findNetCoreAppTargetFramework(project) !== undefined) {
+        if (project.IsExe && protocol.findNetCoreAppTargetFramework(project) !== undefined) {
             result.push(project);
         }
     });
@@ -346,6 +342,35 @@ function getOperations(generator: AssetGenerator) {
         getLaunchOperations(generator.launchJsonPath, operations));
 }
 
+function getBuildTasks(tasksConfiguration: tasks.TaskConfiguration): tasks.TaskDescription[] {
+    let result: tasks.TaskDescription[] = [];
+
+    function findBuildTask(tasksDescriptions: tasks.TaskDescription[]) {
+        if (tasksDescriptions) {
+            const buildTask = tasksDescriptions.find(td => td.taskName === 'build');
+            if (buildTask !== undefined) {
+                result.push(buildTask);
+            }
+        }
+    }
+
+    findBuildTask(tasksConfiguration.tasks);
+
+    if (tasksConfiguration.windows) {
+        findBuildTask(tasksConfiguration.windows.tasks);
+    }
+
+    if (tasksConfiguration.osx) {
+        findBuildTask(tasksConfiguration.osx.tasks);
+    }
+
+    if (tasksConfiguration.linux) {
+        findBuildTask(tasksConfiguration.linux.tasks);
+    }
+
+    return result;
+}
+
 function getBuildOperations(tasksJsonPath: string) {
     return new Promise<Operations>((resolve, reject) => {
         fs.exists(tasksJsonPath, exists => {
@@ -356,19 +381,19 @@ function getBuildOperations(tasksJsonPath: string) {
                     }
 
                     const text = buffer.toString();
-
-                    let buildTask: tasks.TaskDescription;
+                    let tasksConfiguration: tasks.TaskConfiguration;
 
                     try {
-                        const tasksJson: tasks.TaskConfiguration = tolerantParse(text);
-                        buildTask = tasksJson.tasks.find(td => td.taskName === 'build');
+                        tasksConfiguration = tolerantParse(text);
                     }
                     catch (error) {
                         vscode.window.showErrorMessage(`Failed to parse tasks.json file`);
-                        buildTask = undefined;
+                        return resolve({ updateTasksJson: false });
                     }
 
-                    resolve({ updateTasksJson: (buildTask === undefined) });
+                    let buildTasks = getBuildTasks(tasksConfiguration);
+
+                    resolve({ updateTasksJson: buildTasks.length === 0 });
                 });
             }
             else {
