@@ -714,7 +714,7 @@
                   },
                   "pipeArgs": {
                     "type": "array",
-                    "description": "Command line arguments passed to the pipe program.",
+                    "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                     "items": {
                       "type": "string"
                     },
@@ -754,7 +754,7 @@
                       },
                       "pipeArgs": {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program.",
+                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "items": {
                           "type": "string"
                         },
@@ -791,7 +791,7 @@
                       },
                       "pipeArgs": {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program.",
+                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "items": {
                           "type": "string"
                         },
@@ -828,7 +828,7 @@
                       },
                       "pipeArgs": {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program.",
+                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "items": {
                           "type": "string"
                         },
@@ -964,7 +964,7 @@
                   },
                   "pipeArgs": {
                     "type": "array",
-                    "description": "Command line arguments passed to the pipe program.",
+                    "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                     "items": {
                       "type": "string"
                     },
@@ -1004,7 +1004,7 @@
                       },
                       "pipeArgs": {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program.",
+                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "items": {
                           "type": "string"
                         },
@@ -1041,7 +1041,7 @@
                       },
                       "pipeArgs": {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program.",
+                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "items": {
                           "type": "string"
                         },
@@ -1078,7 +1078,7 @@
                       },
                       "pipeArgs": {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program.",
+                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "items": {
                           "type": "string"
                         },
