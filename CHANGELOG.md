@@ -1,4 +1,4 @@
-## 1.7.0 _(Not Yet Released)_
+## 1.7.0 (February 8, 2017)
 
 #### Syntax Hightlighting
 
