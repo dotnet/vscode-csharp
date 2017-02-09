@@ -117,8 +117,13 @@ export class RemoteAttachPicker {
     }
 
     public static getRemoteOSAndProcesses(pipeCmd: string): Promise<AttachItem[]> {
+        
+        // If the client OS is NOT Windows, we need to escape '$(uname)' as otherwise it will be evaluated on the client side
+        // If the client OS is Windows, we don't want to do that as it will be sent as-is, and thus the if statement will be broken
+        const remoteUnameCommand = os.platform() !== "win32" ? "$\\(uname\\)" : "$(uname)";
+
         // Commands to get OS and processes
-        const command = `bash -c 'uname && if [ $(uname) == "Linux" ] ; then ${RemoteAttachPicker.linuxPsCommand} ; elif [ $(uname) == "Darwin" ] ; ` +
+        const command = `bash -c 'uname && if [ "${remoteUnameCommand}" == "Linux" ] ; then ${RemoteAttachPicker.linuxPsCommand} ; elif [ "${remoteUnameCommand}" == "Darwin" ] ; ` +
             `then ${RemoteAttachPicker.osxPsCommand}; fi'`;
 
         return execChildProcessAndOutputErrorToChannel(`${pipeCmd} "${command}"`, null, RemoteAttachPicker._channel).then(output => {
