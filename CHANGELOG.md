@@ -7,12 +7,12 @@
 #### Scripting
 
 * C# scripts (.csx files) now allow multiple `#load` directives, and `#r` and `#load` directives update live. ([omnisharp-roslyn#760](https://github.com/OmniSharp/omnisharp-roslyn/pull/760)) _(Contributed by [@filipw](https://github.com/filipw))_
-* Assembly references will now unify properly for C# scripts. ([[omnisharp-roslyn#764]](https://github.com/OmniSharp/omnisharp-roslyn/pull/764)) _(Contributed by [@filipw](https://github.com/filipw))_
+* Assembly references will now unify properly for C# scripts. ([omnisharp-roslyn#764](https://github.com/OmniSharp/omnisharp-roslyn/pull/764)) _(Contributed by [@filipw](https://github.com/filipw))_
 
 #### Other Updates and Fixes
 
 * Find All References now properly highlights locations of found references. ([#428](https://github.com/OmniSharp/omnisharp-vscode/issues/428))
-* Assembly references will now unify properly for project.json projects. ([[#1221]](https://github.com/OmniSharp/omnisharp-vscode/issues/1221))
+* Assembly references will now unify properly for project.json projects. ([#1221](https://github.com/OmniSharp/omnisharp-vscode/issues/1221))
 
 ## 1.7.0 (February 8, 2017)
 
