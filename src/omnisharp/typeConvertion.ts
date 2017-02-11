@@ -4,25 +4,35 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 
-import * as proto from './protocol';
+import * as protocol from './protocol';
 import * as vscode from 'vscode';
 
-export function toLocation(location: proto.ResourceLocation): vscode.Location {
-    let {FileName, Line, Column} = location;
-    return new vscode.Location(vscode.Uri.file(FileName), new vscode.Position(Line - 1, Column - 1));
+export function toLocation(location: protocol.ResourceLocation | protocol.QuickFix): vscode.Location {
+    const fileName = vscode.Uri.file(location.FileName);
+    const position = new vscode.Position(location.Line - 1, location.Column - 1);
+
+    const endLine = (<protocol.QuickFix>location).EndLine;
+    const endColumn = (<protocol.QuickFix>location).EndColumn;
+
+    if (endLine !== undefined && endColumn !== undefined) {
+        const endPosition = new vscode.Position(endLine - 1, endColumn - 1);
+        return new vscode.Location(fileName, new vscode.Range(position, endPosition));
+    }
+
+    return new vscode.Location(fileName, position);
 }
 
-export function toRange(rangeLike: { Line: number; Column: number; EndLine: number; EndColumn: number;}): vscode.Range {
+export function toRange(rangeLike: { Line: number; Column: number; EndLine: number; EndColumn: number; }): vscode.Range {
     let {Line, Column, EndLine, EndColumn} = rangeLike;
     return new vscode.Range(Line - 1, Column - 1, EndLine - 1, EndColumn - 1);
 }
 
-export function toRange2(rangeLike: { StartLine: number; StartColumn: number; EndLine: number; EndColumn: number;}): vscode.Range {
+export function toRange2(rangeLike: { StartLine: number; StartColumn: number; EndLine: number; EndColumn: number; }): vscode.Range {
     let {StartLine, StartColumn, EndLine, EndColumn} = rangeLike;
     return new vscode.Range(StartLine - 1, StartColumn - 1, EndLine - 1, EndColumn - 1);
 }
 
-export function createRequest<T extends proto.Request>(document: vscode.TextDocument, where: vscode.Position | vscode.Range, includeBuffer: boolean = false): T {
+export function createRequest<T extends protocol.Request>(document: vscode.TextDocument, where: vscode.Position | vscode.Range, includeBuffer: boolean = false): T {
 
     let Line: number, Column: number;
 
@@ -34,7 +44,7 @@ export function createRequest<T extends proto.Request>(document: vscode.TextDocu
         Column = where.start.character + 1;
     }
 
-    let request: proto.Request = {
+    let request: protocol.Request = {
         Filename: document.fileName,
         Buffer: includeBuffer ? document.getText() : undefined,
         Line,
@@ -44,7 +54,7 @@ export function createRequest<T extends proto.Request>(document: vscode.TextDocu
     return <T>request;
 }
 
-export function toDocumentSymbol(bucket: vscode.SymbolInformation[], node: proto.Node, containerLabel?: string): void {
+export function toDocumentSymbol(bucket: vscode.SymbolInformation[], node: protocol.Node, containerLabel?: string): void {
 
     let ret = new vscode.SymbolInformation(node.Location.Text, kinds[node.Kind],
         toRange(node.Location),
