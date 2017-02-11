@@ -25,6 +25,10 @@ export function filesChanged(server: OmniSharpServer, requests: protocol.Request
     return server.makeRequest<void>(protocol.Requests.FilesChanged, requests);
 }
 
+export function findImplementations(server: OmniSharpServer, request: protocol.FindImplementationsRequest, token: vscode.CancellationToken) {
+    return server.makeRequest<protocol.QuickFixResponse>(protocol.Requests.FindImplementations, request);
+}
+
 export function findSymbols(server: OmniSharpServer, request: protocol.FindSymbolsRequest, token: vscode.CancellationToken) {
     return server.makeRequest<protocol.FindSymbolsResponse>(protocol.Requests.FindSymbols, request, token);
 }
