@@ -7,7 +7,7 @@
 #### Scripting
 
 * C# scripts (.csx files) now allow multiple `#load` directives, and `#r` and `#load` directives update live. ([omnisharp-roslyn#760](https://github.com/OmniSharp/omnisharp-roslyn/pull/760)) _(Contributed by [@filipw](https://github.com/filipw))_
-* Assembly references will now unify properly for C# scripts. ([[omnisharp-roslyn#764]](https://github.com/OmniSharp/omnisharp-roslyn/pull/764))
+* Assembly references will now unify properly for C# scripts. ([[omnisharp-roslyn#764]](https://github.com/OmniSharp/omnisharp-roslyn/pull/764)) _(Contributed by [@filipw](https://github.com/filipw))_
 
 #### Other Updates and Fixes
 
