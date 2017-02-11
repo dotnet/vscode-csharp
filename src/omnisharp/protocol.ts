@@ -21,6 +21,7 @@ export module Requests {
     export const FormatRange = '/formatRange';
     export const GetCodeActions = '/getcodeactions';
     export const GoToDefinition = '/gotoDefinition';
+    export const FindImplementations = '/findimplementations';
     export const Projects = '/projects';
     export const RemoveFromProject = '/removefromproject';
     export const Rename = '/rename';
@@ -68,6 +69,10 @@ export interface Request {
 export interface GoToDefinitionRequest extends Request
 {
     WantMetadata?: boolean;
+}
+
+export interface FindImplementationsRequest extends Request
+{
 }
 
 export interface LinePositionSpanTextChange {
