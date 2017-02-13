@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as https from 'https';
 import { Logger } from './logger';
 import * as path from 'path';
-import { PlatformInformation } from './platform';
+
 import * as proc from 'process';
 import { getProxyAgent } from './proxy';
 import { parse as parseUrl } from 'url';
@@ -22,65 +22,88 @@ export interface NuGetService {
 
 export class NuGetClient{
 
-    constructor(private platformInfo: PlatformInformation) { }
+    constructor(private configXml: string, private logger: Logger) { }
 
     public PackageSources: PackageSource[] = [];
     public NugetServices: { [id: string]: NuGetService } = {};
 
-    public UpdatePackageSourcesFromConfig(logger: Logger): Promise<boolean> {
+    public ReadConfigFromFile(): Promise<string> {
+        let pathToConfig: string[] = [];
+        if (proc.platform === 'win32') {
+            pathToConfig.push(path.join(proc.env.AppData, 'NuGet', 'NuGet.config'));
+            // push machine wide config paths
+        } else {
+            // found this on StackOverflow (http://stackoverflow.com/questions/30076371/mac-osx-mono-nuget-how-to-set-up-a-default-appdata-nuget-nuget-config)
+            // and this http://gunnarpeipman.com/2014/10/running-asp-net-5-on-linux/
+            // TODO: verify the file actually resides there
+            pathToConfig.push(path.join('~', '.config', 'NuGet', 'NuGet.config'));
+        }
+        return new Promise<string>((resolve, reject) => {
+            for (let i = 0; i < pathToConfig.length; i++) {
+                if (fs.existsSync(pathToConfig[i])) {
+                    fs.readFile(pathToConfig[i], 'utf-8', (err, data) => {
+                        if (err) {
+                            this.logger.append('Reading ' + pathToConfig + 'failed with error ' + err);
+                            this.configXml = '';
+                        }
+                        if (data.length > 0) {
+                            this.logger.append('Using active package sources from ' + pathToConfig[i]);
+                            this.configXml = data;
+                            resolve(this.configXml);
+                            return;
+                        }
+                    });
+                }
+            }
+            this.logger.append('No config file found.');
+            resolve('');
+        });
+    }
+
+    public UpdatePackageSourcesFromConfig(): Promise<boolean> {
         let packageSourcesUpdated = false;
         return new Promise<boolean>((resolve, reject) => {
-            let nuGetConfig: string;
-
-            if (this.platformInfo.isWindows) {
-                nuGetConfig = path.join(proc.env.AppData, 'NuGet', 'NuGet.config');
+            if (this.configXml.length === 0 && this.PackageSources.length === 0) {
+                this.logger.append('No config and no package sources available. Using nuget.org as default');
+                let nugetOrg: PackageSource = { source: 'nuget.org', indexUrl: 'https://api.nuget.org/v3/index.json' };
+                this.PackageSources.push(nugetOrg);
+                packageSourcesUpdated = true;
             } else {
-                // found this on StackOverflow (http://stackoverflow.com/questions/30076371/mac-osx-mono-nuget-how-to-set-up-a-default-appdata-nuget-nuget-config)
-                // and this http://gunnarpeipman.com/2014/10/running-asp-net-5-on-linux/
-                // TODO: verify the file actually resides there
-                nuGetConfig = path.join('~', '.config', 'NuGet', 'NuGet.config');
-            }
-
-            logger.appendLine('using active feeds from ' + nuGetConfig);
-
-            fs.readFile(nuGetConfig, 'utf-8', (err, data) => {
-                if (err) {
-                    reject('Reading ' + nuGetConfig + ' failed with error ' + err);
-                }
-                let nuget = xmlParser(data);
+                let nuget = xmlParser(this.configXml);
                 let configuration = nuget.root;
                 let aps = configuration.children.find(n => n.name === 'activePackageSource');
                 aps.children.forEach(aps => {
                     let psIndex = this.PackageSources.findIndex(ps => ps.source === aps.attributes['key']);
                     if (psIndex != -1) {
                         if (this.PackageSources[psIndex].indexUrl != aps.attributes['value']) {
+                            this.logger.append('Updating the indexUrl of existing package source ' + aps.attributes['key']);
                             this.PackageSources[psIndex].indexUrl = aps.attributes['value'];
                             packageSourcesUpdated = true;
                         }
                     } else {
+                        this.logger.append('Adding new source ' + aps.attributes['key'] + 'with index URL ' + aps.attributes['value'] + 'to package sources.');
                         this.PackageSources.push({ source: aps.attributes['key'], indexUrl: aps.attributes['value'] });
                         packageSourcesUpdated = true;
                     }
-                    resolve(packageSourcesUpdated);
                 });
-            });
+            }
+            resolve(packageSourcesUpdated);
         });
-    };
+    }
 
-    public UpdateNuGetService(logger: Logger, packageSource: PackageSource): Promise<boolean> {
+    public UpdateNuGetService(packageSource: PackageSource): Promise<boolean> {
         let servicesUpdated = false;
         return new Promise<boolean>((resolve, reject) => {
-            this.UpdatePackageSourcesFromConfig(logger).then(updated => {
+            this.UpdatePackageSourcesFromConfig().then(updated => {
                 if (updated) {
-                    logger.append('updating index of ' + packageSource.source);
-                    let nugetService: NuGetService;
+                    this.logger.append('updating index of ' + packageSource.source);
                     let url = parseUrl(packageSource.indexUrl);
                     let options: https.RequestOptions = {
                         host: url.host,
                         path: url.path,
                         agent: getProxyAgent(url, '', true)
                     };
-                    let serviceRequest = https.get(options, response => {
+                    https.get(options, response => {
                         let svcIndexString = '';
                         response.on('data', chunk => {
                             svcIndexString += chunk;
@@ -113,9 +136,10 @@ export class NuGetClient{
         });
     }
 
-    public UpdateNuGetServices(logger: Logger): Promise<void> {
-        return new Promise<void>(() => {
-            this.PackageSources.forEach(ps => this.UpdateNuGetService(logger, ps))
+    public UpdateNuGetServices(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            this.PackageSources.forEach(ps => this.UpdateNuGetService(ps));
+            resolve();
         });
     }
 }

@@ -3,34 +3,54 @@ import * as chaiAsPromised from 'chai-as-promised';
 
 import { Logger } from '../src/logger';
 import { NuGetClient, PackageSource } from '../src/nuget';
-//import { OmniSharpServer } from '../src/omnisharp/server';
-import { PlatformInformation } from '../src/platform';
-import PackageReferenceProvider from '../src/features/packageReferenceProvider';
 import * as vscode from 'vscode';
-import TelemetryReporter from 'vscode-extension-telemetry';
 
 suite("Resolve package refs and versions from NuGet", () => {
-    //let server: OmniSharpServer;
     let logger: Logger;
-    let platformInfo: PlatformInformation;
 
     suiteSetup(() => {
         should();
         use(chaiAsPromised);
-        //server = new OmniSharpServer(new TelemetryReporter('test', '0.0.0-test', 'test'));
         let channel: vscode.OutputChannel = vscode.window.createOutputChannel("test");
         logger = new Logger(() => channel.hide());
-        PlatformInformation.GetCurrent().then((pi) => platformInfo = pi);
     });
 
     suite('NuGetClient', () => {
 
-        test('Read activePackageSources from user scoped NuGet.config', () => {
-            let nugetOrg = {source: 'nuget.org', indexUrl: 'https://api.nuget.org/v3/index.json'};
-            let target = new NuGetClient(platformInfo);
-            let p = target.UpdatePackageSourcesFromConfig(logger).then((result) => {
+        test('Read activePackageSources from NuGet.config', () => {
+            let nugetOrg = { source: 'nuget.org', indexUrl: 'https://api.nuget.org/v3/index.json' };
+            let configXml = '<?xml version="1.0" encoding="utf-8"?> \
+<configuration> \
+  <packageRestore> \
+    <add key="enabled" value="True" /> \
+    <add key="automatic" value="True" /> \
+  </packageRestore> \
+  <packageSources> \
+    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" /> \
+    <add key="nuget.org" value="https://www.nuget.org/api/v2/" /> \
+    <add key="dotnetcore on myget" value="https://dotnet.myget.org/F/dotnet-core/api/v2/" /> \
+  </packageSources> \
+  <disabledPackageSources /> \
+  <activePackageSource> \
+    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" /> \
+    <add key="dotnetcore on myget" value="https://dotnet.myget.org/F/dotnet-core/api/v2/" /> \
+  </activePackageSource> \
+</configuration>';
+            let target = new NuGetClient(configXml, logger);
+            let p = target.UpdatePackageSourcesFromConfig().then((result) => {
                 result.should.be.true;
                 target.PackageSources.should.contain(nugetOrg);
+            });
+            return p.should.eventually.be.fulfilled;
+        });
+
+        test('Default to nuget.org V3 with no config or package sources available', () => {
+            let nugetOrg = {source: 'nuget.org', indexUrl: 'https://api.nuget.org/v3/index.json'};
+            let target = new NuGetClient('', logger);
+            let p = target.UpdatePackageSourcesFromConfig().then((result) => {
+                result.should.be.true;
+                target.PackageSources.length.should.equal(1);
+                target.PackageSources[0].should.deep.equal(nugetOrg);
             });
             return p.should.eventually.be.fulfilled;
         });
@@ -38,9 +58,9 @@ suite("Resolve package refs and versions from NuGet", () => {
         test('Update NuGet services for package sources', () => {
             let autoCompleteService = 'https://api-v2v3search-0.nuget.org/autocomplete';
             let packageRegistrationService = 'https://api.nuget.org/v3-flatcontainer/';
-            let target = new NuGetClient(platformInfo);
+            let target = new NuGetClient('', logger);
             let packageSource: PackageSource = { source: 'nuget.org', indexUrl: 'https://api.nuget.org/v3/index.json' };
-            let p = target.UpdateNuGetService(logger, packageSource).then((result) => {
+            let p = target.UpdateNuGetService(packageSource).then((result) => {
                 result.should.be.true;
                 target.NugetServices[packageSource.source].autoCompleteService.should.contain(autoCompleteService);
                 target.NugetServices[packageSource.source].packageRegistrationService.should.equal(packageRegistrationService);
@@ -60,7 +80,7 @@ suite("Resolve package refs and versions from NuGet", () => {
     suite('CompletionItemProvider', () => {
         test('Provide suggestions for partial packageId');
 
-        test('Provide suggestions for version number of give package');
+        test('Provide suggestions for version number of given package');
 
     });
 });
