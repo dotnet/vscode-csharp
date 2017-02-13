@@ -142,4 +142,33 @@ export class NuGetClient{
             resolve();
         });
     }
+
+    public FindPackagesByPartialId(partialPackageId: string): Promise<string[]> {
+        return new Promise<string[]>((resolve, reject) => {
+            let packageIds: string[] = [];
+            let requests: Promise<string[]>[] = [];
+            this.PackageSources.forEach(ps => {
+                requests.push(new Promise<string[]>((res, rej) => {
+                    let url = parseUrl(this.NugetServices[ps.source].autoCompleteService[0] + '?q=' + partialPackageId);
+                    let options: https.RequestOptions = {
+                        host: url.host,
+                        path: url.path,
+                        agent: getProxyAgent(url, '', true)
+                    };
+                    https.get(options, response => {
+                        let json: string;
+                        response.on('data', (chunk) => json += chunk);
+                        response.on('end', () => {
+                            let payload = JSON.parse(json);
+                            res(payload.data);
+                        });
+                    });
+                }));
+            });
+            Promise.all(requests).then(payloads => {
+                payloads.forEach(payload => packageIds.concat(payload));
+                resolve(packageIds);
+            });
+        });
+    }
 }

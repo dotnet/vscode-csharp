@@ -39,6 +39,7 @@ suite("Resolve package refs and versions from NuGet", () => {
             let target = new NuGetClient(configXml, logger);
             let p = target.UpdatePackageSourcesFromConfig().then((result) => {
                 result.should.be.true;
+                target.PackageSources.length.should.equal(2);
                 target.PackageSources.should.contain(nugetOrg);
             });
             return p.should.eventually.be.fulfilled;
@@ -68,9 +69,17 @@ suite("Resolve package refs and versions from NuGet", () => {
             return p.should.eventually.be.fulfilled;
         });
 
-        test('Retrieve package ids for partial packageId from NuGet Gallery');
+        test('Retrieve package ids for partially given packageId', () => {
+            let packageSource: PackageSource = { source: 'nuget.org', indexUrl: 'https://api.nuget.org/v3/index.json' };
+            let target = new NuGetClient('', logger);
+            return target.UpdateNuGetService(packageSource).then(() => {
+                let p = target.FindPackagesByPartialId('newtonsoft');
+                p.should.eventually.have.length.greaterThan(1);
+                p.should.eventually.contain('Newtonsoft.Json');
+            }).should.eventually.be.fulfilled;
+        });
 
-        test('Don\'t call out to NuGet gallery for empty package id');
+        test('Don\'t call out to the package source for an empty package id');
 
         test('Retrieve all version numbers for the selected package');
 
