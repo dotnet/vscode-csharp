@@ -27,9 +27,9 @@ Install the .NET Core command line tools (CLI) by following the installation par
 **OSX:** .NET Core requires openSSL to work. Don't forget this! Execute: `brew install openssl`
 
 ##### 3: Install C# Extension for VS Code
-Open the command palette in VS Code (`F1`) and type `ext install C#` to trigger the installation of the extension. VS Code will show a message that the extension has been installed and it will restart.
+Open the command palette in VS Code (press <kbd>F1</kbd>) and type `ext install C#` to trigger the installation of the extension. VS Code will show a message that the extension has been installed and it will restart.
 
-If you have previously installed the C# extension, make sure that you have a recent version. You can check this by opening the command palette (`F1`) and running `Extensions: Show Installed Extensions`.
+If you have previously installed the C# extension, make sure that you have a recent version. You can check this by opening the command palette (press <kbd>F1</kbd>) and running `Extensions: Show Installed Extensions`.
 
 ##### 4: Wait for download of platform-specific files 
 The first time that C# code is opened in VS Code, the extension will download the platform-specific files needed for debugging and editing. Debugging and editor features will not work until these steps finish.
@@ -70,7 +70,7 @@ If your code has multiple projects or you would rather generate these files by h
 
 **.vscode/tasks.json**: Start with [this example](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/ExampleCode/tasks.json) which configures VS Code to launch `dotnet build`. Update the `cwd` property if your project isn't in the root of the open folder. If you don't want to build from VS Code at all, you can skip this file. If you do this, you will need to comment out the `preLaunchTask` from .vscode/launch.json when you create it.
 
-**.vscode/launch.json**: When you want to start debugging, press the debugger play button (or hit `F5`) as you would normally do. VS Code will provide a list of templates to select from. Pick ".NET Core" from this list and the edit the `program` property to indicate the path to the application dll or .NET Core host executable to launch. For example:
+**.vscode/launch.json**: When you want to start debugging, press the debugger play button (or press <kbd>F5</kbd>) as you would normally do. VS Code will provide a list of templates to select from. Pick ".NET Core" from this list and the edit the `program` property to indicate the path to the application dll or .NET Core host executable to launch. For example:
 
 	"configurations": [
 		{
@@ -78,7 +78,7 @@ If your code has multiple projects or you would rather generate these files by h
 			"program": "${workspaceRoot}/MyLaunchingProject/bin/Debug/netcoreapp1.0/MyLaunchingProject.dll",
 
 ##### 4: Start debugging
-Your project is now all set. Set a breakpoint or two where you want to stop, click the debugger play button (or hit `F5`) and you are off.
+Your project is now all set. Set a breakpoint or two where you want to stop, click the debugger play button (or press <kbd>F5</kbd>) and you are off.
 
 ###Debugging Code compiled on another computer
 If your code was built on a different computer from where you would like to run in there are a few things to keep in mind --
@@ -132,7 +132,7 @@ The C# debugger supports attaching to processes. To do this, switch to the Debug
 
 ![Debug launch configuration drop down](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/images/debug-launch-configurations.png)
 
-Select the '.NET Core Attach' configuration. Clicking the play button (or pressing `F5`) will then try to attach. In launch.json, if `processId` is set to `"${command.pickProcess}"` this will provide UI to select which process to attach to.
+Select the '.NET Core Attach' configuration. Clicking the play button (or pressing <kbd>F5</kbd>) will then try to attach. In launch.json, if `processId` is set to `"${command.pickProcess}"` this will provide UI to select which process to attach to.
 
 #### Docker Support
 
