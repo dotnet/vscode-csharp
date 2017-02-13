@@ -6,7 +6,7 @@
 
 import { Location, getLocation, createScanner, SyntaxKind } from 'jsonc-parser';
 import { ProjectJSONContribution } from './projectJSONContribution';
-import { XHRRequest, configure as configureXHR, xhr } from 'request-light';
+import { configure as configureXHR, xhr } from 'request-light';
 
 import {
     CompletionItem, CompletionItemProvider, CompletionList, TextDocument, Position, Hover, HoverProvider,
@@ -115,7 +115,7 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
                 if (!proposed[suggestion.label]) {
                     proposed[suggestion.label] = true;
                     if (overwriteRange) {
-                        suggestion.textEdit = TextEdit.replace(overwriteRange, suggestion.insertText);
+                        suggestion.textEdit = TextEdit.replace(overwriteRange, <string>suggestion.insertText);
                     }
 
                     items.push(suggestion);
@@ -154,8 +154,8 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
     }
 
     private getCurrentWord(document: TextDocument, position: Position) {
-        var i = position.character - 1;
-        var text = document.lineAt(position.line).text;
+        let i = position.character - 1;
+        let text = document.lineAt(position.line).text;
         while (i >= 0 && ' \t\n\r\v":{[,'.indexOf(text.charAt(i)) === -1) {
             i--;
         }

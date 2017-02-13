@@ -14,7 +14,6 @@ const localize = nls.loadMessageBundle();
 
 const FEED_INDEX_URL = 'https://api.nuget.org/v3/index.json';
 const LIMIT = 30;
-const RESOLVE_ID = 'ProjectJSONContribution-';
 
 interface NugetServices {
     'SearchQueryService'?: string;
@@ -173,14 +172,14 @@ export class ProjectJSONContribution implements IJSONContribution {
 
     public resolveSuggestion(item: CompletionItem): Thenable<CompletionItem> {
         if (item.kind === CompletionItemKind.Property) {
-            let pack = item.label
+            let pack = item.label;
             return this.getInfo(pack).then(info => {
                 if (info.description) {
                     item.documentation = info.description;
                 }
                 if (info.version) {
                     item.detail = info.version;
-                    item.insertText = item.insertText.replace(/\{\{\}\}/, '{{' + info.version + '}}');
+                    item.insertText = (<string>item.insertText).replace(/\{\{\}\}/, '{{' + info.version + '}}');
                 }
                 return item;
             });
