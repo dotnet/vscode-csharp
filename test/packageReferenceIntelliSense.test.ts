@@ -84,9 +84,17 @@ suite("Resolve package refs and versions from NuGet", () => {
             return p.should.eventually.have.length(10);
         });
 
-        test('Retrieve all version numbers for the selected package');
+        test('Retrieve all version numbers for the selected package', async () => {
+            let packageSource: PackageSource = { source: 'nuget.org', indexUrl: 'https://api.nuget.org/v3/index.json' };
+            let target = new NuGetClient('', logger);
+            await target.UpdateNuGetService(packageSource);
+            let p = target.FindVersionsByPackageId('newtonsoft.json');
+            p.should.eventually.be.fulfilled;
+            return p.should.eventually.have.length.greaterThan(1);
+        });
 
         test('Retrieve version numbers for partially given version number');
+                //p.should.eventually.all.satisfy(function (versionString: string) { return versionString.startsWith('9.'); });
     });
 
     suite('CompletionItemProvider', () => {

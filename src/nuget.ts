@@ -187,4 +187,40 @@ export class NuGetClient{
             });
         });
     }
+
+    public FindVersionsByPackageId(packageId: string): Promise<string[]> {
+        return new Promise<string[]>((resolve, reject) => {
+            let versions:string[] = [];
+            let requests: Promise<string[]>[] = [];
+            this.PackageSources.forEach(ps => {
+                requests.push(new Promise<string[]>((res, rej) => {
+                    let urlString = this.NugetServices[ps.source].packageRegistrationService + packageId + '/index.json';
+                    let url = parseUrl(urlString);
+                    let options: https.RequestOptions = {
+                        host: url.host,
+                        path: url.path,
+                        agent: getProxyAgent(url, '', true)
+                    };
+                    https.get(options, response => {
+                        let json = '';
+                        response.on('data', (chunk) => json += chunk);
+                        response.on('end', () => {
+                            let payload = JSON.parse(json);
+                            res(payload.versions);
+                        });
+                    });
+                }));
+            });
+            Promise.all(requests).then(payloads => {
+                payloads.forEach(payload => {
+                    if (versions.length === 0) {
+                        versions = payload;
+                    } else {
+                        versions.concat(payload);
+                    }
+                });
+                resolve(versions);
+            });
+        });
+    }
 }
