@@ -188,7 +188,7 @@ export class NuGetClient{
         });
     }
 
-    public FindVersionsByPackageId(packageId: string): Promise<string[]> {
+    public FindVersionsByPackageId(packageId: string, partialVersion?: string): Promise<string[]> {
         return new Promise<string[]>((resolve, reject) => {
             let versions:string[] = [];
             let requests: Promise<string[]>[] = [];
@@ -205,8 +205,18 @@ export class NuGetClient{
                         let json = '';
                         response.on('data', (chunk) => json += chunk);
                         response.on('end', () => {
-                            let payload = JSON.parse(json);
-                            res(payload.versions);
+                            let versions: string[] = [];
+                            try {
+                                let payload = JSON.parse(json);
+                                if (partialVersion) {
+                                    versions = (<string[]>payload.versions).filter(v => v.startsWith(partialVersion));
+                                } else {
+                                    versions = payload.versions;
+                                }
+                            } catch (error) {
+                                versions = ['unknown package'];
+                            }
+                            res(versions);
                         });
                     });
                 }));

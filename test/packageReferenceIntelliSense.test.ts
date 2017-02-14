@@ -93,8 +93,24 @@ suite("Resolve package refs and versions from NuGet", () => {
             return p.should.eventually.have.length.greaterThan(1);
         });
 
-        test('Retrieve version numbers for partially given version number');
-                //p.should.eventually.all.satisfy(function (versionString: string) { return versionString.startsWith('9.'); });
+        test('Retrieve version numbers for partially given version number', async () => {
+            let packageSource: PackageSource = { source: 'nuget.org', indexUrl: 'https://api.nuget.org/v3/index.json' };
+            let target = new NuGetClient('', logger);
+            await target.UpdateNuGetService(packageSource);
+            let p = target.FindVersionsByPackageId('newtonsoft.json', '9.');
+            p.should.eventually.be.fulfilled;
+            p.should.eventually.have.length.greaterThan(1);
+            return p.should.eventually.satisfy(function (versions: string[]) { return versions.every(v => v.startsWith('9.')); });
+        });
+
+        test('Gracefully fail when querying versons for unkown packages', async () => {
+            let packageSource: PackageSource = { source: 'nuget.org', indexUrl: 'https://api.nuget.org/v3/index.json' };
+            let target = new NuGetClient('', logger);
+            await target.UpdateNuGetService(packageSource);
+            let p = target.FindVersionsByPackageId('OmniSharp', '9.');
+            p.should.eventually.be.fulfilled;
+            return p.should.eventually.deep.equal(['unknown package']);
+        });
     });
 
     suite('CompletionItemProvider', () => {
