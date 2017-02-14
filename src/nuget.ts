@@ -143,20 +143,30 @@ export class NuGetClient{
         });
     }
 
-    public FindPackagesByPartialId(partialPackageId: string): Promise<string[]> {
+    public FindPackagesByPartialId(partialPackageId: string, maxResults?: number): Promise<string[]> {
+        if (!maxResults) {
+            // this could be used to make the limit configurable via a OmniSharp Setting
+            maxResults = 20;
+        }
         return new Promise<string[]>((resolve, reject) => {
             let packageIds: string[] = [];
             let requests: Promise<string[]>[] = [];
             this.PackageSources.forEach(ps => {
                 requests.push(new Promise<string[]>((res, rej) => {
-                    let url = parseUrl(this.NugetServices[ps.source].autoCompleteService[0] + '?q=' + partialPackageId);
+                    let urlString: string;
+                    if (partialPackageId) {
+                        urlString = this.NugetServices[ps.source].autoCompleteService[0] + '?q=' + partialPackageId + '&take=' + maxResults;
+                    } else {
+                        urlString = this.NugetServices[ps.source].autoCompleteService[0] + '?take=' + maxResults;
+                    }
+                    let url = parseUrl(urlString);
                     let options: https.RequestOptions = {
                         host: url.host,
                         path: url.path,
                         agent: getProxyAgent(url, '', true)
                     };
                     https.get(options, response => {
-                        let json: string;
+                        let json: string = '';
                         response.on('data', (chunk) => json += chunk);
                         response.on('end', () => {
                             let payload = JSON.parse(json);
@@ -166,7 +176,13 @@ export class NuGetClient{
                 }));
             });
             Promise.all(requests).then(payloads => {
-                payloads.forEach(payload => packageIds.concat(payload));
+                payloads.forEach(payload => {
+                    if (packageIds.length === 0) {
+                        packageIds = payload;
+                    } else {
+                        packageIds.concat(payload);
+                    }
+                });
                 resolve(packageIds);
             });
         });
