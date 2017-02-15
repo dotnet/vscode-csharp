@@ -1,5 +1,8 @@
 import { should, use } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as nock from 'nock';
 
 import { Logger } from '../src/logger';
 import { NuGetClient, PackageSource } from '../src/nuget';
@@ -9,13 +12,24 @@ suite("Resolve package refs and versions from NuGet", () => {
     let logger: Logger;
 
     suiteSetup(() => {
+        // chai.
         should();
         use(chaiAsPromised);
+
         let channel: vscode.OutputChannel = vscode.window.createOutputChannel("test");
         logger = new Logger(() => channel.hide());
+        nock.disableNetConnect();
     });
 
+    suiteTeardown(() => nock.enableNetConnect());
+
     suite('NuGetClient', () => {
+        setup(() => {
+            let indexJson = path.join(__dirname, 'data', 'PackageSourceIndex.json');
+            nock('https://api.nuget.org')
+                .get('/v3/index.json')
+                .replyWithFile(200, indexJson,{ 'Content-Type': 'application/ld+json'});
+        });
 
         test('Read activePackageSources from NuGet.config', async () => {
             let nugetOrg = { source: 'nuget.org', indexUrl: 'https://api.nuget.org/v3/index.json' };
@@ -37,7 +51,9 @@ suite("Resolve package refs and versions from NuGet", () => {
   </activePackageSource> \
 </configuration>';
             let target = new NuGetClient(configXml, logger);
+
             let result = await target.UpdatePackageSourcesFromConfig();
+
             result.should.be.true;
             target.PackageSources.length.should.equal(2);
             target.PackageSources.should.contain(nugetOrg);
@@ -47,7 +63,9 @@ suite("Resolve package refs and versions from NuGet", () => {
             let nugetOrg = {source: 'nuget.org', indexUrl: 'https://api.nuget.org/v3/index.json'};
             let target = new NuGetClient('', logger);
             let result = await target.UpdatePackageSourcesFromConfig();
+
             result.should.be.true;
+
             target.PackageSources.length.should.equal(1);
             target.PackageSources[0].should.deep.equal(nugetOrg);
         });
@@ -57,18 +75,25 @@ suite("Resolve package refs and versions from NuGet", () => {
             let packageRegistrationService = 'https://api.nuget.org/v3-flatcontainer/';
             let target = new NuGetClient('', logger);
             let packageSource: PackageSource = { source: 'nuget.org', indexUrl: 'https://api.nuget.org/v3/index.json' };
+
             let result = await target.UpdateNuGetService(packageSource);
+
             result.should.be.true;
             target.NugetServices[packageSource.source].autoCompleteService.should.contain(autoCompleteService);
             target.NugetServices[packageSource.source].packageRegistrationService.should.equal(packageRegistrationService);
-
         });
 
         test('Retrieve package ids for partially given packageId', async () => {
-            let packageSource: PackageSource = { source: 'nuget.org', indexUrl: 'https://api.nuget.org/v3/index.json' };
+            let partialId = 'newtonsoft';
+            nock('https://api-v2v3search-0.nuget.org')
+                .get('/autocomplete?q=' + partialId + '&take=20')
+                .replyWithFile(200, path.join(__dirname, 'data', 'AutoCompleteResponsePartialId.json'));
             let target = new NuGetClient('', logger);
-            await target.UpdateNuGetService(packageSource);
-            let p = target.FindPackagesByPartialId('newtonsoft');
+            target.PackageSources = [{ source: 'nuget.org', indexUrl: '' }];
+            target.NugetServices['nuget.org'] = { autoCompleteService: ['https://api-v2v3search-0.nuget.org/autocomplete'], packageRegistrationService: '' };
+
+            let p = target.FindPackagesByPartialId(partialId);
+
             p.should.eventually.be.fulfilled;
             p.should.eventually.have.length.greaterThan(1);
             p.should.eventually.not.have.length.greaterThan(20);
@@ -76,38 +101,61 @@ suite("Resolve package refs and versions from NuGet", () => {
         });
 
         test('Limit the number of responses for an empty package id', async () => {
-            let packageSource: PackageSource = { source: 'nuget.org', indexUrl: 'https://api.nuget.org/v3/index.json' };
+            nock('https://api-v2v3search-0.nuget.org')
+                .get('/autocomplete?take=10')
+                .replyWithFile(200, path.join(__dirname, 'data', 'AutoCompleteResponseNoId.json'));
             let target = new NuGetClient('', logger);
-            await target.UpdateNuGetService(packageSource);
+            target.PackageSources = [{ source: 'nuget.org', indexUrl: '' }];
+            target.NugetServices['nuget.org'] = { autoCompleteService: ['https://api-v2v3search-0.nuget.org/autocomplete'], packageRegistrationService: '' };
+
             let p = target.FindPackagesByPartialId('', 10);
+
             p.should.eventually.be.fulfilled;
             return p.should.eventually.have.length(10);
         });
 
         test('Retrieve all version numbers for the selected package', async () => {
-            let packageSource: PackageSource = { source: 'nuget.org', indexUrl: 'https://api.nuget.org/v3/index.json' };
+            let packageId = 'newtonsoft.json';
+            nock('https://api.nuget.org')
+                .get('/v3-flatcontainer/' + packageId + '/index.json')
+                .replyWithFile(200, path.join(__dirname, 'data', 'FindVersionsResponse.json'));
             let target = new NuGetClient('', logger);
-            await target.UpdateNuGetService(packageSource);
-            let p = target.FindVersionsByPackageId('newtonsoft.json');
+            target.PackageSources = [{ source: 'nuget.org', indexUrl: '' }];
+            target.NugetServices['nuget.org'] = { autoCompleteService: [], packageRegistrationService: 'https://api.nuget.org/v3-flatcontainer/' };
+
+            let p = target.FindVersionsByPackageId(packageId);
+
             p.should.eventually.be.fulfilled;
             return p.should.eventually.have.length.greaterThan(1);
         });
 
         test('Retrieve version numbers for partially given version number', async () => {
-            let packageSource: PackageSource = { source: 'nuget.org', indexUrl: 'https://api.nuget.org/v3/index.json' };
+            let packageId = 'newtonsoft.json';
+            nock('https://api.nuget.org')
+                .get('/v3-flatcontainer/' + packageId + '/index.json')
+                .replyWithFile(200, path.join(__dirname, 'data', 'FindVersionsResponse.json'));
             let target = new NuGetClient('', logger);
-            await target.UpdateNuGetService(packageSource);
-            let p = target.FindVersionsByPackageId('newtonsoft.json', '9.');
+            target.PackageSources = [{ source: 'nuget.org', indexUrl: '' }];
+            target.NugetServices['nuget.org'] = { autoCompleteService: [], packageRegistrationService: 'https://api.nuget.org/v3-flatcontainer/' };
+
+            let p = target.FindVersionsByPackageId(packageId, '9.');
+
             p.should.eventually.be.fulfilled;
             p.should.eventually.have.length.greaterThan(1);
             return p.should.eventually.satisfy(function (versions: string[]) { return versions.every(v => v.startsWith('9.')); });
         });
 
         test('Gracefully fail when querying versons for unkown packages', async () => {
-            let packageSource: PackageSource = { source: 'nuget.org', indexUrl: 'https://api.nuget.org/v3/index.json' };
+            let packageId = 'OmniSharp';
+            nock('https://api.nuget.org')
+                .get('/v3-flatcontainer/' + packageId + '/index.json')
+                .replyWithFile(404, path.join(__dirname, 'data', 'PackageNotFound.xml'));
             let target = new NuGetClient('', logger);
-            await target.UpdateNuGetService(packageSource);
-            let p = target.FindVersionsByPackageId('OmniSharp', '9.');
+            target.PackageSources = [{ source: 'nuget.org', indexUrl: '' }];
+            target.NugetServices['nuget.org'] = { autoCompleteService: [], packageRegistrationService: 'https://api.nuget.org/v3-flatcontainer/' };
+
+            let p = target.FindVersionsByPackageId(packageId, '9.');
+
             p.should.eventually.be.fulfilled;
             return p.should.eventually.deep.equal(['unknown package']);
         });

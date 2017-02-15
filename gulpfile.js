@@ -171,3 +171,8 @@ gulp.task('tslint', () => {
             emitError: false
         }))
 });
+
+gulp.task('testdata', () => {
+    gulp.src('./test/data/*.*')
+        .pipe(gulp.dest('./out/test/data'));
+})

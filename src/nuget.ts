@@ -130,6 +130,7 @@ export class NuGetClient{
                             }
                             resolve(servicesUpdated);
                         });
+                        response.on('error', (err) => reject('Can\'t connect to package source due to ' + err.message));
                     });
                 }
             });
@@ -172,6 +173,7 @@ export class NuGetClient{
                             let payload = JSON.parse(json);
                             res(payload.data);
                         });
+                        response.on('error', (err) => rej('Can\'t query packages from ' + ps + ' due to' + err.message));
                     });
                 }));
             });
@@ -184,6 +186,8 @@ export class NuGetClient{
                     }
                 });
                 resolve(packageIds);
+            }, (reasons) => {
+                debugger;
             });
         });
     }
@@ -218,6 +222,7 @@ export class NuGetClient{
                             }
                             res(versions);
                         });
+                        response.on('error', (err) => rej('Can\'t query versions from ' + ps + ' due to ' + err.message));
                     });
                 }));
             });
@@ -230,6 +235,8 @@ export class NuGetClient{
                     }
                 });
                 resolve(versions);
+            }, reasons => {
+                debugger;
             });
         });
     }

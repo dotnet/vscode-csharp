@@ -1,0 +1,11 @@
+{
+    "@context":{
+        "@vocab":"http://schema.nuget.org/schema#"
+    },
+    "totalHits":40,
+    "lastReopen":"2017-02-15T11:14:37.0834689Z",
+    "index":"v3-lucene0-v2v3-20170110",
+    "data":[
+        "Newtonsoft.Json","Rebus.NewtonsoftJson","HybridDb.NewtonsoftJson","Newtonsoft.Msgpack","Newtonsoft.Json.FSharp","rethinkdb-net-newtonsoft","Rock.Core.Newtonsoft","Newtonsoft.Json.Schema","NewtonsoftJsonExt","Sfa.Core.Newtonsoft.Json","Newtonsoft.JsonResult","Newtonsoft.Json.Glimpse","Unity.Newtonsoft.Json","Newtonsoft.Dson","Pollock.Newtonsoft.Json","Newtonsoft.Json.Interface","Newtonsoft.Json.Net20.dll","Lime.Protocol.Serialization.Newtonsoft","Cronus.Serialization.NewtonsoftJson","Gu.Persist.NewtonsoftJson"
+    ]
+}
