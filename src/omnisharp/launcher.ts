@@ -16,7 +16,8 @@ import { Options } from './options';
 export enum LaunchTargetKind {
     Solution,
     ProjectJson,
-    Folder
+    Folder,
+    Csx
 }
 
 /**
@@ -44,7 +45,7 @@ export function findLaunchTargets(): Thenable<LaunchTarget[]> {
     const options = Options.Read();
 
     return vscode.workspace.findFiles(
-        /*include*/ '{**/*.sln,**/*.csproj,**/project.json}', 
+        /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx}', 
         /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
         /*maxResults*/ options.maxProjectResults)
     .then(resources => {
@@ -104,6 +105,19 @@ function select(resources: vscode.Uri[], rootPath: string): LaunchTarget[] {
                 kind: LaunchTargetKind.ProjectJson
             });
         }
+
+        // Add CSX files
+        if (isCsx(resource)) {
+            const dirname = path.dirname(resource.fsPath);
+
+            targets.push({
+                label: path.basename(resource.fsPath),
+                description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
+                target: dirname,
+                directory: dirname,
+                kind: LaunchTargetKind.Csx
+            });
+        }
     });
 
     // Add the root folder under the following circumstances:
@@ -132,6 +146,10 @@ function isSolution(resource: vscode.Uri): boolean {
 
 function isProjectJson(resource: vscode.Uri): boolean {
     return /\project.json$/i.test(resource.fsPath);
+}
+
+function isCsx(resource: vscode.Uri): boolean {
+    return /\.csx$/i.test(resource.fsPath);
 }
 
 export interface LaunchResult {
