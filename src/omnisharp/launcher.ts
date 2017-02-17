@@ -73,7 +73,8 @@ function select(resources: vscode.Uri[], rootPath: string): LaunchTarget[] {
         hasCsProjFiles = false,
         hasSlnFile = false,
         hasProjectJson = false,
-        hasProjectJsonAtRoot = false;
+        hasProjectJsonAtRoot = false,
+        hasCSX = false;
 
     hasCsProjFiles = resources.some(isCSharpProject);
 
@@ -106,17 +107,9 @@ function select(resources: vscode.Uri[], rootPath: string): LaunchTarget[] {
             });
         }
 
-        // Add CSX files
+        // Discover CSX files
         if (isCsx(resource)) {
-            const dirname = path.dirname(resource.fsPath);
-
-            targets.push({
-                label: path.basename(resource.fsPath),
-                description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
-                target: dirname,
-                directory: dirname,
-                kind: LaunchTargetKind.Csx
-            });
+            hasCSX = true;
         }
     });
 
@@ -130,6 +123,17 @@ function select(resources: vscode.Uri[], rootPath: string): LaunchTarget[] {
             target: rootPath,
             directory: rootPath,
             kind: LaunchTargetKind.Folder
+        });
+    }
+
+    // if we noticed any CSX file(s), add a single CSX-specific target pointing at the root folder
+    if (hasCSX) {
+        targets.push({
+            label: "CSX",
+            description: path.basename(rootPath),
+            target: rootPath,
+            directory: rootPath,
+            kind: LaunchTargetKind.Csx
         });
     }
 
