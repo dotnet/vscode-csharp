@@ -107,8 +107,8 @@ function select(resources: vscode.Uri[], rootPath: string): LaunchTarget[] {
             });
         }
 
-        // Discover CSX files
-        if (isCsx(resource)) {
+        // Discover if there is any CSX file
+        if (!hasCSX && isCsx(resource)) {
             hasCSX = true;
         }
     });
