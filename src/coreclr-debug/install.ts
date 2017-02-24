@@ -73,7 +73,7 @@ export class DebugInstaller {
         delete manifestObject.contributes.debuggers[0].runtime;
         delete manifestObject.contributes.debuggers[0].program;
 
-        let programString = './.debugger/OpenDebugAD7';
+        let programString = './.debugger/vsdbg-ui';
         manifestObject.contributes.debuggers[0].windows = { program: programString + '.exe' };
         manifestObject.contributes.debuggers[0].osx = { program: programString };
         manifestObject.contributes.debuggers[0].linux = { program: programString };
