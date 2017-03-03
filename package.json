@@ -696,22 +696,15 @@
                     "type": "boolean",
                     "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
                     "default": false
-                  },
-                  "trace": {
-                    "type": "boolean",
-                    "description": "Optional flag to determine whether diagnostic adapter command tracing should be logged to the output window.",
-                    "default": false
-                  },
-                  "traceResponse": {
-                    "type": "boolean",
-                    "description": "Optional flag to determine whether diagnostic adapter command and response tracing should be logged to the output window.",
-                    "default": false
                   }
                 }
               },
               "pipeTransport": {
                 "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (clrdbg).",
                 "type": "object",
+                "required": [
+                  "debuggerPath"
+                ],
                 "default": {
                   "pipeCwd": "${workspaceRoot}",
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
@@ -946,22 +939,15 @@
                     "type": "boolean",
                     "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
                     "default": false
-                  },
-                  "trace": {
-                    "type": "boolean",
-                    "description": "Optional flag to determine whether diagnostic adapter command tracing should be logged to the output window.",
-                    "default": false
-                  },
-                  "traceResponse": {
-                    "type": "boolean",
-                    "description": "Optional flag to determine whether diagnostic adapter command and response tracing should be logged to the output window.",
-                    "default": false
                   }
                 }
               },
               "pipeTransport": {
                 "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (clrdbg).",
                 "type": "object",
+                "required": [
+                  "debuggerPath"
+                ],
                 "default": {
                   "pipeCwd": "${workspaceRoot}",
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
