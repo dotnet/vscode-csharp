@@ -27,7 +27,7 @@ interface ConsoleLaunchConfiguration extends DebugConfiguration {
     cwd: string;
     stopAtEntry: boolean;
     env?: any;
-    externalConsole?: boolean;
+    console?: string;
 }
 
 interface CommandLine {
@@ -188,7 +188,7 @@ export class AssetGenerator {
             program: this.computeProgramPath(),
             args: [],
             cwd: '${workspaceRoot}',
-            externalConsole: false,
+            console: "internalConsole",
             stopAtEntry: false,
             internalConsoleOptions: "openOnSessionStart"
         };

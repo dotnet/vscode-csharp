@@ -618,9 +618,24 @@
                 "description": "Environment variables passed to the program.",
                 "default": {}
               },
+              "console": {
+                "type": "string",
+                "enum": [
+                  "internalConsole",
+                  "integratedTerminal",
+                  "externalTerminal"
+                ],
+                "enumDescriptions": [
+                  "Output to the VS Code Debug Console. This doesn't support reading console input (ex:Console.ReadLine)",
+                  "VS Code's integrated terminal",
+                  "External terminal that can be configured via user settings"
+                ],
+                "description": "Where to launch the debug target.",
+                "default": "internalConsole"
+              },
               "externalConsole": {
                 "type": "boolean",
-                "description": "If 'true' the debugger should launch the target application into a new external console.",
+                "description": "Attribute 'externalConsole' is deprecated, use 'console' instead.",
                 "default": false
               },
               "sourceFileMap": {
@@ -1111,7 +1126,7 @@
             "args": [],
             "cwd": "${workspaceRoot}",
             "stopAtEntry": false,
-            "externalConsole": false
+            "console": "internalConsole"
           },
           {
             "name": ".NET Core Launch (web)",
