@@ -50,7 +50,7 @@ function sendDownloadingNotStartedMessage() {
 // When installation of the debugger components finishes, the extension manifest is rewritten so that this proxy is no longer called
 // If the debugger components have not finished downloading, the proxy displays an error message to the user
 // If the debugger components have finished downloading, the manifest has been rewritten but has not been reloaded. 
-// This proxy will still be called and launch OpenDebugAD7 as a child process.
+// This proxy will still be called and launch vsdbg-ui as a child process.
 // During subsequent code sessions, the rewritten manifest will be loaded and this proxy will no longer be called. 
 function proxy() {
     let extensionPath = path.resolve(__dirname, '../../../');
@@ -107,11 +107,11 @@ function proxy() {
         // debugger has finished install and manifest has been rewritten, kick off our debugger process
 
         new Promise<void>((resolve, reject) => {
-            let processPath = path.join(util.debugAdapterDir(), "OpenDebugAD7" + CoreClrDebugUtil.getPlatformExeExtension());
+            let processPath = path.join(util.debugAdapterDir(), "vsdbg-ui" + CoreClrDebugUtil.getPlatformExeExtension());
             let args = process.argv.slice(2);
             
             // do not explicitly set a current working dir
-            // this seems to match what code does when OpenDebugAD7 is launched directly from the manifest
+            // this seems to match what code does when vsdbg-ui is launched directly from the manifest
             const child = child_process.spawn(processPath, args);
             
             // If we don't exit cleanly from the child process, log the error.
