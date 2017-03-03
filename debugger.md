@@ -118,13 +118,13 @@ Environment variables may be passed to your program using this schema:
     }
 
 #####Console (terminal) window
-By default, processes are launched with their console output (stdout/stderr) going to the VS Code Debugger Console. This is useful for executables that take their input file files, the network, etc. But this does NOT work for applications that want to read from the console (ex: `Console.ReadLine`). For these applications, use a setting such as the following:
+By default, processes are launched with their console output (stdout/stderr) going to the VS Code Debugger Console. This is useful for executables that take their input from the network, files, etc. But this does NOT work for applications that want to read from the console (ex: `Console.ReadLine`). For these applications, use a setting such as the following:
 
     "console": "integratedTerminal"
 
-When this is set to `integratedTerminal` the target process will run inside [VS Code's integrated terminal](https://code.visualstudio.com/docs/editor/integrated-terminal). Click the 'Terminal' tab in the tab group beneith the editor to interact with your application.
+When this is set to `integratedTerminal` the target process will run inside [VS Code's integrated terminal](https://code.visualstudio.com/docs/editor/integrated-terminal). Click the 'Terminal' tab in the tab group beneath the editor to interact with your application.
 
-When this is set to `externalTerminal` the target process will run in a seperate terminal.
+When this is set to `externalTerminal` the target process will run in a separate terminal.
 
 ##### Stepping into properties and operators
 The debugger steps over properties and operators in managed code by default. In most cases, this provides a better debugging experience. To change this and enable stepping into properties or operators add:
