@@ -98,7 +98,15 @@ function showDotnetToolsWarning(message: string) : void
             goToSettingsMessage, getDotNetMessage).then(value => {
                 if (value === getDotNetMessage) {
                     let open = require('open');
-                    open('https://www.microsoft.com/net/core');
+                    let dotnetcoreURL = 'https://www.microsoft.com/net/core'
+
+                    // Windows redirects https://www.microsoft.com/net/core to https://www.microsoft.com/net/core#windowsvs2015
+                    if (process.platform == "win32")
+                    {
+                        dotnetcoreURL = dotnetcoreURL + '#windowscmd';
+                    }
+
+                    open(dotnetcoreURL);
                 } else if (value === goToSettingsMessage) {
                     vscode.commands.executeCommand('workbench.action.openGlobalSettings');
                 }
