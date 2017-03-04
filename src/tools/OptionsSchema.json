@@ -138,6 +138,11 @@
                     "type": "boolean",
                     "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
                     "default": false
+                },
+                "browserStdOut": {
+                    "type": "boolean",
+                    "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
+                    "default": true
                 }
             }
         },
