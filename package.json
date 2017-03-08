@@ -316,20 +316,6 @@
     "workspaceContains:project.json"
   ],
   "contributes": {
-    "languages": [
-      {
-        "id": "csharp",
-        "extensions": [
-          ".cs",
-          ".csx"
-        ],
-        "aliases": [
-          "C#",
-          "csharp"
-        ],
-        "configuration": "./csharp.configuration.json"
-      }
-    ],
     "configuration": {
       "title": "C# configuration",
       "properties": {
@@ -391,13 +377,6 @@
         }
       }
     },
-    "grammars": [
-      {
-        "language": "csharp",
-        "scopeName": "source.cs",
-        "path": "./syntaxes/csharp.tmLanguage"
-      }
-    ],
     "jsonValidation": [
       {
         "fileMatch": "project.json",
