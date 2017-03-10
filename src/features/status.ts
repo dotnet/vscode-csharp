@@ -26,7 +26,8 @@ let defaultSelector: vscode.DocumentSelector = [
     'csharp', // c#-files OR
     { pattern: '**/project.json' }, // project.json-files OR
     { pattern: '**/*.sln' }, // any solution file OR
-    { pattern: '**/*.csproj' } // an csproj file
+    { pattern: '**/*.csproj' }, // an csproj file
+    { pattern: '**/*.csx' } // C# script
 ];
 
 class Status {

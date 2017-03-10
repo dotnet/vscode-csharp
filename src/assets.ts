@@ -27,7 +27,7 @@ interface ConsoleLaunchConfiguration extends DebugConfiguration {
     cwd: string;
     stopAtEntry: boolean;
     env?: any;
-    externalConsole?: boolean;
+    console?: string;
 }
 
 interface CommandLine {
@@ -179,6 +179,21 @@ export class AssetGenerator {
         return result;
     }
 
+    private computeWorkingDirectory() : string {
+        if (!this.hasProject) {
+            // If there's no target project data, use a placeholder for the path.
+            return '${workspaceRoot}';
+        }
+
+        let result = '${workspaceRoot}';
+
+        if (this.projectPath) {
+            result = path.join(result, path.relative(this.rootPath, this.projectPath));
+        }
+
+        return result;
+    }
+
     private createLaunchConfiguration(): ConsoleLaunchConfiguration {
         return {
             name: '.NET Core Launch (console)',
@@ -187,8 +202,8 @@ export class AssetGenerator {
             preLaunchTask: 'build',
             program: this.computeProgramPath(),
             args: [],
-            cwd: '${workspaceRoot}',
-            externalConsole: false,
+            cwd: this.computeWorkingDirectory(),
+            console: "internalConsole",
             stopAtEntry: false,
             internalConsoleOptions: "openOnSessionStart"
         };
@@ -202,7 +217,7 @@ export class AssetGenerator {
             preLaunchTask: 'build',
             program: this.computeProgramPath(),
             args: [],
-            cwd: '${workspaceRoot}',
+            cwd: this.computeWorkingDirectory(),
             stopAtEntry: false,
             internalConsoleOptions: "openOnSessionStart",
             launchBrowser: {
@@ -233,7 +248,7 @@ export class AssetGenerator {
             name: '.NET Core Attach',
             type: 'coreclr',
             request: 'attach',
-            processId: "${command.pickProcess}"
+            processId: "${command:pickProcess}"
         };
     }
 

@@ -266,6 +266,7 @@ export class PlatformInformation {
 
         switch (distributionName) {
             case 'Zorin OS':
+            case 'zorin': // ID changed in 12.1
                 if (distributionVersion === "12") {
                     return ubuntu_16_04;
                 }

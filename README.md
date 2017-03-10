@@ -18,15 +18,15 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-with-VS-Code-using-CSharp-and-NET-Core)
 
-### What's New in 1.7.0
+### What's New in 1.8.0
 
-* A brand new TextMate grammar written from scratch that provides much more robust C# syntax highlighting
-* Better support for .NET Core .csproj projects, including .NET Core projects created with the latest [Visual Studio 2017 RC](https://www.visualstudio.com/vs/visual-studio-2017-rc/).
-* Support for restoring NuGet packages in .NET Core .csproj projects.
-* Improved code action support, including fixes like "Move Type to File" and "Generate Type".
+* Added support for "Go to Implementation" and "Peek Implementation" 
+* Improvements to C# scripting support
+* New architecture for the debugger
+* Several breaking changes to remote debugging (see changelog for details).
 * Lot's more!
 
-See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.7.0/CHANGELOG.md) for all of the updates.
+See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.8.0/CHANGELOG.md) for all of the updates.
 
 ### Supported Operating Systems for Debugging
 

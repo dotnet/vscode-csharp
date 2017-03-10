@@ -350,11 +350,11 @@ export class OmniSharpServer {
     public autoStart(preferredPath: string): Thenable<void> {
         return findLaunchTargets().then(launchTargets => {
             // If there aren't any potential launch targets, we create file watcher and try to
-            // start the server again once a *.sln, *.csproj or project.json file is created.
+            // start the server again once a *.sln, *.csproj, project.json or CSX file is created.
             if (launchTargets.length === 0) {
                 return new Promise<void>((resolve, reject) => {
                     // 1st watch for files
-                    let watcher = vscode.workspace.createFileSystemWatcher('{**/*.sln,**/*.csproj,**/project.json}',
+                    let watcher = vscode.workspace.createFileSystemWatcher('{**/*.sln,**/*.csproj,**/project.json,**/*.csx}',
                         /*ignoreCreateEvents*/ false,
                         /*ignoreChangeEvents*/ true,
                         /*ignoreDeleteEvents*/ true);

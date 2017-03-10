@@ -12,6 +12,7 @@ import * as util from './common';
 import { Logger } from './logger';
 import { PackageManager, Status, PackageError } from './packages';
 import { PlatformInformation } from './platform';
+import { addJSONProviders } from './features/json/jsonContributions';
 
 let _channel: vscode.OutputChannel = null;
 
@@ -34,6 +35,9 @@ export function activate(context: vscode.ExtensionContext): any {
             // activate language services
             OmniSharp.activate(context, reporter);
 
+            // register JSON completion & hover providers for project.json
+            context.subscriptions.push(addJSONProviders());
+            
             // activate coreclr-debug
             coreclrdebug.activate(context, reporter, logger, _channel);
         });
@@ -129,7 +133,7 @@ function installRuntimeDependencies(extension: vscode.Extension<any>, logger: Lo
                 }
 
                 if (error.pkg) {
-                    telemetryProps['error.packageUrl'] = error.pkg.url; 
+                    telemetryProps['error.packageUrl'] = error.pkg.url;
                 }
 
             } else {
@@ -145,7 +149,7 @@ function installRuntimeDependencies(extension: vscode.Extension<any>, logger: Lo
             telemetryProps['platform.architecture'] = platformInfo.architecture;
             telemetryProps['platform.platform'] = platformInfo.platform;
             telemetryProps['platform.runtimeId'] = platformInfo.runtimeId;
-            if (platformInfo.distribution) { 
+            if (platformInfo.distribution) {
                 telemetryProps['platform.distribution'] = platformInfo.distribution.toString();
             }
 

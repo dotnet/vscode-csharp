@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.7.0",
+  "version": "1.8.0-beta3",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -33,9 +33,11 @@
     "fs-extra": "^1.0.0",
     "http-proxy-agent": "^1.0.0",
     "https-proxy-agent": "^1.0.0",
+    "jsonc-parser": "^0.3.0",
     "lodash.debounce": "^4.0.8",
     "mkdirp": "^0.5.1",
     "open": "*",
+    "request-light": "^0.2.0",
     "semver": "*",
     "tmp": "0.0.28",
     "vscode-debugprotocol": "^1.6.1",
@@ -61,7 +63,7 @@
     "tslint-microsoft-contrib": "^2.0.12",
     "typescript": "^2.0.3",
     "vsce": "^1.7.0",
-    "vscode": "^1.0.0"
+    "vscode": "^1.0.3"
   },
   "runtimeDependencies": [
     {
@@ -117,7 +119,7 @@
     },
     {
       "description": "OmniSharp (.NET 4.6 / x86)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.9-beta25.zip",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.11.0.zip",
       "installPath": "./bin/omnisharp",
       "platforms": [
         "win32"
@@ -128,7 +130,7 @@
     },
     {
       "description": "OmniSharp (.NET 4.6 / x64)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.9-beta25.zip",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.11.0.zip",
       "installPath": "./bin/omnisharp",
       "platforms": [
         "win32"
@@ -139,7 +141,7 @@
     },
     {
       "description": "OmniSharp (Mono 4.6)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-mono-1.9-beta25.zip",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-mono-1.11.0.zip",
       "installPath": "./bin/omnisharp",
       "platforms": [
         "darwin",
@@ -148,8 +150,8 @@
     },
     {
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-win7-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-8-3/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-8-3/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "win7-x64"
@@ -157,150 +159,150 @@
     },
     {
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-osx.10.11-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-osx.10.11-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-8-3/coreclr-debug-osx.10.11-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-8-3/coreclr-debug-osx.10.11-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "osx.10.11-x64"
       ],
       "binaries": [
-        "./OpenDebugAD7",
-        "./clrdbg"
+        "./vsdbg-ui",
+        "./vsdbg"
       ]
     },
     {
       "description": ".NET Core Debugger (CentOS / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-centos.7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-centos.7-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-8-3/coreclr-debug-centos.7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-8-3/coreclr-debug-centos.7-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "centos.7-x64"
       ],
       "binaries": [
-        "./OpenDebugAD7",
-        "./clrdbg"
+        "./vsdbg-ui",
+        "./vsdbg"
       ]
     },
     {
       "description": ".NET Core Debugger (Debian / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-debian.8-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-debian.8-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-8-3/coreclr-debug-debian.8-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-8-3/coreclr-debug-debian.8-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "debian.8-x64"
       ],
       "binaries": [
-        "./OpenDebugAD7",
-        "./clrdbg"
+        "./vsdbg-ui",
+        "./vsdbg"
       ]
     },
     {
       "description": ".NET Core Debugger (Fedora 23 / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-fedora.23-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-fedora.23-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-8-3/coreclr-debug-fedora.23-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-8-3/coreclr-debug-fedora.23-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "fedora.23-x64"
       ],
       "binaries": [
-        "./OpenDebugAD7",
-        "./clrdbg"
+        "./vsdbg-ui",
+        "./vsdbg"
       ]
     },
     {
       "description": ".NET Core Debugger (Fedora 24 / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-fedora.24-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-fedora.24-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-8-3/coreclr-debug-fedora.24-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-8-3/coreclr-debug-fedora.24-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "fedora.24-x64"
       ],
       "binaries": [
-        "./OpenDebugAD7",
-        "./clrdbg"
+        "./vsdbg-ui",
+        "./vsdbg"
       ]
     },
     {
       "description": ".NET Core Debugger (OpenSUSE 13 / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-opensuse.13.2-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-opensuse.13.2-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-8-3/coreclr-debug-opensuse.13.2-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-8-3/coreclr-debug-opensuse.13.2-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "opensuse.13.2-x64"
       ],
       "binaries": [
-        "./OpenDebugAD7",
-        "./clrdbg"
+        "./vsdbg-ui",
+        "./vsdbg"
       ]
     },
     {
       "description": ".NET Core Debugger (OpenSUSE 42 / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-opensuse.42.1-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-opensuse.42.1-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-8-3/coreclr-debug-opensuse.42.1-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-8-3/coreclr-debug-opensuse.42.1-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "opensuse.42.1-x64"
       ],
       "binaries": [
-        "./OpenDebugAD7",
-        "./clrdbg"
+        "./vsdbg-ui",
+        "./vsdbg"
       ]
     },
     {
       "description": ".NET Core Debugger (RHEL / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-rhel.7.2-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-rhel.7.2-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-8-3/coreclr-debug-rhel.7.2-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-8-3/coreclr-debug-rhel.7.2-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "rhel.7-x64"
       ],
       "binaries": [
-        "./OpenDebugAD7",
-        "./clrdbg"
+        "./vsdbg-ui",
+        "./vsdbg"
       ]
     },
     {
       "description": ".NET Core Debugger (Ubuntu 14.04 / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-ubuntu.14.04-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-ubuntu.14.04-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-8-3/coreclr-debug-ubuntu.14.04-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-8-3/coreclr-debug-ubuntu.14.04-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "ubuntu.14.04-x64"
       ],
       "binaries": [
-        "./OpenDebugAD7",
-        "./clrdbg"
+        "./vsdbg-ui",
+        "./vsdbg"
       ]
     },
     {
       "description": ".NET Core Debugger (Ubuntu 16.04 / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-ubuntu.16.04-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-ubuntu.16.04-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-8-3/coreclr-debug-ubuntu.16.04-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-8-3/coreclr-debug-ubuntu.16.04-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "ubuntu.16.04-x64"
       ],
       "binaries": [
-        "./OpenDebugAD7",
-        "./clrdbg"
+        "./vsdbg-ui",
+        "./vsdbg"
       ]
     },
     {
       "description": ".NET Core Debugger (Ubuntu 16.10 / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-7-1/coreclr-debug-ubuntu.16.10-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-7-1/coreclr-debug-ubuntu.16.10-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-8-3/coreclr-debug-ubuntu.16.10-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-8-3/coreclr-debug-ubuntu.16.10-x64.zip",
       "installPath": ".debugger",
       "runtimeIds": [
         "ubuntu.16.10-x64"
       ],
       "binaries": [
-        "./OpenDebugAD7",
-        "./clrdbg"
+        "./vsdbg-ui",
+        "./vsdbg"
       ]
     }
   ],
   "engines": {
-    "vscode": "^1.5.0"
+    "vscode": "^1.10.1"
   },
   "activationEvents": [
     "onLanguage:csharp",
@@ -314,20 +316,6 @@
     "workspaceContains:project.json"
   ],
   "contributes": {
-    "languages": [
-      {
-        "id": "csharp",
-        "extensions": [
-          ".cs",
-          ".csx"
-        ],
-        "aliases": [
-          "C#",
-          "csharp"
-        ],
-        "configuration": "./csharp.configuration.json"
-      }
-    ],
     "configuration": {
       "title": "C# configuration",
       "properties": {
@@ -389,13 +377,6 @@
         }
       }
     },
-    "grammars": [
-      {
-        "language": "csharp",
-        "scopeName": "source.cs",
-        "path": "./syntaxes/csharp.tmLanguage"
-      }
-    ],
     "jsonValidation": [
       {
         "fileMatch": "project.json",
@@ -616,9 +597,24 @@
                 "description": "Environment variables passed to the program.",
                 "default": {}
               },
+              "console": {
+                "type": "string",
+                "enum": [
+                  "internalConsole",
+                  "integratedTerminal",
+                  "externalTerminal"
+                ],
+                "enumDescriptions": [
+                  "Output to the VS Code Debug Console. This doesn't support reading console input (ex:Console.ReadLine)",
+                  "VS Code's integrated terminal",
+                  "External terminal that can be configured via user settings"
+                ],
+                "description": "Where to launch the debug target.",
+                "default": "internalConsole"
+              },
               "externalConsole": {
                 "type": "boolean",
-                "description": "If 'true' the debugger should launch the target application into a new external console.",
+                "description": "Attribute 'externalConsole' is deprecated, use 'console' instead.",
                 "default": false
               },
               "sourceFileMap": {
@@ -680,26 +676,24 @@
                     "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
                     "default": false
                   },
-                  "trace": {
+                  "browserStdOut": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether diagnostic adapter command tracing should be logged to the output window.",
-                    "default": false
-                  },
-                  "traceResponse": {
-                    "type": "boolean",
-                    "description": "Optional flag to determine whether diagnostic adapter command and response tracing should be logged to the output window.",
-                    "default": false
+                    "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
+                    "default": true
                   }
                 }
               },
               "pipeTransport": {
-                "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (clrdbg).",
+                "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg).",
                 "type": "object",
+                "required": [
+                  "debuggerPath"
+                ],
                 "default": {
                   "pipeCwd": "${workspaceRoot}",
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                   "pipeArgs": [],
-                  "debuggerPath": "enter the path for the debugger on the target machine, for example ~/clrdbg/clrdbg"
+                  "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
                 },
                 "properties": {
                   "pipeCwd": {
@@ -723,7 +717,7 @@
                   "debuggerPath": {
                     "type": "string",
                     "description": "The full path to the debugger on the target machine.",
-                    "default": "enter the path for the debugger on the target machine, for example ~/clrdbg/clrdbg"
+                    "default": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
                   },
                   "pipeEnv": {
                     "type": "object",
@@ -861,12 +855,12 @@
                 "anyOf": [
                   {
                     "type": "string",
-                    "description": "The process id to attach to. Use \"${command.pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
-                    "default": "${command.pickProcess}"
+                    "description": "The process id to attach to. Use \"${command:pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                    "default": "${command:pickProcess}"
                   },
                   {
                     "type": "integer",
-                    "description": "The process id to attach to. Use \"${command.pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                    "description": "The process id to attach to. Use \"${command:pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
                     "default": 0
                   }
                 ]
@@ -930,26 +924,24 @@
                     "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
                     "default": false
                   },
-                  "trace": {
+                  "browserStdOut": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether diagnostic adapter command tracing should be logged to the output window.",
-                    "default": false
-                  },
-                  "traceResponse": {
-                    "type": "boolean",
-                    "description": "Optional flag to determine whether diagnostic adapter command and response tracing should be logged to the output window.",
-                    "default": false
+                    "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
+                    "default": true
                   }
                 }
               },
               "pipeTransport": {
-                "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (clrdbg).",
+                "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg).",
                 "type": "object",
+                "required": [
+                  "debuggerPath"
+                ],
                 "default": {
                   "pipeCwd": "${workspaceRoot}",
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                   "pipeArgs": [],
-                  "debuggerPath": "enter the path for the debugger on the target machine, for example ~/clrdbg/clrdbg"
+                  "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
                 },
                 "properties": {
                   "pipeCwd": {
@@ -973,7 +965,7 @@
                   "debuggerPath": {
                     "type": "string",
                     "description": "The full path to the debugger on the target machine.",
-                    "default": "enter the path for the debugger on the target machine, for example ~/clrdbg/clrdbg"
+                    "default": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
                   },
                   "pipeEnv": {
                     "type": "object",
@@ -1109,7 +1101,7 @@
             "args": [],
             "cwd": "${workspaceRoot}",
             "stopAtEntry": false,
-            "externalConsole": false
+            "console": "internalConsole"
           },
           {
             "name": ".NET Core Launch (web)",
@@ -1145,7 +1137,7 @@
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",
-            "processId": "${command.pickProcess}"
+            "processId": "${command:pickProcess}"
           }
         ]
       }

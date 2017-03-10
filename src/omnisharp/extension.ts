@@ -7,6 +7,7 @@ import * as vscode from 'vscode';
 import TelemetryReporter from 'vscode-extension-telemetry';
 
 import DefinitionProvider from '../features/definitionProvider';
+import ImplementationProvider from '../features/implementationProvider';
 import CodeLensProvider from '../features/codeLensProvider';
 import DefinitionMetadataDocumentProvider from '../features/definitionMetadataDocumentProvider';
 import DocumentHighlightProvider from '../features/documentHighlightProvider';
@@ -47,6 +48,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         localDisposables.push(definitionMetadataDocumentProvider);
 
         localDisposables.push(vscode.languages.registerDefinitionProvider(documentSelector, new DefinitionProvider(server, definitionMetadataDocumentProvider)));
+        localDisposables.push(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server)));
         localDisposables.push(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server)));
         localDisposables.push(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server)));
         localDisposables.push(vscode.languages.registerDocumentSymbolProvider(documentSelector, new DocumentSymbolProvider(server)));
