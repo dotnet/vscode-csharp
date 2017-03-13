@@ -727,6 +727,11 @@
                     "description": "Environment variables passed to the pipe program.",
                     "default": {}
                   },
+                  "quoteArgs": {
+                    "type": "boolean",
+                    "description": "Flag to enable or disable quotes around 'debuggerPath'",
+                    "default": true
+                  },
                   "windows": {
                     "description": "Windows-specific pipe launch configuration options",
                     "default": {
@@ -974,6 +979,11 @@
                     },
                     "description": "Environment variables passed to the pipe program.",
                     "default": {}
+                  },
+                  "quoteArgs": {
+                    "type": "boolean",
+                    "description": "Flag to enable or disable quotes around 'debuggerPath'",
+                    "default": true
                   },
                   "windows": {
                     "description": "Windows-specific pipe launch configuration options",

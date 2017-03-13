@@ -84,6 +84,11 @@
                     "description": "Environment variables passed to the pipe program.",
                     "default": {}
                 },
+                "quoteArgs": {
+                    "type": "boolean",
+                    "description": "Flag to enable or disable quotes around 'debuggerPath'",
+                    "default": true
+                },
                 "windows": {
                     "$ref": "#/definitions/PipeConfigurations",
                     "description": "Windows-specific pipe launch configuration options",
