@@ -32,6 +32,11 @@
                     },
                     "default": []
                 },
+                "quoteArgs": {
+                    "type": "boolean",
+                    "description": "Flag to enable or disable quotes around 'debuggerPath'",
+                    "default": true
+                },
                 "pipeEnv": {
                     "type": "object",
                     "additionalProperties": {
