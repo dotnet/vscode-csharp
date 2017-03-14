@@ -32,6 +32,11 @@
                     },
                     "default": []
                 },
+                "quoteArgs": {
+                    "type": "boolean",
+                    "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
+                    "default": true
+                },
                 "pipeEnv": {
                     "type": "object",
                     "additionalProperties": {
@@ -83,6 +88,11 @@
                     },
                     "description": "Environment variables passed to the pipe program.",
                     "default": {}
+                },
+                "quoteArgs": {
+                    "type": "boolean",
+                    "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
+                    "default": true
                 },
                 "windows": {
                     "$ref": "#/definitions/PipeConfigurations",
