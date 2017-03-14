@@ -729,7 +729,7 @@
                   },
                   "quoteArgs": {
                     "type": "boolean",
-                    "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set, the debugger command will no longer be automatically quoted.",
+                    "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
                     "default": true
                   },
                   "windows": {
@@ -761,7 +761,7 @@
                       },
                       "quoteArgs": {
                         "type": "boolean",
-                        "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set, the debugger command will no longer be automatically quoted.",
+                        "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
                         "default": true
                       },
                       "pipeEnv": {
@@ -803,7 +803,7 @@
                       },
                       "quoteArgs": {
                         "type": "boolean",
-                        "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set, the debugger command will no longer be automatically quoted.",
+                        "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
                         "default": true
                       },
                       "pipeEnv": {
@@ -845,7 +845,7 @@
                       },
                       "quoteArgs": {
                         "type": "boolean",
-                        "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set, the debugger command will no longer be automatically quoted.",
+                        "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
                         "default": true
                       },
                       "pipeEnv": {
@@ -997,7 +997,7 @@
                   },
                   "quoteArgs": {
                     "type": "boolean",
-                    "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set, the debugger command will no longer be automatically quoted.",
+                    "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
                     "default": true
                   },
                   "windows": {
@@ -1029,7 +1029,7 @@
                       },
                       "quoteArgs": {
                         "type": "boolean",
-                        "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set, the debugger command will no longer be automatically quoted.",
+                        "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
                         "default": true
                       },
                       "pipeEnv": {
@@ -1071,7 +1071,7 @@
                       },
                       "quoteArgs": {
                         "type": "boolean",
-                        "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set, the debugger command will no longer be automatically quoted.",
+                        "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
                         "default": true
                       },
                       "pipeEnv": {
@@ -1113,7 +1113,7 @@
                       },
                       "quoteArgs": {
                         "type": "boolean",
-                        "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set, the debugger command will no longer be automatically quoted.",
+                        "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
                         "default": true
                       },
                       "pipeEnv": {
