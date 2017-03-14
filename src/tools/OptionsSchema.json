@@ -34,7 +34,7 @@
                 },
                 "quoteArgs": {
                     "type": "boolean",
-                    "description": "Flag to enable or disable quotes around 'debuggerPath'",
+                    "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set, the debugger command will no longer be automatically quoted.",
                     "default": true
                 },
                 "pipeEnv": {
@@ -91,7 +91,7 @@
                 },
                 "quoteArgs": {
                     "type": "boolean",
-                    "description": "Flag to enable or disable quotes around 'debuggerPath'",
+                    "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set, the debugger command will no longer be automatically quoted.",
                     "default": true
                 },
                 "windows": {
