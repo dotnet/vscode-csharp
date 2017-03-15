@@ -30,7 +30,7 @@ See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.8.0/C
 
 ### Supported Operating Systems for Debugging
 
-* Currently, the C# debugger supports the following operatings systems:
+* Currently, the C# debugger supports the following operating systems:
 
   * Windows (64-bit only)
   * macOS
