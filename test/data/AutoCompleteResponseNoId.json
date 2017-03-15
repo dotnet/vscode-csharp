@@ -1,0 +1,11 @@
+{
+    "@context":{
+        "@vocab":"http://schema.nuget.org/schema#"
+    },
+    "totalHits":67541,
+    "lastReopen":"2017-02-15T11:22:56.2233078Z",
+    "index":"v3-lucene0-v2v3-20170110",
+    "data":[
+        "Newtonsoft.Json","NUnit","EntityFramework","jQuery","bootstrap","AutoMapper","log4net","Microsoft.AspNet.Mvc","NUnit.Runners","angularjs"
+    ]
+}

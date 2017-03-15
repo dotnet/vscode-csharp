@@ -1,0 +1,146 @@
+{
+  "version": "3.0.0-beta.1",
+  "resources": [
+    {
+      "@id": "https://api-v2v3search-0.nuget.org/query",
+      "@type": "SearchQueryService",
+      "comment": "Query endpoint of NuGet Search service (primary)"
+    },
+    {
+      "@id": "https://api-v2v3search-1.nuget.org/query",
+      "@type": "SearchQueryService",
+      "comment": "Query endpoint of NuGet Search service (secondary)"
+    },
+    {
+      "@id": "https://api-v2v3search-0.nuget.org/autocomplete",
+      "@type": "SearchAutocompleteService",
+      "comment": "Autocomplete endpoint of NuGet Search service (primary)"
+    },
+    {
+      "@id": "https://api-v2v3search-1.nuget.org/autocomplete",
+      "@type": "SearchAutocompleteService",
+      "comment": "Autocomplete endpoint of NuGet Search service (secondary)"
+    },
+    {
+      "@id": "https://api-v2v3search-0.nuget.org/",
+      "@type": "SearchGalleryQueryService/3.0.0-rc",
+      "comment": "Azure Website based Search Service used by Gallery (primary)"
+    },
+    {
+      "@id": "https://api-v2v3search-1.nuget.org/",
+      "@type": "SearchGalleryQueryService/3.0.0-rc",
+      "comment": "Azure Website based Search Service used by Gallery (secondary)"
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration1/",
+      "@type": "RegistrationsBaseUrl",
+      "comment": "Base URL of Azure storage where NuGet package registration info is stored"
+    },
+    {
+      "@id": "https://api.nuget.org/v3-flatcontainer/",
+      "@type": "PackageBaseAddress/3.0.0",
+      "comment": "Base URL of Azure storage where NuGet package registration info for NET Core is stored, in the format https://api.nuget.org/v3-flatcontainer/{id-lower}/{version-lower}.{version-lower}.nupkg"
+    },
+    {
+      "@id": "https://www.nuget.org/api/v2",
+      "@type": "LegacyGallery"
+    },
+    {
+      "@id": "https://www.nuget.org/api/v2",
+      "@type": "LegacyGallery/2.0.0"
+    },
+    {
+      "@id": "https://www.nuget.org/api/v2/package",
+      "@type": "PackagePublish/2.0.0"
+    },	
+    {
+      "@id": "https://api-v2v3search-0.nuget.org/query",
+      "@type": "SearchQueryService/3.0.0-rc",
+      "comment": "Query endpoint of NuGet Search service (primary) used by RC clients"
+    },
+    {
+      "@id": "https://api-v2v3search-1.nuget.org/query",
+      "@type": "SearchQueryService/3.0.0-rc",
+      "comment": "Query endpoint of NuGet Search service (secondary) used by RC clients"
+    },
+    {
+      "@id": "https://api-v2v3search-0.nuget.org/autocomplete",
+      "@type": "SearchAutocompleteService/3.0.0-rc",
+      "comment": "Autocomplete endpoint of NuGet Search service (primary) used by RC clients"
+    },
+    {
+      "@id": "https://api-v2v3search-1.nuget.org/autocomplete",
+      "@type": "SearchAutocompleteService/3.0.0-rc",
+      "comment": "Autocomplete endpoint of NuGet Search service (secondary) used by RC clients"
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration1/",
+      "@type": "RegistrationsBaseUrl/3.0.0-rc",
+      "comment": "Base URL of Azure storage where NuGet package registration info is stored used by RC clients"
+    },
+    {
+      "@id": "https://www.nuget.org/packages/{id}/{version}/ReportAbuse",
+      "@type": "ReportAbuseUriTemplate/3.0.0-rc",
+      "comment": "URI template used by NuGet Client to construct Report Abuse URL for packages used by RC clients"
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration1/{id-lower}/index.json",
+      "@type": "PackageDisplayMetadataUriTemplate/3.0.0-rc",
+      "comment": "URI template used by NuGet Client to construct display metadata for Packages using ID"
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration1/{id-lower}/{version-lower}.json",
+      "@type": "PackageVersionDisplayMetadataUriTemplate/3.0.0-rc",
+      "comment": "URI template used by NuGet Client to construct display metadata for Packages using ID, Version"
+    },
+    {
+      "@id": "https://api-v2v3search-0.nuget.org/query",
+      "@type": "SearchQueryService/3.0.0-beta",
+      "comment": "Query endpoint of NuGet Search service (primary) used by beta clients"
+    },
+    {
+      "@id": "https://api-v2v3search-1.nuget.org/query",
+      "@type": "SearchQueryService/3.0.0-beta",
+      "comment": "Query endpoint of NuGet Search service (secondary) used by beta clients"
+    },
+    {
+      "@id": "https://api-v2v3search-0.nuget.org/autocomplete",
+      "@type": "SearchAutocompleteService/3.0.0-beta",
+      "comment": "Autocomplete endpoint of NuGet Search service (primary) used by beta clients"
+    },
+    {
+      "@id": "https://api-v2v3search-1.nuget.org/autocomplete",
+      "@type": "SearchAutocompleteService/3.0.0-beta",
+      "comment": "Autocomplete endpoint of NuGet Search service (secondary) used by beta clients"
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration1/",
+      "@type": "RegistrationsBaseUrl/3.0.0-beta",
+      "comment": "Base URL of Azure storage where NuGet package registration info is stored used by Beta clients"
+    },
+    {
+      "@id": "https://www.nuget.org/packages/{id}/{version}/ReportAbuse",
+      "@type": "ReportAbuseUriTemplate/3.0.0-beta",
+      "comment": "URI template used by NuGet Client to construct Report Abuse URL for packages"
+    },
+    {
+      "@id": "https://api.nuget.org/v3/stats0/totals.json",
+      "@type": "TotalStats/3.0.0-rc",
+      "comment": "Endpoint to get stats totals to display in nuget.org home page"
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration1-gz/",
+      "@type": "RegistrationsBaseUrl/3.4.0",
+      "comment": "Base URL of Azure storage where NuGet package registration info is stored in GZIP format."
+    },
+	{
+	  "@id": "https://api.nuget.org/v3/catalog0/index.json",
+	  "@type": "Catalog/3.0.0",
+      "comment": "Index of the NuGet package catalog."
+	}
+  ],
+  "@context": {
+    "@vocab": "http://schema.nuget.org/services#",
+    "comment": "http://www.w3.org/2000/01/rdf-schema#comment"
+  }
+}

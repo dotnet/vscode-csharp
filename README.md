@@ -52,8 +52,8 @@ The C# extension now supports basic debugging capabilities! See http://aka.ms/vs
 ### Development
 
 First install:
-* Node.js (newer than 4.3.1)
-* Npm (newer 2.14.12)
+* Node.js (6.9.5 or newer)
+* Npm (3.10.2 or newer)
 
 To **run and develop** do the following:
 
