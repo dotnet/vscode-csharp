@@ -4,7 +4,7 @@
 * When opening a .csproj-based .NET Core project in VS Code, the C# extension will not activate until a C# file is opened in the editor. ([#1150](https://github.com/OmniSharp/omnisharp-vscode/issues/1150))
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
 
-## 1.9.0 _(Not Yet Release)_
+## 1.9.0 _(Not Yet Released)_
 
 #### Other Updates and Fixes
 
