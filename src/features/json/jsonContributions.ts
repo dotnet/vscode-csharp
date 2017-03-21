@@ -45,7 +45,7 @@ export function addJSONProviders(): Disposable {
     let contributions = [new ProjectJSONContribution(xhr)];
     contributions.forEach(contribution => {
         let selector = contribution.getDocumentSelector();
-        subscriptions.push(languages.registerCompletionItemProvider(selector, new JSONCompletionItemProvider(contribution)));
+        subscriptions.push(languages.registerCompletionItemProvider(selector, new JSONCompletionItemProvider(contribution), '"', ':'));
         subscriptions.push(languages.registerHoverProvider(selector, new JSONHoverProvider(contribution)));
     });
 
