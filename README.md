@@ -60,7 +60,7 @@ To **run and develop** do the following:
 * Run `npm i`
 * Run `npm run compile`
 * Open in Visual Studio Code (`code .`)
-* *Optional:* run `tsc -w`, make code changes (on Windows, try `start node ".\node_modules\typescript\bin\tsc -w"`)
+* *Optional:* run `npm run watch`, make code changes
 * Press <kbd>F5</kbd> to debug
 
 To **test** do the following: `npm run test` or <kbd>F5</kbd> in VS Code with the "Launch Tests" debug configuration.
