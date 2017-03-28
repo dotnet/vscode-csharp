@@ -6,6 +6,12 @@
 
 ## 1.9.0 _(Not Yet Released)_
 
+#### Debugger
+
+* **Hot issue:** Fixes debugging on OSX Sierra ([#1220](https://github.com/OmniSharp/omnisharp-vscode/issues/1220))
+* Several bug fixes that addressed problems with launch ([#1318](https://github.com/OmniSharp/omnisharp-vscode/issues/1318), [#1335](https://github.com/OmniSharp/omnisharp-vscode/issues/1335), [#1336](https://github.com/OmniSharp/omnisharp-vscode/issues/1336))
+* Fix issue where VS Code would incorrectly display threads as paused ([#1317](https://github.com/OmniSharp/omnisharp-vscode/issues/1317))
+
 #### Other Updates and Fixes
 
 * Improvements made to project.json package completion experience. ([#1338](https://github.com/OmniSharp/omnisharp-vscode/pull/1338))
