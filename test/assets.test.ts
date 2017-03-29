@@ -19,7 +19,7 @@ suite("Asset generation: project.json", () => {
         let buildPath = tasksJson.tasks[0].args[0];
 
         // ${workspaceRoot}/project.json
-        let segments = buildPath.split(path.sep);
+        let segments = buildPath.split(path.posix.sep);
         segments.should.deep.equal(['${workspaceRoot}', 'project.json']);
     });
 
@@ -31,7 +31,7 @@ suite("Asset generation: project.json", () => {
         let buildPath = tasksJson.tasks[0].args[0];
 
         // ${workspaceRoot}/nested/project.json
-        let segments = buildPath.split(path.sep);
+        let segments = buildPath.split(path.posix.sep);
         segments.should.deep.equal(['${workspaceRoot}', 'nested', 'project.json']);
     });
 
@@ -43,7 +43,7 @@ suite("Asset generation: project.json", () => {
         let programPath = launchJson.configurations[0].program;
 
         // ${workspaceRoot}/bin/Debug/netcoreapp1.0/testApp.dll
-        let segments = programPath.split(path.sep);
+        let segments = programPath.split(path.posix.sep);
         segments.should.deep.equal(['${workspaceRoot}', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 
@@ -55,7 +55,7 @@ suite("Asset generation: project.json", () => {
         let programPath = launchJson.configurations[0].program;
 
         // ${workspaceRoot}/nested/bin/Debug/netcoreapp1.0/testApp.dll
-        let segments = programPath.split(path.sep);
+        let segments = programPath.split(path.posix.sep);
         segments.should.deep.equal(['${workspaceRoot}', 'nested', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 
@@ -67,7 +67,7 @@ suite("Asset generation: project.json", () => {
         let programPath = launchJson.configurations[0].program;
 
         // ${workspaceRoot}/bin/Debug/netcoreapp1.0/testApp.dll
-        let segments = programPath.split(path.sep);
+        let segments = programPath.split(path.posix.sep);
         segments.should.deep.equal(['${workspaceRoot}', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 
@@ -79,7 +79,7 @@ suite("Asset generation: project.json", () => {
         let programPath = launchJson.configurations[0].program;
 
         // ${workspaceRoot}/nested/bin/Debug/netcoreapp1.0/testApp.dll
-        let segments = programPath.split(path.sep);
+        let segments = programPath.split(path.posix.sep);
         segments.should.deep.equal(['${workspaceRoot}', 'nested', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 });
@@ -127,7 +127,7 @@ suite("Asset generation: csproj", () => {
         let buildPath = tasksJson.tasks[0].args[0];
 
         // ${workspaceRoot}/project.json
-        let segments = buildPath.split(path.sep);
+        let segments = buildPath.split(path.posix.sep);
         segments.should.deep.equal(['${workspaceRoot}', 'testApp.csproj']);
     });
 
@@ -139,7 +139,7 @@ suite("Asset generation: csproj", () => {
         let buildPath = tasksJson.tasks[0].args[0];
 
         // ${workspaceRoot}/nested/project.json
-        let segments = buildPath.split(path.sep);
+        let segments = buildPath.split(path.posix.sep);
         segments.should.deep.equal(['${workspaceRoot}', 'nested', 'testApp.csproj']);
     });
 
@@ -151,7 +151,7 @@ suite("Asset generation: csproj", () => {
         let programPath = launchJson.configurations[0].program;
 
         // ${workspaceRoot}/bin/Debug/netcoreapp1.0/testApp.dll
-        let segments = programPath.split(path.sep);
+        let segments = programPath.split(path.posix.sep);
         segments.should.deep.equal(['${workspaceRoot}', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 
@@ -163,7 +163,7 @@ suite("Asset generation: csproj", () => {
         let programPath = launchJson.configurations[0].program;
 
         // ${workspaceRoot}/nested/bin/Debug/netcoreapp1.0/testApp.dll
-        let segments = programPath.split(path.sep);
+        let segments = programPath.split(path.posix.sep);
         segments.should.deep.equal(['${workspaceRoot}', 'nested', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 
@@ -175,7 +175,7 @@ suite("Asset generation: csproj", () => {
         let programPath = launchJson.configurations[0].program;
 
         // ${workspaceRoot}/bin/Debug/netcoreapp1.0/testApp.dll
-        let segments = programPath.split(path.sep);
+        let segments = programPath.split(path.posix.sep);
         segments.should.deep.equal(['${workspaceRoot}', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 
@@ -187,7 +187,7 @@ suite("Asset generation: csproj", () => {
         let programPath = launchJson.configurations[0].program;
 
         // ${workspaceRoot}/nested/bin/Debug/netcoreapp1.0/testApp.dll
-        let segments = programPath.split(path.sep);
+        let segments = programPath.split(path.posix.sep);
         segments.should.deep.equal(['${workspaceRoot}', 'nested', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 });
