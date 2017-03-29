@@ -15,6 +15,7 @@
 #### Other Updates and Fixes
 
 * Improvements made to project.json package completion experience. ([#1338](https://github.com/OmniSharp/omnisharp-vscode/pull/1338))
+* Assets for building and debugging are now always generated with POSIX style paths. ([#1354](https://github.com/OmniSharp/omnisharp-vscode/pull/1354))
 
 ## 1.8.0 (March 10, 2017)
 

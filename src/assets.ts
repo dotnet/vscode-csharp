@@ -194,15 +194,20 @@ export class AssetGenerator {
         return result;
     }
 
+    private convertNativePathToPosix(pathString: string) : string {
+        let parts = pathString.split(path.sep);
+        return parts.join(path.posix.sep);
+    }
+
     private createLaunchConfiguration(): ConsoleLaunchConfiguration {
         return {
             name: '.NET Core Launch (console)',
             type: 'coreclr',
             request: 'launch',
             preLaunchTask: 'build',
-            program: this.computeProgramPath(),
+            program: this.convertNativePathToPosix(this.computeProgramPath()),
             args: [],
-            cwd: this.computeWorkingDirectory(),
+            cwd: this.convertNativePathToPosix(this.computeWorkingDirectory()),
             console: "internalConsole",
             stopAtEntry: false,
             internalConsoleOptions: "openOnSessionStart"
@@ -215,9 +220,9 @@ export class AssetGenerator {
             type: 'coreclr',
             request: 'launch',
             preLaunchTask: 'build',
-            program: this.computeProgramPath(),
+            program: this.convertNativePathToPosix(this.computeProgramPath()),
             args: [],
-            cwd: this.computeWorkingDirectory(),
+            cwd: this.convertNativePathToPosix(this.computeWorkingDirectory()),
             stopAtEntry: false,
             internalConsoleOptions: "openOnSessionStart",
             launchBrowser: {
@@ -282,7 +287,7 @@ export class AssetGenerator {
 
         return {
             taskName: 'build',
-            args: [buildPath],
+            args: [this.convertNativePathToPosix(buildPath)],
             isBuildCommand: true,
             problemMatcher: '$msCompile'
         };
