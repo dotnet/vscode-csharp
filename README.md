@@ -18,6 +18,10 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-with-VS-Code-using-CSharp-and-NET-Core)
 
+### What's New in 1.8.1
+
+Fixes debugging on macOS Sierra 10.12.4.
+
 ### What's New in 1.8.0
 
 * Added support for "Go to Implementation" and "Peek Implementation" 
