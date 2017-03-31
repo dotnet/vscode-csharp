@@ -258,24 +258,17 @@ export class AssetGenerator {
     }
 
     public createLaunchJson(isWebProject: boolean): any {
-        let version = '0.2.0';
         if (!isWebProject) {
-            return {
-                version: version,
-                configurations: [
-                    this.createLaunchConfiguration(),
-                    this.createAttachConfiguration()
-                ]
-            };
+            return [
+                this.createLaunchConfiguration(),
+                this.createAttachConfiguration()
+            ];
         }
         else {
-            return {
-                version: version,
-                configurations: [
-                    this.createWebLaunchConfiguration(),
-                    this.createAttachConfiguration()
-                ]
-            };
+            return [
+                this.createWebLaunchConfiguration(),
+                this.createAttachConfiguration()
+            ];
         }
     }
 
@@ -488,7 +481,18 @@ function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: Operati
 
         const isWebProject = generator.hasWebServerDependency();
         const launchJson = generator.createLaunchJson(isWebProject);
-        const launchJsonText = JSON.stringify(launchJson, null, '    ');
+
+        const configurationsMassaged = JSON.stringify(launchJson, null, '   ').split('\n').map(line => '   ' + line).join('\n').trim();
+
+        const launchJsonText = [
+			'{',
+			'\t// Use IntelliSense to find out which attributes exist for C# debugging',
+			'\t// Use hover for the description of the existing attributes',
+			'\t// For further information visit https://go.microsoft.com/fwlink/?linkid=830387',
+			'\t"version": "0.2.0",',
+			'\t"configurations": ' + configurationsMassaged,
+			'}'
+		].join('\n');
 
         fs.writeFile(generator.launchJsonPath, launchJsonText, err => {
             if (err) {
