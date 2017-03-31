@@ -1,10 +1,10 @@
-﻿#Instructions for setting up the .NET Core debugger
+﻿# Instructions for setting up the .NET Core debugger
 This page gives you detailed instructions on how to debug code running under .NET Core in VS Code. 
 
-####Your Feedback​
+#### Your Feedback​
 File bugs and feature requests [here](https://github.com/OmniSharp/omnisharp-vscode/issues) and [join our insiders group](http://landinghub.visualstudio.com/dotnetcoreinsiders) to help us build great tooling for .NET Core.
 
-####Requirements
+#### Requirements
 * Requires .NET Core 1.0 (rc2 are earlier releases are not supported)
 * X64 only
 * Supported operating systems: 
@@ -12,7 +12,7 @@ File bugs and feature requests [here](https://github.com/OmniSharp/omnisharp-vsc
     * Linux: Red Hat Enterprise Linux 7.2+, Ubuntu 14.04 LTS, Ubuntu 16.04 LTS, Debian 8.2+, Linux Mint 17+, CentOS 7.1+, Oracle Linux 7.1+, Fedora 23, openSUSE 13.2
     * Windows: 7+
 
-###First Time setup
+### First Time setup
 ##### 1: Get Visual Studio Code
 Install Visual Studio Code (VSC). Pick the latest VSC version from here: https://code.visualstudio.com Make sure it is at least 1.5. 
 
@@ -35,9 +35,8 @@ If you have previously installed the C# extension, make sure that you have a rec
 The first time that C# code is opened in VS Code, the extension will download the platform-specific files needed for debugging and editing. Debugging and editor features will not work until these steps finish.
 
 
-###Once for each project
+### Once for each project
 The following steps have to executed for every project. 
-
 ##### 1: Get a project
 You can start from scratch by creating an empty project with `dotnet new`. Begin by opening the terminal in Visual Studio Code (`View->Integrated Terminal`) and type these commands:
 
@@ -80,7 +79,7 @@ If your code has multiple projects or you would rather generate these files by h
 ##### 4: Start debugging
 Your project is now all set. Set a breakpoint or two where you want to stop, click the debugger play button (or press <kbd>F5</kbd>) and you are off.
 
-###Debugging Code compiled on another computer
+### Debugging Code compiled on another computer
 If your code was built on a different computer from where you would like to run in there are a few things to keep in mind --
 
 * **Source Maps**: Unless your local source code is at exactly the same path as where the code was originally built you will need to add a [sourceFileMap](#source-file-map) to launch.json.
