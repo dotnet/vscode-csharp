@@ -1,10 +1,10 @@
-﻿#Instructions for setting up the .NET Core debugger
+﻿# Instructions for setting up the .NET Core debugger
 This page gives you detailed instructions on how to debug code running under .NET Core in VS Code. 
 
-####Your Feedback​
+#### Your Feedback​
 File bugs and feature requests [here](https://github.com/OmniSharp/omnisharp-vscode/issues) and [join our insiders group](http://landinghub.visualstudio.com/dotnetcoreinsiders) to help us build great tooling for .NET Core.
 
-####Requirements
+#### Requirements
 * Requires .NET Core 1.0 (rc2 are earlier releases are not supported)
 * X64 only
 * Supported operating systems: 
@@ -12,7 +12,7 @@ File bugs and feature requests [here](https://github.com/OmniSharp/omnisharp-vsc
     * Linux: Red Hat Enterprise Linux 7.2+, Ubuntu 14.04 LTS, Ubuntu 16.04 LTS, Debian 8.2+, Linux Mint 17+, CentOS 7.1+, Oracle Linux 7.1+, Fedora 23, openSUSE 13.2
     * Windows: 7+
 
-###First Time setup
+### First Time setup
 ##### 1: Get Visual Studio Code
 Install Visual Studio Code (VSC). Pick the latest VSC version from here: https://code.visualstudio.com Make sure it is at least 1.5. 
 
@@ -35,7 +35,7 @@ If you have previously installed the C# extension, make sure that you have a rec
 The first time that C# code is opened in VS Code, the extension will download the platform-specific files needed for debugging and editing. Debugging and editor features will not work until these steps finish.
 
 
-###Once for each project
+### Once for each project
 The following steps have to executed for every project. 
 
 ##### 1: Get a project
@@ -80,15 +80,15 @@ If your code has multiple projects or you would rather generate these files by h
 ##### 4: Start debugging
 Your project is now all set. Set a breakpoint or two where you want to stop, click the debugger play button (or press <kbd>F5</kbd>) and you are off.
 
-###Debugging Code compiled on another computer
+### Debugging Code compiled on another computer
 If your code was built on a different computer from where you would like to run in there are a few things to keep in mind --
 
 * **Source Maps**: Unless your local source code is at exactly the same path as where the code was originally built you will need to add a [sourceFileMap](#source-file-map) to launch.json.
 * **Portable PDBs**: If the code was built on Windows, it might have been built using Windows PDBs instead of portable PDBs, but the C# extension only supports portable PDBs. See the [portable PDB documentation](https://github.com/OmniSharp/omnisharp-vscode/wiki/Portable-PDBs#how-to-generate-portable-pdbs) for more information.
 * **Debug vs. Release**: It is much easier to debug code which has been compiled in the `Debug` configuration. So unless the issue you are looking at only reproduces with optimizations, it is much better to use Debug bits. If you do need to debug optimized code, you will need to disable [justMyCode](#just-my-code) in launch.json.
 
-####More things to configure In launch.json
-#####Just My Code
+#### More things to configure In launch.json
+##### Just My Code
 You can optionally disable justMyCode by setting it to "false". You should disable Just My Code when you are trying to debug into a library that you pulled down which doesn't have symbols or is optimized.
 
     "justMyCode":false*
@@ -98,26 +98,26 @@ Just My Code is a set of features that makes it easier to focus on debugging you
 * User-unhandled exceptions: automatically stop the debugger just before exceptions are about to be caught by the framework
 * Just My Code stepping: when stepping, if framework code calls back to user code, automatically stop.
 
-#####Source File Map
+##### Source File Map
 You can optionally configure a file by file mapping by providing map following this schema:
 
     "sourceFileMap": {
         "C:\foo":"/home/me/foo"
     }
 
-#####Symbol Path
+##### Symbol Path
 You can optionally provide paths to symbols following this schema:
 
     "symbolPath": [ "/Volumes/symbols" ]
 
-#####Environment variables
+##### Environment variables
 Environment variables may be passed to your program using this schema:
 
     "env": {
         "myVariableName":"theValueGoesHere"
     }
 
-#####Console (terminal) window
+##### Console (terminal) window
 By default, processes are launched with their console output (stdout/stderr) going to the VS Code Debugger Console. This is useful for executables that take their input from the network, files, etc. But this does NOT work for applications that want to read from the console (ex: `Console.ReadLine`). For these applications, use a setting such as the following:
 
     "console": "integratedTerminal"
