@@ -184,6 +184,7 @@ export class AssetGenerator {
     "type": "coreclr",
     "request": "launch",
     "preLaunchTask": "build",
+    // If you have changed target frameworks, make sure to update the program path.
     "program": "${this.convertNativePathToPosix(this.computeProgramPath())}",
     "args": [],
     "cwd": "${this.convertNativePathToPosix(this.computeWorkingDirectory())}",
