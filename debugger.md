@@ -87,49 +87,7 @@ If your code was built on a different computer from where you would like to run 
 * **Portable PDBs**: If the code was built on Windows, it might have been built using Windows PDBs instead of portable PDBs, but the C# extension only supports portable PDBs. See the [portable PDB documentation](https://github.com/OmniSharp/omnisharp-vscode/wiki/Portable-PDBs#how-to-generate-portable-pdbs) for more information.
 * **Debug vs. Release**: It is much easier to debug code which has been compiled in the `Debug` configuration. So unless the issue you are looking at only reproduces with optimizations, it is much better to use Debug bits. If you do need to debug optimized code, you will need to disable [justMyCode](#just-my-code) in launch.json.
 
-####More things to configure In launch.json
-#####Just My Code
-You can optionally disable justMyCode by setting it to "false". You should disable Just My Code when you are trying to debug into a library that you pulled down which doesn't have symbols or is optimized.
-
-    "justMyCode":false*
-
-Just My Code is a set of features that makes it easier to focus on debugging your code by hiding some of the details of optimized libraries that you might be using, like the .NET Framework itself. The most important sub parts of this feature are --
-
-* User-unhandled exceptions: automatically stop the debugger just before exceptions are about to be caught by the framework
-* Just My Code stepping: when stepping, if framework code calls back to user code, automatically stop.
-
-#####Source File Map
-You can optionally configure a file by file mapping by providing map following this schema:
-
-    "sourceFileMap": {
-        "C:\foo":"/home/me/foo"
-    }
-
-#####Symbol Path
-You can optionally provide paths to symbols following this schema:
-
-    "symbolPath": [ "/Volumes/symbols" ]
-
-#####Environment variables
-Environment variables may be passed to your program using this schema:
-
-    "env": {
-        "myVariableName":"theValueGoesHere"
-    }
-
-#####Console (terminal) window
-By default, processes are launched with their console output (stdout/stderr) going to the VS Code Debugger Console. This is useful for executables that take their input from the network, files, etc. But this does NOT work for applications that want to read from the console (ex: `Console.ReadLine`). For these applications, use a setting such as the following:
-
-    "console": "integratedTerminal"
-
-When this is set to `integratedTerminal` the target process will run inside [VS Code's integrated terminal](https://code.visualstudio.com/docs/editor/integrated-terminal). Click the 'Terminal' tab in the tab group beneath the editor to interact with your application.
-
-When this is set to `externalTerminal` the target process will run in a separate terminal.
-
-##### Stepping into properties and operators
-The debugger steps over properties and operators in managed code by default. In most cases, this provides a better debugging experience. To change this and enable stepping into properties or operators add:
-
-    "enableStepFiltering": false
+#### [Configurating launch.json for C# Debugging](debugger-launchjson.md)
 
 #### Attach Support
 The C# debugger supports attaching to processes. To do this, switch to the Debug tab, and open the configuration drop down.

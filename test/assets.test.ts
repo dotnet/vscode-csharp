@@ -7,6 +7,7 @@ import { should } from 'chai';
 import * as path from 'path';
 import * as protocol from '../src/omnisharp/protocol';
 import { AssetGenerator } from '../src/assets';
+import * as json from 'comment-json';
 
 suite("Asset generation: project.json", () => {
     suiteSetup(() => should());
@@ -39,8 +40,8 @@ suite("Asset generation: project.json", () => {
         let rootPath = path.resolve('testRoot');
         let info = createDotNetWorkspaceInformation(rootPath, 'testApp.dll', 'netcoreapp1.0');
         let generator = new AssetGenerator(info, rootPath);
-        let launchJson = generator.createLaunchJson(/*isWebProject*/ false);
-        let programPath = launchJson.configurations[0].program;
+        let launchJson = json.parse(generator.createLaunchJson(/*isWebProject*/ false), null, true);
+        let programPath = launchJson[0].program;
 
         // ${workspaceRoot}/bin/Debug/netcoreapp1.0/testApp.dll
         let segments = programPath.split(path.posix.sep);
@@ -51,8 +52,8 @@ suite("Asset generation: project.json", () => {
         let rootPath = path.resolve('testRoot');
         let info = createDotNetWorkspaceInformation(path.join(rootPath, 'nested'), 'testApp.dll', 'netcoreapp1.0');
         let generator = new AssetGenerator(info, rootPath);
-        let launchJson = generator.createLaunchJson(/*isWebProject*/ false);
-        let programPath = launchJson.configurations[0].program;
+        let launchJson = json.parse(generator.createLaunchJson(/*isWebProject*/ false), null, true);
+        let programPath = launchJson[0].program;
 
         // ${workspaceRoot}/nested/bin/Debug/netcoreapp1.0/testApp.dll
         let segments = programPath.split(path.posix.sep);
@@ -63,8 +64,8 @@ suite("Asset generation: project.json", () => {
         let rootPath = path.resolve('testRoot');
         let info = createDotNetWorkspaceInformation(rootPath, 'testApp.dll', 'netcoreapp1.0');
         let generator = new AssetGenerator(info, rootPath);
-        let launchJson = generator.createLaunchJson(/*isWebProject*/ true);
-        let programPath = launchJson.configurations[0].program;
+        let launchJson = json.parse(generator.createLaunchJson(/*isWebProject*/ true), null, true);
+        let programPath = launchJson[0].program;
 
         // ${workspaceRoot}/bin/Debug/netcoreapp1.0/testApp.dll
         let segments = programPath.split(path.posix.sep);
@@ -75,8 +76,8 @@ suite("Asset generation: project.json", () => {
         let rootPath = path.resolve('testRoot');
         let info = createDotNetWorkspaceInformation(path.join(rootPath, 'nested'), 'testApp.dll', 'netcoreapp1.0');
         let generator = new AssetGenerator(info, rootPath);
-        let launchJson = generator.createLaunchJson(/*isWebProject*/ true);
-        let programPath = launchJson.configurations[0].program;
+        let launchJson = json.parse(generator.createLaunchJson(/*isWebProject*/ true), null, true);
+        let programPath = launchJson[0].program;
 
         // ${workspaceRoot}/nested/bin/Debug/netcoreapp1.0/testApp.dll
         let segments = programPath.split(path.posix.sep);
@@ -147,8 +148,8 @@ suite("Asset generation: csproj", () => {
         let rootPath = path.resolve('testRoot');
         let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netcoreapp1.0');
         let generator = new AssetGenerator(info, rootPath);
-        let launchJson = generator.createLaunchJson(/*isWebProject*/ false);
-        let programPath = launchJson.configurations[0].program;
+        let launchJson = json.parse(generator.createLaunchJson(/*isWebProject*/ false), null, true);
+        let programPath = launchJson[0].program;
 
         // ${workspaceRoot}/bin/Debug/netcoreapp1.0/testApp.dll
         let segments = programPath.split(path.posix.sep);
@@ -159,8 +160,8 @@ suite("Asset generation: csproj", () => {
         let rootPath = path.resolve('testRoot');
         let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'nested', 'testApp.csproj'), 'testApp', 'netcoreapp1.0');
         let generator = new AssetGenerator(info, rootPath);
-        let launchJson = generator.createLaunchJson(/*isWebProject*/ false);
-        let programPath = launchJson.configurations[0].program;
+        let launchJson = json.parse(generator.createLaunchJson(/*isWebProject*/ false), null, true);
+        let programPath = launchJson[0].program;
 
         // ${workspaceRoot}/nested/bin/Debug/netcoreapp1.0/testApp.dll
         let segments = programPath.split(path.posix.sep);
@@ -171,8 +172,8 @@ suite("Asset generation: csproj", () => {
         let rootPath = path.resolve('testRoot');
         let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netcoreapp1.0');
         let generator = new AssetGenerator(info, rootPath);
-        let launchJson = generator.createLaunchJson(/*isWebProject*/ true);
-        let programPath = launchJson.configurations[0].program;
+        let launchJson = json.parse(generator.createLaunchJson(/*isWebProject*/ true), null, true);
+        let programPath = launchJson[0].program;
 
         // ${workspaceRoot}/bin/Debug/netcoreapp1.0/testApp.dll
         let segments = programPath.split(path.posix.sep);
@@ -183,8 +184,8 @@ suite("Asset generation: csproj", () => {
         let rootPath = path.resolve('testRoot');
         let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'nested', 'testApp.csproj'), 'testApp', 'netcoreapp1.0');
         let generator = new AssetGenerator(info, rootPath);
-        let launchJson = generator.createLaunchJson(/*isWebProject*/ true);
-        let programPath = launchJson.configurations[0].program;
+        let launchJson = json.parse(generator.createLaunchJson(/*isWebProject*/ true), null, true);
+        let programPath = launchJson[0].program;
 
         // ${workspaceRoot}/nested/bin/Debug/netcoreapp1.0/testApp.dll
         let segments = programPath.split(path.posix.sep);

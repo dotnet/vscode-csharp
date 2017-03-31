@@ -12,46 +12,6 @@ import * as serverUtils from './omnisharp/utils';
 import * as protocol from './omnisharp/protocol';
 import { tolerantParse } from './json';
 
-interface DebugConfiguration {
-    name: string;
-    type: string;
-    request: string;
-    internalConsoleOptions?: string;
-    sourceFileMap?: any;
-}
-
-interface ConsoleLaunchConfiguration extends DebugConfiguration {
-    preLaunchTask: string;
-    program: string;
-    args: string[];
-    cwd: string;
-    stopAtEntry: boolean;
-    env?: any;
-    console?: string;
-}
-
-interface CommandLine {
-    command: string;
-    args?: string;
-}
-
-interface LaunchBrowserConfiguration {
-    enabled: boolean;
-    args: string;
-    windows?: CommandLine;
-    osx: CommandLine;
-    linux: CommandLine;
-}
-
-interface WebLaunchConfiguration extends ConsoleLaunchConfiguration {
-    launchBrowser: LaunchBrowserConfiguration;
-}
-
-interface AttachConfiguration extends DebugConfiguration {
-    processId: string;
-}
-
-
 export class AssetGenerator {
     public rootPath: string;
     public vscodeFolder: string;
@@ -198,77 +158,89 @@ export class AssetGenerator {
         let parts = pathString.split(path.sep);
         return parts.join(path.posix.sep);
     }
-
-    private createLaunchConfiguration(): ConsoleLaunchConfiguration {
-        return {
-            name: '.NET Core Launch (console)',
-            type: 'coreclr',
-            request: 'launch',
-            preLaunchTask: 'build',
-            program: this.convertNativePathToPosix(this.computeProgramPath()),
-            args: [],
-            cwd: this.convertNativePathToPosix(this.computeWorkingDirectory()),
-            console: "internalConsole",
-            stopAtEntry: false,
-            internalConsoleOptions: "openOnSessionStart"
-        };
+    
+    private createLaunchConfiguration(): string{
+        return `
+{
+    "name": ".NET Core Launch (console)",
+    "type": "coreclr",
+    "request": "launch",
+    "preLaunchTask": "build",
+    // If you have changed target frameworks, make sure to update the program path.
+    "program": "${this.convertNativePathToPosix(this.computeProgramPath())}",
+    "args": [],
+    "cwd": "${this.convertNativePathToPosix(this.computeWorkingDirectory())}",
+    // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+    "console": "internalConsole",
+    "stopAtEntry": false,
+    "internalConsoleOptions": "openOnSessionStart"
+}`;
     }
 
-    private createWebLaunchConfiguration(): WebLaunchConfiguration {
-        return {
-            name: '.NET Core Launch (web)',
-            type: 'coreclr',
-            request: 'launch',
-            preLaunchTask: 'build',
-            program: this.convertNativePathToPosix(this.computeProgramPath()),
-            args: [],
-            cwd: this.convertNativePathToPosix(this.computeWorkingDirectory()),
-            stopAtEntry: false,
-            internalConsoleOptions: "openOnSessionStart",
-            launchBrowser: {
-                enabled: true,
-                args: '${auto-detect-url}',
-                windows: {
-                    command: 'cmd.exe',
-                    args: '/C start ${auto-detect-url}'
-                },
-                osx: {
-                    command: 'open'
-                },
-                linux: {
-                    command: 'xdg-open'
-                }
-            },
-            env: {
-                ASPNETCORE_ENVIRONMENT: "Development"
-            },
-            sourceFileMap: {
-                "/Views": "${workspaceRoot}/Views"
-            }
-        };
+    private createWebLaunchConfiguration(): string {
+        return `
+{
+    "name": ".NET Core Launch (web)",
+    "type": "coreclr",
+    "request": "launch",
+    "preLaunchTask": "build",
+    "program": "${this.convertNativePathToPosix(this.computeProgramPath())}",
+    "args": [],
+    "cwd": "${this.convertNativePathToPosix(this.computeWorkingDirectory())}",
+    "stopAtEntry": false,
+    "internalConsoleOptions": "openOnSessionStart",
+    "launchBrowser": {
+        "enabled": true,
+        "args": "\${auto-detect-url}",
+        "windows": {
+            "command": "cmd.exe",
+            "args": "/C start \${auto-detect-url}"
+        },
+        "osx": {
+            "command": "open"
+        },
+        "linux": {
+            "command": "xdg-open"
+        }
+    },
+    "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+    },
+    "sourceFileMap": {
+        "/Views": "\${workspaceRoot}/Views"
+    }
+}`;
     }
 
-    private createAttachConfiguration(): AttachConfiguration {
-        return {
-            name: '.NET Core Attach',
-            type: 'coreclr',
-            request: 'attach',
-            processId: "${command:pickProcess}"
-        };
+    // AttachConfiguration
+    private createAttachConfiguration(): string {
+        return `
+{
+    "name": ".NET Core Attach",
+    "type": "coreclr",
+    "request": "attach",
+    "processId": "\${command:pickProcess}"
+}`;
     }
 
-    public createLaunchJson(isWebProject: boolean): any {
+    public createLaunchJson(isWebProject: boolean): string {
         if (!isWebProject) {
-            return [
-                this.createLaunchConfiguration(),
-                this.createAttachConfiguration()
-            ];
+            const launchConfigurationsMassaged: string = indentJsonString(this.createLaunchConfiguration());
+            const attachConfigurationsMassaged: string = indentJsonString(this.createAttachConfiguration());
+            return `
+[
+    ${launchConfigurationsMassaged},
+    ${attachConfigurationsMassaged}
+]`;
         }
         else {
-            return [
-                this.createWebLaunchConfiguration(),
-                this.createAttachConfiguration()
-            ];
+            const webLaunchConfigurationsMassaged: string = indentJsonString(this.createWebLaunchConfiguration());
+            const attachConfigurationsMassaged: string = indentJsonString(this.createAttachConfiguration());
+            return `
+[
+    ${webLaunchConfigurationsMassaged},
+    ${attachConfigurationsMassaged}
+]`;
         }
     }
 
@@ -473,6 +445,10 @@ function addTasksJsonIfNecessary(generator: AssetGenerator, operations: Operatio
     });
 }
 
+function indentJsonString(json: string, numSpaces: number = 4): string {
+    return json.split('\n').map(line => ' '.repeat(numSpaces) + line).join('\n').trim();
+}
+
 function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: Operations) {
     return new Promise<void>((resolve, reject) => {
         if (!operations.addLaunchJson) {
@@ -480,21 +456,20 @@ function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: Operati
         }
 
         const isWebProject = generator.hasWebServerDependency();
-        const launchJson = generator.createLaunchJson(isWebProject);
+        const launchJson: string = generator.createLaunchJson(isWebProject);
 
-        const configurationsMassaged = JSON.stringify(launchJson, null, '   ').split('\n').map(line => '   ' + line).join('\n').trim();
+        const configurationsMassaged: string = indentJsonString(launchJson);
 
-        const launchJsonText = [
-			'{',
-			'\t// Use IntelliSense to find out which attributes exist for C# debugging',
-			'\t// Use hover for the description of the existing attributes',
-			'\t// For further information visit https://go.microsoft.com/fwlink/?linkid=830387',
-			'\t"version": "0.2.0",',
-			'\t"configurations": ' + configurationsMassaged,
-			'}'
-		].join('\n');
+        const launchJsonText = `
+{
+   // Use IntelliSense to find out which attributes exist for C# debugging
+   // Use hover for the description of the existing attributes
+   // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+   "version": "0.2.0",
+   "configurations": ${configurationsMassaged}
+}`;
 
-        fs.writeFile(generator.launchJsonPath, launchJsonText, err => {
+        fs.writeFile(generator.launchJsonPath, launchJsonText.trim(), err => {
             if (err) {
                 return reject(err);
             }
