@@ -46,7 +46,6 @@
   },
   "devDependencies": {
     "@types/chai": "^3.4.34",
-    "@types/comment-json": "^1.1.0",
     "@types/fs-extra": "0.0.35",
     "@types/mkdirp": "^0.3.29",
     "@types/mocha": "^2.2.32",
@@ -54,7 +53,6 @@
     "@types/semver": "^5.3.30",
     "@types/tmp": "0.0.32",
     "chai": "^3.5.0",
-    "comment-json": "^1.1.3",
     "del": "^2.0.2",
     "gulp": "^3.9.1",
     "gulp-mocha": "^2.1.3",

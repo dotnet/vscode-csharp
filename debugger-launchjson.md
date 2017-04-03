@@ -3,7 +3,7 @@ The launch.json file is used to configure the debugger in Visual Studio Code.
 
 Visual Studio Code generates a launch.json with almost all of the required information. 
 If your workspace has only one launchable project, the C# extension will offer to automatically generate this file. 
-If you missed this prompt, you can force the generation by executing the command `.NET: Generate Assets for Build and Debug` from the VS Code command pallet.
+If you missed this prompt, you can force the generation by executing the command `.NET: Generate Assets for Build and Debug` from the VS Code command palette.
 The generated file contains two sections. One that configures debugging for launch and a second that configures debugging for attach.
 
 If you have more than one launchable project, then you will need to modify your launch.json file by hand. 
@@ -13,7 +13,7 @@ Visual Studio Code will still generate a basic template, but you will need to fi
 # Configurating VS Code's debugging behavior
 
 ## PreLaunchTask
-The `preLaunchTask` field runs the associated taskName in tasks.json before debugging your program. You can get the default build prelaunch task by executing the command `Tasks: Configure Tasks Runner` from the VS Code command pallet.
+The `preLaunchTask` field runs the associated taskName in tasks.json before debugging your program. You can get the default build prelaunch task by executing the command `Tasks: Configure Tasks Runner` from the VS Code command palette.
 
 This will create a task that runs `dotnet build`. You can read more about tasks at [https://code.visualstudio.com/docs/editor/tasks](https://code.visualstudio.com/docs/editor/tasks).
 
@@ -22,8 +22,8 @@ The program field is set to the path to the application dll or .NET Core host ex
 
 Example: "${workspaceRoot}/bin/Debug/\<target-framework\>/\<project-name.dll\>" where:
 
-    <target-framework>: (example: 'netstandard1.5') This is the framework that the app is being built for. It is set in the project.json file.
-    <project-name>: (example: 'MyApp') The name of the project being debugged.",
+* \<target-framework\>: (example: 'netstandard1.5') This is the framework that the app is being built for. It is set in the project.json file.
+* \<project-name\>: (example: 'MyApp') The name of the project being debugged.",
 
 ## Cwd
 The working directory of the target process.
@@ -32,7 +32,7 @@ The working directory of the target process.
 These are the arguments that will be passed to your program.
 
 ## Stop at Entry
-If you need to stop at the entry point of the target, you can optionally set stopAtEntry to be "true".
+If you need to stop at the entry point of the target, you can optionally set `stopAtEntry` to be "true".
 
 ## Launch Browser
 The launch browser field can be optionally added if you need to launch with a web browser.
@@ -68,7 +68,7 @@ You can optionally provide paths to symbols following this schema:
     "symbolPath": [ "/Volumes/symbols" ]
 
 ## Just My Code
-You can optionally disable justMyCode by setting it to "false". You should disable Just My Code when you are trying to debug into a library that you pulled down which doesn't have symbols or is optimized.
+You can optionally disable `justMyCode` by setting it to "false". You should disable Just My Code when you are trying to debug into a library that you pulled down which doesn't have symbols or is optimized.
 
     "justMyCode":false*
 
