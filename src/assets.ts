@@ -158,7 +158,7 @@ export class AssetGenerator {
         let parts = pathString.split(path.sep);
         return parts.join(path.posix.sep);
     }
-    
+
     private createLaunchConfiguration(): string{
         return `
 {
@@ -317,10 +317,8 @@ interface Operations {
     addLaunchJson?: boolean;
 }
 
-function hasOperations(operations: Operations) {
-    return operations.addLaunchJson ||
-        operations.updateTasksJson ||
-        operations.addLaunchJson;
+function hasAddOperations(operations: Operations) {
+    return operations.addLaunchJson || operations.addLaunchJson;
 }
 
 function getOperations(generator: AssetGenerator) {
@@ -507,7 +505,7 @@ export function addAssetsIfNecessary(server: OmniSharpServer): Promise<AddAssetR
             if (containsDotNetCoreProjects(info)) {
                 const generator = new AssetGenerator(info);
                 return getOperations(generator).then(operations => {
-                    if (!hasOperations(operations)) {
+                    if (!hasAddOperations(operations)) {
                         return resolve(AddAssetResult.NotApplicable);
                     }
 
@@ -603,7 +601,7 @@ export function generateAssets(server: OmniSharpServer) {
         if (containsDotNetCoreProjects(info)) {
             const generator = new AssetGenerator(info);
             getOperations(generator).then(operations => {
-                if (hasOperations(operations)) {
+                if (hasAddOperations(operations)) {
                     shouldGenerateAssets(generator).then(res => {
                         if (res) {
                             fs.ensureDir(generator.vscodeFolder, err => {
