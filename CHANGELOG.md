@@ -10,11 +10,13 @@
 
 * Several bug fixes that addressed problems with launch ([#1318](https://github.com/OmniSharp/omnisharp-vscode/issues/1318), [#1335](https://github.com/OmniSharp/omnisharp-vscode/issues/1335), [#1336](https://github.com/OmniSharp/omnisharp-vscode/issues/1336))
 * Fix issue where VS Code would incorrectly display threads as paused ([#1317](https://github.com/OmniSharp/omnisharp-vscode/issues/1317))
+* Added new 'csharp.fallbackDebuggerLinuxRuntimeId' configuration setting to control the version of the debugger used on Liunx ([#1361](https://github.com/OmniSharp/omnisharp-vscode/issues/1361)).
 
 #### Other Updates and Fixes
 
 * Improvements made to project.json package completion experience. ([#1338](https://github.com/OmniSharp/omnisharp-vscode/pull/1338))
 * Assets for building and debugging are now always generated with POSIX style paths. ([#1354](https://github.com/OmniSharp/omnisharp-vscode/pull/1354))
+* Improved the extension's runtime dependency download logic to skip re-downloading packages that were already successfully downloaded and installed.
 
 ## 1.8.1 (March 31, 2017)
 

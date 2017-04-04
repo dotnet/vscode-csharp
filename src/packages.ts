@@ -25,6 +25,9 @@ export interface Package {
     architectures: string[];
     binaries: string[];
     tmpFile: tmp.SynchrounousResult;
+
+    // Path to use to test if the package has already been installed
+    installTestPath?: string;
 }
 
 export interface Status {
@@ -55,7 +58,7 @@ export class PackageManager {
     public DownloadPackages(logger: Logger, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
         return this.GetPackages()
             .then(packages => {
-                return util.buildPromiseChain(packages, pkg => downloadPackage(pkg, logger, status, proxy, strictSSL));
+                return util.buildPromiseChain(packages, pkg => maybeDownloadPackage(pkg, logger, status, proxy, strictSSL));
             });
     }
 
@@ -127,6 +130,16 @@ function getNoopStatus(): Status {
         setMessage: text => { },
         setDetail: text => { }
     };
+}
+
+function maybeDownloadPackage(pkg: Package, logger: Logger, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
+    return doesPackageTestPathExist(pkg).then((exists: boolean) => {
+        if (!exists) {
+            return downloadPackage(pkg, logger, status, proxy, strictSSL);
+        } else {
+            logger.appendLine(`Skipping package '${pkg.description}' (already downloaded).`);
+        }
+    });
 }
 
 function downloadPackage(pkg: Package, logger: Logger, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
@@ -243,6 +256,12 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
 }
 
 function installPackage(pkg: Package, logger: Logger, status?: Status): Promise<void> {
+
+    if (!pkg.tmpFile) {
+        // Download of this package was skipped, so there is nothing to install
+        return Promise.resolve();
+    }
+
     status = status || getNoopStatus();
 
     logger.appendLine(`Installing package '${pkg.description}'`);
@@ -250,8 +269,21 @@ function installPackage(pkg: Package, logger: Logger, status?: Status): Promise<
     status.setMessage("$(desktop-download) Installing packages...");
     status.setDetail(`Installing package '${pkg.description}'`);
 
-    return new Promise<void>((resolve, reject) => {
-        if (!pkg.tmpFile || pkg.tmpFile.fd == 0) {
+    return new Promise<void>((resolve, baseReject) => {
+        const reject = (err) => {
+            // If anything goes wrong with unzip, make sure we delete the test path (if there is one)
+            // so we will retry again later
+            const testPath = getPackageTestPath(pkg);
+            if (testPath) {
+                fs.unlink(testPath, unlinkErr => {
+                    baseReject(err);
+                });
+            } else {
+                baseReject(err);
+            }
+        };
+
+        if (pkg.tmpFile.fd == 0) {
             return reject(new PackageError('Downloaded file unavailable', pkg));
         }
 
@@ -311,4 +343,21 @@ function installPackage(pkg: Package, logger: Logger, status?: Status): Promise<
         // Clean up temp file
         pkg.tmpFile.removeCallback();
     });
+}
+
+function doesPackageTestPathExist(pkg: Package) : Promise<boolean> {
+    const testPath = getPackageTestPath(pkg);
+    if (testPath) {
+        return util.fileExists(testPath);
+    } else {
+        return Promise.resolve(false);
+    }
+}
+
+function getPackageTestPath(pkg: Package) : string {
+    if (pkg.installTestPath) {
+        return path.join(util.getExtensionPath(), pkg.installTestPath);
+    } else {
+        return null;
+    }
 }
