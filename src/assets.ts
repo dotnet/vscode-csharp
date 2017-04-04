@@ -331,7 +331,7 @@ function getBuildTasks(tasksConfiguration: tasks.TaskConfiguration): tasks.TaskD
 
     function findBuildTask(tasksDescriptions: tasks.TaskDescription[]) {
         if (tasksDescriptions) {
-            const buildTask = tasksDescriptions.find(td => td.taskName === 'build');
+            const buildTask = tasksDescriptions.find(td => td.isBuildCommand);
             if (buildTask !== undefined) {
                 result.push(buildTask);
             }
