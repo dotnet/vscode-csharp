@@ -504,6 +504,7 @@ export namespace V2 {
     export interface GetTestStartInfoResponse {
         Executable: string;
         Argument: string;
+        WorkingDirectory: string;
     }
 
     export interface RunDotNetTestRequest {
@@ -512,9 +513,21 @@ export namespace V2 {
         TestFrameworkName: string;
     }
 
+    export interface DotNetResult {
+        MethodName: string;
+        Outcome: string;
+        ErrorMessage: string;
+        ErrorStackTrace: string;
+    }
+
     export interface RunDotNetTestResponse {
         Failure: string;
         Pass: boolean;
+    }
+
+    export interface TestMessageEvent {
+        MessageLevel: string;
+        Message: string;
     }
 }
 

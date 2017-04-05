@@ -36,7 +36,13 @@ export function registerDotNetTestDebugCommand(server: OmniSharpServer): vscode.
 // Run test through dotnet-test command. This function can be moved to a separate structure
 export function runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string, server: OmniSharpServer) {
     getTestOutputChannel().show();
-    getTestOutputChannel().appendLine('Running test ' + testMethod + '...');
+    getTestOutputChannel().appendLine(`Running test ${testMethod}...`);
+
+    let disposable = server.onTestMessage(e =>
+    {
+        getTestOutputChannel().appendLine(e.Message);
+    });
+
     serverUtils
         .runDotNetTest(server, { FileName: fileName, MethodName: testMethod, TestFrameworkName: testFrameworkName })
         .then(
@@ -47,9 +53,12 @@ export function runDotnetTest(testMethod: string, fileName: string, testFramewor
             else {
                 getTestOutputChannel().appendLine('Test failed \n');
             }
+
+            disposable.dispose();
         },
         reason => {
             vscode.window.showErrorMessage(`Failed to run test because ${reason}.`);
+            disposable.dispose();
         });
 }
 
