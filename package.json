@@ -1133,14 +1133,14 @@
         },
         "configurationSnippets": [
             {
-                "label": ".NET: Launch .NET Core App",
-                "description": "Launch a .NET Core App with a debugger.",
+                "label": ".NET: Launch .NET Core Console App",
+                "description": "Launch a .NET Core Console App with a debugger.",
                 "body": {
                     "name": ".NET Core Launch (console)",
                     "type": "coreclr",
                     "request": "launch",
                     "preLaunchTask": "build",
-                    "program": "^\"\\${workspaceRoot}/bin/Debug/<target-framework>/<project-name.dll>\"",
+                    "program": "^\"\\${workspaceRoot}/bin/Debug/${1:<target-framework>}/${2:<project-name.dll>}\"",
                     "args": [],
                     "cwd": "^\"\\${workspaceRoot}\"",
                     "stopAtEntry": false,
@@ -1148,8 +1148,8 @@
                 }
             },
             {
-                "label": ".NET: Attach to local .NET Core App",
-                "description": "Attach a debugger to a .NET Core App.",
+                "label": ".NET: Attach to local .NET Core Console App",
+                "description": "Attach a debugger to a .NET Core Console App.",
                 "body": {
                     "name": ".NET Core Attach",
                     "type": "coreclr",
@@ -1165,7 +1165,7 @@
                     "type": "coreclr",
                     "request": "launch",
                     "preLaunchTask": "build",
-                    "program": "^\"\\${workspaceRoot}/bin/Debug/<target-framework>/<project-name.dll>\"",
+                    "program": "^\"\\${workspaceRoot}/bin/Debug/${1:<target-framework>}/${2:<project-name.dll>}\"",
                     "args": [],
                     "cwd": "^\"\\${workspaceRoot}\"",
                     "stopAtEntry": false,
@@ -1192,29 +1192,29 @@
                 }
             },
             {
-                "label": ".NET: Launch a remote .NET Core App",
-                "description": "Launch a .NET Core App on a remote machine.",
+                "label": ".NET: Launch a remote .NET Core Console App",
+                "description": "Launch a .NET Core Console App on a remote machine.",
                 "body": {
                     "name": ".NET Core Launch (console)",
                     "type": "coreclr",
                     "request": "launch",
                     "preLaunchTask": "build",
-                    "program": "^\"\\${workspaceRoot}/bin/Debug/<target-framework>/<project-name.dll>\"",
+                    "program": "^\"\\${workspaceRoot}/bin/Debug/${1:<target-framework>}/${2:<project-name.dll>}\"",
                     "args": [],
                     "cwd": "^\"\\${workspaceRoot}\"",
                     "stopAtEntry": false,
                     "console": "internalConsole",
                     "pipeTransport": {
                         "pipeCwd": "^\"\\${workspaceRoot}\"",
-                        "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
+                        "pipeProgram": "^\"${3:enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'}\"",
                         "pipeArgs": [],
-                        "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
+                        "debuggerPath": "^\"${4:enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg}\""
                     }
                 }
             },
             {
-                "label": ".NET: Attach to remote .NET Core App",
-                "description": "Attach a debugger to a .NET Core App on a remote machine.",
+                "label": ".NET: Attach to remote .NET Core Console App",
+                "description": "Attach a debugger to a .NET Core Console App on a remote machine.",
                 "body": {
                     "name": ".NET Core Attach",
                     "type": "coreclr",
@@ -1222,9 +1222,9 @@
                     "processId": "^\"\\${command:pickRemoteProcess}\"",
                     "pipeTransport": {
                         "pipeCwd": "^\"\\${workspaceRoot}\"",
-                        "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
+                        "pipeProgram": "^\"${1:enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'}\"",
                         "pipeArgs": [],
-                        "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
+                        "debuggerPath": "^\"${2:enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg}\""
                     }
                 }
             }
