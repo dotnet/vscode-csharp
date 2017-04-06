@@ -502,7 +502,7 @@ export namespace V2 {
     }
 
     export interface DebugTestCheckResponse {
-        PreferredDebugType: string;
+        DebugType: string;
     }
 
     export interface DebugTestStartRequest extends Request {

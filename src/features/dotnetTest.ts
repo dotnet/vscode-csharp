@@ -139,7 +139,7 @@ export function debugDotnetTest(testMethod: string, fileName: string, testFramew
 
     return serverUtils.debugTestCheck(server, request)
         .then(response => {
-            debugType = response.PreferredDebugType;
+            debugType = response.DebugType;
             return getLaunchConfiguration(server, debugType, fileName, testMethod, testFrameworkName);
         })
         .then(config => {
