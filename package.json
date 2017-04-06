@@ -1131,6 +1131,104 @@
             }
           }
         },
+        "configurationSnippets": [
+            {
+                "label": ".NET: Launch .NET Core App",
+                "description": "Launch a .NET Core App with a debugger.",
+                "body": {
+                    "name": ".NET Core Launch (console)",
+                    "type": "coreclr",
+                    "request": "launch",
+                    "preLaunchTask": "build",
+                    "program": "^\"\\${workspaceRoot}/bin/Debug/<target-framework>/<project-name.dll>\"",
+                    "args": [],
+                    "cwd": "^\"\\${workspaceRoot}\"",
+                    "stopAtEntry": false,
+                    "console": "internalConsole"
+                }
+            },
+            {
+                "label": ".NET: Attach to local .NET Core App",
+                "description": "Attach a debugger to a .NET Core App.",
+                "body": {
+                    "name": ".NET Core Attach",
+                    "type": "coreclr",
+                    "request": "attach",
+                    "processId": "^\"\\${command:pickProcess}\""
+                }
+            },
+            {
+                "label": ".NET: Launch a local .NET Core Web App",
+                "description": "Launch a .NET Core Web App with both a browser and a debugger.",
+                "body": {
+                    "name": ".NET Core Launch (web)",
+                    "type": "coreclr",
+                    "request": "launch",
+                    "preLaunchTask": "build",
+                    "program": "^\"\\${workspaceRoot}/bin/Debug/<target-framework>/<project-name.dll>\"",
+                    "args": [],
+                    "cwd": "^\"\\${workspaceRoot}\"",
+                    "stopAtEntry": false,
+                    "launchBrowser": {
+                        "enabled": true,
+                        "args": "^\"\\${auto-detect-url}\"",
+                        "windows": {
+                            "command": "cmd.exe",
+                            "args": "^\"/C start \\${auto-detect-url}\""
+                        },
+                        "osx": {
+                            "command": "open"
+                        },
+                        "linux": {
+                            "command": "xdg-open"
+                        }
+                    },
+                    "env": {
+                        "ASPNETCORE_ENVIRONMENT": "Development"
+                    },
+                    "sourceFileMap": {
+                        "/Views": "^\"\\${workspaceRoot}/Views\""
+                    }
+                }
+            },
+            {
+                "label": ".NET: Launch a remote .NET Core App",
+                "description": "Launch a .NET Core App on a remote machine.",
+                "body": {
+                    "name": ".NET Core Launch (console)",
+                    "type": "coreclr",
+                    "request": "launch",
+                    "preLaunchTask": "build",
+                    "program": "^\"\\${workspaceRoot}/bin/Debug/<target-framework>/<project-name.dll>\"",
+                    "args": [],
+                    "cwd": "^\"\\${workspaceRoot}\"",
+                    "stopAtEntry": false,
+                    "console": "internalConsole",
+                    "pipeTransport": {
+                        "pipeCwd": "^\"\\${workspaceRoot}\"",
+                        "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
+                        "pipeArgs": [],
+                        "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
+                    }
+                }
+            },
+            {
+                "label": ".NET: Attach to remote .NET Core App",
+                "description": "Attach a debugger to a .NET Core App on a remote machine.",
+                "body": {
+                    "name": ".NET Core Attach",
+                    "type": "coreclr",
+                    "request": "attach",
+                    "processId": "^\"\\${command:pickRemoteProcess}\"",
+                    "pipeTransport": {
+                        "pipeCwd": "^\"\\${workspaceRoot}\"",
+                        "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
+                        "pipeArgs": [],
+                        "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
+                    }
+                }
+            }
+        ],
         "initialConfigurations": [
           {
             "name": ".NET Core Launch (console)",
