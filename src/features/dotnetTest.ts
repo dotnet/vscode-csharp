@@ -3,10 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
-import {OmniSharpServer} from '../omnisharp/server';
-import {toRange} from '../omnisharp/typeConvertion';
+import { OmniSharpServer } from '../omnisharp/server';
+import { toRange } from '../omnisharp/typeConvertion';
 import * as vscode from 'vscode';
 import * as serverUtils from "../omnisharp/utils";
 import * as protocol from '../omnisharp/protocol';
@@ -35,23 +33,28 @@ export function registerDotNetTestDebugCommand(server: OmniSharpServer): vscode.
 
 // Run test through dotnet-test command. This function can be moved to a separate structure
 export function runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string, server: OmniSharpServer) {
-    getTestOutputChannel().show();
-    getTestOutputChannel().appendLine(`Running test ${testMethod}...`);
+    const output = getTestOutputChannel();
 
-    let disposable = server.onTestMessage(e =>
-    {
-        getTestOutputChannel().appendLine(e.Message);
+    output.show();
+    output.appendLine(`Running test ${testMethod}...`);
+
+    const disposable = server.onTestMessage(e => {
+        output.appendLine(e.Message);
     });
 
-    serverUtils
-        .runDotNetTest(server, { FileName: fileName, MethodName: testMethod, TestFrameworkName: testFrameworkName })
-        .then(
-        response => {
+    const request: protocol.V2.RunTestRequest = {
+        Filename: fileName,
+        MethodName: testMethod,
+        TestFrameworkName: testFrameworkName
+    };
+
+    serverUtils.runTest(server, request)
+        .then(response => {
             if (response.Pass) {
-                getTestOutputChannel().appendLine('Test passed \n');
+                output.appendLine('Test passed \n');
             }
             else {
-                getTestOutputChannel().appendLine('Test failed \n');
+                output.appendLine('Test failed \n');
             }
 
             disposable.dispose();
@@ -62,23 +65,92 @@ export function runDotnetTest(testMethod: string, fileName: string, testFramewor
         });
 }
 
+function getLaunchConfigurationForAttach(server: OmniSharpServer, fileName: string, testMethod: string, testFrameworkName: string): Promise<any> {
+    const request: protocol.V2.GetTestStartInfoRequest = {
+        Filename: fileName,
+        MethodName: testMethod,
+        TestFrameworkName: testFrameworkName
+    };
+
+    return serverUtils.debugTestStart(server, request)
+        .then(response => {
+            return {
+                name: ".NET Test Attach",
+                type: "coreclr",
+                request: "attach",
+                processId: response.ProcessId
+            };
+        });
+}
+
+function getLaunchConfigurationForLaunch(server: OmniSharpServer, fileName: string, testMethod: string, testFrameworkName: string): Promise<any> {
+    const request: protocol.V2.GetTestStartInfoRequest = {
+        Filename: fileName,
+        MethodName: testMethod,
+        TestFrameworkName: testFrameworkName
+    };
+
+    return serverUtils.getTestStartInfo(server, request)
+        .then(response => {
+            let args = response.Argument.split(' ');
+
+            // Ensure that quoted args are unquoted.
+            args = args.map(arg => {
+                if (arg.startsWith('"') && arg.endsWith('"')) {
+                    return arg.substring(1, arg.length - 1);
+                }
+                else {
+                    return arg;
+                }
+            });
+
+            return {
+                name: ".NET Test Launch",
+                type: "coreclr",
+                request: "launch",
+                program: response.Executable,
+                args: args,
+                cwd: response.WorkingDirectory,
+                stopAtEntry: false
+            };
+        });
+}
+
+
+function getLaunchConfiguration(server: OmniSharpServer, debugType: string, fileName: string, testMethod: string, testFrameworkName: string): Promise<any> {
+    switch (debugType) {
+        case "attach":
+            return getLaunchConfigurationForAttach(server, fileName, testMethod, testFrameworkName);
+        case "launch":
+            return getLaunchConfigurationForLaunch(server, fileName, testMethod, testFrameworkName);
+
+        default:
+            throw new Error(`Unexpected PreferredDebugType: ${debugType}`);
+    }
+}
+
 // Run test through dotnet-test command with debugger attached
 export function debugDotnetTest(testMethod: string, fileName: string, testFrameworkName: string, server: OmniSharpServer) {
-    serverUtils.getTestStartInfo(server, { FileName: fileName, MethodName: testMethod, TestFrameworkName: testFrameworkName }).then(response => {
-        vscode.commands.executeCommand(
-            'vscode.startDebug', {
-                "name": ".NET test launch",
-                "type": "coreclr",
-                "request": "launch",
-                "program": response.Executable,
-                "args": response.Argument.split(' '),
-                "cwd": "${workspaceRoot}",
-                "stopAtEntry": false
+    const request: protocol.V2.DebugTestCheckRequest = {
+        Filename: fileName
+    };
+
+    let debugType: string;
+
+    return serverUtils.debugTestCheck(server, request)
+        .then(response => {
+            debugType = response.PreferredDebugType;
+            return getLaunchConfiguration(server, debugType, fileName, testMethod, testFrameworkName);
+        })
+        .then(config => {
+            return vscode.commands.executeCommand('vscode.startDebug', config);
+        })
+        .then(() => {
+            if (debugType === "attach") {
+                serverUtils.debugTestReady(server, { Filename: fileName });
             }
-        ).then(
-            response => { },
-            reason => { vscode.window.showErrorMessage(`Failed to start debugger on test because ${reason}.`); });
-    });
+        })
+        .catch(reason => vscode.window.showErrorMessage(`Failed to start debugger: ${reason}`));
 }
 
 export function updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node, isDebugEnable: boolean) {

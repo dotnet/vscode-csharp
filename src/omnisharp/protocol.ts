@@ -419,7 +419,10 @@ export namespace V2 {
         export const GetCodeActions = '/v2/getcodeactions';
         export const RunCodeAction = '/v2/runcodeaction';
         export const GetTestStartInfo = '/v2/getteststartinfo';
-        export const RunDotNetTest = '/v2/runtest';
+        export const RunTest = '/v2/runtest';
+        export const DebugTestCheck = '/v2/debugtest/check';
+        export const DebugTestStart = '/v2/debugtest/start';
+        export const DebugTestReady = '/v2/debugtest/ready';
     }
 
     export interface Point {
@@ -495,8 +498,31 @@ export namespace V2 {
     }
 
     // dotnet-test endpoints
-    export interface GetTestStartInfoRequest {
-        FileName: string;
+    export interface DebugTestCheckRequest extends Request {
+    }
+
+    export interface DebugTestCheckResponse {
+        PreferredDebugType: string;
+    }
+
+    export interface DebugTestStartRequest extends Request {
+        MethodName: string;
+        TestFrameworkName: string;
+    }
+
+    export interface DebugTestStartResponse {
+        ProcessId: number;
+        HostProcessId: number;
+    }
+
+    export interface DebugTestReadyRequest extends Request {
+    }
+
+    export interface DebugTestReadyResponse {
+        IsReady: boolean;
+    }
+
+    export interface GetTestStartInfoRequest extends Request {
         MethodName: string;
         TestFrameworkName: string;
     }
@@ -507,8 +533,7 @@ export namespace V2 {
         WorkingDirectory: string;
     }
 
-    export interface RunDotNetTestRequest {
-        FileName: string;
+    export interface RunTestRequest extends Request {
         MethodName: string;
         TestFrameworkName: string;
     }
@@ -520,7 +545,7 @@ export namespace V2 {
         ErrorStackTrace: string;
     }
 
-    export interface RunDotNetTestResponse {
+    export interface RunTestResponse {
         Failure: string;
         Pass: boolean;
     }
