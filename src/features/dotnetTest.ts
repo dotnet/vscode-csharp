@@ -146,6 +146,7 @@ export function debugDotnetTest(testMethod: string, fileName: string, testFramew
             return vscode.commands.executeCommand('vscode.startDebug', config);
         })
         .then(() => {
+            // TODO: Need to find out when the attach is really complete from the debugger. This is currently a race.
             if (debugType === "attach") {
                 serverUtils.debugTestReady(server, { Filename: fileName });
             }
