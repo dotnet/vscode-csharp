@@ -63,13 +63,7 @@ export class CSharpExtDownloader
                 this.logger.appendLine();
 
                 // Display platform information and RID followed by a blank line
-                this.logger.append(`Platform: ${info.toString()}`);
-                if (info.runtimeId) {
-                    this.logger.appendLine(` (${info.runtimeId})`);
-                }
-                else {
-                    this.logger.appendLine();
-                }
+                this.logger.appendLine(`Platform: ${info.toString()}`);
                 this.logger.appendLine();
 
                 installationStage = 'downloadPackages';
