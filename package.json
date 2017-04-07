@@ -342,6 +342,11 @@
           "default": false,
           "description": "Launch OmniSharp with Mono."
         },
+        "omnisharp.waitForDebugger": {
+          "type": "boolean",
+          "default": false,
+          "description": "Pass the --debug flag when launching the OmniSharp server to allow a debugger to be attached."
+        },
         "omnisharp.loggingLevel": {
           "type": "string",
           "default": "information",

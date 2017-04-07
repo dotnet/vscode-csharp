@@ -246,6 +246,10 @@ export class OmniSharpServer {
             '--loglevel', this._options.loggingLevel
         ];
 
+        if (this._options.waitForDebugger === true) {
+            args.push('--debug');
+        }
+
         this._logger.appendLine(`Starting OmniSharp server at ${new Date().toLocaleString()}`);
         this._logger.increaseIndent();
         this._logger.appendLine(`Target: ${solutionPath}`);
