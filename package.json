@@ -79,7 +79,8 @@
       "binaries": [
         "./mono.linux-x86",
         "./run"
-      ]
+      ],
+      "installTestPath": "./bin/mono.linux-x86"
     },
     {
       "description": "Mono Runtime (Linux / x64)",
@@ -94,7 +95,8 @@
       "binaries": [
         "./mono.linux-x86_64",
         "./run"
-      ]
+      ],
+      "installTestPath": "./bin/mono.linux-x86_64"
     },
     {
       "description": "Mono Runtime (macOS)",
@@ -106,7 +108,8 @@
       "binaries": [
         "./mono.osx",
         "./run"
-      ]
+      ],
+      "installTestPath": "./bin/mono.osx"
     },
     {
       "description": "Mono Framework Assemblies",
@@ -115,7 +118,8 @@
       "platforms": [
         "darwin",
         "linux"
-      ]
+      ],
+      "installTestPath": "./bin/framework/mscorlib.dll"
     },
     {
       "description": "OmniSharp (.NET 4.6 / x86)",
@@ -126,7 +130,8 @@
       ],
       "architectures": [
         "x86"
-      ]
+      ],
+      "installTestPath": "./bin/omnisharp/OmniSharp.exe"
     },
     {
       "description": "OmniSharp (.NET 4.6 / x64)",
@@ -137,7 +142,8 @@
       ],
       "architectures": [
         "x86_64"
-      ]
+      ],
+      "installTestPath": "./bin/omnisharp/OmniSharp.exe"
     },
     {
       "description": "OmniSharp (Mono 4.6)",
@@ -146,7 +152,8 @@
       "platforms": [
         "darwin",
         "linux"
-      ]
+      ],
+      "installTestPath": "./bin/omnisharp/OmniSharp.exe"
     },
     {
       "description": ".NET Core Debugger (Windows / x64)",
@@ -155,7 +162,8 @@
       "installPath": ".debugger",
       "runtimeIds": [
         "win7-x64"
-      ]
+      ],
+      "installTestPath": "./.debugger/vsdbg-ui.exe"
     },
     {
       "description": ".NET Core Debugger (macOS / x64)",
@@ -168,7 +176,8 @@
       "binaries": [
         "./vsdbg-ui",
         "./vsdbg"
-      ]
+      ],
+      "installTestPath": "./.debugger/vsdbg-ui"
     },
     {
       "description": ".NET Core Debugger (CentOS / x64)",
@@ -181,7 +190,8 @@
       "binaries": [
         "./vsdbg-ui",
         "./vsdbg"
-      ]
+      ],
+      "installTestPath": "./.debugger/vsdbg-ui"
     },
     {
       "description": ".NET Core Debugger (Debian / x64)",
@@ -194,7 +204,8 @@
       "binaries": [
         "./vsdbg-ui",
         "./vsdbg"
-      ]
+      ],
+      "installTestPath": "./.debugger/vsdbg-ui"
     },
     {
       "description": ".NET Core Debugger (Fedora 23 / x64)",
@@ -207,7 +218,8 @@
       "binaries": [
         "./vsdbg-ui",
         "./vsdbg"
-      ]
+      ],
+      "installTestPath": "./.debugger/vsdbg-ui"
     },
     {
       "description": ".NET Core Debugger (Fedora 24 / x64)",
@@ -220,7 +232,8 @@
       "binaries": [
         "./vsdbg-ui",
         "./vsdbg"
-      ]
+      ],
+      "installTestPath": "./.debugger/vsdbg-ui"
     },
     {
       "description": ".NET Core Debugger (OpenSUSE 13 / x64)",
@@ -233,7 +246,8 @@
       "binaries": [
         "./vsdbg-ui",
         "./vsdbg"
-      ]
+      ],
+      "installTestPath": "./.debugger/vsdbg-ui"
     },
     {
       "description": ".NET Core Debugger (OpenSUSE 42 / x64)",
@@ -246,7 +260,8 @@
       "binaries": [
         "./vsdbg-ui",
         "./vsdbg"
-      ]
+      ],
+      "installTestPath": "./.debugger/vsdbg-ui"
     },
     {
       "description": ".NET Core Debugger (RHEL / x64)",
@@ -259,7 +274,8 @@
       "binaries": [
         "./vsdbg-ui",
         "./vsdbg"
-      ]
+      ],
+      "installTestPath": "./.debugger/vsdbg-ui"
     },
     {
       "description": ".NET Core Debugger (Ubuntu 14.04 / x64)",
@@ -272,7 +288,8 @@
       "binaries": [
         "./vsdbg-ui",
         "./vsdbg"
-      ]
+      ],
+      "installTestPath": "./.debugger/vsdbg-ui"
     },
     {
       "description": ".NET Core Debugger (Ubuntu 16.04 / x64)",
@@ -285,7 +302,8 @@
       "binaries": [
         "./vsdbg-ui",
         "./vsdbg"
-      ]
+      ],
+      "installTestPath": "./.debugger/vsdbg-ui"
     },
     {
       "description": ".NET Core Debugger (Ubuntu 16.10 / x64)",
@@ -298,7 +316,8 @@
       "binaries": [
         "./vsdbg-ui",
         "./vsdbg"
-      ]
+      ],
+      "installTestPath": "./.debugger/vsdbg-ui"
     }
   ],
   "engines": {
@@ -323,6 +342,22 @@
           "type": "boolean",
           "default": false,
           "description": "Suppress the warning that the .NET CLI is not on the path."
+        },
+        "csharp.fallbackDebuggerLinuxRuntimeId": {
+          "type": "string",
+          "enum": [
+            "centos.7-x64",
+            "debian.8-x64",
+            "fedora.23-x64",
+            "fedora.24-x64",
+            "opensuse.13.2-x64",
+            "opensuse.42.1-x64",
+            "rhel.7-x64",
+            "ubuntu.14.04-x64",
+            "ubuntu.16.04-x64",
+            "ubuntu.16.10-x64"
+          ],
+          "description": "If the current Linux distribution is not recognized, this option can be used to tell the debugger what version can be used. After changing this option, close VS Code, remove the debugger folder (~/.vscode/extensions/ms-vscode.csharp-<ver>/.debugger) if it has already downloaded, and restart VS Code."
         },
         "csharp.suppressDotnetRestoreNotification": {
           "type": "boolean",
