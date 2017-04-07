@@ -11,7 +11,7 @@
 * **Arch Linux change**: before, the debugger would automatically use the Ubuntu 16 debugger on Arch. Now we require the debugger to be explicitly set. See https://aka.ms/vscode-csext-arch for more information.
 * Several bug fixes that addressed problems with launch ([#1318](https://github.com/OmniSharp/omnisharp-vscode/issues/1318), [#1335](https://github.com/OmniSharp/omnisharp-vscode/issues/1335), [#1336](https://github.com/OmniSharp/omnisharp-vscode/issues/1336))
 * Fix issue where VS Code would incorrectly display threads as paused ([#1317](https://github.com/OmniSharp/omnisharp-vscode/issues/1317))
-* Added new 'csharp.fallbackDebuggerLinuxRuntimeId' configuration setting to control the version of the debugger used on Liunx ([#1361](https://github.com/OmniSharp/omnisharp-vscode/issues/1361)).
+* Added new 'csharp.fallbackDebuggerLinuxRuntimeId' configuration setting to control the version of the debugger used on Linux ([#1361](https://github.com/OmniSharp/omnisharp-vscode/issues/1361)).
 
 #### Other Updates and Fixes
 
