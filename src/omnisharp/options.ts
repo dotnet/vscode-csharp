@@ -9,6 +9,7 @@ export class Options {
     constructor(
         public path?: string,
         public useMono?: boolean,
+        public waitForDebugger?: boolean,
         public loggingLevel?: string,
         public autoStart?: boolean,
         public projectLoadTimeout?: number,
@@ -33,6 +34,8 @@ export class Options {
             ? csharpConfig.get<boolean>('omnisharpUsesMono')
             : omnisharpConfig.get<boolean>('useMono');
 
+        const waitForDebugger = omnisharpConfig.get<boolean>('waitForDebugger', false);
+
         // support the legacy "verbose" level as "debug"
         let loggingLevel = omnisharpConfig.get<string>('loggingLevel');
         if (loggingLevel.toLowerCase() === 'verbose') {
@@ -45,6 +48,6 @@ export class Options {
         const maxProjectResults = omnisharpConfig.get<number>('maxProjectResults', 250);
         const useEditorFormattingSettings = omnisharpConfig.get<boolean>('useEditorFormattingSettings', true);
 
-        return new Options(path, useMono, loggingLevel, autoStart, projectLoadTimeout, maxProjectResults, useEditorFormattingSettings);
+        return new Options(path, useMono, waitForDebugger, loggingLevel, autoStart, projectLoadTimeout, maxProjectResults, useEditorFormattingSettings);
     }
 }
