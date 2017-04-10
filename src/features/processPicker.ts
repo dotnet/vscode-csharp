@@ -5,6 +5,8 @@
 
 import * as os from 'os';
 import * as vscode from 'vscode';
+import * as tmp from 'tmp';
+import * as fs from 'fs-extra';
 import * as child_process from 'child_process';
 import { PlatformInformation } from '../platform';
 
@@ -65,17 +67,27 @@ export class RemoteAttachPicker {
             return Promise.reject<string>(new Error("Configuration \"" + name + "\" in launch.json does not have a " +
                 "pipeTransport argument with debuggerPath for pickRemoteProcess. Use pickProcess for local attach."));
         } else {
-            let pipeProgram = args.pipeTransport.pipeProgram;
-            let pipeArgs = args.pipeTransport.pipeArgs;
-            let platformSpecificPipeTransportOptions = RemoteAttachPicker.getPlatformSpecificPipeTransportOptions(args);
+            let pipeProgram: string = args.pipeTransport.pipeProgram;
+            let pipeArgs: string[] = args.pipeTransport.pipeArgs;
+            let quoteArgs: boolean = args.pipeTransport.quoteArgs != null ? args.pipeTransport.quoteArgs : true; // default value is true
+            let platformSpecificPipeTransportOptions: any = RemoteAttachPicker.getPlatformSpecificPipeTransportOptions(args);
 
             if (platformSpecificPipeTransportOptions) {
                 pipeProgram = platformSpecificPipeTransportOptions.pipeProgram || pipeProgram;
                 pipeArgs = platformSpecificPipeTransportOptions.pipeArgs || pipeArgs;
+                quoteArgs = platformSpecificPipeTransportOptions.pipeTransport.quoteArgs != null ? platformSpecificPipeTransportOptions.pipeTransport.quoteArgs : quoteArgs;
             }
 
-            let argList = RemoteAttachPicker.createArgumentList(pipeArgs);
-            let pipeCmd: string = `"${pipeProgram}" ${argList}`;
+            let pipeCmdList: string[] = [];
+            pipeCmdList.push(pipeProgram);
+            pipeCmdList = pipeCmdList.concat(pipeArgs);
+
+            const scriptShellCmdList: string[] = ["bash", "-s"];
+
+            pipeCmdList = pipeCmdList.concat(scriptShellCmdList);
+
+            let pipeCmd: string = quoteArgs ? this.createArgumentList(pipeCmdList) : pipeCmdList.join(' ');
+
             return RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd).then(processes => {
                 let attachPickOptions: vscode.QuickPickOptions = {
                     matchOnDescription: true,
@@ -118,15 +130,18 @@ export class RemoteAttachPicker {
 
     public static getRemoteOSAndProcesses(pipeCmd: string): Promise<AttachItem[]> {
         
-        // If the client OS is NOT Windows, we need to escape '$(uname)' as otherwise it will be evaluated on the client side
-        // If the client OS is Windows, we don't want to do that as it will be sent as-is, and thus the if statement will be broken
-        const remoteUnameCommand = os.platform() !== "win32" ? "$\\(uname\\)" : "$(uname)";
-
         // Commands to get OS and processes
-        const command = `bash -c 'uname && if [ "${remoteUnameCommand}" == "Linux" ] ; then ${RemoteAttachPicker.linuxPsCommand} ; elif [ "${remoteUnameCommand}" == "Darwin" ] ; ` +
-            `then ${RemoteAttachPicker.osxPsCommand}; fi'`;
+        const command = `uname && if [ "$(uname)" == "Linux" ] ; then ${RemoteAttachPicker.linuxPsCommand} ; elif [ "$(uname)" == "Darwin" ] ; ` +
+            `then ${RemoteAttachPicker.osxPsCommand}; fi`;
 
-        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} "${command}"`, null, RemoteAttachPicker._channel).then(output => {
+        // Create a temp file to redirect commands to the pipeProgram to solve quoting issues.
+        const tempFile = tmp.fileSync();
+        fs.write(tempFile.fd, command);
+
+        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} < ${tempFile.name}`, null, RemoteAttachPicker._channel).then(output => {
+            // Remove temp file since the uname and ps commands have been executed.
+            tempFile.removeCallback();
+
             // OS will be on first line
             // Processess will follow if listed
             let lines = output.split(/\r?\n/);
