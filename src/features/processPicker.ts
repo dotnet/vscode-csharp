@@ -82,7 +82,7 @@ export class RemoteAttachPicker {
             pipeCmdList.push(pipeProgram);
             pipeCmdList = pipeCmdList.concat(pipeArgs);
 
-            const scriptShellCmdList: string[] = ["bash", "-s"];
+            const scriptShellCmdList: string[] = ["sh", "-s"];
 
             pipeCmdList = pipeCmdList.concat(scriptShellCmdList);
 
@@ -131,7 +131,7 @@ export class RemoteAttachPicker {
     public static getRemoteOSAndProcesses(pipeCmd: string): Promise<AttachItem[]> {
 
         // Commands to get OS and processes
-        const command = `uname && if [ "$(uname)" == "Linux" ] ; then ${RemoteAttachPicker.linuxPsCommand} ; elif [ "$(uname)" == "Darwin" ] ; ` +
+        const command = `uname && if [ "$(uname)" = "Linux" ] ; then ${RemoteAttachPicker.linuxPsCommand} ; elif [ "$(uname)" = "Darwin" ] ; ` +
             `then ${RemoteAttachPicker.osxPsCommand}; fi`;
 
         // Create a temp file to redirect commands to the pipeProgram to solve quoting issues.
