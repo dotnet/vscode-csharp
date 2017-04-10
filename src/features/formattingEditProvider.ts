@@ -15,7 +15,7 @@ export default class FormattingSupport extends AbstractSupport implements Docume
     public provideDocumentRangeFormattingEdits(document: TextDocument, range: Range, options: FormattingOptions, token: CancellationToken): Promise<TextEdit[]> {
 
         let request = <protocol.FormatRangeRequest>{
-            Filename: document.fileName,
+            FileName: document.fileName,
             Line: range.start.line + 1,
             Column: range.start.character + 1,
             EndLine: range.end.line + 1,
@@ -32,7 +32,7 @@ export default class FormattingSupport extends AbstractSupport implements Docume
     public provideOnTypeFormattingEdits(document: TextDocument, position: Position, ch: string, options: FormattingOptions, token: CancellationToken): Promise<TextEdit[]> {
 
         let request = <protocol.FormatAfterKeystrokeRequest> {
-            Filename: document.fileName,
+            FileName: document.fileName,
             Line: position.line + 1,
             Column: position.character + 1,
             Character: ch

@@ -43,7 +43,7 @@ export function runDotnetTest(testMethod: string, fileName: string, testFramewor
     });
 
     const request: protocol.V2.RunTestRequest = {
-        Filename: fileName,
+        FileName: fileName,
         MethodName: testMethod,
         TestFrameworkName: testFrameworkName
     };
@@ -65,90 +65,91 @@ export function runDotnetTest(testMethod: string, fileName: string, testFramewor
         });
 }
 
-function getLaunchConfigurationForAttach(server: OmniSharpServer, fileName: string, testMethod: string, testFrameworkName: string): Promise<any> {
-    const request: protocol.V2.GetTestStartInfoRequest = {
-        Filename: fileName,
+function createLaunchConfiguration(program: string, argsString: string, cwd: string) {
+    let args = argsString.split(' ');
+
+    // Ensure that quoted args are unquoted.
+    args = args.map(arg => {
+        if (arg.startsWith('"') && arg.endsWith('"')) {
+            return arg.substring(1, arg.length - 1);
+        }
+        else {
+            return arg;
+        }
+    });
+
+    return {
+        name: ".NET Test Launch",
+        type: "coreclr",
+        request: "launch",
+        program,
+        args,
+        cwd,
+        stopAtEntry: true
+    };
+}
+
+function getLaunchConfigurationForVSTest(server: OmniSharpServer, fileName: string, testMethod: string, testFrameworkName: string): Promise<any> {
+    const request: protocol.V2.DebugTestGetStartInfoRequest = {
+        FileName: fileName,
         MethodName: testMethod,
         TestFrameworkName: testFrameworkName
     };
 
-    return serverUtils.debugTestStart(server, request)
-        .then(response => {
-            return {
-                name: ".NET Test Attach",
-                type: "coreclr",
-                request: "attach",
-                processId: response.ProcessId
-            };
-        });
+    return serverUtils.debugTestGetStartInfo(server, request)
+        .then(response => createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory));
 }
 
-function getLaunchConfigurationForLaunch(server: OmniSharpServer, fileName: string, testMethod: string, testFrameworkName: string): Promise<any> {
+function getLaunchConfigurationForLegacy(server: OmniSharpServer, fileName: string, testMethod: string, testFrameworkName: string): Promise<any> {
     const request: protocol.V2.GetTestStartInfoRequest = {
-        Filename: fileName,
+        FileName: fileName,
         MethodName: testMethod,
         TestFrameworkName: testFrameworkName
     };
 
     return serverUtils.getTestStartInfo(server, request)
-        .then(response => {
-            let args = response.Argument.split(' ');
-
-            // Ensure that quoted args are unquoted.
-            args = args.map(arg => {
-                if (arg.startsWith('"') && arg.endsWith('"')) {
-                    return arg.substring(1, arg.length - 1);
-                }
-                else {
-                    return arg;
-                }
-            });
-
-            return {
-                name: ".NET Test Launch",
-                type: "coreclr",
-                request: "launch",
-                program: response.Executable,
-                args: args,
-                cwd: response.WorkingDirectory,
-                stopAtEntry: false
-            };
-        });
+        .then(response => createLaunchConfiguration(response.Executable, response.Argument, response.WorkingDirectory));
 }
 
 
 function getLaunchConfiguration(server: OmniSharpServer, debugType: string, fileName: string, testMethod: string, testFrameworkName: string): Promise<any> {
     switch (debugType) {
-        case "attach":
-            return getLaunchConfigurationForAttach(server, fileName, testMethod, testFrameworkName);
-        case "launch":
-            return getLaunchConfigurationForLaunch(server, fileName, testMethod, testFrameworkName);
+        case "legacy":
+            return getLaunchConfigurationForLegacy(server, fileName, testMethod, testFrameworkName);
+        case "vstest":
+            return getLaunchConfigurationForVSTest(server, fileName, testMethod, testFrameworkName);
 
         default:
-            throw new Error(`Unexpected PreferredDebugType: ${debugType}`);
+            throw new Error(`Unexpected debug type: ${debugType}`);
     }
 }
 
 // Run test through dotnet-test command with debugger attached
 export function debugDotnetTest(testMethod: string, fileName: string, testFrameworkName: string, server: OmniSharpServer) {
-    const request: protocol.V2.DebugTestCheckRequest = {
-        Filename: fileName
-    };
-
+    // We support to styles of 'dotnet test' for debugging: The legacy 'project.json' testing, and the newer csproj support
+    // using VS Test. These require a different level of communication.
     let debugType: string;
 
-    return serverUtils.debugTestCheck(server, request)
-        .then(response => {
-            debugType = response.DebugType;
+    return serverUtils.requestProjectInformation(server, { FileName: fileName} )
+        .then(projectInfo => {
+            if (projectInfo.DotNetProject) {
+                debugType = "legacy";
+            }
+            else if (projectInfo.MsBuildProject) {
+                debugType = "vstest";
+            }
+            else {
+                throw new Error();
+            }
+
             return getLaunchConfiguration(server, debugType, fileName, testMethod, testFrameworkName);
         })
-        .then(config => {
-            return vscode.commands.executeCommand('vscode.startDebug', config);
-        })
+        .then(config => vscode.commands.executeCommand('vscode.startDebug', config))
         .then(() => {
-            // TODO: Need to find out when the attach is really complete from the debugger. This is currently a race.
-            if (debugType === "attach") {
-                serverUtils.debugTestReady(server, { Filename: fileName });
+            // For VS Test, we need to signal to start the test run after the debugger has launched.
+            // TODO: Need to find out when the debugger has actually launched. This is currently a race.
+            if (debugType === "vstest") {
+                serverUtils.debugTestRun(server, { FileName: fileName });
             }
         })
         .catch(reason => vscode.window.showErrorMessage(`Failed to start debugger: ${reason}`));

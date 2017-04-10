@@ -193,7 +193,7 @@ class DiagnosticsProvider extends AbstractSupport {
 
         let source = new vscode.CancellationTokenSource();
         let handle = setTimeout(() => {
-            serverUtils.codeCheck(this._server, { Filename: document.fileName }, source.token).then(value => {
+            serverUtils.codeCheck(this._server, { FileName: document.fileName }, source.token).then(value => {
 
                 // Easy case: If there are no diagnostics in the file, we can clear it quickly. 
                 if (value.QuickFixes.length === 0) {
@@ -228,7 +228,7 @@ class DiagnosticsProvider extends AbstractSupport {
         this._projectValidation = new vscode.CancellationTokenSource();
         let handle = setTimeout(() => {
 
-            serverUtils.codeCheck(this._server, { Filename: null }, this._projectValidation.token).then(value => {
+            serverUtils.codeCheck(this._server, { FileName: null }, this._projectValidation.token).then(value => {
 
                 let quickFixes = value.QuickFixes.sort((a, b) => a.FileName.localeCompare(b.FileName));
                 let entries: [vscode.Uri, vscode.Diagnostic[]][] = [];

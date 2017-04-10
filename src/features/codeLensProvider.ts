@@ -32,7 +32,7 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
     };
 
     provideCodeLenses(document: TextDocument, token: CancellationToken): CodeLens[] | Thenable<CodeLens[]> {
-        return serverUtils.currentFileMembersAsTree(this._server, { Filename: document.fileName }, token).then(tree => {
+        return serverUtils.currentFileMembersAsTree(this._server, { FileName: document.fileName }, token).then(tree => {
             let ret: CodeLens[] = [];
             tree.TopLevelTypeDefinitions.forEach(node => this._convertQuickFix(ret, document.fileName, node));
             return ret;
@@ -59,7 +59,7 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
         if (codeLens instanceof OmniSharpCodeLens) {
 
             let req = <protocol.FindUsagesRequest>{
-                Filename: codeLens.fileName,
+                FileName: codeLens.fileName,
                 Line: codeLens.range.start.line + 1,
                 Column: codeLens.range.start.character + 1,
                 OnlyThisFile: false,
@@ -75,7 +75,7 @@ export default class OmniSharpCodeLensProvider extends AbstractSupport implement
                 codeLens.command = {
                     title: len === 1 ? '1 reference' : `${len} references`,
                     command: 'editor.action.showReferences',
-                    arguments: [Uri.file(req.Filename), codeLens.range.start, res.QuickFixes.map(toLocation)]
+                    arguments: [Uri.file(req.FileName), codeLens.range.start, res.QuickFixes.map(toLocation)]
                 };
 
                 return codeLens;

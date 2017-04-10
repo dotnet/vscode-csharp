@@ -45,7 +45,7 @@ export function createRequest<T extends protocol.Request>(document: vscode.TextD
     }
 
     let request: protocol.Request = {
-        Filename: document.fileName,
+        FileName: document.fileName,
         Buffer: includeBuffer ? document.getText() : undefined,
         Line,
         Column

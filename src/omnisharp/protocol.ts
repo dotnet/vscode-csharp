@@ -22,6 +22,7 @@ export module Requests {
     export const GetCodeActions = '/getcodeactions';
     export const GoToDefinition = '/gotoDefinition';
     export const FindImplementations = '/findimplementations';
+    export const Project = '/project';
     export const Projects = '/projects';
     export const RemoveFromProject = '/removefromproject';
     export const Rename = '/rename';
@@ -59,7 +60,7 @@ export namespace WireProtocol {
 }
 
 export interface Request {
-    Filename: string;
+    FileName: string;
     Line?: number;
     Column?: number;
     Buffer?: string;
@@ -420,9 +421,8 @@ export namespace V2 {
         export const RunCodeAction = '/v2/runcodeaction';
         export const GetTestStartInfo = '/v2/getteststartinfo';
         export const RunTest = '/v2/runtest';
-        export const DebugTestCheck = '/v2/debugtest/check';
-        export const DebugTestStart = '/v2/debugtest/start';
-        export const DebugTestReady = '/v2/debugtest/ready';
+        export const DebugTestGetStartInfo = '/v2/debugtest/getstartinfo';
+        export const DebugTestRun = '/v2/debugtest/run';
     }
 
     export interface Point {
@@ -498,28 +498,22 @@ export namespace V2 {
     }
 
     // dotnet-test endpoints
-    export interface DebugTestCheckRequest extends Request {
-    }
-
-    export interface DebugTestCheckResponse {
-        DebugType: string;
-    }
-
-    export interface DebugTestStartRequest extends Request {
+    export interface DebugTestGetStartInfoRequest extends Request {
         MethodName: string;
         TestFrameworkName: string;
     }
 
-    export interface DebugTestStartResponse {
-        ProcessId: number;
-        HostProcessId: number;
+    export interface DebugTestGetStartInfoResponse {
+        FileName: string;
+        Arguments: string;
+        WorkingDirectory: string;
+        EnvironmentVariables: Map<string, string>;
     }
 
-    export interface DebugTestReadyRequest extends Request {
+    export interface DebugTestRunRequest extends Request {
     }
 
-    export interface DebugTestReadyResponse {
-        IsReady: boolean;
+    export interface DebugTestRunResponse {
     }
 
     export interface GetTestStartInfoRequest extends Request {
