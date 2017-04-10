@@ -5,8 +5,8 @@
 
 import * as os from 'os';
 import * as vscode from 'vscode';
-import * as tmp from 'tmp';
-import * as fs from 'fs-extra';
+import { getExtensionPath } from '../common';
+import * as path from 'path';
 import * as child_process from 'child_process';
 import { PlatformInformation } from '../platform';
 
@@ -80,11 +80,13 @@ export class RemoteAttachPicker {
 
             let pipeCmdList: string[] = [];
             pipeCmdList.push(pipeProgram);
-            pipeCmdList = pipeCmdList.concat(pipeArgs);
 
-            const scriptShellCmdList: string[] = ["sh", "-s"];
+            // Remove debuggerCommand for remoteProcessPicker
+            pipeCmdList = pipeCmdList.concat(pipeArgs.filter(arg => arg !== "${debuggerCommand}"));
 
-            pipeCmdList = pipeCmdList.concat(scriptShellCmdList);
+            let scriptShellCmd: string = "sh -s";
+
+            pipeCmdList.push(scriptShellCmd);
 
             let pipeCmd: string = quoteArgs ? this.createArgumentList(pipeCmdList) : pipeCmdList.join(' ');
 
@@ -129,19 +131,9 @@ export class RemoteAttachPicker {
     }
 
     public static getRemoteOSAndProcesses(pipeCmd: string): Promise<AttachItem[]> {
+        const scriptPath = path.join(getExtensionPath(), 'scripts', 'remoteProcessPickerScript');
 
-        // Commands to get OS and processes
-        const command = `uname && if [ "$(uname)" = "Linux" ] ; then ${RemoteAttachPicker.linuxPsCommand} ; elif [ "$(uname)" = "Darwin" ] ; ` +
-            `then ${RemoteAttachPicker.osxPsCommand}; fi`;
-
-        // Create a temp file to redirect commands to the pipeProgram to solve quoting issues.
-        const tempFile = tmp.fileSync();
-        fs.write(tempFile.fd, command);
-
-        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} < ${tempFile.name}`, null, RemoteAttachPicker._channel).then(output => {
-            // Remove temp file since the uname and ps commands have been executed.
-            tempFile.removeCallback();
-
+        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} < ${scriptPath}`, null, RemoteAttachPicker._channel).then(output => {
             // OS will be on first line
             // Processess will follow if listed
             let lines = output.split(/\r?\n/);

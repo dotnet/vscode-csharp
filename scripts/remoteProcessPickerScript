@@ -1,0 +1,1 @@
+uname && if [ "$(uname)" = "Linux" ] ; then ps -axww -o pid=,comm=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,args= ; elif [ "$(uname)" = "Darwin" ] ; then ps -axww -o pid=,comm=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,args= -c; fi
