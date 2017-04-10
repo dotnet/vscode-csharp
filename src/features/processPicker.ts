@@ -129,7 +129,7 @@ export class RemoteAttachPicker {
     }
 
     public static getRemoteOSAndProcesses(pipeCmd: string): Promise<AttachItem[]> {
-        
+
         // Commands to get OS and processes
         const command = `uname && if [ "$(uname)" == "Linux" ] ; then ${RemoteAttachPicker.linuxPsCommand} ; elif [ "$(uname)" == "Darwin" ] ; ` +
             `then ${RemoteAttachPicker.osxPsCommand}; fi`;
@@ -413,26 +413,26 @@ function execChildProcess(process: string, workingDirectory: string): Promise<st
 // VSCode cannot find the path "c:\windows\system32\bash.exe" as bash.exe is only available on 64bit OS. 
 // It can be invoked from "c:\windows\sysnative\bash.exe", so adding "c:\windows\sysnative" to path if we identify
 // VSCode is running in windows and doesn't have it in the path.
-function GetSysNativePathIfNeeded() : Promise<any> {
-    return PlatformInformation.GetCurrent().then(platformInfo => { 
+function GetSysNativePathIfNeeded(): Promise<any> {
+    return PlatformInformation.GetCurrent().then(platformInfo => {
         let env = process.env;
         if (platformInfo.isWindows && platformInfo.architecture === "x86_64") {
-            let sysnative : String = process.env.WINDIR + "\\sysnative";
-            env.Path = process.env.PATH + ";" + sysnative;                   
+            let sysnative: String = process.env.WINDIR + "\\sysnative";
+            env.Path = process.env.PATH + ";" + sysnative;
         }
-        
+
         return env;
     });
 }
 
 function execChildProcessAndOutputErrorToChannel(process: string, workingDirectory: string, channel: vscode.OutputChannel): Promise<string> {
-    channel.appendLine(`Executing: ${process}`);    
+    channel.appendLine(`Executing: ${process}`);
 
     return new Promise<string>((resolve, reject) => {
         return GetSysNativePathIfNeeded().then(newEnv => {
             child_process.exec(process, { cwd: workingDirectory, env: newEnv, maxBuffer: 500 * 1024 }, (error: Error, stdout: string, stderr: string) => {
                 let channelOutput = "";
-                
+
                 if (stdout && stdout.length > 0) {
                     channelOutput.concat(stdout);
                 }
