@@ -33,7 +33,6 @@ export default class OmnisharpCodeActionProvider extends AbstractProvider implem
     }
 
     public provideCodeActions(document: TextDocument, range: Range, context: CodeActionContext, token: CancellationToken): Promise<Command[]> {
-
         if (this._disabled) {
             return;
         }
