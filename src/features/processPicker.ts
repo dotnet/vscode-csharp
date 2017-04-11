@@ -5,6 +5,8 @@
 
 import * as os from 'os';
 import * as vscode from 'vscode';
+import { getExtensionPath } from '../common';
+import * as path from 'path';
 import * as child_process from 'child_process';
 import { PlatformInformation } from '../platform';
 
@@ -65,17 +67,39 @@ export class RemoteAttachPicker {
             return Promise.reject<string>(new Error("Configuration \"" + name + "\" in launch.json does not have a " +
                 "pipeTransport argument with debuggerPath for pickRemoteProcess. Use pickProcess for local attach."));
         } else {
-            let pipeProgram = args.pipeTransport.pipeProgram;
-            let pipeArgs = args.pipeTransport.pipeArgs;
-            let platformSpecificPipeTransportOptions = RemoteAttachPicker.getPlatformSpecificPipeTransportOptions(args);
+            let pipeProgram: string = args.pipeTransport.pipeProgram;
+            let pipeArgs: string[] = args.pipeTransport.pipeArgs;
+            let quoteArgs: boolean = args.pipeTransport.quoteArgs != null ? args.pipeTransport.quoteArgs : true; // default value is true
+            let platformSpecificPipeTransportOptions: any = RemoteAttachPicker.getPlatformSpecificPipeTransportOptions(args);
 
             if (platformSpecificPipeTransportOptions) {
                 pipeProgram = platformSpecificPipeTransportOptions.pipeProgram || pipeProgram;
                 pipeArgs = platformSpecificPipeTransportOptions.pipeArgs || pipeArgs;
+                quoteArgs = platformSpecificPipeTransportOptions.pipeTransport.quoteArgs != null ? platformSpecificPipeTransportOptions.pipeTransport.quoteArgs : quoteArgs;
             }
 
-            let argList = RemoteAttachPicker.createArgumentList(pipeArgs);
-            let pipeCmd: string = `"${pipeProgram}" ${argList}`;
+            let pipeCmdList: string[] = [];
+            let scriptShellCmd: string = "sh -s";
+            pipeCmdList.push(pipeProgram);
+
+            const debuggerCommandString: string = "${debuggerCommand}";
+
+            if (pipeArgs.filter(arg => arg.indexOf(debuggerCommandString) >= 0).length > 0) {
+                for (let arg of pipeArgs) {
+                    while (arg.indexOf("${debuggerCommand}") >= 0) {
+                        arg = arg.replace("${debuggerCommand}", scriptShellCmd);
+                    }
+                    
+                    pipeCmdList.push(arg);
+                }
+            }
+            else {
+                pipeCmdList = pipeCmdList.concat(pipeArgs);
+                pipeCmdList.push(scriptShellCmd);
+            }
+
+            let pipeCmd: string = quoteArgs ? this.createArgumentList(pipeCmdList) : pipeCmdList.join(' ');
+
             return RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd).then(processes => {
                 let attachPickOptions: vscode.QuickPickOptions = {
                     matchOnDescription: true,
@@ -93,10 +117,18 @@ export class RemoteAttachPicker {
         let ret = "";
 
         for (let arg of args) {
-            if (ret) {
+            if (ret)
+            {
                 ret += " ";
             }
-            ret += `"${arg}"`;
+            
+            if (arg.includes(' ')) {
+                ret += `"${arg}"`;
+            }
+            else
+            {
+                ret += `${arg}`;
+            }
         }
 
         return ret;
@@ -117,16 +149,9 @@ export class RemoteAttachPicker {
     }
 
     public static getRemoteOSAndProcesses(pipeCmd: string): Promise<AttachItem[]> {
-        
-        // If the client OS is NOT Windows, we need to escape '$(uname)' as otherwise it will be evaluated on the client side
-        // If the client OS is Windows, we don't want to do that as it will be sent as-is, and thus the if statement will be broken
-        const remoteUnameCommand = os.platform() !== "win32" ? "$\\(uname\\)" : "$(uname)";
+        const scriptPath = path.join(getExtensionPath(), 'scripts', 'remoteProcessPickerScript');
 
-        // Commands to get OS and processes
-        const command = `bash -c 'uname && if [ "${remoteUnameCommand}" == "Linux" ] ; then ${RemoteAttachPicker.linuxPsCommand} ; elif [ "${remoteUnameCommand}" == "Darwin" ] ; ` +
-            `then ${RemoteAttachPicker.osxPsCommand}; fi'`;
-
-        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} "${command}"`, null, RemoteAttachPicker._channel).then(output => {
+        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} < ${scriptPath}`, null, RemoteAttachPicker._channel).then(output => {
             // OS will be on first line
             // Processess will follow if listed
             let lines = output.split(/\r?\n/);
@@ -398,26 +423,26 @@ function execChildProcess(process: string, workingDirectory: string): Promise<st
 // VSCode cannot find the path "c:\windows\system32\bash.exe" as bash.exe is only available on 64bit OS. 
 // It can be invoked from "c:\windows\sysnative\bash.exe", so adding "c:\windows\sysnative" to path if we identify
 // VSCode is running in windows and doesn't have it in the path.
-function GetSysNativePathIfNeeded() : Promise<any> {
-    return PlatformInformation.GetCurrent().then(platformInfo => { 
+function GetSysNativePathIfNeeded(): Promise<any> {
+    return PlatformInformation.GetCurrent().then(platformInfo => {
         let env = process.env;
         if (platformInfo.isWindows && platformInfo.architecture === "x86_64") {
-            let sysnative : String = process.env.WINDIR + "\\sysnative";
-            env.Path = process.env.PATH + ";" + sysnative;                   
+            let sysnative: String = process.env.WINDIR + "\\sysnative";
+            env.Path = process.env.PATH + ";" + sysnative;
         }
-        
+
         return env;
     });
 }
 
 function execChildProcessAndOutputErrorToChannel(process: string, workingDirectory: string, channel: vscode.OutputChannel): Promise<string> {
-    channel.appendLine(`Executing: ${process}`);    
+    channel.appendLine(`Executing: ${process}`);
 
     return new Promise<string>((resolve, reject) => {
         return GetSysNativePathIfNeeded().then(newEnv => {
             child_process.exec(process, { cwd: workingDirectory, env: newEnv, maxBuffer: 500 * 1024 }, (error: Error, stdout: string, stderr: string) => {
                 let channelOutput = "";
-                
+
                 if (stdout && stdout.length > 0) {
                     channelOutput.concat(stdout);
                 }
