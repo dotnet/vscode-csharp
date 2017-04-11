@@ -8,6 +8,7 @@ import { toRange } from '../omnisharp/typeConvertion';
 import * as vscode from 'vscode';
 import * as serverUtils from "../omnisharp/utils";
 import * as protocol from '../omnisharp/protocol';
+import * as utils from '../common';
 
 let _testOutputChannel: vscode.OutputChannel = undefined;
 
@@ -66,17 +67,7 @@ export function runDotnetTest(testMethod: string, fileName: string, testFramewor
 }
 
 function createLaunchConfiguration(program: string, argsString: string, cwd: string) {
-    let args = argsString.split(' ');
-
-    // Ensure that quoted args are unquoted.
-    args = args.map(arg => {
-        if (arg.startsWith('"') && arg.endsWith('"')) {
-            return arg.substring(1, arg.length - 1);
-        }
-        else {
-            return arg;
-        }
-    });
+    let args = utils.splitCommandLineArgs(argsString);
 
     return {
         name: ".NET Test Launch",

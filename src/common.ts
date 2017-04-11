@@ -117,3 +117,57 @@ export function convertNativePathToPosix(pathString: string): string {
     let parts = pathString.split(path.sep);
     return parts.join(path.posix.sep);
 }
+
+/**
+ * Splits a string of command line arguments into a string array. This function
+ * handles double-quoted arguments, but it is tailored toward the needs of the
+ * text returned by VSTest, and is not generally useful as a command line parser.
+ * @param commandLineString Text of command line arguments
+ */
+export function splitCommandLineArgs(commandLineString: string): string[] {
+     let result = [];
+     let start = -1;
+     let index = 0;
+     let inQuotes = false;
+
+     while (index < commandLineString.length) {
+         let ch = commandLineString[index];
+
+         // Are we starting a new word?
+         if (start === -1 && ch !== ' ' && ch !== '"') {
+             start = index;
+         }
+
+         // is next character quote?
+         if (ch === '"') {
+             // Are we already in a quoted argument? If so, push the argument to the result list.
+             // If not, start a new quoted argument.
+             if (inQuotes) {
+                 let arg = start >= 0
+                    ? commandLineString.substring(start, index)
+                    : "";
+                 result.push(arg);
+                 start = -1;
+                 inQuotes = false;
+             }
+             else {
+                 inQuotes = true;
+             }
+         }
+
+         if (!inQuotes && start >= 0 && ch === ' ') {
+             let arg = commandLineString.substring(start, index);
+             result.push(arg);
+             start = -1;
+         }
+
+         index++;
+     }
+
+     if (start >= 0) {
+         let arg = commandLineString.substring(start, commandLineString.length);
+         result.push(arg);
+     }
+
+     return result;
+}

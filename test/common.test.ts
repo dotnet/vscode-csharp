@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { buildPromiseChain, safeLength, sum } from '../src/common';
+import { buildPromiseChain, splitCommandLineArgs, safeLength, sum } from '../src/common';
 
 suite("Common", () => {
     suiteSetup(() => should());
@@ -22,6 +22,50 @@ suite("Common", () => {
             return promise.then(() => {
                 array.should.deep.equal([1, 2, 3, 4, 5]);
             });
+        });
+    });
+
+    suite("splitCommandLineArgs", () => {
+        test("single argument", () => {
+            let result = splitCommandLineArgs("hello");
+
+            result.should.deep.equal(["hello"]);
+        });
+
+        test("two arguments", () => {
+            let result = splitCommandLineArgs("hello world");
+
+            result.should.deep.equal(["hello", "world"]);
+        });
+
+        test("single quoted argument", () => {
+            let result = splitCommandLineArgs("\"hello world\"");
+
+            result.should.deep.equal(["hello world"]);
+        });
+
+        test("two argument, one quoted", () => {
+            let result = splitCommandLineArgs("hello \"world\"");
+
+            result.should.deep.equal(["hello", "world"]);
+        });
+
+        test("many quoted arguments", () => {
+            let result = splitCommandLineArgs("\"a\" \"b\" \"c\" \"d\" \"e\"");
+
+            result.should.deep.equal(["a", "b", "c", "d", "e"]);
+        });
+
+        test("many arguments, some quoted, some not", () => {
+            let result = splitCommandLineArgs("\"a\" b \"c\" d \"e\"");
+
+            result.should.deep.equal(["a", "b", "c", "d", "e"]);
+        });
+
+        test("many arguments, some quoted, some not (inverted)", () => {
+            let result = splitCommandLineArgs("a \"b\" c \"d\" e");
+
+            result.should.deep.equal(["a", "b", "c", "d", "e"]);
         });
     });
 
