@@ -112,3 +112,8 @@ export function deleteInstallFile(type: InstallFileType): Promise<void> {
         });
     });
 }
+
+export function convertNativePathToPosix(pathString: string): string {
+    let parts = pathString.split(path.sep);
+    return parts.join(path.posix.sep);
+}

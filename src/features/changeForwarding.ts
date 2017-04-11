@@ -22,7 +22,7 @@ function forwardDocumentChanges(server: OmniSharpServer): Disposable {
             return;
         }
 
-        serverUtils.updateBuffer(server, {Buffer: document.getText(), Filename: document.fileName}).catch(err => {
+        serverUtils.updateBuffer(server, {Buffer: document.getText(), FileName: document.fileName}).catch(err => {
             console.error(err);
             return err;
         });
@@ -36,7 +36,7 @@ function forwardFileChanges(server: OmniSharpServer): Disposable {
             return;
         }
         
-        let req = { Filename: uri.fsPath };
+        let req = { FileName: uri.fsPath };
         
         serverUtils.filesChanged(server, [req]).catch(err => {
             console.warn(`[o] failed to forward file change event for ${uri.fsPath}`, err);

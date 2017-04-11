@@ -57,6 +57,10 @@ export function rename(server: OmniSharpServer, request: protocol.RenameRequest,
     return server.makeRequest<protocol.RenameResponse>(protocol.Requests.Rename, request, token);
 }
 
+export function requestProjectInformation(server: OmniSharpServer, request: protocol.Request) {
+    return server.makeRequest<protocol.ProjectInformationResponse>(protocol.Requests.Project, request);
+}
+
 export function requestWorkspaceInformation(server: OmniSharpServer) {
     return server.makeRequest<protocol.WorkspaceInformationResponse>(protocol.Requests.Projects);
 }
@@ -85,8 +89,16 @@ export function getTestStartInfo(server: OmniSharpServer, request: protocol.V2.G
     return server.makeRequest<protocol.V2.GetTestStartInfoResponse>(protocol.V2.Requests.GetTestStartInfo, request);
 }
 
-export function runDotNetTest(server: OmniSharpServer, request: protocol.V2.RunDotNetTestRequest) {
-    return server.makeRequest<protocol.V2.RunDotNetTestResponse>(protocol.V2.Requests.RunDotNetTest, request);
+export function runTest(server: OmniSharpServer, request: protocol.V2.RunTestRequest) {
+    return server.makeRequest<protocol.V2.RunTestResponse>(protocol.V2.Requests.RunTest, request);
+}
+
+export function debugTestGetStartInfo(server: OmniSharpServer, request: protocol.V2.DebugTestGetStartInfoRequest) {
+    return server.makeRequest<protocol.V2.DebugTestGetStartInfoResponse>(protocol.V2.Requests.DebugTestGetStartInfo, request);
+}
+
+export function debugTestRun(server: OmniSharpServer, request: protocol.V2.DebugTestRunRequest) {
+    return server.makeRequest<protocol.V2.DebugTestRunResponse>(protocol.V2.Requests.DebugTestRun, request);
 }
 
 export function isNetCoreProject(project: protocol.MSBuildProject) {

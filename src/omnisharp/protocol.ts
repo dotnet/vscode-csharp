@@ -22,6 +22,7 @@ export module Requests {
     export const GetCodeActions = '/getcodeactions';
     export const GoToDefinition = '/gotoDefinition';
     export const FindImplementations = '/findimplementations';
+    export const Project = '/project';
     export const Projects = '/projects';
     export const RemoveFromProject = '/removefromproject';
     export const Rename = '/rename';
@@ -59,7 +60,7 @@ export namespace WireProtocol {
 }
 
 export interface Request {
-    Filename: string;
+    FileName: string;
     Line?: number;
     Column?: number;
     Buffer?: string;
@@ -419,7 +420,9 @@ export namespace V2 {
         export const GetCodeActions = '/v2/getcodeactions';
         export const RunCodeAction = '/v2/runcodeaction';
         export const GetTestStartInfo = '/v2/getteststartinfo';
-        export const RunDotNetTest = '/v2/runtest';
+        export const RunTest = '/v2/runtest';
+        export const DebugTestGetStartInfo = '/v2/debugtest/getstartinfo';
+        export const DebugTestRun = '/v2/debugtest/run';
     }
 
     export interface Point {
@@ -495,8 +498,25 @@ export namespace V2 {
     }
 
     // dotnet-test endpoints
-    export interface GetTestStartInfoRequest {
+    export interface DebugTestGetStartInfoRequest extends Request {
+        MethodName: string;
+        TestFrameworkName: string;
+    }
+
+    export interface DebugTestGetStartInfoResponse {
         FileName: string;
+        Arguments: string;
+        WorkingDirectory: string;
+        EnvironmentVariables: Map<string, string>;
+    }
+
+    export interface DebugTestRunRequest extends Request {
+    }
+
+    export interface DebugTestRunResponse {
+    }
+
+    export interface GetTestStartInfoRequest extends Request {
         MethodName: string;
         TestFrameworkName: string;
     }
@@ -504,17 +524,29 @@ export namespace V2 {
     export interface GetTestStartInfoResponse {
         Executable: string;
         Argument: string;
+        WorkingDirectory: string;
     }
 
-    export interface RunDotNetTestRequest {
-        FileName: string;
+    export interface RunTestRequest extends Request {
         MethodName: string;
         TestFrameworkName: string;
     }
 
-    export interface RunDotNetTestResponse {
+    export interface DotNetResult {
+        MethodName: string;
+        Outcome: string;
+        ErrorMessage: string;
+        ErrorStackTrace: string;
+    }
+
+    export interface RunTestResponse {
         Failure: string;
         Pass: boolean;
+    }
+
+    export interface TestMessageEvent {
+        MessageLevel: string;
+        Message: string;
     }
 }
 

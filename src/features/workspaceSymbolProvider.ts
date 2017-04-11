@@ -16,7 +16,7 @@ export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport im
 
     public provideWorkspaceSymbols(search: string, token: CancellationToken): Promise<SymbolInformation[]> {
 
-        return serverUtils.findSymbols(this._server, { Filter: search, Filename: '' }, token).then(res => {
+        return serverUtils.findSymbols(this._server, { Filter: search, FileName: '' }, token).then(res => {
             if (res && Array.isArray(res.QuickFixes)) {
                 return res.QuickFixes.map(OmnisharpWorkspaceSymbolProvider._asSymbolInformation);
             }

@@ -11,6 +11,7 @@ import { OmniSharpServer } from './omnisharp/server';
 import * as serverUtils from './omnisharp/utils';
 import * as protocol from './omnisharp/protocol';
 import { tolerantParse } from './json';
+import * as util from './common';
 
 export class AssetGenerator {
     public rootPath: string;
@@ -154,11 +155,6 @@ export class AssetGenerator {
         return result;
     }
 
-    private convertNativePathToPosix(pathString: string) : string {
-        let parts = pathString.split(path.sep);
-        return parts.join(path.posix.sep);
-    }
-
     private createLaunchConfiguration(): string{
         return `
 {
@@ -167,9 +163,9 @@ export class AssetGenerator {
     "request": "launch",
     "preLaunchTask": "build",
     // If you have changed target frameworks, make sure to update the program path.
-    "program": "${this.convertNativePathToPosix(this.computeProgramPath())}",
+    "program": "${util.convertNativePathToPosix(this.computeProgramPath())}",
     "args": [],
-    "cwd": "${this.convertNativePathToPosix(this.computeWorkingDirectory())}",
+    "cwd": "${util.convertNativePathToPosix(this.computeWorkingDirectory())}",
     // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
     "console": "internalConsole",
     "stopAtEntry": false,
@@ -185,9 +181,9 @@ export class AssetGenerator {
     "request": "launch",
     "preLaunchTask": "build",
     // If you have changed target frameworks, make sure to update the program path.
-    "program": "${this.convertNativePathToPosix(this.computeProgramPath())}",
+    "program": "${util.convertNativePathToPosix(this.computeProgramPath())}",
     "args": [],
-    "cwd": "${this.convertNativePathToPosix(this.computeWorkingDirectory())}",
+    "cwd": "${util.convertNativePathToPosix(this.computeWorkingDirectory())}",
     "stopAtEntry": false,
     "internalConsoleOptions": "openOnSessionStart",
     "launchBrowser": {
@@ -253,7 +249,7 @@ export class AssetGenerator {
 
         return {
             taskName: 'build',
-            args: [this.convertNativePathToPosix(buildPath)],
+            args: [util.convertNativePathToPosix(buildPath)],
             isBuildCommand: true,
             problemMatcher: '$msCompile'
         };
