@@ -84,7 +84,7 @@ export class RemoteAttachPicker {
 
             const debuggerCommandString: string = "${debuggerCommand}";
 
-            if (pipeArgs.indexOf(debuggerCommandString) > 0) {
+            if (pipeArgs.filter(arg => arg.indexOf(debuggerCommandString) >= 0).length > 0) {
                 for (let arg of pipeArgs) {
                     while (arg.indexOf("${debuggerCommand}") >= 0) {
                         arg = arg.replace("${debuggerCommand}", scriptShellCmd);
