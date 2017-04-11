@@ -82,17 +82,15 @@ export class RemoteAttachPicker {
             let scriptShellCmd: string = "sh -s";
             pipeCmdList.push(pipeProgram);
 
-            if (pipeArgs.filter(arg => arg === "${debuggerCommand}").length > 0) {
-                for (let arg of pipeArgs)
-                {
-                    if (arg === "${debuggerCommand}")
-                    {
-                        pipeCmdList.push(scriptShellCmd);
+            const debuggerCommandString: string = "${debuggerCommand}";
+
+            if (pipeArgs.indexOf(debuggerCommandString) > 0) {
+                for (let arg of pipeArgs) {
+                    while (arg.indexOf("${debuggerCommand}") >= 0) {
+                        arg = arg.replace("${debuggerCommand}", scriptShellCmd);
                     }
-                    else
-                    {
-                        pipeCmdList.push(arg);
-                    }
+                    
+                    pipeCmdList.push(arg);
                 }
             }
             else {
