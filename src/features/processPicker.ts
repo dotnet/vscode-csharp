@@ -79,14 +79,26 @@ export class RemoteAttachPicker {
             }
 
             let pipeCmdList: string[] = [];
+            let scriptShellCmd: string = "sh -s";
             pipeCmdList.push(pipeProgram);
 
-            // Remove debuggerCommand for remoteProcessPicker
-            pipeCmdList = pipeCmdList.concat(pipeArgs.filter(arg => arg !== "${debuggerCommand}"));
-
-            let scriptShellCmd: string = "sh -s";
-
-            pipeCmdList.push(scriptShellCmd);
+            if (pipeArgs.filter(arg => arg === "${debuggerCommand}").length > 0) {
+                for (let arg of pipeArgs)
+                {
+                    if (arg === "${debuggerCommand}")
+                    {
+                        pipeCmdList.push(scriptShellCmd);
+                    }
+                    else
+                    {
+                        pipeCmdList.push(arg);
+                    }
+                }
+            }
+            else {
+                pipeCmdList = pipeCmdList.concat(pipeArgs);
+                pipeCmdList.push(scriptShellCmd);
+            }
 
             let pipeCmd: string = quoteArgs ? this.createArgumentList(pipeCmdList) : pipeCmdList.join(' ');
 
@@ -107,10 +119,18 @@ export class RemoteAttachPicker {
         let ret = "";
 
         for (let arg of args) {
-            if (ret) {
+            if (ret)
+            {
                 ret += " ";
             }
-            ret += `"${arg}"`;
+            
+            if (arg.includes(' ')) {
+                ret += `"${arg}"`;
+            }
+            else
+            {
+                ret += `${arg}`;
+            }
         }
 
         return ret;
