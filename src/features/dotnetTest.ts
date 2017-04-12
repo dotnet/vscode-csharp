@@ -5,10 +5,14 @@
 
 import { OmniSharpServer } from '../omnisharp/server';
 import { toRange } from '../omnisharp/typeConvertion';
+import { DebuggerEventsProtocol } from '../coreclr-debug/debuggerEventsProtocol';
 import * as vscode from 'vscode';
 import * as serverUtils from "../omnisharp/utils";
 import * as protocol from '../omnisharp/protocol';
 import * as utils from '../common';
+import * as net from 'net';
+import * as os from 'os';
+import * as path from 'path';
 
 let _testOutputChannel: vscode.OutputChannel = undefined;
 
@@ -66,13 +70,16 @@ export function runDotnetTest(testMethod: string, fileName: string, testFramewor
         });
 }
 
-function createLaunchConfiguration(program: string, argsString: string, cwd: string) {
+function createLaunchConfiguration(program: string, argsString: string, cwd: string, debuggerEventsPipeName: string) {
     let args = utils.splitCommandLineArgs(argsString);
 
     return {
+        // NOTE: uncomment this for vsdbg developement
+        // debugServer: 4711,
         name: ".NET Test Launch",
         type: "coreclr",
         request: "launch",
+        debuggerEventsPipeName: debuggerEventsPipeName,
         program,
         args,
         cwd,
@@ -80,7 +87,8 @@ function createLaunchConfiguration(program: string, argsString: string, cwd: str
     };
 }
 
-function getLaunchConfigurationForVSTest(server: OmniSharpServer, fileName: string, testMethod: string, testFrameworkName: string): Promise<any> {
+function getLaunchConfigurationForVSTest(server: OmniSharpServer, fileName: string, testMethod: string, testFrameworkName: string, debugEventListener: DebugEventListener): Promise<any> {
+
     const request: protocol.V2.DebugTestGetStartInfoRequest = {
         FileName: fileName,
         MethodName: testMethod,
@@ -88,7 +96,7 @@ function getLaunchConfigurationForVSTest(server: OmniSharpServer, fileName: stri
     };
 
     return serverUtils.debugTestGetStartInfo(server, request)
-        .then(response => createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory));
+        .then(response => createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath()));
 }
 
 function getLaunchConfigurationForLegacy(server: OmniSharpServer, fileName: string, testMethod: string, testFrameworkName: string): Promise<any> {
@@ -99,16 +107,16 @@ function getLaunchConfigurationForLegacy(server: OmniSharpServer, fileName: stri
     };
 
     return serverUtils.getTestStartInfo(server, request)
-        .then(response => createLaunchConfiguration(response.Executable, response.Argument, response.WorkingDirectory));
+        .then(response => createLaunchConfiguration(response.Executable, response.Argument, response.WorkingDirectory, null));
 }
 
 
-function getLaunchConfiguration(server: OmniSharpServer, debugType: string, fileName: string, testMethod: string, testFrameworkName: string): Promise<any> {
+function getLaunchConfiguration(server: OmniSharpServer, debugType: string, fileName: string, testMethod: string, testFrameworkName: string, debugEventListener: DebugEventListener): Promise<any> {
     switch (debugType) {
         case "legacy":
             return getLaunchConfigurationForLegacy(server, fileName, testMethod, testFrameworkName);
         case "vstest":
-            return getLaunchConfigurationForVSTest(server, fileName, testMethod, testFrameworkName);
+            return getLaunchConfigurationForVSTest(server, fileName, testMethod, testFrameworkName, debugEventListener);
 
         default:
             throw new Error(`Unexpected debug type: ${debugType}`);
@@ -120,20 +128,25 @@ export function debugDotnetTest(testMethod: string, fileName: string, testFramew
     // We support to styles of 'dotnet test' for debugging: The legacy 'project.json' testing, and the newer csproj support
     // using VS Test. These require a different level of communication.
     let debugType: string;
+    let debugEventListener: DebugEventListener = null;
 
     return serverUtils.requestProjectInformation(server, { FileName: fileName} )
         .then(projectInfo => {
             if (projectInfo.DotNetProject) {
                 debugType = "legacy";
+                return Promise.resolve();
             }
             else if (projectInfo.MsBuildProject) {
                 debugType = "vstest";
+                debugEventListener = new DebugEventListener();
+                return debugEventListener.start();
             }
             else {
                 throw new Error();
             }
-
-            return getLaunchConfiguration(server, debugType, fileName, testMethod, testFrameworkName);
+        })
+        .then(() => {
+            return getLaunchConfiguration(server, debugType, fileName, testMethod, testFrameworkName, debugEventListener);
         })
         .then(config => vscode.commands.executeCommand('vscode.startDebug', config))
         .then(() => {
@@ -143,7 +156,12 @@ export function debugDotnetTest(testMethod: string, fileName: string, testFramew
                 serverUtils.debugTestRun(server, { FileName: fileName });
             }
         })
-        .catch(reason => vscode.window.showErrorMessage(`Failed to start debugger: ${reason}`));
+        .catch(reason => {
+            vscode.window.showErrorMessage(`Failed to start debugger: ${reason}`);
+            if (debugEventListener != null) {
+                debugEventListener.close();
+            }
+        });
 }
 
 export function updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node, isDebugEnable: boolean) {
@@ -165,5 +183,82 @@ export function updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: strin
                 toRange(node.Location),
                 { title: "debug test", command: 'dotnet.test.debug', arguments: [testFeature.Data, fileName, testFrameworkName] }));
         }
+    }
+}
+
+class DebugEventListener {
+    static s_activeInstance : DebugEventListener = null;
+    _serverSocket : net.Server;
+    _pipePath : string;
+    _outputChannel : vscode.OutputChannel;
+
+    constructor() {
+        // NOTE: The max pipe name on OSX is fairly small, so this name shouldn't bee too long.
+        const pipeSuffix = "TestDebugEvents-" + process.pid;
+        if (os.platform() === 'win32') {
+            this._pipePath = "\\\\.\\pipe\\Microsoft.VSCode.CSharpExt." + pipeSuffix;
+        } else {
+            this._pipePath = path.join(utils.getExtensionPath(), "." + pipeSuffix);
+        }
+
+        this._outputChannel = getTestOutputChannel();
+    }
+
+    public start() : Promise<void> {
+
+        // We use our process id as part of the pipe name, so if we still somehow have an old instance running, close it.
+        if (DebugEventListener.s_activeInstance !== null) {
+            DebugEventListener.s_activeInstance.close();
+        }
+        DebugEventListener.s_activeInstance = this;
+
+        // TODO: On Unix do we need to unlink file if it exists already?     
+        
+        this._serverSocket = net.createServer((socket: net.Socket) => {
+            socket.on('data', (buffer: Buffer) => {
+
+                let event: DebuggerEventsProtocol.DebuggerEvent;
+                try {
+                    event = DebuggerEventsProtocol.decodePacket(buffer);
+                } catch (e) {
+                    this._outputChannel.appendLine("Warning: Invalid event received from debugger");
+                    return;
+                }
+                
+                if (event.eventType === DebuggerEventsProtocol.EventType.debuggingStopped) {
+                    this.fireDebuggingStopped();
+                }
+            });
+
+            socket.on('end', () => {
+                this.fireDebuggingStopped();
+            });
+        });
+
+        return new Promise<void>((resolve, reject) => {
+            this._serverSocket.listen(this._pipePath, () => {
+                resolve();
+            });
+        });
+    }
+
+    public pipePath() : string {
+        return this._pipePath;
+    }
+
+    public close() {
+        if (this === DebugEventListener.s_activeInstance) {
+            DebugEventListener.s_activeInstance = null;
+        }
+
+        if (this._serverSocket !== null) {
+            this._serverSocket.close();
+        }
+    }
+
+    private fireDebuggingStopped() : void {
+        // TODO: notify omniSharp
+        
+        this.close();
     }
 }
