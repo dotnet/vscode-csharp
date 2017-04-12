@@ -73,6 +73,25 @@ export function fileExists(filePath: string): Promise<boolean> {
     });
 }
 
+export function deleteIfExists(filePath: string): Promise<void> {
+    return fileExists(filePath)
+    .then((exists: boolean) => {
+        return new Promise<void>((resolve, reject) => {
+            if (!exists) {
+                resolve();
+            }
+
+            fs.unlink(filePath, err => {
+                if (err) {
+                    return reject(err);
+                }
+
+                resolve();
+            });
+        });
+    });
+}
+
 export enum InstallFileType {
     Begin,
     Lock

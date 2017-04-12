@@ -191,6 +191,7 @@ class DebugEventListener {
     _serverSocket : net.Server;
     _pipePath : string;
     _outputChannel : vscode.OutputChannel;
+    _isClosed: boolean = false;
 
     constructor() {
         // NOTE: The max pipe name on OSX is fairly small, so this name shouldn't bee too long.
@@ -211,8 +212,6 @@ class DebugEventListener {
             DebugEventListener.s_activeInstance.close();
         }
         DebugEventListener.s_activeInstance = this;
-
-        // TODO: On Unix do we need to unlink file if it exists already?     
         
         this._serverSocket = net.createServer((socket: net.Socket) => {
             socket.on('data', (buffer: Buffer) => {
@@ -225,7 +224,9 @@ class DebugEventListener {
                     return;
                 }
                 
-                if (event.eventType === DebuggerEventsProtocol.EventType.debuggingStopped) {
+                if (event.eventType === DebuggerEventsProtocol.EventType.ProcessLaunched) {
+                    // TODO: notify OmniSharp
+                } else if (event.eventType === DebuggerEventsProtocol.EventType.DebuggingStopped) {
                     this.fireDebuggingStopped();
                 }
             });
@@ -235,9 +236,20 @@ class DebugEventListener {
             });
         });
 
-        return new Promise<void>((resolve, reject) => {
-            this._serverSocket.listen(this._pipePath, () => {
-                resolve();
+        return this.removeSocketFileIfExists().then(() => {
+            return new Promise<void>((resolve, reject) => {
+                let isStarted: boolean = false;
+                this._serverSocket.on('error', (err: Error) => {
+                    if (!isStarted) {
+                        reject(err.message);
+                    } else {
+                        this._outputChannel.appendLine("Warning: Communications error on debugger event channel. " + err.message);
+                    }
+                });
+                this._serverSocket.listen(this._pipePath, () => {
+                    isStarted = true;
+                    resolve();
+                });
             });
         });
     }
@@ -250,6 +262,10 @@ class DebugEventListener {
         if (this === DebugEventListener.s_activeInstance) {
             DebugEventListener.s_activeInstance = null;
         }
+        if (this._isClosed) {
+            return;
+        }
+        this._isClosed = true;
 
         if (this._serverSocket !== null) {
             this._serverSocket.close();
@@ -257,8 +273,21 @@ class DebugEventListener {
     }
 
     private fireDebuggingStopped() : void {
+        if (this._isClosed) {
+            return;
+        }
+        
         // TODO: notify omniSharp
         
         this.close();
+    }
+
+    private removeSocketFileIfExists() : Promise<void> {
+        if (os.platform() === 'win32') {
+            // Win32 doesn't use the file system for pipe names
+            return Promise.resolve();
+        } else {
+            return utils.deleteIfExists(this._pipePath);
+        }
     }
 }

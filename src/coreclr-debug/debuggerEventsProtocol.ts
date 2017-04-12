@@ -10,18 +10,19 @@
 // 
 // All messages are sent as UTF-8 JSON text with a tailing '\n'
 export namespace DebuggerEventsProtocol {
-    export enum EventType {
+    export module EventType {
         // Indicates that the vsdbg-ui has received the attach or launch request and is starting up
-        starting,
+        export const Starting = "starting";
         // Indicates that vsdbg-ui has successfully launched the specified process.
         // The ProcessLaunchedEvent interface details the event payload.
-        processLaunched,
+        export const ProcessLaunched = "processLaunched";
         // Debug session is ending
-        debuggingStopped
-    }
+        export const DebuggingStopped = "debuggingStopped";
+    };
 
     export interface DebuggerEvent {
-        eventType: EventType;
+        // Contains one of the 'DebuggerEventsProtocol.EventType' values
+        eventType: string;
     }
 
     export interface ProcessLaunchedEvent extends DebuggerEvent {
