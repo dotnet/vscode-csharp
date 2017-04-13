@@ -129,6 +129,8 @@ export function debugDotnetTest(testMethod: string, fileName: string, testFramew
     // using VS Test. These require a different level of communication.
     let debugType: string;
     let debugEventListener: DebugEventListener = null;
+    let outputChannel = getTestOutputChannel();
+    outputChannel.appendLine(`Debugging method '${testMethod}'.`);
 
     return serverUtils.requestProjectInformation(server, { FileName: fileName} )
         .then(projectInfo => {
@@ -138,7 +140,7 @@ export function debugDotnetTest(testMethod: string, fileName: string, testFramew
             }
             else if (projectInfo.MsBuildProject) {
                 debugType = "vstest";
-                debugEventListener = new DebugEventListener();
+                debugEventListener = new DebugEventListener(fileName, server, outputChannel);
                 return debugEventListener.start();
             }
             else {
@@ -149,13 +151,6 @@ export function debugDotnetTest(testMethod: string, fileName: string, testFramew
             return getLaunchConfiguration(server, debugType, fileName, testMethod, testFrameworkName, debugEventListener);
         })
         .then(config => vscode.commands.executeCommand('vscode.startDebug', config))
-        .then(() => {
-            // For VS Test, we need to signal to start the test run after the debugger has launched.
-            // TODO: Need to find out when the debugger has actually launched. This is currently a race.
-            if (debugType === "vstest") {
-                serverUtils.debugTestRun(server, { FileName: fileName });
-            }
-        })
         .catch(reason => {
             vscode.window.showErrorMessage(`Failed to start debugger: ${reason}`);
             if (debugEventListener != null) {
@@ -188,12 +183,18 @@ export function updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: strin
 
 class DebugEventListener {
     static s_activeInstance : DebugEventListener = null;
-    _serverSocket : net.Server;
-    _pipePath : string;
+    _fileName: string;
+    _server: OmniSharpServer;
     _outputChannel : vscode.OutputChannel;
+    _pipePath : string;
+
+    _serverSocket : net.Server;
     _isClosed: boolean = false;
 
-    constructor() {
+    constructor(fileName: string, server: OmniSharpServer, outputChannel: vscode.OutputChannel) {
+        this._fileName = fileName;
+        this._server = server;
+        this._outputChannel = outputChannel;
         // NOTE: The max pipe name on OSX is fairly small, so this name shouldn't bee too long.
         const pipeSuffix = "TestDebugEvents-" + process.pid;
         if (os.platform() === 'win32') {
@@ -201,8 +202,6 @@ class DebugEventListener {
         } else {
             this._pipePath = path.join(utils.getExtensionPath(), "." + pipeSuffix);
         }
-
-        this._outputChannel = getTestOutputChannel();
     }
 
     public start() : Promise<void> {
@@ -225,8 +224,12 @@ class DebugEventListener {
                 }
                 
                 if (event.eventType === DebuggerEventsProtocol.EventType.ProcessLaunched) {
-                    // TODO: notify OmniSharp
+                    let processLaunchedEvent = <DebuggerEventsProtocol.ProcessLaunchedEvent>(event);
+                    this._outputChannel.appendLine(`Started debugging process #${processLaunchedEvent.targetProcessId}.`);
+                    // TODO: provide the process id to OmniSharp
+                    serverUtils.debugTestRun(this._server, { FileName: this._fileName });
                 } else if (event.eventType === DebuggerEventsProtocol.EventType.DebuggingStopped) {
+                    this._outputChannel.appendLine("Debugging complete.");
                     this.fireDebuggingStopped();
                 }
             });
@@ -278,7 +281,7 @@ class DebugEventListener {
         }
         
         // TODO: notify omniSharp
-        
+
         this.close();
     }
 
