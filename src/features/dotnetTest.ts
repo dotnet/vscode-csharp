@@ -132,7 +132,7 @@ export function debugDotnetTest(testMethod: string, fileName: string, testFramew
     let outputChannel = getTestOutputChannel();
     outputChannel.appendLine(`Debugging method '${testMethod}'.`);
 
-    return serverUtils.requestProjectInformation(server, { FileName: fileName} )
+    return serverUtils.requestProjectInformation(server, { FileName: fileName })
         .then(projectInfo => {
             if (projectInfo.DotNetProject) {
                 debugType = "legacy";
@@ -147,9 +147,7 @@ export function debugDotnetTest(testMethod: string, fileName: string, testFramew
                 throw new Error();
             }
         })
-        .then(() => {
-            return getLaunchConfiguration(server, debugType, fileName, testMethod, testFrameworkName, debugEventListener);
-        })
+        .then(() => getLaunchConfiguration(server, debugType, fileName, testMethod, testFrameworkName, debugEventListener))
         .then(config => vscode.commands.executeCommand('vscode.startDebug', config))
         .catch(reason => {
             vscode.window.showErrorMessage(`Failed to start debugger: ${reason}`);
@@ -182,13 +180,13 @@ export function updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: strin
 }
 
 class DebugEventListener {
-    static s_activeInstance : DebugEventListener = null;
+    static s_activeInstance: DebugEventListener = null;
     _fileName: string;
     _server: OmniSharpServer;
-    _outputChannel : vscode.OutputChannel;
-    _pipePath : string;
+    _outputChannel: vscode.OutputChannel;
+    _pipePath: string;
 
-    _serverSocket : net.Server;
+    _serverSocket: net.Server;
     _isClosed: boolean = false;
 
     constructor(fileName: string, server: OmniSharpServer, outputChannel: vscode.OutputChannel) {
@@ -204,38 +202,41 @@ class DebugEventListener {
         }
     }
 
-    public start() : Promise<void> {
+    public start(): Promise<void> {
 
         // We use our process id as part of the pipe name, so if we still somehow have an old instance running, close it.
         if (DebugEventListener.s_activeInstance !== null) {
             DebugEventListener.s_activeInstance.close();
         }
         DebugEventListener.s_activeInstance = this;
-        
+
         this._serverSocket = net.createServer((socket: net.Socket) => {
             socket.on('data', (buffer: Buffer) => {
-
                 let event: DebuggerEventsProtocol.DebuggerEvent;
                 try {
                     event = DebuggerEventsProtocol.decodePacket(buffer);
-                } catch (e) {
+                }
+                catch (e) {
                     this._outputChannel.appendLine("Warning: Invalid event received from debugger");
                     return;
                 }
-                
-                if (event.eventType === DebuggerEventsProtocol.EventType.ProcessLaunched) {
-                    let processLaunchedEvent = <DebuggerEventsProtocol.ProcessLaunchedEvent>(event);
-                    this._outputChannel.appendLine(`Started debugging process #${processLaunchedEvent.targetProcessId}.`);
-                    // TODO: provide the process id to OmniSharp
-                    serverUtils.debugTestRun(this._server, { FileName: this._fileName });
-                } else if (event.eventType === DebuggerEventsProtocol.EventType.DebuggingStopped) {
-                    this._outputChannel.appendLine("Debugging complete.");
-                    this.fireDebuggingStopped();
+
+                switch (event.eventType) {
+                    case DebuggerEventsProtocol.EventType.ProcessLaunched:
+                        let processLaunchedEvent = <DebuggerEventsProtocol.ProcessLaunchedEvent>(event);
+                        this._outputChannel.appendLine(`Started debugging process #${processLaunchedEvent.targetProcessId}.`);
+                        this.onProcessLaunched(processLaunchedEvent.targetProcessId);
+                        break;
+
+                    case DebuggerEventsProtocol.EventType.DebuggingStopped:
+                        this._outputChannel.appendLine("Debugging complete.\n");
+                        this.onDebuggingStopped();
+                        break;
                 }
             });
 
             socket.on('end', () => {
-                this.fireDebuggingStopped();
+                this.onDebuggingStopped();
             });
         });
 
@@ -257,7 +258,7 @@ class DebugEventListener {
         });
     }
 
-    public pipePath() : string {
+    public pipePath(): string {
         return this._pipePath;
     }
 
@@ -265,9 +266,11 @@ class DebugEventListener {
         if (this === DebugEventListener.s_activeInstance) {
             DebugEventListener.s_activeInstance = null;
         }
+
         if (this._isClosed) {
             return;
         }
+
         this._isClosed = true;
 
         if (this._serverSocket !== null) {
@@ -275,21 +278,42 @@ class DebugEventListener {
         }
     }
 
-    private fireDebuggingStopped() : void {
+    private onProcessLaunched(targetProcessId: number): void {
+        let request: protocol.V2.DebugTestLaunchRequest = {
+            FileName: this._fileName,
+            TargetProcessId: targetProcessId
+        };
+
+        const disposable = this._server.onTestMessage(e => {
+            this._outputChannel.appendLine(e.Message);
+        });
+
+        serverUtils.debugTestLaunch(this._server, request)
+            .then(_ => {
+                disposable.dispose();
+            });
+    }
+
+    private onDebuggingStopped(): void {
         if (this._isClosed) {
             return;
         }
-        
-        // TODO: notify omniSharp
+
+        let request: protocol.V2.DebugTestStopRequest = {
+            FileName: this._fileName
+        };
+
+        serverUtils.debugTestStop(this._server, request);
 
         this.close();
     }
 
-    private removeSocketFileIfExists() : Promise<void> {
+    private removeSocketFileIfExists(): Promise<void> {
         if (os.platform() === 'win32') {
             // Win32 doesn't use the file system for pipe names
             return Promise.resolve();
-        } else {
+        }
+        else {
             return utils.deleteIfExists(this._pipePath);
         }
     }

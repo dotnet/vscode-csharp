@@ -5,7 +5,7 @@
 
 'use strict';
 
-import {OmniSharpServer} from './server';
+import { OmniSharpServer } from './server';
 import * as protocol from './protocol';
 import * as vscode from 'vscode';
 
@@ -97,8 +97,12 @@ export function debugTestGetStartInfo(server: OmniSharpServer, request: protocol
     return server.makeRequest<protocol.V2.DebugTestGetStartInfoResponse>(protocol.V2.Requests.DebugTestGetStartInfo, request);
 }
 
-export function debugTestRun(server: OmniSharpServer, request: protocol.V2.DebugTestRunRequest) {
-    return server.makeRequest<protocol.V2.DebugTestRunResponse>(protocol.V2.Requests.DebugTestRun, request);
+export function debugTestLaunch(server: OmniSharpServer, request: protocol.V2.DebugTestLaunchRequest) {
+    return server.makeRequest<protocol.V2.DebugTestLaunchResponse>(protocol.V2.Requests.DebugTestLaunch, request);
+}
+
+export function debugTestStop(server: OmniSharpServer, request: protocol.V2.DebugTestStopRequest) {
+    return server.makeRequest<protocol.V2.DebugTestStopResponse>(protocol.V2.Requests.DebugTestStop, request);
 }
 
 export function isNetCoreProject(project: protocol.MSBuildProject) {

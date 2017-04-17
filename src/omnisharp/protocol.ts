@@ -67,13 +67,11 @@ export interface Request {
     Changes?: LinePositionSpanTextChange[];
 }
 
-export interface GoToDefinitionRequest extends Request
-{
+export interface GoToDefinitionRequest extends Request {
     WantMetadata?: boolean;
 }
 
-export interface FindImplementationsRequest extends Request
-{
+export interface FindImplementationsRequest extends Request {
 }
 
 export interface LinePositionSpanTextChange {
@@ -422,7 +420,8 @@ export namespace V2 {
         export const GetTestStartInfo = '/v2/getteststartinfo';
         export const RunTest = '/v2/runtest';
         export const DebugTestGetStartInfo = '/v2/debugtest/getstartinfo';
-        export const DebugTestRun = '/v2/debugtest/run';
+        export const DebugTestLaunch = '/v2/debugtest/launch';
+        export const DebugTestStop = '/v2/debugtest/stop';
     }
 
     export interface Point {
@@ -510,10 +509,17 @@ export namespace V2 {
         EnvironmentVariables: Map<string, string>;
     }
 
-    export interface DebugTestRunRequest extends Request {
+    export interface DebugTestLaunchRequest extends Request {
+        TargetProcessId: number;
     }
 
-    export interface DebugTestRunResponse {
+    export interface DebugTestLaunchResponse {
+    }
+
+    export interface DebugTestStopRequest extends Request {
+    }
+
+    export interface DebugTestStopResponse {
     }
 
     export interface GetTestStartInfoRequest extends Request {
