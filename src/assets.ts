@@ -541,27 +541,10 @@ function doesAnyAssetExist(generator: AssetGenerator) {
     });
 }
 
-function deleteAsset(path: string) {
-    return new Promise<void>((resolve, reject) => {
-        fs.exists(path, exists => {
-            if (exists) {
-                // TODO: Should we check after unlinking to see if the file still exists?
-                fs.unlink(path, err => {
-                    if (err) {
-                        return reject(err);
-                    }
-
-                    resolve();
-                });
-            }
-        });
-    });
-}
-
 function deleteAssets(generator: AssetGenerator) {
     return Promise.all([
-        deleteAsset(generator.launchJsonPath),
-        deleteAsset(generator.tasksJsonPath)
+        util.deleteIfExists(generator.launchJsonPath),
+        util.deleteIfExists(generator.tasksJsonPath)
     ]);
 }
 
