@@ -6,6 +6,7 @@
 import * as os from 'os';
 import * as vscode from 'vscode';
 import { getExtensionPath } from '../common';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as child_process from 'child_process';
 import { PlatformInformation } from '../platform';
@@ -45,6 +46,27 @@ export class RemoteAttachPicker {
 
     private static _channel: vscode.OutputChannel = null;
 
+    public static ValidateAndFixPipeProgram(program: string): Promise<string> {
+        return PlatformInformation.GetCurrent().then(platformInfo => {
+            // If its 64 bit windows and the program does not exist. Try to replace System32 with sysnative
+            if (platformInfo.isWindows && platformInfo.architecture === "x86_64" && !fs.existsSync(program) && program.toLowerCase().includes("system32")) {
+                let sysRoot: string = process.env.SystemRoot;
+
+                // Escape backslashes for regex
+                let oldPath = path.join(sysRoot, 'System32').replace(/\\/g, '\\\\');
+                let newPath = path.join(sysRoot, 'sysnative');
+                
+                // Regex to replace and ignore casing
+                let regex = RegExp(oldPath, "ig");
+
+                return program.replace(regex, newPath);
+            }
+
+            // Return original program and let it fall through
+            return program;
+        });
+    }
+
     public static ShowAttachEntries(args: any): Promise<string> {
         // Create remote attach output channel for errors.
         if (!RemoteAttachPicker._channel) {
@@ -78,36 +100,38 @@ export class RemoteAttachPicker {
                 quoteArgs = platformSpecificPipeTransportOptions.pipeTransport.quoteArgs != null ? platformSpecificPipeTransportOptions.pipeTransport.quoteArgs : quoteArgs;
             }
 
-            let pipeCmdList: string[] = [];
-            let scriptShellCmd: string = "sh -s";
-            pipeCmdList.push(pipeProgram);
+            return RemoteAttachPicker.ValidateAndFixPipeProgram(pipeProgram).then(pipeProgram => {
+                let pipeCmdList: string[] = [];
+                let scriptShellCmd: string = "sh -s";
+                pipeCmdList.push(pipeProgram);
 
-            const debuggerCommandString: string = "${debuggerCommand}";
+                const debuggerCommandString: string = "${debuggerCommand}";
 
-            if (pipeArgs.filter(arg => arg.indexOf(debuggerCommandString) >= 0).length > 0) {
-                for (let arg of pipeArgs) {
-                    while (arg.indexOf("${debuggerCommand}") >= 0) {
-                        arg = arg.replace("${debuggerCommand}", scriptShellCmd);
+                if (pipeArgs.filter(arg => arg.indexOf(debuggerCommandString) >= 0).length > 0) {
+                    for (let arg of pipeArgs) {
+                        while (arg.indexOf("${debuggerCommand}") >= 0) {
+                            arg = arg.replace("${debuggerCommand}", scriptShellCmd);
+                        }
+
+                        pipeCmdList.push(arg);
                     }
-                    
-                    pipeCmdList.push(arg);
                 }
-            }
-            else {
-                pipeCmdList = pipeCmdList.concat(pipeArgs);
-                pipeCmdList.push(scriptShellCmd);
-            }
+                else {
+                    pipeCmdList = pipeCmdList.concat(pipeArgs);
+                    pipeCmdList.push(scriptShellCmd);
+                }
 
-            let pipeCmd: string = quoteArgs ? this.createArgumentList(pipeCmdList) : pipeCmdList.join(' ');
+                let pipeCmd: string = quoteArgs ? this.createArgumentList(pipeCmdList) : pipeCmdList.join(' ');
 
-            return RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd).then(processes => {
-                let attachPickOptions: vscode.QuickPickOptions = {
-                    matchOnDescription: true,
-                    matchOnDetail: true,
-                    placeHolder: "Select the process to attach to"
-                };
-                return vscode.window.showQuickPick(processes, attachPickOptions).then(item => {
-                    return item ? item.id : Promise.reject<string>(new Error("Could not find a process id to attach."));
+                return RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd).then(processes => {
+                    let attachPickOptions: vscode.QuickPickOptions = {
+                        matchOnDescription: true,
+                        matchOnDetail: true,
+                        placeHolder: "Select the process to attach to"
+                    };
+                    return vscode.window.showQuickPick(processes, attachPickOptions).then(item => {
+                        return item ? item.id : Promise.reject<string>(new Error("Could not find a process id to attach."));
+                    });
                 });
             });
         }
@@ -444,15 +468,15 @@ function execChildProcessAndOutputErrorToChannel(process: string, workingDirecto
                 let channelOutput = "";
 
                 if (stdout && stdout.length > 0) {
-                    channelOutput.concat(stdout);
+                    channelOutput = channelOutput.concat(stdout);
                 }
 
                 if (stderr && stderr.length > 0) {
-                    channelOutput.concat(stderr);
+                    channelOutput = channelOutput.concat("stderr: " + stderr);
                 }
 
                 if (error) {
-                    channelOutput.concat(error.message);
+                    channelOutput = channelOutput.concat("Error Message: " + error.message);
                 }
 
 
