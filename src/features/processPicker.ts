@@ -55,7 +55,7 @@ export class RemoteAttachPicker {
                 // Escape backslashes for regex
                 let oldPath = path.join(sysRoot, 'System32').replace(/\\/g, '\\\\');
                 let newPath = path.join(sysRoot, 'sysnative');
-                
+
                 // Regex to replace and ignore casing
                 let regex = RegExp(oldPath, "ig");
 
@@ -141,16 +141,14 @@ export class RemoteAttachPicker {
         let ret = "";
 
         for (let arg of args) {
-            if (ret)
-            {
+            if (ret) {
                 ret += " ";
             }
-            
+
             if (arg.includes(' ')) {
                 ret += `"${arg}"`;
             }
-            else
-            {
+            else {
                 ret += `${arg}`;
             }
         }
