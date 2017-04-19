@@ -48,18 +48,23 @@ export class RemoteAttachPicker {
 
     public static ValidateAndFixPipeProgram(program: string): Promise<string> {
         return PlatformInformation.GetCurrent().then(platformInfo => {
-            // If its 64 bit windows and the program does not exist. Try to replace System32 with sysnative
-            if (platformInfo.isWindows && platformInfo.architecture === "x86_64" && !fs.existsSync(program) && program.toLowerCase().includes("system32")) {
-                let sysRoot: string = process.env.SystemRoot;
+            let sysRoot: string = process.env.SystemRoot;
+            let oldPath = path.join(sysRoot, 'System32');
+            let newPath = path.join(sysRoot, 'sysnative');
 
-                // Escape backslashes for regex
-                let oldPath = path.join(sysRoot, 'System32').replace(/\\/g, '\\\\');
-                let newPath = path.join(sysRoot, 'sysnative');
+            // Escape backslashes, replace and ignore casing
+            let regex = RegExp(oldPath.replace(/\\/g, '\\\\'), "ig");
 
-                // Regex to replace and ignore casing
-                let regex = RegExp(oldPath, "ig");
+            // Replace System32 with sysnative
+            let newProgram = program.replace(regex, newPath);
 
-                return program.replace(regex, newPath);
+            // If its 64 bit Windows and the program does not exist in System32, but it does in sysnative.
+            // Return sysnative program
+            if (platformInfo.isWindows() && platformInfo.architecture === "x86_64" &&
+                program.toLowerCase().startsWith(oldPath.toLowerCase()) &&
+                !fs.existsSync(program) && fs.existsSync(newProgram)) {
+
+                return newProgram;
             }
 
             // Return original program and let it fall through
@@ -448,7 +453,7 @@ function execChildProcess(process: string, workingDirectory: string): Promise<st
 function GetSysNativePathIfNeeded(): Promise<any> {
     return PlatformInformation.GetCurrent().then(platformInfo => {
         let env = process.env;
-        if (platformInfo.isWindows && platformInfo.architecture === "x86_64") {
+        if (platformInfo.isWindows() && platformInfo.architecture === "x86_64") {
             let sysnative: String = process.env.WINDIR + "\\sysnative";
             env.Path = process.env.PATH + ";" + sysnative;
         }
