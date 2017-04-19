@@ -1,4 +1,4 @@
-## Known Issues
+## Known Issues in 1.8.1
 
 * Running and debugging of tests are not supported in .csproj-based .NET Core projects. However, there will still be clickable "run test" and "debug test" indicators above test methods. ([#1100](https://github.com/OmniSharp/omnisharp-vscode/issues/1100))
 * When opening a .csproj-based .NET Core project in VS Code, the C# extension will not activate until a C# file is opened in the editor. ([#1150](https://github.com/OmniSharp/omnisharp-vscode/issues/1150))
@@ -6,18 +6,40 @@
 
 ## 1.9.0 _(Not Yet Released)_
 
+#### Unit Testing
+
+* Support added for running and debugging unit tests in .csproj-based .NET Core projects. ([#1100](https://github.com/OmniSharp/omnisharp-vscode/issues/1100))
+
 #### Debugger
 
-* **Arch Linux change**: before, the debugger would automatically use the Ubuntu 16 debugger on Arch. Now we require the debugger to be explicitly set. See https://aka.ms/vscode-csext-arch for more information.
+* **Arch Linux change**: Before, the debugger would automatically use the Ubuntu 16 debugger on Arch. Now we require the debugger to be explicitly set. See https://aka.ms/vscode-csext-arch for more information.
 * Several bug fixes that addressed problems with launch ([#1318](https://github.com/OmniSharp/omnisharp-vscode/issues/1318), [#1335](https://github.com/OmniSharp/omnisharp-vscode/issues/1335), [#1336](https://github.com/OmniSharp/omnisharp-vscode/issues/1336))
 * Fix issue where VS Code would incorrectly display threads as paused ([#1317](https://github.com/OmniSharp/omnisharp-vscode/issues/1317))
 * Added new 'csharp.fallbackDebuggerLinuxRuntimeId' configuration setting to control the version of the debugger used on Linux ([#1361](https://github.com/OmniSharp/omnisharp-vscode/issues/1361)).
 
+#### Project System
+
+* Properly handle package references with version ranges in .csproj (PR: [omnisharp-roslyn#814](https://github.com/OmniSharp/omnisharp-roslyn/pull/814))
+* Fix regression with MSBuild project system where a project reference and a binary reference could be added for the same assembly, causing ambiguity errors ([omnisharp-roslyn#795](https://github.com/OmniSharp/omnisharp-roslyn/issues/795), PR: [omnisharp-roslyn#815](https://github.com/OmniSharp/omnisharp-roslyn/pull/815))
+* If VS 2017 is on the current machine, use the MSBuild included with VS 2017 for processing projects. ([#1368](https://github.com/OmniSharp/omnisharp-vscode/issues/1368), PR: [omnisharp-roslyn#818]()https://github.com/OmniSharp/omnisharp-roslyn/issues/818)
+* Fixed null reference exception in DotNetProjectSystem when project reference is invalid (PR: [omnisharp-roslyn#797](https://github.com/OmniSharp/omnisharp-roslyn/pull/797))
+
+#### Improved OmniSharp Settings
+* Added support for global omnisharp.json file ([omnisharp-roslyn#717](https://github.com/OmniSharp/omnisharp-roslyn/issues/7170), PR: [omnisharp-roslyn#809](https://github.com/OmniSharp/omnisharp-roslyn/pull/809)) _(Contributed by [@filipw](https://github.com/filipw))_
+
+  This file can appear in one of the following locations:
+  * Windows: `%APPDATA%\OmniSharp\omnisharp.json`
+  * macOS/Linus: `~/.omnisharp/omnisharp.json`
+* Watch local and global omnisharp.json files for changes while OmniSharp is running. Currently, this only works for formatting options. (PR: [omnisharp-roslyn#804](https://github.com/OmniSharp/omnisharp-roslyn/pull/804))_(Contributed by [@filipw](https://github.com/filipw))_
+* New 'omnisharp.waitForDebugger' setting to make it easier to debug the OmniSharp server itself. (PR: [#1370](https://github.com/OmniSharp/omnisharp-roslyn/pull/1370))
+
 #### Other Updates and Fixes
 
 * Improvements made to project.json package completion experience. ([#1338](https://github.com/OmniSharp/omnisharp-vscode/pull/1338))
-* Assets for building and debugging are now always generated with POSIX style paths. ([#1354](https://github.com/OmniSharp/omnisharp-vscode/pull/1354))
+* Diagnostics are no longer created for hidden diagnostics, addressing the problem of "Remove Unnecessary Usings" spam in the Problems pane. ([#1231](https://github.com/OmniSharp/omnisharp-vscode/issues/1231))
 * Improved the extension's runtime dependency download logic to skip re-downloading packages that were already successfully downloaded and installed.
+* Assets for building and debugging are now always generated with POSIX style paths. ([#1354](https://github.com/OmniSharp/omnisharp-vscode/pull/1354))
+* Don't offer to generate tasks.json if build task already exists. (PR #1363) _(Contributed by [@eamodio](https://github.com/eamodio))_
 
 ## 1.8.1 (March 31, 2017)
 
