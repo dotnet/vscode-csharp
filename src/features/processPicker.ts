@@ -6,6 +6,7 @@
 import * as os from 'os';
 import * as vscode from 'vscode';
 import { getExtensionPath } from '../common';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as child_process from 'child_process';
 import { PlatformInformation } from '../platform';
@@ -45,6 +46,35 @@ export class RemoteAttachPicker {
 
     private static _channel: vscode.OutputChannel = null;
 
+    public static ValidateAndFixPipeProgram(program: string): Promise<string> {
+        return PlatformInformation.GetCurrent().then(platformInfo => {
+            // Check if we are on a 64 bit Windows
+            if (platformInfo.isWindows() && platformInfo.architecture === "x86_64") {
+                let sysRoot: string = process.env.SystemRoot;
+                let oldPath = path.join(sysRoot, 'System32');
+                let newPath = path.join(sysRoot, 'sysnative');
+
+                // Escape backslashes, replace and ignore casing
+                let regex = RegExp(oldPath.replace(/\\/g, '\\\\'), "ig");
+
+                // Replace System32 with sysnative
+                let newProgram = program.replace(regex, newPath);
+
+                // Check if program strong contains System32 directory.
+                // And if the program does not exist in System32, but it does in sysnative.
+                // Return sysnative program
+                if (program.toLowerCase().startsWith(oldPath.toLowerCase()) &&
+                    !fs.existsSync(program) && fs.existsSync(newProgram)) {
+
+                    return newProgram;
+                }
+            }
+
+            // Return original program and let it fall through
+            return program;
+        });
+    }
+
     public static ShowAttachEntries(args: any): Promise<string> {
         // Create remote attach output channel for errors.
         if (!RemoteAttachPicker._channel) {
@@ -78,36 +108,38 @@ export class RemoteAttachPicker {
                 quoteArgs = platformSpecificPipeTransportOptions.pipeTransport.quoteArgs != null ? platformSpecificPipeTransportOptions.pipeTransport.quoteArgs : quoteArgs;
             }
 
-            let pipeCmdList: string[] = [];
-            let scriptShellCmd: string = "sh -s";
-            pipeCmdList.push(pipeProgram);
+            return RemoteAttachPicker.ValidateAndFixPipeProgram(pipeProgram).then(pipeProgram => {
+                let pipeCmdList: string[] = [];
+                let scriptShellCmd: string = "sh -s";
+                pipeCmdList.push(pipeProgram);
 
-            const debuggerCommandString: string = "${debuggerCommand}";
+                const debuggerCommandString: string = "${debuggerCommand}";
 
-            if (pipeArgs.filter(arg => arg.indexOf(debuggerCommandString) >= 0).length > 0) {
-                for (let arg of pipeArgs) {
-                    while (arg.indexOf("${debuggerCommand}") >= 0) {
-                        arg = arg.replace("${debuggerCommand}", scriptShellCmd);
+                if (pipeArgs.filter(arg => arg.indexOf(debuggerCommandString) >= 0).length > 0) {
+                    for (let arg of pipeArgs) {
+                        while (arg.indexOf("${debuggerCommand}") >= 0) {
+                            arg = arg.replace("${debuggerCommand}", scriptShellCmd);
+                        }
+
+                        pipeCmdList.push(arg);
                     }
-                    
-                    pipeCmdList.push(arg);
                 }
-            }
-            else {
-                pipeCmdList = pipeCmdList.concat(pipeArgs);
-                pipeCmdList.push(scriptShellCmd);
-            }
+                else {
+                    pipeCmdList = pipeCmdList.concat(pipeArgs);
+                    pipeCmdList.push(scriptShellCmd);
+                }
 
-            let pipeCmd: string = quoteArgs ? this.createArgumentList(pipeCmdList) : pipeCmdList.join(' ');
+                let pipeCmd: string = quoteArgs ? this.createArgumentList(pipeCmdList) : pipeCmdList.join(' ');
 
-            return RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd).then(processes => {
-                let attachPickOptions: vscode.QuickPickOptions = {
-                    matchOnDescription: true,
-                    matchOnDetail: true,
-                    placeHolder: "Select the process to attach to"
-                };
-                return vscode.window.showQuickPick(processes, attachPickOptions).then(item => {
-                    return item ? item.id : Promise.reject<string>(new Error("Could not find a process id to attach."));
+                return RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd).then(processes => {
+                    let attachPickOptions: vscode.QuickPickOptions = {
+                        matchOnDescription: true,
+                        matchOnDetail: true,
+                        placeHolder: "Select the process to attach to"
+                    };
+                    return vscode.window.showQuickPick(processes, attachPickOptions).then(item => {
+                        return item ? item.id : Promise.reject<string>(new Error("Could not find a process id to attach."));
+                    });
                 });
             });
         }
@@ -117,16 +149,14 @@ export class RemoteAttachPicker {
         let ret = "";
 
         for (let arg of args) {
-            if (ret)
-            {
+            if (ret) {
                 ret += " ";
             }
-            
+
             if (arg.includes(' ')) {
                 ret += `"${arg}"`;
             }
-            else
-            {
+            else {
                 ret += `${arg}`;
             }
         }
@@ -426,7 +456,7 @@ function execChildProcess(process: string, workingDirectory: string): Promise<st
 function GetSysNativePathIfNeeded(): Promise<any> {
     return PlatformInformation.GetCurrent().then(platformInfo => {
         let env = process.env;
-        if (platformInfo.isWindows && platformInfo.architecture === "x86_64") {
+        if (platformInfo.isWindows() && platformInfo.architecture === "x86_64") {
             let sysnative: String = process.env.WINDIR + "\\sysnative";
             env.Path = process.env.PATH + ";" + sysnative;
         }
@@ -444,15 +474,15 @@ function execChildProcessAndOutputErrorToChannel(process: string, workingDirecto
                 let channelOutput = "";
 
                 if (stdout && stdout.length > 0) {
-                    channelOutput.concat(stdout);
+                    channelOutput = channelOutput.concat(stdout);
                 }
 
                 if (stderr && stderr.length > 0) {
-                    channelOutput.concat(stderr);
+                    channelOutput = channelOutput.concat("stderr: " + stderr);
                 }
 
                 if (error) {
-                    channelOutput.concat(error.message);
+                    channelOutput = channelOutput.concat("Error Message: " + error.message);
                 }
 
 
