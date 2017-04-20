@@ -100,12 +100,10 @@ export class Advisor {
         for (let key in this._projectSourceFileCounts) {
             sourceFileCount += this._projectSourceFileCounts[key];
             if (sourceFileCount > 1000) {
-                console.log(`_isHugeProject = true (${sourceFileCount})`);
                 return true;
             }
         }
 
-        console.log(`_isHugeProject = false (${sourceFileCount})`);
         return false;
     }
 }
@@ -193,10 +191,12 @@ class DiagnosticsProvider extends AbstractSupport {
 
         let source = new vscode.CancellationTokenSource();
         let handle = setTimeout(() => {
-            serverUtils.codeCheck(this._server, { Filename: document.fileName }, source.token).then(value => {
+            serverUtils.codeCheck(this._server, { FileName: document.fileName }, source.token).then(value => {
+
+                let quickFixes = value.QuickFixes.filter(DiagnosticsProvider._shouldInclude);
 
                 // Easy case: If there are no diagnostics in the file, we can clear it quickly. 
-                if (value.QuickFixes.length === 0) {
+                if (quickFixes.length === 0) {
                     if (this._diagnostics.has(document.uri)) {
                         this._diagnostics.delete(document.uri);
                     }
@@ -205,7 +205,7 @@ class DiagnosticsProvider extends AbstractSupport {
                 }
 
                 // (re)set new diagnostics for this document
-                let diagnostics = value.QuickFixes.map(DiagnosticsProvider._asDiagnostic);
+                let diagnostics = quickFixes.map(DiagnosticsProvider._asDiagnostic);
 
                 this._diagnostics.set(document.uri, diagnostics);
             });
@@ -228,9 +228,12 @@ class DiagnosticsProvider extends AbstractSupport {
         this._projectValidation = new vscode.CancellationTokenSource();
         let handle = setTimeout(() => {
 
-            serverUtils.codeCheck(this._server, { Filename: null }, this._projectValidation.token).then(value => {
+            serverUtils.codeCheck(this._server, { FileName: null }, this._projectValidation.token).then(value => {
 
-                let quickFixes = value.QuickFixes.sort((a, b) => a.FileName.localeCompare(b.FileName));
+                let quickFixes = value.QuickFixes
+                    .filter(DiagnosticsProvider._shouldInclude)
+                    .sort((a, b) => a.FileName.localeCompare(b.FileName));
+
                 let entries: [vscode.Uri, vscode.Diagnostic[]][] = [];
                 let lastEntry: [vscode.Uri, vscode.Diagnostic[]];
 
@@ -269,6 +272,10 @@ class DiagnosticsProvider extends AbstractSupport {
         });
     }
 
+    private static _shouldInclude(quickFix: protocol.QuickFix): boolean {
+        return quickFix.LogLevel.toLowerCase() !== 'hidden';
+    }
+
     // --- data converter
 
     private static _asDiagnostic(quickFix: protocol.QuickFix): vscode.Diagnostic {
@@ -279,13 +286,13 @@ class DiagnosticsProvider extends AbstractSupport {
 
     private static _asDiagnosticSeverity(logLevel: string): vscode.DiagnosticSeverity {
         switch (logLevel.toLowerCase()) {
-            case 'warning':
-            case 'warn':
-                return vscode.DiagnosticSeverity.Warning;
-            case 'hidden':
-                return vscode.DiagnosticSeverity.Information;
-            default:
+            case 'error':
                 return vscode.DiagnosticSeverity.Error;
+            case 'warning':
+                return vscode.DiagnosticSeverity.Warning;
+            // info and hidden
+            default:
+                return vscode.DiagnosticSeverity.Information;
         }
     }
 

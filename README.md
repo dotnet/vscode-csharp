@@ -34,7 +34,7 @@ See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.8.0/C
 
 ### Supported Operating Systems for Debugging
 
-* Currently, the C# debugger supports the following operatings systems:
+* Currently, the C# debugger supports the following operating systems:
 
   * Windows (64-bit only)
   * macOS
@@ -64,7 +64,7 @@ To **run and develop** do the following:
 * Run `npm i`
 * Run `npm run compile`
 * Open in Visual Studio Code (`code .`)
-* *Optional:* run `tsc -w`, make code changes (on Windows, try `start node ".\node_modules\typescript\bin\tsc -w"`)
+* *Optional:* run `npm run watch`, make code changes
 * Press <kbd>F5</kbd> to debug
 
 To **test** do the following: `npm run test` or <kbd>F5</kbd> in VS Code with the "Launch Tests" debug configuration.

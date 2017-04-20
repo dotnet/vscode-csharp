@@ -105,6 +105,7 @@ export class ProjectJSONContribution implements IJSONContribution {
                             let proposal = new CompletionItem(name);
                             proposal.kind = CompletionItemKind.Property;
                             proposal.insertText = insertText;
+                            proposal.filterText = JSON.stringify(name);
                             result.add(proposal);
                         }
                         if (results.length === LIMIT) {

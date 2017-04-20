@@ -33,13 +33,12 @@ export default class OmnisharpCodeActionProvider extends AbstractProvider implem
     }
 
     public provideCodeActions(document: TextDocument, range: Range, context: CodeActionContext, token: CancellationToken): Promise<Command[]> {
-
         if (this._disabled) {
             return;
         }
 
         let req: protocol.V2.GetCodeActionsRequest = {
-            Filename: document.fileName,
+            FileName: document.fileName,
             Selection: OmnisharpCodeActionProvider._asRange(range)
         };
 
@@ -49,7 +48,7 @@ export default class OmnisharpCodeActionProvider extends AbstractProvider implem
                     title: codeAction.Name,
                     command: this._commandId,
                     arguments: [<protocol.V2.RunCodeActionRequest>{
-                        Filename: document.fileName,
+                        FileName: document.fileName,
                         Selection: OmnisharpCodeActionProvider._asRange(range),
                         Identifier: codeAction.Identifier,
                         WantsTextChanges: true

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { LinuxDistribution, PlatformInformation } from '../src/platform';
+import { LinuxDistribution, PlatformInformation, ILinuxRuntimeIdFallback } from '../src/platform';
 
 suite("Platform", () => {
     suiteSetup(() => should());
@@ -131,6 +131,45 @@ suite("Platform", () => {
         const platformInfo = new PlatformInformation('linux', 'x86_64', distro_unknown_no_id_like());
 
         should().equal(platformInfo.runtimeId, null);
+    })
+
+    test("Compute correct RID for GalliumOS 2.0", () => {
+        const platformInfo = new PlatformInformation('linux', 'x86_64', distro_gallium_2_0());
+
+        platformInfo.runtimeId.should.equal('ubuntu.16.04-x64');
+    })
+
+    test("Fallback runtime id not used for Ubuntu", () => {
+        const linuxFallbackRuntimeId = new TestLinuxRuntimeIdFallback('');
+        const platformInfo = new PlatformInformation('linux', 'x86_64', distro_ubuntu_16_04(), linuxFallbackRuntimeId);
+
+        platformInfo.runtimeId.should.equal('ubuntu.16.04-x64');
+        linuxFallbackRuntimeId.wasFallbackQueried().should.equal(false);
+    })
+
+    test("Fallback runtime id used for unknown distro", () => {
+        const linuxFallbackRuntimeId = new TestLinuxRuntimeIdFallback('ubuntu.16.04-x64');
+        const platformInfo = new PlatformInformation('linux', 'x86_64', distro_unknown_no_id_like(), linuxFallbackRuntimeId);
+
+        platformInfo.runtimeId.should.equal('ubuntu.16.04-x64');
+        linuxFallbackRuntimeId.wasFallbackQueried().should.equal(true);
+    })
+
+    test("Fallback runtime id ignored when not provided", () => {
+        const linuxFallbackRuntimeId = new TestLinuxRuntimeIdFallback('');
+        const platformInfo = new PlatformInformation('linux', 'x86_64', distro_unknown_no_id_like(), linuxFallbackRuntimeId);
+
+        should().equal(platformInfo.runtimeId, null);
+        linuxFallbackRuntimeId.wasFallbackQueried().should.equal(true);
+    })
+
+    test("Fallback runtime id precedence over heuristics", () => {
+        // NOTE: gallium normally uses ubuntu 16. In this test we force it to instead be something else.
+        const linuxFallbackRuntimeId = new TestLinuxRuntimeIdFallback('fedora.23-x64');
+        const platformInfo = new PlatformInformation('linux', 'x86_64', distro_gallium_2_0(), linuxFallbackRuntimeId);
+
+        platformInfo.runtimeId.should.equal('fedora.23-x64');
+        linuxFallbackRuntimeId.wasFallbackQueried().should.equal(true);
     })
 });
 
@@ -307,3 +346,39 @@ ID=MakeBelieve`;
 
     return LinuxDistribution.FromReleaseInfo(input, '\n');
 }
+
+function distro_gallium_2_0(): LinuxDistribution {
+    const input = `
+NAME="GalliumOS"
+VERSION="2.0 (Xenon)"
+ID=galliumos
+ID_LIKE="ubuntu debian"
+PRETTY_NAME="GalliumOS 2.0"
+ANSI_COLOR="1;34"
+VERSION_ID="2.0"
+HOME_URL="https://galliumos.org/"
+SUPPORT_URL="https://galliumos.org/"
+BUG_REPORT_URL="https://github.com/GalliumOS/galliumos-distro/issues"
+UBUNTU_CODENAME=xenial`;
+
+    return LinuxDistribution.FromReleaseInfo(input, '\n');
+}
+
+class TestLinuxRuntimeIdFallback implements ILinuxRuntimeIdFallback {
+    private _fallbackRuntime: string;
+    private _wasFallbackQueried: boolean;
+
+    constructor(fallbackRuntime: string) {
+        this._fallbackRuntime = fallbackRuntime;
+        this._wasFallbackQueried = false;
+    }
+
+    getFallbackLinuxRuntimeId(): string {
+        this._wasFallbackQueried = true;
+        return this._fallbackRuntime;
+    }
+
+    wasFallbackQueried(): boolean {
+        return this._wasFallbackQueried;
+    }
+};

@@ -14,7 +14,7 @@ export default class OmnisharpDocumentSymbolProvider extends AbstractSupport imp
 
     public provideDocumentSymbols(document: TextDocument, token: CancellationToken): Promise<SymbolInformation[]> {
 
-        return serverUtils.currentFileMembersAsTree(this._server, { Filename: document.fileName }, token).then(tree => {
+        return serverUtils.currentFileMembersAsTree(this._server, { FileName: document.fileName }, token).then(tree => {
             let ret: SymbolInformation[] = [];
             for (let node of tree.TopLevelTypeDefinitions) {
                 toDocumentSymbol(ret, node);

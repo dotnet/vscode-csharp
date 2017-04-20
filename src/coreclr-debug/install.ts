@@ -70,6 +70,8 @@ export class DebugInstaller {
         const manifestPath = path.join(this._util.extensionDir(), 'package.json');
         let manifestString = fs.readFileSync(manifestPath, 'utf8');
         let manifestObject = JSON.parse(manifestString);
+
+        // .NET Core
         delete manifestObject.contributes.debuggers[0].runtime;
         delete manifestObject.contributes.debuggers[0].program;
 
@@ -77,6 +79,14 @@ export class DebugInstaller {
         manifestObject.contributes.debuggers[0].windows = { program: programString + '.exe' };
         manifestObject.contributes.debuggers[0].osx = { program: programString };
         manifestObject.contributes.debuggers[0].linux = { program: programString };
+
+        // .NET Framework
+        delete manifestObject.contributes.debuggers[1].runtime;
+        delete manifestObject.contributes.debuggers[1].program;
+
+        manifestObject.contributes.debuggers[1].windows = { program: programString + '.exe' };
+        manifestObject.contributes.debuggers[1].osx = { program: programString };
+        manifestObject.contributes.debuggers[1].linux = { program: programString };
 
         manifestString = JSON.stringify(manifestObject, null, 2);
         fs.writeFileSync(manifestPath, manifestString);

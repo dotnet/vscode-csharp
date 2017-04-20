@@ -43,6 +43,8 @@ module Events {
 
     export const MsBuildProjectDiagnostics = 'MsBuildProjectDiagnostics';
 
+    export const TestMessage = 'TestMessage';
+
     export const BeforeServerInstall = 'BeforeServerInstall';
     export const BeforeServerStart = 'BeforeServerStart';
     export const ServerStart = 'ServerStart';
@@ -193,6 +195,10 @@ export class OmniSharpServer {
         return this._addListener(Events.MsBuildProjectDiagnostics, listener, thisArg);
     }
 
+    public onTestMessage(listener: (e: protocol.V2.TestMessageEvent) => any, thisArg?: any) {
+        return this._addListener(Events.TestMessage, listener, thisArg);
+    }
+
     public onBeforeServerInstall(listener: () => any) {
         return this._addListener(Events.BeforeServerInstall, listener);
     }
@@ -245,6 +251,10 @@ export class OmniSharpServer {
             '--encoding', 'utf-8',
             '--loglevel', this._options.loggingLevel
         ];
+
+        if (this._options.waitForDebugger === true) {
+            args.push('--debug');
+        }
 
         this._logger.appendLine(`Starting OmniSharp server at ${new Date().toLocaleString()}`);
         this._logger.increaseIndent();

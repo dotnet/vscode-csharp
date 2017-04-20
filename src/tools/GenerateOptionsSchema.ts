@@ -86,8 +86,13 @@ export function GenerateOptionsSchema() {
     schemaJSON.definitions = ReplaceReferences(schemaJSON.definitions, schemaJSON.definitions);
 
     // Hard Code adding in configurationAttributes launch and attach.
+    // .NET Core
     packageJSON.contributes.debuggers[0].configurationAttributes.launch = schemaJSON.definitions.LaunchOptions;
     packageJSON.contributes.debuggers[0].configurationAttributes.attach = schemaJSON.definitions.AttachOptions;
+
+    // Full .NET Framework
+    packageJSON.contributes.debuggers[1].configurationAttributes.launch = schemaJSON.definitions.LaunchOptions;
+    packageJSON.contributes.debuggers[1].configurationAttributes.attach = schemaJSON.definitions.AttachOptions;
 
     fs.writeFileSync('package.json', JSON.stringify(packageJSON, null, 2));
 }
