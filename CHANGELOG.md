@@ -13,9 +13,12 @@
 #### Debugger
 
 * **Arch Linux change**: Before, the debugger would automatically use the Ubuntu 16 debugger on Arch. Now we require the debugger to be explicitly set. See https://aka.ms/vscode-csext-arch for more information.
-* Several bug fixes that addressed problems with launch ([#1318](https://github.com/OmniSharp/omnisharp-vscode/issues/1318), [#1335](https://github.com/OmniSharp/omnisharp-vscode/issues/1335), [#1336](https://github.com/OmniSharp/omnisharp-vscode/issues/1336))
+* Several bug fixes that addressed problems with launch ([#1335](https://github.com/OmniSharp/omnisharp-vscode/issues/1335), [#1336](https://github.com/OmniSharp/omnisharp-vscode/issues/1336))
+* Fixed several pipeTransport issues including introducing a new `quoteArgs` option ([#1318](https://github.com/OmniSharp/omnisharp-vscode/issues/1318)), and fixing attach with Docker ([#1369](https://github.com/OmniSharp/omnisharp-vscode/issues/1369))
 * Fix issue where VS Code would incorrectly display threads as paused ([#1317](https://github.com/OmniSharp/omnisharp-vscode/issues/1317))
 * Added new 'csharp.fallbackDebuggerLinuxRuntimeId' configuration setting to control the version of the debugger used on Linux ([#1361](https://github.com/OmniSharp/omnisharp-vscode/issues/1361)).
+* Added a new `clr` debugging `type` in launch.json to enable debugging for Azure scenarios. That type is limited to Windows Desktop CLR, 64-bit processes, and only supports the [Portable PDB debug format](https://github.com/OmniSharp/omnisharp-vscode/wiki/Portable-PDBs).
+* Added support for the launch.json editor's 'Add Configuration' button ([#1024](https://github.com/OmniSharp/omnisharp-vscode/issues/1024]))
 
 #### Project System
 

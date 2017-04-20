@@ -104,6 +104,8 @@ then add the pipeTransport field folloing this schema:
 
 More information about pipe transport can be found [here](https://github.com/OmniSharp/omnisharp-vscode/wiki/Attaching-to-remote-processes).
 
+You can find information on configuring pipe transport for [Windows Subsystem for Linux](https://msdn.microsoft.com/en-us/commandline/wsl/about) (WSL) [here](https://github.com/OmniSharp/omnisharp-vscode/wiki/Windows-Subsystem-for-Linux).
+
 ## Operating System Specific Configurations
 If there specific commands that need to be changed per operating system, you can use the fields: 'windows', 'osx', or 'linux'. 
 You can replace any of the fields mentioned above for the specific operating system.
