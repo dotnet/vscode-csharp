@@ -78,7 +78,7 @@ export function deleteIfExists(filePath: string): Promise<void> {
     .then((exists: boolean) => {
         return new Promise<void>((resolve, reject) => {
             if (!exists) {
-                resolve();
+                return resolve();
             }
 
             fs.unlink(filePath, err => {
