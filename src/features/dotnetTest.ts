@@ -70,9 +70,7 @@ export function runDotnetTest(testMethod: string, fileName: string, testFramewor
         });
 }
 
-function createLaunchConfiguration(program: string, argsString: string, cwd: string, debuggerEventsPipeName: string) {
-    let args = utils.splitCommandLineArgs(argsString);
-
+function createLaunchConfiguration(program: string, args: string, cwd: string, debuggerEventsPipeName: string) {
     return {
         // NOTE: uncomment this for vsdbg developement
         // debugServer: 4711,

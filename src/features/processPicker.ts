@@ -89,7 +89,7 @@ export class RemoteAttachPicker {
         let pipeProgram: string = pipeTransport.pipeProgram;
         let pipeArgs: string[] | string = pipeTransport.pipeArgs;
         let quoteArgs: boolean = pipeTransport.quoteArgs != null ? pipeTransport.quoteArgs : true; // default value is true
-        let platformSpecificPipeTransportOptions: any = this.getPlatformSpecificPipeTransportOptions(pipeTransport, osPlatform); 
+        let platformSpecificPipeTransportOptions: IPipeTransportOptions = this.getPlatformSpecificPipeTransportOptions(pipeTransport, osPlatform); 
 
         if (platformSpecificPipeTransportOptions) {
             pipeProgram = platformSpecificPipeTransportOptions.pipeProgram || pipeProgram;
@@ -108,7 +108,7 @@ export class RemoteAttachPicker {
     // is included, then use that specific pipe transport configuration.
     //
     // Note: osPlatform is passed as an argument for testing.
-    private static getPlatformSpecificPipeTransportOptions(config: any, osPlatform: string): any {
+    private static getPlatformSpecificPipeTransportOptions(config: any, osPlatform: string): IPipeTransportOptions {
         if (osPlatform == "darwin" && config.osx) {
             return config.osx;
         } else if (osPlatform == "linux" && config.linux) {
@@ -137,11 +137,11 @@ export class RemoteAttachPicker {
 
     public static createPipeCmdFromString(pipeProgram: string, pipeArgs: string, quoteArgs: boolean): string {
         // Quote program if quoteArgs is true.
-        let pipeCmd: string = this.quoteArg(pipeProgram, quoteArgs);
+        let pipeCmd: string = this.quoteArg(pipeProgram);
 
         // If ${debuggerCommand} exists in pipeArgs, replace. No quoting is applied to the command here.
         if (pipeArgs.indexOf(this.debuggerCommand) >= 0) {
-            pipeCmd = pipeCmd.concat(" ", pipeArgs.replace(this.debuggerCommand, this.scriptShellCmd));
+            pipeCmd = pipeCmd.concat(" ", pipeArgs.replace(/\$\{debuggerCommand\}/g, this.scriptShellCmd));
         }
         // Add ${debuggerCommand} to the end of the args. Quote if quoteArgs is true.
         else {

@@ -89,18 +89,39 @@ suite("Remote Process Picker: Validate quoting arguments.", () => {
         let pipeTransport = GetWindowsDockerLaunchJSONWithStringArgsAndDebuggerCommand();
 
         // quoteArgs flag should be ignored
-        let pipeCmd = RemoteAttachPicker.createPipeCmdFromString(pipeTransport.pipeProgram, pipeTransport.pipeArgs, true);
+        let pipeCmd = RemoteAttachPicker.createPipeCmdFromString(pipeTransport.pipeProgram, pipeTransport.pipeArgs, pipeTransport.quoteArgs);
 
-        pipeCmd.should.deep.equal("C:\\System32\\bash.exe -c docker -i exec 1234567 " + RemoteAttachPicker.scriptShellCmd);
+        pipeCmd.should.deep.equal("docker -i exec 1234567 " + RemoteAttachPicker.scriptShellCmd);
     });
 
     test("Windows Docker with array args", () => {
         let pipeTransport = GetWindowsDockerLaunchJSONWithArrayArgs();
 
-        let pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, false);
+        let pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, pipeTransport.quoteArgs);
 
-        pipeCmd.should.deep.equal("C:\\System32\\bash.exe -c docker -i exec 1234567 " + RemoteAttachPicker.scriptShellCmd);
+        pipeCmd.should.deep.equal("docker -i exec 1234567 " + RemoteAttachPicker.scriptShellCmd);
 
+    });
+
+    test("Windows Docker with array args with quotes", () => {
+        let pipeTransport = GetWindowsDockerLaunchJSONWithArrayArgs();
+
+        let pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, true);
+
+        pipeCmd.should.deep.equal("docker -i exec 1234567 \"" + RemoteAttachPicker.scriptShellCmd + "\"");
+
+    });
+
+    test("Multiple ${debuggerCommand} in string args", () => {
+        let pipeCmd = RemoteAttachPicker.createPipeCmdFromString("program.exe", "".concat(RemoteAttachPicker.debuggerCommand, " ", RemoteAttachPicker.debuggerCommand, " ", RemoteAttachPicker.debuggerCommand), true);
+
+        pipeCmd.should.deep.equal("program.exe " + RemoteAttachPicker.scriptShellCmd + " " + RemoteAttachPicker.scriptShellCmd + " "  + RemoteAttachPicker.scriptShellCmd);
+    });
+
+    test("Multiple ${debuggerCommand} in array args", () => {
+        let pipeCmd = RemoteAttachPicker.createPipeCmdFromArray("program.exe", [RemoteAttachPicker.debuggerCommand, RemoteAttachPicker.debuggerCommand, RemoteAttachPicker.debuggerCommand], true);
+
+        pipeCmd.should.deep.equal("program.exe \"" + RemoteAttachPicker.scriptShellCmd + "\" \"" + RemoteAttachPicker.scriptShellCmd + "\" \""  + RemoteAttachPicker.scriptShellCmd + "\"");
     });
 
     test("OS Specific Configurations", () => {
@@ -160,16 +181,18 @@ function GetWindowsWSLLaunchJSONWithStringArgsAndDebuggerCommand() {
 function GetWindowsDockerLaunchJSONWithArrayArgs() {
     return {
         pipeCwd: "${workspaceRoot}",
-        pipeProgram: "C:\\System32\\bash.exe",
-        pipeArgs: ["-c", "docker", "-i", "exec", "1234567"]
+        pipeProgram: "docker",
+        pipeArgs: ["-i", "exec", "1234567"],
+        quoteArgs: false
     }
 };
 
 function GetWindowsDockerLaunchJSONWithStringArgsAndDebuggerCommand() {
     return {
         pipeCwd: "${workspaceRoot}",
-        pipeProgram: "C:\\System32\\bash.exe",
-        pipeArgs: "-c docker -i exec 1234567 ${debuggerCommand}"
+        pipeProgram: "docker",
+        pipeArgs: "-i exec 1234567 ${debuggerCommand}",
+        quoteArgs: false
     }
 }
 
