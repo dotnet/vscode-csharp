@@ -112,6 +112,14 @@ suite("Remote Process Picker: Validate quoting arguments.", () => {
 
     });
 
+    test("Linux dotnet with array args and spaces", () => {
+        let pipeTransport = GetLinuxLaunchJSONWithArrayArgs();
+
+        let pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, true);
+
+        pipeCmd.should.deep.equal(`/usr/bin/shared/dotnet bin/framework/myprogram.dll \"argument with spaces\" \"${RemoteAttachPicker.scriptShellCmd}\"`);
+    });
+
     test("Multiple ${debuggerCommand} in string args", () => {
         let pipeCmd = RemoteAttachPicker.createPipeCmdFromString("program.exe", "".concat(RemoteAttachPicker.debuggerCommand, " ", RemoteAttachPicker.debuggerCommand, " ", RemoteAttachPicker.debuggerCommand), true);
 
@@ -193,6 +201,15 @@ function GetWindowsDockerLaunchJSONWithStringArgsAndDebuggerCommand() {
         pipeProgram: "docker",
         pipeArgs: "-i exec 1234567 ${debuggerCommand}",
         quoteArgs: false
+    }
+}
+
+function GetLinuxLaunchJSONWithArrayArgs() {
+    return {
+        pipeCwd: "${workspaceRoot}",
+        pipeProgram: "/usr/bin/shared/dotnet",
+        pipeArgs: ["bin/framework/myprogram.dll", "argument with spaces"],
+        quoteArg: true
     }
 }
 

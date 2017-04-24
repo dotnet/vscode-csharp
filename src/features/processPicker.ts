@@ -89,7 +89,7 @@ export class RemoteAttachPicker {
         let pipeProgram: string = pipeTransport.pipeProgram;
         let pipeArgs: string[] | string = pipeTransport.pipeArgs;
         let quoteArgs: boolean = pipeTransport.quoteArgs != null ? pipeTransport.quoteArgs : true; // default value is true
-        let platformSpecificPipeTransportOptions: IPipeTransportOptions = this.getPlatformSpecificPipeTransportOptions(pipeTransport, osPlatform); 
+        let platformSpecificPipeTransportOptions: IPipeTransportOptions = this.getPlatformSpecificPipeTransportOptions(pipeTransport, osPlatform);
 
         if (platformSpecificPipeTransportOptions) {
             pipeProgram = platformSpecificPipeTransportOptions.pipeProgram || pipeProgram;
@@ -109,11 +109,11 @@ export class RemoteAttachPicker {
     //
     // Note: osPlatform is passed as an argument for testing.
     private static getPlatformSpecificPipeTransportOptions(config: any, osPlatform: string): IPipeTransportOptions {
-        if (osPlatform == "darwin" && config.osx) {
+        if (osPlatform === "darwin" && config.osx) {
             return config.osx;
-        } else if (osPlatform == "linux" && config.linux) {
+        } else if (osPlatform === "linux" && config.linux) {
             return config.linux;
-        } else if (osPlatform == "win32" && config.windows) {
+        } else if (osPlatform === "win32" && config.windows) {
             return config.windows;
         }
 
@@ -123,7 +123,7 @@ export class RemoteAttachPicker {
     // Creates a pipe command string based on the type of pipe args.
     private static createPipeCmd(pipeProgram: string, pipeArgs: string | string[], quoteArgs: boolean): Promise<string> {
         return this.ValidateAndFixPipeProgram(pipeProgram).then(fixedPipeProgram => {
-            if (typeof pipeArgs == "string") {
+            if (typeof pipeArgs === "string") {
                 return Promise.resolve(this.createPipeCmdFromString(fixedPipeProgram, pipeArgs, quoteArgs));
             }
             else if (pipeArgs instanceof Array) {
@@ -178,26 +178,16 @@ export class RemoteAttachPicker {
 
     // Quote the arg if the flag is enabled and there is a space.
     public static quoteArg(arg: string, quoteArg: boolean = true): string {
-            if (quoteArg && arg.includes(' ')) {
-                return `"${arg}"`;
-            }
+        if (quoteArg && arg.includes(' ')) {
+            return `"${arg}"`;
+        }
 
-            return arg;
+        return arg;
     }
 
     // Converts an array of string arguments to a string version. Always quotes any arguments with spaces.
     public static createArgumentList(args: string[]): string {
-        let ret = "";
-
-        for (let arg of args) {
-            if (ret) {
-                ret += " ";
-            }
-
-            ret += this.quoteArg(arg);
-        }
-
-        return ret;
+        return args.map(arg => this.quoteArg(arg)).join(" ");
     }
 
     public static ShowAttachEntries(args: any): Promise<string> {
@@ -224,18 +214,17 @@ export class RemoteAttachPicker {
         } else {
             let pipeTransport = this.getPipeTransportOptions(args.pipeTransport, os.platform());
 
-            return RemoteAttachPicker.createPipeCmd(pipeTransport.pipeProgram, pipeTransport.pipeArgs, pipeTransport.quoteArgs).then(pipeCmd => {
-                return RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd).then(processes => {
+            return RemoteAttachPicker.createPipeCmd(pipeTransport.pipeProgram, pipeTransport.pipeArgs, pipeTransport.quoteArgs)
+                .then(pipeCmd => RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd))
+                .then(processes => {
                     let attachPickOptions: vscode.QuickPickOptions = {
                         matchOnDescription: true,
                         matchOnDetail: true,
                         placeHolder: "Select the process to attach to"
                     };
-                    return vscode.window.showQuickPick(processes, attachPickOptions).then(item => {
-                        return item ? item.id : Promise.reject<string>(new Error("Could not find a process id to attach."));
-                    });
-                });
-            });
+                    return vscode.window.showQuickPick(processes, attachPickOptions);
+                })
+                .then(item => { return item ? item.id : Promise.reject<string>(new Error("Could not find a process id to attach.")); });
         }
     }
 
