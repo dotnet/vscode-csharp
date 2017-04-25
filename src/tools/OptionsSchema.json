@@ -25,12 +25,21 @@
                     "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
                 },
                 "pipeArgs": {
-                    "type": "array",
-                    "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "default": []
+                    "anyOf": [
+                        {
+                            "type": "array",
+                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": []
+                        },
+                        {
+                            "type": "string",
+                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "default": ""
+                        }
+                    ]
                 },
                 "quoteArgs": {
                     "type": "boolean",
@@ -69,12 +78,21 @@
                     "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
                 },
                 "pipeArgs": {
-                    "type": "array",
-                    "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "default": []
+                    "anyOf": [
+                        {
+                            "type": "array",
+                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": []
+                        },
+                        {
+                            "type": "string",
+                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "default": ""
+                        }
+                    ]
                 },
                 "debuggerPath" : {
                     "type" : "string",
@@ -195,9 +213,21 @@
                     "default": true
                 },
                 "args": {
-                    "type": "string",
-                    "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
-                    "default": "${auto-detect-url}"
+                    "anyOf": [
+                        {
+                            "type": "array",
+                            "description": "Command line arguments passed to the program.",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": []
+                        },
+                        {
+                            "type": "string",
+                            "description": "Stringified version of command line arguments passed to the program.",
+                            "default": ""
+                        }
+                    ]
                 },
                 "osx": {
                     "$ref": "#/definitions/LaunchBrowserPlatformOptions",
@@ -241,12 +271,21 @@
                     "default": "${workspaceRoot}"
                 },
                 "args": {
-                    "type": "array",
-                    "description": "Command line arguments passed to the program.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "default": []
+                    "anyOf": [
+                        {
+                            "type": "array",
+                            "description": "Command line arguments passed to the program.",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": []
+                        },
+                        {
+                            "type": "string",
+                            "description": "Stringified version of command line arguments passed to the program.",
+                            "default": ""
+                        }
+                    ]
                 },
                 "stopAtEntry": {
                     "type": "boolean",

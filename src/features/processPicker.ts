@@ -39,10 +39,19 @@ export class AttachPicker {
     }
 }
 
+interface IPipeTransportOptions {
+    pipeProgram: string;
+    pipeArgs: string | string[];
+    quoteArgs: boolean;
+}
+
 export class RemoteAttachPicker {
     public static get commColumnTitle() { return Array(PsOutputParser.secondColumnCharacters).join("a"); }
     public static get linuxPsCommand() { return `ps -axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args=`; }
     public static get osxPsCommand() { return `ps -axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args= -c`; }
+    public static get debuggerCommand() { return "${debuggerCommand}"; };
+    public static get scriptShellCmd() { return "sh -s"; };
+
 
     private static _channel: vscode.OutputChannel = null;
 
@@ -75,6 +84,112 @@ export class RemoteAttachPicker {
         });
     }
 
+    // Note: osPlatform is passed as an argument for testing.
+    public static getPipeTransportOptions(pipeTransport: any, osPlatform: string): IPipeTransportOptions {
+        let pipeProgram: string = pipeTransport.pipeProgram;
+        let pipeArgs: string[] | string = pipeTransport.pipeArgs;
+        let quoteArgs: boolean = pipeTransport.quoteArgs != null ? pipeTransport.quoteArgs : true; // default value is true
+        let platformSpecificPipeTransportOptions: IPipeTransportOptions = this.getPlatformSpecificPipeTransportOptions(pipeTransport, osPlatform);
+
+        if (platformSpecificPipeTransportOptions) {
+            pipeProgram = platformSpecificPipeTransportOptions.pipeProgram || pipeProgram;
+            pipeArgs = platformSpecificPipeTransportOptions.pipeArgs || pipeArgs;
+            quoteArgs = platformSpecificPipeTransportOptions.quoteArgs != null ? platformSpecificPipeTransportOptions.quoteArgs : quoteArgs;
+        }
+
+        return {
+            pipeProgram: pipeProgram,
+            pipeArgs: pipeArgs,
+            quoteArgs: quoteArgs
+        };
+    }
+
+    // If the current process is on a current operating system and a specific pipe transport
+    // is included, then use that specific pipe transport configuration.
+    //
+    // Note: osPlatform is passed as an argument for testing.
+    private static getPlatformSpecificPipeTransportOptions(config: any, osPlatform: string): IPipeTransportOptions {
+        if (osPlatform === "darwin" && config.osx) {
+            return config.osx;
+        } else if (osPlatform === "linux" && config.linux) {
+            return config.linux;
+        } else if (osPlatform === "win32" && config.windows) {
+            return config.windows;
+        }
+
+        return null;
+    }
+
+    // Creates a pipe command string based on the type of pipe args.
+    private static createPipeCmd(pipeProgram: string, pipeArgs: string | string[], quoteArgs: boolean): Promise<string> {
+        return this.ValidateAndFixPipeProgram(pipeProgram).then(fixedPipeProgram => {
+            if (typeof pipeArgs === "string") {
+                return Promise.resolve(this.createPipeCmdFromString(fixedPipeProgram, pipeArgs, quoteArgs));
+            }
+            else if (pipeArgs instanceof Array) {
+                return Promise.resolve(this.createPipeCmdFromArray(fixedPipeProgram, pipeArgs, quoteArgs));
+            } else {
+                // Invalid args type
+                return Promise.reject<string>(new Error("pipeArgs must be a string or a string array type"));
+            }
+        });
+    }
+
+    public static createPipeCmdFromString(pipeProgram: string, pipeArgs: string, quoteArgs: boolean): string {
+        // Quote program if quoteArgs is true.
+        let pipeCmd: string = this.quoteArg(pipeProgram);
+
+        // If ${debuggerCommand} exists in pipeArgs, replace. No quoting is applied to the command here.
+        if (pipeArgs.indexOf(this.debuggerCommand) >= 0) {
+            pipeCmd = pipeCmd.concat(" ", pipeArgs.replace(/\$\{debuggerCommand\}/g, this.scriptShellCmd));
+        }
+        // Add ${debuggerCommand} to the end of the args. Quote if quoteArgs is true.
+        else {
+            pipeCmd = pipeCmd.concat(" ", pipeArgs.concat(" ", this.quoteArg(this.scriptShellCmd, quoteArgs)));
+        }
+
+        return pipeCmd;
+    }
+
+    public static createPipeCmdFromArray(pipeProgram: string, pipeArgs: string[], quoteArgs: boolean): string {
+        let pipeCmdList: string[] = [];
+        // Add pipeProgram to the start. Quoting is handeled later.
+        pipeCmdList.push(pipeProgram);
+
+        // If ${debuggerCommand} exists, replace it.
+        if (pipeArgs.filter(arg => arg.indexOf(this.debuggerCommand) >= 0).length > 0) {
+            for (let arg of pipeArgs) {
+                while (arg.indexOf(this.debuggerCommand) >= 0) {
+                    arg = arg.replace(this.debuggerCommand, RemoteAttachPicker.scriptShellCmd);
+                }
+
+                pipeCmdList.push(arg);
+            }
+        }
+        // Add ${debuggerCommand} to the end of the arguments.
+        else {
+            pipeCmdList = pipeCmdList.concat(pipeArgs);
+            pipeCmdList.push(this.scriptShellCmd);
+        }
+
+        // Quote if enabled.
+        return quoteArgs ? this.createArgumentList(pipeCmdList) : pipeCmdList.join(' ');
+    }
+
+    // Quote the arg if the flag is enabled and there is a space.
+    public static quoteArg(arg: string, quoteArg: boolean = true): string {
+        if (quoteArg && arg.includes(' ')) {
+            return `"${arg}"`;
+        }
+
+        return arg;
+    }
+
+    // Converts an array of string arguments to a string version. Always quotes any arguments with spaces.
+    public static createArgumentList(args: string[]): string {
+        return args.map(arg => this.quoteArg(arg)).join(" ");
+    }
+
     public static ShowAttachEntries(args: any): Promise<string> {
         // Create remote attach output channel for errors.
         if (!RemoteAttachPicker._channel) {
@@ -97,85 +212,20 @@ export class RemoteAttachPicker {
             return Promise.reject<string>(new Error("Configuration \"" + name + "\" in launch.json does not have a " +
                 "pipeTransport argument with debuggerPath for pickRemoteProcess. Use pickProcess for local attach."));
         } else {
-            let pipeProgram: string = args.pipeTransport.pipeProgram;
-            let pipeArgs: string[] = args.pipeTransport.pipeArgs;
-            let quoteArgs: boolean = args.pipeTransport.quoteArgs != null ? args.pipeTransport.quoteArgs : true; // default value is true
-            let platformSpecificPipeTransportOptions: any = RemoteAttachPicker.getPlatformSpecificPipeTransportOptions(args);
+            let pipeTransport = this.getPipeTransportOptions(args.pipeTransport, os.platform());
 
-            if (platformSpecificPipeTransportOptions) {
-                pipeProgram = platformSpecificPipeTransportOptions.pipeProgram || pipeProgram;
-                pipeArgs = platformSpecificPipeTransportOptions.pipeArgs || pipeArgs;
-                quoteArgs = platformSpecificPipeTransportOptions.pipeTransport.quoteArgs != null ? platformSpecificPipeTransportOptions.pipeTransport.quoteArgs : quoteArgs;
-            }
-
-            return RemoteAttachPicker.ValidateAndFixPipeProgram(pipeProgram).then(pipeProgram => {
-                let pipeCmdList: string[] = [];
-                let scriptShellCmd: string = "sh -s";
-                pipeCmdList.push(pipeProgram);
-
-                const debuggerCommandString: string = "${debuggerCommand}";
-
-                if (pipeArgs.filter(arg => arg.indexOf(debuggerCommandString) >= 0).length > 0) {
-                    for (let arg of pipeArgs) {
-                        while (arg.indexOf("${debuggerCommand}") >= 0) {
-                            arg = arg.replace("${debuggerCommand}", scriptShellCmd);
-                        }
-
-                        pipeCmdList.push(arg);
-                    }
-                }
-                else {
-                    pipeCmdList = pipeCmdList.concat(pipeArgs);
-                    pipeCmdList.push(scriptShellCmd);
-                }
-
-                let pipeCmd: string = quoteArgs ? this.createArgumentList(pipeCmdList) : pipeCmdList.join(' ');
-
-                return RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd).then(processes => {
+            return RemoteAttachPicker.createPipeCmd(pipeTransport.pipeProgram, pipeTransport.pipeArgs, pipeTransport.quoteArgs)
+                .then(pipeCmd => RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd))
+                .then(processes => {
                     let attachPickOptions: vscode.QuickPickOptions = {
                         matchOnDescription: true,
                         matchOnDetail: true,
                         placeHolder: "Select the process to attach to"
                     };
-                    return vscode.window.showQuickPick(processes, attachPickOptions).then(item => {
-                        return item ? item.id : Promise.reject<string>(new Error("Could not find a process id to attach."));
-                    });
-                });
-            });
+                    return vscode.window.showQuickPick(processes, attachPickOptions);
+                })
+                .then(item => { return item ? item.id : Promise.reject<string>(new Error("Could not find a process id to attach.")); });
         }
-    }
-
-    private static createArgumentList(args: string[]): string {
-        let ret = "";
-
-        for (let arg of args) {
-            if (ret) {
-                ret += " ";
-            }
-
-            if (arg.includes(' ')) {
-                ret += `"${arg}"`;
-            }
-            else {
-                ret += `${arg}`;
-            }
-        }
-
-        return ret;
-    }
-
-    private static getPlatformSpecificPipeTransportOptions(config) {
-        const osPlatform = os.platform();
-
-        if (osPlatform == "darwin" && config.pipeTransport.osx) {
-            return config.pipeTransport.osx;
-        } else if (osPlatform == "linux" && config.pipeTransport.linux) {
-            return config.pipeTransport.linux;
-        } else if (osPlatform == "win32" && config.pipeTransport.windows) {
-            return config.pipeTransport.windows;
-        }
-
-        return null;
     }
 
     public static getRemoteOSAndProcesses(pipeCmd: string): Promise<AttachItem[]> {
