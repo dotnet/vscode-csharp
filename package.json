@@ -519,8 +519,7 @@
           "launch": {
             "type": "object",
             "required": [
-              "program",
-              "cwd"
+              "program"
             ],
             "properties": {
               "program": {
@@ -1447,8 +1446,7 @@
           "launch": {
             "type": "object",
             "required": [
-              "program",
-              "cwd"
+              "program"
             ],
             "properties": {
               "program": {
