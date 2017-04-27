@@ -55,12 +55,26 @@ export function runDotnetTest(testMethod: string, fileName: string, testFramewor
 
     serverUtils.runTest(server, request)
         .then(response => {
-            if (response.Pass) {
-                output.appendLine('Test passed \n');
+            const totalTests = response.Results.length;
+
+            let totalPassed = 0, totalFailed = 0, totalSkipped = 0;
+            for (let result of response.Results) {
+                switch (result.Outcome) {
+                    case protocol.V2.TestOutcomes.Failed:
+                        totalFailed += 1;
+                        break;
+                    case protocol.V2.TestOutcomes.Passed:
+                        totalPassed += 1;
+                        break;
+                    case protocol.V2.TestOutcomes.Skipped:
+                        totalSkipped += 1;
+                        break;
+                }
             }
-            else {
-                output.appendLine('Test failed \n');
-            }
+
+            output.appendLine('');
+            output.appendLine(`Total tests: ${totalTests}. Passed: ${totalPassed}. Failed: ${totalFailed}. Skipped: ${totalSkipped}`);
+            output.appendLine('');
 
             disposable.dispose();
         },
