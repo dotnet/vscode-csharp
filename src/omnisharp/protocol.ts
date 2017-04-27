@@ -538,7 +538,15 @@ export namespace V2 {
         TestFrameworkName: string;
     }
 
-    export interface DotNetResult {
+    export module TestOutcomes {
+        export const None = 'none';
+        export const Passed = 'passed';
+        export const Failed = 'failed';
+        export const Skipped = 'skipped';
+        export const NotFound = 'notfound';
+    }
+
+    export interface DotNetTestResult {
         MethodName: string;
         Outcome: string;
         ErrorMessage: string;
@@ -548,6 +556,7 @@ export namespace V2 {
     export interface RunTestResponse {
         Failure: string;
         Pass: boolean;
+        Results: DotNetTestResult[];
     }
 
     export interface TestMessageEvent {
