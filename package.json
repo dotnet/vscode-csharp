@@ -364,10 +364,10 @@
           "default": false,
           "description": "Suppress the notification window to perform a 'dotnet restore' when dependencies can't be resolved."
         },
-        "csharp.suppressHiddenMessages": {
+        "csharp.suppressHiddenDiagnostics": {
             "type": "boolean",
             "default": true,
-            "description": "Suppress hidden messages from being shown."
+            "description": "Suppress 'hidden' diagnostics (such as 'unnecessary using directives') from appearing in the editor or the Problems pane."
         },
         "omnisharp.path": {
           "type": [

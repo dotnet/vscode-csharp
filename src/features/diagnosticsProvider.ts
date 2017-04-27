@@ -274,7 +274,7 @@ class DiagnosticsProvider extends AbstractSupport {
 
     private static _shouldInclude(quickFix: protocol.QuickFix): boolean {
         const config = vscode.workspace.getConfiguration('csharp');
-        if (config.get('suppressHiddenMessages', true)) {
+        if (config.get('suppressHiddenDiagnostics', true)) {
             return quickFix.LogLevel.toLowerCase() !== 'hidden';
         } else {
             return true;
