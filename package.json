@@ -364,6 +364,11 @@
           "default": false,
           "description": "Suppress the notification window to perform a 'dotnet restore' when dependencies can't be resolved."
         },
+        "csharp.suppressHiddenMessages": {
+            "type": "boolean",
+            "default": true,
+            "description": "Suppress hidden messages from being shown."
+        },
         "omnisharp.path": {
           "type": [
             "string",

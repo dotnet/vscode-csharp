@@ -195,7 +195,7 @@ class DiagnosticsProvider extends AbstractSupport {
 
                 let quickFixes = value.QuickFixes.filter(DiagnosticsProvider._shouldInclude);
 
-                // Easy case: If there are no diagnostics in the file, we can clear it quickly. 
+                // Easy case: If there are no diagnostics in the file, we can clear it quickly.
                 if (quickFixes.length === 0) {
                     if (this._diagnostics.has(document.uri)) {
                         this._diagnostics.delete(document.uri);
@@ -273,7 +273,12 @@ class DiagnosticsProvider extends AbstractSupport {
     }
 
     private static _shouldInclude(quickFix: protocol.QuickFix): boolean {
-        return quickFix.LogLevel.toLowerCase() !== 'hidden';
+        const config = vscode.workspace.getConfiguration('csharp');
+        if (config.get('suppressHiddenMessages', true)) {
+            return quickFix.LogLevel.toLowerCase() !== 'hidden';
+        } else {
+            return true;
+        }
     }
 
     // --- data converter
