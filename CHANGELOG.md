@@ -3,6 +3,27 @@
 * When opening a .csproj-based .NET Core project in VS Code, the C# extension will not activate until a C# file is opened in the editor. ([#1150](https://github.com/OmniSharp/omnisharp-vscode/issues/1150))
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
 
+## 1.10.0 _(Not Yet Released)_
+
+#### Unit Testing
+
+* Add support for NUnit Test Adapter. ([#1434](https://github.com/OmniSharp/omnisharp-vscode/issues/1434), PR: [omnisharp-roslyn#834](https://github.com/OmniSharp/omnisharp-roslyn/pull/834))
+* Tests that define display names are now run properly. ([#1426](https://github.com/OmniSharp/omnisharp-vscode/issues/1426), PR: [omnisharp-roslyn#833](https://github.com/OmniSharp/omnisharp-roslyn/pull/833))
+* Tests with similar names are no longer incorrectly run together when one of them is clicked. ([#1432](https://github.com/OmniSharp/omnisharp-vscode/issues/1432), PR: [omnisharp-roslyn#833](https://github.com/OmniSharp/omnisharp-roslyn/pull/833))
+* Improve response from running/debugging tests to include output from build and test summary. ([#419](https://github.com/OmniSharp/omnisharp-vscode/issues/419), [#455](https://github.com/OmniSharp/omnisharp-vscode/issues/455), PR: [#1436](https://github.com/OmniSharp/omnisharp-vscode/pull/1436))
+
+#### Project System
+
+* Project references to projects located outside of the current workspace directory are now loaded and processed. ([#963](https://github.com/OmniSharp/omnisharp-vscode/issues/963), PR: [omnisharp-roslyn#832](https://github.com/OmniSharp/omnisharp-vscode/issues/963))
+
+#### Scripting
+
+* Support Metadata as Source for Go To Definition in CSX files. ([omnisharp-roslyn#755](https://github.com/OmniSharp/omnisharp-roslyn/issues/755), PR: ([omnisharp-roslyn#829](https://github.com/OmniSharp/omnisharp-roslyn/pull/829)) _(Contributed by [@filipw](https://github.com/filipw))_
+
+#### Other Updates and Fixes
+
+* New `csharp.suppressHiddenDiagnostics` setting that can be set to true to display hidden diagnostics, such as 'unnecessary using directive'. ([#1429](https://github.com/OmniSharp/omnisharp-vscode/issues/1429), PR: [#1435](https://github.com/OmniSharp/omnisharp-vscode/pull/1435)) _(Contributed by [@cruz82](https://github.com/cruz82))_
+
 ## 1.9.0 (April 20, 2017)
 
 #### Unit Testing
