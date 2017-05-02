@@ -85,18 +85,28 @@ export function runDotnetTest(testMethod: string, fileName: string, testFramewor
 }
 
 function createLaunchConfiguration(program: string, args: string, cwd: string, debuggerEventsPipeName: string) {
-    return {
-        // NOTE: uncomment this for vsdbg developement
-        // debugServer: 4711,
-        name: ".NET Test Launch",
-        type: "coreclr",
-        request: "launch",
-        debuggerEventsPipeName: debuggerEventsPipeName,
-        program,
-        args,
-        cwd,
-        stopAtEntry: true
-    };
+    let debugOptions = vscode.workspace.getConfiguration('csharp').get('unitTestDebugingOptions');
+
+    // Get the initial set of options from the workspace setting
+    let result:any;
+    if (typeof debugOptions === "object") {
+        // clone the options object to avoid changing it
+        result = JSON.parse(JSON.stringify(debugOptions));
+    } else {
+        result = {};
+    }
+
+    // Now fill in the rest of the options
+    result.name = ".NET Test Launch";
+    result.type = "coreclr";
+    result.request = "launch";
+    result.debuggerEventsPipeName = debuggerEventsPipeName;
+    result.program = program;
+    result.args = args;
+    result.cwd = cwd;
+    result.stopAtEntry = true;
+
+    return result;
 }
 
 function getLaunchConfigurationForVSTest(server: OmniSharpServer, fileName: string, testMethod: string, testFrameworkName: string, debugEventListener: DebugEventListener): Promise<any> {
