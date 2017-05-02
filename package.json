@@ -359,6 +359,84 @@
           ],
           "description": "If the current Linux distribution is not recognized, this option can be used to tell the debugger what version can be used. After changing this option, close VS Code, remove the debugger folder (~/.vscode/extensions/ms-vscode.csharp-<ver>/.debugger) if it has already downloaded, and restart VS Code."
         },
+        "csharp.unitTestDebugingOptions": {
+          "type": "object",
+          "description": "Options to use with the debugger when launching for unit test debugging. Any launch.json option is valid here.",
+          "default": {},
+          "properties": {
+            "sourceFileMap": {
+              "type": "object",
+              "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "default": {
+                "<source-path>": "<target-path>"
+              }
+            },
+            "justMyCode": {
+              "type": "boolean",
+              "description": "Optional flag to only show user code.",
+              "default": true
+            },
+            "symbolPath": {
+              "type": "array",
+              "description": "Array of directories to use to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to. Example: '[ \"/Volumes/symbols\" ]",
+              "items": {
+                "type": "string"
+              },
+              "default": []
+            },
+            "requireExactSource": {
+              "type": "boolean",
+              "description": "Optional flag to require current source code to match the pdb.",
+              "default": true
+            },
+            "enableStepFiltering": {
+              "type": "boolean",
+              "description": "Optional flag to enable stepping over Properties and Operators.",
+              "default": true
+            },
+            "debugServer": {
+              "type": "number",
+              "description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
+              "default": 4711 
+            },
+            "logging": {
+              "description": "Optional flags to determine what types of messages should be logged to the output window.",
+              "type": "object",
+              "required": [],
+              "default": {},
+              "properties": {
+                "exceptions": {
+                  "type": "boolean",
+                  "description": "Optional flag to determine whether exception messages should be logged to the output window.",
+                  "default": true
+                },
+                "moduleLoad": {
+                  "type": "boolean",
+                  "description": "Optional flag to determine whether module load events should be logged to the output window.",
+                  "default": true
+                },
+                "programOutput": {
+                  "type": "boolean",
+                  "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
+                  "default": true
+                },
+                "engineLogging": {
+                  "type": "boolean",
+                  "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
+                  "default": false
+                },
+                "browserStdOut": {
+                  "type": "boolean",
+                  "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
+                  "default": true
+                }
+              }
+            }
+          }
+        },
         "csharp.suppressDotnetRestoreNotification": {
           "type": "boolean",
           "default": false,
