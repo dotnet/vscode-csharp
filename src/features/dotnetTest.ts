@@ -104,7 +104,6 @@ function createLaunchConfiguration(program: string, args: string, cwd: string, d
     result.program = program;
     result.args = args;
     result.cwd = cwd;
-    result.stopAtEntry = true;
 
     return result;
 }
