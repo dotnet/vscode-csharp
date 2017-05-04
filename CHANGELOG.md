@@ -5,6 +5,24 @@
 
 ## 1.10.0 _(Not Yet Released)_
 
+#### Completion List
+
+* Several improvements to the completion list! _(All contributed by [@filipw](https://github.com/filipw) with PR [omnisharp-roslyn#840](https://github.com/OmniSharp/omnisharp-roslyn/pull/840))_
+  * Attributes are completed properly without the 'Attribute' suffix. ([#393](https://github.com/OmniSharp/omnisharp-vscode/issues/393))
+  * Named parameters now appear in the completion list. ([#652](https://github.com/OmniSharp/omnisharp-vscode/issues/652))
+  * Object initializer members now appear in the completion list. ([#260](https://github.com/OmniSharp/omnisharp-vscode/issues/260))
+  * Completion appears within XML doc comment CREFs.
+  * Initial support for completion on 'override' and 'partial' keywords. ([#1044](https://github.com/OmniSharp/omnisharp-vscode/issues/1044))
+
+#### Project System
+
+* Project references to projects located outside of the current workspace directory are now loaded and processed. ([#963](https://github.com/OmniSharp/omnisharp-vscode/issues/963), PR: [omnisharp-roslyn#832](https://github.com/OmniSharp/omnisharp-vscode/issues/963))
+* OmniSharp now loads .NET Core projects using the SDKs included with the .NET Core SDK appropriate for that project, if they're installed on the machine. ([#1438](https://github.com/OmniSharp/omnisharp-vscode/issues/1438), [omnisharp-roslyn#765](https://github.com/OmniSharp/omnisharp-roslyn/issues/765), PR: [omnisharp-roslyn#847](https://github.com/OmniSharp/omnisharp-roslyn/pull/847))
+
+#### Scripting
+
+* Support Metadata as Source for Go To Definition in CSX files. ([omnisharp-roslyn#755](https://github.com/OmniSharp/omnisharp-roslyn/issues/755), PR: ([omnisharp-roslyn#829](https://github.com/OmniSharp/omnisharp-roslyn/pull/829)) _(Contributed by [@filipw](https://github.com/filipw))_
+
 #### Unit Testing
 
 * Add support for NUnit Test Adapter. ([#1434](https://github.com/OmniSharp/omnisharp-vscode/issues/1434), PR: [omnisharp-roslyn#834](https://github.com/OmniSharp/omnisharp-roslyn/pull/834))
@@ -12,14 +30,6 @@
 * Tests with similar names are no longer incorrectly run together when one of them is clicked. ([#1432](https://github.com/OmniSharp/omnisharp-vscode/issues/1432), PR: [omnisharp-roslyn#833](https://github.com/OmniSharp/omnisharp-roslyn/pull/833))
 * Improve response from running/debugging tests to include output from build and test summary. ([#419](https://github.com/OmniSharp/omnisharp-vscode/issues/419), [#455](https://github.com/OmniSharp/omnisharp-vscode/issues/455), PR: [#1436](https://github.com/OmniSharp/omnisharp-vscode/pull/1436))
 * Added `csharp.unitTestDebugingOptions` setting to pass launch.json-style debug options (example: `justMyCode`) when unit test debugging.
-
-#### Project System
-
-* Project references to projects located outside of the current workspace directory are now loaded and processed. ([#963](https://github.com/OmniSharp/omnisharp-vscode/issues/963), PR: [omnisharp-roslyn#832](https://github.com/OmniSharp/omnisharp-vscode/issues/963))
-
-#### Scripting
-
-* Support Metadata as Source for Go To Definition in CSX files. ([omnisharp-roslyn#755](https://github.com/OmniSharp/omnisharp-roslyn/issues/755), PR: ([omnisharp-roslyn#829](https://github.com/OmniSharp/omnisharp-roslyn/pull/829)) _(Contributed by [@filipw](https://github.com/filipw))_
 
 #### Other Updates and Fixes
 
