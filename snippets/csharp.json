@@ -251,56 +251,6 @@
 		],
 		"description": "Simple iterator"
 	},
-	
-	"Named iterator/indexer pair using a nested class": {
-
-		"prefix": "iterindex",
-		"body": [
-			"public ${Name}Iterator ${Name}",
-			"{",
-			"	get",
-			"	{",
-			"		return new ${Name}Iterator(this);",
-			"	}",
-			"}",
-			"",
-			"public class ${Name}Iterator",
-			"{",
-			"	readonly ${ClassName} outer;",
-			"	",
-			"	internal ${Name}Iterator(${ClassName} outer)",
-			"	{",
-			"		this.outer = outer;",
-			"	}",
-			"	",
-			"	// TODO: provide an appropriate implementation here",
-			"	public int Length { get { return 1; } }",
-			"	",
-			"	public ${ElementType} this[int index]",
-			"	{",
-			"		get",
-			"		{",
-			"			//",
-			"			// TODO: implement indexer here",
-			"			//",
-			"			// you have full access to ${ClassName} privates",
-			"			//",
-			"			${throw new System.NotImplementedException();}",
-			"			return default(${ElementType});",
-			"		}",
-			"	}",
-			"	",
-			"	public System.Collections.Generic.IEnumerator<${ElementType}> GetEnumerator()",
-			"	{",
-			"		for (int i = 0; i < this.Length; i++)",
-			"		{",
-			"			yield return this[i];",
-			"		}",
-			"	}",
-			"}"
-		],
-		"description": "Named iterator/indexer pair using a nested class"
-	},
 
 	"Lock statement": {
 
