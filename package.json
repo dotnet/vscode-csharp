@@ -329,6 +329,7 @@
     "onCommand:o.pickProjectAndStart",
     "onCommand:o.showOutput",
     "onCommand:dotnet.restore",
+    "onCommand:dotnet.generateAssets",
     "onCommand:csharp.downloadDebugger",
     "onCommand:csharp.listProcess",
     "onCommand:csharp.listRemoteProcess",
