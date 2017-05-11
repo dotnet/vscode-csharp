@@ -90,7 +90,7 @@ _kinds['Class'] = CompletionItemKind.Class;
 _kinds['Delegate'] = CompletionItemKind.Class; // need a better option for this.
 _kinds['Enum'] = CompletionItemKind.Enum;
 _kinds['Interface'] = CompletionItemKind.Interface;
-_kinds['Struct'] = CompletionItemKind.Class; // need a better option for this.
+_kinds['Struct'] = CompletionItemKind.Struct;
 
 // variables
 _kinds['Local'] = CompletionItemKind.Variable;
@@ -98,8 +98,8 @@ _kinds['Parameter'] = CompletionItemKind.Variable;
 _kinds['RangeVariable'] = CompletionItemKind.Variable;
 
 // members
-_kinds['EnumMember'] = CompletionItemKind.Property; // need a better option for this.
-_kinds['Event'] = CompletionItemKind.Field; // need a better option for this.
+_kinds['EnumMember'] = CompletionItemKind.EnumMember;
+_kinds['Event'] = CompletionItemKind.Event;
 _kinds['Field'] = CompletionItemKind.Field;
 _kinds['Property'] = CompletionItemKind.Property;
 _kinds['Method'] = CompletionItemKind.Method;
