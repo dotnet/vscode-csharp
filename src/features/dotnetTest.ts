@@ -187,14 +187,14 @@ export function updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: strin
     let testFeature = node.Features.find(value => (value.Name == 'XunitTestMethod' || value.Name == 'NUnitTestMethod' || value.Name == 'MSTestMethod'));
     if (testFeature) {
         // this test method has a test feature
-        let testFrameworkName = 'xunit'
+        let testFrameworkName = 'xunit';
         if(testFeature.Name == 'NunitTestMethod')
         {
             testFrameworkName = 'nunit';
         }
         else if(testFeature.Name == 'MSTestMethod')
         {
-            testFrameworkName = 'mstest'
+            testFrameworkName = 'mstest';
         }
         
         bucket.push(new vscode.CodeLens(
