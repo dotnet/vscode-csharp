@@ -184,10 +184,19 @@ export function updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: strin
         return;
     }
 
-    let testFeature = node.Features.find(value => (value.Name == 'XunitTestMethod' || value.Name == 'NUnitTestMethod'));
+    let testFeature = node.Features.find(value => (value.Name == 'XunitTestMethod' || value.Name == 'NUnitTestMethod' || value.Name == 'MSTestMethod'));
     if (testFeature) {
         // this test method has a test feature
-        let testFrameworkName = testFeature.Name == 'XunitTestMethod' ? 'xunit' : 'nunit';
+        let testFrameworkName = 'xunit';
+        if(testFeature.Name == 'NunitTestMethod')
+        {
+            testFrameworkName = 'nunit';
+        }
+        else if(testFeature.Name == 'MSTestMethod')
+        {
+            testFrameworkName = 'mstest';
+        }
+        
         bucket.push(new vscode.CodeLens(
             toRange(node.Location),
             { title: "run test", command: 'dotnet.test.run', arguments: [testFeature.Data, fileName, testFrameworkName] }));
