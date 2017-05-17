@@ -16,6 +16,7 @@ import TelemetryReporter from 'vscode-extension-telemetry';
 import * as os from 'os';
 import * as path from 'path';
 import * as protocol from './protocol';
+import * as utils from '../common';
 import * as vscode from 'vscode';
 
 enum ServerState {
@@ -337,9 +338,15 @@ export class OmniSharpServer {
             });
         }
         else {
-            // Kill Unix process
-            this._serverProcess.kill('SIGTERM');
-            cleanupPromise = Promise.resolve();
+            // Kill Unix process and children
+            cleanupPromise = utils.getUnixChildProcessIds(this._serverProcess.pid)
+                .then(children => {
+                    for (let child of children) {
+                        process.kill(child, 'SIGTERM');
+                    }
+
+                    this._serverProcess.kill('SIGTERM');
+                });
         }
 
         return cleanupPromise.then(() => {

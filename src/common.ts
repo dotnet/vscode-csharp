@@ -5,6 +5,7 @@
 
 import * as cp from 'child_process';
 import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
 
 let extensionPath: string;
@@ -57,6 +58,41 @@ export function execChildProcess(command: string, workingDirectory: string = get
                 resolve(stdout);
             }
         });
+    });
+}
+
+export function getUnixChildProcessIds(pid: number): Promise<number[]> {
+    return new Promise<number[]>((resolve, reject) => {
+        let ps = cp.exec('ps -A -o ppid,pid', (error, stdout, stderr) =>
+        {
+            if (error) {
+                return reject(error);
+            }
+
+            if (stderr) {
+                return reject(stderr);
+            }
+
+            if (!stdout) {
+                return resolve([]);
+            }
+
+            let lines = stdout.split(os.EOL);
+            let pairs = lines.map(line => line.trim().split(/\s+/));
+
+            let children = [];
+
+            for (let pair of pairs) {
+                let ppid = parseInt(pair[0]);
+                if (ppid === pid) {
+                    children.push(parseInt(pair[1]));
+                }
+            }
+
+            resolve(children);
+        });
+
+        ps.on('error', reject);
     });
 }
 
