@@ -553,21 +553,6 @@
         "command": "o.showOutput",
         "key": "Ctrl+L L",
         "mac": "Cmd+L L"
-      },
-      {
-        "key": "shift+0",
-        "command": "^acceptSelectedSuggestion",
-        "when": "editorTextFocus && suggestWidgetVisible && editorLangId == 'csharp' && suggestionSupportsAcceptOnKey"
-      },
-      {
-        "key": "shift+9",
-        "command": "^acceptSelectedSuggestion",
-        "when": "editorTextFocus && suggestWidgetVisible && editorLangId == 'csharp' && suggestionSupportsAcceptOnKey"
-      },
-      {
-        "key": ".",
-        "command": "^acceptSelectedSuggestion",
-        "when": "editorTextFocus && suggestWidgetVisible && editorLangId == 'csharp' && suggestionSupportsAcceptOnKey"
       }
     ],
     "snippets": [
