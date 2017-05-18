@@ -46,7 +46,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
             // transform AutoCompleteResponse to CompletionItem and
             // group by code snippet
             for (let response of responses) {
-                let completion = new CompletionItem(response.DisplayText);
+                let completion = new CompletionItem(response.CompletionText);
 
                 completion.detail = response.ReturnType
                     ? `${response.ReturnType} ${response.DisplayText}`
@@ -105,11 +105,12 @@ _kinds['Parameter'] = CompletionItemKind.Variable;
 _kinds['RangeVariable'] = CompletionItemKind.Variable;
 
 // members
+_kinds['Const'] = CompletionItemKind.Constant;
 _kinds['EnumMember'] = CompletionItemKind.EnumMember;
 _kinds['Event'] = CompletionItemKind.Event;
 _kinds['Field'] = CompletionItemKind.Field;
-_kinds['Property'] = CompletionItemKind.Property;
 _kinds['Method'] = CompletionItemKind.Method;
+_kinds['Property'] = CompletionItemKind.Property;
 
 // other stuff
 _kinds['Label'] = CompletionItemKind.Unit; // need a better option for this.
