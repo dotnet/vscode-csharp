@@ -8,6 +8,9 @@ src/**
 .gitignore
 .travis.yml
 tsconfig.json
+ISSUE_TEMPLATE
+tslint.json
+gulpfile.js
 
 **/.nyc_output/**
 **/coverage/**
