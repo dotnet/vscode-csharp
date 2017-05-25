@@ -3,6 +3,51 @@
 * When opening a .csproj-based .NET Core project in VS Code, the C# extension will not activate until a C# file is opened in the editor. ([#1150](https://github.com/OmniSharp/omnisharp-vscode/issues/1150))
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
 
+## 1.10.0 _(Not Yet Released)_
+
+#### Completion List
+
+* Several improvements to the completion list! _(All contributed by [@filipw](https://github.com/filipw) with PR [omnisharp-roslyn#840](https://github.com/OmniSharp/omnisharp-roslyn/pull/840))_
+  * Attributes are completed properly without the 'Attribute' suffix. ([#393](https://github.com/OmniSharp/omnisharp-vscode/issues/393))
+  * Named parameters now appear in the completion list. ([#652](https://github.com/OmniSharp/omnisharp-vscode/issues/652))
+  * Object initializer members now appear in the completion list. ([#260](https://github.com/OmniSharp/omnisharp-vscode/issues/260))
+  * Completion appears within XML doc comment CREFs.
+  * Initial support for completion on 'override' and 'partial' keywords. ([#1044](https://github.com/OmniSharp/omnisharp-vscode/issues/1044))
+* New VS Code completion item glyphs (e.g. struct, event, etc.) are supported. (PR: [#1472](https://github.com/OmniSharp/omnisharp-vscode/pull/1472)) _(Contributed by [@dopare](https://github.com/dopare))_
+
+#### Project System
+
+* Project references to projects located outside of the current workspace directory are now loaded and processed. ([#963](https://github.com/OmniSharp/omnisharp-vscode/issues/963), PR: [omnisharp-roslyn#832](https://github.com/OmniSharp/omnisharp-vscode/issues/963))
+* OmniSharp now loads .NET Core projects using the SDKs included with the .NET Core SDK appropriate for that project, if they're installed on the machine. ([#1438](https://github.com/OmniSharp/omnisharp-vscode/issues/1438), [omnisharp-roslyn#765](https://github.com/OmniSharp/omnisharp-roslyn/issues/765), PR: [omnisharp-roslyn#847](https://github.com/OmniSharp/omnisharp-roslyn/pull/847))
+* Options can now be set in an omnisharp.json to specify the Configuration (e.g. Debug) and Platform (e.g. AnyCPU) that MSBuild should use. ([omnisharp-roslyn#202](https://github.com/OmniSharp/omnisharp-roslyn/issues/202), PR: [omnisharp-roslyn#858](https://github.com/OmniSharp/omnisharp-roslyn/pull/858)) _(Contributed by [@nanoant](https://github.com/nanoant))_
+* Fixed issue where a package reference would be reported as an unresolved dependency if the reference differed from the intended dependency by case (PR: [#861](https://github.com/OmniSharp/omnisharp-roslyn/pull/861))
+* Cleaned up unresolved dependency detection in OmniSharp and added logging to help diagnose project issues. ([#1272](https://github.com/OmniSharp/omnisharp-vscode/issues/1272), PR: [#861](https://github.com/OmniSharp/omnisharp-roslyn/pull/862))
+
+#### Scripting
+
+* Support Metadata as Source for Go To Definition in CSX files. ([omnisharp-roslyn#755](https://github.com/OmniSharp/omnisharp-roslyn/issues/755), PR: ([omnisharp-roslyn#829](https://github.com/OmniSharp/omnisharp-roslyn/pull/829)) _(Contributed by [@filipw](https://github.com/filipw))_
+
+#### Unit Testing
+
+* MSTest support added ([#1482](https://github.com/OmniSharp/omnisharp-vscode/issues/1482), PRs: [#1478](https://github.com/OmniSharp/omnisharp-vscode/pull/1478), [omnisharp-roslyn#856](https://github.com/OmniSharp/omnisharp-roslyn/pull/856)) _(Contributed by [@AbhitejJohn](https://github.com/AbhitejJohn))_
+* Add support for NUnit Test Adapter. ([#1434](https://github.com/OmniSharp/omnisharp-vscode/issues/1434), PR: [omnisharp-roslyn#834](https://github.com/OmniSharp/omnisharp-roslyn/pull/834))
+* Tests that define display names are now run properly. ([#1426](https://github.com/OmniSharp/omnisharp-vscode/issues/1426), PR: [omnisharp-roslyn#833](https://github.com/OmniSharp/omnisharp-roslyn/pull/833))
+* Tests with similar names are no longer incorrectly run together when one of them is clicked. ([#1432](https://github.com/OmniSharp/omnisharp-vscode/issues/1432), PR: [omnisharp-roslyn#833](https://github.com/OmniSharp/omnisharp-roslyn/pull/833))
+* Improve response from running/debugging tests to include output from build and test summary. ([#419](https://github.com/OmniSharp/omnisharp-vscode/issues/419), [#455](https://github.com/OmniSharp/omnisharp-vscode/issues/455), PRs: [#1436](https://github.com/OmniSharp/omnisharp-vscode/pull/1436), [#1486](https://github.com/OmniSharp/omnisharp-vscode/pull/1486))
+* Added `csharp.unitTestDebugingOptions` setting to pass launch.json-style debug options (example: `justMyCode`) when unit test debugging.
+
+#### Debugger
+* Resolves crash on OSX when the target process loads an embedded PDB ([#1456](https://github.com/OmniSharp/omnisharp-vscode/issues/1456)). This commonly affects users trying to debug XUnit tests.
+* Enhanced exception peek display to provide additional exception properties.
+
+#### Other Updates and Fixes
+
+* New `csharp.suppressHiddenDiagnostics` setting that can be set to true to display hidden diagnostics, such as 'unnecessary using directive'. ([#1429](https://github.com/OmniSharp/omnisharp-vscode/issues/1429), PR: [#1435](https://github.com/OmniSharp/omnisharp-vscode/pull/1435)) _(Contributed by [@cruz82](https://github.com/cruz82))_
+* Fix issue causing several code snippets to not be available. ([#1459](https://github.com/OmniSharp/omnisharp-vscode/issues/1459), PR: [#1461](https://github.com/OmniSharp/omnisharp-vscode/pull/1461)) _(Contributed by [@shaunluttin](https://github.com/shaunluttin))_
+* Ensure the 'Generate Assets for Build and Debug' command can cause the extension to activate. (PR: [#1470](https://github.com/OmniSharp/omnisharp-vscode/pull/1470))
+* The OmniSharp process is now correctly terminated on Unix when the 'Restart OmniSharp' command is invoked. ([#1445](https://github.com/OmniSharp/omnisharp-vscode/issues/1445), PR: [#1466](https://github.com/OmniSharp/omnisharp-vscode/pull/1466))
+* Added new `RoslynExtensions` option to allow specifying a set of assemblies in an omnisharp.json file that OmniSharp will look in to find Roslyn extensions to load. (PR: [omnisharp-roslyn#848](https://github.com/OmniSharp/omnisharp-roslyn/pull/848)) _(Contributed by [@filipw](https://github.com/filipw))_
+
 ## 1.9.0 (April 20, 2017)
 
 #### Unit Testing

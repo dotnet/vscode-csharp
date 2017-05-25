@@ -14,6 +14,12 @@ import {CompletionItemProvider, CompletionItem, CompletionItemKind, Cancellation
 
 export default class OmniSharpCompletionItemProvider extends AbstractSupport implements CompletionItemProvider {
 
+    // copied from Roslyn here: https://github.com/dotnet/roslyn/blob/6e8f6d600b6c4bc0b92bc3d782a9e0b07e1c9f8e/src/Features/Core/Portable/Completion/CompletionRules.cs#L166-L169
+    private static DefaultCommitCharacters = [
+        ' ', '{', '}', '[', ']', '(', ')', '.', ',', ':',
+        ';', '+', '-', '*', '/', '%', '&', '|', '^', '!',
+        '~', '=', '<', '>', '?', '@', '#', '\'', '\"', '\\'];
+
     public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken): Promise<CompletionItem[]> {
 
         let wordToComplete = '';
@@ -28,9 +34,9 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
         req.WantKind = true;
         req.WantReturnType = true;
 
-        return serverUtils.autoComplete(this._server, req).then(values => {
+        return serverUtils.autoComplete(this._server, req).then(responses => {
 
-            if (!values) {
+            if (!responses) {
                 return;
             }
 
@@ -39,11 +45,17 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
 
             // transform AutoCompleteResponse to CompletionItem and
             // group by code snippet
-            for (let value of values) {
-                let completion = new CompletionItem(value.CompletionText.replace(/\(|\)|<|>/g, ''));
-                completion.detail = value.ReturnType ? `${value.ReturnType} ${value.DisplayText}` : value.DisplayText;
-                completion.documentation = extractSummaryText(value.Description);
-                completion.kind = _kinds[value.Kind] || CompletionItemKind.Property;
+            for (let response of responses) {
+                let completion = new CompletionItem(response.CompletionText);
+
+                completion.detail = response.ReturnType
+                    ? `${response.ReturnType} ${response.DisplayText}`
+                    : response.DisplayText;
+
+                completion.documentation = extractSummaryText(response.Description);
+                completion.kind = _kinds[response.Kind] || CompletionItemKind.Property;
+                completion.insertText = response.CompletionText.replace(/<>/g, '');
+                completion.commitCharacters = OmniSharpCompletionItemProvider.DefaultCommitCharacters;
 
                 let array = completions[completion.label];
                 if (!array) {
@@ -85,7 +97,7 @@ _kinds['Class'] = CompletionItemKind.Class;
 _kinds['Delegate'] = CompletionItemKind.Class; // need a better option for this.
 _kinds['Enum'] = CompletionItemKind.Enum;
 _kinds['Interface'] = CompletionItemKind.Interface;
-_kinds['Struct'] = CompletionItemKind.Class; // need a better option for this.
+_kinds['Struct'] = CompletionItemKind.Struct;
 
 // variables
 _kinds['Local'] = CompletionItemKind.Variable;
@@ -93,11 +105,12 @@ _kinds['Parameter'] = CompletionItemKind.Variable;
 _kinds['RangeVariable'] = CompletionItemKind.Variable;
 
 // members
-_kinds['EnumMember'] = CompletionItemKind.Property; // need a better option for this.
-_kinds['Event'] = CompletionItemKind.Field; // need a better option for this.
+_kinds['Const'] = CompletionItemKind.Constant;
+_kinds['EnumMember'] = CompletionItemKind.EnumMember;
+_kinds['Event'] = CompletionItemKind.Event;
 _kinds['Field'] = CompletionItemKind.Field;
-_kinds['Property'] = CompletionItemKind.Property;
 _kinds['Method'] = CompletionItemKind.Method;
+_kinds['Property'] = CompletionItemKind.Property;
 
 // other stuff
 _kinds['Label'] = CompletionItemKind.Unit; // need a better option for this.
