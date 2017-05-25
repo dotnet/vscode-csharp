@@ -18,15 +18,15 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-with-VS-Code-using-CSharp-and-NET-Core)
 
-### What's New in 1.9.0
+### What's New in 1.10.0
 
-* Added support for running and debugging tests in .NET Core .csproj projects.
-* Tons of debugger fixes and better debugger configuration support.
-* Big improvements in processing of .NET Core .csproj projects.
-* Less noise from overly-chatty diagnostics (like "Remove Unnecessary Usings").
+* Support added for NUnit and MSBuild tests.
+* Several improvements to the completion list, including new icons for events.
+* Important debugger fixes for OSX.
+* Project references outside of the opened folder are now loaded.
 * Lot's more!
 
-See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.9.0/CHANGELOG.md) for all of the updates.
+See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.10.0/CHANGELOG.md) for all of the updates.
 
 ### Supported Operating Systems for Debugging
 
