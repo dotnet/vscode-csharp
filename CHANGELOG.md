@@ -1,9 +1,10 @@
-## Known Issues in 1.9.0
+## Known Issues in 1.10.0
 
 * When opening a .csproj-based .NET Core project in VS Code, the C# extension will not activate until a C# file is opened in the editor. ([#1150](https://github.com/OmniSharp/omnisharp-vscode/issues/1150))
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
+* .NET Core SDK 2.0-preview2 is not yet supported. ([#1495](https://github.com/OmniSharp/omnisharp-vscode/issues/1495))
 
-## 1.10.0 _(Not Yet Released)_
+## 1.10.0 (May 25, 2017)
 
 #### Completion List
 
@@ -14,6 +15,7 @@
   * Completion appears within XML doc comment CREFs.
   * Initial support for completion on 'override' and 'partial' keywords. ([#1044](https://github.com/OmniSharp/omnisharp-vscode/issues/1044))
 * New VS Code completion item glyphs (e.g. struct, event, etc.) are supported. (PR: [#1472](https://github.com/OmniSharp/omnisharp-vscode/pull/1472)) _(Contributed by [@dopare](https://github.com/dopare))_
+* Updated completion to use same commit characters as Visual Studio. Completion should now complete as non-identifier characters are typed. ([#1487](https://github.com/OmniSharp/omnisharp-vscode/issues/1487), [#1491](https://github.com/OmniSharp/omnisharp-vscode/issues/1491), PR: [#1494](https://github.com/OmniSharp/omnisharp-vscode/pull/1494))
 
 #### Project System
 
@@ -31,6 +33,7 @@
 
 * MSTest support added ([#1482](https://github.com/OmniSharp/omnisharp-vscode/issues/1482), PRs: [#1478](https://github.com/OmniSharp/omnisharp-vscode/pull/1478), [omnisharp-roslyn#856](https://github.com/OmniSharp/omnisharp-roslyn/pull/856)) _(Contributed by [@AbhitejJohn](https://github.com/AbhitejJohn))_
 * Add support for NUnit Test Adapter. ([#1434](https://github.com/OmniSharp/omnisharp-vscode/issues/1434), PR: [omnisharp-roslyn#834](https://github.com/OmniSharp/omnisharp-roslyn/pull/834))
+* Files are saved before running or debugging tests to ensure that recent unsaved changes are included in test runs. ([#1473](https://github.com/OmniSharp/omnisharp-vscode/issues/1473), PR: [#1493](https://github.com/OmniSharp/omnisharp-vscode/pull/1493))
 * Tests that define display names are now run properly. ([#1426](https://github.com/OmniSharp/omnisharp-vscode/issues/1426), PR: [omnisharp-roslyn#833](https://github.com/OmniSharp/omnisharp-roslyn/pull/833))
 * Tests with similar names are no longer incorrectly run together when one of them is clicked. ([#1432](https://github.com/OmniSharp/omnisharp-vscode/issues/1432), PR: [omnisharp-roslyn#833](https://github.com/OmniSharp/omnisharp-roslyn/pull/833))
 * Improve response from running/debugging tests to include output from build and test summary. ([#419](https://github.com/OmniSharp/omnisharp-vscode/issues/419), [#455](https://github.com/OmniSharp/omnisharp-vscode/issues/455), PRs: [#1436](https://github.com/OmniSharp/omnisharp-vscode/pull/1436), [#1486](https://github.com/OmniSharp/omnisharp-vscode/pull/1486))
