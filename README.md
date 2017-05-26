@@ -1,3 +1,4 @@
+
 ## C# for Visual Studio Code (powered by OmniSharp)
 
 |Master|Release|
@@ -54,6 +55,7 @@ The C# extension now supports basic debugging capabilities! See http://aka.ms/vs
 First install:
 * Node.js (newer than 4.3.1)
 * Npm (newer 2.14.12)
+* Python 2.7
 
 To **run and develop** do the following:
 
