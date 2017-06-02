@@ -22,7 +22,7 @@ import WorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
 import reportDiagnostics, { Advisor } from '../features/diagnosticsProvider';
 import SignatureHelpProvider from '../features/signatureHelpProvider';
 import registerCommands from '../features/commands';
-import forwardChanges from '../features/changeForwarding';
+import forwardChanges, { registerOpenDocuments } from '../features/changeForwarding';
 import reportStatus from '../features/status';
 import { OmniSharpServer } from './server';
 import { Options } from './options';
@@ -75,6 +75,9 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
     disposables.push(registerCommands(server, context.extensionPath));
     disposables.push(reportStatus(server));
 
+    // Ensure all open documents are synchonized with the server
+    disposables.push(server.onServerStart(() => registerOpenDocuments(server)));
+
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
         disposables.push(server.onServerStart(() => {
             // Update or add tasks.json and launch.json
@@ -90,7 +93,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
     disposables.push(server.onServerStart(() => {
         let measures: { [key: string]: number } = {};
 
-         utils.requestWorkspaceInformation(server)
+        utils.requestWorkspaceInformation(server)
             .then(workspaceInfo => {
                 if (workspaceInfo.DotNet && workspaceInfo.DotNet.Projects.length > 0) {
                     measures['projectjson.projectcount'] = workspaceInfo.DotNet.Projects.length;

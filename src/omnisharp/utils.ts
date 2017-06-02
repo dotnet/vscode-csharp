@@ -17,8 +17,24 @@ export function codeCheck(server: OmniSharpServer, request: protocol.Request, to
     return server.makeRequest<protocol.QuickFixResponse>(protocol.Requests.CodeCheck, request, token);
 }
 
+export function completion(server: OmniSharpServer, request: protocol.V2.CompletionRequest) {
+    return server.makeRequest<protocol.V2.CompletionResponse>(protocol.V2.Requests.Completion, request);
+}
+
+export function completionItemResolve(server: OmniSharpServer, request: protocol.V2.CompletionItemResolveRequest) {
+    return server.makeRequest<protocol.V2.CompletionItemResolveResponse>(protocol.V2.Requests.CompletionItemResolve, request);
+}
+
 export function currentFileMembersAsTree(server: OmniSharpServer, request: protocol.Request, token: vscode.CancellationToken) {
     return server.makeRequest<protocol.CurrentFileMembersAsTreeResponse>(protocol.Requests.CurrentFileMembersAsTree, request, token);
+}
+
+export function fileClose(server: OmniSharpServer, request: protocol.FileBasedRequest) {
+    return server.makeRequest<void>(protocol.Requests.FileClose, request);
+}
+
+export function fileOpen(server: OmniSharpServer, request: protocol.FileBasedRequest) {
+    return server.makeRequest<void>(protocol.Requests.FileOpen, request);
 }
 
 export function filesChanged(server: OmniSharpServer, requests: protocol.Request[]) {

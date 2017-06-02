@@ -6,6 +6,7 @@
 'use strict';
 
 import * as path from 'path';
+import * as vscode from 'vscode';
 
 export module Requests {
     export const AddToProject = '/addtoproject';
@@ -14,6 +15,8 @@ export module Requests {
     export const CodeFormat = '/codeformat';
     export const ChangeBuffer = '/changebuffer';
     export const CurrentFileMembersAsTree = '/currentfilemembersastree';
+    export const FileClose = '/close';
+    export const FileOpen = '/open';
     export const FilesChanged = '/filesChanged';
     export const FindSymbols = '/findsymbols';
     export const FindUsages = '/findusages';
@@ -59,8 +62,11 @@ export namespace WireProtocol {
     }
 }
 
-export interface Request {
+export interface FileBasedRequest {
     FileName: string;
+}
+
+export interface Request extends FileBasedRequest {
     Line?: number;
     Column?: number;
     Buffer?: string;
@@ -415,6 +421,8 @@ export interface PackageDependency {
 export namespace V2 {
 
     export module Requests {
+        export const Completion = '/v2/completion';
+        export const CompletionItemResolve = '/v2/completionItem/resolve';
         export const GetCodeActions = '/v2/getcodeactions';
         export const RunCodeAction = '/v2/runcodeaction';
         export const GetTestStartInfo = '/v2/getteststartinfo';
@@ -424,14 +432,67 @@ export namespace V2 {
         export const DebugTestStop = '/v2/debugtest/stop';
     }
 
+    export module CompletionTriggerKind {
+        export const Invoke = 'Invoke';
+        export const Insertion = 'Insertion';
+        export const Deletion = 'Deletion';
+    }
+
+    export interface CompletionTrigger {
+        Kind: string;
+        Character?: string;
+    }
+
+    export interface CompletionRequest extends FileBasedRequest {
+        Position: number;
+        Trigger: CompletionTrigger;
+    }
+
+    export interface CompletionItem {
+        DisplayText: string;
+        Kind: string;
+        FilterText: string;
+        SortText: string;
+        Description?: string;
+        TextEdit?: TextEdit;
+        AdditionalTextEdits: TextEdit[];
+    }
+
+    export interface CompletionResponse {
+        IsSuggestionMode: boolean;
+        Items: CompletionItem[];
+    }
+
+    export interface CompletionItemResolveRequest extends FileBasedRequest {
+        ItemIndex: number;
+        DisplayText: string;
+    }
+
+    export interface CompletionItemResolveResponse {
+        Item: CompletionItem;
+    }
+
     export interface Point {
         Line: number;
         Column: number;
     }
 
+    export function toPosition(point: Point): vscode.Position {
+        return new vscode.Position(point.Line - 1, point.Column - 1);
+    }
+
     export interface Range {
         Start: Point;
         End: Point;
+    }
+
+    export function toRange(range: Range): vscode.Range {
+        return new vscode.Range(toPosition(range.Start), toPosition(range.End));
+    }
+
+    export interface TextEdit {
+        Range: Range;
+        NewText: string;
     }
 
     export interface GetCodeActionsRequest extends Request {
