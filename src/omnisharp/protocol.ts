@@ -433,9 +433,9 @@ export namespace V2 {
     }
 
     export module CompletionTriggerKind {
-        export const Invoke = 'Invoke';
-        export const Insertion = 'Insertion';
-        export const Deletion = 'Deletion';
+        export const Invoke = 'invoke';
+        export const Insertion = 'insertion';
+        export const Deletion = 'deletion';
     }
 
     export interface CompletionTrigger {
@@ -448,17 +448,33 @@ export namespace V2 {
         Trigger: CompletionTrigger;
     }
 
+    export module CharacterSetModificationRuleKind {
+        export const Add = 'add';
+        export const Remove = 'remove';
+        export const Replace = 'replace';
+    }
+
+    export interface CharacterSetModificationRule {
+        Kind: string;
+        Characters: string[];
+    }
+
     export interface CompletionItem {
         DisplayText: string;
         Kind: string;
         FilterText: string;
         SortText: string;
+        CommitCharacterRules: CharacterSetModificationRule[];
+
+        // These properties must be resolved via the '/v2/completionItem/resolve' end point
+        // before they are available.
         Description?: string;
         TextEdit?: TextEdit;
         AdditionalTextEdits: TextEdit[];
     }
 
     export interface CompletionResponse {
+        DefaultCommitCharacters: string[];
         IsSuggestionMode: boolean;
         Items: CompletionItem[];
     }

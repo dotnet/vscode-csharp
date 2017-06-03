@@ -24,12 +24,6 @@ class OmniSharpCompletionItem extends vscode.CompletionItem {
 
 export default class OmniSharpCompletionItemProvider extends AbstractSupport implements vscode.CompletionItemProvider {
 
-    // copied from Roslyn here: https://github.com/dotnet/roslyn/blob/6e8f6d600b6c4bc0b92bc3d782a9e0b07e1c9f8e/src/Features/Core/Portable/Completion/CompletionRules.cs#L166-L169
-    private static DefaultCommitCharacters = [
-        ' ', '{', '}', '[', ']', '(', ')', '.', ',', ':',
-        ';', '+', '-', '*', '/', '%', '&', '|', '^', '!',
-        '~', '=', '<', '>', '?', '@', '#', '\'', '\"', '\\'];
-
     public provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): Promise<vscode.CompletionList> {
         let request: protocol.CompletionRequest = {
             FileName: document.fileName,
@@ -48,6 +42,36 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
                     let newItem = new OmniSharpCompletionItem(item.DisplayText, kind, document.fileName, index);
                     newItem.filterText = item.FilterText;
                     newItem.sortText = item.SortText;
+
+                    // Create set of commit characters for this item.
+                    // Note: If we're in 'suggestion mode', we don't provide any commit characters.
+                    if (!response.IsSuggestionMode) {
+                        let commitCharacters = response.DefaultCommitCharacters;
+
+                        for (let rule of item.CommitCharacterRules) {
+                            switch (rule.Kind)
+                            {
+                                case protocol.CharacterSetModificationRuleKind.Add:
+                                    commitCharacters.push(...rule.Characters);
+                                    break;
+
+                                case protocol.CharacterSetModificationRuleKind.Remove:
+                                    for (let i = commitCharacters.length - 1; i >= 0; i--) {
+                                        if (rule.Characters.indexOf(commitCharacters[i]) >= 0) {
+                                            commitCharacters.splice(i, 1);
+                                        }
+                                    }
+
+                                    break;
+
+                                case protocol.CharacterSetModificationRuleKind.Replace:
+                                    commitCharacters = rule.Characters;
+                                    break;
+                            }
+                        }
+
+                        newItem.commitCharacters = commitCharacters;
+                    }
 
                     items.push(newItem);
                 }
