@@ -565,12 +565,23 @@ export namespace V2 {
     }
 }
 
+export function findNetFrameworkTargetFramework(project: MSBuildProject): TargetFramework {
+    let regexp = new RegExp('^net[1-4]');
+    return project.TargetFrameworks.find(tf => regexp.test(tf.ShortName));
+}
+
 export function findNetCoreAppTargetFramework(project: MSBuildProject): TargetFramework {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp'));
 }
 
 export function findNetStandardTargetFramework(project: MSBuildProject): TargetFramework {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netstandard'));
+}
+
+export function isDotNetCoreProject(project: MSBuildProject): Boolean {
+    return findNetCoreAppTargetFramework(project) !== undefined ||
+        findNetStandardTargetFramework(project) !== undefined ||
+        findNetFrameworkTargetFramework(project) !== undefined;
 }
 
 export interface ProjectDescriptor {
@@ -594,8 +605,7 @@ export function getDotNetCoreProjectDescriptors(info: WorkspaceInformationRespon
 
     if (info.MsBuild && info.MsBuild.Projects.length > 0) {
         for (let project of info.MsBuild.Projects) {
-            if (findNetCoreAppTargetFramework(project) !== undefined ||
-                findNetStandardTargetFramework(project) !== undefined) {
+            if (isDotNetCoreProject(project)) {
                 result.push({
                     Name: path.basename(project.Path),
                     Directory: path.dirname(project.Path),
