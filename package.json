@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.10.0",
+  "version": "1.11.0-beta1",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -123,7 +123,7 @@
     },
     {
       "description": "OmniSharp (.NET 4.6 / x86)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.19.1.zip",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.20.0zip",
       "installPath": "./bin/omnisharp",
       "platforms": [
         "win32"
@@ -135,7 +135,7 @@
     },
     {
       "description": "OmniSharp (.NET 4.6 / x64)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.19.1.zip",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.20.0.zip",
       "installPath": "./bin/omnisharp",
       "platforms": [
         "win32"
@@ -147,7 +147,7 @@
     },
     {
       "description": "OmniSharp (Mono 4.6)",
-      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-mono-1.19.1.zip",
+      "url": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-mono-1.20.0.zip",
       "installPath": "./bin/omnisharp",
       "platforms": [
         "darwin",
