@@ -360,7 +360,7 @@
           ],
           "description": "If the current Linux distribution is not recognized, this option can be used to tell the debugger what version can be used. After changing this option, close VS Code, remove the debugger folder (~/.vscode/extensions/ms-vscode.csharp-<ver>/.debugger) if it has already downloaded, and restart VS Code."
         },
-        "csharp.unitTestDebugingOptions": {
+        "csharp.unitTestDebuggingOptions": {
           "type": "object",
           "description": "Options to use with the debugger when launching for unit test debugging. Any launch.json option is valid here.",
           "default": {},
@@ -401,7 +401,7 @@
             "debugServer": {
               "type": "number",
               "description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
-              "default": 4711 
+              "default": 4711
             },
             "logging": {
               "description": "Optional flags to determine what types of messages should be logged to the output window.",
