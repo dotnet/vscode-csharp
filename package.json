@@ -69,6 +69,7 @@
     {
       "description": "Mono Runtime (Linux / x86)",
       "url": "https://omnisharpdownload.azureedge.net/ext/mono.linux-x86-5.2.0.104.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/mono.linux-x86-5.2.0.104.zip",
       "installPath": "./bin",
       "platforms": [
         "linux"
@@ -85,6 +86,7 @@
     {
       "description": "Mono Runtime (Linux / x64)",
       "url": "https://omnisharpdownload.azureedge.net/ext/mono.linux-x86_64-5.2.0.104.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/mono.linux-x86_64-5.2.0.104.zip",
       "installPath": "./bin",
       "platforms": [
         "linux"
@@ -101,6 +103,7 @@
     {
       "description": "Mono Runtime (macOS)",
       "url": "https://omnisharpdownload.azureedge.net/ext/mono.osx-5.2.0.104.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/mono.osx-5.2.0.104.zip",
       "installPath": "./bin",
       "platforms": [
         "darwin"
@@ -114,6 +117,7 @@
     {
       "description": "Mono Framework Assemblies",
       "url": "https://omnisharpdownload.azureedge.net/ext/framework-5.2.0.104.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/framework-5.2.0.104.zip",
       "installPath": "./bin/framework",
       "platforms": [
         "darwin",
@@ -124,6 +128,7 @@
     {
       "description": "OmniSharp (.NET 4.6 / x86)",
       "url": "https://omnisharpdownload.azureedge.net/ext/omnisharp-win-x86-1.21.0.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.21.0.zip",
       "installPath": "./bin/omnisharp",
       "platforms": [
         "win32"
@@ -136,6 +141,7 @@
     {
       "description": "OmniSharp (.NET 4.6 / x64)",
       "url": "https://omnisharpdownload.azureedge.net/ext/omnisharp-win-x64-1.21.0.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.21.0.zip",
       "installPath": "./bin/omnisharp",
       "platforms": [
         "win32"
@@ -148,6 +154,7 @@
     {
       "description": "OmniSharp (Mono 4.6)",
       "url": "https://omnisharpdownload.azureedge.net/ext/omnisharp-mono-1.21.0.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-mono-1.21.0.zip",
       "installPath": "./bin/omnisharp",
       "platforms": [
         "darwin",
@@ -444,9 +451,9 @@
           "description": "Suppress the notification window to perform a 'dotnet restore' when dependencies can't be resolved."
         },
         "csharp.suppressHiddenDiagnostics": {
-            "type": "boolean",
-            "default": true,
-            "description": "Suppress 'hidden' diagnostics (such as 'unnecessary using directives') from appearing in the editor or the Problems pane."
+          "type": "boolean",
+          "default": true,
+          "description": "Suppress 'hidden' diagnostics (such as 'unnecessary using directives') from appearing in the editor or the Problems pane."
         },
         "omnisharp.path": {
           "type": [
