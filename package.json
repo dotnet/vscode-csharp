@@ -340,7 +340,9 @@
     "onCommand:csharp.downloadDebugger",
     "onCommand:csharp.listProcess",
     "onCommand:csharp.listRemoteProcess",
-    "workspaceContains:project.json"
+    "workspaceContains:project.json",
+    "workspaceContains:*.csproj",
+    "workspaceContains:*.sln"
   ],
   "contributes": {
     "configuration": {
