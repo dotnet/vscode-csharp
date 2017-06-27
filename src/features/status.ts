@@ -135,7 +135,7 @@ export function reportDocumentStatus(server: OmniSharpServer): vscode.Disposable
                     SourceFiles: string[];
                 }
 
-                let fileNames: vscode.DocumentSelector[] = [];
+                let fileNames: vscode.DocumentFilter[] = [];
                 let label: string;
 
                 function addProjectFileNames(project: Project) {
