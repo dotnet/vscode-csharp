@@ -19,17 +19,6 @@
 * Improved download speeds for OmniSharp and Mono dependencies.
 * Allow the ".NET: Restore Packages" command to run on projects targeting full framework. ([#1507](https://github.com/OmniSharp/omnisharp-vscode/pull/1507), PR: [#1545](https://github.com/OmniSharp/omnisharp-vscode/pull/1545)) _(contributed by [@adamhartford](https://github.com/adamhartford))_
 
-## 1.11.0 _(Not Yet Released)_
-
-#### Completion List
-
-* No longer trigger completion when a '<' character is typed. ([#1521](https://github.com/OmniSharp/omnisharp-vscode/issues/1521), PR: [#1530](https://github.com/OmniSharp/omnisharp-vscode/pull/1530))
-* Completion list no longer triggers on space in contexts where a lambda expression could be typed. ([#1524](https://github.com/OmniSharp/omnisharp-vscode/issues/1524), PR: [#1548](https://github.com/OmniSharp/omnisharp-vscode/pull/1548))
-
-#### Other Updates and Fixes
-
-* Allow the ".NET: Restore Packages" command to run on projects targeting full framework. ([#1507](https://github.com/OmniSharp/omnisharp-vscode/pull/1507), PR: [#1545](https://github.com/OmniSharp/omnisharp-vscode/pull/1545)) _(contributed by [@adamhartford](https://github.com/adamhartford))_
-
 ## 1.10.0 (May 25, 2017)
 
 #### Completion List
