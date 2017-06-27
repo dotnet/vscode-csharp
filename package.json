@@ -343,7 +343,10 @@
     "workspaceContains:project.json",
     "workspaceContains:*.csproj",
     "workspaceContains:*.sln",
-    "workspaceContains:*.csx"
+    "workspaceContains:*.csx",
+    "workspaceContains:**/*.csproj",
+    "workspaceContains:**/*.sln",
+    "workspaceContains:**/*.csx"
   ],
   "contributes": {
     "configuration": {
