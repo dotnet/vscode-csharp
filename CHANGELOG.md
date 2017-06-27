@@ -1,8 +1,23 @@
-## Known Issues in 1.10.0
+## Known Issues in 1.11.0
 
 * When opening a .csproj-based .NET Core project in VS Code, the C# extension will not activate until a C# file is opened in the editor. ([#1150](https://github.com/OmniSharp/omnisharp-vscode/issues/1150))
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
-* .NET Core SDK 2.0-preview2 is not yet supported. ([#1495](https://github.com/OmniSharp/omnisharp-vscode/issues/1495))
+
+## 1.11.0 (June 27, 2017)
+
+#### Completion List
+
+* No longer trigger completion when a '<' character is typed. ([#1521](https://github.com/OmniSharp/omnisharp-vscode/issues/1521), PR: [#1530](https://github.com/OmniSharp/omnisharp-vscode/pull/1530))
+* Completion list no longer triggers on space in contexts where a lambda expression could be typed. ([#1524](https://github.com/OmniSharp/omnisharp-vscode/issues/1524), PR: [#1548](https://github.com/OmniSharp/omnisharp-vscode/pull/1548))
+
+#### Project System
+
+* Fixed support for the latest .NET Core 2.0 preview. ([#1566](https://github.com/OmniSharp/omnisharp-vscode/issues/1566))
+
+#### Other Updates and Fixes
+
+* Improved download speeds for OmniSharp and Mono dependencies.
+* Allow the ".NET: Restore Packages" command to run on projects targeting full framework. ([#1507](https://github.com/OmniSharp/omnisharp-vscode/pull/1507), PR: [#1545](https://github.com/OmniSharp/omnisharp-vscode/pull/1545)) _(contributed by [@adamhartford](https://github.com/adamhartford))_
 
 ## 1.11.0 _(Not Yet Released)_
 
