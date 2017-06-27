@@ -342,7 +342,8 @@
     "onCommand:csharp.listRemoteProcess",
     "workspaceContains:project.json",
     "workspaceContains:*.csproj",
-    "workspaceContains:*.sln"
+    "workspaceContains:*.sln",
+    "workspaceContains:*.csx"
   ],
   "contributes": {
     "configuration": {
