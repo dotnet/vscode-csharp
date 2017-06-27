@@ -15,8 +15,13 @@ import {CompletionItemProvider, CompletionItem, CompletionItemKind, Cancellation
 export default class OmniSharpCompletionItemProvider extends AbstractSupport implements CompletionItemProvider {
 
     // copied from Roslyn here: https://github.com/dotnet/roslyn/blob/6e8f6d600b6c4bc0b92bc3d782a9e0b07e1c9f8e/src/Features/Core/Portable/Completion/CompletionRules.cs#L166-L169
-    private static DefaultCommitCharacters = [
+    private static AllCommitCharacters = [
         ' ', '{', '}', '[', ']', '(', ')', '.', ',', ':',
+        ';', '+', '-', '*', '/', '%', '&', '|', '^', '!',
+        '~', '=', '<', '>', '?', '@', '#', '\'', '\"', '\\'];
+    
+    private static CommitCharactersWithoutSpace = [
+        '{', '}', '[', ']', '(', ')', '.', ',', ':',
         ';', '+', '-', '*', '/', '%', '&', '|', '^', '!',
         '~', '=', '<', '>', '?', '@', '#', '\'', '\"', '\\'];
 
@@ -55,7 +60,10 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
                 completion.documentation = extractSummaryText(response.Description);
                 completion.kind = _kinds[response.Kind] || CompletionItemKind.Property;
                 completion.insertText = response.CompletionText.replace(/<>/g, '');
-                completion.commitCharacters = OmniSharpCompletionItemProvider.DefaultCommitCharacters;
+
+                completion.commitCharacters = response.IsSuggestionMode
+                    ? OmniSharpCompletionItemProvider.CommitCharactersWithoutSpace
+                    : OmniSharpCompletionItemProvider.AllCommitCharacters;
 
                 let array = completions[completion.label];
                 if (!array) {

@@ -100,7 +100,7 @@ export function runDotnetTest(testMethod: string, fileName: string, testFramewor
 }
 
 function createLaunchConfiguration(program: string, args: string, cwd: string, debuggerEventsPipeName: string) {
-    let debugOptions = vscode.workspace.getConfiguration('csharp').get('unitTestDebugingOptions');
+    let debugOptions = vscode.workspace.getConfiguration('csharp').get('unitTestDebuggingOptions');
 
     // Get the initial set of options from the workspace setting
     let result: any;

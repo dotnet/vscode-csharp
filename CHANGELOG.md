@@ -4,6 +4,17 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
 * .NET Core SDK 2.0-preview2 is not yet supported. ([#1495](https://github.com/OmniSharp/omnisharp-vscode/issues/1495))
 
+## 1.11.0 _(Not Yet Released)_
+
+#### Completion List
+
+* No longer trigger completion when a '<' character is typed. ([#1521](https://github.com/OmniSharp/omnisharp-vscode/issues/1521), PR: [#1530](https://github.com/OmniSharp/omnisharp-vscode/pull/1530))
+* Completion list no longer triggers on space in contexts where a lambda expression could be typed. ([#1524](https://github.com/OmniSharp/omnisharp-vscode/issues/1524), PR: [#1548](https://github.com/OmniSharp/omnisharp-vscode/pull/1548))
+
+#### Other Updates and Fixes
+
+* Allow the ".NET: Restore Packages" command to run on projects targeting full framework. ([#1507](https://github.com/OmniSharp/omnisharp-vscode/pull/1507), PR: [#1545](https://github.com/OmniSharp/omnisharp-vscode/pull/1545)) _(contributed by [@adamhartford](https://github.com/adamhartford))_
+
 ## 1.10.0 (May 25, 2017)
 
 #### Completion List
@@ -40,6 +51,7 @@
 * Added `csharp.unitTestDebugingOptions` setting to pass launch.json-style debug options (example: `justMyCode`) when unit test debugging.
 
 #### Debugger
+
 * Resolves crash on OSX when the target process loads an embedded PDB ([#1456](https://github.com/OmniSharp/omnisharp-vscode/issues/1456)). This commonly affects users trying to debug XUnit tests.
 * Enhanced exception peek display to provide additional exception properties.
 
