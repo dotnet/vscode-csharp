@@ -68,7 +68,7 @@ function completeDebuggerInstall(logger: Logger, channel: vscode.OutputChannel) 
                     let installer = new debugInstall.DebugInstaller(_debugUtil);
                     installer.finishInstall()
                         .then(() => {
-                            vscode.window.setStatusBarMessage('Successfully installed .NET Core Debugger.');
+                            vscode.window.setStatusBarMessage('Successfully installed .NET Core Debugger.', 5000);
                         })
                         .catch((err) => {
                             logger.appendLine("[ERROR]: An error occured while installing the .NET Core Debugger:");
