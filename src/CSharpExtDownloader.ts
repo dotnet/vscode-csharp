@@ -9,7 +9,6 @@ import * as util from './common';
 import { Logger } from './logger';
 import { PackageManager, Status, PackageError } from './packages';
 import { PlatformInformation } from './platform';
-import { VSCodePlatformInformation } from './vscodePlatform';
 
 /*
  * Class used to download the runtime dependencies of the C# Extension
@@ -55,7 +54,7 @@ export class CSharpExtDownloader
         return util.touchInstallFile(util.InstallFileType.Begin)
             .then(() => {
                 installationStage = 'getPlatformInfo';
-                return VSCodePlatformInformation.GetCurrent();
+                return PlatformInformation.GetCurrent();
             })
             .then(info => {
                 platformInfo = info;
@@ -115,7 +114,6 @@ export class CSharpExtDownloader
                 telemetryProps['installStage'] = installationStage;
                 telemetryProps['platform.architecture'] = platformInfo.architecture;
                 telemetryProps['platform.platform'] = platformInfo.platform;
-                telemetryProps['platform.runtimeId'] = platformInfo.runtimeId;
                 if (platformInfo.distribution) {
                     telemetryProps['platform.distribution'] = platformInfo.distribution.toString();
                 }
