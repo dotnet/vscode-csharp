@@ -2,7 +2,7 @@ import { workspace, Uri, TextDocument, Disposable, TextDocumentContentProvider} 
 import { MetadataResponse } from '../omnisharp/protocol';
 
 export default class DefinitionMetadataDocumentProvider implements TextDocumentContentProvider, Disposable {
-    private _scheme = "omnisharp-metadata";
+    readonly scheme = "omnisharp-metadata";
     private _registration : Disposable;
     private _documents: Map<string, MetadataResponse>;
     private _documentClosedSubscription: Disposable;
@@ -31,7 +31,7 @@ export default class DefinitionMetadataDocumentProvider implements TextDocumentC
     }
 
     public register() : void {
-        this._registration = workspace.registerTextDocumentContentProvider(this._scheme, this);
+        this._registration = workspace.registerTextDocumentContentProvider(this.scheme, this);
     }
 
     public provideTextDocumentContent(uri : Uri) : string {
@@ -39,7 +39,7 @@ export default class DefinitionMetadataDocumentProvider implements TextDocumentC
     }
 
     private createUri(metadataResponse: MetadataResponse) : Uri {
-        return Uri.parse(this._scheme + "://" +
+        return Uri.parse(this.scheme + "://" +
                          metadataResponse.SourceName.replace(/\\/g, "/")
                                                     .replace(/(.*)\/(.*)/g, "$1/[metadata] $2"));
     }

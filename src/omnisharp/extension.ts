@@ -47,7 +47,9 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         definitionMetadataDocumentProvider.register();
         localDisposables.push(definitionMetadataDocumentProvider);
 
-        localDisposables.push(vscode.languages.registerDefinitionProvider(documentSelector, new DefinitionProvider(server, definitionMetadataDocumentProvider)));
+        const definitionProvider = new DefinitionProvider(server, definitionMetadataDocumentProvider);
+        localDisposables.push(vscode.languages.registerDefinitionProvider(documentSelector, definitionProvider));
+        localDisposables.push(vscode.languages.registerDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
         localDisposables.push(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server)));
         localDisposables.push(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server)));
         localDisposables.push(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server)));
