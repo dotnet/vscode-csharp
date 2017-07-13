@@ -185,10 +185,12 @@ function launch(cwd: string, args: string[]): Promise<LaunchResult> {
 
         if (options.useEditorFormattingSettings) 
         {
-            let editorConfig = vscode.workspace.getConfiguration('editor');
-            args.push(`formattingOptions:useTabs=${!editorConfig.get('insertSpaces', true)}`);
-            args.push(`formattingOptions:tabSize=${editorConfig.get('tabSize', 4)}`);
-            args.push(`formattingOptions:indentationSize=${editorConfig.get('tabSize',4)}`);
+            let globalConfig = vscode.workspace.getConfiguration();
+            let csharpConfig = vscode.workspace.getConfiguration('[csharp]');
+
+            args.push(`formattingOptions:useTabs=${!getConfigurationValue(globalConfig, csharpConfig, 'editor.insertSpaces', true)}`);
+            args.push(`formattingOptions:tabSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
+            args.push(`formattingOptions:indentationSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
         }
 
         if (options.path && options.useMono) {
@@ -204,6 +206,16 @@ function launch(cwd: string, args: string[]): Promise<LaunchResult> {
             return launchNix(launchPath, cwd, args);
         }
     });
+}
+
+function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csharpConfig: vscode.WorkspaceConfiguration,
+    configurationPath: string, defaultValue: any): any {
+    
+    if (csharpConfig[configurationPath] != undefined) {
+        return csharpConfig[configurationPath];
+    }
+    
+    return globalConfig.get(configurationPath, defaultValue);
 }
 
 function getLaunchPath(platformInfo: PlatformInformation): string {
