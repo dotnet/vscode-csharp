@@ -5,7 +5,7 @@ This page gives you detailed instructions on how to debug code running under .NE
 File bugs and feature requests [here](https://github.com/OmniSharp/omnisharp-vscode/issues) and [join our insiders group](http://landinghub.visualstudio.com/dotnetcoreinsiders) to help us build great tooling for .NET Core.
 
 #### Requirements
-* Requires .NET Core 1.0 (rc2 are earlier releases are not supported)
+* Requires .NET Core 1.0 (rc2 and earlier releases are not supported)
 * X64 only
 * Supported operating systems: 
     * macOS: 10.11+ (El Capitan+)
