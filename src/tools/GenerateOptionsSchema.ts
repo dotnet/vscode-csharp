@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as os from 'os';
 
 function AppendFieldsToObject(reference: any, obj: any) {
 
@@ -94,5 +95,9 @@ export function GenerateOptionsSchema() {
     packageJSON.contributes.debuggers[1].configurationAttributes.launch = schemaJSON.definitions.LaunchOptions;
     packageJSON.contributes.debuggers[1].configurationAttributes.attach = schemaJSON.definitions.AttachOptions;
 
-    fs.writeFileSync('package.json', JSON.stringify(packageJSON, null, 2));
+    let content = JSON.stringify(packageJSON, null, 2);
+    if (os.platform() === 'win32') {
+        content = content.replace(/\n/gm, "\r\n");
+    }
+    fs.writeFileSync('package.json', content);
 }
