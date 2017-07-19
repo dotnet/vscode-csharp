@@ -206,9 +206,11 @@
     "workspaceContains:*.csproj",
     "workspaceContains:*.sln",
     "workspaceContains:*.csx",
+    "workspaceContains:*.cake",
     "workspaceContains:**/*.csproj",
     "workspaceContains:**/*.sln",
-    "workspaceContains:**/*.csx"
+    "workspaceContains:**/*.csx",
+    "workspaceContains:**/*.cake"
   ],
   "contributes": {
     "configuration": {

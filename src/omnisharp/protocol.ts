@@ -279,6 +279,7 @@ export interface WorkspaceInformationResponse {
     MsBuild?: MsBuildWorkspaceInformation;
     DotNet?: DotNetWorkspaceInformation;
     ScriptCs?: ScriptCsContext;
+    Cake?: CakeContext;
 }
 
 export interface MsBuildWorkspaceInformation {
@@ -291,6 +292,10 @@ export interface ScriptCsContext {
     References: { [n: string]: string };
     Usings: { [n: string]: string };
     ScriptPacks: { [n: string]: string };
+    Path: string;
+}
+
+export interface CakeContext {
     Path: string;
 }
 

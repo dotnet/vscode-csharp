@@ -17,7 +17,8 @@ export enum LaunchTargetKind {
     Solution,
     ProjectJson,
     Folder,
-    Csx
+    Csx,
+    Cake
 }
 
 /**
@@ -45,7 +46,7 @@ export function findLaunchTargets(): Thenable<LaunchTarget[]> {
     const options = Options.Read();
 
     return vscode.workspace.findFiles(
-        /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx}', 
+        /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}', 
         /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
         /*maxResults*/ options.maxProjectResults)
     .then(resources => {
@@ -74,7 +75,8 @@ function select(resources: vscode.Uri[], rootPath: string): LaunchTarget[] {
         hasSlnFile = false,
         hasProjectJson = false,
         hasProjectJsonAtRoot = false,
-        hasCSX = false;
+        hasCSX = false,
+        hasCake = false;
 
     hasCsProjFiles = resources.some(isCSharpProject);
 
@@ -111,6 +113,11 @@ function select(resources: vscode.Uri[], rootPath: string): LaunchTarget[] {
         if (!hasCSX && isCsx(resource)) {
             hasCSX = true;
         }
+
+        // Discover if there is any Cake file
+        if (!hasCake && isCake(resource)) {
+            hasCake = true;
+        }
     });
 
     // Add the root folder under the following circumstances:
@@ -137,6 +144,17 @@ function select(resources: vscode.Uri[], rootPath: string): LaunchTarget[] {
         });
     }
 
+    // if we noticed any Cake file(s), add a single Cake-specific target pointing at the root folder
+    if (hasCake) {
+        targets.push({
+            label: "Cake",
+            description: path.basename(rootPath),
+            target: rootPath,
+            directory: rootPath,
+            kind: LaunchTargetKind.Cake
+        });
+    }
+
     return targets.sort((a, b) => a.directory.localeCompare(b.directory));
 }
 
@@ -154,6 +172,10 @@ function isProjectJson(resource: vscode.Uri): boolean {
 
 function isCsx(resource: vscode.Uri): boolean {
     return /\.csx$/i.test(resource.fsPath);
+}
+
+function isCake(resource: vscode.Uri): boolean {
+    return /\.cake$/i.test(resource.fsPath);
 }
 
 export interface LaunchResult {
