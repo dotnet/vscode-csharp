@@ -164,8 +164,8 @@
     },
     {
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/10950340/4d5e39c15f4229a200bc1956621758fe/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-12-3/coreclr-debug-win7-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/10966208/a75c00c88407dbc32ceaaa4e0c84f88d/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-12-4/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -177,8 +177,8 @@
     },
     {
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/10950340/4d5e39c15f4229a200bc1956621758fe/coreclr-debug-osx.10.11-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-12-3/coreclr-debug-osx.10.11-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/10966208/a75c00c88407dbc32ceaaa4e0c84f88d/coreclr-debug-osx.10.11-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-12-4/coreclr-debug-osx.10.11-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "darwin"
@@ -194,8 +194,8 @@
     },
     {
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/10950340/4d5e39c15f4229a200bc1956621758fe/coreclr-debug-linux-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-12-3/coreclr-debug-linux-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/10966208/a75c00c88407dbc32ceaaa4e0c84f88d/coreclr-debug-linux-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-12-4/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
