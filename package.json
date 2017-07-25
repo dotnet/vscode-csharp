@@ -315,6 +315,15 @@
                   "default": true
                 }
               }
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "coreclr",
+                "clr"
+              ],
+              "description": "Type type of code to debug. Can be either 'coreclr' for .NET Core debugging, or 'clr' for Desktop .NET Framework. 'clr' only works on Windows as the Desktop framework is Windows-only.",
+              "default": "coreclr"
             }
           }
         },
