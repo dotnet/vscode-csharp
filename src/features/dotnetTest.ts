@@ -111,9 +111,12 @@ function createLaunchConfiguration(program: string, args: string, cwd: string, d
         result = {};
     }
 
+    if (!result.type) {
+        result.type = "coreclr";
+    }
+
     // Now fill in the rest of the options
     result.name = ".NET Test Launch";
-    result.type = "coreclr";
     result.request = "launch";
     result.debuggerEventsPipeName = debuggerEventsPipeName;
     result.program = program;
