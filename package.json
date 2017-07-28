@@ -41,7 +41,7 @@
     "semver": "*",
     "tmp": "0.0.28",
     "vscode-debugprotocol": "^1.6.1",
-    "vscode-extension-telemetry": "0.0.4",
+    "vscode-extension-telemetry": "0.0.8",
     "yauzl": "^2.5.0"
   },
   "devDependencies": {
