@@ -261,7 +261,7 @@
             "properties": {
                 "program": {
                     "type": "string",
-                    "description": "Path to the application dll or .NET Core host executable to launch.\nThis property normally takes the form: '${workspaceRoot}/bin/Debug/<target-framework>/<project-name.dll>'\nExample: '${workspaceRoot}/bin/Debug/netcoreapp1.1/MyProject.dll'\n\nWhere:\n<target-framework> is the framework that the debugged project is being built for. This is normally found in the project file as the 'TargetFramework' property.\n<project-name.dll> is the name of debugged project's build output dll. This is normally the same as the project file name but with a '.dll' extension.",
+                    "description": "Path to the application dll or .NET Core host executable to launch.\nThis property normally takes the form: '${workspaceRoot}/bin/Debug/(target-framework)/(project-name.dll)'\nExample: '${workspaceRoot}/bin/Debug/netcoreapp1.1/MyProject.dll'\n\nWhere:\n(target-framework) is the framework that the debugged project is being built for. This is normally found in the project file as the 'TargetFramework' property.\n(project-name.dll) is the name of debugged project's build output dll. This is normally the same as the project file name but with a '.dll' extension.",
                     "default": "${workspaceRoot}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll"
                 },
                 "cwd": {
