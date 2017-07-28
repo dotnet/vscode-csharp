@@ -22,7 +22,7 @@ The program field is set to the path of the application dll or .NET Core host ex
 
 This property normally takes the form: "${workspaceRoot}/bin/Debug/\<target-framework\>/\<project-name.dll\>".
 
-Example: "${workspaceRoot}/bin/Debug/netcoreapp1.1/MyProject.dll"
+Example: `"${workspaceRoot}/bin/Debug/netcoreapp1.1/MyProject.dll"`
 
 Where:
 
