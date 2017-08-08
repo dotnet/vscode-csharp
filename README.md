@@ -31,7 +31,7 @@ See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.10.0/
 * Currently, the C# debugger officially supports the following operating systems:
 
   * Windows (64-bit only)
-  * macOS
+  * macOS 10.12 (Sierra) and newer
   * Ubuntu 14.04+ (and distros based on it)
   * Debian 8.7+
   * Red Hat Enterprise Linux (RHEL) / CentOS / Oracle Linux 7.3+

@@ -5,6 +5,7 @@
 'use strict';
 
 import * as path from 'path';
+import * as os from 'os';
 import { DebugProtocol } from 'vscode-debugprotocol';
 import * as child_process from 'child_process';
 import { CoreClrDebugUtil } from './util';
@@ -70,6 +71,11 @@ function proxy() {
         //first check if dotnet is on the path and new enough
         util.checkDotNetCli()
             .then((dotnetInfo) => {
+                if (os.platform() === "darwin" && !CoreClrDebugUtil.isMacOSSupported()) {
+                    sendErrorMessage("The .NET Core debugger cannot be started. The debugger requires macOS 10.12 (Sierra) or newer.");
+                    return;
+                }
+
                 // next check if we have begun installing packages
                 common.installFileExists(common.InstallFileType.Begin)
                     .then((beginExists: boolean) => {
