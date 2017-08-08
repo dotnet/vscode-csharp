@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.12.0-beta4",
+  "version": "1.12.0-beta5",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -67,27 +67,68 @@
   },
   "runtimeDependencies": [
     {
-      "description": "Mono Runtime (Linux / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11004046/b55a892377b7f8157e3ab28a2f8a3a1f/mono.linux-x86-5.2.0.209.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/mono.linux-x86-5.2.0.209.zip",
-      "installPath": "./bin",
+      "description": "OmniSharp for Windows (.NET 4.6 / x86)",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/11071105/cbf554a87cbe90e7f290ce79398776bf/omnisharp-win-x86-1.23.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.23.1.zip",
+      "installPath": ".omnisharp",
+      "platforms": [
+        "win32"
+      ],
+      "architectures": [
+        "x86"
+      ],
+      "installTestPath": "./.omnisharp/OmniSharp.exe"
+    },
+    {
+      "description": "OmniSharp for Windows (.NET 4.6 / x64)",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/11071104/51b457cd47f5348658ce356d3e90c75c/omnisharp-win-x64-1.23.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.23.1.zip",
+      "installPath": ".omnisharp",
+      "platforms": [
+        "win32"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "installTestPath": "./.omnisharp/OmniSharp.exe"
+    },
+    {
+      "description": "OmniSharp for OSX",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/11071103/4df6a2993b53c7ff89ce8e7f93ef5d15/omnisharp-osx-1.23.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.23.1.zip",
+      "installPath": ".omnisharp",
+      "platforms": [
+        "darwin"
+      ],
+      "binaries": [
+        "./mono.osx",
+        "./run"
+      ],
+      "installTestPath": "./.omnisharp/mono.osx"
+    },
+    {
+      "description": "OmniSharp for Linux (x86)",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/11071102/76070e75070ac32ed0f8cac1e753b21e/omnisharp-linux-x86-1.23.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.23.1.zip",
+      "installPath": ".omnisharp",
       "platforms": [
         "linux"
       ],
       "architectures": [
-        "x86"
+        "x86",
+        "i686"
       ],
       "binaries": [
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./bin/mono.linux-x86"
+      "installTestPath": "./.omnisharp/mono.linux-x86"
     },
     {
-      "description": "Mono Runtime (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11004046/b55a892377b7f8157e3ab28a2f8a3a1f/mono.linux-x86_64-5.2.0.209.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/mono.linux-x86_64-5.2.0.209.zip",
-      "installPath": "./bin",
+      "description": "OmniSharp for Linux (x64)",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/11071101/d1308f9fa4e3dcf36eea1a1f731decd7/omnisharp-linux-x64-1.23.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.23.1.zip",
+      "installPath": ".omnisharp",
       "platforms": [
         "linux"
       ],
@@ -98,69 +139,7 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./bin/mono.linux-x86_64"
-    },
-    {
-      "description": "Mono Runtime (macOS)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11004046/b55a892377b7f8157e3ab28a2f8a3a1f/mono.osx-5.2.0.209.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/mono.osx-5.2.0.209.zip",
-      "installPath": "./bin",
-      "platforms": [
-        "darwin"
-      ],
-      "binaries": [
-        "./mono.osx",
-        "./run"
-      ],
-      "installTestPath": "./bin/mono.osx"
-    },
-    {
-      "description": "Mono Framework Assemblies",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11004046/b55a892377b7f8157e3ab28a2f8a3a1f/framework-5.2.0.209.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/framework-5.2.0.209.zip",
-      "installPath": "./bin/framework",
-      "platforms": [
-        "darwin",
-        "linux"
-      ],
-      "installTestPath": "./bin/framework/mscorlib.dll"
-    },
-    {
-      "description": "OmniSharp (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11004046/b55a892377b7f8157e3ab28a2f8a3a1f/omnisharp-win-x86-1.23.0-alpha1.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.23.0-alpha1.zip",
-      "installPath": "./bin/omnisharp",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "x86"
-      ],
-      "installTestPath": "./bin/omnisharp/OmniSharp.exe"
-    },
-    {
-      "description": "OmniSharp (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11004046/b55a892377b7f8157e3ab28a2f8a3a1f/omnisharp-win-x64-1.23.0-alpha1.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.23.0-alpha1.zip",
-      "installPath": "./bin/omnisharp",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "installTestPath": "./bin/omnisharp/OmniSharp.exe"
-    },
-    {
-      "description": "OmniSharp (Mono 4.6)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11004046/b55a892377b7f8157e3ab28a2f8a3a1f/omnisharp-mono-1.23.0-alpha1.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-mono-1.23.0-alpha1.zip",
-      "installPath": "./bin/omnisharp",
-      "platforms": [
-        "darwin",
-        "linux"
-      ],
-      "installTestPath": "./bin/omnisharp/OmniSharp.exe"
+      "installTestPath": "./.omnisharp/mono.linux-x86_64"
     },
     {
       "description": ".NET Core Debugger (Windows / x64)",
