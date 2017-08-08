@@ -22,10 +22,6 @@ export function getExtensionPath() {
     return extensionPath;
 }
 
-export function getBinPath() {
-    return path.resolve(getExtensionPath(), "bin");
-}
-
 export function isBoolean(obj: any): obj is boolean {
     return obj === true || obj === false;
 }

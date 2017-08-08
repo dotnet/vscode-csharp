@@ -219,10 +219,10 @@ function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csha
 }
 
 function getLaunchPath(platformInfo: PlatformInformation): string {
-    const binPath = util.getBinPath();
+    const binPath = path.resolve(util.getExtensionPath(), '.omnisharp');
 
     return platformInfo.isWindows()
-        ? path.join(binPath, 'omnisharp', 'OmniSharp.exe')
+        ? path.join(binPath, 'OmniSharp.exe')
         : path.join(binPath, 'run');
 }
 
@@ -289,12 +289,12 @@ function launchNixMono(launchPath: string, cwd: string, args: string[]): Promise
 
 function canLaunchMono(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-        hasMono('>=4.6.0').then(success => {
+        hasMono('>=5.2.0').then(success => {
             if (success) {
                 resolve();
             }
             else {
-                reject(new Error('Cannot start Omnisharp because Mono version >=4.0.1 is required.'));
+                reject(new Error('Cannot start Omnisharp because Mono version >=5.2.0 is required.'));
             }
         });
     });
