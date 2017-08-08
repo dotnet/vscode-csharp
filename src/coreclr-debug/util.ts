@@ -7,6 +7,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as semver from 'semver';
+import * as os from 'os';
 import { execChildProcess } from './../common';
 import { Logger } from './../logger';
 
@@ -114,6 +115,12 @@ export class CoreClrDebugUtil
 
             return dotnetInfo;
         });
+    }
+
+    public static isMacOSSupported() : boolean {
+        // .NET Core 2.0 requires macOS 10.12 (Sierra), which is Darwin 16.0+
+        // Darwin version chart: https://en.wikipedia.org/wiki/Darwin_(operating_system)
+        return semver.gte(os.release(), "16.0.0");
     }
 
     public static existsSync(path: string) : boolean {

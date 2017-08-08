@@ -5,6 +5,7 @@
 'use strict';
 
 import * as vscode from 'vscode';
+import * as os from 'os';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { CoreClrDebugUtil, DotnetInfo, } from './util';
 import * as debugInstall from './install';
@@ -45,6 +46,14 @@ export function activate(thisExtension : vscode.Extension<any>, context: vscode.
 function completeDebuggerInstall(logger: Logger, channel: vscode.OutputChannel) : void {
     _debugUtil.checkDotNetCli()
         .then((dotnetInfo: DotnetInfo) => {
+
+            if (os.platform() === "darwin" && !CoreClrDebugUtil.isMacOSSupported()) {
+                logger.appendLine("[ERROR] The debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer.");
+                channel.show();
+                vscode.window.showErrorMessage("The .NET Core debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer.");
+                return;
+            }
+
             let installer = new debugInstall.DebugInstaller(_debugUtil);
             installer.finishInstall()
                 .then(() => {
