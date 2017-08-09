@@ -13,6 +13,7 @@ import * as utils from '../common';
 import * as net from 'net';
 import * as os from 'os';
 import * as path from 'path';
+import TelemetryReporter from 'vscode-extension-telemetry';
 
 let _testOutputChannel: vscode.OutputChannel = undefined;
 
@@ -24,16 +25,16 @@ function getTestOutputChannel(): vscode.OutputChannel {
     return _testOutputChannel;
 }
 
-export function registerDotNetTestRunCommand(server: OmniSharpServer): vscode.Disposable {
+export function registerDotNetTestRunCommand(server: OmniSharpServer, reporter: TelemetryReporter): vscode.Disposable {
     return vscode.commands.registerCommand(
         'dotnet.test.run',
-        (testMethod, fileName, testFrameworkName) => runDotnetTest(testMethod, fileName, testFrameworkName, server));
+        (testMethod, fileName, testFrameworkName) => runDotnetTest(testMethod, fileName, testFrameworkName, server, reporter));
 }
 
-export function registerDotNetTestDebugCommand(server: OmniSharpServer): vscode.Disposable {
+export function registerDotNetTestDebugCommand(server: OmniSharpServer, reporter: TelemetryReporter): vscode.Disposable {
     return vscode.commands.registerCommand(
         'dotnet.test.debug',
-        (testMethod, fileName, testFrameworkName) => debugDotnetTest(testMethod, fileName, testFrameworkName, server));
+        (testMethod, fileName, testFrameworkName) => debugDotnetTest(testMethod, fileName, testFrameworkName, server, reporter));
 }
 
 function saveDirtyFiles(): Promise<boolean> {
@@ -78,7 +79,7 @@ function reportResults(results: protocol.V2.DotNetTestResult[], output: vscode.O
 }
 
 // Run test through dotnet-test command. This function can be moved to a separate structure
-export function runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string, server: OmniSharpServer) {
+export function runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string, server: OmniSharpServer, reporter: TelemetryReporter) {
     const output = getTestOutputChannel();
 
     output.show();
@@ -178,7 +179,7 @@ function getLaunchConfiguration(server: OmniSharpServer, debugType: string, file
 }
 
 // Run test through dotnet-test command with debugger attached
-export function debugDotnetTest(testMethod: string, fileName: string, testFrameworkName: string, server: OmniSharpServer) {
+export function debugDotnetTest(testMethod: string, fileName: string, testFrameworkName: string, server: OmniSharpServer, reporter: TelemetryReporter) {
     // We support to styles of 'dotnet test' for debugging: The legacy 'project.json' testing, and the newer csproj support
     // using VS Test. These require a different level of communication.
     let debugType: string;

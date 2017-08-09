@@ -5,12 +5,13 @@
 
 'use strict';
 
-import {CancellationToken, CodeLens, Range, Uri, TextDocument, CodeLensProvider} from 'vscode';
-import {toRange, toLocation} from '../omnisharp/typeConvertion';
-import AbstractSupport from './abstractProvider';
-import {updateCodeLensForTest} from './dotnetTest';
+import { CancellationToken, CodeLens, Range, Uri, TextDocument, CodeLensProvider } from 'vscode';
+import { toRange, toLocation } from '../omnisharp/typeConvertion';
+import AbstractProvider from './abstractProvider';
+import { updateCodeLensForTest } from './dotnetTest';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
+import TelemetryReporter from 'vscode-extension-telemetry';
 
 class OmniSharpCodeLens extends CodeLens {
 
@@ -22,7 +23,7 @@ class OmniSharpCodeLens extends CodeLens {
     }
 }
 
-export default class OmniSharpCodeLensProvider extends AbstractSupport implements CodeLensProvider {
+export default class OmniSharpCodeLensProvider extends AbstractProvider implements CodeLensProvider {
 
     private static filteredSymbolNames: { [name: string]: boolean } = {
         'Equals': true,
