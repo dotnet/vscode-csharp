@@ -15,8 +15,14 @@ import * as path from 'path';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import AbstractProvider from './abstractProvider';
 
+const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
+
 export default class TestManager extends AbstractProvider {
     private _channel: vscode.OutputChannel;
+
+    private _runCounts: { [testFrameworkName: string]: number };
+    private _debugCounts: { [testFrameworkName: string]: number };
+    private _telemetryIntervalId: NodeJS.Timer = undefined;
 
     constructor(server: OmniSharpServer, reporter: TelemetryReporter) {
         super(server, reporter);
@@ -30,7 +36,23 @@ export default class TestManager extends AbstractProvider {
             'dotnet.test.debug',
             (testMethod, fileName, testFrameworkName) => this._debugDotnetTest(testMethod, fileName, testFrameworkName));
 
-        this.addDisposables(d1, d2);
+        // Set up telemetry
+        this._runCounts = {};
+        this._debugCounts = {};
+
+        this._telemetryIntervalId = setInterval(() =>
+            this._reportTelemetry(), TelemetryReportingDelay);
+
+        let d3 = new vscode.Disposable(() => {
+            if (this._telemetryIntervalId !== undefined) {
+                // Stop reporting telemetry
+                clearInterval(this._telemetryIntervalId);
+                this._telemetryIntervalId = undefined;
+                this._reportTelemetry();
+            }
+        });
+
+        this.addDisposables(d1, d2, d3);
     }
 
     private _getOutputChannel(): vscode.OutputChannel {
@@ -38,8 +60,42 @@ export default class TestManager extends AbstractProvider {
             this._channel = vscode.window.createOutputChannel(".NET Test Log");
             this.addDisposables(this._channel);
         }
-        
+
         return this._channel;
+    }
+
+    private _recordRunRequest(testFrameworkName: string): void {
+        let count = this._runCounts[testFrameworkName];
+
+        if (!count) {
+            count = 1;
+        }
+        else {
+            count += 1;
+        }
+
+        this._runCounts[testFrameworkName] = count;
+    }
+
+    private _recordDebugRequest(testFrameworkName: string): void {
+        let count = this._debugCounts[testFrameworkName];
+
+        if (!count) {
+            count = 1;
+        }
+        else {
+            count += 1;
+        }
+
+        this._debugCounts[testFrameworkName] = count;
+    }
+
+    private _reportTelemetry(): void {
+        this._reporter.sendTelemetryEvent('RunTest', null, this._runCounts);
+        this._reporter.sendTelemetryEvent('DebugTest', null, this._debugCounts);
+
+        this._runCounts = {};
+        this._debugCounts = {};
     }
 
     private _saveDirtyFiles(): Promise<boolean> {
@@ -96,6 +152,7 @@ export default class TestManager extends AbstractProvider {
         });
 
         this._saveDirtyFiles()
+            .then(_ => this._recordRunRequest(testFrameworkName))
             .then(_ => this._runTest(fileName, testMethod, testFrameworkName))
             .then(results => this._reportResults(results))
             .then(() => listener.dispose())
@@ -199,6 +256,7 @@ export default class TestManager extends AbstractProvider {
         output.appendLine('');
 
         return this._saveDirtyFiles()
+            .then(_ => this._recordDebugRequest(testFrameworkName))
             .then(_ => serverUtils.requestProjectInformation(this._server, { FileName: fileName }))
             .then(projectInfo => {
                 if (projectInfo.DotNetProject) {
