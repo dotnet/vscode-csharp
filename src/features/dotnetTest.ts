@@ -36,10 +36,6 @@ export default class TestManager extends AbstractProvider {
             'dotnet.test.debug',
             (testMethod, fileName, testFrameworkName) => this._debugDotnetTest(testMethod, fileName, testFrameworkName));
 
-        // Set up telemetry
-        this._runCounts = {};
-        this._debugCounts = {};
-
         this._telemetryIntervalId = setInterval(() =>
             this._reportTelemetry(), TelemetryReportingDelay);
 
@@ -65,6 +61,10 @@ export default class TestManager extends AbstractProvider {
     }
 
     private _recordRunRequest(testFrameworkName: string): void {
+        if (this._runCounts === undefined) {
+            this._runCounts = {};
+        }
+
         let count = this._runCounts[testFrameworkName];
 
         if (!count) {
@@ -78,6 +78,10 @@ export default class TestManager extends AbstractProvider {
     }
 
     private _recordDebugRequest(testFrameworkName: string): void {
+        if (this._debugCounts === undefined) {
+            this._debugCounts = {};
+        }
+
         let count = this._debugCounts[testFrameworkName];
 
         if (!count) {
@@ -91,11 +95,16 @@ export default class TestManager extends AbstractProvider {
     }
 
     private _reportTelemetry(): void {
-        this._reporter.sendTelemetryEvent('RunTest', null, this._runCounts);
-        this._reporter.sendTelemetryEvent('DebugTest', null, this._debugCounts);
+        if (this._runCounts) {
+            this._reporter.sendTelemetryEvent('RunTest', null, this._runCounts);
+        }
 
-        this._runCounts = {};
-        this._debugCounts = {};
+        if (this._debugCounts) {
+            this._reporter.sendTelemetryEvent('DebugTest', null, this._debugCounts);
+        }
+
+        this._runCounts = undefined;
+        this._debugCounts = undefined;
     }
 
     private _saveDirtyFiles(): Promise<boolean> {
