@@ -1,6 +1,7 @@
 bin
 node_modules
 out
+.omnisharp/
 .omnisharp-*/
 .debugger
 .vscode-test
