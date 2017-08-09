@@ -11,14 +11,16 @@ import AbstractProvider from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import { toRange2 } from '../omnisharp/typeConvertion';
 import * as serverUtils from '../omnisharp/utils';
+import TelemetryReporter from 'vscode-extension-telemetry';
 
 export default class CodeActionProvider extends AbstractProvider implements vscode.CodeActionProvider {
 
     private _disabled: boolean;
     private _commandId: string;
 
-    constructor(server: OmniSharpServer) {
-        super(server);
+    constructor(server: OmniSharpServer, reporter: TelemetryReporter) {
+        super(server, reporter);
+
         this._commandId = 'omnisharp.runCodeAction';
 
         this._checkOption();

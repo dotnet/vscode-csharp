@@ -11,13 +11,14 @@ import * as serverUtils from '../omnisharp/utils';
 import {createRequest, toLocation} from '../omnisharp/typeConvertion';
 import {Uri, TextDocument, Position, Location, CancellationToken, DefinitionProvider} from 'vscode';
 import DefinitionMetadataDocumentProvider from './definitionMetadataDocumentProvider';
-
+import TelemetryReporter from 'vscode-extension-telemetry';
 
 export default class CSharpDefinitionProvider extends AbstractSupport implements DefinitionProvider {
     private _definitionMetadataDocumentProvider: DefinitionMetadataDocumentProvider;
 
-    constructor(server, definitionMetadataDocumentProvider: DefinitionMetadataDocumentProvider) {
-        super(server);
+    constructor(server,reporter: TelemetryReporter, definitionMetadataDocumentProvider: DefinitionMetadataDocumentProvider) {
+        super(server, reporter);
+
         this._definitionMetadataDocumentProvider = definitionMetadataDocumentProvider;
     }
 
