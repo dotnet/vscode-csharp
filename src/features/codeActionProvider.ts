@@ -27,7 +27,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
 
         let d1 = vscode.workspace.onDidChangeConfiguration(this._checkOption, this);
         let d2 = vscode.commands.registerCommand(this._commandId, this._runCodeAction, this);
-        this._disposables.push(d1, d2);
+        this.addDisposables(d1, d2);
     }
 
     private _checkOption(): void {

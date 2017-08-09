@@ -13,7 +13,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as protocol from '../omnisharp/protocol';
 import * as vscode from 'vscode';
-import * as dotnetTest from './dotnetTest';
 import { DotNetAttachItemsProviderFactory, AttachPicker, RemoteAttachPicker } from './processPicker';
 import { generateAssets } from '../assets';
 import TelemetryReporter from 'vscode-extension-telemetry';
@@ -30,19 +29,15 @@ export default function registerCommands(server: OmniSharpServer, reporter: Tele
     // running the command activates the extension, which is all we need for installation to kickoff
     let d5 = vscode.commands.registerCommand('csharp.downloadDebugger', () => { });
 
-    // register two commands for running and debugging xunit tests
-    let d6 = dotnetTest.registerDotNetTestRunCommand(server, reporter);
-    let d7 = dotnetTest.registerDotNetTestDebugCommand(server, reporter);
-
     // register process picker for attach
     let attachItemsProvider = DotNetAttachItemsProviderFactory.Get();
     let attacher = new AttachPicker(attachItemsProvider);
-    let d8 = vscode.commands.registerCommand('csharp.listProcess', () => attacher.ShowAttachEntries());
+    let d6 = vscode.commands.registerCommand('csharp.listProcess', () => attacher.ShowAttachEntries());
     // Register command for generating tasks.json and launch.json assets.
-    let d9 = vscode.commands.registerCommand('dotnet.generateAssets', () => generateAssets(server));
-    let d10 = vscode.commands.registerCommand('csharp.listRemoteProcess', (args) => RemoteAttachPicker.ShowAttachEntries(args));
+    let d7 = vscode.commands.registerCommand('dotnet.generateAssets', () => generateAssets(server));
+    let d8 = vscode.commands.registerCommand('csharp.listRemoteProcess', (args) => RemoteAttachPicker.ShowAttachEntries(args));
 
-    return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10);
+    return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8);
 }
 
 function restartOmniSharp(server: OmniSharpServer) {

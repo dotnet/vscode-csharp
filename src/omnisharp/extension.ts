@@ -21,6 +21,7 @@ import CompletionItemProvider from '../features/completionItemProvider';
 import WorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
 import reportDiagnostics, { Advisor } from '../features/diagnosticsProvider';
 import SignatureHelpProvider from '../features/signatureHelpProvider';
+import TestManager from '../features/dotnetTest';
 import registerCommands from '../features/commands';
 import forwardChanges from '../features/changeForwarding';
 import reportStatus from '../features/status';
@@ -51,7 +52,9 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         localDisposables.push(vscode.languages.registerDefinitionProvider(documentSelector, definitionProvider));
         localDisposables.push(vscode.languages.registerDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
         localDisposables.push(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server, reporter)));
-        localDisposables.push(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, reporter)));
+        const testManager = new TestManager(server, reporter);
+        localDisposables.push(testManager);
+        localDisposables.push(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, reporter, testManager)));
         localDisposables.push(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server, reporter)));
         localDisposables.push(vscode.languages.registerDocumentSymbolProvider(documentSelector, new DocumentSymbolProvider(server, reporter)));
         localDisposables.push(vscode.languages.registerReferenceProvider(documentSelector, new ReferenceProvider(server, reporter)));
