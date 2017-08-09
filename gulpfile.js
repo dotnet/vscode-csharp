@@ -20,6 +20,7 @@ const platform = require('./out/src/platform');
 const util = require('./out/src/common');
 const child_process = require('child_process');
 const optionsSchemaGenerator = require('./out/src/tools/GenerateOptionsSchema');
+const packageDependencyUpdater = require('./out/src/tools/UpdatePackageDependencies');
 
 const Logger = logger.Logger;
 const PackageManager = packages.PackageManager;
@@ -42,6 +43,10 @@ gulp.task('clean', () => {
 
 gulp.task('generateOptionsSchema', () => {
     optionsSchemaGenerator.GenerateOptionsSchema();
+});
+
+gulp.task('updatePackageDependencies', () => {
+    packageDependencyUpdater.updatePackageDependencies();
 });
 
 // Install Tasks

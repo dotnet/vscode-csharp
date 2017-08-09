@@ -436,7 +436,7 @@ export namespace V2 {
     }
 
     export interface GetCodeActionsRequest extends Request {
-        Selection: Range;
+        Selection?: Range;
     }
 
     export interface OmniSharpCodeAction {
@@ -450,7 +450,7 @@ export namespace V2 {
 
     export interface RunCodeActionRequest extends Request {
         Identifier: string;
-        Selection: Range;
+        Selection?: Range;
         WantsTextChanges: boolean;
     }
 

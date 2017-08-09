@@ -1,7 +1,45 @@
-## Known Issues in 1.11.0
+## Known Issues in 1.12.0
 
-* When opening a .csproj-based .NET Core project in VS Code, the C# extension will not activate until a C# file is opened in the editor. ([#1150](https://github.com/OmniSharp/omnisharp-vscode/issues/1150))
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
+
+## 1.12.0 _(Not Yet Released)_
+
+#### Debugger
+
+* Update debugger to run *itself* on .NET Core 2.0-preview2 (target app can still use .NET Core 1.x). This allows the debugger to run on more Linux distributions, and it allows there to be a single debugger package for all supported Linux distributions.
+* Fix issue where the call stack may be empty when stepping quickly ([#1575](https://github.com/OmniSharp/omnisharp-vscode/issues/1575))
+* Improvements to the information displayed in the editor peak window when stopping on an exception that has inner exceptions ([#1007](https://github.com/OmniSharp/omnisharp-vscode/issues/1007))
+* Fix expression evaluation when stopping at an exception in .NET Core 2.0 ([#1593](https://github.com/OmniSharp/omnisharp-vscode/issues/1593))
+* Improve error behavior when `"program"` in launch.json is set to a path that doesn't exist ([#1634](https://github.com/OmniSharp/omnisharp-vscode/issues/1634))
+* Enable stepping by statement (instead of by line) ([#1476](https://github.com/OmniSharp/omnisharp-vscode/issues/1476))
+
+#### Editor
+
+* Go to Definition now works from "metadata as source" files ([#771](https://github.com/OmniSharp/omnisharp-vscode/issues/771), PR: [#1620](https://github.com/OmniSharp/omnisharp-vscode/pull/1620)) _(Contributed by [@filipw](https://github.com/filipw))_
+* Selection-based code fixes and refactorings (such as "Extract Method") will no longer be offerred unless there is actually a selection in the editor. ([#1605](https://github.com/OmniSharp/omnisharp-vscode/issues/1605), PR: [#1606](https://github.com/OmniSharp/omnisharp-vscode/pull/1606))
+
+#### Project System
+
+* Mono targets and tasks are now better located when Mono is installed. This enables support for many Mono-based projects types, such as Xamarin.iOS, Xamarin.Android, MonoGame, etc. ([#1597](https://github.com/OmniSharp/omnisharp-vscode/issues/1597), [#1624](https://github.com/OmniSharp/omnisharp-vscode/issues/1624), [#1396](https://github.com/OmniSharp/omnisharp-vscode/issues/1396) [omnisharp-roslyn#892](https://github.com/OmniSharp/omnisharp-roslyn/issues/892), PR: [omnisharp-roslyn#923](https://github.com/OmniSharp/omnisharp-roslyn/pull/923))
+* Use new solution parer to be more resilient against invalid solution files. ([1580](https://github.com/OmniSharp/omnisharp-vscode/issues/1580), [1645](https://github.com/OmniSharp/omnisharp-vscode/issues/1645), PRs: [omnisharp-roslyn#897](https://github.com/OmniSharp/omnisharp-roslyn/pull/897) and [omnisharp-roslyn#918](https://github.com/OmniSharp/omnisharp-roslyn/pull/918))
+* The MSBuild project system now calls the "Compile" target rather than the "ResolveReferences" target when processing MSBuild files. This has the effect of ensuring that other targets have the opportunity to run (such as targets that generate files) while still not building any output binaries. ([#1531](https://github.com/OmniSharp/omnisharp-vscode/issues/1531))
+* Binding redirects added for MSBuild assemblies, fixing issues with MSBuild tasks built with different versions of MSBuild. ([omnisharp-roslyn#903](https://github.com/OmniSharp/omnisharp-roslyn/issues/903))
+* The OmniSharp server has updated to the latest MSBuild. ([omnisharp-roslyn#904](https://github.com/OmniSharp/omnisharp-roslyn/pull/904), PR: [omnisharp-roslyn#907](https://github.com/OmniSharp/omnisharp-roslyn/pull/907))
+
+#### Scripting
+
+* Support added for referencing NuGet packages in C# scripts. (PR: [omnisharp-roslyn#813](https://github.com/OmniSharp/omnisharp-roslyn/pull/813)) _(Contributed by [@seesharper](https://github.com/seesharper))_
+* System.dll is now added correctly for C# scripts targeting .NET Framework. ([omnisharp-vscode#1581](https://github.com/OmniSharp/omnisharp-vscode/issues/1581), PR: [#898](https://github.com/OmniSharp/omnisharp-roslyn/pull/898)) _(Contributed by [@filipw](https://github.com/filipw))_
+
+#### Other Updates and Fixes
+
+* Switched to a new CDN for the extension's dependencies which should deliver an improved download experience ([#1542](https://github.com/OmniSharp/omnisharp-vscode/issues/1542))
+* Automatically activate the extension when opening workspaces that contain any .csproj, .sln, or .csx files ([#1375](https://github.com/OmniSharp/omnisharp-vscode/issues/1375), [#1150](https://github.com/OmniSharp/omnisharp-vscode/issues/1150), PR: [#1592](https://github.com/OmniSharp/omnisharp-vscode/pull/1592)))
+* Added nag message when project.json projects are opened by OmniSharp, to serve as a reminder to migrate projects from project.json to .csproj. (PR: [#1657](https://github.com/OmniSharp/omnisharp-vscode/pull/1657))
+* Added `type` property to `csharp.unitTestDebuggingOptions` to allow debugging tests with 'clr' debugger (Windows only). ([#1586](https://github.com/OmniSharp/omnisharp-vscode/issues/1586), PR: [#1663](https://github.com/OmniSharp/omnisharp-vscode/pull/1663))
+* The `[csharp]` configuration section is now checked for formatting options. ([#1574](https://github.com/OmniSharp/omnisharp-vscode/issues/1574)) _(Contributed by [@filipw](https://github.com/filipw))_
+* All project systems (project.json, MSBuild, CSX Scripting) now support an "Enabled" property that can be configured in omnisharp.json. (PR: [omnisharp-roslyn#902](https://github.com/OmniSharp/omnisharp-roslyn/pull/902)) _(Contributed by [@filipw](https://github.com/filipw))_
+* The OmniSharp server has been updated to Roslyn 2.3.0, which adds support for C# 7.1 (PRs: [omnisharp-roslyn#900](https://github.com/OmniSharp/omnisharp-roslyn/pull/900), [omnisharp-roslyn#901](https://github.com/OmniSharp/omnisharp-roslyn/pull/901), [omnisharp-roslyn#930](https://github.com/OmniSharp/omnisharp-roslyn/pull/930) and [omnisharp-roslyn#931](https://github.com/OmniSharp/omnisharp-roslyn/pull/931))
 
 ## 1.11.0 (June 27, 2017)
 

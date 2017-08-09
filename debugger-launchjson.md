@@ -18,12 +18,16 @@ The `preLaunchTask` field runs the associated taskName in tasks.json before debu
 This will create a task that runs `dotnet build`. You can read more about tasks at [https://code.visualstudio.com/docs/editor/tasks](https://code.visualstudio.com/docs/editor/tasks).
 
 ## Program
-The program field is set to the path to the application dll or .NET Core host executable to launch. 
+The program field is set to the path of the application dll or .NET Core host executable to launch.
 
-Example: "${workspaceRoot}/bin/Debug/\<target-framework\>/\<project-name.dll\>" where:
+This property normally takes the form: "${workspaceRoot}/bin/Debug/\<target-framework\>/\<project-name.dll\>".
 
-* \<target-framework\>: (example: 'netstandard1.5') This is the framework that the app is being built for. It is set in the project.json file.
-* \<project-name\>: (example: 'MyApp') The name of the project being debugged.",
+Example: `"${workspaceRoot}/bin/Debug/netcoreapp1.1/MyProject.dll"`
+
+Where:
+
+* \<target-framework\> is the framework that the debugged project is being built for. This is normally found in the project file as the 'TargetFramework' property.
+* \<project-name.dll\> is the name of debugged project's build output dll. This is normally the same as the project file name but with a '.dll' extension.
 
 ## Cwd
 The working directory of the target process.

@@ -5,6 +5,7 @@
 'use strict';
 
 import * as path from 'path';
+import * as os from 'os';
 import { DebugProtocol } from 'vscode-debugprotocol';
 import * as child_process from 'child_process';
 import { CoreClrDebugUtil } from './util';
@@ -70,33 +71,32 @@ function proxy() {
         //first check if dotnet is on the path and new enough
         util.checkDotNetCli()
             .then((dotnetInfo) => {
-                util.checkOpenSSLInstalledIfRequired().then((isInstalled) => {
-                    if (isInstalled) {
-                        // next check if we have begun installing packages
-                        common.installFileExists(common.InstallFileType.Begin)
-                            .then((beginExists: boolean) => {
-                                if (beginExists) {
-                                    // packages manager has begun
-                                    sendStillDownloadingMessage();
-                                } else {
-                                    // begin doesn't exist. There is a chance we finished downloading and begin had been deleted. Check if lock exists
-                                    common.installFileExists(common.InstallFileType.Lock)
-                                        .then((lockExists) => {
-                                            if (lockExists) {
-                                                // packages have finished installing but we had not finished rewriting our manifest when F5 came in
-                                                sendStillDownloadingMessage();
-                                            }
-                                            else {
-                                                // no install files existed when we checked. we have likely not been activated
-                                                sendDownloadingNotStartedMessage();
-                                            }
-                                        });
-                                }
-                            });
-                    } else {
-                        sendErrorMessage("The .NET Core debugger cannot be started. OpenSSL is not correctly configured. See the C# output channel for details.");
-                    }
-                });
+                if (os.platform() === "darwin" && !CoreClrDebugUtil.isMacOSSupported()) {
+                    sendErrorMessage("The .NET Core debugger cannot be started. The debugger requires macOS 10.12 (Sierra) or newer.");
+                    return;
+                }
+
+                // next check if we have begun installing packages
+                common.installFileExists(common.InstallFileType.Begin)
+                    .then((beginExists: boolean) => {
+                        if (beginExists) {
+                            // packages manager has begun
+                            sendStillDownloadingMessage();
+                        } else {
+                            // begin doesn't exist. There is a chance we finished downloading and begin had been deleted. Check if lock exists
+                            common.installFileExists(common.InstallFileType.Lock)
+                                .then((lockExists) => {
+                                    if (lockExists) {
+                                        // packages have finished installing but we had not finished rewriting our manifest when F5 came in
+                                        sendStillDownloadingMessage();
+                                    }
+                                    else {
+                                        // no install files existed when we checked. we have likely not been activated
+                                        sendDownloadingNotStartedMessage();
+                                    }
+                                });
+                        }
+                    });
             }, (err) => {
                 // error from checkDotNetCli
                 sendErrorMessage(err.ErrorMessage || util.defaultDotNetCliErrorMessage());

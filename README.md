@@ -28,18 +28,17 @@ See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.10.0/
 
 ### Supported Operating Systems for Debugging
 
-* Currently, the C# debugger supports the following operating systems:
+* Currently, the C# debugger officially supports the following operating systems:
 
   * Windows (64-bit only)
-  * macOS
-  * Ubuntu 14.04 / Linux Mint 17 / Linux Mint 18 / Elementary OS 0.3
-  * Ubuntu 16.04 / Elementary OS 0.4 / Arch / Zorin OS 12
-  * Ubuntu 16.10
-  * Debian 8.2
-  * CentOS 7.1 / Oracle Linux 7
-  * Red Hat Enterprise Linux (RHEL)
-  * Fedora 23 / 24
-  * OpenSUSE 13 / 42
+  * macOS 10.12 (Sierra) and newer
+  * Ubuntu 14.04+ (and distros based on it)
+  * Debian 8.7+
+  * Red Hat Enterprise Linux (RHEL) / CentOS / Oracle Linux 7.3+
+  * Fedora 23 / 24 / 25
+  * OpenSUSE 42.2+
+
+This list is currently the same as the x64 .NET Core 2.0 operating systems (see [.NET Core list](https://github.com/dotnet/core/blob/master/roadmap.md#net-core-20---supported-os-versions)). Note that other Linux distributions will likely work as well as long as they include glibc, OpenSSL 1.0, and libunwind.
 
 ### Found a Bug?
 Please file any issues at https://github.com/OmniSharp/omnisharp-vscode/issues.

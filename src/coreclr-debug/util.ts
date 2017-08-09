@@ -6,8 +6,8 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
-import * as os from 'os';
 import * as semver from 'semver';
+import * as os from 'os';
 import { execChildProcess } from './../common';
 import { Logger } from './../logger';
 
@@ -76,25 +76,6 @@ export class CoreClrDebugUtil
         return 'Failed to find up to date dotnet cli on the path.';
     }
 
-    public checkOpenSSLInstalledIfRequired(): Promise<boolean> {
-        if (os.platform() !== "darwin") {
-            // We only need special handling on OSX
-            return Promise.resolve(true);
-        }
-
-        return new Promise<boolean>((resolve, reject) => {
-            fs.access("/usr/local/lib/libcrypto.1.0.0.dylib", (err1) => {
-                if (err1) {
-                    resolve(false);
-                } else {
-                    fs.access("/usr/local/lib/libssl.1.0.0.dylib", (err2) => {
-                        resolve(!err2);
-                    });
-                }
-            });
-        });
-    }
-
     // This function checks for the presence of dotnet on the path and ensures the Version
     // is new enough for us. 
     // Returns: a promise that returns a DotnetInfo class
@@ -134,6 +115,12 @@ export class CoreClrDebugUtil
 
             return dotnetInfo;
         });
+    }
+
+    public static isMacOSSupported() : boolean {
+        // .NET Core 2.0 requires macOS 10.12 (Sierra), which is Darwin 16.0+
+        // Darwin version chart: https://en.wikipedia.org/wiki/Darwin_(operating_system)
+        return semver.gte(os.release(), "16.0.0");
     }
 
     public static existsSync(path: string) : boolean {

@@ -4,14 +4,6 @@ This page gives you detailed instructions on how to debug code running under .NE
 #### Your Feedback​
 File bugs and feature requests [here](https://github.com/OmniSharp/omnisharp-vscode/issues) and [join our insiders group](http://landinghub.visualstudio.com/dotnetcoreinsiders) to help us build great tooling for .NET Core.
 
-#### Requirements
-* Requires .NET Core 1.0 (rc2 are earlier releases are not supported)
-* X64 only
-* Supported operating systems: 
-    * macOS: 10.11+ (El Capitan+)
-    * Linux: Red Hat Enterprise Linux 7.2+, Ubuntu 14.04 LTS, Ubuntu 16.04 LTS, Debian 8.2+, Linux Mint 17+, CentOS 7.1+, Oracle Linux 7.1+, Fedora 23, openSUSE 13.2
-    * Windows: 7+
-
 ### First Time setup
 ##### 1: Get Visual Studio Code
 Install Visual Studio Code (VSC). Pick the latest VSC version from here: https://code.visualstudio.com Make sure it is at least 1.5. 

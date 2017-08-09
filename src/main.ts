@@ -32,7 +32,7 @@ export function activate(context: vscode.ExtensionContext): any {
     ensureRuntimeDependencies(extension, logger, reporter)
         .then((success : boolean) => {
             // activate language services
-            OmniSharp.activate(context, reporter);
+            OmniSharp.activate(context, reporter, _channel);
 
             // register JSON completion & hover providers for project.json
             context.subscriptions.push(addJSONProviders());

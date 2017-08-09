@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { OmniSharpServer } from '../omnisharp/server';
-import { toRange } from '../omnisharp/typeConvertion';
 import { DebuggerEventsProtocol } from '../coreclr-debug/debuggerEventsProtocol';
 import * as vscode from 'vscode';
 import * as serverUtils from "../omnisharp/utils";
@@ -13,232 +12,283 @@ import * as utils from '../common';
 import * as net from 'net';
 import * as os from 'os';
 import * as path from 'path';
+import TelemetryReporter from 'vscode-extension-telemetry';
+import AbstractProvider from './abstractProvider';
 
-let _testOutputChannel: vscode.OutputChannel = undefined;
+const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 
-function getTestOutputChannel(): vscode.OutputChannel {
-    if (_testOutputChannel === undefined) {
-        _testOutputChannel = vscode.window.createOutputChannel(".NET Test Log");
+export default class TestManager extends AbstractProvider {
+    private _channel: vscode.OutputChannel;
+
+    private _runCounts: { [testFrameworkName: string]: number };
+    private _debugCounts: { [testFrameworkName: string]: number };
+    private _telemetryIntervalId: NodeJS.Timer = undefined;
+
+    constructor(server: OmniSharpServer, reporter: TelemetryReporter) {
+        super(server, reporter);
+
+        // register commands
+        let d1 = vscode.commands.registerCommand(
+            'dotnet.test.run',
+            (testMethod, fileName, testFrameworkName) => this._runDotnetTest(testMethod, fileName, testFrameworkName));
+
+        let d2 = vscode.commands.registerCommand(
+            'dotnet.test.debug',
+            (testMethod, fileName, testFrameworkName) => this._debugDotnetTest(testMethod, fileName, testFrameworkName));
+
+        this._telemetryIntervalId = setInterval(() =>
+            this._reportTelemetry(), TelemetryReportingDelay);
+
+        let d3 = new vscode.Disposable(() => {
+            if (this._telemetryIntervalId !== undefined) {
+                // Stop reporting telemetry
+                clearInterval(this._telemetryIntervalId);
+                this._telemetryIntervalId = undefined;
+                this._reportTelemetry();
+            }
+        });
+
+        this.addDisposables(d1, d2, d3);
     }
 
-    return _testOutputChannel;
-}
+    private _getOutputChannel(): vscode.OutputChannel {
+        if (this._channel === undefined) {
+            this._channel = vscode.window.createOutputChannel(".NET Test Log");
+            this.addDisposables(this._channel);
+        }
 
-export function registerDotNetTestRunCommand(server: OmniSharpServer): vscode.Disposable {
-    return vscode.commands.registerCommand(
-        'dotnet.test.run',
-        (testMethod, fileName, testFrameworkName) => runDotnetTest(testMethod, fileName, testFrameworkName, server));
-}
+        return this._channel;
+    }
 
-export function registerDotNetTestDebugCommand(server: OmniSharpServer): vscode.Disposable {
-    return vscode.commands.registerCommand(
-        'dotnet.test.debug',
-        (testMethod, fileName, testFrameworkName) => debugDotnetTest(testMethod, fileName, testFrameworkName, server));
-}
+    private _recordRunRequest(testFrameworkName: string): void {
+        if (this._runCounts === undefined) {
+            this._runCounts = {};
+        }
 
-function saveDirtyFiles(): Promise<boolean> {
-    return Promise.resolve(
-        vscode.workspace.saveAll(/*includeUntitled*/ false));
-}
+        let count = this._runCounts[testFrameworkName];
 
-function runTest(server: OmniSharpServer, fileName: string, testMethod: string, testFrameworkName: string): Promise<protocol.V2.DotNetTestResult[]> {
-    const request: protocol.V2.RunTestRequest = {
-        FileName: fileName,
-        MethodName: testMethod,
-        TestFrameworkName: testFrameworkName
-    };
+        if (!count) {
+            count = 1;
+        }
+        else {
+            count += 1;
+        }
 
-    return serverUtils.runTest(server, request)
-        .then(response => response.Results);
-}
+        this._runCounts[testFrameworkName] = count;
+    }
 
-function reportResults(results: protocol.V2.DotNetTestResult[], output: vscode.OutputChannel): Promise<void> {
-    const totalTests = results.length;
+    private _recordDebugRequest(testFrameworkName: string): void {
+        if (this._debugCounts === undefined) {
+            this._debugCounts = {};
+        }
 
-    let totalPassed = 0, totalFailed = 0, totalSkipped = 0;
-    for (let result of results) {
-        switch (result.Outcome) {
-            case protocol.V2.TestOutcomes.Failed:
-                totalFailed += 1;
-                break;
-            case protocol.V2.TestOutcomes.Passed:
-                totalPassed += 1;
-                break;
-            case protocol.V2.TestOutcomes.Skipped:
-                totalSkipped += 1;
-                break;
+        let count = this._debugCounts[testFrameworkName];
+
+        if (!count) {
+            count = 1;
+        }
+        else {
+            count += 1;
+        }
+
+        this._debugCounts[testFrameworkName] = count;
+    }
+
+    private _reportTelemetry(): void {
+        if (this._runCounts) {
+            this._reporter.sendTelemetryEvent('RunTest', null, this._runCounts);
+        }
+
+        if (this._debugCounts) {
+            this._reporter.sendTelemetryEvent('DebugTest', null, this._debugCounts);
+        }
+
+        this._runCounts = undefined;
+        this._debugCounts = undefined;
+    }
+
+    private _saveDirtyFiles(): Promise<boolean> {
+        return Promise.resolve(
+            vscode.workspace.saveAll(/*includeUntitled*/ false));
+    }
+
+    private _runTest(fileName: string, testMethod: string, testFrameworkName: string): Promise<protocol.V2.DotNetTestResult[]> {
+        const request: protocol.V2.RunTestRequest = {
+            FileName: fileName,
+            MethodName: testMethod,
+            TestFrameworkName: testFrameworkName
+        };
+
+        return serverUtils.runTest(this._server, request)
+            .then(response => response.Results);
+    }
+
+    private _reportResults(results: protocol.V2.DotNetTestResult[]): Promise<void> {
+        const totalTests = results.length;
+
+        let totalPassed = 0, totalFailed = 0, totalSkipped = 0;
+        for (let result of results) {
+            switch (result.Outcome) {
+                case protocol.V2.TestOutcomes.Failed:
+                    totalFailed += 1;
+                    break;
+                case protocol.V2.TestOutcomes.Passed:
+                    totalPassed += 1;
+                    break;
+                case protocol.V2.TestOutcomes.Skipped:
+                    totalSkipped += 1;
+                    break;
+            }
+        }
+
+        const output = this._getOutputChannel();
+        output.appendLine('');
+        output.appendLine(`Total tests: ${totalTests}. Passed: ${totalPassed}. Failed: ${totalFailed}. Skipped: ${totalSkipped}`);
+        output.appendLine('');
+
+        return Promise.resolve();
+    }
+
+    private _runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string) {
+        const output = this._getOutputChannel();
+
+        output.show();
+        output.appendLine(`Running test ${testMethod}...`);
+        output.appendLine('');
+
+        const listener = this._server.onTestMessage(e => {
+            output.appendLine(e.Message);
+        });
+
+        this._saveDirtyFiles()
+            .then(_ => this._recordRunRequest(testFrameworkName))
+            .then(_ => this._runTest(fileName, testMethod, testFrameworkName))
+            .then(results => this._reportResults(results))
+            .then(() => listener.dispose())
+            .catch(reason => {
+                listener.dispose();
+                vscode.window.showErrorMessage(`Failed to run test because ${reason}.`);
+            });
+    }
+
+    private _createLaunchConfiguration(program: string, args: string, cwd: string, debuggerEventsPipeName: string) {
+        let debugOptions = vscode.workspace.getConfiguration('csharp').get('unitTestDebuggingOptions');
+
+        // Get the initial set of options from the workspace setting
+        let result: any;
+        if (typeof debugOptions === "object") {
+            // clone the options object to avoid changing it
+            result = JSON.parse(JSON.stringify(debugOptions));
+        } else {
+            result = {};
+        }
+
+        if (!result.type) {
+            result.type = "coreclr";
+        }
+
+        // Now fill in the rest of the options
+        result.name = ".NET Test Launch";
+        result.request = "launch";
+        result.debuggerEventsPipeName = debuggerEventsPipeName;
+        result.program = program;
+        result.args = args;
+        result.cwd = cwd;
+
+        return result;
+    }
+
+    private _getLaunchConfigurationForVSTest(fileName: string, testMethod: string, testFrameworkName: string, debugEventListener: DebugEventListener): Promise<any> {
+        const output = this._getOutputChannel();
+
+        // Listen for test messages while getting start info.
+        const listener = this._server.onTestMessage(e => {
+            output.appendLine(e.Message);
+        });
+
+        const request: protocol.V2.DebugTestGetStartInfoRequest = {
+            FileName: fileName,
+            MethodName: testMethod,
+            TestFrameworkName: testFrameworkName
+        };
+
+        return serverUtils.debugTestGetStartInfo(this._server, request)
+            .then(response => {
+                listener.dispose();
+                return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath());
+            });
+    }
+
+    private _getLaunchConfigurationForLegacy(fileName: string, testMethod: string, testFrameworkName: string): Promise<any> {
+        const output = this._getOutputChannel();
+
+        // Listen for test messages while getting start info.
+        const listener = this._server.onTestMessage(e => {
+            output.appendLine(e.Message);
+        });
+
+        const request: protocol.V2.GetTestStartInfoRequest = {
+            FileName: fileName,
+            MethodName: testMethod,
+            TestFrameworkName: testFrameworkName
+        };
+
+        return serverUtils.getTestStartInfo(this._server, request)
+            .then(response => {
+                listener.dispose();
+                return this._createLaunchConfiguration(response.Executable, response.Argument, response.WorkingDirectory, null);
+            });
+    }
+
+    private _getLaunchConfiguration(debugType: string, fileName: string, testMethod: string, testFrameworkName: string, debugEventListener: DebugEventListener): Promise<any> {
+        switch (debugType) {
+            case 'legacy':
+                return this._getLaunchConfigurationForLegacy(fileName, testMethod, testFrameworkName);
+            case 'vstest':
+                return this._getLaunchConfigurationForVSTest(fileName, testMethod, testFrameworkName, debugEventListener);
+
+            default:
+                throw new Error(`Unexpected debug type: ${debugType}`);
         }
     }
 
-    output.appendLine('');
-    output.appendLine(`Total tests: ${totalTests}. Passed: ${totalPassed}. Failed: ${totalFailed}. Skipped: ${totalSkipped}`);
-    output.appendLine('');
+    private _debugDotnetTest(testMethod: string, fileName: string, testFrameworkName: string) {
+        // We support to styles of 'dotnet test' for debugging: The legacy 'project.json' testing, and the newer csproj support
+        // using VS Test. These require a different level of communication.
+        let debugType: string;
+        let debugEventListener: DebugEventListener = null;
 
-    return Promise.resolve();
-}
+        const output = this._getOutputChannel();
 
-// Run test through dotnet-test command. This function can be moved to a separate structure
-export function runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string, server: OmniSharpServer) {
-    const output = getTestOutputChannel();
+        output.show();
+        output.appendLine(`Debugging method '${testMethod}'...`);
+        output.appendLine('');
 
-    output.show();
-    output.appendLine(`Running test ${testMethod}...`);
-    output.appendLine('');
-
-    const listener = server.onTestMessage(e => {
-        output.appendLine(e.Message);
-    });
-
-    saveDirtyFiles()
-        .then(_ => runTest(server, fileName, testMethod, testFrameworkName))
-        .then(results => reportResults(results, output))
-        .then(() => listener.dispose())
-        .catch(reason => {
-            listener.dispose();
-            vscode.window.showErrorMessage(`Failed to run test because ${reason}.`);
-        });
-}
-
-function createLaunchConfiguration(program: string, args: string, cwd: string, debuggerEventsPipeName: string) {
-    let debugOptions = vscode.workspace.getConfiguration('csharp').get('unitTestDebuggingOptions');
-
-    // Get the initial set of options from the workspace setting
-    let result: any;
-    if (typeof debugOptions === "object") {
-        // clone the options object to avoid changing it
-        result = JSON.parse(JSON.stringify(debugOptions));
-    } else {
-        result = {};
-    }
-
-    // Now fill in the rest of the options
-    result.name = ".NET Test Launch";
-    result.type = "coreclr";
-    result.request = "launch";
-    result.debuggerEventsPipeName = debuggerEventsPipeName;
-    result.program = program;
-    result.args = args;
-    result.cwd = cwd;
-
-    return result;
-}
-
-function getLaunchConfigurationForVSTest(server: OmniSharpServer, fileName: string, testMethod: string, testFrameworkName: string, debugEventListener: DebugEventListener, output: vscode.OutputChannel): Promise<any> {
-    // Listen for test messages while getting start info.
-    const listener = server.onTestMessage(e => {
-        output.appendLine(e.Message);
-    });
-
-    const request: protocol.V2.DebugTestGetStartInfoRequest = {
-        FileName: fileName,
-        MethodName: testMethod,
-        TestFrameworkName: testFrameworkName
-    };
-
-    return serverUtils.debugTestGetStartInfo(server, request)
-        .then(response => {
-            listener.dispose();
-            return createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath());
-        });
-}
-
-function getLaunchConfigurationForLegacy(server: OmniSharpServer, fileName: string, testMethod: string, testFrameworkName: string, output: vscode.OutputChannel): Promise<any> {
-    // Listen for test messages while getting start info.
-    const listener = server.onTestMessage(e => {
-        output.appendLine(e.Message);
-    });
-
-    const request: protocol.V2.GetTestStartInfoRequest = {
-        FileName: fileName,
-        MethodName: testMethod,
-        TestFrameworkName: testFrameworkName
-    };
-
-    return serverUtils.getTestStartInfo(server, request)
-        .then(response => {
-            listener.dispose();
-            return createLaunchConfiguration(response.Executable, response.Argument, response.WorkingDirectory, null);
-        });
-}
-
-
-function getLaunchConfiguration(server: OmniSharpServer, debugType: string, fileName: string, testMethod: string, testFrameworkName: string, debugEventListener: DebugEventListener, output: vscode.OutputChannel): Promise<any> {
-    switch (debugType) {
-        case 'legacy':
-            return getLaunchConfigurationForLegacy(server, fileName, testMethod, testFrameworkName, output);
-        case 'vstest':
-            return getLaunchConfigurationForVSTest(server, fileName, testMethod, testFrameworkName, debugEventListener, output);
-
-        default:
-            throw new Error(`Unexpected debug type: ${debugType}`);
-    }
-}
-
-// Run test through dotnet-test command with debugger attached
-export function debugDotnetTest(testMethod: string, fileName: string, testFrameworkName: string, server: OmniSharpServer) {
-    // We support to styles of 'dotnet test' for debugging: The legacy 'project.json' testing, and the newer csproj support
-    // using VS Test. These require a different level of communication.
-    let debugType: string;
-    let debugEventListener: DebugEventListener = null;
-
-    const output = getTestOutputChannel();
-
-    output.show();
-    output.appendLine(`Debugging method '${testMethod}'...`);
-    output.appendLine('');
-
-    return saveDirtyFiles()
-        .then(_ => serverUtils.requestProjectInformation(server, { FileName: fileName }))
-        .then(projectInfo => {
-            if (projectInfo.DotNetProject) {
-                debugType = 'legacy';
-                return Promise.resolve();
-            }
-            else if (projectInfo.MsBuildProject) {
-                debugType = 'vstest';
-                debugEventListener = new DebugEventListener(fileName, server, output);
-                return debugEventListener.start();
-            }
-            else {
-                throw new Error('Expected project.json or .csproj project.');
-            }
-        })
-        .then(() => getLaunchConfiguration(server, debugType, fileName, testMethod, testFrameworkName, debugEventListener, output))
-        .then(config => vscode.commands.executeCommand('vscode.startDebug', config))
-        .catch(reason => {
-            vscode.window.showErrorMessage(`Failed to start debugger: ${reason}`);
-            if (debugEventListener != null) {
-                debugEventListener.close();
-            }
-        });
-}
-
-export function updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node, isDebugEnable: boolean) {
-    // backward compatible check: Features property doesn't present on older version OmniSharp
-    if (node.Features === undefined) {
-        return;
-    }
-
-    let testFeature = node.Features.find(value => (value.Name == 'XunitTestMethod' || value.Name == 'NUnitTestMethod' || value.Name == 'MSTestMethod'));
-    if (testFeature) {
-        // this test method has a test feature
-        let testFrameworkName = 'xunit';
-        if (testFeature.Name == 'NunitTestMethod') {
-            testFrameworkName = 'nunit';
-        }
-        else if (testFeature.Name == 'MSTestMethod') {
-            testFrameworkName = 'mstest';
-        }
-
-        bucket.push(new vscode.CodeLens(
-            toRange(node.Location),
-            { title: "run test", command: 'dotnet.test.run', arguments: [testFeature.Data, fileName, testFrameworkName] }));
-
-        if (isDebugEnable) {
-            bucket.push(new vscode.CodeLens(
-                toRange(node.Location),
-                { title: "debug test", command: 'dotnet.test.debug', arguments: [testFeature.Data, fileName, testFrameworkName] }));
-        }
+        return this._saveDirtyFiles()
+            .then(_ => this._recordDebugRequest(testFrameworkName))
+            .then(_ => serverUtils.requestProjectInformation(this._server, { FileName: fileName }))
+            .then(projectInfo => {
+                if (projectInfo.DotNetProject) {
+                    debugType = 'legacy';
+                    return Promise.resolve();
+                }
+                else if (projectInfo.MsBuildProject) {
+                    debugType = 'vstest';
+                    debugEventListener = new DebugEventListener(fileName, this._server, output);
+                    return debugEventListener.start();
+                }
+                else {
+                    throw new Error('Expected project.json or .csproj project.');
+                }
+            })
+            .then(() => this._getLaunchConfiguration(debugType, fileName, testMethod, testFrameworkName, debugEventListener))
+            .then(config => vscode.commands.executeCommand('vscode.startDebug', config))
+            .catch(reason => {
+                vscode.window.showErrorMessage(`Failed to start debugger: ${reason}`);
+                if (debugEventListener != null) {
+                    debugEventListener.close();
+                }
+            });
     }
 }
 

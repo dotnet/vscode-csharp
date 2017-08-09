@@ -126,7 +126,7 @@ export class AssetGenerator {
     private computeProgramPath() {
         if (!this.hasProject) {
             // If there's no target project data, use a placeholder for the path.
-            return '${workspaceRoot}/bin/Debug/<target-framework>/<project-name.dll>';
+            return '${workspaceRoot}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll';
         }
 
         let result = '${workspaceRoot}';

@@ -185,10 +185,12 @@ function launch(cwd: string, args: string[]): Promise<LaunchResult> {
 
         if (options.useEditorFormattingSettings) 
         {
-            let editorConfig = vscode.workspace.getConfiguration('editor');
-            args.push(`formattingOptions:useTabs=${!editorConfig.get('insertSpaces', true)}`);
-            args.push(`formattingOptions:tabSize=${editorConfig.get('tabSize', 4)}`);
-            args.push(`formattingOptions:indentationSize=${editorConfig.get('tabSize',4)}`);
+            let globalConfig = vscode.workspace.getConfiguration();
+            let csharpConfig = vscode.workspace.getConfiguration('[csharp]');
+
+            args.push(`formattingOptions:useTabs=${!getConfigurationValue(globalConfig, csharpConfig, 'editor.insertSpaces', true)}`);
+            args.push(`formattingOptions:tabSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
+            args.push(`formattingOptions:indentationSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
         }
 
         if (options.path && options.useMono) {
@@ -206,11 +208,21 @@ function launch(cwd: string, args: string[]): Promise<LaunchResult> {
     });
 }
 
+function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csharpConfig: vscode.WorkspaceConfiguration,
+    configurationPath: string, defaultValue: any): any {
+    
+    if (csharpConfig[configurationPath] != undefined) {
+        return csharpConfig[configurationPath];
+    }
+    
+    return globalConfig.get(configurationPath, defaultValue);
+}
+
 function getLaunchPath(platformInfo: PlatformInformation): string {
-    const binPath = util.getBinPath();
+    const binPath = path.resolve(util.getExtensionPath(), '.omnisharp');
 
     return platformInfo.isWindows()
-        ? path.join(binPath, 'omnisharp', 'OmniSharp.exe')
+        ? path.join(binPath, 'OmniSharp.exe')
         : path.join(binPath, 'run');
 }
 
@@ -260,6 +272,7 @@ function launchNixMono(launchPath: string, cwd: string, args: string[]): Promise
     return canLaunchMono()
         .then(() => {
             let argsCopy = args.slice(0); // create copy of details args
+            argsCopy.unshift("--assembly-loader=strict");
             argsCopy.unshift(launchPath);
 
             let process = spawn('mono', argsCopy, {
@@ -277,12 +290,12 @@ function launchNixMono(launchPath: string, cwd: string, args: string[]): Promise
 
 function canLaunchMono(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-        hasMono('>=4.6.0').then(success => {
+        hasMono('>=5.2.0').then(success => {
             if (success) {
                 resolve();
             }
             else {
-                reject(new Error('Cannot start Omnisharp because Mono version >=4.0.1 is required.'));
+                reject(new Error('Cannot start Omnisharp because Mono version >=5.2.0 is required.'));
             }
         });
     });
