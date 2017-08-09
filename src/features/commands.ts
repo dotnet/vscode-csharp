@@ -5,21 +5,21 @@
 
 'use strict';
 
-import {OmniSharpServer} from '../omnisharp/server';
+import { OmniSharpServer } from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
-import {findLaunchTargets} from '../omnisharp/launcher';
+import { findLaunchTargets } from '../omnisharp/launcher';
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as protocol from '../omnisharp/protocol';
 import * as vscode from 'vscode';
-import * as dotnetTest from './dotnetTest';
-import {DotNetAttachItemsProviderFactory, AttachPicker, RemoteAttachPicker} from './processPicker';
-import {generateAssets} from '../assets';
+import { DotNetAttachItemsProviderFactory, AttachPicker, RemoteAttachPicker } from './processPicker';
+import { generateAssets } from '../assets';
+import TelemetryReporter from 'vscode-extension-telemetry';
 
 let channel = vscode.window.createOutputChannel('.NET');
 
-export default function registerCommands(server: OmniSharpServer, extensionPath: string) {
+export default function registerCommands(server: OmniSharpServer, reporter: TelemetryReporter) {
     let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server));
     let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', () => pickProjectAndStart(server));
     let d3 = vscode.commands.registerCommand('o.showOutput', () => server.getChannel().show(vscode.ViewColumn.Three));
@@ -29,19 +29,15 @@ export default function registerCommands(server: OmniSharpServer, extensionPath:
     // running the command activates the extension, which is all we need for installation to kickoff
     let d5 = vscode.commands.registerCommand('csharp.downloadDebugger', () => { });
 
-    // register two commands for running and debugging xunit tests
-    let d6 = dotnetTest.registerDotNetTestRunCommand(server);
-    let d7 = dotnetTest.registerDotNetTestDebugCommand(server);
-
     // register process picker for attach
     let attachItemsProvider = DotNetAttachItemsProviderFactory.Get();
     let attacher = new AttachPicker(attachItemsProvider);
-    let d8 = vscode.commands.registerCommand('csharp.listProcess', () => attacher.ShowAttachEntries());
+    let d6 = vscode.commands.registerCommand('csharp.listProcess', () => attacher.ShowAttachEntries());
     // Register command for generating tasks.json and launch.json assets.
-    let d9 = vscode.commands.registerCommand('dotnet.generateAssets', () => generateAssets(server));
-    let d10 = vscode.commands.registerCommand('csharp.listRemoteProcess', (args) => RemoteAttachPicker.ShowAttachEntries(args));
+    let d7 = vscode.commands.registerCommand('dotnet.generateAssets', () => generateAssets(server));
+    let d8 = vscode.commands.registerCommand('csharp.listRemoteProcess', (args) => RemoteAttachPicker.ShowAttachEntries(args));
 
-    return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10);
+    return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8);
 }
 
 function restartOmniSharp(server: OmniSharpServer) {

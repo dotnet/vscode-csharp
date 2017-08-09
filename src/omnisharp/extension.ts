@@ -21,6 +21,7 @@ import CompletionItemProvider from '../features/completionItemProvider';
 import WorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
 import reportDiagnostics, { Advisor } from '../features/diagnosticsProvider';
 import SignatureHelpProvider from '../features/signatureHelpProvider';
+import TestManager from '../features/dotnetTest';
 import registerCommands from '../features/commands';
 import forwardChanges from '../features/changeForwarding';
 import reportStatus from '../features/status';
@@ -47,25 +48,27 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         definitionMetadataDocumentProvider.register();
         localDisposables.push(definitionMetadataDocumentProvider);
 
-        const definitionProvider = new DefinitionProvider(server, definitionMetadataDocumentProvider);
+        const definitionProvider = new DefinitionProvider(server, reporter, definitionMetadataDocumentProvider);
         localDisposables.push(vscode.languages.registerDefinitionProvider(documentSelector, definitionProvider));
         localDisposables.push(vscode.languages.registerDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
-        localDisposables.push(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server)));
-        localDisposables.push(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server)));
-        localDisposables.push(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server)));
-        localDisposables.push(vscode.languages.registerDocumentSymbolProvider(documentSelector, new DocumentSymbolProvider(server)));
-        localDisposables.push(vscode.languages.registerReferenceProvider(documentSelector, new ReferenceProvider(server)));
-        localDisposables.push(vscode.languages.registerHoverProvider(documentSelector, new HoverProvider(server)));
-        localDisposables.push(vscode.languages.registerRenameProvider(documentSelector, new RenameProvider(server)));
-        localDisposables.push(vscode.languages.registerDocumentRangeFormattingEditProvider(documentSelector, new FormatProvider(server)));
-        localDisposables.push(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new FormatProvider(server), '}', ';'));
-        localDisposables.push(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionItemProvider(server), '.'));
-        localDisposables.push(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server)));
-        localDisposables.push(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server), '(', ','));
-        const codeActionProvider = new CodeActionProvider(server);
+        localDisposables.push(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server, reporter)));
+        const testManager = new TestManager(server, reporter);
+        localDisposables.push(testManager);
+        localDisposables.push(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, reporter, testManager)));
+        localDisposables.push(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server, reporter)));
+        localDisposables.push(vscode.languages.registerDocumentSymbolProvider(documentSelector, new DocumentSymbolProvider(server, reporter)));
+        localDisposables.push(vscode.languages.registerReferenceProvider(documentSelector, new ReferenceProvider(server, reporter)));
+        localDisposables.push(vscode.languages.registerHoverProvider(documentSelector, new HoverProvider(server, reporter)));
+        localDisposables.push(vscode.languages.registerRenameProvider(documentSelector, new RenameProvider(server, reporter)));
+        localDisposables.push(vscode.languages.registerDocumentRangeFormattingEditProvider(documentSelector, new FormatProvider(server, reporter)));
+        localDisposables.push(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new FormatProvider(server, reporter), '}', ';'));
+        localDisposables.push(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionItemProvider(server, reporter), '.'));
+        localDisposables.push(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server, reporter)));
+        localDisposables.push(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server, reporter), '(', ','));
+        const codeActionProvider = new CodeActionProvider(server, reporter);
         localDisposables.push(codeActionProvider);
         localDisposables.push(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
-        localDisposables.push(reportDiagnostics(server, advisor));
+        localDisposables.push(reportDiagnostics(server, reporter, advisor));
         localDisposables.push(forwardChanges(server));
     }));
 
@@ -74,7 +77,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         vscode.Disposable.from(...localDisposables).dispose();
     }));
 
-    disposables.push(registerCommands(server, context.extensionPath));
+    disposables.push(registerCommands(server, reporter));
     disposables.push(reportStatus(server));
 
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {

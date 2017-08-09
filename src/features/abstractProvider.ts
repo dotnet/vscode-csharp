@@ -5,17 +5,24 @@
 
 'use strict';
 
-import {OmniSharpServer} from '../omnisharp/server';
-import {Disposable} from 'vscode';
+import { OmniSharpServer } from '../omnisharp/server';
+import { Disposable } from 'vscode';
+import TelemetryReporter from 'vscode-extension-telemetry';
 
-export default class AbstractProvider {
+export default abstract class AbstractProvider {
 
     protected _server: OmniSharpServer;
-    protected _disposables: Disposable[];
+    protected _reporter: TelemetryReporter;
+    private _disposables: Disposable[];
 
-    constructor(server: OmniSharpServer) {
+    constructor(server: OmniSharpServer, reporter: TelemetryReporter) {
         this._server = server;
+        this._reporter = reporter;
         this._disposables = [];
+    }
+
+    protected addDisposables(...disposables: Disposable[]) {
+        this._disposables.push(...disposables);
     }
 
     dispose() {
