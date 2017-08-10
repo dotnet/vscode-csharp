@@ -2,7 +2,7 @@
 
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
 
-## 1.12.0 _(Not Yet Released)_
+## 1.12.0 (August 8, 2017)
 
 #### Debugger
 
