@@ -2,6 +2,10 @@
 
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
 
+## 1.12.1 (August 14, 2017)
+
+* MSBuild support properly sets CscToolExe to 'csc.exe' to address issues when a project's MSBuild targets have set it to 'mcs.exe'. ([#1707](https://github.com/OmniSharp/omnisharp-vscode/issues/1707))
+
 ## 1.12.0 (August 8, 2017)
 
 #### Debugger
