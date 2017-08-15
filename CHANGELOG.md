@@ -1,6 +1,11 @@
-## Known Issues in 1.12.0
+## Known Issues in 1.13.0
 
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
+
+## 1.13.0 _(Not Yet Released)_
+
+#### Debugger
+* Improved logic for resolving breakpoints in local functions and lambdas ([#1678](https://github.com/OmniSharp/omnisharp-vscode/issues/1678))
 
 ## 1.12.1 (August 14, 2017)
 
