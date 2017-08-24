@@ -48,7 +48,8 @@ export class Options {
         const projectLoadTimeout = omnisharpConfig.get<number>('projectLoadTimeout', 60);
         const maxProjectResults = omnisharpConfig.get<number>('maxProjectResults', 250);
         const useEditorFormattingSettings = omnisharpConfig.get<boolean>('useEditorFormattingSettings', true);
-        const useFormatting = omnisharpConfig.get<boolean>('format.enable', true);
+
+        const useFormatting = csharpConfig.get<boolean>('format.enable', true);
 
         return new Options(path, useMono, waitForDebugger, loggingLevel, autoStart, projectLoadTimeout, maxProjectResults, useEditorFormattingSettings, useFormatting);
     }
