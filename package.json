@@ -366,6 +366,11 @@
           "type": "boolean",
           "default": true,
           "description": "Specifes whether OmniSharp should use VS Code editor settings for C# code formatting (use of tabs, indentation size)."
+        },
+        "omnisharp.format.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Specifes whether OmniSharp should be used for C# code formatting."
         }
       }
     },
