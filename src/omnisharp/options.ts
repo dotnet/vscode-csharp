@@ -14,7 +14,8 @@ export class Options {
         public autoStart?: boolean,
         public projectLoadTimeout?: number,
         public maxProjectResults?: number,
-        public useEditorFormattingSettings?: boolean) { }
+        public useEditorFormattingSettings?: boolean,
+        public useFormatting?: boolean) { }
 
     public static Read(): Options {
         // Extra effort is taken below to ensure that legacy versions of options
@@ -48,6 +49,8 @@ export class Options {
         const maxProjectResults = omnisharpConfig.get<number>('maxProjectResults', 250);
         const useEditorFormattingSettings = omnisharpConfig.get<boolean>('useEditorFormattingSettings', true);
 
-        return new Options(path, useMono, waitForDebugger, loggingLevel, autoStart, projectLoadTimeout, maxProjectResults, useEditorFormattingSettings);
+        const useFormatting = csharpConfig.get<boolean>('format.enable', true);
+
+        return new Options(path, useMono, waitForDebugger, loggingLevel, autoStart, projectLoadTimeout, maxProjectResults, useEditorFormattingSettings, useFormatting);
     }
 }

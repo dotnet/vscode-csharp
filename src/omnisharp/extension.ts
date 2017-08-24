@@ -37,6 +37,8 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         scheme: 'file' // only files from disk
     };
 
+    const options = Options.Read();
+
     const server = new OmniSharpServer(reporter);
     const advisor = new Advisor(server); // create before server is started
     const disposables: vscode.Disposable[] = [];
@@ -60,8 +62,10 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         localDisposables.push(vscode.languages.registerReferenceProvider(documentSelector, new ReferenceProvider(server, reporter)));
         localDisposables.push(vscode.languages.registerHoverProvider(documentSelector, new HoverProvider(server, reporter)));
         localDisposables.push(vscode.languages.registerRenameProvider(documentSelector, new RenameProvider(server, reporter)));
-        localDisposables.push(vscode.languages.registerDocumentRangeFormattingEditProvider(documentSelector, new FormatProvider(server, reporter)));
-        localDisposables.push(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new FormatProvider(server, reporter), '}', ';'));
+        if (options.useFormatting) {
+            localDisposables.push(vscode.languages.registerDocumentRangeFormattingEditProvider(documentSelector, new FormatProvider(server, reporter)));
+            localDisposables.push(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new FormatProvider(server, reporter), '}', ';'));
+        }
         localDisposables.push(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionItemProvider(server, reporter), '.'));
         localDisposables.push(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server, reporter)));
         localDisposables.push(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server, reporter), '(', ','));
@@ -137,7 +141,6 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
     // read and store last solution or folder path
     disposables.push(server.onBeforeServerStart(path => context.workspaceState.update('lastSolutionPathOrFolder', path)));
 
-    const options = Options.Read();
     if (options.autoStart) {
         server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder'));
     }

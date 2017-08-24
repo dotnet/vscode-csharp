@@ -214,6 +214,11 @@
     "configuration": {
       "title": "C# configuration",
       "properties": {
+        "csharp.format.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable default C# formatter (requires restart)."
+        },
         "csharp.suppressDotnetInstallWarning": {
           "type": "boolean",
           "default": false,
