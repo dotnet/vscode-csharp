@@ -370,7 +370,7 @@
         "omnisharp.format.enable": {
           "type": "boolean",
           "default": true,
-          "description": "Specifes whether OmniSharp should be used for C# code formatting."
+          "description": "Enable/disable default C# formatter (requires restart)."
         }
       }
     },
