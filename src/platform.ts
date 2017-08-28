@@ -33,6 +33,26 @@ export class LinuxDistribution {
         return `name=${this.name}, version=${this.version}`;
     }
 
+    /**
+     * Returns a string representation of LinuxDistribution that only returns the
+     * distro name if it appears on an approved list of known distros. Otherwise,
+     * it returns 'other'.
+     */
+    public toTelemetryString(): string {
+        const approvedList = [
+            'antergos', 'arch', 'centos', 'debian', 'deepin', 'elementary', 'fedora',
+            'galliumos', 'gentoo', 'kali', 'linuxmint', 'manjoro', 'neon', 'opensuse',
+            'parrot', 'rhel', 'ubuntu', 'zorin'
+        ];
+
+        if (this.name === unknown || approvedList.indexOf(this.name) >= 0) {
+            return this.toString();
+        }
+        else {
+            return 'other';
+        }
+    }
+
     private static FromFilePath(filePath: string): Promise<LinuxDistribution> {
         return new Promise<LinuxDistribution>((resolve, reject) => {
             fs.readFile(filePath, 'utf8', (error, data) => {
