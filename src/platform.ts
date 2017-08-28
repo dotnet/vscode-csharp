@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as util from './common';
@@ -35,21 +36,29 @@ export class LinuxDistribution {
 
     /**
      * Returns a string representation of LinuxDistribution that only returns the
-     * distro name if it appears on an approved list of known distros. Otherwise,
+     * distro name if it appears on an allowed list of known distros. Otherwise,
      * it returns 'other'.
      */
     public toTelemetryString(): string {
-        const approvedList = [
+        const allowedList = [
             'antergos', 'arch', 'centos', 'debian', 'deepin', 'elementary', 'fedora',
             'galliumos', 'gentoo', 'kali', 'linuxmint', 'manjoro', 'neon', 'opensuse',
             'parrot', 'rhel', 'ubuntu', 'zorin'
         ];
 
-        if (this.name === unknown || approvedList.indexOf(this.name) >= 0) {
+        if (this.name === unknown || allowedList.indexOf(this.name) >= 0) {
             return this.toString();
         }
         else {
-            return 'other';
+            // Having a hash of the name will be helpful to identify spikes in the 'other'
+            // bucket when a new distro becomes popular and needs to be added to the
+            // allowed list above.
+            const hash = crypto.createHash('sha256');
+            hash.update(this.name);
+
+            const hashedName = hash.digest('hex');
+
+            return `other (${hashedName})`;
         }
     }
 
