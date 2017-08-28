@@ -115,7 +115,7 @@ export class CSharpExtDownloader
                 telemetryProps['platform.architecture'] = platformInfo.architecture;
                 telemetryProps['platform.platform'] = platformInfo.platform;
                 if (platformInfo.distribution) {
-                    telemetryProps['platform.distribution'] = platformInfo.distribution.toString();
+                    telemetryProps['platform.distribution'] = platformInfo.distribution.toTelemetryString();
                 }
 
                 if (this.reporter) {
