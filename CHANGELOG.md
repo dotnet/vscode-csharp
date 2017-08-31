@@ -5,7 +5,13 @@
 ## 1.13.0 _(Not Yet Released)_
 
 #### Debugger
+
 * Improved logic for resolving breakpoints in local functions and lambdas ([#1678](https://github.com/OmniSharp/omnisharp-vscode/issues/1678))
+
+#### Testing
+
+* Fix error that occurs when running or debugging tests with latest xUnit 2.3.0 builds. ([#1733](https://github.com/OmniSharp/omnisharp-vscode/issues/1733), [omnisharp-rolsyn#944](https://github.com/OmniSharp/omnisharp-roslyn/issues/944), PR: [omnisharp-roslyn#945](https://github.com/OmniSharp/omnisharp-roslyn/pull/945))
+* Pass `--no-restore` when invoking `dotnet build` to ensure that implicit restore does not run, making the build and the test run a bit faster. ([omnisharp-roslyn##942](https://github.com/OmniSharp/omnisharp-roslyn/issues/942), PR: [omnisharp-roslyn#945](https://github.com/OmniSharp/omnisharp-roslyn/pull/945))
 
 ## 1.12.1 (August 14, 2017)
 
