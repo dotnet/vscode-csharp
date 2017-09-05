@@ -501,6 +501,7 @@ export namespace V2 {
     export interface DebugTestGetStartInfoRequest extends Request {
         MethodName: string;
         TestFrameworkName: string;
+        TargetFrameworkVersion: string;
     }
 
     export interface DebugTestGetStartInfoResponse {
@@ -526,6 +527,7 @@ export namespace V2 {
     export interface GetTestStartInfoRequest extends Request {
         MethodName: string;
         TestFrameworkName: string;
+        TargetFrameworkVersion: string;
     }
 
     export interface GetTestStartInfoResponse {
@@ -537,6 +539,7 @@ export namespace V2 {
     export interface RunTestRequest extends Request {
         MethodName: string;
         TestFrameworkName: string;
+        TargetFrameworkVersion: string;
     }
 
     export module TestOutcomes {
