@@ -104,7 +104,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         if (testFeature) {
             // this test method has a test feature
             let testFrameworkName = 'xunit';
-            if (testFeature.Name == 'NunitTestMethod') {
+            if (testFeature.Name == 'NUnitTestMethod') {
                 testFrameworkName = 'nunit';
             }
             else if (testFeature.Name == 'MSTestMethod') {
