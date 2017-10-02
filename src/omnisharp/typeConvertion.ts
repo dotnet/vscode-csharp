@@ -9,6 +9,10 @@ import * as vscode from 'vscode';
 
 export function toLocation(location: protocol.ResourceLocation | protocol.QuickFix): vscode.Location {
     const fileName = vscode.Uri.file(location.FileName);
+    return toLocationFromUri(fileName, location);
+}
+
+export function toLocationFromUri(uri: vscode.Uri, location: protocol.ResourceLocation | protocol.QuickFix): vscode.Location {
     const position = new vscode.Position(location.Line - 1, location.Column - 1);
 
     const endLine = (<protocol.QuickFix>location).EndLine;
@@ -16,10 +20,10 @@ export function toLocation(location: protocol.ResourceLocation | protocol.QuickF
 
     if (endLine !== undefined && endColumn !== undefined) {
         const endPosition = new vscode.Position(endLine - 1, endColumn - 1);
-        return new vscode.Location(fileName, new vscode.Range(position, endPosition));
+        return new vscode.Location(uri, new vscode.Range(position, endPosition));
     }
 
-    return new vscode.Location(fileName, position);
+    return new vscode.Location(uri, position);
 }
 
 export function toRange(rangeLike: { Line: number; Column: number; EndLine: number; EndColumn: number; }): vscode.Range {

@@ -8,7 +8,7 @@
 import AbstractSupport from './abstractProvider';
 import {MetadataRequest, GoToDefinitionRequest, MetadataSource} from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import {createRequest, toLocation} from '../omnisharp/typeConvertion';
+import {createRequest, toLocation, toLocationFromUri} from '../omnisharp/typeConvertion';
 import {Uri, TextDocument, Position, Location, CancellationToken, DefinitionProvider} from 'vscode';
 import DefinitionMetadataDocumentProvider from './definitionMetadataDocumentProvider';
 import TelemetryReporter from 'vscode-extension-telemetry';
@@ -29,11 +29,23 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
 
         return serverUtils.goToDefinition(this._server, req, token).then(gotoDefinitionResponse => {
 
+            // the defintion is in source
             if (gotoDefinitionResponse && gotoDefinitionResponse.FileName) {
+
+                // if it is part of an already used metadata file, retrieve its uri instead of going to the physical file
+                if (gotoDefinitionResponse.FileName.startsWith("$metadata$")) {
+                    const uri = this._definitionMetadataDocumentProvider.getExistingMetadataResponseUri(gotoDefinitionResponse.FileName);
+                    return toLocationFromUri(uri, gotoDefinitionResponse);
+                }
+
+                // if it is a normal source definition, convert the response to a location
                 return toLocation(gotoDefinitionResponse);
+               
+            // the definition is in metadata
             } else if (gotoDefinitionResponse.MetadataSource) {
                 const metadataSource: MetadataSource = gotoDefinitionResponse.MetadataSource;
 
+                // go to metadata endpoint for more information
                 return serverUtils.getMetadata(this._server, <MetadataRequest> {
                     Timeout: 5000,
                     AssemblyName: metadataSource.AssemblyName,

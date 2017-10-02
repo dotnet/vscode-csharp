@@ -23,24 +23,26 @@ export default class DefinitionMetadataDocumentProvider implements TextDocumentC
     }
 
     public addMetadataResponse(metadataResponse: MetadataResponse) : Uri {
-        const uri = this.createUri(metadataResponse);
-
+        const uri = this.createUri(metadataResponse.SourceName);
         this._documents.set(uri.toString(), metadataResponse);
 
         return uri;
+    }
+
+    public getExistingMetadataResponseUri(sourceName: string) : Uri {
+        return this.createUri(sourceName);
     }
 
     public register() : void {
         this._registration = workspace.registerTextDocumentContentProvider(this.scheme, this);
     }
 
-    public provideTextDocumentContent(uri : Uri) : string {
+    public provideTextDocumentContent(uri: Uri) : string {
         return this._documents.get(uri.toString()).Source;
     }
 
-    private createUri(metadataResponse: MetadataResponse) : Uri {
+    private createUri(sourceName: string) : Uri {
         return Uri.parse(this.scheme + "://" +
-                         metadataResponse.SourceName.replace(/\\/g, "/")
-                                                    .replace(/(.*)\/(.*)/g, "$1/[metadata] $2"));
+            sourceName.replace(/\\/g, "/").replace(/(.*)\/(.*)/g, "$1/[metadata] $2"));
     }
 }
