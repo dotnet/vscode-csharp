@@ -34,7 +34,7 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
 
                 // if it is part of an already used metadata file, retrieve its uri instead of going to the physical file
                 if (gotoDefinitionResponse.FileName.startsWith("$metadata$")) {
-                    let uri = this._definitionMetadataDocumentProvider.getExistingMetadataResponseUri(gotoDefinitionResponse.FileName);
+                    const uri = this._definitionMetadataDocumentProvider.getExistingMetadataResponseUri(gotoDefinitionResponse.FileName);
                     return toLocationFromUri(uri, gotoDefinitionResponse);
                 }
 

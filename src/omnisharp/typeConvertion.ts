@@ -12,7 +12,7 @@ export function toLocation(location: protocol.ResourceLocation | protocol.QuickF
     return toLocationFromUri(fileName, location);
 }
 
-export function toLocationFromUri(uri:vscode.Uri, location: protocol.ResourceLocation | protocol.QuickFix): vscode.Location {
+export function toLocationFromUri(uri: vscode.Uri, location: protocol.ResourceLocation | protocol.QuickFix): vscode.Location {
     const position = new vscode.Position(location.Line - 1, location.Column - 1);
 
     const endLine = (<protocol.QuickFix>location).EndLine;

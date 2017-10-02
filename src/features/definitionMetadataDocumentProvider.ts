@@ -29,7 +29,7 @@ export default class DefinitionMetadataDocumentProvider implements TextDocumentC
         return uri;
     }
 
-    public getExistingMetadataResponseUri(sourceName:string) : Uri {
+    public getExistingMetadataResponseUri(sourceName: string) : Uri {
         return this.createUri(sourceName);
     }
 
@@ -37,11 +37,11 @@ export default class DefinitionMetadataDocumentProvider implements TextDocumentC
         this._registration = workspace.registerTextDocumentContentProvider(this.scheme, this);
     }
 
-    public provideTextDocumentContent(uri : Uri) : string {
+    public provideTextDocumentContent(uri: Uri) : string {
         return this._documents.get(uri.toString()).Source;
     }
 
-    private createUri(sourceName:string) : Uri {
+    private createUri(sourceName: string) : Uri {
         return Uri.parse(this.scheme + "://" +
             sourceName.replace(/\\/g, "/").replace(/(.*)\/(.*)/g, "$1/[metadata] $2"));
     }
