@@ -30,8 +30,7 @@ export default class DefinitionMetadataDocumentProvider implements TextDocumentC
     }
 
     public getExistingMetadataResponseUri(sourceName:string) : Uri {
-        const uri = this.createUri(sourceName);
-        return uri;
+        return this.createUri(sourceName);
     }
 
     public register() : void {
@@ -44,7 +43,6 @@ export default class DefinitionMetadataDocumentProvider implements TextDocumentC
 
     private createUri(sourceName:string) : Uri {
         return Uri.parse(this.scheme + "://" +
-                         sourceName.replace(/\\/g, "/")
-                                                    .replace(/(.*)\/(.*)/g, "$1/[metadata] $2"));
+            sourceName.replace(/\\/g, "/").replace(/(.*)\/(.*)/g, "$1/[metadata] $2"));
     }
 }
