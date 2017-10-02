@@ -8,6 +8,9 @@
 
 * Improved logic for resolving breakpoints in local functions and lambdas ([#1678](https://github.com/OmniSharp/omnisharp-vscode/issues/1678))
 
+#### Navigation
+
+* Fixed issue with Go to Definition where it was not possible to navigate to a  definition within the same file if the file was generated from metadata. (PR: [#1772](https://github.com/OmniSharp/omnisharp-vscode/pull/1772)) _(Contributed by [@filipw](https://github.com/filipw))_
 
 #### Project System
 
