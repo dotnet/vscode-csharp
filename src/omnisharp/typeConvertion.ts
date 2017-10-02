@@ -22,6 +22,20 @@ export function toLocation(location: protocol.ResourceLocation | protocol.QuickF
     return new vscode.Location(fileName, position);
 }
 
+export function toUriLocation(uri:vscode.Uri, location: protocol.ResourceLocation | protocol.QuickFix): vscode.Location {
+    const position = new vscode.Position(location.Line - 1, location.Column - 1);
+
+    const endLine = (<protocol.QuickFix>location).EndLine;
+    const endColumn = (<protocol.QuickFix>location).EndColumn;
+
+    if (endLine !== undefined && endColumn !== undefined) {
+        const endPosition = new vscode.Position(endLine - 1, endColumn - 1);
+        return new vscode.Location(uri, new vscode.Range(position, endPosition));
+    }
+
+    return new vscode.Location(uri, position);
+}
+
 export function toRange(rangeLike: { Line: number; Column: number; EndLine: number; EndColumn: number; }): vscode.Range {
     let {Line, Column, EndLine, EndColumn} = rangeLike;
     return new vscode.Range(Line - 1, Column - 1, EndLine - 1, EndColumn - 1);

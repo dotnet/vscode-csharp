@@ -23,10 +23,14 @@ export default class DefinitionMetadataDocumentProvider implements TextDocumentC
     }
 
     public addMetadataResponse(metadataResponse: MetadataResponse) : Uri {
-        const uri = this.createUri(metadataResponse);
-
+        const uri = this.createUri(metadataResponse.SourceName);
         this._documents.set(uri.toString(), metadataResponse);
 
+        return uri;
+    }
+
+    public getExistingMetadataResponseUri(sourceName:string) : Uri {
+        const uri = this.createUri(sourceName);
         return uri;
     }
 
@@ -38,9 +42,9 @@ export default class DefinitionMetadataDocumentProvider implements TextDocumentC
         return this._documents.get(uri.toString()).Source;
     }
 
-    private createUri(metadataResponse: MetadataResponse) : Uri {
+    private createUri(sourceName:string) : Uri {
         return Uri.parse(this.scheme + "://" +
-                         metadataResponse.SourceName.replace(/\\/g, "/")
+                         sourceName.replace(/\\/g, "/")
                                                     .replace(/(.*)\/(.*)/g, "$1/[metadata] $2"));
     }
 }

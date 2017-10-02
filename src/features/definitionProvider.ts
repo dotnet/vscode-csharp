@@ -8,7 +8,7 @@
 import AbstractSupport from './abstractProvider';
 import {MetadataRequest, GoToDefinitionRequest, MetadataSource} from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import {createRequest, toLocation} from '../omnisharp/typeConvertion';
+import {createRequest, toLocation, toUriLocation} from '../omnisharp/typeConvertion';
 import {Uri, TextDocument, Position, Location, CancellationToken, DefinitionProvider} from 'vscode';
 import DefinitionMetadataDocumentProvider from './definitionMetadataDocumentProvider';
 import TelemetryReporter from 'vscode-extension-telemetry';
@@ -30,6 +30,11 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
         return serverUtils.goToDefinition(this._server, req, token).then(gotoDefinitionResponse => {
 
             if (gotoDefinitionResponse && gotoDefinitionResponse.FileName) {
+                if (gotoDefinitionResponse.FileName.startsWith("$metadata$")) {
+                    let uri = this._definitionMetadataDocumentProvider.getExistingMetadataResponseUri(gotoDefinitionResponse.FileName);
+                    return toUriLocation(uri, gotoDefinitionResponse);
+                }
+
                 return toLocation(gotoDefinitionResponse);
             } else if (gotoDefinitionResponse.MetadataSource) {
                 const metadataSource: MetadataSource = gotoDefinitionResponse.MetadataSource;
