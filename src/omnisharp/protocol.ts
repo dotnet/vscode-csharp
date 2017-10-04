@@ -256,6 +256,7 @@ export interface AutoCompleteRequest extends Request {
     WantSnippet?: boolean;
     WantReturnType?: boolean;
     WantKind?: boolean;
+    TriggerCharacter?: string;
 }
 
 export interface AutoCompleteResponse {

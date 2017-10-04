@@ -10,7 +10,7 @@ import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import {createRequest} from '../omnisharp/typeConvertion';
-import {CompletionItemProvider, CompletionItem, CompletionItemKind, CancellationToken, TextDocument, Range, Position} from 'vscode';
+import {CompletionItemProvider, CompletionItem, CompletionItemKind, CompletionContext, CompletionTriggerKind, CancellationToken, TextDocument, Range, Position} from 'vscode';
 
 export default class OmniSharpCompletionItemProvider extends AbstractSupport implements CompletionItemProvider {
 
@@ -25,7 +25,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
         ';', '+', '-', '*', '/', '%', '&', '|', '^', '!',
         '~', '=', '<', '>', '?', '@', '#', '\'', '\"', '\\'];
 
-    public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken): Promise<CompletionItem[]> {
+    public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionItem[]> {
 
         let wordToComplete = '';
         let range = document.getWordRangeAtPosition(position);
@@ -38,6 +38,10 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
         req.WantDocumentationForEveryCompletionResult = true;
         req.WantKind = true;
         req.WantReturnType = true;
+        if (context.triggerKind == CompletionTriggerKind.TriggerCharacter)
+        {
+            req.TriggerCharacter = context.triggerCharacter;
+        }
 
         return serverUtils.autoComplete(this._server, req).then(responses => {
 
