@@ -328,6 +328,11 @@
           "default": true,
           "description": "Specifies whether the references CodeLens show be shown."
         },
+        "csharp.showTestsCodeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Specifies whether the run and debug test CodeLens show be shown."
+        },
         "omnisharp.path": {
           "type": [
             "string",
