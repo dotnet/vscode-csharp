@@ -323,6 +323,11 @@
           "default": true,
           "description": "Suppress 'hidden' diagnostics (such as 'unnecessary using directives') from appearing in the editor or the Problems pane."
         },
+        "csharp.showReferencesCodeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Specifies whether the references CodeLens show be shown."
+        },
         "omnisharp.path": {
           "type": [
             "string",
