@@ -47,8 +47,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         const options = Options.Read();
         if (!options.showReferencesCodeLens)
         {
-            let arr: vscode.CodeLens[] = [];
-            return arr;
+            return [];
         }
 
         return serverUtils.currentFileMembersAsTree(this._server, { FileName: document.fileName }, token).then(tree => {

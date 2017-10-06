@@ -52,7 +52,7 @@ export class Options {
 
         const useFormatting = csharpConfig.get<boolean>('format.enable', true);
 
-        const showReferencesCodeLens = omnisharpConfig.get<boolean>('showReferencesCodeLens', true);
+        const showReferencesCodeLens = csharpConfig.get<boolean>('showReferencesCodeLens', true);
 
         return new Options(path, 
             useMono, 
