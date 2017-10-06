@@ -1,6 +1,7 @@
 ## Known Issues in 1.13.0
 
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
+  * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
 ## 1.13.0 _(Not Yet Released)_
 
