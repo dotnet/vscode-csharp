@@ -13,6 +13,7 @@ import { toRange, toLocation } from '../omnisharp/typeConvertion';
 import AbstractProvider from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
+import { Options } from '../omnisharp/options';
 
 class OmniSharpCodeLens extends vscode.CodeLens {
 
@@ -43,6 +44,13 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
     };
 
     provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
+        const options = Options.Read();
+        if (!options.showReferencesCodeLens)
+        {
+            let arr: vscode.CodeLens[] = [];
+            return arr;
+        }
+
         return serverUtils.currentFileMembersAsTree(this._server, { FileName: document.fileName }, token).then(tree => {
             let ret: vscode.CodeLens[] = [];
             tree.TopLevelTypeDefinitions.forEach(node => this._convertQuickFix(ret, document.fileName, node));

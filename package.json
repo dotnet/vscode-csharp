@@ -373,6 +373,11 @@
           "type": "boolean",
           "default": true,
           "description": "Specifes whether OmniSharp should use VS Code editor settings for C# code formatting (use of tabs, indentation size)."
+        },
+        "omnisharp.showReferencesCodeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Specifies whether Omnisharp should show the references CodeLens"
         }
       }
     },
