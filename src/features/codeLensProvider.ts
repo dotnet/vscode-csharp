@@ -28,12 +28,14 @@ class OmniSharpCodeLens extends vscode.CodeLens {
 export default class OmniSharpCodeLensProvider extends AbstractProvider implements vscode.CodeLensProvider {
 
     private _testManager: TestManager;
+    private _options: Options;
 
     constructor(server: OmniSharpServer, reporter: TelemetryReporter, testManager: TestManager)
     {
         super(server, reporter);
 
         this._testManager = testManager;
+        this._options = Options.Read();
     }
 
     private static filteredSymbolNames: { [name: string]: boolean } = {
@@ -44,8 +46,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
     };
 
     provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
-        const options = Options.Read();
-        if (!options.showReferencesCodeLens)
+        if (!this._options.showReferencesCodeLens && !this._options.showTestsCodeLens)
         {
             return [];
         }
@@ -64,13 +65,17 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         }
 
         let lens = new OmniSharpCodeLens(fileName, toRange(node.Location));
-        bucket.push(lens);
+        if (this._options.showReferencesCodeLens) {
+            bucket.push(lens);
+        }
 
         for (let child of node.ChildNodes) {
             this._convertQuickFix(bucket, fileName, child);
         }
 
-        this._updateCodeLensForTest(bucket, fileName, node);
+        if (this._options.showTestsCodeLens) {
+            this._updateCodeLensForTest(bucket, fileName, node);
+        }
     }
 
     resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken): Thenable<vscode.CodeLens> {

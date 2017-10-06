@@ -16,7 +16,8 @@ export class Options {
         public maxProjectResults?: number,
         public useEditorFormattingSettings?: boolean,
         public useFormatting?: boolean,
-        public showReferencesCodeLens?: boolean) { }
+        public showReferencesCodeLens?: boolean,
+        public showTestsCodeLens?: boolean) { }
 
     public static Read(): Options {
         // Extra effort is taken below to ensure that legacy versions of options
@@ -53,6 +54,7 @@ export class Options {
         const useFormatting = csharpConfig.get<boolean>('format.enable', true);
 
         const showReferencesCodeLens = csharpConfig.get<boolean>('showReferencesCodeLens', true);
+        const showTestsCodeLens = csharpConfig.get<boolean>('showTestsCodeLens', true);
 
         return new Options(path, 
             useMono, 
@@ -63,6 +65,7 @@ export class Options {
             maxProjectResults, 
             useEditorFormattingSettings, 
             useFormatting,
-            showReferencesCodeLens);
+            showReferencesCodeLens,
+            showTestsCodeLens);
     }
 }
