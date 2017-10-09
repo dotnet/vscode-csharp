@@ -17,7 +17,8 @@ export class Options {
         public useEditorFormattingSettings?: boolean,
         public useFormatting?: boolean,
         public showReferencesCodeLens?: boolean,
-        public showTestsCodeLens?: boolean) { }
+        public showTestsCodeLens?: boolean,
+        public disableCodeActions?: boolean) { }
 
     public static Read(): Options {
         // Extra effort is taken below to ensure that legacy versions of options
@@ -56,6 +57,8 @@ export class Options {
         const showReferencesCodeLens = csharpConfig.get<boolean>('showReferencesCodeLens', true);
         const showTestsCodeLens = csharpConfig.get<boolean>('showTestsCodeLens', true);
 
+        const disableCodeActions = csharpConfig.get<boolean>('disableCodeActions', false);
+
         return new Options(path, 
             useMono, 
             waitForDebugger,
@@ -66,6 +69,7 @@ export class Options {
             useEditorFormattingSettings, 
             useFormatting,
             showReferencesCodeLens,
-            showTestsCodeLens);
+            showTestsCodeLens,
+            disableCodeActions);
     }
 }

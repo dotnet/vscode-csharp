@@ -35,13 +35,13 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         super(server, reporter);
 
         this._testManager = testManager;
-        this._checkOptions();
+        this._resetCachedOptions();
 
-        let configChangedDisposable = vscode.workspace.onDidChangeConfiguration(this._checkOptions, this);
+        let configChangedDisposable = vscode.workspace.onDidChangeConfiguration(this._resetCachedOptions, this);
         this.addDisposables(configChangedDisposable);
     }
 
-    private _checkOptions(): void {
+    private _resetCachedOptions(): void {
         this._options = Options.Read();
     }
 

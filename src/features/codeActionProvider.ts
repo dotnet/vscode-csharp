@@ -11,11 +11,12 @@ import AbstractProvider from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import { toRange2 } from '../omnisharp/typeConvertion';
 import * as serverUtils from '../omnisharp/utils';
+import { Options } from '../omnisharp/options';
 import TelemetryReporter from 'vscode-extension-telemetry';
 
 export default class CodeActionProvider extends AbstractProvider implements vscode.CodeActionProvider {
 
-    private _disabled: boolean;
+    private _options: Options;
     private _commandId: string;
 
     constructor(server: OmniSharpServer, reporter: TelemetryReporter) {
@@ -23,20 +24,19 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
 
         this._commandId = 'omnisharp.runCodeAction';
 
-        this._checkOption();
+        this._resetCachedOptions();
 
-        let d1 = vscode.workspace.onDidChangeConfiguration(this._checkOption, this);
+        let d1 = vscode.workspace.onDidChangeConfiguration(this._resetCachedOptions, this);
         let d2 = vscode.commands.registerCommand(this._commandId, this._runCodeAction, this);
         this.addDisposables(d1, d2);
     }
 
-    private _checkOption(): void {
-        let value = vscode.workspace.getConfiguration().get('csharp.disableCodeActions', false);
-        this._disabled = value;
+    private _resetCachedOptions(): void {
+        this._options = Options.Read();
     }
 
     public provideCodeActions(document: vscode.TextDocument, range: vscode.Range, context: vscode.CodeActionContext, token: vscode.CancellationToken): Promise<vscode.Command[]> {
-        if (this._disabled) {
+        if (this._options.disableCodeActions) {
             return;
         }
 
