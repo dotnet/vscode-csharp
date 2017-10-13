@@ -197,7 +197,8 @@ export function launchOmniSharp(cwd: string, args: string[]): Promise<LaunchResu
                 setTimeout(function () {
                     resolve(result);
                 }, 0);
-            });
+            })
+            .catch(reason => reject(reason));
     });
 }
 
