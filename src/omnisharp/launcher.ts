@@ -215,18 +215,36 @@ function launch(cwd: string, args: string[]): Promise<LaunchResult> {
             args.push(`formattingOptions:indentationSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
         }
 
-        if (options.path && options.useMono) {
-            return launchNixMono(options.path, cwd, args);
+        // If the user has provide a path to OmniSharp, we'll use that.
+        if (options.path) {
+            if (platformInfo.isWindows()) {
+                return launchWindows(options.path, cwd, args);
+            }
+
+            // If we're launching on macOS/Linux, we have two possibilities:
+            //   1. Launch using Mono
+            //   2. Launch process directly (e.g. a 'run' script)
+            return options.useMono
+                ? launchNixMono(options.path, cwd, args)
+                : launchNix(options.path, cwd, args);
         }
 
-        const launchPath = options.path || getLaunchPath(platformInfo);
+        // If the user has not provided a path, we'll use the locally-installed OmniSharp
+        const basePath = path.resolve(util.getExtensionPath(), '.omnisharp');
 
         if (platformInfo.isWindows()) {
-            return launchWindows(launchPath, cwd, args);
+            return launchWindows(path.join(basePath, 'OmniSharp.exe'), cwd, args);
         }
-        else {
-            return launchNix(launchPath, cwd, args);
-        }
+
+        // If it's possible to launch on a global Mono, we'll do that. Otherwise, run with our
+        // locally installed Mono runtime.
+        return canLaunchMono()
+            .then(() => {
+                return launchNixMono(path.join(basePath, 'omnisharp', 'OmniSharp.exe'), cwd, args);
+            })
+            .catch(_ => {
+                return launchNix(path.join(basePath, 'run'), cwd, args);
+            });
     });
 }
 
@@ -238,14 +256,6 @@ function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csha
     }
     
     return globalConfig.get(configurationPath, defaultValue);
-}
-
-function getLaunchPath(platformInfo: PlatformInformation): string {
-    const binPath = path.resolve(util.getExtensionPath(), '.omnisharp');
-
-    return platformInfo.isWindows()
-        ? path.join(binPath, 'OmniSharp.exe')
-        : path.join(binPath, 'run');
 }
 
 function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchResult {
