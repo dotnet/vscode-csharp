@@ -305,8 +305,8 @@ function launchNixMono(launchPath: string, cwd: string, args: string[]): Promise
     return canLaunchMono()
         .then(() => {
             let argsCopy = args.slice(0); // create copy of details args
-            argsCopy.unshift("--assembly-loader=strict");
             argsCopy.unshift(launchPath);
+            argsCopy.unshift("--assembly-loader=strict");
 
             let process = spawn('mono', argsCopy, {
                 detached: false,
