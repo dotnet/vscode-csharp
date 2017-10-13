@@ -496,6 +496,8 @@ export class OmniSharpServer {
     }
 
     private _onLineReceived(line: string) {
+        line = line.trim();
+
         if (line[0] !== '{') {
             this._logger.appendLine(line);
             return;
