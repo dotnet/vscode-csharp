@@ -11,7 +11,7 @@ declare module "vscode-tasks" {
         /**
          * The configuration's version number
          */
-        version: string;
+        version: "0.2.0";
 
         /**
          * Windows specific task configuration
@@ -32,25 +32,21 @@ declare module "vscode-tasks" {
     export interface BaseTaskConfiguration {
 
         /**
+         * The type of a custom task. Tasks of type "shell" are executed
+         * inside a shell (e.g. bash, cmd, powershell, ...)
+         */
+        type: "shell" | "process";
+
+        /**
          * The command to be executed. Can be an external program or a shell
          * command.
          */
         command: string;
 
         /**
-         * Specifies whether the command is a shell command and therefore must
-         * be executed in a shell interpreter (e.g. cmd.exe, bash, ...).
-         *
-         * Defaults to false if omitted.
+         * Specifies whether a global command is a background task.
          */
-        isShellCommand?: boolean;
-
-        /**
-         * Specifies whether a global command is watching the filesystem. A task.json
-         * file can either contain a global isWatching property or a tasks property
-         * but not both.
-         */
-        isWatching?: boolean;
+        isBackground?: boolean;
 
         /**
          * The command options used when the command is executed. Can be omitted.
@@ -63,30 +59,9 @@ declare module "vscode-tasks" {
         args?: string[];
 
         /**
-         * Controls whether the output view of the running tasks is brought to front or not.
-         *
-         * Valid values are:
-         *   "always": bring the output window always to front when a task is executed.
-         *   "silent": only bring it to front if no problem matcher is defined for the task executed.
-         *   "never": never bring the output window to front.
-         *
-         * If omitted "always" is used.
+         * The presentation options.
          */
-        showOutput?: string;
-
-        /**
-         * If set to false the task name is added as an additional argument to the
-         * command when executed. If set to true the task name is suppressed. If
-         * omitted false is used.
-         */
-        suppressTaskName?: boolean;
-
-        /**
-         * Some commands require that the task argument is highlighted with a special
-         * prefix (e.g. /t: for msbuild). This property can be used to control such
-         * a prefix.
-         */
-        taskSelector?: string;
+        presentation?: PresentationOptions;
 
         /**
          * The problem matcher to be used if a global command is executed (e.g. no tasks
@@ -101,6 +76,7 @@ declare module "vscode-tasks" {
          */
         tasks?: TaskDescription[];
     }
+
 
     /**
      * Options to be passed to the external program or shell
@@ -118,6 +94,23 @@ declare module "vscode-tasks" {
          * the parent process' environment is used.
          */
         env?: { [key: string]: string; };
+
+        /**
+          * Configuration of the shell when task type is `shell`
+          */
+        shell: {
+
+            /**
+            * The shell to use.
+            */
+            executable: string;
+
+            /**
+            * The arguments to be passed to the shell executable to run in command mode
+            * (e.g ['-c'] for bash or ['/S', '/C'] for cmd.exe).
+            */
+            args?: string[];
+        }
     }
 
     /**
@@ -131,42 +124,70 @@ declare module "vscode-tasks" {
         taskName: string;
 
         /**
-         * Additional arguments passed to the command when this task is
-         * executed.
+         * The type of a custom task. Tasks of type "shell" are executed
+         * inside a shell (e.g. bash, cmd, powershell, ...)
+         */
+        type: "shell" | "process";
+
+        /**
+         * The command to execute. If the type is "shell" it should be the full
+         * command line including any additional arguments passed to the command.
+         */
+        command: string;
+
+        /**
+         * Whether the executed command is kept alive and runs in the background.
+         */
+        isBackground?: boolean;
+
+        /**
+         * Additional arguments passed to the command. Should be used if type
+         * is "process".
          */
         args?: string[];
 
         /**
-         * Whether this task maps to the default build command.
+         * Defines the group to which this tasks belongs
          */
-        isBuildCommand?: boolean;
+        group?: "build" | "string";
 
         /**
-         * Whether this task maps to the default test command.
+         * The presentation options.
          */
-        isTestCommand?: boolean;
-
-        /**
-         * Whether the executed command is kept alive and is watching the file system.
-         */
-        isWatching?: boolean;
-
-        /**
-         * Controls whether the output view of the running tasks is brought to front or not.
-         * See BaseTaskConfiguration#showOutput for details.
-         */
-        showOutput?: string;
-
-        /**
-         * See BaseTaskConfiguration#suppressTaskName for details.
-         */
-        suppressTaskName?: boolean;
+        presentation?: PresentationOptions;
 
         /**
          * The problem matcher(s) to use to capture problems in the tasks
          * output.
          */
         problemMatcher?: string | ProblemMatcher | (string | ProblemMatcher)[];
+    }
+
+    export interface PresentationOptions {
+
+        /**
+         * Controls whether the task output is reveal in the user interface.
+         * Defaults to `always`.
+         */
+        reveal?: "never" | "silent" | "always";
+
+        /**
+         * Controls whether the command associated with the task is echoed
+         * in the user interface.
+         */
+        echo?: boolean;
+
+        /**
+         * Controls whether the panel showing the task output is taking focus.
+         */
+        focus?: boolean;
+
+        /**
+         * Controls if the task panel is used for this task only (dedicated),
+         * shared between tasks (shared) or if a new panel is created on
+         * every task execution (new). Defaults to `shared`
+         */
+        panel?: "shared" | "dedicated" | "new";
     }
 
     /**
@@ -216,7 +237,7 @@ declare module "vscode-tasks" {
         fileLocation?: string | string[];
 
         /**
-         * The name of a predefined problem pattern, the inline definintion
+         * The name of a predefined problem pattern, the inline definition
          * of a problem pattern or an array of problem patterns to match
          * problems spread over multiple lines.
          */
@@ -226,13 +247,13 @@ declare module "vscode-tasks" {
          * Additional information used to detect when a background task (like a watching task in Gulp)
          * is active.
          */
-        watching?: WatchingMatcher;
+        background?: BackgroundMatcher;
     }
 
     /**
-     * A description to track the start and end of a watching task.
+     * A description to track the start and end of a background task.
      */
-    export interface WatchingMatcher {
+    export interface BackgroundMatcher {
 
         /**
          * If set to true the watcher is in active mode when the task
@@ -242,12 +263,12 @@ declare module "vscode-tasks" {
         activeOnStart?: boolean;
 
         /**
-         * If matched in the output the start of a watching task is signaled.
+         * If matched in the output the start of a background task is signaled.
          */
         beginsPattern?: string;
 
         /**
-         * If matched in the output the end of a watching task is signaled.
+         * If matched in the output the end of a background task is signaled.
          */
         endsPattern?: string;
     }
@@ -306,7 +327,7 @@ declare module "vscode-tasks" {
         severity?: number;
 
         /**
-         * The match group index of the problems's code.
+         * The match group index of the problem's code.
          *
          * Defaults to undefined. No code is captured.
          */
