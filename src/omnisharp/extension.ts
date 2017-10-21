@@ -30,6 +30,7 @@ import { Options } from './options';
 import { addAssetsIfNecessary, AddAssetResult } from '../assets';
 import { sum, safeLength } from '../common';
 import * as utils from './utils';
+import { CSharpConfigurationProvider } from '../configurationProvider';
 
 export function activate(context: vscode.ExtensionContext, reporter: TelemetryReporter, channel: vscode.OutputChannel) {
     const documentSelector: vscode.DocumentSelector = {
@@ -150,6 +151,9 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         advisor.dispose();
         server.stop();
     }));
+
+    // Register ConfigurationProvider
+    disposables.push(vscode.debug.registerDebugConfigurationProvider('coreclr', new CSharpConfigurationProvider()));
 
     context.subscriptions.push(...disposables);
 }

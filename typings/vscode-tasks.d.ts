@@ -11,7 +11,7 @@ declare module "vscode-tasks" {
         /**
          * The configuration's version number
          */
-        version: "0.2.0";
+        version: string;
 
         /**
          * Windows specific task configuration

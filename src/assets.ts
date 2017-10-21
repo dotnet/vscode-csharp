@@ -155,24 +155,6 @@ export class AssetGenerator {
         return result;
     }
 
-    private createLaunchConfiguration(): string{
-        return `
-{
-    "name": ".NET Core Launch (console)",
-    "type": "coreclr",
-    "request": "launch",
-    "preLaunchTask": "build",
-    // If you have changed target frameworks, make sure to update the program path.
-    "program": "${util.convertNativePathToPosix(this.computeProgramPath())}",
-    "args": [],
-    "cwd": "${util.convertNativePathToPosix(this.computeWorkingDirectory())}",
-    // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-    "console": "internalConsole",
-    "stopAtEntry": false,
-    "internalConsoleOptions": "openOnSessionStart"
-}`;
-    }
-
     private createWebLaunchConfiguration(): string {
         return `
 {
@@ -209,21 +191,10 @@ export class AssetGenerator {
 }`;
     }
 
-    // AttachConfiguration
-    private createAttachConfiguration(): string {
-        return `
-{
-    "name": ".NET Core Attach",
-    "type": "coreclr",
-    "request": "attach",
-    "processId": "\${command:pickProcess}"
-}`;
-    }
-
     public createLaunchJson(isWebProject: boolean): string {
         if (!isWebProject) {
-            const launchConfigurationsMassaged: string = indentJsonString(this.createLaunchConfiguration());
-            const attachConfigurationsMassaged: string = indentJsonString(this.createAttachConfiguration());
+            const launchConfigurationsMassaged: string = indentJsonString(createLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory()));
+            const attachConfigurationsMassaged: string = indentJsonString(createAttachConfiguration());
             return `
 [
     ${launchConfigurationsMassaged},
@@ -232,7 +203,7 @@ export class AssetGenerator {
         }
         else {
             const webLaunchConfigurationsMassaged: string = indentJsonString(this.createWebLaunchConfiguration());
-            const attachConfigurationsMassaged: string = indentJsonString(this.createAttachConfiguration());
+            const attachConfigurationsMassaged: string = indentJsonString(createAttachConfiguration());
             return `
 [
     ${webLaunchConfigurationsMassaged},
@@ -248,23 +219,52 @@ export class AssetGenerator {
         }
 
         return {
-            taskName: 'build',
-            args: [util.convertNativePathToPosix(buildPath)],
-            isBuildCommand: true,
+            taskName: 'dotnet: build',
+            command: 'dotnet',
+            type: 'process',
+            args: ['build', util.convertNativePathToPosix(buildPath)],
             problemMatcher: '$msCompile'
         };
     }
 
     public createTasksConfiguration(): tasks.TaskConfiguration {
         return {
-            version: '0.1.0',
-            command: 'dotnet',
-            isShellCommand: true,
-            args: [],
+            version: "2.0.0",
+            command: "dotnet",
+            type: "process",
             tasks: [this.createBuildTaskDescription()]
         };
     }
 }
+
+export function createLaunchConfiguration(programPath: string, workingDirectory: string): string {
+    return `
+{
+"name": ".NET Core Launch (console)",
+"type": "coreclr",
+"request": "launch",
+"preLaunchTask": "build",
+// If you have changed target frameworks, make sure to update the program path.
+"program": "${util.convertNativePathToPosix(programPath)}",
+"args": [],
+"cwd": "${util.convertNativePathToPosix(workingDirectory)}",
+// For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+"console": "internalConsole",
+"stopAtEntry": false,
+"internalConsoleOptions": "openOnSessionStart"
+}`;
+}
+
+// AttachConfiguration
+export function createAttachConfiguration(): string {
+    return `
+{
+    "name": ".NET Core Attach",
+    "type": "coreclr",
+    "request": "attach",
+    "processId": "\${command:pickProcess}"
+}`;
+ }
 
 function findExecutableMSBuildProjects(projects: protocol.MSBuildProject[]) {
     let result: protocol.MSBuildProject[] = [];
@@ -327,7 +327,7 @@ function getBuildTasks(tasksConfiguration: tasks.TaskConfiguration): tasks.TaskD
 
     function findBuildTask(tasksDescriptions: tasks.TaskDescription[]) {
         if (tasksDescriptions) {
-            const buildTask = tasksDescriptions.find(td => td.isBuildCommand);
+            const buildTask = tasksDescriptions.find(td => td.group === 'build');
             if (buildTask !== undefined) {
                 result.push(buildTask);
             }
