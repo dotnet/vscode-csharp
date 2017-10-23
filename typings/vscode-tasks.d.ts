@@ -35,13 +35,13 @@ declare module "vscode-tasks" {
          * The type of a custom task. Tasks of type "shell" are executed
          * inside a shell (e.g. bash, cmd, powershell, ...)
          */
-        type: "shell" | "process";
+        type?: "shell" | "process";
 
         /**
          * The command to be executed. Can be an external program or a shell
          * command.
          */
-        command: string;
+        command?: string;
 
         /**
          * Specifies whether a global command is a background task.

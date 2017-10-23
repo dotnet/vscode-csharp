@@ -17,11 +17,11 @@ suite("Asset generation: project.json", () => {
         let info = createDotNetWorkspaceInformation(rootPath, 'testApp.dll', 'netcoreapp1.0');
         let generator = new AssetGenerator(info, rootPath);
         let tasksJson = generator.createTasksConfiguration();
-        let buildPath = tasksJson.tasks[0].args[0];
+        let buildPath = tasksJson.tasks[0].args[1];
 
-        // ${workspaceRoot}/project.json
+        // ${workspaceFolder}/project.json
         let segments = buildPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceRoot}', 'project.json']);
+        segments.should.deep.equal(['${workspaceFolder}', 'project.json']);
     });
 
     test("Create tasks.json for nested project opened in workspace", () => {
@@ -29,11 +29,11 @@ suite("Asset generation: project.json", () => {
         let info = createDotNetWorkspaceInformation(path.join(rootPath, 'nested'), 'testApp.dll', 'netcoreapp1.0');
         let generator = new AssetGenerator(info, rootPath);
         let tasksJson = generator.createTasksConfiguration();
-        let buildPath = tasksJson.tasks[0].args[0];
+        let buildPath = tasksJson.tasks[0].args[1];
 
-        // ${workspaceRoot}/nested/project.json
+        // ${workspaceFolder}/nested/project.json
         let segments = buildPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceRoot}', 'nested', 'project.json']);
+        segments.should.deep.equal(['${workspaceFolder}', 'nested', 'project.json']);
     });
 
     test("Create launch.json for project opened in workspace", () => {
@@ -43,9 +43,9 @@ suite("Asset generation: project.json", () => {
         let launchJson = parse(generator.createLaunchJson(/*isWebProject*/ false), undefined, { disallowComments: true });
         let programPath = launchJson[0].program;
 
-        // ${workspaceRoot}/bin/Debug/netcoreapp1.0/testApp.dll
+        // ${workspaceFolder}/bin/Debug/netcoreapp1.0/testApp.dll
         let segments = programPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceRoot}', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
+        segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 
     test("Create launch.json for nested project opened in workspace", () => {
@@ -55,9 +55,9 @@ suite("Asset generation: project.json", () => {
         let launchJson = parse(generator.createLaunchJson(/*isWebProject*/ false), undefined, { disallowComments: true });
         let programPath = launchJson[0].program;
 
-        // ${workspaceRoot}/nested/bin/Debug/netcoreapp1.0/testApp.dll
+        // ${workspaceFolder}/nested/bin/Debug/netcoreapp1.0/testApp.dll
         let segments = programPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceRoot}', 'nested', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
+        segments.should.deep.equal(['${workspaceFolder}', 'nested', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 
     test("Create launch.json for web project opened in workspace", () => {
@@ -67,9 +67,9 @@ suite("Asset generation: project.json", () => {
         let launchJson = parse(generator.createLaunchJson(/*isWebProject*/ true), undefined, { disallowComments: true });
         let programPath = launchJson[0].program;
 
-        // ${workspaceRoot}/bin/Debug/netcoreapp1.0/testApp.dll
+        // ${workspaceFolder}/bin/Debug/netcoreapp1.0/testApp.dll
         let segments = programPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceRoot}', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
+        segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 
     test("Create launch.json for nested web project opened in workspace", () => {
@@ -79,9 +79,9 @@ suite("Asset generation: project.json", () => {
         let launchJson = parse(generator.createLaunchJson(/*isWebProject*/ true), undefined, { disallowComments: true });
         let programPath = launchJson[0].program;
 
-        // ${workspaceRoot}/nested/bin/Debug/netcoreapp1.0/testApp.dll
+        // ${workspaceFolder}/nested/bin/Debug/netcoreapp1.0/testApp.dll
         let segments = programPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceRoot}', 'nested', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
+        segments.should.deep.equal(['${workspaceFolder}', 'nested', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 });
 
@@ -125,11 +125,11 @@ suite("Asset generation: csproj", () => {
         let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netcoreapp1.0');
         let generator = new AssetGenerator(info, rootPath);
         let tasksJson = generator.createTasksConfiguration();
-        let buildPath = tasksJson.tasks[0].args[0];
+        let buildPath = tasksJson.tasks[0].args[1];
 
-        // ${workspaceRoot}/project.json
+        // ${workspaceFolder}/project.json
         let segments = buildPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceRoot}', 'testApp.csproj']);
+        segments.should.deep.equal(['${workspaceFolder}', 'testApp.csproj']);
     });
 
     test("Create tasks.json for nested project opened in workspace", () => {
@@ -137,11 +137,11 @@ suite("Asset generation: csproj", () => {
         let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'nested', 'testApp.csproj'), 'testApp', 'netcoreapp1.0');
         let generator = new AssetGenerator(info, rootPath);
         let tasksJson = generator.createTasksConfiguration();
-        let buildPath = tasksJson.tasks[0].args[0];
+        let buildPath = tasksJson.tasks[0].args[1];
 
-        // ${workspaceRoot}/nested/project.json
+        // ${workspaceFolder}/nested/project.json
         let segments = buildPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceRoot}', 'nested', 'testApp.csproj']);
+        segments.should.deep.equal(['${workspaceFolder}', 'nested', 'testApp.csproj']);
     });
 
     test("Create launch.json for project opened in workspace", () => {
@@ -151,9 +151,9 @@ suite("Asset generation: csproj", () => {
         let launchJson = parse(generator.createLaunchJson(/*isWebProject*/ false), undefined, { disallowComments: true });
         let programPath = launchJson[0].program;
 
-        // ${workspaceRoot}/bin/Debug/netcoreapp1.0/testApp.dll
+        // ${workspaceFolder}/bin/Debug/netcoreapp1.0/testApp.dll
         let segments = programPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceRoot}', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
+        segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 
     test("Create launch.json for nested project opened in workspace", () => {
@@ -163,9 +163,9 @@ suite("Asset generation: csproj", () => {
         let launchJson = parse(generator.createLaunchJson(/*isWebProject*/ false), undefined, { disallowComments: true });
         let programPath = launchJson[0].program;
 
-        // ${workspaceRoot}/nested/bin/Debug/netcoreapp1.0/testApp.dll
+        // ${workspaceFolder}/nested/bin/Debug/netcoreapp1.0/testApp.dll
         let segments = programPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceRoot}', 'nested', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
+        segments.should.deep.equal(['${workspaceFolder}', 'nested', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 
     test("Create launch.json for web project opened in workspace", () => {
@@ -175,9 +175,9 @@ suite("Asset generation: csproj", () => {
         let launchJson = parse(generator.createLaunchJson(/*isWebProject*/ true), undefined, { disallowComments: true });
         let programPath = launchJson[0].program;
 
-        // ${workspaceRoot}/bin/Debug/netcoreapp1.0/testApp.dll
+        // ${workspaceFolder}/bin/Debug/netcoreapp1.0/testApp.dll
         let segments = programPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceRoot}', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
+        segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 
     test("Create launch.json for nested web project opened in workspace", () => {
@@ -187,9 +187,9 @@ suite("Asset generation: csproj", () => {
         let launchJson = parse(generator.createLaunchJson(/*isWebProject*/ true), undefined, { disallowComments: true });
         let programPath = launchJson[0].program;
 
-        // ${workspaceRoot}/nested/bin/Debug/netcoreapp1.0/testApp.dll
+        // ${workspaceFolder}/nested/bin/Debug/netcoreapp1.0/testApp.dll
         let segments = programPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceRoot}', 'nested', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
+        segments.should.deep.equal(['${workspaceFolder}', 'nested', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 });
 

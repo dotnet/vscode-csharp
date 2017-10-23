@@ -126,10 +126,10 @@ export class AssetGenerator {
     private computeProgramPath() {
         if (!this.hasProject) {
             // If there's no target project data, use a placeholder for the path.
-            return '${workspaceRoot}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll';
+            return '${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll';
         }
 
-        let result = '${workspaceRoot}';
+        let result = '${workspaceFolder}';
 
         if (this.projectPath) {
             result = path.join(result, path.relative(this.rootPath, this.projectPath));
@@ -143,10 +143,10 @@ export class AssetGenerator {
     private computeWorkingDirectory() : string {
         if (!this.hasProject) {
             // If there's no target project data, use a placeholder for the path.
-            return '${workspaceRoot}';
+            return '${workspaceFolder}';
         }
 
-        let result = '${workspaceRoot}';
+        let result = '${workspaceFolder}';
 
         if (this.projectPath) {
             result = path.join(result, path.relative(this.rootPath, this.projectPath));
@@ -186,7 +186,7 @@ export class AssetGenerator {
         "ASPNETCORE_ENVIRONMENT": "Development"
     },
     "sourceFileMap": {
-        "/Views": "\${workspaceRoot}/Views"
+        "/Views": "\${workspaceFolder}/Views"
     }
 }`;
     }
@@ -215,11 +215,11 @@ export class AssetGenerator {
     private createBuildTaskDescription(): tasks.TaskDescription {
         let buildPath = '';
         if (this.hasProject) {
-            buildPath = path.join('${workspaceRoot}', path.relative(this.rootPath, this.projectFilePath));
+            buildPath = path.join('${workspaceFolder}', path.relative(this.rootPath, this.projectFilePath));
         }
 
         return {
-            taskName: 'dotnet: build',
+            taskName: 'build',
             command: 'dotnet',
             type: 'process',
             args: ['build', util.convertNativePathToPosix(buildPath)],
@@ -230,28 +230,26 @@ export class AssetGenerator {
     public createTasksConfiguration(): tasks.TaskConfiguration {
         return {
             version: "2.0.0",
-            command: "dotnet",
-            type: "process",
             tasks: [this.createBuildTaskDescription()]
         };
     }
 }
 
-export function createLaunchConfiguration(programPath: string, workingDirectory: string): string {
+ export function createLaunchConfiguration(programPath: string, workingDirectory: string): string {
     return `
 {
-"name": ".NET Core Launch (console)",
-"type": "coreclr",
-"request": "launch",
-"preLaunchTask": "build",
-// If you have changed target frameworks, make sure to update the program path.
-"program": "${util.convertNativePathToPosix(programPath)}",
-"args": [],
-"cwd": "${util.convertNativePathToPosix(workingDirectory)}",
-// For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-"console": "internalConsole",
-"stopAtEntry": false,
-"internalConsoleOptions": "openOnSessionStart"
+    "name": ".NET Core Launch (console)",
+    "type": "coreclr",
+    "request": "launch",
+    "preLaunchTask": "build",
+    // If you have changed target frameworks, make sure to update the program path.
+    "program": "${util.convertNativePathToPosix(programPath)}",
+    "args": [],
+    "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
+    // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+    "console": "internalConsole",
+    "stopAtEntry": false,
+    "internalConsoleOptions": "openOnSessionStart"
 }`;
 }
 
@@ -264,7 +262,7 @@ export function createAttachConfiguration(): string {
     "request": "attach",
     "processId": "\${command:pickProcess}"
 }`;
- }
+}
 
 function findExecutableMSBuildProjects(projects: protocol.MSBuildProject[]) {
     let result: protocol.MSBuildProject[] = [];
@@ -294,7 +292,7 @@ function findExecutableProjectJsonProjects(projects: protocol.DotNetProject[], c
     return result;
 }
 
-function containsDotNetCoreProjects(workspaceInfo: protocol.WorkspaceInformationResponse) {
+export function containsDotNetCoreProjects(workspaceInfo: protocol.WorkspaceInformationResponse) {
     if (workspaceInfo.DotNet && findExecutableProjectJsonProjects(workspaceInfo.DotNet.Projects, 'Debug').length > 0) {
         return true;
     }
@@ -421,7 +419,7 @@ function promptToAddAssets() {
     });
 }
 
-function addTasksJsonIfNecessary(generator: AssetGenerator, operations: Operations) {
+export function addTasksJsonIfNecessary(generator: AssetGenerator, operations: Operations) {
     return new Promise<void>((resolve, reject) => {
         if (!operations.addTasksJson) {
             return resolve();

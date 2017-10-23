@@ -153,7 +153,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
     }));
 
     // Register ConfigurationProvider
-    disposables.push(vscode.debug.registerDebugConfigurationProvider('coreclr', new CSharpConfigurationProvider()));
+    disposables.push(vscode.debug.registerDebugConfigurationProvider('coreclr', new CSharpConfigurationProvider(server)));
 
     context.subscriptions.push(...disposables);
 }

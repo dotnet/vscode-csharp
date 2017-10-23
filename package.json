@@ -474,13 +474,13 @@
             "properties": {
               "program": {
                 "type": "string",
-                "description": "Path to the application dll or .NET Core host executable to launch.\nThis property normally takes the form: '${workspaceRoot}/bin/Debug/(target-framework)/(project-name.dll)'\nExample: '${workspaceRoot}/bin/Debug/netcoreapp1.1/MyProject.dll'\n\nWhere:\n(target-framework) is the framework that the debugged project is being built for. This is normally found in the project file as the 'TargetFramework' property.\n(project-name.dll) is the name of debugged project's build output dll. This is normally the same as the project file name but with a '.dll' extension.",
-                "default": "${workspaceRoot}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll"
+                "description": "Path to the application dll or .NET Core host executable to launch.\nThis property normally takes the form: '${workspaceFolder}/bin/Debug/(target-framework)/(project-name.dll)'\nExample: '${workspaceFolder}/bin/Debug/netcoreapp1.1/MyProject.dll'\n\nWhere:\n(target-framework) is the framework that the debugged project is being built for. This is normally found in the project file as the 'TargetFramework' property.\n(project-name.dll) is the name of debugged project's build output dll. This is normally the same as the project file name but with a '.dll' extension.",
+                "default": "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll"
               },
               "cwd": {
                 "type": "string",
                 "description": "Path to the working directory of the program being debugged. Default is the current workspace.",
-                "default": "${workspaceRoot}"
+                "default": "${workspaceFolder}"
               },
               "args": {
                 "anyOf": [
@@ -706,7 +706,7 @@
                   "debuggerPath"
                 ],
                 "default": {
-                  "pipeCwd": "${workspaceRoot}",
+                  "pipeCwd": "${workspaceFolder}",
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                   "pipeArgs": [],
                   "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
@@ -715,7 +715,7 @@
                   "pipeCwd": {
                     "type": "string",
                     "description": "The fully qualified path to the working directory for the pipe program.",
-                    "default": "${workspaceRoot}"
+                    "default": "${workspaceFolder}"
                   },
                   "pipeProgram": {
                     "type": "string",
@@ -761,7 +761,7 @@
                   "windows": {
                     "description": "Windows-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
                       "pipeArgs": []
                     },
@@ -770,7 +770,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -813,7 +813,7 @@
                   "osx": {
                     "description": "OSX-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
@@ -822,7 +822,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -865,7 +865,7 @@
                   "linux": {
                     "description": "Linux-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
@@ -874,7 +874,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -1014,7 +1014,7 @@
                   "debuggerPath"
                 ],
                 "default": {
-                  "pipeCwd": "${workspaceRoot}",
+                  "pipeCwd": "${workspaceFolder}",
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                   "pipeArgs": [],
                   "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
@@ -1023,7 +1023,7 @@
                   "pipeCwd": {
                     "type": "string",
                     "description": "The fully qualified path to the working directory for the pipe program.",
-                    "default": "${workspaceRoot}"
+                    "default": "${workspaceFolder}"
                   },
                   "pipeProgram": {
                     "type": "string",
@@ -1069,7 +1069,7 @@
                   "windows": {
                     "description": "Windows-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
                       "pipeArgs": []
                     },
@@ -1078,7 +1078,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -1121,7 +1121,7 @@
                   "osx": {
                     "description": "OSX-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
@@ -1130,7 +1130,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -1173,7 +1173,7 @@
                   "linux": {
                     "description": "Linux-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
@@ -1182,7 +1182,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -1352,13 +1352,13 @@
             "properties": {
               "program": {
                 "type": "string",
-                "description": "Path to the application dll or .NET Core host executable to launch.\nThis property normally takes the form: '${workspaceRoot}/bin/Debug/(target-framework)/(project-name.dll)'\nExample: '${workspaceRoot}/bin/Debug/netcoreapp1.1/MyProject.dll'\n\nWhere:\n(target-framework) is the framework that the debugged project is being built for. This is normally found in the project file as the 'TargetFramework' property.\n(project-name.dll) is the name of debugged project's build output dll. This is normally the same as the project file name but with a '.dll' extension.",
-                "default": "${workspaceRoot}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll"
+                "description": "Path to the application dll or .NET Core host executable to launch.\nThis property normally takes the form: '${workspaceFolder}/bin/Debug/(target-framework)/(project-name.dll)'\nExample: '${workspaceFolder}/bin/Debug/netcoreapp1.1/MyProject.dll'\n\nWhere:\n(target-framework) is the framework that the debugged project is being built for. This is normally found in the project file as the 'TargetFramework' property.\n(project-name.dll) is the name of debugged project's build output dll. This is normally the same as the project file name but with a '.dll' extension.",
+                "default": "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll"
               },
               "cwd": {
                 "type": "string",
                 "description": "Path to the working directory of the program being debugged. Default is the current workspace.",
-                "default": "${workspaceRoot}"
+                "default": "${workspaceFolder}"
               },
               "args": {
                 "anyOf": [
@@ -1584,7 +1584,7 @@
                   "debuggerPath"
                 ],
                 "default": {
-                  "pipeCwd": "${workspaceRoot}",
+                  "pipeCwd": "${workspaceFolder}",
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                   "pipeArgs": [],
                   "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
@@ -1593,7 +1593,7 @@
                   "pipeCwd": {
                     "type": "string",
                     "description": "The fully qualified path to the working directory for the pipe program.",
-                    "default": "${workspaceRoot}"
+                    "default": "${workspaceFolder}"
                   },
                   "pipeProgram": {
                     "type": "string",
@@ -1639,7 +1639,7 @@
                   "windows": {
                     "description": "Windows-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
                       "pipeArgs": []
                     },
@@ -1648,7 +1648,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -1691,7 +1691,7 @@
                   "osx": {
                     "description": "OSX-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
@@ -1700,7 +1700,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -1743,7 +1743,7 @@
                   "linux": {
                     "description": "Linux-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
@@ -1752,7 +1752,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -1892,7 +1892,7 @@
                   "debuggerPath"
                 ],
                 "default": {
-                  "pipeCwd": "${workspaceRoot}",
+                  "pipeCwd": "${workspaceFolder}",
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                   "pipeArgs": [],
                   "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
@@ -1901,7 +1901,7 @@
                   "pipeCwd": {
                     "type": "string",
                     "description": "The fully qualified path to the working directory for the pipe program.",
-                    "default": "${workspaceRoot}"
+                    "default": "${workspaceFolder}"
                   },
                   "pipeProgram": {
                     "type": "string",
@@ -1947,7 +1947,7 @@
                   "windows": {
                     "description": "Windows-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
                       "pipeArgs": []
                     },
@@ -1956,7 +1956,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -1999,7 +1999,7 @@
                   "osx": {
                     "description": "OSX-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
@@ -2008,7 +2008,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -2051,7 +2051,7 @@
                   "linux": {
                     "description": "Linux-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
@@ -2060,7 +2060,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
