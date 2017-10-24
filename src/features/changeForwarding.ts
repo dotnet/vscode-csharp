@@ -8,6 +8,7 @@
 import {Disposable, Uri, workspace} from 'vscode';
 import {OmniSharpServer} from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
+import { FileChangeType } from '../omnisharp/protocol';
 
 function forwardDocumentChanges(server: OmniSharpServer): Disposable {
 
@@ -31,25 +32,30 @@ function forwardDocumentChanges(server: OmniSharpServer): Disposable {
 
 function forwardFileChanges(server: OmniSharpServer): Disposable {
 
-    function onFileSystemEvent(uri: Uri): void {
-        if (!server.isRunning()) {
-            return;
-        }
-        
-        let req = { FileName: uri.fsPath };
-        
-        serverUtils.filesChanged(server, [req]).catch(err => {
-            console.warn(`[o] failed to forward file change event for ${uri.fsPath}`, err);
-            return err;
-        });
+    function onFileSystemEvent(changeType: FileChangeType): (Uri) => void {
+        return function(uri: Uri) 
+        {
+            if (!server.isRunning()) {
+                return;
+            }
+            
+            let req = { FileName: uri.fsPath, changeType};
+            
+            serverUtils.filesChanged(server, [req]).catch(err => {
+                console.warn(`[o] failed to forward file change event for ${uri.fsPath}`, err);
+                return err;
+            });
+        }        
     }
 
     const watcher = workspace.createFileSystemWatcher('**/*.*');
-    let d1 = watcher.onDidCreate(onFileSystemEvent);
-    let d2 = watcher.onDidChange(onFileSystemEvent);
-    let d3 = watcher.onDidDelete(onFileSystemEvent);
+    let d1 = watcher.onDidCreate(onFileSystemEvent(FileChangeType.Create));
+    // In theory we don't need to subscribe to "change" notifications
+    // because we already get them through the buffer update request
+    //let d2 = watcher.onDidChange(onFileChange);
+    let d3 = watcher.onDidDelete(onFileSystemEvent(FileChangeType.Delete));
 
-    return Disposable.from(watcher, d1, d2, d3);
+    return Disposable.from(watcher, d1, d3);
 }
 
 export default function forwardChanges(server: OmniSharpServer): Disposable {
