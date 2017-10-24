@@ -134,11 +134,9 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
                 toRange(node.Location),
                 { title: "run test", command: 'dotnet.test.run', arguments: [testFeature.Data, fileName, testFrameworkName] }));
 
-            if (this._server.isDebugEnable()) {
-                bucket.push(new vscode.CodeLens(
-                    toRange(node.Location),
-                    { title: "debug test", command: 'dotnet.test.debug', arguments: [testFeature.Data, fileName, testFrameworkName] }));
-            }
+            bucket.push(new vscode.CodeLens(
+                toRange(node.Location),
+                { title: "debug test", command: 'dotnet.test.debug', arguments: [testFeature.Data, fileName, testFrameworkName] }));
         }
     }
 }
