@@ -190,7 +190,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.15.0"
+    "vscode": "^1.17.0"
   },
   "activationEvents": [
     "onLanguage:csharp",

@@ -39,26 +39,24 @@ export interface LaunchTarget {
  * is included if there are any `*.csproj` files present, but a `*.sln* file is not found.
  */
 export function findLaunchTargets(): Thenable<LaunchTarget[]> {
-    if (!vscode.workspace.rootPath) {
+    if (!vscode.workspace.workspaceFolders) {
         return Promise.resolve([]);
     }
 
     const options = Options.Read();
 
     return vscode.workspace.findFiles(
-        /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}', 
-        /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
-        /*maxResults*/ options.maxProjectResults)
-    .then(resources => {
-        return select(resources, vscode.workspace.rootPath);
-    });
+            /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}', 
+            /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
+            /*maxResults*/ options.maxProjectResults)
+        .then(resourcesToLaunchTargets);
 }
 
-function select(resources: vscode.Uri[], rootPath: string): LaunchTarget[] {
+function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
     // The list of launch targets is calculated like so:
     //   * If there are .csproj files, .sln files are considered as launch targets.
     //   * Any project.json file is considered a launch target.
-    //   * If there is no project.json file in the root, the root as added as a launch target.
+    //   * If there is no project.json file in a workspace folder, the workspace folder as added as a launch target.
     //   * Additionally, if there are .csproj files, but no .sln file, the root is added as a launch target.
     //
     // TODO:
@@ -70,90 +68,115 @@ function select(resources: vscode.Uri[], rootPath: string): LaunchTarget[] {
         return [];
     }
 
-    let targets: LaunchTarget[] = [],
-        hasCsProjFiles = false,
-        hasSlnFile = false,
-        hasProjectJson = false,
-        hasProjectJsonAtRoot = false,
-        hasCSX = false,
-        hasCake = false;
+    let workspaceFolderToUriMap = new Map<number, vscode.Uri[]>();
 
-    hasCsProjFiles = resources.some(isCSharpProject);
+    for (let resource of resources) {
+        let folder = vscode.workspace.getWorkspaceFolder(resource);
+        if (folder) {
+            let buckets: vscode.Uri[];
 
-    resources.forEach(resource => {
-        // Add .sln files if there are .csproj files
-        if (hasCsProjFiles && isSolution(resource)) {
-            hasSlnFile = true;
+            if (workspaceFolderToUriMap.has(folder.index)) {
+                buckets = workspaceFolderToUriMap.get(folder.index);
+            } else {
+                buckets = [];
+                workspaceFolderToUriMap.set(folder.index, buckets);
+            }
 
+            buckets.push(resource);
+        }
+    }
+
+    let targets: LaunchTarget[] = [];
+
+    workspaceFolderToUriMap.forEach((resources, folderIndex) => 
+    {
+        let hasCsProjFiles = false,
+            hasSlnFile = false,
+            hasProjectJson = false,
+            hasProjectJsonAtRoot = false,
+            hasCSX = false,
+            hasCake = false;
+
+        hasCsProjFiles = resources.some(isCSharpProject);
+        
+        let folder = vscode.workspace.workspaceFolders[folderIndex];
+        let folderPath = folder.uri.fsPath;
+    
+        resources.forEach(resource => {
+            // Add .sln files if there are .csproj files
+            if (hasCsProjFiles && isSolution(resource)) {
+                hasSlnFile = true;
+    
+                targets.push({
+                    label: path.basename(resource.fsPath),
+                    description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
+                    target: resource.fsPath,
+                    directory: path.dirname(resource.fsPath),
+                    kind: LaunchTargetKind.Solution
+                });
+            }
+    
+            // Add project.json files
+            if (isProjectJson(resource)) {
+                const dirname = path.dirname(resource.fsPath);
+                hasProjectJson = true;
+                hasProjectJsonAtRoot = hasProjectJsonAtRoot || dirname === folderPath;
+    
+                targets.push({
+                    label: path.basename(resource.fsPath),
+                    description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
+                    target: dirname,
+                    directory: dirname,
+                    kind: LaunchTargetKind.ProjectJson
+                });
+            }
+    
+            // Discover if there is any CSX file
+            if (!hasCSX && isCsx(resource)) {
+                hasCSX = true;
+            }
+    
+            // Discover if there is any Cake file
+            if (!hasCake && isCake(resource)) {
+                hasCake = true;
+            }
+        });
+    
+        // Add the root folder under the following circumstances:
+        // * If there are .csproj files, but no .sln file, and none in the root.
+        // * If there are project.json files, but none in the root.
+        if ((hasCsProjFiles && !hasSlnFile) || (hasProjectJson && !hasProjectJsonAtRoot)) {
             targets.push({
-                label: path.basename(resource.fsPath),
-                description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
-                target: resource.fsPath,
-                directory: path.dirname(resource.fsPath),
-                kind: LaunchTargetKind.Solution
+                label: path.basename(folderPath),
+                description: '',
+                target: folderPath,
+                directory: folderPath,
+                kind: LaunchTargetKind.Folder
             });
         }
-
-        // Add project.json files
-        if (isProjectJson(resource)) {
-            const dirname = path.dirname(resource.fsPath);
-            hasProjectJson = true;
-            hasProjectJsonAtRoot = hasProjectJsonAtRoot || dirname === rootPath;
-
+    
+        // if we noticed any CSX file(s), add a single CSX-specific target pointing at the root folder
+        if (hasCSX) {
             targets.push({
-                label: path.basename(resource.fsPath),
-                description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
-                target: dirname,
-                directory: dirname,
-                kind: LaunchTargetKind.ProjectJson
+                label: "CSX",
+                description: path.basename(folderPath),
+                target: folderPath,
+                directory: folderPath,
+                kind: LaunchTargetKind.Csx
             });
         }
-
-        // Discover if there is any CSX file
-        if (!hasCSX && isCsx(resource)) {
-            hasCSX = true;
-        }
-
-        // Discover if there is any Cake file
-        if (!hasCake && isCake(resource)) {
-            hasCake = true;
+    
+        // if we noticed any Cake file(s), add a single Cake-specific target pointing at the root folder
+        if (hasCake) {
+            targets.push({
+                label: "Cake",
+                description: path.basename(folderPath),
+                target: folderPath,
+                directory: folderPath,
+                kind: LaunchTargetKind.Cake
+            });
         }
     });
-
-    // Add the root folder under the following circumstances:
-    // * If there are .csproj files, but no .sln file, and none in the root.
-    // * If there are project.json files, but none in the root.
-    if ((hasCsProjFiles && !hasSlnFile) || (hasProjectJson && !hasProjectJsonAtRoot)) {
-        targets.push({
-            label: path.basename(rootPath),
-            description: '',
-            target: rootPath,
-            directory: rootPath,
-            kind: LaunchTargetKind.Folder
-        });
-    }
-
-    // if we noticed any CSX file(s), add a single CSX-specific target pointing at the root folder
-    if (hasCSX) {
-        targets.push({
-            label: "CSX",
-            description: path.basename(rootPath),
-            target: rootPath,
-            directory: rootPath,
-            kind: LaunchTargetKind.Csx
-        });
-    }
-
-    // if we noticed any Cake file(s), add a single Cake-specific target pointing at the root folder
-    if (hasCake) {
-        targets.push({
-            label: "Cake",
-            description: path.basename(rootPath),
-            target: rootPath,
-            directory: rootPath,
-            kind: LaunchTargetKind.Cake
-        });
-    }
 
     return targets.sort((a, b) => a.directory.localeCompare(b.directory));
 }
