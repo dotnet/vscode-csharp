@@ -78,8 +78,6 @@ export class OmniSharpServer {
     private _channel: vscode.OutputChannel;
     private _logger: Logger;
 
-    private _isDebugEnable: boolean = false;
-
     private _serverProcess: ChildProcess;
     private _options: Options;
 
@@ -144,10 +142,6 @@ export class OmniSharpServer {
 
     public getChannel(): vscode.OutputChannel {
         return this._channel;
-    }
-
-    public isDebugEnable(): boolean {
-        return this._isDebugEnable;
     }
 
     // --- eventing
@@ -285,13 +279,6 @@ export class OmniSharpServer {
             this._fireEvent(Events.ServerStart, solutionPath);
 
             return this._doConnect();
-        }).then(() => {
-            return vscode.commands.getCommands()
-                .then(commands => {
-                    if (commands.find(c => c === 'vscode.startDebug')) {
-                        this._isDebugEnable = true;
-                    }
-                });
         }).then(() => {
             // Start telemetry reporting
             this._telemetryIntervalId = setInterval(() => this._reportTelemetry(), TelemetryReportingDelay);

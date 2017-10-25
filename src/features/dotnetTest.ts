@@ -304,7 +304,10 @@ export default class TestManager extends AbstractProvider {
                 }
             })
             .then(() => this._getLaunchConfiguration(debugType, fileName, testMethod, testFrameworkName, targetFrameworkVersion, debugEventListener))
-            .then(config => vscode.commands.executeCommand('vscode.startDebug', config))
+            .then(config => {
+                const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(fileName));
+                return vscode.debug.startDebugging(workspaceFolder, config);
+            })
             .catch(reason => {
                 vscode.window.showErrorMessage(`Failed to start debugger: ${reason}`);
                 if (debugEventListener != null) {
