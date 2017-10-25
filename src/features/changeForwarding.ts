@@ -45,17 +45,17 @@ function forwardFileChanges(server: OmniSharpServer): Disposable {
                 console.warn(`[o] failed to forward file change event for ${uri.fsPath}`, err);
                 return err;
             });
-        }        
+        };  
     }
 
     const watcher = workspace.createFileSystemWatcher('**/*.*');
     let d1 = watcher.onDidCreate(onFileSystemEvent(FileChangeType.Create));
+    let d2 = watcher.onDidDelete(onFileSystemEvent(FileChangeType.Delete));
+
     // In theory we don't need to subscribe to "change" notifications
     // because we already get them through the buffer update request
-    //let d2 = watcher.onDidChange(onFileChange);
-    let d3 = watcher.onDidDelete(onFileSystemEvent(FileChangeType.Delete));
 
-    return Disposable.from(watcher, d1, d3);
+    return Disposable.from(watcher, d1, d2);
 }
 
 export default function forwardChanges(server: OmniSharpServer): Disposable {
