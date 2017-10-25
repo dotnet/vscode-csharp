@@ -419,14 +419,14 @@ export interface PackageDependency {
 }
     
 export interface FilesChangedRequest extends Request{
-    ChangeType: FileChangeType
+    ChangeType: FileChangeType;
 }
 
 export enum FileChangeType
 {
-    Change,
-    Create,
-    Delete
+    Change = "Change",
+    Create = "Create",
+    Delete = "Delete"
 }
 
 export namespace V2 {
