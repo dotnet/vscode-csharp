@@ -1,11 +1,15 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { parse } from 'jsonc-parser';
 import { OmniSharpServer } from './omnisharp/server';
 import * as serverUtils from './omnisharp/utils';
-import { AssetGenerator, addTasksJsonIfNecessary, createLaunchConfiguration, createAttachConfiguration, containsDotNetCoreProjects} from './assets';
-import { WorkspaceInformationResponse } from './omnisharp/protocol';
+import { AssetGenerator, addTasksJsonIfNecessary, createLaunchConfiguration, createAttachConfiguration, containsDotNetCoreProjects, createWebLaunchConfiguration } from './assets';
 
 export class CSharpConfigurationProvider implements vscode.DebugConfigurationProvider {
     private server: OmniSharpServer;
@@ -15,13 +19,21 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
     }
 
     /**
-     * TODO: Remove function. 
+     * TODO: Remove function when https://github.com/OmniSharp/omnisharp-roslyn/issues/909 is resolved.
      * 
      * Note: serverUtils.requestWorkspaceInformation only retrieves one folder for multi-root workspaces. Therefore, generator will be incorrect for all folders
-     * except the first in a workspace. 
+     * except the first in a workspace. Currently, this only works if the requested folder is the same as the server's solution path or folder.
      */
-    private checkWorkspaceInformationMatchesWorkspaceFolder(folder: vscode.WorkspaceFolder, info: WorkspaceInformationResponse): boolean {
-        return info && ((info.MsBuild && info.MsBuild.SolutionPath === folder.uri.fsPath) || (info.DotNet && info.DotNet.RuntimePath === folder.uri.fsPath));
+    private checkWorkspaceInformationMatchesWorkspaceFolder(folder: vscode.WorkspaceFolder | undefined): boolean {
+        const solutionPathOrFolder: string = this.server.getSolutionPathOrFolder();
+        let serverFolder = solutionPathOrFolder;
+
+        // If its a .sln file, get the folder of the solution.
+        if (fs.lstatSync(solutionPathOrFolder).isFile())
+        {
+            serverFolder = path.dirname(solutionPathOrFolder);
+        }
+        return folder && folder.uri && (folder.uri.fsPath === serverFolder);
     }
 
     /**
@@ -30,7 +42,7 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
     provideDebugConfigurations(folder: vscode.WorkspaceFolder | undefined, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration[]> {
         return serverUtils.requestWorkspaceInformation(this.server).then(info => {
             const generator = new AssetGenerator(info);
-            if (this.checkWorkspaceInformationMatchesWorkspaceFolder(folder, info) && containsDotNetCoreProjects(info)){
+            if (this.checkWorkspaceInformationMatchesWorkspaceFolder(folder) && containsDotNetCoreProjects(info)){
                 const dotVscodeFolder: string = path.join(folder.uri.fsPath, '.vscode');
                 const tasksJsonPath: string = path.join(dotVscodeFolder, 'tasks.json');
                 
@@ -59,6 +71,9 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
                 parse(createLaunchConfiguration(
                     "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll", 
                     '${workspaceFolder}')), 
+                parse(createWebLaunchConfiguration(
+                    "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll", 
+                    '${workspaceFolder}')),
                 parse(createAttachConfiguration())
             ];
         });

@@ -155,42 +155,6 @@ export class AssetGenerator {
         return result;
     }
 
-    private createWebLaunchConfiguration(): string {
-        return `
-{
-    "name": ".NET Core Launch (web)",
-    "type": "coreclr",
-    "request": "launch",
-    "preLaunchTask": "build",
-    // If you have changed target frameworks, make sure to update the program path.
-    "program": "${util.convertNativePathToPosix(this.computeProgramPath())}",
-    "args": [],
-    "cwd": "${util.convertNativePathToPosix(this.computeWorkingDirectory())}",
-    "stopAtEntry": false,
-    "internalConsoleOptions": "openOnSessionStart",
-    "launchBrowser": {
-        "enabled": true,
-        "args": "\${auto-detect-url}",
-        "windows": {
-            "command": "cmd.exe",
-            "args": "/C start \${auto-detect-url}"
-        },
-        "osx": {
-            "command": "open"
-        },
-        "linux": {
-            "command": "xdg-open"
-        }
-    },
-    "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-    },
-    "sourceFileMap": {
-        "/Views": "\${workspaceFolder}/Views"
-    }
-}`;
-    }
-
     public createLaunchJson(isWebProject: boolean): string {
         if (!isWebProject) {
             const launchConfigurationsMassaged: string = indentJsonString(createLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory()));
@@ -202,7 +166,7 @@ export class AssetGenerator {
 ]`;
         }
         else {
-            const webLaunchConfigurationsMassaged: string = indentJsonString(this.createWebLaunchConfiguration());
+            const webLaunchConfigurationsMassaged: string = indentJsonString(createWebLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory()));
             const attachConfigurationsMassaged: string = indentJsonString(createAttachConfiguration());
             return `
 [
@@ -233,6 +197,42 @@ export class AssetGenerator {
             tasks: [this.createBuildTaskDescription()]
         };
     }
+}
+
+export function createWebLaunchConfiguration(programPath: string, workingDirectory: string): string {
+    return `
+{
+"name": ".NET Core Launch (web)",
+"type": "coreclr",
+"request": "launch",
+"preLaunchTask": "build",
+// If you have changed target frameworks, make sure to update the program path.
+"program": "${util.convertNativePathToPosix(programPath)}",
+"args": [],
+"cwd": "${util.convertNativePathToPosix(workingDirectory)}",
+"stopAtEntry": false,
+"internalConsoleOptions": "openOnSessionStart",
+"launchBrowser": {
+    "enabled": true,
+    "args": "\${auto-detect-url}",
+    "windows": {
+        "command": "cmd.exe",
+        "args": "/C start \${auto-detect-url}"
+    },
+    "osx": {
+        "command": "open"
+    },
+    "linux": {
+        "command": "xdg-open"
+    }
+},
+"env": {
+    "ASPNETCORE_ENVIRONMENT": "Development"
+},
+"sourceFileMap": {
+    "/Views": "\${workspaceFolder}/Views"
+}
+}`;
 }
 
  export function createLaunchConfiguration(programPath: string, workingDirectory: string): string {
