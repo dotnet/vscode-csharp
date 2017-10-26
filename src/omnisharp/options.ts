@@ -54,8 +54,8 @@ export class Options {
 
         const useFormatting = csharpConfig.get<boolean>('format.enable', true);
 
-        const showReferencesCodeLens = csharpConfig.get<boolean>('showReferencesCodeLens', true);
-        const showTestsCodeLens = csharpConfig.get<boolean>('showTestsCodeLens', true);
+        const showReferencesCodeLens = csharpConfig.get<boolean>('referencesCodeLens.enabled', true);
+        const showTestsCodeLens = csharpConfig.get<boolean>('testsCodeLens.enabled', true);
 
         const disableCodeActions = csharpConfig.get<boolean>('disableCodeActions', false);
 
