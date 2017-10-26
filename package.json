@@ -323,12 +323,12 @@
           "default": true,
           "description": "Suppress 'hidden' diagnostics (such as 'unnecessary using directives') from appearing in the editor or the Problems pane."
         },
-        "csharp.showReferencesCodeLens": {
+        "csharp.referencesCodeLens.enabled": {
           "type": "boolean",
           "default": true,
           "description": "Specifies whether the references CodeLens should be show be shown."
         },
-        "csharp.showTestsCodeLens": {
+        "csharp.testsCodeLens.enabled": {
           "type": "boolean",
           "default": true,
           "description": "Specifies whether the run and debug test CodeLens should be show be shown."
