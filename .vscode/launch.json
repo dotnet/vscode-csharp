@@ -17,12 +17,12 @@
             ]
         },
         {
-            "name": "Launch Csproj Workspace Tests",
+            "name": "Launch singleCsproj Workspace Tests",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "${workspaceRoot}/testAssets/csproj",
+                "${workspaceRoot}/testAssets/singleCsproj",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test"
             ],

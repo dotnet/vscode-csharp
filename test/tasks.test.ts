@@ -3,18 +3,49 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from '../src/vscodeAdapter';
+import * as vscode from 'vscode';
 
+import { getRegisteredTaskProvider } from '../src/vscodeAdapter';
 import { should } from 'chai';
+import workspaceData from '../testAssets/workspaces';
 
-suite("Tasks generation: project.json", () => {
-    suiteSetup(() => should());
+const chai = require('chai');
+chai.use(require('chai-arrays'));
+chai.use(require('chai-fs'));
 
-    test("build task should be visible for C# project.json workspace", (done) => {
-        let foo : Thenable<vscode.Task[]> = vscode.getRegisteredTaskProvider().provider.provideTasks() as Thenable<vscode.Task[]>;
-        foo.then(t => {
-            console.log(t);
-            done();
-        });
+suite(`Tasks generation: ${workspaceData.name}`, () => {
+    let tasks: vscode.Task[];
+    let buildTasks: vscode.Task[];
+    
+    suiteSetup(async () => {
+        should();
+
+        tasks = await getRegisteredTaskProvider()
+            .provider
+            .provideTasks();
+
+        buildTasks = tasks.filter((value) => value.name.startsWith("build "));
+    });
+
+    test(`a build task should be available for each project`, async () => {
+        buildTasks
+             .should.have.length(workspaceData.projects.length);
+    });
+    
+    test("build tasks should produce non-empty bin and obj directories", async () => {        
+        await workspaceData.deleteBuildArtifacts();
+        
+        for (let task of buildTasks) {
+            await vscode
+                .commands
+                .executeCommand('workbench.action.tasks.runTask', task.name);
+        }
+
+        workspaceData
+            .projects
+            .forEach(p => {
+                p.binDirectoryPath.should.exist.and.not.be.empty;
+                p.objDirectoryPath.should.exist.and.not.be.empty;
+            });
     });
 });

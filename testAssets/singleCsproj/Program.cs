@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace csproj
+namespace singleCsproj
 {
     class Program
     {
