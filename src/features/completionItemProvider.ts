@@ -10,7 +10,7 @@ import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import {createRequest} from '../omnisharp/typeConvertion';
-import {CompletionItemProvider, CompletionItem, CompletionItemKind, CompletionContext, CompletionTriggerKind, CancellationToken, TextDocument, Range, Position} from 'vscode';
+import {CompletionItemProvider, CompletionItem, CompletionItemKind, CompletionContext, CompletionTriggerKind, CancellationToken, TextDocument, Range, Position, CompletionList} from 'vscode';
 
 export default class OmniSharpCompletionItemProvider extends AbstractSupport implements CompletionItemProvider {
 
@@ -25,7 +25,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
         ';', '+', '-', '*', '/', '%', '&', '|', '^', '!',
         '~', '=', '<', '>', '?', '@', '#', '\'', '\"', '\\'];
 
-    public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionItem[]> {
+    public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionList> {
 
         let wordToComplete = '';
         let range = document.getWordRangeAtPosition(position);
@@ -97,7 +97,9 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
                 result.push(suggestion);
             }
 
-            return result;
+            // for short completions (up to 1 character), treat the list as incomplete
+            // because the server has likely witheld some matches due to performance constraints
+            return new CompletionList(result, wordToComplete.length > 1 ? false : true);
         });
     }
 }
