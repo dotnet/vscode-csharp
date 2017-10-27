@@ -280,6 +280,7 @@ export interface WorkspaceInformationResponse {
     MsBuild?: MsBuildWorkspaceInformation;
     DotNet?: DotNetWorkspaceInformation;
     ScriptCs?: ScriptCsContext;
+    Cake?: CakeContext;
 }
 
 export interface MsBuildWorkspaceInformation {
@@ -292,6 +293,10 @@ export interface ScriptCsContext {
     References: { [n: string]: string };
     Usings: { [n: string]: string };
     ScriptPacks: { [n: string]: string };
+    Path: string;
+}
+
+export interface CakeContext {
     Path: string;
 }
 
@@ -412,6 +417,17 @@ export interface UnresolvedDependenciesMessage {
 export interface PackageDependency {
     Name: string;
     Version: string;
+}
+    
+export interface FilesChangedRequest extends Request{
+    ChangeType: FileChangeType;
+}
+
+export enum FileChangeType
+{
+    Change = "Change",
+    Create = "Create",
+    Delete = "Delete"
 }
 
 export namespace V2 {

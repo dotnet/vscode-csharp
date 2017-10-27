@@ -78,8 +78,6 @@ export class OmniSharpServer {
     private _channel: vscode.OutputChannel;
     private _logger: Logger;
 
-    private _isDebugEnable: boolean = false;
-
     private _serverProcess: ChildProcess;
     private _options: Options;
 
@@ -144,10 +142,6 @@ export class OmniSharpServer {
 
     public getChannel(): vscode.OutputChannel {
         return this._channel;
-    }
-
-    public isDebugEnable(): boolean {
-        return this._isDebugEnable;
     }
 
     // --- eventing
@@ -286,13 +280,6 @@ export class OmniSharpServer {
 
             return this._doConnect();
         }).then(() => {
-            return vscode.commands.getCommands()
-                .then(commands => {
-                    if (commands.find(c => c === 'vscode.startDebug')) {
-                        this._isDebugEnable = true;
-                    }
-                });
-        }).then(() => {
             // Start telemetry reporting
             this._telemetryIntervalId = setInterval(() => this._reportTelemetry(), TelemetryReportingDelay);
         }).then(() => {
@@ -367,11 +354,11 @@ export class OmniSharpServer {
     public autoStart(preferredPath: string): Thenable<void> {
         return findLaunchTargets().then(launchTargets => {
             // If there aren't any potential launch targets, we create file watcher and try to
-            // start the server again once a *.sln, *.csproj, project.json or CSX file is created.
+            // start the server again once a *.sln, *.csproj, project.json, CSX or Cake file is created.
             if (launchTargets.length === 0) {
                 return new Promise<void>((resolve, reject) => {
                     // 1st watch for files
-                    let watcher = vscode.workspace.createFileSystemWatcher('{**/*.sln,**/*.csproj,**/project.json,**/*.csx}',
+                    let watcher = vscode.workspace.createFileSystemWatcher('{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
                         /*ignoreCreateEvents*/ false,
                         /*ignoreChangeEvents*/ true,
                         /*ignoreDeleteEvents*/ true);
@@ -496,6 +483,8 @@ export class OmniSharpServer {
     }
 
     private _onLineReceived(line: string) {
+        line = line.trim();
+
         if (line[0] !== '{') {
             this._logger.appendLine(line);
             return;
