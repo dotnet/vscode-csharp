@@ -5,24 +5,42 @@
 
 ## 1.13.0 _(Not Yet Released)_
 
+#### Cake
+
+* Added support for *.cake files! (PRs: [#1681](https://github.com/OmniSharp/omnisharp-vscode/pull/1681), [omnisharp-roslyn#932](https://github.com/OmniSharp/omnisharp-roslyn/pull/932)) _(Contributed by [@mholo65](https://github.com/mholo65))_
+
 #### Debugger
 
 * Improved logic for resolving breakpoints in local functions and lambdas ([#1678](https://github.com/OmniSharp/omnisharp-vscode/issues/1678))
 
+#### Editor
+
+* Improved completion list behavior when matching substrings. (PRs: [#1813](https://github.com/OmniSharp/omnisharp-vscode/pull/1813), [omnisharp-roslyn#990](https://github.com/OmniSharp/omnisharp-roslyn/pull/990)) _(Contributed by [@filipw](https://github.com/filipw))_
+* Completion list now triggers on SPACE after `new`. ([#146](https://github.com/OmniSharp/omnisharp-vscode/issues/146), PR: [#1776](https://github.com/OmniSharp/omnisharp-vscode/pull/1776), [omnisharp-roslyn#975](https://github.com/OmniSharp/omnisharp-roslyn/pull/975))
+
 #### Navigation
 
 * Fixed issue with Go to Definition where it was not possible to navigate to a  definition within the same file if the file was generated from metadata. (PR: [#1772](https://github.com/OmniSharp/omnisharp-vscode/pull/1772)) _(Contributed by [@filipw](https://github.com/filipw))_
+* Improved symbol search behavior when matching substrings. (PR: [omnisharp-roslyn#990](https://github.com/OmniSharp/omnisharp-roslyn/pull/990)) _(Contributed by [@filipw](https://github.com/filipw))_
 
 #### Project System
 
+* Significantly changed how MSBuild is located by OmniSharp, resulting in more project types loading properly. (PR: [omnisharp-roslyn#988](https://github.com/OmniSharp/omnisharp-roslyn/pull/988))
 * Fixed bug where `LangVersion` property was not read correctly from project file, blocking C# 7.1 development. ([omnisharp-roslyn#961](https://github.com/OmniSharp/omnisharp-roslyn/issues/961), PR: [omnisharp-roslyn#962](https://github.com/OmniSharp/omnisharp-roslyn/pull/962)]) _(Contributed by [@filipw](https://github.com/filipw))_
 * Fixed issue where signing key was not read correctly from project file, which can result in InternalsVisibleTo not being handled properly. (PR: [omnisharp-roslyn#964](https://github.com/OmniSharp/omnisharp-roslyn/pull/964))
+* Fixed long-standing problem with renaming files. ([#785](https://github.com/OmniSharp/omnisharp-vscode/issues/785), [#1792](https://github.com/OmniSharp/omnisharp-vscode/issues/1792), PR: [#1805](https://github.com/OmniSharp/omnisharp-vscode/pull/1805))
 
 #### Testing
 
 * Fix error that occurs when running or debugging tests with latest xUnit 2.3.0 builds. ([#1733](https://github.com/OmniSharp/omnisharp-vscode/issues/1733), [omnisharp-rolsyn#944](https://github.com/OmniSharp/omnisharp-roslyn/issues/944), PR: [omnisharp-roslyn#945](https://github.com/OmniSharp/omnisharp-roslyn/pull/945), [#1749](https://github.com/OmniSharp/omnisharp-vscode/pull/1749))
 * Fix issue causing NUnit tests not to work when running or debugging tests. ([#1615](https://github.com/OmniSharp/omnisharp-vscode/issues/1635), PR: [#1760](https://github.com/OmniSharp/omnisharp-vscode/pull/1760)). _(Contributed by [@dgileadi](https://github.com/dgileadi))_
 * Pass `--no-restore` when invoking `dotnet build` to ensure that implicit restore does not run, making the build and the test run a bit faster. ([omnisharp-roslyn##942](https://github.com/OmniSharp/omnisharp-roslyn/issues/942), PR: [omnisharp-roslyn#945](https://github.com/OmniSharp/omnisharp-roslyn/pull/945))
+
+#### Other Updates and Fixes
+
+* If Mono 5.2.0 or greater is installed, OmniSharp will be launched on that rather than the local Mono runtime that it carries with it. This allows, more Mono and Xamarin projects to load properly and improves OmniSharp performance (since it can run on Mono AOT'd binaries). ([#1779](https://github.com/OmniSharp/omnisharp-vscode/issues/1779), PR: [#1789](https://github.com/OmniSharp/omnisharp-vscode/pull/1789))
+* Support added for launching OmniSharp on folders and solutions across multi-root workspaces. ([#1762](https://github.com/OmniSharp/omnisharp-vscode/issues/1762), PR: [#1806](https://github.com/OmniSharp/omnisharp-vscode/pull/1806))
+* Added `csharp.referencesCodeLens.enabled` and `csharp.testsCodeLens.enabled` options to allow disabling/enabling for the 'references' and 'run/debug test' code lenses independently. ([#1570](https://github.com/OmniSharp/omnisharp-vscode/issues/1570), [#1807](https://github.com/OmniSharp/omnisharp-vscode/issues/1807), PRs: [#1781](https://github.com/OmniSharp/omnisharp-vscode/pull/1781), [#1809](https://github.com/OmniSharp/omnisharp-vscode/pull/1809))
 
 ## 1.12.1 (August 14, 2017)
 
