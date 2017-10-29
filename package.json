@@ -27,6 +27,9 @@
     "compile": "tsc -p ./ && gulp tslint",
     "watch": "tsc -watch -p ./",
     "test": "node ./node_modules/vscode/bin/test",
+    "test_singleCsproj": "cross-env CODE_TESTS_WORKSPACE=./testAssets/singleCsproj npm run integrationTests",
+    "test_singleProjectJson": "cross-env CODE_TESTS_WORKSPACE=./testAssets/singleProjectJson npm run integrationTests",
+    "integrationTests": "node ./node_modules/vscode/bin/test",
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
@@ -57,6 +60,7 @@
     "chai": "^3.5.0",
     "chai-arrays": "^2.0.0",
     "chai-fs": "^1.0.0",
+    "cross-env": "^5.1.1",
     "del": "^2.0.2",
     "gulp": "^3.9.1",
     "gulp-mocha": "^2.1.3",

@@ -31,6 +31,22 @@
             "outFiles": [
                 "${workspaceRoot}/out/test/**/*.js"
             ]
+        },
+        {
+            "name": "Launch singleProjectJson Workspace Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "${workspaceRoot}/testAssets/singleProjectJson",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test"
+            ],
+            "stopOnEntry": false,
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/out/test/**/*.js"
+            ]
         }
     ]
 }
