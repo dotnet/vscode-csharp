@@ -320,30 +320,44 @@ function getOperations(generator: AssetGenerator) {
         getLaunchOperations(generator.launchJsonPath, operations));
 }
 
+/**
+ * Will return old (version=0.1.0) or new (version=2.0.0) tasks. If there are any of them, do not 
+ * write over the tasks.json.
+ */
 function getBuildTasks(tasksConfiguration: tasks.TaskConfiguration): tasks.TaskDescription[] {
     let result: tasks.TaskDescription[] = [];
 
-    function findBuildTask(tasksDescriptions: tasks.TaskDescription[]) {
-        if (tasksDescriptions) {
-            const buildTask = tasksDescriptions.find(td => td.group === 'build');
-            if (buildTask !== undefined) {
-                result.push(buildTask);
-            }
+    const tasksV1: string = "0.1.0";
+    const tasksV2: string = "2.0.0";
+
+    function findBuildTask(version: string, tasksDescriptions: tasks.TaskDescription[]) {
+        let buildTask = undefined;
+        // Find the old tasks
+        if (version === tasksV1 && tasksDescriptions) {
+            buildTask = tasksDescriptions.find(td => td.isBuildCommand);
+        }
+        // Find the new tasks
+        else if (version === tasksV2 && tasksDescriptions) {
+            buildTask = tasksDescriptions.find(td => td.group === 'build');
+        }
+
+        if (buildTask !== undefined) {
+            result.push(buildTask);
         }
     }
 
-    findBuildTask(tasksConfiguration.tasks);
+    findBuildTask(tasksConfiguration.version, tasksConfiguration.tasks);
 
     if (tasksConfiguration.windows) {
-        findBuildTask(tasksConfiguration.windows.tasks);
+        findBuildTask(tasksConfiguration.version, tasksConfiguration.windows.tasks);
     }
 
     if (tasksConfiguration.osx) {
-        findBuildTask(tasksConfiguration.osx.tasks);
+        findBuildTask(tasksConfiguration.version, tasksConfiguration.osx.tasks);
     }
 
     if (tasksConfiguration.linux) {
-        findBuildTask(tasksConfiguration.linux.tasks);
+        findBuildTask(tasksConfiguration.version, tasksConfiguration.linux.tasks);
     }
 
     return result;

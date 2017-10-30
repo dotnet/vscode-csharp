@@ -10,6 +10,7 @@ import { parse } from 'jsonc-parser';
 import { OmniSharpServer } from './omnisharp/server';
 import * as serverUtils from './omnisharp/utils';
 import { AssetGenerator, addTasksJsonIfNecessary, createLaunchConfiguration, createAttachConfiguration, containsDotNetCoreProjects, createWebLaunchConfiguration } from './assets';
+import { isSubfolderOf } from './common';
 
 export class CSharpConfigurationProvider implements vscode.DebugConfigurationProvider {
     private server: OmniSharpServer;
@@ -26,14 +27,25 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
      */
     private checkWorkspaceInformationMatchesWorkspaceFolder(folder: vscode.WorkspaceFolder | undefined): boolean {
         const solutionPathOrFolder: string = this.server.getSolutionPathOrFolder();
-        let serverFolder = solutionPathOrFolder;
 
+        // Make sure folder, folder.uri, and solutionPathOrFolder are defined.
+        if (!folder || !folder.uri || !solutionPathOrFolder)
+        {
+            return false;
+        }
+
+        let serverFolder = solutionPathOrFolder;
         // If its a .sln file, get the folder of the solution.
         if (fs.lstatSync(solutionPathOrFolder).isFile())
         {
             serverFolder = path.dirname(solutionPathOrFolder);
         }
-        return folder && folder.uri && (folder.uri.fsPath === serverFolder);
+
+        // Get absolute paths of current folder and server folder.
+        const currentFolder = path.resolve(folder.uri.fsPath);
+        serverFolder = path.resolve(serverFolder);
+
+        return currentFolder && folder.uri && isSubfolderOf(serverFolder, currentFolder);
     }
 
     /**

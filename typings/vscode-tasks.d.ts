@@ -147,6 +147,11 @@ declare module "vscode-tasks" {
         args?: string[];
 
         /**
+         * Tasks V1 isBuildCommand is used to detect if the tasks is in a build group.
+         */
+        isBuildCommand?: boolean;
+
+        /**
          * Defines the group to which this tasks belongs
          */
         group?: "build" | "string";
