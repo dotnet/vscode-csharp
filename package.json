@@ -26,9 +26,10 @@
     "vscode:prepublish": "tsc -p ./",
     "compile": "tsc -p ./ && gulp tslint",
     "watch": "tsc -watch -p ./",
-    "test": "node ./node_modules/vscode/bin/test",
+    "test": "npm run test_singleCsproj && npm run test_slnWithCsproj && npm run test_singleProjectJson",
     "test_singleCsproj": "cross-env CODE_TESTS_WORKSPACE=./testAssets/singleCsproj npm run integrationTests",
     "test_singleProjectJson": "cross-env CODE_TESTS_WORKSPACE=./testAssets/singleProjectJson npm run integrationTests",
+    "test_slnWithCsproj": "cross-env CODE_TESTS_WORKSPACE=./testAssets/slnWithCsproj npm run integrationTests",
     "integrationTests": "node ./node_modules/vscode/bin/test",
     "postinstall": "node ./node_modules/vscode/bin/install"
   },

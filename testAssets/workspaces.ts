@@ -2,11 +2,21 @@ import * as fs from 'async-file';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-let workspace: IWorkspace = {
-    projects: [{
-        relativePath: ""
-    }]
-};
+import singleCsproj from './singleCsproj';
+import singleProjectJson from './singleProjectJson';
+import slnWithCsproj from './slnWithCsproj';
+
+const workspaces: { [x: string]: IWorkspace } = {
+    singleCsproj,
+    singleProjectJson,
+    slnWithCsproj
+}
+
+let workspaceName = vscode.workspace.rootPath
+    .split(path.sep)
+    .pop();
+
+let workspace = workspaces[workspaceName];
 
 export class Project {
     constructor(project: IProject) {
