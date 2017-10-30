@@ -8,6 +8,7 @@ import * as serverUtils from './omnisharp/utils';
 import * as vscode from './vscodeAdapter';
 
 import { OmniSharpServer } from './omnisharp/server';
+import { TaskRevealKind } from 'vscode';
 
 let taskProvider: vscode.Disposable | undefined;
 
@@ -41,9 +42,33 @@ async function provideDotnetTasks(server: OmniSharpServer): Promise<vscode.Task[
 	return serverUtils.requestWorkspaceInformation(server).then(info => {
 		if (info.MsBuild && info.MsBuild.Projects) {
 			for (let project of info.MsBuild.Projects) {
-				tasks.push(new vscode.Task(
+				let task = new vscode.Task(
 						taskDefinition,
 						`build ${project.AssemblyName}`,
+						'dotnet',
+						new vscode.ShellExecution(
+							`dotnet build ${project.Path}`, {
+								executable: 'dotnet',
+								shellArgs: [`${project.AssemblyName}`]
+							}),
+						'$msCompile'
+					);
+				
+				task.group = vscode.TaskGroup.Build;
+
+				task.presentationOptions = {
+					reveal: TaskRevealKind.Silent
+				};
+
+				tasks.push(task);
+			}
+		}
+
+		if (info.DotNet && info.DotNet.Projects) {
+			for (let project of info.DotNet.Projects) {
+				tasks.push(new vscode.Task(
+						taskDefinition,
+						`build ${project.Path}`,
 						'dotnet',
 						new vscode.ShellExecution(`dotnet build ${project.Path}`),
 						'$msCompile'
