@@ -51,11 +51,9 @@ function forwardFileChanges(server: OmniSharpServer): Disposable {
     const watcher = workspace.createFileSystemWatcher('**/*.*');
     let d1 = watcher.onDidCreate(onFileSystemEvent(FileChangeType.Create));
     let d2 = watcher.onDidDelete(onFileSystemEvent(FileChangeType.Delete));
+    let d3 = watcher.onDidChange(onFileSystemEvent(FileChangeType.Change));
 
-    // In theory we don't need to subscribe to "change" notifications
-    // because we already get them through the buffer update request
-
-    return Disposable.from(watcher, d1, d2);
+    return Disposable.from(watcher, d1, d2, d3);
 }
 
 export default function forwardChanges(server: OmniSharpServer): Disposable {
