@@ -20,6 +20,11 @@ suite(`Tasks generation: ${workspaceData.name}`, () => {
     suiteSetup(async () => {
         should();
 
+        let csharpExtension = vscode.extensions.getExtension("ms-vscode.csharp");
+        if (!csharpExtension.isActive) {
+            await csharpExtension.activate();
+        }
+
         await vscode.commands.executeCommand('workbench.action.tasks.showTasks');
 
         tasks = await getRegisteredTaskProvider()
