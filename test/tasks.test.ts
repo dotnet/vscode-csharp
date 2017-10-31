@@ -20,6 +20,8 @@ suite(`Tasks generation: ${workspaceData.name}`, () => {
     suiteSetup(async () => {
         should();
 
+        await vscode.commands.executeCommand('workbench.action.tasks.showTasks');
+
         tasks = await getRegisteredTaskProvider()
             .provider
             .provideTasks();
