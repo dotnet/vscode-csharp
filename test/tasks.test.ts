@@ -25,7 +25,7 @@ suite(`Tasks generation: ${workspaceData.name}`, () => {
             await csharpExtension.activate();
         }
 
-        await vscode.commands.executeCommand('workbench.action.tasks.showTasks');
+        await vscode.commands.executeCommand('workbench.action.tasks.runTask');
 
         tasks = await getRegisteredTaskProvider()
             .provider
