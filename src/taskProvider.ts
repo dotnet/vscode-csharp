@@ -35,52 +35,42 @@ export function deactivate(): void {
 
 async function provideDotnetTasks(server: OmniSharpServer): Promise<vscode.Task[]> {
 	let tasks: vscode.Task[] = [];
-	let taskDefinition: vscode.TaskDefinition = {
+	
+	let workspaceInformation = await serverUtils.requestWorkspaceInformation(server);
+	
+	if (workspaceInformation.MsBuild && workspaceInformation.MsBuild.Projects) {
+		for (let project of workspaceInformation.MsBuild.Projects) {
+			tasks.push(provideBuildTask(project.AssemblyName, project.Path));
+		}
+	}
+
+	if (workspaceInformation.DotNet && workspaceInformation.DotNet.Projects) {
+		for (let project of workspaceInformation.DotNet.Projects) {
+			tasks.push(provideBuildTask(project.Path, project.Path));
+		}
+	}
+	
+	return tasks;
+}
+
+function provideBuildTask(projectIdentifier: string, projectPath: string): vscode.Task {
+	const taskDefinition: vscode.TaskDefinition = {
 		type: "dotnet"
 	};
 	
-	return serverUtils.requestWorkspaceInformation(server).then(info => {
-		if (info.MsBuild && info.MsBuild.Projects) {
-			for (let project of info.MsBuild.Projects) {
-				let task = new vscode.Task(
-						taskDefinition,
-						`build ${project.AssemblyName}`,
-						'dotnet',
-						new vscode.ShellExecution(
-							`dotnet build ${project.Path}`, {
-								executable: 'dotnet',
-								shellArgs: [`${project.AssemblyName}`]
-							}),
-						'$msCompile'
-					);
-				
-				task.group = vscode.TaskGroup.Build;
+	let task = new vscode.Task(
+		taskDefinition,
+		`build ${projectIdentifier}`,
+		'dotnet',
+		new vscode.ShellExecution(`dotnet build ${projectPath}`),
+		'$msCompile'
+	);
+	
+	task.group = vscode.TaskGroup.Build;
 
-				task.presentationOptions = {
-					reveal: TaskRevealKind.Silent
-				};
+	task.presentationOptions = {
+		reveal: TaskRevealKind.Silent
+	};
 
-				tasks.push(task);
-			}
-		}
-
-		if (info.DotNet && info.DotNet.Projects) {
-			for (let project of info.DotNet.Projects) {
-				tasks.push(new vscode.Task(
-						taskDefinition,
-						`build ${project.Path}`,
-						'dotnet',
-						new vscode.ShellExecution(`dotnet build ${project.Path}`),
-						'$msCompile'
-					)
-				);
-			}
-		}
-		
-		return tasks;
-	}).catch(r =>{
-		console.log(r);
-		
-		return tasks;
-	});
+	return task;
 }
