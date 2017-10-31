@@ -10,14 +10,12 @@ import * as vscode from './vscodeAdapter';
 import { OmniSharpServer } from './omnisharp/server';
 import { TaskRevealKind } from 'vscode';
 
-let taskProvider: vscode.Disposable | undefined;
-
-export function activate(_context: vscode.ExtensionContext, server: OmniSharpServer): void {
+export function activate(_context: vscode.ExtensionContext, server: OmniSharpServer): vscode.Disposable {
 	if (!vscode.workspace.workspaceFolders) {
-		return;
+		return new vscode.Disposable(() => {});
 	}
 
-	taskProvider = vscode.workspace.registerTaskProvider('dotnet', {
+	return vscode.workspace.registerTaskProvider('dotnet', {
 		provideTasks: () => {
 			return provideDotnetTasks(server);
 		},
@@ -25,12 +23,6 @@ export function activate(_context: vscode.ExtensionContext, server: OmniSharpSer
 			return undefined;
 		}
 	});
-}
-
-export function deactivate(): void {
-	if (taskProvider) {
-		taskProvider.dispose();
-	}
 }
 
 async function provideDotnetTasks(server: OmniSharpServer): Promise<vscode.Task[]> {

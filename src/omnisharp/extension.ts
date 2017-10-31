@@ -82,8 +82,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         localDisposables.push(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
         localDisposables.push(reportDiagnostics(server, reporter, advisor));
         localDisposables.push(forwardChanges(server));
-
-        taskProvider.activate(context, server);
+        localDisposables.push(taskProvider.activate(context, server));
     }));
 
     disposables.push(server.onServerStop(() => {
