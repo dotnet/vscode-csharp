@@ -7,8 +7,6 @@ export interface IRegisteredTaskProvider {
     provider: vscode.TaskProvider;
 }
 
-let registeredTaskProvider: IRegisteredTaskProvider;
-
 class workspaceAdapter {
     get workspaceFolders(): vscode.WorkspaceFolder[] {
         return vscode.workspace.workspaceFolders;
@@ -34,7 +32,31 @@ class workspaceAdapter {
 
 export const workspace = new workspaceAdapter();
 
-export function getRegisteredTaskProvider() {
-    return registeredTaskProvider;
+let registeredTaskProvider: IRegisteredTaskProvider;
+
+
+function setRegisteredTaskProvider(taskProvider: IRegisteredTaskProvider): void {
+    registeredTaskProvider = taskProvider;
 }
 
+function sleep(ms = 0) {
+    return new Promise(r => setTimeout(r, ms));
+}
+
+export async function getRegisteredTaskProvider(timeout: number = 1000): Promise<IRegisteredTaskProvider> {
+    return poll(() => !!registeredTaskProvider, () => registeredTaskProvider, timeout, 100);
+}
+
+export async function poll<T>(condition: () => boolean, value: () => T, duration: number, step: number): Promise<T> {
+    while (duration > 0) {
+        if (condition()) {
+            return value();
+        }
+
+        await sleep(step);
+
+        duration -= step;
+    }
+
+    throw new Error("Polling did not succeed within the alotted duration.");
+}
