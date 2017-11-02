@@ -18,6 +18,7 @@ suite(`Tasks generation: ${workspaceData.name}`, () => {
     let buildTasks: vscode.Task[];
     
     suiteSetup(async () => {
+        this.setTimeout(60000);
         should();
 console.log(vscode.workspace.rootPath);
 for (var file of await vscode.workspace.findFiles("**/*.*")) {
@@ -27,7 +28,8 @@ for (var file of await vscode.workspace.findFiles("**/*.*")) {
         if (!csharpExtension.isActive) {
             await csharpExtension.activate();
         }
-
+console.log(JSON.stringify(csharpExtension));
+console.log("Is the extension active?");
         await vscode.commands.executeCommand('workbench.action.tasks.runTask'); 
 
         let registeredTaskProvider = await getRegisteredTaskProvider(30000);
