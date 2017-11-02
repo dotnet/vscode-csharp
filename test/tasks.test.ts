@@ -13,12 +13,12 @@ const chai = require('chai');
 chai.use(require('chai-arrays'));
 chai.use(require('chai-fs'));
 
-suite(`Tasks generation: ${workspaceData.name}`, () => {
+suite(`Tasks generation: ${workspaceData.name}`, function() {
     let tasks: vscode.Task[];
     let buildTasks: vscode.Task[];
     
-    suiteSetup(async () => {
-        this.setTimeout(60000);
+    suiteSetup(async function() {
+        this.timeout(60000);
         should();
 console.log(vscode.workspace.rootPath);
 for (var file of await vscode.workspace.findFiles("**/*.*")) {
@@ -28,7 +28,8 @@ for (var file of await vscode.workspace.findFiles("**/*.*")) {
         if (!csharpExtension.isActive) {
             await csharpExtension.activate();
         }
-console.log(JSON.stringify(csharpExtension));
+console.log(csharpExtension.extensionPath);
+console.log(csharpExtension.isActive);
 console.log("Is the extension active?");
         await vscode.commands.executeCommand('workbench.action.tasks.runTask'); 
 
