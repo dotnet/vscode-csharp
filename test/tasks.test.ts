@@ -31,7 +31,6 @@ for (var file of await vscode.workspace.findFiles("**/*.*")) {
 console.log(csharpExtension.extensionPath);
 console.log(csharpExtension.isActive);
 console.log("Is the extension active?");
-        await vscode.commands.executeCommand('workbench.action.tasks.runTask'); 
 
         let registeredTaskProvider = await getRegisteredTaskProvider(30000);
 
