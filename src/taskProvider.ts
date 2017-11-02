@@ -5,7 +5,7 @@
 'use strict';
 
 import * as serverUtils from './omnisharp/utils';
-import * as vscode from './vscodeAdapter';
+import * as vscode from './vscodeTasksAdapter';
 
 import { OmniSharpServer } from './omnisharp/server';
 import { TaskRevealKind } from 'vscode';

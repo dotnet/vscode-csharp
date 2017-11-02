@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 
-import { getRegisteredTaskProvider } from '../src/vscodeAdapter';
+import { getRegisteredTaskProvider } from '../src/vscodeTasksAdapter';
 import { should } from 'chai';
 import workspaceData from '../testAssets/workspaces';
 
