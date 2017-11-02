@@ -55,28 +55,29 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
     provideDebugConfigurations(folder: vscode.WorkspaceFolder | undefined, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration[]> {
         return serverUtils.requestWorkspaceInformation(this.server).then(info => {
             const generator = new AssetGenerator(info);
-            if (this.checkWorkspaceInformationMatchesWorkspaceFolder(folder) && containsDotNetCoreProjects(info)){
+            if (this.checkWorkspaceInformationMatchesWorkspaceFolder(folder) && containsDotNetCoreProjects(info)) {
                 const dotVscodeFolder: string = path.join(folder.uri.fsPath, '.vscode');
                 const tasksJsonPath: string = path.join(dotVscodeFolder, 'tasks.json');
                 
                 // Make sure .vscode folder exists, addTasksJsonIfNecessary will fail to create tasks.json if the folder does not exist. 
-                fs.ensureDirSync(dotVscodeFolder);
-    
-                // if the file does not exist, addTasksJson
-                const addTasksJson: boolean = !fs.existsSync(tasksJsonPath);
-    
-                return addTasksJsonIfNecessary(generator, {addTasksJson: addTasksJson}).then(() => {
+                return fs.ensureDir(dotVscodeFolder).then(() => {
+                    // Check to see if tasks.json exists.
+                    return fs.pathExists(tasksJsonPath);
+                }).then(tasksJsonExists => {
+                    // Enable addTasksJson if it does not exist.
+                    return addTasksJsonIfNecessary(generator, {addTasksJson: !tasksJsonExists});
+                }).then(() => {
                     const isWebProject = generator.hasWebServerDependency();
                     const launchJson: string = generator.createLaunchJson(isWebProject);
-    
+
                     // jsonc-parser's parse function parses a JSON string with comments into a JSON object. However, this removes the comments. 
                     return parse(launchJson);
                 });
             }
-            else {
-                // Error to be caught in the .catch() below to write default C# configurations
-                throw new Error("Does not contain .NET Core projects.");
-            }
+
+            // Error to be caught in the .catch() below to write default C# configurations
+            throw new Error("Does not contain .NET Core projects.");
+
         }).catch((err) => {
             // Provider will always create an launch.json file. Providing default C# configurations.
             // jsonc-parser's parse to convert to JSON object without comments. 

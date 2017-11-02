@@ -30,7 +30,7 @@
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
-    "fs-extra": "^1.0.0",
+    "fs-extra": "^4.0.2",
     "http-proxy-agent": "^1.0.0",
     "https-proxy-agent": "^1.0.0",
     "jsonc-parser": "^0.3.0",
@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@types/chai": "^3.4.34",
-    "@types/fs-extra": "0.0.35",
+    "@types/fs-extra": "4.0.3",
     "@types/mkdirp": "^0.3.29",
     "@types/mocha": "^2.2.32",
     "@types/node": "^6.0.40",
