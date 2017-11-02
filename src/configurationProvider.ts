@@ -9,7 +9,8 @@ import * as path from 'path';
 import { parse } from 'jsonc-parser';
 import { OmniSharpServer } from './omnisharp/server';
 import * as serverUtils from './omnisharp/utils';
-import { AssetGenerator, addTasksJsonIfNecessary, createLaunchConfiguration, createAttachConfiguration, containsDotNetCoreProjects, createWebLaunchConfiguration } from './assets';
+import { containsDotNetCoreProjects } from './omnisharp/protocol';
+import { AssetGenerator, addTasksJsonIfNecessary, createLaunchConfiguration, createAttachConfiguration, createWebLaunchConfiguration } from './assets';
 import { isSubfolderOf } from './common';
 
 export class CSharpConfigurationProvider implements vscode.DebugConfigurationProvider {
@@ -73,8 +74,8 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
                 });
             }
             else {
-                // Error to write default C# configurations.
-                throw new Error("Does not contain dotnet core projects.");
+                // Error to be caught in the .catch() below to write default C# configurations
+                throw new Error("Does not contain .NET Core projects.");
             }
         }).catch((err) => {
             // Provider will always create an launch.json file. Providing default C# configurations.

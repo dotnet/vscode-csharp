@@ -46,7 +46,7 @@ export class AssetGenerator {
 
         // First, we'll check for .NET Core .csproj projects.
         if (workspaceInfo.MsBuild && workspaceInfo.MsBuild.Projects) {
-            const executableMSBuildProjects = findExecutableMSBuildProjects(workspaceInfo.MsBuild.Projects);
+            const executableMSBuildProjects = protocol.findExecutableMSBuildProjects(workspaceInfo.MsBuild.Projects);
 
             const targetMSBuildProject = executableMSBuildProjects.length > 0
                 ? executableMSBuildProjects[0]
@@ -64,7 +64,7 @@ export class AssetGenerator {
         }
 
         // Next, we'll try looking for project.json projects.
-        const executableProjects = findExecutableProjectJsonProjects(workspaceInfo.DotNet.Projects, configurationName);
+        const executableProjects = protocol.findExecutableProjectJsonProjects(workspaceInfo.DotNet.Projects, configurationName);
 
         // TODO: We arbitrarily pick the first executable project that we find. This will need
         // revisiting when we project a "start up project" selector.
@@ -202,36 +202,36 @@ export class AssetGenerator {
 export function createWebLaunchConfiguration(programPath: string, workingDirectory: string): string {
     return `
 {
-"name": ".NET Core Launch (web)",
-"type": "coreclr",
-"request": "launch",
-"preLaunchTask": "build",
-// If you have changed target frameworks, make sure to update the program path.
-"program": "${util.convertNativePathToPosix(programPath)}",
-"args": [],
-"cwd": "${util.convertNativePathToPosix(workingDirectory)}",
-"stopAtEntry": false,
-"internalConsoleOptions": "openOnSessionStart",
-"launchBrowser": {
-    "enabled": true,
-    "args": "\${auto-detect-url}",
-    "windows": {
-        "command": "cmd.exe",
-        "args": "/C start \${auto-detect-url}"
+    "name": ".NET Core Launch (web)",
+    "type": "coreclr",
+    "request": "launch",
+    "preLaunchTask": "build",
+    // If you have changed target frameworks, make sure to update the program path.
+    "program": "${util.convertNativePathToPosix(programPath)}",
+    "args": [],
+    "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
+    "stopAtEntry": false,
+    "internalConsoleOptions": "openOnSessionStart",
+    "launchBrowser": {
+        "enabled": true,
+        "args": "\${auto-detect-url}",
+        "windows": {
+            "command": "cmd.exe",
+            "args": "/C start \${auto-detect-url}"
+        },
+        "osx": {
+            "command": "open"
+        },
+        "linux": {
+            "command": "xdg-open"
+        }
     },
-    "osx": {
-        "command": "open"
+    "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
     },
-    "linux": {
-        "command": "xdg-open"
+    "sourceFileMap": {
+        "/Views": "\${workspaceFolder}/Views"
     }
-},
-"env": {
-    "ASPNETCORE_ENVIRONMENT": "Development"
-},
-"sourceFileMap": {
-    "/Views": "\${workspaceFolder}/Views"
-}
 }`;
 }
 
@@ -263,47 +263,6 @@ export function createAttachConfiguration(): string {
     "processId": "\${command:pickProcess}"
 }`;
 }
-
-function findExecutableMSBuildProjects(projects: protocol.MSBuildProject[]) {
-    let result: protocol.MSBuildProject[] = [];
-
-    projects.forEach(project => {
-        if (project.IsExe && protocol.findNetCoreAppTargetFramework(project) !== undefined) {
-            result.push(project);
-        }
-    });
-
-    return result;
-}
-
-function findExecutableProjectJsonProjects(projects: protocol.DotNetProject[], configurationName: string) {
-    let result: protocol.DotNetProject[] = [];
-
-    projects.forEach(project => {
-        project.Configurations.forEach(configuration => {
-            if (configuration.Name === configurationName && configuration.EmitEntryPoint === true) {
-                if (project.Frameworks.length > 0) {
-                    result.push(project);
-                }
-            }
-        });
-    });
-
-    return result;
-}
-
-export function containsDotNetCoreProjects(workspaceInfo: protocol.WorkspaceInformationResponse) {
-    if (workspaceInfo.DotNet && findExecutableProjectJsonProjects(workspaceInfo.DotNet.Projects, 'Debug').length > 0) {
-        return true;
-    }
-
-    if (workspaceInfo.MsBuild && findExecutableMSBuildProjects(workspaceInfo.MsBuild.Projects).length > 0) {
-        return true;
-    }
-
-    return false;
-}
-
 
 interface Operations {
     addTasksJson?: boolean;
@@ -510,7 +469,7 @@ export function addAssetsIfNecessary(server: OmniSharpServer): Promise<AddAssetR
 
         serverUtils.requestWorkspaceInformation(server).then(info => {
             // If there are no .NET Core projects, we won't bother offering to add assets.
-            if (containsDotNetCoreProjects(info)) {
+            if (protocol.containsDotNetCoreProjects(info)) {
                 const generator = new AssetGenerator(info);
                 return getOperations(generator).then(operations => {
                     if (!hasAddOperations(operations)) {
@@ -589,7 +548,7 @@ function shouldGenerateAssets(generator: AssetGenerator) {
 
 export function generateAssets(server: OmniSharpServer) {
     serverUtils.requestWorkspaceInformation(server).then(info => {
-        if (containsDotNetCoreProjects(info)) {
+        if (protocol.containsDotNetCoreProjects(info)) {
             const generator = new AssetGenerator(info);
             getOperations(generator).then(operations => {
                 if (hasAddOperations(operations)) {

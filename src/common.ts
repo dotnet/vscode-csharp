@@ -177,7 +177,12 @@ export function convertNativePathToPosix(pathString: string): string {
  * @param subfolder subfolder to check if it is part of the folder parameter
  * @param folder folder to check aganist
  */
-export function isSubfolderOf(subfolder: string, folder:string): boolean {
+export function isSubfolderOf(subfolder: string, folder: string): boolean {
+    if (os.platform() !== 'win32')
+    {
+        
+    }
+
     const subfolderArray: string[] = subfolder.split(path.sep);
     const folderArray: string[] = folder.split(path.sep);
 
