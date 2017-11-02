@@ -20,17 +20,11 @@ suite(`Tasks generation: ${workspaceData.name}`, function() {
     suiteSetup(async function() {
         this.timeout(60000);
         should();
-console.log(vscode.workspace.rootPath);
-for (var file of await vscode.workspace.findFiles("**/*.*")) {
-    console.log(file.fsPath);
-}
+        
         let csharpExtension = vscode.extensions.getExtension("ms-vscode.csharp");
         if (!csharpExtension.isActive) {
             await csharpExtension.activate();
         }
-console.log(csharpExtension.extensionPath);
-console.log(csharpExtension.isActive);
-console.log("Is the extension active?");
 
         let registeredTaskProvider = await getRegisteredTaskProvider(30000);
 
