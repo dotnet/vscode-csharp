@@ -7,7 +7,7 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "${workspaceRoot}/testAssets/slnWithCsproj", 
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj", 
                 "--extensionDevelopmentPath=${workspaceRoot}"
             ],
             "stopOnEntry": false,
