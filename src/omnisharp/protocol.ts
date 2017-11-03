@@ -256,6 +256,7 @@ export interface AutoCompleteRequest extends Request {
     WantSnippet?: boolean;
     WantReturnType?: boolean;
     WantKind?: boolean;
+    TriggerCharacter?: string;
 }
 
 export interface AutoCompleteResponse {
@@ -416,6 +417,17 @@ export interface UnresolvedDependenciesMessage {
 export interface PackageDependency {
     Name: string;
     Version: string;
+}
+    
+export interface FilesChangedRequest extends Request{
+    ChangeType: FileChangeType;
+}
+
+export enum FileChangeType
+{
+    Change = "Change",
+    Create = "Create",
+    Delete = "Delete"
 }
 
 export namespace V2 {

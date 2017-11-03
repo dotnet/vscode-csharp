@@ -67,7 +67,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
             localDisposables.push(vscode.languages.registerDocumentRangeFormattingEditProvider(documentSelector, new FormatProvider(server, reporter)));
             localDisposables.push(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new FormatProvider(server, reporter), '}', ';'));
         }
-        localDisposables.push(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionItemProvider(server, reporter), '.'));
+        localDisposables.push(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionItemProvider(server, reporter), '.', ' '));
         localDisposables.push(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server, reporter)));
         localDisposables.push(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server, reporter), '(', ','));
         const codeActionProvider = new CodeActionProvider(server, reporter);
