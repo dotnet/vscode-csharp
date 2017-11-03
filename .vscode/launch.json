@@ -22,9 +22,9 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "${workspaceRoot}/testAssets/singleCsproj",
+                "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test"
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "stopOnEntry": false,
             "sourceMaps": true,
@@ -38,9 +38,9 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "${workspaceRoot}/testAssets/singleProjectJson",
+                "${workspaceRoot}/test/integrationTests/testAssets/singleProjectJson",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test"
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "stopOnEntry": false,
             "sourceMaps": true,
@@ -54,9 +54,9 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "${workspaceRoot}/testAssets/slnWithCsproj",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test"
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "stopOnEntry": false,
             "sourceMaps": true,
@@ -71,7 +71,7 @@
             "runtimeExecutable": "${execPath}",
             "args": [
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test"
+                "--extensionTestsPath=${workspaceRoot}/out/test/unitTests"
             ],
             "stopOnEntry": false,
             "sourceMaps": true,
