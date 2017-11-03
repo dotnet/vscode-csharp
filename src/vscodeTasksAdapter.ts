@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-export {Disposable, ExtensionContext, ShellExecution, Task, TaskDefinition, TaskGroup, WorkspaceFolder} from "vscode";
+export {Disposable, ExtensionContext, ShellExecution, Task, TaskDefinition, TaskGroup, TaskRevealKind, WorkspaceFolder} from "vscode";
 
 export interface ITaskProviderRegistration {
     type: string;

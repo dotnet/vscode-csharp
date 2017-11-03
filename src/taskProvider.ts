@@ -8,7 +8,6 @@ import * as serverUtils from './omnisharp/utils';
 import * as vscode from './vscodeTasksAdapter';
 
 import { OmniSharpServer } from './omnisharp/server';
-import { TaskRevealKind } from 'vscode';
 
 export function activate(_context: vscode.ExtensionContext, server: OmniSharpServer): vscode.Disposable {
     if (!vscode.workspace.workspaceFolders) {
@@ -61,7 +60,7 @@ function provideBuildTask(projectIdentifier: string, projectPath: string): vscod
     task.group = vscode.TaskGroup.Build;
 
     task.presentationOptions = {
-        reveal: TaskRevealKind.Silent
+        reveal: vscode.TaskRevealKind.Silent
     };
 
     return task;
