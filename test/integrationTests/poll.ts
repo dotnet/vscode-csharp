@@ -1,4 +1,9 @@
-export default async function poll<T>(getValue: () => T, duration: number, step: number): Promise<T> {
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+ export default async function poll<T>(getValue: () => T, duration: number, step: number): Promise<T> {
     while (duration > 0) {
         let value = getValue();
 
