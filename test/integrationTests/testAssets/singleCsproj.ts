@@ -1,6 +1,6 @@
-import { IWorkspace } from "./workspaces";
+import { ITestAssetWorkspace } from "./testAssets";
 
-let workspace: IWorkspace = {
+let workspace: ITestAssetWorkspace = {
     description: "single csproj at root of workspace",
     projects: [{
         relativePath: "singleCsproj.csproj"

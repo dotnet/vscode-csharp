@@ -7,13 +7,13 @@ import * as vscode from 'vscode';
 
 import { getRegisteredTaskProvider } from '../../src/vscodeTasksAdapter';
 import { should } from 'chai';
-import workspaceData from './testAssets/workspaces';
+import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
 chai.use(require('chai-fs'));
 
-suite(`Tasks generation: ${workspaceData.description}`, function() {
+suite(`Tasks generation: ${testAssetWorkspace.description}`, function() {
     let tasks: vscode.Task[];
     let buildTasks: vscode.Task[];
 
@@ -37,11 +37,11 @@ suite(`Tasks generation: ${workspaceData.description}`, function() {
 
     test(`a build task should be available for each project`, async () => {
         buildTasks
-             .should.have.length(workspaceData.projects.length);
+             .should.have.length(testAssetWorkspace.projects.length);
     });
 
     test("build tasks should produce non-empty bin and obj directories", async () => {
-        await workspaceData.deleteBuildArtifacts();
+        await testAssetWorkspace.deleteBuildArtifacts();
 
         for (let task of buildTasks) {
             await vscode
@@ -49,7 +49,7 @@ suite(`Tasks generation: ${workspaceData.description}`, function() {
                 .executeCommand('workbench.action.tasks.runTask', task.name);
         }
 
-        workspaceData
+        testAssetWorkspace
             .projects
             .forEach(p => {
                 p.binDirectoryPath.should.exist.and.not.be.empty;
