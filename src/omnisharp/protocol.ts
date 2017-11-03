@@ -638,3 +638,43 @@ export function getDotNetCoreProjectDescriptors(info: WorkspaceInformationRespon
 
     return result;
 }
+
+export function findExecutableMSBuildProjects(projects: MSBuildProject[]) {
+    let result: MSBuildProject[] = [];
+
+    projects.forEach(project => {
+        if (project.IsExe && findNetCoreAppTargetFramework(project) !== undefined) {
+            result.push(project);
+        }
+    });
+
+    return result;
+}
+
+export function findExecutableProjectJsonProjects(projects: DotNetProject[], configurationName: string) {
+    let result: DotNetProject[] = [];
+
+    projects.forEach(project => {
+        project.Configurations.forEach(configuration => {
+            if (configuration.Name === configurationName && configuration.EmitEntryPoint === true) {
+                if (project.Frameworks.length > 0) {
+                    result.push(project);
+                }
+            }
+        });
+    });
+
+    return result;
+}
+
+export function containsDotNetCoreProjects(workspaceInfo: WorkspaceInformationResponse) {
+    if (workspaceInfo.DotNet && findExecutableProjectJsonProjects(workspaceInfo.DotNet.Projects, 'Debug').length > 0) {
+        return true;
+    }
+
+    if (workspaceInfo.MsBuild && findExecutableMSBuildProjects(workspaceInfo.MsBuild.Projects).length > 0) {
+        return true;
+    }
+
+    return false;
+}

@@ -168,3 +168,19 @@ export function convertNativePathToPosix(pathString: string): string {
     let parts = pathString.split(path.sep);
     return parts.join(path.posix.sep);
 }
+
+/**
+ * This function checks to see if a subfolder is part of folder.
+ * 
+ * Assumes subfolder and folder are absolute paths and have consistent casing.
+ * 
+ * @param subfolder subfolder to check if it is part of the folder parameter
+ * @param folder folder to check aganist
+ */
+export function isSubfolderOf(subfolder: string, folder: string): boolean {
+    const subfolderArray: string[] = subfolder.split(path.sep);
+    const folderArray: string[] = folder.split(path.sep);
+
+    // Check to see that every sub directory in subfolder exists in folder.
+    return subfolderArray.length <= folderArray.length && subfolderArray.every((subpath, index) => folderArray[index] === subpath);
+}

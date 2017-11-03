@@ -66,7 +66,7 @@ If your code has multiple projects or you would rather generate these files by h
 	"configurations": [
 		{
 			...
-			"program": "${workspaceRoot}/MyLaunchingProject/bin/Debug/netcoreapp1.0/MyLaunchingProject.dll",
+			"program": "${workspaceFolder}/MyLaunchingProject/bin/Debug/netcoreapp1.0/MyLaunchingProject.dll",
 
 ##### 4: Start debugging
 Your project is now all set. Set a breakpoint or two where you want to stop, click the debugger play button (or press <kbd>F5</kbd>) and you are off.

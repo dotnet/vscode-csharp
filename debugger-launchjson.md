@@ -20,9 +20,9 @@ This will create a task that runs `dotnet build`. You can read more about tasks 
 ## Program
 The program field is set to the path of the application dll or .NET Core host executable to launch.
 
-This property normally takes the form: "${workspaceRoot}/bin/Debug/\<target-framework\>/\<project-name.dll\>".
+This property normally takes the form: "${workspaceFolder}/bin/Debug/\<target-framework\>/\<project-name.dll\>".
 
-Example: `"${workspaceRoot}/bin/Debug/netcoreapp1.1/MyProject.dll"`
+Example: `"${workspaceFolder}/bin/Debug/netcoreapp1.1/MyProject.dll"`
 
 Where:
 
@@ -102,7 +102,7 @@ then add the pipeTransport field folloing this schema:
         "pipeProgram": "ssh",
         "pipeArgs": [ "-T", "ExampleAccount@ExampleTargetComputer" ],
         "debuggerPath": "~/vsdbg/vsdbg",
-        "pipeCwd": "${workspaceRoot}",
+        "pipeCwd": "${workspaceFolder}",
         "quoteArgs": true
     }
 
