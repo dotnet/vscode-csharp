@@ -1,5 +1,5 @@
+import { RemoteAttachPicker } from '../../src/features/processPicker';
 import { should } from 'chai';
-import { RemoteAttachPicker } from '../src/features/processPicker';
 
 suite("Remote Process Picker: Validate quoting arguments.", () => {
     suiteSetup(() => should());

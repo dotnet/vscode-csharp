@@ -22,11 +22,11 @@ export class Project {
     constructor(project: IProject) {
         this.relativePath = project.relativePath;
     }
-    
+
     relativePath: string;
 
     get projectDirectoryPath(): string {
-        return path.resolve(vscode.workspace.workspaceFolders[0].uri.fsPath, 
+        return path.resolve(vscode.workspace.workspaceFolders[0].uri.fsPath,
                             this.relativePath);
     }
 
@@ -50,16 +50,14 @@ export class Workspace {
             w => new Project(w)
         );
 
-        this.name = "single csproj at root of workspace";
-
-        this.workspaceDirectory = "singleCsproj";
+        this.description = workspace.description;
     }
 
     async deleteBuildArtifacts(): Promise<void> {
         this.projects.forEach(async p => await p.deleteBuildArtifacts());
     }
 
-    name: string;
+    description: string;
 
     projects: Project [];
 
@@ -67,6 +65,7 @@ export class Workspace {
 }
 
 export interface IWorkspace {
+    description: string,
     projects: IProject[];
 }
 

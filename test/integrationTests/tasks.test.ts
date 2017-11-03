@@ -5,22 +5,22 @@
 
 import * as vscode from 'vscode';
 
-import { getRegisteredTaskProvider } from '../src/vscodeTasksAdapter';
+import { getRegisteredTaskProvider } from '../../src/vscodeTasksAdapter';
 import { should } from 'chai';
-import workspaceData from '../testAssets/workspaces';
+import workspaceData from './testAssets/workspaces';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
 chai.use(require('chai-fs'));
 
-suite(`Tasks generation: ${workspaceData.name}`, function() {
+suite(`Tasks generation: ${workspaceData.description}`, function() {
     let tasks: vscode.Task[];
     let buildTasks: vscode.Task[];
-    
+
     suiteSetup(async function() {
         this.timeout(60000);
         should();
-        
+
         let csharpExtension = vscode.extensions.getExtension("ms-vscode.csharp");
         if (!csharpExtension.isActive) {
             await csharpExtension.activate();
@@ -39,10 +39,10 @@ suite(`Tasks generation: ${workspaceData.name}`, function() {
         buildTasks
              .should.have.length(workspaceData.projects.length);
     });
-    
-    test("build tasks should produce non-empty bin and obj directories", async () => {        
+
+    test("build tasks should produce non-empty bin and obj directories", async () => {
         await workspaceData.deleteBuildArtifacts();
-        
+
         for (let task of buildTasks) {
             await vscode
                 .commands

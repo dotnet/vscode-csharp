@@ -1,8 +1,9 @@
 import { IWorkspace } from "./workspaces";
 
 let workspace: IWorkspace = {
+    description: "single project.json at root of workspace",
     projects: [{
-        relativePath: "singleCsproj.csproj"
+        relativePath: "project.json"
     }]
 };
 

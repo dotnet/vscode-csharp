@@ -1,6 +1,7 @@
 import { IWorkspace } from "./workspaces";
 
 let workspace: IWorkspace = {
+    description: "sln with several csproj's",
     projects: [{
         relativePath: "src/app/app.csproj"
     },{

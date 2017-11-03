@@ -3,8 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { LinuxDistribution, PlatformInformation } from '../../src/platform';
+
 import { should } from 'chai';
-import { LinuxDistribution, PlatformInformation } from '../src/platform';
 
 suite("Platform", () => {
     suiteSetup(() => should());
