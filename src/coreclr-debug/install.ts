@@ -71,6 +71,28 @@ export class DebugInstaller {
         let manifestString = fs.readFileSync(manifestPath, 'utf8');
         let manifestObject = JSON.parse(manifestString);
 
+        manifestObject.activationEvents = [
+            "onDebug",
+            "onLanguage:csharp",
+            "onCommand:o.restart",
+            "onCommand:o.pickProjectAndStart",
+            "onCommand:o.showOutput",
+            "onCommand:dotnet.restore",
+            "onCommand:dotnet.generateAssets",
+            "onCommand:csharp.downloadDebugger",
+            "onCommand:csharp.listProcess",
+            "onCommand:csharp.listRemoteProcess",
+            "workspaceContains:project.json",
+            "workspaceContains:*.csproj",
+            "workspaceContains:*.sln",
+            "workspaceContains:*.csx",
+            "workspaceContains:*.cake",
+            "workspaceContains:**/*.csproj",
+            "workspaceContains:**/*.sln",
+            "workspaceContains:**/*.csx",
+            "workspaceContains:**/*.cake"
+        ];
+
         // .NET Core
         delete manifestObject.contributes.debuggers[0].runtime;
         delete manifestObject.contributes.debuggers[0].program;

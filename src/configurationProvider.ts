@@ -26,27 +26,31 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
      * Note: serverUtils.requestWorkspaceInformation only retrieves one folder for multi-root workspaces. Therefore, generator will be incorrect for all folders
      * except the first in a workspace. Currently, this only works if the requested folder is the same as the server's solution path or folder.
      */
-    private checkWorkspaceInformationMatchesWorkspaceFolder(folder: vscode.WorkspaceFolder | undefined): boolean {
+    private checkWorkspaceInformationMatchesWorkspaceFolder(folder: vscode.WorkspaceFolder | undefined): Promise<boolean> {
         const solutionPathOrFolder: string = this.server.getSolutionPathOrFolder();
 
         // Make sure folder, folder.uri, and solutionPathOrFolder are defined.
         if (!folder || !folder.uri || !solutionPathOrFolder)
         {
-            return false;
+            return Promise.resolve(false);
         }
 
         let serverFolder = solutionPathOrFolder;
         // If its a .sln file, get the folder of the solution.
-        if (fs.lstatSync(solutionPathOrFolder).isFile())
-        {
-            serverFolder = path.dirname(solutionPathOrFolder);
-        }
+        return fs.lstat(solutionPathOrFolder).then(stat => {
+            return stat.isFile();
+        }).then(isFile => {
+            if (isFile)
+            {
+                serverFolder = path.dirname(solutionPathOrFolder);
+            }
 
-        // Get absolute paths of current folder and server folder.
-        const currentFolder = path.resolve(folder.uri.fsPath);
-        serverFolder = path.resolve(serverFolder);
+            // Get absolute paths of current folder and server folder.
+            const currentFolder = path.resolve(folder.uri.fsPath);
+            serverFolder = path.resolve(serverFolder);
 
-        return currentFolder && folder.uri && isSubfolderOf(serverFolder, currentFolder);
+            return currentFolder && folder.uri && isSubfolderOf(serverFolder, currentFolder);
+        });
     }
 
     /**
@@ -54,30 +58,31 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
 	 */
     provideDebugConfigurations(folder: vscode.WorkspaceFolder | undefined, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration[]> {
         return serverUtils.requestWorkspaceInformation(this.server).then(info => {
-            const generator = new AssetGenerator(info);
-            if (this.checkWorkspaceInformationMatchesWorkspaceFolder(folder) && containsDotNetCoreProjects(info)) {
-                const dotVscodeFolder: string = path.join(folder.uri.fsPath, '.vscode');
-                const tasksJsonPath: string = path.join(dotVscodeFolder, 'tasks.json');
+            return this.checkWorkspaceInformationMatchesWorkspaceFolder(folder).then(workspaceMatches => { 
+                const generator = new AssetGenerator(info);
+                if (workspaceMatches && containsDotNetCoreProjects(info)) {
+                    const dotVscodeFolder: string = path.join(folder.uri.fsPath, '.vscode');
+                    const tasksJsonPath: string = path.join(dotVscodeFolder, 'tasks.json');
+                    
+                    // Make sure .vscode folder exists, addTasksJsonIfNecessary will fail to create tasks.json if the folder does not exist. 
+                    return fs.ensureDir(dotVscodeFolder).then(() => {
+                        // Check to see if tasks.json exists.
+                        return fs.pathExists(tasksJsonPath);
+                    }).then(tasksJsonExists => {
+                        // Enable addTasksJson if it does not exist.
+                        return addTasksJsonIfNecessary(generator, {addTasksJson: !tasksJsonExists});
+                    }).then(() => {
+                        const isWebProject = generator.hasWebServerDependency();
+                        const launchJson: string = generator.createLaunchJson(isWebProject);
+
+                        // jsonc-parser's parse function parses a JSON string with comments into a JSON object. However, this removes the comments. 
+                        return parse(launchJson);
+                    });
+                }
                 
-                // Make sure .vscode folder exists, addTasksJsonIfNecessary will fail to create tasks.json if the folder does not exist. 
-                return fs.ensureDir(dotVscodeFolder).then(() => {
-                    // Check to see if tasks.json exists.
-                    return fs.pathExists(tasksJsonPath);
-                }).then(tasksJsonExists => {
-                    // Enable addTasksJson if it does not exist.
-                    return addTasksJsonIfNecessary(generator, {addTasksJson: !tasksJsonExists});
-                }).then(() => {
-                    const isWebProject = generator.hasWebServerDependency();
-                    const launchJson: string = generator.createLaunchJson(isWebProject);
-
-                    // jsonc-parser's parse function parses a JSON string with comments into a JSON object. However, this removes the comments. 
-                    return parse(launchJson);
-                });
-            }
-
-            // Error to be caught in the .catch() below to write default C# configurations
-            throw new Error("Does not contain .NET Core projects.");
-
+                // Error to be caught in the .catch() below to write default C# configurations
+                throw new Error("Does not contain .NET Core projects.");
+            });
         }).catch((err) => {
             // Provider will always create an launch.json file. Providing default C# configurations.
             // jsonc-parser's parse to convert to JSON object without comments. 
