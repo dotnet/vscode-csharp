@@ -44,7 +44,7 @@ async function provideDotnetTasks(server: OmniSharpServer): Promise<vscode.Task[
     return tasks;
 }
 
-function provideBuildTask(projectIdentifier: string, projectPath: string): vscode.Task {
+export function provideBuildTask(projectIdentifier: string, projectPath: string): vscode.Task {
     const taskDefinition: vscode.TaskDefinition = {
         type: "dotnet"
     };
