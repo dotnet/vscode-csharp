@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import { RemoteAttachPicker } from '../../src/features/processPicker';
 import { should } from 'chai';
 
@@ -159,7 +164,7 @@ function GetWindowsWSLLaunchJSONWithArrayArgs() {
         pipeCwd: "${workspaceFolder}",
         pipeProgram: "C:\\System32\\bash.exe",
         pipeArgs: ["-c"]
-    }
+    };
 }
 
 function GetWindowsWSLLaunchJSONWithArrayArgsAndDebuggerCommand() {
@@ -167,7 +172,7 @@ function GetWindowsWSLLaunchJSONWithArrayArgsAndDebuggerCommand() {
         pipeCwd: "${workspaceFolder}",
         pipeProgram: "C:\\System32\\bash.exe",
         pipeArgs: ["-c", "${debuggerCommand}", "--", "ignored"]
-    }
+    };
 }
 
 function GetWindowsWSLLaunchJSONWithStringArgs() {
@@ -175,7 +180,7 @@ function GetWindowsWSLLaunchJSONWithStringArgs() {
         pipeCwd: "${workspaceFolder}",
         pipeProgram: "C:\\System32\\bash.exe",
         pipeArgs: "-c"
-    }
+    };
 }
 
 function GetWindowsWSLLaunchJSONWithStringArgsAndDebuggerCommand() {
@@ -183,7 +188,7 @@ function GetWindowsWSLLaunchJSONWithStringArgsAndDebuggerCommand() {
         pipeCwd: "${workspaceFolder}",
         pipeProgram: "C:\\System32\\bash.exe",
         pipeArgs: "-c ${debuggerCommand} -- ignored"
-    }
+    };
 }
 
 function GetWindowsDockerLaunchJSONWithArrayArgs() {
@@ -192,7 +197,7 @@ function GetWindowsDockerLaunchJSONWithArrayArgs() {
         pipeProgram: "docker",
         pipeArgs: ["-i", "exec", "1234567"],
         quoteArgs: false
-    }
+    };
 };
 
 function GetWindowsDockerLaunchJSONWithStringArgsAndDebuggerCommand() {
@@ -201,7 +206,7 @@ function GetWindowsDockerLaunchJSONWithStringArgsAndDebuggerCommand() {
         pipeProgram: "docker",
         pipeArgs: "-i exec 1234567 ${debuggerCommand}",
         quoteArgs: false
-    }
+    };
 }
 
 function GetLinuxLaunchJSONWithArrayArgs() {
@@ -210,7 +215,7 @@ function GetLinuxLaunchJSONWithArrayArgs() {
         pipeProgram: "/usr/bin/shared/dotnet",
         pipeArgs: ["bin/framework/myprogram.dll", "argument with spaces"],
         quoteArg: true
-    }
+    };
 }
 
 function GetOSSpecificJSON() {
@@ -229,5 +234,5 @@ function GetOSSpecificJSON() {
         linux: {
             pipeProgram: "Linux pipeProgram",
         }
-    }
+    };
 }

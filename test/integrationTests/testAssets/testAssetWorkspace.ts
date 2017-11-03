@@ -16,7 +16,7 @@ const testAssetWorkspaces: { [x: string]: ITestAssetWorkspace } = {
     singleCsproj,
     singleProjectJson,
     slnWithCsproj
-}
+};
 
 const workspaceName = vscode.workspace.rootPath
     .split(path.sep)

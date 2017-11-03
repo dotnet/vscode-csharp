@@ -56,6 +56,6 @@ export interface ITestAssetProject {
 }
 
 export interface ITestAssetWorkspace {
-    description: string,
+    description: string;
     projects: ITestAssetProject[];
 }

@@ -5,7 +5,7 @@
 
 import { provideBuildTask } from '../../src/taskProvider';
 import { should } from 'chai';
-const chai = require('chai');
+require('chai');
 
 suite("Create VSCode Tasks", () => {
     suite("Build Tasks", () => {
@@ -26,11 +26,11 @@ suite("Create VSCode Tasks", () => {
         });
         
         test("source should be 'dotnet'", () => {
-            task.problemMatchers.should.include("$msCompile", "because build tasks produce msCompile output.")
+            task.problemMatchers.should.include("$msCompile", "because build tasks produce msCompile output.");
         });
     });
 
     suiteSetup(() => {
         should();
-    })
+    });
 });
