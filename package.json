@@ -2129,11 +2129,7 @@
         "properties": {
           "task": {
             "type": "string",
-            "description": "The Rake task to customize"
-          },
-          "file": {
-            "type": "string",
-            "description": "The Rake file that provides the task. Can be omitted."
+            "description": "The dotnet task to customize"
           }
         }
       }
