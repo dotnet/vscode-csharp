@@ -6,6 +6,7 @@
 import * as vscode from 'vscode';
 
 import { getRegisteredTaskProvider } from '../../src/vscodeTasksAdapter';
+import poll from './poll';
 import { should } from 'chai';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
@@ -26,7 +27,7 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function() {
             await csharpExtension.activate();
         }
 
-        let registeredTaskProvider = await getRegisteredTaskProvider(30000);
+        let registeredTaskProvider = await poll(() => getRegisteredTaskProvider(), 30000, 100);
 
         tasks = await registeredTaskProvider
             .provider
