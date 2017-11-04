@@ -3,11 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { should } from 'chai';
 import * as path from 'path';
-import * as protocol from '../src/omnisharp/protocol';
-import { AssetGenerator } from '../src/assets';
+import * as protocol from '../../src/omnisharp/protocol';
+
+import { AssetGenerator } from '../../src/assets';
 import { parse } from 'jsonc-parser';
+import { should } from 'chai';
 
 suite("Asset generation: project.json", () => {
     suiteSetup(() => should());
