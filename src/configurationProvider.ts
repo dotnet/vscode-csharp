@@ -3,15 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { parse } from 'jsonc-parser';
-import { OmniSharpServer } from './omnisharp/server';
 import * as serverUtils from './omnisharp/utils';
+import * as vscode from 'vscode';
+
+import { AssetGenerator, addTasksJsonIfNecessary, createAttachConfiguration, createLaunchConfiguration, createWebLaunchConfiguration } from './assets';
+
+import { OmniSharpServer } from './omnisharp/server';
 import { containsDotNetCoreProjects } from './omnisharp/protocol';
-import { AssetGenerator, addTasksJsonIfNecessary, createLaunchConfiguration, createAttachConfiguration, createWebLaunchConfiguration } from './assets';
 import { isSubfolderOf } from './common';
+import { parse } from 'jsonc-parser';
 
 export class CSharpConfigurationProvider implements vscode.DebugConfigurationProvider {
     private server: OmniSharpServer;
@@ -101,7 +103,7 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
     /**
 	 * Try to add all missing attributes to the debug configuration being launched.
 	 */
-	resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, config: vscode.DebugConfiguration, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration> {
+    resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, config: vscode.DebugConfiguration, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration> {
         // vsdbg does the error checking
         return config;
     }   
