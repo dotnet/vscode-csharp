@@ -8,7 +8,12 @@ import * as vscode from 'vscode';
 
 import {ITestAssetWorkspace, TestAssetWorkspace} from './testAssets';
 
+import singleCsproj from './singleCsproj';
+import slnWithCsproj from './slnWithCsproj';
+
 const testAssetWorkspaces: { [x: string]: ITestAssetWorkspace } = {
+    singleCsproj,
+    slnWithCsproj
 };
 
 const workspaceName = vscode.workspace.rootPath

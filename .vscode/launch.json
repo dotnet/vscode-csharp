@@ -31,6 +31,22 @@
             ]
         },
         {
+            "name": "Launch singleCsproj Workspace Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
+            ],
+            "stopOnEntry": false,
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/out/test/**/*.js"
+            ]
+        },
+        {
             "name": "Launch slnWithCsproj Workspace Tests",
             "type": "extensionHost",
             "request": "launch",
