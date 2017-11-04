@@ -11,6 +11,7 @@ import { AddAssetResult, addAssetsIfNecessary } from '../assets';
 import reportDiagnostics, { Advisor } from '../features/diagnosticsProvider';
 import { safeLength, sum } from '../common';
 
+import { CSharpConfigurationProvider } from '../configurationProvider';
 import CodeActionProvider from '../features/codeActionProvider';
 import CodeLensProvider from '../features/codeLensProvider';
 import CompletionItemProvider from '../features/completionItemProvider';
@@ -32,12 +33,6 @@ import WorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
 import forwardChanges from '../features/changeForwarding';
 import registerCommands from '../features/commands';
 import reportStatus from '../features/status';
-import { OmniSharpServer } from './server';
-import { Options } from './options';
-import { addAssetsIfNecessary, AddAssetResult } from '../assets';
-import { sum, safeLength } from '../common';
-import * as utils from './utils';
-import { CSharpConfigurationProvider } from '../configurationProvider';
 
 export function activate(context: vscode.ExtensionContext, reporter: TelemetryReporter, channel: vscode.OutputChannel) {
     const documentSelector: vscode.DocumentSelector = {
