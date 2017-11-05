@@ -45,6 +45,18 @@ export class TestAssetWorkspace {
     async deleteBuildArtifacts(): Promise<void> {
         this.projects.forEach(async p => await p.deleteBuildArtifacts());
     }
+    
+    get vsCodeDirectoryPath(): string {
+        return path.join(vscode.workspace.rootPath, ".vscode");;
+    }
+
+    get launchJsonPath(): string {
+        return path.join(this.vsCodeDirectoryPath, "launch.json");
+    }
+    
+    get tasksJsonPath(): string {
+        return path.join(this.vsCodeDirectoryPath, "tasks.json");
+    }
 
     description: string;
 

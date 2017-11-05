@@ -3,19 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import TelemetryReporter from 'vscode-extension-telemetry';
-
-import * as coreclrdebug from './coreclr-debug/activate';
 import * as OmniSharp from './omnisharp/extension';
+import * as coreclrdebug from './coreclr-debug/activate';
 import * as util from './common';
-import { Logger } from './logger';
+import * as vscode from 'vscode';
+
 import { CSharpExtDownloader } from './CSharpExtDownloader';
+import { Logger } from './logger';
+import TelemetryReporter from 'vscode-extension-telemetry';
 import { addJSONProviders } from './features/json/jsonContributions';
 
 let _channel: vscode.OutputChannel = null;
 
-export function activate(context: vscode.ExtensionContext): any {
+export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 
     const extensionId = 'ms-vscode.csharp';
     const extension = vscode.extensions.getExtension(extensionId);
@@ -29,19 +29,25 @@ export function activate(context: vscode.ExtensionContext): any {
 
     let logger = new Logger(text => _channel.append(text));
 
-    ensureRuntimeDependencies(extension, logger, reporter)
-        .then((success : boolean) => {
-            // activate language services
-            OmniSharp.activate(context, reporter, _channel);
+    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, logger, reporter);
 
-            // register JSON completion & hover providers for project.json
-            context.subscriptions.push(addJSONProviders());
-            
-            if (success) {
-                // activate coreclr-debug
-                coreclrdebug.activate(extension, context, reporter, logger, _channel);
-            }
-        });
+    if (!runtimeDependenciesExist) {
+        //do something
+    }
+    
+    // activate language services
+    let omniSharpPromise = OmniSharp.activate(context, reporter, _channel);
+
+    // register JSON completion & hover providers for project.json
+    context.subscriptions.push(addJSONProviders());
+    
+    // activate coreclr-debug
+    let coreClrDebugPromise = coreclrdebug.activate(extension, context, reporter, logger, _channel);
+
+    return {
+        initializationFinished: Promise.all([omniSharpPromise, coreClrDebugPromise])
+        .then(a => {})
+    };
 }
 
 function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger, reporter: TelemetryReporter): Promise<boolean> {

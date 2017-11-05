@@ -4,40 +4,49 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 
-import * as vscode from 'vscode';
-import * as os from 'os';
-import TelemetryReporter from 'vscode-extension-telemetry';
-import { CoreClrDebugUtil, DotnetInfo, } from './util';
 import * as debugInstall from './install';
+import * as os from 'os';
+import * as vscode from 'vscode';
+
+import { CoreClrDebugUtil, DotnetInfo, } from './util';
+
 import { Logger } from './../logger';
 import { PlatformInformation } from './../platform';
+import TelemetryReporter from 'vscode-extension-telemetry';
 
 let _debugUtil: CoreClrDebugUtil = null;
 let _reporter: TelemetryReporter = null;
 let _logger: Logger = null;
 
-export function activate(thisExtension : vscode.Extension<any>, context: vscode.ExtensionContext, reporter: TelemetryReporter, logger: Logger, channel: vscode.OutputChannel) {
+export async function activate(thisExtension : vscode.Extension<any>, context: vscode.ExtensionContext, reporter: TelemetryReporter, logger: Logger, channel: vscode.OutputChannel) {
     _debugUtil = new CoreClrDebugUtil(context.extensionPath, logger);
     _reporter = reporter;
     _logger = logger;
 
     if (!CoreClrDebugUtil.existsSync(_debugUtil.debugAdapterDir())) {
-        PlatformInformation.GetCurrent().then((info) => {
-            if (info.architecture !== "x86_64") {
-                if (info.isWindows() && info.architecture === "x86") {
+        let platformInformation: PlatformInformation;
+        
+        try {
+            platformInformation = await PlatformInformation.GetCurrent();
+        }
+        catch (err) {
+            // Somehow we couldn't figure out the platform we are on
+            logger.appendLine("[ERROR]: C# Extension failed to install the debugger package");
+            showInstallErrorMessage(channel);
+        }
+        
+        if (platformInformation) {
+            if (platformInformation.architecture !== "x86_64") {
+                if (platformInformation.isWindows() && platformInformation.architecture === "x86") {
                     logger.appendLine(`[WARNING]: x86 Windows is not currently supported by the .NET Core debugger. Debugging will not be available.`);
                 } else {
-                    logger.appendLine(`[WARNING]: Processor architecture '${info.architecture}' is not currently supported by the .NET Core debugger. Debugging will not be available.`);
+                    logger.appendLine(`[WARNING]: Processor architecture '${platformInformation.architecture}' is not currently supported by the .NET Core debugger. Debugging will not be available.`);
                 }
             } else {
                 logger.appendLine("[ERROR]: C# Extension failed to install the debugger package");
                 showInstallErrorMessage(channel);
             }
-        }, (err) => {
-            // Somehow we couldn't figure out the platform we are on
-            logger.appendLine("[ERROR]: C# Extension failed to install the debugger package");
-            showInstallErrorMessage(channel);
-        });
+        }
     } else if (!CoreClrDebugUtil.existsSync(_debugUtil.installCompleteFilePath())) {
         completeDebuggerInstall(logger, channel);
     }

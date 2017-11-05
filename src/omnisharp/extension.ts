@@ -157,4 +157,6 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
     disposables.push(vscode.debug.registerDebugConfigurationProvider('coreclr', new CSharpConfigurationProvider(server)));
 
     context.subscriptions.push(...disposables);
+    
+    return new Promise<string>(resolve => server.onServerStart(e => resolve(e)));
 }
