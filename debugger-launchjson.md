@@ -63,7 +63,7 @@ When this is set to `externalTerminal` the target process will run in a separate
 You can optionally configure a file by file mapping by providing map following this schema:
 
     "sourceFileMap": {
-        "C:\foo":"/home/me/foo"
+        "C:\\foo":"/home/me/foo"
     }
 
 ## Symbol Path
