@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { tolerantParse } from '../src/json';
+import { tolerantParse } from '../../src/json';
 
 suite("JSON", () => {
     suiteSetup(() => should());

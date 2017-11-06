@@ -7,6 +7,8 @@
         "no-var-keyword": true,
         "promise-must-complete": true,
         "curly": true,
-        "semicolon": true
+        "semicolon": true,
+        "indent": [true, "spaces", 4],
+        "file-header": [true, ".*"] 
     }
 }

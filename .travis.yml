@@ -14,9 +14,12 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
+      - sourceline: 'deb https://packages.microsoft.com/repos/microsoft-ubuntu-trusty-prod trusty main'
+        key_url: 'https://packages.microsoft.com/keys/microsoft.asc'
     packages:
       - g++-4.9
       - libsecret-1-dev
+      - dotnet-sdk-2.0.2
 
 install:
 - npm install
