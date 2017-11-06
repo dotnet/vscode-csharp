@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.13.0-beta4",
+  "version": "1.13.0-beta5",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -68,8 +68,8 @@
   "runtimeDependencies": [
     {
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/100229653/2bcdb52a3a25e1f7c42057c1755fdc84/omnisharp-win-x86-1.26.0.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.26.0.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100265554/077ad93cf1fb671e2c0902586873ab06/omnisharp-win-x86-1.26.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.26.1.zip",
       "installPath": ".omnisharp",
       "platforms": [
         "win32"
@@ -81,8 +81,8 @@
     },
     {
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/100229652/5aebec76e7272330f89f22a9b6dc15fa/omnisharp-win-x64-1.26.0.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.26.0.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100265553/6af3cbbb63bb25dc4f2b481879e8525a/omnisharp-win-x64-1.26.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.26.1.zip",
       "installPath": ".omnisharp",
       "platforms": [
         "win32"
@@ -94,8 +94,8 @@
     },
     {
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/100229651/8f7cef31adb7684806f817cf35581188/omnisharp-osx-1.26.0.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.26.0.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100265552/a9ff84a7405589572ade0087cdf2c2b5/omnisharp-osx-1.26.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.26.1.zip",
       "installPath": ".omnisharp",
       "platforms": [
         "darwin"
@@ -108,8 +108,8 @@
     },
     {
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/100229714/11a6e85fc78b40cdb5a30e6da919efdc/omnisharp-linux-x86-1.26.0.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.26.0.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100265551/666592bdb3277d5152c0930f092b7c1c/omnisharp-linux-x86-1.26.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.26.1.zip",
       "installPath": ".omnisharp",
       "platforms": [
         "linux"
@@ -126,8 +126,8 @@
     },
     {
       "description": "OmniSharp for Linux (x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/100229650/607ee43103b6f5641bbd08b8ffcaf892/omnisharp-linux-x64-1.26.0.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.26.0.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100265550/6780b525c18ff3bdb4687fa8e7657d6c/omnisharp-linux-x64-1.26.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.26.1.zip",
       "installPath": ".omnisharp",
       "platforms": [
         "linux"

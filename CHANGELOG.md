@@ -29,6 +29,8 @@
 * Fixed bug where `LangVersion` property was not read correctly from project file, blocking C# 7.1 development. ([omnisharp-roslyn#961](https://github.com/OmniSharp/omnisharp-roslyn/issues/961), PR: [omnisharp-roslyn#962](https://github.com/OmniSharp/omnisharp-roslyn/pull/962)]) _(Contributed by [@filipw](https://github.com/filipw))_
 * Fixed issue where signing key was not read correctly from project file, which can result in InternalsVisibleTo not being handled properly. (PR: [omnisharp-roslyn#964](https://github.com/OmniSharp/omnisharp-roslyn/pull/964))
 * Fixed long-standing problem with renaming files. ([#785](https://github.com/OmniSharp/omnisharp-vscode/issues/785), [#1792](https://github.com/OmniSharp/omnisharp-vscode/issues/1792), PR: [#1805](https://github.com/OmniSharp/omnisharp-vscode/pull/1805))
+* Fixed problem where the Antlr4.CodeGenerator Nuget package would not generate files during OmniSharp design-time build. ([#1822](https://github.com/OmniSharp/omnisharp-vscode/issues/1822), PR: [omnisharp-roslyn#1002](https://github.com/OmniSharp/omnisharp-roslyn/pull/1002))
+* Fixed issue where a C# project referencing a non-C# project would cause the referenced project to be loaded (causing OmniSharp to potentially treat it as C#!). ([#371](https://github.com/OmniSharp/omnisharp-vscode/issues/371), [#1829](https://github.com/OmniSharp/omnisharp-vscode/issues/1829), PR: [omnisharp-roslyn#1005](https://github.com/OmniSharp/omnisharp-roslyn/pull/1005))
 
 #### Testing
 
