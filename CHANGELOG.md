@@ -11,7 +11,8 @@
 
 #### Debugger
 
-* Improved logic for resolving breakpoints in local functions and lambdas ([#1678](https://github.com/OmniSharp/omnisharp-vscode/issues/1678))
+* Improved logic for resolving breakpoints in local functions and lambdas. ([#1678](https://github.com/OmniSharp/omnisharp-vscode/issues/1678))
+* When generating a new launch.json file via "start debugging" in a workspace without a launch.json file, the extension now provides the same content as is created with the '.NET: Generate Assets for Build and Debug' command. This takes advantage of a new extensibility point from VS Code. Before the C# extension could only statically provide templates, so, for example, they couldn't have the path to the launchable project. (PR: [#1801](https://github.com/OmniSharp/omnisharp-vscode/pull/1801))
 
 #### Editor
 
@@ -37,6 +38,7 @@
 * Fix error that occurs when running or debugging tests with latest xUnit 2.3.0 builds. ([#1733](https://github.com/OmniSharp/omnisharp-vscode/issues/1733), [omnisharp-rolsyn#944](https://github.com/OmniSharp/omnisharp-roslyn/issues/944), PR: [omnisharp-roslyn#945](https://github.com/OmniSharp/omnisharp-roslyn/pull/945), [#1749](https://github.com/OmniSharp/omnisharp-vscode/pull/1749))
 * Fix issue causing NUnit tests not to work when running or debugging tests. ([#1615](https://github.com/OmniSharp/omnisharp-vscode/issues/1635), PR: [#1760](https://github.com/OmniSharp/omnisharp-vscode/pull/1760)). _(Contributed by [@dgileadi](https://github.com/dgileadi))_
 * Pass `--no-restore` when invoking `dotnet build` to ensure that implicit restore does not run, making the build and the test run a bit faster. ([omnisharp-roslyn##942](https://github.com/OmniSharp/omnisharp-roslyn/issues/942), PR: [omnisharp-roslyn#945](https://github.com/OmniSharp/omnisharp-roslyn/pull/945))
+* Fix Unit Test debugging with VS Code 1.18. ([#1800](https://github.com/OmniSharp/omnisharp-vscode/issues/1800))
 
 #### Other Updates and Fixes
 
