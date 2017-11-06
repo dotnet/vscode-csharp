@@ -256,6 +256,7 @@ export interface AutoCompleteRequest extends Request {
     WantSnippet?: boolean;
     WantReturnType?: boolean;
     WantKind?: boolean;
+    TriggerCharacter?: string;
 }
 
 export interface AutoCompleteResponse {
@@ -279,6 +280,7 @@ export interface WorkspaceInformationResponse {
     MsBuild?: MsBuildWorkspaceInformation;
     DotNet?: DotNetWorkspaceInformation;
     ScriptCs?: ScriptCsContext;
+    Cake?: CakeContext;
 }
 
 export interface MsBuildWorkspaceInformation {
@@ -291,6 +293,10 @@ export interface ScriptCsContext {
     References: { [n: string]: string };
     Usings: { [n: string]: string };
     ScriptPacks: { [n: string]: string };
+    Path: string;
+}
+
+export interface CakeContext {
     Path: string;
 }
 
@@ -412,6 +418,17 @@ export interface PackageDependency {
     Name: string;
     Version: string;
 }
+    
+export interface FilesChangedRequest extends Request{
+    ChangeType: FileChangeType;
+}
+
+export enum FileChangeType
+{
+    Change = "Change",
+    Create = "Create",
+    Delete = "Delete"
+}
 
 export namespace V2 {
 
@@ -501,6 +518,7 @@ export namespace V2 {
     export interface DebugTestGetStartInfoRequest extends Request {
         MethodName: string;
         TestFrameworkName: string;
+        TargetFrameworkVersion: string;
     }
 
     export interface DebugTestGetStartInfoResponse {
@@ -526,6 +544,7 @@ export namespace V2 {
     export interface GetTestStartInfoRequest extends Request {
         MethodName: string;
         TestFrameworkName: string;
+        TargetFrameworkVersion: string;
     }
 
     export interface GetTestStartInfoResponse {
@@ -537,6 +556,7 @@ export namespace V2 {
     export interface RunTestRequest extends Request {
         MethodName: string;
         TestFrameworkName: string;
+        TargetFrameworkVersion: string;
     }
 
     export module TestOutcomes {
@@ -617,4 +637,44 @@ export function getDotNetCoreProjectDescriptors(info: WorkspaceInformationRespon
     }
 
     return result;
+}
+
+export function findExecutableMSBuildProjects(projects: MSBuildProject[]) {
+    let result: MSBuildProject[] = [];
+
+    projects.forEach(project => {
+        if (project.IsExe && findNetCoreAppTargetFramework(project) !== undefined) {
+            result.push(project);
+        }
+    });
+
+    return result;
+}
+
+export function findExecutableProjectJsonProjects(projects: DotNetProject[], configurationName: string) {
+    let result: DotNetProject[] = [];
+
+    projects.forEach(project => {
+        project.Configurations.forEach(configuration => {
+            if (configuration.Name === configurationName && configuration.EmitEntryPoint === true) {
+                if (project.Frameworks.length > 0) {
+                    result.push(project);
+                }
+            }
+        });
+    });
+
+    return result;
+}
+
+export function containsDotNetCoreProjects(workspaceInfo: WorkspaceInformationResponse) {
+    if (workspaceInfo.DotNet && findExecutableProjectJsonProjects(workspaceInfo.DotNet.Projects, 'Debug').length > 0) {
+        return true;
+    }
+
+    if (workspaceInfo.MsBuild && findExecutableMSBuildProjects(workspaceInfo.MsBuild.Projects).length > 0) {
+        return true;
+    }
+
+    return false;
 }

@@ -112,11 +112,12 @@ export default class TestManager extends AbstractProvider {
             vscode.workspace.saveAll(/*includeUntitled*/ false));
     }
 
-    private _runTest(fileName: string, testMethod: string, testFrameworkName: string): Promise<protocol.V2.DotNetTestResult[]> {
+    private _runTest(fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string): Promise<protocol.V2.DotNetTestResult[]> {
         const request: protocol.V2.RunTestRequest = {
             FileName: fileName,
             MethodName: testMethod,
-            TestFrameworkName: testFrameworkName
+            TestFrameworkName: testFrameworkName,
+            TargetFrameworkVersion: targetFrameworkVersion
         };
 
         return serverUtils.runTest(this._server, request)
@@ -162,7 +163,23 @@ export default class TestManager extends AbstractProvider {
 
         this._saveDirtyFiles()
             .then(_ => this._recordRunRequest(testFrameworkName))
-            .then(_ => this._runTest(fileName, testMethod, testFrameworkName))
+            .then(_ => serverUtils.requestProjectInformation(this._server, { FileName: fileName }))
+            .then(projectInfo => 
+            {
+                let targetFrameworkVersion: string;
+
+                if (projectInfo.DotNetProject) {
+                    targetFrameworkVersion = undefined;
+                }
+                else if (projectInfo.MsBuildProject) {
+                    targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;
+                }
+                else {
+                    throw new Error('Expected project.json or .csproj project.');
+                }
+
+                return this._runTest(fileName, testMethod, testFrameworkName, targetFrameworkVersion);
+            })
             .then(results => this._reportResults(results))
             .then(() => listener.dispose())
             .catch(reason => {
@@ -198,7 +215,7 @@ export default class TestManager extends AbstractProvider {
         return result;
     }
 
-    private _getLaunchConfigurationForVSTest(fileName: string, testMethod: string, testFrameworkName: string, debugEventListener: DebugEventListener): Promise<any> {
+    private _getLaunchConfigurationForVSTest(fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener): Promise<any> {
         const output = this._getOutputChannel();
 
         // Listen for test messages while getting start info.
@@ -209,7 +226,8 @@ export default class TestManager extends AbstractProvider {
         const request: protocol.V2.DebugTestGetStartInfoRequest = {
             FileName: fileName,
             MethodName: testMethod,
-            TestFrameworkName: testFrameworkName
+            TestFrameworkName: testFrameworkName,
+            TargetFrameworkVersion: targetFrameworkVersion
         };
 
         return serverUtils.debugTestGetStartInfo(this._server, request)
@@ -219,7 +237,7 @@ export default class TestManager extends AbstractProvider {
             });
     }
 
-    private _getLaunchConfigurationForLegacy(fileName: string, testMethod: string, testFrameworkName: string): Promise<any> {
+    private _getLaunchConfigurationForLegacy(fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string): Promise<any> {
         const output = this._getOutputChannel();
 
         // Listen for test messages while getting start info.
@@ -230,7 +248,8 @@ export default class TestManager extends AbstractProvider {
         const request: protocol.V2.GetTestStartInfoRequest = {
             FileName: fileName,
             MethodName: testMethod,
-            TestFrameworkName: testFrameworkName
+            TestFrameworkName: testFrameworkName,
+            TargetFrameworkVersion: targetFrameworkVersion
         };
 
         return serverUtils.getTestStartInfo(this._server, request)
@@ -240,12 +259,12 @@ export default class TestManager extends AbstractProvider {
             });
     }
 
-    private _getLaunchConfiguration(debugType: string, fileName: string, testMethod: string, testFrameworkName: string, debugEventListener: DebugEventListener): Promise<any> {
+    private _getLaunchConfiguration(debugType: string, fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener): Promise<any> {
         switch (debugType) {
             case 'legacy':
-                return this._getLaunchConfigurationForLegacy(fileName, testMethod, testFrameworkName);
+                return this._getLaunchConfigurationForLegacy(fileName, testMethod, testFrameworkName, targetFrameworkVersion);
             case 'vstest':
-                return this._getLaunchConfigurationForVSTest(fileName, testMethod, testFrameworkName, debugEventListener);
+                return this._getLaunchConfigurationForVSTest(fileName, testMethod, testFrameworkName, targetFrameworkVersion, debugEventListener);
 
             default:
                 throw new Error(`Unexpected debug type: ${debugType}`);
@@ -257,6 +276,7 @@ export default class TestManager extends AbstractProvider {
         // using VS Test. These require a different level of communication.
         let debugType: string;
         let debugEventListener: DebugEventListener = null;
+        let targetFrameworkVersion: string;
 
         const output = this._getOutputChannel();
 
@@ -270,10 +290,12 @@ export default class TestManager extends AbstractProvider {
             .then(projectInfo => {
                 if (projectInfo.DotNetProject) {
                     debugType = 'legacy';
+                    targetFrameworkVersion = '';
                     return Promise.resolve();
                 }
                 else if (projectInfo.MsBuildProject) {
                     debugType = 'vstest';
+                    targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;
                     debugEventListener = new DebugEventListener(fileName, this._server, output);
                     return debugEventListener.start();
                 }
@@ -281,8 +303,11 @@ export default class TestManager extends AbstractProvider {
                     throw new Error('Expected project.json or .csproj project.');
                 }
             })
-            .then(() => this._getLaunchConfiguration(debugType, fileName, testMethod, testFrameworkName, debugEventListener))
-            .then(config => vscode.commands.executeCommand('vscode.startDebug', config))
+            .then(() => this._getLaunchConfiguration(debugType, fileName, testMethod, testFrameworkName, targetFrameworkVersion, debugEventListener))
+            .then(config => {
+                const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(fileName));
+                return vscode.debug.startDebugging(workspaceFolder, config);
+            })
             .catch(reason => {
                 vscode.window.showErrorMessage(`Failed to start debugger: ${reason}`);
                 if (debugEventListener != null) {

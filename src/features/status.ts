@@ -27,7 +27,8 @@ let defaultSelector: vscode.DocumentSelector = [
     { pattern: '**/project.json' }, // project.json-files OR
     { pattern: '**/*.sln' }, // any solution file OR
     { pattern: '**/*.csproj' }, // an csproj file
-    { pattern: '**/*.csx' } // C# script
+    { pattern: '**/*.csx' }, // C# script
+    { pattern: '**/*.cake' } // Cake script
 ];
 
 class Status {

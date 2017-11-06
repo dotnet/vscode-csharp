@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.12.1",
+  "version": "1.13.0-beta5",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -30,7 +30,7 @@
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
-    "fs-extra": "^1.0.0",
+    "fs-extra": "^4.0.2",
     "http-proxy-agent": "^1.0.0",
     "https-proxy-agent": "^1.0.0",
     "jsonc-parser": "^0.3.0",
@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@types/chai": "^3.4.34",
-    "@types/fs-extra": "0.0.35",
+    "@types/fs-extra": "4.0.3",
     "@types/mkdirp": "^0.3.29",
     "@types/mocha": "^2.2.32",
     "@types/node": "^6.0.40",
@@ -63,13 +63,13 @@
     "tslint-microsoft-contrib": "^2.0.12",
     "typescript": "^2.0.3",
     "vsce": "^1.7.0",
-    "vscode": "^1.0.3"
+    "vscode": "^1.1.6"
   },
   "runtimeDependencies": [
     {
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11114591/53def2e097a7e2c1a8bf567c6d81ad7a/omnisharp-win-x86-1.23.2.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.23.2.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100265554/077ad93cf1fb671e2c0902586873ab06/omnisharp-win-x86-1.26.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.26.1.zip",
       "installPath": ".omnisharp",
       "platforms": [
         "win32"
@@ -81,8 +81,8 @@
     },
     {
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11114590/f5469e805c6dcbe675e6a1d94fd78cc0/omnisharp-win-x64-1.23.2.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.23.2.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100265553/6af3cbbb63bb25dc4f2b481879e8525a/omnisharp-win-x64-1.26.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.26.1.zip",
       "installPath": ".omnisharp",
       "platforms": [
         "win32"
@@ -94,8 +94,8 @@
     },
     {
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11114589/63b1de65cb20eb8f423449f864e1ac97/omnisharp-osx-1.23.2.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.23.2.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100265552/a9ff84a7405589572ade0087cdf2c2b5/omnisharp-osx-1.26.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.26.1.zip",
       "installPath": ".omnisharp",
       "platforms": [
         "darwin"
@@ -108,8 +108,8 @@
     },
     {
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11114588/1b7020f25d4bb682983b831d97810489/omnisharp-linux-x86-1.23.2.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.23.2.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100265551/666592bdb3277d5152c0930f092b7c1c/omnisharp-linux-x86-1.26.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.26.1.zip",
       "installPath": ".omnisharp",
       "platforms": [
         "linux"
@@ -126,8 +126,8 @@
     },
     {
       "description": "OmniSharp for Linux (x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11114587/5d10adc99d8c7e561dadc2ab31031397/omnisharp-linux-x64-1.23.2.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.23.2.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100265550/6780b525c18ff3bdb4687fa8e7657d6c/omnisharp-linux-x64-1.26.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.26.1.zip",
       "installPath": ".omnisharp",
       "platforms": [
         "linux"
@@ -143,8 +143,8 @@
     },
     {
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/10975649/e7e53245607ac00f315a629e2ed934b9/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-12-5/coreclr-debug-win7-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/11121545/61b8ee7aa56d99502a7ae3a19547e73b/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-13-0/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -156,8 +156,8 @@
     },
     {
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/10975649/e7e53245607ac00f315a629e2ed934b9/coreclr-debug-osx.10.11-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-12-5/coreclr-debug-osx.10.11-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/11121545/61b8ee7aa56d99502a7ae3a19547e73b/coreclr-debug-osx.10.11-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-13-0/coreclr-debug-osx.10.11-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "darwin"
@@ -173,8 +173,8 @@
     },
     {
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/10975649/e7e53245607ac00f315a629e2ed934b9/coreclr-debug-linux-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-12-5/coreclr-debug-linux-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/11121545/61b8ee7aa56d99502a7ae3a19547e73b/coreclr-debug-linux-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-13-0/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -190,9 +190,10 @@
     }
   ],
   "engines": {
-    "vscode": "^1.12.0"
+    "vscode": "^1.17.0"
   },
   "activationEvents": [
+    "onDebug",
     "onLanguage:csharp",
     "onCommand:o.restart",
     "onCommand:o.pickProjectAndStart",
@@ -206,14 +207,21 @@
     "workspaceContains:*.csproj",
     "workspaceContains:*.sln",
     "workspaceContains:*.csx",
+    "workspaceContains:*.cake",
     "workspaceContains:**/*.csproj",
     "workspaceContains:**/*.sln",
-    "workspaceContains:**/*.csx"
+    "workspaceContains:**/*.csx",
+    "workspaceContains:**/*.cake"
   ],
   "contributes": {
     "configuration": {
       "title": "C# configuration",
       "properties": {
+        "csharp.format.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable default C# formatter (requires restart)."
+        },
         "csharp.suppressDotnetInstallWarning": {
           "type": "boolean",
           "default": false,
@@ -315,6 +323,16 @@
           "type": "boolean",
           "default": true,
           "description": "Suppress 'hidden' diagnostics (such as 'unnecessary using directives') from appearing in the editor or the Problems pane."
+        },
+        "csharp.referencesCodeLens.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Specifies whether the references CodeLens should be show be shown."
+        },
+        "csharp.testsCodeLens.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Specifies whether the run and debug test CodeLens should be show be shown."
         },
         "omnisharp.path": {
           "type": [
@@ -456,13 +474,13 @@
             "properties": {
               "program": {
                 "type": "string",
-                "description": "Path to the application dll or .NET Core host executable to launch.\nThis property normally takes the form: '${workspaceRoot}/bin/Debug/(target-framework)/(project-name.dll)'\nExample: '${workspaceRoot}/bin/Debug/netcoreapp1.1/MyProject.dll'\n\nWhere:\n(target-framework) is the framework that the debugged project is being built for. This is normally found in the project file as the 'TargetFramework' property.\n(project-name.dll) is the name of debugged project's build output dll. This is normally the same as the project file name but with a '.dll' extension.",
-                "default": "${workspaceRoot}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll"
+                "description": "Path to the application dll or .NET Core host executable to launch.\nThis property normally takes the form: '${workspaceFolder}/bin/Debug/(target-framework)/(project-name.dll)'\nExample: '${workspaceFolder}/bin/Debug/netcoreapp1.1/MyProject.dll'\n\nWhere:\n(target-framework) is the framework that the debugged project is being built for. This is normally found in the project file as the 'TargetFramework' property.\n(project-name.dll) is the name of debugged project's build output dll. This is normally the same as the project file name but with a '.dll' extension.",
+                "default": "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll"
               },
               "cwd": {
                 "type": "string",
                 "description": "Path to the working directory of the program being debugged. Default is the current workspace.",
-                "default": "${workspaceRoot}"
+                "default": "${workspaceFolder}"
               },
               "args": {
                 "anyOf": [
@@ -688,7 +706,7 @@
                   "debuggerPath"
                 ],
                 "default": {
-                  "pipeCwd": "${workspaceRoot}",
+                  "pipeCwd": "${workspaceFolder}",
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                   "pipeArgs": [],
                   "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
@@ -697,7 +715,7 @@
                   "pipeCwd": {
                     "type": "string",
                     "description": "The fully qualified path to the working directory for the pipe program.",
-                    "default": "${workspaceRoot}"
+                    "default": "${workspaceFolder}"
                   },
                   "pipeProgram": {
                     "type": "string",
@@ -743,7 +761,7 @@
                   "windows": {
                     "description": "Windows-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
                       "pipeArgs": []
                     },
@@ -752,7 +770,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -795,7 +813,7 @@
                   "osx": {
                     "description": "OSX-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
@@ -804,7 +822,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -847,7 +865,7 @@
                   "linux": {
                     "description": "Linux-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
@@ -856,7 +874,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -996,7 +1014,7 @@
                   "debuggerPath"
                 ],
                 "default": {
-                  "pipeCwd": "${workspaceRoot}",
+                  "pipeCwd": "${workspaceFolder}",
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                   "pipeArgs": [],
                   "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
@@ -1005,7 +1023,7 @@
                   "pipeCwd": {
                     "type": "string",
                     "description": "The fully qualified path to the working directory for the pipe program.",
-                    "default": "${workspaceRoot}"
+                    "default": "${workspaceFolder}"
                   },
                   "pipeProgram": {
                     "type": "string",
@@ -1051,7 +1069,7 @@
                   "windows": {
                     "description": "Windows-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
                       "pipeArgs": []
                     },
@@ -1060,7 +1078,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -1103,7 +1121,7 @@
                   "osx": {
                     "description": "OSX-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
@@ -1112,7 +1130,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -1155,7 +1173,7 @@
                   "linux": {
                     "description": "Linux-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
@@ -1164,7 +1182,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -1306,55 +1324,6 @@
               }
             }
           }
-        ],
-        "initialConfigurations": [
-          {
-            "name": ".NET Core Launch (console)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceRoot}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll",
-            "args": [],
-            "cwd": "${workspaceRoot}",
-            "stopAtEntry": false,
-            "console": "internalConsole"
-          },
-          {
-            "name": ".NET Core Launch (web)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceRoot}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll",
-            "args": [],
-            "cwd": "${workspaceRoot}",
-            "stopAtEntry": false,
-            "launchBrowser": {
-              "enabled": true,
-              "args": "${auto-detect-url}",
-              "windows": {
-                "command": "cmd.exe",
-                "args": "/C start ${auto-detect-url}"
-              },
-              "osx": {
-                "command": "open"
-              },
-              "linux": {
-                "command": "xdg-open"
-              }
-            },
-            "env": {
-              "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-              "/Views": "${workspaceRoot}/Views"
-            }
-          },
-          {
-            "name": ".NET Core Attach",
-            "type": "coreclr",
-            "request": "attach",
-            "processId": "${command:pickProcess}"
-          }
         ]
       },
       {
@@ -1383,13 +1352,13 @@
             "properties": {
               "program": {
                 "type": "string",
-                "description": "Path to the application dll or .NET Core host executable to launch.\nThis property normally takes the form: '${workspaceRoot}/bin/Debug/(target-framework)/(project-name.dll)'\nExample: '${workspaceRoot}/bin/Debug/netcoreapp1.1/MyProject.dll'\n\nWhere:\n(target-framework) is the framework that the debugged project is being built for. This is normally found in the project file as the 'TargetFramework' property.\n(project-name.dll) is the name of debugged project's build output dll. This is normally the same as the project file name but with a '.dll' extension.",
-                "default": "${workspaceRoot}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll"
+                "description": "Path to the application dll or .NET Core host executable to launch.\nThis property normally takes the form: '${workspaceFolder}/bin/Debug/(target-framework)/(project-name.dll)'\nExample: '${workspaceFolder}/bin/Debug/netcoreapp1.1/MyProject.dll'\n\nWhere:\n(target-framework) is the framework that the debugged project is being built for. This is normally found in the project file as the 'TargetFramework' property.\n(project-name.dll) is the name of debugged project's build output dll. This is normally the same as the project file name but with a '.dll' extension.",
+                "default": "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll"
               },
               "cwd": {
                 "type": "string",
                 "description": "Path to the working directory of the program being debugged. Default is the current workspace.",
-                "default": "${workspaceRoot}"
+                "default": "${workspaceFolder}"
               },
               "args": {
                 "anyOf": [
@@ -1615,7 +1584,7 @@
                   "debuggerPath"
                 ],
                 "default": {
-                  "pipeCwd": "${workspaceRoot}",
+                  "pipeCwd": "${workspaceFolder}",
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                   "pipeArgs": [],
                   "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
@@ -1624,7 +1593,7 @@
                   "pipeCwd": {
                     "type": "string",
                     "description": "The fully qualified path to the working directory for the pipe program.",
-                    "default": "${workspaceRoot}"
+                    "default": "${workspaceFolder}"
                   },
                   "pipeProgram": {
                     "type": "string",
@@ -1670,7 +1639,7 @@
                   "windows": {
                     "description": "Windows-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
                       "pipeArgs": []
                     },
@@ -1679,7 +1648,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -1722,7 +1691,7 @@
                   "osx": {
                     "description": "OSX-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
@@ -1731,7 +1700,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -1774,7 +1743,7 @@
                   "linux": {
                     "description": "Linux-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
@@ -1783,7 +1752,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -1923,7 +1892,7 @@
                   "debuggerPath"
                 ],
                 "default": {
-                  "pipeCwd": "${workspaceRoot}",
+                  "pipeCwd": "${workspaceFolder}",
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                   "pipeArgs": [],
                   "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
@@ -1932,7 +1901,7 @@
                   "pipeCwd": {
                     "type": "string",
                     "description": "The fully qualified path to the working directory for the pipe program.",
-                    "default": "${workspaceRoot}"
+                    "default": "${workspaceFolder}"
                   },
                   "pipeProgram": {
                     "type": "string",
@@ -1978,7 +1947,7 @@
                   "windows": {
                     "description": "Windows-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
                       "pipeArgs": []
                     },
@@ -1987,7 +1956,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -2030,7 +1999,7 @@
                   "osx": {
                     "description": "OSX-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
@@ -2039,7 +2008,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
@@ -2082,7 +2051,7 @@
                   "linux": {
                     "description": "Linux-specific pipe launch configuration options",
                     "default": {
-                      "pipeCwd": "${workspaceRoot}",
+                      "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                       "pipeArgs": []
                     },
@@ -2091,7 +2060,7 @@
                       "pipeCwd": {
                         "type": "string",
                         "description": "The fully qualified path to the working directory for the pipe program.",
-                        "default": "${workspaceRoot}"
+                        "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",

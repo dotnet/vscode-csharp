@@ -156,7 +156,7 @@ suite("Remote Process Picker: Validate quoting arguments.", () => {
 
 function GetWindowsWSLLaunchJSONWithArrayArgs() {
     return {
-        pipeCwd: "${workspaceRoot}",
+        pipeCwd: "${workspaceFolder}",
         pipeProgram: "C:\\System32\\bash.exe",
         pipeArgs: ["-c"]
     }
@@ -164,7 +164,7 @@ function GetWindowsWSLLaunchJSONWithArrayArgs() {
 
 function GetWindowsWSLLaunchJSONWithArrayArgsAndDebuggerCommand() {
     return {
-        pipeCwd: "${workspaceRoot}",
+        pipeCwd: "${workspaceFolder}",
         pipeProgram: "C:\\System32\\bash.exe",
         pipeArgs: ["-c", "${debuggerCommand}", "--", "ignored"]
     }
@@ -172,7 +172,7 @@ function GetWindowsWSLLaunchJSONWithArrayArgsAndDebuggerCommand() {
 
 function GetWindowsWSLLaunchJSONWithStringArgs() {
     return {
-        pipeCwd: "${workspaceRoot}",
+        pipeCwd: "${workspaceFolder}",
         pipeProgram: "C:\\System32\\bash.exe",
         pipeArgs: "-c"
     }
@@ -180,7 +180,7 @@ function GetWindowsWSLLaunchJSONWithStringArgs() {
 
 function GetWindowsWSLLaunchJSONWithStringArgsAndDebuggerCommand() {
     return {
-        pipeCwd: "${workspaceRoot}",
+        pipeCwd: "${workspaceFolder}",
         pipeProgram: "C:\\System32\\bash.exe",
         pipeArgs: "-c ${debuggerCommand} -- ignored"
     }
@@ -188,7 +188,7 @@ function GetWindowsWSLLaunchJSONWithStringArgsAndDebuggerCommand() {
 
 function GetWindowsDockerLaunchJSONWithArrayArgs() {
     return {
-        pipeCwd: "${workspaceRoot}",
+        pipeCwd: "${workspaceFolder}",
         pipeProgram: "docker",
         pipeArgs: ["-i", "exec", "1234567"],
         quoteArgs: false
@@ -197,7 +197,7 @@ function GetWindowsDockerLaunchJSONWithArrayArgs() {
 
 function GetWindowsDockerLaunchJSONWithStringArgsAndDebuggerCommand() {
     return {
-        pipeCwd: "${workspaceRoot}",
+        pipeCwd: "${workspaceFolder}",
         pipeProgram: "docker",
         pipeArgs: "-i exec 1234567 ${debuggerCommand}",
         quoteArgs: false
@@ -206,7 +206,7 @@ function GetWindowsDockerLaunchJSONWithStringArgsAndDebuggerCommand() {
 
 function GetLinuxLaunchJSONWithArrayArgs() {
     return {
-        pipeCwd: "${workspaceRoot}",
+        pipeCwd: "${workspaceFolder}",
         pipeProgram: "/usr/bin/shared/dotnet",
         pipeArgs: ["bin/framework/myprogram.dll", "argument with spaces"],
         quoteArg: true
@@ -215,7 +215,7 @@ function GetLinuxLaunchJSONWithArrayArgs() {
 
 function GetOSSpecificJSON() {
     return {
-        pipeCwd: "${workspaceRoot}",
+        pipeCwd: "${workspaceFolder}",
         pipeProgram: "pipeProgram",
         pipeArgs: [],
         windows: {

@@ -13,6 +13,7 @@ import { toRange, toLocation } from '../omnisharp/typeConvertion';
 import AbstractProvider from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
+import { Options } from '../omnisharp/options';
 
 class OmniSharpCodeLens extends vscode.CodeLens {
 
@@ -27,12 +28,21 @@ class OmniSharpCodeLens extends vscode.CodeLens {
 export default class OmniSharpCodeLensProvider extends AbstractProvider implements vscode.CodeLensProvider {
 
     private _testManager: TestManager;
+    private _options: Options;
 
     constructor(server: OmniSharpServer, reporter: TelemetryReporter, testManager: TestManager)
     {
         super(server, reporter);
 
         this._testManager = testManager;
+        this._resetCachedOptions();
+
+        let configChangedDisposable = vscode.workspace.onDidChangeConfiguration(this._resetCachedOptions, this);
+        this.addDisposables(configChangedDisposable);
+    }
+
+    private _resetCachedOptions(): void {
+        this._options = Options.Read();
     }
 
     private static filteredSymbolNames: { [name: string]: boolean } = {
@@ -43,6 +53,11 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
     };
 
     provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
+        if (!this._options.showReferencesCodeLens && !this._options.showTestsCodeLens)
+        {
+            return [];
+        }
+
         return serverUtils.currentFileMembersAsTree(this._server, { FileName: document.fileName }, token).then(tree => {
             let ret: vscode.CodeLens[] = [];
             tree.TopLevelTypeDefinitions.forEach(node => this._convertQuickFix(ret, document.fileName, node));
@@ -57,13 +72,17 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         }
 
         let lens = new OmniSharpCodeLens(fileName, toRange(node.Location));
-        bucket.push(lens);
+        if (this._options.showReferencesCodeLens) {
+            bucket.push(lens);
+        }
 
         for (let child of node.ChildNodes) {
             this._convertQuickFix(bucket, fileName, child);
         }
 
-        this._updateCodeLensForTest(bucket, fileName, node);
+        if (this._options.showTestsCodeLens) {
+            this._updateCodeLensForTest(bucket, fileName, node);
+        }
     }
 
     resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken): Thenable<vscode.CodeLens> {
@@ -104,7 +123,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         if (testFeature) {
             // this test method has a test feature
             let testFrameworkName = 'xunit';
-            if (testFeature.Name == 'NunitTestMethod') {
+            if (testFeature.Name == 'NUnitTestMethod') {
                 testFrameworkName = 'nunit';
             }
             else if (testFeature.Name == 'MSTestMethod') {
@@ -115,11 +134,9 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
                 toRange(node.Location),
                 { title: "run test", command: 'dotnet.test.run', arguments: [testFeature.Data, fileName, testFrameworkName] }));
 
-            if (this._server.isDebugEnable()) {
-                bucket.push(new vscode.CodeLens(
-                    toRange(node.Location),
-                    { title: "debug test", command: 'dotnet.test.debug', arguments: [testFeature.Data, fileName, testFrameworkName] }));
-            }
+            bucket.push(new vscode.CodeLens(
+                toRange(node.Location),
+                { title: "debug test", command: 'dotnet.test.debug', arguments: [testFeature.Data, fileName, testFrameworkName] }));
         }
     }
 }
