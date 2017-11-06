@@ -1,4 +1,10 @@
-import { workspace, Uri, TextDocument, Disposable, TextDocumentContentProvider} from 'vscode';
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+import { Disposable, TextDocument, TextDocumentContentProvider, Uri, workspace } from 'vscode';
+
 import { MetadataResponse } from '../omnisharp/protocol';
 
 export default class DefinitionMetadataDocumentProvider implements TextDocumentContentProvider, Disposable {
