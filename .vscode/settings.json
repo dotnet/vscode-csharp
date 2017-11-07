@@ -11,6 +11,8 @@
         "**/node_modules": true,
         "out/": true
     },
+
+    "csharp.suppressDotnetRestoreNotification": true,
    
     "tslint.rulesDirectory": "node_modules/tslint-microsoft-contrib",
     "typescript.tsdk": "./node_modules/typescript/lib"
