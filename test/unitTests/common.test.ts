@@ -4,8 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
+
+import { buildPromiseChain, isSubfolderOf, safeLength, sum } from '../../src/common';
+
 import { should } from 'chai';
-import { buildPromiseChain, safeLength, sum, isSubfolderOf } from '../src/common';
 
 suite("Common", () => {
     suiteSetup(() => should());

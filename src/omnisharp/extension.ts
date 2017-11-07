@@ -3,34 +3,35 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as utils from './utils';
 import * as vscode from 'vscode';
-import TelemetryReporter from 'vscode-extension-telemetry';
 
-import DefinitionProvider from '../features/definitionProvider';
-import ImplementationProvider from '../features/implementationProvider';
+import { AddAssetResult, addAssetsIfNecessary } from '../assets';
+import reportDiagnostics, { Advisor } from '../features/diagnosticsProvider';
+import { safeLength, sum } from '../common';
+
+import { CSharpConfigurationProvider } from '../configurationProvider';
+import CodeActionProvider from '../features/codeActionProvider';
 import CodeLensProvider from '../features/codeLensProvider';
+import CompletionItemProvider from '../features/completionItemProvider';
 import DefinitionMetadataDocumentProvider from '../features/definitionMetadataDocumentProvider';
+import DefinitionProvider from '../features/definitionProvider';
 import DocumentHighlightProvider from '../features/documentHighlightProvider';
 import DocumentSymbolProvider from '../features/documentSymbolProvider';
-import CodeActionProvider from '../features/codeActionProvider';
-import ReferenceProvider from '../features/referenceProvider';
-import HoverProvider from '../features/hoverProvider';
-import RenameProvider from '../features/renameProvider';
 import FormatProvider from '../features/formattingEditProvider';
-import CompletionItemProvider from '../features/completionItemProvider';
-import WorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
-import reportDiagnostics, { Advisor } from '../features/diagnosticsProvider';
-import SignatureHelpProvider from '../features/signatureHelpProvider';
-import TestManager from '../features/dotnetTest';
-import registerCommands from '../features/commands';
-import forwardChanges from '../features/changeForwarding';
-import reportStatus from '../features/status';
+import HoverProvider from '../features/hoverProvider';
+import ImplementationProvider from '../features/implementationProvider';
 import { OmniSharpServer } from './server';
 import { Options } from './options';
-import { addAssetsIfNecessary, AddAssetResult } from '../assets';
-import { sum, safeLength } from '../common';
-import * as utils from './utils';
-import { CSharpConfigurationProvider } from '../configurationProvider';
+import ReferenceProvider from '../features/referenceProvider';
+import RenameProvider from '../features/renameProvider';
+import SignatureHelpProvider from '../features/signatureHelpProvider';
+import TelemetryReporter from 'vscode-extension-telemetry';
+import TestManager from '../features/dotnetTest';
+import WorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
+import forwardChanges from '../features/changeForwarding';
+import registerCommands from '../features/commands';
+import reportStatus from '../features/status';
 
 export function activate(context: vscode.ExtensionContext, reporter: TelemetryReporter, channel: vscode.OutputChannel) {
     const documentSelector: vscode.DocumentSelector = {
@@ -156,4 +157,6 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
     disposables.push(vscode.debug.registerDebugConfigurationProvider('coreclr', new CSharpConfigurationProvider(server)));
 
     context.subscriptions.push(...disposables);
+    
+    return new Promise<string>(resolve => server.onServerStart(e => resolve(e)));
 }
