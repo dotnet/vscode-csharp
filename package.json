@@ -21,6 +21,9 @@
     "Linters",
     "Snippets"
   ],
+  "keywords": [
+    "multi-root ready"
+  ],
   "main": "./out/src/main",
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
@@ -74,7 +77,7 @@
     "tslint": "^3.15.1",
     "tslint-microsoft-contrib": "^2.0.12",
     "typescript": "^2.0.3",
-    "vsce": "^1.7.0",
+    "vsce": "^1.32.0",
     "vscode": "^1.1.6"
   },
   "runtimeDependencies": [
