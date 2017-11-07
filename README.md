@@ -18,16 +18,21 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-with-VS-Code-using-CSharp-and-NET-Core)
 
-### What's New in 1.12.0
+### What's New in 1.13.0
 
-* Support for C# 7.1.
-* Support for latest .NET Core 2.0 preview.
-* Improvements to our support for Xamarin projects.
-* Several improvements to code actions, plus several new code fixes and refactorings.
-* The completion list now suggests variable names as you type.
-* Many other bug fixes
+* Support for Cake files. (https://cakebuild.net/)
+* The language service now runs on Mono >= 5.2.0 when it is globally installed on macOS or Linux, resulting faster project load times.
+* If debugging is started when a launch.json is not present, picking ".NET Core" generates a launch.json dynamically that can correctly launch a .NET Core app without any additional changes.
+* Better reliability loading projects when Visual Studio 2017 (Windows) or Mono >= 5.2.0 (macOS/Linux) is installed.
+* Fixed issues with non-C# projects (such as F#) being treated as C# projects.
+* Addressed bugs when renaming files.
+* New options for controlling the display of the references and test CodeLens:
+  * `csharp.referencesCodeLens.enabled`
+  * `csharp.testsCodeLens.enabled`
+* Fixed problems with running/debugging xUnit 2.3.0 or NUnit tests.
+* Many other bug fixes!
 
-See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.12.0/CHANGELOG.md) for all of the updates.
+See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.13.0/CHANGELOG.md) for all of the updates.
 
 ### Supported Operating Systems for Debugging
 
