@@ -30,10 +30,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     let logger = new Logger(text => _channel.append(text));
 
     let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, logger, reporter);
-
-    if (!runtimeDependenciesExist) {
-        //do something
-    }
     
     // activate language services
     let omniSharpPromise = OmniSharp.activate(context, reporter, _channel);
@@ -41,9 +37,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     // register JSON completion & hover providers for project.json
     context.subscriptions.push(addJSONProviders());
     
-    // activate coreclr-debug
-    let coreClrDebugPromise = coreclrdebug.activate(extension, context, reporter, logger, _channel);
-
+    let coreClrDebugPromise = Promise.resolve();
+    if (runtimeDependenciesExist) {
+        // activate coreclr-debug
+        coreClrDebugPromise = coreclrdebug.activate(extension, context, reporter, logger, _channel);
+    }
+    
     return {
         initializationFinished: Promise.all([omniSharpPromise, coreClrDebugPromise])
         .then(a => {})
