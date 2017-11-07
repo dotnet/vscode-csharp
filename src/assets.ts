@@ -15,7 +15,7 @@ import { OmniSharpServer } from './omnisharp/server';
 import { tolerantParse } from './json';
 
 export class AssetGenerator {
-    public rootPath: string;
+    public workspaceFolder: vscode.WorkspaceFolder;
     public vscodeFolder: string;
     public tasksJsonPath: string;
     public launchJsonPath: string;
@@ -27,13 +27,33 @@ export class AssetGenerator {
     private executableName: string;
     private configurationName: string;
 
-    public constructor(workspaceInfo: protocol.WorkspaceInformationResponse, rootPath: string = vscode.workspace.rootPath) {
-        if (rootPath === null || rootPath === undefined) {
-            throw new Error('rootPath must set.');
+    public constructor(workspaceInfo: protocol.WorkspaceInformationResponse, workspaceFolder: vscode.WorkspaceFolder = undefined) {
+        if (workspaceFolder) {
+            this.workspaceFolder = workspaceFolder;
+        }
+        else {
+            let resourcePath: string = undefined;
+
+            if (!resourcePath && workspaceInfo.Cake) {
+                resourcePath = workspaceInfo.Cake.Path;
+            }
+
+            if (!resourcePath && workspaceInfo.ScriptCs) {
+                resourcePath = workspaceInfo.ScriptCs.Path;
+            }
+
+            if (!resourcePath && workspaceInfo.DotNet && workspaceInfo.DotNet.Projects.length > 0) {
+                resourcePath = workspaceInfo.DotNet.Projects[0].Path;
+            }
+
+            if (!resourcePath && workspaceInfo.MsBuild) {
+                resourcePath = workspaceInfo.MsBuild.SolutionPath;
+            }
+
+            this.workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(resourcePath));
         }
 
-        this.rootPath = rootPath;
-        this.vscodeFolder = path.join(this.rootPath, '.vscode');
+        this.vscodeFolder = path.join(this.workspaceFolder.uri.fsPath, '.vscode');
         this.tasksJsonPath = path.join(this.vscodeFolder, 'tasks.json');
         this.launchJsonPath = path.join(this.vscodeFolder, 'launch.json');
 
@@ -133,7 +153,7 @@ export class AssetGenerator {
         let result = '${workspaceFolder}';
 
         if (this.projectPath) {
-            result = path.join(result, path.relative(this.rootPath, this.projectPath));
+            result = path.join(result, path.relative(this.workspaceFolder.uri.fsPath, this.projectPath));
         }
 
         result = path.join(result, `bin/${this.configurationName}/${this.targetFramework}/${this.executableName}`);
@@ -141,7 +161,7 @@ export class AssetGenerator {
         return result;
     }
 
-    private computeWorkingDirectory() : string {
+    private computeWorkingDirectory(): string {
         if (!this.hasProject) {
             // If there's no target project data, use a placeholder for the path.
             return '${workspaceFolder}';
@@ -150,7 +170,7 @@ export class AssetGenerator {
         let result = '${workspaceFolder}';
 
         if (this.projectPath) {
-            result = path.join(result, path.relative(this.rootPath, this.projectPath));
+            result = path.join(result, path.relative(this.workspaceFolder.uri.fsPath, this.projectPath));
         }
 
         return result;
@@ -180,7 +200,7 @@ export class AssetGenerator {
     private createBuildTaskDescription(): tasks.TaskDescription {
         let buildPath = '';
         if (this.hasProject) {
-            buildPath = path.join('${workspaceFolder}', path.relative(this.rootPath, this.projectFilePath));
+            buildPath = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, this.projectFilePath));
         }
 
         return {
@@ -236,7 +256,7 @@ export function createWebLaunchConfiguration(programPath: string, workingDirecto
 }`;
 }
 
- export function createLaunchConfiguration(programPath: string, workingDirectory: string): string {
+export function createLaunchConfiguration(programPath: string, workingDirectory: string): string {
     return `
 {
     "name": ".NET Core Launch (console)",
@@ -379,13 +399,13 @@ interface PromptItem extends vscode.MessageItem {
     result: PromptResult;
 }
 
-function promptToAddAssets() {
+function promptToAddAssets(workspaceFolder: vscode.WorkspaceFolder) {
     return new Promise<PromptResult>((resolve, reject) => {
         const yesItem: PromptItem = { title: 'Yes', result: PromptResult.Yes };
         const noItem: PromptItem = { title: 'Not Now', result: PromptResult.No, isCloseAffordance: true };
         const disableItem: PromptItem = { title: "Don't Ask Again", result: PromptResult.Disable };
 
-        const projectName = path.basename(vscode.workspace.rootPath);
+        const projectName = path.basename(workspaceFolder.uri.fsPath);
 
         vscode.window.showWarningMessage(
             `Required assets to build and debug are missing from '${projectName}'. Add them?`, disableItem, noItem, yesItem)
@@ -464,7 +484,7 @@ export enum AddAssetResult {
 
 export function addAssetsIfNecessary(server: OmniSharpServer): Promise<AddAssetResult> {
     return new Promise<AddAssetResult>((resolve, reject) => {
-        if (!vscode.workspace.rootPath) {
+        if (!vscode.workspace.workspaceFolders) {
             return resolve(AddAssetResult.NotApplicable);
         }
 
@@ -477,7 +497,7 @@ export function addAssetsIfNecessary(server: OmniSharpServer): Promise<AddAssetR
                         return resolve(AddAssetResult.NotApplicable);
                     }
 
-                    promptToAddAssets().then(result => {
+                    promptToAddAssets(generator.workspaceFolder).then(result => {
                         if (result === PromptResult.Disable) {
                             return resolve(AddAssetResult.Disable);
                         }
