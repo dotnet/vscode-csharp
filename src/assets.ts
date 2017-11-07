@@ -5,13 +5,14 @@
 
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import * as vscode from 'vscode';
-import * as tasks from 'vscode-tasks';
-import { OmniSharpServer } from './omnisharp/server';
-import * as serverUtils from './omnisharp/utils';
 import * as protocol from './omnisharp/protocol';
-import { tolerantParse } from './json';
+import * as serverUtils from './omnisharp/utils';
+import * as tasks from 'vscode-tasks';
 import * as util from './common';
+import * as vscode from 'vscode';
+
+import { OmniSharpServer } from './omnisharp/server';
+import { tolerantParse } from './json';
 
 export class AssetGenerator {
     public rootPath: string;
@@ -546,24 +547,20 @@ function shouldGenerateAssets(generator: AssetGenerator) {
     });
 }
 
-export function generateAssets(server: OmniSharpServer) {
-    serverUtils.requestWorkspaceInformation(server).then(info => {
-        if (protocol.containsDotNetCoreProjects(info)) {
-            const generator = new AssetGenerator(info);
-            getOperations(generator).then(operations => {
-                if (hasAddOperations(operations)) {
-                    shouldGenerateAssets(generator).then(res => {
-                        if (res) {
-                            fs.ensureDir(generator.vscodeFolder, err => {
-                                addAssets(generator, operations);
-                            });
-                        }
-                    });
-                }
-            });
+export async function generateAssets(server: OmniSharpServer) {
+    let workspaceInformation = await serverUtils.requestWorkspaceInformation(server);
+    if (protocol.containsDotNetCoreProjects(workspaceInformation)) {
+        const generator = new AssetGenerator(workspaceInformation);
+        let operations = await getOperations(generator);
+        if (hasAddOperations(operations)) {
+            let doGenerateAssets = await shouldGenerateAssets(generator);
+            if (doGenerateAssets) {
+                await fs.ensureDir(generator.vscodeFolder);
+                await addAssets(generator, operations);
+            }
         }
-        else {
-            vscode.window.showErrorMessage("Could not locate .NET Core project. Assets were not generated.");
-        }
-    });
+    }
+    else {
+        await vscode.window.showErrorMessage("Could not locate .NET Core project. Assets were not generated.");
+    }
 }
