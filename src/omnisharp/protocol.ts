@@ -356,6 +356,14 @@ export interface ModifiedFileResponse {
     FileName: string;
     Buffer: string;
     Changes: TextChange[];
+    ModificationType: FileModificationType;
+}
+
+export enum FileModificationType
+{
+    Modified = "Modified",
+    Opened = "Opened",
+    Renamed = "Renamed"
 }
 
 export interface RenameResponse {
@@ -474,7 +482,6 @@ export namespace V2 {
     export interface RunCodeActionResponse {
         Changes: ModifiedFileResponse[];
     }
-
 
     export interface MSBuildProjectDiagnostics {
         FileName: string;

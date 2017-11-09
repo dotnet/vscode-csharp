@@ -13,6 +13,8 @@ import { toRange2 } from '../omnisharp/typeConvertion';
 import * as serverUtils from '../omnisharp/utils';
 import { Options } from '../omnisharp/options';
 import TelemetryReporter from 'vscode-extension-telemetry';
+import { FileModificationType } from '../omnisharp/protocol';
+import { Uri } from 'vscode';
 
 export default class CodeActionProvider extends AbstractProvider implements vscode.CodeActionProvider {
 
@@ -112,20 +114,62 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
 
                 let edit = new vscode.WorkspaceEdit();
 
+                let fileToOpen: Uri = null;
+                let renamedFiles: Uri[] = [];
+
                 for (let change of response.Changes) {
-                    let uri = vscode.Uri.file(change.FileName);
-                    let edits: vscode.TextEdit[] = [];
-                    for (let textChange of change.Changes) {
-                        edits.push(vscode.TextEdit.replace(toRange2(textChange), textChange.NewText));
+                    if (change.ModificationType == FileModificationType.Renamed)
+                    {
+                        // The file was renamed. Omnisharp has already persisted
+                        // the right changes to disk. We don't need to try to
+                        // apply text changes.
+                        renamedFiles.push(Uri.file(change.FileName));
                     }
 
-                    edit.set(uri, edits);
+                    if (change.ModificationType == FileModificationType.Opened)
+                    {
+                        // The CodeAction requested that we open a file. 
+                        // Record that file name and keep processing CodeActions.
+                        // If a CodeAction requests that we open multiple files 
+                        // we only open the last one (what would it mean to open multiple files?)
+                        fileToOpen = vscode.Uri.file(change.FileName);
+                    }
+
+                    if (change.ModificationType == FileModificationType.Modified)
+                    {
+                        let uri = vscode.Uri.file(change.FileName);
+                        let edits: vscode.TextEdit[] = [];
+                        for (let textChange of change.Changes) {
+                            edits.push(vscode.TextEdit.replace(toRange2(textChange), textChange.NewText));
+                        }
+    
+                        edit.set(uri, edits);
+                    }
                 }
 
-                return vscode.workspace.applyEdit(edit);
-            }
+                let applyEditPromise = vscode.workspace.applyEdit(edit);
 
-        }, (error) => {
+                // Unfortunately, the textEditor.Close() API has been deprecated
+                // and replaced with a command that can only close the active editor.
+                // If files were renamed that weren't the active editor, their tabs will
+                // be left open and marked as "deleted" by VS Code
+                let next = applyEditPromise;
+                if (renamedFiles.some(r => r.fsPath == vscode.window.activeTextEditor.document.uri.fsPath))
+                {
+                    next = applyEditPromise.then(_ => 
+                        {
+                            return vscode.commands.executeCommand("workbench.action.closeActiveEditor");
+                        });
+                }
+
+                return fileToOpen != null
+                 ? next.then(_ => 
+                        {
+                            return vscode.commands.executeCommand("vscode.open", fileToOpen);
+                        })
+                 : next;
+                }
+            }, (error) => {
             return Promise.reject(`Problem invoking 'RunCodeAction' on OmniSharp server: ${error}`);
         });
     }
