@@ -2,6 +2,11 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+let Subscriber: (message: string) => void;
+
+export function SubscribeToAllLoggers(subscriber: (message:string) => void) {
+    Subscriber = subscriber;
+}
 
 export class Logger {
     private _writer: (message: string) => void;
@@ -20,17 +25,17 @@ export class Logger {
         if (this._atLineStart) {
             if (this._indentLevel > 0) {
                 const indent = " ".repeat(this._indentLevel * this._indentSize);
-                this._writer(indent);
+                this.write(indent);
             }
 
             if (this._prefix) {
-                this._writer(`[${this._prefix}] `);
+                this.write(`[${this._prefix}] `);
             }
 
             this._atLineStart = false;
         }
 
-        this._writer(message); 
+        this.write(message); 
     }
 
     public increaseIndent(): void {
@@ -52,5 +57,13 @@ export class Logger {
         message = message || "";
         this._appendCore(message + '\n');
         this._atLineStart = true;
+    }
+
+    private write(message: string) {
+        this._writer(message);
+
+        if (Subscriber) {
+            Subscriber(message);
+        }
     }
 }

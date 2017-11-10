@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { SubscribeToAllLoggers } from "../../src/logger";
 //
 // PLEASE DO NOT MODIFY / DELETE UNLESS YOU KNOW WHAT YOU ARE DOING
 //
@@ -25,5 +26,7 @@ testRunner.configure({
     ui: 'tdd',      // the TDD UI is being used in extension.test.ts (suite, test, etc.)
     useColors: true // colored output from test results
 });
+
+SubscribeToAllLoggers(message => console.log(message));
 
 module.exports = testRunner;
