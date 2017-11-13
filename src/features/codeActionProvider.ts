@@ -15,6 +15,7 @@ import { Options } from '../omnisharp/options';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { FileModificationType } from '../omnisharp/protocol';
 import { Uri } from 'vscode';
+import { rename } from 'async-file';
 
 export default class CodeActionProvider extends AbstractProvider implements vscode.CodeActionProvider {
 
@@ -92,7 +93,8 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
                     Column: column,
                     Selection: selection,
                     Identifier: codeAction.Identifier,
-                    WantsTextChanges: true
+                    WantsTextChanges: true,
+                    WantsAllCodeActionOperations: true
                 };
 
                 return {
@@ -122,10 +124,12 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
                     {
                         // The file was renamed. Omnisharp has already persisted
                         // the right changes to disk. We don't need to try to
-                        // apply text changes.
+                        // apply text changes (and will skip this file if we see an edit)
                         renamedFiles.push(Uri.file(change.FileName));
                     }
+                }
 
+                for (let change of response.Changes) {
                     if (change.ModificationType == FileModificationType.Opened)
                     {
                         // The CodeAction requested that we open a file. 
@@ -138,6 +142,13 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
                     if (change.ModificationType == FileModificationType.Modified)
                     {
                         let uri = vscode.Uri.file(change.FileName);
+                        if (renamedFiles.some(r => r == uri))
+                        {
+                            // This file got renamed. Omnisharp has already
+                            // persisted the new file with any applicable changes.
+                            continue;
+                        }
+
                         let edits: vscode.TextEdit[] = [];
                         for (let textChange of change.Changes) {
                             edits.push(vscode.TextEdit.replace(toRange2(textChange), textChange.NewText));

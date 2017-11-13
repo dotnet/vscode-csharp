@@ -361,9 +361,9 @@ export interface ModifiedFileResponse {
 
 export enum FileModificationType
 {
-    Modified = "Modified",
-    Opened = "Opened",
-    Renamed = "Renamed"
+    Modified,
+    Opened,
+    Renamed,
 }
 
 export interface RenameResponse {
@@ -477,6 +477,7 @@ export namespace V2 {
         Identifier: string;
         Selection?: Range;
         WantsTextChanges: boolean;
+        WantsAllCodeActionOperations: boolean
     }
 
     export interface RunCodeActionResponse {
