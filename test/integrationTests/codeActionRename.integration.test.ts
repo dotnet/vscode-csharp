@@ -23,10 +23,6 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function() {
             await csharpExtension.activate(); 
         }
 
-        testAssetWorkspace.deleteBuildArtifacts();
-
-        await fs.rimraf(testAssetWorkspace.vsCodeDirectoryPath);
-
         await csharpExtension.exports.initializationFinished;
 
     });
