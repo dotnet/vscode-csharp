@@ -3,6 +3,22 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
+## 1.14.0 _(Not Yet Released)_
+
+#### Editor
+
+* Fix to allow signature help return results for attribute constructors. ([#1814](https://github.com/OmniSharp/omnisharp-vscode/issues/1814), PR: [omnisharp-roslyn#1007](https://github.com/OmniSharp/omnisharp-roslyn/pull/1007))
+
+#### Project System
+
+* Addressed problems with projects not being refreshed by OmniSharp after a package restore. ([#1583](https://github.com/OmniSharp/omnisharp-vscode/issues/1583), [#1661](https://github.com/OmniSharp/omnisharp-vscode/issues/1661), [#1785](https://github.com/OmniSharp/omnisharp-vscode/issues/1785), PR: [omnisharp-roslyn#1003](https://github.com/OmniSharp/omnisharp-roslyn/pull/1003))
+
+## 1.13.1 (November 13, 2017)
+
+* Addressed problem with Sdk-style projects not being loaded properly in certain cases. ([#1846](https://github.com/OmniSharp/omnisharp-vscode/issues/1846), [#1849](https://github.com/OmniSharp/omnisharp-vscode/issues/1849), PR: [omnisharp-roslyn#1021](https://github.com/OmniSharp/omnisharp-roslyn/pull/1021))
+* Fixed issue with discovering MSBuild under Mono even when it is missing. ([omnisharp-roslyn#1011](https://github.com/OmniSharp/omnisharp-roslyn/issues/1011), PR: [omnisharp-roslyn#1016](https://github.com/OmniSharp/omnisharp-roslyn/pull/1016))
+* Fixed issue to not use Visual Studio 2017 MSBuild if it is from VS 2017 RTM. ([omnisharp-roslyn#1014](https://github.com/OmniSharp/omnisharp-roslyn/issues/1014), PR: [omnisharp-roslyn#1016](https://github.com/OmniSharp/omnisharp-roslyn/pull/1016))
+
 ## 1.13.0 (November 7, 2017)
 
 #### Cake
