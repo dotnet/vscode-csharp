@@ -21,7 +21,8 @@ export default class OmniSharpHoverProvider extends AbstractSupport implements H
 
         return serverUtils.typeLookup(this._server, req, token).then(value => {
             if (value && value.Type) {
-                let contents = [extractSummaryText(value.Documentation), { language: 'csharp', value: value.Type }];
+                let addLine = value.Documentation.split("\n").join("\n\n");
+                let contents = [extractSummaryText(addLine), { language: 'csharp', value: value.Type }];
                 return new Hover(contents);
             }
         });
