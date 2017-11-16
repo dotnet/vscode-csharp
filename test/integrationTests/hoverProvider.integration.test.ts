@@ -1,3 +1,7 @@
+/*--------------------------------------------------------------------------------------------- 
+ *  Copyright (c) Microsoft Corporation. All rights reserved. 
+ *  Licensed under the MIT License. See License.txt in the project root for license information. 
+ *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'async-file';
 import * as vscode from 'vscode';
@@ -19,45 +23,35 @@ suite(`Test Hover Behavior ${testAssetWorkspace.description}`, function() {
         if (!csharpExtension.isActive) { 
             await csharpExtension.activate();
         }
-
-        testAssetWorkspace.deleteBuildArtifacts();
-        
-        await fs.rimraf(testAssetWorkspace.vsCodeDirectoryPath);
         
         await csharpExtension.exports.initializationFinished;
-                
-        await vscode.commands.executeCommand("dotnet.generateAssets");
-        
-        await poll(async () => await fs.exists(testAssetWorkspace.launchJsonPath), 10000, 100);
-
     });
 
 
     test("Hover returns the correct XML", async () => {                
+
+        var program = 
+`using System;
+namespace hoverXmlDoc
+{
+    class testissue
+    {
+        ///<summary>Checks if object is tagged with the tag.</summary>
+        /// <param name="gameObject">The game object.</param>
+        /// <param name="tagName">Name of the tag </param>
+        /// <returns>Returns <c> true</c>if object is tagged with tag.</returns>
         
-        let program : string = "using System;\
-        \nnamespace hoverXmlDoc \
-        \n{\
-        \n    class testissue\
-        \n    {\
-        \n    ///<summary>Checks if object is tagged with the tag.</summary>\
-        \n    /// <param name=\"gameObject\">The game object.</param> \
-        \n    /// <param name=\"tagName\">Name of the tag </param>\
-        \n    /// <returns>Returns <c> true</c>if object is tagged with tag.</returns>\
-        \n\
-        \n        public static bool Compare(int gameObject,string tagName)\
-        \n        {\
-        \n            return gameObject.TagifyCompareTag(tagName);\
-        \n        }\
-        \n    }\
-        }";
+        public static bool Compare(int gameObject,string tagName)
+        {
+            return gameObject.TagifyCompareTag(tagName);
+        }
+    }
+}`;
         let fileUri = await testAssetWorkspace.projects[0].addFileWithContents("test.cs", program); 
         await vscode.commands.executeCommand("vscode.open", fileUri);
 
-        let c = await vscode.commands.executeCommand("vscode.executeHoverProvider", fileUri,new vscode.Position(10,30));
+        let c = await vscode.commands.executeCommand("vscode.executeHoverProvider", fileUri,new vscode.Position(10,29));
         let answer:string = "Checks if object is tagged with the tag.\n\ngameObject: The game object.\n\ntagName: Name of the tag \n\nReturns: Returns trueif object is tagged with tag.";
-        expect(c[0].contents[0].value).to.equal(answer);
-        
+        expect(c[0].contents[0].value).to.equal(answer);       
     });
-
 });
