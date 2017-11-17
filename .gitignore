@@ -13,3 +13,4 @@ install.*
 obj/
 bin/
 test/**/.vscode
+.logs/
