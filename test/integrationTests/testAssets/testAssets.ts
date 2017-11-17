@@ -7,7 +7,6 @@ import * as fs from 'async-file';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as cp from 'child_process'
-import {ExecFileOptions} from 'child_process'
 
 export class TestAssetProject {
     constructor(project: ITestAssetProject) {
