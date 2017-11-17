@@ -4,7 +4,7 @@ node_js:
 - "6"
 
 env:
-- CODE_VERSION=1.17.2
+- CODE_VERSION=1.18.0
 
 before_install:
   - if [ $TRAVIS_OS_NAME == "linux" ]; then
