@@ -4,12 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 
-import { MarkedString, CompletionItemKind, CompletionItem, DocumentSelector } from 'vscode';
-import { XHRRequest, XHRResponse, getErrorStatusDescription } from 'request-light';
+import * as nls from 'vscode-nls';
+
+import { CompletionItem, CompletionItemKind, DocumentSelector, MarkedString } from 'vscode';
 import { IJSONContribution, ISuggestionsCollector } from './jsonContributions';
+import { XHRRequest, XHRResponse, getErrorStatusDescription } from 'request-light';
+
 import { Location } from 'jsonc-parser';
 
-import * as nls from 'vscode-nls';
 const localize = nls.loadMessageBundle();
 
 const FEED_INDEX_URL = 'https://api.nuget.org/v3/index.json';
@@ -118,7 +120,7 @@ export class ProjectJSONContribution implements IJSONContribution {
             }, error => {
                 result.error(error);
             });
-        };
+        }
         return null;
     }
 
