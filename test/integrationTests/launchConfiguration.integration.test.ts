@@ -1,6 +1,6 @@
-/*--------------------------------------------------------------------------------------------- 
- *  Copyright (c) Microsoft Corporation. All rights reserved. 
- *  Licensed under the MIT License. See License.txt in the project root for license information. 
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'async-file';
@@ -27,10 +27,11 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
 
         await csharpExtension.exports.initializationFinished;
 
+        await csharpExtension.exports.initializationFinished;
+
         await vscode.commands.executeCommand("dotnet.generateAssets");
 
         await poll(async () => await fs.exists(testAssetWorkspace.launchJsonPath), 10000, 100);
-
     });
 
     test("Starting .NET Core Launch (console) from the workspace root should create an Active Debug Session", async () => {

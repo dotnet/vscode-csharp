@@ -14,5 +14,6 @@ obj/
 bin/
 test/**/.vscode
 .logs/
+.nyc_output/
 
 \.DS_Store

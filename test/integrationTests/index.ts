@@ -34,7 +34,7 @@ if (process.env.OSVC_SUITE) {
     if (!fs.existsSync("./.logs")) {
         fs.mkdirSync("./.logs");
     }
-    
+
     let logFilePath = `./.logs/${process.env.OSVC_SUITE}.log`;
 
     SubscribeToAllLoggers(message => fs.appendFileSync(logFilePath, message));

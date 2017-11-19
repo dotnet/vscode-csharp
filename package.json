@@ -38,7 +38,9 @@
     "test:integration:slnWithCsproj": "cross-env OSVC_SUITE=slnWithCsproj npm run test:runSuiteInVsCode",
     "test:runSuiteInVsCode": "cross-env CODE_TESTS_PATH=./out/test/integrationTests CODE_TESTS_WORKSPACE=./test/integrationTests/testAssets/$OSVC_SUITE npm run test:runInVsCode",
     "test:runInVsCode": "node ./test/runVsCodeTestsWithAbsolutePaths.js",
-    "postinstall": "node ./node_modules/vscode/bin/install"
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "cov":"rimraf ./.nyc_output && rimraf ./out && npm run compile && npm run cov:instrument && npm test",
+    "cov:instrument":"rimraf ./cov && nyc instrument --produce-source-map --eager --extension .test.js --cwd=./out . ./cov && rimraf ./out/src && copyfiles -a \"./cov/out/src/**/*\" -u 3 ./out/src && rimraf ./cov"
   },
   "dependencies": {
     "fs-extra": "^5.0.0",
@@ -69,6 +71,7 @@
     "chai-arrays": "2.0.0",
     "chai-as-promised": "7.1.1",
     "chai-fs": "2.0.0",
+    "copyfiles": "^1.2.0",
     "cross-env": "5.1.1",
     "del": "3.0.0",
     "gulp": "3.9.1",
@@ -77,6 +80,7 @@
     "mocha": "4.0.1",
     "mocha-typescript": "^1.1.12",
     "npm-run-all": "4.1.1",
+    "nyc": "^11.3.0",
     "plist": "2.0.1",
     "ts-node": "^5.0.1",
     "tslint": "5.8.0",
