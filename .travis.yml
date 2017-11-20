@@ -33,6 +33,12 @@ install:
 script:
   - npm test --silent
 
+after_failure:
+  - ./.travis/printLogs.sh
+
+after_success:
+  - ./.travis/printLogs.sh
+
 deploy:
   provider: releases
   api_key:
