@@ -60,12 +60,14 @@ export function updatePackageDependencies() {
     };
 
     newPrimaryUrls.split(',').forEach(urlToUpdate =>{
+        console.log(`Trying to update ${urlToUpdate}`);
         let depedency = findDependencyToUpdate(urlToUpdate);
         depedency.url = urlToUpdate;
     });
 
     if (newFallbackUrls !== undefined) {
         newFallbackUrls.split(',').forEach(urlToUpdate =>{
+            console.log(`Trying to update ${urlToUpdate}`);
             let depedency = findDependencyToUpdate(urlToUpdate);
             depedency.fallbackUrl = urlToUpdate;
         }); 
