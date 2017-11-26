@@ -78,7 +78,7 @@
     "tslint-microsoft-contrib": "^5.0.1",
     "typescript": "^2.0.3",
     "vsce": "^1.32.0",
-    "vscode": "^1.1.6"
+    "vscode": "^1.1.8"
   },
   "runtimeDependencies": [
     {
@@ -205,7 +205,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.17.0"
+    "vscode": "^1.18.0"
   },
   "activationEvents": [
     "onDebug",
