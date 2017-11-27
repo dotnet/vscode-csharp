@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.14.0-beta1",
+  "version": "1.14.0-beta2",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -54,31 +54,31 @@
     "yauzl": "^2.5.0"
   },
   "devDependencies": {
-    "@types/chai": "^3.4.34",
+    "@types/chai": "^4.0.5",
     "@types/chai-arrays": "^1.0.2",
-    "@types/fs-extra": "4.0.3",
-    "@types/mkdirp": "^0.3.29",
+    "@types/fs-extra": "^4.0.5",
+    "@types/mkdirp": "^0.5.1",
     "@types/mocha": "^2.2.32",
-    "@types/node": "^6.0.40",
+    "@types/node": "^8.0.53",
     "@types/semver": "^5.3.30",
-    "@types/tmp": "0.0.32",
+    "@types/tmp": "0.0.33",
     "async-file": "^2.0.2",
-    "chai": "^3.5.0",
+    "chai": "^4.1.2",
     "chai-arrays": "^2.0.0",
-    "chai-fs": "^1.0.0",
+    "chai-fs": "^2.0.0",
     "cross-env": "^5.1.1",
-    "del": "^2.0.2",
+    "del": "^3.0.0",
     "gulp": "^3.9.1",
-    "gulp-mocha": "^2.1.3",
-    "gulp-tslint": "^4.3.0",
-    "mocha": "^2.3.3",
+    "gulp-mocha": "^4.3.1",
+    "gulp-tslint": "^8.1.2",
+    "mocha": "^4.0.1",
     "npm-run-all": "^4.1.1",
     "plist": "^2.0.1",
-    "tslint": "^3.15.1",
-    "tslint-microsoft-contrib": "^2.0.12",
+    "tslint": "^5.8.0",
+    "tslint-microsoft-contrib": "^5.0.1",
     "typescript": "^2.0.3",
     "vsce": "^1.32.0",
-    "vscode": "^1.1.6"
+    "vscode": "^1.1.8"
   },
   "runtimeDependencies": [
     {
@@ -158,8 +158,8 @@
     },
     {
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11121545/61b8ee7aa56d99502a7ae3a19547e73b/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-13-0/coreclr-debug-win7-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100317420/a30d7e11bc435433d297adc824ee837f/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-14-4/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -171,8 +171,8 @@
     },
     {
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11121545/61b8ee7aa56d99502a7ae3a19547e73b/coreclr-debug-osx.10.11-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-13-0/coreclr-debug-osx.10.11-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100317420/a30d7e11bc435433d297adc824ee837f/coreclr-debug-osx-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-14-4/coreclr-debug-osx.10.11-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "darwin"
@@ -188,8 +188,8 @@
     },
     {
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11121545/61b8ee7aa56d99502a7ae3a19547e73b/coreclr-debug-linux-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-13-0/coreclr-debug-linux-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100317420/a30d7e11bc435433d297adc824ee837f/coreclr-debug-linux-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-14-4/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -205,7 +205,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.17.0"
+    "vscode": "^1.18.0"
   },
   "activationEvents": [
     "onDebug",
