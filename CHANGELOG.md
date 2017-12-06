@@ -5,6 +5,12 @@
 
 ## 1.14.0 _(Not Yet Released)_
 
+#### Debugger
+
+* Fixes symbol loading while debugging apps running under .NET Core 2.1 (ex: netcoreapp 2.1) on Linux and macOS
+* Fixes debug console message encoding issue on Windows ([#1775](https://github.com/OmniSharp/omnisharp-vscode/issues/1775)).
+* Adds preliminary support for Linux ARM debugging
+
 #### Editor
 
 * Fix to allow signature help return results for attribute constructors. ([#1814](https://github.com/OmniSharp/omnisharp-vscode/issues/1814), PR: [omnisharp-roslyn#1007](https://github.com/OmniSharp/omnisharp-roslyn/pull/1007))
