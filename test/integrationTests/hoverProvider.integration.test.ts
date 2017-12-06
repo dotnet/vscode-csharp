@@ -27,7 +27,7 @@ suite(`Test Hover Behavior ${testAssetWorkspace.description}`, function() {
    });
 
 
-   test("Hover returns the correct XML", async () => {                
+   test("Hover returns the correct XML", async function ()  {                
 
        var program = 
 `using System;
@@ -42,7 +42,7 @@ namespace hoverXmlDoc
        
        public static bool Compare(int gameObject,string tagName)
        {
-           return gameObject.TagifyCompareTag(tagName);
+           return true;
        }
    }
 }`;
@@ -52,5 +52,10 @@ namespace hoverXmlDoc
        let c = await vscode.commands.executeCommand("vscode.executeHoverProvider", fileUri,new vscode.Position(10,29));
        let answer:string = "Checks if object is tagged with the tag.\n\ngameObject: The game object.\n\ntagName: Name of the tag \n\nReturns: Returns trueif object is tagged with tag.";
        expect(c[0].contents[0].value).to.equal(answer);       
-   });
+    });
+   
+    teardown(async() =>
+    {   
+        await testAssetWorkspace.cleanupWorkspace();
+    })
 });
