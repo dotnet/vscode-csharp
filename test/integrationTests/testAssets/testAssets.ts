@@ -16,7 +16,7 @@ export class TestAssetProject {
 
     get projectDirectoryPath(): string {
         return path.join(vscode.workspace.workspaceFolders[0].uri.fsPath,
-                            this.relativePath);
+            this.relativePath);
     }
 
     get binDirectoryPath(): string {
@@ -30,6 +30,12 @@ export class TestAssetProject {
     async deleteBuildArtifacts(): Promise<void> {
         await fs.rimraf(this.binDirectoryPath);
         await fs.rimraf(this.objDirectoryPath);
+    }
+
+    async addFileWithContents(fileName: string, contents: string): Promise<vscode.Uri> {
+        let loc = path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, fileName);
+        await fs.writeTextFile(loc, contents);
+        return vscode.Uri.file(loc);
     }
 }
 
@@ -45,7 +51,7 @@ export class TestAssetWorkspace {
     async deleteBuildArtifacts(): Promise<void> {
         this.projects.forEach(async p => await p.deleteBuildArtifacts());
     }
-    
+
     get vsCodeDirectoryPath(): string {
         return path.join(vscode.workspace.rootPath, ".vscode");
     }
@@ -53,14 +59,14 @@ export class TestAssetWorkspace {
     get launchJsonPath(): string {
         return path.join(this.vsCodeDirectoryPath, "launch.json");
     }
-    
+
     get tasksJsonPath(): string {
         return path.join(this.vsCodeDirectoryPath, "tasks.json");
     }
 
     description: string;
 
-    projects: TestAssetProject [];
+    projects: TestAssetProject[];
 }
 
 export interface ITestAssetProject {

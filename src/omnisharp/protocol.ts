@@ -214,6 +214,17 @@ export interface FindSymbolsResponse {
     QuickFixes: SymbolLocation[];
 }
 
+export interface DocumentationComment {
+    RemarksText : string;
+    ExampleText : string;
+    ReturnsText : string ;
+    SummaryText: string ;
+    ValueText: string;
+    Exception : string[];
+    ParamElements :  string[];
+    TypeParamElements :string[];
+}
+
 export interface TypeLookupRequest extends Request {
     IncludeDocumentation: boolean;
 }
@@ -221,6 +232,7 @@ export interface TypeLookupRequest extends Request {
 export interface TypeLookupResponse {
     Type: string;
     Documentation: string;
+    StructuredDocumentation : DocumentationComment; 
 }
 
 export interface RunCodeActionResponse {
