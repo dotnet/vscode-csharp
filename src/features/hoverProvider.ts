@@ -5,11 +5,11 @@
 
 'use strict';
 
-import {extractSummaryText} from './documentation';
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import {createRequest} from '../omnisharp/typeConvertion';
+
 import {HoverProvider, Hover, TextDocument, CancellationToken, Position} from 'vscode';
 
 export default class OmniSharpHoverProvider extends AbstractSupport implements HoverProvider {
@@ -25,7 +25,7 @@ export default class OmniSharpHoverProvider extends AbstractSupport implements H
                 let newline = "\n\n";
                 let documentation = "";
                 Object.getOwnPropertyNames(structDoc).forEach(
-                    function (val, idx, array) {
+                    function (val) {
                         if(Array.isArray(structDoc[val])){
                             if(structDoc[val].length>0){
                                 if(val=="ParamElements")

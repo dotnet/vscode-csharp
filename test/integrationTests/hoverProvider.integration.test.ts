@@ -14,21 +14,31 @@ const chai = require('chai');
 chai.use(require('chai-arrays')); 
 chai.use(require('chai-fs')); 
 
-suite(`Test Hover Behavior ${testAssetWorkspace.description}`, function() {
-   suiteSetup(async function() { 
-       should();
+suite(`Tasks generation: ${testAssetWorkspace.description}`, function() {
+    suiteSetup(async function() { 
+        should();
+        console.log("Suite start");
+        let csharpExtension = vscode.extensions.getExtension("ms-vscode.csharp"); 
+        if (!csharpExtension.isActive) { 
+            await csharpExtension.activate(); 
+        }
 
-       let csharpExtension = vscode.extensions.getExtension("ms-vscode.csharp"); 
-       if (!csharpExtension.isActive) { 
-           await csharpExtension.activate();
-       }
-       
-       await csharpExtension.exports.initializationFinished;
-   });
+        await testAssetWorkspace.cleanupWorkspace();
+
+        await csharpExtension.exports.initializationFinished;
+        
+        await vscode.commands.executeCommand("dotnet.generateAssets");
+
+        await poll(async () => await fs.exists(testAssetWorkspace.launchJsonPath), 10000, 100);
+        
+        console.log("Suite end");
+    }); 
 
 
-   test("Hover returns the correct XML", async function ()  {                
+   test("Hover returns structured documentation with proper newlines", async function ()  {                
 
+    console.log("Test start");
+    await vscode.commands.executeCommand('workbench.action.tasks.runTask','build');
        var program = 
 `using System;
 namespace hoverXmlDoc
@@ -48,8 +58,10 @@ namespace hoverXmlDoc
 }`;
        let fileUri = await testAssetWorkspace.projects[0].addFileWithContents("test1.cs", program); 
        await vscode.commands.executeCommand("vscode.open", fileUri);
-
+       /*var d = await fs.exists(fileUri.fsPath);
+       console.log("File exists",d);*/
        let c = await vscode.commands.executeCommand("vscode.executeHoverProvider", fileUri,new vscode.Position(10,29));
+
        let answer:string = 
 `Summary: Checks if object is tagged with the tag.
 
@@ -60,11 +72,14 @@ gameObject: The game object.
 tagName: Name of the tag.
 
 Returns: Returns trueif object is tagged with tag.`;
-       expect(c[0].contents[0].value).to.equal(answer);       
+       expect(c[0].contents[0].value).to.equal(answer);
+       console.log("Test end ");
     });
    
     teardown(async() =>
     {   
+        console.log("Teardown start");
         await testAssetWorkspace.cleanupWorkspace();
+        console.log("Teardown end");     
     })
 });

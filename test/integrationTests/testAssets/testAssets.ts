@@ -67,12 +67,15 @@ export class TestAssetWorkspace {
 
     async cleanupWorkspace() : Promise<void>
     {
+        console.log("Clean started");
         for (let project of this.projects)
         {
             let wd = path.dirname(project.projectDirectoryPath);
             await this.invokeGit("clean -xdf . ", wd);
             await this.invokeGit("checkout -- .", wd);
+            console.log("Cleaning");
         }
+        console.log("Clean ended");
     }
 
      invokeGit(args: string, workingDirectory: string) : Promise<{stdout: string, stderr: string}> {
