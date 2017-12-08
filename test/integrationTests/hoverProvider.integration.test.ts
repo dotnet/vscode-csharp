@@ -37,8 +37,8 @@ namespace hoverXmlDoc
    {
        ///<summary>Checks if object is tagged with the tag.</summary>
        /// <param name="gameObject">The game object.</param>
-       /// <param name="tagName">Name of the tag </param>
-       /// <returns>Returns <c> true</c>if object is tagged with tag.</returns>
+       /// <param name="tagName">Name of the tag.</param>
+       /// <returns>Returns <c> true</c> if object is tagged with tag.</returns>
        
        public static bool Compare(int gameObject,string tagName)
        {
@@ -50,7 +50,16 @@ namespace hoverXmlDoc
        await vscode.commands.executeCommand("vscode.open", fileUri);
 
        let c = await vscode.commands.executeCommand("vscode.executeHoverProvider", fileUri,new vscode.Position(10,29));
-       let answer:string = "Checks if object is tagged with the tag.\n\ngameObject: The game object.\n\ntagName: Name of the tag \n\nReturns: Returns trueif object is tagged with tag.";
+       let answer:string = 
+`Summary: Checks if object is tagged with the tag.
+
+Parameters:
+
+gameObject: The game object.
+
+tagName: Name of the tag.
+
+Returns: Returns trueif object is tagged with tag.`;
        expect(c[0].contents[0].value).to.equal(answer);       
     });
    

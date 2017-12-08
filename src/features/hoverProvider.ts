@@ -21,35 +21,27 @@ export default class OmniSharpHoverProvider extends AbstractSupport implements H
 
         return serverUtils.typeLookup(this._server, req, token).then(value => {
             if (value && value.Type) {
-                let structuredDocumentation = value.StructuredDocumentation ;
+                let structDoc = value.StructuredDocumentation ;
                 let newline = "\n\n";
-                let ParamText = structuredDocumentation.ParamElements.join(newline);
-                if(ParamText.length>0)
-                {
-                    ParamText = "Parameters:\n\n"+ ParamText;
-                }
-
-                let TypeParamText = structuredDocumentation.TypeParamElements.join(newline);
-                if(TypeParamText.length>0)
-                {
-                    TypeParamText = "TypeParameters:\n\n"+TypeParamText;
-                }
-                
-                let ExceptionText = structuredDocumentation.Exception.join(newline);
-                if(ExceptionText.length>0)
-                {
-                    ExceptionText = "Exceptions:\n\n"+ ExceptionText;
-                }
-
-                let documentation = 
-                structuredDocumentation.SummaryText + newline +
-                ParamText + newline +
-                TypeParamText + newline +
-                structuredDocumentation.ValueText + newline +
-                structuredDocumentation.ExampleText + newline +
-                structuredDocumentation.RemarksText + newline +
-                structuredDocumentation.ReturnsText + newline +
-                ExceptionText;
+                let documentation = "";
+                Object.getOwnPropertyNames(structDoc).forEach(
+                    function (val, idx, array) {
+                        if(Array.isArray(structDoc[val])){
+                            if(structDoc[val].length>0){
+                                if(val=="ParamElements")
+                                    documentation += "Parameters:" ;
+                                else if(val=="TypeParamElements")
+                                    documentation += "TypeParameters:";
+                                else
+                                    documentation += "Exceptions:";
+                                documentation += newline + structDoc[val].join(newline) + newline;
+                             }
+                         }
+                        else if(structDoc[val])
+                            documentation += structDoc[val] + newline; 
+                    }
+                );
+                documentation = documentation.trim();
                 let contents = [documentation, { language: 'csharp', value: value.Type }];
                 return new Hover(contents);
             }

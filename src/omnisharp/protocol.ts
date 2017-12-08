@@ -215,14 +215,14 @@ export interface FindSymbolsResponse {
 }
 
 export interface DocumentationComment {
+    SummaryText: string ;
+    TypeParamElements :string[];
+    ParamElements :  string[];
+    ReturnsText : string ;
     RemarksText : string;
     ExampleText : string;
-    ReturnsText : string ;
-    SummaryText: string ;
     ValueText: string;
     Exception : string[];
-    ParamElements :  string[];
-    TypeParamElements :string[];
 }
 
 export interface TypeLookupRequest extends Request {
