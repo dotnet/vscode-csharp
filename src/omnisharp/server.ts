@@ -18,6 +18,7 @@ import * as path from 'path';
 import * as protocol from './protocol';
 import * as utils from '../common';
 import * as vscode from 'vscode';
+import { setTimeout } from 'timers';
 
 enum ServerState {
     Starting,
@@ -96,6 +97,13 @@ export class OmniSharpServer {
 
     public isRunning(): boolean {
         return this._state === ServerState.Started;
+    }
+
+    public async waitForEmptyEventQueue() : Promise<void> {
+        while (!this._requestQueue.isEmpty()) {
+            var p = new Promise((resolve) => setTimeout(resolve, 100));
+            await p;
+        }     
     }
 
     private _getState(): ServerState {
