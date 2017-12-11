@@ -10,5 +10,5 @@
         "indent": [ true, "spaces", 4 ],
         "file-header": [ true, ".*" ]
     },
-    "rulesDirectory": ["node_modules/tslint-microsoft-contrib", "node_modules/tslint-no-unused-expression-chai"]
+    "rulesDirectory": ["node_modules/tslint-microsoft-contrib", "node_modules/tslint-no-unused-expression-chai/rules"]
 }

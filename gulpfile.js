@@ -170,7 +170,8 @@ gulp.task('tslint', () => {
     gulp.src(allTypeScript)
         .pipe(tslint({
             program: require('tslint').Linter.createProgram("./tsconfig.json"),
-            rulesDirectory: ["node_modules/tslint-microsoft-contrib", "node_modules/tslint-no-unused-expression-chai"]
+            configuration: "./tslint.json",
+            rulesDirectory: ["node_modules/tslint-microsoft-contrib", "node_modules/tslint-no-unused-expression-chai/rules"]
         }))
         .pipe(tslint.report(lintReporter, {
             summarizeFailureOutput: false,
