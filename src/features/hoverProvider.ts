@@ -28,17 +28,21 @@ export default class OmniSharpHoverProvider extends AbstractSupport implements H
                     function (val) {
                         if(Array.isArray(structDoc[val])){
                             if(structDoc[val].length>0){
-                                if(val=="ParamElements")
+                                if(val=="ParamElements"){
                                     documentation += "Parameters:" ;
-                                else if(val=="TypeParamElements")
+                                }
+                                else if(val=="TypeParamElements"){
                                     documentation += "TypeParameters:";
-                                else
+                                }
+                                else{
                                     documentation += "Exceptions:";
+                                }
                                 documentation += newline + structDoc[val].join(newline) + newline;
                              }
                          }
-                        else if(structDoc[val])
-                            documentation += structDoc[val] + newline; 
+                        else if(structDoc[val]){
+                            documentation += structDoc[val] + newline;
+                        } 
                     }
                 );
                 documentation = documentation.trim();

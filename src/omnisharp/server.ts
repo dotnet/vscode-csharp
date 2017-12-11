@@ -101,7 +101,7 @@ export class OmniSharpServer {
 
     public async waitForEmptyEventQueue() : Promise<void> {
         while (!this._requestQueue.isEmpty()) {
-            var p = new Promise((resolve) => setTimeout(resolve, 100));
+            let p = new Promise((resolve) => setTimeout(resolve, 100));
             await p;
         }     
     }
