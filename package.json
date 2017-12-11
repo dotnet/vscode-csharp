@@ -54,7 +54,7 @@
     "yauzl": "^2.5.0"
   },
   "devDependencies": {
-    "@types/chai": "^4.0.5",
+    "@types/chai": "4.0.8",
     "@types/chai-arrays": "^1.0.2",
     "@types/fs-extra": "^4.0.5",
     "@types/mkdirp": "^0.5.1",
@@ -76,6 +76,7 @@
     "plist": "^2.0.1",
     "tslint": "^5.8.0",
     "tslint-microsoft-contrib": "^5.0.1",
+    "tslint-no-unused-expression-chai": "0.0.3",
     "typescript": "^2.0.3",
     "vsce": "^1.32.0",
     "vscode": "^1.1.8"

@@ -1,6 +1,6 @@
 {
     "rules": {
-        "no-unused-expression": true,
+        "no-unused-expression-chai": true,
         "no-unused-variable": true,
         "no-duplicate-variable": true,
         "no-var-keyword": true,
@@ -8,6 +8,7 @@
         "curly": true,
         "semicolon": true,
         "indent": [true, "spaces", 4],
-        "file-header": [true, ".*"] 
-    }
+        "file-header": [true, ".*"]
+    },
+    "rulesDirectory": ["node_modules/tslint-microsoft-contrib", "node_modules/tslint-no-unused-expression-chai/rules"]
 }
