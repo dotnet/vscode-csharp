@@ -34,7 +34,8 @@ export class TestAssetProject {
     }
 
     async addFileWithContents(fileName: string, contents: string): Promise<vscode.Uri> {
-        let loc = path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, fileName);
+        let dir = path.dirname(this.projectDirectoryPath)
+        let loc = path.join(dir, fileName);
         await fs.writeTextFile(loc, contents);
         return vscode.Uri.file(loc);
     }
@@ -67,15 +68,12 @@ export class TestAssetWorkspace {
 
     async cleanupWorkspace() : Promise<void>
     {
-        console.log("Clean started");
         for (let project of this.projects)
         {
             let wd = path.dirname(project.projectDirectoryPath);
             await this.invokeGit("clean -xdf . ", wd);
-            await this.invokeGit("checkout -- .", wd);
-            console.log("Cleaning");
+             await this.invokeGit("checkout -- .", wd);
         }
-        console.log("Clean ended");
     }
 
      invokeGit(args: string, workingDirectory: string) : Promise<{stdout: string, stderr: string}> {
