@@ -72,24 +72,28 @@ suite("Common", () => {
         test("same paths", () => {
             let subfolder: string = ["C:", "temp", "VS", "dotnetProject"].join(path.sep);
             let folder: string= ["C:", "temp", "VS", "dotnetProject"].join(path.sep);
+            // tslint:disable-next-line:no-unused-expression
             isSubfolderOf(subfolder, folder).should.be.true;
         });
 
         test("correct subfolder", () => {
             let subfolder: string = ["C:", "temp", "VS"].join(path.sep);
             let folder: string= ["C:", "temp", "VS", "dotnetProject"].join(path.sep);
+            // tslint:disable-next-line:no-unused-expression
             isSubfolderOf(subfolder, folder).should.be.true;
         });
 
         test("longer subfolder", () => {
             let subfolder: string = ["C:", "temp", "VS", "a", "b", "c"].join(path.sep);
             let folder: string= ["C:", "temp", "VS"].join(path.sep);
+            // tslint:disable-next-line:no-unused-expression
             isSubfolderOf(subfolder, folder).should.be.false;
         });
 
         test("Different drive", () => {
             let subfolder: string = ["C:", "temp", "VS"].join(path.sep);
             let folder: string= ["E:", "temp", "VS"].join(path.sep);
+            // tslint:disable-next-line:no-unused-expression
             isSubfolderOf(subfolder, folder).should.be.false;
         });
     });
