@@ -9,6 +9,9 @@ import * as vscode from 'vscode';
 import poll from './poll';
 import { should, expect } from 'chai';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import { RequestQueueCollection } from '../../src/omnisharp/requestQueue';
+import { OmniSharpServer } from '../../src/omnisharp/server';
+import { omnisharp } from '../../src/omnisharp/extension';
 
 const chai = require('chai'); 
 chai.use(require('chai-arrays')); 
@@ -38,7 +41,7 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function() {
    test("Hover returns structured documentation with proper newlines", async function ()  {                
 
     console.log("Test start");
-    await vscode.commands.executeCommand('workbench.action.tasks.runTask','build');
+    //await vscode.commands.executeCommand("dotnet.restore");
        var program = 
 `using System;
 namespace hoverXmlDoc
@@ -57,6 +60,9 @@ namespace hoverXmlDoc
    }
 }`;
        let fileUri = await testAssetWorkspace.projects[0].addFileWithContents("test1.cs", program); 
+
+       await omnisharp.waitForEmptyEventQueue();
+
        await vscode.commands.executeCommand("vscode.open", fileUri);
        /*var d = await fs.exists(fileUri.fsPath);
        console.log("File exists",d);*/
