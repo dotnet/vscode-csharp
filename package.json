@@ -54,12 +54,12 @@
     "yauzl": "^2.5.0"
   },
   "devDependencies": {
-    "@types/chai": "^4.0.8",
+    "@types/chai": "^4.0.5",
     "@types/chai-arrays": "^1.0.2",
     "@types/fs-extra": "^4.0.5",
-    "@types/mkdirp": "^0.5.2",
+    "@types/mkdirp": "^0.5.1",
     "@types/mocha": "^2.2.32",
-    "@types/node": "^8.0.57",
+    "@types/node": "^8.0.53",
     "@types/semver": "^5.3.30",
     "@types/tmp": "0.0.33",
     "async-file": "^2.0.2",
