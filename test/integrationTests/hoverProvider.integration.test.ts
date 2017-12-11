@@ -20,7 +20,7 @@ chai.use(require('chai-fs'));
 suite(`Tasks generation: ${testAssetWorkspace.description}`, function() {
     suiteSetup(async function() { 
         should();
-        console.log("Suite start");
+
         let csharpExtension = vscode.extensions.getExtension("ms-vscode.csharp"); 
         if (!csharpExtension.isActive) { 
             await csharpExtension.activate(); 
@@ -34,17 +34,14 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function() {
 
         await poll(async () => await fs.exists(testAssetWorkspace.launchJsonPath), 10000, 100);
         
-        console.log("Suite end");
     }); 
 
 
    test("Hover returns structured documentation with proper newlines", async function ()  {                
 
-    console.log("Test start");
-    //await vscode.commands.executeCommand("dotnet.restore");
        var program = 
 `using System;
-namespace hoverXmlDoc
+namespace Test
 {
    class testissue
    {
@@ -64,8 +61,7 @@ namespace hoverXmlDoc
        await omnisharp.waitForEmptyEventQueue();
 
        await vscode.commands.executeCommand("vscode.open", fileUri);
-       /*var d = await fs.exists(fileUri.fsPath);
-       console.log("File exists",d);*/
+
        let c = await vscode.commands.executeCommand("vscode.executeHoverProvider", fileUri,new vscode.Position(10,29));
 
        let answer:string = 
@@ -79,13 +75,10 @@ tagName: Name of the tag.
 
 Returns: Returns trueif object is tagged with tag.`;
        expect(c[0].contents[0].value).to.equal(answer);
-       console.log("Test end ");
     });
    
     teardown(async() =>
     {   
-        console.log("Teardown start");
-        await testAssetWorkspace.cleanupWorkspace();
-        console.log("Teardown end");     
+        await testAssetWorkspace.cleanupWorkspace();     
     })
 });
