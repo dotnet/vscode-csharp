@@ -33,7 +33,7 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function() {
         
     }); 
  
-    test("Starting .NET Core Launch (console) from the workspace root should create an Active Debug Session", async () => {      
+    test("Starting .NET Core Launch (console) from the workspace root should create an Active Debug Session", async () => {
         await vscode.debug.startDebugging(vscode.workspace.workspaceFolders[0], ".NET Core Launch (console)");
 
         let debugSessionTerminated = new Promise(resolve => {
