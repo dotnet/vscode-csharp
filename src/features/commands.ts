@@ -105,7 +105,7 @@ function projectsToCommands(projects: protocol.ProjectDescriptor[]): Promise<Com
     });
 }
 
-export function dotnetRestoreAllProjects(server: OmniSharpServer) {
+export function dotnetRestoreAllProjects(server: OmniSharpServer) : Promise<void> {
 
     if (!server.isRunning()) {
         return Promise.reject('OmniSharp server is not running.');
