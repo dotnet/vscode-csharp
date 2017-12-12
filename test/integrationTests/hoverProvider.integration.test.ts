@@ -39,7 +39,7 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function() {
 
    test("Hover returns structured documentation with proper newlines", async function ()  {                
 
-       var program = 
+       let program = 
 `using System;
 namespace Test
 {
@@ -69,9 +69,8 @@ namespace Test
 
 Parameters:
 
-gameObject: The game object.
-
-tagName: Name of the tag.
+\t\tgameObject: The game object.
+\t\ttagName: Name of the tag.
 
 Returns: Returns trueif object is tagged with tag.`;
        expect(c[0].contents[0].value).to.equal(answer);
