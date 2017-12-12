@@ -11,14 +11,6 @@ import { AssetGenerator } from '../../src/assets';
 import { parse } from 'jsonc-parser';
 import { should } from 'chai';
 
-function createMockWorkspaceFolder(rootPath: string) : vscode.WorkspaceFolder {
-    return {
-        uri: vscode.Uri.file(rootPath),
-        name: undefined,
-        index: undefined
-    }
-}
-
 suite("Asset generation: project.json", () => {
     suiteSetup(() => should());
 
@@ -95,38 +87,6 @@ suite("Asset generation: project.json", () => {
     });
 });
 
-function createDotNetWorkspaceInformation(projectPath: string, compilationOutputAssemblyFile: string, targetFrameworkShortName: string, emitEntryPoint: boolean = true): protocol.WorkspaceInformationResponse {
-    return {
-        DotNet: {
-            Projects: [
-                {
-                    Path: projectPath,
-                    Name: '',
-                    ProjectSearchPaths: [],
-                    Configurations: [
-                        {
-                            Name: 'Debug',
-                            CompilationOutputPath: '',
-                            CompilationOutputAssemblyFile: compilationOutputAssemblyFile,
-                            CompilationOutputPdbFile: '',
-                            EmitEntryPoint: emitEntryPoint
-                        }
-                    ],
-                    Frameworks: [
-                        {
-                            Name: '',
-                            FriendlyName: '',
-                            ShortName: targetFrameworkShortName
-                        }
-                    ],
-                    SourceFiles: []
-                }
-            ],
-            RuntimePath: ''
-        }
-    };
-}
-
 suite("Asset generation: csproj", () => {
     suiteSetup(() => should());
 
@@ -202,6 +162,46 @@ suite("Asset generation: csproj", () => {
         segments.should.deep.equal(['${workspaceFolder}', 'nested', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 });
+
+function createMockWorkspaceFolder(rootPath: string): vscode.WorkspaceFolder {
+    return {
+        uri: vscode.Uri.file(rootPath),
+        name: undefined,
+        index: undefined
+    };
+}
+
+function createDotNetWorkspaceInformation(projectPath: string, compilationOutputAssemblyFile: string, targetFrameworkShortName: string, emitEntryPoint: boolean = true): protocol.WorkspaceInformationResponse {
+    return {
+        DotNet: {
+            Projects: [
+                {
+                    Path: projectPath,
+                    Name: '',
+                    ProjectSearchPaths: [],
+                    Configurations: [
+                        {
+                            Name: 'Debug',
+                            CompilationOutputPath: '',
+                            CompilationOutputAssemblyFile: compilationOutputAssemblyFile,
+                            CompilationOutputPdbFile: '',
+                            EmitEntryPoint: emitEntryPoint
+                        }
+                    ],
+                    Frameworks: [
+                        {
+                            Name: '',
+                            FriendlyName: '',
+                            ShortName: targetFrameworkShortName
+                        }
+                    ],
+                    SourceFiles: []
+                }
+            ],
+            RuntimePath: ''
+        }
+    };
+}
 
 function createMSBuildWorkspaceInformation(projectPath: string, assemblyName: string, targetFrameworkShortName: string, isExe: boolean = true): protocol.WorkspaceInformationResponse {
     return {

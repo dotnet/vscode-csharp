@@ -170,7 +170,7 @@ gulp.task('tslint', () => {
     gulp.src(allTypeScript)
         .pipe(tslint({
             program: require('tslint').Linter.createProgram("./tsconfig.json"),
-            rulesDirectory: "node_modules/tslint-microsoft-contrib"
+            configuration: "./tslint.json"
         }))
         .pipe(tslint.report(lintReporter, {
             summarizeFailureOutput: false,
