@@ -198,7 +198,7 @@ function GetWindowsDockerLaunchJSONWithArrayArgs() {
         pipeArgs: ["-i", "exec", "1234567"],
         quoteArgs: false
     };
-};
+}
 
 function GetWindowsDockerLaunchJSONWithStringArgsAndDebuggerCommand() {
     return {
