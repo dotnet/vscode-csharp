@@ -31,6 +31,12 @@ export class TestAssetProject {
         await fs.rimraf(this.binDirectoryPath);
         await fs.rimraf(this.objDirectoryPath);
     }
+
+    async addFileWithContents(fileName: string, contents: string) : Promise<vscode.Uri> { 
+        let loc = path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, fileName); 
+        await fs.writeTextFile(loc, contents); 
+        return vscode.Uri.file(loc); 
+    } 
 }
 
 export class TestAssetWorkspace {
