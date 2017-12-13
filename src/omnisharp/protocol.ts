@@ -214,15 +214,19 @@ export interface FindSymbolsResponse {
     QuickFixes: SymbolLocation[];
 }
 
+export interface DocumentedObject {
+    Name: string;
+    Documentation: string;
+}
 export interface DocumentationComment {
     SummaryText: string ;
-    TypeParamElements :string[];
-    ParamElements :  string[];
+    TypeParamElements :DocumentedObject[];
+    ParamElements :  DocumentedObject[];
     ReturnsText : string ;
     RemarksText : string;
     ExampleText : string;
     ValueText: string;
-    Exception : string[];
+    Exception : DocumentedObject[];
 }
 
 export interface TypeLookupRequest extends Request {

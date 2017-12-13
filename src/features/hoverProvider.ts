@@ -31,12 +31,12 @@ export default class OmniSharpHoverProvider extends AbstractSupport implements H
 
                 if (structDoc.TypeParamElements && structDoc.TypeParamElements.length > 0) {
                     documentation += "Type Parameters:" + newLine;
-                    documentation += indentSpaces + structDoc.TypeParamElements.join("\n" + indentSpaces) + newLine;
+                    documentation += indentSpaces + structDoc.TypeParamElements.map(OmniSharpHoverProvider.displayDocumentationObject).join("\n" + indentSpaces) + newLine;
                 } 
 
                 if (structDoc.ParamElements && structDoc.ParamElements.length > 0) {
                     documentation += "Parameters:" + newLine;
-                    documentation += indentSpaces + structDoc.ParamElements.join("\n" + indentSpaces) + newLine;
+                    documentation += indentSpaces + structDoc.ParamElements.map(OmniSharpHoverProvider.displayDocumentationObject).join("\n" + indentSpaces) + newLine;
                 }
 
                 if (structDoc.ReturnsText) {
@@ -57,7 +57,7 @@ export default class OmniSharpHoverProvider extends AbstractSupport implements H
                 
                 if (structDoc.Exception && structDoc.Exception.length > 0) {
                     documentation += "Exceptions:" + newLine;
-                    documentation += indentSpaces + structDoc.Exception.join("\n" + indentSpaces) + newLine;
+                    documentation += indentSpaces + structDoc.Exception.map(OmniSharpHoverProvider.displayDocumentationObject).join("\n" + indentSpaces) + newLine;
                 }
 
                 documentation = documentation.trim();
@@ -65,5 +65,9 @@ export default class OmniSharpHoverProvider extends AbstractSupport implements H
                 return new Hover(contents);
             }
         });
+    }
+
+    private static displayDocumentationObject(obj: protocol.DocumentedObject): string{
+        return obj.Name + ": " + obj.Documentation;
     }
 }
