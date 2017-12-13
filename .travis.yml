@@ -1,7 +1,7 @@
 language: node_js
 
 node_js:
-- "6"
+- "8"
 
 env:
 - CODE_VERSION=1.18.0
