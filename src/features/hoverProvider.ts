@@ -67,7 +67,7 @@ export default class OmniSharpHoverProvider extends AbstractSupport implements H
         });
     }
 
-    private static displayDocumentationObject(obj: protocol.DocumentedObject): string{
+    private static displayDocumentationObject(obj: protocol.DocumentationItem): string{
         return obj.Name + ": " + obj.Documentation;
     }
 }
