@@ -77,7 +77,7 @@
     "tslint": "5.8.0",
     "tslint-microsoft-contrib": "5.0.1",
     "tslint-no-unused-expression-chai": "0.0.3",
-    "typescript": "2.0.3",
+    "typescript": "2.6.2",
     "vsce": "^1.32.0",
     "vscode": "^1.1.8"
   },
