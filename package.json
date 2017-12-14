@@ -39,16 +39,16 @@
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
-    "fs-extra": "^4.0.2",
-    "http-proxy-agent": "^1.0.0",
-    "https-proxy-agent": "^1.0.0",
-    "jsonc-parser": "^0.3.0",
+    "fs-extra": "^4.0.3",
+    "http-proxy-agent": "^2.0.0",
+    "https-proxy-agent": "^2.1.1",
+    "jsonc-parser": "^1.0.0",
     "lodash.debounce": "^4.0.8",
     "mkdirp": "^0.5.1",
     "open": "*",
     "request-light": "^0.2.0",
     "semver": "*",
-    "tmp": "0.0.28",
+    "tmp": "0.0.33",
     "vscode-debugprotocol": "^1.6.1",
     "vscode-extension-telemetry": "0.0.8",
     "yauzl": "^2.5.0"
