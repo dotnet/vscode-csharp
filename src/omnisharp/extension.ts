@@ -99,7 +99,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
 
     // After server is started (and projects are loaded), check to see if there are
     // any project.json projects if the suppress option is not set. If so, notify the user about migration.
-   let csharpConfig = vscode.workspace.getConfiguration('csharp');
+    let csharpConfig = vscode.workspace.getConfiguration('csharp');
     if (!csharpConfig.get<boolean>('suppressProjectDotJsonWarning')) {
         disposables.push(server.onServerStart(() => {
             utils.requestWorkspaceInformation(server)
