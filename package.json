@@ -334,6 +334,11 @@
           "default": false,
           "description": "Suppress the notification window to perform a 'dotnet restore' when dependencies can't be resolved."
         },
+        "csharp.suppressProjectDotJsonWarning": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress the warning that project.json is no longer a supported project format for .NET Core applications"
+        },
         "csharp.suppressHiddenDiagnostics": {
           "type": "boolean",
           "default": true,
