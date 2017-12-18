@@ -15,12 +15,10 @@ import { PlatformInformation } from './../platform';
 import TelemetryReporter from 'vscode-extension-telemetry';
 
 let _debugUtil: CoreClrDebugUtil = null;
-let _reporter: TelemetryReporter = null;
 let _logger: Logger = null;
 
 export async function activate(thisExtension : vscode.Extension<any>, context: vscode.ExtensionContext, reporter: TelemetryReporter, logger: Logger, channel: vscode.OutputChannel) {
     _debugUtil = new CoreClrDebugUtil(context.extensionPath, logger);
-    _reporter = reporter;
     _logger = logger;
 
     if (!CoreClrDebugUtil.existsSync(_debugUtil.debugAdapterDir())) {

@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.13.0-beta5",
+  "version": "1.14.0-beta2",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -21,6 +21,9 @@
     "Linters",
     "Snippets"
   ],
+  "keywords": [
+    "multi-root ready"
+  ],
   "main": "./out/src/main",
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
@@ -36,52 +39,53 @@
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
-    "fs-extra": "^4.0.2",
-    "http-proxy-agent": "^1.0.0",
-    "https-proxy-agent": "^1.0.0",
-    "jsonc-parser": "^0.3.0",
+    "fs-extra": "^5.0.0",
+    "http-proxy-agent": "^2.0.0",
+    "https-proxy-agent": "^2.1.1",
+    "jsonc-parser": "^1.0.0",
     "lodash.debounce": "^4.0.8",
     "mkdirp": "^0.5.1",
     "open": "*",
     "request-light": "^0.2.0",
     "semver": "*",
-    "tmp": "0.0.28",
+    "tmp": "0.0.33",
     "vscode-debugprotocol": "^1.6.1",
     "vscode-extension-telemetry": "0.0.8",
     "yauzl": "^2.5.0"
   },
   "devDependencies": {
-    "@types/chai": "^3.4.34",
-    "@types/chai-arrays": "^1.0.2",
-    "@types/fs-extra": "4.0.3",
-    "@types/mkdirp": "^0.3.29",
-    "@types/mocha": "^2.2.32",
-    "@types/node": "^6.0.40",
-    "@types/semver": "^5.3.30",
-    "@types/tmp": "0.0.32",
-    "async-file": "^2.0.2",
-    "chai": "^3.5.0",
-    "chai-arrays": "^2.0.0",
-    "chai-fs": "^1.0.0",
-    "cross-env": "^5.1.1",
-    "del": "^2.0.2",
-    "gulp": "^3.9.1",
-    "gulp-mocha": "^2.1.3",
-    "gulp-tslint": "^4.3.0",
-    "mocha": "^2.3.3",
-    "npm-run-all": "^4.1.1",
-    "plist": "^2.0.1",
-    "tslint": "^3.15.1",
-    "tslint-microsoft-contrib": "^2.0.12",
-    "typescript": "^2.0.3",
-    "vsce": "^1.7.0",
-    "vscode": "^1.1.6"
+    "@types/chai": "4.0.8",
+    "@types/chai-arrays": "1.0.2",
+    "@types/fs-extra": "4.0.5",
+    "@types/mkdirp": "0.5.1",
+    "@types/mocha": "2.2.32",
+    "@types/node": "8.0.53",
+    "@types/semver": "5.3.30",
+    "@types/tmp": "0.0.33",
+    "async-file": "2.0.2",
+    "chai": "4.1.2",
+    "chai-arrays": "2.0.0",
+    "chai-fs": "2.0.0",
+    "cross-env": "5.1.1",
+    "del": "3.0.0",
+    "gulp": "3.9.1",
+    "gulp-mocha": "4.3.1",
+    "gulp-tslint": "8.1.2",
+    "mocha": "4.0.1",
+    "npm-run-all": "4.1.1",
+    "plist": "2.0.1",
+    "tslint": "5.8.0",
+    "tslint-microsoft-contrib": "5.0.1",
+    "tslint-no-unused-expression-chai": "0.0.3",
+    "typescript": "2.6.2",
+    "vsce": "^1.32.0",
+    "vscode": "^1.1.8"
   },
   "runtimeDependencies": [
     {
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/100265554/077ad93cf1fb671e2c0902586873ab06/omnisharp-win-x86-1.26.1.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.26.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100289208/83b6be4e753a13aeac50203cd524350a/omnisharp-win-x86-1.27.2.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.27.2.zip",
       "installPath": ".omnisharp",
       "platforms": [
         "win32"
@@ -93,8 +97,8 @@
     },
     {
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/100265553/6af3cbbb63bb25dc4f2b481879e8525a/omnisharp-win-x64-1.26.1.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.26.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100289204/1291dd6c146dfbfcded52a8fc0a58c60/omnisharp-win-x64-1.27.2.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.27.2.zip",
       "installPath": ".omnisharp",
       "platforms": [
         "win32"
@@ -106,8 +110,8 @@
     },
     {
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/100265552/a9ff84a7405589572ade0087cdf2c2b5/omnisharp-osx-1.26.1.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.26.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100289200/6f9abf6fa8ff4891f29099cf23f9034a/omnisharp-osx-1.27.2.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.27.2.zip",
       "installPath": ".omnisharp",
       "platforms": [
         "darwin"
@@ -120,8 +124,8 @@
     },
     {
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/100265551/666592bdb3277d5152c0930f092b7c1c/omnisharp-linux-x86-1.26.1.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.26.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100289198/3a894f5135ea9e3cefee8b557ce52fb6/omnisharp-linux-x86-1.27.2.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.27.2.zip",
       "installPath": ".omnisharp",
       "platforms": [
         "linux"
@@ -138,8 +142,8 @@
     },
     {
       "description": "OmniSharp for Linux (x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/100265550/6780b525c18ff3bdb4687fa8e7657d6c/omnisharp-linux-x64-1.26.1.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.26.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100289197/6b6deacae45d80bf0174c40b720ed20b/omnisharp-linux-x64-1.27.2.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.27.2.zip",
       "installPath": ".omnisharp",
       "platforms": [
         "linux"
@@ -155,8 +159,8 @@
     },
     {
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11121545/61b8ee7aa56d99502a7ae3a19547e73b/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-13-0/coreclr-debug-win7-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100317420/a30d7e11bc435433d297adc824ee837f/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-14-4/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -168,8 +172,8 @@
     },
     {
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11121545/61b8ee7aa56d99502a7ae3a19547e73b/coreclr-debug-osx.10.11-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-13-0/coreclr-debug-osx.10.11-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100317420/a30d7e11bc435433d297adc824ee837f/coreclr-debug-osx-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-14-4/coreclr-debug-osx.10.11-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "darwin"
@@ -185,8 +189,8 @@
     },
     {
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11121545/61b8ee7aa56d99502a7ae3a19547e73b/coreclr-debug-linux-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-13-0/coreclr-debug-linux-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/100317420/a30d7e11bc435433d297adc824ee837f/coreclr-debug-linux-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-14-4/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -202,7 +206,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.17.0"
+    "vscode": "^1.18.0"
   },
   "activationEvents": [
     "onDebug",
@@ -330,6 +334,11 @@
           "type": "boolean",
           "default": false,
           "description": "Suppress the notification window to perform a 'dotnet restore' when dependencies can't be resolved."
+        },
+        "csharp.suppressProjectJsonWarning": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress the warning that project.json is no longer a supported project format for .NET Core applications"
         },
         "csharp.suppressHiddenDiagnostics": {
           "type": "boolean",

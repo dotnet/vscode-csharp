@@ -47,7 +47,7 @@ export class TestAssetWorkspace {
     }
     
     get vsCodeDirectoryPath(): string {
-        return path.join(vscode.workspace.rootPath, ".vscode");;
+        return path.join(vscode.workspace.rootPath, ".vscode");
     }
 
     get launchJsonPath(): string {

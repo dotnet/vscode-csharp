@@ -169,7 +169,8 @@ const lintReporter = (output, file, options) => {
 gulp.task('tslint', () => {
     gulp.src(allTypeScript)
         .pipe(tslint({
-            rulesDirectory: "node_modules/tslint-microsoft-contrib"
+            program: require('tslint').Linter.createProgram("./tsconfig.json"),
+            configuration: "./tslint.json"
         }))
         .pipe(tslint.report(lintReporter, {
             summarizeFailureOutput: false,
