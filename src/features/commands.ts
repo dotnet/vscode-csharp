@@ -8,7 +8,6 @@
 import { OmniSharpServer } from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
 import { findLaunchTargets } from '../omnisharp/launcher';
-import * as os from 'os';
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -17,10 +16,11 @@ import * as vscode from 'vscode';
 import { DotNetAttachItemsProviderFactory, AttachPicker, RemoteAttachPicker } from './processPicker';
 import { generateAssets } from '../assets';
 import TelemetryReporter from 'vscode-extension-telemetry';
+import { registerAdapterExecutionCommand } from '../coreclr-debug/activate';
 
 let channel = vscode.window.createOutputChannel('.NET');
 
-export default function registerCommands(server: OmniSharpServer, reporter: TelemetryReporter) {
+export default function registerCommands(server: OmniSharpServer, reporter: TelemetryReporter, channel: vscode.OutputChannel) {
     let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server));
     let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', () => pickProjectAndStart(server));
     let d3 = vscode.commands.registerCommand('o.showOutput', () => server.getChannel().show(vscode.ViewColumn.Three));
@@ -34,19 +34,16 @@ export default function registerCommands(server: OmniSharpServer, reporter: Tele
     let attachItemsProvider = DotNetAttachItemsProviderFactory.Get();
     let attacher = new AttachPicker(attachItemsProvider);
     let d6 = vscode.commands.registerCommand('csharp.listProcess', () => attacher.ShowAttachEntries());
+
     // Register command for generating tasks.json and launch.json assets.
     let d7 = vscode.commands.registerCommand('dotnet.generateAssets', () => generateAssets(server));
+
+    // Register command for remote process picker for attach
     let d8 = vscode.commands.registerCommand('csharp.listRemoteProcess', (args) => RemoteAttachPicker.ShowAttachEntries(args));
-    let d9 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', () => {
-        return {
-            command: "./.debugger/vsdbg-ui" + os.platform() == "win32" ? ".exe" : ""
-        };
-    });
-    let d10 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', () => {
-        return {
-            command: "./.debugger/vsdbg-ui" + os.platform() == "win32" ? ".exe" : ""
-        };
-    });
+
+    // Register command for adapter executable command.
+    let d9 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', (args) => registerAdapterExecutionCommand(channel).then(adapterExecutableCommand => adapterExecutableCommand));
+    let d10 = vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', (args) => registerAdapterExecutionCommand(channel).then(adapterExecutableCommand => adapterExecutableCommand));
 
     return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10);
 }
