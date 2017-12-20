@@ -4,8 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { CoreClrDebugUtil } from './util';
-import * as fs from 'fs';
-import * as path from 'path';
 
 export class InstallError extends Error {
     public installStage: string;
@@ -51,8 +49,6 @@ export class DebugInstaller {
         let errorBuilder = new InstallError();
 
         return Promise.resolve().then(() => {
-            errorBuilder.installStage = 'rewriteManifest';
-            this.rewriteManifest();
             errorBuilder.installStage = 'writeCompletionFile';
             return CoreClrDebugUtil.writeEmptyFile(this._util.installCompleteFilePath());
          }).catch((err) => {
@@ -64,31 +60,5 @@ export class DebugInstaller {
 
             throw errorBuilder;
         });
-    }
-
-    private rewriteManifest(): void {
-        const manifestPath = path.join(this._util.extensionDir(), 'package.json');
-        let manifestString = fs.readFileSync(manifestPath, 'utf8');
-        let manifestObject = JSON.parse(manifestString);
-
-        // .NET Core
-        delete manifestObject.contributes.debuggers[0].runtime;
-        delete manifestObject.contributes.debuggers[0].program;
-
-        let programString = './.debugger/vsdbg-ui';
-        manifestObject.contributes.debuggers[0].windows = { program: programString + '.exe' };
-        manifestObject.contributes.debuggers[0].osx = { program: programString };
-        manifestObject.contributes.debuggers[0].linux = { program: programString };
-
-        // .NET Framework
-        delete manifestObject.contributes.debuggers[1].runtime;
-        delete manifestObject.contributes.debuggers[1].program;
-
-        manifestObject.contributes.debuggers[1].windows = { program: programString + '.exe' };
-        manifestObject.contributes.debuggers[1].osx = { program: programString };
-        manifestObject.contributes.debuggers[1].linux = { program: programString };
-
-        manifestString = JSON.stringify(manifestObject, null, 2);
-        fs.writeFileSync(manifestPath, manifestString);
     }
 }

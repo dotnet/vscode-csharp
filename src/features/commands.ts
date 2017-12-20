@@ -8,6 +8,7 @@
 import { OmniSharpServer } from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
 import { findLaunchTargets } from '../omnisharp/launcher';
+import * as os from 'os';
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -36,8 +37,18 @@ export default function registerCommands(server: OmniSharpServer, reporter: Tele
     // Register command for generating tasks.json and launch.json assets.
     let d7 = vscode.commands.registerCommand('dotnet.generateAssets', () => generateAssets(server));
     let d8 = vscode.commands.registerCommand('csharp.listRemoteProcess', (args) => RemoteAttachPicker.ShowAttachEntries(args));
+    let d9 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', () => {
+        return {
+            command: "./.debugger/vsdbg-ui" + os.platform() == "win32" ? ".exe" : ""
+        };
+    });
+    let d10 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', () => {
+        return {
+            command: "./.debugger/vsdbg-ui" + os.platform() == "win32" ? ".exe" : ""
+        };
+    });
 
-    return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8);
+    return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10);
 }
 
 function restartOmniSharp(server: OmniSharpServer) {
