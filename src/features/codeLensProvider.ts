@@ -17,7 +17,6 @@ import { Options } from '../omnisharp/options';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import TestManager from './dotnetTest';
 import { Range, Position, Location } from 'vscode';
-import { QuickFix } from '../omnisharp/protocol';
 
 class OmniSharpCodeLens extends vscode.CodeLens {
 
@@ -72,7 +71,6 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         if (node.Kind === 'MethodDeclaration' && OmniSharpCodeLensProvider.filteredSymbolNames[node.Location.Text]) {
             return;
         }
-
 
         let lens = new OmniSharpCodeLens(document.fileName, toRange(node.Location), this._attributeSpanToRange(document, node));
         if (this._options.showReferencesCodeLens) {
@@ -154,5 +152,4 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         }
         return toRange(node.Location);
     }
-
 }
