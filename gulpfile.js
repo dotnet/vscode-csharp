@@ -13,7 +13,6 @@ const mocha = require('gulp-mocha');
 const tslint = require('gulp-tslint');
 const vsce = require('vsce');
 const debugUtil = require('./out/src/coreclr-debug/util');
-const debugInstall = require('./out/src/coreclr-debug/install');
 const packages = require('./out/src/packages');
 const logger = require('./out/src/logger');
 const platform = require('./out/src/platform');
@@ -54,7 +53,6 @@ function install(platformInfo, packageJSON) {
     const packageManager = new PackageManager(platformInfo, packageJSON);
     const logger = new Logger(message => process.stdout.write(message));
     const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'), logger);
-    const debugInstaller = new debugInstall.DebugInstaller(debuggerUtil);
 
     return packageManager.DownloadPackages(logger)
         .then(() => {
@@ -62,9 +60,6 @@ function install(platformInfo, packageJSON) {
         })
         .then(() => {
             return util.touchInstallFile(util.InstallFileType.Lock)
-        })
-        .then(() => {
-            return debugInstaller.finishInstall();
         });
 }
 
