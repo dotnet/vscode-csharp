@@ -242,6 +242,8 @@ export interface Node {
     Location: QuickFix;
     Kind: string;
     Features: SyntaxFeature[];
+    AttributeSpanStart: number;
+    AttributeSpanEnd: number;
 }
 
 export interface CurrentFileMembersAsTreeResponse {
@@ -418,13 +420,12 @@ export interface PackageDependency {
     Name: string;
     Version: string;
 }
-    
-export interface FilesChangedRequest extends Request{
+
+export interface FilesChangedRequest extends Request {
     ChangeType: FileChangeType;
 }
 
-export enum FileChangeType
-{
+export enum FileChangeType {
     Change = "Change",
     Create = "Create",
     Delete = "Delete"

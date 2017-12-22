@@ -16,14 +16,18 @@ import { OmniSharpServer } from '../omnisharp/server';
 import { Options } from '../omnisharp/options';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import TestManager from './dotnetTest';
+import { Range, Position, Location } from 'vscode';
+import { QuickFix } from '../omnisharp/protocol';
 
 class OmniSharpCodeLens extends vscode.CodeLens {
 
     fileName: string;
+    actualRange: vscode.Range;
 
-    constructor(fileName: string, range: vscode.Range) {
-        super(range);
+    constructor(fileName: string, actualrange: vscode.Range, attributeRange: vscode.Range) {
+        super(attributeRange);
         this.fileName = fileName;
+        this.actualRange = actualrange;
     }
 }
 
@@ -31,8 +35,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 
     private _options: Options;
 
-    constructor(server: OmniSharpServer, reporter: TelemetryReporter, testManager: TestManager)
-    {
+    constructor(server: OmniSharpServer, reporter: TelemetryReporter, testManager: TestManager) {
         super(server, reporter);
 
         this._resetCachedOptions();
@@ -53,35 +56,35 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
     };
 
     provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
-        if (!this._options.showReferencesCodeLens && !this._options.showTestsCodeLens)
-        {
+        if (!this._options.showReferencesCodeLens && !this._options.showTestsCodeLens) {
             return [];
         }
 
         return serverUtils.currentFileMembersAsTree(this._server, { FileName: document.fileName }, token).then(tree => {
             let ret: vscode.CodeLens[] = [];
-            tree.TopLevelTypeDefinitions.forEach(node => this._convertQuickFix(ret, document.fileName, node));
+            tree.TopLevelTypeDefinitions.forEach(node => this._convertQuickFix(ret, document, node));
             return ret;
         });
     }
 
-    private _convertQuickFix(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node): void {
+    private _convertQuickFix(bucket: vscode.CodeLens[], document: vscode.TextDocument, node: protocol.Node): void {
 
         if (node.Kind === 'MethodDeclaration' && OmniSharpCodeLensProvider.filteredSymbolNames[node.Location.Text]) {
             return;
         }
 
-        let lens = new OmniSharpCodeLens(fileName, toRange(node.Location));
+
+        let lens = new OmniSharpCodeLens(document.fileName, toRange(node.Location), this._attributeSpanToRange(document, node));
         if (this._options.showReferencesCodeLens) {
             bucket.push(lens);
         }
 
         for (let child of node.ChildNodes) {
-            this._convertQuickFix(bucket, fileName, child);
+            this._convertQuickFix(bucket, document, child);
         }
 
         if (this._options.showTestsCodeLens) {
-            this._updateCodeLensForTest(bucket, fileName, node);
+            this._updateCodeLensForTest(bucket, document.fileName, node);
         }
     }
 
@@ -90,8 +93,8 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 
             let req = <protocol.FindUsagesRequest>{
                 FileName: codeLens.fileName,
-                Line: codeLens.range.start.line + 1,
-                Column: codeLens.range.start.character + 1,
+                Line: codeLens.actualRange.start.line + 1,
+                Column: codeLens.actualRange.start.character + 1,
                 OnlyThisFile: false,
                 ExcludeDefinition: true
             };
@@ -105,7 +108,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
                 codeLens.command = {
                     title: len === 1 ? '1 reference' : `${len} references`,
                     command: 'editor.action.showReferences',
-                    arguments: [vscode.Uri.file(req.FileName), codeLens.range.start, res.QuickFixes.map(toLocation)]
+                    arguments: [vscode.Uri.file(req.FileName), codeLens.actualRange.start, res.QuickFixes.map(toLocation)]
                 };
 
                 return codeLens;
@@ -139,4 +142,17 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
                 { title: "debug test", command: 'dotnet.test.debug', arguments: [testFeature.Data, fileName, testFrameworkName] }));
         }
     }
+
+    private _attributeSpanToRange(document: vscode.TextDocument, node: protocol.Node): vscode.Range {
+        //If the node has some attributes then returns the range of the attributes, else returns the range from the node location
+        if (node.AttributeSpanStart) {
+            let line = document.positionAt(node.AttributeSpanStart).line;
+            let column = document.positionAt(node.AttributeSpanStart).character;
+            let endLine = document.positionAt(node.AttributeSpanEnd).line;
+            let endColumn = document.positionAt(node.AttributeSpanEnd).character;
+            return new Range(line, column, endLine, endColumn);
+        }
+        return toRange(node.Location);
+    }
+
 }
