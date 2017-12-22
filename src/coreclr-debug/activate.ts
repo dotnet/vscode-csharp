@@ -64,7 +64,7 @@ async function completeDebuggerInstall(logger: Logger, channel: vscode.OutputCha
             }
 
             // Write install.complete
-            CoreClrDebugUtil.writeEmptyFile(this._util.installCompleteFilePath());
+            CoreClrDebugUtil.writeEmptyFile(_debugUtil.installCompleteFilePath());
             vscode.window.setStatusBarMessage('Successfully installed .NET Core Debugger.', 5000);
 
             return true;
