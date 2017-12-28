@@ -32,11 +32,15 @@ export default class TestManager extends AbstractProvider {
             'dotnet.test.run',
             (testMethod, fileName, testFrameworkName) => this._runDotnetTest(testMethod, fileName, testFrameworkName));
 
+        let d2 = vscode.commands.registerCommand(
+            'dotnet.test.debug',
+            (testMethod, fileName, testFrameworkName) => this._debugDotnetTest(testMethod, fileName, testFrameworkName));
+
         let d4 = vscode.commands.registerCommand(
             'dotnet.tests.run',
             (...testsToRun) => this._runDotnetTestsInClass(testsToRun));
 
-        let d2 = vscode.commands.registerCommand(
+        let d5 = vscode.commands.registerCommand(
             'dotnet.test.debug',
             (testMethod, fileName, testFrameworkName) => this._debugDotnetTest(testMethod, fileName, testFrameworkName));
 
@@ -165,7 +169,7 @@ export default class TestManager extends AbstractProvider {
             output.appendLine(e.Message);
         });
 
-        await this._saveDirtyFiles()
+        this._saveDirtyFiles()
             .then(_ => this._recordRunRequest(testFrameworkName))
             .then(_ => serverUtils.requestProjectInformation(this._server, { FileName: fileName }))
             .then(projectInfo => {
@@ -193,24 +197,24 @@ export default class TestManager extends AbstractProvider {
 
     private async _runDotnetTestsInClass(testsToRun) {
 
-        let allResults : protocol.V2.DotNetTestResult[];
+        let allResults: protocol.V2.DotNetTestResult[];
         for (let [testMethod, fileName, testFrameworkName] of testsToRun) {
             const output = this._getOutputChannel();
 
             output.show();
             output.appendLine(`Running test ${testMethod}...`);
             output.appendLine('');
-    
+
             const listener = this._server.onTestMessage(e => {
                 output.appendLine(e.Message);
             });
-    
+
             await this._saveDirtyFiles()
                 .then(_ => this._recordRunRequest(testFrameworkName))
                 .then(_ => serverUtils.requestProjectInformation(this._server, { FileName: fileName }))
                 .then(projectInfo => {
                     let targetFrameworkVersion: string;
-    
+
                     if (projectInfo.DotNetProject) {
                         targetFrameworkVersion = undefined;
                     }
@@ -220,19 +224,19 @@ export default class TestManager extends AbstractProvider {
                     else {
                         throw new Error('Expected project.json or .csproj project.');
                     }
-    
+
                     return this._runTest(fileName, testMethod, testFrameworkName, targetFrameworkVersion);
                 })
                 .then(results => {
                     //pushing all the results to one result
                     if (!allResults) {
                         allResults = results;
-                    }    
+                    }
                     else {
                         Array.prototype.push.apply(allResults, results);
-                    }  
-                }    
-            )
+                    }
+                }
+                )
                 .then(() => listener.dispose())
                 .catch(reason => {
                     listener.dispose();
