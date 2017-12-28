@@ -31,8 +31,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 
     private _options: Options;
 
-    constructor(server: OmniSharpServer, reporter: TelemetryReporter, testManager: TestManager)
-    {
+    constructor(server: OmniSharpServer, reporter: TelemetryReporter, testManager: TestManager) {
         super(server, reporter);
 
         this._resetCachedOptions();
@@ -53,8 +52,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
     };
 
     provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
-        if (!this._options.showReferencesCodeLens && !this._options.showTestsCodeLens)
-        {
+        if (!this._options.showReferencesCodeLens && !this._options.showTestsCodeLens) {
             return [];
         }
 
@@ -119,6 +117,10 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             return;
         }
 
+        if (node.Kind == "ClassDeclaration" && node.ChildNodes.length > 0) {
+            this._updateCodeLensForTestClass(bucket, fileName, node);
+        }
+
         let testFeature = node.Features.find(value => (value.Name == 'XunitTestMethod' || value.Name == 'NUnitTestMethod' || value.Name == 'MSTestMethod'));
         if (testFeature) {
             // this test method has a test feature
@@ -137,6 +139,40 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             bucket.push(new vscode.CodeLens(
                 toRange(node.Location),
                 { title: "debug test", command: 'dotnet.test.debug', arguments: [testFeature.Data, fileName, testFrameworkName] }));
+        }
+    }
+
+    private _updateCodeLensForTestClass(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node) {
+        //if the class doesnot contain any method then return
+        if (!node.ChildNodes.find(value => (value.Kind == "MethodDeclaration"))) {
+            return;
+        }
+
+        let argumentArray = new Array<Array<string>>();
+        let newArguments;
+        for (let child of node.ChildNodes) {
+            if (child.Kind == "MethodDeclaration") {
+                let testFeature = child.Features.find(value => (value.Name == 'XunitTestMethod' || value.Name == 'NUnitTestMethod' || value.Name == 'MSTestMethod'));
+                if (testFeature) {
+                    // this test method has a test feature
+                    let testFrameworkName = 'xunit';
+                    if (testFeature.Name == 'NUnitTestMethod') {
+                        testFrameworkName = 'nunit';
+                    }
+                    else if (testFeature.Name == 'MSTestMethod') {
+                        testFrameworkName = 'mstest';
+                    }
+
+                    newArguments = [testFeature.Data, fileName, testFrameworkName];
+                    argumentArray.push(newArguments);
+                }
+            }
+        }
+        //console.log(typeof (newArguments));
+        if (argumentArray.length) {
+            bucket.push(new vscode.CodeLens(
+                toRange(node.Location),
+                { title: "run all test", command: 'dotnet.tests.run', arguments: argumentArray }));
         }
     }
 }
