@@ -41,8 +41,8 @@ export default class TestManager extends AbstractProvider {
             (...testsToRun) => this._runDotnetTestsInClass(testsToRun));
 
         let d5 = vscode.commands.registerCommand(
-            'dotnet.test.debug',
-            (testMethod, fileName, testFrameworkName) => this._debugDotnetTest(testMethod, fileName, testFrameworkName));
+            'dotnet.tests.debug',
+            (...testsToDebug) => this._debugDotnetTestsInClass(testsToDebug));
 
         this._telemetryIntervalId = setInterval(() =>
             this._reportTelemetry(), TelemetryReportingDelay);
@@ -56,7 +56,7 @@ export default class TestManager extends AbstractProvider {
             }
         });
 
-        this.addDisposables(d1, d2, d3, d4);
+        this.addDisposables(d1, d2, d3, d4, d5);
     }
 
     private _getOutputChannel(): vscode.OutputChannel {
@@ -235,8 +235,7 @@ export default class TestManager extends AbstractProvider {
                     else {
                         Array.prototype.push.apply(allResults, results);
                     }
-                }
-                )
+                })
                 .then(() => listener.dispose())
                 .catch(reason => {
                     listener.dispose();
@@ -372,6 +371,12 @@ export default class TestManager extends AbstractProvider {
                     debugEventListener.close();
                 }
             });
+    }
+
+    private async _debugDotnetTestsInClass(testsToDebug) {
+        for (let [testMethod, fileName, testFrameworkName] of testsToDebug) {
+            await this._debugDotnetTest(testMethod, fileName, testFrameworkName);
+        }
     }
 }
 
