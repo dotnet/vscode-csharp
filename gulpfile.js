@@ -29,7 +29,7 @@ const PlatformInformation = platform.PlatformInformation;
 
 function cleanSync(deleteVsix) {
     del.sync('install.*');
-    del.sync('.omnisharp-*');
+    del.sync('.omnisharp*');
     del.sync('.debugger');
 
     if (deleteVsix) {
@@ -103,7 +103,7 @@ function doOfflinePackage(platformInfo, packageName, packageJSON) {
     cleanSync(false);
     return install(platformInfo, packageJSON)
         .then(() => {
-            doPackageSync(packageName + '-' + platformInfo.runtimeId + '.vsix');
+            doPackageSync(packageName + '-' + platformInfo.platform + '-' + platformInfo.architecture + '.vsix');
         });
 }
 
@@ -130,13 +130,7 @@ gulp.task('package:offline', ['clean'], () => {
     var packages = [];
     packages.push(new PlatformInformation('win32', 'x86_64'));
     packages.push(new PlatformInformation('darwin', 'x86_64'));
-    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('centos', '7')));
-    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('debian', '8')));
-    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('fedora', '23')));
-    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('opensuse', '13.2')));
-    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('rhel', '7.2')));
-    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('ubuntu', '14.04')));
-    packages.push(new PlatformInformation('linux', 'x86_64', new LinuxDistribution('ubuntu', '16.04')));
+    packages.push(new PlatformInformation('linux', 'x86_64'));
 
     var promise = Promise.resolve();
 
