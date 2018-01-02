@@ -124,14 +124,20 @@ export async function registerAdapterExecutionCommand(channel: vscode.OutputChan
     let util = new CoreClrDebugUtil(common.getExtensionPath(), logger);
     let success = true;
 
-    if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {
-        // our install.complete file does not exist yet, meaning we have not completed the installation. Try to figure out what if anything the package manager is doing
-        // the order in which files are dealt with is this:
-        // 1. install.Begin is created
-        // 2. install.Lock is created
-        // 3. install.Begin is deleted
-        // 4. install.complete is created
+    // our install.complete file does not exist yet, meaning we have not completed the installation. Try to figure out what if anything the package manager is doing
+    // the order in which files are dealt with is this:
+    // 1. install.Begin is created
+    // 2. install.Lock is created
+    // 3. install.Begin is deleted
+    // 4. install.complete is created
 
+    // install.Lock does not exist, need to wait for packages to finish downloading.
+    if (!common.installFileExists(common.InstallFileType.Lock)) {
+        success = false;
+        vscode.window.showInformationMessage('The omnisharp-csharp extension is still downloading packages. Please see progress in the output window below.');
+    }
+    // install.complete does not exist, check dotnetCLI to see if we can complete.
+    else if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {
         success = await completeDebuggerInstall(logger, channel);
     }
 

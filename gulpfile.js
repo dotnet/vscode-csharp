@@ -60,6 +60,9 @@ function install(platformInfo, packageJSON) {
         })
         .then(() => {
             return util.touchInstallFile(util.InstallFileType.Lock)
+        })
+        .then(() => {
+            return debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());
         });
 }
 
