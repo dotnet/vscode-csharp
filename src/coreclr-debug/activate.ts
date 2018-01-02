@@ -58,7 +58,6 @@ async function completeDebuggerInstall(logger: Logger, channel: vscode.OutputCha
             if (os.platform() === "darwin" && !CoreClrDebugUtil.isMacOSSupported()) {
                 logger.appendLine("[ERROR] The debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer.");
                 channel.show();
-                vscode.window.showErrorMessage("The .NET Core debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer.");
 
                 return false;
             }
@@ -122,7 +121,6 @@ interface AdapterExecutableCommand {
 export async function registerAdapterExecutionCommand(channel: vscode.OutputChannel): Promise<AdapterExecutableCommand> {
     let logger = new Logger(text => channel.append(text));
     let util = new CoreClrDebugUtil(common.getExtensionPath(), logger);
-    let success = true;
 
     // our install.complete file does not exist yet, meaning we have not completed the installation. Try to figure out what if anything the package manager is doing
     // the order in which files are dealt with is this:
@@ -133,23 +131,20 @@ export async function registerAdapterExecutionCommand(channel: vscode.OutputChan
 
     // install.Lock does not exist, need to wait for packages to finish downloading.
     if (!common.installFileExists(common.InstallFileType.Lock)) {
-        success = false;
-        vscode.window.showInformationMessage('The omnisharp-csharp extension is still downloading packages. Please see progress in the output window below.');
+        throw new Error('The omnisharp-csharp extension is still downloading packages. Please see progress in the output window below.');
     }
     // install.complete does not exist, check dotnetCLI to see if we can complete.
     else if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {
-        success = await completeDebuggerInstall(logger, channel);
+        let success: boolean = await completeDebuggerInstall(logger, channel);
+
+        if (!success)
+        {
+            throw new Error('Failed to complete the installation of the omnisharp-csharp extension. Please see the error in the output window below.');
+        }
     }
 
-    if (success)   
-    {
-        // debugger has finished install and manifest has been rewritten, kick off our debugger process
-        return {
-            command: path.join(common.getExtensionPath(), ".debugger", "vsdbg-ui" + CoreClrDebugUtil.getPlatformExeExtension())
-        };
-    }
-    else
-    {
-        return null;
-    }
+    // debugger has finished install, kick off our debugger process
+    return {
+        command: path.join(common.getExtensionPath(), ".debugger", "vsdbg-ui" + CoreClrDebugUtil.getPlatformExeExtension())
+    };
 }
