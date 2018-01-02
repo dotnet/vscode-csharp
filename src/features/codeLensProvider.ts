@@ -72,7 +72,8 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             return;
         }
 
-        let lens = new OmniSharpCodeLens(document.fileName, toRange(node.Location), this._attributeSpanToRange(document, node));
+        let attributeRange = this._attributeSpanToRange(document, node);
+        let lens = new OmniSharpCodeLens(document.fileName, toRange(node.Location), attributeRange);
         if (this._options.showReferencesCodeLens) {
             bucket.push(lens);
         }
@@ -82,7 +83,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         }
 
         if (this._options.showTestsCodeLens) {
-            this._updateCodeLensForTest(bucket, document.fileName, node);
+            this._updateCodeLensForTest(bucket, document.fileName, node, attributeRange);
         }
     }
 
@@ -114,7 +115,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         }
     }
 
-    private _updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node) {
+    private _updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node, attributeRange: vscode.Range) {
         // backward compatible check: Features property doesn't present on older version OmniSharp
         if (node.Features === undefined) {
             return;
@@ -132,17 +133,17 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             }
 
             bucket.push(new vscode.CodeLens(
-                toRange(node.Location),
+                attributeRange,
                 { title: "run test", command: 'dotnet.test.run', arguments: [testFeature.Data, fileName, testFrameworkName] }));
 
             bucket.push(new vscode.CodeLens(
-                toRange(node.Location),
+                attributeRange,
                 { title: "debug test", command: 'dotnet.test.debug', arguments: [testFeature.Data, fileName, testFrameworkName] }));
         }
     }
 
     private _attributeSpanToRange(document: vscode.TextDocument, node: protocol.Node): vscode.Range {
-        //If the node has some attributes then returns the range of the attributes, else returns the range from the node location
+        //If the node has some attributes then returns the range of the attributes, else returns the range from the actual node location
         if (node.AttributeSpanStart) {
             let line = document.positionAt(node.AttributeSpanStart).line;
             let column = document.positionAt(node.AttributeSpanStart).character;
