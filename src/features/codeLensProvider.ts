@@ -23,10 +23,10 @@ class OmniSharpCodeLens extends vscode.CodeLens {
     fileName: string;
     actualRange: vscode.Range;
 
-    constructor(fileName: string, actualrange: vscode.Range, attributeRange: vscode.Range) {
+    constructor(fileName: string, actualRange: vscode.Range, attributeRange: vscode.Range) {
         super(attributeRange);
         this.fileName = fileName;
-        this.actualRange = actualrange;
+        this.actualRange = actualRange;
     }
 }
 
@@ -145,11 +145,9 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
     private _attributeSpanToRange(document: vscode.TextDocument, node: protocol.Node): vscode.Range {
         //If the node has some attributes then returns the range of the attributes, else returns the range from the actual node location
         if (node.AttributeSpanStart) {
-            let line = document.positionAt(node.AttributeSpanStart).line;
-            let column = document.positionAt(node.AttributeSpanStart).character;
-            let endLine = document.positionAt(node.AttributeSpanEnd).line;
-            let endColumn = document.positionAt(node.AttributeSpanEnd).character;
-            return new Range(line, column, endLine, endColumn);
+            let start = document.positionAt(node.AttributeSpanStart);
+            let end = document.positionAt(node.AttributeSpanEnd);
+            return new Range(start,end);
         }
         return toRange(node.Location);
     }
