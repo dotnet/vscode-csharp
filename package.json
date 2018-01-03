@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.14.0-beta2",
+  "version": "1.14.0-beta.2.config-default-sln",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -403,7 +403,7 @@
         },
         "omnisharp.defaultSolution": {
           "type": "string",
-          "default": "",
+          "default": null,
           "description": "The name of the default solution file if the root folder of the repo has multiple *.sln files. "
         },
         "omnisharp.useEditorFormattingSettings": {
