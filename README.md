@@ -16,7 +16,7 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 ### Get Started Writing C# in VS Code
 
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
-* [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-with-VS-Code-using-CSharp-and-NET-Core)
+* [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
 ### What's New in 1.13.0
 
