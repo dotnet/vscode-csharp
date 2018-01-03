@@ -122,7 +122,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
     disposables.push(server.onServerStart(() => {
         let measures: { [key: string]: number } = {};
 
-         utils.requestWorkspaceInformation(server)
+        utils.requestWorkspaceInformation(server)
             .then(workspaceInfo => {
                 if (workspaceInfo.DotNet && workspaceInfo.DotNet.Projects.length > 0) {
                     measures['projectjson.projectcount'] = workspaceInfo.DotNet.Projects.length;
@@ -159,6 +159,6 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
     disposables.push(vscode.debug.registerDebugConfigurationProvider('coreclr', new CSharpConfigurationProvider(server)));
 
     context.subscriptions.push(...disposables);
-    
+
     return new Promise<string>(resolve => server.onServerStart(e => resolve(e)));
 }

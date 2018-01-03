@@ -236,8 +236,9 @@ export class OmniSharpServer {
 
         const solutionPath = launchTarget.target;
         const cwd = path.dirname(solutionPath);
+
         this._options = Options.Read();
-        
+
         let args = [
             '-s', solutionPath,
             '--hostPID', process.pid.toString(),
@@ -352,7 +353,7 @@ export class OmniSharpServer {
     }
 
     public autoStart(preferredPath: string): Thenable<void> {
-        return findLaunchTargets().then(launchTargets => {
+        return findLaunchTargets().then((launchTargets) => {
             // If there aren't any potential launch targets, we create file watcher and try to
             // start the server again once a *.sln, *.csproj, project.json, CSX or Cake file is created.
             if (launchTargets.length === 0) {
@@ -373,20 +374,32 @@ export class OmniSharpServer {
                 });
             }
 
-            // If there's more than one launch target, we start the server if one of the targets
-            // matches the preferred path. Otherwise, we fire the "MultipleLaunchTargets" event,
-            // which is handled in status.ts to display the launch target selector.
-            if (launchTargets.length > 1 && preferredPath) {
+            const defaultLaunchTarget = launchTargets.filter((a) => (a.isDefault === true));
+            // If there's more than one target, launch the server with the launch target that
+            // matches the default solution (if it's configured).
+            // The user can still manually switch to another solution from  the 'Omnisharp: Select Project command'
+            if (launchTargets.length > 1 && defaultLaunchTarget.length > 0) {
+                // start server with default solution
+                return this.restart(defaultLaunchTarget[0]);
 
-                for (let launchTarget of launchTargets) {
-                    if (launchTarget.target === preferredPath) {
-                        // start preferred path
-                        return this.restart(launchTarget);
+            }
+            else {
+                // If there's more than one launch target, we start the server if one of the targets
+                // matches the preferred path. Otherwise, we fire the "MultipleLaunchTargets" event,
+                // which is handled in status.ts to display the launch target selector.
+                if (launchTargets.length > 1 && preferredPath) {
+
+                    for (let launchTarget of launchTargets) {
+
+                        if (launchTarget.target === preferredPath) {
+                            // start preferred path
+                            return this.restart(launchTarget);
+                        }
                     }
-                }
 
-                this._fireEvent(Events.MultipleLaunchTargets, launchTargets);
-                return Promise.reject<void>(undefined);
+                    this._fireEvent(Events.MultipleLaunchTargets, launchTargets);
+                    return Promise.reject<void>(undefined);
+                }
             }
 
             // If there's only one target, just start

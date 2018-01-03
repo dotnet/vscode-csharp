@@ -29,6 +29,7 @@ export interface LaunchTarget {
     description: string;
     directory: string;
     target: string;
+    isDefault: boolean;
     kind: LaunchTargetKind;
 }
 
@@ -42,7 +43,6 @@ export function findLaunchTargets(): Thenable<LaunchTarget[]> {
     if (!vscode.workspace.workspaceFolders) {
         return Promise.resolve([]);
     }
-
 
     const options = Options.Read();
 
@@ -64,8 +64,6 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
     //   * It should be possible to choose a .csproj as a launch target
     //   * It should be possible to choose a .sln file even when no .csproj files are found 
     //     within the root.
-
-    const options = Options.Read();
 
     if (!Array.isArray(resources)) {
         return [];
@@ -113,6 +111,7 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                     label: path.basename(resource.fsPath),
                     description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
                     target: resource.fsPath,
+                    isDefault: false,
                     directory: path.dirname(resource.fsPath),
                     kind: LaunchTargetKind.Solution
                 });
@@ -128,6 +127,7 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                     label: path.basename(resource.fsPath),
                     description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
                     target: dirname,
+                    isDefault: false,
                     directory: dirname,
                     kind: LaunchTargetKind.ProjectJson
                 });
@@ -152,6 +152,7 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                 label: path.basename(folderPath),
                 description: '',
                 target: folderPath,
+                isDefault: false,
                 directory: folderPath,
                 kind: LaunchTargetKind.Folder
             });
@@ -163,6 +164,7 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                 label: "CSX",
                 description: path.basename(folderPath),
                 target: folderPath,
+                isDefault: false,
                 directory: folderPath,
                 kind: LaunchTargetKind.Csx
             });
@@ -174,6 +176,7 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                 label: "Cake",
                 description: path.basename(folderPath),
                 target: folderPath,
+                isDefault: false,
                 directory: folderPath,
                 kind: LaunchTargetKind.Cake
             });
@@ -182,17 +185,27 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
 
     let rtnTargets: LaunchTarget[];
 
-    // set user configured default when ther are multiple *.sln files in the root
-    if (options.defaultSolution) {
-        // set default as first in array to work with general VS Code logic
-        const defaultTarget = targets.filter((a) => (path.basename(a.target) === options.defaultSolution));
-        rtnTargets = targets.filter((a) => !(path.basename(a.target) === options.defaultSolution));
-        rtnTargets.unshift(defaultTarget[0]);
+    const options = Options.Read();
+
+    for (let target of targets) {
+        if (path.basename(target.target) === options.defaultSolution) {
+            target.isDefault = true;
+        }
     }
-    else {
-        // alphabetical order
-        rtnTargets = targets.sort((a, b) => a.directory.localeCompare(b.directory));
-    }
+
+    // // set user configured default when there are multiple *.sln files in the root
+    // if (options.defaultSolution) {
+    //     // set default as first in array to work with general VS Code logic
+    //     const defaultTarget = targets.filter((a) => (path.basename(a.target) === options.defaultSolution));
+    //     rtnTargets = targets.filter((a) => !(path.basename(a.target) === options.defaultSolution));
+    //     rtnTargets.unshift(defaultTarget[0]);
+    // }
+    // else {
+    //     // alphabetical order
+    //     rtnTargets = targets.sort((a, b) => a.directory.localeCompare(b.directory));
+    // }
+
+    rtnTargets = targets.sort((a, b) => a.directory.localeCompare(b.directory));
 
     return rtnTargets;
 }
