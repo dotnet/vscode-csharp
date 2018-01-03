@@ -401,10 +401,10 @@
           "default": 250,
           "description": "The maximum number of projects to be shown in the 'Select Project' dropdown (maximum 250)."
         },
-        "omnisharp.defaultSolution": {
+        "omnisharp.defaultLaunchTarget": {
           "type": "string",
           "default": null,
-          "description": "The name of the default solution file if the root folder of the repo has multiple *.sln files. "
+          "description": "The name of the default solution, profject file etc. (launch targert) used at start up if the repo has multiple. e.g.'MyAwesomeSolution.sln'"
         },
         "omnisharp.useEditorFormattingSettings": {
           "type": "boolean",

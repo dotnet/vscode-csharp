@@ -188,22 +188,10 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
     const options = Options.Read();
 
     for (let target of targets) {
-        if (path.basename(target.target) === options.defaultSolution) {
+        if (path.basename(target.target) === options.defaultLaunchTarget) {
             target.isDefault = true;
         }
     }
-
-    // // set user configured default when there are multiple *.sln files in the root
-    // if (options.defaultSolution) {
-    //     // set default as first in array to work with general VS Code logic
-    //     const defaultTarget = targets.filter((a) => (path.basename(a.target) === options.defaultSolution));
-    //     rtnTargets = targets.filter((a) => !(path.basename(a.target) === options.defaultSolution));
-    //     rtnTargets.unshift(defaultTarget[0]);
-    // }
-    // else {
-    //     // alphabetical order
-    //     rtnTargets = targets.sort((a, b) => a.directory.localeCompare(b.directory));
-    // }
 
     rtnTargets = targets.sort((a, b) => a.directory.localeCompare(b.directory));
 
