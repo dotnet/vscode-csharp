@@ -158,7 +158,7 @@ export default class TestManager extends AbstractProvider {
         return Promise.resolve();
     }
 
-    private async _runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string) {
+    private _runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string) {
         const output = this._getOutputChannel();
 
         output.show();
