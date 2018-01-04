@@ -14,7 +14,7 @@
 			"command": "echo",
 			"showOutput": "always",
 			"isShellCommand": true,
-			"args": ["Run tests in VS Code by launching the debugg with the 'Launch Tests' configuration."],
+			"args": ["Run tests in VS Code by launching the debugger with the 'Launch Tests' configuration."],
 			"isTestCommand": true
 		},
 		{
