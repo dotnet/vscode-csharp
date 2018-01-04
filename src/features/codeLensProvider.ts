@@ -54,16 +54,15 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         'ToString': true
     };
 
-    provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
+    async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken){
         if (!this._options.showReferencesCodeLens && !this._options.showTestsCodeLens) {
             return [];
         }
 
-        return serverUtils.currentFileMembersAsTree(this._server, { FileName: document.fileName }, token).then(tree => {
-            let ret: vscode.CodeLens[] = [];
-            tree.TopLevelTypeDefinitions.forEach(node => this._convertQuickFix(ret, document, node));
-            return ret;
-        });
+        let tree = await serverUtils.currentFileMembersAsTree(this._server, { FileName: document.fileName }, token);
+        let ret: vscode.CodeLens[] = [];
+        tree.TopLevelTypeDefinitions.forEach(node => this._convertQuickFix(ret, document, node));
+        return ret;
     }
 
     private _convertQuickFix(bucket: vscode.CodeLens[], document: vscode.TextDocument, node: protocol.Node): void {
