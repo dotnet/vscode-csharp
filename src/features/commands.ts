@@ -16,7 +16,7 @@ import * as vscode from 'vscode';
 import { DotNetAttachItemsProviderFactory, AttachPicker, RemoteAttachPicker } from './processPicker';
 import { generateAssets } from '../assets';
 import TelemetryReporter from 'vscode-extension-telemetry';
-import { registerAdapterExecutionCommand } from '../coreclr-debug/activate';
+import { getAdapterExecutionCommand } from '../coreclr-debug/activate';
 
 let channel = vscode.window.createOutputChannel('.NET');
 
@@ -42,8 +42,8 @@ export default function registerCommands(server: OmniSharpServer, reporter: Tele
     let d8 = vscode.commands.registerCommand('csharp.listRemoteProcess', (args) => RemoteAttachPicker.ShowAttachEntries(args));
 
     // Register command for adapter executable command.
-    let d9 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', (args) => registerAdapterExecutionCommand(channel).then(adapterExecutableCommand => adapterExecutableCommand));
-    let d10 = vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', (args) => registerAdapterExecutionCommand(channel).then(adapterExecutableCommand => adapterExecutableCommand));
+    let d9 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', (args) => getAdapterExecutionCommand(channel));
+    let d10 = vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', (args) => getAdapterExecutionCommand(channel));
 
     return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10);
 }

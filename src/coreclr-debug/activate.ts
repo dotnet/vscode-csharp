@@ -118,7 +118,7 @@ interface AdapterExecutableCommand {
 // The default extension manifest calls this command as the adapterExecutableCommand
 // If the debugger components have not finished downloading, the proxy displays an error message to the user
 // Else it will launch the debug adapter
-export async function registerAdapterExecutionCommand(channel: vscode.OutputChannel): Promise<AdapterExecutableCommand> {
+export async function getAdapterExecutionCommand(channel: vscode.OutputChannel): Promise<AdapterExecutableCommand> {
     let logger = new Logger(text => channel.append(text));
     let util = new CoreClrDebugUtil(common.getExtensionPath(), logger);
 
@@ -135,7 +135,8 @@ export async function registerAdapterExecutionCommand(channel: vscode.OutputChan
         // install.Lock does not exist, need to wait for packages to finish downloading.
         let installLock: boolean = await common.installFileExists(common.InstallFileType.Lock);
         if (!installLock) {
-            throw new Error('The omnisharp-csharp extension is still downloading packages. Please see progress in the output window below.');
+            channel.show();
+            throw new Error('The C# extension is still downloading packages. Please see progress in the output window below.');
         }
         // install.complete does not exist, check dotnetCLI to see if we can complete.
         else if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {
@@ -143,7 +144,8 @@ export async function registerAdapterExecutionCommand(channel: vscode.OutputChan
 
             if (!success)
             {
-                throw new Error('Failed to complete the installation of the omnisharp-csharp extension. Please see the error in the output window below.');
+                channel.show();
+                throw new Error('Failed to complete the installation of the C# extension. Please see the error in the output window below.');
             }
         }
     }
