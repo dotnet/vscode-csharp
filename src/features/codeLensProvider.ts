@@ -148,8 +148,8 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             return;
         }
 
-        let argumentArray = new Array<Array<string>>();
-        let newArguments;
+        let argumentArray = new Array<string>();
+        let frameworkname: string;
         for (let child of node.ChildNodes) {
             if (child.Kind == "MethodDeclaration") {
                 let testFeature = child.Features.find(value => (value.Name == 'XunitTestMethod' || value.Name == 'NUnitTestMethod' || value.Name == 'MSTestMethod'));
@@ -162,9 +162,8 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
                     else if (testFeature.Name == 'MSTestMethod') {
                         testFrameworkName = 'mstest';
                     }
-
-                    newArguments = [testFeature.Data, fileName, testFrameworkName];
-                    argumentArray.push(newArguments);
+                    frameworkname = testFrameworkName;
+                    argumentArray.push(testFeature.Data);
                 }
             }
         }
@@ -172,7 +171,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         if (argumentArray.length) {
             bucket.push(new vscode.CodeLens(
                 toRange(node.Location),
-                { title: "run all test", command: 'dotnet.tests.run', arguments: argumentArray }));
+                { title: "run all test", command: 'dotnet.tests.run', arguments: [fileName, frameworkname, argumentArray] }));
             bucket.push(new vscode.CodeLens(
                 toRange(node.Location),
                 { title: "debug all test", command: 'dotnet.tests.debug', arguments: argumentArray }));

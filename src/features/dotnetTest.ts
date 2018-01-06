@@ -38,7 +38,7 @@ export default class TestManager extends AbstractProvider {
 
         let d4 = vscode.commands.registerCommand(
             'dotnet.tests.run',
-            (...testsToRun) => this._runDotnetTestsInClass(testsToRun));
+            (fileName, testFrameworkName,testsToRun) => this._runDotnetTestsInClass(fileName, testFrameworkName, testsToRun));
 
         let d5 = vscode.commands.registerCommand(
             'dotnet.tests.debug',
@@ -125,7 +125,7 @@ export default class TestManager extends AbstractProvider {
             FileName: fileName,
             MethodName: testMethod,
             TestFrameworkName: testFrameworkName,
-            TargetFrameworkVersion: targetFrameworkVersion
+            TargetFrameworkVersion: targetFrameworkVersion,
         };
 
         return serverUtils.runTest(this._server, request)
@@ -195,19 +195,52 @@ export default class TestManager extends AbstractProvider {
             });
     }
 
-    private async _runDotnetTestsInClass(testsToRun) {
+    private async _runDotnetTestsInClass(fileName: string, testFrameworkName: string, testsToRun) {
 
-        let allResults: protocol.V2.DotNetTestResult[];
-        for (let [testMethod, fileName, testFrameworkName] of testsToRun) {
-            const output = this._getOutputChannel();
+        let allResults: protocol.V2.DotNetTestResult[] = new Array();
+        const output = this._getOutputChannel();
+        output.show();
+        const listener = this._server.onTestMessage(e => {
+            output.appendLine(e.Message);
+        });
+        let methodsToRun: string[] = new Array();
+        for (let testMethod of testsToRun) {
+            methodsToRun.push(testMethod);
+        }
+        await this._saveDirtyFiles()
+            .then(_ => this._recordRunRequest(testFrameworkName))
+            .then(_ => serverUtils.requestProjectInformation(this._server, { FileName: fileName }))
+            .then(projectInfo => {
+                let targetFrameworkVersion: string;
 
-            output.show();
+                if (projectInfo.DotNetProject) {
+                    targetFrameworkVersion = undefined;
+                }
+                else if (projectInfo.MsBuildProject) {
+                    targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;
+                }
+                else {
+                    throw new Error('Expected project.json or .csproj project.');
+                }
+
+                return this._runTestsInClass(fileName, testFrameworkName, targetFrameworkVersion, methodsToRun);
+            }).then(responses => {
+                responses.forEach(response => {
+                    this._reportResults(response.Results);
+                    Array.prototype.push.apply(allResults, response.Results);
+                });
+            }).then(() => listener.dispose())
+            .catch(reason => {
+                listener.dispose();
+                vscode.window.showErrorMessage(`Failed to run test because ${reason}.`);
+            });
+        await this._reportResults(allResults);
+    }
+        
+       /* for (let [testMethod, fileName, testFrameworkName] of testsToRun) {
+            methodsToRun.push(testMethod);
             output.appendLine(`Running test ${testMethod}...`);
             output.appendLine('');
-
-            const listener = this._server.onTestMessage(e => {
-                output.appendLine(e.Message);
-            });
 
             await this._saveDirtyFiles()
                 .then(_ => this._recordRunRequest(testFrameworkName))
@@ -235,6 +268,7 @@ export default class TestManager extends AbstractProvider {
                     else {
                         Array.prototype.push.apply(allResults, results);
                     }
+                    this._reportResults(results);
                 })
                 .then(() => listener.dispose())
                 .catch(reason => {
@@ -243,6 +277,17 @@ export default class TestManager extends AbstractProvider {
                 });
         }
         await this._reportResults(allResults);
+    }*/
+
+    private _runTestsInClass(fileName: string, testFrameworkName: string, targetFrameworkVersion: string, methodsToRun: string[]): Promise<protocol.V2.RunTestResponse[]> {
+        const request: protocol.V2.RunTestsInClassRequest = {
+            FileName: fileName,
+            TestFrameworkName: testFrameworkName,
+            TargetFrameworkVersion: targetFrameworkVersion,
+            MethodNamesInClass: methodsToRun
+        };
+
+        return serverUtils.runTestsInClass(this._server, request);
     }
 
     private _createLaunchConfiguration(program: string, args: string, cwd: string, debuggerEventsPipeName: string) {
