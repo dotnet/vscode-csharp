@@ -37,12 +37,12 @@ export default class TestManager extends AbstractProvider {
             (testMethod, fileName, testFrameworkName) => this._debugDotnetTest(testMethod, fileName, testFrameworkName));
 
         let d4 = vscode.commands.registerCommand(
-            'dotnet.tests.run',
-            (fileName, testFrameworkName,testsToRun) => this._runDotnetTestsInClass(fileName, testFrameworkName, testsToRun));
+            'dotnet.classTests.run',
+            (fileName, testFrameworkName, methodsInClass) => this._runDotnetTestsInClass(fileName, testFrameworkName, methodsInClass));
 
         let d5 = vscode.commands.registerCommand(
-            'dotnet.tests.debug',
-            (...testsToDebug) => this._debugDotnetTestsInClass(testsToDebug));
+            'dotnet.classTests.debug',
+            (fileName, testFrameworkName, methodsInClass) => this._debugDotnetTestsInClass(fileName, testFrameworkName, methodsInClass));
 
         this._telemetryIntervalId = setInterval(() =>
             this._reportTelemetry(), TelemetryReportingDelay);
@@ -195,18 +195,14 @@ export default class TestManager extends AbstractProvider {
             });
     }
 
-    private async _runDotnetTestsInClass(fileName: string, testFrameworkName: string, testsToRun) {
-
+    private async _runDotnetTestsInClass(fileName: string, testFrameworkName: string, methodsToRun: string[]) {
         let allResults: protocol.V2.DotNetTestResult[] = new Array();
         const output = this._getOutputChannel();
         output.show();
         const listener = this._server.onTestMessage(e => {
             output.appendLine(e.Message);
         });
-        let methodsToRun: string[] = new Array();
-        for (let testMethod of testsToRun) {
-            methodsToRun.push(testMethod);
-        }
+
         await this._saveDirtyFiles()
             .then(_ => this._recordRunRequest(testFrameworkName))
             .then(_ => serverUtils.requestProjectInformation(this._server, { FileName: fileName }))
@@ -226,58 +222,15 @@ export default class TestManager extends AbstractProvider {
                 return this._runTestsInClass(fileName, testFrameworkName, targetFrameworkVersion, methodsToRun);
             }).then(responses => {
                 responses.forEach(response => {
-                    this._reportResults(response.Results);
                     Array.prototype.push.apply(allResults, response.Results);
                 });
             }).then(() => listener.dispose())
             .catch(reason => {
                 listener.dispose();
-                vscode.window.showErrorMessage(`Failed to run test because ${reason}.`);
+                vscode.window.showErrorMessage(`Could not run tests`);
             });
         await this._reportResults(allResults);
     }
-        
-       /* for (let [testMethod, fileName, testFrameworkName] of testsToRun) {
-            methodsToRun.push(testMethod);
-            output.appendLine(`Running test ${testMethod}...`);
-            output.appendLine('');
-
-            await this._saveDirtyFiles()
-                .then(_ => this._recordRunRequest(testFrameworkName))
-                .then(_ => serverUtils.requestProjectInformation(this._server, { FileName: fileName }))
-                .then(projectInfo => {
-                    let targetFrameworkVersion: string;
-
-                    if (projectInfo.DotNetProject) {
-                        targetFrameworkVersion = undefined;
-                    }
-                    else if (projectInfo.MsBuildProject) {
-                        targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;
-                    }
-                    else {
-                        throw new Error('Expected project.json or .csproj project.');
-                    }
-
-                    return this._runTest(fileName, testMethod, testFrameworkName, targetFrameworkVersion);
-                })
-                .then(results => {
-                    //pushing all the results to one result
-                    if (!allResults) {
-                        allResults = results;
-                    }
-                    else {
-                        Array.prototype.push.apply(allResults, results);
-                    }
-                    this._reportResults(results);
-                })
-                .then(() => listener.dispose())
-                .catch(reason => {
-                    listener.dispose();
-                    vscode.window.showErrorMessage(`Failed to run test because ${reason}.`);
-                });
-        }
-        await this._reportResults(allResults);
-    }*/
 
     private _runTestsInClass(fileName: string, testFrameworkName: string, targetFrameworkVersion: string, methodsToRun: string[]): Promise<protocol.V2.RunTestResponse[]> {
         const request: protocol.V2.RunTestsInClassRequest = {
@@ -418,8 +371,8 @@ export default class TestManager extends AbstractProvider {
             });
     }
 
-    private async _debugDotnetTestsInClass(testsToDebug) {
-        for (let [testMethod, fileName, testFrameworkName] of testsToDebug) {
+    private async _debugDotnetTestsInClass(fileName: string, testFrameworkName: string, methodsToRun: string[]) {
+        for (let testMethod of methodsToRun) {
             await this._debugDotnetTest(testMethod, fileName, testFrameworkName);
         }
     }

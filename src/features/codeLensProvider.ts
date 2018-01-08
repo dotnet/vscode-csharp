@@ -148,33 +148,34 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             return;
         }
 
-        let argumentArray = new Array<string>();
-        let frameworkname: string;
+        let testMethodsInClass = new Array<string>();
+        let testFrameworkName: string = null;
         for (let child of node.ChildNodes) {
             if (child.Kind == "MethodDeclaration") {
                 let testFeature = child.Features.find(value => (value.Name == 'XunitTestMethod' || value.Name == 'NUnitTestMethod' || value.Name == 'MSTestMethod'));
                 if (testFeature) {
                     // this test method has a test feature
-                    let testFrameworkName = 'xunit';
-                    if (testFeature.Name == 'NUnitTestMethod') {
-                        testFrameworkName = 'nunit';
-                    }
-                    else if (testFeature.Name == 'MSTestMethod') {
-                        testFrameworkName = 'mstest';
-                    }
-                    frameworkname = testFrameworkName;
-                    argumentArray.push(testFeature.Data);
+                    if (testFrameworkName == null) {
+                        testFrameworkName = 'xunit';
+                        if (testFeature.Name == 'NUnitTestMethod') {
+                            testFrameworkName = 'nunit';
+                        }
+                        else if (testFeature.Name == 'MSTestMethod') {
+                            testFrameworkName = 'mstest';
+                        }
+                    }    
+                    testMethodsInClass.push(testFeature.Data);
                 }
             }
         }
-        //console.log(typeof (newArguments));
-        if (argumentArray.length) {
+
+        if (testMethodsInClass.length) {
             bucket.push(new vscode.CodeLens(
                 toRange(node.Location),
-                { title: "run all test", command: 'dotnet.tests.run', arguments: [fileName, frameworkname, argumentArray] }));
+                { title: "run all test", command: 'dotnet.classTests.run', arguments: [fileName, testFrameworkName, testMethodsInClass] }));
             bucket.push(new vscode.CodeLens(
                 toRange(node.Location),
-                { title: "debug all test", command: 'dotnet.tests.debug', arguments: argumentArray }));
+                { title: "debug all test", command: 'dotnet.classTests.debug', arguments: [fileName, testFrameworkName, testMethodsInClass] }));
         }
     }
 }
