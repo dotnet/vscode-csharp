@@ -35,9 +35,24 @@ export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport im
             case 'Method':
                 return SymbolKind.Method;
             case 'Field':
-            case 'Property':
                 return SymbolKind.Field;
+            case 'Property':
+                return SymbolKind.Property;
+            case 'Interface':
+                return SymbolKind.Interface;
+            case 'Enum':
+                return SymbolKind.Enum;
+            case 'Struct':
+                return SymbolKind.Struct;
+            case 'Event':
+                return SymbolKind.Event;
+            case 'EnumMember':
+                return SymbolKind.EnumMember;
+            case 'Class':
+                return SymbolKind.Class;
+            default:
+                return SymbolKind.Class;
+            
         }
-        return SymbolKind.Class;
     }
 }
