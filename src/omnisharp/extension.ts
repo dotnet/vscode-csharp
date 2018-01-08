@@ -83,7 +83,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         vscode.Disposable.from(...localDisposables).dispose();
     }));
 
-    disposables.push(registerCommands(server, reporter));
+    disposables.push(registerCommands(server, reporter, channel));
     disposables.push(reportStatus(server));
 
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
