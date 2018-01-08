@@ -195,7 +195,7 @@ export default class TestManager extends AbstractProvider {
             });
     }
 
-    private async _runDotnetTestsInClass(fileName: string, testFrameworkName: string, methodsToRun: string[]) {
+    private async _runDotnetTestsInClass(fileName: string, testFrameworkName: string, methodsInClass: string[]) {
         let allResults: protocol.V2.DotNetTestResult[] = new Array();
         const output = this._getOutputChannel();
         output.show();
@@ -219,7 +219,7 @@ export default class TestManager extends AbstractProvider {
                     throw new Error('Expected project.json or .csproj project.');
                 }
 
-                return this._runTestsInClass(fileName, testFrameworkName, targetFrameworkVersion, methodsToRun);
+                return this._runTestsInClass(fileName, testFrameworkName, targetFrameworkVersion, methodsInClass);
             }).then(responses => {
                 responses.forEach(response => {
                     Array.prototype.push.apply(allResults, response.Results);
