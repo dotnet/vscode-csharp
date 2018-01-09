@@ -439,6 +439,7 @@ export namespace V2 {
         export const RunTest = '/v2/runtest';
         export const RunAllTestsInClass = "/v2/runtestsinclass";
         export const DebugTestGetStartInfo = '/v2/debugtest/getstartinfo';
+        export const DebugTestsInClassGetStartInfo = '/v2/debugtestsinclass/getstartinfo';
         export const DebugTestLaunch = '/v2/debugtest/launch';
         export const DebugTestStop = '/v2/debugtest/stop';
     }
@@ -518,6 +519,12 @@ export namespace V2 {
     // dotnet-test endpoints
     export interface DebugTestGetStartInfoRequest extends Request {
         MethodName: string;
+        TestFrameworkName: string;
+        TargetFrameworkVersion: string;
+    }
+
+    export interface DebugTestClassGetStartInfoRequest extends Request {
+        MethodsInClass: string[];
         TestFrameworkName: string;
         TargetFrameworkVersion: string;
     }

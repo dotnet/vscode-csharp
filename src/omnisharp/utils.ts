@@ -101,6 +101,10 @@ export function debugTestGetStartInfo(server: OmniSharpServer, request: protocol
     return server.makeRequest<protocol.V2.DebugTestGetStartInfoResponse>(protocol.V2.Requests.DebugTestGetStartInfo, request);
 }
 
+export function debugTestClassGetStartInfo(server: OmniSharpServer, request: protocol.V2.DebugTestClassGetStartInfoRequest) {
+    return server.makeRequest<protocol.V2.DebugTestGetStartInfoResponse[]>(protocol.V2.Requests.DebugTestsInClassGetStartInfo, request);
+}
+
 export function debugTestLaunch(server: OmniSharpServer, request: protocol.V2.DebugTestLaunchRequest) {
     return server.makeRequest<protocol.V2.DebugTestLaunchResponse>(protocol.V2.Requests.DebugTestLaunch, request);
 }

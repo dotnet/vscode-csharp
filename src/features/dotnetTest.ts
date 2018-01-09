@@ -430,17 +430,19 @@ export default class TestManager extends AbstractProvider {
             output.appendLine(e.Message);
         });
 
-        const request: protocol.V2.DebugTestGetStartInfoRequestInClass = {
+        const request: protocol.V2.DebugTestClassGetStartInfoRequest = {
             FileName: fileName,
             MethodsInClass: methodsToRun,
             TestFrameworkName: testFrameworkName,
             TargetFrameworkVersion: targetFrameworkVersion
         };
 
-        return serverUtils.debugTestGetStartInfo(this._server, request)
-            .then(response => {
-                listener.dispose();
-                return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath());
+        return serverUtils.debugTestClassGetStartInfo(this._server, request)
+            .then(responses => {
+                responses.forEach(response => {
+                    listener.dispose();
+                    return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath());
+                });    
             });
     }
 
@@ -452,9 +454,9 @@ export default class TestManager extends AbstractProvider {
             output.appendLine(e.Message);
         });
 
-        const request: protocol.V2.GetTestStartInfoRequestInClass = {
+        const request: protocol.V2.GetTestStartInfoRequest = {
             FileName: fileName,
-            MethodsInClass: methodsToRun,
+            MethodName: methodsToRun[0],
             TestFrameworkName: testFrameworkName,
             TargetFrameworkVersion: targetFrameworkVersion
         };
