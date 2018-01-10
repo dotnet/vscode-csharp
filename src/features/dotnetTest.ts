@@ -18,7 +18,7 @@ import AbstractProvider from './abstractProvider';
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 
 export default class TestManager extends AbstractProvider {
-    
+
     private _channel: vscode.OutputChannel;
 
     private _runCounts: { [testFrameworkName: string]: number };
@@ -159,7 +159,28 @@ export default class TestManager extends AbstractProvider {
         return Promise.resolve();
     }
 
-    private _runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string) {
+    private async helper(fileName: string, testFrameworkName: string) {
+
+        await this._saveDirtyFiles();
+        this._recordRunRequest(testFrameworkName);
+        let projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
+
+        let targetFrameworkVersion: string;
+
+        if (projectInfo.DotNetProject) {
+            targetFrameworkVersion = undefined;
+        }
+        else if (projectInfo.MsBuildProject) {
+            targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;
+        }
+        else {
+            throw new Error('Expected project.json or .csproj project.');
+        }
+
+        return targetFrameworkVersion;
+    }
+
+    private async _runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string) {
         const output = this._getOutputChannel();
 
         output.show();
@@ -170,24 +191,9 @@ export default class TestManager extends AbstractProvider {
             output.appendLine(e.Message);
         });
 
-        this._saveDirtyFiles()
-            .then(_ => this._recordRunRequest(testFrameworkName))
-            .then(_ => serverUtils.requestProjectInformation(this._server, { FileName: fileName }))
-            .then(projectInfo => {
-                let targetFrameworkVersion: string;
-
-                if (projectInfo.DotNetProject) {
-                    targetFrameworkVersion = undefined;
-                }
-                else if (projectInfo.MsBuildProject) {
-                    targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;
-                }
-                else {
-                    throw new Error('Expected project.json or .csproj project.');
-                }
-
-                return this._runTest(fileName, testMethod, testFrameworkName, targetFrameworkVersion);
-            })
+        let targetFrameworkVersion =  await this.helper(fileName, testFrameworkName);
+        
+        return this._runTest(fileName, testMethod, testFrameworkName, targetFrameworkVersion)
             .then(results => this._reportResults(results))
             .then(() => listener.dispose())
             .catch(reason => {
@@ -438,11 +444,9 @@ export default class TestManager extends AbstractProvider {
         };
 
         return serverUtils.debugTestClassGetStartInfo(this._server, request)
-            .then(responses => {
-                responses.forEach(response => {
-                    listener.dispose();
-                    return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath());
-                });    
+            .then(response => {
+                listener.dispose();
+                return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath());
             });
     }
 
