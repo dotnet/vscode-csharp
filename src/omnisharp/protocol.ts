@@ -214,6 +214,22 @@ export interface FindSymbolsResponse {
     QuickFixes: SymbolLocation[];
 }
 
+export interface DocumentationItem {
+    Name: string;
+    Documentation: string;
+}
+
+export interface DocumentationComment {
+    SummaryText: string ;
+    TypeParamElements :DocumentationItem[];
+    ParamElements :  DocumentationItem[];
+    ReturnsText : string ;
+    RemarksText : string;
+    ExampleText : string;
+    ValueText: string;
+    Exception : DocumentationItem[];
+}
+
 export interface TypeLookupRequest extends Request {
     IncludeDocumentation: boolean;
 }
@@ -373,12 +389,14 @@ export interface SignatureHelpItem {
     Label: string;
     Documentation: string;
     Parameters: SignatureHelpParameter[];
+    StructuredDocumentation: DocumentationComment;
 }
 
 export interface SignatureHelpParameter {
     Name: string;
     Label: string;
     Documentation: string;
+    StructuredDocumentation: DocumentationComment;
 }
 
 export interface MSBuildProjectDiagnostics {
