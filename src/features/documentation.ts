@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ - *  Copyright (c) Microsoft Corporation. All rights reserved.
+ - *  Licensed under the MIT License. See License.txt in the project root for license information.
+ - *--------------------------------------------------------------------------------------------*/
+
 'use strict';
 import * as protocol from '../omnisharp/protocol';
 
@@ -73,5 +78,5 @@ export function GetDocumentationString(structDoc: protocol.DocumentationComment)
 }
 
 export function displayDocumentationObject(obj: protocol.DocumentationItem): string {
-    return  obj.Name + ": " + obj.Documentation;
+    return obj.Name + ": " + obj.Documentation;
 }
