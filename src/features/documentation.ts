@@ -1,6 +1,5 @@
 'use strict';
 import * as protocol from '../omnisharp/protocol';
-import { MarkdownString } from 'vscode';
 
 const summaryStartTag = /<summary>/i;
 const summaryEndTag = /<\/summary>/i;
