@@ -23,9 +23,7 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function() {
             await csharpExtension.activate(); 
         }
 
-        testAssetWorkspace.deleteBuildArtifacts();
-
-        await fs.rimraf(testAssetWorkspace.vsCodeDirectoryPath);
+        await testAssetWorkspace.cleanupWorkspace();
 
         await csharpExtension.exports.initializationFinished;
         
@@ -45,4 +43,9 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function() {
 
         await debugSessionTerminated;
     });
+
+    teardown(async() =>
+    {   
+        await testAssetWorkspace.cleanupWorkspace();
+    })
 }); 
