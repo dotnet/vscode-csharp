@@ -47,5 +47,5 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
 
     teardown(async () => {
         await testAssetWorkspace.cleanupWorkspace();
-    })
+    });
 });
