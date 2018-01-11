@@ -39,45 +39,45 @@
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
-    "fs-extra": "^4.0.2",
-    "http-proxy-agent": "^1.0.0",
-    "https-proxy-agent": "^1.0.0",
-    "jsonc-parser": "^0.3.0",
+    "fs-extra": "^5.0.0",
+    "http-proxy-agent": "^2.0.0",
+    "https-proxy-agent": "^2.1.1",
+    "jsonc-parser": "^1.0.0",
     "lodash.debounce": "^4.0.8",
     "mkdirp": "^0.5.1",
     "open": "*",
     "request-light": "^0.2.0",
     "semver": "*",
-    "tmp": "0.0.28",
+    "tmp": "0.0.33",
     "vscode-debugprotocol": "^1.6.1",
     "vscode-extension-telemetry": "0.0.8",
     "yauzl": "^2.5.0"
   },
   "devDependencies": {
     "@types/chai": "4.0.8",
-    "@types/chai-arrays": "^1.0.2",
-    "@types/fs-extra": "^4.0.5",
-    "@types/mkdirp": "^0.5.1",
-    "@types/mocha": "^2.2.32",
-    "@types/node": "^8.0.53",
-    "@types/semver": "^5.3.30",
+    "@types/chai-arrays": "1.0.2",
+    "@types/fs-extra": "4.0.5",
+    "@types/mkdirp": "0.5.1",
+    "@types/mocha": "2.2.32",
+    "@types/node": "8.0.53",
+    "@types/semver": "5.3.30",
     "@types/tmp": "0.0.33",
-    "async-file": "^2.0.2",
-    "chai": "^4.1.2",
-    "chai-arrays": "^2.0.0",
-    "chai-fs": "^2.0.0",
-    "cross-env": "^5.1.1",
-    "del": "^3.0.0",
-    "gulp": "^3.9.1",
-    "gulp-mocha": "^4.3.1",
-    "gulp-tslint": "^8.1.2",
-    "mocha": "^4.0.1",
-    "npm-run-all": "^4.1.1",
-    "plist": "^2.0.1",
-    "tslint": "^5.8.0",
-    "tslint-microsoft-contrib": "^5.0.1",
+    "async-file": "2.0.2",
+    "chai": "4.1.2",
+    "chai-arrays": "2.0.0",
+    "chai-fs": "2.0.0",
+    "cross-env": "5.1.1",
+    "del": "3.0.0",
+    "gulp": "3.9.1",
+    "gulp-mocha": "4.3.1",
+    "gulp-tslint": "8.1.2",
+    "mocha": "4.0.1",
+    "npm-run-all": "4.1.1",
+    "plist": "2.0.1",
+    "tslint": "5.8.0",
+    "tslint-microsoft-contrib": "5.0.1",
     "tslint-no-unused-expression-chai": "0.0.3",
-    "typescript": "^2.0.3",
+    "typescript": "2.6.2",
     "vsce": "^1.32.0",
     "vscode": "^1.1.8"
   },
@@ -335,6 +335,11 @@
           "default": false,
           "description": "Suppress the notification window to perform a 'dotnet restore' when dependencies can't be resolved."
         },
+        "csharp.suppressProjectJsonWarning": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress the warning that project.json is no longer a supported project format for .NET Core applications"
+        },
         "csharp.suppressHiddenDiagnostics": {
           "type": "boolean",
           "default": true,
@@ -473,13 +478,11 @@
             "razor"
           ]
         },
-        "runtime": "node",
-        "runtimeArgs": [],
         "variables": {
           "pickProcess": "csharp.listProcess",
           "pickRemoteProcess": "csharp.listRemoteProcess"
         },
-        "program": "./out/src/coreclr-debug/proxy.js",
+        "adapterExecutableCommand": "csharp.coreclrAdapterExecutableCommand",
         "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
         "configurationAttributes": {
           "launch": {
@@ -1351,13 +1354,11 @@
             "razor"
           ]
         },
-        "runtime": "node",
-        "runtimeArgs": [],
         "variables": {
           "pickProcess": "csharp.listProcess",
           "pickRemoteProcess": "csharp.listRemoteProcess"
         },
-        "program": "./out/src/coreclr-debug/proxy.js",
+        "adapterExecutableCommand": "csharp.clrAdapterExecutableCommand",
         "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
         "configurationAttributes": {
           "launch": {
