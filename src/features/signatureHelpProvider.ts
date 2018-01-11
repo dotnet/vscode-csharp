@@ -35,8 +35,6 @@ export default class OmniSharpSignatureHelpProvider extends AbstractSupport impl
                 ret.signatures.push(signatureInfo);
 
                 for (let parameter of signature.Parameters) {
-                    let paramDocumentation = this.GetParameterDocumentation(parameter);
-
                     let parameterInfo = new ParameterInformation(
                         parameter.Label,
                         this.GetParameterDocumentation(parameter));
