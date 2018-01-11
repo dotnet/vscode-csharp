@@ -32,7 +32,7 @@ export function extractSummaryText(xmlDocComment: string): string {
     return summary.slice(0, endIndex);
 }
 
-export function GetDocumentation(structDoc: protocol.DocumentationComment) {
+export function GetDocumentationString(structDoc: protocol.DocumentationComment) {
     let newLine = "\n";
     let indentSpaces = "\t";
     let documentation = "";
@@ -79,8 +79,9 @@ export function GetDocumentation(structDoc: protocol.DocumentationComment) {
 }
 
 export function displayDocumentationObject(obj: protocol.DocumentationItem): string {
-    return "**" + obj.Name + "**" + ": " + obj.Documentation;
+    return  obj.Name + ": " + obj.Documentation;
 }
+
 
 export function GetDocumentation1(structDoc: protocol.DocumentationComment) {
     let newLine = "\n";

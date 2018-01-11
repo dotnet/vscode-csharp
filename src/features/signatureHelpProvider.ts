@@ -7,9 +7,10 @@
 
 import AbstractSupport from './abstractProvider';
 import * as serverUtils from '../omnisharp/utils';
-import {extractSummaryText, GetDocumentation, GetDocumentation1} from './documentation';
+import {GetDocumentationString} from './documentation';
 import {createRequest} from '../omnisharp/typeConvertion';
-import {SignatureHelpProvider, SignatureHelp, SignatureInformation, ParameterInformation, CancellationToken, TextDocument, Position} from 'vscode';
+import { SignatureHelpProvider, SignatureHelp, SignatureInformation, ParameterInformation, CancellationToken, TextDocument, Position } from 'vscode';
+import { MarkdownString } from 'vscode';
 
 export default class OmniSharpSignatureHelpProvider extends AbstractSupport implements SignatureHelpProvider {
 
@@ -29,13 +30,13 @@ export default class OmniSharpSignatureHelpProvider extends AbstractSupport impl
 
             for (let signature of res.Signatures) {
 
-                let signatureInfo = new SignatureInformation(signature.Label, GetDocumentation1(signature.StructuredDocumentation));
+                let signatureInfo = new SignatureInformation(signature.Label, new MarkdownString(GetDocumentationString(signature.StructuredDocumentation)));
                 ret.signatures.push(signatureInfo);
 
                 for (let parameter of signature.Parameters) {
                     let parameterInfo = new ParameterInformation(
                         parameter.Label,
-                        GetDocumentation(parameter.StructuredDocumentation));
+                        GetDocumentationString(parameter.StructuredDocumentation));
 
                     signatureInfo.parameters.push(parameterInfo);
                 }
