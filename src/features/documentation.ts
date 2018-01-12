@@ -35,9 +35,7 @@ export function GetDocumentationString(structDoc: protocol.DocumentationComment)
     let newLine = "\n\n";
     let indentSpaces = "\t\t";
     let documentation = "";
-    if (structDoc == null) {
-        return documentation;
-    }
+    
     if (structDoc.SummaryText) {
         documentation += structDoc.SummaryText + newLine;
     }
