@@ -31,11 +31,3 @@ export function extractSummaryText(xmlDocComment: string): string {
 
     return summary.slice(0, endIndex);
 }
-
-export function GetSummaryText(structDoc: protocol.DocumentationComment) {
-    if (structDoc !== null && structDoc.SummaryText != null && structDoc.SummaryText.length > 0) {
-        return structDoc.SummaryText;
-    }
-
-    return null;
-}

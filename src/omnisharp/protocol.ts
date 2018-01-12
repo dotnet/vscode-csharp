@@ -396,7 +396,6 @@ export interface SignatureHelpParameter {
     Name: string;
     Label: string;
     Documentation: string;
-    StructuredDocumentation: DocumentationComment;
 }
 
 export interface MSBuildProjectDiagnostics {
