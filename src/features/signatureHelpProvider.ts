@@ -49,8 +49,8 @@ export default class OmniSharpSignatureHelpProvider extends AbstractSupport impl
     private GetParameterDocumentation(parameter: SignatureHelpParameter) {
         let summary = parameter.Documentation;
         if (summary.length > 0) {
-            let nameInBold = `**${parameter.Name}**: `;
-            return new MarkdownString(nameInBold + summary);
+            let paramText = `**${parameter.Name}**: ${summary}`;
+            return new MarkdownString(paramText);
         }
 
         return "";
