@@ -10,7 +10,7 @@ import * as serverUtils from '../omnisharp/utils';
 import { createRequest } from '../omnisharp/typeConvertion';
 import { SignatureHelpProvider, SignatureHelp, SignatureInformation, ParameterInformation, CancellationToken, TextDocument, Position } from 'vscode';
 import { MarkdownString } from 'vscode';
-import { SignatureHelpParameter, SignatureHelpItem } from '../omnisharp/protocol';
+import { SignatureHelpParameter } from '../omnisharp/protocol';
 
 export default class OmniSharpSignatureHelpProvider extends AbstractSupport implements SignatureHelpProvider {
 
@@ -52,7 +52,7 @@ export default class OmniSharpSignatureHelpProvider extends AbstractSupport impl
             let nameInBold = "**" + parameter.Name + "**" + ": ";
             return new MarkdownString(nameInBold + summary);
         }
-        
+
         return "";
     }
 }
