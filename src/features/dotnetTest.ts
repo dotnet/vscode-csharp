@@ -40,11 +40,11 @@ export default class TestManager extends AbstractProvider {
 
         let d4 = vscode.commands.registerCommand(
             'dotnet.classTests.run',
-            (methodsInClass, fileName, testFrameworkName) => this._runDotnetTestsInClass(methodsInClass, fileName, testFrameworkName,));
+            (methodsInClass, fileName, testFrameworkName) => this._runDotnetTestsInClass(methodsInClass, fileName, testFrameworkName, ));
 
         let d5 = vscode.commands.registerCommand(
             'dotnet.classTests.debug',
-            ( methodsInClass, fileName, testFrameworkName) => this._debugDotnetTestsInClass(methodsInClass, fileName, testFrameworkName));
+            (methodsInClass, fileName, testFrameworkName) => this._debugDotnetTestsInClass(methodsInClass, fileName, testFrameworkName));
 
         this._telemetryIntervalId = setInterval(() =>
             this._reportTelemetry(), TelemetryReportingDelay);
@@ -134,11 +134,15 @@ export default class TestManager extends AbstractProvider {
             .then(response => response.Results);
     }
 
-    private _reportResults(results: protocol.V2.DotNetTestResult[]): Promise<void> {
+    private _reportResults(results: protocol.V2.DotNetTestResult[], printEachResult: boolean): Promise<void> {
         const totalTests = results.length;
+        const output = this._getOutputChannel();
 
         let totalPassed = 0, totalFailed = 0, totalSkipped = 0;
         for (let result of results) {
+            if (printEachResult) {
+                output.appendLine(`${result.MethodName}: ${result.Outcome}`);
+            }    
             switch (result.Outcome) {
                 case protocol.V2.TestOutcomes.Failed:
                     totalFailed += 1;
@@ -152,7 +156,6 @@ export default class TestManager extends AbstractProvider {
             }
         }
 
-        const output = this._getOutputChannel();
         output.appendLine('');
         output.appendLine(`Total tests: ${totalTests}. Passed: ${totalPassed}. Failed: ${totalFailed}. Skipped: ${totalSkipped}`);
         output.appendLine('');
@@ -195,7 +198,7 @@ export default class TestManager extends AbstractProvider {
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
 
         return this._runTest(fileName, testMethod, testFrameworkName, targetFrameworkVersion)
-            .then(results => this._reportResults(results))
+            .then(results => this._reportResults(results, false))
             .then(() => listener.dispose())
             .catch(reason => {
                 listener.dispose();
@@ -221,7 +224,7 @@ export default class TestManager extends AbstractProvider {
                 });
             }).then(async () => {
                 listener.dispose();
-                await this._reportResults(allResults);
+                await this._reportResults(allResults, true);
             })
             .catch(reason => {
                 listener.dispose();
@@ -348,6 +351,7 @@ export default class TestManager extends AbstractProvider {
 
         return { debugType, debugEventListener, targetFrameworkVersion };
     }
+
     private async _debugDotnetTest(testMethod: string, fileName: string, testFrameworkName: string) {
         // We support to styles of 'dotnet test' for debugging: The legacy 'project.json' testing, and the newer csproj support
         // using VS Test. These require a different level of communication.
