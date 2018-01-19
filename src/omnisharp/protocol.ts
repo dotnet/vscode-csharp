@@ -237,6 +237,7 @@ export interface TypeLookupRequest extends Request {
 export interface TypeLookupResponse {
     Type: string;
     Documentation: string;
+    StructuredDocumentation: DocumentationComment;
 }
 
 export interface RunCodeActionResponse {

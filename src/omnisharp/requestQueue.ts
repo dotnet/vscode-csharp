@@ -135,6 +135,13 @@ export class RequestQueueCollection {
         }
     }
 
+    public isEmpty()
+    {
+        return !this._deferredQueue.hasPending()
+         && !this._normalQueue.hasPending()
+         && !this._priorityQueue.hasPending();
+    }
+
     public enqueue(request: Request) {
         const queue = this.getQueue(request.command);
         queue.enqueue(request);

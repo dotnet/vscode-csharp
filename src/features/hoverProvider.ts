@@ -5,12 +5,12 @@
 
 'use strict';
 
-import {extractSummaryText} from './documentation';
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import {createRequest} from '../omnisharp/typeConvertion';
-import {HoverProvider, Hover, TextDocument, CancellationToken, Position} from 'vscode';
+import { createRequest } from '../omnisharp/typeConvertion';
+import { HoverProvider, Hover, TextDocument, CancellationToken, Position } from 'vscode';
+import { GetDocumentationString } from './documentation';
 
 export default class OmniSharpHoverProvider extends AbstractSupport implements HoverProvider {
 
@@ -21,7 +21,8 @@ export default class OmniSharpHoverProvider extends AbstractSupport implements H
 
         return serverUtils.typeLookup(this._server, req, token).then(value => {
             if (value && value.Type) {
-                let contents = [extractSummaryText(value.Documentation), { language: 'csharp', value: value.Type }];
+                let documentation = GetDocumentationString(value.StructuredDocumentation);
+                let contents = [documentation, { language: 'csharp', value: value.Type }];
                 return new Hover(contents);
             }
         });
