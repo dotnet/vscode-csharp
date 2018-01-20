@@ -134,15 +134,14 @@ export default class TestManager extends AbstractProvider {
             .then(response => response.Results);
     }
 
-    private _reportResults(results: protocol.V2.DotNetTestResult[], printEachResult: boolean): Promise<void> {
+    private _reportResults(results: protocol.V2.DotNetTestResult[]): Promise<void> {
         const totalTests = results.length;
         const output = this._getOutputChannel();
 
         let totalPassed = 0, totalFailed = 0, totalSkipped = 0;
         for (let result of results) {
-            if (printEachResult) {
-                output.appendLine(`${result.MethodName}: ${result.Outcome}`);
-            }    
+            output.appendLine(`${result.MethodName}: ${result.Outcome}`);
+            
             switch (result.Outcome) {
                 case protocol.V2.TestOutcomes.Failed:
                     totalFailed += 1;
@@ -198,7 +197,7 @@ export default class TestManager extends AbstractProvider {
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
 
         return this._runTest(fileName, testMethod, testFrameworkName, targetFrameworkVersion)
-            .then(results => this._reportResults(results, false))
+            .then(results => this._reportResults(results))
             .then(() => listener.dispose())
             .catch(reason => {
                 listener.dispose();
@@ -218,29 +217,24 @@ export default class TestManager extends AbstractProvider {
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
 
         return this._runTestsInClass(fileName, testFrameworkName, targetFrameworkVersion, methodsInClass)
-            .then(responses => {
-                responses.forEach(response => {
-                    Array.prototype.push.apply(allResults, response.Results);
-                });
-            }).then(async () => {
-                listener.dispose();
-                await this._reportResults(allResults, true);
-            })
-            .catch(reason => {
-                listener.dispose();
-                vscode.window.showErrorMessage(`Could not run tests`);
-            });
+        .then(results => this._reportResults(results))
+        .then(() => listener.dispose())
+        .catch(reason => {
+            listener.dispose();
+            vscode.window.showErrorMessage(`Failed to run tests because ${reason}.`);
+        });
     }
 
-    private _runTestsInClass(fileName: string, testFrameworkName: string, targetFrameworkVersion: string, methodsToRun: string[]): Promise<protocol.V2.RunTestResponse[]> {
+    private _runTestsInClass(fileName: string, testFrameworkName: string, targetFrameworkVersion: string, methodsToRun: string[]): Promise<protocol.V2.DotNetTestResult[]> {
         const request: protocol.V2.RunTestsInClassRequest = {
             FileName: fileName,
             TestFrameworkName: testFrameworkName,
             TargetFrameworkVersion: targetFrameworkVersion,
-            MethodNamesInClass: methodsToRun
+            MethodNames: methodsToRun
         };
 
-        return serverUtils.runTestsInClass(this._server, request);
+        return serverUtils.runTestsInClass(this._server, request)
+        .then(response => response.Results);
     }
 
     private _createLaunchConfiguration(program: string, args: string, cwd: string, debuggerEventsPipeName: string) {

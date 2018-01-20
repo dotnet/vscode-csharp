@@ -94,7 +94,7 @@ export function runTest(server: OmniSharpServer, request: protocol.V2.RunTestReq
 }
 
 export function runTestsInClass(server: OmniSharpServer, request: protocol.V2.RunTestsInClassRequest) {
-    return server.makeRequest<protocol.V2.RunTestResponse[]>(protocol.V2.Requests.RunAllTestsInClass, request);
+    return server.makeRequest<protocol.V2.RunTestResponse>(protocol.V2.Requests.RunAllTestsInClass, request);
 }
 
 export function debugTestGetStartInfo(server: OmniSharpServer, request: protocol.V2.DebugTestGetStartInfoRequest) {

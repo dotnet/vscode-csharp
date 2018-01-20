@@ -584,9 +584,9 @@ export namespace V2 {
     }
 
     export interface RunTestsInClassRequest extends Request {
+        MethodNames: string[];
         TestFrameworkName: string;
         TargetFrameworkVersion: string;
-        MethodNamesInClass: string[];
     }
 
     export module TestOutcomes {
