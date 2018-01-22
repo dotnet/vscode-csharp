@@ -363,6 +363,11 @@
           "default": null,
           "description": "Specifies the full path to the OmniSharp server."
         },
+        "omnisharp.experimentOmnisharp":{
+          "type":"string",
+          "default": null,
+          "description": "Specifies if the user wants to use the experiment build. Possible values - latest or some version number" 
+        },
         "omnisharp.useMono": {
           "type": "boolean",
           "default": false,

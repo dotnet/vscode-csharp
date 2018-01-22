@@ -46,7 +46,7 @@ export function findLaunchTargets(): Thenable<LaunchTarget[]> {
     const options = Options.Read();
 
     return vscode.workspace.findFiles(
-            /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}', 
+            /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
             /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
             /*maxResults*/ options.maxProjectResults)
         .then(resourcesToLaunchTargets);
@@ -88,8 +88,7 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
 
     let targets: LaunchTarget[] = [];
 
-    workspaceFolderToUriMap.forEach((resources, folderIndex) => 
-    {
+    workspaceFolderToUriMap.forEach((resources, folderIndex) => {
         let hasCsProjFiles = false,
             hasSlnFile = false,
             hasProjectJson = false,
@@ -98,15 +97,15 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
             hasCake = false;
 
         hasCsProjFiles = resources.some(isCSharpProject);
-        
+
         let folder = vscode.workspace.workspaceFolders[folderIndex];
         let folderPath = folder.uri.fsPath;
-    
+
         resources.forEach(resource => {
             // Add .sln files if there are .csproj files
             if (hasCsProjFiles && isSolution(resource)) {
                 hasSlnFile = true;
-    
+
                 targets.push({
                     label: path.basename(resource.fsPath),
                     description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
@@ -115,13 +114,13 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                     kind: LaunchTargetKind.Solution
                 });
             }
-    
+
             // Add project.json files
             if (isProjectJson(resource)) {
                 const dirname = path.dirname(resource.fsPath);
                 hasProjectJson = true;
                 hasProjectJsonAtRoot = hasProjectJsonAtRoot || dirname === folderPath;
-    
+
                 targets.push({
                     label: path.basename(resource.fsPath),
                     description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
@@ -130,18 +129,18 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                     kind: LaunchTargetKind.ProjectJson
                 });
             }
-    
+
             // Discover if there is any CSX file
             if (!hasCSX && isCsx(resource)) {
                 hasCSX = true;
             }
-    
+
             // Discover if there is any Cake file
             if (!hasCake && isCake(resource)) {
                 hasCake = true;
             }
         });
-    
+
         // Add the root folder under the following circumstances:
         // * If there are .csproj files, but no .sln file, and none in the root.
         // * If there are project.json files, but none in the root.
@@ -154,7 +153,7 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                 kind: LaunchTargetKind.Folder
             });
         }
-    
+
         // if we noticed any CSX file(s), add a single CSX-specific target pointing at the root folder
         if (hasCSX) {
             targets.push({
@@ -165,7 +164,7 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                 kind: LaunchTargetKind.Csx
             });
         }
-    
+
         // if we noticed any Cake file(s), add a single Cake-specific target pointing at the root folder
         if (hasCake) {
             targets.push({
@@ -207,9 +206,9 @@ export interface LaunchResult {
     usingMono: boolean;
 }
 
-export function launchOmniSharp(cwd: string, args: string[]): Promise<LaunchResult> {
+export function launchOmniSharp(cwd: string, args: string[], experimentVersion: string): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        launch(cwd, args)
+        launch(cwd, args, experimentVersion)
             .then(result => {
                 // async error - when target not not ENEOT
                 result.process.on('error', err => {
@@ -225,12 +224,11 @@ export function launchOmniSharp(cwd: string, args: string[]): Promise<LaunchResu
     });
 }
 
-function launch(cwd: string, args: string[]): Promise<LaunchResult> {
+function launch(cwd: string, args: string[], experimentVersion: string): Promise<LaunchResult> {
     return PlatformInformation.GetCurrent().then(platformInfo => {
         const options = Options.Read();
 
-        if (options.useEditorFormattingSettings) 
-        {
+        if (options.useEditorFormattingSettings) {
             let globalConfig = vscode.workspace.getConfiguration();
             let csharpConfig = vscode.workspace.getConfiguration('[csharp]');
 
@@ -253,8 +251,14 @@ function launch(cwd: string, args: string[]): Promise<LaunchResult> {
                 : launchNix(options.path, cwd, args);
         }
 
-        // If the user has not provided a path, we'll use the locally-installed OmniSharp
-        const basePath = path.resolve(util.getExtensionPath(), '.omnisharp');
+        let basePath: string;
+        if (experimentVersion) {
+            basePath = path.resolve(util.getExtensionPath(), `.omnisharp/experiment/${experimentVersion}`);
+        }
+        else {
+            // If the user has not provided a path, we'll use the locally-installed OmniSharp
+            basePath = path.resolve(util.getExtensionPath(), '.omnisharp');
+        }
 
         if (platformInfo.isWindows()) {
             return launchWindows(path.join(basePath, 'OmniSharp.exe'), cwd, args);
@@ -274,11 +278,11 @@ function launch(cwd: string, args: string[]): Promise<LaunchResult> {
 
 function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csharpConfig: vscode.WorkspaceConfiguration,
     configurationPath: string, defaultValue: any): any {
-    
+
     if (csharpConfig[configurationPath] != undefined) {
         return csharpConfig[configurationPath];
     }
-    
+
     return globalConfig.get(configurationPath, defaultValue);
 }
 
@@ -287,7 +291,7 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
         const hasSpaceWithoutQuotes = /^[^"].* .*[^"]/;
         return hasSpaceWithoutQuotes.test(arg)
             ? `"${arg}"`
-            : arg.replace("&","^&");
+            : arg.replace("&", "^&");
     }
 
     let argsCopy = args.slice(0); // create copy of args

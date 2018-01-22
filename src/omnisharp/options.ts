@@ -18,7 +18,8 @@ export class Options {
         public useFormatting?: boolean,
         public showReferencesCodeLens?: boolean,
         public showTestsCodeLens?: boolean,
-        public disableCodeActions?: boolean) { }
+        public disableCodeActions?: boolean,
+        public experimentOmnisharp?: string) { }
 
     public static Read(): Options {
         // Extra effort is taken below to ensure that legacy versions of options
@@ -59,17 +60,20 @@ export class Options {
 
         const disableCodeActions = csharpConfig.get<boolean>('disableCodeActions', false);
 
-        return new Options(path, 
-            useMono, 
+        const experimentOmnisharp = omnisharpConfig.get<string>('experimentOmnisharp');
+
+        return new Options(path,
+            useMono,
             waitForDebugger,
-            loggingLevel, 
-            autoStart, 
-            projectLoadTimeout, 
-            maxProjectResults, 
-            useEditorFormattingSettings, 
+            loggingLevel,
+            autoStart,
+            projectLoadTimeout,
+            maxProjectResults,
+            useEditorFormattingSettings,
             useFormatting,
             showReferencesCodeLens,
             showTestsCodeLens,
-            disableCodeActions);
+            disableCodeActions,
+            experimentOmnisharp);
     }
 }
