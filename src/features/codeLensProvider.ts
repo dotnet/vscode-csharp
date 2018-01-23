@@ -58,12 +58,16 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 
         let tree = await serverUtils.currentFileMembersAsTree(this._server, { FileName: document.fileName }, token);
         let ret: vscode.CodeLens[] = [];
-        tree.TopLevelTypeDefinitions.forEach(node => this._convertQuickFix(ret, document.fileName, node));
+
+        for (let node of tree.TopLevelTypeDefinitions) {
+            await this._convertQuickFix(ret, document.fileName, node);
+        }
+
         return ret;
     }
 
 
-    private _convertQuickFix(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node) {
+    private async _convertQuickFix(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node): Promise<void> {
 
         if (node.Kind === 'MethodDeclaration' && OmniSharpCodeLensProvider.filteredSymbolNames[node.Location.Text]) {
             return;
@@ -75,11 +79,11 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         }
 
         for (let child of node.ChildNodes) {
-         this._convertQuickFix(bucket, fileName, child);
+            this._convertQuickFix(bucket, fileName, child);
         }
 
         if (this._options.showTestsCodeLens) {
-             this._updateCodeLensForTest(bucket, fileName, node);
+            await this._updateCodeLensForTest(bucket, fileName, node);
         }
     }
 
@@ -111,16 +115,16 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         }
     }
 
-    private async  _updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node){
+    private async  _updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node): Promise<void> {
         // backward compatible check: Features property doesn't present on older version OmniSharp
         if (node.Features === undefined) {
             return;
         }
 
         if (node.Kind === "ClassDeclaration" && node.ChildNodes.length > 0) {
-            let projectInfo =  await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
+            let projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
             if (projectInfo.MsBuildProject) {
-                 this._updateCodeLensForTestClass(bucket, fileName, node);
+                this._updateCodeLensForTestClass(bucket, fileName, node);
             }
         }
 
@@ -136,7 +140,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         }
     }
 
-    private _updateCodeLensForTestClass(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node){
+    private _updateCodeLensForTestClass(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node) {
         // if the class doesnot contain any method then return
         if (!node.ChildNodes.find(value => (value.Kind === "MethodDeclaration"))) {
             return;
