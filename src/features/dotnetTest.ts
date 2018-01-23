@@ -14,12 +14,10 @@ import * as os from 'os';
 import * as path from 'path';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import AbstractProvider from './abstractProvider';
-import { outputFileSync } from 'fs-extra';
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 
 export default class TestManager extends AbstractProvider {
-
     private _channel: vscode.OutputChannel;
 
     private _runCounts: { [testFrameworkName: string]: number };
@@ -141,7 +139,6 @@ export default class TestManager extends AbstractProvider {
         let totalPassed = 0, totalFailed = 0, totalSkipped = 0;
         for (let result of results) {
             output.appendLine(`${result.MethodName}: ${result.Outcome}`);
-            
             switch (result.Outcome) {
                 case protocol.V2.TestOutcomes.Failed:
                     totalFailed += 1;
