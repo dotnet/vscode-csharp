@@ -121,9 +121,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             return this._updateCodeLensForTestClass(bucket, fileName, node);
         }
 
-        let featureAndFramework = this._getTestFeatureAndFramework(node);
-        let testFeature = featureAndFramework.Feature;
-        let testFrameworkName = featureAndFramework.Framework;
+        let [testFeature, testFrameworkName] = this._getTestFeatureAndFramework(node);
         if (testFeature) {
             bucket.push(new vscode.CodeLens(
                 toRange(node.Location),
@@ -144,19 +142,18 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         let testMethods = new Array<string>();
         let testFrameworkName: string = null;
         for (let child of node.ChildNodes) {
-            let featureAndFramework = this._getTestFeatureAndFramework(child);
-            let testFeature = featureAndFramework.Feature;
+            let [testFeature, frameworkName] = this._getTestFeatureAndFramework(node);
             if (testFeature) {
                 // this test method has a test feature
                 if (!testFrameworkName) {
-                    testFrameworkName = featureAndFramework.Framework;
+                    testFrameworkName = frameworkName;
                 }
 
                 testMethods.push(testFeature.Data);
             }
         }
 
-        if (testMethods.length) {
+        if (testMethods.length > 0) {
             bucket.push(new vscode.CodeLens(
                 toRange(node.Location),
                 { title: "run all tests", command: 'dotnet.classTests.run', arguments: [testMethods, fileName, testFrameworkName] }));
@@ -166,7 +163,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         }
     }
 
-    private _getTestFeatureAndFramework(node: protocol.Node) {
+    private _getTestFeatureAndFramework(node: protocol.Node): [protocol.SyntaxFeature, string] {
         let testFeature = node.Features.find(value => (value.Name == 'XunitTestMethod' || value.Name == 'NUnitTestMethod' || value.Name == 'MSTestMethod'));
         if (testFeature) {
             let testFrameworkName = 'xunit';
@@ -177,9 +174,9 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
                 testFrameworkName = 'mstest';
             }
 
-            return { Feature: testFeature, Framework: testFrameworkName };
+            return [ testFeature, testFrameworkName ];
         }
 
-        return { Feature: null, Framework: null };
+        return [null, null];
     }
 }
