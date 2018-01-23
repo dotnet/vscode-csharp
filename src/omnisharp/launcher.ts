@@ -206,9 +206,9 @@ export interface LaunchResult {
     usingMono: boolean;
 }
 
-export function launchOmniSharp(cwd: string, args: string[], experimentVersion: string): Promise<LaunchResult> {
+export function launchOmniSharp(cwd: string, args: string[], experimentalVersion: string): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        launch(cwd, args, experimentVersion)
+        launch(cwd, args, experimentalVersion)
             .then(result => {
                 // async error - when target not not ENEOT
                 result.process.on('error', err => {
@@ -224,7 +224,7 @@ export function launchOmniSharp(cwd: string, args: string[], experimentVersion: 
     });
 }
 
-function launch(cwd: string, args: string[], experimentVersion: string): Promise<LaunchResult> {
+function launch(cwd: string, args: string[], experimentalVersion: string): Promise<LaunchResult> {
     return PlatformInformation.GetCurrent().then(platformInfo => {
         const options = Options.Read();
 
@@ -252,8 +252,8 @@ function launch(cwd: string, args: string[], experimentVersion: string): Promise
         }
 
         let basePath: string;
-        if (experimentVersion) {
-            basePath = path.resolve(util.getExtensionPath(), `.omnisharp/experiment/${experimentVersion}`);
+        if (experimentalVersion) {
+            basePath = path.resolve(util.getExtensionPath(), `.omnisharp/experimental/${experimentalVersion}`);
         }
         else {
             // If the user has not provided a path, we'll use the locally-installed OmniSharp

@@ -19,7 +19,7 @@ export class Options {
         public showReferencesCodeLens?: boolean,
         public showTestsCodeLens?: boolean,
         public disableCodeActions?: boolean,
-        public experimentOmnisharp?: string) { }
+        public experimentalOmnisharp?: string) { }
 
     public static Read(): Options {
         // Extra effort is taken below to ensure that legacy versions of options
@@ -60,7 +60,7 @@ export class Options {
 
         const disableCodeActions = csharpConfig.get<boolean>('disableCodeActions', false);
 
-        const experimentOmnisharp = omnisharpConfig.get<string>('experimentOmnisharp');
+        const experimentalOmnisharp = omnisharpConfig.get<string>('experimentalOmnisharp');
 
         return new Options(path,
             useMono,
@@ -74,6 +74,6 @@ export class Options {
             showReferencesCodeLens,
             showTestsCodeLens,
             disableCodeActions,
-            experimentOmnisharp);
+            experimentalOmnisharp);
     }
 }

@@ -260,18 +260,18 @@ export class OmniSharpServer {
             args.push('--debug');
         }
 
-        let experimentVersion : string;
-        let experimentOption = this._options.experimentOmnisharp;
-        if(experimentOption == "latest"){
+        let experimentalVersion : string;
+        let experimentalOption = this._options.experimentalOmnisharp;
+        if(experimentalOption == "latest"){
             let downloader = new OmnisharpDownloader();
-            experimentVersion = downloader.GetLatestExperimentVersion();
-            if(!experimentVersion){
-                this._logger.appendLine('No directory present in the experiment folder. Using the release version instead');
+            experimentalVersion = downloader.GetLatestInstalledExperimentalVersion();
+            if(!experimentalVersion){
+                this._logger.appendLine('No directory present in the experimental folder. Using the release version instead');
             }
         }
-        else if(experimentOption){
-            //If experiment option is not null means it is set to some version value
-            experimentVersion = experimentOption;
+        else if(experimentalOption){
+            //If experimental option is not null means it is set to some version value
+            experimentalVersion = experimentalOption;
         }
 
         this._logger.appendLine(`Starting OmniSharp server at ${new Date().toLocaleString()}`);
@@ -282,7 +282,7 @@ export class OmniSharpServer {
 
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
-        return launchOmniSharp(cwd, args, experimentVersion).then(value => {
+        return launchOmniSharp(cwd, args, experimentalVersion).then(value => {
             if (value.usingMono) {
                 this._logger.appendLine(`OmniSharp server started wth Mono`);
             }

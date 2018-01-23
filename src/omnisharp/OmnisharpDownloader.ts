@@ -9,8 +9,8 @@ import * as fs from 'fs';
 
 export class OmnisharpDownloader {
 
-    public GetLatestExperimentVersion(): string {
-        let basePath = path.resolve(utils.getExtensionPath(), ".omnisharp/experiment");
+    public GetLatestInstalledExperimentalVersion(): string {
+        let basePath = path.resolve(utils.getExtensionPath(), ".omnisharp/experimental");
         let compareVersions = require('compare-versions');
         let latestVersion: string;
         let items = fs.readdirSync(basePath);
