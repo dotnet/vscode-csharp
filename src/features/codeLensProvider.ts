@@ -51,19 +51,19 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         'ToString': true
     };
 
-    provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
+    async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken) {
         if (!this._options.showReferencesCodeLens && !this._options.showTestsCodeLens) {
             return [];
         }
 
-        return serverUtils.currentFileMembersAsTree(this._server, { FileName: document.fileName }, token).then(tree => {
-            let ret: vscode.CodeLens[] = [];
-            tree.TopLevelTypeDefinitions.forEach(node => this._convertQuickFix(ret, document.fileName, node));
-            return ret;
-        });
+        let tree = await serverUtils.currentFileMembersAsTree(this._server, { FileName: document.fileName }, token);
+        let ret: vscode.CodeLens[] = [];
+        tree.TopLevelTypeDefinitions.forEach(node => this._convertQuickFix(ret, document.fileName, node));
+        return ret;
     }
 
-    private _convertQuickFix(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node): void {
+
+    private async _convertQuickFix(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node) {
 
         if (node.Kind === 'MethodDeclaration' && OmniSharpCodeLensProvider.filteredSymbolNames[node.Location.Text]) {
             return;
@@ -79,7 +79,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         }
 
         if (this._options.showTestsCodeLens) {
-            this._updateCodeLensForTest(bucket, fileName, node);
+            await this._updateCodeLensForTest(bucket, fileName, node);
         }
     }
 
@@ -111,14 +111,17 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         }
     }
 
-    private _updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node) {
+    private async _updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node){
         // backward compatible check: Features property doesn't present on older version OmniSharp
         if (node.Features === undefined) {
             return;
         }
 
         if (node.Kind == "ClassDeclaration" && node.ChildNodes.length > 0) {
-            return this._updateCodeLensForTestClass(bucket, fileName, node);
+            let projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
+            if (projectInfo.MsBuildProject) {
+                await this._updateCodeLensForTestClass(bucket, fileName, node);
+            }
         }
 
         let [testFeature, testFrameworkName] = this._getTestFeatureAndFramework(node);
@@ -133,7 +136,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         }
     }
 
-    private _updateCodeLensForTestClass(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node) {
+    private _updateCodeLensForTestClass(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node){
         // if the class doesnot contain any method then return
         if (!node.ChildNodes.find(value => (value.Kind == "MethodDeclaration"))) {
             return;
@@ -142,7 +145,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         let testMethods = new Array<string>();
         let testFrameworkName: string = null;
         for (let child of node.ChildNodes) {
-            let [testFeature, frameworkName] = this._getTestFeatureAndFramework(node);
+            let [testFeature, frameworkName] = this._getTestFeatureAndFramework(child);
             if (testFeature) {
                 // this test method has a test feature
                 if (!testFrameworkName) {
@@ -174,7 +177,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
                 testFrameworkName = 'mstest';
             }
 
-            return [ testFeature, testFrameworkName ];
+            return [testFeature, testFrameworkName];
         }
 
         return [null, null];
