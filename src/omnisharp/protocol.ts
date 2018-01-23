@@ -540,7 +540,7 @@ export namespace V2 {
     }
 
     export interface DebugTestClassGetStartInfoRequest extends Request {
-        MethodsInClass: string[];
+        MethodNames: string[];
         TestFrameworkName: string;
         TargetFrameworkVersion: string;
     }

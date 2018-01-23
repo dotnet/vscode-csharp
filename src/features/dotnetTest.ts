@@ -40,7 +40,7 @@ export default class TestManager extends AbstractProvider {
 
         let d4 = vscode.commands.registerCommand(
             'dotnet.classTests.run',
-            (methodsInClass, fileName, testFrameworkName) => this._runDotnetTestsInClass(methodsInClass, fileName, testFrameworkName, ));
+            (methodsInClass, fileName, testFrameworkName) => this._runDotnetTestsInClass(methodsInClass, fileName, testFrameworkName));
 
         let d5 = vscode.commands.registerCommand(
             'dotnet.classTests.debug',
@@ -127,7 +127,7 @@ export default class TestManager extends AbstractProvider {
             FileName: fileName,
             MethodName: testMethod,
             TestFrameworkName: testFrameworkName,
-            TargetFrameworkVersion: targetFrameworkVersion,
+            TargetFrameworkVersion: targetFrameworkVersion
         };
 
         return serverUtils.runTest(this._server, request)
@@ -405,7 +405,7 @@ export default class TestManager extends AbstractProvider {
 
         const request: protocol.V2.DebugTestClassGetStartInfoRequest = {
             FileName: fileName,
-            MethodsInClass: methodsToRun,
+            MethodNames: methodsToRun,
             TestFrameworkName: testFrameworkName,
             TargetFrameworkVersion: targetFrameworkVersion
         };

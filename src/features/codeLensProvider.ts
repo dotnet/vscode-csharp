@@ -63,7 +63,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
     }
 
 
-    private async _convertQuickFix(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node) {
+    private _convertQuickFix(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node) {
 
         if (node.Kind === 'MethodDeclaration' && OmniSharpCodeLensProvider.filteredSymbolNames[node.Location.Text]) {
             return;
@@ -75,11 +75,11 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         }
 
         for (let child of node.ChildNodes) {
-            this._convertQuickFix(bucket, fileName, child);
+         this._convertQuickFix(bucket, fileName, child);
         }
 
         if (this._options.showTestsCodeLens) {
-            await this._updateCodeLensForTest(bucket, fileName, node);
+             this._updateCodeLensForTest(bucket, fileName, node);
         }
     }
 
@@ -111,16 +111,16 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         }
     }
 
-    private async _updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node){
+    private async  _updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node){
         // backward compatible check: Features property doesn't present on older version OmniSharp
         if (node.Features === undefined) {
             return;
         }
 
-        if (node.Kind == "ClassDeclaration" && node.ChildNodes.length > 0) {
-            let projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
+        if (node.Kind === "ClassDeclaration" && node.ChildNodes.length > 0) {
+            let projectInfo =  await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
             if (projectInfo.MsBuildProject) {
-                await this._updateCodeLensForTestClass(bucket, fileName, node);
+                 this._updateCodeLensForTestClass(bucket, fileName, node);
             }
         }
 
@@ -138,7 +138,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 
     private _updateCodeLensForTestClass(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node){
         // if the class doesnot contain any method then return
-        if (!node.ChildNodes.find(value => (value.Kind == "MethodDeclaration"))) {
+        if (!node.ChildNodes.find(value => (value.Kind === "MethodDeclaration"))) {
             return;
         }
 
