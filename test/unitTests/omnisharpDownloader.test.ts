@@ -10,7 +10,7 @@ import { OmnisharpDownloader } from '../../src/omnisharp/OmnisharpDownloader';
 
 const tmp = require('tmp');
 
-suite("Experiment Omnisharp - Latest Version", () => {
+suite("Experimental Omnisharp - Latest Version", () => {
     suiteSetup(() => should());
 
     test('Returns latest version', () => {
@@ -29,6 +29,18 @@ suite("Experiment Omnisharp - Latest Version", () => {
         let versions: string[] = ["1.28.0", "1.27.0", "1.26.0", "1.29.0-beta1"];
         let latestVersion = GetLatestVersion(versions);
         latestVersion.should.equal("1.29.0-beta1");
+    })
+
+    test('Returns the latest pre-release version', () => {
+        let versions: string[] = ["1.28.0", "1.27.0", "1.29.0-beta2", "1.29.0-beta1"];
+        let latestVersion = GetLatestVersion(versions);
+        latestVersion.should.equal("1.29.0-beta2");
+    })
+
+    test('Returns the prod version over pre-release version', () => {
+        let versions: string[] = ["1.28.0", "1.27.0", "1.29.0", "1.29.0-beta1"];
+        let latestVersion = GetLatestVersion(versions);
+        latestVersion.should.equal("1.29.0");
     })
 
     test('Returns undefined if no valid version exists', () => {
