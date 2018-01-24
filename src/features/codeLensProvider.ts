@@ -123,7 +123,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 
         if (node.Kind === "ClassDeclaration" && node.ChildNodes.length > 0) {
             let projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
-            if (projectInfo.MsBuildProject) {
+            if (!projectInfo.DotNetProject && projectInfo.MsBuildProject) {
                 this._updateCodeLensForTestClass(bucket, fileName, node);
             }
         }
