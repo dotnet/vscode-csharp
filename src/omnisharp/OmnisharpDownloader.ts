@@ -11,18 +11,21 @@ export class OmnisharpDownloader {
 
     public GetLatestInstalledExperimentalVersion(): string {
         let basePath = path.resolve(utils.getExtensionPath(), ".omnisharp/experimental");
-        let compareVersions = require('compare-versions');
+        const semver = require('semver');
 
         let latestVersion: string;
-        let items = fs.readdirSync(basePath);
-        if (items) {
-            latestVersion = items.reduce((latest, cur) => {
-                if (compareVersions(latest, cur)) {
-                    return cur;
-                }
-
-                return latest;
-            });
+        let installedItems = fs.readdirSync(basePath);
+        if (installedItems) {
+            let validVersions = installedItems.filter(value => semver.valid(value));
+            if(validVersions){
+                latestVersion = validVersions.reduce((latestTillNow, element) => {
+                    if (semver.gt(latestTillNow, element)) {
+                        return latestTillNow;
+                    }
+    
+                    return element;
+                });
+            }
         }
 
         return latestVersion;
