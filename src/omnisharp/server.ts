@@ -264,7 +264,8 @@ export class OmniSharpServer {
         let experimentalOption = this._options.experimentalOmnisharp;
         if(experimentalOption == "latest"){
             let downloader = new OmnisharpDownloader();
-            experimentalVersion = downloader.GetLatestInstalledExperimentalVersion();
+            const basePath = path.resolve(utils.getExtensionPath(), ".omnisharp/experimental");
+            experimentalVersion = downloader.GetLatestInstalledExperimentalVersion(basePath);
             if(!experimentalVersion){
                 this._logger.appendLine('No directory present in the experimental folder. Using the release version instead');
             }

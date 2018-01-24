@@ -9,8 +9,7 @@ import * as fs from 'fs';
 
 export class OmnisharpDownloader {
 
-    public GetLatestInstalledExperimentalVersion(): string {
-        let basePath = path.resolve(utils.getExtensionPath(), ".omnisharp/experimental");
+    public GetLatestInstalledExperimentalVersion(basePath: string): string {
         const semver = require('semver');
 
         let latestVersion: string;
