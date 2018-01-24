@@ -259,6 +259,8 @@ export interface Node {
     Location: QuickFix;
     Kind: string;
     Features: SyntaxFeature[];
+    AttributeSpanStart: number;
+    AttributeSpanEnd: number;
 }
 
 export interface CurrentFileMembersAsTreeResponse {
