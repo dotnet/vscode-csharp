@@ -31,7 +31,7 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function() {
         let fileUri = await testAssetWorkspace.projects[0].addFileWithContents("test.cs", "class C {}");
         await vscode.commands.executeCommand("vscode.open", fileUri);
         let c = await vscode.commands.executeCommand("vscode.executeCodeActionProvider", fileUri, new vscode.Range(0, 7, 0, 7)) as {command: string, arguments: string[]}[];
-        expect(c.length).to.equal(3);
+        expect(c.length).to.equal(2);
         await vscode.commands.executeCommand(c[1].command, ...c[1].arguments)
         expect(vscode.window.activeTextEditor.document.fileName).contains("C.cs");
     });
