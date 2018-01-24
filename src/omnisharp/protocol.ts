@@ -493,7 +493,7 @@ export namespace V2 {
         Identifier: string;
         Selection?: Range;
         WantsTextChanges: boolean;
-        WantsAllCodeActionOperations: boolean
+        WantsAllCodeActionOperations: boolean;
     }
 
     export interface RunCodeActionResponse {

@@ -15,7 +15,6 @@ import { Options } from '../omnisharp/options';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { FileModificationType } from '../omnisharp/protocol';
 import { Uri } from 'vscode';
-import { rename } from 'async-file';
 
 export default class CodeActionProvider extends AbstractProvider implements vscode.CodeActionProvider {
 
