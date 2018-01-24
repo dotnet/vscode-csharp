@@ -23,7 +23,7 @@ export class CSharpExtDownloader
     }
 
     public installRuntimeDependencies(): Promise<boolean> {
-        this.logger.append('Updating C# dependencies...');
+        this.logger.append('Installing C# dependencies...');
         this.channel.show();
 
         let statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);

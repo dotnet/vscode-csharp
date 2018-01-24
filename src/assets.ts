@@ -204,7 +204,7 @@ export class AssetGenerator {
         }
 
         return {
-            taskName: 'build',
+            label: 'build',
             command: 'dotnet',
             type: 'process',
             args: ['build', util.convertNativePathToPosix(buildPath)],
