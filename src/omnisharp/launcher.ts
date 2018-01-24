@@ -256,7 +256,7 @@ function launch(cwd: string, args: string[], experimentalVersion: string): Promi
             basePath = path.resolve(util.getExtensionPath(), `.omnisharp/experimental/${experimentalVersion}`);
         }
         else {
-            // If the user has not provided a path, we'll use the locally-installed OmniSharp
+            // If the user has not provided a path and some experimental version, we'll use the locally-installed OmniSharp
             basePath = path.resolve(util.getExtensionPath(), '.omnisharp');
         }
 

@@ -12,12 +12,17 @@ export class OmnisharpDownloader {
     public GetLatestInstalledExperimentalVersion(): string {
         let basePath = path.resolve(utils.getExtensionPath(), ".omnisharp/experimental");
         let compareVersions = require('compare-versions');
+
         let latestVersion: string;
         let items = fs.readdirSync(basePath);
         if (items) {
-            items.sort(compareVersions);
-            latestVersion = items[items.length - 1];
-            //get the latest version after sorting
+            latestVersion = items.reduce((latest, cur) => {
+                if (compareVersions(latest, cur)) {
+                    return cur;
+                }
+
+                return latest;
+            });
         }
 
         return latestVersion;
