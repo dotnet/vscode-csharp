@@ -262,9 +262,11 @@ export class OmniSharpServer {
 
         let experimentalVersion : string;
         let experimentalOption = this._options.experimentalOmnisharp;
+        let extensionPath = utils.getExtensionPath();
+        
         if(experimentalOption == "latest"){
             let downloader = new OmnisharpDownloader();
-            const basePath = path.resolve(utils.getExtensionPath(), ".omnisharp/experimental");
+            const basePath = path.resolve(extensionPath, ".omnisharp/experimental");
             experimentalVersion = downloader.GetLatestInstalledExperimentalVersion(basePath);
             if(!experimentalVersion){
                 this._logger.appendLine('No directory present in the experimental folder. Using the release version instead');
@@ -283,7 +285,7 @@ export class OmniSharpServer {
 
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
-        return launchOmniSharp(cwd, args, experimentalVersion).then(value => {
+        return launchOmniSharp(cwd, args, extensionPath, experimentalVersion).then(value => {
             if (value.usingMono) {
                 this._logger.appendLine(`OmniSharp server started wth Mono`);
             }

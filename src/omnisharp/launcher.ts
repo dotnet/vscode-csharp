@@ -206,9 +206,9 @@ export interface LaunchResult {
     usingMono: boolean;
 }
 
-export function launchOmniSharp(cwd: string, args: string[], experimentalVersion: string): Promise<LaunchResult> {
+export function launchOmniSharp(cwd: string, args: string[], extensionPath: string, experimentalVersion: string): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        launch(cwd, args, experimentalVersion)
+        launch(cwd, args, extensionPath, experimentalVersion)
             .then(result => {
                 // async error - when target not not ENEOT
                 result.process.on('error', err => {
@@ -224,7 +224,7 @@ export function launchOmniSharp(cwd: string, args: string[], experimentalVersion
     });
 }
 
-function launch(cwd: string, args: string[], experimentalVersion: string): Promise<LaunchResult> {
+function launch(cwd: string, args: string[], extensionPath: string, experimentalVersion: string): Promise<LaunchResult> {
     return PlatformInformation.GetCurrent().then(platformInfo => {
         const options = Options.Read();
 
@@ -253,11 +253,11 @@ function launch(cwd: string, args: string[], experimentalVersion: string): Promi
 
         let basePath: string;
         if (experimentalVersion) {
-            basePath = path.resolve(util.getExtensionPath(), `.omnisharp/experimental/${experimentalVersion}`);
+            basePath = path.resolve(extensionPath, `.omnisharp/experimental/${experimentalVersion}`);
         }
         else {
             // If the user has not provided a path and some experimental version, we'll use the locally-installed OmniSharp
-            basePath = path.resolve(util.getExtensionPath(), '.omnisharp');
+            basePath = path.resolve(extensionPath, '.omnisharp');
         }
 
         if (platformInfo.isWindows()) {
