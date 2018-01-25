@@ -10,7 +10,6 @@ import { satisfies } from 'semver';
 import { PlatformInformation } from '../platform';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import * as util from '../common';
 import { Options } from './options';
 
 export enum LaunchTargetKind {
@@ -61,7 +60,7 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
     //
     // TODO:
     //   * It should be possible to choose a .csproj as a launch target
-    //   * It should be possible to choose a .sln file even when no .csproj files are found 
+    //   * It should be possible to choose a .sln file even when no .csproj files are found
     //     within the root.
 
     if (!Array.isArray(resources)) {

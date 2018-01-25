@@ -17,50 +17,50 @@ suite("Experimental Omnisharp - Latest Version", () => {
         let versions: string[] = ["1.28.0", "1.27.0", "1.26.0"];
         let latestVersion = GetLatestVersion(versions);
         latestVersion.should.equal("1.28.0");
-    })
+    });
 
     test('Ignores unparseable strings', () => {
         let versions: string[] = ["1.28.0", "1.27.0", "1.26.0", "a.b.c"];
         let latestVersion = GetLatestVersion(versions);
         latestVersion.should.equal("1.28.0");
-    })
+    });
 
     test('Returns pre-release versions if they are the latest', () => {
         let versions: string[] = ["1.28.0", "1.27.0", "1.26.0", "1.29.0-beta1"];
         let latestVersion = GetLatestVersion(versions);
         latestVersion.should.equal("1.29.0-beta1");
-    })
+    });
 
     test('Returns the latest pre-release version', () => {
         let versions: string[] = ["1.28.0", "1.27.0", "1.29.0-beta2", "1.29.0-beta1"];
         let latestVersion = GetLatestVersion(versions);
         latestVersion.should.equal("1.29.0-beta2");
-    })
+    });
 
     test('Returns the prod version over pre-release version', () => {
         let versions: string[] = ["1.28.0", "1.27.0", "1.29.0", "1.29.0-beta1"];
         let latestVersion = GetLatestVersion(versions);
         latestVersion.should.equal("1.29.0");
-    })
+    });
 
     test('Returns undefined if no valid version exists', () => {
         let versions: string[] = ["a.b.c"];
         let latestVersion = GetLatestVersion(versions);
         assert.equal(latestVersion, undefined);
-    })
+    });
 
     test('Returns undefined if folder is empty', () => {
         let versions: string[] = [];
         let latestVersion = GetLatestVersion(versions);
         assert.equal(latestVersion, undefined);
-    })
+    });
 
     test('Returns undefined if experimental folder doesnot exist', () => {
         let downloader = new OmnisharpDownloader();
         let latestVersion = downloader.GetLatestInstalledExperimentalVersion("");
         assert.equal(latestVersion, undefined);
-    })
-})
+    });
+});
 
 
 function GetLatestVersion(versions: string[]): string {
