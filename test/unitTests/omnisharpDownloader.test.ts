@@ -62,18 +62,26 @@ suite("Experimental Omnisharp - Latest Version", () => {
     });
 });
 
-
 function GetLatestVersion(versions: string[]): string {
     let downloader = new OmnisharpDownloader();
-    let tmpObj = tmp.dirSync({ unsafeCleanup: true });
-    addVersionsToDirectory(tmpObj.name, versions);
-    let latestVersion = downloader.GetLatestInstalledExperimentalVersion(tmpObj.name);
-    tmpObj.removeCallback();
+    let tmpDir = tmp.dirSync();
+    let dirPath = tmpDir.name;
+    AddVersionsToDirectory(dirPath, versions);
+    let latestVersion = downloader.GetLatestInstalledExperimentalVersion(dirPath);
+    CleanUpDirectory(dirPath);
+    tmpDir.removeCallback();
     return latestVersion;
 }
 
-function addVersionsToDirectory(dirPath: string, versions: string[]) {
+function AddVersionsToDirectory(dirPath: string, versions: string[]) {
     for (let version of versions) {
         fs.mkdir(`${dirPath}/${version}`, () => { });
+    }
+}
+
+function CleanUpDirectory(dirPath: string) {
+    let installedVersions = fs.readdirSync(dirPath);
+    for (let version of installedVersions) {
+        fs.rmdirSync(`${dirPath}/${version}`);
     }
 }
