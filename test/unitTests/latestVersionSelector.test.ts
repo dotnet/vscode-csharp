@@ -5,7 +5,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { should, assert } from 'chai';
+import { should } from 'chai';
 import { GetLatestInstalledExperimentalVersion } from '../../src/omnisharp/latestVersionSelector';
 
 const tmp = require('tmp');
