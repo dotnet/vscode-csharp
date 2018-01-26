@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { should, assert } from 'chai';
-import { OmnisharpDownloader } from '../../src/omnisharp/OmnisharpDownloader';
+import { GetLatestInstalledExperimentalVersion } from '../../src/omnisharp/latestVersionSelector';
 
 const tmp = require('tmp');
 
@@ -46,28 +46,26 @@ suite("Experimental Omnisharp - Latest Version", () => {
     test('Returns undefined if no valid version exists', () => {
         let versions: string[] = ["a.b.c"];
         let latestVersion = GetLatestVersion(versions);
-        assert.equal(latestVersion, undefined);
+        latestVersion.should.equal("");
     });
 
-    test('Returns undefined if folder is empty', () => {
+    test('Returns empty if folder is empty', () => {
         let versions: string[] = [];
         let latestVersion = GetLatestVersion(versions);
-        assert.equal(latestVersion, undefined);
+        latestVersion.should.equal("");
     });
 
-    test('Returns undefined if experimental folder doesnot exist', () => {
-        let downloader = new OmnisharpDownloader();
-        let latestVersion = downloader.GetLatestInstalledExperimentalVersion("");
-        assert.equal(latestVersion, undefined);
+    test('Returns empty if experimental folder doesnot exist', () => {
+        let latestVersion = GetLatestInstalledExperimentalVersion("");
+        latestVersion.should.equal("");
     });
 });
 
 function GetLatestVersion(versions: string[]): string {
-    let downloader = new OmnisharpDownloader();
     let tmpDir = tmp.dirSync();
     let dirPath = tmpDir.name;
     AddVersionsToDirectory(dirPath, versions);
-    let latestVersion = downloader.GetLatestInstalledExperimentalVersion(dirPath);
+    let latestVersion = GetLatestInstalledExperimentalVersion(dirPath);
     CleanUpDirectory(dirPath);
     tmpDir.removeCallback();
     return latestVersion;

@@ -10,7 +10,9 @@ import { satisfies } from 'semver';
 import { PlatformInformation } from '../platform';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import * as util from '../common';
 import { Options } from './options';
+import { GetLatestInstalledExperimentalVersion } from './latestVersionSelector';
 
 export enum LaunchTargetKind {
     Solution,
@@ -205,9 +207,9 @@ export interface LaunchResult {
     usingMono: boolean;
 }
 
-export function launchOmniSharp(cwd: string, args: string[], extensionPath: string, experimentalVersion: string): Promise<LaunchResult> {
+export function launchOmniSharp(cwd: string, args: string[]): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        launch(cwd, args, extensionPath, experimentalVersion)
+        launch(cwd, args)
             .then(result => {
                 // async error - when target not not ENEOT
                 result.process.on('error', err => {
@@ -223,7 +225,7 @@ export function launchOmniSharp(cwd: string, args: string[], extensionPath: stri
     });
 }
 
-function launch(cwd: string, args: string[], extensionPath: string, experimentalVersion: string): Promise<LaunchResult> {
+function launch(cwd: string, args: string[]): Promise<LaunchResult> {
     return PlatformInformation.GetCurrent().then(platformInfo => {
         const options = Options.Read();
 
@@ -250,12 +252,16 @@ function launch(cwd: string, args: string[], extensionPath: string, experimental
                 : launchNix(options.path, cwd, args);
         }
 
+        let extensionPath = util.getExtensionPath();
         let basePath: string;
-        if (experimentalVersion) {
-            basePath = path.resolve(extensionPath, `.omnisharp/experimental/${experimentalVersion}`);
+        if (options.alternateVersion) {
+            basePath = path.resolve(extensionPath,`.omnisharp/experimental/${options.alternateVersion}`);
+        }
+        else if (options.useLatestExperimentalBuild) {
+            basePath = getLatestExperimentalBuildPath(extensionPath);
         }
         else {
-            // If the user has not provided a path and some experimental version, we'll use the locally-installed OmniSharp
+            // If the user has neither provided a path not set any options for using other versions, we'll use the locally-installed OmniSharp
             basePath = path.resolve(extensionPath, '.omnisharp');
         }
 
@@ -273,6 +279,18 @@ function launch(cwd: string, args: string[], extensionPath: string, experimental
                 return launchNix(path.join(basePath, 'run'), cwd, args);
             });
     });
+}
+
+function getLatestExperimentalBuildPath(extensionPath: string) {
+    let dirPath = path.resolve(extensionPath, `.omnisharp/experimental`);
+    let latestVersion = GetLatestInstalledExperimentalVersion(dirPath);
+    if (latestVersion && latestVersion.length>0) {
+        return path.resolve(extensionPath, `.omnisharp/experimental/${latestVersion}`);
+    }
+    else {
+        //If there is no latest version present in experimental folder, use the release version
+        return path.resolve(extensionPath, `.omnisharp`);
+    }
 }
 
 function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csharpConfig: vscode.WorkspaceConfiguration,

@@ -19,7 +19,8 @@ export class Options {
         public showReferencesCodeLens?: boolean,
         public showTestsCodeLens?: boolean,
         public disableCodeActions?: boolean,
-        public experimentalOmnisharp?: string) { }
+        public alternateVersion?: string,
+        public useLatestExperimentalBuild?: boolean) { }
 
     public static Read(): Options {
         // Extra effort is taken below to ensure that legacy versions of options
@@ -60,8 +61,9 @@ export class Options {
 
         const disableCodeActions = csharpConfig.get<boolean>('disableCodeActions', false);
 
-        const experimentalOmnisharp = omnisharpConfig.get<string>('experimentalOmnisharp');
-
+        const alternateVersion = omnisharpConfig.get<string>('alternateVersion');
+        const useLatestExperimentalBuild = omnisharpConfig.get<boolean>('useLatestExperimentalBuild', false);
+        
         return new Options(path,
             useMono,
             waitForDebugger,
@@ -74,6 +76,7 @@ export class Options {
             showReferencesCodeLens,
             showTestsCodeLens,
             disableCodeActions,
-            experimentalOmnisharp);
+            alternateVersion,
+            useLatestExperimentalBuild);
     }
 }

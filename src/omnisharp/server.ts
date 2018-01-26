@@ -19,7 +19,6 @@ import * as protocol from './protocol';
 import * as utils from '../common';
 import * as vscode from 'vscode';
 import { setTimeout } from 'timers';
-import { OmnisharpDownloader } from './OmnisharpDownloader';
 
 enum ServerState {
     Starting,
@@ -260,23 +259,6 @@ export class OmniSharpServer {
             args.push('--debug');
         }
 
-        let experimentalVersion : string;
-        let experimentalOption = this._options.experimentalOmnisharp;
-        let extensionPath = utils.getExtensionPath();
-        
-        if(experimentalOption == "latest"){
-            let downloader = new OmnisharpDownloader();
-            const basePath = path.resolve(extensionPath, ".omnisharp/experimental");
-            experimentalVersion = downloader.GetLatestInstalledExperimentalVersion(basePath);
-            if(!experimentalVersion){
-                this._logger.appendLine('No directory present in the experimental folder. Using the release version instead');
-            }
-        }
-        else if(experimentalOption){
-            //If experimental option is not null means it is set to some version value
-            experimentalVersion = experimentalOption;
-        }
-
         this._logger.appendLine(`Starting OmniSharp server at ${new Date().toLocaleString()}`);
         this._logger.increaseIndent();
         this._logger.appendLine(`Target: ${solutionPath}`);
@@ -285,7 +267,7 @@ export class OmniSharpServer {
 
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
-        return launchOmniSharp(cwd, args, extensionPath, experimentalVersion).then(value => {
+        return launchOmniSharp(cwd, args).then(value => {
             if (value.usingMono) {
                 this._logger.appendLine(`OmniSharp server started wth Mono`);
             }
