@@ -28,17 +28,14 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function() {
             await csharpExtension.activate(); 
         }
 
-
         await csharpExtension.exports.initializationFinished;
         await omnisharp.restart();
-
 
         await vscode.commands.executeCommand("dotnet.generateAssets");
 
         await poll(async () => await fs.exists(testAssetWorkspace.launchJsonPath), 10000, 100);
         
     }); 
-
 
    test("Hover returns structured documentation with proper newlines", async function ()  {                
 
