@@ -73,7 +73,7 @@ function GetLatestVersion(versions: string[]): string {
 
 function AddVersionsToDirectory(dirPath: string, versions: string[]) {
     for (let version of versions) {
-        fs.mkdir(`${dirPath}/${version}`, () => { });
+        fs.mkdirSync(`${dirPath}/${version}`);
     }
 }
 
