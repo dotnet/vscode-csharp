@@ -84,7 +84,7 @@
   "runtimeDependencies": [
     {
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/100505823/5804b7d3b5eeb7e4ae812a7cff03bd52/omnisharp-win-x86-1.29.0.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/11539709/dcb3a815e48ea792fc788fc9fa6ea379/omnisharp-win-x86-1.29.0.zip",
       "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.29.0.zip",
       "installPath": ".omnisharp",
       "platforms": [
@@ -97,7 +97,7 @@
     },
     {
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11539709/dcb3a815e48ea792fc788fc9fa6ea379/omnisharp-win-x86-1.29.0.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/11539712/2ceb65cab39ffc725480ede21ad8071c/omnisharp-win-x64-1.29.0.zip",
       "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.29.0.zip",
       "installPath": ".omnisharp",
       "platforms": [
