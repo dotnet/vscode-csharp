@@ -17,11 +17,9 @@ const chai = require('chai');
 chai.use(require('chai-arrays')); 
 chai.use(require('chai-fs')); 
 
-suite(`Tasks generation: ${testAssetWorkspace.description}`, function() {
+suite(`Hover Provider: ${testAssetWorkspace.description}`, function() {
     suiteSetup(async function() { 
         should();
-
-        await testAssetWorkspace.cleanupWorkspace();
 
         let csharpExtension = vscode.extensions.getExtension("ms-vscode.csharp"); 
         if (!csharpExtension.isActive) { 
@@ -30,11 +28,6 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function() {
 
         await csharpExtension.exports.initializationFinished;
         await omnisharp.restart();
-
-        await vscode.commands.executeCommand("dotnet.generateAssets");
-
-        await poll(async () => await fs.exists(testAssetWorkspace.launchJsonPath), 10000, 100);
-        
     }); 
 
    test("Hover returns structured documentation with proper newlines", async function ()  {                
