@@ -351,11 +351,10 @@ export class OmniSharpServer {
         });
     }
 
-    public restart(launchTarget: LaunchTarget = this._launchTarget): Promise<void> {
+    public async restart(launchTarget: LaunchTarget = this._launchTarget): Promise<void> {
         if (launchTarget) {
-            return this.stop().then(() => {
-                this._start(launchTarget);
-            });
+            await this.stop();
+            await this._start(launchTarget);
         }
     }
 
