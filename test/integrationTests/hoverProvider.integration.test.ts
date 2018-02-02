@@ -72,12 +72,11 @@ Parameters:
 \t\tgameObject: The game object.
 \t\ttagName: Name of the tag.
 
-Returns trueif object is tagged with tag.`;
+Returns  true if object is tagged with tag.`;
        expect(c[0].contents[0].value).to.equal(answer);
     });
    
-    teardown(async() =>
-    {   
-        await testAssetWorkspace.cleanupWorkspace();     
-    })
+    teardown(async () => {
+        await testAssetWorkspace.cleanupWorkspace();
+    });
 });
