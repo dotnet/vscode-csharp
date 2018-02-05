@@ -361,7 +361,7 @@
             "null"
           ],
           "default": null,
-          "description": "Specifies the full path to the OmniSharp server."
+          "description": "Specifies the full path to the OmniSharp server or the string \"latest\" to download the latest version or some version number"
         },
         "omnisharp.useMono": {
           "type": "boolean",

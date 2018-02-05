@@ -19,6 +19,7 @@ import * as protocol from './protocol';
 import * as utils from '../common';
 import * as vscode from 'vscode';
 import { setTimeout } from 'timers';
+import { GetExperimentalOmnisharpPath } from './experimentalOmnisharp';
 
 enum ServerState {
     Starting,
@@ -259,6 +260,18 @@ export class OmniSharpServer {
             args.push('--debug');
         }
 
+        let experimentalLaunchPath: string;
+        if (this._options.path) {
+            try {
+                experimentalLaunchPath = GetExperimentalOmnisharpPath(this._options.path);
+            }
+            catch (error) {
+                this._logger.appendLine(`Could not start the server due to ${error}`);
+                this._logger.appendLine();
+                return;
+            }
+        }
+
         this._logger.appendLine(`Starting OmniSharp server at ${new Date().toLocaleString()}`);
         this._logger.increaseIndent();
         this._logger.appendLine(`Target: ${solutionPath}`);
@@ -267,7 +280,7 @@ export class OmniSharpServer {
 
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
-        return launchOmniSharp(cwd, args).then(value => {
+        return launchOmniSharp(cwd, args, experimentalLaunchPath).then(value => {
             if (value.usingMono) {
                 this._logger.appendLine(`OmniSharp server started wth Mono`);
             }

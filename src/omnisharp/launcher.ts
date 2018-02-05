@@ -207,9 +207,9 @@ export interface LaunchResult {
     usingMono: boolean;
 }
 
-export function launchOmniSharp(cwd: string, args: string[]): Promise<LaunchResult> {
+export function launchOmniSharp(cwd: string, args: string[], experimentalLaunchPath: string): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        launch(cwd, args)
+        launch(cwd, args, experimentalLaunchPath)
             .then(result => {
                 // async error - when target not not ENEOT
                 result.process.on('error', err => {
@@ -225,7 +225,7 @@ export function launchOmniSharp(cwd: string, args: string[]): Promise<LaunchResu
     });
 }
 
-function launch(cwd: string, args: string[]): Promise<LaunchResult> {
+function launch(cwd: string, args: string[], experimentalLaunchPath: string): Promise<LaunchResult> {
     return PlatformInformation.GetCurrent().then(platformInfo => {
         const options = Options.Read();
 
@@ -240,17 +240,17 @@ function launch(cwd: string, args: string[]): Promise<LaunchResult> {
         }
 
         // If the user has provide a path to OmniSharp, we'll use that.
-        if (options.path) {
+        if (experimentalLaunchPath) {
             if (platformInfo.isWindows()) {
-                return launchWindows(options.path, cwd, args);
+                return launchWindows(experimentalLaunchPath, cwd, args);
             }
 
             // If we're launching on macOS/Linux, we have two possibilities:
             //   1. Launch using Mono
             //   2. Launch process directly (e.g. a 'run' script)
             return options.useMono
-                ? launchNixMono(options.path, cwd, args)
-                : launchNix(options.path, cwd, args);
+                ? launchNixMono(experimentalLaunchPath, cwd, args)
+                : launchNix(experimentalLaunchPath, cwd, args);
         }
 
         // If the user has not provided a path, we'll use the locally-installed OmniSharp
