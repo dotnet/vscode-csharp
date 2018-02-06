@@ -12,6 +12,7 @@
 
 * Fixes symbol loading while debugging apps running under .NET Core 2.1 (ex: netcoreapp 2.1) on Linux and macOS
 * Fixes debug console message encoding issue on Windows ([#1775](https://github.com/OmniSharp/omnisharp-vscode/issues/1775)).
+* Adds support for extracting source files embedded in PDBs. See the C# [EmbeddedFiles](https://github.com/dotnet/roslyn/issues/19127) feature for more information.
 * Adds preliminary support for Linux ARM debugging
 
 #### Editor
