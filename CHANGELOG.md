@@ -16,6 +16,9 @@
 * Fix to allow signature help return results for attribute constructors. ([#1814](https://github.com/OmniSharp/omnisharp-vscode/issues/1814), PR: [omnisharp-roslyn#1007](https://github.com/OmniSharp/omnisharp-roslyn/pull/1007))
 * Fix to return correct SymbolKinds from WorkspaceSymbolprovider ([#1907](https://github.com/OmniSharp/omnisharp-vscode/issues/1907), PR: [#1911](https://github.com/OmniSharp/omnisharp-vscode/pull/1911)) _(Contributed by [@craig006](https://github.com/craig006))_
 * Improved newline formatting in hover info ([#1057](https://github.com/OmniSharp/omnisharp-vscode/issues/1057), PR:[1918](https://github.com/OmniSharp/omnisharp-vscode/pull/1918))
+* Disabled Go To Definition on property acessor keywords ([#1949](https://github.com/OmniSharp/omnisharp-vscode/issues/1949), PR:[omnisharp-roslyn#1086](https://github.com/OmniSharp/omnisharp-roslyn/pull/1086))
+* Bug fixes to IntelliSense (completion, signature help): ([#1664](https://github.com/OmniSharp/omnisharp-vscode/issues/1664), [1440](https://github.com/OmniSharp/omnisharp-vscode/issues/1440), PR: [omnisharp-roslyn#1030](https://github.com/OmniSharp/omnisharp-roslyn/pull/1030); [#146](https://github.com/OmniSharp/omnisharp-vscode/issues/146) , PR[#1776](https://github.com/OmniSharp/omnisharp-vscode/pull/1776)
+* Improved "Format Code" behavior: [#214](https://github.com/OmniSharp/omnisharp-vscode/issues/214), PR[omnisharp-roslyn#1043](https://github.com/OmniSharp/omnisharp-roslyn/pull/1043)
 
 #### Project System
 
