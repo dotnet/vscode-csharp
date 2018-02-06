@@ -19,7 +19,7 @@ import * as protocol from './protocol';
 import * as utils from '../common';
 import * as vscode from 'vscode';
 import { setTimeout } from 'timers';
-import { GetExperimentalOmnisharpPath } from './experimentalOmnisharp';
+import { ExperimentalOmnisharpManager } from './experimentalOmnisharpManager';
 
 enum ServerState {
     Starting,
@@ -83,7 +83,11 @@ export class OmniSharpServer {
     private _serverProcess: ChildProcess;
     private _options: Options;
 
-    constructor(reporter: TelemetryReporter) {
+    private _csharpLogger: Logger;
+    private _csharpChannel: vscode.OutputChannel;
+    private _packageJSON: any; 
+
+    constructor(reporter: TelemetryReporter, csharpLogger?: Logger, csharpChannel?: vscode.OutputChannel, packageJSON?: any) {
         this._reporter = reporter;
 
         this._channel = vscode.window.createOutputChannel('OmniSharp Log');
@@ -94,6 +98,9 @@ export class OmniSharpServer {
             : new Logger(message => { });
 
         this._requestQueue = new RequestQueueCollection(logger, 8, request => this._makeRequest(request));
+        this._csharpLogger = csharpLogger;
+        this._csharpChannel = csharpChannel;
+        this._packageJSON = packageJSON;
     }
 
     public isRunning(): boolean {
@@ -239,7 +246,7 @@ export class OmniSharpServer {
 
     // --- start, stop, and connect
 
-    private _start(launchTarget: LaunchTarget): Promise<void> {
+    private async _start(launchTarget: LaunchTarget): Promise<void> {
         this._setState(ServerState.Starting);
         this._launchTarget = launchTarget;
 
@@ -263,7 +270,8 @@ export class OmniSharpServer {
         let experimentalLaunchPath: string;
         if (this._options.path) {
             try {
-                experimentalLaunchPath = GetExperimentalOmnisharpPath(this._options.path);
+                let manager = new ExperimentalOmnisharpManager(this._csharpChannel, this._csharpLogger, this._reporter, this._packageJSON);
+                experimentalLaunchPath = await manager.GetExperimentalOmnisharpPath(this._options.path, this._options.useMono);
             }
             catch (error) {
                 this._logger.appendLine(`Could not start the server due to ${error}`);
