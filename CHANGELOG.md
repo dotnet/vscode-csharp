@@ -22,6 +22,7 @@
 * Disabled Go To Definition on property acessor keywords ([#1949](https://github.com/OmniSharp/omnisharp-vscode/issues/1949), PR: [omnisharp-roslyn#1086](https://github.com/OmniSharp/omnisharp-roslyn/pull/1086))
 * Bug fixes to IntelliSense (completion, signature help): (([#1664](https://github.com/OmniSharp/omnisharp-vscode/issues/1664), [1440](https://github.com/OmniSharp/omnisharp-vscode/issues/1440), PR: [omnisharp-roslyn#1030](https://github.com/OmniSharp/omnisharp-roslyn/pull/1030)); ([#146](https://github.com/OmniSharp/omnisharp-vscode/issues/146) , PR: [#1776](https://github.com/OmniSharp/omnisharp-vscode/pull/1776)))
 * Improved "Format Code" behavior: ([#214](https://github.com/OmniSharp/omnisharp-vscode/issues/214), PR: [omnisharp-roslyn#1043](https://github.com/OmniSharp/omnisharp-roslyn/pull/1043))
+* Improved code action ordering: ([omnisharp-roslyn#758](https://github.com/OmniSharp/omnisharp-roslyn/issues/758), PR: [omnisharp-roslyn#1078](https://github.com/OmniSharp/omnisharp-roslyn/pull/1078))
 
 #### Project System
 
