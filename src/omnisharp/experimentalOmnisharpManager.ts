@@ -8,7 +8,7 @@ import * as path from 'path';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
 import { Logger } from '../logger';
-import { OmnisharpDownloader } from './experimentalOmnisharpDownloader';
+import { ExperimentalOmnisharpDownloader } from './experimentalOmnisharpDownloader';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { PlatformInformation } from '../platform';
 
@@ -38,7 +38,7 @@ export class ExperimentalOmnisharpManager {
 
     private async InstallVersionAndReturnLaunchPath(version: string, useMono: boolean, serverUrl: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
         if (IsValidSemver(version)) {
-            let downloader = new OmnisharpDownloader(this.channel, this.logger, this.reporter, this.packageJSON);
+            let downloader = new ExperimentalOmnisharpDownloader(this.channel, this.logger, this.reporter, this.packageJSON);
             await downloader.DownloadAndInstallExperimentalVersion(version, serverUrl, installPath);
 
             return await GetLaunchPathForVersion(platformInfo, version, installPath, extensionPath, useMono);

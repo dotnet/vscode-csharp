@@ -11,7 +11,7 @@ import TelemetryReporter from 'vscode-extension-telemetry';
 import { GetDownloadDependencies, GetStatus, GetPlatformInformation, SendTelemetry, ReportError } from '../downloadHelper';
 import { GetPackagesFromVersion } from './experimentalPackageCreator';
 
-export class OmnisharpDownloader {
+export class ExperimentalOmnisharpDownloader {
 
     public constructor(
         private channel: vscode.OutputChannel,
