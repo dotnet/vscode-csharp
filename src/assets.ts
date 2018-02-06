@@ -457,10 +457,16 @@ function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: Operati
         let launchJson: string = generator.createLaunchJson(isWebProject);
 
         if (existingLaunchConfigs) {
-            launchJson = launchJson.substring(0, launchJson.length-1);
             let existingLaunchConfigsString = JSON.stringify(existingLaunchConfigs, null, '    ');
-            existingLaunchConfigsString = existingLaunchConfigsString.substring(1, existingLaunchConfigsString.length-1);
-            launchJson = `${launchJson},${existingLaunchConfigsString}]`;
+            const lastBracket = launchJson.lastIndexOf(']');
+            const lastBracketInExistingConfig = existingLaunchConfigsString.lastIndexOf(']');
+            const firstBracketInExistingConfig = existingLaunchConfigsString.lastIndexOf('[');
+
+            if (lastBracket !== -1 && lastBracketInExistingConfig !== -1 && firstBracketInExistingConfig !== -1) {
+                launchJson = launchJson.substring(0, lastBracket);
+                existingLaunchConfigsString = existingLaunchConfigsString.substring(firstBracketInExistingConfig, lastBracketInExistingConfig);
+                launchJson = `${launchJson},${existingLaunchConfigsString}]`;
+            }
         }
 
         const configurationsMassaged: string = indentJsonString(launchJson);
