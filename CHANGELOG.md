@@ -6,6 +6,7 @@
 ## 1.14.0 _(Not Yet Released)_
 
 #### C# Language Support
+
 * Support for C# 7.2 (PR: [omnisharp-roslyn#1055](https://github.com/OmniSharp/omnisharp-roslyn/pull/1055)) _(Contributed by [@filipw](https://github.com/filipw))_
 
 #### Debugger
