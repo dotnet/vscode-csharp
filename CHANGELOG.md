@@ -14,9 +14,8 @@
 #### Editor
 
 * Fix to allow signature help return results for attribute constructors. ([#1814](https://github.com/OmniSharp/omnisharp-vscode/issues/1814), PR: [omnisharp-roslyn#1007](https://github.com/OmniSharp/omnisharp-roslyn/pull/1007))
-* Fix to return correct SymbolKinds from WorkspaceSymbolprovider ([#1907](https://github.com/OmniSharp/omnisharp-vscode/issues/1907), PR: [#1911](https://github.com/OmniSharp/omnisharp-vscode/pull/1911)) (_Contributed by [@craig006](https://github.com/craig006)_)
+* Fix to return correct SymbolKinds from WorkspaceSymbolprovider ([#1907](https://github.com/OmniSharp/omnisharp-vscode/issues/1907), PR: [#1911](https://github.com/OmniSharp/omnisharp-vscode/pull/1911)) _(Contributed by [@craig006](https://github.com/craig006))_
 * Improved newline formatting in hover info ([#1057](https://github.com/OmniSharp/omnisharp-vscode/issues/1057), PR:[1918](https://github.com/OmniSharp/omnisharp-vscode/pull/1918))
-
 
 #### Project System
 
@@ -24,12 +23,13 @@
 * Added option to disable warning about project.json deprecation ([1920](https://github.com/OmniSharp/omnisharp-vscode/issues/1920), PR: [1926](https://github.com/OmniSharp/omnisharp-vscode/pull/1926))
 
 #### Task Generation
-* Updated task generator to match latest schema from VS Code (PR: [#1932](https://github.com/OmniSharp/omnisharp-vscode/pull/1923)) (_Contributed by [@natec425](https://github.com/natec425)_)
-* Fixed a typo in tasks.json (PR: [1945](https://github.com/OmniSharp/omnisharp-vscode/pull/1945)) (_Contributed by [@SebastianPfliegel](SebastianPfliegel)_)
+
+* Updated task generator to match latest schema from VS Code (PR: [#1932](https://github.com/OmniSharp/omnisharp-vscode/pull/1923)) _(Contributed by [@natec425](https://github.com/natec425))_
+* Fixed a typo in tasks.json (PR: [1945](https://github.com/OmniSharp/omnisharp-vscode/pull/1945)) _(Contributed by [@SebastianPfliegel](SebastianPfliegel))_
 
 #### Misc
-* Fixed offline packaging ([1912](https://github.com/OmniSharp/omnisharp-vscode/issues/1912), [1930](https://github.com/OmniSharp/omnisharp-vscode/issues/1930), PR:]1931](https://github.com/OmniSharp/omnisharp-vscode/pull/1931))
 
+* Fixed offline packaging ([1912](https://github.com/OmniSharp/omnisharp-vscode/issues/1912), [1930](https://github.com/OmniSharp/omnisharp-vscode/issues/1930), PR:]1931](https://github.com/OmniSharp/omnisharp-vscode/pull/1931))
 
 ## 1.13.1 (November 13, 2017)
 
