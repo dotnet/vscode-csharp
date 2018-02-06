@@ -106,13 +106,6 @@ suite('Package Creator - Gets the experimental omnisharp packages from a set of 
         expect(fn).to.throw('Invalid version');
     });
 
-    test('Throws exception if the version is not a valid semver version', () => {
-        let version = "a.b.c";
-        let inputPackages = <Package[]>GetInputPackages();
-        let fn = function () { GetPackagesFromVersion(version, inputPackages, serverUrl, installPath); };
-        expect(fn).to.throw('Invalid version');
-    });
-
     test('Returns experiment packages with install test path depending on install path and version', () => {
         let inputPackages = <Package[]>[
             {

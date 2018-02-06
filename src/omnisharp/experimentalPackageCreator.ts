@@ -7,7 +7,10 @@ import { Package } from "../packages";
 import * as semver from 'semver';
 
 export function GetPackagesFromVersion(version: string, runTimeDependencies: Package[], serverUrl: string, installPath: string): Package[] {
-    // To do: add null check
+    if (!version) {
+        throw new Error('Invalid version');
+    }
+    
     let versionPackages = new Array<Package>();
     for (let inputPackage of runTimeDependencies) {
         //we need only the omnisharp packages in experimental download
