@@ -6,12 +6,17 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as util from '../../src/common';
-import { should, expect } from "chai";
+import { should } from "chai";
 import { PlatformInformation } from "../../src/platform";
 import { GetLaunchPathForVersion, ExperimentalOmnisharpManager } from "../../src/omnisharp/experimentalOmnisharpManager";
 import { Logger } from '../../src/logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { rimraf } from 'async-file';
+
+const chai = require("chai");
+const chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
+let expect = chai.expect;
 
 suite('Returns Omnisharp Launch Path based on the specified parameters', () => {
 
@@ -30,6 +35,14 @@ suite('Returns Omnisharp Launch Path based on the specified parameters', () => {
         util.setExtensionPath(extension.extensionPath);
         extensionPath = util.getExtensionPath();
         should();
+    });
+
+    test("Throws error when version is null", async () => {
+        expect(GetLaunchPathForVersion(platformInfo, null, installPath, extensionPath, useMono)).to.be.rejectedWith(Error);
+    });
+
+    test("Throws error when version is empty", async () => {
+        expect(GetLaunchPathForVersion(platformInfo, "", installPath, extensionPath, useMono)).to.be.rejectedWith(Error);
     });
 
     test("Returns Launch Path based on install path", async () => {
@@ -67,6 +80,7 @@ suite('Installs the version packages and returns the launch path', () => {
     let useMono: boolean;
     let extensionPath: string;
     let manager: ExperimentalOmnisharpManager;
+    let platformInfo: PlatformInformation;
 
     suiteSetup(() => {
         version = "1.2.3";
@@ -77,18 +91,31 @@ suite('Installs the version packages and returns the launch path', () => {
         util.setExtensionPath(extension.extensionPath);
         extensionPath = util.getExtensionPath();
         manager = GetExperimentalOmnisharpManager();
+        platformInfo = new PlatformInformation("win32", "x86");
         should();
     });
 
+    test('Throws error when version is null', async () => {
+        expect(manager.InstallVersionAndReturnLaunchPath(null, useMono, serverUrl, installPath, extensionPath, platformInfo)).to.be.rejectedWith(Error);
+    });
+
+    test('Throws error when version string is empty', async () => {
+        expect(manager.InstallVersionAndReturnLaunchPath("", useMono, serverUrl, installPath, extensionPath, platformInfo)).to.be.rejectedWith(Error);
+    });
+
+    test('Throws error when version string is invalid semver', async () => {
+        expect(manager.InstallVersionAndReturnLaunchPath("a.b.c", useMono, serverUrl, installPath, extensionPath, platformInfo)).to.be.rejectedWith(Error);
+    });
+
     test('Downloads package and returns launch path based on version', async () => {
-        let launchPath = await manager.InstallVersionAndReturnLaunchPath("1.2.4", useMono, serverUrl, installPath, extensionPath, new PlatformInformation("win32", "x86"));
+        let launchPath = await manager.InstallVersionAndReturnLaunchPath("1.2.4", useMono, serverUrl, installPath, extensionPath, platformInfo);
         let dirPath = path.resolve(extensionPath, `.omnisharp/experimental/1.2.4`);
         await rimraf(dirPath);
         launchPath.should.equal(path.resolve(extensionPath, '.omnisharp/experimental/1.2.4/OmniSharp.exe'));
     });
 
     test('Downloads package from given url and installs them at the specified path', async () => {
-        let launchPath = await manager.InstallVersionAndReturnLaunchPath(version, useMono, serverUrl, installPath, extensionPath, new PlatformInformation("win32", "x86"));
+        let launchPath = await manager.InstallVersionAndReturnLaunchPath(version, useMono, serverUrl, installPath, extensionPath, platformInfo);
         let dirPath = path.resolve(extensionPath, `.omnisharp/experimental/1.2.3`);
 
         let exists = await util.fileExists(path.resolve(dirPath, `install_check_1.2.3.txt`));
