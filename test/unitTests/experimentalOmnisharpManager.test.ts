@@ -39,24 +39,24 @@ suite('Returns Omnisharp Launch Path based on the specified parameters', () => {
 
     test("Returns Launch Path based on version", async () => {
         let launchPath = await GetLaunchPathForVersion(platformInfo, "0.0.0", installPath, extensionPath, useMono);
-        launchPath.should.equal(path.resolve(extensionPath,`.omnisharp/experimental/0.0.0/OmniSharp.exe`));
+        launchPath.should.equal(path.resolve(extensionPath, `.omnisharp/experimental/0.0.0/OmniSharp.exe`));
     });
 
     test("Returns Launch Path based on platform - Windows", async () => {
         let launchPath = await GetLaunchPathForVersion(platformInfo, version, installPath, extensionPath, useMono);
-        launchPath.should.equal(path.resolve(extensionPath,`.omnisharp/experimental/1.1.1/OmniSharp.exe`));
+        launchPath.should.equal(path.resolve(extensionPath, `.omnisharp/experimental/1.1.1/OmniSharp.exe`));
     });
 
     test("Returns Launch Path based on platform - Unix with Mono", async () => {
         platformInfo = new PlatformInformation("linux", "x86");
         let launchPath = await GetLaunchPathForVersion(platformInfo, version, installPath, extensionPath, true);
-        launchPath.should.equal(path.resolve(extensionPath,`.omnisharp/experimental/1.1.1/omnisharp/OmniSharp.exe`));
+        launchPath.should.equal(path.resolve(extensionPath, `.omnisharp/experimental/1.1.1/omnisharp/OmniSharp.exe`));
     });
 
     test("Returns Launch Path based on platform - Unix without Mono", async () => {
         platformInfo = new PlatformInformation("linux", "x86");
         let launchPath = await GetLaunchPathForVersion(platformInfo, version, installPath, extensionPath, useMono);
-        launchPath.should.equal(path.resolve(extensionPath,`.omnisharp/experimental/1.1.1/run`));
+        launchPath.should.equal(path.resolve(extensionPath, `.omnisharp/experimental/1.1.1/run`));
     });
 });
 
@@ -102,7 +102,6 @@ suite('Installs the version packages and returns the launch path', () => {
         await rimraf(dirPath);
         launchPath.should.equal(path.resolve(extensionPath, '.omnisharp/experimental/1.2.3/run'));
     });
-
 });
 
 function GetExperimentalOmnisharpManager() {

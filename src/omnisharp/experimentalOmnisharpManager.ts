@@ -28,7 +28,7 @@ export class ExperimentalOmnisharpManager {
         if (await util.fileExists(optionPath)) {
             return optionPath;
         }
-
+        //If the path is not a valid path on disk, treat it as a version
         let serverUrl = "https://omnisharpdownload.blob.core.windows.net";
         let installPath = ".omnisharp/experimental";
         let platformInfo = await PlatformInformation.GetCurrent();
@@ -70,6 +70,7 @@ export async function GetLaunchPathForVersion(platformInfo: PlatformInformation,
     if (useMono) {
         return path.join(basePath, 'omnisharp', 'OmniSharp.exe');
     }
+
     return path.join(basePath, 'run');
 }
 

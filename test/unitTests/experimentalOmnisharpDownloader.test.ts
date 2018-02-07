@@ -22,7 +22,7 @@ suite("Gets the version packages and downloads and installs them", () => {
         let downloader = GetOmnisharpDownloader();
         let serverUrl = "https://roslynomnisharp.blob.core.windows.net";
         let installPath = ".omnisharp/experimental/";
-        let tempDir = path.resolve(util.getExtensionPath(), `.omnisharp\\experimental\\1.2.3`);
+        let tempDir = path.resolve(util.getExtensionPath(), `.omnisharp/experimental/1.2.3`);
         await downloader.DownloadAndInstallExperimentalVersion(version, serverUrl, installPath);
         let exists = await util.fileExists(path.resolve(tempDir, `install_check_1.2.3.txt`));
         await rimraf(tempDir);

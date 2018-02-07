@@ -8,7 +8,7 @@ import { Status, PackageManager, Package } from '../packages';
 import { PlatformInformation } from '../platform';
 import { Logger } from '../logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
-import { GetDownloadDependencies, GetStatus, GetPlatformInformation, SendTelemetry, ReportError } from '../downloadHelper';
+import { GetDownloaderDependencies, GetStatus, GetPlatformInformation, SendTelemetry, ReportError } from '../downloadHelper';
 import { GetPackagesFromVersion } from './experimentalPackageCreator';
 
 export class ExperimentalOmnisharpDownloader {
@@ -40,7 +40,7 @@ export class ExperimentalOmnisharpDownloader {
             installationStage = 'getPlatformInfo';
             platformInfo = await GetPlatformInformation(this.logger);
             installationStage = 'downloadPackages';
-            let dep = await GetDownloadDependencies(this.reporter, this.logger, this.channel, this.packageJSON, platformInfo);
+            let dep = await GetDownloaderDependencies(this.reporter, this.logger, this.channel, this.packageJSON, platformInfo);
             let packageManager = dep.PackageManager;
             let proxy = dep.Proxy;
             let strictSSL = dep.StrictSSL;

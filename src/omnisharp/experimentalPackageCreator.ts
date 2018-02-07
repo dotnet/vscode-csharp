@@ -41,11 +41,11 @@ export function GetExperimentPackage(inputPackage: Package, serverUrl: string, v
     return GetPackageFromArchitecture(inputPackage, serverUrl, version, inputPackage.experimentalPackageId, installPath, installBinary);
 }
 
-export function GetPackageFromArchitecture(inputPackage: Package, serverUrl: string, version: string, architectureInfo: string, installPath: string, installBinary: string): Package {
+function GetPackageFromArchitecture(inputPackage: Package, serverUrl: string, version: string, architectureInfo: string, installPath: string, installBinary: string): Package {
     if (!version) {
         throw new Error('Invalid version');
     }
-    
+
     let versionPackage = <Package>{
         "description": inputPackage.description,
         "url": `${serverUrl}/ext/omnisharp-${architectureInfo}-${version}.zip`,

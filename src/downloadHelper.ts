@@ -10,7 +10,7 @@ import { PlatformInformation } from './platform';
 import { Logger } from './logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
 
-export async function GetDownloadDependencies(reporter: TelemetryReporter, logger: Logger, channel: vscode.OutputChannel, packageJSON: any, platformInfo: PlatformInformation) {
+export async function GetDownloaderDependencies(reporter: TelemetryReporter, logger: Logger, channel: vscode.OutputChannel, packageJSON: any, platformInfo: PlatformInformation) {
     let packageManager = new PackageManager(platformInfo, packageJSON);
     const config = vscode.workspace.getConfiguration();
     const proxy = config.get<string>('http.proxy');
