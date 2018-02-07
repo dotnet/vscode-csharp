@@ -8,7 +8,7 @@ import { Package } from "../../src/packages";
 import { GetExperimentPackage, GetPackagesFromVersion } from "../../src/omnisharp/experimentalPackageCreator";
 
 
-suite("Package Creator - Correct parameters are formed for an input package", () => {
+suite("Experimental Package Creator - Output package depends on the input package and other input parameters like serverUrl", () => {
 
     let serverUrl: string;
     let version: string;
@@ -21,6 +21,18 @@ suite("Package Creator - Correct parameters are formed for an input package", ()
         installPath = "testPath";
         inputPackages = <Package[]>GetInputPackages();
         should();
+    });
+
+    test('Throws exception if version is empty', () => {
+        let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "os-architecture"));
+        let fn = function () { GetExperimentPackage(testPackage, serverUrl, "", installPath); };
+        expect(fn).to.throw('Invalid version');
+    });
+
+    test('Throws exception if version is null', () => {
+        let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "os-architecture"));
+        let fn = function () { GetExperimentPackage(testPackage, serverUrl, null, installPath);};
+        expect(fn).to.throw('Invalid version');
     });
 
     test('Description, architectures, binaries and platforms do not change', () => {
@@ -36,49 +48,42 @@ suite("Package Creator - Correct parameters are formed for an input package", ()
     test('Download url is calculated using server url and version', () => {
         let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "os-architecture"));
         let resultPackage = GetExperimentPackage(testPackage, "http://someurl", "1.1.1", installPath);
-        //rename the url
         resultPackage.url.should.equal("http://someurl/ext/omnisharp-os-architecture-1.1.1.zip");
     });
 
     test('Install path is calculated using the specified path and version', () => {
         let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "os-architecture"));
         let resultPackage = GetExperimentPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
-
         resultPackage.installPath.should.equal("experimentPath/1.2.3");
     });
 
     test('Install test path is calculated using specified path, version and ends with Omnisharp.exe - Windows(x86)', () => {
         let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "win-x86"));
         let resultPackage = GetExperimentPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
-
         resultPackage.installTestPath.should.equal("./experimentPath/1.2.3/Omnisharp.exe");
     });
 
     test('Install test path is calculated using specified path, version and ends with Omnisharp.exe - Windows(x64)', () => {
         let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "win-x64"));
         let resultPackage = GetExperimentPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
-
         resultPackage.installTestPath.should.equal("./experimentPath/1.2.3/Omnisharp.exe");
     });
 
     test('Install test path is calculated using specified path, version and ends with mono.osx - OSX', () => {
         let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "osx"));
         let resultPackage = GetExperimentPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
-
         resultPackage.installTestPath.should.equal("./experimentPath/1.2.3/mono.osx");
     });
 
     test('Install test path is calculated using specified path, version and ends with mono.linux-x86 - Linux(x86)', () => {
         let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "linux-x86"));
         let resultPackage = GetExperimentPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
-
         resultPackage.installTestPath.should.equal("./experimentPath/1.2.3/mono.linux-x86");
     });
 
     test('Install test path is calculated using specified path, version and ends with mono.linux-x86_64 - Linux(x64)', () => {
         let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "linux-x64"));
         let resultPackage = GetExperimentPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
-
         resultPackage.installTestPath.should.equal("./experimentPath/1.2.3/mono.linux-x86_64");
     });
 });

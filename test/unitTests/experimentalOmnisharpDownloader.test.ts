@@ -11,6 +11,7 @@ import { should, assert } from 'chai';
 import { Logger } from '../../src/logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { ExperimentalOmnisharpDownloader } from '../../src/omnisharp/experimentalOmnisharpDownloader';
+import { rimraf } from 'async-file';
 
 suite("Gets the version packages and downloads and installs them", () => {
 
@@ -20,27 +21,14 @@ suite("Gets the version packages and downloads and installs them", () => {
         let version = "1.2.3";
         let downloader = GetOmnisharpDownloader();
         let serverUrl = "https://roslynomnisharp.blob.core.windows.net";
-        let installPath = ".omnisharp/experimental";
-        let versionPath = path.resolve(util.getExtensionPath(), `${installPath}/${version}`);
+        let installPath = ".omnisharp/experimental/";
+        let tempDir = path.resolve(util.getExtensionPath(), `.omnisharp\\experimental\\1.2.3`);
         await downloader.DownloadAndInstallExperimentalVersion(version, serverUrl, installPath);
-        let exists = await util.fileExists(path.resolve(versionPath, `install_check_${version}.txt`));
-        DeleteDirectory(versionPath);
+        let exists = await util.fileExists(path.resolve(tempDir, `install_check_1.2.3.txt`));
+        await rimraf(tempDir);
         exists.should.equal(true);
     });
 });
-
-function DeleteDirectory(dirPath: string) {
-    //delete all the files of this directory and then the directory itself
-    //ask if we need a fucntion to recursively delete the files in a directory
-    let files = fs.readdirSync(dirPath);
-    for (let file of files) {
-        fs.unlinkSync(`${dirPath}/${file}`);
-    }
-
-    fs.rmdirSync(dirPath);
-}
-
-
 
 function GetOmnisharpDownloader() {
     let channel = vscode.window.createOutputChannel('Experiment Channel');

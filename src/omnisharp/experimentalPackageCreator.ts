@@ -10,7 +10,7 @@ export function GetPackagesFromVersion(version: string, runTimeDependencies: Pac
     if (!version) {
         throw new Error('Invalid version');
     }
-    
+
     let versionPackages = new Array<Package>();
     for (let inputPackage of runTimeDependencies) {
         //we need only the omnisharp packages in experimental download
@@ -42,6 +42,10 @@ export function GetExperimentPackage(inputPackage: Package, serverUrl: string, v
 }
 
 export function GetPackageFromArchitecture(inputPackage: Package, serverUrl: string, version: string, architectureInfo: string, installPath: string, installBinary: string): Package {
+    if (!version) {
+        throw new Error('Invalid version');
+    }
+    
     let versionPackage = <Package>{
         "description": inputPackage.description,
         "url": `${serverUrl}/ext/omnisharp-${architectureInfo}-${version}.zip`,

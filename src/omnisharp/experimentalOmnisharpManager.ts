@@ -36,7 +36,7 @@ export class ExperimentalOmnisharpManager {
         return await this.InstallVersionAndReturnLaunchPath(optionPath, useMono, serverUrl, installPath, extensionPath, platformInfo);
     }
 
-    private async InstallVersionAndReturnLaunchPath(version: string, useMono: boolean, serverUrl: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
+    public async InstallVersionAndReturnLaunchPath(version: string, useMono: boolean, serverUrl: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
         if (IsValidSemver(version)) {
             let downloader = new ExperimentalOmnisharpDownloader(this.channel, this.logger, this.reporter, this.packageJSON);
             await downloader.DownloadAndInstallExperimentalVersion(version, serverUrl, installPath);
@@ -57,15 +57,19 @@ function IsValidSemver(version: string): boolean {
     return false;
 }
 
-async function GetLaunchPathForVersion(platformInfo: PlatformInformation, version: string, installPath: string, extensionPath: string, useMono: boolean) {
+export async function GetLaunchPathForVersion(platformInfo: PlatformInformation, version: string, installPath: string, extensionPath: string, useMono: boolean) {
+    if (!version) {
+        throw new Error('Invalid Version');
+    }
+
     let basePath = path.resolve(extensionPath, installPath, version);
 
     if (platformInfo.isWindows()) {
-        return path.resolve(basePath, 'Omnisharp.exe');
+        return path.join(basePath, 'OmniSharp.exe');
     }
     if (useMono) {
-        return path.resolve(basePath, 'omnisharp', 'OmniSharp.exe');
+        return path.join(basePath, 'omnisharp', 'OmniSharp.exe');
     }
-    return path.resolve(basePath, 'run');
+    return path.join(basePath, 'run');
 }
 
