@@ -21,6 +21,10 @@ export class ExperimentalOmnisharpDownloader {
     }
 
     public async DownloadAndInstallExperimentalVersion(version: string, serverUrl: string, installPath: string) {
+        if (!version) {
+            throw new Error('Invalid version');
+        }
+        
         this.logger.append('Getting the version packages...');
         this.channel.show();
 
@@ -58,7 +62,7 @@ export class ExperimentalOmnisharpDownloader {
 
         catch (error) {
             ReportError(this.logger, error, telemetryProps, installationStage);
-            throw error;
+            throw error;// throw the error up to the server
         }
         finally {
             SendTelemetry(this.logger, this.reporter, telemetryProps, installationStage, platformInfo, statusItem);
