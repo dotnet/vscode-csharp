@@ -460,11 +460,11 @@ function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: Operati
             let existingLaunchConfigsString = JSON.stringify(existingLaunchConfigs, null, '    ');
             const lastBracket = launchJson.lastIndexOf(']');
             const lastBracketInExistingConfig = existingLaunchConfigsString.lastIndexOf(']');
-            const firstBracketInExistingConfig = existingLaunchConfigsString.lastIndexOf('[');
+            const firstBracketInExistingConfig = existingLaunchConfigsString.indexOf('[');
 
             if (lastBracket !== -1 && lastBracketInExistingConfig !== -1 && firstBracketInExistingConfig !== -1) {
                 launchJson = launchJson.substring(0, lastBracket);
-                existingLaunchConfigsString = existingLaunchConfigsString.substring(firstBracketInExistingConfig, lastBracketInExistingConfig);
+                existingLaunchConfigsString = existingLaunchConfigsString.substring(firstBracketInExistingConfig + 1, lastBracketInExistingConfig);
                 launchJson = `${launchJson},${existingLaunchConfigsString}]`;
             }
         }
