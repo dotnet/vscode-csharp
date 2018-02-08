@@ -8,8 +8,8 @@ import { Status, PackageManager, Package } from '../packages';
 import { PlatformInformation } from '../platform';
 import { Logger } from '../logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
-import { GetDownloaderDependencies, GetStatus, GetPlatformInformation, SendTelemetry, ReportError } from '../downloadHelper';
-import { GetPackagesFromVersion } from './experimentalPackageCreator';
+import { GetPackagesFromVersion } from './experimentalOmnisharp.PackageCreator';
+import { GetDependenciesAndDownloadPackages, GetStatus, GetAndLogPlatformInformation, ReportInstallationError, SendInstallationTelemetry } from '../experimentalOmnisharp.Download.Helper';
 
 export class ExperimentalOmnisharpDownloader {
 
@@ -24,8 +24,9 @@ export class ExperimentalOmnisharpDownloader {
         if (!version) {
             throw new Error('Invalid version');
         }
-        
+
         this.logger.append('Getting the version packages...');
+        this.logger.appendLine();
         this.channel.show();
 
         let statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
@@ -33,7 +34,6 @@ export class ExperimentalOmnisharpDownloader {
 
         let telemetryProps: any = {};
         let installationStage = '';
-        let latestVersion: string;
         let platformInfo: PlatformInformation;
 
         if (this.reporter) {
@@ -42,15 +42,16 @@ export class ExperimentalOmnisharpDownloader {
 
         try {
             installationStage = 'getPlatformInfo';
-            platformInfo = await GetPlatformInformation(this.logger);
-            installationStage = 'downloadPackages';
-            let dep = await GetDownloaderDependencies(this.reporter, this.logger, this.channel, this.packageJSON, platformInfo);
-            let packageManager = dep.PackageManager;
-            let proxy = dep.Proxy;
-            let strictSSL = dep.StrictSSL;
+            platformInfo = await GetAndLogPlatformInformation(this.logger);
+
+            installationStage = 'getPackageInfo';
             let packages: Package[] = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
+
+            installationStage = 'downloadPackages';
+            let packageManager = new PackageManager(platformInfo, this.packageJSON);
+             // Specify the packages that the package manager needs to download
             packageManager.SetVersionPackagesForDownload(packages);
-            await packageManager.DownloadPackages(this.logger, status, proxy, strictSSL);
+            await GetDependenciesAndDownloadPackages(packages,status, platformInfo, packageManager, this.logger);
 
             this.logger.appendLine();
 
@@ -61,11 +62,11 @@ export class ExperimentalOmnisharpDownloader {
         }
 
         catch (error) {
-            ReportError(this.logger, error, telemetryProps, installationStage);
+            ReportInstallationError(this.logger, error, telemetryProps, installationStage);
             throw error;// throw the error up to the server
         }
         finally {
-            SendTelemetry(this.logger, this.reporter, telemetryProps, installationStage, platformInfo, statusItem);
+            SendInstallationTelemetry(this.logger, this.reporter, telemetryProps, installationStage, platformInfo, statusItem);
         }
     }
 }

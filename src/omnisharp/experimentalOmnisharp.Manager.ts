@@ -8,7 +8,7 @@ import * as path from 'path';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
 import { Logger } from '../logger';
-import { ExperimentalOmnisharpDownloader } from './experimentalOmnisharpDownloader';
+import { ExperimentalOmnisharpDownloader } from './experimentalOmnisharp.Downloader';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { PlatformInformation } from '../platform';
 
@@ -21,7 +21,7 @@ export class ExperimentalOmnisharpManager {
     ) {
     }
 
-    public async GetExperimentalOmnisharpPath(optionPath: string, useMono: boolean): Promise<string> {
+    public async GetExperimentalOmnisharpPath(optionPath: string, useMono: boolean, platformInfo: PlatformInformation, serverUrl: string, installPath: string, extensionPath: string): Promise<string> {
         // Looks at the options path, installs the dependencies and returns the path to be loaded by the omnisharp server
         // To Do : Add the functionality for the latest option
 
@@ -29,10 +29,7 @@ export class ExperimentalOmnisharpManager {
             return optionPath;
         }
         //If the path is not a valid path on disk, treat it as a version
-        let serverUrl = "https://omnisharpdownload.blob.core.windows.net";
-        let installPath = ".omnisharp/experimental";
-        let platformInfo = await PlatformInformation.GetCurrent();
-        let extensionPath = util.getExtensionPath();
+        
         return await this.InstallVersionAndReturnLaunchPath(optionPath, useMono, serverUrl, installPath, extensionPath, platformInfo);
     }
 

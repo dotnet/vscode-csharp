@@ -2,22 +2,17 @@
 * Copyright (c) Microsoft Corporation. All rights reserved.
 * Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
-import * as fs from 'fs';
 import * as vscode from 'vscode';
-import * as util from './common';
-import { PackageManager, Status, PackageError } from './packages';
+import { PackageManager, Status, PackageError, Package } from './packages';
 import { PlatformInformation } from './platform';
 import { Logger } from './logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
 
-export async function GetDownloaderDependencies(reporter: TelemetryReporter, logger: Logger, channel: vscode.OutputChannel, packageJSON: any, platformInfo: PlatformInformation) {
-    let packageManager = new PackageManager(platformInfo, packageJSON);
+export async function GetDependenciesAndDownloadPackages(packages: Package[],status: Status, platformInfo: PlatformInformation, packageManager: PackageManager,logger: Logger) { 
     const config = vscode.workspace.getConfiguration();
     const proxy = config.get<string>('http.proxy');
     const strictSSL = config.get('http.proxyStrictSSL', true);
-    return {
-        Proxy: proxy, StrictSSL: strictSSL, PackageManager: packageManager
-    };
+    await packageManager.DownloadPackages(logger, status, proxy, strictSSL);
 }
 
 export function GetStatus(statusItem: vscode.StatusBarItem): Status {
@@ -35,16 +30,16 @@ export function GetStatus(statusItem: vscode.StatusBarItem): Status {
     return status;
 }
 
-export async function GetPlatformInformation(logger: Logger): Promise<PlatformInformation> {
+export async function GetAndLogPlatformInformation(logger: Logger): Promise<PlatformInformation> {
     let platformInfo = await PlatformInformation.GetCurrent();
-    logger.appendLine();
-    // Display platform information and RID followed by a blank line
+
     logger.appendLine(`Platform: ${platformInfo.toString()}`);
     logger.appendLine();
+
     return platformInfo;
 }
 
-export function ReportError(logger: Logger, error, telemetryProps: any, installationStage: string) {
+export function ReportInstallationError(logger: Logger, error, telemetryProps: any, installationStage: string) {
     let errorMessage: string;
     if (error instanceof PackageError) {
         // we can log the message in a PackageError to telemetry as we do not put PII in PackageError messages
@@ -63,12 +58,12 @@ export function ReportError(logger: Logger, error, telemetryProps: any, installa
         // do not log raw errorMessage in telemetry as it is likely to contain PII.
         errorMessage = error.toString();
     }
-    
+
     logger.appendLine(`Failed at stage: ${installationStage}`);
     logger.appendLine(errorMessage);
 }
 
-export function SendTelemetry(logger: Logger, reporter: TelemetryReporter, telemetryProps: any, installationStage: string, platformInfo: PlatformInformation, statusItem: vscode.StatusBarItem) {
+export function SendInstallationTelemetry(logger: Logger, reporter: TelemetryReporter, telemetryProps: any, installationStage: string, platformInfo: PlatformInformation, statusItem: vscode.StatusBarItem) {
     telemetryProps['installStage'] = installationStage;
     telemetryProps['platform.architecture'] = platformInfo.architecture;
     telemetryProps['platform.platform'] = platformInfo.platform;

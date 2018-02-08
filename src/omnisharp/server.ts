@@ -19,7 +19,8 @@ import * as protocol from './protocol';
 import * as utils from '../common';
 import * as vscode from 'vscode';
 import { setTimeout } from 'timers';
-import { ExperimentalOmnisharpManager } from './experimentalOmnisharpManager';
+import { ExperimentalOmnisharpManager } from './experimentalOmnisharp.Manager';
+import { PlatformInformation } from '../platform';
 
 enum ServerState {
     Starting,
@@ -85,7 +86,7 @@ export class OmniSharpServer {
 
     private _csharpLogger: Logger;
     private _csharpChannel: vscode.OutputChannel;
-    private _packageJSON: any; 
+    private _packageJSON: any;
 
     constructor(reporter: TelemetryReporter, csharpLogger?: Logger, csharpChannel?: vscode.OutputChannel, packageJSON?: any) {
         this._reporter = reporter;
@@ -107,11 +108,11 @@ export class OmniSharpServer {
         return this._state === ServerState.Started;
     }
 
-    public async waitForEmptyEventQueue() : Promise<void> {
+    public async waitForEmptyEventQueue(): Promise<void> {
         while (!this._requestQueue.isEmpty()) {
             let p = new Promise((resolve) => setTimeout(resolve, 100));
             await p;
-        }     
+        }
     }
 
     private _getState(): ServerState {
@@ -253,7 +254,7 @@ export class OmniSharpServer {
         const solutionPath = launchTarget.target;
         const cwd = path.dirname(solutionPath);
         this._options = Options.Read();
-        
+
         let args = [
             '-s', solutionPath,
             '--hostPID', process.pid.toString(),
@@ -270,11 +271,16 @@ export class OmniSharpServer {
         let experimentalLaunchPath: string;
         if (this._options.path) {
             try {
+                let serverUrl = "https://roslynomnisharp.blob.core.windows.net";
+                let installPath = ".omnisharp/experimental";
+                let extensionPath = utils.getExtensionPath();
                 let manager = new ExperimentalOmnisharpManager(this._csharpChannel, this._csharpLogger, this._reporter, this._packageJSON);
-                experimentalLaunchPath = await manager.GetExperimentalOmnisharpPath(this._options.path, this._options.useMono);
+                let platformInfo = await PlatformInformation.GetCurrent();
+                experimentalLaunchPath = await manager.GetExperimentalOmnisharpPath(this._options.path, this._options.useMono, platformInfo, serverUrl, installPath, extensionPath);
             }
             catch (error) {
-                this._logger.appendLine(`Could not start the server due to ${error}`);
+                this._logger.appendLine('Error occured in loading omnisharp from omnisharp.path');
+                this._logger.appendLine(`Could not start the server due to ${error.toString()}`);
                 this._logger.appendLine();
                 return;
             }

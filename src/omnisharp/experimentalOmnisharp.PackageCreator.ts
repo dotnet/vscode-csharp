@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Package } from "../packages";
-import * as semver from 'semver';
 
 export function GetPackagesFromVersion(version: string, runTimeDependencies: Package[], serverUrl: string, installPath: string): Package[] {
     if (!version) {
@@ -48,7 +47,7 @@ function GetPackageFromArchitecture(inputPackage: Package, serverUrl: string, ve
 
     let versionPackage = <Package>{
         "description": inputPackage.description,
-        "url": `${serverUrl}/ext/omnisharp-${architectureInfo}-${version}.zip`,
+        "url": `${serverUrl}/releases/${version}/omnisharp-${architectureInfo}.zip`,
         "installPath": `${installPath}/${version}`,
         "platforms": inputPackage.platforms,
         "architectures": inputPackage.architectures,

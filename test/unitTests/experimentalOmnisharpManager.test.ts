@@ -8,32 +8,78 @@ import * as vscode from 'vscode';
 import * as util from '../../src/common';
 import { should } from "chai";
 import { PlatformInformation } from "../../src/platform";
-import { GetLaunchPathForVersion, ExperimentalOmnisharpManager } from "../../src/omnisharp/experimentalOmnisharpManager";
+import { GetLaunchPathForVersion, ExperimentalOmnisharpManager } from "../../src/omnisharp/experimentalOmnisharp.Manager";
 import { Logger } from '../../src/logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { rimraf } from 'async-file';
+import { GetTestPackageJSON } from './experimentalOmnisharpDownloader.test';
 
 const chai = require("chai");
-const chaiAsPromised = require("chai-as-promised");
-chai.use(chaiAsPromised);
+chai.use(require("chai-as-promised"));
 let expect = chai.expect;
 
-suite('Returns Omnisharp Launch Path based on the specified parameters', () => {
+const tmp = require('tmp');
+
+suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path depending on the path and useMono option', () => {
+    const platformInfo = new PlatformInformation("win32", "x86");
+    const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
+    const installPath = ".omnisharp/experimental";
+    let extensionPath: string;
+    let tmpDir : any;
+    let tmpFile : any;
+
+    suiteSetup(() => should());
+
+    setup(()=>{
+        tmpDir = tmp.dirSync();
+        extensionPath = tmpDir.name;
+        util.setExtensionPath(tmpDir.name);
+    });
+
+    test('Returns the same path if absolute path to an existing file is passed', async () => {
+        tmpFile = tmp.fileSync();
+        let manager = GetExperimentalOmnisharpManager();
+
+        let omnisharpPath = await manager.GetExperimentalOmnisharpPath(tmpFile.name, false, platformInfo, serverUrl, installPath, extensionPath);
+        omnisharpPath.should.equal(tmpFile.name);
+    });
+
+    test('Throws error if the path is neither an absolute path nor a valid semver', async () => {
+        let manager = GetExperimentalOmnisharpManager();
+        expect(manager.GetExperimentalOmnisharpPath("Some incorrect path", false, platformInfo, serverUrl,installPath,extensionPath)).to.be.rejectedWith(Error);
+    });
+
+    teardown(async () => {
+        if (tmpDir) {
+            await rimraf(tmpDir.name);
+        }
+
+        if(tmpFile){
+            tmpFile.removeCallback();
+        }
+        
+        tmpFile = null;
+        tmpDir = null;
+    });
+});
+
+suite('GetLaunchPathForVersion : Returns Omnisharp Launch Path based on the specified parameters', () => {
 
     let platformInfo: PlatformInformation;
     let version: string;
     let installPath: string;
     let extensionPath: string;
     let useMono: boolean;
+    let tmpDir: any;
 
     suiteSetup(() => {
         platformInfo = new PlatformInformation("win32", "x86");
         version = "1.1.1";
         installPath = ".omnisharp/experimental";
         useMono = false;
-        const extension = vscode.extensions.getExtension('ms-vscode.csharp');
-        util.setExtensionPath(extension.extensionPath);
-        extensionPath = util.getExtensionPath();
+        let tmpDir = tmp.dirSync();
+        extensionPath = tmpDir.name;
+        util.setExtensionPath(tmpDir.name);
         should();
     });
 
@@ -71,9 +117,17 @@ suite('Returns Omnisharp Launch Path based on the specified parameters', () => {
         let launchPath = await GetLaunchPathForVersion(platformInfo, version, installPath, extensionPath, useMono);
         launchPath.should.equal(path.resolve(extensionPath, `.omnisharp/experimental/1.1.1/run`));
     });
+
+    suiteTeardown(async () => {
+        if (tmpDir) {
+            await rimraf(tmpDir.name);
+        }
+
+        tmpDir = null;
+    });
 });
 
-suite('Installs the version packages and returns the launch path', () => {
+suite('InstallVersionAndReturnLaunchPath : Installs the version packages and returns the launch path', () => {
     let version: string;
     let serverUrl: string;
     let installPath: string;
@@ -81,18 +135,22 @@ suite('Installs the version packages and returns the launch path', () => {
     let extensionPath: string;
     let manager: ExperimentalOmnisharpManager;
     let platformInfo: PlatformInformation;
+    let tmpDir = null;
 
     suiteSetup(() => {
         version = "1.2.3";
         serverUrl = "https://roslynomnisharp.blob.core.windows.net";
         installPath = ".omnisharp/experimental/";
         useMono = false;
-        const extension = vscode.extensions.getExtension('ms-vscode.csharp');
-        util.setExtensionPath(extension.extensionPath);
-        extensionPath = util.getExtensionPath();
         manager = GetExperimentalOmnisharpManager();
         platformInfo = new PlatformInformation("win32", "x86");
         should();
+    });
+
+    setup(() => {
+        tmpDir = tmp.dirSync();
+        util.setExtensionPath(tmpDir.name);
+        extensionPath = util.getExtensionPath();
     });
 
     test('Throws error when version is null', async () => {
@@ -109,35 +167,36 @@ suite('Installs the version packages and returns the launch path', () => {
 
     test('Downloads package and returns launch path based on version', async () => {
         let launchPath = await manager.InstallVersionAndReturnLaunchPath("1.2.4", useMono, serverUrl, installPath, extensionPath, platformInfo);
-        let dirPath = path.resolve(extensionPath, `.omnisharp/experimental/1.2.4`);
-        await rimraf(dirPath);
         launchPath.should.equal(path.resolve(extensionPath, '.omnisharp/experimental/1.2.4/OmniSharp.exe'));
     });
 
     test('Downloads package from given url and installs them at the specified path', async () => {
         let launchPath = await manager.InstallVersionAndReturnLaunchPath(version, useMono, serverUrl, installPath, extensionPath, platformInfo);
-        let dirPath = path.resolve(extensionPath, `.omnisharp/experimental/1.2.3`);
-
-        let exists = await util.fileExists(path.resolve(dirPath, `install_check_1.2.3.txt`));
-        await rimraf(dirPath);
+        let exists = await util.fileExists(path.resolve(extensionPath, `.omnisharp/experimental/1.2.3/install_check_1.2.3.txt`));
         exists.should.equal(true);
     });
 
     test('Downloads package and returns launch path based on platform - Not using mono on Linux ', async () => {
         let launchPath = await manager.InstallVersionAndReturnLaunchPath(version, useMono, serverUrl, installPath, extensionPath, new PlatformInformation("linux", "x64"));
-        let dirPath = path.resolve(extensionPath, `.omnisharp/experimental/1.2.3`);
-        await rimraf(dirPath);
         launchPath.should.equal(path.resolve(extensionPath, '.omnisharp/experimental/1.2.3/run'));
+    });
+
+    test('Downloads package and returns launch path based on platform - Using mono on Linux ', async () => {
+        let launchPath = await manager.InstallVersionAndReturnLaunchPath(version, true, serverUrl, installPath, extensionPath, new PlatformInformation("linux", "x64"));
+        launchPath.should.equal(path.resolve(extensionPath, '.omnisharp/experimental/1.2.3/omnisharp/OmniSharp.exe'));
+    });
+
+    teardown(async () => {
+        if (tmpDir) {
+            await rimraf(tmpDir.name);
+        }
+
+        tmpDir = null;
     });
 });
 
 function GetExperimentalOmnisharpManager() {
     let channel = vscode.window.createOutputChannel('Experiment Channel');
     let logger = new Logger(text => channel.append(text));
-    const extensionId = 'ms-vscode.csharp';
-    const extension = vscode.extensions.getExtension(extensionId);
-    const extensionVersion = extension.packageJSON.version;
-    const aiKey = extension.packageJSON.contributes.debuggers[0].aiKey;
-    const reporter = new TelemetryReporter(extensionId, extensionVersion, aiKey);
-    return new ExperimentalOmnisharpManager(channel, logger, reporter, extension.packageJSON);
+    return new ExperimentalOmnisharpManager(channel, logger, null, GetTestPackageJSON());
 }
