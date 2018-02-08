@@ -9,6 +9,7 @@ Project types to test:
 * Directory containing .sln file that references csprojs--projects should be loaded 
 * .NET Core/.NET Standard csproj
 * (Windows) Desktop .NET projects
+* Unity projects
 
 The easist way to verify that a project was successfully loaded is to open a .cs file within it and verify that the references codelens indicator appears.
 
@@ -16,6 +17,10 @@ The easist way to verify that a project was successfully loaded is to open a .cs
 * `dotnet new console` in a directory
 * A more complex dotnet solution, eg. [1] 
 * A console app solution created in Visual Studio
+
+#### Unity
+* Follow the directions at https://code.visualstudio.com/docs/other/unity to configure VS Code with unity
+* Try editing a project like https://github.com/staceyhaffner/SuperSpaceShooter
 
 #### Intellisense 
 * The completion list in a file contains symbols defined in references and in the file
