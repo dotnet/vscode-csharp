@@ -28,10 +28,7 @@ suite(`Hover Provider: ${testAssetWorkspace.description}`, function() {
         }
 
         await csharpExtension.exports.initializationFinished;
-        await omnisharp.restart();
     }); 
-
-    });
 
     test("Hover returns structured documentation with proper newlines", async function () {
 
