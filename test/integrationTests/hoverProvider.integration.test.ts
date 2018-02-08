@@ -56,6 +56,7 @@ namespace Test
         // Wait for the file to appear in the O# Workspace
         while (true) {
             let info = await requestWorkspaceInformation(omnisharp);
+            console.log(info.MsBuild.Projects[0].SourceFiles);
             if (info.MsBuild.Projects[0].SourceFiles.find(s => s.endsWith("test1.cs"))) {
                 break;
             }
