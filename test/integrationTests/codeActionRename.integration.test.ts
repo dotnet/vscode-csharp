@@ -27,15 +27,19 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function() {
 
     });
     
-    test("Code actions can remame and open files", async () => {                
+    test("Code actions can rename and open files", async () => {                
         let fileUri = await testAssetWorkspace.projects[0].addFileWithContents("test.cs", "class C {}");
         await vscode.commands.executeCommand("vscode.open", fileUri);
         let c = await vscode.commands.executeCommand("vscode.executeCodeActionProvider", fileUri, new vscode.Range(0, 7, 0, 7)) as {command: string, title: string, arguments: string[]}[];
         let command = c.find(
-            (s) => { return s.title == "Rename file to C.cs" }
-        )
+            (s) => { return s.title == "Rename file to C.cs"; }
+        );
         expect(command, "Didn't find rename class command");
         await vscode.commands.executeCommand(command.command, ...command.arguments)
         expect(vscode.window.activeTextEditor.document.fileName).contains("C.cs");
+    });
+
+    teardown(async () => {
+        await testAssetWorkspace.cleanupWorkspace();
     });
 }); 
