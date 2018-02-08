@@ -13,6 +13,7 @@ import { RequestQueueCollection } from '../../src/omnisharp/requestQueue';
 import { OmniSharpServer } from '../../src/omnisharp/server';
 import { omnisharp } from '../../src/omnisharp/extension';
 import { requestWorkspaceInformation } from '../../src/omnisharp/utils';
+import { file } from 'tmp';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -50,7 +51,7 @@ namespace Test
    }
 }`;
         let fileUri = await testAssetWorkspace.projects[0].addFileWithContents("test1.cs", program);
-
+        console.log(fileUri);
         await vscode.commands.executeCommand("vscode.open", fileUri);
 
         // Wait for the file to appear in the O# Workspace
