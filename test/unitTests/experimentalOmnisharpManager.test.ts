@@ -8,11 +8,11 @@ import * as vscode from 'vscode';
 import * as util from '../../src/common';
 import { should } from "chai";
 import { PlatformInformation } from "../../src/platform";
-import { GetLaunchPathForVersion, ExperimentalOmnisharpManager } from "../../src/omnisharp/experimentalOmnisharp.Manager";
 import { Logger } from '../../src/logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { rimraf } from 'async-file';
 import { GetTestPackageJSON } from './experimentalOmnisharpDownloader.test';
+import { GetLaunchPathForVersion, ExperimentalOmnisharpManager } from '../../src/omnisharp/experimentalOmnisharp.Manager';
 
 const chai = require("chai");
 chai.use(require("chai-as-promised"));

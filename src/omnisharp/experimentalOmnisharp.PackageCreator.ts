@@ -12,7 +12,6 @@ export function GetPackagesFromVersion(version: string, runTimeDependencies: Pac
 
     let versionPackages = new Array<Package>();
     for (let inputPackage of runTimeDependencies) {
-        //we need only the omnisharp packages in experimental download
         if (inputPackage.experimentalPackageId) {
             versionPackages.push(GetExperimentPackage(inputPackage, serverUrl, version, installPath));
         }
