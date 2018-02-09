@@ -21,7 +21,6 @@ export function GetPackagesFromVersion(version: string, runTimeDependencies: Pac
 }
 
 export function GetExperimentPackage(inputPackage: Package, serverUrl: string, version: string, installPath: string): Package {
-    let architectureInfo: string;
     let installBinary: string;
     if (inputPackage.experimentalPackageId == "win-x86" || inputPackage.experimentalPackageId == "win-x64") {
         installBinary = "Omnisharp.exe";
