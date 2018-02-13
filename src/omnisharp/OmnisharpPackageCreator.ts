@@ -13,14 +13,14 @@ export function GetPackagesFromVersion(version: string, runTimeDependencies: Pac
     let versionPackages = new Array<Package>();
     for (let inputPackage of runTimeDependencies) {
         if (inputPackage.experimentalPackageId) {
-            versionPackages.push(GetExperimentPackage(inputPackage, serverUrl, version, installPath));
+            versionPackages.push(GetOmnisharpPackage(inputPackage, serverUrl, version, installPath));
         }
     }
 
     return versionPackages;
 }
 
-export function GetExperimentPackage(inputPackage: Package, serverUrl: string, version: string, installPath: string): Package {
+export function GetOmnisharpPackage(inputPackage: Package, serverUrl: string, version: string, installPath: string): Package {
     let installBinary: string;
     if (inputPackage.experimentalPackageId == "win-x86" || inputPackage.experimentalPackageId == "win-x64") {
         installBinary = "OmniSharp.exe";

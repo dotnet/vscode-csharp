@@ -8,7 +8,7 @@ import * as path from 'path';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
 import { Logger } from '../logger';
-import { ExperimentalOmnisharpDownloader } from './OmnisharpDownloader';
+import { OmnisharpDownloader } from './OmnisharpDownloader';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { PlatformInformation } from '../platform';
 
@@ -29,7 +29,7 @@ export class OmnisharpManager {
                 return omnisharpPath;
             }
             else {
-                throw new Error('Could not find the specified file');
+                throw new Error('Invalid path specified');
             }
         }
         //If the path is not a valid path on disk, treat it as a version 
@@ -38,8 +38,8 @@ export class OmnisharpManager {
 
     public async InstallVersionAndReturnLaunchPath(version: string, useMono: boolean, serverUrl: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
         if (semver.valid(version)) {
-            let downloader = new ExperimentalOmnisharpDownloader(this.channel, this.logger, this.packageJSON, this.reporter);
-            await downloader.DownloadAndInstallExperimentalVersion(version, serverUrl, installPath);
+            let downloader = new OmnisharpDownloader(this.channel, this.logger, this.packageJSON, this.reporter);
+            await downloader.DownloadAndInstallOmnisharp(version, serverUrl, installPath);
 
             return await GetLaunchPathForVersion(platformInfo, version, installPath, extensionPath, useMono);
         }

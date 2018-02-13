@@ -9,7 +9,7 @@ import * as util from '../../src/common';
 import { should } from 'chai';
 import { Logger } from '../../src/logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
-import { ExperimentalOmnisharpDownloader } from '../../src/omnisharp/OmnisharpDownloader';
+import { OmnisharpDownloader } from '../../src/omnisharp/OmnisharpDownloader';
 import { rimraf } from 'async-file';
 import { tmpdir } from 'os';
 
@@ -30,7 +30,7 @@ suite("DownloadAndInstallExperimentalVersion : Gets the version packages, downlo
         let downloader = GetOmnisharpDownloader();
         let serverUrl = "https://roslynomnisharp.blob.core.windows.net";
         let installPath = ".omnisharp/experimental/";
-        await downloader.DownloadAndInstallExperimentalVersion(version, serverUrl, installPath);
+        await downloader.DownloadAndInstallOmnisharp(version, serverUrl, installPath);
         let exists = await util.fileExists(path.resolve(tmpDir.name, installPath, version, `install_check_1.2.3.txt`));
         exists.should.equal(true);
     });
@@ -47,7 +47,7 @@ suite("DownloadAndInstallExperimentalVersion : Gets the version packages, downlo
 function GetOmnisharpDownloader() {
     let channel = vscode.window.createOutputChannel('Experiment Channel');
     let logger = new Logger(text => channel.append(text));
-    return new ExperimentalOmnisharpDownloader(channel, logger, GetTestPackageJSON(), null);
+    return new OmnisharpDownloader(channel, logger, GetTestPackageJSON(), null);
 }
 
 //Since we need only the runtime dependencies of packageJSON for the downloader create a testPackageJSON

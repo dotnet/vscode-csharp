@@ -274,7 +274,7 @@ export class OmniSharpServer {
                 let serverUrl = "https://roslynomnisharp.blob.core.windows.net";
                 let installPath = ".omnisharp/experimental";
                 let extensionPath = utils.getExtensionPath();
-                let manager = new OmnisharpManager(this._csharpChannel, this._csharpLogger, this._reporter, this._packageJSON);
+                let manager = new OmnisharpManager(this._csharpChannel, this._csharpLogger, this._packageJSON, this._reporter);
                 let platformInfo = await PlatformInformation.GetCurrent();
                 experimentalLaunchPath = await manager.GetOmnisharpPath(this._options.path, this._options.useMono, platformInfo, serverUrl, installPath, extensionPath);
             }

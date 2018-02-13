@@ -11,7 +11,7 @@ import TelemetryReporter from 'vscode-extension-telemetry';
 import { GetPackagesFromVersion } from './OmnisharpPackageCreator';
 import { GetDependenciesAndDownloadPackages, SetStatus, GetAndLogPlatformInformation, ReportInstallationError, SendInstallationTelemetry } from '../Omnisharp.Download.Helper';
 
-export class ExperimentalOmnisharpDownloader {
+export class OmnisharpDownloader {
     public constructor(
         private channel: vscode.OutputChannel,
         private logger: Logger,
@@ -19,12 +19,12 @@ export class ExperimentalOmnisharpDownloader {
         private reporter?: TelemetryReporter) {
     }
 
-    public async DownloadAndInstallExperimentalVersion(version: string, serverUrl: string, installPath: string) {
+    public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string) {
         if (!version) {
             throw new Error('Invalid version');
         }
 
-        this.logger.append('Downloading and installing the required omnisharp packages');
+        this.logger.append('Downloading and installing the required omnisharp packages...');
         this.logger.appendLine();
         this.channel.show();
 
