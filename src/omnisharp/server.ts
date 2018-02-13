@@ -276,7 +276,7 @@ export class OmniSharpServer {
                 let extensionPath = utils.getExtensionPath();
                 let manager = new OmnisharpManager(this._csharpChannel, this._csharpLogger, this._packageJSON, this._reporter);
                 let platformInfo = await PlatformInformation.GetCurrent();
-                experimentalLaunchPath = await manager.GetOmnisharpPath(this._options.path, this._options.useMono, platformInfo, serverUrl, installPath, extensionPath);
+                experimentalLaunchPath = await manager.GetOmnisharpPath(this._options.path, this._options.useMono, serverUrl, installPath, extensionPath, platformInfo);
             }
             catch (error) {
                 this._logger.appendLine('Error occured in loading omnisharp from omnisharp.path');

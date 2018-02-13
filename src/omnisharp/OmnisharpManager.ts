@@ -20,7 +20,7 @@ export class OmnisharpManager {
         private reporter?: TelemetryReporter) {
     }
 
-    public async GetOmnisharpPath(omnisharpPath: string, useMono: boolean, platformInfo: PlatformInformation, serverUrl: string, installPath: string, extensionPath: string): Promise<string> {
+    public async GetOmnisharpPath(omnisharpPath: string, useMono: boolean, serverUrl: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation): Promise<string> {
         // Looks at the options path, installs the dependencies and returns the path to be loaded by the omnisharp server
         // To Do : Add the functionality for the latest option
 
