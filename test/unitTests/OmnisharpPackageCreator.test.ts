@@ -36,14 +36,20 @@ suite("GetOmnisharpPackage : Output package depends on the input package and oth
         expect(fn).to.throw('Invalid version');
     });
 
-    test('Description, architectures, binaries and platforms do not change', () => {
+    test('Architectures, binaries and platforms do not change', () => {
         let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "os-architecture"));
         let resultPackage = GetOmnisharpPackage(testPackage, serverUrl, version, installPath);
 
-        resultPackage.description.should.equal(testPackage.description);
         resultPackage.architectures.should.equal(testPackage.architectures);
         assert.equal(resultPackage.binaries, testPackage.binaries);
         resultPackage.platforms.should.equal(testPackage.platforms);
+    });
+
+    test('Version information is appended to the description', () => {
+        let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "os-architecture"));
+        let resultPackage = GetOmnisharpPackage(testPackage, serverUrl, "1.2.3", installPath);
+
+        resultPackage.description.should.equal(`${testPackage.description}, Version = 1.2.3`);
     });
 
     test('Download url is calculated using server url and version', () => {

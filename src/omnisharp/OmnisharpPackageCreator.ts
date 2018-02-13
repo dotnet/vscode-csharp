@@ -44,7 +44,7 @@ function GetPackageFromArchitecture(inputPackage: Package, serverUrl: string, ve
     }
 
     let versionPackage = <Package>{
-        "description": inputPackage.description,
+        "description": `${inputPackage.description}, Version = ${version}`,
         "url": `${serverUrl}/releases/${version}/omnisharp-${architectureInfo}.zip`,
         "installPath": `${installPath}/${version}`,
         "platforms": inputPackage.platforms,
