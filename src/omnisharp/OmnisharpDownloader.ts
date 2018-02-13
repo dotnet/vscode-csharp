@@ -9,7 +9,7 @@ import { PlatformInformation } from '../platform';
 import { Logger } from '../logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { GetPackagesFromVersion } from './OmnisharpPackageCreator';
-import { GetDependenciesAndDownloadPackages, GetStatus, GetAndLogPlatformInformation, ReportInstallationError, SendInstallationTelemetry } from '../Omnisharp.Download.Helper';
+import { GetDependenciesAndDownloadPackages, SetStatus, GetAndLogPlatformInformation, ReportInstallationError, SendInstallationTelemetry } from '../Omnisharp.Download.Helper';
 
 export class ExperimentalOmnisharpDownloader {
     public constructor(
@@ -28,8 +28,9 @@ export class ExperimentalOmnisharpDownloader {
         this.logger.appendLine();
         this.channel.show();
 
-        let statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
-        let status = GetStatus(statusItem);
+        let statusObject = SetStatus();
+        let status = statusObject.Status;
+        let statusItem = statusObject.StatusItem;
 
         let telemetryProps: any = {};
         let installationStage = '';
@@ -48,7 +49,7 @@ export class ExperimentalOmnisharpDownloader {
 
             installationStage = 'downloadPackages';
             let packageManager = new PackageManager(platformInfo, this.packageJSON);
-             // Specify the packages that the package manager needs to download
+            // Specify the packages that the package manager needs to download
             packageManager.SetVersionPackagesForDownload(packages);
             await GetDependenciesAndDownloadPackages(packages,status, platformInfo, packageManager, this.logger);
 

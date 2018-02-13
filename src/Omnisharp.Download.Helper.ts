@@ -15,7 +15,8 @@ export async function GetDependenciesAndDownloadPackages(packages: Package[], st
     await packageManager.DownloadPackages(logger, status, proxy, strictSSL);
 }
 
-export function GetStatus(statusItem: vscode.StatusBarItem): Status {
+export function SetStatus() {
+    let statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
     let status: Status = {
         setMessage: text => {
             statusItem.text = text;
@@ -27,7 +28,7 @@ export function GetStatus(statusItem: vscode.StatusBarItem): Status {
         }
     };
 
-    return status;
+    return { StatusItem: statusItem, Status: status };
 }
 
 export async function GetAndLogPlatformInformation(logger: Logger): Promise<PlatformInformation> {
