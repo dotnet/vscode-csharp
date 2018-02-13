@@ -11,8 +11,8 @@ import { PlatformInformation } from "../../src/platform";
 import { Logger } from '../../src/logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { rimraf } from 'async-file';
-import { GetTestPackageJSON } from './experimentalOmnisharpDownloader.test';
-import { GetLaunchPathForVersion, ExperimentalOmnisharpManager } from '../../src/omnisharp/experimentalOmnisharp.Manager';
+import { GetTestPackageJSON } from './OmnisharpDownloader.test';
+import { GetLaunchPathForVersion, OmnisharpManager } from '../../src/omnisharp/OmnisharpManager';
 
 const chai = require("chai");
 chai.use(require("chai-as-promised"));
@@ -40,13 +40,13 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
         tmpFile = tmp.fileSync();
         let manager = GetExperimentalOmnisharpManager();
 
-        let omnisharpPath = await manager.GetExperimentalOmnisharpPath(tmpFile.name, false, platformInfo, serverUrl, installPath, extensionPath);
+        let omnisharpPath = await manager.GetOmnisharpPath(tmpFile.name, false, platformInfo, serverUrl, installPath, extensionPath);
         omnisharpPath.should.equal(tmpFile.name);
     });
 
     test('Throws error if the path is neither an absolute path nor a valid semver', async () => {
         let manager = GetExperimentalOmnisharpManager();
-        expect(manager.GetExperimentalOmnisharpPath("Some incorrect path", false, platformInfo, serverUrl, installPath, extensionPath)).to.be.rejectedWith(Error);
+        expect(manager.GetOmnisharpPath("Some incorrect path", false, platformInfo, serverUrl, installPath, extensionPath)).to.be.rejectedWith(Error);
     });
 
     teardown(async () => {
@@ -133,7 +133,7 @@ suite('InstallVersionAndReturnLaunchPath : Installs the version packages and ret
     let installPath: string;
     let useMono: boolean;
     let extensionPath: string;
-    let manager: ExperimentalOmnisharpManager;
+    let manager: OmnisharpManager;
     let platformInfo: PlatformInformation;
     let tmpDir = null;
 
@@ -198,5 +198,5 @@ suite('InstallVersionAndReturnLaunchPath : Installs the version packages and ret
 function GetExperimentalOmnisharpManager() {
     let channel = vscode.window.createOutputChannel('Experiment Channel');
     let logger = new Logger(text => channel.append(text));
-    return new ExperimentalOmnisharpManager(channel, logger, GetTestPackageJSON(), null);
+    return new OmnisharpManager(channel, logger, GetTestPackageJSON(), null);
 }

@@ -19,7 +19,7 @@ import * as protocol from './protocol';
 import * as utils from '../common';
 import * as vscode from 'vscode';
 import { setTimeout } from 'timers';
-import { ExperimentalOmnisharpManager } from './experimentalOmnisharp.Manager';
+import { OmnisharpManager } from './OmnisharpManager';
 import { PlatformInformation } from '../platform';
 
 enum ServerState {
@@ -274,9 +274,9 @@ export class OmniSharpServer {
                 let serverUrl = "https://roslynomnisharp.blob.core.windows.net";
                 let installPath = ".omnisharp/experimental";
                 let extensionPath = utils.getExtensionPath();
-                let manager = new ExperimentalOmnisharpManager(this._csharpChannel, this._csharpLogger, this._reporter, this._packageJSON);
+                let manager = new OmnisharpManager(this._csharpChannel, this._csharpLogger, this._reporter, this._packageJSON);
                 let platformInfo = await PlatformInformation.GetCurrent();
-                experimentalLaunchPath = await manager.GetExperimentalOmnisharpPath(this._options.path, this._options.useMono, platformInfo, serverUrl, installPath, extensionPath);
+                experimentalLaunchPath = await manager.GetOmnisharpPath(this._options.path, this._options.useMono, platformInfo, serverUrl, installPath, extensionPath);
             }
             catch (error) {
                 this._logger.appendLine('Error occured in loading omnisharp from omnisharp.path');

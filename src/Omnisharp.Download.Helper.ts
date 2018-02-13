@@ -8,7 +8,7 @@ import { PlatformInformation } from './platform';
 import { Logger } from './logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
 
-export async function GetDependenciesAndDownloadPackages(packages: Package[],status: Status, platformInfo: PlatformInformation, packageManager: PackageManager,logger: Logger) { 
+export async function GetDependenciesAndDownloadPackages(packages: Package[], status: Status, platformInfo: PlatformInformation, packageManager: PackageManager, logger: Logger) {
     const config = vscode.workspace.getConfiguration();
     const proxy = config.get<string>('http.proxy');
     const strictSSL = config.get('http.proxyStrictSSL', true);

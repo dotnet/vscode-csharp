@@ -8,8 +8,8 @@ import { PackageManager, Package } from '../packages';
 import { PlatformInformation } from '../platform';
 import { Logger } from '../logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
-import { GetPackagesFromVersion } from './experimentalOmnisharp.PackageCreator';
-import { GetDependenciesAndDownloadPackages, GetStatus, GetAndLogPlatformInformation, ReportInstallationError, SendInstallationTelemetry } from '../experimentalOmnisharp.Download.Helper';
+import { GetPackagesFromVersion } from './OmnisharpPackageCreator';
+import { GetDependenciesAndDownloadPackages, GetStatus, GetAndLogPlatformInformation, ReportInstallationError, SendInstallationTelemetry } from '../Omnisharp.Download.Helper';
 
 export class ExperimentalOmnisharpDownloader {
     public constructor(

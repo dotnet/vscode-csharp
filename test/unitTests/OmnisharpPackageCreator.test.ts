@@ -5,8 +5,8 @@
 
 import { assert, should, expect } from "chai";
 import { Package } from "../../src/packages";
-import { GetTestPackageJSON } from "./experimentalOmnisharpDownloader.test";
-import { GetExperimentPackage, GetPackagesFromVersion } from "../../src/omnisharp/experimentalOmnisharp.PackageCreator";
+import { GetTestPackageJSON } from "./OmnisharpDownloader.test";
+import { GetExperimentPackage, GetPackagesFromVersion } from "../../src/omnisharp/OmnisharpPackageCreator";
 
 suite("GetExperimentPackage : Output package depends on the input package and other input parameters like serverUrl", () => {
 

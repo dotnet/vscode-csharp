@@ -225,7 +225,7 @@ export function launchOmniSharp(cwd: string, args: string[], experimentalLaunchP
     });
 }
 
-function launch(cwd: string, args: string[], experimentalLaunchPath: string): Promise<LaunchResult> {
+function launch(cwd: string, args: string[], launchPath: string): Promise<LaunchResult> {
     return PlatformInformation.GetCurrent().then(platformInfo => {
         const options = Options.Read();
 
@@ -239,18 +239,18 @@ function launch(cwd: string, args: string[], experimentalLaunchPath: string): Pr
             args.push(`formattingOptions:indentationSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
         }
 
-        // If the user has provide a path to OmniSharp, we'll use that.
-        if (experimentalLaunchPath) {
+        // If the user has provided a path to OmniSharp, we'll use that.
+        if (launchPath) {
             if (platformInfo.isWindows()) {
-                return launchWindows(experimentalLaunchPath, cwd, args);
+                return launchWindows(launchPath, cwd, args);
             }
 
             // If we're launching on macOS/Linux, we have two possibilities:
             //   1. Launch using Mono
             //   2. Launch process directly (e.g. a 'run' script)
             return options.useMono
-                ? launchNixMono(experimentalLaunchPath, cwd, args)
-                : launchNix(experimentalLaunchPath, cwd, args);
+                ? launchNixMono(launchPath, cwd, args)
+                : launchNix(launchPath, cwd, args);
         }
 
         // If the user has not provided a path, we'll use the locally-installed OmniSharp

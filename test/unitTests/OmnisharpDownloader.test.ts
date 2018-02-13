@@ -9,7 +9,7 @@ import * as util from '../../src/common';
 import { should } from 'chai';
 import { Logger } from '../../src/logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
-import { ExperimentalOmnisharpDownloader } from '../../src/omnisharp/experimentalOmnisharp.Downloader';
+import { ExperimentalOmnisharpDownloader } from '../../src/omnisharp/OmnisharpDownloader';
 import { rimraf } from 'async-file';
 import { tmpdir } from 'os';
 

@@ -8,11 +8,11 @@ import * as path from 'path';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
 import { Logger } from '../logger';
-import { ExperimentalOmnisharpDownloader } from './experimentalOmnisharp.Downloader';
+import { ExperimentalOmnisharpDownloader } from './OmnisharpDownloader';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { PlatformInformation } from '../platform';
 
-export class ExperimentalOmnisharpManager {
+export class OmnisharpManager {
     public constructor(
         private channel: vscode.OutputChannel,
         private logger: Logger,
@@ -20,7 +20,7 @@ export class ExperimentalOmnisharpManager {
         private reporter?: TelemetryReporter) {
     }
 
-    public async GetExperimentalOmnisharpPath(omnisharpPath: string, useMono: boolean, platformInfo: PlatformInformation, serverUrl: string, installPath: string, extensionPath: string): Promise<string> {
+    public async GetOmnisharpPath(omnisharpPath: string, useMono: boolean, platformInfo: PlatformInformation, serverUrl: string, installPath: string, extensionPath: string): Promise<string> {
         // Looks at the options path, installs the dependencies and returns the path to be loaded by the omnisharp server
         // To Do : Add the functionality for the latest option
 
