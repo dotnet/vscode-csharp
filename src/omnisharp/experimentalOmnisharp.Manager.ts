@@ -16,42 +16,37 @@ export class ExperimentalOmnisharpManager {
     public constructor(
         private channel: vscode.OutputChannel,
         private logger: Logger,
-        private reporter: TelemetryReporter,
-        private packageJSON: any
-    ) {
+        private packageJSON: any,
+        private reporter?: TelemetryReporter) {
     }
 
-    public async GetExperimentalOmnisharpPath(optionPath: string, useMono: boolean, platformInfo: PlatformInformation, serverUrl: string, installPath: string, extensionPath: string): Promise<string> {
+    public async GetExperimentalOmnisharpPath(omnisharpPath: string, useMono: boolean, platformInfo: PlatformInformation, serverUrl: string, installPath: string, extensionPath: string): Promise<string> {
         // Looks at the options path, installs the dependencies and returns the path to be loaded by the omnisharp server
         // To Do : Add the functionality for the latest option
 
-        if (await util.fileExists(optionPath)) {
-            return optionPath;
+        if (path.isAbsolute(omnisharpPath)) {
+            if (await util.fileExists(omnisharpPath)) {
+                return omnisharpPath;
+            }
+            else {
+                throw new Error('Could not find the specified file');
+            }
         }
-        //If the path is not a valid path on disk, treat it as a version
-        
-        return await this.InstallVersionAndReturnLaunchPath(optionPath, useMono, serverUrl, installPath, extensionPath, platformInfo);
+        //If the path is not a valid path on disk, treat it as a version 
+        return await this.InstallVersionAndReturnLaunchPath(omnisharpPath, useMono, serverUrl, installPath, extensionPath, platformInfo);
     }
 
     public async InstallVersionAndReturnLaunchPath(version: string, useMono: boolean, serverUrl: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
-        if (IsValidSemver(version)) {
-            let downloader = new ExperimentalOmnisharpDownloader(this.channel, this.logger, this.reporter, this.packageJSON);
+        if (semver.valid(version)) {
+            let downloader = new ExperimentalOmnisharpDownloader(this.channel, this.logger, this.packageJSON, this.reporter);
             await downloader.DownloadAndInstallExperimentalVersion(version, serverUrl, installPath);
 
             return await GetLaunchPathForVersion(platformInfo, version, installPath, extensionPath, useMono);
         }
         else {
-            throw new Error('Bad Input to Omnisharp Path');
+            throw new Error('Invalid omnisharp version specified');
         }
     }
-}
-
-function IsValidSemver(version: string): boolean {
-    if (semver.valid(version)) {
-        return true;
-    }
-
-    return false;
 }
 
 export async function GetLaunchPathForVersion(platformInfo: PlatformInformation, version: string, installPath: string, extensionPath: string, useMono: boolean) {

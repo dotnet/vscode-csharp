@@ -23,7 +23,7 @@ export function GetPackagesFromVersion(version: string, runTimeDependencies: Pac
 export function GetExperimentPackage(inputPackage: Package, serverUrl: string, version: string, installPath: string): Package {
     let installBinary: string;
     if (inputPackage.experimentalPackageId == "win-x86" || inputPackage.experimentalPackageId == "win-x64") {
-        installBinary = "Omnisharp.exe";
+        installBinary = "OmniSharp.exe";
     }
     else if (inputPackage.experimentalPackageId == "osx") {
         installBinary = "mono.osx";

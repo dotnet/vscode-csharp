@@ -12,12 +12,11 @@ import { GetPackagesFromVersion } from './experimentalOmnisharp.PackageCreator';
 import { GetDependenciesAndDownloadPackages, GetStatus, GetAndLogPlatformInformation, ReportInstallationError, SendInstallationTelemetry } from '../experimentalOmnisharp.Download.Helper';
 
 export class ExperimentalOmnisharpDownloader {
-
     public constructor(
         private channel: vscode.OutputChannel,
         private logger: Logger,
-        private reporter: TelemetryReporter /* optional */,
-        private packageJSON: any) {
+        private packageJSON: any,
+        private reporter?: TelemetryReporter) {
     }
 
     public async DownloadAndInstallExperimentalVersion(version: string, serverUrl: string, installPath: string) {
@@ -25,7 +24,7 @@ export class ExperimentalOmnisharpDownloader {
             throw new Error('Invalid version');
         }
 
-        this.logger.append('Getting the version packages...');
+        this.logger.append('Downloading and installing the required omnisharp packages');
         this.logger.appendLine();
         this.channel.show();
 

@@ -25,12 +25,12 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
     const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
     const installPath = ".omnisharp/experimental";
     let extensionPath: string;
-    let tmpDir : any;
-    let tmpFile : any;
+    let tmpDir: any;
+    let tmpFile: any;
 
     suiteSetup(() => should());
 
-    setup(()=>{
+    setup(() => {
         tmpDir = tmp.dirSync();
         extensionPath = tmpDir.name;
         util.setExtensionPath(tmpDir.name);
@@ -46,7 +46,7 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
 
     test('Throws error if the path is neither an absolute path nor a valid semver', async () => {
         let manager = GetExperimentalOmnisharpManager();
-        expect(manager.GetExperimentalOmnisharpPath("Some incorrect path", false, platformInfo, serverUrl,installPath,extensionPath)).to.be.rejectedWith(Error);
+        expect(manager.GetExperimentalOmnisharpPath("Some incorrect path", false, platformInfo, serverUrl, installPath, extensionPath)).to.be.rejectedWith(Error);
     });
 
     teardown(async () => {
@@ -54,10 +54,10 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
             await rimraf(tmpDir.name);
         }
 
-        if(tmpFile){
+        if (tmpFile) {
             tmpFile.removeCallback();
         }
-        
+
         tmpFile = null;
         tmpDir = null;
     });
@@ -198,5 +198,5 @@ suite('InstallVersionAndReturnLaunchPath : Installs the version packages and ret
 function GetExperimentalOmnisharpManager() {
     let channel = vscode.window.createOutputChannel('Experiment Channel');
     let logger = new Logger(text => channel.append(text));
-    return new ExperimentalOmnisharpManager(channel, logger, null, GetTestPackageJSON());
+    return new ExperimentalOmnisharpManager(channel, logger, GetTestPackageJSON(), null);
 }

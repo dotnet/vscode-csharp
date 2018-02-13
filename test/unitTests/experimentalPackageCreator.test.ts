@@ -61,13 +61,13 @@ suite("GetExperimentPackage : Output package depends on the input package and ot
     test('Install test path is calculated using specified path, version and ends with Omnisharp.exe - Windows(x86)', () => {
         let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "win-x86"));
         let resultPackage = GetExperimentPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
-        resultPackage.installTestPath.should.equal("./experimentPath/1.2.3/Omnisharp.exe");
+        resultPackage.installTestPath.should.equal("./experimentPath/1.2.3/OmniSharp.exe");
     });
 
     test('Install test path is calculated using specified path, version and ends with Omnisharp.exe - Windows(x64)', () => {
         let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "win-x64"));
         let resultPackage = GetExperimentPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
-        resultPackage.installTestPath.should.equal("./experimentPath/1.2.3/Omnisharp.exe");
+        resultPackage.installTestPath.should.equal("./experimentPath/1.2.3/OmniSharp.exe");
     });
 
     test('Install test path is calculated using specified path, version and ends with mono.osx - OSX', () => {
@@ -147,7 +147,7 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
 
         let outPackages = GetPackagesFromVersion("1.1.1", inputPackages, serverUrl, "experimentPath");
         outPackages.length.should.equal(2);
-        outPackages[0].installTestPath.should.equal("./experimentPath/1.1.1/Omnisharp.exe");
+        outPackages[0].installTestPath.should.equal("./experimentPath/1.1.1/OmniSharp.exe");
         outPackages[1].installTestPath.should.equal("./experimentPath/1.1.1/mono.osx");
     });
 
