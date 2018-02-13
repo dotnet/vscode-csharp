@@ -8,28 +8,41 @@ import * as path from 'path';
 import * as util from '../../src/common';
 import { should } from 'chai';
 import { Logger } from '../../src/logger';
-import TelemetryReporter from 'vscode-extension-telemetry';
 import { OmnisharpDownloader } from '../../src/omnisharp/OmnisharpDownloader';
 import { rimraf } from 'async-file';
-import { tmpdir } from 'os';
 
 const tmp = require('tmp');
+const chai = require("chai");
+chai.use(require("chai-as-promised"));
+let expect = chai.expect;
 
 suite("DownloadAndInstallExperimentalVersion : Gets the version packages, downloads and installs them", () => {
     let tmpDir = null;
+    const version = "1.2.3";
+    const downloader = GetOmnisharpDownloader();
+    const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
+    const installPath = ".omnisharp/experimental/";
 
     setup(() => {
         tmpDir = tmp.dirSync();
         util.setExtensionPath(tmpDir.name);
     });
 
+    test('Throws error if version is null', () => {
+        expect(downloader.DownloadAndInstallOmnisharp(null, serverUrl, installPath)).to.be.rejectedWith(Error);
+    });
+
+    test('Throws error if version is empty string', () => {
+        expect(downloader.DownloadAndInstallOmnisharp("", serverUrl, installPath)).to.be.rejectedWith(Error);
+    });
+
+    test('Throws error if request is made for a version that doesnot exist on the server', () => {
+        expect(downloader.DownloadAndInstallOmnisharp("1.00000001.0000", serverUrl, installPath)).to.be.rejectedWith(Error);
+    });
+
     test('Packages are downloaded from the specified server url and installed at the specified path', async () => {
         /* Download a test package that conatins a install_check_1.2.3.txt file and check whether the 
            file appears at the expected path */
-        let version = "1.2.3";
-        let downloader = GetOmnisharpDownloader();
-        let serverUrl = "https://roslynomnisharp.blob.core.windows.net";
-        let installPath = ".omnisharp/experimental/";
         await downloader.DownloadAndInstallOmnisharp(version, serverUrl, installPath);
         let exists = await util.fileExists(path.resolve(tmpDir.name, installPath, version, `install_check_1.2.3.txt`));
         exists.should.equal(true);

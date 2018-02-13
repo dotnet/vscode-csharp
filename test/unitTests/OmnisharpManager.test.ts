@@ -9,7 +9,6 @@ import * as util from '../../src/common';
 import { should } from "chai";
 import { PlatformInformation } from "../../src/platform";
 import { Logger } from '../../src/logger';
-import TelemetryReporter from 'vscode-extension-telemetry';
 import { rimraf } from 'async-file';
 import { GetTestPackageJSON } from './OmnisharpDownloader.test';
 import { GetLaunchPathForVersion, OmnisharpManager } from '../../src/omnisharp/OmnisharpManager';

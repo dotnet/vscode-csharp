@@ -9,7 +9,7 @@ import { PlatformInformation } from '../platform';
 import { Logger } from '../logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { GetPackagesFromVersion } from './OmnisharpPackageCreator';
-import { GetDependenciesAndDownloadPackages, SetStatus, GetAndLogPlatformInformation, ReportInstallationError, SendInstallationTelemetry } from '../Omnisharp.Download.Helper';
+import { GetDependenciesAndDownloadPackages, SetStatus, GetAndLogPlatformInformation, ReportInstallationError, SendInstallationTelemetry } from '../OmnisharpDownload.Helper';
 
 export class OmnisharpDownloader {
     public constructor(
@@ -24,7 +24,7 @@ export class OmnisharpDownloader {
             throw new Error('Invalid version');
         }
 
-        this.logger.append('Downloading and installing the required omnisharp packages...');
+        this.logger.append('Installing Omnisharp Packages...');
         this.logger.appendLine();
         this.channel.show();
 
