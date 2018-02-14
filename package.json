@@ -39,6 +39,7 @@
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
+    "chai-as-promised": "^7.1.1",
     "fs-extra": "^5.0.0",
     "http-proxy-agent": "^2.0.0",
     "https-proxy-agent": "^2.1.1",
@@ -93,7 +94,8 @@
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.omnisharp/OmniSharp.exe"
+      "installTestPath": "./.omnisharp/OmniSharp.exe",
+      "experimentalPackageId": "win-x86"
     },
     {
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
@@ -106,7 +108,8 @@
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/OmniSharp.exe"
+      "installTestPath": "./.omnisharp/OmniSharp.exe",
+      "experimentalPackageId": "win-x64"
     },
     {
       "description": "OmniSharp for OSX",
@@ -120,7 +123,8 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/mono.osx"
+      "installTestPath": "./.omnisharp/mono.osx",
+      "experimentalPackageId": "osx"
     },
     {
       "description": "OmniSharp for Linux (x86)",
@@ -138,7 +142,8 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/mono.linux-x86"
+      "installTestPath": "./.omnisharp/mono.linux-x86",
+      "experimentalPackageId": "linux-x86"
     },
     {
       "description": "OmniSharp for Linux (x64)",
@@ -155,7 +160,8 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/mono.linux-x86_64"
+      "installTestPath": "./.omnisharp/mono.linux-x86_64",
+      "experimentalPackageId": "linux-x64"
     },
     {
       "description": ".NET Core Debugger (Windows / x64)",
@@ -361,7 +367,7 @@
             "null"
           ],
           "default": null,
-          "description": "Specifies the full path to the OmniSharp server."
+          "description": "Specifies how to acquire the OmniSharp to use. Can be one of \"latest\", a specific version number, or the absolute path to a local OmniSharp folder."
         },
         "omnisharp.useMono": {
           "type": "boolean",
