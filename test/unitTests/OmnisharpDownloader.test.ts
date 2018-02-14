@@ -23,7 +23,6 @@ suite("DownloadAndInstallExperimentalVersion : Gets the version packages, downlo
     const downloader = GetTestOmnisharpDownloader();
     const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
     const installPath = ".omnisharp/experimental/";
-    const platformInfo = new PlatformInformation("win32", "x86");
 
     setup(() => {
         tmpDir = tmp.dirSync();
@@ -31,21 +30,21 @@ suite("DownloadAndInstallExperimentalVersion : Gets the version packages, downlo
     });
 
     test('Throws error if version is null', () => {
-        expect(downloader.DownloadAndInstallOmnisharp(null, serverUrl, installPath, platformInfo)).to.be.rejectedWith(Error);
+        expect(downloader.DownloadAndInstallOmnisharp(null, serverUrl, installPath)).to.be.rejectedWith(Error);
     });
 
     test('Throws error if version is empty string', () => {
-        expect(downloader.DownloadAndInstallOmnisharp("", serverUrl, installPath, platformInfo)).to.be.rejectedWith(Error);
+        expect(downloader.DownloadAndInstallOmnisharp("", serverUrl, installPath)).to.be.rejectedWith(Error);
     });
 
     test('Throws error if request is made for a version that doesnot exist on the server', () => {
-        expect(downloader.DownloadAndInstallOmnisharp("1.00000001.0000", serverUrl, installPath, platformInfo)).to.be.rejectedWith(Error);
+        expect(downloader.DownloadAndInstallOmnisharp("1.00000001.0000", serverUrl, installPath)).to.be.rejectedWith(Error);
     });
 
     test('Packages are downloaded from the specified server url and installed at the specified path', async () => {
         /* Download a test package that conatins a install_check_1.2.3.txt file and check whether the 
            file appears at the expected path */
-        await downloader.DownloadAndInstallOmnisharp(version, serverUrl, installPath, platformInfo);
+        await downloader.DownloadAndInstallOmnisharp(version, serverUrl, installPath);
         let exists = await util.fileExists(path.resolve(tmpDir.name, installPath, version, `install_check_1.2.3.txt`));
         exists.should.equal(true);
     });
@@ -62,7 +61,7 @@ suite("DownloadAndInstallExperimentalVersion : Gets the version packages, downlo
 function GetTestOmnisharpDownloader() {
     let channel = vscode.window.createOutputChannel('Experiment Channel');
     let logger = new Logger(text => channel.append(text));
-    return new OmnisharpDownloader(channel, logger, GetTestPackageJSON(), null);
+    return new OmnisharpDownloader(channel, logger, GetTestPackageJSON(), new PlatformInformation("win32", "x86"), null);
 }
 
 //Since we need only the runtime dependencies of packageJSON for the downloader create a testPackageJSON

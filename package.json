@@ -367,7 +367,7 @@
             "null"
           ],
           "default": null,
-          "description": "Specifies how to acquire the OmniSharp to use. Can be one of \"latest\", a specific version number, or the absolute path to a local OmniSharp folder."
+          "description": "Specifies the path to OmniSharp. This can be the absolute path to an OmniSharp executable, a specific version number, or \"latest\". If a version number or \"latest\" is specified, the appropriate version of OmniSharp will be downloaded on your behalf."
         },
         "omnisharp.useMono": {
           "type": "boolean",

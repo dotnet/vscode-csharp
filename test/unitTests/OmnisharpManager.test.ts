@@ -23,6 +23,7 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
     const platformInfo = new PlatformInformation("win32", "x86");
     const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
     const installPath = ".omnisharp/experimental";
+    const versionFilepathInServer = "testVersionInfo.txt";
     const useMono = false;
     const manager = GetTestOmnisharpManager();
     let extensionPath: string;
@@ -38,50 +39,55 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
     });
 
     test('Throws error if the path is neither an absolute path nor a valid semver', async () => {
-        expect(manager.GetOmnisharpPath("Some incorrect path", useMono, serverUrl, installPath, extensionPath, platformInfo)).to.be.rejectedWith(Error);
+        expect(manager.GetOmnisharpPath("Some incorrect path", useMono, serverUrl, versionFilepathInServer, installPath, extensionPath, platformInfo)).to.be.rejectedWith(Error);
     });
 
     test('Throws error when the specified path is null', async () => {
-        expect(manager.GetOmnisharpPath(null, useMono, serverUrl, installPath, extensionPath, platformInfo)).to.be.rejectedWith(Error);
+        expect(manager.GetOmnisharpPath(null, useMono, serverUrl, versionFilepathInServer, installPath, extensionPath, platformInfo)).to.be.rejectedWith(Error);
     });
 
     test('Throws error when the specified path is empty', async () => {
-        expect(manager.GetOmnisharpPath("", useMono, serverUrl, installPath, extensionPath, platformInfo)).to.be.rejectedWith(Error);
+        expect(manager.GetOmnisharpPath("", useMono, serverUrl, versionFilepathInServer, installPath, extensionPath, platformInfo)).to.be.rejectedWith(Error);
     });
 
     test('Throws error when the specified path is an invalid semver', async () => {
-        expect(manager.GetOmnisharpPath("a.b.c", useMono, serverUrl, installPath, extensionPath, platformInfo)).to.be.rejectedWith(Error);
+        expect(manager.GetOmnisharpPath("a.b.c", useMono, serverUrl, versionFilepathInServer, installPath, extensionPath, platformInfo)).to.be.rejectedWith(Error);
     });
 
     test('Returns the same path if absolute path to an existing file is passed', async () => {
         tmpFile = tmp.fileSync();
-        let omnisharpPath = await manager.GetOmnisharpPath(tmpFile.name, useMono, serverUrl, installPath, extensionPath, platformInfo);
+        let omnisharpPath = await manager.GetOmnisharpPath(tmpFile.name, useMono, serverUrl, versionFilepathInServer, installPath, extensionPath, platformInfo);
         omnisharpPath.should.equal(tmpFile.name);
     });
 
+    test('Installs the latest version and returns the launch path based on the version and platform', async () => {
+        let omnisharpPath = await manager.GetOmnisharpPath("latest", useMono, serverUrl, versionFilepathInServer, installPath, extensionPath, platformInfo);
+        omnisharpPath.should.equal(path.resolve(extensionPath, `.omnisharp/experimental/1.2.3/OmniSharp.exe`));
+    });
+
     test('Installs the test version and returns the launch path based on the version and platform', async () => {
-        let omnisharpPath = await manager.GetOmnisharpPath("1.2.3", useMono, serverUrl, installPath, extensionPath, platformInfo);
+        let omnisharpPath = await manager.GetOmnisharpPath("1.2.3", useMono, serverUrl, versionFilepathInServer, installPath, extensionPath, platformInfo);
         omnisharpPath.should.equal(path.resolve(extensionPath, `.omnisharp/experimental/1.2.3/OmniSharp.exe`));
     });
 
     test('Downloads package from given url and installs them at the specified path', async () => {
-        let launchPath = await manager.GetOmnisharpPath("1.2.3", useMono, serverUrl, installPath, extensionPath, platformInfo);
+        let launchPath = await manager.GetOmnisharpPath("1.2.3", useMono, serverUrl, versionFilepathInServer, installPath, extensionPath, platformInfo);
         let exists = await util.fileExists(path.resolve(extensionPath, `.omnisharp/experimental/1.2.3/install_check_1.2.3.txt`));
         exists.should.equal(true);
     });
 
     test('Downloads package and returns launch path based on platform - Not using mono on Linux ', async () => {
-        let launchPath = await manager.GetOmnisharpPath("1.2.3", useMono, serverUrl, installPath, extensionPath, new PlatformInformation("linux", "x64"));
+        let launchPath = await manager.GetOmnisharpPath("1.2.3", useMono, serverUrl, versionFilepathInServer, installPath, extensionPath, new PlatformInformation("linux", "x64"));
         launchPath.should.equal(path.resolve(extensionPath, '.omnisharp/experimental/1.2.3/run'));
     });
 
     test('Downloads package and returns launch path based on platform - Using mono on Linux ', async () => {
-        let launchPath = await manager.GetOmnisharpPath("1.2.3", true, serverUrl, installPath, extensionPath, new PlatformInformation("linux", "x64"));
+        let launchPath = await manager.GetOmnisharpPath("1.2.3", true, serverUrl, versionFilepathInServer, installPath, extensionPath, new PlatformInformation("linux", "x64"));
         launchPath.should.equal(path.resolve(extensionPath, '.omnisharp/experimental/1.2.3/omnisharp/OmniSharp.exe'));
     });
 
     test('Downloads package and returns launch path based on install path ', async () => {
-        let launchPath = await manager.GetOmnisharpPath("1.2.3", true, serverUrl, "installHere", extensionPath, platformInfo);
+        let launchPath = await manager.GetOmnisharpPath("1.2.3", true, serverUrl, versionFilepathInServer, "installHere", extensionPath, platformInfo);
         launchPath.should.equal(path.resolve(extensionPath, 'installHere/1.2.3/OmniSharp.exe'));
     });
 

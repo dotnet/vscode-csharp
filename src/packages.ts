@@ -119,12 +119,14 @@ export class PackageManager {
             await maybeDownloadPackage(filePackage, logger, status, proxy, strictSSL);
             if (filePackage.tmpFile) {
                 latestVersion = fs.readFileSync(filePackage.tmpFile.name, 'utf8');
+                //Delete the temporary file created
+                filePackage.tmpFile.removeCallback();
             }
 
             return latestVersion;
         }
         catch (error) {
-            throw new Error(`Could not download the latest version info file due to ${error.toString()}`);
+            throw new Error(`Could not download the latest version file due to ${error.toString()}`);
         }
     }
 }
