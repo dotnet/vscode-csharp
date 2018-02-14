@@ -23,7 +23,7 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
     const platformInfo = new PlatformInformation("win32", "x86");
     const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
     const installPath = ".omnisharp/experimental";
-    const versionFilepathInServer = "testVersionInfo.txt";
+    const versionFilepathInServer = "releases/testVersionInfo.txt";
     const useMono = false;
     const manager = GetTestOmnisharpManager();
     let extensionPath: string;
