@@ -5,15 +5,17 @@
 
 'use strict';
 
-import { OmniSharpServer } from '../omnisharp/server';
-import TelemetryReporter from 'vscode-extension-telemetry';
-import TestManager from './dotnetTest';
-import * as vscode from 'vscode';
-import { toRange, toLocation } from '../omnisharp/typeConvertion';
-import AbstractProvider from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
+import * as vscode from 'vscode';
+
+import { toLocation, toRange } from '../omnisharp/typeConvertion';
+
+import AbstractProvider from './abstractProvider';
+import { OmniSharpServer } from '../omnisharp/server';
 import { Options } from '../omnisharp/options';
+import TelemetryReporter from 'vscode-extension-telemetry';
+import TestManager from './dotnetTest';
 
 class OmniSharpCodeLens extends vscode.CodeLens {
 
@@ -27,14 +29,12 @@ class OmniSharpCodeLens extends vscode.CodeLens {
 
 export default class OmniSharpCodeLensProvider extends AbstractProvider implements vscode.CodeLensProvider {
 
-    private _testManager: TestManager;
     private _options: Options;
 
     constructor(server: OmniSharpServer, reporter: TelemetryReporter, testManager: TestManager)
     {
         super(server, reporter);
 
-        this._testManager = testManager;
         this._resetCachedOptions();
 
         let configChangedDisposable = vscode.workspace.onDidChangeConfiguration(this._resetCachedOptions, this);

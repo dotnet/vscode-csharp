@@ -214,6 +214,22 @@ export interface FindSymbolsResponse {
     QuickFixes: SymbolLocation[];
 }
 
+export interface DocumentationItem {
+    Name: string;
+    Documentation: string;
+}
+
+export interface DocumentationComment {
+    SummaryText: string;
+    TypeParamElements: DocumentationItem[];
+    ParamElements: DocumentationItem[];
+    ReturnsText: string;
+    RemarksText: string;
+    ExampleText: string;
+    ValueText: string;
+    Exception: DocumentationItem[];
+}
+
 export interface TypeLookupRequest extends Request {
     IncludeDocumentation: boolean;
 }
@@ -221,6 +237,7 @@ export interface TypeLookupRequest extends Request {
 export interface TypeLookupResponse {
     Type: string;
     Documentation: string;
+    StructuredDocumentation: DocumentationComment;
 }
 
 export interface RunCodeActionResponse {
@@ -356,6 +373,14 @@ export interface ModifiedFileResponse {
     FileName: string;
     Buffer: string;
     Changes: TextChange[];
+    ModificationType: FileModificationType;
+}
+
+export enum FileModificationType
+{
+    Modified,
+    Opened,
+    Renamed,
 }
 
 export interface RenameResponse {
@@ -418,13 +443,12 @@ export interface PackageDependency {
     Name: string;
     Version: string;
 }
-    
-export interface FilesChangedRequest extends Request{
+
+export interface FilesChangedRequest extends Request {
     ChangeType: FileChangeType;
 }
 
-export enum FileChangeType
-{
+export enum FileChangeType {
     Change = "Change",
     Create = "Create",
     Delete = "Delete"
@@ -469,12 +493,12 @@ export namespace V2 {
         Identifier: string;
         Selection?: Range;
         WantsTextChanges: boolean;
+        WantsAllCodeActionOperations: boolean;
     }
 
     export interface RunCodeActionResponse {
         Changes: ModifiedFileResponse[];
     }
-
 
     export interface MSBuildProjectDiagnostics {
         FileName: string;

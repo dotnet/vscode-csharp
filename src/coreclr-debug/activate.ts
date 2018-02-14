@@ -4,9 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 
-import * as debugInstall from './install';
 import * as os from 'os';
+import * as path from 'path';
 import * as vscode from 'vscode';
+import * as common from './../common';
 
 import { CoreClrDebugUtil, DotnetInfo, } from './util';
 
@@ -15,12 +16,10 @@ import { PlatformInformation } from './../platform';
 import TelemetryReporter from 'vscode-extension-telemetry';
 
 let _debugUtil: CoreClrDebugUtil = null;
-let _reporter: TelemetryReporter = null;
 let _logger: Logger = null;
 
 export async function activate(thisExtension : vscode.Extension<any>, context: vscode.ExtensionContext, reporter: TelemetryReporter, logger: Logger, channel: vscode.OutputChannel) {
     _debugUtil = new CoreClrDebugUtil(context.extensionPath, logger);
-    _reporter = reporter;
     _logger = logger;
 
     if (!CoreClrDebugUtil.existsSync(_debugUtil.debugAdapterDir())) {
@@ -52,34 +51,30 @@ export async function activate(thisExtension : vscode.Extension<any>, context: v
     }
 }
 
-function completeDebuggerInstall(logger: Logger, channel: vscode.OutputChannel) : void {
-    _debugUtil.checkDotNetCli()
+async function completeDebuggerInstall(logger: Logger, channel: vscode.OutputChannel) : Promise<boolean> {
+    return _debugUtil.checkDotNetCli()
         .then((dotnetInfo: DotnetInfo) => {
 
             if (os.platform() === "darwin" && !CoreClrDebugUtil.isMacOSSupported()) {
                 logger.appendLine("[ERROR] The debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer.");
                 channel.show();
-                vscode.window.showErrorMessage("The .NET Core debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer.");
-                return;
+
+                return false;
             }
 
-            let installer = new debugInstall.DebugInstaller(_debugUtil);
-            installer.finishInstall()
-                .then(() => {
-                    vscode.window.setStatusBarMessage('Successfully installed .NET Core Debugger.', 5000);
-                })
-                .catch((err) => {
-                    logger.appendLine("[ERROR]: An error occured while installing the .NET Core Debugger:");
-                    logger.appendLine(err);
-                    showInstallErrorMessage(channel);
-                    // TODO: log telemetry?
-                });
+            // Write install.complete
+            CoreClrDebugUtil.writeEmptyFile(_debugUtil.installCompleteFilePath());
+            vscode.window.setStatusBarMessage('Successfully installed .NET Core Debugger.', 5000);
+
+            return true;
         }, (err) => {
             // Check for dotnet tools failed. pop the UI
             // err is a DotNetCliError but use defaults in the unexpected case that it's not
             showDotnetToolsWarning(err.ErrorMessage || _debugUtil.defaultDotNetCliErrorMessage());
             _logger.appendLine(err.ErrorString || err);
             // TODO: log telemetry?
+
+            return false;
         });
 }
 
@@ -114,4 +109,49 @@ function showDotnetToolsWarning(message: string) : void
                 }
             });
     }
+}
+
+interface AdapterExecutableCommand {
+    command: string;
+}
+
+// The default extension manifest calls this command as the adapterExecutableCommand
+// If the debugger components have not finished downloading, the proxy displays an error message to the user
+// Else it will launch the debug adapter
+export async function getAdapterExecutionCommand(channel: vscode.OutputChannel): Promise<AdapterExecutableCommand> {
+    let logger = new Logger(text => channel.append(text));
+    let util = new CoreClrDebugUtil(common.getExtensionPath(), logger);
+
+    // Check for .debugger folder. Handle if it does not exist.
+    if (!CoreClrDebugUtil.existsSync(util.debugAdapterDir()))
+    {
+        // our install.complete file does not exist yet, meaning we have not completed the installation. Try to figure out what if anything the package manager is doing
+        // the order in which files are dealt with is this:
+        // 1. install.Begin is created
+        // 2. install.Lock is created
+        // 3. install.Begin is deleted
+        // 4. install.complete is created
+
+        // install.Lock does not exist, need to wait for packages to finish downloading.
+        let installLock: boolean = await common.installFileExists(common.InstallFileType.Lock);
+        if (!installLock) {
+            channel.show();
+            throw new Error('The C# extension is still downloading packages. Please see progress in the output window below.');
+        }
+        // install.complete does not exist, check dotnetCLI to see if we can complete.
+        else if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {
+            let success: boolean = await completeDebuggerInstall(logger, channel);
+
+            if (!success)
+            {
+                channel.show();
+                throw new Error('Failed to complete the installation of the C# extension. Please see the error in the output window below.');
+            }
+        }
+    }
+
+    // debugger has finished install, kick off our debugger process
+    return {
+        command: path.join(common.getExtensionPath(), ".debugger", "vsdbg-ui" + CoreClrDebugUtil.getPlatformExeExtension())
+    };
 }

@@ -18,7 +18,7 @@ export namespace DebuggerEventsProtocol {
         export const ProcessLaunched = "processLaunched";
         // Debug session is ending
         export const DebuggingStopped = "debuggingStopped";
-    };
+    }
 
     export interface DebuggerEvent {
         // Contains one of the 'DebuggerEventsProtocol.EventType' values

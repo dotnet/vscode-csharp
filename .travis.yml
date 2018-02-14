@@ -1,7 +1,10 @@
 language: node_js
 
 node_js:
-- "6"
+- "8"
+
+env:
+- CODE_VERSION=1.18.0
 
 before_install:
   - if [ $TRAVIS_OS_NAME == "linux" ]; then
@@ -29,6 +32,12 @@ install:
 
 script:
   - npm test --silent
+
+after_failure:
+  - ./.travis/printLogs.sh
+
+after_success:
+  - ./.travis/printLogs.sh
 
 deploy:
   provider: releases

@@ -12,3 +12,7 @@ install.*
 
 obj/
 bin/
+test/**/.vscode
+.logs/
+
+\.DS_Store

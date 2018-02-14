@@ -3,13 +3,14 @@
  * See LICENSE.md in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import * as os from 'os';
-import * as vscode from 'vscode';
-import { getExtensionPath } from '../common';
-import * as fs from 'fs-extra';
-import * as path from 'path';
 import * as child_process from 'child_process';
+import * as fs from 'fs-extra';
+import * as os from 'os';
+import * as path from 'path';
+import * as vscode from 'vscode';
+
 import { PlatformInformation } from '../platform';
+import { getExtensionPath } from '../common';
 
 export interface AttachItem extends vscode.QuickPickItem {
     id: string;
@@ -49,8 +50,8 @@ export class RemoteAttachPicker {
     public static get commColumnTitle() { return Array(PsOutputParser.secondColumnCharacters).join("a"); }
     public static get linuxPsCommand() { return `ps -axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args=`; }
     public static get osxPsCommand() { return `ps -axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args= -c`; }
-    public static get debuggerCommand() { return "${debuggerCommand}"; };
-    public static get scriptShellCmd() { return "sh -s"; };
+    public static get debuggerCommand() { return "${debuggerCommand}"; }
+    public static get scriptShellCmd() { return "sh -s"; }
 
 
     private static _channel: vscode.OutputChannel = null;
