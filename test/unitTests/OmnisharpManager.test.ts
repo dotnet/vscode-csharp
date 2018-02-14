@@ -76,12 +76,12 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
     });
 
     test('Downloads package and returns launch path based on platform - Using mono on Linux ', async () => {
-        let launchPath = await manager.InstallVersionAndReturnLaunchPath("1.2.3", true, serverUrl, installPath, extensionPath, new PlatformInformation("linux", "x64"));
+        let launchPath = await manager.GetOmnisharpPath("1.2.3", true, serverUrl, installPath, extensionPath, new PlatformInformation("linux", "x64"));
         launchPath.should.equal(path.resolve(extensionPath, '.omnisharp/experimental/1.2.3/omnisharp/OmniSharp.exe'));
     });
 
     test('Downloads package and returns launch path based on install path ', async () => {
-        let launchPath = await manager.InstallVersionAndReturnLaunchPath("1.2.3", true, serverUrl, "installHere", extensionPath, platformInfo);
+        let launchPath = await manager.GetOmnisharpPath("1.2.3", true, serverUrl, "installHere", extensionPath, platformInfo);
         launchPath.should.equal(path.resolve(extensionPath, 'installHere/1.2.3/OmniSharp.exe'));
     });
 

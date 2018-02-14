@@ -37,9 +37,9 @@ export class OmnisharpManager {
     }
 
     public async InstallVersionAndReturnLaunchPath(version: string, useMono: boolean, serverUrl: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
-        if (semver.valid(version)) {
+        if (semver.valid(version) || version == "latest") {
             let downloader = new OmnisharpDownloader(this.channel, this.logger, this.packageJSON, this.reporter);
-            await downloader.DownloadAndInstallOmnisharp(version, serverUrl, installPath);
+            await downloader.DownloadAndInstallOmnisharp(version, serverUrl, installPath, platformInfo);
 
             return await GetLaunchPathForVersion(platformInfo, version, installPath, extensionPath, useMono);
         }

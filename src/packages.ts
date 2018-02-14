@@ -112,6 +112,21 @@ export class PackageManager {
     public SetVersionPackagesForDownload(packages: Package[]) {
         this.allPackages = packages;
     }
+
+    public async GetLatestVersionFromFile(logger: Logger, status: Status, proxy: string, strictSSL: boolean, filePackage: Package): Promise<string> {
+        try {
+            let latestVersion: string;
+            await maybeDownloadPackage(filePackage, logger, status, proxy, strictSSL);
+            if (filePackage.tmpFile) {
+                latestVersion = fs.readFileSync(filePackage.tmpFile.name, 'utf8');
+            }
+
+            return latestVersion;
+        }
+        catch (error) {
+            throw new Error(`Could not download the latest version info file due to ${error.toString()}`);
+        }
+    }
 }
 
 function getBaseInstallPath(pkg: Package): string {

@@ -8,8 +8,8 @@ import { PackageManager, Package } from '../packages';
 import { PlatformInformation } from '../platform';
 import { Logger } from '../logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
-import { GetPackagesFromVersion } from './OmnisharpPackageCreator';
-import { GetDependenciesAndDownloadPackages, SetStatus, GetAndLogPlatformInformation, ReportInstallationError, SendInstallationTelemetry } from '../OmnisharpDownload.Helper';
+import { GetPackagesFromVersion, GetVersionFilePackage } from './OmnisharpPackageCreator';
+import { SetStatus, LogPlatformInformation, ReportInstallationError, SendInstallationTelemetry, GetNetworkDependencies } from '../OmnisharpDownload.Helper';
 
 export class OmnisharpDownloader {
     public constructor(
@@ -19,12 +19,12 @@ export class OmnisharpDownloader {
         private reporter?: TelemetryReporter) {
     }
 
-    public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string) {
+    public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string, platformInfo: PlatformInformation) {
         if (!version) {
             throw new Error('Invalid version');
         }
 
-        this.logger.append('Installing Omnisharp Packages...');
+        this.logger.appendLine('Installing Omnisharp Packages...');
         this.logger.appendLine();
         this.channel.show();
 
@@ -32,26 +32,41 @@ export class OmnisharpDownloader {
         let status = statusObject.Status;
         let statusItem = statusObject.StatusItem;
 
+        let networkObject = GetNetworkDependencies();
+        let proxy = networkObject.Proxy;
+        let strictSSL = networkObject.StrictSSL;
+
         let telemetryProps: any = {};
         let installationStage = '';
-        let platformInfo: PlatformInformation;
 
         if (this.reporter) {
             this.reporter.sendTelemetryEvent("AcquisitionStart");
         }
 
         try {
-            installationStage = 'getPlatformInfo';
-            platformInfo = await GetAndLogPlatformInformation(this.logger);
+            LogPlatformInformation(this.logger, platformInfo);
+            let packageManager = new PackageManager(platformInfo, this.packageJSON);
+
+            if (version == "latest") {
+                installationStage = 'getLatestVersionInfoFile';
+
+                this.logger.appendLine('Getting latest build information...');
+                this.logger.appendLine();
+                
+
+                let filePackage = GetVersionFilePackage(serverUrl);
+                //Fetch the latest version information from the file
+                version = await packageManager.GetLatestVersionFromFile(this.logger, status, proxy, strictSSL, filePackage);
+            }
 
             installationStage = 'getPackageInfo';
             let packages: Package[] = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
 
             installationStage = 'downloadPackages';
-            let packageManager = new PackageManager(platformInfo, this.packageJSON);
+            
             // Specify the packages that the package manager needs to download
             packageManager.SetVersionPackagesForDownload(packages);
-            await GetDependenciesAndDownloadPackages(packages,status, platformInfo, packageManager, this.logger);
+            await packageManager.DownloadPackages(this.logger, status, proxy, strictSSL);
 
             this.logger.appendLine();
 
@@ -60,7 +75,6 @@ export class OmnisharpDownloader {
 
             installationStage = 'completeSuccess';
         }
-
         catch (error) {
             ReportInstallationError(this.logger, error, telemetryProps, installationStage);
             throw error;// throw the error up to the server

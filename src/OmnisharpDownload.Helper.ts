@@ -8,11 +8,11 @@ import { PlatformInformation } from './platform';
 import { Logger } from './logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
 
-export async function GetDependenciesAndDownloadPackages(packages: Package[], status: Status, platformInfo: PlatformInformation, packageManager: PackageManager, logger: Logger) {
+export function GetNetworkDependencies() {
     const config = vscode.workspace.getConfiguration();
     const proxy = config.get<string>('http.proxy');
     const strictSSL = config.get('http.proxyStrictSSL', true);
-    await packageManager.DownloadPackages(logger, status, proxy, strictSSL);
+    return { Proxy: proxy, StrictSSL: strictSSL };
 }
 
 export function SetStatus() {
@@ -31,13 +31,9 @@ export function SetStatus() {
     return { StatusItem: statusItem, Status: status };
 }
 
-export async function GetAndLogPlatformInformation(logger: Logger): Promise<PlatformInformation> {
-    let platformInfo = await PlatformInformation.GetCurrent();
-
+export function LogPlatformInformation(logger: Logger, platformInfo: PlatformInformation) {
     logger.appendLine(`Platform: ${platformInfo.toString()}`);
     logger.appendLine();
-
-    return platformInfo;
 }
 
 export function ReportInstallationError(logger: Logger, error, telemetryProps: any, installationStage: string) {
