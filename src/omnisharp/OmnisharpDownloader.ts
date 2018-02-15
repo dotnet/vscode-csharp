@@ -86,7 +86,7 @@ export class OmnisharpDownloader {
         try {
             this.logger.appendLine('Getting latest build information...');
             this.logger.appendLine();
-
+            //The package manager needs a package format to download, hence we form a package for the latest version file
             let filePackage = GetVersionFilePackage(serverUrl, versionFilePathInServer);
             //Fetch the latest version information from the file
             return await this.packageManager.GetLatestVersionFromFile(this.logger, this.status, this.proxy, this.strictSSL, filePackage);

@@ -28,12 +28,13 @@ export class OmnisharpManager {
                 return omnisharpPath;
             }
             else {
-                throw new Error('Invalid path specified');
+                throw new Error('The system could not find the specified path');
             }
         }
         else if (omnisharpPath == "latest") {
             return await this.LatestInstallAndReturnLaunchPath(downloader, useMono, serverUrl, versionFilePathInServer, installPath, extensionPath, platformInfo);
         }
+
         //If the path is neither a valid path on disk not the string "latest", treat it as a version 
         return await this.InstallVersionAndReturnLaunchPath(downloader, omnisharpPath, useMono, serverUrl, installPath, extensionPath, platformInfo);
     }

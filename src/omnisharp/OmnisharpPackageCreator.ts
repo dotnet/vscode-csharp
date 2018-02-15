@@ -58,10 +58,8 @@ function GetPackageFromArchitecture(inputPackage: Package, serverUrl: string, ve
 }
 
 export function GetVersionFilePackage(serverUrl: string, pathInServer: string): Package {
-    let filePackage = <Package>{
+    return <Package>{
         "description": "Latest version information file",
         "url": `${serverUrl}/${pathInServer}`
     };
-
-    return filePackage;
 }
