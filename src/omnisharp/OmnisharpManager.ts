@@ -41,8 +41,7 @@ export class OmnisharpManager {
 
     public async LatestInstallAndReturnLaunchPath(downloader: OmnisharpDownloader, useMono: boolean, serverUrl: string, versionFilePathInServer: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
         let version = await downloader.GetLatestVersion(serverUrl, versionFilePathInServer);
-        await downloader.DownloadAndInstallOmnisharp(version, serverUrl, installPath);
-        return GetLaunchPathForVersion(platformInfo, version, installPath, extensionPath, useMono);
+        return await this.InstallVersionAndReturnLaunchPath(downloader, version, useMono, serverUrl, installPath, extensionPath, platformInfo);
     }
 
     public async InstallVersionAndReturnLaunchPath(downloader: OmnisharpDownloader, version: string, useMono: boolean, serverUrl: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
