@@ -249,7 +249,7 @@ function launch(cwd: string, args: string[]): Promise<LaunchResult> {
             //   1. Launch using Mono
             //   2. Launch process directly (e.g. a 'run' script)
             return options.useMono
-                ? launchNixMono(options.path, cwd, args)
+                ? launchNixMono(options.path, cwd, options.waitForDebugger, args)
                 : launchNix(options.path, cwd, args);
         }
 
@@ -264,7 +264,7 @@ function launch(cwd: string, args: string[]): Promise<LaunchResult> {
         // locally installed Mono runtime.
         return canLaunchMono()
             .then(() => {
-                return launchNixMono(path.join(basePath, 'omnisharp', 'OmniSharp.exe'), cwd, args);
+                return launchNixMono(path.join(basePath, 'omnisharp', 'OmniSharp.exe'), cwd, options.useMono, args);
             })
             .catch(_ => {
                 return launchNix(path.join(basePath, 'run'), cwd, args);
@@ -324,12 +324,18 @@ function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResul
     };
 }
 
-function launchNixMono(launchPath: string, cwd: string, args: string[]): Promise<LaunchResult> {
+function launchNixMono(launchPath: string, cwd: string, useDebugger:boolean, args: string[]): Promise<LaunchResult> {
     return canLaunchMono()
         .then(() => {
             let argsCopy = args.slice(0); // create copy of details args
             argsCopy.unshift(launchPath);
-            argsCopy.unshift("--assembly-loader=strict");
+
+            if (useDebugger)
+            {
+                argsCopy.unshift("--assembly-loader=strict");
+                argsCopy.unshift("--debug");
+                argsCopy.unshift("--debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55555");
+            }
 
             let process = spawn('mono', argsCopy, {
                 detached: false,
