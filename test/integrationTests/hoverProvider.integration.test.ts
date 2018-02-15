@@ -17,11 +17,9 @@ const chai = require('chai');
 chai.use(require('chai-arrays')); 
 chai.use(require('chai-fs')); 
 
-suite(`Tasks generation: ${testAssetWorkspace.description}`, function() {
+suite(`Hover Provider: ${testAssetWorkspace.description}`, function() {
     suiteSetup(async function() { 
         should();
-
-        await testAssetWorkspace.cleanupWorkspace();
 
         let csharpExtension = vscode.extensions.getExtension("ms-vscode.csharp"); 
         if (!csharpExtension.isActive) { 
@@ -30,11 +28,6 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function() {
 
         await csharpExtension.exports.initializationFinished;
         await omnisharp.restart();
-
-        await vscode.commands.executeCommand("dotnet.generateAssets");
-
-        await poll(async () => await fs.exists(testAssetWorkspace.launchJsonPath), 10000, 100);
-        
     }); 
 
    test("Hover returns structured documentation with proper newlines", async function ()  {                
@@ -48,7 +41,7 @@ namespace Test
        ///<summary>Checks if object is tagged with the tag.</summary>
        /// <param name="gameObject">The game object.</param>
        /// <param name="tagName">Name of the tag.</param>
-       /// <returns>Returns <c> true</c> if object is tagged with tag.</returns>
+       /// <returns>Returns <c>true</c> if object is tagged with tag.</returns>
        
        public static bool Compare(int gameObject,string tagName)
        {
@@ -72,7 +65,7 @@ Parameters:
 \t\tgameObject: The game object.
 \t\ttagName: Name of the tag.
 
-Returns  true if object is tagged with tag.`;
+Returns true if object is tagged with tag.`;
        expect(c[0].contents[0].value).to.equal(answer);
     });
    
