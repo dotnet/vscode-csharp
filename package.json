@@ -369,6 +369,16 @@
           "default": null,
           "description": "Specifies how to acquire the OmniSharp to use. Can be one of \"latest\", a specific version number, or the absolute path to a local OmniSharp folder."
         },
+        "omnisharp.useLatestExperimentalBuild": {
+          "type": "boolean",
+          "default": false,
+          "description": "Specifies whether the latest experimental omnisharp build must be used"
+        },
+        "omnisharp.alternateVersion": {
+          "type": "string",
+          "default": null,
+          "description": "Specifies which alternate omnisharp version must be used"
+        },
         "omnisharp.useMono": {
           "type": "boolean",
           "default": false,

@@ -12,6 +12,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as util from '../common';
 import { Options } from './options';
+import { GetLatestInstalledExperimentalVersion } from './latestVersionSelector';
 
 export enum LaunchTargetKind {
     Solution,
@@ -61,7 +62,7 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
     //
     // TODO:
     //   * It should be possible to choose a .csproj as a launch target
-    //   * It should be possible to choose a .sln file even when no .csproj files are found 
+    //   * It should be possible to choose a .sln file even when no .csproj files are found
     //     within the root.
 
     if (!Array.isArray(resources)) {
@@ -251,8 +252,18 @@ function launch(cwd: string, args: string[], launchPath: string): Promise<Launch
                 : launchNix(launchPath, cwd, args);
         }
 
-        // If the user has not provided a path, we'll use the locally-installed OmniSharp
-        const basePath = path.resolve(util.getExtensionPath(), '.omnisharp');
+        let extensionPath = util.getExtensionPath();
+        let basePath: string;
+        if (options.alternateVersion) {
+            basePath = path.resolve(extensionPath,`.omnisharp/experimental/${options.alternateVersion}`);
+        }
+        else if (options.useLatestExperimentalBuild) {
+            basePath = getLatestExperimentalBuildPath(extensionPath);
+        }
+        else {
+            // If the user has neither provided a path not set any options for using other versions, we'll use the locally-installed OmniSharp
+            basePath = path.resolve(extensionPath, '.omnisharp');
+        }
 
         if (platformInfo.isWindows()) {
             return launchWindows(path.join(basePath, 'OmniSharp.exe'), cwd, args);
@@ -268,6 +279,18 @@ function launch(cwd: string, args: string[], launchPath: string): Promise<Launch
                 return launchNix(path.join(basePath, 'run'), cwd, args);
             });
     });
+}
+
+function getLatestExperimentalBuildPath(extensionPath: string) {
+    let dirPath = path.resolve(extensionPath, `.omnisharp/experimental`);
+    let latestVersion = GetLatestInstalledExperimentalVersion(dirPath);
+    if (latestVersion && latestVersion.length>0) {
+        return path.resolve(extensionPath, `.omnisharp/experimental/${latestVersion}`);
+    }
+    else {
+        //If there is no latest version present in experimental folder, use the release version
+        return path.resolve(extensionPath, `.omnisharp`);
+    }
 }
 
 function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csharpConfig: vscode.WorkspaceConfiguration,
