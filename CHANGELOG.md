@@ -1,9 +1,13 @@
-## Known Issues in 1.13.0
+## Known Issues in 1.14.0
 
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.14.0 _(Not Yet Released)_
+## 1.14.0 (February 14, 2017)
+
+#### C# Language Support
+
+* Support for C# 7.2 (PR: [omnisharp-roslyn#1055](https://github.com/OmniSharp/omnisharp-roslyn/pull/1055)) _(Contributed by [@filipw](https://github.com/filipw))_
 
 #### Debugger
 
@@ -15,10 +19,27 @@
 #### Editor
 
 * Fix to allow signature help return results for attribute constructors. ([#1814](https://github.com/OmniSharp/omnisharp-vscode/issues/1814), PR: [omnisharp-roslyn#1007](https://github.com/OmniSharp/omnisharp-roslyn/pull/1007))
+* Fix to return correct SymbolKinds from WorkspaceSymbolprovider ([#1907](https://github.com/OmniSharp/omnisharp-vscode/issues/1907), PR: [#1911](https://github.com/OmniSharp/omnisharp-vscode/pull/1911)) _(Contributed by [@craig006](https://github.com/craig006))_
+* Improved newline formatting in hover info ([#1057](https://github.com/OmniSharp/omnisharp-vscode/issues/1057), PR: [#1918](https://github.com/OmniSharp/omnisharp-vscode/pull/1918))
+* Disabled Go To Definition on property acessor keywords ([#1949](https://github.com/OmniSharp/omnisharp-vscode/issues/1949), PR: [omnisharp-roslyn#1086](https://github.com/OmniSharp/omnisharp-roslyn/pull/1086))
+* Bug fixes to IntelliSense (completion, signature help): (([#1664](https://github.com/OmniSharp/omnisharp-vscode/issues/1664), [1440](https://github.com/OmniSharp/omnisharp-vscode/issues/1440), PR: [omnisharp-roslyn#1030](https://github.com/OmniSharp/omnisharp-roslyn/pull/1030)); ([#146](https://github.com/OmniSharp/omnisharp-vscode/issues/146) , PR: [#1776](https://github.com/OmniSharp/omnisharp-vscode/pull/1776)))
+* Improved "Format Code" behavior: ([#214](https://github.com/OmniSharp/omnisharp-vscode/issues/214), PR: [omnisharp-roslyn#1043](https://github.com/OmniSharp/omnisharp-roslyn/pull/1043))
+* Improved code action ordering: ([omnisharp-roslyn#758](https://github.com/OmniSharp/omnisharp-roslyn/issues/758), PR: [omnisharp-roslyn#1078](https://github.com/OmniSharp/omnisharp-roslyn/pull/1078))
+* Fixed duplicate errors in error list ([#1830](https://github.com/OmniSharp/omnisharp-vscode/issues/1830), PR:[#1107](https://github.com/OmniSharp/omnisharp-roslyn/pull/1107))
 
 #### Project System
 
 * Addressed problems with projects not being refreshed by OmniSharp after a package restore. ([#1583](https://github.com/OmniSharp/omnisharp-vscode/issues/1583), [#1661](https://github.com/OmniSharp/omnisharp-vscode/issues/1661), [#1785](https://github.com/OmniSharp/omnisharp-vscode/issues/1785), PR: [omnisharp-roslyn#1003](https://github.com/OmniSharp/omnisharp-roslyn/pull/1003))
+* Added option to disable warning about project.json deprecation ([1920](https://github.com/OmniSharp/omnisharp-vscode/issues/1920), PR: [#1926](https://github.com/OmniSharp/omnisharp-vscode/pull/1926))
+
+#### Task Generation
+
+* Updated task generator to match latest schema from VS Code (PR: [#1932](https://github.com/OmniSharp/omnisharp-vscode/pull/1923)) _(Contributed by [@natec425](https://github.com/natec425))_
+* Fixed a typo in tasks.json (PR: [1945](https://github.com/OmniSharp/omnisharp-vscode/pull/1945)) _(Contributed by [@SebastianPfliegel](SebastianPfliegel))_
+
+#### Misc
+
+* Fixed offline packaging ([1912](https://github.com/OmniSharp/omnisharp-vscode/issues/1912), [1930](https://github.com/OmniSharp/omnisharp-vscode/issues/1930), PR: [#1931](https://github.com/OmniSharp/omnisharp-vscode/pull/1931))
 
 ## 1.13.1 (November 13, 2017)
 
