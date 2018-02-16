@@ -12,10 +12,12 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { RequestQueueCollection } from '../../src/omnisharp/requestQueue';
 import { OmniSharpServer } from '../../src/omnisharp/server';
 import { omnisharp } from '../../src/omnisharp/extension';
+import { requestWorkspaceInformation } from '../../src/omnisharp/utils';
+import { file } from 'tmp';
 
-const chai = require('chai'); 
-chai.use(require('chai-arrays')); 
-chai.use(require('chai-fs')); 
+const chai = require('chai');
+chai.use(require('chai-arrays'));
+chai.use(require('chai-fs'));
 
 suite(`Hover Provider: ${testAssetWorkspace.description}`, function() {
     suiteSetup(async function() { 
@@ -27,13 +29,12 @@ suite(`Hover Provider: ${testAssetWorkspace.description}`, function() {
         }
 
         await csharpExtension.exports.initializationFinished;
-        await omnisharp.restart();
     }); 
 
-   test("Hover returns structured documentation with proper newlines", async function ()  {                
+    test("Hover returns structured documentation with proper newlines", async function () {
 
-       let program = 
-`using System;
+        let program =
+            `using System;
 namespace Test
 {
    class testissue
@@ -49,16 +50,24 @@ namespace Test
        }
    }
 }`;
-       let fileUri = await testAssetWorkspace.projects[0].addFileWithContents("test1.cs", program); 
+        let fileUri = await testAssetWorkspace.projects[0].addFileWithContents("test1.cs", program);
+        console.log(fileUri);
+        await vscode.commands.executeCommand("vscode.open", fileUri);
 
-       await omnisharp.waitForEmptyEventQueue();
+        // Wait for the file to appear in the O# Workspace
+        while (true) {
+            let info = await requestWorkspaceInformation(omnisharp);
+            console.log(info.MsBuild.Projects[0].SourceFiles);
+            if (info.MsBuild.Projects[0].SourceFiles.find(s => s.endsWith("test1.cs"))) {
+                break;
+            }
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
 
-       await vscode.commands.executeCommand("vscode.open", fileUri);
+        let c = await vscode.commands.executeCommand("vscode.executeHoverProvider", fileUri, new vscode.Position(10, 29));
 
-       let c = await vscode.commands.executeCommand("vscode.executeHoverProvider", fileUri,new vscode.Position(10,29));
-
-       let answer:string = 
-`Checks if object is tagged with the tag.
+        let answer: string =
+            `Checks if object is tagged with the tag.
 
 Parameters:
 
@@ -68,7 +77,7 @@ Parameters:
 Returns true if object is tagged with tag.`;
        expect(c[0].contents[0].value).to.equal(answer);
     });
-   
+
     teardown(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
