@@ -48,15 +48,11 @@ namespace Test
        }
    }
 }`;
-        let fileUri = await testAssetWorkspace.projects[0].addFileWithContents("test1.cs", program);
-
+        let fileUri = await testAssetWorkspace.projects[0].addFileWithContents("hover.cs", program);
         await omnisharp.restart();
         await omnisharp.waitForEmptyEventQueue();
-
-        await vscode.workspace.openTextDocument(fileUri);
-
+        await vscode.commands.executeCommand("vscode.open", fileUri);
         let c = await vscode.commands.executeCommand("vscode.executeHoverProvider", fileUri, new vscode.Position(10, 29));
-
         let answer: string =
             `Checks if object is tagged with the tag.
 
@@ -66,6 +62,7 @@ Parameters:
 \t\ttagName: Name of the tag.
 
 Returns true if object is tagged with tag.`;
+
         expect(c[0].contents[0].value).to.equal(answer);
     });
 
