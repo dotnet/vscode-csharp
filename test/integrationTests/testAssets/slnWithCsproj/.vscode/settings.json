@@ -1,0 +1,3 @@
+{
+    "omnisharp.defaultLaunchTarget": "slnWithCsproj.sln"
+}
