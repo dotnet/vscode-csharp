@@ -10,9 +10,9 @@ install.*
 
 *.vsix
 
-obj/
-bin/
-test/**/.vscode
+**/obj/
+**/bin/
+test/**/singleCsproj/.vscode
 .logs/
 
 \.DS_Store

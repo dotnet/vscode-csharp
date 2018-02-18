@@ -7,12 +7,43 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
+                "${workspaceFolder}/test/integrationTests/testAssets/singleCsproj",
                 "--extensionDevelopmentPath=${workspaceRoot}"
             ],
             "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceRoot}/out/src/**/*.js"
+            ]
+        },
+        {
+            "name": "Launch Extension with singleCsproj",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
+                "--extensionDevelopmentPath=${workspaceRoot}"
+            ],
+            "stopOnEntry": false,
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/out/test/**/*.js"
+            ]
+        },
+        {
+            "name": "Launch Extension with slnWithCsproj",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
+                "--extensionDevelopmentPath=${workspaceRoot}"
+            ],
+            "stopOnEntry": false,
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/out/test/**/*.js"
             ]
         },
         {
@@ -23,38 +54,6 @@
             "args": [
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/unitTests"
-            ],
-            "stopOnEntry": false,
-            "sourceMaps": true,
-            "outFiles": [
-                "${workspaceRoot}/out/test/**/*.js"
-            ]
-        },
-        {
-            "name": "Launch singleCsproj Workspace Tests",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": [
-                "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
-                "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
-            ],
-            "stopOnEntry": false,
-            "sourceMaps": true,
-            "outFiles": [
-                "${workspaceRoot}/out/test/**/*.js"
-            ]
-        },
-        {
-            "name": "Launch slnWithCsproj Workspace Tests",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": [
-                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
-                "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "stopOnEntry": false,
             "sourceMaps": true,
