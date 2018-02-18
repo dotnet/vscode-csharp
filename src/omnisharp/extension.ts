@@ -33,6 +33,8 @@ import forwardChanges from '../features/changeForwarding';
 import registerCommands from '../features/commands';
 import reportStatus from '../features/status';
 
+export let omnisharp: OmniSharpServer;
+
 export function activate(context: vscode.ExtensionContext, reporter: TelemetryReporter, channel: vscode.OutputChannel) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
@@ -42,6 +44,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
     const options = Options.Read();
 
     const server = new OmniSharpServer(reporter);
+    omnisharp = server;
     const advisor = new Advisor(server); // create before server is started
     const disposables: vscode.Disposable[] = [];
     const localDisposables: vscode.Disposable[] = [];
@@ -83,7 +86,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         vscode.Disposable.from(...localDisposables).dispose();
     }));
 
-    disposables.push(registerCommands(server, reporter));
+    disposables.push(registerCommands(server, reporter, channel));
     disposables.push(reportStatus(server));
 
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {

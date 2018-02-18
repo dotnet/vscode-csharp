@@ -16,10 +16,11 @@ import * as vscode from 'vscode';
 import { DotNetAttachItemsProviderFactory, AttachPicker, RemoteAttachPicker } from './processPicker';
 import { generateAssets } from '../assets';
 import TelemetryReporter from 'vscode-extension-telemetry';
+import { getAdapterExecutionCommand } from '../coreclr-debug/activate';
 
 let channel = vscode.window.createOutputChannel('.NET');
 
-export default function registerCommands(server: OmniSharpServer, reporter: TelemetryReporter) {
+export default function registerCommands(server: OmniSharpServer, reporter: TelemetryReporter, channel: vscode.OutputChannel) {
     let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server));
     let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', () => pickProjectAndStart(server));
     let d3 = vscode.commands.registerCommand('o.showOutput', () => server.getChannel().show(vscode.ViewColumn.Three));
@@ -33,11 +34,18 @@ export default function registerCommands(server: OmniSharpServer, reporter: Tele
     let attachItemsProvider = DotNetAttachItemsProviderFactory.Get();
     let attacher = new AttachPicker(attachItemsProvider);
     let d6 = vscode.commands.registerCommand('csharp.listProcess', () => attacher.ShowAttachEntries());
+
     // Register command for generating tasks.json and launch.json assets.
     let d7 = vscode.commands.registerCommand('dotnet.generateAssets', () => generateAssets(server));
+
+    // Register command for remote process picker for attach
     let d8 = vscode.commands.registerCommand('csharp.listRemoteProcess', (args) => RemoteAttachPicker.ShowAttachEntries(args));
 
-    return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8);
+    // Register command for adapter executable command.
+    let d9 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', (args) => getAdapterExecutionCommand(channel));
+    let d10 = vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', (args) => getAdapterExecutionCommand(channel));
+
+    return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10);
 }
 
 function restartOmniSharp(server: OmniSharpServer) {
@@ -105,7 +113,7 @@ function projectsToCommands(projects: protocol.ProjectDescriptor[]): Promise<Com
     });
 }
 
-export function dotnetRestoreAllProjects(server: OmniSharpServer) {
+export function dotnetRestoreAllProjects(server: OmniSharpServer) : Promise<void> {
 
     if (!server.isRunning()) {
         return Promise.reject('OmniSharp server is not running.');
