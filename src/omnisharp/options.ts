@@ -19,7 +19,7 @@ export class Options {
         public showReferencesCodeLens?: boolean,
         public showTestsCodeLens?: boolean,
         public disableCodeActions?: boolean,
-        public defaultLaunchTarget?: string) { }
+        public defaultLaunchSolution?: string) { }
 
 
     public static Read(): Options {
@@ -52,7 +52,7 @@ export class Options {
 
         const projectLoadTimeout = omnisharpConfig.get<number>('projectLoadTimeout', 60);
         const maxProjectResults = omnisharpConfig.get<number>('maxProjectResults', 250);
-        const defaultLaunchTarget = omnisharpConfig.get<string>('defaultLaunchTarget', undefined);
+        const defaultLaunchSolution = omnisharpConfig.get<string>('defaultLaunchSolution', undefined);
         const useEditorFormattingSettings = omnisharpConfig.get<boolean>('useEditorFormattingSettings', true);
 
         const useFormatting = csharpConfig.get<boolean>('format.enable', true);
@@ -74,6 +74,6 @@ export class Options {
             showReferencesCodeLens,
             showTestsCodeLens,
             disableCodeActions,
-            defaultLaunchTarget);
+            defaultLaunchSolution);
     }
 }

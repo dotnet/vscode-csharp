@@ -188,7 +188,7 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
     const options = Options.Read();
 
     for (let target of targets) {
-        if (path.basename(target.target) === options.defaultLaunchTarget) {
+        if (path.basename(target.target) === options.defaultLaunchSolution) {
             target.isDefault = true;
         }
     }

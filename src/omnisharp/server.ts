@@ -99,11 +99,11 @@ export class OmniSharpServer {
         return this._state === ServerState.Started;
     }
 
-    public async waitForEmptyEventQueue() : Promise<void> {
+    public async waitForEmptyEventQueue(): Promise<void> {
         while (!this._requestQueue.isEmpty()) {
             let p = new Promise((resolve) => setTimeout(resolve, 100));
             await p;
-        }     
+        }
     }
 
     private _getState(): ServerState {
@@ -381,13 +381,13 @@ export class OmniSharpServer {
                 });
             }
 
-            const defaultLaunchTarget = launchTargets.filter((a) => (a.isDefault === true));
+            const defaultLaunchSolution = launchTargets.filter((a) => (a.isDefault === true));
             // If there's more than one target, launch the server with the launch target that
             // matches the default solution (if it's configured).
             // The user can still manually switch to another solution from  the 'Omnisharp: Select Project command'
-            if (launchTargets.length > 1 && defaultLaunchTarget.length > 0) {
+            if (launchTargets.length > 1 && defaultLaunchSolution.length > 0) {
                 // start server with default solution
-                return this.restart(defaultLaunchTarget[0]);
+                return this.restart(defaultLaunchSolution[0]);
 
             }
             else {
