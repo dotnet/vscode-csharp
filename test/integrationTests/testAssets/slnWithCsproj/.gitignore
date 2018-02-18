@@ -1,2 +1,2 @@
-test/obj/
-test/bin/
+**/obj/
+**/bin/
