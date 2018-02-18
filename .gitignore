@@ -10,8 +10,8 @@ install.*
 
 *.vsix
 
-**/obj/
-**/bin/
+obj/
+bin/
 test/**/singleCsproj/.vscode
 .logs/
 
