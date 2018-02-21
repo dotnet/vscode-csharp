@@ -1,7 +1,7 @@
 using System;
 namespace Test
 {
-    class testissue
+    class sigHelp
     {
         ///<summary>DoWork is some method.</summary>
         /// <param name="Int1">Used to indicate status.</param>

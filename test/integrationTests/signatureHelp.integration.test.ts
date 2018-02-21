@@ -43,7 +43,7 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
 
     test("Returns label when method does not have documentation", async function () {
         let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(19, 23));
-        let answer = `void testissue.noDocMethod()`;
+        let answer = `void sigHelp.noDocMethod()`;
         expect(c.signatures[0].label).to.equal(answer);
     });
 
@@ -55,7 +55,7 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
 
     test("Returns label for the method", async function () {
         let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(18, 18));
-        let answer = `void testissue.DoWork(int Int1, float Float1)`;
+        let answer = `void sigHelp.DoWork(int Int1, float Float1)`;
         expect(c.signatures[0].label).to.equal(answer);
     });
 
