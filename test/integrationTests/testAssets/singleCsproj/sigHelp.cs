@@ -1,24 +1,23 @@
 using System;
 namespace Test
 {
-   class testissue
-   {
-       ///<summary>Checks if object is tagged with the tag.</summary>
-       /// <param name="gameObject">The game object.</param>
-       /// <param name="tagName">Name of the tag.</param>
-       /// <returns>Returns <c>true</c> if object is tagged with tag.</returns>
-       public static void Compare(int gameObject,string tagName)
-       {
-       }
+    class testissue
+    {
+        ///<summary>DoWork is some method.</summary>
+        /// <param name="Int1">Used to indicate status.</param>
+        /// <param name="Float1">Used to specify context.</param>
+        public static void DoWork(int Int1, float Float1)
+        {
+        }
 
-       public static void noDocMethod()
-       {
-       }
+        public static void noDocMethod()
+        {
+        }
 
-       public static void main()
-       {
-           Compare(4, "four");
-           noDocMethod();
-       }
-   }
+        public static void main()
+        {
+            DoWork(4, 4.0f);
+            noDocMethod();
+        }
+    }
 }

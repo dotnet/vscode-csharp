@@ -37,53 +37,53 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
 
     
     test("Returns response with documentation as undefined when method does not have documentation", async function () {
-        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(20, 23));
+        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(19, 23));
         expect(c.signatures[0].documentation).to.be.undefined;
     });
 
     test("Returns label when method does not have documentation", async function () {
-        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(20, 23));
+        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(19, 23));
         let answer = `void testissue.noDocMethod()`;
         expect(c.signatures[0].label).to.equal(answer);
     });
 
     test("Returns summary as documentation for the method", async function () {
-        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(19, 19));
-        let answer = `Checks if object is tagged with the tag.`;
+        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(18, 18));
+        let answer = `DoWork is some method.`;
         expect(c.signatures[0].documentation).to.equal(answer);
     });
 
     test("Returns label for the method", async function () {
-        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(19, 19));
-        let answer = `void testissue.Compare(int gameObject, string tagName)`;
+        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(18, 18));
+        let answer = `void testissue.DoWork(int Int1, float Float1)`;
         expect(c.signatures[0].label).to.equal(answer);
     });
 
     test("Returns label for the parameters", async function () {
-        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(19, 19));
-        let param1 = `int gameObject`;
-        let param2 = `string tagName`;
+        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(18, 18));
+        let param1 = `int Int1`;
+        let param2 = `float Float1`;
         expect(c.signatures[0].parameters[0].label).to.equal(param1);
         expect(c.signatures[0].parameters[1].label).to.equal(param2);
     });
 
     test("Returns documentation for the parameters", async function () {
-        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(19, 19));
-        let param1 = `**gameObject**: The game object.`;
-        let param2 = `**tagName**: Name of the tag.`;
+        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(18, 18));
+        let param1 = `**Int1**: Used to indicate status.`;
+        let param2 = `**Float1**: Used to specify context.`;
         expect((<vscode.MarkdownString> c.signatures[0].parameters[0].documentation).value).to.equal(param1);
         expect((<vscode.MarkdownString> c.signatures[0].parameters[1].documentation).value).to.equal(param2);
     });
 
     test("Signature Help identifies active parameter if there is no comma", async function () {
-        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(19, 19));
-        let answer = `int gameObject`;
+        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(18, 18));
+        let answer = `int Int1`;
         expect(c.signatures[0].parameters[c.activeParameter].label).to.equal(answer);
     });
 
     test("Signature Help identifies active parameter based on comma", async function () {
-        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(19, 21));
-        let answer = `string tagName`;
+        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(18, 20));
+        let answer = `float Float1`;
         expect(c.signatures[0].parameters[c.activeParameter].label).to.equal(answer);
     });
 
