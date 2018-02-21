@@ -5,6 +5,7 @@
 
 import * as fs from 'async-file';
 import * as vscode from 'vscode';
+import * as path from 'path';
 
 import poll from './poll';
 import { should, expect } from 'chai';
@@ -13,52 +14,33 @@ import { RequestQueueCollection } from '../../src/omnisharp/requestQueue';
 import { OmniSharpServer } from '../../src/omnisharp/server';
 import { omnisharp } from '../../src/omnisharp/extension';
 
-const chai = require('chai'); 
-chai.use(require('chai-arrays')); 
-chai.use(require('chai-fs')); 
+const chai = require('chai');
+chai.use(require('chai-arrays'));
+chai.use(require('chai-fs'));
 
-suite(`Hover Provider: ${testAssetWorkspace.description}`, function() {
-    suiteSetup(async function() { 
+suite(`Hover Provider: ${testAssetWorkspace.description}`, function () {
+    suiteSetup(async function () {
         should();
 
-        let csharpExtension = vscode.extensions.getExtension("ms-vscode.csharp"); 
-        if (!csharpExtension.isActive) { 
-            await csharpExtension.activate(); 
+        let csharpExtension = vscode.extensions.getExtension("ms-vscode.csharp");
+        if (!csharpExtension.isActive) {
+            await csharpExtension.activate();
         }
 
         await csharpExtension.exports.initializationFinished;
-        await omnisharp.restart();
-    }); 
+    });
 
-   test("Hover returns structured documentation with proper newlines", async function ()  {                
+    test("Hover returns structured documentation with proper newlines", async function () {
+        let fileName = 'hover.cs';
+        let dir = path.dirname(testAssetWorkspace.projects[0].projectDirectoryPath);
+        let loc = path.join(dir, fileName);
+        let fileUri = vscode.Uri.file(loc);
+        await omnisharp.waitForEmptyEventQueue();
 
-       let program = 
-`using System;
-namespace Test
-{
-   class testissue
-   {
-       ///<summary>Checks if object is tagged with the tag.</summary>
-       /// <param name="gameObject">The game object.</param>
-       /// <param name="tagName">Name of the tag.</param>
-       /// <returns>Returns <c>true</c> if object is tagged with tag.</returns>
-       
-       public static bool Compare(int gameObject,string tagName)
-       {
-           return true;
-       }
-   }
-}`;
-       let fileUri = await testAssetWorkspace.projects[0].addFileWithContents("test1.cs", program); 
-
-       await omnisharp.waitForEmptyEventQueue();
-
-       await vscode.commands.executeCommand("vscode.open", fileUri);
-
-       let c = await vscode.commands.executeCommand("vscode.executeHoverProvider", fileUri,new vscode.Position(10,29));
-
-       let answer:string = 
-`Checks if object is tagged with the tag.
+        await vscode.commands.executeCommand("vscode.open", fileUri);
+        let c = await vscode.commands.executeCommand("vscode.executeHoverProvider", fileUri, new vscode.Position(10, 29));
+        let answer: string =
+            `Checks if object is tagged with the tag.
 
 Parameters:
 
@@ -66,9 +48,9 @@ Parameters:
 \t\ttagName: Name of the tag.
 
 Returns true if object is tagged with tag.`;
-       expect(c[0].contents[0].value).to.equal(answer);
+        expect(c[0].contents[0].value).to.equal(answer);
     });
-   
+
     teardown(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
