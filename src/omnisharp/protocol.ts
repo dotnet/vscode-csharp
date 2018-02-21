@@ -461,7 +461,9 @@ export namespace V2 {
         export const RunCodeAction = '/v2/runcodeaction';
         export const GetTestStartInfo = '/v2/getteststartinfo';
         export const RunTest = '/v2/runtest';
+        export const RunAllTestsInClass = "/v2/runtestsinclass";
         export const DebugTestGetStartInfo = '/v2/debugtest/getstartinfo';
+        export const DebugTestsInClassGetStartInfo = '/v2/debugtestsinclass/getstartinfo';
         export const DebugTestLaunch = '/v2/debugtest/launch';
         export const DebugTestStop = '/v2/debugtest/stop';
     }
@@ -545,6 +547,12 @@ export namespace V2 {
         TargetFrameworkVersion: string;
     }
 
+    export interface DebugTestClassGetStartInfoRequest extends Request {
+        MethodNames: string[];
+        TestFrameworkName: string;
+        TargetFrameworkVersion: string;
+    }
+
     export interface DebugTestGetStartInfoResponse {
         FileName: string;
         Arguments: string;
@@ -579,6 +587,12 @@ export namespace V2 {
 
     export interface RunTestRequest extends Request {
         MethodName: string;
+        TestFrameworkName: string;
+        TargetFrameworkVersion: string;
+    }
+
+    export interface RunTestsInClassRequest extends Request {
+        MethodNames: string[];
         TestFrameworkName: string;
         TargetFrameworkVersion: string;
     }
