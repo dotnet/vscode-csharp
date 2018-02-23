@@ -36,6 +36,14 @@ export default class TestManager extends AbstractProvider {
             'dotnet.test.debug',
             (testMethod, fileName, testFrameworkName) => this._debugDotnetTest(testMethod, fileName, testFrameworkName));
 
+        let d4 = vscode.commands.registerCommand(
+            'dotnet.classTests.run',
+            (methodsInClass, fileName, testFrameworkName) => this._runDotnetTestsInClass(methodsInClass, fileName, testFrameworkName));
+
+        let d5 = vscode.commands.registerCommand(
+            'dotnet.classTests.debug',
+            (methodsInClass, fileName, testFrameworkName) => this._debugDotnetTestsInClass(methodsInClass, fileName, testFrameworkName));
+
         this._telemetryIntervalId = setInterval(() =>
             this._reportTelemetry(), TelemetryReportingDelay);
 
@@ -48,7 +56,7 @@ export default class TestManager extends AbstractProvider {
             }
         });
 
-        this.addDisposables(d1, d2, d3);
+        this.addDisposables(d1, d2, d3, d4, d5);
     }
 
     private _getOutputChannel(): vscode.OutputChannel {
@@ -126,9 +134,11 @@ export default class TestManager extends AbstractProvider {
 
     private _reportResults(results: protocol.V2.DotNetTestResult[]): Promise<void> {
         const totalTests = results.length;
+        const output = this._getOutputChannel();
 
         let totalPassed = 0, totalFailed = 0, totalSkipped = 0;
         for (let result of results) {
+            output.appendLine(`${result.MethodName}: ${result.Outcome}`);
             switch (result.Outcome) {
                 case protocol.V2.TestOutcomes.Failed:
                     totalFailed += 1;
@@ -142,7 +152,6 @@ export default class TestManager extends AbstractProvider {
             }
         }
 
-        const output = this._getOutputChannel();
         output.appendLine('');
         output.appendLine(`Total tests: ${totalTests}. Passed: ${totalPassed}. Failed: ${totalFailed}. Skipped: ${totalSkipped}`);
         output.appendLine('');
@@ -150,7 +159,28 @@ export default class TestManager extends AbstractProvider {
         return Promise.resolve();
     }
 
-    private _runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string) {
+    private async _recordRunAndGetFrameworkVersion(fileName: string, testFrameworkName: string) {
+
+        await this._saveDirtyFiles();
+        this._recordRunRequest(testFrameworkName);
+        let projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
+
+        let targetFrameworkVersion: string;
+
+        if (projectInfo.DotNetProject) {
+            targetFrameworkVersion = undefined;
+        }
+        else if (projectInfo.MsBuildProject) {
+            targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;
+        }
+        else {
+            throw new Error('Expected project.json or .csproj project.');
+        }
+
+        return targetFrameworkVersion;
+    }
+
+    private async _runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string) {
         const output = this._getOutputChannel();
 
         output.show();
@@ -161,31 +191,46 @@ export default class TestManager extends AbstractProvider {
             output.appendLine(e.Message);
         });
 
-        this._saveDirtyFiles()
-            .then(_ => this._recordRunRequest(testFrameworkName))
-            .then(_ => serverUtils.requestProjectInformation(this._server, { FileName: fileName }))
-            .then(projectInfo => 
-            {
-                let targetFrameworkVersion: string;
+        let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
 
-                if (projectInfo.DotNetProject) {
-                    targetFrameworkVersion = undefined;
-                }
-                else if (projectInfo.MsBuildProject) {
-                    targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;
-                }
-                else {
-                    throw new Error('Expected project.json or .csproj project.');
-                }
-
-                return this._runTest(fileName, testMethod, testFrameworkName, targetFrameworkVersion);
-            })
+        return this._runTest(fileName, testMethod, testFrameworkName, targetFrameworkVersion)
             .then(results => this._reportResults(results))
             .then(() => listener.dispose())
             .catch(reason => {
                 listener.dispose();
                 vscode.window.showErrorMessage(`Failed to run test because ${reason}.`);
             });
+    }
+
+    private async _runDotnetTestsInClass(methodsInClass: string[], fileName: string, testFrameworkName: string) {
+        const output = this._getOutputChannel();
+
+        output.show();
+        const listener = this._server.onTestMessage(e => {
+            output.appendLine(e.Message);
+        });
+
+        let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
+
+        return this._runTestsInClass(fileName, testFrameworkName, targetFrameworkVersion, methodsInClass)
+            .then(results => this._reportResults(results))
+            .then(() => listener.dispose())
+            .catch(reason => {
+                listener.dispose();
+                vscode.window.showErrorMessage(`Failed to run tests because ${reason}.`);
+            });
+    }
+
+    private _runTestsInClass(fileName: string, testFrameworkName: string, targetFrameworkVersion: string, methodsToRun: string[]): Promise<protocol.V2.DotNetTestResult[]> {
+        const request: protocol.V2.RunTestsInClassRequest = {
+            FileName: fileName,
+            TestFrameworkName: testFrameworkName,
+            TargetFrameworkVersion: targetFrameworkVersion,
+            MethodNames: methodsToRun
+        };
+
+        return serverUtils.runTestsInClass(this._server, request)
+            .then(response => response.Results);
     }
 
     private _createLaunchConfiguration(program: string, args: string, cwd: string, debuggerEventsPipeName: string) {
@@ -271,12 +316,35 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    private _debugDotnetTest(testMethod: string, fileName: string, testFrameworkName: string) {
-        // We support to styles of 'dotnet test' for debugging: The legacy 'project.json' testing, and the newer csproj support
-        // using VS Test. These require a different level of communication.
+    private async _recordDebugAndGetDebugValues(fileName: string, testFrameworkName: string, output: vscode.OutputChannel) {
+        await this._saveDirtyFiles();
+        this._recordDebugRequest(testFrameworkName);
+        let projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
+
         let debugType: string;
         let debugEventListener: DebugEventListener = null;
         let targetFrameworkVersion: string;
+
+        if (projectInfo.DotNetProject) {
+            debugType = 'legacy';
+            targetFrameworkVersion = '';
+        }
+        else if (projectInfo.MsBuildProject) {
+            debugType = 'vstest';
+            targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;
+            debugEventListener = new DebugEventListener(fileName, this._server, output);
+            debugEventListener.start();
+        }
+        else {
+            throw new Error('Expected project.json or .csproj project.');
+        }
+
+        return { debugType, debugEventListener, targetFrameworkVersion };
+    }
+
+    private async _debugDotnetTest(testMethod: string, fileName: string, testFrameworkName: string) {
+        // We support to styles of 'dotnet test' for debugging: The legacy 'project.json' testing, and the newer csproj support
+        // using VS Test. These require a different level of communication.
 
         const output = this._getOutputChannel();
 
@@ -284,26 +352,9 @@ export default class TestManager extends AbstractProvider {
         output.appendLine(`Debugging method '${testMethod}'...`);
         output.appendLine('');
 
-        return this._saveDirtyFiles()
-            .then(_ => this._recordDebugRequest(testFrameworkName))
-            .then(_ => serverUtils.requestProjectInformation(this._server, { FileName: fileName }))
-            .then(projectInfo => {
-                if (projectInfo.DotNetProject) {
-                    debugType = 'legacy';
-                    targetFrameworkVersion = '';
-                    return Promise.resolve();
-                }
-                else if (projectInfo.MsBuildProject) {
-                    debugType = 'vstest';
-                    targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;
-                    debugEventListener = new DebugEventListener(fileName, this._server, output);
-                    return debugEventListener.start();
-                }
-                else {
-                    throw new Error('Expected project.json or .csproj project.');
-                }
-            })
-            .then(() => this._getLaunchConfiguration(debugType, fileName, testMethod, testFrameworkName, targetFrameworkVersion, debugEventListener))
+        let { debugType, debugEventListener, targetFrameworkVersion } = await this._recordDebugAndGetDebugValues(fileName, testFrameworkName, output);
+
+        return this._getLaunchConfiguration(debugType, fileName, testMethod, testFrameworkName, targetFrameworkVersion, debugEventListener)
             .then(config => {
                 const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(fileName));
                 return vscode.debug.startDebugging(workspaceFolder, config);
@@ -313,6 +364,53 @@ export default class TestManager extends AbstractProvider {
                 if (debugEventListener != null) {
                     debugEventListener.close();
                 }
+            });
+    }
+
+    private async _debugDotnetTestsInClass(methodsToRun: string[], fileName: string, testFrameworkName: string) {
+
+        const output = this._getOutputChannel();
+
+        let { debugType, debugEventListener, targetFrameworkVersion } = await this._recordDebugAndGetDebugValues(fileName, testFrameworkName, output);
+
+        return await this._getLaunchConfigurationForClass(debugType, fileName, methodsToRun, testFrameworkName, targetFrameworkVersion, debugEventListener)
+            .then(config => {
+                const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(fileName));
+                return vscode.debug.startDebugging(workspaceFolder, config);
+            })
+            .catch(reason => {
+                vscode.window.showErrorMessage(`Failed to start debugger: ${reason}`);
+                if (debugEventListener != null) {
+                    debugEventListener.close();
+                }
+            });
+    }
+
+    private _getLaunchConfigurationForClass(debugType: string, fileName: string, methodsToRun: string[], testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener): Promise<any> {
+        if (debugType == 'vstest') {
+            return this._getLaunchConfigurationForVSTestClass(fileName, methodsToRun, testFrameworkName, targetFrameworkVersion, debugEventListener);
+        }
+        throw new Error(`Unexpected debug type: ${debugType}`);
+    }
+
+    private _getLaunchConfigurationForVSTestClass(fileName: string, methodsToRun: string[], testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener): Promise<any> {
+        const output = this._getOutputChannel();
+
+        const listener = this._server.onTestMessage(e => {
+            output.appendLine(e.Message);
+        });
+
+        const request: protocol.V2.DebugTestClassGetStartInfoRequest = {
+            FileName: fileName,
+            MethodNames: methodsToRun,
+            TestFrameworkName: testFrameworkName,
+            TargetFrameworkVersion: targetFrameworkVersion
+        };
+
+        return serverUtils.debugTestClassGetStartInfo(this._server, request)
+            .then(response => {
+                listener.dispose();
+                return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath());
             });
     }
 }

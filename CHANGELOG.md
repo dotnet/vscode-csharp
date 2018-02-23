@@ -1,9 +1,9 @@
-## Known Issues in 1.13.0
+## Known Issues in 1.14.0
 
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.14.0 _(Not Yet Released)_
+## 1.14.0 (February 14, 2017)
 
 #### C# Language Support
 
@@ -25,6 +25,7 @@
 * Bug fixes to IntelliSense (completion, signature help): (([#1664](https://github.com/OmniSharp/omnisharp-vscode/issues/1664), [1440](https://github.com/OmniSharp/omnisharp-vscode/issues/1440), PR: [omnisharp-roslyn#1030](https://github.com/OmniSharp/omnisharp-roslyn/pull/1030)); ([#146](https://github.com/OmniSharp/omnisharp-vscode/issues/146) , PR: [#1776](https://github.com/OmniSharp/omnisharp-vscode/pull/1776)))
 * Improved "Format Code" behavior: ([#214](https://github.com/OmniSharp/omnisharp-vscode/issues/214), PR: [omnisharp-roslyn#1043](https://github.com/OmniSharp/omnisharp-roslyn/pull/1043))
 * Improved code action ordering: ([omnisharp-roslyn#758](https://github.com/OmniSharp/omnisharp-roslyn/issues/758), PR: [omnisharp-roslyn#1078](https://github.com/OmniSharp/omnisharp-roslyn/pull/1078))
+* Fixed duplicate errors in error list ([#1830](https://github.com/OmniSharp/omnisharp-vscode/issues/1830), PR:[#1107](https://github.com/OmniSharp/omnisharp-roslyn/pull/1107))
 
 #### Project System
 

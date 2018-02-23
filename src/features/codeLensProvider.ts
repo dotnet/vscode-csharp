@@ -31,8 +31,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 
     private _options: Options;
 
-    constructor(server: OmniSharpServer, reporter: TelemetryReporter, testManager: TestManager)
-    {
+    constructor(server: OmniSharpServer, reporter: TelemetryReporter, testManager: TestManager) {
         super(server, reporter);
 
         this._resetCachedOptions();
@@ -52,20 +51,23 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         'ToString': true
     };
 
-    provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
-        if (!this._options.showReferencesCodeLens && !this._options.showTestsCodeLens)
-        {
+    async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken) {
+        if (!this._options.showReferencesCodeLens && !this._options.showTestsCodeLens) {
             return [];
         }
 
-        return serverUtils.currentFileMembersAsTree(this._server, { FileName: document.fileName }, token).then(tree => {
-            let ret: vscode.CodeLens[] = [];
-            tree.TopLevelTypeDefinitions.forEach(node => this._convertQuickFix(ret, document.fileName, node));
-            return ret;
-        });
+        let tree = await serverUtils.currentFileMembersAsTree(this._server, { FileName: document.fileName }, token);
+        let ret: vscode.CodeLens[] = [];
+
+        for (let node of tree.TopLevelTypeDefinitions) {
+            await this._convertQuickFix(ret, document.fileName, node);
+        }
+
+        return ret;
     }
 
-    private _convertQuickFix(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node): void {
+
+    private async _convertQuickFix(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node): Promise<void> {
 
         if (node.Kind === 'MethodDeclaration' && OmniSharpCodeLensProvider.filteredSymbolNames[node.Location.Text]) {
             return;
@@ -81,7 +83,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         }
 
         if (this._options.showTestsCodeLens) {
-            this._updateCodeLensForTest(bucket, fileName, node);
+            await this._updateCodeLensForTest(bucket, fileName, node);
         }
     }
 
@@ -113,23 +115,21 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         }
     }
 
-    private _updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node) {
+    private async  _updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node): Promise<void> {
         // backward compatible check: Features property doesn't present on older version OmniSharp
         if (node.Features === undefined) {
             return;
         }
 
-        let testFeature = node.Features.find(value => (value.Name == 'XunitTestMethod' || value.Name == 'NUnitTestMethod' || value.Name == 'MSTestMethod'));
-        if (testFeature) {
-            // this test method has a test feature
-            let testFrameworkName = 'xunit';
-            if (testFeature.Name == 'NUnitTestMethod') {
-                testFrameworkName = 'nunit';
+        if (node.Kind === "ClassDeclaration" && node.ChildNodes.length > 0) {
+            let projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
+            if (!projectInfo.DotNetProject && projectInfo.MsBuildProject) {
+                this._updateCodeLensForTestClass(bucket, fileName, node);
             }
-            else if (testFeature.Name == 'MSTestMethod') {
-                testFrameworkName = 'mstest';
-            }
+        }
 
+        let [testFeature, testFrameworkName] = this._getTestFeatureAndFramework(node);
+        if (testFeature) {
             bucket.push(new vscode.CodeLens(
                 toRange(node.Location),
                 { title: "run test", command: 'dotnet.test.run', arguments: [testFeature.Data, fileName, testFrameworkName] }));
@@ -138,5 +138,52 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
                 toRange(node.Location),
                 { title: "debug test", command: 'dotnet.test.debug', arguments: [testFeature.Data, fileName, testFrameworkName] }));
         }
+    }
+
+    private _updateCodeLensForTestClass(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node) {
+        // if the class doesnot contain any method then return
+        if (!node.ChildNodes.find(value => (value.Kind === "MethodDeclaration"))) {
+            return;
+        }
+
+        let testMethods = new Array<string>();
+        let testFrameworkName: string = null;
+        for (let child of node.ChildNodes) {
+            let [testFeature, frameworkName] = this._getTestFeatureAndFramework(child);
+            if (testFeature) {
+                // this test method has a test feature
+                if (!testFrameworkName) {
+                    testFrameworkName = frameworkName;
+                }
+
+                testMethods.push(testFeature.Data);
+            }
+        }
+
+        if (testMethods.length > 0) {
+            bucket.push(new vscode.CodeLens(
+                toRange(node.Location),
+                { title: "run all tests", command: 'dotnet.classTests.run', arguments: [testMethods, fileName, testFrameworkName] }));
+            bucket.push(new vscode.CodeLens(
+                toRange(node.Location),
+                { title: "debug all tests", command: 'dotnet.classTests.debug', arguments: [testMethods, fileName, testFrameworkName] }));
+        }
+    }
+
+    private _getTestFeatureAndFramework(node: protocol.Node): [protocol.SyntaxFeature, string] {
+        let testFeature = node.Features.find(value => (value.Name == 'XunitTestMethod' || value.Name == 'NUnitTestMethod' || value.Name == 'MSTestMethod'));
+        if (testFeature) {
+            let testFrameworkName = 'xunit';
+            if (testFeature.Name == 'NUnitTestMethod') {
+                testFrameworkName = 'nunit';
+            }
+            else if (testFeature.Name == 'MSTestMethod') {
+                testFrameworkName = 'mstest';
+            }
+
+            return [testFeature, testFrameworkName];
+        }
+
+        return [null, null];
     }
 }
