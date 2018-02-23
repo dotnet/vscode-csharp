@@ -78,11 +78,7 @@ export class PackageManager {
                 this.allPackages = <Package[]>this.packageJSON.runtimeDependencies;
 
                 // Convert relative binary paths to absolute
-                for (let pkg of this.allPackages) {
-                    if (pkg.binaries) {
-                        pkg.binaries = pkg.binaries.map(value => path.resolve(getBaseInstallPath(pkg), value));
-                    }
-                }
+                resolvePackageBinaries(this.allPackages);
 
                 resolve(this.allPackages);
             }
@@ -111,6 +107,7 @@ export class PackageManager {
 
     public SetVersionPackagesForDownload(packages: Package[]) {
         this.allPackages = packages;
+        resolvePackageBinaries(this.allPackages);
     }
 
     public async GetLatestVersionFromFile(logger: Logger, status: Status, proxy: string, strictSSL: boolean, filePackage: Package): Promise<string> {
@@ -127,6 +124,15 @@ export class PackageManager {
         }
         catch (error) {
             throw new Error(`Could not download the latest version file due to ${error.toString()}`);
+        }
+    }
+}
+
+function resolvePackageBinaries(packages: Package[]) {
+    // Convert relative binary paths to absolute
+    for (let pkg of packages) {
+        if (pkg.binaries) {
+            pkg.binaries = pkg.binaries.map(value => path.resolve(getBaseInstallPath(pkg), value));
         }
     }
 }
