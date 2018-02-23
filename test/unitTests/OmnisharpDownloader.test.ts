@@ -10,6 +10,7 @@ import { should } from 'chai';
 import { Logger } from '../../src/logger';
 import { OmnisharpDownloader } from '../../src/omnisharp/OmnisharpDownloader';
 import { rimraf } from 'async-file';
+import { PlatformInformation } from '../../src/platform';
 
 const tmp = require('tmp');
 const chai = require("chai");
@@ -19,7 +20,7 @@ let expect = chai.expect;
 suite("DownloadAndInstallExperimentalVersion : Gets the version packages, downloads and installs them", () => {
     let tmpDir = null;
     const version = "1.2.3";
-    const downloader = GetOmnisharpDownloader();
+    const downloader = GetTestOmnisharpDownloader();
     const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
     const installPath = ".omnisharp/experimental/";
 
@@ -57,10 +58,10 @@ suite("DownloadAndInstallExperimentalVersion : Gets the version packages, downlo
     });
 });
 
-function GetOmnisharpDownloader() {
+function GetTestOmnisharpDownloader() {
     let channel = vscode.window.createOutputChannel('Experiment Channel');
     let logger = new Logger(text => channel.append(text));
-    return new OmnisharpDownloader(channel, logger, GetTestPackageJSON(), null);
+    return new OmnisharpDownloader(channel, logger, GetTestPackageJSON(), new PlatformInformation("win32", "x86"), null);
 }
 
 //Since we need only the runtime dependencies of packageJSON for the downloader create a testPackageJSON

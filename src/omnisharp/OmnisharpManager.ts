@@ -20,28 +20,34 @@ export class OmnisharpManager {
         private reporter?: TelemetryReporter) {
     }
 
-    public async GetOmnisharpPath(omnisharpPath: string, useMono: boolean, serverUrl: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation): Promise<string> {
+    public async GetOmnisharpPath(omnisharpPath: string, useMono: boolean, serverUrl: string, versionFilePathInServer: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation): Promise<string> {
         // Looks at the options path, installs the dependencies and returns the path to be loaded by the omnisharp server
-        // To Do : Add the functionality for the latest option
-
+        let downloader = new OmnisharpDownloader(this.channel, this.logger, this.packageJSON, platformInfo, this.reporter);
         if (path.isAbsolute(omnisharpPath)) {
             if (await util.fileExists(omnisharpPath)) {
                 return omnisharpPath;
             }
             else {
-                throw new Error('Invalid path specified');
+                throw new Error('The system could not find the specified path');
             }
         }
-        //If the path is not a valid path on disk, treat it as a version 
-        return await this.InstallVersionAndReturnLaunchPath(omnisharpPath, useMono, serverUrl, installPath, extensionPath, platformInfo);
+        else if (omnisharpPath == "latest") {
+            return await this.LatestInstallAndReturnLaunchPath(downloader, useMono, serverUrl, versionFilePathInServer, installPath, extensionPath, platformInfo);
+        }
+
+        //If the path is neither a valid path on disk not the string "latest", treat it as a version 
+        return await this.InstallVersionAndReturnLaunchPath(downloader, omnisharpPath, useMono, serverUrl, installPath, extensionPath, platformInfo);
     }
 
-    public async InstallVersionAndReturnLaunchPath(version: string, useMono: boolean, serverUrl: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
-        if (semver.valid(version)) {
-            let downloader = new OmnisharpDownloader(this.channel, this.logger, this.packageJSON, this.reporter);
-            await downloader.DownloadAndInstallOmnisharp(version, serverUrl, installPath);
+    public async LatestInstallAndReturnLaunchPath(downloader: OmnisharpDownloader, useMono: boolean, serverUrl: string, versionFilePathInServer: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
+        let version = await downloader.GetLatestVersion(serverUrl, versionFilePathInServer);
+        return await this.InstallVersionAndReturnLaunchPath(downloader, version, useMono, serverUrl, installPath, extensionPath, platformInfo);
+    }
 
-            return await GetLaunchPathForVersion(platformInfo, version, installPath, extensionPath, useMono);
+    public async InstallVersionAndReturnLaunchPath(downloader: OmnisharpDownloader, version: string, useMono: boolean, serverUrl: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
+        if (semver.valid(version)) {
+            await downloader.DownloadAndInstallOmnisharp(version, serverUrl, installPath);
+            return GetLaunchPathForVersion(platformInfo, version, installPath, extensionPath, useMono);
         }
         else {
             throw new Error('Invalid omnisharp version specified');
@@ -49,7 +55,7 @@ export class OmnisharpManager {
     }
 }
 
-export async function GetLaunchPathForVersion(platformInfo: PlatformInformation, version: string, installPath: string, extensionPath: string, useMono: boolean) {
+export function GetLaunchPathForVersion(platformInfo: PlatformInformation, version: string, installPath: string, extensionPath: string, useMono: boolean) {
     if (!version) {
         throw new Error('Invalid Version');
     }
