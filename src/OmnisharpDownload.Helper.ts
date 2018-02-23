@@ -56,6 +56,7 @@ export function ReportInstallationError(logger: Logger, error, telemetryProps: a
         errorMessage = error.toString();
     }
 
+    logger.appendLine();
     logger.appendLine(`Failed at stage: ${installationStage}`);
     logger.appendLine(errorMessage);
 }
