@@ -73,7 +73,8 @@ export class OmnisharpDownloader {
             throw error;// throw the error up to the server
         }
         finally {
-            SendInstallationTelemetry(this.logger, this.reporter, this.telemetryProps, installationStage, this.platformInfo, this.statusItem);
+            SendInstallationTelemetry(this.logger, this.reporter, this.telemetryProps, installationStage, this.platformInfo);
+            this.statusItem.dispose();
         }
     }
 

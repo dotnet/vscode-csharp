@@ -61,7 +61,7 @@ export function ReportInstallationError(logger: Logger, error, telemetryProps: a
     logger.appendLine(errorMessage);
 }
 
-export function SendInstallationTelemetry(logger: Logger, reporter: TelemetryReporter, telemetryProps: any, installationStage: string, platformInfo: PlatformInformation, statusItem: vscode.StatusBarItem) {
+export function SendInstallationTelemetry(logger: Logger, reporter: TelemetryReporter, telemetryProps: any, installationStage: string, platformInfo: PlatformInformation) {
     telemetryProps['installStage'] = installationStage;
     telemetryProps['platform.architecture'] = platformInfo.architecture;
     telemetryProps['platform.platform'] = platformInfo.platform;
@@ -75,6 +75,4 @@ export function SendInstallationTelemetry(logger: Logger, reporter: TelemetryRep
     logger.appendLine();
     installationStage = '';
     logger.appendLine('Finished');
-
-    statusItem.dispose();
 }
