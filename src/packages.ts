@@ -75,7 +75,8 @@ export class PackageManager {
                 resolve(this.allPackages);
             }
             else if (this.packageJSON.runtimeDependencies) {
-                this.allPackages = <Package[]>this.packageJSON.runtimeDependencies;
+                this.allPackages = JSON.parse(JSON.stringify(<Package[]>this.packageJSON.runtimeDependencies)); 
+                //Copying the packages by value and not by reference so that there are no side effects
 
                 // Convert relative binary paths to absolute
                 resolvePackageBinaries(this.allPackages);
