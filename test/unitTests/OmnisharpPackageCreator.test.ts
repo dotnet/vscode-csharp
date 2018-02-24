@@ -6,7 +6,7 @@
 import { assert, should, expect } from "chai";
 import { Package } from "../../src/packages";
 import { GetTestPackageJSON } from "./OmnisharpDownloader.test";
-import { GetOmnisharpPackage, GetPackagesFromVersion, GetVersionFilePackage } from "../../src/omnisharp/OmnisharpPackageCreator";
+import { SetBinaryAndGetPackage, GetPackagesFromVersion, GetVersionFilePackage } from "../../src/omnisharp/OmnisharpPackageCreator";
 
 suite("GetOmnisharpPackage : Output package depends on the input package and other input parameters like serverUrl", () => {
 
@@ -25,20 +25,20 @@ suite("GetOmnisharpPackage : Output package depends on the input package and oth
     });
 
     test('Throws exception if version is empty', () => {
-        let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "os-architecture"));
-        let fn = function () { GetOmnisharpPackage(testPackage, serverUrl, "", installPath); };
+        let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "os-architecture"));
+        let fn = function () { SetBinaryAndGetPackage(testPackage, serverUrl, "", installPath); };
         expect(fn).to.throw('Invalid version');
     });
 
     test('Throws exception if version is null', () => {
-        let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "os-architecture"));
-        let fn = function () { GetOmnisharpPackage(testPackage, serverUrl, null, installPath);};
+        let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "os-architecture"));
+        let fn = function () { SetBinaryAndGetPackage(testPackage, serverUrl, null, installPath);};
         expect(fn).to.throw('Invalid version');
     });
 
     test('Architectures, binaries and platforms do not change', () => {
-        let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "os-architecture"));
-        let resultPackage = GetOmnisharpPackage(testPackage, serverUrl, version, installPath);
+        let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "os-architecture"));
+        let resultPackage = SetBinaryAndGetPackage(testPackage, serverUrl, version, installPath);
 
         resultPackage.architectures.should.equal(testPackage.architectures);
         assert.equal(resultPackage.binaries, testPackage.binaries);
@@ -46,51 +46,51 @@ suite("GetOmnisharpPackage : Output package depends on the input package and oth
     });
 
     test('Version information is appended to the description', () => {
-        let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "os-architecture"));
-        let resultPackage = GetOmnisharpPackage(testPackage, serverUrl, "1.2.3", installPath);
+        let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "os-architecture"));
+        let resultPackage = SetBinaryAndGetPackage(testPackage, serverUrl, "1.2.3", installPath);
 
         resultPackage.description.should.equal(`${testPackage.description}, Version = 1.2.3`);
     });
 
     test('Download url is calculated using server url and version', () => {
-        let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "os-architecture"));
-        let resultPackage = GetOmnisharpPackage(testPackage, "http://someurl", "1.1.1", installPath);
+        let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "os-architecture"));
+        let resultPackage = SetBinaryAndGetPackage(testPackage, "http://someurl", "1.1.1", installPath);
         resultPackage.url.should.equal("http://someurl/releases/1.1.1/omnisharp-os-architecture.zip");
     });
 
     test('Install path is calculated using the specified path and version', () => {
-        let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "os-architecture"));
-        let resultPackage = GetOmnisharpPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
+        let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "os-architecture"));
+        let resultPackage = SetBinaryAndGetPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
         resultPackage.installPath.should.equal("experimentPath/1.2.3");
     });
 
     test('Install test path is calculated using specified path, version and ends with Omnisharp.exe - Windows(x86)', () => {
-        let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "win-x86"));
-        let resultPackage = GetOmnisharpPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
+        let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "win-x86"));
+        let resultPackage = SetBinaryAndGetPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
         resultPackage.installTestPath.should.equal("./experimentPath/1.2.3/OmniSharp.exe");
     });
 
     test('Install test path is calculated using specified path, version and ends with Omnisharp.exe - Windows(x64)', () => {
-        let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "win-x64"));
-        let resultPackage = GetOmnisharpPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
+        let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "win-x64"));
+        let resultPackage = SetBinaryAndGetPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
         resultPackage.installTestPath.should.equal("./experimentPath/1.2.3/OmniSharp.exe");
     });
 
     test('Install test path is calculated using specified path, version and ends with mono.osx - OSX', () => {
-        let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "osx"));
-        let resultPackage = GetOmnisharpPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
+        let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "osx"));
+        let resultPackage = SetBinaryAndGetPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
         resultPackage.installTestPath.should.equal("./experimentPath/1.2.3/mono.osx");
     });
 
     test('Install test path is calculated using specified path, version and ends with mono.linux-x86 - Linux(x86)', () => {
-        let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "linux-x86"));
-        let resultPackage = GetOmnisharpPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
+        let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "linux-x86"));
+        let resultPackage = SetBinaryAndGetPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
         resultPackage.installTestPath.should.equal("./experimentPath/1.2.3/mono.linux-x86");
     });
 
     test('Install test path is calculated using specified path, version and ends with mono.linux-x86_64 - Linux(x64)', () => {
-        let testPackage = inputPackages.find(element => (element.experimentalPackageId && element.experimentalPackageId == "linux-x64"));
-        let resultPackage = GetOmnisharpPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
+        let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "linux-x64"));
+        let resultPackage = SetBinaryAndGetPackage(testPackage, serverUrl, "1.2.3", "experimentPath");
         resultPackage.installTestPath.should.equal("./experimentPath/1.2.3/mono.linux-x86_64");
     });
 });
@@ -132,7 +132,7 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
                     "x86_64"
                 ],
                 "installTestPath": "./.omnisharp/OmniSharp.exe",
-                "experimentalPackageId": "win-x64"
+                "platformId": "win-x64"
             },
             {
                 "description": "OmniSharp for OSX",
@@ -147,7 +147,7 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
                     "./run"
                 ],
                 "installTestPath": "./.omnisharp/mono.osx",
-                "experimentalPackageId": "osx"
+                "platformId": "osx"
             },
         ];
 
@@ -172,7 +172,7 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
                     "x86_64"
                 ],
                 "installTestPath": "./.omnisharp/OmniSharp.exe",
-                "experimentalPackageId": "win-x64"
+                "platformId": "win-x64"
             },
             {
                 "description": "Some other package - no experimental id",
@@ -192,7 +192,7 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
 
         let outPackages = GetPackagesFromVersion(version, inputPackages, serverUrl, installPath);
         outPackages.length.should.equal(1);
-        outPackages[0].experimentalPackageId.should.equal("win-x64");
+        outPackages[0].platformId.should.equal("win-x64");
     });
 });
 

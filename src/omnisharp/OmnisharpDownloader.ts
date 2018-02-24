@@ -39,10 +39,6 @@ export class OmnisharpDownloader {
     }
 
     public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string) {
-        if (!version) {
-            throw new Error('Invalid version');
-        }
-
         this.logger.appendLine('Installing Omnisharp Packages...');
         this.logger.appendLine();
         this.channel.show();

@@ -29,14 +29,6 @@ suite("DownloadAndInstallExperimentalVersion : Gets the version packages, downlo
         util.setExtensionPath(tmpDir.name);
     });
 
-    test('Throws error if version is null', () => {
-        expect(downloader.DownloadAndInstallOmnisharp(null, serverUrl, installPath)).to.be.rejectedWith(Error);
-    });
-
-    test('Throws error if version is empty string', () => {
-        expect(downloader.DownloadAndInstallOmnisharp("", serverUrl, installPath)).to.be.rejectedWith(Error);
-    });
-
     test('Throws error if request is made for a version that doesnot exist on the server', () => {
         expect(downloader.DownloadAndInstallOmnisharp("1.00000001.0000", serverUrl, installPath)).to.be.rejectedWith(Error);
     });
@@ -81,7 +73,7 @@ export function GetTestPackageJSON() {
                     "x86"
                 ],
                 "installTestPath": "./.omnisharp/OmniSharp.exe",
-                "experimentalPackageId": "win-x86"
+                "platformId": "win-x86"
             },
             {
                 "description": "OmniSharp for Windows (.NET 4.6 / x64)",
@@ -95,7 +87,7 @@ export function GetTestPackageJSON() {
                     "x86_64"
                 ],
                 "installTestPath": "./.omnisharp/OmniSharp.exe",
-                "experimentalPackageId": "win-x64"
+                "platformId": "win-x64"
             },
             {
                 "description": "OmniSharp for OSX",
@@ -110,7 +102,7 @@ export function GetTestPackageJSON() {
                     "./run"
                 ],
                 "installTestPath": "./.omnisharp/mono.osx",
-                "experimentalPackageId": "osx"
+                "platformId": "osx"
             },
             {
                 "description": "OmniSharp for Linux (x86)",
@@ -129,7 +121,7 @@ export function GetTestPackageJSON() {
                     "./run"
                 ],
                 "installTestPath": "./.omnisharp/mono.linux-x86",
-                "experimentalPackageId": "linux-x86"
+                "platformId": "linux-x86"
             },
             {
                 "description": "OmniSharp for Linux (x64)",
@@ -147,7 +139,7 @@ export function GetTestPackageJSON() {
                     "./run"
                 ],
                 "installTestPath": "./.omnisharp/mono.linux-x86_64",
-                "experimentalPackageId": "linux-x64"
+                "platformId": "linux-x64"
             },
             {
                 "description": "OmniSharp for Test OS(architecture)",
@@ -165,10 +157,10 @@ export function GetTestPackageJSON() {
                     "./binary2"
                 ],
                 "installTestPath": "./.omnisharp/binary",
-                "experimentalPackageId": "os-architecture"
+                "platformId": "os-architecture"
             },
             {
-                "description": "Non omnisharp package without experimentalPackageID",
+                "description": "Non omnisharp package without platformId",
                 "url": "https://download.visualstudio.microsoft.com/download/pr/100317420/a30d7e11bc435433d297adc824ee837f/coreclr-debug-win7-x64.zip",
                 "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-14-4/coreclr-debug-win7-x64.zip",
                 "installPath": ".debugger",

@@ -32,14 +32,14 @@ export class OmnisharpManager {
             }
         }
         else if (omnisharpPath == "latest") {
-            return await this.LatestInstallAndReturnLaunchPath(downloader, useMono, serverUrl, versionFilePathInServer, installPath, extensionPath, platformInfo);
+            return await this.InstallLatestAndReturnLaunchPath(downloader, useMono, serverUrl, versionFilePathInServer, installPath, extensionPath, platformInfo);
         }
 
         //If the path is neither a valid path on disk not the string "latest", treat it as a version 
         return await this.InstallVersionAndReturnLaunchPath(downloader, omnisharpPath, useMono, serverUrl, installPath, extensionPath, platformInfo);
     }
 
-    public async LatestInstallAndReturnLaunchPath(downloader: OmnisharpDownloader, useMono: boolean, serverUrl: string, versionFilePathInServer: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
+    public async InstallLatestAndReturnLaunchPath(downloader: OmnisharpDownloader, useMono: boolean, serverUrl: string, versionFilePathInServer: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
         let version = await downloader.GetLatestVersion(serverUrl, versionFilePathInServer);
         return await this.InstallVersionAndReturnLaunchPath(downloader, version, useMono, serverUrl, installPath, extensionPath, platformInfo);
     }

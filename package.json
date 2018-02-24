@@ -95,7 +95,7 @@
         "x86"
       ],
       "installTestPath": "./.omnisharp/OmniSharp.exe",
-      "experimentalPackageId": "win-x86"
+      "platformId": "win-x86"
     },
     {
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
@@ -109,7 +109,7 @@
         "x86_64"
       ],
       "installTestPath": "./.omnisharp/OmniSharp.exe",
-      "experimentalPackageId": "win-x64"
+      "platformId": "win-x64"
     },
     {
       "description": "OmniSharp for OSX",
@@ -124,7 +124,7 @@
         "./run"
       ],
       "installTestPath": "./.omnisharp/mono.osx",
-      "experimentalPackageId": "osx"
+      "platformId": "osx"
     },
     {
       "description": "OmniSharp for Linux (x86)",
@@ -143,7 +143,7 @@
         "./run"
       ],
       "installTestPath": "./.omnisharp/mono.linux-x86",
-      "experimentalPackageId": "linux-x86"
+      "platformId": "linux-x86"
     },
     {
       "description": "OmniSharp for Linux (x64)",
@@ -161,7 +161,7 @@
         "./run"
       ],
       "installTestPath": "./.omnisharp/mono.linux-x86_64",
-      "experimentalPackageId": "linux-x64"
+      "platformId": "linux-x64"
     },
     {
       "description": ".NET Core Debugger (Windows / x64)",

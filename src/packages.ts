@@ -24,7 +24,7 @@ export interface Package {
     architectures: string[];
     binaries: string[];
     tmpFile: tmp.SynchrounousResult;
-    experimentalPackageId?: string;
+    platformId?: string;
 
     // Path to use to test if the package has already been installed
     installTestPath?: string;
