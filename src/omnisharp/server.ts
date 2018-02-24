@@ -297,7 +297,7 @@ export class OmniSharpServer {
 
         return launchOmniSharp(cwd, args, launchPath).then(value => {
             if (value.usingMono) {
-                this._logger.appendLine(`OmniSharp server started wth Mono`);
+                this._logger.appendLine(`OmniSharp server started with Mono`);
             }
             else {
                 this._logger.appendLine(`OmniSharp server started`);
