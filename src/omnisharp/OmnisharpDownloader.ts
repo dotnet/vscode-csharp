@@ -9,7 +9,7 @@ import { PlatformInformation } from '../platform';
 import { Logger } from '../logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { GetPackagesFromVersion, GetVersionFilePackage } from './OmnisharpPackageCreator';
-import { SetStatus, ReportInstallationError, SendInstallationTelemetry, GetNetworkDependencies } from '../OmnisharpDownload.Helper';
+import { SetStatus, ReportInstallationError, SendInstallationTelemetry, GetNetworkDependencies } from '../downloader.helper';
 
 export class OmnisharpDownloader {
     private status: Status;

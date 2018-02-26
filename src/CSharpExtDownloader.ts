@@ -9,7 +9,7 @@ import * as util from './common';
 import { Logger } from './logger';
 import { PackageManager, Status, PackageError } from './packages';
 import { PlatformInformation } from './platform';
-import { SetStatus, GetNetworkDependencies, ReportInstallationError, SendInstallationTelemetry } from './OmnisharpDownload.Helper';
+import { SetStatus, GetNetworkDependencies, ReportInstallationError, SendInstallationTelemetry } from './downloader.helper';
 
 /*
  * Class used to download the runtime dependencies of the C# Extension
