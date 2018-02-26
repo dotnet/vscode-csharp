@@ -31,11 +31,6 @@ export function SetStatus() {
     return { StatusItem: statusItem, Status: status };
 }
 
-export function LogPlatformInformation(logger: Logger, platformInfo: PlatformInformation) {
-    logger.appendLine(`Platform: ${platformInfo.toString()}`);
-    logger.appendLine();
-}
-
 export function ReportInstallationError(logger: Logger, error, telemetryProps: any, installationStage: string) {
     let errorMessage: string;
     if (error instanceof PackageError) {

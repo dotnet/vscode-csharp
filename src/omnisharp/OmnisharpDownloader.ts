@@ -9,7 +9,7 @@ import { PlatformInformation } from '../platform';
 import { Logger } from '../logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { GetPackagesFromVersion, GetVersionFilePackage } from './OmnisharpPackageCreator';
-import { SetStatus, LogPlatformInformation, ReportInstallationError, SendInstallationTelemetry, GetNetworkDependencies } from '../OmnisharpDownload.Helper';
+import { SetStatus, ReportInstallationError, SendInstallationTelemetry, GetNetworkDependencies } from '../OmnisharpDownload.Helper';
 
 export class OmnisharpDownloader {
     private status: Status;
@@ -50,7 +50,8 @@ export class OmnisharpDownloader {
         }
 
         try {
-            LogPlatformInformation(this.logger, this.platformInfo);
+            this.logger.appendLine(`Platform: ${this.platformInfo.toString()}`);
+            this.logger.appendLine();
 
             installationStage = 'getPackageInfo';
             let packages: Package[] = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
