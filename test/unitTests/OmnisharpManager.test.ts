@@ -11,7 +11,7 @@ import { PlatformInformation } from "../../src/platform";
 import { Logger } from '../../src/logger';
 import { rimraf } from 'async-file';
 import { GetTestPackageJSON } from './OmnisharpDownloader.test';
-import { GetLaunchPathForVersion, OmnisharpManager } from '../../src/omnisharp/OmnisharpManager';
+import { OmnisharpManager } from '../../src/omnisharp/OmnisharpManager';
 
 const chai = require("chai");
 chai.use(require("chai-as-promised"));

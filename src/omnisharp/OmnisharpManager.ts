@@ -39,12 +39,12 @@ export class OmnisharpManager {
         return await this.InstallVersionAndReturnLaunchPath(downloader, omnisharpPath, useMono, serverUrl, installPath, extensionPath, platformInfo);
     }
 
-    public async InstallLatestAndReturnLaunchPath(downloader: OmnisharpDownloader, useMono: boolean, serverUrl: string, latestVersionFileServerPath: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
+    private async InstallLatestAndReturnLaunchPath(downloader: OmnisharpDownloader, useMono: boolean, serverUrl: string, latestVersionFileServerPath: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
         let version = await downloader.GetLatestVersion(serverUrl, latestVersionFileServerPath);
         return await this.InstallVersionAndReturnLaunchPath(downloader, version, useMono, serverUrl, installPath, extensionPath, platformInfo);
     }
 
-    public async InstallVersionAndReturnLaunchPath(downloader: OmnisharpDownloader, version: string, useMono: boolean, serverUrl: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
+    private async InstallVersionAndReturnLaunchPath(downloader: OmnisharpDownloader, version: string, useMono: boolean, serverUrl: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
         if (semver.valid(version)) {
             await downloader.DownloadAndInstallOmnisharp(version, serverUrl, installPath);
             return GetLaunchPathForVersion(platformInfo, version, installPath, extensionPath, useMono);
@@ -55,7 +55,7 @@ export class OmnisharpManager {
     }
 }
 
-export function GetLaunchPathForVersion(platformInfo: PlatformInformation, version: string, installPath: string, extensionPath: string, useMono: boolean) {
+function GetLaunchPathForVersion(platformInfo: PlatformInformation, version: string, installPath: string, extensionPath: string, useMono: boolean) {
     if (!version) {
         throw new Error('Invalid Version');
     }
