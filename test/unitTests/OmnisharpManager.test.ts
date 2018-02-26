@@ -38,7 +38,7 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
         util.setExtensionPath(tmpDir.name);
     });
 
-    test('Throws error if the path is neither an absolute path nor a valid semver', async () => {
+    test('Throws error if the path is neither an absolute path nor a valid semver, nor the string "latest"', async () => {
         expect(manager.GetOmnisharpPath("Some incorrect path", useMono, serverUrl, versionFilepathInServer, installPath, extensionPath, platformInfo)).to.be.rejectedWith(Error);
     });
 
