@@ -77,6 +77,11 @@ export function updatePackageDependencies() {
     if (os.platform() === 'win32') {
         content = content.replace(/\n/gm, "\r\n");
     }
+
+    // We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. This process will
+    // convert that from the readable espace sequence, to just an invisible character. Convert it back to the visible espace sequence.
+    content = content.replace(/\u200b/gm, "\\u200b");
+
     fs.writeFileSync('package.json', content);
 }
 

@@ -85,9 +85,20 @@ function ReplaceReferences(definitions: any, objects: any) {
     return objects;
 }
 
+function mergeReferences(baseDefinitions: any, additionalDefinitions: any) : void {
+    for (let key in additionalDefinitions) {
+        if (baseDefinitions[key]) {
+            throw `Error: '${key}' defined in multiple schema files.`;
+        }
+        baseDefinitions[key] = additionalDefinitions[key];
+    }
+}
+
 export function GenerateOptionsSchema() {
     let packageJSON: any = JSON.parse(fs.readFileSync('package.json').toString());
     let schemaJSON: any = JSON.parse(fs.readFileSync('src/tools/OptionsSchema.json').toString());
+    let symbolSettingsJSON: any = JSON.parse(fs.readFileSync('src/tools/VSSymbolSettings.json').toString());
+    mergeReferences(schemaJSON.definitions, symbolSettingsJSON.definitions);
 
     schemaJSON.definitions = ReplaceReferences(schemaJSON.definitions, schemaJSON.definitions);
 
@@ -100,9 +111,37 @@ export function GenerateOptionsSchema() {
     packageJSON.contributes.debuggers[1].configurationAttributes.launch = schemaJSON.definitions.LaunchOptions;
     packageJSON.contributes.debuggers[1].configurationAttributes.attach = schemaJSON.definitions.AttachOptions;
 
+    // Make a copy of the options for unit test debugging
+    let unitTestDebuggingOptions = JSON.parse(JSON.stringify(schemaJSON.definitions.AttachOptions.properties));
+    // Remove the options we don't want
+    delete unitTestDebuggingOptions.processName;
+    delete unitTestDebuggingOptions.processId;
+    delete unitTestDebuggingOptions.pipeTransport;
+    // Add the additional options we do want
+    unitTestDebuggingOptions["type"] = {
+        "type": "string",
+        "enum": [
+            "coreclr",
+            "clr"
+        ],
+        "description": "Type type of code to debug. Can be either 'coreclr' for .NET Core debugging, or 'clr' for Desktop .NET Framework. 'clr' only works on Windows as the Desktop framework is Windows-only.",
+        "default": "coreclr"
+    };
+    unitTestDebuggingOptions["debugServer"] = {
+        "type": "number",
+        "description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
+        "default": 4711
+    };
+    packageJSON.contributes.configuration.properties["csharp.unitTestDebuggingOptions"].properties = unitTestDebuggingOptions;
+
     let content = JSON.stringify(packageJSON, null, 2);
     if (os.platform() === 'win32') {
         content = content.replace(/\n/gm, "\r\n");
     }
+    
+    // We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. This process will
+    // convert that from the readable espace sequence, to just an invisible character. Convert it back to the visible espace sequence.
+    content = content.replace(/\u200b/gm, "\\u200b");
+
     fs.writeFileSync('package.json', content);
 }
