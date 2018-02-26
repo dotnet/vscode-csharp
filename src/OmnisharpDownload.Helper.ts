@@ -75,4 +75,5 @@ export function SendInstallationTelemetry(logger: Logger, reporter: TelemetryRep
     logger.appendLine();
     installationStage = '';
     logger.appendLine('Finished');
+    logger.appendLine();
 }

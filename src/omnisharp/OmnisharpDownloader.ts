@@ -39,7 +39,7 @@ export class OmnisharpDownloader {
     }
 
     public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string) {
-        this.logger.appendLine('Installing Omnisharp Packages...');
+        this.logger.append('Installing Omnisharp Packages...');
         this.logger.appendLine();
         this.channel.show();
 
