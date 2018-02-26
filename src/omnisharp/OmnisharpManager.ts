@@ -20,7 +20,7 @@ export class OmnisharpManager {
         private reporter?: TelemetryReporter) {
     }
 
-    public async GetOmnisharpPath(omnisharpPath: string, useMono: boolean, serverUrl: string, versionFilePathInServer: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation): Promise<string> {
+    public async GetOmnisharpPath(omnisharpPath: string, useMono: boolean, serverUrl: string, latestVersionFileServerPath: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation): Promise<string> {
         // Looks at the options path, installs the dependencies and returns the path to be loaded by the omnisharp server
         let downloader = new OmnisharpDownloader(this.channel, this.logger, this.packageJSON, platformInfo, this.reporter);
         if (path.isAbsolute(omnisharpPath)) {
@@ -32,15 +32,15 @@ export class OmnisharpManager {
             }
         }
         else if (omnisharpPath == "latest") {
-            return await this.InstallLatestAndReturnLaunchPath(downloader, useMono, serverUrl, versionFilePathInServer, installPath, extensionPath, platformInfo);
+            return await this.InstallLatestAndReturnLaunchPath(downloader, useMono, serverUrl, latestVersionFileServerPath, installPath, extensionPath, platformInfo);
         }
 
         //If the path is neither a valid path on disk not the string "latest", treat it as a version 
         return await this.InstallVersionAndReturnLaunchPath(downloader, omnisharpPath, useMono, serverUrl, installPath, extensionPath, platformInfo);
     }
 
-    public async InstallLatestAndReturnLaunchPath(downloader: OmnisharpDownloader, useMono: boolean, serverUrl: string, versionFilePathInServer: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
-        let version = await downloader.GetLatestVersion(serverUrl, versionFilePathInServer);
+    public async InstallLatestAndReturnLaunchPath(downloader: OmnisharpDownloader, useMono: boolean, serverUrl: string, latestVersionFileServerPath: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation) {
+        let version = await downloader.GetLatestVersion(serverUrl, latestVersionFileServerPath);
         return await this.InstallVersionAndReturnLaunchPath(downloader, version, useMono, serverUrl, installPath, extensionPath, platformInfo);
     }
 

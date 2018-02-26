@@ -78,13 +78,13 @@ export class OmnisharpDownloader {
         }
     }
 
-    public async GetLatestVersion(serverUrl: string, versionFilePathInServer): Promise<string> {
+    public async GetLatestVersion(serverUrl: string, latestVersionFileServerPath: string): Promise<string> {
         let installationStage = 'getLatestVersionInfoFile';
         try {
             this.logger.appendLine('Getting latest build information...');
             this.logger.appendLine();
             //The package manager needs a package format to download, hence we form a package for the latest version file
-            let filePackage = GetVersionFilePackage(serverUrl, versionFilePathInServer);
+            let filePackage = GetVersionFilePackage(serverUrl, latestVersionFileServerPath);
             //Fetch the latest version information from the file
             return await this.packageManager.GetLatestVersionFromFile(this.logger, this.status, this.proxy, this.strictSSL, filePackage);
         }

@@ -60,6 +60,9 @@ module Events {
 }
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
+const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
+const installPath = ".omnisharp/experimental";
+const latestVersionFileServerPath = 'releases/versioninfo.txt';
 
 export class OmniSharpServer {
 
@@ -271,13 +274,10 @@ export class OmniSharpServer {
         let launchPath: string;
         if (this._options.path) {
             try {
-                let serverUrl = "https://roslynomnisharp.blob.core.windows.net";
-                let installPath = ".omnisharp/experimental";
                 let extensionPath = utils.getExtensionPath();
-                let versionFilePathInServer = 'releases/versioninfo.txt';
                 let manager = new OmnisharpManager(this._csharpChannel, this._csharpLogger, this._packageJSON, this._reporter);
                 let platformInfo = await PlatformInformation.GetCurrent();
-                launchPath = await manager.GetOmnisharpPath(this._options.path, this._options.useMono, serverUrl, versionFilePathInServer,installPath, extensionPath, platformInfo);
+                launchPath = await manager.GetOmnisharpPath(this._options.path, this._options.useMono, serverUrl, latestVersionFileServerPath, installPath, extensionPath, platformInfo);
             }
             catch (error) {
                 this._logger.appendLine('Error occured in loading omnisharp from omnisharp.path');
