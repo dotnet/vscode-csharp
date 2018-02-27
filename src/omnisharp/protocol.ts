@@ -398,6 +398,7 @@ export interface SignatureHelpItem {
     Label: string;
     Documentation: string;
     Parameters: SignatureHelpParameter[];
+    StructuredDocumentation: DocumentationComment;
 }
 
 export interface SignatureHelpParameter {

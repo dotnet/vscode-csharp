@@ -32,10 +32,11 @@ import WorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
 import forwardChanges from '../features/changeForwarding';
 import registerCommands from '../features/commands';
 import reportStatus from '../features/status';
+import { Logger } from '../logger';
 
 export let omnisharp: OmniSharpServer;
 
-export function activate(context: vscode.ExtensionContext, reporter: TelemetryReporter, channel: vscode.OutputChannel) {
+export function activate(context: vscode.ExtensionContext, reporter: TelemetryReporter, channel: vscode.OutputChannel, logger: Logger, packageJSON: any) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
         scheme: 'file' // only files from disk
@@ -43,7 +44,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
 
     const options = Options.Read();
 
-    const server = new OmniSharpServer(reporter);
+    const server = new OmniSharpServer(reporter, logger, channel, packageJSON);
     omnisharp = server;
     const advisor = new Advisor(server); // create before server is started
     const disposables: vscode.Disposable[] = [];

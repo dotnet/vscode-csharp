@@ -19,6 +19,8 @@ import * as protocol from './protocol';
 import * as utils from '../common';
 import * as vscode from 'vscode';
 import { setTimeout } from 'timers';
+import { OmnisharpManager } from './OmnisharpManager';
+import { PlatformInformation } from '../platform';
 
 enum ServerState {
     Starting,
@@ -58,6 +60,9 @@ module Events {
 }
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
+const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
+const installPath = ".omnisharp/experimental";
+const latestVersionFileServerPath = 'releases/versioninfo.txt';
 
 export class OmniSharpServer {
 
@@ -82,7 +87,11 @@ export class OmniSharpServer {
     private _serverProcess: ChildProcess;
     private _options: Options;
 
-    constructor(reporter: TelemetryReporter) {
+    private _csharpLogger: Logger;
+    private _csharpChannel: vscode.OutputChannel;
+    private _packageJSON: any;
+
+    constructor(reporter: TelemetryReporter, csharpLogger?: Logger, csharpChannel?: vscode.OutputChannel, packageJSON?: any) {
         this._reporter = reporter;
 
         this._channel = vscode.window.createOutputChannel('OmniSharp Log');
@@ -93,17 +102,20 @@ export class OmniSharpServer {
             : new Logger(message => { });
 
         this._requestQueue = new RequestQueueCollection(logger, 8, request => this._makeRequest(request));
+        this._csharpLogger = csharpLogger;
+        this._csharpChannel = csharpChannel;
+        this._packageJSON = packageJSON;
     }
 
     public isRunning(): boolean {
         return this._state === ServerState.Started;
     }
 
-    public async waitForEmptyEventQueue() : Promise<void> {
+    public async waitForEmptyEventQueue(): Promise<void> {
         while (!this._requestQueue.isEmpty()) {
             let p = new Promise((resolve) => setTimeout(resolve, 100));
             await p;
-        }     
+        }
     }
 
     private _getState(): ServerState {
@@ -238,14 +250,14 @@ export class OmniSharpServer {
 
     // --- start, stop, and connect
 
-    private _start(launchTarget: LaunchTarget): Promise<void> {
+    private async _start(launchTarget: LaunchTarget): Promise<void> {
         this._setState(ServerState.Starting);
         this._launchTarget = launchTarget;
 
         const solutionPath = launchTarget.target;
         const cwd = path.dirname(solutionPath);
         this._options = Options.Read();
-        
+
         let args = [
             '-s', solutionPath,
             '--hostPID', process.pid.toString(),
@@ -259,6 +271,22 @@ export class OmniSharpServer {
             args.push('--debug');
         }
 
+        let launchPath: string;
+        if (this._options.path) {
+            try {
+                let extensionPath = utils.getExtensionPath();
+                let manager = new OmnisharpManager(this._csharpChannel, this._csharpLogger, this._packageJSON, this._reporter);
+                let platformInfo = await PlatformInformation.GetCurrent();
+                launchPath = await manager.GetOmnisharpPath(this._options.path, this._options.useMono, serverUrl, latestVersionFileServerPath, installPath, extensionPath, platformInfo);
+            }
+            catch (error) {
+                this._logger.appendLine('Error occured in loading omnisharp from omnisharp.path');
+                this._logger.appendLine(`Could not start the server due to ${error.toString()}`);
+                this._logger.appendLine();
+                return;
+            }
+        }
+
         this._logger.appendLine(`Starting OmniSharp server at ${new Date().toLocaleString()}`);
         this._logger.increaseIndent();
         this._logger.appendLine(`Target: ${solutionPath}`);
@@ -267,9 +295,9 @@ export class OmniSharpServer {
 
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
-        return launchOmniSharp(cwd, args).then(value => {
+        return launchOmniSharp(cwd, args, launchPath).then(value => {
             if (value.usingMono) {
-                this._logger.appendLine(`OmniSharp server started wth Mono`);
+                this._logger.appendLine(`OmniSharp server started with Mono`);
             }
             else {
                 this._logger.appendLine(`OmniSharp server started`);
