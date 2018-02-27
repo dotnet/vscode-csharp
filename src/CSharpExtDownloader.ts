@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import * as util from './common';
 import { Logger } from './logger';
-import { PackageManager, Status, PackageError } from './packages';
+import { PackageManager } from './packages';
 import { PlatformInformation } from './platform';
 import { GetStatus, GetNetworkConfiguration, ReportInstallationError, SendInstallationTelemetry } from './downloader.helper';
 
