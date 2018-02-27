@@ -33,6 +33,7 @@ export interface Package {
 export interface Status {
     setMessage: (text: string) => void;
     setDetail: (text: string) => void;
+    dispose?: () => void;
 }
 
 export class PackageError extends Error {
@@ -75,7 +76,7 @@ export class PackageManager {
                 resolve(this.allPackages);
             }
             else if (this.packageJSON.runtimeDependencies) {
-                this.allPackages = JSON.parse(JSON.stringify(<Package[]>this.packageJSON.runtimeDependencies)); 
+                this.allPackages = JSON.parse(JSON.stringify(<Package[]>this.packageJSON.runtimeDependencies));
                 //Copying the packages by value and not by reference so that there are no side effects
 
                 // Convert relative binary paths to absolute

@@ -9,7 +9,7 @@ import * as util from './common';
 import { Logger } from './logger';
 import { PackageManager, Status, PackageError } from './packages';
 import { PlatformInformation } from './platform';
-import { SetStatus, GetNetworkConfiguration, ReportInstallationError, SendInstallationTelemetry } from './downloader.helper';
+import { GetStatus, GetNetworkConfiguration, ReportInstallationError, SendInstallationTelemetry } from './downloader.helper';
 
 /*
  * Class used to download the runtime dependencies of the C# Extension
@@ -26,9 +26,7 @@ export class CSharpExtDownloader {
         this.logger.append('Installing C# dependencies...');
         this.channel.show();
 
-        let statusObject = SetStatus();
-        let status = statusObject.Status;
-        let statusItem = statusObject.StatusItem;
+        let status = GetStatus();
 
         // Sends "AcquisitionStart" telemetry to indicate an acquisition  started.
         if (this.reporter) {
@@ -76,7 +74,7 @@ export class CSharpExtDownloader {
         }
         finally {
             SendInstallationTelemetry(this.logger, this.reporter, telemetryProps, installationStage, platformInfo);
-            statusItem.dispose();
+            status.dispose();
             // We do this step at the end so that we clean up the begin file in the case that we hit above catch block
             // Attach a an empty catch to this so that errors here do not propogate
             try {
