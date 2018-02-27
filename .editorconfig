@@ -9,11 +9,7 @@ indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
 
-# 2 space indentation for .travis.yml and package.json
-[{.travis.yml},package.json]
-indent_style = space
+# 2 space indentation and utf-8 for for .travis.yml, package.json, and .json files under src
+[{.travis.yml,package.json,src/**/*.json}]
 indent_size = 2
-
-[syntaxes/csharp.json]
-indent_style = space
-indent_size = 2
+charset = utf-8
