@@ -3,6 +3,15 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
+## 1.15.0 _(Not Yet Released)_
+
+#### Debugger
+
+* Adds support for [Source Link](https://github.com/dotnet/core/blob/master/Documentation/diagnostics/source_link.md), Symbol Servers and other more advanced symbol options ([#373](https://github.com/OmniSharp/omnisharp-vscode/issues/373))
+* Adds launch.json option to suppress Just-In-Time compiler optimizations.
+* Due to the previous two items and work from the .NET Team, it is now possible to easily debug into ASP.NET itself in projects running against .NET Core 2.1 preview 1. Support for debugging into all the managed code in .NET Core will come in future .NET Core 2.1 builds. Instructions are in the [wiki](https://github.com/OmniSharp/omnisharp-vscode/wiki/Debugging-into-the-.NET-Framework-itself).
+
+
 ## 1.14.0 (February 14, 2018)
 
 #### C# Language Support
