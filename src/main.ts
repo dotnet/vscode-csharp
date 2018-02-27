@@ -32,7 +32,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, logger, reporter);
     
     // activate language services
-    let omniSharpPromise = OmniSharp.activate(context, reporter, _channel);
+    let omniSharpPromise = OmniSharp.activate(context, reporter, _channel, logger, extension.packageJSON);
 
     // register JSON completion & hover providers for project.json
     context.subscriptions.push(addJSONProviders());

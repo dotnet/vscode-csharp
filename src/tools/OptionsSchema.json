@@ -1,446 +1,484 @@
 {
-    "_comment": "See README.md for information about this file",
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "title": "VS Code launch/attach options",
-    "description": "A json schema for the VS Code attach and launch options",
-    "type": "object",
-    "definitions": {
-        "PipeConfigurations": {
-            "type": "object",
-            "description": "Platform-specific pipe launch configuration options",
-            "default": {
-                "pipeCwd": "${workspaceFolder}",
-                "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
-                "pipeArgs": []
+  "_comment": "See README.md for information about this file",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "VS Code launch/attach options",
+  "description": "A json schema for the VS Code attach and launch options",
+  "type": "object",
+  "definitions": {
+    "PipeConfigurations": {
+      "type": "object",
+      "description": "Platform-specific pipe launch configuration options",
+      "default": {
+        "pipeCwd": "${workspaceFolder}",
+        "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
+        "pipeArgs": []
+      },
+      "properties": {
+        "pipeCwd": {
+          "type": "string",
+          "description": "The fully qualified path to the working directory for the pipe program.",
+          "default": "${workspaceFolder}"
+        },
+        "pipeProgram": {
+          "type": "string",
+          "description": "The fully qualified pipe command to execute.",
+          "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
+        },
+        "pipeArgs": {
+          "anyOf": [
+            {
+              "type": "array",
+              "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+              "items": {
+                "type": "string"
+              },
+              "default": []
             },
-            "properties": {
-                "pipeCwd": {
-                    "type": "string",
-                    "description": "The fully qualified path to the working directory for the pipe program.",
-                    "default": "${workspaceFolder}"
-                },
-                "pipeProgram": {
-                    "type": "string",
-                    "description": "The fully qualified pipe command to execute.",
-                    "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
-                },
-                "pipeArgs": {
-                    "anyOf": [
-                        {
-                            "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
-                            "items": {
-                                "type": "string"
-                            },
-                            "default": []
-                        },
-                        {
-                            "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
-                            "default": ""
-                        }
-                    ]
-                },
-                "quoteArgs": {
-                    "type": "boolean",
-                    "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
-                    "default": true
-                },
-                "pipeEnv": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "description": "Environment variables passed to the pipe program.",
-                    "default": {}
-                }
+            {
+              "type": "string",
+              "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+              "default": ""
             }
+          ]
         },
-        "PipeTransport": {
-            "type": "object",
-            "required": ["debuggerPath"],
-            "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg).",
-            "default": {
-                "pipeCwd": "${workspaceFolder}",
-                "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
-                "pipeArgs": [],
-                "debuggerPath" : "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
-            },
-            "properties": {
-                "pipeCwd": {
-                    "type": "string",
-                    "description": "The fully qualified path to the working directory for the pipe program.",
-                    "default": "${workspaceFolder}"
-                },
-                "pipeProgram": {
-                    "type": "string",
-                    "description": "The fully qualified pipe command to execute.",
-                    "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
-                },
-                "pipeArgs": {
-                    "anyOf": [
-                        {
-                            "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
-                            "items": {
-                                "type": "string"
-                            },
-                            "default": []
-                        },
-                        {
-                            "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
-                            "default": ""
-                        }
-                    ]
-                },
-                "debuggerPath" : {
-                    "type" : "string",
-                    "description" : "The full path to the debugger on the target machine.",
-                    "default" : "~/vsdbg/vsdbg"
-                },
-                "pipeEnv": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "description": "Environment variables passed to the pipe program.",
-                    "default": {}
-                },
-                "quoteArgs": {
-                    "type": "boolean",
-                    "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
-                    "default": true
-                },
-                "windows": {
-                    "$ref": "#/definitions/PipeConfigurations",
-                    "description": "Windows-specific pipe launch configuration options",
-                    "default": {
-                        "pipeCwd": "${workspaceFolder}",
-                        "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
-                        "pipeArgs": []
-                    }
-                },
-                "osx": {
-                    "$ref": "#/definitions/PipeConfigurations",
-                    "description": "OSX-specific pipe launch configuration options",
-                    "default": {
-                        "pipeCwd": "${workspaceFolder}",
-                        "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
-                        "pipeArgs": []
-                    }
-                },
-                "linux": {
-                    "$ref": "#/definitions/PipeConfigurations",
-                    "description": "Linux-specific pipe launch configuration options",
-                    "default": {
-                        "pipeCwd": "${workspaceFolder}",
-                        "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
-                        "pipeArgs": []
-                    }
-                }
-            }
+        "quoteArgs": {
+          "type": "boolean",
+          "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
+          "default": true
         },
-        "Logging": {
-            "type": "object",
-            "required": [],
-            "default": {},
-            "description": "Optional flags to determine what types of messages should be logged to the output window.",
-            "properties": {
-                "exceptions": {
-                    "type": "boolean",
-                    "description": "Optional flag to determine whether exception messages should be logged to the output window.",
-                    "default": true
-                },
-                "moduleLoad": {
-                    "type": "boolean",
-                    "description": "Optional flag to determine whether module load events should be logged to the output window.",
-                    "default": true
-                },
-                "programOutput": {
-                    "type": "boolean",
-                    "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
-                    "default": true
-                },
-                "engineLogging": {
-                    "type": "boolean",
-                    "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
-                    "default": false
-                },
-                "browserStdOut": {
-                    "type": "boolean",
-                    "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
-                    "default": true
-                }
-            }
-        },
-        "LaunchBrowserPlatformOptions": {
-            "type": "object",
-            "properties": {
-                "command": {
-                    "type": "string",
-                    "description": "The command to execute for launching the web browser",
-                    "default": "open"
-                },
-                "args": {
-                    "type": "string",
-                    "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
-                    "default": "${auto-detect-url}"
-                }
-            }
-        },
-        "LaunchBrowser": {
-            "type": "object",
-            "description": "Describes options to launch a web browser as part of launch",
-            "default": {
-                "enabled": true,
-                "args": "${auto-detect-url}",
-                "windows": {
-                    "command": "cmd.exe",
-                    "args": "/C start ${auto-detect-url}"
-                },
-                "osx": {
-                    "command": "open"
-                },
-                "linux": {
-                    "command": "xdg-open"
-                }
-            },
-            "properties": {
-                "enabled": {
-                    "type": "boolean",
-                    "description": "Whether web browser launch is enabled",
-                    "default": true
-                },
-                "args": {
-                    "anyOf": [
-                        {
-                            "type": "array",
-                            "description": "Command line arguments passed to the program.",
-                            "items": {
-                                "type": "string"
-                            },
-                            "default": []
-                        },
-                        {
-                            "type": "string",
-                            "description": "Stringified version of command line arguments passed to the program.",
-                            "default": ""
-                        }
-                    ]
-                },
-                "osx": {
-                    "$ref": "#/definitions/LaunchBrowserPlatformOptions",
-                    "description": "OSX-specific web launch configuration options",
-                    "default": {
-                        "command": "open"
-                    }
-                },
-                "linux": {
-                    "$ref": "#/definitions/LaunchBrowserPlatformOptions",
-                    "description": "Linux-specific web launch configuration options",
-                    "default": {
-                        "command": "xdg-open"
-                    }
-                },
-                "windows": {
-                    "$ref": "#/definitions/LaunchBrowserPlatformOptions",
-                    "description": "Windows-specific web launch configuration options",
-                    "default": {
-                        "command": "cmd.exe",
-                        "args": "/C start ${auto-detect-url}"
-                    }
-                }
-            }
-        },
-        "LaunchOptions": {
-            "type": "object",
-            "required": [
-                "program"
-            ],
-            "properties": {
-                "program": {
-                    "type": "string",
-                    "description": "Path to the application dll or .NET Core host executable to launch.\nThis property normally takes the form: '${workspaceFolder}/bin/Debug/(target-framework)/(project-name.dll)'\nExample: '${workspaceFolder}/bin/Debug/netcoreapp1.1/MyProject.dll'\n\nWhere:\n(target-framework) is the framework that the debugged project is being built for. This is normally found in the project file as the 'TargetFramework' property.\n(project-name.dll) is the name of debugged project's build output dll. This is normally the same as the project file name but with a '.dll' extension.",
-                    "default": "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll"
-                },
-                "cwd": {
-                    "type": "string",
-                    "description": "Path to the working directory of the program being debugged. Default is the current workspace.",
-                    "default": "${workspaceFolder}"
-                },
-                "args": {
-                    "anyOf": [
-                        {
-                            "type": "array",
-                            "description": "Command line arguments passed to the program.",
-                            "items": {
-                                "type": "string"
-                            },
-                            "default": []
-                        },
-                        {
-                            "type": "string",
-                            "description": "Stringified version of command line arguments passed to the program.",
-                            "default": ""
-                        }
-                    ]
-                },
-                "stopAtEntry": {
-                    "type": "boolean",
-                    "description": "If true, the debugger should stop at the entry point of the target.",
-                    "default": false
-                },
-                "launchBrowser": {
-                    "$ref": "#/definitions/LaunchBrowser",
-                    "description": "Describes options to launch a web browser as part of launch",
-                    "default": {
-                        "enabled": true,
-                        "args": "${auto-detect-url}",
-                        "windows": {
-                            "command": "cmd.exe",
-                            "args": "/C start ${auto-detect-url}"
-                        },
-                        "osx": {
-                            "command": "open"
-                        },
-                        "linux": {
-                            "command": "xdg-open"
-                        }
-                    }
-                },
-                "env": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "description": "Environment variables passed to the program.",
-                    "default": {}
-                },
-                "console": {
-                    "type": "string",
-                    "enum": [ "internalConsole", "integratedTerminal", "externalTerminal" ],
-                    "enumDescriptions": [
-                        "Output to the VS Code Debug Console. This doesn't support reading console input (ex:Console.ReadLine)",
-                        "VS Code's integrated terminal",
-                        "External terminal that can be configured via user settings"
-                    ],
-                    "description": "Where to launch the debug target.",
-                    "default": "internalConsole"
-                },
-                "externalConsole": {
-                    "type": "boolean",
-                    "description": "Attribute 'externalConsole' is deprecated, use 'console' instead.",
-                    "default": false
-                },
-                "sourceFileMap": {
-                    "type": "object",
-                    "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "default": {
-                        "<insert-source-path-here>": "<insert-target-path-here>"
-                    }
-                },
-                "justMyCode": {
-                    "type": "boolean",
-                    "description": "Optional flag to only show user code.",
-                    "default": true
-                },
-                "symbolPath": {
-                    "type": "array",
-                    "description": "Array of directories to use to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to. Example: '[ \"/Volumes/symbols\" ]",
-                    "items": {
-                        "type": "string"
-                    },
-                    "default": []
-                },
-                "requireExactSource": {
-                    "type": "boolean",
-                    "description": "Optional flag to require current source code to match the pdb.",
-                    "default": true
-                },
-                "enableStepFiltering": {
-                    "type": "boolean",
-                    "description": "Optional flag to enable stepping over Properties and Operators.",
-                    "default": true
-                },
-                "logging": {
-                    "$ref": "#/definitions/Logging",
-                    "description": "Optional flags to determine what types of messages should be logged to the output window."
-                },
-                "pipeTransport": {
-                    "$ref": "#/definitions/PipeTransport",
-                    "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg)."
-                }
-            }
-        },
-        "AttachOptions": {
-            "type": "object",
-            "required": [],
-            "properties": {
-                "processName": {
-                    "type": "string",
-                    "description": "",
-                    "default": "The process name to attach to. If this is used, 'processId' should not be used."
-                },
-                "processId": {
-                    "anyOf": [
-                        {
-                            "type": "string",
-                            "description": "The process id to attach to. Use \"${command:pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
-                            "default": "${command:pickProcess}"
-                        },
-                        {
-                            "type": "integer",
-                            "description": "The process id to attach to. Use \"${command:pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
-                            "default": 0
-                        }
-                    ]
-                },
-                "sourceFileMap": {
-                    "type": "object",
-                    "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "default": {
-                        "<insert-source-path-here>": "<insert-target-path-here>"
-                    }
-                },
-                "justMyCode": {
-                    "type": "boolean",
-                    "description": "Optional flag to only show user code.",
-                    "default": true
-                },
-                "symbolPath": {
-                    "type": "array",
-                    "description": "Array of directories to use to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to. Example: '[ \"/Volumes/symbols\" ]",
-                    "items": {
-                        "type": "string"
-                    },
-                    "default": []
-                },
-                "requireExactSource": {
-                    "type": "boolean",
-                    "description": "Optional flag to require current source code to match the pdb.",
-                    "default": true
-                },
-                "enableStepFiltering": {
-                    "type": "boolean",
-                    "description": "Optional flag to enable stepping over Properties and Operators.",
-                    "default": true
-                },
-                "logging": {
-                    "$ref": "#/definitions/Logging",
-                    "description": "Optional flags to determine what types of messages should be logged to the output window."
-                },
-                "pipeTransport": {
-                    "$ref": "#/definitions/PipeTransport",
-                    "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg)."
-                }
-            }
+        "pipeEnv": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Environment variables passed to the pipe program.",
+          "default": {}
         }
+      }
+    },
+    "PipeTransport": {
+      "type": "object",
+      "required": [ "debuggerPath" ],
+      "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg).",
+      "default": {
+        "pipeCwd": "${workspaceFolder}",
+        "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
+        "pipeArgs": [],
+        "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
+      },
+      "properties": {
+        "pipeCwd": {
+          "type": "string",
+          "description": "The fully qualified path to the working directory for the pipe program.",
+          "default": "${workspaceFolder}"
+        },
+        "pipeProgram": {
+          "type": "string",
+          "description": "The fully qualified pipe command to execute.",
+          "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
+        },
+        "pipeArgs": {
+          "anyOf": [
+            {
+              "type": "array",
+              "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+              "items": {
+                "type": "string"
+              },
+              "default": []
+            },
+            {
+              "type": "string",
+              "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+              "default": ""
+            }
+          ]
+        },
+        "debuggerPath": {
+          "type": "string",
+          "description": "The full path to the debugger on the target machine.",
+          "default": "~/vsdbg/vsdbg"
+        },
+        "pipeEnv": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Environment variables passed to the pipe program.",
+          "default": {}
+        },
+        "quoteArgs": {
+          "type": "boolean",
+          "description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
+          "default": true
+        },
+        "windows": {
+          "$ref": "#/definitions/PipeConfigurations",
+          "description": "Windows-specific pipe launch configuration options",
+          "default": {
+            "pipeCwd": "${workspaceFolder}",
+            "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
+            "pipeArgs": []
+          }
+        },
+        "osx": {
+          "$ref": "#/definitions/PipeConfigurations",
+          "description": "OSX-specific pipe launch configuration options",
+          "default": {
+            "pipeCwd": "${workspaceFolder}",
+            "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
+            "pipeArgs": []
+          }
+        },
+        "linux": {
+          "$ref": "#/definitions/PipeConfigurations",
+          "description": "Linux-specific pipe launch configuration options",
+          "default": {
+            "pipeCwd": "${workspaceFolder}",
+            "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
+            "pipeArgs": []
+          }
+        }
+      }
+    },
+    "Logging": {
+      "type": "object",
+      "required": [],
+      "default": {},
+      "description": "Optional flags to determine what types of messages should be logged to the output window.",
+      "properties": {
+        "exceptions": {
+          "type": "boolean",
+          "description": "Optional flag to determine whether exception messages should be logged to the output window.",
+          "default": true
+        },
+        "moduleLoad": {
+          "type": "boolean",
+          "description": "Optional flag to determine whether module load events should be logged to the output window.",
+          "default": true
+        },
+        "programOutput": {
+          "type": "boolean",
+          "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
+          "default": true
+        },
+        "engineLogging": {
+          "type": "boolean",
+          "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
+          "default": false
+        },
+        "browserStdOut": {
+          "type": "boolean",
+          "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
+          "default": true
+        }
+      }
+    },
+    "LaunchBrowserPlatformOptions": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string",
+          "description": "The command to execute for launching the web browser",
+          "default": "open"
+        },
+        "args": {
+          "type": "string",
+          "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
+          "default": "${auto-detect-url}"
+        }
+      }
+    },
+    "LaunchBrowser": {
+      "type": "object",
+      "description": "Describes options to launch a web browser as part of launch",
+      "default": {
+        "enabled": true,
+        "args": "${auto-detect-url}",
+        "windows": {
+          "command": "cmd.exe",
+          "args": "/C start ${auto-detect-url}"
+        },
+        "osx": {
+          "command": "open"
+        },
+        "linux": {
+          "command": "xdg-open"
+        }
+      },
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether web browser launch is enabled",
+          "default": true
+        },
+        "args": {
+          "anyOf": [
+            {
+              "type": "array",
+              "description": "Command line arguments passed to the program.",
+              "items": {
+                "type": "string"
+              },
+              "default": []
+            },
+            {
+              "type": "string",
+              "description": "Stringified version of command line arguments passed to the program.",
+              "default": ""
+            }
+          ]
+        },
+        "osx": {
+          "$ref": "#/definitions/LaunchBrowserPlatformOptions",
+          "description": "OSX-specific web launch configuration options",
+          "default": {
+            "command": "open"
+          }
+        },
+        "linux": {
+          "$ref": "#/definitions/LaunchBrowserPlatformOptions",
+          "description": "Linux-specific web launch configuration options",
+          "default": {
+            "command": "xdg-open"
+          }
+        },
+        "windows": {
+          "$ref": "#/definitions/LaunchBrowserPlatformOptions",
+          "description": "Windows-specific web launch configuration options",
+          "default": {
+            "command": "cmd.exe",
+            "args": "/C start ${auto-detect-url}"
+          }
+        }
+      }
+    },
+    "LaunchOptions": {
+      "type": "object",
+      "required": [
+        "program"
+      ],
+      "properties": {
+        "program": {
+          "type": "string",
+          "description": "Path to the application dll or .NET Core host executable to launch.\nThis property normally takes the form: '${workspaceFolder}/bin/Debug/(target-framework)/(project-name.dll)'\nExample: '${workspaceFolder}/bin/Debug/netcoreapp1.1/MyProject.dll'\n\nWhere:\n(target-framework) is the framework that the debugged project is being built for. This is normally found in the project file as the 'TargetFramework' property.\n(project-name.dll) is the name of debugged project's build output dll. This is normally the same as the project file name but with a '.dll' extension.",
+          "default": "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll"
+        },
+        "cwd": {
+          "type": "string",
+          "description": "Path to the working directory of the program being debugged. Default is the current workspace.",
+          "default": "${workspaceFolder}"
+        },
+        "args": {
+          "anyOf": [
+            {
+              "type": "array",
+              "description": "Command line arguments passed to the program.",
+              "items": {
+                "type": "string"
+              },
+              "default": []
+            },
+            {
+              "type": "string",
+              "description": "Stringified version of command line arguments passed to the program.",
+              "default": ""
+            }
+          ]
+        },
+        "stopAtEntry": {
+          "type": "boolean",
+          "description": "If true, the debugger should stop at the entry point of the target.",
+          "default": false
+        },
+        "launchBrowser": {
+          "$ref": "#/definitions/LaunchBrowser",
+          "description": "Describes options to launch a web browser as part of launch",
+          "default": {
+            "enabled": true,
+            "args": "${auto-detect-url}",
+            "windows": {
+              "command": "cmd.exe",
+              "args": "/C start ${auto-detect-url}"
+            },
+            "osx": {
+              "command": "open"
+            },
+            "linux": {
+              "command": "xdg-open"
+            }
+          }
+        },
+        "env": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Environment variables passed to the program.",
+          "default": {}
+        },
+        "console": {
+          "type": "string",
+          "enum": [ "internalConsole", "integratedTerminal", "externalTerminal" ],
+          "enumDescriptions": [
+            "Output to the VS Code Debug Console. This doesn't support reading console input (ex:Console.ReadLine)",
+            "VS Code's integrated terminal",
+            "External terminal that can be configured via user settings"
+          ],
+          "description": "Where to launch the debug target.",
+          "default": "internalConsole"
+        },
+        "externalConsole": {
+          "type": "boolean",
+          "description": "Attribute 'externalConsole' is deprecated, use 'console' instead.",
+          "default": false
+        },
+        "sourceFileMap": {
+          "type": "object",
+          "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {
+            "<insert-source-path-here>": "<insert-target-path-here>"
+          }
+        },
+        "justMyCode": {
+          "type": "boolean",
+          "description": "Optional flag to only show user code.",
+          "default": true
+        },
+        "requireExactSource": {
+          "type": "boolean",
+          "description": "Optional flag to require current source code to match the pdb.",
+          "default": true
+        },
+        "enableStepFiltering": {
+          "type": "boolean",
+          "description": "Optional flag to enable stepping over Properties and Operators.",
+          "default": true
+        },
+        "logging": {
+          "$ref": "#/definitions/Logging",
+          "description": "Optional flags to determine what types of messages should be logged to the output window."
+        },
+        "pipeTransport": {
+          "$ref": "#/definitions/PipeTransport",
+          "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg)."
+        },
+        "suppressJITOptimizations": {
+          "type": "boolean",
+          "description": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. For more information: https://aka.ms/VSCode-CS-LaunchJson#suppress-jit-optimizations",
+          "default": false
+        },
+        "symbolOptions": {
+          "$ref": "#/definitions/VSSymbolOptions",
+          "description": "Options to control how symbols (.pdb files) are found and loaded.",
+          "default": {
+            "searchPaths": [],
+            "searchMicrosoftSymbolServer": false
+          }
+        },
+        "sourceLinkOptions": {
+          "$ref": "#/definitions/SourceLinkOptions",
+          "description": "Options to control how Source Link connects to web servers. For more information: https://aka.ms/VSCode-CS-LaunchJson#source-link-options",
+          "default": {
+            "*": { "enabled": true }
+          }
+        }
+      }
+    },
+    "AttachOptions": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "processName": {
+          "type": "string",
+          "description": "",
+          "default": "The process name to attach to. If this is used, 'processId' should not be used."
+        },
+        "processId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "description": "The process id to attach to. Use \"${command:pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+              "default": "${command:pickProcess}"
+            },
+            {
+              "type": "integer",
+              "description": "The process id to attach to. Use \"${command:pickProcesss}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+              "default": 0
+            }
+          ]
+        },
+        "sourceFileMap": {
+          "type": "object",
+          "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {
+            "<insert-source-path-here>": "<insert-target-path-here>"
+          }
+        },
+        "justMyCode": {
+          "type": "boolean",
+          "description": "Optional flag to only show user code.",
+          "default": true
+        },
+        "requireExactSource": {
+          "type": "boolean",
+          "description": "Optional flag to require current source code to match the pdb.",
+          "default": true
+        },
+        "enableStepFiltering": {
+          "type": "boolean",
+          "description": "Optional flag to enable stepping over Properties and Operators.",
+          "default": true
+        },
+        "logging": {
+          "$ref": "#/definitions/Logging",
+          "description": "Optional flags to determine what types of messages should be logged to the output window."
+        },
+        "pipeTransport": {
+          "$ref": "#/definitions/PipeTransport",
+          "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg)."
+        },
+        "suppressJITOptimizations": {
+          "type": "boolean",
+          "description": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. For more information: https://aka.ms/VSCode-CS-LaunchJson#suppress-jit-optimizations",
+          "default": false
+        },
+        "symbolOptions": {
+          "$ref": "#/definitions/VSSymbolOptions",
+          "description": "Options to control how symbols (.pdb files) are found and loaded.",
+          "default": {
+            "searchPaths": [],
+            "searchMicrosoftSymbolServer": false
+          }
+        },
+        "sourceLinkOptions": {
+          "$ref": "#/definitions/SourceLinkOptions",
+          "description": "Options to control how Source Link connects to web servers. For more information: https://aka.ms/VSCode-CS-LaunchJson#source-link-options",
+          "default": {
+            "*": { "enabled": true }
+          }
+        }
+      }
+    },
+    "SourceLinkOptions": {
+      "type": "object",
+      "description": "Options to control how Source Link connects to web servers. For more information: https://aka.ms/VSCode-CS-LaunchJson#source-link-options",
+      "additionalItems": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "title": "boolean",
+            "description": "Is Source Link enabled for this URL?  If unspecified, this option defaults to 'true'.",
+            "default": "true"
+          }
+        }
+      }
     }
+  }
 }
