@@ -8,14 +8,14 @@ import { PlatformInformation } from './platform';
 import { Logger } from './logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
 
-export function GetNetworkDependencies() {
+export function GetNetworkConfiguration() {
     const config = vscode.workspace.getConfiguration();
     const proxy = config.get<string>('http.proxy');
     const strictSSL = config.get('http.proxyStrictSSL', true);
     return { Proxy: proxy, StrictSSL: strictSSL };
 }
 
-export function SetStatus() {
+export function GetStatus(): Status {
     let statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
     let status: Status = {
         setMessage: text => {
@@ -25,10 +25,13 @@ export function SetStatus() {
         setDetail: text => {
             statusItem.tooltip = text;
             statusItem.show();
+        },
+        dispose: () => {
+            statusItem.dispose();
         }
     };
 
-    return { StatusItem: statusItem, Status: status };
+    return status;
 }
 
 export function ReportInstallationError(logger: Logger, error, telemetryProps: any, installationStage: string) {
