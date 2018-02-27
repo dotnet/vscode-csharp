@@ -9,7 +9,7 @@ import * as util from './common';
 import { Logger } from './logger';
 import { PackageManager, Status, PackageError } from './packages';
 import { PlatformInformation } from './platform';
-import { SetStatus, GetNetworkDependencies, ReportInstallationError, SendInstallationTelemetry } from './downloader.helper';
+import { SetStatus, GetNetworkConfiguration, ReportInstallationError, SendInstallationTelemetry } from './downloader.helper';
 
 /*
  * Class used to download the runtime dependencies of the C# Extension
@@ -24,7 +24,6 @@ export class CSharpExtDownloader {
 
     public async installRuntimeDependencies(): Promise<boolean> {
         this.logger.append('Installing C# dependencies...');
-        this.logger.appendLine();
         this.channel.show();
 
         let statusObject = SetStatus();
@@ -49,16 +48,16 @@ export class CSharpExtDownloader {
             platformInfo = await PlatformInformation.GetCurrent();
 
             packageManager = new PackageManager(platformInfo, this.packageJSON);
-
+            this.logger.appendLine();
             // Display platform information and RID followed by a blank line
             this.logger.appendLine(`Platform: ${platformInfo.toString()}`);
             this.logger.appendLine();
 
             installationStage = 'downloadPackages';
 
-            let networkObject = GetNetworkDependencies();
-            const proxy = networkObject.Proxy;
-            const strictSSL = networkObject.StrictSSL;
+            let networkConfiguration = GetNetworkConfiguration();
+            const proxy = networkConfiguration.Proxy;
+            const strictSSL = networkConfiguration.StrictSSL;
 
             await packageManager.DownloadPackages(this.logger, status, proxy, strictSSL);
             this.logger.appendLine();
