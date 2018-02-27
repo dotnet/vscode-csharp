@@ -8,7 +8,7 @@ Welcome to the C# extension for Visual Studio Code! This preview provides the fo
 
 * Lightweight development tools for [.NET Core](https://dotnet.github.io).
 * Great C# editing support, including Syntax Highlighting, IntelliSense, Go to Definition, Find All References, etc.
-* Debugging support for .NET Core (CoreCLR). NOTE: Mono and Desktop CLR debugging is not supported.
+* Debugging support for .NET Core (CoreCLR). NOTE: Mono debugging is not supported. Desktop CLR debugging has [limited support](https://github.com/OmniSharp/omnisharp-vscode/wiki/Desktop-.NET-Framework).
 * Support for project.json and csproj projects on Windows, macOS and Linux.
 
 The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnisharp-roslyn).
