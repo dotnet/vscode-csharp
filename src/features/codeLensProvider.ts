@@ -132,11 +132,11 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         if (testFeature) {
             bucket.push(new vscode.CodeLens(
                 toRange(node.Location),
-                { title: "run test", command: 'dotnet.test.run', arguments: [testFeature.Data, fileName, testFrameworkName] }));
+                { title: "Run Test", command: 'dotnet.test.run', arguments: [testFeature.Data, fileName, testFrameworkName] }));
 
             bucket.push(new vscode.CodeLens(
                 toRange(node.Location),
-                { title: "debug test", command: 'dotnet.test.debug', arguments: [testFeature.Data, fileName, testFrameworkName] }));
+                { title: "Debug Test", command: 'dotnet.test.debug', arguments: [testFeature.Data, fileName, testFrameworkName] }));
         }
     }
 
@@ -163,10 +163,10 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         if (testMethods.length > 0) {
             bucket.push(new vscode.CodeLens(
                 toRange(node.Location),
-                { title: "run all tests", command: 'dotnet.classTests.run', arguments: [testMethods, fileName, testFrameworkName] }));
+                { title: "Run All Tests", command: 'dotnet.classTests.run', arguments: [testMethods, fileName, testFrameworkName] }));
             bucket.push(new vscode.CodeLens(
                 toRange(node.Location),
-                { title: "debug all tests", command: 'dotnet.classTests.debug', arguments: [testMethods, fileName, testFrameworkName] }));
+                { title: "Debug All Tests", command: 'dotnet.classTests.debug', arguments: [testMethods, fileName, testFrameworkName] }));
         }
     }
 
