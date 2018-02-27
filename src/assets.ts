@@ -204,7 +204,7 @@ export class AssetGenerator {
         }
 
         return {
-            taskName: 'build',
+            label: 'build',
             command: 'dotnet',
             type: 'process',
             args: ['build', util.convertNativePathToPosix(buildPath)],
@@ -419,9 +419,16 @@ export function addTasksJsonIfNecessary(generator: AssetGenerator, operations: O
             return resolve();
         }
 
+        // Read existing Tasks configuration
+        const tasksConfigs = vscode.workspace.getConfiguration('tasks');
+        let existingTaskConfigs = tasksConfigs.get<Array<tasks.TaskDescription>>('tasks');
         const tasksJson = generator.createTasksConfiguration();
-        const tasksJsonText = JSON.stringify(tasksJson, null, '    ');
 
+        if (existingTaskConfigs) {
+            tasksJson['tasks'] = tasksJson['tasks'].concat(existingTaskConfigs);
+        }
+
+        const tasksJsonText = JSON.stringify(tasksJson, null, '    ');
         fs.writeFile(generator.tasksJsonPath, tasksJsonText, err => {
             if (err) {
                 return reject(err);
@@ -442,11 +449,27 @@ function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: Operati
             return resolve();
         }
 
+        // Read existing launch configuration
+        const launchConfigs = vscode.workspace.getConfiguration('launch');
+        let existingLaunchConfigs = launchConfigs.get<{}[]>('configurations');
+
         const isWebProject = generator.hasWebServerDependency();
-        const launchJson: string = generator.createLaunchJson(isWebProject);
+        let launchJson: string = generator.createLaunchJson(isWebProject);
+
+        if (existingLaunchConfigs) {
+            let existingLaunchConfigsString = JSON.stringify(existingLaunchConfigs, null, '    ');
+            const lastBracket = launchJson.lastIndexOf(']');
+            const lastBracketInExistingConfig = existingLaunchConfigsString.lastIndexOf(']');
+            const firstBracketInExistingConfig = existingLaunchConfigsString.indexOf('[');
+
+            if (lastBracket !== -1 && lastBracketInExistingConfig !== -1 && firstBracketInExistingConfig !== -1) {
+                launchJson = launchJson.substring(0, lastBracket);
+                existingLaunchConfigsString = existingLaunchConfigsString.substring(firstBracketInExistingConfig + 1, lastBracketInExistingConfig);
+                launchJson = `${launchJson},${existingLaunchConfigsString}]`;
+            }
+        }
 
         const configurationsMassaged: string = indentJsonString(launchJson);
-
         const launchJsonText = `
 {
    // Use IntelliSense to find out which attributes exist for C# debugging

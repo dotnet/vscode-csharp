@@ -8,7 +8,7 @@ Welcome to the C# extension for Visual Studio Code! This preview provides the fo
 
 * Lightweight development tools for [.NET Core](https://dotnet.github.io).
 * Great C# editing support, including Syntax Highlighting, IntelliSense, Go to Definition, Find All References, etc.
-* Debugging support for .NET Core (CoreCLR). NOTE: Mono and Desktop CLR debugging is not supported.
+* Debugging support for .NET Core (CoreCLR). NOTE: Mono debugging is not supported. Desktop CLR debugging has [limited support](https://github.com/OmniSharp/omnisharp-vscode/wiki/Desktop-.NET-Framework).
 * Support for project.json and csproj projects on Windows, macOS and Linux.
 
 The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnisharp-roslyn).
@@ -16,23 +16,19 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 ### Get Started Writing C# in VS Code
 
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
-* [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-with-VS-Code-using-CSharp-and-NET-Core)
+* [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
-### What's New in 1.13.0
+### What's New in 1.14.0
 
-* Support for Cake files. (https://cakebuild.net/)
-* The language service now runs on Mono >= 5.2.0 when it is globally installed on macOS or Linux, resulting faster project load times.
-* If debugging is started when a launch.json is not present, picking ".NET Core" generates a launch.json dynamically that can correctly launch a .NET Core app without any additional changes.
-* Better reliability loading projects when Visual Studio 2017 (Windows) or Mono >= 5.2.0 (macOS/Linux) is installed.
-* Fixed issues with non-C# projects (such as F#) being treated as C# projects.
-* Addressed bugs when renaming files.
-* New options for controlling the display of the references and test CodeLens:
-  * `csharp.referencesCodeLens.enabled`
-  * `csharp.testsCodeLens.enabled`
-* Fixed problems with running/debugging xUnit 2.3.0 or NUnit tests.
+* Support for C# 7.2
+* Debugger support for extracting source files embedded in PDBs
+* Preliminary support for Linux ARM debugging
+* Improved Symbol/Documentation text display
+* Addressed problems with projects not being refreshed by OmniSharp after a package restore
+* Added option to disable warning about project.json deprecation
 * Many other bug fixes!
 
-See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.13.0/CHANGELOG.md) for all of the updates.
+See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.14.0/CHANGELOG.md) for all of the updates.
 
 ### Supported Operating Systems for Debugging
 

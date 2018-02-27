@@ -93,8 +93,16 @@ export function runTest(server: OmniSharpServer, request: protocol.V2.RunTestReq
     return server.makeRequest<protocol.V2.RunTestResponse>(protocol.V2.Requests.RunTest, request);
 }
 
+export function runTestsInClass(server: OmniSharpServer, request: protocol.V2.RunTestsInClassRequest) {
+    return server.makeRequest<protocol.V2.RunTestResponse>(protocol.V2.Requests.RunAllTestsInClass, request);
+}
+
 export function debugTestGetStartInfo(server: OmniSharpServer, request: protocol.V2.DebugTestGetStartInfoRequest) {
     return server.makeRequest<protocol.V2.DebugTestGetStartInfoResponse>(protocol.V2.Requests.DebugTestGetStartInfo, request);
+}
+
+export function debugTestClassGetStartInfo(server: OmniSharpServer, request: protocol.V2.DebugTestClassGetStartInfoRequest) {
+    return server.makeRequest<protocol.V2.DebugTestGetStartInfoResponse>(protocol.V2.Requests.DebugTestsInClassGetStartInfo, request);
 }
 
 export function debugTestLaunch(server: OmniSharpServer, request: protocol.V2.DebugTestLaunchRequest) {

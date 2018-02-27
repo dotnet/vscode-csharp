@@ -24,6 +24,7 @@ export interface Package {
     architectures: string[];
     binaries: string[];
     tmpFile: tmp.SynchrounousResult;
+    platformId?: string;
 
     // Path to use to test if the package has already been installed
     installTestPath?: string;
@@ -36,9 +37,9 @@ export interface Status {
 
 export class PackageError extends Error {
     // Do not put PII (personally identifiable information) in the 'message' field as it will be logged to telemetry
-    constructor(public message: string, 
-                public pkg: Package = null, 
-                public innerError: any = null) {
+    constructor(public message: string,
+        public pkg: Package = null,
+        public innerError: any = null) {
         super(message);
     }
 }
@@ -74,14 +75,11 @@ export class PackageManager {
                 resolve(this.allPackages);
             }
             else if (this.packageJSON.runtimeDependencies) {
-                this.allPackages = <Package[]>this.packageJSON.runtimeDependencies;
+                this.allPackages = JSON.parse(JSON.stringify(<Package[]>this.packageJSON.runtimeDependencies)); 
+                //Copying the packages by value and not by reference so that there are no side effects
 
                 // Convert relative binary paths to absolute
-                for (let pkg of this.allPackages) {
-                    if (pkg.binaries) {
-                        pkg.binaries = pkg.binaries.map(value => path.resolve(getBaseInstallPath(pkg), value));
-                    }
-                }
+                resolvePackageBinaries(this.allPackages);
 
                 resolve(this.allPackages);
             }
@@ -106,6 +104,37 @@ export class PackageManager {
                     return true;
                 });
             });
+    }
+
+    public SetVersionPackagesForDownload(packages: Package[]) {
+        this.allPackages = packages;
+        resolvePackageBinaries(this.allPackages);
+    }
+
+    public async GetLatestVersionFromFile(logger: Logger, status: Status, proxy: string, strictSSL: boolean, filePackage: Package): Promise<string> {
+        try {
+            let latestVersion: string;
+            await maybeDownloadPackage(filePackage, logger, status, proxy, strictSSL);
+            if (filePackage.tmpFile) {
+                latestVersion = fs.readFileSync(filePackage.tmpFile.name, 'utf8');
+                //Delete the temporary file created
+                filePackage.tmpFile.removeCallback();
+            }
+
+            return latestVersion;
+        }
+        catch (error) {
+            throw new Error(`Could not download the latest version file due to ${error.toString()}`);
+        }
+    }
+}
+
+function resolvePackageBinaries(packages: Package[]) {
+    // Convert relative binary paths to absolute
+    for (let pkg of packages) {
+        if (pkg.binaries) {
+            pkg.binaries = pkg.binaries.map(value => path.resolve(getBaseInstallPath(pkg), value));
+        }
     }
 }
 
@@ -139,7 +168,7 @@ function downloadPackage(pkg: Package, logger: Logger, status: Status, proxy: st
     status = status || getNoopStatus();
 
     logger.append(`Downloading package '${pkg.description}' `);
-    
+
     status.setMessage("$(cloud-download) Downloading packages");
     status.setDetail(`Downloading package '${pkg.description}'...`);
 
@@ -199,7 +228,7 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
                 logger.appendLine(`failed (error code '${response.statusCode}')`);
                 return reject(new PackageError(response.statusCode.toString(), pkg));
             }
-            
+
             // Downloading - hook up events
             let packageSize = parseInt(response.headers['content-length'], 10);
             let downloadedBytes = 0;
@@ -338,7 +367,7 @@ function installPackage(pkg: Package, logger: Logger, status?: Status): Promise<
     });
 }
 
-function doesPackageTestPathExist(pkg: Package) : Promise<boolean> {
+function doesPackageTestPathExist(pkg: Package): Promise<boolean> {
     const testPath = getPackageTestPath(pkg);
     if (testPath) {
         return util.fileExists(testPath);
@@ -347,7 +376,7 @@ function doesPackageTestPathExist(pkg: Package) : Promise<boolean> {
     }
 }
 
-function getPackageTestPath(pkg: Package) : string {
+function getPackageTestPath(pkg: Package): string {
     if (pkg.installTestPath) {
         return path.join(util.getExtensionPath(), pkg.installTestPath);
     } else {
