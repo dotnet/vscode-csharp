@@ -10,6 +10,7 @@ import { Logger } from '../logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { GetPackagesFromVersion, GetVersionFilePackage } from './OmnisharpPackageCreator';
 import { GetStatus, ReportInstallationError, SendInstallationTelemetry, GetNetworkConfiguration } from '../downloader.helper';
+import { MessageObserver, MessageType } from './messageType';
 
 export class OmnisharpDownloader {
     private status: Status;
@@ -19,8 +20,7 @@ export class OmnisharpDownloader {
     private telemetryProps: any;
 
     public constructor(
-        private channel: vscode.OutputChannel,
-        private logger: Logger,
+        private sink: MessageObserver,
         private packageJSON: any,
         private platformInfo: PlatformInformation,
         private reporter?: TelemetryReporter) {
@@ -34,20 +34,17 @@ export class OmnisharpDownloader {
     }
 
     public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string) {
-        this.logger.append('Installing Omnisharp Packages...');
-        this.channel.show();
+        this.sink.onNext({ type: MessageType.OmnisharpInstallation });
 
         let installationStage = '';
-        
+
         if (this.reporter) {
             this.reporter.sendTelemetryEvent("AcquisitionStart");
         }
 
         try {
             installationStage = 'logPlatformInfo';
-            this.logger.appendLine();
-            this.logger.appendLine(`Platform: ${this.platformInfo.toString()}`);
-            this.logger.appendLine();
+            this.sink.onNext({ type: MessageType.Platform, info: this.platformInfo });
 
             installationStage = 'getPackageInfo';
             let packages: Package[] = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
@@ -55,21 +52,19 @@ export class OmnisharpDownloader {
             installationStage = 'downloadPackages';
             // Specify the packages that the package manager needs to download
             this.packageManager.SetVersionPackagesForDownload(packages);
-            await this.packageManager.DownloadPackages(this.logger, this.status, this.proxy, this.strictSSL);
-
-            this.logger.appendLine();
+            await this.packageManager.DownloadPackages(this.sink, this.status, this.proxy, this.strictSSL);
 
             installationStage = 'installPackages';
-            await this.packageManager.InstallPackages(this.logger, this.status);
+            await this.packageManager.InstallPackages(this.sink, this.status);
 
             installationStage = 'completeSuccess';
         }
         catch (error) {
-            ReportInstallationError(this.logger, error, this.telemetryProps, installationStage);
+            ReportInstallationError(this.sink, error, this.telemetryProps, installationStage);
             throw error;// throw the error up to the server
         }
         finally {
-            SendInstallationTelemetry(this.logger, this.reporter, this.telemetryProps, installationStage, this.platformInfo);
+            SendInstallationTelemetry(this.sink, this.reporter, this.telemetryProps, installationStage, this.platformInfo);
             this.status.dispose();
         }
     }
@@ -77,15 +72,14 @@ export class OmnisharpDownloader {
     public async GetLatestVersion(serverUrl: string, latestVersionFileServerPath: string): Promise<string> {
         let installationStage = 'getLatestVersionInfoFile';
         try {
-            this.logger.appendLine('Getting latest build information...');
-            this.logger.appendLine();
+            this.sink.onNext({ type: MessageType.InstallationProgress, stage: installationStage, message: 'Getting latest build information...' });
             //The package manager needs a package format to download, hence we form a package for the latest version file
             let filePackage = GetVersionFilePackage(serverUrl, latestVersionFileServerPath);
             //Fetch the latest version information from the file
-            return await this.packageManager.GetLatestVersionFromFile(this.logger, this.status, this.proxy, this.strictSSL, filePackage);
+            return await this.packageManager.GetLatestVersionFromFile(this.sink, this.status, this.proxy, this.strictSSL, filePackage);
         }
         catch (error) {
-            ReportInstallationError(this.logger, error, this.telemetryProps, installationStage);
+            ReportInstallationError(this.sink, error, this.telemetryProps, installationStage);
             throw error;
         }
     }

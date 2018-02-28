@@ -18,12 +18,12 @@ import { generateAssets } from '../assets';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { getAdapterExecutionCommand } from '../coreclr-debug/activate';
 
-let channel = vscode.window.createOutputChannel('.NET');
+let dotNetChannel = vscode.window.createOutputChannel('.NET');
 
-export default function registerCommands(server: OmniSharpServer, reporter: TelemetryReporter, channel: vscode.OutputChannel) {
+export default function registerCommands(server: OmniSharpServer, reporter: TelemetryReporter, csharpChannel: vscode.OutputChannel, omnisharpChannel: vscode.OutputChannel) {
     let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server));
     let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', () => pickProjectAndStart(server));
-    let d3 = vscode.commands.registerCommand('o.showOutput', () => server.getChannel().show(vscode.ViewColumn.Three));
+    let d3 = vscode.commands.registerCommand('o.showOutput', () => omnisharpChannel.show(vscode.ViewColumn.Three));
     let d4 = vscode.commands.registerCommand('dotnet.restore', () => dotnetRestoreAllProjects(server));
 
     // register empty handler for csharp.installDebugger
@@ -42,8 +42,8 @@ export default function registerCommands(server: OmniSharpServer, reporter: Tele
     let d8 = vscode.commands.registerCommand('csharp.listRemoteProcess', (args) => RemoteAttachPicker.ShowAttachEntries(args));
 
     // Register command for adapter executable command.
-    let d9 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', (args) => getAdapterExecutionCommand(channel));
-    let d10 = vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', (args) => getAdapterExecutionCommand(channel));
+    let d9 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', (args) => getAdapterExecutionCommand(csharpChannel));
+    let d10 = vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', (args) => getAdapterExecutionCommand(csharpChannel));
 
     return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10);
 }
@@ -163,8 +163,8 @@ export function dotnetRestoreForProject(server: OmniSharpServer, filePath: strin
 
 function dotnetRestore(cwd: string, filePath?: string) {
     return new Promise<void>((resolve, reject) => {
-        channel.clear();
-        channel.show();
+        dotNetChannel.clear();
+        dotNetChannel.show();
 
         let cmd = 'dotnet';
         let args = ['restore'];
@@ -177,11 +177,11 @@ function dotnetRestore(cwd: string, filePath?: string) {
 
         function handleData(stream: NodeJS.ReadableStream) {
             stream.on('data', chunk => {
-                channel.append(chunk.toString());
+                dotNetChannel.append(chunk.toString());
             });
 
             stream.on('err', err => {
-                channel.append(`ERROR: ${err}`);
+                dotNetChannel.append(`ERROR: ${err}`);
             });
         }
 
@@ -189,12 +189,12 @@ function dotnetRestore(cwd: string, filePath?: string) {
         handleData(dotnet.stderr);
 
         dotnet.on('close', (code, signal) => {
-            channel.appendLine(`Done: ${code}.`);
+            dotNetChannel.appendLine(`Done: ${code}.`);
             resolve();
         });
 
         dotnet.on('error', err => {
-            channel.appendLine(`ERROR: ${err}`);
+            dotNetChannel.appendLine(`ERROR: ${err}`);
             reject(err);
         });
     });

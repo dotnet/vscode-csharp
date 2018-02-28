@@ -14,6 +14,7 @@ import * as util from './common';
 import { Logger } from './logger';
 import { PlatformInformation } from './platform';
 import { getProxyAgent } from './proxy';
+import { MessageObserver, MessageType } from './omnisharp/messageType';
 
 export interface Package {
     description: string;
@@ -56,17 +57,17 @@ export class PackageManager {
         tmp.setGracefulCleanup();
     }
 
-    public DownloadPackages(logger: Logger, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
+    public DownloadPackages(sink: MessageObserver, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
         return this.GetPackages()
             .then(packages => {
-                return util.buildPromiseChain(packages, pkg => maybeDownloadPackage(pkg, logger, status, proxy, strictSSL));
+                return util.buildPromiseChain(packages, pkg => maybeDownloadPackage(pkg, sink, status, proxy, strictSSL));
             });
     }
 
-    public InstallPackages(logger: Logger, status: Status): Promise<void> {
+    public InstallPackages(sink: MessageObserver, status: Status): Promise<void> {
         return this.GetPackages()
             .then(packages => {
-                return util.buildPromiseChain(packages, pkg => installPackage(pkg, logger, status));
+                return util.buildPromiseChain(packages, pkg => installPackage(pkg, sink, status));
             });
     }
 
@@ -112,10 +113,10 @@ export class PackageManager {
         resolvePackageBinaries(this.allPackages);
     }
 
-    public async GetLatestVersionFromFile(logger: Logger, status: Status, proxy: string, strictSSL: boolean, filePackage: Package): Promise<string> {
+    public async GetLatestVersionFromFile(sink: MessageObserver, status: Status, proxy: string, strictSSL: boolean, filePackage: Package): Promise<string> {
         try {
             let latestVersion: string;
-            await maybeDownloadPackage(filePackage, logger, status, proxy, strictSSL);
+            await maybeDownloadPackage(filePackage, sink, status, proxy, strictSSL);
             if (filePackage.tmpFile) {
                 latestVersion = fs.readFileSync(filePackage.tmpFile.name, 'utf8');
                 //Delete the temporary file created
@@ -155,20 +156,21 @@ function getNoopStatus(): Status {
     };
 }
 
-function maybeDownloadPackage(pkg: Package, logger: Logger, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
+function maybeDownloadPackage(pkg: Package, sink: MessageObserver, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
     return doesPackageTestPathExist(pkg).then((exists: boolean) => {
         if (!exists) {
-            return downloadPackage(pkg, logger, status, proxy, strictSSL);
+            return downloadPackage(pkg, sink, status, proxy, strictSSL);
         } else {
-            logger.appendLine(`Skipping package '${pkg.description}' (already downloaded).`);
+            sink.onNext({ type: MessageType.InstallationProgress, stage: 'downloadPackages', message: `Skipping package '${pkg.description}' (already downloaded).` });
         }
     });
 }
 
-function downloadPackage(pkg: Package, logger: Logger, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
+function downloadPackage(pkg: Package, sink: MessageObserver, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
     status = status || getNoopStatus();
+    const installationStage = 'downloadPackages';
 
-    logger.append(`Downloading package '${pkg.description}' `);
+    sink.onNext({ type: MessageType.InstallationProgress, stage: installationStage, message: `Downloading package '${pkg.description}' ` });
 
     status.setMessage("$(cloud-download) Downloading packages");
     status.setDetail(`Downloading package '${pkg.description}'...`);
@@ -184,17 +186,18 @@ function downloadPackage(pkg: Package, logger: Logger, status: Status, proxy: st
     }).then(tmpResult => {
         pkg.tmpFile = tmpResult;
 
-        let result = downloadFile(pkg.url, pkg, logger, status, proxy, strictSSL)
-            .then(() => logger.appendLine(' Done!'));
-
+        let result = downloadFile(pkg.url, pkg, sink, status, proxy, strictSSL)
+            .then(() => sink.onNext({ type: MessageType.InstallationProgress, stage: installationStage, message: ` Done!` }));
+        
         // If the package has a fallback Url, and downloading from the primary Url failed, try again from 
         // the fallback. This is used for debugger packages as some users have had issues downloading from
         // the CDN link.
         if (pkg.fallbackUrl) {
             result = result.catch((primaryUrlError) => {
-                logger.append(`\tRetrying from '${pkg.fallbackUrl}' `);
-                return downloadFile(pkg.fallbackUrl, pkg, logger, status, proxy, strictSSL)
-                    .then(() => logger.appendLine(' Done!'))
+                //to do: currently we are replacing logger.append with appendLine. Look into this.
+                sink.onNext({ type: MessageType.InstallationProgress, stage: 'downloadPackages', message: `\tRetrying from '${pkg.fallbackUrl}' `});
+                return downloadFile(pkg.fallbackUrl, pkg, sink, status, proxy, strictSSL)
+                    .then(() => sink.onNext({ type: MessageType.InstallationProgress, stage: 'downloadPackages', message: ' Done!' }))
                     .catch(() => primaryUrlError);
             });
         }
@@ -203,8 +206,9 @@ function downloadPackage(pkg: Package, logger: Logger, status: Status, proxy: st
     });
 }
 
-function downloadFile(urlString: string, pkg: Package, logger: Logger, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
+function downloadFile(urlString: string, pkg: Package, sink: MessageObserver, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
     const url = parseUrl(urlString);
+    const installationStage = 'downloadPackages';
 
     const options: https.RequestOptions = {
         host: url.host,
@@ -221,12 +225,12 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
         let request = https.request(options, response => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
-                return resolve(downloadFile(response.headers.location, pkg, logger, status, proxy, strictSSL));
+                return resolve(downloadFile(response.headers.location, pkg, sink, status, proxy, strictSSL));
             }
 
             if (response.statusCode != 200) {
                 // Download failed - print error message
-                logger.appendLine(`failed (error code '${response.statusCode}')`);
+                sink.onNext({ type: MessageType.InstallationProgress, stage: installationStage, message: `failed (error code '${response.statusCode}')` });
                 return reject(new PackageError(response.statusCode.toString(), pkg));
             }
 
@@ -237,7 +241,7 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
             let dots = 0;
             let tmpFile = fs.createWriteStream(null, { fd: pkg.tmpFile.fd });
 
-            logger.append(`(${Math.ceil(packageSize / 1024)} KB) `);
+            sink.onNext({ type: MessageType.InstallationProgress, stage: installationStage, message: `(${Math.ceil(packageSize / 1024)} KB) ` });
 
             response.on('data', data => {
                 downloadedBytes += data.length;
@@ -252,7 +256,7 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
                 // Update dots after package name in output console
                 let newDots = Math.ceil(downloadPercentage / 5);
                 if (newDots > dots) {
-                    logger.append('.'.repeat(newDots - dots));
+                    sink.onNext({ type: MessageType.InstallationProgress, stage: installationStage, message: '.'.repeat(newDots - dots) });
                     dots = newDots;
                 }
             });
@@ -278,8 +282,8 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger, status: S
     });
 }
 
-function installPackage(pkg: Package, logger: Logger, status?: Status): Promise<void> {
-
+function installPackage(pkg: Package, sink: MessageObserver, status?: Status): Promise<void> {
+    const installationStage = 'installPackages';
     if (!pkg.tmpFile) {
         // Download of this package was skipped, so there is nothing to install
         return Promise.resolve();
@@ -287,8 +291,8 @@ function installPackage(pkg: Package, logger: Logger, status?: Status): Promise<
 
     status = status || getNoopStatus();
 
-    logger.appendLine(`Installing package '${pkg.description}'`);
-
+    sink.onNext({ type: MessageType.InstallationProgress, stage: installationStage, message: `Installing package '${pkg.description}'` });
+ 
     status.setMessage("$(desktop-download) Installing packages...");
     status.setDetail(`Installing package '${pkg.description}'`);
 

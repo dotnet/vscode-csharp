@@ -13,10 +13,10 @@ import * as serverUtils from '../omnisharp/utils';
 
 const debounce = require('lodash.debounce');
 
-export default function reportStatus(server: OmniSharpServer) {
+export default function reportStatus(server: OmniSharpServer, channel: vscode.OutputChannel) {
     return vscode.Disposable.from(
-        reportServerStatus(server),
-        forwardOutput(server),
+        reportServerStatus(server, channel),
+        forwardOutput(server, channel),
         reportDocumentStatus(server));
 }
 
@@ -207,10 +207,10 @@ export function reportDocumentStatus(server: OmniSharpServer): vscode.Disposable
 
 // ---- server status
 
-export function reportServerStatus(server: OmniSharpServer): vscode.Disposable{
+export function reportServerStatus(server: OmniSharpServer, channel: vscode.OutputChannel): vscode.Disposable{
 
     function appendLine(value: string = '') {
-        server.getChannel().appendLine(value);
+        channel.appendLine(value);
     }
 
     let d0 = server.onServerError(err => {
@@ -283,9 +283,7 @@ function showMessageSoon() {
 
 // --- mirror output in channel
 
-function forwardOutput(server: OmniSharpServer) {
-
-    const logChannel = server.getChannel();
+function forwardOutput(server: OmniSharpServer, logChannel: vscode.OutputChannel) {
 
     function forward(message: string) {
         logChannel.append(message);

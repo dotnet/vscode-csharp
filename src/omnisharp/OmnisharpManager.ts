@@ -11,18 +11,18 @@ import { Logger } from '../logger';
 import { OmnisharpDownloader } from './OmnisharpDownloader';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { PlatformInformation } from '../platform';
+import { MessageObserver } from './messageType';
 
 export class OmnisharpManager {
     public constructor(
-        private channel: vscode.OutputChannel,
-        private logger: Logger,
+        private sink : MessageObserver,
         private packageJSON: any,
         private reporter?: TelemetryReporter) {
     }
 
     public async GetOmnisharpPath(omnisharpPath: string, useMono: boolean, serverUrl: string, latestVersionFileServerPath: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation): Promise<string> {
         // Looks at the options path, installs the dependencies and returns the path to be loaded by the omnisharp server
-        let downloader = new OmnisharpDownloader(this.channel, this.logger, this.packageJSON, platformInfo, this.reporter);
+        let downloader = new OmnisharpDownloader(this.sink, this.packageJSON, platformInfo, this.reporter);
         if (path.isAbsolute(omnisharpPath)) {
             if (await util.fileExists(omnisharpPath)) {
                 return omnisharpPath;

@@ -7,6 +7,7 @@ import { Status, PackageError } from './packages';
 import { PlatformInformation } from './platform';
 import { Logger } from './logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
+import { MessageObserver, MessageType } from './omnisharp/messageType';
 
 export function GetNetworkConfiguration() {
     const config = vscode.workspace.getConfiguration();
@@ -34,7 +35,7 @@ export function GetStatus(): Status {
     return status;
 }
 
-export function ReportInstallationError(logger: Logger, error, telemetryProps: any, installationStage: string) {
+export function ReportInstallationError(sink: MessageObserver, error, telemetryProps: any, installationStage: string) {
     let errorMessage: string;
     if (error instanceof PackageError) {
         // we can log the message in a PackageError to telemetry as we do not put PII in PackageError messages
@@ -54,12 +55,10 @@ export function ReportInstallationError(logger: Logger, error, telemetryProps: a
         errorMessage = error.toString();
     }
 
-    logger.appendLine();
-    logger.appendLine(`Failed at stage: ${installationStage}`);
-    logger.appendLine(errorMessage);
+    sink.onNext({ type: MessageType.InstallationFailure, stage: installationStage, message: errorMessage });
 }
 
-export function SendInstallationTelemetry(logger: Logger, reporter: TelemetryReporter, telemetryProps: any, installationStage: string, platformInfo: PlatformInformation) {
+export function SendInstallationTelemetry(sink: MessageObserver, reporter: TelemetryReporter, telemetryProps: any, installationStage: string, platformInfo: PlatformInformation) {
     telemetryProps['installStage'] = installationStage;
     telemetryProps['platform.architecture'] = platformInfo.architecture;
     telemetryProps['platform.platform'] = platformInfo.platform;
@@ -70,8 +69,6 @@ export function SendInstallationTelemetry(logger: Logger, reporter: TelemetryRep
         reporter.sendTelemetryEvent('Acquisition', telemetryProps);
     }
 
-    logger.appendLine();
     installationStage = '';
-    logger.appendLine('Finished');
-    logger.appendLine();
+    sink.onNext({ type: MessageType.InstallationFinished, stage: '', message: '' });
 }

@@ -21,6 +21,8 @@ import * as vscode from 'vscode';
 import { setTimeout } from 'timers';
 import { OmnisharpManager } from './OmnisharpManager';
 import { PlatformInformation } from '../platform';
+import { IObserver } from 'rx';
+import { Message, MessageType, MessageObserver } from './messageType';
 
 enum ServerState {
     Starting,
@@ -68,8 +70,6 @@ export class OmniSharpServer {
 
     private static _nextId = 1;
 
-    private _debugMode: boolean = false;
-
     private _readLine: ReadLine;
     private _disposables: vscode.Disposable[] = [];
 
@@ -81,30 +81,20 @@ export class OmniSharpServer {
     private _state: ServerState = ServerState.Stopped;
     private _launchTarget: LaunchTarget;
     private _requestQueue: RequestQueueCollection;
-    private _channel: vscode.OutputChannel;
-    private _logger: Logger;
-
     private _serverProcess: ChildProcess;
     private _options: Options;
 
     private _csharpLogger: Logger;
     private _csharpChannel: vscode.OutputChannel;
     private _packageJSON: any;
+    private _sink: MessageObserver;
 
-    constructor(reporter: TelemetryReporter, csharpLogger?: Logger, csharpChannel?: vscode.OutputChannel, packageJSON?: any) {
+    constructor(reporter: TelemetryReporter, sink: MessageObserver, packageJSON?: any) {
         this._reporter = reporter;
-
-        this._channel = vscode.window.createOutputChannel('OmniSharp Log');
-        this._logger = new Logger(message => this._channel.append(message));
-
-        const logger = this._debugMode
-            ? this._logger
-            : new Logger(message => { });
-
-        this._requestQueue = new RequestQueueCollection(logger, 8, request => this._makeRequest(request));
-        this._csharpLogger = csharpLogger;
-        this._csharpChannel = csharpChannel;
+        let verboseLogger = new Logger(message => this._sink.onNext({ type: MessageType.OmnisharpServerVerboseMessage, message: message }));
+        this._requestQueue = new RequestQueueCollection(verboseLogger, 8, request => this._makeRequest(request));
         this._packageJSON = packageJSON;
+        this._sink = sink;
     }
 
     public isRunning(): boolean {
@@ -159,13 +149,8 @@ export class OmniSharpServer {
             ? this._launchTarget.target
             : undefined;
     }
-
-    public getChannel(): vscode.OutputChannel {
-        return this._channel;
-    }
-
+    
     // --- eventing
-
     public onStdout(listener: (e: string) => any, thisArg?: any) {
         return this._addListener(Events.StdOut, listener, thisArg);
     }
@@ -275,39 +260,22 @@ export class OmniSharpServer {
         if (this._options.path) {
             try {
                 let extensionPath = utils.getExtensionPath();
-                let manager = new OmnisharpManager(this._csharpChannel, this._csharpLogger, this._packageJSON, this._reporter);
+                let manager = new OmnisharpManager(this._sink, this._packageJSON, this._reporter);
                 let platformInfo = await PlatformInformation.GetCurrent();
                 launchPath = await manager.GetOmnisharpPath(this._options.path, this._options.useMono, serverUrl, latestVersionFileServerPath, installPath, extensionPath, platformInfo);
             }
             catch (error) {
-                this._logger.appendLine('Error occured in loading omnisharp from omnisharp.path');
-                this._logger.appendLine(`Could not start the server due to ${error.toString()}`);
-                this._logger.appendLine();
+                this._sink.onNext({ type: MessageType.OmnisharpFailure, message: `Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error: error });
                 return;
             }
         }
 
-        this._logger.appendLine(`Starting OmniSharp server at ${new Date().toLocaleString()}`);
-        this._logger.increaseIndent();
-        this._logger.appendLine(`Target: ${solutionPath}`);
-        this._logger.decreaseIndent();
-        this._logger.appendLine();
+        this._sink.onNext({ type: MessageType.OmnisharpInitialisation, timeStamp: new Date(), solutionPath: solutionPath });
 
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
         return launchOmniSharp(cwd, args, launchPath).then(value => {
-            if (value.usingMono) {
-                this._logger.appendLine(`OmniSharp server started with Mono`);
-            }
-            else {
-                this._logger.appendLine(`OmniSharp server started`);
-            }
-
-            this._logger.increaseIndent();
-            this._logger.appendLine(`Path: ${value.command}`);
-            this._logger.appendLine(`PID: ${value.process.pid}`);
-            this._logger.decreaseIndent();
-            this._logger.appendLine();
+            this._sink.onNext({ type: MessageType.OmnisharpLaunch, usingMono: value.usingMono, command: value.command, pid: value.process.pid });
 
             this._serverProcess = value.process;
             this._delayTrackers = {};
@@ -521,7 +489,7 @@ export class OmniSharpServer {
         line = line.trim();
 
         if (line[0] !== '{') {
-            this._logger.appendLine(line);
+            this._sink.onNext({ type: MessageType.OmnisharpServerMessage, message: line });
             return;
         }
 
@@ -547,7 +515,7 @@ export class OmniSharpServer {
                 this._handleEventPacket(<protocol.WireProtocol.EventPacket>packet);
                 break;
             default:
-                console.warn(`Unknown packet type: ${packet.Type}`);
+                this._sink.onNext({ type: MessageType.OmnisharpServerMessage, message: `Unknown packet type: ${packet.Type}` });
                 break;
         }
     }
@@ -556,13 +524,11 @@ export class OmniSharpServer {
         const request = this._requestQueue.dequeue(packet.Command, packet.Request_seq);
 
         if (!request) {
-            this._logger.appendLine(`Received response for ${packet.Command} but could not find request.`);
+            this._sink.onNext({ type: MessageType.OmnisharpServerMessage, message: `Received response for ${packet.Command} but could not find request.` });
             return;
         }
 
-        if (this._debugMode) {
-            this._logger.appendLine(`handleResponse: ${packet.Command} (${packet.Request_seq})`);
-        }
+        this._sink.onNext({ type: MessageType.OmnisharpServerVerboseMessage, message: `handleResponse: ${packet.Command} (${packet.Request_seq})` });
 
         if (packet.Success) {
             request.onSuccess(packet.Body);
@@ -577,7 +543,7 @@ export class OmniSharpServer {
     private _handleEventPacket(packet: protocol.WireProtocol.EventPacket): void {
         if (packet.Event === 'log') {
             const entry = <{ LogLevel: string; Name: string; Message: string; }>packet.Body;
-            this._logOutput(entry.LogLevel, entry.Name, entry.Message);
+            this._sink.onNext({ type: MessageType.OmnisharpEventPacketReceived, logLevel: entry.LogLevel, name: entry.Name, message: entry.Message });
         }
         else {
             // fwd all other events
@@ -595,48 +561,8 @@ export class OmniSharpServer {
             Arguments: request.data
         };
 
-        if (this._debugMode) {
-            this._logger.append(`makeRequest: ${request.command} (${id})`);
-            if (request.data) {
-                this._logger.append(`, data=${JSON.stringify(request.data)}`);
-            }
-            this._logger.appendLine();
-        }
-
+        this._sink.onNext({ type: MessageType.OmnisharpRequestMessage, request: request, id: id });
         this._serverProcess.stdin.write(JSON.stringify(requestPacket) + '\n');
-
         return id;
-    }
-
-    private static getLogLevelPrefix(logLevel: string) {
-        switch (logLevel) {
-            case "TRACE": return "trce";
-            case "DEBUG": return "dbug";
-            case "INFORMATION": return "info";
-            case "WARNING": return "warn";
-            case "ERROR": return "fail";
-            case "CRITICAL": return "crit";
-            default: throw new Error(`Unknown log level value: ${logLevel}`);
-        }
-    }
-
-    private _isFilterableOutput(logLevel: string, name: string, message: string) {
-        // filter messages like: /codecheck: 200 339ms
-        const timing200Pattern = /^\/[\/\w]+: 200 \d+ms/;
-
-        return logLevel === "INFORMATION"
-            && name === "OmniSharp.Middleware.LoggingMiddleware"
-            && timing200Pattern.test(message);
-    }
-
-    private _logOutput(logLevel: string, name: string, message: string) {
-        if (this._debugMode || !this._isFilterableOutput(logLevel, name, message)) {
-            let output = `[${OmniSharpServer.getLogLevelPrefix(logLevel)}]: ${name}${os.EOL}${message}`;
-
-            const newLinePlusPadding = os.EOL + "        ";
-            output = output.replace(os.EOL, newLinePlusPadding);
-
-            this._logger.appendLine(output);
-        }
     }
 }
