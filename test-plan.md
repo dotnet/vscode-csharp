@@ -69,8 +69,10 @@ The easist way to verify that a project was successfully loaded is to open a .cs
 * `Rename file to match type` should correctly rename the file. The renamed file should be open after the refactoring
 * (this is not an exhaustive list)
 
-#### Code Lens
+#### Code Lens - References
 * References codelens appears on symbols and shows correct Find All References results
+
+#### Code Lens - Unit Tests
 * In unit tests projects, the "run test" and "debug test" codelens appears on test methods
   * Clicking runs or debugs the test and prints results to the console
 
@@ -95,9 +97,3 @@ dotnet add test\test.csproj reference project\project.csproj
 dotnet new solution -n solution
 dotnet sln solution.sln add test\test.csproj project\project.csproj
 ```
-
-
-
-
-
-
