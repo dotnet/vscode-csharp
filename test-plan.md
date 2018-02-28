@@ -88,6 +88,19 @@ The easist way to verify that a project was successfully loaded is to open a .cs
 * In a project that uses globbing (.NET Core), use the VS Code file explorer to add a new file next to the csproj. Intellisense/sighelp/etc should be available in the new file
 * Add a new file and reference a type in it from a different file. Deleting from disk the file containing the referenced type  should produce error messages
 
+#### Omnisharp Options
+
+  #### omnisharp.useMono (for Linux)
+  For using this option, mono version greater than or equal to 5.2.0 must be installed. If that is not so, setting this option should give an error.
+  * If the option is not set, the OmniSharp path displayed in the "OmniSharp Log" should end with "run"
+  * If the option is set, the OmniSharp path as mentioned above should end with "OmniSharp.exe"
+
+  #### omnisharp.path
+  * Setting this to the default value(null) or empty string should start the OmniSharp server, and display the .omnisharp folder followed by the platform specific binary/executable as the OmniSharp path
+  * Setting this option to the (absolute)path that contains the platform specific binary/executable for Omnisharp, should start the OmniSharp server and display the same in the OmniSharp path
+  * Setting this to a particular version like "1.29.2-beta.60" should download and install the specified version packages and start the OmniSharp server and display the OmniSharp path that includes '.omnisharp/experimental/1.29.2-beta.60' followed by the platform specific binary/executable
+  * All the three possible values should start the OmniSharp server and display the appropriate OmniSharp path, with and without setting the useMono option on Linux
+
 [1] For example,
 ```
 mkdir project
