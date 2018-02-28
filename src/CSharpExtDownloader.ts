@@ -7,14 +7,14 @@ import * as vscode from 'vscode';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import * as util from './common';
 import { Logger } from './logger';
-import { PackageManager, Status, PackageError } from './packages';
+import { PackageManager } from './packages';
 import { PlatformInformation } from './platform';
+import { GetStatus, GetNetworkConfiguration, ReportInstallationError, SendInstallationTelemetry } from './downloader.helper';
 
 /*
  * Class used to download the runtime dependencies of the C# Extension
  */
-export class CSharpExtDownloader
-{
+export class CSharpExtDownloader {
     public constructor(
         private channel: vscode.OutputChannel,
         private logger: Logger,
@@ -22,21 +22,11 @@ export class CSharpExtDownloader
         private packageJSON: any) {
     }
 
-    public installRuntimeDependencies(): Promise<boolean> {
+    public async installRuntimeDependencies(): Promise<boolean> {
         this.logger.append('Installing C# dependencies...');
         this.channel.show();
 
-        let statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
-        let status: Status = {
-            setMessage: text => {
-                statusItem.text = text;
-                statusItem.show();
-            },
-            setDetail: text => {
-                statusItem.tooltip = text;
-                statusItem.show();
-            }
-        };
+        let status = GetStatus();
 
         // Sends "AcquisitionStart" telemetry to indicate an acquisition  started.
         if (this.reporter) {
@@ -46,95 +36,52 @@ export class CSharpExtDownloader
         let platformInfo: PlatformInformation;
         let packageManager: PackageManager;
         let installationStage = 'touchBeginFile';
-        let errorMessage = '';
         let success = false;
 
         let telemetryProps: any = {};
 
-        return util.touchInstallFile(util.InstallFileType.Begin)
-            .then(() => {
-                installationStage = 'getPlatformInfo';
-                return PlatformInformation.GetCurrent();
-            })
-            .then(info => {
-                platformInfo = info;
-                packageManager = new PackageManager(info, this.packageJSON);
-                this.logger.appendLine();
+        try {
+            await util.touchInstallFile(util.InstallFileType.Begin);
+            installationStage = 'getPlatformInfo';
+            platformInfo = await PlatformInformation.GetCurrent();
 
-                // Display platform information and RID followed by a blank line
-                this.logger.appendLine(`Platform: ${info.toString()}`);
-                this.logger.appendLine();
+            packageManager = new PackageManager(platformInfo, this.packageJSON);
+            this.logger.appendLine();
+            // Display platform information and RID followed by a blank line
+            this.logger.appendLine(`Platform: ${platformInfo.toString()}`);
+            this.logger.appendLine();
 
-                installationStage = 'downloadPackages';
+            installationStage = 'downloadPackages';
 
-                const config = vscode.workspace.getConfiguration();
-                const proxy = config.get<string>('http.proxy');
-                const strictSSL = config.get('http.proxyStrictSSL', true);
+            let networkConfiguration = GetNetworkConfiguration();
+            const proxy = networkConfiguration.Proxy;
+            const strictSSL = networkConfiguration.StrictSSL;
 
-                return packageManager.DownloadPackages(this.logger, status, proxy, strictSSL);
-            })
-            .then(() => {
-                this.logger.appendLine();
+            await packageManager.DownloadPackages(this.logger, status, proxy, strictSSL);
+            this.logger.appendLine();
 
-                installationStage = 'installPackages';
-                return packageManager.InstallPackages(this.logger, status);
-            })
-            .then(() => {
-                installationStage = 'touchLockFile';
-                return util.touchInstallFile(util.InstallFileType.Lock);
-            })
-            .then(() => {
-                installationStage = 'completeSuccess';
-                success = true;
-            })
-            .catch(error => {
-                if (error instanceof PackageError) {
-                    // we can log the message in a PackageError to telemetry as we do not put PII in PackageError messages
-                    telemetryProps['error.message'] = error.message;
+            installationStage = 'installPackages';
+            await packageManager.InstallPackages(this.logger, status);
 
-                    if (error.innerError) {
-                        errorMessage = error.innerError.toString();
-                    } else {
-                        errorMessage = error.message;
-                    }
-
-                    if (error.pkg) {
-                        telemetryProps['error.packageUrl'] = error.pkg.url;
-                    }
-
-                } else {
-                    // do not log raw errorMessage in telemetry as it is likely to contain PII.
-                    errorMessage = error.toString();
-                }
-
-                this.logger.appendLine(`Failed at stage: ${installationStage}`);
-                this.logger.appendLine(errorMessage);
-            })
-            .then(() => {
-                telemetryProps['installStage'] = installationStage;
-                telemetryProps['platform.architecture'] = platformInfo.architecture;
-                telemetryProps['platform.platform'] = platformInfo.platform;
-                if (platformInfo.distribution) {
-                    telemetryProps['platform.distribution'] = platformInfo.distribution.toTelemetryString();
-                }
-
-                if (this.reporter) {
-                    this.reporter.sendTelemetryEvent('Acquisition', telemetryProps);
-                }
-
-                this.logger.appendLine();
-                installationStage = '';
-                this.logger.appendLine('Finished');
-
-                statusItem.dispose();
-            })
-            .then(() => {
-                // We do this step at the end so that we clean up the begin file in the case that we hit above catch block
-                // Attach a an empty catch to this so that errors here do not propogate
-                return util.deleteInstallFile(util.InstallFileType.Begin).catch((error) => { });
-            }).then(() => {
-                return success;
-            });
-        
+            installationStage = 'touchLockFile';
+            await util.touchInstallFile(util.InstallFileType.Lock);
+            
+            installationStage = 'completeSuccess';
+            success = true;
+        }
+        catch (error) {
+            ReportInstallationError(this.logger, error, telemetryProps, installationStage);
+        }
+        finally {
+            SendInstallationTelemetry(this.logger, this.reporter, telemetryProps, installationStage, platformInfo);
+            status.dispose();
+            // We do this step at the end so that we clean up the begin file in the case that we hit above catch block
+            // Attach a an empty catch to this so that errors here do not propogate
+            try {
+                util.deleteInstallFile(util.InstallFileType.Begin);
+            }
+            catch (error) { }
+            return success;
+        }
     }
 }
