@@ -75,6 +75,7 @@ The easist way to verify that a project was successfully loaded is to open a .cs
 #### Code Lens - Unit Tests
 * In unit tests projects, the "run test" and "debug test" codelens appears on test methods
   * Clicking runs or debugs the test and prints results to the console
+  * Breakpoints in a unit test are hit if you "debug test"
 
 #### Symbol Finder
 * Ctrl-T can find symbols by name when you type them
