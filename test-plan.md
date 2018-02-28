@@ -28,7 +28,7 @@ The easist way to verify that a project was successfully loaded is to open a .cs
 
 #### Signature Help 
 * Signature Help shows up in a method call after typing `(`
-* Signature help shows documentation for methods and for 
+* Signature help shows documentation for methods and for parameters
 * Parameter documentation is only shown for the currently active parameter
 
 #### Quick Info
