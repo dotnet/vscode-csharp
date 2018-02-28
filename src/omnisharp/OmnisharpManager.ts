@@ -15,7 +15,7 @@ import { MessageObserver } from './messageType';
 
 export class OmnisharpManager {
     public constructor(
-        private sink : MessageObserver,
+        private sink: MessageObserver,
         private packageJSON: any,
         private reporter?: TelemetryReporter) {
     }

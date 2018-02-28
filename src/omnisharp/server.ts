@@ -21,8 +21,7 @@ import * as vscode from 'vscode';
 import { setTimeout } from 'timers';
 import { OmnisharpManager } from './OmnisharpManager';
 import { PlatformInformation } from '../platform';
-import { IObserver } from 'rx';
-import { Message, MessageType, MessageObserver } from './messageType';
+import { MessageType, MessageObserver } from './messageType';
 
 enum ServerState {
     Starting,
@@ -149,7 +148,7 @@ export class OmniSharpServer {
             ? this._launchTarget.target
             : undefined;
     }
-    
+
     // --- eventing
     public onStdout(listener: (e: string) => any, thisArg?: any) {
         return this._addListener(Events.StdOut, listener, thisArg);
