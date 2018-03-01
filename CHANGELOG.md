@@ -12,12 +12,9 @@
 * Due to the previous two items and work from the .NET Team, it is now possible to easily debug into ASP.NET itself in projects running against .NET Core 2.1 preview 1. Support for debugging into all the managed code in .NET Core will come in future .NET Core 2.1 builds. Instructions are in the [wiki](https://github.com/OmniSharp/omnisharp-vscode/wiki/Debugging-into-the-.NET-Framework-itself).
 
 #### Alternative Omnisharp Support
-
-* Adds support to use the "omnisharp.path" option to download alternative copies of OmniSharp. The possible values for this option are:
-    * "latest" - Use the latest CI build
-    * Version to use - The particular OmniSharp version the user desires like "1.29.2-beta.60"
-    * Some absolute path - The absolute path on disk that points to the executables (like Omnisharp.exe in Windows) or binaries to be used to start the OmniSharp server
-
+"Enables the use of pre-release builds of Omnisharp. Downloading a pre-release build of Omnisharp allows the C# extension for VS Code to use features that have been merged into the "master" branch of omnisharp-roslyn(https://github.com/OmniSharp/omnisharp-roslyn) but that have not been officially released
+* Adds support to use the "omnisharp.path" option to download alternative copies of OmniSharp. 
+Specifies the path to OmniSharp. This can be the absolute path to an OmniSharp executable, a specific version number, or \"latest\". If a version number or \"latest\" is specified, the appropriate version of OmniSharp will be downloaded and used.
 
 ## 1.14.0 (February 14, 2018)
 
