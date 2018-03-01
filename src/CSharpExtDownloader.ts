@@ -10,21 +10,20 @@ import { Logger } from './logger';
 import { PackageManager } from './packages';
 import { PlatformInformation } from './platform';
 import { GetStatus, GetNetworkConfiguration, ReportInstallationError, SendInstallationTelemetry } from './downloader.helper';
+import { MessageObserver, MessageType } from './omnisharp/messageType';
 
 /*
  * Class used to download the runtime dependencies of the C# Extension
  */
 export class CSharpExtDownloader {
     public constructor(
-        private channel: vscode.OutputChannel,
-        private logger: Logger,
+        private sink: MessageObserver,
         private reporter: TelemetryReporter /* optional */,
         private packageJSON: any) {
     }
 
     public async installRuntimeDependencies(): Promise<boolean> {
-        this.logger.append('Installing C# dependencies...');
-        this.channel.show();
+        this.sink.onNext({ type: MessageType.PackageInstallation, packageInfo: "C# dependencies" });
 
         let status = GetStatus();
 
@@ -46,10 +45,8 @@ export class CSharpExtDownloader {
             platformInfo = await PlatformInformation.GetCurrent();
 
             packageManager = new PackageManager(platformInfo, this.packageJSON);
-            this.logger.appendLine();
             // Display platform information and RID followed by a blank line
-            this.logger.appendLine(`Platform: ${platformInfo.toString()}`);
-            this.logger.appendLine();
+            this.sink.onNext({ type: MessageType.Platform, info: platformInfo });
 
             installationStage = 'downloadPackages';
 
@@ -57,11 +54,10 @@ export class CSharpExtDownloader {
             const proxy = networkConfiguration.Proxy;
             const strictSSL = networkConfiguration.StrictSSL;
 
-            await packageManager.DownloadPackages(this.logger, status, proxy, strictSSL);
-            this.logger.appendLine();
+            await packageManager.DownloadPackages(this.sink, status, proxy, strictSSL);
 
             installationStage = 'installPackages';
-            await packageManager.InstallPackages(this.logger, status);
+            await packageManager.InstallPackages(this.sink, status);
 
             installationStage = 'touchLockFile';
             await util.touchInstallFile(util.InstallFileType.Lock);
@@ -70,10 +66,10 @@ export class CSharpExtDownloader {
             success = true;
         }
         catch (error) {
-            ReportInstallationError(this.logger, error, telemetryProps, installationStage);
+            ReportInstallationError(this.sink, error, telemetryProps, installationStage);
         }
         finally {
-            SendInstallationTelemetry(this.logger, this.reporter, telemetryProps, installationStage, platformInfo);
+            SendInstallationTelemetry(this.sink, this.reporter, telemetryProps, installationStage, platformInfo);
             status.dispose();
             // We do this step at the end so that we clean up the begin file in the case that we hit above catch block
             // Attach a an empty catch to this so that errors here do not propogate

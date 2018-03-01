@@ -12,8 +12,13 @@ import { CSharpExtDownloader } from './CSharpExtDownloader';
 import { Logger } from './logger';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { addJSONProviders } from './features/json/jsonContributions';
+import { Subject } from 'rx';
+import { Message, MessageObserver } from './omnisharp/messageType';
+import { omnisharpLoggerObserver } from './omnisharp/omnisharpLoggerObserver';
+import { csharpChannelObserver } from './omnisharp/csharpChannelObserver';
+import { csharpLoggerObserver } from './omnisharp/csharpLoggerObserver';
 
-let _channel: vscode.OutputChannel = null;
+let csharpChannel: vscode.OutputChannel = null;
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 
@@ -25,38 +30,48 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     util.setExtensionPath(extension.extensionPath);
 
-    _channel = vscode.window.createOutputChannel('C#');
+    csharpChannel = vscode.window.createOutputChannel('C#');
 
-    let logger = new Logger(text => _channel.append(text));
+    let csharpLogger = new Logger(text => csharpChannel.append(text));
 
-    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, logger, reporter);
-    
+    const sink = new Subject<Message>();
+    let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
+    let omnisharpLogObserver = new omnisharpLoggerObserver(() => new Logger(message => omnisharpChannel.append(message)), false);
+    let csharpchannelObserver = new csharpChannelObserver(() => csharpChannel);
+    let csharpLogObserver = new csharpLoggerObserver(() => csharpLogger);
+
+    sink.subscribe(omnisharpLogObserver.onNext);
+    sink.subscribe(csharpchannelObserver.onNext);
+    sink.subscribe(csharpLogObserver.onNext);
+
+    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, sink, reporter);
+
     // activate language services
-    let omniSharpPromise = OmniSharp.activate(context, reporter, _channel, logger, extension.packageJSON);
+    let omniSharpPromise = OmniSharp.activate(context, reporter, sink, extension.packageJSON);
 
     // register JSON completion & hover providers for project.json
     context.subscriptions.push(addJSONProviders());
-    
+
     let coreClrDebugPromise = Promise.resolve();
     if (runtimeDependenciesExist) {
         // activate coreclr-debug
-        coreClrDebugPromise = coreclrdebug.activate(extension, context, reporter, logger, _channel);
+        coreClrDebugPromise = coreclrdebug.activate(extension, context, reporter, csharpLogger, csharpChannel);
     }
-    
+
     return {
         initializationFinished: Promise.all([omniSharpPromise, coreClrDebugPromise])
-        .then(promiseResult => {
-            // This promise resolver simply swallows the result of Promise.all. When we decide we want to expose this level of detail
-            // to other extensions then we will design that return type and implement it here.
-        })
+            .then(promiseResult => {
+                // This promise resolver simply swallows the result of Promise.all. When we decide we want to expose this level of detail
+                // to other extensions then we will design that return type and implement it here.
+            })
     };
 }
 
-function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger, reporter: TelemetryReporter): Promise<boolean> {
+function ensureRuntimeDependencies(extension: vscode.Extension<any>, sink: MessageObserver, reporter: TelemetryReporter): Promise<boolean> {
     return util.installFileExists(util.InstallFileType.Lock)
         .then(exists => {
             if (!exists) {
-                const downloader = new CSharpExtDownloader(_channel, logger, reporter, extension.packageJSON);
+                const downloader = new CSharpExtDownloader(sink, reporter, extension.packageJSON);
                 return downloader.installRuntimeDependencies();
             } else {
                 return true;

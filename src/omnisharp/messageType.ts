@@ -9,11 +9,11 @@ import { Request } from "./requestQueue";
 
 export type MessageObserver = IObserver<Message>;
 export enum MessageType {
-    OmnisharpInitialisation, OmnisharpLaunch, OmnisharpInstallation, Platform, InstallationFailure, InstallationProgress, InstallationFinished, OmnisharpFailure,
-    OmnisharpServerMessage, OmnisharpRequestMessage, OmnisharpServerVerboseMessage, OmnisharpEventPacketReceived
+    OmnisharpInitialisation, OmnisharpLaunch, PackageInstallation, Platform, InstallationFailure, InstallationProgress, InstallationFinished, OmnisharpFailure,
+    OmnisharpServerMessage, OmnisharpRequestMessage, OmnisharpServerVerboseMessage, OmnisharpEventPacketReceived, DownloadStart, DownloadProgress, DownloadEnd
 }
-export type Message = OmnisharpInitialisation | OmnisharpLaunch | OmnisharpInstallation | Platform | InstallationStep | OmnisharpFailure
-    | OmnisharpServerMessage | OmnisharpRequestMessage | OmnisharpEventPacketReceived;
+export type Message = OmnisharpInitialisation | OmnisharpLaunch | PackageInstallation | Platform | InstallationStep | OmnisharpFailure
+    | OmnisharpServerMessage | OmnisharpRequestMessage | OmnisharpEventPacketReceived | DownloadStep;
 
 interface OmnisharpInitialisation {
     type: MessageType.OmnisharpInitialisation;
@@ -28,8 +28,9 @@ interface OmnisharpLaunch {
     pid: number;
 }
 
-interface OmnisharpInstallation {
-    type: MessageType.OmnisharpInstallation;
+interface PackageInstallation {
+    type: MessageType.PackageInstallation;
+    packageInfo: string;
 }
 
 interface Platform {
@@ -40,6 +41,11 @@ interface Platform {
 interface InstallationStep {
     type: MessageType.InstallationFailure | MessageType.InstallationProgress | MessageType.InstallationFinished;
     stage: string;
+    message: string;
+}
+
+interface DownloadStep {
+    type: MessageType.DownloadStart | MessageType.DownloadProgress | MessageType.DownloadEnd;
     message: string;
 }
 

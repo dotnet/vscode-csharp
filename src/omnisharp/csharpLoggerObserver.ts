@@ -15,22 +15,20 @@ export class csharpLoggerObserver {
 
     public onNext(message: Message) {
         switch (message.type) {
-            case MessageType.OmnisharpInstallation:
-                this.logger.append('Installing Omnisharp Packages...');
+            case MessageType.PackageInstallation:
+                this.logger.append(`Installing ${message.packageInfo}...`);
                 this.logger.appendLine();
                 break;
-            case MessageType.Platform:
+            case MessageType.Platform:    
                 this.logger.appendLine(`Platform: ${message.info.toString()}`);
                 this.logger.appendLine();
                 break;
             case MessageType.InstallationFailure:
-                this.logger.appendLine();
                 this.logger.appendLine(`Failed at stage: ${message.stage}`);
                 this.logger.appendLine(message.message);
                 this.logger.appendLine();
                 break;
             case MessageType.InstallationFinished:
-                this.logger.appendLine();
                 this.logger.appendLine('Finished');
                 this.logger.appendLine();
                 break;
@@ -38,6 +36,13 @@ export class csharpLoggerObserver {
                 this.logger.appendLine(message.message);
                 this.logger.appendLine();
                 break;
+            case MessageType.DownloadStart:
+            case MessageType.DownloadProgress:    
+                this.logger.append(message.message);
+                break;
+            case MessageType.DownloadEnd:
+                this.logger.appendLine(message.message);  
+            break;
         }
     }
 }

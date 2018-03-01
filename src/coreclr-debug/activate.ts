@@ -119,8 +119,7 @@ interface AdapterExecutableCommand {
 // If the debugger components have not finished downloading, the proxy displays an error message to the user
 // Else it will launch the debug adapter
 export async function getAdapterExecutionCommand(channel: vscode.OutputChannel): Promise<AdapterExecutableCommand> {
-    let logger = new Logger(text => channel.append(text));
-    let util = new CoreClrDebugUtil(common.getExtensionPath(), logger);
+    let util = new CoreClrDebugUtil(common.getExtensionPath());
 
     // Check for .debugger folder. Handle if it does not exist.
     if (!CoreClrDebugUtil.existsSync(util.debugAdapterDir()))

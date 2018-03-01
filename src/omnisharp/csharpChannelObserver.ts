@@ -13,7 +13,7 @@ export class csharpChannelObserver {
 
     public onNext(message: Message) {
         switch (message.type) {
-            case MessageType.OmnisharpInstallation:
+            case MessageType.PackageInstallation:
             case MessageType.InstallationFailure:
                 this.channel.show();
                 break;

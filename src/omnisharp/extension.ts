@@ -33,34 +33,19 @@ import forwardChanges from '../features/changeForwarding';
 import registerCommands from '../features/commands';
 import reportStatus from '../features/status';
 import { Subject } from 'rx';
-import { Message, MessageType } from './messageType';
+import { MessageObserver } from './messageType';
 import { Logger } from '../logger';
-import { omnisharpLoggerObserver } from './omnisharpLoggerObserver';
-import { csharpChannelObserver } from './csharpChannelObserver';
-import { csharpLoggerObserver } from './csharpLoggerObserver';
 
 export let omnisharp: OmniSharpServer;
 
-export function activate(context: vscode.ExtensionContext, reporter: TelemetryReporter, csharpChannel: vscode.OutputChannel, csharpLogger: Logger, packageJSON: any) {
+export function activate(context: vscode.ExtensionContext, reporter: TelemetryReporter, sink: MessageObserver, packageJSON: any) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
         scheme: 'file' // only files from disk
     };
 
     const options = Options.Read();
-
-    const messagePump = new Subject<Message>();
-
-    let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
-    let omnisharpLogObserver = new omnisharpLoggerObserver(() => new Logger(message => omnisharpChannel.append(message)), false);
-    let csharpchannelObserver = new csharpChannelObserver(() => csharpChannel);
-    let csharpLogObserver = new csharpLoggerObserver(() => csharpLogger);
-
-    messagePump.subscribe(omnisharpLogObserver.onNext);
-    messagePump.subscribe(csharpchannelObserver.onNext);
-    messagePump.subscribe(csharpLogObserver.onNext);
-
-    const server = new OmniSharpServer(reporter, messagePump, packageJSON);
+    const server = new OmniSharpServer(reporter, sink, packageJSON);
 
     omnisharp = server;
     const advisor = new Advisor(server); // create before server is started
@@ -104,8 +89,8 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         vscode.Disposable.from(...localDisposables).dispose();
     }));
 
-    disposables.push(registerCommands(server, reporter, csharpChannel, omnisharpChannel));
-    disposables.push(reportStatus(server, omnisharpChannel));
+    disposables.push(registerCommands(server, reporter, sink));
+    disposables.push(reportStatus(server, sink));
 
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
         disposables.push(server.onServerStart(() => {
