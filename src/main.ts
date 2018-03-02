@@ -15,11 +15,12 @@ import { PlatformInformation } from './platform';
 import { Subject } from 'rx';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { addJSONProviders } from './features/json/jsonContributions';
-import { csharpChannelObserver } from './omnisharp/observers/csharpChannelObserver';
-import { csharpLoggerObserver } from './omnisharp/observers/csharpLoggerObserver';
-import { omnisharpLoggerObserver } from './omnisharp/observers/omnisharpLoggerObserver';
+import { CsharpChannelObserver } from './omnisharp/observers/csharpChannelObserver';
+import { CsharpLoggerObserver } from './omnisharp/observers/csharpLoggerObserver';
+import { OmnisharpLoggerObserver } from './omnisharp/observers/omnisharpLoggerObserver';
 import { DotNetChannelObserver } from './omnisharp/observers/dotnetChannelObserver';
 import { TelemetryObserver } from './omnisharp/telemetryObserver';
+import { OmnisharpChannelObserver } from './omnisharp/observers/OmnisharpChannelObserver';
 
 let csharpChannel: vscode.OutputChannel = null;
 
@@ -37,14 +38,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     let csharpLogger = new Logger(text => csharpChannel.append(text));
     let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
-    let omnisharpLogObserver = new omnisharpLoggerObserver(() => new Logger(message => omnisharpChannel.append(message)), false);
-    let csharpchannelObserver = new csharpChannelObserver(() => csharpChannel);
-    let csharpLogObserver = new csharpLoggerObserver(() => csharpLogger);
+    let omnisharpLogObserver = new OmnisharpLoggerObserver(() => new Logger(message => omnisharpChannel.append(message)), false);
+    let omnisharpChannelObserver = new OmnisharpChannelObserver(() => omnisharpChannel);
+    let csharpchannelObserver = new CsharpChannelObserver(() => csharpChannel);
+    let csharpLogObserver = new CsharpLoggerObserver(() => csharpLogger);
     let dotnetChannel = vscode.window.createOutputChannel('.NET');
     let dotnetChannelObserver = new DotNetChannelObserver(() => dotnetChannel);
 
     const sink = new Subject<Message>();
     sink.subscribe(omnisharpLogObserver.onNext);
+    sink.subscribe(omnisharpChannelObserver.onNext);
     sink.subscribe(csharpchannelObserver.onNext);
     sink.subscribe(csharpLogObserver.onNext);
     sink.subscribe(dotnetChannelObserver.onNext);

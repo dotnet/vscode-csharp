@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { Message, MessageType } from "../messageType";
 
-export class csharpChannelObserver {
+export class CsharpChannelObserver {
     private channel;
 
     constructor(channelCreator: () => {
