@@ -12,6 +12,10 @@ export type MessageObserver = IObserver<Message>;
 export enum MessageType {
     ActivationFailure,
     CommandShowOutput,
+    CommandDotNetRestoreStart,
+    CommandDotNetRestoreProgress,
+    CommandDotNetRestoreSucceeded,
+    CommandDotNetRestoreFailed,
     DebuggerNotInstalledFailure,
     DebuggerPreRequisiteFailure,
     DebuggerPreRequisiteWarning,
@@ -34,45 +38,39 @@ export enum MessageType {
     TestExecutionCountReport,
 }
 export type Message = 
-    ActivationFailure |
-    CommandShowOutput |
-    DebuggerNotInstalledFailure |
-    DebuggerPreRequisiteFailure |
-    DebuggerPreRequisiteWarning |
-    DownloadStep |
+    Action |
+    ActionWithMessage |
     InstallationStep |
     InstallationFailure |
-    InstallationSuccess |
     OmnisharpDelayTrackerEventMeasures |
     OmnisharpEventPacketReceived |
     OmnisharpFailure |
     OmnisharpInitialisation |
     OmnisharpLaunch |
     OmnisharpRequestMessage |
-    OmnisharpServerMessage |
     PackageInstallation |
     Platform |
     TestExecutionCountReport;
 
-interface ActivationFailure {
-    type: MessageType.ActivationFailure;
+interface Action {
+    type: MessageType.ActivationFailure |
+          MessageType.CommandShowOutput |
+          MessageType.DebuggerNotInstalledFailure |
+          MessageType.CommandDotNetRestoreStart |
+          MessageType.InstallationSuccess;
 }
 
-interface CommandShowOutput {
-    type: MessageType.CommandShowOutput;
-}
-
-interface DebuggerNotInstalledFailure {
-    type: MessageType.DebuggerNotInstalledFailure;
-}
-
-interface DebuggerPreRequisiteFailure {
-    type: MessageType.DebuggerPreRequisiteFailure;
-    message: string;
-}
-
-interface DebuggerPreRequisiteWarning {
-    type: MessageType.DebuggerPreRequisiteWarning;
+interface ActionWithMessage {
+    type: MessageType.DebuggerPreRequisiteFailure |
+          MessageType.DebuggerPreRequisiteWarning |
+          MessageType.CommandDotNetRestoreProgress |
+          MessageType.CommandDotNetRestoreSucceeded |
+          MessageType.CommandDotNetRestoreFailed |
+          MessageType.DownloadStart | 
+          MessageType.DownloadProgress | 
+          MessageType.DownloadEnd |
+          MessageType.OmnisharpServerMessage |
+          MessageType.OmnisharpServerVerboseMessage;
     message: string;
 }
 
@@ -116,24 +114,10 @@ interface InstallationFailure {
     error: any;
 }
 
-interface InstallationSuccess {
-    type: MessageType.InstallationSuccess;
-}
-
-interface DownloadStep {
-    type: MessageType.DownloadStart | MessageType.DownloadProgress | MessageType.DownloadEnd;
-    message: string;
-}
-
 interface OmnisharpFailure {
     type: MessageType.OmnisharpFailure;
     message: string;
     error: Error;
-}
-
-interface OmnisharpServerMessage {
-    type: MessageType.OmnisharpServerMessage | MessageType.OmnisharpServerVerboseMessage;
-    message: string;
 }
 
 interface OmnisharpRequestMessage {
