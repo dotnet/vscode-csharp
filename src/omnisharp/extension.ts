@@ -21,8 +21,7 @@ import DocumentSymbolProvider from '../features/documentSymbolProvider';
 import FormatProvider from '../features/formattingEditProvider';
 import HoverProvider from '../features/hoverProvider';
 import ImplementationProvider from '../features/implementationProvider';
-import { Logger } from '../logger';
-import { MessageObserver } from './messageType';
+import { MessageObserver, MessageType } from './messageType';
 import { OmniSharpServer } from './server';
 import { Options } from './options';
 import ReferenceProvider from '../features/referenceProvider';
@@ -111,12 +110,12 @@ export function activate(context: vscode.ExtensionContext, sink: MessageObserver
                 .then(workspaceInfo => {
                     if (workspaceInfo.DotNet && workspaceInfo.DotNet.Projects.length > 0) {
                         const shortMessage = 'project.json is no longer a supported project format for .NET Core applications.';
-                        const detailedMessage = "Warning: project.json is no longer a supported project format for .NET Core applications. Update to the latest version of .NET Core (https://aka.ms/netcoredownload) and use 'dotnet migrate' to upgrade your project (see https://aka.ms/netcoremigrate for details).";
                         const moreDetailItem: vscode.MessageItem = { title: 'More Detail' };
                         vscode.window.showWarningMessage(shortMessage, moreDetailItem)
                             .then(item => {
-                                csharpChannel.appendLine(detailedMessage);
-                                csharpChannel.show();
+                                sink.onNext({
+                                    type: MessageType.ProjectJsonDeprecatedWarning
+                                });
                             });
                     }
                 });
@@ -143,7 +142,11 @@ export function activate(context: vscode.ExtensionContext, sink: MessageObserver
 
                 // TODO: Add measurements for script.
 
-                reporter.sendTelemetryEvent('OmniSharp.Start', null, measures);
+                sink.onNext({ 
+                    type: MessageType.OmnisharpStart,
+                    eventName: 'OmniSharp.Start',
+                    measures
+                });
             });
     }));
 

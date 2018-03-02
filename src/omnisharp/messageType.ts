@@ -38,9 +38,11 @@ export enum MessageType {
     OmnisharpServerMsBuildProjectDiagnostics,
     OmnisharpServerUnresolvedDependencies,
     OmnisharpServerMessage, 
-    OmnisharpServerVerboseMessage, 
+    OmnisharpServerVerboseMessage,
+    OmnisharpStart,
     PackageInstallation,
     Platform,
+    ProjectJsonDeprecatedWarning,
     TestExecutionCountReport,
 }
 export type Message = 
@@ -48,7 +50,7 @@ export type Message =
     ActionWithMessage |
     InstallationStep |
     InstallationFailure |
-    OmnisharpDelayTrackerEventMeasures |
+    TelemetryEventWithMeasures |
     OmnisharpEventPacketReceived |
     OmnisharpFailure |
     OmnisharpInitialisation |
@@ -66,7 +68,8 @@ interface Action {
           MessageType.CommandShowOutput |
           MessageType.DebuggerNotInstalledFailure |
           MessageType.CommandDotNetRestoreStart |
-          MessageType.InstallationSuccess;
+          MessageType.InstallationSuccess |
+          MessageType.ProjectJsonDeprecatedWarning;
 }
 
 interface ActionWithMessage {
@@ -85,8 +88,9 @@ interface ActionWithMessage {
     message: string;
 }
 
-interface OmnisharpDelayTrackerEventMeasures {
-    type: MessageType.OmnisharpDelayTrackerEventMeasures;
+interface TelemetryEventWithMeasures {
+    type: MessageType.OmnisharpDelayTrackerEventMeasures |
+          MessageType.OmnisharpStart;
     eventName: string;
     measures: { [key: string]: number } ;
 }

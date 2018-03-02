@@ -61,6 +61,9 @@ export class csharpLoggerObserver {
             case MessageType.DebuggerPreRequisiteWarning:
                 this.logger.appendLine(message.message);
                 break;
+            case MessageType.ProjectJsonDeprecatedWarning:
+                this.logger.appendLine("Warning: project.json is no longer a supported project format for .NET Core applications. Update to the latest version of .NET Core (https://aka.ms/netcoredownload) and use 'dotnet migrate' to upgrade your project (see https://aka.ms/netcoremigrate for details).");
+                break;
         }
     }
 }

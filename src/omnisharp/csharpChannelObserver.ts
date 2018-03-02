@@ -17,6 +17,7 @@ export class csharpChannelObserver {
             case MessageType.InstallationFailure:
             case MessageType.DebuggerNotInstalledFailure:
             case MessageType.DebuggerPreRequisiteFailure:
+            case MessageType.ProjectJsonDeprecatedWarning:
                 this.channel.show();
                 break;
         }
