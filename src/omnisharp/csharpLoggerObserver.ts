@@ -3,8 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Logger } from "../logger";
 import { Message, MessageType } from "./messageType";
+
+import { Logger } from "../logger";
+import { PackageError } from "../packages";
 
 export class csharpLoggerObserver {
     private logger;
@@ -15,6 +17,9 @@ export class csharpLoggerObserver {
 
     public onNext(message: Message) {
         switch (message.type) {
+            case MessageType.ActivationFailure:
+                this.logger.appendLine("Could not get platform information.");
+                break;
             case MessageType.PackageInstallation:
                 this.logger.append(`Installing ${message.packageInfo}...`);
                 this.logger.appendLine();
@@ -25,7 +30,18 @@ export class csharpLoggerObserver {
                 break;
             case MessageType.InstallationFailure:
                 this.logger.appendLine(`Failed at stage: ${message.stage}`);
-                this.logger.appendLine(message.message);
+                if (message.error instanceof PackageError) {
+                    if (message.error.innerError) {
+                        this.logger.appendLine(message.error.innerError.toString());
+                    }
+                    else {
+                        this.logger.appendLine(message.error.message);
+                    }
+                }
+                else {
+                    // do not log raw errorMessage in telemetry as it is likely to contain PII.
+                    this.logger.appendLine(message.error.toString());
+                }
                 this.logger.appendLine();
                 break;
             case MessageType.InstallationFinished:

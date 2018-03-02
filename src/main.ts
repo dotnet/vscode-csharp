@@ -8,15 +8,18 @@ import * as coreclrdebug from './coreclr-debug/activate';
 import * as util from './common';
 import * as vscode from 'vscode';
 
+import { Message, MessageObserver, MessageType } from './omnisharp/messageType';
+
 import { CSharpExtDownloader } from './CSharpExtDownloader';
 import { Logger } from './logger';
+import { PlatformInformation } from './platform';
+import { Subject } from 'rx';
+import { TelemetryObserver } from './omnisharp/telemetryObserver';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { addJSONProviders } from './features/json/jsonContributions';
-import { Subject } from 'rx';
-import { Message, MessageObserver } from './omnisharp/messageType';
-import { omnisharpLoggerObserver } from './omnisharp/omnisharpLoggerObserver';
 import { csharpChannelObserver } from './omnisharp/csharpChannelObserver';
 import { csharpLoggerObserver } from './omnisharp/csharpLoggerObserver';
+import { omnisharpLoggerObserver } from './omnisharp/omnisharpLoggerObserver';
 
 let csharpChannel: vscode.OutputChannel = null;
 
@@ -34,17 +37,29 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     let csharpLogger = new Logger(text => csharpChannel.append(text));
 
+
     const sink = new Subject<Message>();
     let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
     let omnisharpLogObserver = new omnisharpLoggerObserver(() => new Logger(message => omnisharpChannel.append(message)), false);
     let csharpchannelObserver = new csharpChannelObserver(() => csharpChannel);
     let csharpLogObserver = new csharpLoggerObserver(() => csharpLogger);
-
     sink.subscribe(omnisharpLogObserver.onNext);
     sink.subscribe(csharpchannelObserver.onNext);
     sink.subscribe(csharpLogObserver.onNext);
 
-    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, sink, reporter);
+    let platformInfo: PlatformInformation;
+
+    try {
+        platformInfo = await PlatformInformation.GetCurrent();
+    }
+    catch (error) {
+        sink.onNext({ type: MessageType.ActivationFailure});
+    }
+    
+    let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter);
+    sink.subscribe(telemetryObserver.onNext);
+    
+    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, sink, platformInfo);
 
     // activate language services
     let omniSharpPromise = OmniSharp.activate(context, reporter, sink, extension.packageJSON);
@@ -67,11 +82,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     };
 }
 
-function ensureRuntimeDependencies(extension: vscode.Extension<any>, sink: MessageObserver, reporter: TelemetryReporter): Promise<boolean> {
+function ensureRuntimeDependencies(extension: vscode.Extension<any>, sink: MessageObserver, platformInfo: PlatformInformation): Promise<boolean> {
     return util.installFileExists(util.InstallFileType.Lock)
         .then(exists => {
             if (!exists) {
-                const downloader = new CSharpExtDownloader(sink, reporter, extension.packageJSON);
+                const downloader = new CSharpExtDownloader(sink, extension.packageJSON, platformInfo);
                 return downloader.installRuntimeDependencies();
             } else {
                 return true;
