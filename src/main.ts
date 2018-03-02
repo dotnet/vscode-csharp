@@ -57,12 +57,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
         platformInfo = await PlatformInformation.GetCurrent();
     }
     catch (error) {
-        sink.onNext({ type: MessageType.ActivationFailure});
+        sink.onNext({ type: MessageType.ActivationFailure });
     }
-    
+
     let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter);
     sink.subscribe(telemetryObserver.onNext);
-    
+
     let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, sink, platformInfo);
 
     // activate language services
@@ -82,7 +82,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
         .then(promiseResult => {
             // This promise resolver simply swallows the result of Promise.all. When we decide we want to expose this level of detail
             // to other extensions then we will design that return type and implement it here.
-            })
+        })
     };
 }
 
