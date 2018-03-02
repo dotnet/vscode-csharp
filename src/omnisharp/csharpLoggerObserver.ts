@@ -57,9 +57,8 @@ export class csharpLoggerObserver {
                 this.logger.append(message.message);
                 break;
             case MessageType.DownloadEnd:
-                this.logger.appendLine(message.message);  
-                break;
             case MessageType.DebuggerPreRequisiteFailure:
+            case MessageType.DebuggerPreRequisiteWarning:
                 this.logger.appendLine(message.message);
                 break;
         }
