@@ -37,22 +37,20 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     csharpChannel = vscode.window.createOutputChannel('C#');
 
     let csharpLogger = new Logger(text => csharpChannel.append(text));
-
-
-    const sink = new Subject<Message>();
     let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
     let omnisharpLogObserver = new omnisharpLoggerObserver(() => new Logger(message => omnisharpChannel.append(message)), false);
     let csharpchannelObserver = new csharpChannelObserver(() => csharpChannel);
     let csharpLogObserver = new csharpLoggerObserver(() => csharpLogger);
     let dotnetChannel = vscode.window.createOutputChannel('.NET');
     let dotnetChannelObserver = new DotNetChannelObserver(() => dotnetChannel);
+
+    const sink = new Subject<Message>();
     sink.subscribe(omnisharpLogObserver.onNext);
     sink.subscribe(csharpchannelObserver.onNext);
     sink.subscribe(csharpLogObserver.onNext);
     sink.subscribe(dotnetChannelObserver.onNext);
 
     let platformInfo: PlatformInformation;
-
     try {
         platformInfo = await PlatformInformation.GetCurrent();
     }
@@ -90,7 +88,7 @@ function ensureRuntimeDependencies(extension: vscode.Extension<any>, sink: Messa
     return util.installFileExists(util.InstallFileType.Lock)
         .then(exists => {
             if (!exists) {
-                const downloader = new CSharpExtDownloader(sink, extension.packageJSON);
+                const downloader = new CSharpExtDownloader(sink, extension.packageJSON, platformInfo);
                 return downloader.installRuntimeDependencies();
             } else {
                 return true;
