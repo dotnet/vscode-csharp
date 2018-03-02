@@ -21,31 +21,28 @@ import DocumentSymbolProvider from '../features/documentSymbolProvider';
 import FormatProvider from '../features/formattingEditProvider';
 import HoverProvider from '../features/hoverProvider';
 import ImplementationProvider from '../features/implementationProvider';
+import { MessageObserver, MessageType } from './messageType';
 import { OmniSharpServer } from './server';
 import { Options } from './options';
 import ReferenceProvider from '../features/referenceProvider';
 import RenameProvider from '../features/renameProvider';
 import SignatureHelpProvider from '../features/signatureHelpProvider';
-import TelemetryReporter from 'vscode-extension-telemetry';
 import TestManager from '../features/dotnetTest';
 import WorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
 import forwardChanges from '../features/changeForwarding';
 import registerCommands from '../features/commands';
 import reportStatus from '../features/status';
-import { Subject } from 'rx';
-import { MessageObserver } from './messageType';
-import { Logger } from '../logger';
 
 export let omnisharp: OmniSharpServer;
 
-export function activate(context: vscode.ExtensionContext, reporter: TelemetryReporter, sink: MessageObserver, packageJSON: any) {
+export function activate(context: vscode.ExtensionContext, sink: MessageObserver, packageJSON: any) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
         scheme: 'file' // only files from disk
     };
 
     const options = Options.Read();
-    const server = new OmniSharpServer(reporter, sink, packageJSON);
+    const server = new OmniSharpServer(sink, packageJSON);
 
     omnisharp = server;
     const advisor = new Advisor(server); // create before server is started
@@ -58,29 +55,29 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         definitionMetadataDocumentProvider.register();
         localDisposables.push(definitionMetadataDocumentProvider);
 
-        const definitionProvider = new DefinitionProvider(server, reporter, definitionMetadataDocumentProvider);
+        const definitionProvider = new DefinitionProvider(server, definitionMetadataDocumentProvider);
         localDisposables.push(vscode.languages.registerDefinitionProvider(documentSelector, definitionProvider));
         localDisposables.push(vscode.languages.registerDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
-        localDisposables.push(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server, reporter)));
-        const testManager = new TestManager(server, reporter);
+        localDisposables.push(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server)));
+        const testManager = new TestManager(server, sink);
         localDisposables.push(testManager);
-        localDisposables.push(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, reporter, testManager)));
-        localDisposables.push(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server, reporter)));
-        localDisposables.push(vscode.languages.registerDocumentSymbolProvider(documentSelector, new DocumentSymbolProvider(server, reporter)));
-        localDisposables.push(vscode.languages.registerReferenceProvider(documentSelector, new ReferenceProvider(server, reporter)));
-        localDisposables.push(vscode.languages.registerHoverProvider(documentSelector, new HoverProvider(server, reporter)));
-        localDisposables.push(vscode.languages.registerRenameProvider(documentSelector, new RenameProvider(server, reporter)));
+        localDisposables.push(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, testManager)));
+        localDisposables.push(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server)));
+        localDisposables.push(vscode.languages.registerDocumentSymbolProvider(documentSelector, new DocumentSymbolProvider(server)));
+        localDisposables.push(vscode.languages.registerReferenceProvider(documentSelector, new ReferenceProvider(server)));
+        localDisposables.push(vscode.languages.registerHoverProvider(documentSelector, new HoverProvider(server)));
+        localDisposables.push(vscode.languages.registerRenameProvider(documentSelector, new RenameProvider(server)));
         if (options.useFormatting) {
-            localDisposables.push(vscode.languages.registerDocumentRangeFormattingEditProvider(documentSelector, new FormatProvider(server, reporter)));
-            localDisposables.push(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new FormatProvider(server, reporter), '}', ';'));
+            localDisposables.push(vscode.languages.registerDocumentRangeFormattingEditProvider(documentSelector, new FormatProvider(server)));
+            localDisposables.push(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new FormatProvider(server), '}', ';'));
         }
-        localDisposables.push(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionItemProvider(server, reporter), '.', ' '));
-        localDisposables.push(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server, reporter)));
-        localDisposables.push(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server, reporter), '(', ','));
-        const codeActionProvider = new CodeActionProvider(server, reporter);
+        localDisposables.push(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionItemProvider(server), '.', ' '));
+        localDisposables.push(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server)));
+        localDisposables.push(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server), '(', ','));
+        const codeActionProvider = new CodeActionProvider(server);
         localDisposables.push(codeActionProvider);
         localDisposables.push(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
-        localDisposables.push(reportDiagnostics(server, reporter, advisor));
+        localDisposables.push(reportDiagnostics(server, advisor));
         localDisposables.push(forwardChanges(server));
     }));
 
@@ -89,7 +86,7 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
         vscode.Disposable.from(...localDisposables).dispose();
     }));
 
-    disposables.push(registerCommands(server, reporter, sink));
+    disposables.push(registerCommands(server, sink));
     disposables.push(reportStatus(server, sink));
 
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
@@ -112,12 +109,12 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
                 .then(workspaceInfo => {
                     if (workspaceInfo.DotNet && workspaceInfo.DotNet.Projects.length > 0) {
                         const shortMessage = 'project.json is no longer a supported project format for .NET Core applications.';
-                        const detailedMessage = "Warning: project.json is no longer a supported project format for .NET Core applications. Update to the latest version of .NET Core (https://aka.ms/netcoredownload) and use 'dotnet migrate' to upgrade your project (see https://aka.ms/netcoremigrate for details).";
                         const moreDetailItem: vscode.MessageItem = { title: 'More Detail' };
                         vscode.window.showWarningMessage(shortMessage, moreDetailItem)
                             .then(item => {
-                                csharpChannel.appendLine(detailedMessage);
-                                csharpChannel.show();
+                                sink.onNext({
+                                    type: MessageType.ProjectJsonDeprecatedWarning
+                                });
                             });
                     }
                 });
@@ -144,7 +141,11 @@ export function activate(context: vscode.ExtensionContext, reporter: TelemetryRe
 
                 // TODO: Add measurements for script.
 
-                reporter.sendTelemetryEvent('OmniSharp.Start', null, measures);
+                sink.onNext({ 
+                    type: MessageType.OmnisharpStart,
+                    eventName: 'OmniSharp.Start',
+                    measures
+                });
             });
     }));
 

@@ -3,25 +3,25 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { EventEmitter } from 'events';
-import { ChildProcess, exec } from 'child_process';
-import { ReadLine, createInterface } from 'readline';
-import { launchOmniSharp } from './launcher';
-import { Options } from './options';
-import { Logger } from '../logger';
-import { DelayTracker } from './delayTracker';
-import { LaunchTarget, findLaunchTargets } from './launcher';
-import { Request, RequestQueueCollection } from './requestQueue';
-import TelemetryReporter from 'vscode-extension-telemetry';
-import * as os from 'os';
 import * as path from 'path';
 import * as protocol from './protocol';
 import * as utils from '../common';
 import * as vscode from 'vscode';
-import { setTimeout } from 'timers';
+
+import { ChildProcess, exec } from 'child_process';
+import { LaunchTarget, findLaunchTargets } from './launcher';
+import { MessageObserver, MessageType } from './messageType';
+import { ReadLine, createInterface } from 'readline';
+import { Request, RequestQueueCollection } from './requestQueue';
+
+import { DelayTracker } from './delayTracker';
+import { EventEmitter } from 'events';
+import { Logger } from '../logger';
 import { OmnisharpManager } from './OmnisharpManager';
+import { Options } from './options';
 import { PlatformInformation } from '../platform';
-import { MessageType, MessageObserver } from './messageType';
+import { launchOmniSharp } from './launcher';
+import { setTimeout } from 'timers';
 
 enum ServerState {
     Starting,
@@ -72,7 +72,6 @@ export class OmniSharpServer {
     private _readLine: ReadLine;
     private _disposables: vscode.Disposable[] = [];
 
-    private _reporter: TelemetryReporter;
     private _delayTrackers: { [requestName: string]: DelayTracker };
     private _telemetryIntervalId: NodeJS.Timer = undefined;
 
@@ -83,13 +82,10 @@ export class OmniSharpServer {
     private _serverProcess: ChildProcess;
     private _options: Options;
 
-    private _csharpLogger: Logger;
-    private _csharpChannel: vscode.OutputChannel;
     private _packageJSON: any;
     private _sink: MessageObserver;
 
-    constructor(reporter: TelemetryReporter, sink: MessageObserver, packageJSON?: any) {
-        this._reporter = reporter;
+    constructor(sink: MessageObserver, packageJSON?: any) {
         let verboseLogger = new Logger(message => this._sink.onNext({ type: MessageType.OmnisharpServerVerboseMessage, message: message }));
         this._requestQueue = new RequestQueueCollection(verboseLogger, 8, request => this._makeRequest(request));
         this._packageJSON = packageJSON;
@@ -138,7 +134,7 @@ export class OmniSharpServer {
                 const measures = tracker.getMeasures();
                 tracker.clearMeasures();
 
-                this._reporter.sendTelemetryEvent(eventName, null, measures);
+                this._sink.onNext({ type: MessageType.OmnisharpDelayTrackerEventMeasures, eventName, measures });
             }
         }
     }
@@ -259,7 +255,7 @@ export class OmniSharpServer {
         if (this._options.path) {
             try {
                 let extensionPath = utils.getExtensionPath();
-                let manager = new OmnisharpManager(this._sink, this._packageJSON, this._reporter);
+                let manager = new OmnisharpManager(this._sink, this._packageJSON);
                 let platformInfo = await PlatformInformation.GetCurrent();
                 launchPath = await manager.GetOmnisharpPath(this._options.path, this._options.useMono, serverUrl, latestVersionFileServerPath, installPath, extensionPath, platformInfo);
             }

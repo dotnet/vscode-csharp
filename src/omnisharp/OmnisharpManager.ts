@@ -3,26 +3,23 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as util from '../common';
 import * as path from 'path';
 import * as semver from 'semver';
-import * as vscode from 'vscode';
-import { Logger } from '../logger';
-import { OmnisharpDownloader } from './OmnisharpDownloader';
-import TelemetryReporter from 'vscode-extension-telemetry';
-import { PlatformInformation } from '../platform';
+import * as util from '../common';
+
 import { MessageObserver } from './messageType';
+import { OmnisharpDownloader } from './OmnisharpDownloader';
+import { PlatformInformation } from '../platform';
 
 export class OmnisharpManager {
     public constructor(
         private sink: MessageObserver,
-        private packageJSON: any,
-        private reporter?: TelemetryReporter) {
+        private packageJSON: any) {
     }
 
     public async GetOmnisharpPath(omnisharpPath: string, useMono: boolean, serverUrl: string, latestVersionFileServerPath: string, installPath: string, extensionPath: string, platformInfo: PlatformInformation): Promise<string> {
         // Looks at the options path, installs the dependencies and returns the path to be loaded by the omnisharp server
-        let downloader = new OmnisharpDownloader(this.sink, this.packageJSON, platformInfo, this.reporter);
+        let downloader = new OmnisharpDownloader(this.sink, this.packageJSON, platformInfo);
         if (path.isAbsolute(omnisharpPath)) {
             if (await util.fileExists(omnisharpPath)) {
                 return omnisharpPath;

@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as rx from "rx";
-import * as vscode from "vscode";
 import { Message, MessageType, OmnisharpEventPacketReceived } from "./messageType";
 import { Logger } from "../logger";
 import * as os from 'os';
@@ -71,6 +69,31 @@ export class omnisharpLoggerObserver {
 
                     this.logger.appendLine(output);
                 }
+                break;
+            case MessageType.OmnisharpServerOnServerError:
+                this.logger.appendLine(message.message);
+                break;
+            case MessageType.OmnisharpServerOnError:
+                if (message.errorMessage.FileName) {
+                    this.logger.appendLine(`${message.errorMessage.FileName}(${message.errorMessage.Line},${message.errorMessage.Column})`);
+                }
+                this.logger.appendLine(message.errorMessage.Text);
+                this.logger.appendLine();
+                break;
+            case MessageType.OmnisharpServerMsBuildProjectDiagnostics:
+                if (message.diagnostics.Errors.length > 0 || message.diagnostics.Warnings.length > 0) {
+                    this.logger.appendLine(message.diagnostics.FileName);
+                    message.diagnostics.Errors.forEach(error => {
+                        this.logger.appendLine(`${error.FileName}(${error.StartLine},${error.StartColumn}): Error: ${error.Text}`);
+                    });
+                    message.diagnostics.Warnings.forEach(warning => {
+                        this.logger.appendLine(`${warning.FileName}(${warning.StartLine},${warning.StartColumn}): Warning: ${warning.Text}`);
+                    });
+                    this.logger.appendLine();
+                }
+                break;
+            case MessageType.OmnisharpServerOnStdErr:
+                this.logger.append(message.message);
                 break;
         }
     }

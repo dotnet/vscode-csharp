@@ -3,17 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { OmniSharpServer } from '../omnisharp/server';
-import { DebuggerEventsProtocol } from '../coreclr-debug/debuggerEventsProtocol';
-import * as vscode from 'vscode';
-import * as serverUtils from "../omnisharp/utils";
-import * as protocol from '../omnisharp/protocol';
-import * as utils from '../common';
 import * as net from 'net';
 import * as os from 'os';
 import * as path from 'path';
-import TelemetryReporter from 'vscode-extension-telemetry';
+import * as protocol from '../omnisharp/protocol';
+import * as serverUtils from "../omnisharp/utils";
+import * as utils from '../common';
+import * as vscode from 'vscode';
+
+import { MessageObserver, MessageType } from '../omnisharp/messageType';
+
 import AbstractProvider from './abstractProvider';
+import { DebuggerEventsProtocol } from '../coreclr-debug/debuggerEventsProtocol';
+import { OmniSharpServer } from '../omnisharp/server';
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 
@@ -23,10 +25,12 @@ export default class TestManager extends AbstractProvider {
     private _runCounts: { [testFrameworkName: string]: number };
     private _debugCounts: { [testFrameworkName: string]: number };
     private _telemetryIntervalId: NodeJS.Timer = undefined;
+    private _sink: MessageObserver;
 
-    constructor(server: OmniSharpServer, reporter: TelemetryReporter) {
-        super(server, reporter);
-
+    constructor(server: OmniSharpServer, sink: MessageObserver) {
+        super(server);
+        this._sink = sink;
+        
         // register commands
         let d1 = vscode.commands.registerCommand(
             'dotnet.test.run',
@@ -103,13 +107,10 @@ export default class TestManager extends AbstractProvider {
     }
 
     private _reportTelemetry(): void {
-        if (this._runCounts) {
-            this._reporter.sendTelemetryEvent('RunTest', null, this._runCounts);
-        }
-
-        if (this._debugCounts) {
-            this._reporter.sendTelemetryEvent('DebugTest', null, this._debugCounts);
-        }
+        this._sink.onNext({ 
+            type: MessageType.TestExecutionCountReport,
+            debugCounts: this._debugCounts,
+            runCounts: this._runCounts });
 
         this._runCounts = undefined;
         this._debugCounts = undefined;

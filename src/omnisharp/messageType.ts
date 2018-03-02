@@ -3,19 +3,96 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PlatformInformation } from "../platform";
 import { IObserver } from "rx";
+import { PlatformInformation } from "../platform";
 import { Request } from "./requestQueue";
+import * as protocol from './protocol';
 
 export type MessageObserver = IObserver<Message>;
 export enum MessageType {
-    OmnisharpInitialisation, OmnisharpLaunch, PackageInstallation, Platform, InstallationFailure, InstallationProgress, InstallationFinished, OmnisharpFailure,
-    OmnisharpServerMessage, OmnisharpRequestMessage, OmnisharpServerVerboseMessage, OmnisharpEventPacketReceived, DownloadStart, DownloadProgress, DownloadSuccess,
-    DownloadFailure
+    ActivationFailure,
+    CommandShowOutput,
+    CommandDotNetRestoreStart,
+    CommandDotNetRestoreProgress,
+    CommandDotNetRestoreSucceeded,
+    CommandDotNetRestoreFailed,
+    DebuggerNotInstalledFailure,
+    DebuggerPreRequisiteFailure,
+    DebuggerPreRequisiteWarning,
+    DownloadEnd,
+    DownloadProgress, 
+    DownloadStart, 
+    InstallationFailure,
+    InstallationSuccess, 
+    InstallationProgress, 
+    OmnisharpDelayTrackerEventMeasures,
+    OmnisharpEventPacketReceived, 
+    OmnisharpFailure,
+    OmnisharpInitialisation,
+    OmnisharpLaunch,
+    OmnisharpRequestMessage,
+    OmnisharpServerOnServerError,
+    OmnisharpServerOnError,
+    OmnisharpServerOnStdErr,
+    OmnisharpServerMsBuildProjectDiagnostics,
+    OmnisharpServerUnresolvedDependencies,
+    OmnisharpServerMessage, 
+    OmnisharpServerVerboseMessage,
+    OmnisharpStart,
+    PackageInstallation,
+    Platform,
+    ProjectJsonDeprecatedWarning,
+    TestExecutionCountReport,
 }
-export type Message = OmnisharpInitialisation | OmnisharpLaunch | PackageInstallation | Platform | InstallationStep | OmnisharpFailure
-    | OmnisharpServerMessage | OmnisharpRequestMessage | OmnisharpEventPacketReceived | DownloadStep | DownloadProgress;
+export type Message = 
+    Action |
+    ActionWithMessage |
+    InstallationStep |
+    InstallationFailure |
+    TelemetryEventWithMeasures |
+    OmnisharpEventPacketReceived |
+    OmnisharpFailure |
+    OmnisharpInitialisation |
+    OmnisharpLaunch |
+    OmnisharpServerMsBuildProjectDiagnostics |
+    OmnisharpServerUnresolvedDependencies |
+    OmnisharpRequestMessage |
+    OmnisharpServerOnError |
+    PackageInstallation |
+    Platform |
+    TestExecutionCountReport;
 
+interface Action {
+    type: MessageType.ActivationFailure |
+          MessageType.CommandShowOutput |
+          MessageType.DebuggerNotInstalledFailure |
+          MessageType.CommandDotNetRestoreStart |
+          MessageType.InstallationSuccess |
+          MessageType.ProjectJsonDeprecatedWarning;
+}
+
+interface ActionWithMessage {
+    type: MessageType.DebuggerPreRequisiteFailure |
+          MessageType.DebuggerPreRequisiteWarning |
+          MessageType.CommandDotNetRestoreProgress |
+          MessageType.CommandDotNetRestoreSucceeded |
+          MessageType.CommandDotNetRestoreFailed |
+          MessageType.DownloadStart | 
+          MessageType.DownloadProgress | 
+          MessageType.DownloadEnd |
+          MessageType.OmnisharpServerOnStdErr |
+          MessageType.OmnisharpServerMessage |
+          MessageType.OmnisharpServerOnServerError |
+          MessageType.OmnisharpServerVerboseMessage;
+    message: string;
+}
+
+interface TelemetryEventWithMeasures {
+    type: MessageType.OmnisharpDelayTrackerEventMeasures |
+          MessageType.OmnisharpStart;
+    eventName: string;
+    measures: { [key: string]: number } ;
+}
 interface OmnisharpInitialisation {
     type: MessageType.OmnisharpInitialisation;
     timeStamp: Date;
@@ -40,10 +117,15 @@ interface Platform {
 }
 
 interface InstallationStep {
-    type: MessageType.InstallationFailure | MessageType.InstallationProgress | MessageType.InstallationFinished;
+    type: MessageType.InstallationProgress;
     stage: string;
     message: string;
 }
+
+interface InstallationFailure {
+    type: MessageType.InstallationFailure;
+    stage: string;
+    error: any;
 
 interface DownloadStep {
     type: MessageType.DownloadStart | MessageType.DownloadSuccess | MessageType.DownloadFailure;
@@ -61,15 +143,31 @@ interface OmnisharpFailure {
     error: Error;
 }
 
-interface OmnisharpServerMessage {
-    type: MessageType.OmnisharpServerMessage | MessageType.OmnisharpServerVerboseMessage;
-    message: string;
-}
-
 interface OmnisharpRequestMessage {
     type: MessageType.OmnisharpRequestMessage;
     request: Request;
     id: number;
+}
+
+interface TestExecutionCountReport {
+    type: MessageType.TestExecutionCountReport;
+    debugCounts: { [testFrameworkName: string]: number };
+    runCounts: { [testFrameworkName: string]: number };
+}
+
+interface OmnisharpServerOnError {
+    type: MessageType.OmnisharpServerOnError;
+    errorMessage: protocol.ErrorMessage;
+}
+
+interface OmnisharpServerMsBuildProjectDiagnostics {
+    type: MessageType.OmnisharpServerMsBuildProjectDiagnostics;
+    diagnostics: protocol.MSBuildProjectDiagnostics;
+}
+
+interface OmnisharpServerUnresolvedDependencies {
+    type: MessageType.OmnisharpServerUnresolvedDependencies;
+    unresolvedDependencies: protocol.UnresolvedDependenciesMessage;
 }
 
 export interface OmnisharpEventPacketReceived {

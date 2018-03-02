@@ -3,8 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Logger } from "../logger";
 import { Message, MessageType } from "./messageType";
+
+import { Logger } from "../logger";
+import { PackageError } from "../packages";
 
 export class csharpLoggerObserver {
     private logger;
@@ -16,6 +18,9 @@ export class csharpLoggerObserver {
 
     public onNext(message: Message) {
         switch (message.type) {
+            case MessageType.ActivationFailure:
+                this.logger.appendLine("[ERROR]: C# Extension failed to get platform information.");
+                break;
             case MessageType.PackageInstallation:
                 this.logger.append(`Installing ${message.packageInfo}...`);
                 this.logger.appendLine();
@@ -26,10 +31,21 @@ export class csharpLoggerObserver {
                 break;
             case MessageType.InstallationFailure:
                 this.logger.appendLine(`Failed at stage: ${message.stage}`);
-                this.logger.appendLine(message.message);
+                if (message.error instanceof PackageError) {
+                    if (message.error.innerError) {
+                        this.logger.appendLine(message.error.innerError.toString());
+                    }
+                    else {
+                        this.logger.appendLine(message.error.message);
+                    }
+                }
+                else {
+                    // do not log raw errorMessage in telemetry as it is likely to contain PII.
+                    this.logger.appendLine(message.error.toString());
+                }
                 this.logger.appendLine();
                 break;
-            case MessageType.InstallationFinished:
+            case MessageType.InstallationSuccess:
                 this.logger.appendLine('Finished');
                 this.logger.appendLine();
                 break;
@@ -49,8 +65,13 @@ export class csharpLoggerObserver {
             }
                 break;
             case MessageType.DownloadEnd:
-                this.logger.appendLine(message.message);  
-            break;
+            case MessageType.DebuggerPreRequisiteFailure:
+            case MessageType.DebuggerPreRequisiteWarning:
+                this.logger.appendLine(message.message);
+                break;
+            case MessageType.ProjectJsonDeprecatedWarning:
+                this.logger.appendLine("Warning: project.json is no longer a supported project format for .NET Core applications. Update to the latest version of .NET Core (https://aka.ms/netcoredownload) and use 'dotnet migrate' to upgrade your project (see https://aka.ms/netcoremigrate for details).");
+                break;
         }
     }
 }

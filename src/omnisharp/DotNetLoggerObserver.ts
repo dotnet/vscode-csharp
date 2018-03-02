@@ -2,24 +2,25 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+
 import { Message, MessageType } from "./messageType";
 
-export class csharpChannelObserver {
-    private channel;
+import { Logger } from "../logger";
 
-    constructor(channelCreator: () => { show: () => void }) {
-        this.channel = channelCreator();
+export class DotNetLoggerObserver {
+    private logger;
+
+    constructor(loggerCreator: () => Logger) {
+        this.logger = loggerCreator();
     }
 
     public onNext(message: Message) {
         switch (message.type) {
-            case MessageType.PackageInstallation:
-            case MessageType.InstallationFailure:
-            case MessageType.DebuggerNotInstalledFailure:
-            case MessageType.DebuggerPreRequisiteFailure:
-            case MessageType.ProjectJsonDeprecatedWarning:
-                this.channel.show();
-                break;
+            case MessageType.CommandDotNetRestoreProgress:
+            case MessageType.CommandDotNetRestoreSucceeded:
+            case MessageType.CommandDotNetRestoreFailed:
+                    this.logger.append(message.message);
+                    break;
         }
     }
 }

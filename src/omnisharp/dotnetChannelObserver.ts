@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { Message, MessageType } from "./messageType";
 
-export class csharpChannelObserver {
+export class DotNetChannelObserver {
     private channel;
 
     constructor(channelCreator: () => { show: () => void }) {
@@ -13,11 +13,8 @@ export class csharpChannelObserver {
 
     public onNext(message: Message) {
         switch (message.type) {
-            case MessageType.PackageInstallation:
-            case MessageType.InstallationFailure:
-            case MessageType.DebuggerNotInstalledFailure:
-            case MessageType.DebuggerPreRequisiteFailure:
-            case MessageType.ProjectJsonDeprecatedWarning:
+            case MessageType.CommandDotNetRestoreStart:
+                this.channel.clear();
                 this.channel.show();
                 break;
         }

@@ -3,33 +3,28 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import { PackageManager, Package, Status } from '../packages';
-import { PlatformInformation } from '../platform';
-import { Logger } from '../logger';
-import TelemetryReporter from 'vscode-extension-telemetry';
+import { GetNetworkConfiguration, GetStatus } from '../downloader.helper';
 import { GetPackagesFromVersion, GetVersionFilePackage } from './OmnisharpPackageCreator';
-import { GetStatus, ReportInstallationError, SendInstallationTelemetry, GetNetworkConfiguration } from '../downloader.helper';
 import { MessageObserver, MessageType } from './messageType';
+import { Package, PackageManager, Status } from '../packages';
+
+import { PlatformInformation } from '../platform';
 
 export class OmnisharpDownloader {
     private status: Status;
     private proxy: string;
     private strictSSL: boolean;
     private packageManager: PackageManager;
-    private telemetryProps: any;
 
     public constructor(
         private sink: MessageObserver,
         private packageJSON: any,
-        private platformInfo: PlatformInformation,
-        private reporter?: TelemetryReporter) {
+        private platformInfo: PlatformInformation) {
 
         this.status = GetStatus();
         let networkConfiguration = GetNetworkConfiguration();
         this.proxy = networkConfiguration.Proxy;
         this.strictSSL = networkConfiguration.StrictSSL;
-        this.telemetryProps = {};
         this.packageManager = new PackageManager(this.platformInfo, this.packageJSON);
     }
 
@@ -37,10 +32,6 @@ export class OmnisharpDownloader {
         this.sink.onNext({ type: MessageType.PackageInstallation, packageInfo: `Omnisharp - ${version}` });
 
         let installationStage = '';
-
-        if (this.reporter) {
-            this.reporter.sendTelemetryEvent("AcquisitionStart");
-        }
 
         try {
             installationStage = 'logPlatformInfo';
@@ -57,14 +48,13 @@ export class OmnisharpDownloader {
             installationStage = 'installPackages';
             await this.packageManager.InstallPackages(this.sink, this.status);
 
-            installationStage = 'completeSuccess';
+            this.sink.onNext({ type: MessageType.InstallationSuccess });
         }
         catch (error) {
-            ReportInstallationError(this.sink, error, this.telemetryProps, installationStage);
+            this.sink.onNext({ type: MessageType.InstallationFailure, stage: installationStage, error: error });
             throw error;// throw the error up to the server
         }
         finally {
-            SendInstallationTelemetry(this.sink, this.reporter, this.telemetryProps, installationStage, this.platformInfo);
             this.status.dispose();
         }
     }
@@ -79,7 +69,7 @@ export class OmnisharpDownloader {
             return await this.packageManager.GetLatestVersionFromFile(this.sink, this.status, this.proxy, this.strictSSL, filePackage);
         }
         catch (error) {
-            ReportInstallationError(this.sink, error, this.telemetryProps, installationStage);
+            this.sink.onNext({ type: MessageType.InstallationFailure, stage: installationStage, error: error });
             throw error;
         }
     }

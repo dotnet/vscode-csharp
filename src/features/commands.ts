@@ -15,16 +15,14 @@ import * as protocol from '../omnisharp/protocol';
 import * as vscode from 'vscode';
 import { DotNetAttachItemsProviderFactory, AttachPicker, RemoteAttachPicker } from './processPicker';
 import { generateAssets } from '../assets';
-import TelemetryReporter from 'vscode-extension-telemetry';
 import { getAdapterExecutionCommand } from '../coreclr-debug/activate';
+import { MessageObserver, MessageType } from '../omnisharp/messageType';
 
-let dotNetChannel = vscode.window.createOutputChannel('.NET');
-
-export default function registerCommands(server: OmniSharpServer, reporter: TelemetryReporter, csharpChannel: vscode.OutputChannel, omnisharpChannel: vscode.OutputChannel) {
+export default function registerCommands(server: OmniSharpServer, sink: MessageObserver) {
     let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server));
     let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', () => pickProjectAndStart(server));
-    let d3 = vscode.commands.registerCommand('o.showOutput', () => omnisharpChannel.show(vscode.ViewColumn.Three));
-    let d4 = vscode.commands.registerCommand('dotnet.restore', () => dotnetRestoreAllProjects(server));
+    let d3 = vscode.commands.registerCommand('o.showOutput', () => sink.onNext({ type:MessageType.CommandShowOutput }));
+    let d4 = vscode.commands.registerCommand('dotnet.restore', () => dotnetRestoreAllProjects(server, sink));
 
     // register empty handler for csharp.installDebugger
     // running the command activates the extension, which is all we need for installation to kickoff
@@ -42,8 +40,8 @@ export default function registerCommands(server: OmniSharpServer, reporter: Tele
     let d8 = vscode.commands.registerCommand('csharp.listRemoteProcess', (args) => RemoteAttachPicker.ShowAttachEntries(args));
 
     // Register command for adapter executable command.
-    let d9 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', (args) => getAdapterExecutionCommand(csharpChannel));
-    let d10 = vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', (args) => getAdapterExecutionCommand(csharpChannel));
+    let d9 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', (args) => getAdapterExecutionCommand(sink));
+    let d10 = vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', (args) => getAdapterExecutionCommand(sink));
 
     return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10);
 }
@@ -87,7 +85,7 @@ interface Command {
     execute(): Thenable<any>;
 }
 
-function projectsToCommands(projects: protocol.ProjectDescriptor[]): Promise<Command>[] {
+function projectsToCommands(projects: protocol.ProjectDescriptor[], sink: MessageObserver): Promise<Command>[] {
     return projects.map(project => {
         let projectDirectory = project.Directory;
 
@@ -105,7 +103,7 @@ function projectsToCommands(projects: protocol.ProjectDescriptor[]): Promise<Com
                     label: `dotnet restore - (${project.Name || path.basename(project.Directory)})`,
                     description: projectDirectory,
                     execute() {
-                        return dotnetRestore(projectDirectory);
+                        return dotnetRestore(projectDirectory, sink);
                     }
                 });
             });
@@ -113,7 +111,7 @@ function projectsToCommands(projects: protocol.ProjectDescriptor[]): Promise<Com
     });
 }
 
-export function dotnetRestoreAllProjects(server: OmniSharpServer) : Promise<void> {
+export function dotnetRestoreAllProjects(server: OmniSharpServer, sink: MessageObserver) : Promise<void> {
 
     if (!server.isRunning()) {
         return Promise.reject('OmniSharp server is not running.');
@@ -127,7 +125,7 @@ export function dotnetRestoreAllProjects(server: OmniSharpServer) : Promise<void
             return Promise.reject("No .NET Core projects found");
         }
 
-        let commandPromises = projectsToCommands(descriptors);
+        let commandPromises = projectsToCommands(descriptors, sink);
 
         return Promise.all(commandPromises).then(commands => {
             return vscode.window.showQuickPick(commands);
@@ -139,7 +137,7 @@ export function dotnetRestoreAllProjects(server: OmniSharpServer) : Promise<void
     });
 }
 
-export function dotnetRestoreForProject(server: OmniSharpServer, filePath: string) {
+export function dotnetRestoreForProject(server: OmniSharpServer, filePath: string, sink: MessageObserver) {
 
     if (!server.isRunning()) {
         return Promise.reject('OmniSharp server is not running.');
@@ -155,16 +153,15 @@ export function dotnetRestoreForProject(server: OmniSharpServer, filePath: strin
 
         for (let descriptor of descriptors) {
             if (descriptor.FilePath === filePath) {
-                return dotnetRestore(descriptor.Directory, filePath);
+                return dotnetRestore(descriptor.Directory, sink, filePath);
             }
         }
     });
 }
 
-function dotnetRestore(cwd: string, filePath?: string) {
+function dotnetRestore(cwd: string, sink: MessageObserver, filePath?: string) {
     return new Promise<void>((resolve, reject) => {
-        dotNetChannel.clear();
-        dotNetChannel.show();
+        sink.onNext({ type: MessageType.CommandDotNetRestoreStart });
 
         let cmd = 'dotnet';
         let args = ['restore'];
@@ -177,11 +174,11 @@ function dotnetRestore(cwd: string, filePath?: string) {
 
         function handleData(stream: NodeJS.ReadableStream) {
             stream.on('data', chunk => {
-                dotNetChannel.append(chunk.toString());
+                sink.onNext({ type: MessageType.CommandDotNetRestoreProgress, message: chunk.toString() });
             });
 
             stream.on('err', err => {
-                dotNetChannel.append(`ERROR: ${err}`);
+                sink.onNext({ type: MessageType.CommandDotNetRestoreProgress, message: `ERROR: ${err}` });
             });
         }
 
@@ -189,12 +186,12 @@ function dotnetRestore(cwd: string, filePath?: string) {
         handleData(dotnet.stderr);
 
         dotnet.on('close', (code, signal) => {
-            dotNetChannel.appendLine(`Done: ${code}.`);
+            sink.onNext({ type: MessageType.CommandDotNetRestoreSucceeded, message: `Done: ${code}.` });
             resolve();
         });
 
         dotnet.on('error', err => {
-            dotNetChannel.appendLine(`ERROR: ${err}`);
+            sink.onNext({ type: MessageType.CommandDotNetRestoreFailed, message: `ERROR: ${err}` });
             reject(err);
         });
     });
