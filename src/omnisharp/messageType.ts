@@ -17,6 +17,7 @@ export enum MessageType {
     InstallationFailure,
     InstallationSuccess, 
     InstallationProgress, 
+    OmnisharpDelayTrackerEventMeasures,
     OmnisharpEventPacketReceived, 
     OmnisharpFailure,
     OmnisharpInitialisation,
@@ -33,6 +34,7 @@ export type Message =
     InstallationStep |
     InstallationFailure |
     InstallationSuccess |
+    OmnisharpDelayTrackerEventMeasures |
     OmnisharpEventPacketReceived |
     OmnisharpFailure |
     OmnisharpInitialisation |
@@ -46,6 +48,11 @@ interface ActivationFailure {
     type: MessageType.ActivationFailure;
 }
 
+interface OmnisharpDelayTrackerEventMeasures {
+    type: MessageType.OmnisharpDelayTrackerEventMeasures;
+    eventName: string;
+    measures: { [key: string]: number } ;
+}
 interface OmnisharpInitialisation {
     type: MessageType.OmnisharpInitialisation;
     timeStamp: Date;

@@ -45,6 +45,8 @@ export class TelemetryObserver {
                 telemetryProps['installStage'] = 'completeSuccess';
                 this.reporter.sendTelemetryEvent('Acquisition', telemetryProps);
                 break;
+            case MessageType.OmnisharpDelayTrackerEventMeasures:
+                this.reporter.sendTelemetryEvent(message.eventName, null, message.measures);
         }
     }
 
