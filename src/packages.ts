@@ -161,7 +161,7 @@ function maybeDownloadPackage(pkg: Package, sink: MessageObserver, status: Statu
         if (!exists) {
             return downloadPackage(pkg, sink, status, proxy, strictSSL);
         } else {
-            sink.onNext({ type: MessageType.InstallationProgress, stage: 'downloadPackages', message: `Skipping package '${pkg.description}' (already downloaded).` });
+            sink.onNext({ type: MessageType.DownloadSuccess, message: `Skipping package '${pkg.description}' (already downloaded).` });
         }
     });
 }
@@ -170,7 +170,7 @@ function downloadPackage(pkg: Package, sink: MessageObserver, status: Status, pr
     status = status || getNoopStatus();
     const installationStage = 'downloadPackages';
 
-    sink.onNext({ type: MessageType.InstallationProgress, stage: installationStage, message: `Downloading package '${pkg.description}' ` });
+    sink.onNext({ type: MessageType.DownloadStart, message: `Downloading package '${pkg.description}' ` });
 
     status.setMessage("$(cloud-download) Downloading packages");
     status.setDetail(`Downloading package '${pkg.description}'...`);
@@ -187,7 +187,7 @@ function downloadPackage(pkg: Package, sink: MessageObserver, status: Status, pr
         pkg.tmpFile = tmpResult;
 
         let result = downloadFile(pkg.url, pkg, sink, status, proxy, strictSSL)
-            .then(() => sink.onNext({ type: MessageType.InstallationProgress, stage: installationStage, message: ` Done!` }));
+            .then(() => sink.onNext({ type: MessageType.DownloadSuccess, message: ` Done!` }));
         
         // If the package has a fallback Url, and downloading from the primary Url failed, try again from 
         // the fallback. This is used for debugger packages as some users have had issues downloading from
@@ -195,9 +195,9 @@ function downloadPackage(pkg: Package, sink: MessageObserver, status: Status, pr
         if (pkg.fallbackUrl) {
             result = result.catch((primaryUrlError) => {
                 //to do: currently we are replacing logger.append with appendLine. Look into this.
-                sink.onNext({ type: MessageType.InstallationProgress, stage: 'downloadPackages', message: `\tRetrying from '${pkg.fallbackUrl}' `});
+                sink.onNext({ type: MessageType.DownloadStart, message: `\tRetrying from '${pkg.fallbackUrl}' `});
                 return downloadFile(pkg.fallbackUrl, pkg, sink, status, proxy, strictSSL)
-                    .then(() => sink.onNext({ type: MessageType.InstallationProgress, stage: 'downloadPackages', message: ' Done!' }))
+                    .then(() => sink.onNext({ type: MessageType.DownloadSuccess, message: ' Done!' }))
                     .catch(() => primaryUrlError);
             });
         }
@@ -230,7 +230,7 @@ function downloadFile(urlString: string, pkg: Package, sink: MessageObserver, st
 
             if (response.statusCode != 200) {
                 // Download failed - print error message
-                sink.onNext({ type: MessageType.InstallationProgress, stage: installationStage, message: `failed (error code '${response.statusCode}')` });
+                sink.onNext({ type: MessageType.DownloadFailure, message: `failed (error code '${response.statusCode}')` });
                 return reject(new PackageError(response.statusCode.toString(), pkg));
             }
 
@@ -238,7 +238,6 @@ function downloadFile(urlString: string, pkg: Package, sink: MessageObserver, st
             let packageSize = parseInt(response.headers['content-length'], 10);
             let downloadedBytes = 0;
             let downloadPercentage = 0;
-            let dots = 0;
             let tmpFile = fs.createWriteStream(null, { fd: pkg.tmpFile.fd });
 
             sink.onNext({ type: MessageType.InstallationProgress, stage: installationStage, message: `(${Math.ceil(packageSize / 1024)} KB) ` });
@@ -253,12 +252,7 @@ function downloadFile(urlString: string, pkg: Package, sink: MessageObserver, st
                     downloadPercentage = newPercentage;
                 }
 
-                // Update dots after package name in output console
-                let newDots = Math.ceil(downloadPercentage / 5);
-                if (newDots > dots) {
-                    sink.onNext({ type: MessageType.InstallationProgress, stage: installationStage, message: '.'.repeat(newDots - dots) });
-                    dots = newDots;
-                }
+                sink.onNext({type: MessageType.DownloadProgress,downloadPercentage: downloadPercentage});
             });
 
             response.on('end', () => {

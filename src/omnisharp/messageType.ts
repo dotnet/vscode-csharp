@@ -10,10 +10,11 @@ import { Request } from "./requestQueue";
 export type MessageObserver = IObserver<Message>;
 export enum MessageType {
     OmnisharpInitialisation, OmnisharpLaunch, PackageInstallation, Platform, InstallationFailure, InstallationProgress, InstallationFinished, OmnisharpFailure,
-    OmnisharpServerMessage, OmnisharpRequestMessage, OmnisharpServerVerboseMessage, OmnisharpEventPacketReceived, DownloadStart, DownloadProgress, DownloadEnd
+    OmnisharpServerMessage, OmnisharpRequestMessage, OmnisharpServerVerboseMessage, OmnisharpEventPacketReceived, DownloadStart, DownloadProgress, DownloadSuccess,
+    DownloadFailure
 }
 export type Message = OmnisharpInitialisation | OmnisharpLaunch | PackageInstallation | Platform | InstallationStep | OmnisharpFailure
-    | OmnisharpServerMessage | OmnisharpRequestMessage | OmnisharpEventPacketReceived | DownloadStep;
+    | OmnisharpServerMessage | OmnisharpRequestMessage | OmnisharpEventPacketReceived | DownloadStep | DownloadProgress;
 
 interface OmnisharpInitialisation {
     type: MessageType.OmnisharpInitialisation;
@@ -45,8 +46,13 @@ interface InstallationStep {
 }
 
 interface DownloadStep {
-    type: MessageType.DownloadStart | MessageType.DownloadProgress | MessageType.DownloadEnd;
+    type: MessageType.DownloadStart | MessageType.DownloadSuccess | MessageType.DownloadFailure;
     message: string;
+}
+
+interface DownloadProgress {
+    type: MessageType.DownloadProgress;
+    downloadPercentage: number;
 }
 
 interface OmnisharpFailure {

@@ -8,6 +8,7 @@ import { Message, MessageType } from "./messageType";
 
 export class csharpLoggerObserver {
     private logger;
+    private dots: number;
 
     constructor(loggerCreator: () => Logger) {
         this.logger = loggerCreator();
@@ -37,8 +38,15 @@ export class csharpLoggerObserver {
                 this.logger.appendLine();
                 break;
             case MessageType.DownloadStart:
-            case MessageType.DownloadProgress:    
                 this.logger.append(message.message);
+                this.dots = 0;
+                break;    
+            case MessageType.DownloadProgress:    
+            let newDots = Math.ceil(message.downloadPercentage / 5);
+            if (newDots > this.dots) {
+                this.logger.append('.'.repeat(newDots - this.dots));
+                this.dots = newDots;
+            }
                 break;
             case MessageType.DownloadEnd:
                 this.logger.appendLine(message.message);  
