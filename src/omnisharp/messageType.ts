@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { IObserver } from "rx";
-import { PackageError } from "../packages";
 import { PlatformInformation } from "../platform";
 import { Request } from "./requestQueue";
 import * as protocol from './protocol';

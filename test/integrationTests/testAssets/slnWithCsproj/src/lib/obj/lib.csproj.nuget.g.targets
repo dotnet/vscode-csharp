@@ -4,6 +4,6 @@
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
   </PropertyGroup>
   <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <Import Project="$(NuGetPackageRoot)netstandard.library\2.0.0\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('$(NuGetPackageRoot)netstandard.library\2.0.0\build\netstandard2.0\NETStandard.Library.targets')" />
+    <Import Project="/usr/local/share/dotnet/sdk/NuGetFallbackFolder/netstandard.library/2.0.1/build/netstandard2.0/NETStandard.Library.targets" Condition="Exists('/usr/local/share/dotnet/sdk/NuGetFallbackFolder/netstandard.library/2.0.1/build/netstandard2.0/NETStandard.Library.targets')" />
   </ImportGroup>
 </Project>

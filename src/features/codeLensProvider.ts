@@ -14,7 +14,6 @@ import { toLocation, toRange } from '../omnisharp/typeConvertion';
 import AbstractProvider from './abstractProvider';
 import { OmniSharpServer } from '../omnisharp/server';
 import { Options } from '../omnisharp/options';
-import TelemetryReporter from 'vscode-extension-telemetry';
 import TestManager from './dotnetTest';
 
 class OmniSharpCodeLens extends vscode.CodeLens {

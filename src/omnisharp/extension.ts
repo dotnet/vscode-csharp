@@ -27,7 +27,6 @@ import { Options } from './options';
 import ReferenceProvider from '../features/referenceProvider';
 import RenameProvider from '../features/renameProvider';
 import SignatureHelpProvider from '../features/signatureHelpProvider';
-import { Subject } from 'rx';
 import TestManager from '../features/dotnetTest';
 import WorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
 import forwardChanges from '../features/changeForwarding';

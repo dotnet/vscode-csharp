@@ -20,6 +20,7 @@ import { addJSONProviders } from './features/json/jsonContributions';
 import { csharpChannelObserver } from './omnisharp/csharpChannelObserver';
 import { csharpLoggerObserver } from './omnisharp/csharpLoggerObserver';
 import { omnisharpLoggerObserver } from './omnisharp/omnisharpLoggerObserver';
+import { DotNetChannelObserver } from './omnisharp/dotnetChannelObserver';
 
 let csharpChannel: vscode.OutputChannel = null;
 
@@ -44,9 +45,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     let csharpchannelObserver = new csharpChannelObserver(() => csharpChannel);
     let csharpLogObserver = new csharpLoggerObserver(() => csharpLogger);
     let dotnetChannel = vscode.window.createOutputChannel('.NET');
+    let dotnetChannelObserver = new DotNetChannelObserver(() => dotnetChannel);
     sink.subscribe(omnisharpLogObserver.onNext);
     sink.subscribe(csharpchannelObserver.onNext);
     sink.subscribe(csharpLogObserver.onNext);
+    sink.subscribe(dotnetChannelObserver.onNext);
 
     let platformInfo: PlatformInformation;
 
@@ -63,7 +66,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, sink, platformInfo);
 
     // activate language services
-    let omniSharpPromise = OmniSharp.activate(context, reporter, sink, extension.packageJSON);
+    let omniSharpPromise = OmniSharp.activate(context, sink, extension.packageJSON);
 
     // register JSON completion & hover providers for project.json
     context.subscriptions.push(addJSONProviders());
@@ -71,7 +74,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     let coreClrDebugPromise = Promise.resolve();
     if (runtimeDependenciesExist) {
         // activate coreclr-debug
-        coreClrDebugPromise = coreclrdebug.activate(extension, context, reporter, csharpLogger, csharpChannel);
+        coreClrDebugPromise = coreclrdebug.activate(extension, context, platformInfo, sink);
     }
 
     return {
@@ -87,7 +90,7 @@ function ensureRuntimeDependencies(extension: vscode.Extension<any>, sink: Messa
     return util.installFileExists(util.InstallFileType.Lock)
         .then(exists => {
             if (!exists) {
-                const downloader = new CSharpExtDownloader(sink, extension.packageJSON, platformInfo);
+                const downloader = new CSharpExtDownloader(sink, extension.packageJSON);
                 return downloader.installRuntimeDependencies();
             } else {
                 return true;

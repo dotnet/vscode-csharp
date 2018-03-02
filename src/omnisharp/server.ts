@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as os from 'os';
 import * as path from 'path';
 import * as protocol from './protocol';
 import * as utils from '../common';
@@ -83,8 +82,6 @@ export class OmniSharpServer {
     private _serverProcess: ChildProcess;
     private _options: Options;
 
-    private _csharpLogger: Logger;
-    private _csharpChannel: vscode.OutputChannel;
     private _packageJSON: any;
     private _sink: MessageObserver;
 

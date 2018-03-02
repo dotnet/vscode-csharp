@@ -4,15 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as util from './common';
-import * as vscode from 'vscode';
-
 import { GetNetworkConfiguration, GetStatus } from './downloader.helper';
 import { MessageObserver, MessageType } from './omnisharp/messageType';
-import { PackageError, PackageManager } from './packages';
-
-import { Logger } from './logger';
+import { PackageManager } from './packages';
 import { PlatformInformation } from './platform';
-import TelemetryReporter from 'vscode-extension-telemetry';
 
 /*
  * Class used to download the runtime dependencies of the C# Extension
@@ -20,8 +15,7 @@ import TelemetryReporter from 'vscode-extension-telemetry';
 export class CSharpExtDownloader {
     public constructor(
         private sink: MessageObserver,
-        private packageJSON: any,
-        private platformInfo: PlatformInformation) {
+        private packageJSON: any) {
     }
 
     public async installRuntimeDependencies(): Promise<boolean> {

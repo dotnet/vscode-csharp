@@ -6,7 +6,6 @@
 import * as path from 'path';
 import * as semver from 'semver';
 import * as util from '../common';
-import * as vscode from 'vscode';
 
 import { MessageObserver } from './messageType';
 import { OmnisharpDownloader } from './OmnisharpDownloader';

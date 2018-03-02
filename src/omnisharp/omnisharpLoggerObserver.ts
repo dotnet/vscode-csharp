@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as rx from "rx";
-import * as vscode from "vscode";
 import { Message, MessageType, OmnisharpEventPacketReceived } from "./messageType";
 import { Logger } from "../logger";
 import * as os from 'os';

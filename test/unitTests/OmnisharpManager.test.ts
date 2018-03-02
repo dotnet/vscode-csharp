@@ -12,6 +12,8 @@ import { Logger } from '../../src/logger';
 import { rimraf } from 'async-file';
 import { GetTestPackageJSON } from './OmnisharpDownloader.test';
 import { OmnisharpManager } from '../../src/omnisharp/OmnisharpManager';
+import { Subject } from 'rx';
+import { Message } from '../../src/omnisharp/messageType';
 
 const chai = require("chai");
 chai.use(require("chai-as-promised"));
@@ -106,7 +108,6 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
 });
 
 function GetTestOmnisharpManager() {
-    let channel = vscode.window.createOutputChannel('Experiment Channel');
-    let logger = new Logger(text => channel.append(text));
-    return new OmnisharpManager(channel, logger, GetTestPackageJSON(), null);
+    const sink = new Subject<Message>();
+    return new OmnisharpManager(sink, GetTestPackageJSON());
 }

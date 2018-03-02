@@ -6,7 +6,6 @@
 import { Message, MessageType } from "./messageType";
 
 import { Logger } from "../logger";
-import { PackageError } from "../packages";
 
 export class DotNetLoggerObserver {
     private logger;

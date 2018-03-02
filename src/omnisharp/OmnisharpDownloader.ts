@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-
 import { GetNetworkConfiguration, GetStatus } from '../downloader.helper';
 import { GetPackagesFromVersion, GetVersionFilePackage } from './OmnisharpPackageCreator';
 import { MessageObserver, MessageType } from './messageType';
@@ -17,7 +15,6 @@ export class OmnisharpDownloader {
     private proxy: string;
     private strictSSL: boolean;
     private packageManager: PackageManager;
-    private telemetryProps: any;
 
     public constructor(
         private sink: MessageObserver,
@@ -28,7 +25,6 @@ export class OmnisharpDownloader {
         let networkConfiguration = GetNetworkConfiguration();
         this.proxy = networkConfiguration.Proxy;
         this.strictSSL = networkConfiguration.StrictSSL;
-        this.telemetryProps = {};
         this.packageManager = new PackageManager(this.platformInfo, this.packageJSON);
     }
 

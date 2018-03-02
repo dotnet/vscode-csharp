@@ -11,7 +11,6 @@ import * as tmp from 'tmp';
 import { parse as parseUrl } from 'url';
 import * as yauzl from 'yauzl';
 import * as util from './common';
-import { Logger } from './logger';
 import { PlatformInformation } from './platform';
 import { getProxyAgent } from './proxy';
 import { MessageObserver, MessageType } from './omnisharp/messageType';

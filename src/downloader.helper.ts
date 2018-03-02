@@ -3,13 +3,7 @@
 * Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 import * as vscode from 'vscode';
-
-import { MessageObserver, MessageType } from './omnisharp/messageType';
-import { PackageError, Status } from './packages';
-
-import { Logger } from './logger';
-import { PlatformInformation } from './platform';
-import TelemetryReporter from 'vscode-extension-telemetry';
+import { Status } from './packages';
 
 export function GetNetworkConfiguration() {
     const config = vscode.workspace.getConfiguration();

@@ -8,7 +8,6 @@ import * as vscode from 'vscode';
 import {OmniSharpServer} from '../omnisharp/server';
 import {dotnetRestoreForProject} from './commands';
 import {basename} from 'path';
-import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { MessageObserver, MessageType } from '../omnisharp/messageType';
 

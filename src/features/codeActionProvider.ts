@@ -12,7 +12,6 @@ import * as protocol from '../omnisharp/protocol';
 import { toRange2 } from '../omnisharp/typeConvertion';
 import * as serverUtils from '../omnisharp/utils';
 import { Options } from '../omnisharp/options';
-import TelemetryReporter from 'vscode-extension-telemetry';
 import { FileModificationType } from '../omnisharp/protocol';
 import { Uri } from 'vscode';
 

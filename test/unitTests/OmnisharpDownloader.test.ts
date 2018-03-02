@@ -11,6 +11,8 @@ import { Logger } from '../../src/logger';
 import { OmnisharpDownloader } from '../../src/omnisharp/OmnisharpDownloader';
 import { rimraf } from 'async-file';
 import { PlatformInformation } from '../../src/platform';
+import { Subject } from 'rx';
+import { Message } from '../../src/omnisharp/messageType';
 
 const tmp = require('tmp');
 const chai = require("chai");
@@ -51,9 +53,8 @@ suite("DownloadAndInstallExperimentalVersion : Gets the version packages, downlo
 });
 
 function GetTestOmnisharpDownloader() {
-    let channel = vscode.window.createOutputChannel('Experiment Channel');
-    let logger = new Logger(text => channel.append(text));
-    return new OmnisharpDownloader(channel, logger, GetTestPackageJSON(), new PlatformInformation("win32", "x86"), null);
+    const sink = new Subject<Message>();
+    return new OmnisharpDownloader(sink, GetTestPackageJSON(), new PlatformInformation("win32", "x86"));
 }
 
 //Since we need only the runtime dependencies of packageJSON for the downloader create a testPackageJSON
