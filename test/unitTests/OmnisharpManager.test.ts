@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import * as vscode from 'vscode';
 import * as util from '../../src/common';
 import { should } from "chai";
 import { PlatformInformation } from "../../src/platform";

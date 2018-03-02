@@ -15,25 +15,23 @@ import { PlatformInformation } from './platform';
 export class CSharpExtDownloader {
     public constructor(
         private sink: MessageObserver,
-        private packageJSON: any) {
+        private packageJSON: any,
+        private platformInfo: PlatformInformation) {
     }
 
     public async installRuntimeDependencies(): Promise<boolean> {
         this.sink.onNext({ type: MessageType.PackageInstallation, packageInfo: "C# dependencies" });
 
         let status = GetStatus();
-
-        let platformInfo: PlatformInformation;
-        let packageManager: PackageManager;
         let installationStage = 'touchBeginFile';
         let success = false;
 
         try {
             await util.touchInstallFile(util.InstallFileType.Begin);
 
-            packageManager = new PackageManager(platformInfo, this.packageJSON);
+            let packageManager = new PackageManager(this.platformInfo, this.packageJSON);
             // Display platform information and RID followed by a blank line
-            this.sink.onNext({ type: MessageType.Platform, info: platformInfo });
+            this.sink.onNext({ type: MessageType.Platform, info: this.platformInfo });
 
             installationStage = 'downloadPackages';
 

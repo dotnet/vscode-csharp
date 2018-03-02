@@ -7,7 +7,6 @@ import { GetNetworkConfiguration, GetStatus } from '../downloader.helper';
 import { GetPackagesFromVersion, GetVersionFilePackage } from './OmnisharpPackageCreator';
 import { MessageObserver, MessageType } from './messageType';
 import { Package, PackageManager, Status } from '../packages';
-
 import { PlatformInformation } from '../platform';
 
 export class OmnisharpDownloader {
