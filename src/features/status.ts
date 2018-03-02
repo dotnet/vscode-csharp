@@ -10,13 +10,14 @@ import {dotnetRestoreForProject} from './commands';
 import {basename} from 'path';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
+import { MessageObserver, MessageType } from '../omnisharp/messageType';
 
 const debounce = require('lodash.debounce');
 
-export default function reportStatus(server: OmniSharpServer, channel: vscode.OutputChannel) {
+export default function reportStatus(server: OmniSharpServer, sink: MessageObserver) {
     return vscode.Disposable.from(
-        reportServerStatus(server, channel),
-        forwardOutput(server, channel),
+        reportServerStatus(server, sink),
+        forwardOutput(server, sink),
         reportDocumentStatus(server));
 }
 
@@ -207,57 +208,49 @@ export function reportDocumentStatus(server: OmniSharpServer): vscode.Disposable
 
 // ---- server status
 
-export function reportServerStatus(server: OmniSharpServer, channel: vscode.OutputChannel): vscode.Disposable{
+export function reportServerStatus(server: OmniSharpServer, sink: MessageObserver): vscode.Disposable{
 
-    function appendLine(value: string = '') {
-        channel.appendLine(value);
-    }
 
     let d0 = server.onServerError(err => {
-        appendLine('[ERROR] ' + err);
+        sink.onNext({ 
+            type: MessageType.OmnisharpServerOnServerError,
+            message: '[ERROR] ' + err
+        });
     });
 
     let d1 = server.onError(message => {
-        if (message.FileName) {
-            appendLine(`${message.FileName}(${message.Line},${message.Column})`);
-        }
-        appendLine(message.Text);
-        appendLine();
+        sink.onNext({
+            type: MessageType.OmnisharpServerOnError,
+            errorMessage: message
+        });
+
         showMessageSoon();
     });
 
     let d2 = server.onMsBuildProjectDiagnostics(message => {
+        sink.onNext({
+            type: MessageType.OmnisharpServerMsBuildProjectDiagnostics,
+            diagnostics: message
+        });
 
-        function asErrorMessage(message: protocol.MSBuildDiagnosticsMessage) {
-            let value = `${message.FileName}(${message.StartLine},${message.StartColumn}): Error: ${message.Text}`;
-            appendLine(value);
-        }
-
-        function asWarningMessage(message: protocol.MSBuildDiagnosticsMessage) {
-            let value = `${message.FileName}(${message.StartLine},${message.StartColumn}): Warning: ${message.Text}`;
-            appendLine(value);
-        }
-
-        if (message.Errors.length > 0 || message.Warnings.length > 0) {
-            appendLine(message.FileName);
-            message.Errors.forEach(error => asErrorMessage);
-            message.Warnings.forEach(warning => asWarningMessage);
-            appendLine();
-
-            if (message.Errors.length > 0) {
-                showMessageSoon();
-            }
+        if (message.Errors.length > 0) {
+            showMessageSoon();
         }
     });
 
     let d3 = server.onUnresolvedDependencies(message => {
+        sink.onNext({
+            type: MessageType.OmnisharpServerUnresolvedDependencies,
+            unresolvedDependencies: message
+        });
+
         let csharpConfig = vscode.workspace.getConfiguration('csharp');
         if (!csharpConfig.get<boolean>('suppressDotnetRestoreNotification')) {
             let info = `There are unresolved dependencies from '${vscode.workspace.asRelativePath(message.FileName) }'. Please execute the restore command to continue.`;
 
             return vscode.window.showInformationMessage(info, 'Restore').then(value => {
                 if (value) {
-                    dotnetRestoreForProject(server, message.FileName);
+                    dotnetRestoreForProject(server, message.FileName, sink);
                 }
             });
         }
@@ -283,12 +276,7 @@ function showMessageSoon() {
 
 // --- mirror output in channel
 
-function forwardOutput(server: OmniSharpServer, logChannel: vscode.OutputChannel) {
-
-    function forward(message: string) {
-        logChannel.append(message);
-    }
-
+function forwardOutput(server: OmniSharpServer, sink: MessageObserver) {
     return vscode.Disposable.from(
-        server.onStderr(forward));
+        server.onStderr(message => sink.onNext({ type: MessageType.OmnisharpServerOnStdErr, message })));
 }

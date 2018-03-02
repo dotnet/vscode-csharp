@@ -7,6 +7,7 @@ import { IObserver } from "rx";
 import { PackageError } from "../packages";
 import { PlatformInformation } from "../platform";
 import { Request } from "./requestQueue";
+import * as protocol from './protocol';
 
 export type MessageObserver = IObserver<Message>;
 export enum MessageType {
@@ -30,7 +31,12 @@ export enum MessageType {
     OmnisharpFailure,
     OmnisharpInitialisation,
     OmnisharpLaunch,
-    OmnisharpRequestMessage, 
+    OmnisharpRequestMessage,
+    OmnisharpServerOnServerError,
+    OmnisharpServerOnError,
+    OmnisharpServerOnStdErr,
+    OmnisharpServerMsBuildProjectDiagnostics,
+    OmnisharpServerUnresolvedDependencies,
     OmnisharpServerMessage, 
     OmnisharpServerVerboseMessage, 
     PackageInstallation,
@@ -47,7 +53,10 @@ export type Message =
     OmnisharpFailure |
     OmnisharpInitialisation |
     OmnisharpLaunch |
+    OmnisharpServerMsBuildProjectDiagnostics |
+    OmnisharpServerUnresolvedDependencies |
     OmnisharpRequestMessage |
+    OmnisharpServerOnError |
     PackageInstallation |
     Platform |
     TestExecutionCountReport;
@@ -69,7 +78,9 @@ interface ActionWithMessage {
           MessageType.DownloadStart | 
           MessageType.DownloadProgress | 
           MessageType.DownloadEnd |
+          MessageType.OmnisharpServerOnStdErr |
           MessageType.OmnisharpServerMessage |
+          MessageType.OmnisharpServerOnServerError |
           MessageType.OmnisharpServerVerboseMessage;
     message: string;
 }
@@ -130,6 +141,21 @@ interface TestExecutionCountReport {
     type: MessageType.TestExecutionCountReport;
     debugCounts: { [testFrameworkName: string]: number };
     runCounts: { [testFrameworkName: string]: number };
+}
+
+interface OmnisharpServerOnError {
+    type: MessageType.OmnisharpServerOnError;
+    errorMessage: protocol.ErrorMessage;
+}
+
+interface OmnisharpServerMsBuildProjectDiagnostics {
+    type: MessageType.OmnisharpServerMsBuildProjectDiagnostics;
+    diagnostics: protocol.MSBuildProjectDiagnostics;
+}
+
+interface OmnisharpServerUnresolvedDependencies {
+    type: MessageType.OmnisharpServerUnresolvedDependencies;
+    unresolvedDependencies: protocol.UnresolvedDependenciesMessage;
 }
 
 export interface OmnisharpEventPacketReceived {
