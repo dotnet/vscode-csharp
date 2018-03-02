@@ -126,6 +126,15 @@ interface InstallationFailure {
     type: MessageType.InstallationFailure;
     stage: string;
     error: any;
+
+interface DownloadStep {
+    type: MessageType.DownloadStart | MessageType.DownloadSuccess | MessageType.DownloadFailure;
+    message: string;
+}
+
+interface DownloadProgress {
+    type: MessageType.DownloadProgress;
+    downloadPercentage: number;
 }
 
 interface OmnisharpFailure {
