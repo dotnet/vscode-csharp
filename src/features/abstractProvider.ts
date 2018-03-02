@@ -7,7 +7,6 @@
 
 import { Disposable } from 'vscode';
 import { OmniSharpServer } from '../omnisharp/server';
-import TelemetryReporter from 'vscode-extension-telemetry';
 
 export default abstract class AbstractProvider {
 

@@ -27,6 +27,7 @@ export enum MessageType {
     OmnisharpServerVerboseMessage, 
     PackageInstallation,
     Platform,
+    TestExecutionCountReport,
 }
 export type Message = 
     ActivationFailure |
@@ -42,7 +43,8 @@ export type Message =
     OmnisharpRequestMessage |
     OmnisharpServerMessage |
     PackageInstallation |
-    Platform;
+    Platform |
+    TestExecutionCountReport;
 
 interface ActivationFailure {
     type: MessageType.ActivationFailure;
@@ -112,6 +114,12 @@ interface OmnisharpRequestMessage {
     type: MessageType.OmnisharpRequestMessage;
     request: Request;
     id: number;
+}
+
+interface TestExecutionCountReport {
+    type: MessageType.TestExecutionCountReport;
+    debugCounts: { [testFrameworkName: string]: number };
+    runCounts: { [testFrameworkName: string]: number };
 }
 
 export interface OmnisharpEventPacketReceived {

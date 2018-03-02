@@ -47,6 +47,15 @@ export class TelemetryObserver {
                 break;
             case MessageType.OmnisharpDelayTrackerEventMeasures:
                 this.reporter.sendTelemetryEvent(message.eventName, null, message.measures);
+                break;
+            case MessageType.TestExecutionCountReport:
+                if (message.debugCounts) {
+                    this.reporter.sendTelemetryEvent('DebugTest', null, message.debugCounts);
+                }
+                if (message.runCounts){
+                    this.reporter.sendTelemetryEvent('RunTest', null, message.runCounts);
+                }
+                break;
         }
     }
 
