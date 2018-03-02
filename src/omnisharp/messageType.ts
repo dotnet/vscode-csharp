@@ -19,14 +19,15 @@ export enum MessageType {
     DebuggerNotInstalledFailure,
     DebuggerPreRequisiteFailure,
     DebuggerPreRequisiteWarning,
-    DownloadEnd,
-    DownloadProgress, 
-    DownloadStart, 
+    DownloadSuccess,
+    DownloadFailure,
+    DownloadProgress,
+    DownloadStart,
     InstallationFailure,
-    InstallationSuccess, 
-    InstallationProgress, 
+    InstallationSuccess,
+    InstallationProgress,
     OmnisharpDelayTrackerEventMeasures,
-    OmnisharpEventPacketReceived, 
+    OmnisharpEventPacketReceived,
     OmnisharpFailure,
     OmnisharpInitialisation,
     OmnisharpLaunch,
@@ -36,7 +37,7 @@ export enum MessageType {
     OmnisharpServerOnStdErr,
     OmnisharpServerMsBuildProjectDiagnostics,
     OmnisharpServerUnresolvedDependencies,
-    OmnisharpServerMessage, 
+    OmnisharpServerMessage,
     OmnisharpServerVerboseMessage,
     OmnisharpStart,
     PackageInstallation,
@@ -44,11 +45,13 @@ export enum MessageType {
     ProjectJsonDeprecatedWarning,
     TestExecutionCountReport,
 }
-export type Message = 
+
+export type Message =
     Action |
     ActionWithMessage |
     InstallationStep |
     InstallationFailure |
+    DownloadProgress |
     TelemetryEventWithMeasures |
     OmnisharpEventPacketReceived |
     OmnisharpFailure |
@@ -64,34 +67,34 @@ export type Message =
 
 interface Action {
     type: MessageType.ActivationFailure |
-          MessageType.CommandShowOutput |
-          MessageType.DebuggerNotInstalledFailure |
-          MessageType.CommandDotNetRestoreStart |
-          MessageType.InstallationSuccess |
-          MessageType.ProjectJsonDeprecatedWarning;
+    MessageType.CommandShowOutput |
+    MessageType.DebuggerNotInstalledFailure |
+    MessageType.CommandDotNetRestoreStart |
+    MessageType.InstallationSuccess |
+    MessageType.ProjectJsonDeprecatedWarning;
 }
 
 interface ActionWithMessage {
     type: MessageType.DebuggerPreRequisiteFailure |
-          MessageType.DebuggerPreRequisiteWarning |
-          MessageType.CommandDotNetRestoreProgress |
-          MessageType.CommandDotNetRestoreSucceeded |
-          MessageType.CommandDotNetRestoreFailed |
-          MessageType.DownloadStart | 
-          MessageType.DownloadProgress | 
-          MessageType.DownloadEnd |
-          MessageType.OmnisharpServerOnStdErr |
-          MessageType.OmnisharpServerMessage |
-          MessageType.OmnisharpServerOnServerError |
-          MessageType.OmnisharpServerVerboseMessage;
+    MessageType.DebuggerPreRequisiteWarning |
+    MessageType.CommandDotNetRestoreProgress |
+    MessageType.CommandDotNetRestoreSucceeded |
+    MessageType.CommandDotNetRestoreFailed |
+    MessageType.DownloadStart |
+    MessageType.DownloadSuccess |
+    MessageType.DownloadFailure |
+    MessageType.OmnisharpServerOnStdErr |
+    MessageType.OmnisharpServerMessage |
+    MessageType.OmnisharpServerOnServerError |
+    MessageType.OmnisharpServerVerboseMessage;
     message: string;
 }
 
 interface TelemetryEventWithMeasures {
     type: MessageType.OmnisharpDelayTrackerEventMeasures |
-          MessageType.OmnisharpStart;
+    MessageType.OmnisharpStart;
     eventName: string;
-    measures: { [key: string]: number } ;
+    measures: { [key: string]: number };
 }
 interface OmnisharpInitialisation {
     type: MessageType.OmnisharpInitialisation;
@@ -126,10 +129,6 @@ interface InstallationFailure {
     type: MessageType.InstallationFailure;
     stage: string;
     error: any;
-
-interface DownloadStep {
-    type: MessageType.DownloadStart | MessageType.DownloadSuccess | MessageType.DownloadFailure;
-    message: string;
 }
 
 interface DownloadProgress {

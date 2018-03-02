@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Message, MessageType } from "./messageType";
+import { Message, MessageType } from "./../messageType";
 
-import { Logger } from "../logger";
-import { PackageError } from "../packages";
+import { Logger } from "../../logger";
+import { PackageError } from "../../packages";
 
 export class csharpLoggerObserver {
     private logger;
@@ -64,7 +64,8 @@ export class csharpLoggerObserver {
                 this.dots = newDots;
             }
                 break;
-            case MessageType.DownloadEnd:
+            case MessageType.DownloadSuccess:
+            case MessageType.DownloadFailure:
             case MessageType.DebuggerPreRequisiteFailure:
             case MessageType.DebuggerPreRequisiteWarning:
                 this.logger.appendLine(message.message);

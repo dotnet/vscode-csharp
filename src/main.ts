@@ -9,18 +9,17 @@ import * as util from './common';
 import * as vscode from 'vscode';
 
 import { Message, MessageObserver, MessageType } from './omnisharp/messageType';
-
 import { CSharpExtDownloader } from './CSharpExtDownloader';
 import { Logger } from './logger';
 import { PlatformInformation } from './platform';
 import { Subject } from 'rx';
-import { TelemetryObserver } from './omnisharp/telemetryObserver';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { addJSONProviders } from './features/json/jsonContributions';
-import { csharpChannelObserver } from './omnisharp/csharpChannelObserver';
-import { csharpLoggerObserver } from './omnisharp/csharpLoggerObserver';
-import { omnisharpLoggerObserver } from './omnisharp/omnisharpLoggerObserver';
-import { DotNetChannelObserver } from './omnisharp/dotnetChannelObserver';
+import { csharpChannelObserver } from './omnisharp/observers/csharpChannelObserver';
+import { csharpLoggerObserver } from './omnisharp/observers/csharpLoggerObserver';
+import { omnisharpLoggerObserver } from './omnisharp/observers/omnisharpLoggerObserver';
+import { DotNetChannelObserver } from './omnisharp/observers/dotnetChannelObserver';
+import { TelemetryObserver } from './omnisharp/telemetryObserver';
 
 let csharpChannel: vscode.OutputChannel = null;
 
