@@ -22,8 +22,6 @@ import { DotNetChannelObserver } from './omnisharp/observers/dotnetChannelObserv
 import { TelemetryObserver } from './omnisharp/telemetryObserver';
 import { OmnisharpChannelObserver } from './omnisharp/observers/OmnisharpChannelObserver';
 
-let csharpChannel: vscode.OutputChannel = null;
-
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 
     const extensionId = 'ms-vscode.csharp';
@@ -34,8 +32,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     util.setExtensionPath(extension.extensionPath);
 
-    csharpChannel = vscode.window.createOutputChannel('C#');
-
+    let csharpChannel = vscode.window.createOutputChannel('C#');
     let csharpLogger = new Logger(text => csharpChannel.append(text));
     let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
     let omnisharpLogObserver = new OmnisharpLoggerObserver(() => new Logger(message => omnisharpChannel.append(message)), false);
