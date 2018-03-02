@@ -18,7 +18,7 @@ export class csharpLoggerObserver {
     public onNext(message: Message) {
         switch (message.type) {
             case MessageType.ActivationFailure:
-                this.logger.appendLine("Could not get platform information.");
+                this.logger.appendLine("[ERROR]: C# Extension failed to get platform information.");
                 break;
             case MessageType.PackageInstallation:
                 this.logger.append(`Installing ${message.packageInfo}...`);
@@ -44,7 +44,7 @@ export class csharpLoggerObserver {
                 }
                 this.logger.appendLine();
                 break;
-            case MessageType.InstallationFinished:
+            case MessageType.InstallationSuccess:
                 this.logger.appendLine('Finished');
                 this.logger.appendLine();
                 break;
@@ -58,7 +58,10 @@ export class csharpLoggerObserver {
                 break;
             case MessageType.DownloadEnd:
                 this.logger.appendLine(message.message);  
-            break;
+                break;
+            case MessageType.DebuggerPreRequisiteFailure:
+                this.logger.appendLine(message.message);
+                break;
         }
     }
 }

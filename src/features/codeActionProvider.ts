@@ -21,8 +21,8 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
     private _options: Options;
     private _commandId: string;
 
-    constructor(server: OmniSharpServer, reporter: TelemetryReporter) {
-        super(server, reporter);
+    constructor(server: OmniSharpServer) {
+        super(server);
 
         this._commandId = 'omnisharp.runCodeAction';
 

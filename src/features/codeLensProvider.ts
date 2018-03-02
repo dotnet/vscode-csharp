@@ -31,8 +31,8 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 
     private _options: Options;
 
-    constructor(server: OmniSharpServer, reporter: TelemetryReporter, testManager: TestManager) {
-        super(server, reporter);
+    constructor(server: OmniSharpServer, testManager: TestManager) {
+        super(server);
 
         this._resetCachedOptions();
 

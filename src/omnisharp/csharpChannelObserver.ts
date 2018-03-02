@@ -15,6 +15,8 @@ export class csharpChannelObserver {
         switch (message.type) {
             case MessageType.PackageInstallation:
             case MessageType.InstallationFailure:
+            case MessageType.DebuggerNotInstalledFailure:
+            case MessageType.DebuggerPreRequisiteFailure:
                 this.channel.show();
                 break;
         }

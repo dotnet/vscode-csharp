@@ -9,7 +9,6 @@ import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { toRange } from '../omnisharp/typeConvertion';
 import * as vscode from 'vscode';
-import TelemetryReporter from 'vscode-extension-telemetry';
 
 export class Advisor {
 
@@ -109,8 +108,8 @@ export class Advisor {
     }
 }
 
-export default function reportDiagnostics(server: OmniSharpServer, reporter: TelemetryReporter, advisor: Advisor): vscode.Disposable {
-    return new DiagnosticsProvider(server, reporter, advisor);
+export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor): vscode.Disposable {
+    return new DiagnosticsProvider(server, advisor);
 }
 
 class DiagnosticsProvider extends AbstractSupport {
@@ -121,8 +120,8 @@ class DiagnosticsProvider extends AbstractSupport {
     private _projectValidation: vscode.CancellationTokenSource;
     private _diagnostics: vscode.DiagnosticCollection;
 
-    constructor(server: OmniSharpServer, reporter: TelemetryReporter, validationAdvisor: Advisor) {
-        super(server, reporter);
+    constructor(server: OmniSharpServer, validationAdvisor: Advisor) {
+        super(server);
 
         this._validationAdvisor = validationAdvisor;
         this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');

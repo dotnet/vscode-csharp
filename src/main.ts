@@ -43,6 +43,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     let omnisharpLogObserver = new omnisharpLoggerObserver(() => new Logger(message => omnisharpChannel.append(message)), false);
     let csharpchannelObserver = new csharpChannelObserver(() => csharpChannel);
     let csharpLogObserver = new csharpLoggerObserver(() => csharpLogger);
+    let dotnetChannel = vscode.window.createOutputChannel('.NET');
     sink.subscribe(omnisharpLogObserver.onNext);
     sink.subscribe(csharpchannelObserver.onNext);
     sink.subscribe(csharpLogObserver.onNext);

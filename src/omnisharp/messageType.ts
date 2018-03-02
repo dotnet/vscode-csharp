@@ -11,6 +11,10 @@ import { Request } from "./requestQueue";
 export type MessageObserver = IObserver<Message>;
 export enum MessageType {
     ActivationFailure,
+    CommandShowOutput,
+    DebuggerNotInstalledFailure,
+    DebuggerPreRequisiteFailure,
+    DebuggerPreRequisiteWarning,
     DownloadEnd,
     DownloadProgress, 
     DownloadStart, 
@@ -31,6 +35,10 @@ export enum MessageType {
 }
 export type Message = 
     ActivationFailure |
+    CommandShowOutput |
+    DebuggerNotInstalledFailure |
+    DebuggerPreRequisiteFailure |
+    DebuggerPreRequisiteWarning |
     DownloadStep |
     InstallationStep |
     InstallationFailure |
@@ -48,6 +56,24 @@ export type Message =
 
 interface ActivationFailure {
     type: MessageType.ActivationFailure;
+}
+
+interface CommandShowOutput {
+    type: MessageType.CommandShowOutput;
+}
+
+interface DebuggerNotInstalledFailure {
+    type: MessageType.DebuggerNotInstalledFailure;
+}
+
+interface DebuggerPreRequisiteFailure {
+    type: MessageType.DebuggerPreRequisiteFailure;
+    message: string;
+}
+
+interface DebuggerPreRequisiteWarning {
+    type: MessageType.DebuggerPreRequisiteWarning;
+    message: string;
 }
 
 interface OmnisharpDelayTrackerEventMeasures {
