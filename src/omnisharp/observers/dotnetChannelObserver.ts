@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { Message, MessageType } from "../messageType";
 
-export class DotNetChannelObserver {
+export class DotNetChannelObserver {   
     private channel;
 
     constructor(channelCreator: () => {
@@ -15,7 +15,7 @@ export class DotNetChannelObserver {
         this.channel = channelCreator();
     }
 
-    public onNext(message: Message) {
+    public onNext = (message: Message) => {
         switch (message.type) {
             case MessageType.CommandDotNetRestoreStart:
                 this.channel.clear();

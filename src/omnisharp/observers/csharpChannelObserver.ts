@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { Message, MessageType } from "../messageType";
 
+
 export class CsharpChannelObserver {
     private channel;
 
@@ -15,7 +16,7 @@ export class CsharpChannelObserver {
         this.channel = channelCreator();
     }
 
-    public onNext(message: Message) {
+    public onNext = (message: Message) => {
         switch (message.type) {
             case MessageType.PackageInstallation:
             case MessageType.InstallationFailure:

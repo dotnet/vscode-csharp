@@ -15,11 +15,11 @@ import { PlatformInformation } from './platform';
 import { Subject } from 'rx';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { addJSONProviders } from './features/json/jsonContributions';
-import { CsharpChannelObserver } from './omnisharp/observers/csharpChannelObserver';
-import { CsharpLoggerObserver } from './omnisharp/observers/csharpLoggerObserver';
-import { OmnisharpLoggerObserver } from './omnisharp/observers/omnisharpLoggerObserver';
-import { DotNetChannelObserver } from './omnisharp/observers/dotnetChannelObserver';
-import { TelemetryObserver } from './omnisharp/telemetryObserver';
+import { CsharpChannelObserver } from './omnisharp/observers/CsharpChannelObserver';
+import { CsharpLoggerObserver } from './omnisharp/observers/CsharpLoggerObserver';
+import { OmnisharpLoggerObserver } from './omnisharp/observers/OmnisharpLoggerObserver';
+import { DotNetChannelObserver } from './omnisharp/observers/DotnetChannelObserver';
+import { TelemetryObserver } from './omnisharp/observers/TelemetryObserver';
 import { OmnisharpChannelObserver } from './omnisharp/observers/OmnisharpChannelObserver';
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
@@ -48,8 +48,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     sink.subscribe(csharpchannelObserver.onNext);
     sink.subscribe(csharpLogObserver.onNext);
     sink.subscribe(dotnetChannelObserver.onNext);
-
-    let platformInfo: PlatformInformation;
+   let platformInfo: PlatformInformation;
     try {
         platformInfo = await PlatformInformation.GetCurrent();
     }

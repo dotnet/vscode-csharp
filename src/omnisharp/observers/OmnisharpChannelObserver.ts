@@ -5,7 +5,7 @@
 import { Message, MessageType } from "../messageType";
 import * as vscode from 'vscode';
 
-export class OmnisharpChannelObserver {
+export class OmnisharpChannelObserver { 
     private channel;
 
     constructor(channelCreator: () => {
@@ -16,7 +16,7 @@ export class OmnisharpChannelObserver {
         this.channel = channelCreator();
     }
 
-    public onNext(message: Message) {
+    public onNext = (message: Message) => {
         switch (message.type) {
             case MessageType.CommandShowOutput:
                 this.channel.show(vscode.ViewColumn.Three);

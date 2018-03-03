@@ -8,7 +8,8 @@ import { Logger } from "../../logger";
 import * as os from 'os';
 
 export class OmnisharpLoggerObserver {
-
+   
+    
     private logger;
     private debugMode: boolean;
 
@@ -17,7 +18,7 @@ export class OmnisharpLoggerObserver {
         this.debugMode = debugMode;
     }
 
-    onNext(message: Message): void {
+    public onNext = (message: Message) => {
         switch (message.type) {
             case MessageType.OmnisharpInitialisation:
                 this.logger.appendLine(`Starting OmniSharp server at ${message.timeStamp.toLocaleString()}`);

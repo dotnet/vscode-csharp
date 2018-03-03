@@ -4,11 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Message, MessageType } from "./../messageType";
-
 import { Logger } from "../../logger";
 import { PackageError } from "../../packages";
 
+
 export class CsharpLoggerObserver {
+    
+
     private logger;
     private dots: number;
 
@@ -16,7 +18,7 @@ export class CsharpLoggerObserver {
         this.logger = loggerCreator();
     }
 
-    public onNext(message: Message) {
+    public onNext = (message: Message) => {
         switch (message.type) {
             case MessageType.ActivationFailure:
                 this.logger.appendLine("[ERROR]: C# Extension failed to get platform information.");
@@ -25,7 +27,7 @@ export class CsharpLoggerObserver {
                 this.logger.append(`Installing ${message.packageInfo}...`);
                 this.logger.appendLine();
                 break;
-            case MessageType.Platform:    
+            case MessageType.Platform:
                 this.logger.appendLine(`Platform: ${message.info.toString()}`);
                 this.logger.appendLine();
                 break;
@@ -56,13 +58,13 @@ export class CsharpLoggerObserver {
             case MessageType.DownloadStart:
                 this.logger.append(message.message);
                 this.dots = 0;
-                break;    
-            case MessageType.DownloadProgress:    
-            let newDots = Math.ceil(message.downloadPercentage / 5);
-            if (newDots > this.dots) {
-                this.logger.append('.'.repeat(newDots - this.dots));
-                this.dots = newDots;
-            }
+                break;
+            case MessageType.DownloadProgress:
+                let newDots = Math.ceil(message.downloadPercentage / 5);
+                if (newDots > this.dots) {
+                    this.logger.append('.'.repeat(newDots - this.dots));
+                    this.dots = newDots;
+                }
                 break;
             case MessageType.DownloadSuccess:
             case MessageType.DownloadFailure:
@@ -74,5 +76,5 @@ export class CsharpLoggerObserver {
                 this.logger.appendLine("Warning: project.json is no longer a supported project format for .NET Core applications. Update to the latest version of .NET Core (https://aka.ms/netcoredownload) and use 'dotnet migrate' to upgrade your project (see https://aka.ms/netcoremigrate for details).");
                 break;
         }
-    }
+    }            
 }
