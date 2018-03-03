@@ -7,9 +7,7 @@ import { Message, MessageType, OmnisharpEventPacketReceived } from "../messageTy
 import { Logger } from "../../logger";
 import * as os from 'os';
 
-export class OmnisharpLoggerObserver {
-   
-    
+export class OmnisharpLoggerObserver {   
     private logger;
     private debugMode: boolean;
 

@@ -84,12 +84,14 @@ export class OmniSharpServer {
 
     private _packageJSON: any;
     private _sink: MessageObserver;
+    private _platformInfo: PlatformInformation;
 
-    constructor(sink: MessageObserver, packageJSON?: any) {
+    constructor(sink: MessageObserver, packageJSON: any, platformInfo: PlatformInformation) {
         let verboseLogger = new Logger(message => this._sink.onNext({ type: MessageType.OmnisharpServerVerboseMessage, message: message }));
         this._requestQueue = new RequestQueueCollection(verboseLogger, 8, request => this._makeRequest(request));
         this._packageJSON = packageJSON;
         this._sink = sink;
+        this._platformInfo = platformInfo;
     }
 
     public isRunning(): boolean {
@@ -256,8 +258,7 @@ export class OmniSharpServer {
             try {
                 let extensionPath = utils.getExtensionPath();
                 let manager = new OmnisharpManager(this._sink, this._packageJSON);
-                let platformInfo = await PlatformInformation.GetCurrent();
-                launchPath = await manager.GetOmnisharpPath(this._options.path, this._options.useMono, serverUrl, latestVersionFileServerPath, installPath, extensionPath, platformInfo);
+                launchPath = await manager.GetOmnisharpPath(this._options.path, this._options.useMono, serverUrl, latestVersionFileServerPath, installPath, extensionPath, this._platformInfo);
             }
             catch (error) {
                 this._sink.onNext({ type: MessageType.OmnisharpFailure, message: `Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error: error });

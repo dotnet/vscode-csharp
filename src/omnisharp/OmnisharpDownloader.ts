@@ -28,12 +28,11 @@ export class OmnisharpDownloader {
     }
 
     public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string) {
-        this.sink.onNext({ type: MessageType.PackageInstallation, packageInfo: `Omnisharp - ${version}` });
+        this.sink.onNext({ type: MessageType.PackageInstallation, packageInfo: `Omnisharp Version = ${version}` });
 
         let installationStage = '';
 
         try {
-            installationStage = 'logPlatformInfo';
             this.sink.onNext({ type: MessageType.Platform, info: this.platformInfo });
 
             installationStage = 'getPackageInfo';

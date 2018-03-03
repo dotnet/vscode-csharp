@@ -239,7 +239,7 @@ function downloadFile(urlString: string, pkg: Package, sink: MessageObserver, st
             let downloadPercentage = 0;
             let tmpFile = fs.createWriteStream(null, { fd: pkg.tmpFile.fd });
 
-            sink.onNext({ type: MessageType.InstallationProgress, stage: installationStage, message: `(${Math.ceil(packageSize / 1024)} KB) ` });
+            sink.onNext({ type: MessageType.DownloadStart, message: `(${Math.ceil(packageSize / 1024)} KB) ` });
 
             response.on('data', data => {
                 downloadedBytes += data.length;

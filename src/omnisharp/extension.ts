@@ -32,17 +32,18 @@ import WorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
 import forwardChanges from '../features/changeForwarding';
 import registerCommands from '../features/commands';
 import reportStatus from '../features/status';
+import { PlatformInformation } from '../platform';
 
 export let omnisharp: OmniSharpServer;
 
-export function activate(context: vscode.ExtensionContext, sink: MessageObserver, packageJSON: any) {
+export function activate(context: vscode.ExtensionContext, sink: MessageObserver, packageJSON: any, platformInfo: PlatformInformation) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
         scheme: 'file' // only files from disk
     };
 
     const options = Options.Read();
-    const server = new OmniSharpServer(sink, packageJSON);
+    const server = new OmniSharpServer(sink, packageJSON, platformInfo);
 
     omnisharp = server;
     const advisor = new Advisor(server); // create before server is started
