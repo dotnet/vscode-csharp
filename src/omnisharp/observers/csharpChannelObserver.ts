@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import { Message, MessageType } from "../messageType";
 
-
 export class CsharpChannelObserver {
     private channel;
 
