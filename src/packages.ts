@@ -167,10 +167,8 @@ function maybeDownloadPackage(pkg: Package, sink: MessageObserver, status: Statu
 
 function downloadPackage(pkg: Package, sink: MessageObserver, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
     status = status || getNoopStatus();
-    const installationStage = 'downloadPackages';
 
     sink.onNext({ type: MessageType.DownloadStart, message: `Downloading package '${pkg.description}' ` });
-
     status.setMessage("$(cloud-download) Downloading packages");
     status.setDetail(`Downloading package '${pkg.description}'...`);
 
@@ -207,7 +205,6 @@ function downloadPackage(pkg: Package, sink: MessageObserver, status: Status, pr
 
 function downloadFile(urlString: string, pkg: Package, sink: MessageObserver, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
     const url = parseUrl(urlString);
-    const installationStage = 'downloadPackages';
 
     const options: https.RequestOptions = {
         host: url.host,
