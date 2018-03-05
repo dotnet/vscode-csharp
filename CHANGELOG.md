@@ -13,10 +13,10 @@
 
 #### Alternative Omnisharp Support
 Enables the use of pre-release builds of Omnisharp. Downloading a pre-release build of Omnisharp allows the C# extension for VS Code to use features that have been merged into the "master" branch of omnisharp-roslyn(https://github.com/OmniSharp/omnisharp-roslyn) but that have not been officially released
-* Adds support to use the "omnisharp.path" option to download alternative copies of OmniSharp. The possible values for this option are:
+* Adds support to use the "omnisharp.path" option to download a specific copy of OmniSharp. The possible values for this option are:
+  * Some absolute path - Use a local copy of OmniSharp. The value must point to a directory which contains OmniSharp, typically a user's build output directory for the OmniSharp-Roslyn project. Example: C:\omnisharp-roslyn\artifacts\publish\OmniSharp.Stdio\win7-x64\OmniSharp.exe.
   * "latest" - Use the latest CI build
   * "<version>" - Use a specific version of OmniSharp. Example: `1.29.2-beta.60`
-  * Some absolute path - Use a local copy of OmniSharp. The value must point to a directory which contains OmniSharp, typically a user's build output directory for the OmniSharp-Roslyn project. Example: C:\omnisharp-roslyn\artifacts\publish\OmniSharp.Stdio\win7-x64\OmniSharp.exe.
 
 ## 1.14.0 (February 14, 2018)
 
