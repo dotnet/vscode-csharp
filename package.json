@@ -29,7 +29,7 @@
     "vscode:prepublish": "tsc -p ./",
     "compile": "tsc -p ./ && gulp tslint",
     "watch": "tsc -watch -p ./",
-    "tdd": "npm run test:unit -- --watch",
+    "tdd": "npm run test:unit -- --watch --watch-extensions ts",
     "test": "npm-run-all test:feature test:unit test:integration",
     "test:unit": "mocha --opts mocha.opts",
     "test:feature": "cross-env CODE_TESTS_PATH=./out/test/unitTests npm run test:runInVsCode",
