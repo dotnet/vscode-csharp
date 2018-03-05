@@ -29,6 +29,7 @@ The easist way to verify that a project was successfully loaded is to open a .cs
 #### Signature Help 
 * Signature Help shows up in a method call after typing `(`
 * Signature help shows documentation for methods and for parameters
+* Parameter documentation is only shown for the currently active parameter
 
 #### Quick Info
 * Hovering over an identifier shows info and documentation
@@ -76,6 +77,9 @@ The easist way to verify that a project was successfully loaded is to open a .cs
 * In unit tests projects, the "run test" and "debug test" codelens appears on test methods
   * Clicking runs or debugs the test and prints results to the console
   * Breakpoints in a unit test are hit if you "debug test"
+* "Run All Tests" and "Debug All Tests" code lens buttons will appear on test classes
+  * Click Run All or Debug All should run/debug all the tests in the class and print a summary
+  * If you set breakpoints within multiple tests, you should hit each breakpoint as the tests are run
 
 #### Symbol Finder
 * Ctrl-T can find symbols by name when you type them
