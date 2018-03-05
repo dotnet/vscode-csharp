@@ -32,7 +32,7 @@
     "tdd": "npm run test:unit -- --watch --watch-extensions ts",
     "test": "npm-run-all test:feature test:unit test:integration",
     "test:unit": "mocha --opts mocha.opts",
-    "test:feature": "cross-env CODE_TESTS_PATH=./out/test/unitTests npm run test:runInVsCode",
+    "test:feature": "cross-env CODE_TESTS_PATH=./out/test/featureTests npm run test:runInVsCode",
     "test:integration": "npm-run-all test:integration:*",
     "test:integration:singleCsproj": "cross-env OSVC_SUITE=singleCsproj npm run test:runSuiteInVsCode",
     "test:integration:slnWithCsproj": "cross-env OSVC_SUITE=slnWithCsproj npm run test:runSuiteInVsCode",
