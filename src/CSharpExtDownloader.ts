@@ -30,8 +30,8 @@ export class CSharpExtDownloader {
             await util.touchInstallFile(util.InstallFileType.Begin);
 
             let packageManager = new PackageManager(this.platformInfo, this.packageJSON);
-            // Display platform information and RID followed by a blank line
-            this.sink.onNext({ type: MessageType.Platform, info: this.platformInfo });
+            // Display platform information and RID
+            this.sink.onNext({ type: MessageType.PlatformInfo, info: this.platformInfo });
 
             installationStage = 'downloadPackages';
 
@@ -48,7 +48,6 @@ export class CSharpExtDownloader {
             await util.touchInstallFile(util.InstallFileType.Lock);
 
             success = true;
-
             this.sink.onNext({ type: MessageType.InstallationSuccess });
         }
         catch (error) {

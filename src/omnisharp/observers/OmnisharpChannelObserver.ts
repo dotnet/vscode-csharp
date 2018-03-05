@@ -46,6 +46,8 @@ export class OmnisharpChannelObserver {
             case MessageType.OmnisharpServerOnStdErr:
                 this.channel.append(message.message);
                 break;
+            case MessageType.OmnisharpFailure:
+                this.channel.show();    
         }
     }
 }

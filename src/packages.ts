@@ -185,7 +185,7 @@ function downloadPackage(pkg: Package, sink: MessageObserver, status: Status, pr
 
         let result = downloadFile(pkg.url, pkg, sink, status, proxy, strictSSL)
             .then(() => sink.onNext({ type: MessageType.DownloadSuccess, message: ` Done!` }));
-        
+
         // If the package has a fallback Url, and downloading from the primary Url failed, try again from 
         // the fallback. This is used for debugger packages as some users have had issues downloading from
         // the CDN link.

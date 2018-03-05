@@ -33,7 +33,7 @@ export class OmnisharpDownloader {
         let installationStage = '';
 
         try {
-            this.sink.onNext({ type: MessageType.Platform, info: this.platformInfo });
+            this.sink.onNext({ type: MessageType.PlatformInfo, info: this.platformInfo });
 
             installationStage = 'getPackageInfo';
             let packages: Package[] = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);

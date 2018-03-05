@@ -41,7 +41,7 @@ export enum MessageType {
     OmnisharpServerVerboseMessage,
     OmnisharpStart,
     PackageInstallation,
-    Platform,
+    PlatformInfo,
     ProjectJsonDeprecatedWarning,
     TestExecutionCountReport,
 }
@@ -115,7 +115,7 @@ interface PackageInstallation {
 }
 
 interface Platform {
-    type: MessageType.Platform;
+    type: MessageType.PlatformInfo;
     info: PlatformInformation;
 }
 

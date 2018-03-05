@@ -8,7 +8,7 @@ import { Logger } from "../../logger";
 import { PackageError } from "../../packages";
 
 export class CsharpLoggerObserver {
-    
+
 
     private logger;
     private dots: number;
@@ -26,7 +26,7 @@ export class CsharpLoggerObserver {
                 this.logger.append(`Installing ${message.packageInfo}...`);
                 this.logger.appendLine();
                 break;
-            case MessageType.Platform:
+            case MessageType.PlatformInfo:
                 this.logger.appendLine(`Platform: ${message.info.toString()}`);
                 this.logger.appendLine();
                 break;
@@ -75,5 +75,5 @@ export class CsharpLoggerObserver {
                 this.logger.appendLine("Warning: project.json is no longer a supported project format for .NET Core applications. Update to the latest version of .NET Core (https://aka.ms/netcoredownload) and use 'dotnet migrate' to upgrade your project (see https://aka.ms/netcoremigrate for details).");
                 break;
         }
-    }            
+    }
 }

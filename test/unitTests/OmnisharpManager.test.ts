@@ -7,7 +7,6 @@ import * as path from 'path';
 import * as util from '../../src/common';
 import { should } from "chai";
 import { PlatformInformation } from "../../src/platform";
-import { Logger } from '../../src/logger';
 import { rimraf } from 'async-file';
 import { GetTestPackageJSON } from './OmnisharpDownloader.test';
 import { OmnisharpManager } from '../../src/omnisharp/OmnisharpManager';

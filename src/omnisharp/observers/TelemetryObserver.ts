@@ -11,13 +11,6 @@ export interface ITelemetryReporter {
 }
 
 export class TelemetryObserver {
-    onError(exception: any): void {
-        throw new Error("Method not implemented.");
-    }
-    onCompleted(): void {
-        throw new Error("Method not implemented.");
-    }
-
     private reporter: ITelemetryReporter;
     private platformInfo: PlatformInformation;
 
@@ -62,9 +55,6 @@ export class TelemetryObserver {
                 if (message.runCounts){
                     this.reporter.sendTelemetryEvent('RunTest', null, message.runCounts);
                 }
-                break;
-            case MessageType.OmnisharpStart:
-                this.reporter.sendTelemetryEvent('OmniSharp.Start', null, message.measures);
                 break;
         }
     }
