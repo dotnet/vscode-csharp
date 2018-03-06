@@ -7,11 +7,16 @@ import { Message, MessageType, OmnisharpEventPacketReceived } from "../messageTy
 import { Logger } from "../../logger";
 import * as os from 'os';
 
-export class OmnisharpLoggerObserver {   
+export class OmnisharpLoggerObserver {
     private logger;
     private debugMode: boolean;
 
-    constructor(loggerCreator: () => Logger, debugMode: boolean) {
+    constructor(loggerCreator: () => {
+        appendLine: (message?: string) => void;
+        append: (message?: string) => void;
+        decreaseIndent: () => void;
+        increaseIndent: () => void;
+    }, debugMode: boolean) {
         this.logger = loggerCreator();
         this.debugMode = debugMode;
     }

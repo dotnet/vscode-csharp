@@ -3,11 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-const getNullChannel = () => ({
-    clear: () => {},
-    show: () => {},
-    append: (value) => {},
-    appendLine: (value) => {}
+export const getNullChannel = () => ({
+    clear: () => { },
+    show: () => { },
+    append: (value) => { },
+    appendLine: (value) => { }
 });
 
-export default getNullChannel;
+export const getNullLogger = () => ({
+    append: (value?: string) => { },
+    appendLine: (value?: string) => { },
+    increaseIndent: () => { },
+    decreaseIndent: () => { }
+});

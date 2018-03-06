@@ -9,6 +9,11 @@ import { MessageObserver, MessageType } from './messageType';
 import { Package, PackageManager, Status } from '../packages';
 import { PlatformInformation } from '../platform';
 
+const defaultPackageManagerFactory: IPackageManagerFactory = (platformInfo: PlatformInformation, packageJSON: any) => new PackageManager(platformInfo, packageJSON);
+export interface IPackageManagerFactory {
+    (platformInfo: PlatformInformation, packageJSON: any): PackageManager;
+}
+
 export class OmnisharpDownloader {
     private status: Status;
     private proxy: string;
@@ -18,13 +23,14 @@ export class OmnisharpDownloader {
     public constructor(
         private sink: MessageObserver,
         private packageJSON: any,
-        private platformInfo: PlatformInformation) {
+        private platformInfo: PlatformInformation,
+        packageManagerFactory: IPackageManagerFactory = defaultPackageManagerFactory) {
 
         this.status = GetStatus();
         let networkConfiguration = GetNetworkConfiguration();
         this.proxy = networkConfiguration.Proxy;
         this.strictSSL = networkConfiguration.StrictSSL;
-        this.packageManager = new PackageManager(this.platformInfo, this.packageJSON);
+        this.packageManager = packageManagerFactory(this.platformInfo, this.packageJSON);
     }
 
     public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string) {

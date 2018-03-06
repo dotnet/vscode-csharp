@@ -6,8 +6,7 @@
 import { should, expect } from 'chai';
 import { DotNetChannelObserver } from "../../../src/omnisharp/observers/DotnetChannelObserver";
 import { MessageType, Message } from '../../../src/omnisharp/messageType';
-import { DotnetInfo } from '../../../src/coreclr-debug/util';
-import getNullChannel from './NullChannel';
+import { getNullChannel } from './Fakes';
 import * as CreateMessage from './CreateMessage';
 
 suite("DotnetChannelObserver", () => {
@@ -16,7 +15,7 @@ suite("DotnetChannelObserver", () => {
     [
         CreateMessage.CommandDotNetRestoreStart()
     ].forEach((message: Message) => {
-        test(`Clears the channel for ${message.type}`, () => {
+        test(`Clears the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
             let hasCleared = false;
 
             let observer = new DotNetChannelObserver(() => ({
@@ -28,5 +27,55 @@ suite("DotnetChannelObserver", () => {
 
             expect(hasCleared).to.be.true;
         });
-    });
+        });
+    
+        [
+            CreateMessage.CommandDotNetRestoreStart()
+        ].forEach((message: Message) => {
+            test(`Shows the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
+                let hasShown = false;
+    
+                let observer = new DotNetChannelObserver(() => ({
+                        ...getNullChannel(),
+                        show: () => { hasShown = true; }
+                }));
+    
+                observer.onNext(message);
+    
+                expect(hasShown).to.be.true;
+            });
+        });
+        [
+            CreateMessage.CommandDotNetRestoreProgress("Some message")
+        ].forEach((message: Message) => {
+            test(`Appends the text into the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
+                let appendedMessage = "";
+    
+                let observer = new DotNetChannelObserver(() => ({
+                        ...getNullChannel(),
+                        append: (text: string) => { appendedMessage = text; }
+                }));
+    
+                observer.onNext(message);
+    
+                expect(appendedMessage).to.be.equal(message.message);
+            });
+        });
+        [
+            CreateMessage.CommandDotNetRestoreSucceeded("Some message"),
+            CreateMessage.CommandDotNetRestoreFailed("Some message")
+        ].forEach((message: Message) => {
+            test(`Appends the text and a line into the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
+                let appendedMessage = "";
+    
+                let observer = new DotNetChannelObserver(() => ({
+                        ...getNullChannel(),
+                        appendLine: (text: string) => { appendedMessage = text; }
+                }));
+    
+                observer.onNext(message);
+    
+                expect(appendedMessage).to.be.equal(message.message);
+            });
+        });
 });

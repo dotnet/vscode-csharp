@@ -13,7 +13,10 @@ export class CsharpLoggerObserver {
     private logger;
     private dots: number;
 
-    constructor(loggerCreator: () => Logger) {
+    constructor(loggerCreator: () => {
+        appendLine: (message?: string) => void;
+        append: (message?: string) => void;
+    }) {
         this.logger = loggerCreator();
     }
 
