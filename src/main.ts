@@ -7,10 +7,8 @@ import * as OmniSharp from './omnisharp/extension';
 import * as coreclrdebug from './coreclr-debug/activate';
 import * as util from './common';
 import * as vscode from 'vscode';
-
 import { Message, MessageObserver, MessageType } from './omnisharp/messageType';
 import { CSharpExtDownloader } from './CSharpExtDownloader';
-
 import { PlatformInformation } from './platform';
 import { Subject } from 'rx';
 import TelemetryReporter from 'vscode-extension-telemetry';
