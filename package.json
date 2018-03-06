@@ -41,7 +41,6 @@
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
-    "@types/rx": "^4.1.1",
     "fs-extra": "^5.0.0",
     "http-proxy-agent": "^2.0.0",
     "https-proxy-agent": "^2.1.1",
@@ -65,6 +64,7 @@
     "@types/mkdirp": "0.5.1",
     "@types/mocha": "2.2.32",
     "@types/node": "8.0.53",
+    "@types/rx": "^4.1.1",
     "@types/semver": "5.3.30",
     "@types/tmp": "0.0.33",
     "async-file": "2.0.2",

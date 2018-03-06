@@ -16,7 +16,6 @@ import { Request, RequestQueueCollection } from './requestQueue';
 
 import { DelayTracker } from './delayTracker';
 import { EventEmitter } from 'events';
-import { Logger } from '../logger';
 import { OmnisharpManager } from './OmnisharpManager';
 import { Options } from './options';
 import { PlatformInformation } from '../platform';
@@ -87,10 +86,9 @@ export class OmniSharpServer {
     private _platformInfo: PlatformInformation;
 
     constructor(sink: MessageObserver, packageJSON: any, platformInfo: PlatformInformation) {
-        let verboseLogger = new Logger(message => this._sink.onNext({ type: MessageType.OmnisharpServerVerboseMessage, message: message }));
-        this._requestQueue = new RequestQueueCollection(verboseLogger, 8, request => this._makeRequest(request));
-        this._packageJSON = packageJSON;
         this._sink = sink;
+        this._requestQueue = new RequestQueueCollection(this._sink, 8, request => this._makeRequest(request));
+        this._packageJSON = packageJSON;
         this._platformInfo = platformInfo;
     }
 

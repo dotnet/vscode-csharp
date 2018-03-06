@@ -7,10 +7,8 @@ import * as OmniSharp from './omnisharp/extension';
 import * as coreclrdebug from './coreclr-debug/activate';
 import * as util from './common';
 import * as vscode from 'vscode';
-
 import { Message, MessageObserver, MessageType } from './omnisharp/messageType';
 import { CSharpExtDownloader } from './CSharpExtDownloader';
-import { Logger } from './logger';
 import { PlatformInformation } from './platform';
 import { Subject } from 'rx';
 import TelemetryReporter from 'vscode-extension-telemetry';
@@ -21,6 +19,7 @@ import { OmnisharpLoggerObserver } from './omnisharp/observers/OmnisharpLoggerOb
 import { DotNetChannelObserver } from './omnisharp/observers/DotnetChannelObserver';
 import { TelemetryObserver } from './omnisharp/observers/TelemetryObserver';
 import { OmnisharpChannelObserver } from './omnisharp/observers/OmnisharpChannelObserver';
+import { Logger } from './logger';
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 

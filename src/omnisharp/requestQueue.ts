@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Logger } from '../logger';
 import * as prioritization from './prioritization';
+import { MessageObserver, MessageType } from './messageType';
 
 export interface Request {
     command: string;
@@ -26,7 +26,7 @@ class RequestQueue {
     public constructor(
         private _name: string,
         private _maxSize: number,
-        private _logger: Logger,
+        private _sink: MessageObserver,
         private _makeRequest: (request: Request) => number) {
     }
 
@@ -34,7 +34,7 @@ class RequestQueue {
      * Enqueue a new request.
      */
     public enqueue(request: Request) {
-        this._logger.appendLine(`Enqueue ${this._name} request for ${request.command}.`);
+        this._sink.onNext({ type: MessageType.OmnisharpServerEnqueueRequest, name: this._name, command: request.command });
         this._pending.push(request);
     }
 
@@ -46,7 +46,7 @@ class RequestQueue {
 
         if (request) {
             this._waiting.delete(id);
-            this._logger.appendLine(`Dequeue ${this._name} request for ${request.command} (${id}).`);
+            this._sink.onNext({ type: MessageType.OmnisharpServerDequeueRequest, name: this._name, command: request.command, id });
         }
 
         return request;
@@ -86,8 +86,7 @@ class RequestQueue {
             return;
         }
 
-        this._logger.appendLine(`Processing ${this._name} queue`);
-        this._logger.increaseIndent();
+        this._sink.onNext({ type: MessageType.OmnisharpServerProcessRequestStart, name: this._name });
 
         const slots = this._maxSize - this._waiting.size;
 
@@ -102,8 +101,7 @@ class RequestQueue {
                 break;
             }
         }
-
-        this._logger.decreaseIndent();
+        this._sink.onNext({ type: MessageType.OmnisharpServerProcessRequestComplete });
     }
 }
 
@@ -114,13 +112,13 @@ export class RequestQueueCollection {
     private _deferredQueue: RequestQueue;
 
     public constructor(
-        logger: Logger,
+        sink: MessageObserver,
         concurrency: number,
         makeRequest: (request: Request) => number
     ) {
-        this._priorityQueue = new RequestQueue('Priority', 1, logger, makeRequest);
-        this._normalQueue = new RequestQueue('Normal', concurrency, logger, makeRequest);
-        this._deferredQueue = new RequestQueue('Deferred', Math.max(Math.floor(concurrency / 4), 2), logger, makeRequest);
+        this._priorityQueue = new RequestQueue('Priority', 1, sink, makeRequest);
+        this._normalQueue = new RequestQueue('Normal', concurrency, sink, makeRequest);
+        this._deferredQueue = new RequestQueue('Deferred', Math.max(Math.floor(concurrency / 4), 2), sink, makeRequest);
     }
 
     private getQueue(command: string) {
