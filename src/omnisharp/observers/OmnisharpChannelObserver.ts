@@ -20,7 +20,7 @@ export class OmnisharpChannelObserver extends BaseChannelObserver{
                     this.channel.appendLine(`${message.errorMessage.FileName}(${message.errorMessage.Line},${message.errorMessage.Column})`);
                 }
                 this.channel.appendLine(message.errorMessage.Text);
-                this.channel.appendLine();
+                this.channel.appendLine("");
                 break;
             case MessageType.OmnisharpServerMsBuildProjectDiagnostics:
                 if (message.diagnostics.Errors.length > 0 || message.diagnostics.Warnings.length > 0) {
@@ -31,7 +31,7 @@ export class OmnisharpChannelObserver extends BaseChannelObserver{
                     message.diagnostics.Warnings.forEach(warning => {
                         this.channel.appendLine(`${warning.FileName}(${warning.StartLine},${warning.StartColumn}): Warning: ${warning.Text}`);
                     });
-                    this.channel.appendLine();
+                    this.channel.appendLine("");
                 }
                 break;
             case MessageType.OmnisharpServerOnStdErr:

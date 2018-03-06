@@ -76,3 +76,9 @@ export const DebuggerNotInstalledFailure = (): Message => ({
 export const ProjectJsonDeprecatedWarning = (): Message => ({
     type: MessageType.ProjectJsonDeprecatedWarning,
 });
+
+export const OmnisharpFailure = (message: string, error: any): Message => ({
+    type: MessageType.OmnisharpFailure,
+    message,
+    error
+});
