@@ -9,7 +9,7 @@ import { MessageObserver, MessageType } from './messageType';
 import { Package, PackageManager, Status } from '../packages';
 import { PlatformInformation } from '../platform';
 
-const defaultPackageManagerFactory: IPackageManagerFactory = (platformInfo: PlatformInformation, packageJSON: any) => new PackageManager(platformInfo, packageJSON);
+const defaultPackageManagerFactory: IPackageManagerFactory = (platformInfo, packageJSON) => new PackageManager(platformInfo, packageJSON);
 export interface IPackageManagerFactory {
     (platformInfo: PlatformInformation, packageJSON: any): PackageManager;
 }
