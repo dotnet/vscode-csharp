@@ -74,7 +74,6 @@ export class OmnisharpLoggerObserver {
             case MessageType.OmnisharpServerProcessRequestStart:
                 if (this.debugMode) {
                     this.logger.appendLine(`Processing ${message.name} queue`);
-                    this.logger.appendLine();
                     this.logger.increaseIndent();
                 }
                 break;
