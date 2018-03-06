@@ -8,6 +8,7 @@ export class DotNetChannelObserver {
     private channel;
 
     constructor(channelCreator: () => {
+        clear: () => void;
         show: () => void;
         append(value: string): void;
         appendLine(value: string): void;
