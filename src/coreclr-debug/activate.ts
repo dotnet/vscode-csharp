@@ -23,32 +23,39 @@ export async function activate(thisExtension : vscode.Extension<any>, context: v
     _logger = logger;
 
     if (!CoreClrDebugUtil.existsSync(_debugUtil.debugAdapterDir())) {
-        let platformInformation: PlatformInformation;
-        
-        try {
-            platformInformation = await PlatformInformation.GetCurrent();
-        }
-        catch (err) {
-            // Somehow we couldn't figure out the platform we are on
+        let isInvalidArchitecture: boolean = await checkForInvalidArchitecture(logger, channel);
+        if (!isInvalidArchitecture) {
             logger.appendLine("[ERROR]: C# Extension failed to install the debugger package");
             showInstallErrorMessage(channel);
-        }
-        
-        if (platformInformation) {
-            if (platformInformation.architecture !== "x86_64") {
-                if (platformInformation.isWindows() && platformInformation.architecture === "x86") {
-                    logger.appendLine(`[WARNING]: x86 Windows is not currently supported by the .NET Core debugger. Debugging will not be available.`);
-                } else {
-                    logger.appendLine(`[WARNING]: Processor architecture '${platformInformation.architecture}' is not currently supported by the .NET Core debugger. Debugging will not be available.`);
-                }
-            } else {
-                logger.appendLine("[ERROR]: C# Extension failed to install the debugger package");
-                showInstallErrorMessage(channel);
-            }
         }
     } else if (!CoreClrDebugUtil.existsSync(_debugUtil.installCompleteFilePath())) {
         completeDebuggerInstall(logger, channel);
     }
+}
+
+async function checkForInvalidArchitecture(logger: Logger, channel: vscode.OutputChannel): Promise<boolean> {
+    let platformInformation: PlatformInformation;
+        
+    try {
+        platformInformation = await PlatformInformation.GetCurrent();
+    }
+    catch (err) {
+        // Somehow we couldn't figure out the platform we are on
+        return false;
+    }
+    
+    if (platformInformation) {
+        if (platformInformation.architecture !== "x86_64") {
+            if (platformInformation.isWindows() && platformInformation.architecture === "x86") {
+                logger.appendLine(`[WARNING]: x86 Windows is not currently supported by the .NET Core debugger. Debugging will not be available.`);
+            } else {
+                logger.appendLine(`[WARNING]: Processor architecture '${platformInformation.architecture}' is not currently supported by the .NET Core debugger. Debugging will not be available.`);
+            }
+            return true;
+        }
+    }
+
+    return false;
 }
 
 async function completeDebuggerInstall(logger: Logger, channel: vscode.OutputChannel) : Promise<boolean> {
@@ -123,15 +130,14 @@ export async function getAdapterExecutionCommand(channel: vscode.OutputChannel):
     let util = new CoreClrDebugUtil(common.getExtensionPath(), logger);
 
     // Check for .debugger folder. Handle if it does not exist.
-    if (!CoreClrDebugUtil.existsSync(util.debugAdapterDir()))
-    {
+    if (!CoreClrDebugUtil.existsSync(util.debugAdapterDir())) {
         // our install.complete file does not exist yet, meaning we have not completed the installation. Try to figure out what if anything the package manager is doing
         // the order in which files are dealt with is this:
         // 1. install.Begin is created
         // 2. install.Lock is created
         // 3. install.Begin is deleted
         // 4. install.complete is created
-
+        
         // install.Lock does not exist, need to wait for packages to finish downloading.
         let installLock: boolean = await common.installFileExists(common.InstallFileType.Lock);
         if (!installLock) {
@@ -142,15 +148,22 @@ export async function getAdapterExecutionCommand(channel: vscode.OutputChannel):
         else if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {
             let success: boolean = await completeDebuggerInstall(logger, channel);
 
-            if (!success)
-            {
+            if (!success) {
                 channel.show();
                 throw new Error('Failed to complete the installation of the C# extension. Please see the error in the output window below.');
             }
         }
     }
 
-    // debugger has finished install, kick off our debugger process
+    let isInvalidArchitecture: boolean = await checkForInvalidArchitecture(logger, channel);
+
+    // Not an invalid architecture, retry installing.
+    if (isInvalidArchitecture) {
+        channel.show();
+        throw new Error('An error occured in the C# extension. Please see the error in the output window below.');
+    }
+
+    // debugger has finished installation, kick off our debugger process
     return {
         command: path.join(common.getExtensionPath(), ".debugger", "vsdbg-ui" + CoreClrDebugUtil.getPlatformExeExtension())
     };
