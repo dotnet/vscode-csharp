@@ -17,65 +17,58 @@ suite("DotnetChannelObserver", () => {
     ].forEach((message: Message) => {
         test(`Clears the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
             let hasCleared = false;
-
             let observer = new DotNetChannelObserver(() => ({
-                    ...getNullChannel(),
-                    clear: () => { hasCleared = true; }
+                ...getNullChannel(),
+                clear: () => { hasCleared = true; }
             }));
 
             observer.onNext(message);
-
             expect(hasCleared).to.be.true;
         });
+    });
+
+    [
+        CreateMessage.CommandDotNetRestoreStart()
+    ].forEach((message: Message) => {
+        test(`Shows the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
+            let hasShown = false;
+            let observer = new DotNetChannelObserver(() => ({
+                ...getNullChannel(),
+                show: () => { hasShown = true; }
+            }));
+
+            observer.onNext(message);
+            expect(hasShown).to.be.true;
         });
-    
-        [
-            CreateMessage.CommandDotNetRestoreStart()
-        ].forEach((message: Message) => {
-            test(`Shows the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
-                let hasShown = false;
-    
-                let observer = new DotNetChannelObserver(() => ({
-                        ...getNullChannel(),
-                        show: () => { hasShown = true; }
-                }));
-    
-                observer.onNext(message);
-    
-                expect(hasShown).to.be.true;
-            });
+    });
+    [
+        CreateMessage.CommandDotNetRestoreProgress("Some message")
+    ].forEach((message: ActionWithMessage) => {
+        test(`Appends the text into the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
+            let appendedMessage = "";
+            let observer = new DotNetChannelObserver(() => ({
+                ...getNullChannel(),
+                append: (text: string) => { appendedMessage = text; }
+            }));
+
+            observer.onNext(message);
+            expect(appendedMessage).to.be.equal(message.message);
         });
-        [
-            CreateMessage.CommandDotNetRestoreProgress("Some message")
-        ].forEach((message: ActionWithMessage) => {
-            test(`Appends the text into the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
-                let appendedMessage = "";
-    
-                let observer = new DotNetChannelObserver(() => ({
-                        ...getNullChannel(),
-                        append: (text: string) => { appendedMessage = text; }
-                }));
-    
-                observer.onNext(message);
-    
-                expect(appendedMessage).to.be.equal(message.message);
-            });
+    });
+    [
+        CreateMessage.CommandDotNetRestoreSucceeded("Some message"),
+        CreateMessage.CommandDotNetRestoreFailed("Some message")
+    ].forEach((message: ActionWithMessage) => {
+        test(`Appends the text and a line into the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
+            let appendedMessage = "";
+
+            let observer = new DotNetChannelObserver(() => ({
+                ...getNullChannel(),
+                appendLine: (text: string) => { appendedMessage = text; }
+            }));
+
+            observer.onNext(message);
+            expect(appendedMessage).to.be.equal(message.message);
         });
-        [
-            CreateMessage.CommandDotNetRestoreSucceeded("Some message"),
-            CreateMessage.CommandDotNetRestoreFailed("Some message")
-        ].forEach((message: ActionWithMessage) => {
-            test(`Appends the text and a line into the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
-                let appendedMessage = "";
-    
-                let observer = new DotNetChannelObserver(() => ({
-                        ...getNullChannel(),
-                        appendLine: (text: string) => { appendedMessage = text; }
-                }));
-    
-                observer.onNext(message);
-    
-                expect(appendedMessage).to.be.equal(message.message);
-            });
-        });
+    });
 });

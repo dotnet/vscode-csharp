@@ -47,3 +47,32 @@ export const DownloadFailure = (message: string): Message => ({
     type: MessageType.DownloadFailure,
     message
 });
+
+export const InstallationFailure = (stage: string, error: any): Message => ({
+    type: MessageType.InstallationFailure,
+    stage,
+    error
+});
+
+export const DebuggerPreRequisiteFailure = (message: string): Message => ({
+    type: MessageType.DebuggerPreRequisiteFailure,
+    message
+});
+
+export const DebuggerPreRequisiteWarning = (message: string): Message => ({
+    type: MessageType.DebuggerPreRequisiteWarning,
+    message
+});
+
+export const PackageInstallation = (packageInfo: string): Message => ({
+    type: MessageType.PackageInstallation,
+    packageInfo
+});
+
+export const DebuggerNotInstalledFailure = (): Message => ({
+    type: MessageType.DebuggerNotInstalledFailure,
+});
+
+export const ProjectJsonDeprecatedWarning = (): Message => ({
+    type: MessageType.ProjectJsonDeprecatedWarning,
+});
