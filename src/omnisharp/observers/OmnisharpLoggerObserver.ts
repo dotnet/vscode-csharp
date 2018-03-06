@@ -4,19 +4,20 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Message, MessageType, OmnisharpEventPacketReceived } from "../messageType";
-import { Logger } from "../../logger";
 import * as os from 'os';
 
+interface LoggerAdapter {
+    appendLine: (message?: string) => void;
+    append: (message?: string) => void;
+    decreaseIndent: () => void;
+    increaseIndent: () => void;
+}
+
 export class OmnisharpLoggerObserver {
-    private logger;
+    private logger: LoggerAdapter;
     private debugMode: boolean;
 
-    constructor(loggerCreator: () => {
-        appendLine: (message?: string) => void;
-        append: (message?: string) => void;
-        decreaseIndent: () => void;
-        increaseIndent: () => void;
-    }, debugMode: boolean) {
+    constructor(loggerCreator: () => LoggerAdapter, debugMode: boolean) {
         this.logger = loggerCreator();
         this.debugMode = debugMode;
     }
@@ -56,6 +57,29 @@ export class OmnisharpLoggerObserver {
                         this.logger.append(`, data=${JSON.stringify(message.request.data)}`);
                     }
                     this.logger.appendLine();
+                }
+                break;
+            case MessageType.OmnisharpServerEnqueueRequest:
+                if (this.debugMode) {
+                    this.logger.appendLine(`Enqueue ${message.name} request for ${message.command}.`);
+                    this.logger.appendLine();
+                }
+                break;
+            case MessageType.OmnisharpServerDequeueRequest:
+                if (this.debugMode) {
+                    this.logger.appendLine(`Dequeue ${message.name} request for ${message.command} (${message.id}).`);
+                    this.logger.appendLine();
+                }
+                break;
+            case MessageType.OmnisharpServerProcessRequestStart:
+                if (this.debugMode) {
+                    this.logger.appendLine(`Processing ${message.name} queue`);
+                    this.logger.increaseIndent();
+                }
+                break;
+            case MessageType.OmnisharpServerProcessRequestComplete:
+                if (this.debugMode) {
+                    this.logger.decreaseIndent();
                 }
                 break;
             case MessageType.OmnisharpServerVerboseMessage:

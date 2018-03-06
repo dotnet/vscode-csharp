@@ -38,7 +38,11 @@ export enum MessageType {
     OmnisharpServerMsBuildProjectDiagnostics,
     OmnisharpServerUnresolvedDependencies,
     OmnisharpServerMessage,
+    OmnisharpServerEnqueueRequest,
+    OmnisharpServerDequeueRequest,
+    OmnisharpServerProcessRequestStart,
     OmnisharpServerVerboseMessage,
+    OmnisharpServerProcessRequestComplete,
     OmnisharpStart,
     PackageInstallation,
     PlatformInfo,
@@ -58,6 +62,9 @@ export type Message =
     OmnisharpInitialisation |
     OmnisharpLaunch |
     OmnisharpServerMsBuildProjectDiagnostics |
+    OmnisharpServerEnqueueRequest |
+    OmnisharpServerDequeueRequest |
+    OmnisharpServerProcessRequest |
     OmnisharpServerUnresolvedDependencies |
     OmnisharpRequestMessage |
     OmnisharpServerOnError |
@@ -71,10 +78,11 @@ interface Action {
     MessageType.DebuggerNotInstalledFailure |
     MessageType.CommandDotNetRestoreStart |
     MessageType.InstallationSuccess |
+    MessageType.OmnisharpServerProcessRequestComplete |
     MessageType.ProjectJsonDeprecatedWarning;
 }
 
-interface ActionWithMessage {
+export interface ActionWithMessage {
     type: MessageType.DebuggerPreRequisiteFailure |
     MessageType.DebuggerPreRequisiteWarning |
     MessageType.CommandDotNetRestoreProgress |
@@ -167,6 +175,24 @@ interface OmnisharpServerMsBuildProjectDiagnostics {
 interface OmnisharpServerUnresolvedDependencies {
     type: MessageType.OmnisharpServerUnresolvedDependencies;
     unresolvedDependencies: protocol.UnresolvedDependenciesMessage;
+}
+
+interface OmnisharpServerEnqueueRequest {
+    type: MessageType.OmnisharpServerEnqueueRequest;
+    name: string;
+    command: string;
+}
+
+interface OmnisharpServerDequeueRequest {
+    type: MessageType.OmnisharpServerDequeueRequest;
+    name: string;
+    command: string;
+    id: number;
+}
+
+interface OmnisharpServerProcessRequest {
+    type: MessageType.OmnisharpServerProcessRequestStart;
+    name: string;
 }
 
 export interface OmnisharpEventPacketReceived {

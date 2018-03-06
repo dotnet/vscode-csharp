@@ -5,7 +5,7 @@
 
 import { should, expect } from 'chai';
 import { DotNetChannelObserver } from "../../../src/omnisharp/observers/DotnetChannelObserver";
-import { MessageType, Message } from '../../../src/omnisharp/messageType';
+import { MessageType, Message, ActionWithMessage } from '../../../src/omnisharp/messageType';
 import { getNullChannel } from './Fakes';
 import * as CreateMessage from './CreateMessage';
 
@@ -47,7 +47,7 @@ suite("DotnetChannelObserver", () => {
         });
         [
             CreateMessage.CommandDotNetRestoreProgress("Some message")
-        ].forEach((message: Message) => {
+        ].forEach((message: ActionWithMessage) => {
             test(`Appends the text into the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
                 let appendedMessage = "";
     
@@ -64,7 +64,7 @@ suite("DotnetChannelObserver", () => {
         [
             CreateMessage.CommandDotNetRestoreSucceeded("Some message"),
             CreateMessage.CommandDotNetRestoreFailed("Some message")
-        ].forEach((message: Message) => {
+        ].forEach((message: ActionWithMessage) => {
             test(`Appends the text and a line into the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
                 let appendedMessage = "";
     
