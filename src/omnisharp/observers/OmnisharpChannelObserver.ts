@@ -4,18 +4,9 @@
 *--------------------------------------------------------------------------------------------*/
 import { Message, MessageType } from "../messageType";
 import * as vscode from 'vscode';
+import { ChannelAdapter, BaseChannelObserver } from "./BaseChannelObserver";
 
-export class OmnisharpChannelObserver { 
-    private channel;
-
-    constructor(channelCreator: () => {
-        show: () => void;
-        append(value: string): void;
-        appendLine(value: string): void;
-    }) {
-        this.channel = channelCreator();
-    }
-
+export class OmnisharpChannelObserver extends BaseChannelObserver{ 
     public onNext = (message: Message) => {
         switch (message.type) {
             case MessageType.CommandShowOutput:

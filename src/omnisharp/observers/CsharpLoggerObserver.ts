@@ -5,17 +5,10 @@
 
 import { Message, MessageType } from "./../messageType";
 import { PackageError } from "../../packages";
+import { BaseLoggerObserver, LoggerAdapter } from "./BaseLoggerObserver";
 
-export class CsharpLoggerObserver {
-    private logger;
+export class CsharpLoggerObserver extends BaseLoggerObserver{
     private dots: number;
-
-    constructor(loggerCreator: () => {
-        appendLine: (message?: string) => void;
-        append: (message?: string) => void;
-    }) {
-        this.logger = loggerCreator();
-    }
 
     public onNext = (message: Message) => {
         switch (message.type) {

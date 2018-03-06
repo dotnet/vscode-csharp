@@ -3,18 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { Message, MessageType } from "../messageType";
+import { BaseChannelObserver, ChannelAdapter } from "./BaseChannelObserver";
 
-export class CsharpChannelObserver {
-    private channel;
-
-    constructor(channelCreator: () => {
-        show: () => void;
-        append(value: string): void;
-        appendLine(value: string): void;
-    }) {
-        this.channel = channelCreator();
-    }
-
+export class CsharpChannelObserver extends BaseChannelObserver {
     public onNext = (message: Message) => {
         switch (message.type) {
             case MessageType.PackageInstallation:

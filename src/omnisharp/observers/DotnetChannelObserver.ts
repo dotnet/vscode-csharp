@@ -3,19 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { Message, MessageType } from "../messageType";
+import { ChannelAdapter, BaseChannelObserver } from "./BaseChannelObserver";
 
-export class DotNetChannelObserver {   
-    private channel;
-
-    constructor(channelCreator: () => {
-        clear: () => void;
-        show: () => void;
-        append(value: string): void;
-        appendLine(value: string): void;
-    }) {
-        this.channel = channelCreator();
-    }
-
+export class DotNetChannelObserver extends BaseChannelObserver{   
     public onNext = (message: Message) => {
         switch (message.type) {
             case MessageType.CommandDotNetRestoreStart:

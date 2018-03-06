@@ -5,20 +5,13 @@
 
 import { Message, MessageType, OmnisharpEventPacketReceived } from "../messageType";
 import * as os from 'os';
+import {BaseLoggerObserver, LoggerAdapter } from "./BaseLoggerObserver";
 
-interface LoggerAdapter {
-    appendLine: (message?: string) => void;
-    append: (message?: string) => void;
-    decreaseIndent: () => void;
-    increaseIndent: () => void;
-}
-
-export class OmnisharpLoggerObserver {
-    private logger: LoggerAdapter;
+export class OmnisharpLoggerObserver extends BaseLoggerObserver {
     private debugMode: boolean;
 
     constructor(loggerCreator: () => LoggerAdapter, debugMode: boolean) {
-        this.logger = loggerCreator();
+        super(loggerCreator);
         this.debugMode = debugMode;
     }
 
