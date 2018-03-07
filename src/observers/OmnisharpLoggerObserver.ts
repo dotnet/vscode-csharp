@@ -3,15 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Message, MessageType, OmnisharpEventPacketReceived } from "../messageType";
+import { Message, MessageType, OmnisharpEventPacketReceived } from "../omnisharp/messageType";
 import * as os from 'os';
-import {BaseLoggerObserver, LoggerAdapter } from "./BaseLoggerObserver";
+import { BaseLoggerObserver } from "./BaseLoggerObserver";
+import * as vscode from "vscodeAdapter";
 
 export class OmnisharpLoggerObserver extends BaseLoggerObserver {
     private debugMode: boolean;
 
-    constructor(loggerCreator: () => LoggerAdapter, debugMode: boolean) {
-        super(loggerCreator);
+    constructor(channel: vscode.OutputChannel, debugMode: boolean) {
+        super(channel);
         this.debugMode = debugMode;
     }
 

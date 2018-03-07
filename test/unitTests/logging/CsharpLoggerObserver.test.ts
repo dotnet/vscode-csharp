@@ -5,9 +5,9 @@
 
 import { should, expect } from 'chai';
 import { MessageType, Message } from '../../../src/omnisharp/messageType';
-import { getNullLogger } from './Fakes';
+import { getNullChannel } from './Fakes';
 import * as CreateMessage from './CreateMessage';
-import { CsharpLoggerObserver } from '../../../src/omnisharp/observers/CsharpLoggerObserver';
+import { CsharpLoggerObserver } from '../../../src/observers/CsharpLoggerObserver';
 import { PlatformInformation } from '../../../src/platform';
 import { PackageError } from '../../../src/packages';
 
@@ -54,11 +54,12 @@ suite("CsharpLoggerObserver: Download Messages", () => {
     ].forEach((element) => {
         test(`Prints the download status to the logger as ${element.expected}`, () => {
             let logOutput = "";
-            let observer = new CsharpLoggerObserver(() => ({
-                ...getNullLogger(),
+
+            let observer = new CsharpLoggerObserver({
+                ...getNullChannel(),
                 appendLine: (text?: string) => { logOutput += `${text}\n`; },
                 append: (text?: string) => { logOutput += text; }
-            }));
+            });
 
             element.events.forEach((message: Message) => observer.onNext(message));
             expect(logOutput).to.be.equal(element.expected);
@@ -70,10 +71,10 @@ suite('CsharpLoggerObsever', () => {
     suiteSetup(() => should());
     test('PlatformInfo: AppendLine platform info and a blank', () => {
         let logOutput = "";
-        let observer = new CsharpLoggerObserver(() => ({
-            ...getNullLogger(),
+        let observer = new CsharpLoggerObserver({
+            ...getNullChannel(),
             appendLine: (text?: string) => { logOutput += text ? text : "\n"; }
-        }));
+        });
 
         let message = <Message>{
             type: MessageType.PlatformInfo,
@@ -97,10 +98,10 @@ suite('CsharpLoggerObsever', () => {
     ].forEach((element) =>
         test('InstallationFailure: AppendLine stage, error or inner error and a blank', () => {
             let logOutput = "";
-            let observer = new CsharpLoggerObserver(() => ({
-                ...getNullLogger(),
+            let observer = new CsharpLoggerObserver({
+                ...getNullChannel(),
                 appendLine: (text?: string) => { logOutput += text ? `${text}\n` : "\n"; },
-            }));
+            });
 
             observer.onNext(element.message);
             expect(logOutput).to.be.equal(element.expected);
@@ -118,10 +119,10 @@ suite('CsharpLoggerObsever', () => {
     ].forEach((element) =>
         test(`AppendLine for ${CreateMessage.DisplayMessageType(element.message)}`, () => {
             let logOutput = "";
-            let observer = new CsharpLoggerObserver(() => ({
-                ...getNullLogger(),
+            let observer = new CsharpLoggerObserver({
+                ...getNullChannel(),
                 appendLine: (text?: string) => { logOutput += text ? `${text}\n` : "\n"; },
-            }));
+            });
 
             observer.onNext(element.message);
             expect(logOutput).to.be.equal(element.expected);

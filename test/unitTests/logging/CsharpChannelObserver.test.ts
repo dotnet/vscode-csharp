@@ -7,7 +7,7 @@ import { should, expect } from 'chai';
 import { Message, MessageType } from '../../../src/omnisharp/messageType';
 import { getNullChannel } from './Fakes';
 import * as CreateMessage from './CreateMessage';
-import { CsharpChannelObserver } from '../../../src/omnisharp/observers/CsharpChannelObserver';
+import { CsharpChannelObserver } from '../../../src/observers/CsharpChannelObserver';
 
 suite("CsharpChannelObserver", () => {
     suiteSetup(() => should());
@@ -21,10 +21,10 @@ suite("CsharpChannelObserver", () => {
         test(`Shows the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
             let hasShown = false;
 
-            let observer = new CsharpChannelObserver(() => ({
+            let observer = new CsharpChannelObserver({
                 ...getNullChannel(),
                 show: () => { hasShown = true; }
-            }));
+            });
 
             observer.onNext(message);
             expect(hasShown).to.be.true;

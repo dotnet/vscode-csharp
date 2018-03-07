@@ -13,13 +13,12 @@ import { PlatformInformation } from './platform';
 import { Subject } from 'rx';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { addJSONProviders } from './features/json/jsonContributions';
-import { CsharpChannelObserver } from './omnisharp/observers/CsharpChannelObserver';
-import { CsharpLoggerObserver } from './omnisharp/observers/CsharpLoggerObserver';
-import { OmnisharpLoggerObserver } from './omnisharp/observers/OmnisharpLoggerObserver';
-import { DotNetChannelObserver } from './omnisharp/observers/DotnetChannelObserver';
-import { TelemetryObserver } from './omnisharp/observers/TelemetryObserver';
-import { OmnisharpChannelObserver } from './omnisharp/observers/OmnisharpChannelObserver';
-import { Logger } from './logger';
+import { CsharpChannelObserver } from './observers/CsharpChannelObserver';
+import { CsharpLoggerObserver } from './observers/CsharpLoggerObserver';
+import { OmnisharpLoggerObserver } from './observers/OmnisharpLoggerObserver';
+import { DotNetChannelObserver } from './observers/DotnetChannelObserver';
+import { TelemetryObserver } from './observers/TelemetryObserver';
+import { OmnisharpChannelObserver } from './observers/OmnisharpChannelObserver';
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 
@@ -30,16 +29,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     const reporter = new TelemetryReporter(extensionId, extensionVersion, aiKey);
 
     util.setExtensionPath(extension.extensionPath);
-
+    
     let csharpChannel = vscode.window.createOutputChannel('C#');
-    let csharpLogger = new Logger(text => csharpChannel.append(text));
     let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
-    let omnisharpLogObserver = new OmnisharpLoggerObserver(() => new Logger(message => omnisharpChannel.append(message)), false);
-    let omnisharpChannelObserver = new OmnisharpChannelObserver(() => omnisharpChannel);
-    let csharpchannelObserver = new CsharpChannelObserver(() => csharpChannel);
-    let csharpLogObserver = new CsharpLoggerObserver(() => csharpLogger);
+    let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel, false);
+    let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel);
+    let csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
+    let csharpLogObserver = new CsharpLoggerObserver(csharpChannel);
     let dotnetChannel = vscode.window.createOutputChannel('.NET');
-    let dotnetChannelObserver = new DotNetChannelObserver(() => dotnetChannel);
+    let dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
 
     const sink = new Subject<Message>();
     sink.subscribe(omnisharpLogObserver.onNext);
@@ -47,7 +45,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     sink.subscribe(csharpchannelObserver.onNext);
     sink.subscribe(csharpLogObserver.onNext);
     sink.subscribe(dotnetChannelObserver.onNext);
-   let platformInfo: PlatformInformation;
+    let platformInfo: PlatformInformation;
     try {
         platformInfo = await PlatformInformation.GetCurrent();
     }
@@ -74,10 +72,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     return {
         initializationFinished: Promise.all([omniSharpPromise, coreClrDebugPromise])
-        .then(promiseResult => {
-            // This promise resolver simply swallows the result of Promise.all. When we decide we want to expose this level of detail
-            // to other extensions then we will design that return type and implement it here.
-        })
+            .then(promiseResult => {
+                // This promise resolver simply swallows the result of Promise.all. When we decide we want to expose this level of detail
+                // to other extensions then we will design that return type and implement it here.
+            })
     };
 }
 

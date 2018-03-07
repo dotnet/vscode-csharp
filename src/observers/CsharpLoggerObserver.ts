@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Message, MessageType } from "./../messageType";
-import { PackageError } from "../../packages";
-import { BaseLoggerObserver, LoggerAdapter } from "./BaseLoggerObserver";
+import { Message, MessageType } from "./../omnisharp/messageType";
+import { PackageError } from "../packages";
+import { BaseLoggerObserver } from "./BaseLoggerObserver";
 
 export class CsharpLoggerObserver extends BaseLoggerObserver{
     private dots: number;

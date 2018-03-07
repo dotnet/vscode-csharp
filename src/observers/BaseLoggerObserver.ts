@@ -3,20 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Message } from "../messageType";
+import { Message } from "../omnisharp/messageType";
+import * as vscode from 'vscodeAdapter';
+import { Logger } from "../logger";
 
 export abstract class BaseLoggerObserver {
-    public logger: LoggerAdapter;
-    constructor(loggerCreator: () => LoggerAdapter) {
-        this.logger = loggerCreator();
+    public logger: Logger;
+    constructor(channel: vscode.OutputChannel) {
+        this.logger = new Logger((message) => channel.append(message));
     }
     
     abstract onNext: (message: Message) => void;
-}
-
-export interface LoggerAdapter {
-    appendLine: (message?: string) => void;
-    append: (message?: string) => void;
-    decreaseIndent: () => void;
-    increaseIndent: () => void;
 }

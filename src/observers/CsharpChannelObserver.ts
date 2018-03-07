@@ -2,8 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { Message, MessageType } from "../messageType";
-import { BaseChannelObserver, ChannelAdapter } from "./BaseChannelObserver";
+import { Message, MessageType } from "../omnisharp/messageType";
+import { BaseChannelObserver } from "./BaseChannelObserver";
 
 export class CsharpChannelObserver extends BaseChannelObserver {
     public onNext = (message: Message) => {
