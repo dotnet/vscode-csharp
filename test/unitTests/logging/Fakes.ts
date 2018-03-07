@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscodeAdapter';
+import * as vscode from '../../../src/vscodeAdapter';
 
 export const getNullChannel = (): vscode.OutputChannel => {
     let returnChannel: vscode.OutputChannel = {

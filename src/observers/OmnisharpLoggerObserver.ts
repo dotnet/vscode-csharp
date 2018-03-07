@@ -6,7 +6,7 @@
 import { Message, MessageType, OmnisharpEventPacketReceived } from "../omnisharp/messageType";
 import * as os from 'os';
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
-import * as vscode from "vscodeAdapter";
+import * as vscode from "../vscodeAdapter";
 
 export class OmnisharpLoggerObserver extends BaseLoggerObserver {
     private debugMode: boolean;

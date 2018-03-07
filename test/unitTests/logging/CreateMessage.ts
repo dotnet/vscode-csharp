@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { MessageType, Message } from "../../../src/omnisharp/messageType";
+import { MSBuildDiagnosticsMessage } from "../../../src/omnisharp/protocol";
 
 export const CommandDotNetRestoreStart = () => ({
     type: MessageType.CommandDotNetRestoreStart
@@ -81,4 +82,13 @@ export const OmnisharpFailure = (message: string, error: any): Message => ({
     type: MessageType.OmnisharpFailure,
     message,
     error
+});
+
+export const OmnisharpServerMsBuildProjectDiagnostics = (FileName: string, Warnings: MSBuildDiagnosticsMessage[], Errors: MSBuildDiagnosticsMessage[]): Message => ({
+    type: MessageType.OmnisharpServerMsBuildProjectDiagnostics,
+    diagnostics: {
+        FileName,
+        Warnings,
+        Errors
+    }
 });

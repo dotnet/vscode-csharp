@@ -52,7 +52,7 @@ suite("DotnetChannelObserver", () => {
             });
 
             observer.onNext(message);
-            expect(appendedMessage).to.be.equal(message.message);
+            expect(appendedMessage).to.contain(message.message);
         });
     });
     [

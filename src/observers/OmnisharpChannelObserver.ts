@@ -3,14 +3,13 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 import { Message, MessageType } from "../omnisharp/messageType";
-import * as vscode from 'vscodeAdapter';
+import * as vscode from '../vscodeAdapter';
 import { BaseChannelObserver } from "./BaseChannelObserver";
 
 export class OmnisharpChannelObserver extends BaseChannelObserver{ 
     
     constructor(channel: vscode.OutputChannel) {
         super(channel);
-
     }
 
     public onNext = (message: Message) => {
