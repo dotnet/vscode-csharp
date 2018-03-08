@@ -39,7 +39,8 @@
     "test:runSuiteInVsCode": "cross-env CODE_TESTS_PATH=./out/test/integrationTests CODE_TESTS_WORKSPACE=./test/integrationTests/testAssets/$OSVC_SUITE npm run test:runInVsCode",
     "test:runInVsCode": "node ./test/runVsCodeTestsWithAbsolutePaths.js",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "cov": "rimraf ./.nyc_output && rimraf ./out && npm run compile && nyc instrument --require source-map-support/register . .",
+    "cov": "rimraf ./out && npm run compile && nyc instrument --require source-map-support/register . .",
+    "merge": "istanbul-combine -d coverage -b /Users/piotrp/code/github/piotrpMSFT/omnisharp-vscode -r json .nyc_output/*.json",
     "remap": "cd out && remap-istanbul -i ../.nyc_output/nyc_output.json -o html-report -t html && cd .."
   },
   "dependencies": {
@@ -77,6 +78,7 @@
     "gulp": "3.9.1",
     "gulp-mocha": "4.3.1",
     "gulp-tslint": "8.1.2",
+    "istanbul-combine": "^0.3.0",
     "ltcdr": "^2.2.1",
     "mocha": "4.0.1",
     "mocha-typescript": "^1.1.12",

@@ -8,7 +8,7 @@ suiteTeardown(async () => {
             await fs.mkdir("./.nyc_output");
         }
 
-        let logFilePath = `./.nyc_output/nyc_output.json`;
+        let logFilePath = `./.nyc_output/${process.env["OSVC_SUITE"]}.json`;
 
         await fs.writeTextFile(logFilePath, JSON.stringify(__coverage__));
       }
