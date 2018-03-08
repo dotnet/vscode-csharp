@@ -41,34 +41,4 @@ suite("DotnetChannelObserver", () => {
             expect(hasShown).to.be.true;
         });
     });
-    [
-        CreateMessage.CommandDotNetRestoreProgress("Some message")
-    ].forEach((message: ActionWithMessage) => {
-        test(`Appends the text into the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
-            let appendedMessage = "";
-            let observer = new DotNetChannelObserver({
-                ...getNullChannel(),
-                append: (text: string) => { appendedMessage = text; }
-            });
-
-            observer.onNext(message);
-            expect(appendedMessage).to.contain(message.message);
-        });
-    });
-    [
-        CreateMessage.CommandDotNetRestoreSucceeded("Some message"),
-        CreateMessage.CommandDotNetRestoreFailed("Some message")
-    ].forEach((message: ActionWithMessage) => {
-        test(`Appends the text and a line into the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
-            let appendedMessage = "";
-
-            let observer = new DotNetChannelObserver({
-                ...getNullChannel(),
-                appendLine: (text: string) => { appendedMessage = text; }
-            });
-
-            observer.onNext(message);
-            expect(appendedMessage).to.be.equal(message.message);
-        });
-    });
 });

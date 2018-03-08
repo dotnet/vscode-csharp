@@ -21,7 +21,9 @@ let expect = chai.expect;
 suite("DownloadAndInstallExperimentalVersion : Gets the version packages, downloads and installs them", () => {
     let tmpDir = null;
     const version = "1.2.3";
-    const downloader = GetTestOmnisharpDownloader();
+    const platformInfo = new PlatformInformation("win32", "x86");
+    const sink = new Subject<Message>();
+    const downloader = GetTestOmnisharpDownloader(sink, platformInfo);
     const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
     const installPath = ".omnisharp/experimental/";
 
@@ -51,9 +53,8 @@ suite("DownloadAndInstallExperimentalVersion : Gets the version packages, downlo
     });
 });
 
-function GetTestOmnisharpDownloader() {
-    const sink = new Subject<Message>();
-    return new OmnisharpDownloader(sink, GetTestPackageJSON(), new PlatformInformation("win32", "x86"));
+export function GetTestOmnisharpDownloader(sink: Subject<Message>, platformInfo: PlatformInformation): OmnisharpDownloader{
+    return new OmnisharpDownloader(sink, GetTestPackageJSON(), platformInfo);
 }
 
 //Since we need only the runtime dependencies of packageJSON for the downloader create a testPackageJSON

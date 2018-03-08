@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Message } from "../omnisharp/messageType";
-import * as vscode from 'vscodeAdapter';
+import * as vscode from '../vscodeAdapter';
 import { Logger } from "../logger";
 
 export abstract class BaseLoggerObserver {

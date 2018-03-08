@@ -3,18 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Message, MessageType, OmnisharpEventPacketReceived } from "../omnisharp/messageType";
-import * as os from 'os';
+import { Message, MessageType } from "../omnisharp/messageType";
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
-import * as vscode from "../vscodeAdapter";
 
 export class OmnisharpLoggerObserver extends BaseLoggerObserver {
-    private debugMode: boolean;
-
-    constructor(channel: vscode.OutputChannel, debugMode: boolean) {
-        super(channel);
-        this.debugMode = debugMode;
-    }
 
     public onNext = (message: Message) => {
         switch (message.type) {
@@ -44,75 +36,33 @@ export class OmnisharpLoggerObserver extends BaseLoggerObserver {
                 this.logger.appendLine(message.message);
                 this.logger.appendLine();
                 break;
-            case MessageType.OmnisharpRequestMessage:
-                if (this.debugMode) {
-                    this.logger.append(`makeRequest: ${message.request.command} (${message.id})`);
-                    if (message.request.data) {
-                        this.logger.append(`, data=${JSON.stringify(message.request.data)}`);
-                    }
-                    this.logger.appendLine();
+            case MessageType.OmnisharpServerOnServerError:
+                this.logger.appendLine(message.message);
+                break;
+            case MessageType.OmnisharpServerOnError:
+                if (message.errorMessage.FileName) {
+                    this.logger.appendLine(`${message.errorMessage.FileName}(${message.errorMessage.Line},${message.errorMessage.Column})`);
+                }
+                this.logger.appendLine(message.errorMessage.Text);
+                this.logger.appendLine("");
+                break;
+            case MessageType.OmnisharpServerMsBuildProjectDiagnostics:
+                if (message.diagnostics.Errors.length > 0 || message.diagnostics.Warnings.length > 0) {
+                    this.logger.appendLine(message.diagnostics.FileName);
+                    message.diagnostics.Errors.forEach(error => {
+                        this.logger.appendLine(`${error.FileName}(${error.StartLine},${error.StartColumn}): Error: ${error.Text}`);
+                    });
+                    message.diagnostics.Warnings.forEach(warning => {
+                        this.logger.appendLine(`${warning.FileName}(${warning.StartLine},${warning.StartColumn}): Warning: ${warning.Text}`);
+                    });
+                    this.logger.appendLine("");
                 }
                 break;
-            case MessageType.OmnisharpServerEnqueueRequest:
-                if (this.debugMode) {
-                    this.logger.appendLine(`Enqueue ${message.name} request for ${message.command}.`);
-                    this.logger.appendLine();
-                }
-                break;
-            case MessageType.OmnisharpServerDequeueRequest:
-                if (this.debugMode) {
-                    this.logger.appendLine(`Dequeue ${message.name} request for ${message.command} (${message.id}).`);
-                    this.logger.appendLine();
-                }
-                break;
-            case MessageType.OmnisharpServerProcessRequestStart:
-                if (this.debugMode) {
-                    this.logger.appendLine(`Processing ${message.name} queue`);
-                    this.logger.increaseIndent();
-                }
-                break;
-            case MessageType.OmnisharpServerProcessRequestComplete:
-                if (this.debugMode) {
-                    this.logger.decreaseIndent();
-                }
-                break;
-            case MessageType.OmnisharpServerVerboseMessage:
-                if (this.debugMode) {
-                    this.logger.appendLine(message.message);
-                    this.logger.appendLine();
-                }
-                break;
-            case MessageType.OmnisharpEventPacketReceived:
-                if (this.debugMode || !this._isFilterableOutput(message)) {
-                    let output = `[${this.getLogLevelPrefix(message.logLevel)}]: ${message.name}${os.EOL}${message.message}`;
-
-                    const newLinePlusPadding = os.EOL + "        ";
-                    output = output.replace(os.EOL, newLinePlusPadding);
-
-                    this.logger.appendLine(output);
-                }
+            case MessageType.OmnisharpServerOnStdErr:
+                this.logger.append(message.message);
                 break;
         }
     }
 
-    private _isFilterableOutput(message: OmnisharpEventPacketReceived) {
-        // filter messages like: /codecheck: 200 339ms
-        const timing200Pattern = /^\/[\/\w]+: 200 \d+ms/;
 
-        return message.logLevel === "INFORMATION"
-            && message.name === "OmniSharp.Middleware.LoggingMiddleware"
-            && timing200Pattern.test(message.message);
-    }
-
-    private getLogLevelPrefix(logLevel: string) {
-        switch (logLevel) {
-            case "TRACE": return "trce";
-            case "DEBUG": return "dbug";
-            case "INFORMATION": return "info";
-            case "WARNING": return "warn";
-            case "ERROR": return "fail";
-            case "CRITICAL": return "crit";
-            default: throw new Error(`Unknown log level value: ${logLevel}`);
-        }
-    }
 }

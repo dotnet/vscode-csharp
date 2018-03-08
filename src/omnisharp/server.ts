@@ -21,6 +21,7 @@ import { Options } from './options';
 import { PlatformInformation } from '../platform';
 import { launchOmniSharp } from './launcher';
 import { setTimeout } from 'timers';
+import { OmnisharpDownloader } from './OmnisharpDownloader';
 
 enum ServerState {
     Starting,
@@ -81,15 +82,14 @@ export class OmniSharpServer {
     private _serverProcess: ChildProcess;
     private _options: Options;
 
-    private _packageJSON: any;
+    private _omnisharpManager: OmnisharpManager;
     private _sink: MessageObserver;
-    private _platformInfo: PlatformInformation;
 
     constructor(sink: MessageObserver, packageJSON: any, platformInfo: PlatformInformation) {
         this._sink = sink;
         this._requestQueue = new RequestQueueCollection(this._sink, 8, request => this._makeRequest(request));
-        this._packageJSON = packageJSON;
-        this._platformInfo = platformInfo;
+        let downloader = new OmnisharpDownloader(this._sink, packageJSON, platformInfo);
+        this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
     }
 
     public isRunning(): boolean {
@@ -255,8 +255,7 @@ export class OmniSharpServer {
         if (this._options.path) {
             try {
                 let extensionPath = utils.getExtensionPath();
-                let manager = new OmnisharpManager(this._sink, this._packageJSON);
-                launchPath = await manager.GetOmnisharpPath(this._options.path, this._options.useMono, serverUrl, latestVersionFileServerPath, installPath, extensionPath, this._platformInfo);
+                launchPath = await this._omnisharpManager.GetOmnisharpPath(this._options.path, this._options.useMono, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
             }
             catch (error) {
                 this._sink.onNext({ type: MessageType.OmnisharpFailure, message: `Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error: error });

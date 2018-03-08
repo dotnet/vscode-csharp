@@ -69,7 +69,7 @@ export type Message =
     OmnisharpRequestMessage |
     OmnisharpServerOnError |
     PackageInstallation |
-    Platform |
+    PlatformInfo |
     TestExecutionCountReport;
 
 interface Action {
@@ -122,7 +122,7 @@ interface PackageInstallation {
     packageInfo: string;
 }
 
-interface Platform {
+interface PlatformInfo {
     type: MessageType.PlatformInfo;
     info: PlatformInformation;
 }

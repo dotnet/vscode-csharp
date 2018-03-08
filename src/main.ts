@@ -19,6 +19,8 @@ import { OmnisharpLoggerObserver } from './observers/OmnisharpLoggerObserver';
 import { DotNetChannelObserver } from './observers/DotnetChannelObserver';
 import { TelemetryObserver } from './observers/TelemetryObserver';
 import { OmnisharpChannelObserver } from './observers/OmnisharpChannelObserver';
+import { DotnetLoggerObserver } from './observers/DotnetLoggerObserver';
+import { OmnisharpDebugModeLoggerObserver } from './observers/OmnisharpDebugModeLoggerObserver';
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 
@@ -30,21 +32,33 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     util.setExtensionPath(extension.extensionPath);
     
-    let csharpChannel = vscode.window.createOutputChannel('C#');
-    let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
-    let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel, false);
-    let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel);
-    let csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
-    let csharpLogObserver = new CsharpLoggerObserver(csharpChannel);
     let dotnetChannel = vscode.window.createOutputChannel('.NET');
     let dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
+    let dotnetLoggerObserver = new DotnetLoggerObserver(dotnetChannel);
+
+    let csharpChannel = vscode.window.createOutputChannel('C#');
+    let csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
+    let csharpLogObserver = new CsharpLoggerObserver(csharpChannel);
+
+    let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
+    let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel);
+    let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel);
 
     const sink = new Subject<Message>();
-    sink.subscribe(omnisharpLogObserver.onNext);
-    sink.subscribe(omnisharpChannelObserver.onNext);
+    sink.subscribe(dotnetChannelObserver.onNext);
+    sink.subscribe(dotnetLoggerObserver.onNext);
+
     sink.subscribe(csharpchannelObserver.onNext);
     sink.subscribe(csharpLogObserver.onNext);
-    sink.subscribe(dotnetChannelObserver.onNext);
+
+    sink.subscribe(omnisharpLogObserver.onNext);
+    sink.subscribe(omnisharpChannelObserver.onNext);
+    const debugMode = false;
+    if (debugMode) {
+        let omnisharpDebugModeLoggerObserver = new OmnisharpDebugModeLoggerObserver(omnisharpChannel);
+        sink.subscribe(omnisharpDebugModeLoggerObserver.onNext);
+    }
+    
     let platformInfo: PlatformInformation;
     try {
         platformInfo = await PlatformInformation.GetCurrent();

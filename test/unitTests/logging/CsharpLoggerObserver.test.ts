@@ -69,11 +69,11 @@ suite("CsharpLoggerObserver: Download Messages", () => {
 
 suite('CsharpLoggerObsever', () => {
     suiteSetup(() => should());
-    test('PlatformInfo: AppendLine platform info and a blank', () => {
+    test('PlatformInfo: Logs contain the Platform and Architecture', () => {
         let logOutput = "";
         let observer = new CsharpLoggerObserver({
             ...getNullChannel(),
-            appendLine: (text?: string) => { logOutput += text ? text : "\n"; }
+            append: (text?: string) => { logOutput += text ? text : "\n"; }
         });
 
         let message = <Message>{
@@ -81,30 +81,37 @@ suite('CsharpLoggerObsever', () => {
             info: new PlatformInformation("MyPlatform", "MyArchitecture")
         };
 
-        let expected = "Platform: MyPlatform, MyArchitecture\n";
         observer.onNext(message);
-        expect(logOutput).to.be.equal(expected);
+        expect(logOutput).to.contain("MyPlatform");
+        expect(logOutput).to.contain("MyArchitecture");
     });
 
     [
         {
-            message: CreateMessage.InstallationFailure("someStage", "someError"),
-            expected: `Failed at stage: someStage\nsomeError\n\n`
+            stage: "someStage",
+            error: "someError"
         },
         {
-            message: CreateMessage.InstallationFailure("someStage", new PackageError("someError", null, "innerError")),
-            expected: `Failed at stage: someStage\ninnerError\n\n`
+            stage: "someStage",
+            error: new PackageError("someError", null, "innerError")
         }
     ].forEach((element) =>
-        test('InstallationFailure: AppendLine stage, error or inner error and a blank', () => {
+        test('InstallationFailure: Stage, Error and Inner Errors are logged', () => {
+            let message = CreateMessage.InstallationFailure(element.stage, element.error);
             let logOutput = "";
             let observer = new CsharpLoggerObserver({
                 ...getNullChannel(),
-                appendLine: (text?: string) => { logOutput += text ? `${text}\n` : "\n"; },
+                append: (text?: string) => { logOutput += text || ""; },
             });
 
-            observer.onNext(element.message);
-            expect(logOutput).to.be.equal(element.expected);
+            observer.onNext(message);
+            expect(logOutput).to.contain(element.stage);
+            if (element.error instanceof PackageError) {
+                expect(logOutput).to.contain(element.error.innerError.toString());
+            } 
+            else {
+                expect(logOutput).to.contain(element.error.toString());
+            }
         }));
 
     [
@@ -117,14 +124,14 @@ suite('CsharpLoggerObsever', () => {
             expected: `Some warning message\n`
         }
     ].forEach((element) =>
-        test(`AppendLine for ${CreateMessage.DisplayMessageType(element.message)}`, () => {
+        test(`${CreateMessage.DisplayMessageType(element.message)} is shown`, () => {
             let logOutput = "";
             let observer = new CsharpLoggerObserver({
                 ...getNullChannel(),
-                appendLine: (text?: string) => { logOutput += text ? `${text}\n` : "\n"; },
+                append: (text?: string) => { logOutput += text || ""; },
             });
 
             observer.onNext(element.message);
-            expect(logOutput).to.be.equal(element.expected);
+            expect(logOutput).to.contain(element.expected);
         }));
 });

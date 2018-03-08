@@ -13,7 +13,7 @@ export class CsharpChannelObserver extends BaseChannelObserver {
             case MessageType.DebuggerNotInstalledFailure:
             case MessageType.DebuggerPreRequisiteFailure:
             case MessageType.ProjectJsonDeprecatedWarning:
-                this.channel.show();
+                this.showChannel();
                 break;
         }
     }
