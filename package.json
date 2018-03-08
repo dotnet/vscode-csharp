@@ -39,8 +39,8 @@
     "test:runSuiteInVsCode": "cross-env CODE_TESTS_PATH=./out/test/integrationTests CODE_TESTS_WORKSPACE=./test/integrationTests/testAssets/$OSVC_SUITE npm run test:runInVsCode",
     "test:runInVsCode": "node ./test/runVsCodeTestsWithAbsolutePaths.js",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "cov":"rimraf ./.nyc_output && rimraf ./out && npm run compile && npm run cov:instrument && npm test",
-    "cov:instrument":"rimraf ./cov && nyc instrument --produce-source-map --eager --extension .test.js --cwd=./out . ./cov && rimraf ./out/src && copyfiles -a \"./cov/out/src/**/*\" -u 3 ./out/src && rimraf ./cov"
+    "cov": "rimraf ./.nyc_output && rimraf ./out && npm run compile && npm run cov:instrument && npm test",
+    "cov:instrument": "rimraf ./cov && nyc instrument --produce-source-map --eager --extension .test.js --cwd=./out . ./cov && rimraf ./out/src && copyfiles -a \"./cov/out/src/**/*\" -u 3 ./out/src && rimraf ./cov"
   },
   "dependencies": {
     "fs-extra": "^5.0.0",
@@ -77,6 +77,7 @@
     "gulp": "3.9.1",
     "gulp-mocha": "4.3.1",
     "gulp-tslint": "8.1.2",
+    "ltcdr": "^2.2.1",
     "mocha": "4.0.1",
     "mocha-typescript": "^1.1.12",
     "npm-run-all": "4.1.1",
