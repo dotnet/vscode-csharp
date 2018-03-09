@@ -67,6 +67,7 @@
     "@types/node": "8.0.53",
     "@types/semver": "5.3.30",
     "@types/tmp": "0.0.33",
+    "async-child-process": "^1.1.1",
     "async-file": "^2.0.2",
     "chai": "4.1.2",
     "chai-arrays": "2.0.0",

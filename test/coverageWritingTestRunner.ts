@@ -4,6 +4,7 @@
 
 
 'use strict';
+import {execAsync} from 'async-child-process';
 import path = require('path');
 const fs = require('async-file');
 import Mocha = require('mocha');
@@ -28,8 +29,8 @@ export default class CoverageWritingTestRunner {
         let promiseResolve: any;
 
         new Promise<void>(function (resolve, reject) {
-                promiseResolve = () => resolve();
-            })
+            promiseResolve = () => resolve();
+        })
             .then(this.writeCoverage)
             .then(clb);
 
@@ -47,8 +48,14 @@ export default class CoverageWritingTestRunner {
             let rawCoverageJsonPath = path.join(nycFolderPath, `${process.env.OSVC_SUITE}.json`);
             let remappedCoverageJsonPath = path.join(nycFolderPath, `${process.env.OSVC_SUITE}.remapped.json`);
             let outFolderPath = path.join(process.env.CODE_EXTENSIONS_PATH, "out");
+            let remapIstanbulPath = path.join(process.env.CODE_EXTENSIONS_PATH, "node_modules", "remap-istanbul", "bin", "remap-istanbul.js");
 
             await fs.writeTextFile(rawCoverageJsonPath, JSON.stringify(__coverage__));
+
+            
+            let result = await execAsync(`node ${remapIstanbulPath} -i ${rawCoverageJsonPath} -o ${rawCoverageJsonPath}`, {
+                cwd: outFolderPath
+            });
         }
     }
 }
