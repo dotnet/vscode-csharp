@@ -8,6 +8,9 @@ import path = require('path');
 const fs = require('async-file');
 import Mocha = require('mocha');
 import istanbul = require('istanbul');
+const loadCoverage = require('remap-istanbul/lib/loadCoverage');
+const remap = require('remap-istanbul/lib/remap');
+const writeReport = require('remap-istanbul/lib/writeReport');
 
 declare var __coverage__: any;
 let glob = require('glob');
@@ -24,15 +27,15 @@ export default class CoverageWritingTestRunner {
     public run(testRoot: string, clb: any) {
         let promiseResolve: any;
 
-        new Promise<void>(function(resolve, reject){
-            promiseResolve = () => resolve();
-        })
-        .then(this.writeCoverage)
-        .then(clb);
+        new Promise<void>(function (resolve, reject) {
+                promiseResolve = () => resolve();
+            })
+            .then(this.writeCoverage)
+            .then(clb);
 
         this.baseRunner.run(testRoot, promiseResolve);
     }
-    
+
     private async writeCoverage(): Promise<void> {
         if (__coverage__) {
             let nycFolderPath = path.join(process.env.CODE_EXTENSIONS_PATH, ".nyc_output");
@@ -41,14 +44,11 @@ export default class CoverageWritingTestRunner {
                 await fs.mkdir(nycFolderPath);
             }
 
-            let logFilePath = path.join(nycFolderPath, `${process.env.OSVC_SUITE}.json`);
+            let rawCoverageJsonPath = path.join(nycFolderPath, `${process.env.OSVC_SUITE}.json`);
+            let remappedCoverageJsonPath = path.join(nycFolderPath, `${process.env.OSVC_SUITE}.remapped.json`);
+            let outFolderPath = path.join(process.env.CODE_EXTENSIONS_PATH, "out");
 
-            try{
-                await fs.writeTextFile(logFilePath, JSON.stringify(__coverage__));
-            }
-            catch(e){
-                console.log(e);
-            }
+            await fs.writeTextFile(rawCoverageJsonPath, JSON.stringify(__coverage__));
         }
     }
 }

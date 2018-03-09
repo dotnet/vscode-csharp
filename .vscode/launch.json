@@ -16,14 +16,19 @@
             ]
         },
         {
-            "name": "Launch Unit Tests",
+            "name": "Launch Feature Tests",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/unitTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/featureTests"
             ],
+            "env": {
+                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/featureTests",
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "OSVC_SUITE": "featureTests"
+            },
             "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [

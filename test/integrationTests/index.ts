@@ -31,7 +31,7 @@ testRunner.configure({
     ui: 'tdd',      // the TDD UI is being used in extension.test.ts (suite, test, etc.)
     useColors: true // colored output from test results
 });
-let foo = process.cwd();
+
 // if (process.env.OSVC_SUITE) {
 //     if (!fs.existsSync("./.logs")) {
 //         fs.mkdirSync("./.logs");
