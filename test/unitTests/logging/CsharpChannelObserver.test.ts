@@ -27,7 +27,7 @@ suite("CsharpChannelObserver", () => {
                 show: () => { hasShown = true; }
             });
 
-            observer.onNext(event);
+            observer.post(event);
             expect(hasShown).to.be.true;
         });
     });

@@ -10,7 +10,7 @@ import { BaseEvent, ActivationFailure, PackageInstallation, PlatformInfoEvent, I
 export class CsharpLoggerObserver extends BaseLoggerObserver {
     private dots: number;
 
-    public onNext = (event: BaseEvent) => {
+    public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case ActivationFailure.name:
                 this.logger.appendLine("[ERROR]: C# Extension failed to get platform information.");

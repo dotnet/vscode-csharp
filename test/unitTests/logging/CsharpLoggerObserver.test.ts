@@ -60,7 +60,7 @@ suite("CsharpLoggerObserver: Download Messages", () => {
                 append: (text?: string) => { logOutput += text; }
             });
 
-            element.events.forEach((message: BaseEvent) => observer.onNext(message));
+            element.events.forEach((message: BaseEvent) => observer.post(message));
             expect(logOutput).to.be.equal(element.expected);
         });
     });
@@ -77,7 +77,7 @@ suite('CsharpLoggerObsever', () => {
 
         let message = new PlatformInfoEvent(new PlatformInformation("MyPlatform", "MyArchitecture"));
 
-        observer.onNext(message);
+        observer.post(message);
         expect(logOutput).to.contain("MyPlatform");
         expect(logOutput).to.contain("MyArchitecture");
     });
@@ -100,7 +100,7 @@ suite('CsharpLoggerObsever', () => {
                 append: (text?: string) => { logOutput += text || ""; },
             });
 
-            observer.onNext(message);
+            observer.post(message);
             expect(logOutput).to.contain(element.stage);
             if (element.error instanceof PackageError) {
                 expect(logOutput).to.contain(element.error.innerError.toString());
@@ -127,7 +127,7 @@ suite('CsharpLoggerObsever', () => {
                 append: (text?: string) => { logOutput += text || ""; },
             });
 
-            observer.onNext(element.message);
+            observer.post(element.message);
             expect(logOutput).to.contain(element.expected);
         }));
 });

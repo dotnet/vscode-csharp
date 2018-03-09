@@ -13,5 +13,5 @@ export abstract class BaseLoggerObserver {
         this.logger = new Logger((message) => channel.append(message));
     }
     
-    abstract onNext: (event: BaseEvent) => void;
+    abstract post: (event: BaseEvent) => void;
 }

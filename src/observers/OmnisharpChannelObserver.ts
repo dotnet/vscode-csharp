@@ -9,7 +9,7 @@ import { BaseEvent, CommandShowOutput, OmnisharpFailure } from '../omnisharp/log
 
 export class OmnisharpChannelObserver extends BaseChannelObserver {
 
-    public onNext = (event: BaseEvent) => {
+    public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case CommandShowOutput.name:
                 this.showChannel(vscode.ViewColumn.Three);

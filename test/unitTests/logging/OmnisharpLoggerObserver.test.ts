@@ -21,7 +21,7 @@ suite("OmnisharpLoggerObserver", () => {
                 append: (text: string) => { logOutput += text; },
             });
     
-            observer.onNext(event);
+            observer.post(event);
             expect(logOutput).to.contain();
         });
     });

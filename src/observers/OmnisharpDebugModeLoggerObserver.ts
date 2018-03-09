@@ -8,7 +8,7 @@ import * as os from 'os';
 import { BaseEvent, OmnisharpRequestMessage, OmnisharpServerEnqueueRequest, OmnisharpServerDequeueRequest, OmnisharpServerProcessRequestComplete, OmnisharpServerVerboseMessage, OmnisharpServerProcessRequestStart, OmnisharpEventPacketReceived } from "../omnisharp/loggingEvents";
 
 export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
-    public onNext = (event: BaseEvent) => {
+    public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case OmnisharpRequestMessage.name:
                 this.handleOmnisharpRequestMessage(<OmnisharpRequestMessage>event);

@@ -21,7 +21,7 @@ suite("DotnetChannelObserver", () => {
                 clear: () => { hasCleared = true; }
             });
 
-            observer.onNext(event);
+            observer.post(event);
             expect(hasCleared).to.be.true;
         });
     });
@@ -36,7 +36,7 @@ suite("DotnetChannelObserver", () => {
                 show: () => { hasShown = true; }
             });
 
-            observer.onNext(event);
+            observer.post(event);
             expect(hasShown).to.be.true;
         });
     });

@@ -12,7 +12,7 @@ export abstract class BaseChannelObserver {
     constructor(private channel: vscode.OutputChannel) {
     }
 
-    abstract onNext: (event: BaseEvent) => void;
+    abstract post: (event: BaseEvent) => void;
 
     public showChannel(preserveFocusOrColumn?: boolean | ViewColumn, preserveFocus?: boolean) {
         if (preserveFocus != null) {

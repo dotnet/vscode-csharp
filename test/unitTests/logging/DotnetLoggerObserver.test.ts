@@ -23,7 +23,7 @@ suite("DotnetLoggerObserver", () => {
                 append: (text: string) => { appendedMessage += text; },
             });
 
-            observer.onNext(event);
+            observer.post(event);
             expect(appendedMessage).to.contain(event.message);
         });
     });

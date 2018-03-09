@@ -7,7 +7,7 @@ import { BaseChannelObserver } from "./BaseChannelObserver";
 import { BaseEvent, CommandDotNetRestoreStart } from "../omnisharp/loggingEvents";
 
 export class DotNetChannelObserver extends BaseChannelObserver {
-    public onNext = (event: BaseEvent) => {
+    public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case CommandDotNetRestoreStart.name:
                 this.clearChannel();

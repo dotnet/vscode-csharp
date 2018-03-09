@@ -45,18 +45,18 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel);
 
     const sink = new Subject<BaseEvent>();
-    sink.subscribe(dotnetChannelObserver.onNext);
-    sink.subscribe(dotnetLoggerObserver.onNext);
+    sink.subscribe(dotnetChannelObserver.post);
+    sink.subscribe(dotnetLoggerObserver.post);
 
-    sink.subscribe(csharpchannelObserver.onNext);
-    sink.subscribe(csharpLogObserver.onNext);
+    sink.subscribe(csharpchannelObserver.post);
+    sink.subscribe(csharpLogObserver.post);
 
-    sink.subscribe(omnisharpLogObserver.onNext);
-    sink.subscribe(omnisharpChannelObserver.onNext);
+    sink.subscribe(omnisharpLogObserver.post);
+    sink.subscribe(omnisharpChannelObserver.post);
     const debugMode = false;
     if (debugMode) {
         let omnisharpDebugModeLoggerObserver = new OmnisharpDebugModeLoggerObserver(omnisharpChannel);
-        sink.subscribe(omnisharpDebugModeLoggerObserver.onNext);
+        sink.subscribe(omnisharpDebugModeLoggerObserver.post);
     }
     
     let platformInfo: PlatformInformation;

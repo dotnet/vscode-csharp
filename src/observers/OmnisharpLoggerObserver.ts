@@ -8,7 +8,7 @@ import { BaseEvent, OmnisharpInitialisation, OmnisharpLaunch, OmnisharpFailure, 
 import * as os from 'os';
 
 export class OmnisharpLoggerObserver extends BaseLoggerObserver {
-    public onNext = (event: BaseEvent) => {
+    public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case OmnisharpInitialisation.name:
                 this.handleOmnisharpInitialisation(<OmnisharpInitialisation>event);

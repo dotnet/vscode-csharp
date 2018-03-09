@@ -6,7 +6,7 @@ import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import { BaseEvent, CommandDotNetRestoreProgress, CommandDotNetRestoreSucceeded, CommandDotNetRestoreFailed } from "../omnisharp/loggingEvents";
 
 export class DotnetLoggerObserver extends BaseLoggerObserver {
-    public onNext = (event: BaseEvent) => {
+    public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case CommandDotNetRestoreProgress.name:
                 this.logger.append((<CommandDotNetRestoreProgress>event).message);

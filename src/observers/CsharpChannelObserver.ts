@@ -7,7 +7,7 @@ import { BaseChannelObserver } from "./BaseChannelObserver";
 import { BaseEvent, PackageInstallation, InstallationFailure, DebuggerNotInstalledFailure, DebuggerPreRequisiteFailure, ProjectJsonDeprecatedWarning } from "../omnisharp/loggingEvents";
 
 export class CsharpChannelObserver extends BaseChannelObserver {
-    public onNext = (event: BaseEvent) => {
+    public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case PackageInstallation.name:
             case InstallationFailure.name:
