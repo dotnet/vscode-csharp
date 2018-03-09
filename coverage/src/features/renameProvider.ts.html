@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/features/renameProvider.ts</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../../prettify.css">
+    <link rel="stylesheet" href="../../base.css">
+    <style type='text/css'>
+        div.coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class="header low">
+    <h1>Code coverage report for <span class="entity">src/features/renameProvider.ts</span></h1>
+    <h2>
+        Statements: <span class="metric">29.41% <small>(5 / 17)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">0% <small>(0 / 2)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">0% <small>(0 / 4)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">29.41% <small>(5 / 17)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
+    </h2>
+    <div class="path"><a href="../../index.html">All files</a> &#187; <a href="index.html">src/features/</a> &#187; renameProvider.ts</div>
+</div>
+<div class="body">
+<pre><table class="coverage">
+<tr><td class="line-count">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42</td><td class="line-coverage"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+&nbsp;
+'use strict';
+&nbsp;
+import AbstractSupport from './abstractProvider';
+import * as protocol from '../omnisharp/protocol';
+import * as serverUtils from '../omnisharp/utils';
+import {createRequest} from '../omnisharp/typeConvertion';
+import {RenameProvider, WorkspaceEdit, TextDocument, Uri, CancellationToken, Position, Range} from 'vscode';
+&nbsp;
+export default class OmnisharpRenameProvider extends AbstractSupport implements RenameProvider {
+&nbsp;
+    public provideRenameEdits(document: TextDocument, position: Position, newName: string, token: CancellationToken<span class="fstat-no" title="function not covered" >): Promise&lt;WorkspaceEdit&gt; {</span>
+&nbsp;
+        let req = <span class="cstat-no" title="statement not covered" >createRequest&lt;protocol.RenameRequest&gt;(document, position);</span>
+<span class="cstat-no" title="statement not covered" >        req.WantsTextChanges = true;</span>
+<span class="cstat-no" title="statement not covered" >        req.RenameTo = newName;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return serverUtils.rename(this._server, req, token).then(response =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (!response) {</span>
+<span class="cstat-no" title="statement not covered" >                return;</span>
+            }
+&nbsp;
+            const edit = <span class="cstat-no" title="statement not covered" >new WorkspaceEdit();</span>
+<span class="cstat-no" title="statement not covered" >            response.Changes.forEach(change =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+                const uri = <span class="cstat-no" title="statement not covered" >Uri.file(change.FileName);</span>
+<span class="cstat-no" title="statement not covered" >                change.Changes.forEach(change =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >                    edit.replace(uri,</span>
+                        new Range(change.StartLine - 1, change.StartColumn - 1, change.EndLine - 1, change.EndColumn - 1),
+                        change.NewText);
+                });
+            });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            return edit;</span>
+        });
+    }
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+
+</div>
+<div class="footer">
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Mar 09 2018 19:23:26 GMT-0800 (PST)</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

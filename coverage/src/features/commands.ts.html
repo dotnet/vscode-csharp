@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/features/commands.ts</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../../prettify.css">
+    <link rel="stylesheet" href="../../base.css">
+    <style type='text/css'>
+        div.coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class="header low">
+    <h1>Code coverage report for <span class="entity">src/features/commands.ts</span></h1>
+    <h2>
+        Statements: <span class="metric">29.59% <small>(29 / 98)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">0% <small>(0 / 28)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">9.38% <small>(3 / 32)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">30.34% <small>(27 / 89)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
+    </h2>
+    <div class="path"><a href="../../index.html">All files</a> &#187; <a href="index.html">src/features/</a> &#187; commands.ts</div>
+</div>
+<div class="body">
+<pre><table class="coverage">
+<tr><td class="line-count">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202</td><td class="line-coverage"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+&nbsp;
+'use strict';
+&nbsp;
+import { OmniSharpServer } from '../omnisharp/server';
+import * as serverUtils from '../omnisharp/utils';
+import { findLaunchTargets } from '../omnisharp/launcher';
+import * as cp from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as protocol from '../omnisharp/protocol';
+import * as vscode from 'vscode';
+import { DotNetAttachItemsProviderFactory, AttachPicker, RemoteAttachPicker } from './processPicker';
+import { generateAssets } from '../assets';
+import TelemetryReporter from 'vscode-extension-telemetry';
+import { getAdapterExecutionCommand } from '../coreclr-debug/activate';
+&nbsp;
+let channel = vscode.window.createOutputChannel('.NET');
+&nbsp;
+export default function registerCommands(server: OmniSharpServer, reporter: TelemetryReporter, channel: vscode.OutputChannel) {
+    let d1 = vscode.commands.registerCommand('o.restart', () =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >restartOmniSharp(server))</span></span>;
+    let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', () =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >pickProjectAndStart(server))</span></span>;
+    let d3 = vscode.commands.registerCommand('o.showOutput', () =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >server.getChannel().show(vscode.ViewColumn.Three))</span></span>;
+    let d4 = vscode.commands.registerCommand('dotnet.restore', () =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >dotnetRestoreAllProjects(server))</span></span>;
+&nbsp;
+    // register empty handler for csharp.installDebugger
+    // running the command activates the extension, which is all we need for installation to kickoff
+    let d5 = vscode.commands.registerCommand('csharp.downloadDebugger', () =&gt;<span class="fstat-no" title="function not covered" > { })</span>;
+&nbsp;
+    // register process picker for attach
+    let attachItemsProvider = DotNetAttachItemsProviderFactory.Get();
+    let attacher = new AttachPicker(attachItemsProvider);
+    let d6 = vscode.commands.registerCommand('csharp.listProcess', () =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >attacher.ShowAttachEntries())</span></span>;
+&nbsp;
+    // Register command for generating tasks.json and launch.json assets.
+    let d7 = vscode.commands.registerCommand('dotnet.generateAssets', () =&gt; generateAssets(server));
+&nbsp;
+    // Register command for remote process picker for attach
+    let d8 = vscode.commands.registerCommand('csharp.listRemoteProcess', (args) =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >RemoteAttachPicker.ShowAttachEntries(args))</span></span>;
+&nbsp;
+    // Register command for adapter executable command.
+    let d9 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', (args) =&gt; getAdapterExecutionCommand(channel));
+    let d10 = vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', (args) =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >getAdapterExecutionCommand(channel))</span></span>;
+&nbsp;
+    return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10);
+}
+&nbsp;
+function restartOmniSharp(server: OmniSharpServer<span class="fstat-no" title="function not covered" >) {</span>
+<span class="cstat-no" title="statement not covered" >    if (server.isRunning()) {</span>
+<span class="cstat-no" title="statement not covered" >        server.restart();</span>
+    }
+    else {
+<span class="cstat-no" title="statement not covered" >        server.autoStart('');</span>
+    }
+}
+&nbsp;
+function pickProjectAndStart(server: OmniSharpServer<span class="fstat-no" title="function not covered" >) {</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return findLaunchTargets().then(targets =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+&nbsp;
+        let currentPath = <span class="cstat-no" title="statement not covered" >server.getSolutionPathOrFolder();</span>
+<span class="cstat-no" title="statement not covered" >        if (currentPath) {</span>
+<span class="cstat-no" title="statement not covered" >            for (let target of targets) {</span>
+<span class="cstat-no" title="statement not covered" >                if (target.target === currentPath) {</span>
+<span class="cstat-no" title="statement not covered" >                    target.label = `\u2713 ${target.label}`;</span>
+                }
+            }
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return vscode.window.showQuickPick(targets, {</span>
+            matchOnDescription: true,
+            placeHolder: `Select 1 of ${targets.length} projects`
+        }).then(launchTarget =&gt;<span class="fstat-no" title="function not covered" > {</span>
+<span class="cstat-no" title="statement not covered" >            if (launchTarget) {</span>
+<span class="cstat-no" title="statement not covered" >                return server.restart(launchTarget);</span>
+            }
+        });
+    });
+}
+&nbsp;
+interface Command {
+    label: string;
+    description: string;
+    execute(): Thenable&lt;any&gt;;
+}
+&nbsp;
+function projectsToCommands(projects: protocol.ProjectDescriptor[]<span class="fstat-no" title="function not covered" >): Promise&lt;Command&gt;[] {</span>
+<span class="cstat-no" title="statement not covered" >    return projects.map(project =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+        let projectDirectory = <span class="cstat-no" title="statement not covered" >project.Directory;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return new Promise&lt;Command&gt;((resolve, reject) =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >            fs.lstat(projectDirectory, (err, stats) =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >                if (err) {</span>
+<span class="cstat-no" title="statement not covered" >                    return reject(err);</span>
+                }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                if (stats.isFile()) {</span>
+<span class="cstat-no" title="statement not covered" >                    projectDirectory = path.dirname(projectDirectory);</span>
+                }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                resolve({</span>
+                    label: `dotnet restore - (${project.Name || path.basename(project.Directory)})`,
+                    description: projectDirectory,
+                    execute() {
+<span class="cstat-no" title="statement not covered" >                        return dotnetRestore(projectDirectory);</span>
+                    }
+                });
+            });
+        });
+    });
+}
+&nbsp;
+export function dotnetRestoreAllProjects(server: OmniSharpServer<span class="fstat-no" title="function not covered" >) : Promise&lt;void&gt; {</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (!server.isRunning()) {</span>
+<span class="cstat-no" title="statement not covered" >        return Promise.reject('OmniSharp server is not running.');</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return serverUtils.requestWorkspaceInformation(server).then(info =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+&nbsp;
+        let descriptors = <span class="cstat-no" title="statement not covered" >protocol.getDotNetCoreProjectDescriptors(info);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (descriptors.length === 0) {</span>
+<span class="cstat-no" title="statement not covered" >            return Promise.reject("No .NET Core projects found");</span>
+        }
+&nbsp;
+        let commandPromises = <span class="cstat-no" title="statement not covered" >projectsToCommands(descriptors);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return Promise.all(commandPromises).then(commands =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >            return vscode.window.showQuickPick(commands);</span>
+        }).then(command =&gt;<span class="fstat-no" title="function not covered" > {</span>
+<span class="cstat-no" title="statement not covered" >            if (command) {</span>
+<span class="cstat-no" title="statement not covered" >                return command.execute();</span>
+            }
+        });
+    });
+}
+&nbsp;
+export function dotnetRestoreForProject(server: OmniSharpServer, filePath: string<span class="fstat-no" title="function not covered" >) {</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (!server.isRunning()) {</span>
+<span class="cstat-no" title="statement not covered" >        return Promise.reject('OmniSharp server is not running.');</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return serverUtils.requestWorkspaceInformation(server).then(info =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+&nbsp;
+        let descriptors = <span class="cstat-no" title="statement not covered" >protocol.getDotNetCoreProjectDescriptors(info);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (descriptors.length === 0) {</span>
+<span class="cstat-no" title="statement not covered" >            return Promise.reject("No .NET Core projects found");</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        for (let descriptor of descriptors) {</span>
+<span class="cstat-no" title="statement not covered" >            if (descriptor.FilePath === filePath) {</span>
+<span class="cstat-no" title="statement not covered" >                return dotnetRestore(descriptor.Directory, filePath);</span>
+            }
+        }
+    });
+}
+&nbsp;
+function dotnetRestore(cwd: string, filePath?: string<span class="fstat-no" title="function not covered" >) {</span>
+<span class="cstat-no" title="statement not covered" >    return new Promise&lt;void&gt;((resolve, reject) =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >        channel.clear();</span>
+<span class="cstat-no" title="statement not covered" >        channel.show();</span>
+&nbsp;
+        let cmd = <span class="cstat-no" title="statement not covered" >'dotnet';</span>
+        let args = <span class="cstat-no" title="statement not covered" >['restore'];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (filePath) {</span>
+<span class="cstat-no" title="statement not covered" >            args.push(filePath);</span>
+        }
+&nbsp;
+        let dotnet = <span class="cstat-no" title="statement not covered" >cp.spawn(cmd, args, { cwd: cwd, env: process.env });</span>
+&nbsp;
+        function handleData(stream: NodeJS.ReadableStream<span class="fstat-no" title="function not covered" >) {</span>
+<span class="cstat-no" title="statement not covered" >            stream.on('data', chunk =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >                channel.append(chunk.toString());</span>
+            });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            stream.on('err', err =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >                channel.append(`ERROR: ${err}`);</span>
+            });
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        handleData(dotnet.stdout);</span>
+<span class="cstat-no" title="statement not covered" >        handleData(dotnet.stderr);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        dotnet.on('close', (code, signal) =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >            channel.appendLine(`Done: ${code}.`);</span>
+<span class="cstat-no" title="statement not covered" >            resolve();</span>
+        });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        dotnet.on('error', err =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >            channel.appendLine(`ERROR: ${err}`);</span>
+<span class="cstat-no" title="statement not covered" >            reject(err);</span>
+        });
+    });
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+
+</div>
+<div class="footer">
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Mar 09 2018 19:23:26 GMT-0800 (PST)</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

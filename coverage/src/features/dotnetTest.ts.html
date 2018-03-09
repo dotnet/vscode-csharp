@@ -1,0 +1,1716 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/features/dotnetTest.ts</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../../prettify.css">
+    <link rel="stylesheet" href="../../base.css">
+    <style type='text/css'>
+        div.coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class="header low">
+    <h1>Code coverage report for <span class="entity">src/features/dotnetTest.ts</span></h1>
+    <h2>
+        Statements: <span class="metric">8.68% <small>(21 / 242)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">0% <small>(0 / 58)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">1.59% <small>(1 / 63)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">8.75% <small>(21 / 240)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
+    </h2>
+    <div class="path"><a href="../../index.html">All files</a> &#187; <a href="index.html">src/features/</a> &#187; dotnetTest.ts</div>
+</div>
+<div class="body">
+<pre><table class="coverage">
+<tr><td class="line-count">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472
+473
+474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485
+486
+487
+488
+489
+490
+491
+492
+493
+494
+495
+496
+497
+498
+499
+500
+501
+502
+503
+504
+505
+506
+507
+508
+509
+510
+511
+512
+513
+514
+515
+516
+517
+518
+519
+520
+521
+522
+523
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534
+535
+536
+537
+538
+539
+540
+541
+542
+543
+544
+545
+546
+547
+548
+549
+550
+551
+552
+553
+554
+555
+556
+557
+558</td><td class="line-coverage"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+&nbsp;
+import { OmniSharpServer } from '../omnisharp/server';
+import { DebuggerEventsProtocol } from '../coreclr-debug/debuggerEventsProtocol';
+import * as vscode from 'vscode';
+import * as serverUtils from "../omnisharp/utils";
+import * as protocol from '../omnisharp/protocol';
+import * as utils from '../common';
+import * as net from 'net';
+import * as os from 'os';
+import * as path from 'path';
+import TelemetryReporter from 'vscode-extension-telemetry';
+import AbstractProvider from './abstractProvider';
+&nbsp;
+const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
+&nbsp;
+export default class TestManager extends AbstractProvider {
+    private _channel: vscode.OutputChannel;
+&nbsp;
+    private _runCounts: { [testFrameworkName: string]: number };
+    private _debugCounts: { [testFrameworkName: string]: number };
+    private _telemetryIntervalId: NodeJS.Timer = undefined;
+&nbsp;
+    constructor(server: OmniSharpServer, reporter: TelemetryReporter) {
+        super(server, reporter);
+&nbsp;
+        // register commands
+        let d1 = vscode.commands.registerCommand(
+            'dotnet.test.run',
+            (testMethod, fileName, testFrameworkName) =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >this._runDotnetTest(testMethod, fileName, testFrameworkName))</span></span>;
+&nbsp;
+        let d2 = vscode.commands.registerCommand(
+            'dotnet.test.debug',
+            (testMethod, fileName, testFrameworkName) =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >this._debugDotnetTest(testMethod, fileName, testFrameworkName))</span></span>;
+&nbsp;
+        let d4 = vscode.commands.registerCommand(
+            'dotnet.classTests.run',
+            (methodsInClass, fileName, testFrameworkName) =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >this._runDotnetTestsInClass(methodsInClass, fileName, testFrameworkName))</span></span>;
+&nbsp;
+        let d5 = vscode.commands.registerCommand(
+            'dotnet.classTests.debug',
+            (methodsInClass, fileName, testFrameworkName) =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >this._debugDotnetTestsInClass(methodsInClass, fileName, testFrameworkName))</span></span>;
+&nbsp;
+        this._telemetryIntervalId = setInterval(() =&gt;
+<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >            this._reportTelemetry(),</span></span> TelemetryReportingDelay);
+&nbsp;
+        let d3 = new vscode.Disposable(() =&gt;<span class="fstat-no" title="function not covered" > {</span>
+<span class="cstat-no" title="statement not covered" >            if (this._telemetryIntervalId !== undefined) {</span>
+                // Stop reporting telemetry
+<span class="cstat-no" title="statement not covered" >                clearInterval(this._telemetryIntervalId);</span>
+<span class="cstat-no" title="statement not covered" >                this._telemetryIntervalId = undefined;</span>
+<span class="cstat-no" title="statement not covered" >                this._reportTelemetry();</span>
+            }
+        });
+&nbsp;
+        this.addDisposables(d1, d2, d3, d4, d5);
+    }
+&nbsp;
+    private _getOutputChannel<span class="fstat-no" title="function not covered" >(): vscode.OutputChannel {</span>
+<span class="cstat-no" title="statement not covered" >        if (this._channel === undefined) {</span>
+<span class="cstat-no" title="statement not covered" >            this._channel = vscode.window.createOutputChannel(".NET Test Log");</span>
+<span class="cstat-no" title="statement not covered" >            this.addDisposables(this._channel);</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return this._channel;</span>
+    }
+&nbsp;
+    private _recordRunRequest(testFrameworkName: string<span class="fstat-no" title="function not covered" >): void {</span>
+<span class="cstat-no" title="statement not covered" >        if (this._runCounts === undefined) {</span>
+<span class="cstat-no" title="statement not covered" >            this._runCounts = {};</span>
+        }
+&nbsp;
+        let count = <span class="cstat-no" title="statement not covered" >this._runCounts[testFrameworkName];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (!count) {</span>
+<span class="cstat-no" title="statement not covered" >            count = 1;</span>
+        }
+        else {
+<span class="cstat-no" title="statement not covered" >            count += 1;</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        this._runCounts[testFrameworkName] = count;</span>
+    }
+&nbsp;
+    private _recordDebugRequest(testFrameworkName: string<span class="fstat-no" title="function not covered" >): void {</span>
+<span class="cstat-no" title="statement not covered" >        if (this._debugCounts === undefined) {</span>
+<span class="cstat-no" title="statement not covered" >            this._debugCounts = {};</span>
+        }
+&nbsp;
+        let count = <span class="cstat-no" title="statement not covered" >this._debugCounts[testFrameworkName];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (!count) {</span>
+<span class="cstat-no" title="statement not covered" >            count = 1;</span>
+        }
+        else {
+<span class="cstat-no" title="statement not covered" >            count += 1;</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        this._debugCounts[testFrameworkName] = count;</span>
+    }
+&nbsp;
+    private _reportTelemetry<span class="fstat-no" title="function not covered" >(): void {</span>
+<span class="cstat-no" title="statement not covered" >        if (this._runCounts) {</span>
+<span class="cstat-no" title="statement not covered" >            this._reporter.sendTelemetryEvent('RunTest', null, this._runCounts);</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (this._debugCounts) {</span>
+<span class="cstat-no" title="statement not covered" >            this._reporter.sendTelemetryEvent('DebugTest', null, this._debugCounts);</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        this._runCounts = undefined;</span>
+<span class="cstat-no" title="statement not covered" >        this._debugCounts = undefined;</span>
+    }
+&nbsp;
+    private _saveDirtyFiles<span class="fstat-no" title="function not covered" >(): Promise&lt;boolean&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        return Promise.resolve(</span>
+            vscode.workspace.saveAll(/*includeUntitled*/ false));
+    }
+&nbsp;
+    private _runTest(fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string<span class="fstat-no" title="function not covered" >): Promise&lt;protocol.V2.DotNetTestResult[]&gt; {</span>
+        const request: protocol.V2.RunTestRequest = <span class="cstat-no" title="statement not covered" >{</span>
+            FileName: fileName,
+            MethodName: testMethod,
+            TestFrameworkName: testFrameworkName,
+            TargetFrameworkVersion: targetFrameworkVersion
+        };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return serverUtils.runTest(this._server, request)</span>
+            .then(response =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >response.Results)</span></span>;
+    }
+&nbsp;
+    private _reportResults(results: protocol.V2.DotNetTestResult[]<span class="fstat-no" title="function not covered" >): Promise&lt;void&gt; {</span>
+        const totalTests = <span class="cstat-no" title="statement not covered" >results.length;</span>
+        const output = <span class="cstat-no" title="statement not covered" >this._getOutputChannel();</span>
+&nbsp;
+        let totalPassed = <span class="cstat-no" title="statement not covered" >0,</span> totalFailed = <span class="cstat-no" title="statement not covered" >0,</span> totalSkipped = <span class="cstat-no" title="statement not covered" >0;</span>
+<span class="cstat-no" title="statement not covered" >        for (let result of results) {</span>
+<span class="cstat-no" title="statement not covered" >            output.appendLine(`${result.MethodName}: ${result.Outcome}`);</span>
+<span class="cstat-no" title="statement not covered" >            switch (result.Outcome) {</span>
+                case protocol.V2.TestOutcomes.Failed:
+<span class="cstat-no" title="statement not covered" >                    totalFailed += 1;</span>
+<span class="cstat-no" title="statement not covered" >                    break;</span>
+                case protocol.V2.TestOutcomes.Passed:
+<span class="cstat-no" title="statement not covered" >                    totalPassed += 1;</span>
+<span class="cstat-no" title="statement not covered" >                    break;</span>
+                case protocol.V2.TestOutcomes.Skipped:
+<span class="cstat-no" title="statement not covered" >                    totalSkipped += 1;</span>
+<span class="cstat-no" title="statement not covered" >                    break;</span>
+            }
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        output.appendLine('');</span>
+<span class="cstat-no" title="statement not covered" >        output.appendLine(`Total tests: ${totalTests}. Passed: ${totalPassed}. Failed: ${totalFailed}. Skipped: ${totalSkipped}`);</span>
+<span class="cstat-no" title="statement not covered" >        output.appendLine('');</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return Promise.resolve();</span>
+    }
+&nbsp;
+    private async _recordRunAndGetFrameworkVersion(fileName: string, testFrameworkName: string<span class="fstat-no" title="function not covered" >) {</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        await this._saveDirtyFiles();</span>
+<span class="cstat-no" title="statement not covered" >        this._recordRunRequest(testFrameworkName);</span>
+        let projectInfo = <span class="cstat-no" title="statement not covered" >await serverUtils.requestProjectInformation(this._server, { FileName: fileName });</span>
+&nbsp;
+        let targetFrameworkVersion: string;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (projectInfo.DotNetProject) {</span>
+<span class="cstat-no" title="statement not covered" >            targetFrameworkVersion = undefined;</span>
+        }
+        else <span class="cstat-no" title="statement not covered" >if (projectInfo.MsBuildProject) {</span>
+<span class="cstat-no" title="statement not covered" >            targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;</span>
+        }
+        else {
+<span class="cstat-no" title="statement not covered" >            throw new Error('Expected project.json or .csproj project.');</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return targetFrameworkVersion;</span>
+    }
+&nbsp;
+    private async _runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string<span class="fstat-no" title="function not covered" >) {</span>
+        const output = <span class="cstat-no" title="statement not covered" >this._getOutputChannel();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        output.show();</span>
+<span class="cstat-no" title="statement not covered" >        output.appendLine(`Running test ${testMethod}...`);</span>
+<span class="cstat-no" title="statement not covered" >        output.appendLine('');</span>
+&nbsp;
+        const listener = <span class="cstat-no" title="statement not covered" >this._server.onTestMessage(e =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >            output.appendLine(e.Message);</span>
+        });
+&nbsp;
+        let targetFrameworkVersion = <span class="cstat-no" title="statement not covered" >await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return this._runTest(fileName, testMethod, testFrameworkName, targetFrameworkVersion)</span>
+            .then(results =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >this._reportResults(results))</span></span>
+            .then(() =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >listener.dispose())</span></span>
+            .catch(reason =&gt;<span class="fstat-no" title="function not covered" > {</span>
+<span class="cstat-no" title="statement not covered" >                listener.dispose();</span>
+<span class="cstat-no" title="statement not covered" >                vscode.window.showErrorMessage(`Failed to run test because ${reason}.`);</span>
+            });
+    }
+&nbsp;
+    private async _runDotnetTestsInClass(methodsInClass: string[], fileName: string, testFrameworkName: string<span class="fstat-no" title="function not covered" >) {</span>
+        const output = <span class="cstat-no" title="statement not covered" >this._getOutputChannel();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        output.show();</span>
+        const listener = <span class="cstat-no" title="statement not covered" >this._server.onTestMessage(e =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >            output.appendLine(e.Message);</span>
+        });
+&nbsp;
+        let targetFrameworkVersion = <span class="cstat-no" title="statement not covered" >await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return this._runTestsInClass(fileName, testFrameworkName, targetFrameworkVersion, methodsInClass)</span>
+            .then(results =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >this._reportResults(results))</span></span>
+            .then(() =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >listener.dispose())</span></span>
+            .catch(reason =&gt;<span class="fstat-no" title="function not covered" > {</span>
+<span class="cstat-no" title="statement not covered" >                listener.dispose();</span>
+<span class="cstat-no" title="statement not covered" >                vscode.window.showErrorMessage(`Failed to run tests because ${reason}.`);</span>
+            });
+    }
+&nbsp;
+    private _runTestsInClass(fileName: string, testFrameworkName: string, targetFrameworkVersion: string, methodsToRun: string[]<span class="fstat-no" title="function not covered" >): Promise&lt;protocol.V2.DotNetTestResult[]&gt; {</span>
+        const request: protocol.V2.RunTestsInClassRequest = <span class="cstat-no" title="statement not covered" >{</span>
+            FileName: fileName,
+            TestFrameworkName: testFrameworkName,
+            TargetFrameworkVersion: targetFrameworkVersion,
+            MethodNames: methodsToRun
+        };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return serverUtils.runTestsInClass(this._server, request)</span>
+            .then(response =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >response.Results)</span></span>;
+    }
+&nbsp;
+    private _createLaunchConfiguration(program: string, args: string, cwd: string, debuggerEventsPipeName: string<span class="fstat-no" title="function not covered" >) {</span>
+        let debugOptions = <span class="cstat-no" title="statement not covered" >vscode.workspace.getConfiguration('csharp').get('unitTestDebuggingOptions');</span>
+&nbsp;
+        // Get the initial set of options from the workspace setting
+        let result: any;
+<span class="cstat-no" title="statement not covered" >        if (typeof debugOptions === "object") {</span>
+            // clone the options object to avoid changing it
+<span class="cstat-no" title="statement not covered" >            result = JSON.parse(JSON.stringify(debugOptions));</span>
+        } else {
+<span class="cstat-no" title="statement not covered" >            result = {};</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (!result.type) {</span>
+<span class="cstat-no" title="statement not covered" >            result.type = "coreclr";</span>
+        }
+&nbsp;
+        // Now fill in the rest of the options
+<span class="cstat-no" title="statement not covered" >        result.name = ".NET Test Launch";</span>
+<span class="cstat-no" title="statement not covered" >        result.request = "launch";</span>
+<span class="cstat-no" title="statement not covered" >        result.debuggerEventsPipeName = debuggerEventsPipeName;</span>
+<span class="cstat-no" title="statement not covered" >        result.program = program;</span>
+<span class="cstat-no" title="statement not covered" >        result.args = args;</span>
+<span class="cstat-no" title="statement not covered" >        result.cwd = cwd;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return result;</span>
+    }
+&nbsp;
+    private _getLaunchConfigurationForVSTest(fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener<span class="fstat-no" title="function not covered" >): Promise&lt;any&gt; {</span>
+        const output = <span class="cstat-no" title="statement not covered" >this._getOutputChannel();</span>
+&nbsp;
+        // Listen for test messages while getting start info.
+        const listener = <span class="cstat-no" title="statement not covered" >this._server.onTestMessage(e =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >            output.appendLine(e.Message);</span>
+        });
+&nbsp;
+        const request: protocol.V2.DebugTestGetStartInfoRequest = <span class="cstat-no" title="statement not covered" >{</span>
+            FileName: fileName,
+            MethodName: testMethod,
+            TestFrameworkName: testFrameworkName,
+            TargetFrameworkVersion: targetFrameworkVersion
+        };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return serverUtils.debugTestGetStartInfo(this._server, request)</span>
+            .then(response =&gt;<span class="fstat-no" title="function not covered" > {</span>
+<span class="cstat-no" title="statement not covered" >                listener.dispose();</span>
+<span class="cstat-no" title="statement not covered" >                return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath());</span>
+            });
+    }
+&nbsp;
+    private _getLaunchConfigurationForLegacy(fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string<span class="fstat-no" title="function not covered" >): Promise&lt;any&gt; {</span>
+        const output = <span class="cstat-no" title="statement not covered" >this._getOutputChannel();</span>
+&nbsp;
+        // Listen for test messages while getting start info.
+        const listener = <span class="cstat-no" title="statement not covered" >this._server.onTestMessage(e =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >            output.appendLine(e.Message);</span>
+        });
+&nbsp;
+        const request: protocol.V2.GetTestStartInfoRequest = <span class="cstat-no" title="statement not covered" >{</span>
+            FileName: fileName,
+            MethodName: testMethod,
+            TestFrameworkName: testFrameworkName,
+            TargetFrameworkVersion: targetFrameworkVersion
+        };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return serverUtils.getTestStartInfo(this._server, request)</span>
+            .then(response =&gt;<span class="fstat-no" title="function not covered" > {</span>
+<span class="cstat-no" title="statement not covered" >                listener.dispose();</span>
+<span class="cstat-no" title="statement not covered" >                return this._createLaunchConfiguration(response.Executable, response.Argument, response.WorkingDirectory, null);</span>
+            });
+    }
+&nbsp;
+    private _getLaunchConfiguration(debugType: string, fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener<span class="fstat-no" title="function not covered" >): Promise&lt;any&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        switch (debugType) {</span>
+            case 'legacy':
+<span class="cstat-no" title="statement not covered" >                return this._getLaunchConfigurationForLegacy(fileName, testMethod, testFrameworkName, targetFrameworkVersion);</span>
+            case 'vstest':
+<span class="cstat-no" title="statement not covered" >                return this._getLaunchConfigurationForVSTest(fileName, testMethod, testFrameworkName, targetFrameworkVersion, debugEventListener);</span>
+&nbsp;
+            default:
+<span class="cstat-no" title="statement not covered" >                throw new Error(`Unexpected debug type: ${debugType}`);</span>
+        }
+    }
+&nbsp;
+    private async _recordDebugAndGetDebugValues(fileName: string, testFrameworkName: string, output: vscode.OutputChannel<span class="fstat-no" title="function not covered" >) {</span>
+<span class="cstat-no" title="statement not covered" >        await this._saveDirtyFiles();</span>
+<span class="cstat-no" title="statement not covered" >        this._recordDebugRequest(testFrameworkName);</span>
+        let projectInfo = <span class="cstat-no" title="statement not covered" >await serverUtils.requestProjectInformation(this._server, { FileName: fileName });</span>
+&nbsp;
+        let debugType: string;
+        let debugEventListener: DebugEventListener = <span class="cstat-no" title="statement not covered" >null;</span>
+        let targetFrameworkVersion: string;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (projectInfo.DotNetProject) {</span>
+<span class="cstat-no" title="statement not covered" >            debugType = 'legacy';</span>
+<span class="cstat-no" title="statement not covered" >            targetFrameworkVersion = '';</span>
+        }
+        else <span class="cstat-no" title="statement not covered" >if (projectInfo.MsBuildProject) {</span>
+<span class="cstat-no" title="statement not covered" >            debugType = 'vstest';</span>
+<span class="cstat-no" title="statement not covered" >            targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;</span>
+<span class="cstat-no" title="statement not covered" >            debugEventListener = new DebugEventListener(fileName, this._server, output);</span>
+<span class="cstat-no" title="statement not covered" >            debugEventListener.start();</span>
+        }
+        else {
+<span class="cstat-no" title="statement not covered" >            throw new Error('Expected project.json or .csproj project.');</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return { debugType, debugEventListener, targetFrameworkVersion };</span>
+    }
+&nbsp;
+    private async _debugDotnetTest(testMethod: string, fileName: string, testFrameworkName: string<span class="fstat-no" title="function not covered" >) {</span>
+        // We support to styles of 'dotnet test' for debugging: The legacy 'project.json' testing, and the newer csproj support
+        // using VS Test. These require a different level of communication.
+&nbsp;
+        const output = <span class="cstat-no" title="statement not covered" >this._getOutputChannel();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        output.show();</span>
+<span class="cstat-no" title="statement not covered" >        output.appendLine(`Debugging method '${testMethod}'...`);</span>
+<span class="cstat-no" title="statement not covered" >        output.appendLine('');</span>
+&nbsp;
+        let { debugType, debugEventListener, targetFrameworkVersion } = <span class="cstat-no" title="statement not covered" >await this._recordDebugAndGetDebugValues(fileName, testFrameworkName, output);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return this._getLaunchConfiguration(debugType, fileName, testMethod, testFrameworkName, targetFrameworkVersion, debugEventListener)</span>
+            .then(config =&gt;<span class="fstat-no" title="function not covered" > {</span>
+                const workspaceFolder = <span class="cstat-no" title="statement not covered" >vscode.workspace.getWorkspaceFolder(vscode.Uri.file(fileName));</span>
+<span class="cstat-no" title="statement not covered" >                return vscode.debug.startDebugging(workspaceFolder, config);</span>
+            })
+            .catch(reason =&gt;<span class="fstat-no" title="function not covered" > {</span>
+<span class="cstat-no" title="statement not covered" >                vscode.window.showErrorMessage(`Failed to start debugger: ${reason}`);</span>
+<span class="cstat-no" title="statement not covered" >                if (debugEventListener != null) {</span>
+<span class="cstat-no" title="statement not covered" >                    debugEventListener.close();</span>
+                }
+            });
+    }
+&nbsp;
+    private async _debugDotnetTestsInClass(methodsToRun: string[], fileName: string, testFrameworkName: string<span class="fstat-no" title="function not covered" >) {</span>
+&nbsp;
+        const output = <span class="cstat-no" title="statement not covered" >this._getOutputChannel();</span>
+&nbsp;
+        let { debugType, debugEventListener, targetFrameworkVersion } = <span class="cstat-no" title="statement not covered" >await this._recordDebugAndGetDebugValues(fileName, testFrameworkName, output);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return await this._getLaunchConfigurationForClass(debugType, fileName, methodsToRun, testFrameworkName, targetFrameworkVersion, debugEventListener)</span>
+            .then(config =&gt;<span class="fstat-no" title="function not covered" > {</span>
+                const workspaceFolder = <span class="cstat-no" title="statement not covered" >vscode.workspace.getWorkspaceFolder(vscode.Uri.file(fileName));</span>
+<span class="cstat-no" title="statement not covered" >                return vscode.debug.startDebugging(workspaceFolder, config);</span>
+            })
+            .catch(reason =&gt;<span class="fstat-no" title="function not covered" > {</span>
+<span class="cstat-no" title="statement not covered" >                vscode.window.showErrorMessage(`Failed to start debugger: ${reason}`);</span>
+<span class="cstat-no" title="statement not covered" >                if (debugEventListener != null) {</span>
+<span class="cstat-no" title="statement not covered" >                    debugEventListener.close();</span>
+                }
+            });
+    }
+&nbsp;
+    private _getLaunchConfigurationForClass(debugType: string, fileName: string, methodsToRun: string[], testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener<span class="fstat-no" title="function not covered" >): Promise&lt;any&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        if (debugType == 'vstest') {</span>
+<span class="cstat-no" title="statement not covered" >            return this._getLaunchConfigurationForVSTestClass(fileName, methodsToRun, testFrameworkName, targetFrameworkVersion, debugEventListener);</span>
+        }
+<span class="cstat-no" title="statement not covered" >        throw new Error(`Unexpected debug type: ${debugType}`);</span>
+    }
+&nbsp;
+    private _getLaunchConfigurationForVSTestClass(fileName: string, methodsToRun: string[], testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener<span class="fstat-no" title="function not covered" >): Promise&lt;any&gt; {</span>
+        const output = <span class="cstat-no" title="statement not covered" >this._getOutputChannel();</span>
+&nbsp;
+        const listener = <span class="cstat-no" title="statement not covered" >this._server.onTestMessage(e =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >            output.appendLine(e.Message);</span>
+        });
+&nbsp;
+        const request: protocol.V2.DebugTestClassGetStartInfoRequest = <span class="cstat-no" title="statement not covered" >{</span>
+            FileName: fileName,
+            MethodNames: methodsToRun,
+            TestFrameworkName: testFrameworkName,
+            TargetFrameworkVersion: targetFrameworkVersion
+        };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return serverUtils.debugTestClassGetStartInfo(this._server, request)</span>
+            .then(response =&gt;<span class="fstat-no" title="function not covered" > {</span>
+<span class="cstat-no" title="statement not covered" >                listener.dispose();</span>
+<span class="cstat-no" title="statement not covered" >                return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath());</span>
+            });
+    }
+}
+&nbsp;
+class DebugEventListener {
+    static s_activeInstance: DebugEventListener = null;
+    _fileName: string;
+    _server: OmniSharpServer;
+    _outputChannel: vscode.OutputChannel;
+    _pipePath: string;
+&nbsp;
+    _serverSocket: net.Server;
+<span class="cstat-no" title="statement not covered" >    _isClosed: boolean = false;</span>
+&nbsp;
+    constructor(fileName: string, server: OmniSharpServer, outputChannel: vscode.OutputChannel<span class="fstat-no" title="function not covered" >) {</span>
+<span class="cstat-no" title="statement not covered" >        this._fileName = fileName;</span>
+<span class="cstat-no" title="statement not covered" >        this._server = server;</span>
+<span class="cstat-no" title="statement not covered" >        this._outputChannel = outputChannel;</span>
+        // NOTE: The max pipe name on OSX is fairly small, so this name shouldn't bee too long.
+        const pipeSuffix = <span class="cstat-no" title="statement not covered" >"TestDebugEvents-" + process.pid;</span>
+<span class="cstat-no" title="statement not covered" >        if (os.platform() === 'win32') {</span>
+<span class="cstat-no" title="statement not covered" >            this._pipePath = "\\\\.\\pipe\\Microsoft.VSCode.CSharpExt." + pipeSuffix;</span>
+        } else {
+<span class="cstat-no" title="statement not covered" >            this._pipePath = path.join(utils.getExtensionPath(), "." + pipeSuffix);</span>
+        }
+    }
+&nbsp;
+    public start<span class="fstat-no" title="function not covered" >(): Promise&lt;void&gt; {</span>
+&nbsp;
+        // We use our process id as part of the pipe name, so if we still somehow have an old instance running, close it.
+<span class="cstat-no" title="statement not covered" >        if (DebugEventListener.s_activeInstance !== null) {</span>
+<span class="cstat-no" title="statement not covered" >            DebugEventListener.s_activeInstance.close();</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        DebugEventListener.s_activeInstance = this;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        this._serverSocket = net.createServer((socket: net.Socket) =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >            socket.on('data', (buffer: Buffer) =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+                let event: DebuggerEventsProtocol.DebuggerEvent;
+<span class="cstat-no" title="statement not covered" >                try {</span>
+<span class="cstat-no" title="statement not covered" >                    event = DebuggerEventsProtocol.decodePacket(buffer);</span>
+                }
+                catch (e) {
+<span class="cstat-no" title="statement not covered" >                    this._outputChannel.appendLine("Warning: Invalid event received from debugger");</span>
+<span class="cstat-no" title="statement not covered" >                    return;</span>
+                }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                switch (event.eventType) {</span>
+                    case DebuggerEventsProtocol.EventType.ProcessLaunched:
+                        let processLaunchedEvent = &lt;DebuggerEventsProtocol.ProcessLaunchedEvent&gt;(<span class="cstat-no" title="statement not covered" >event)</span>;
+<span class="cstat-no" title="statement not covered" >                        this._outputChannel.appendLine(`Started debugging process #${processLaunchedEvent.targetProcessId}.`);</span>
+<span class="cstat-no" title="statement not covered" >                        this.onProcessLaunched(processLaunchedEvent.targetProcessId);</span>
+<span class="cstat-no" title="statement not covered" >                        break;</span>
+&nbsp;
+                    case DebuggerEventsProtocol.EventType.DebuggingStopped:
+<span class="cstat-no" title="statement not covered" >                        this._outputChannel.appendLine("Debugging complete.\n");</span>
+<span class="cstat-no" title="statement not covered" >                        this.onDebuggingStopped();</span>
+<span class="cstat-no" title="statement not covered" >                        break;</span>
+                }
+            });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            socket.on('end', () =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >                this.onDebuggingStopped();</span>
+            });
+        });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return this.removeSocketFileIfExists().then(() =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >            return new Promise&lt;void&gt;((resolve, reject) =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+                let isStarted: boolean = <span class="cstat-no" title="statement not covered" >false;</span>
+<span class="cstat-no" title="statement not covered" >                this._serverSocket.on('error', (err: Error) =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >                    if (!isStarted) {</span>
+<span class="cstat-no" title="statement not covered" >                        reject(err.message);</span>
+                    } else {
+<span class="cstat-no" title="statement not covered" >                        this._outputChannel.appendLine("Warning: Communications error on debugger event channel. " + err.message);</span>
+                    }
+                });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                this._serverSocket.listen(this._pipePath, () =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >                    isStarted = true;</span>
+<span class="cstat-no" title="statement not covered" >                    resolve();</span>
+                });
+            });
+        });
+    }
+&nbsp;
+    public pipePath<span class="fstat-no" title="function not covered" >(): string {</span>
+<span class="cstat-no" title="statement not covered" >        return this._pipePath;</span>
+    }
+&nbsp;
+    public close<span class="fstat-no" title="function not covered" >() {</span>
+<span class="cstat-no" title="statement not covered" >        if (this === DebugEventListener.s_activeInstance) {</span>
+<span class="cstat-no" title="statement not covered" >            DebugEventListener.s_activeInstance = null;</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (this._isClosed) {</span>
+<span class="cstat-no" title="statement not covered" >            return;</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        this._isClosed = true;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (this._serverSocket !== null) {</span>
+<span class="cstat-no" title="statement not covered" >            this._serverSocket.close();</span>
+        }
+    }
+&nbsp;
+    private onProcessLaunched(targetProcessId: number<span class="fstat-no" title="function not covered" >): void {</span>
+        let request: protocol.V2.DebugTestLaunchRequest = <span class="cstat-no" title="statement not covered" >{</span>
+            FileName: this._fileName,
+            TargetProcessId: targetProcessId
+        };
+&nbsp;
+        const disposable = <span class="cstat-no" title="statement not covered" >this._server.onTestMessage(e =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >            this._outputChannel.appendLine(e.Message);</span>
+        });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        serverUtils.debugTestLaunch(this._server, request)</span>
+            .then(_ =&gt;<span class="fstat-no" title="function not covered" > {</span>
+<span class="cstat-no" title="statement not covered" >                disposable.dispose();</span>
+            });
+    }
+&nbsp;
+    private onDebuggingStopped<span class="fstat-no" title="function not covered" >(): void {</span>
+<span class="cstat-no" title="statement not covered" >        if (this._isClosed) {</span>
+<span class="cstat-no" title="statement not covered" >            return;</span>
+        }
+&nbsp;
+        let request: protocol.V2.DebugTestStopRequest = <span class="cstat-no" title="statement not covered" >{</span>
+            FileName: this._fileName
+        };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        serverUtils.debugTestStop(this._server, request);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        this.close();</span>
+    }
+&nbsp;
+    private removeSocketFileIfExists<span class="fstat-no" title="function not covered" >(): Promise&lt;void&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        if (os.platform() === 'win32') {</span>
+            // Win32 doesn't use the file system for pipe names
+<span class="cstat-no" title="statement not covered" >            return Promise.resolve();</span>
+        }
+        else {
+<span class="cstat-no" title="statement not covered" >            return utils.deleteIfExists(this._pipePath);</span>
+        }
+    }
+}</pre></td></tr>
+</table></pre>
+
+</div>
+<div class="footer">
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Mar 09 2018 19:23:26 GMT-0800 (PST)</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

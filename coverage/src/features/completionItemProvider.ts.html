@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/features/completionItemProvider.ts</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../../prettify.css">
+    <link rel="stylesheet" href="../../base.css">
+    <style type='text/css'>
+        div.coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class="header low">
+    <h1>Code coverage report for <span class="entity">src/features/completionItemProvider.ts</span></h1>
+    <h2>
+        Statements: <span class="metric">42.62% <small>(26 / 61)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">0% <small>(0 / 18)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">0% <small>(0 / 2)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">42.62% <small>(26 / 61)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
+    </h2>
+    <div class="path"><a href="../../index.html">All files</a> &#187; <a href="index.html">src/features/</a> &#187; completionItemProvider.ts</div>
+</div>
+<div class="body">
+<pre><table class="coverage">
+<tr><td class="line-count">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133</td><td class="line-coverage"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+&nbsp;
+'use strict';
+&nbsp;
+import {extractSummaryText} from './documentation';
+import AbstractSupport from './abstractProvider';
+import * as protocol from '../omnisharp/protocol';
+import * as serverUtils from '../omnisharp/utils';
+import {createRequest} from '../omnisharp/typeConvertion';
+import {CompletionItemProvider, CompletionItem, CompletionItemKind, CompletionContext, CompletionTriggerKind, CancellationToken, TextDocument, Range, Position, CompletionList} from 'vscode';
+&nbsp;
+export default class OmniSharpCompletionItemProvider extends AbstractSupport implements CompletionItemProvider {
+&nbsp;
+    // copied from Roslyn here: https://github.com/dotnet/roslyn/blob/6e8f6d600b6c4bc0b92bc3d782a9e0b07e1c9f8e/src/Features/Core/Portable/Completion/CompletionRules.cs#L166-L169
+    private static AllCommitCharacters = [
+        ' ', '{', '}', '[', ']', '(', ')', '.', ',', ':',
+        ';', '+', '-', '*', '/', '%', '&amp;', '|', '^', '!',
+        '~', '=', '&lt;', '&gt;', '?', '@', '#', '\'', '\"', '\\'];
+    
+    private static CommitCharactersWithoutSpace = [
+        '{', '}', '[', ']', '(', ')', '.', ',', ':',
+        ';', '+', '-', '*', '/', '%', '&amp;', '|', '^', '!',
+        '~', '=', '&lt;', '&gt;', '?', '@', '#', '\'', '\"', '\\'];
+&nbsp;
+    public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext<span class="fstat-no" title="function not covered" >): Promise&lt;CompletionList&gt; {</span>
+&nbsp;
+        let wordToComplete = <span class="cstat-no" title="statement not covered" >'';</span>
+        let range = <span class="cstat-no" title="statement not covered" >document.getWordRangeAtPosition(position);</span>
+<span class="cstat-no" title="statement not covered" >        if (range) {</span>
+<span class="cstat-no" title="statement not covered" >            wordToComplete = document.getText(new Range(range.start, position));</span>
+        }
+&nbsp;
+        let req = <span class="cstat-no" title="statement not covered" >createRequest&lt;protocol.AutoCompleteRequest&gt;(document, position);</span>
+<span class="cstat-no" title="statement not covered" >        req.WordToComplete = wordToComplete;</span>
+<span class="cstat-no" title="statement not covered" >        req.WantDocumentationForEveryCompletionResult = true;</span>
+<span class="cstat-no" title="statement not covered" >        req.WantKind = true;</span>
+<span class="cstat-no" title="statement not covered" >        req.WantReturnType = true;</span>
+<span class="cstat-no" title="statement not covered" >        if (context.triggerKind == CompletionTriggerKind.TriggerCharacter)</span>
+        {
+<span class="cstat-no" title="statement not covered" >            req.TriggerCharacter = context.triggerCharacter;</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return serverUtils.autoComplete(this._server, req).then(responses =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (!responses) {</span>
+<span class="cstat-no" title="statement not covered" >                return;</span>
+            }
+&nbsp;
+            let result: CompletionItem[] = <span class="cstat-no" title="statement not covered" >[];</span>
+            let completions: { [c: string]: CompletionItem[] } = <span class="cstat-no" title="statement not covered" >Object.create(null);</span>
+&nbsp;
+            // transform AutoCompleteResponse to CompletionItem and
+            // group by code snippet
+<span class="cstat-no" title="statement not covered" >            for (let response of responses) {</span>
+                let completion = <span class="cstat-no" title="statement not covered" >new CompletionItem(response.CompletionText);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                completion.detail = response.ReturnType</span>
+                    ? `${response.ReturnType} ${response.DisplayText}`
+                    : response.DisplayText;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                completion.documentation = extractSummaryText(response.Description);</span>
+<span class="cstat-no" title="statement not covered" >                completion.kind = _kinds[response.Kind] || CompletionItemKind.Property;</span>
+<span class="cstat-no" title="statement not covered" >                completion.insertText = response.CompletionText.replace(/&lt;&gt;/g, '');</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                completion.commitCharacters = response.IsSuggestionMode</span>
+                    ? OmniSharpCompletionItemProvider.CommitCharactersWithoutSpace
+                    : OmniSharpCompletionItemProvider.AllCommitCharacters;
+&nbsp;
+                let array = <span class="cstat-no" title="statement not covered" >completions[completion.label];</span>
+<span class="cstat-no" title="statement not covered" >                if (!array) {</span>
+<span class="cstat-no" title="statement not covered" >                    completions[completion.label] = [completion];</span>
+                }
+                else {
+<span class="cstat-no" title="statement not covered" >                    array.push(completion);</span>
+                }
+            }
+&nbsp;
+            // per suggestion group, select on and indicate overloads
+<span class="cstat-no" title="statement not covered" >            for (let key in completions) {</span>
+&nbsp;
+                let suggestion = <span class="cstat-no" title="statement not covered" >completions[key][0],</span>
+                    overloadCount = <span class="cstat-no" title="statement not covered" >completions[key].length - 1;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                if (overloadCount === 0) {</span>
+                    // remove non overloaded items
+<span class="cstat-no" title="statement not covered" >                    delete completions[key];</span>
+&nbsp;
+                }
+                else {
+                    // indicate that there is more
+<span class="cstat-no" title="statement not covered" >                    suggestion.detail = `${suggestion.detail} (+ ${overloadCount} overload(s))`;</span>
+                }
+                
+<span class="cstat-no" title="statement not covered" >                result.push(suggestion);</span>
+            }
+&nbsp;
+            // for short completions (up to 1 character), treat the list as incomplete
+            // because the server has likely witheld some matches due to performance constraints
+<span class="cstat-no" title="statement not covered" >            return new CompletionList(result, wordToComplete.length &gt; 1 ? false : true);</span>
+        });
+    }
+}
+&nbsp;
+const _kinds: { [kind: string]: CompletionItemKind; } = Object.create(null);
+&nbsp;
+// types
+_kinds['Class'] = CompletionItemKind.Class;
+_kinds['Delegate'] = CompletionItemKind.Class; // need a better option for this.
+_kinds['Enum'] = CompletionItemKind.Enum;
+_kinds['Interface'] = CompletionItemKind.Interface;
+_kinds['Struct'] = CompletionItemKind.Struct;
+&nbsp;
+// variables
+_kinds['Local'] = CompletionItemKind.Variable;
+_kinds['Parameter'] = CompletionItemKind.Variable;
+_kinds['RangeVariable'] = CompletionItemKind.Variable;
+&nbsp;
+// members
+_kinds['Const'] = CompletionItemKind.Constant;
+_kinds['EnumMember'] = CompletionItemKind.EnumMember;
+_kinds['Event'] = CompletionItemKind.Event;
+_kinds['Field'] = CompletionItemKind.Field;
+_kinds['Method'] = CompletionItemKind.Method;
+_kinds['Property'] = CompletionItemKind.Property;
+&nbsp;
+// other stuff
+_kinds['Label'] = CompletionItemKind.Unit; // need a better option for this.
+_kinds['Keyword'] = CompletionItemKind.Keyword;
+_kinds['Namespace'] = CompletionItemKind.Module;
+&nbsp;</pre></td></tr>
+</table></pre>
+
+</div>
+<div class="footer">
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Mar 09 2018 19:23:26 GMT-0800 (PST)</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/common.ts</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../prettify.css">
+    <link rel="stylesheet" href="../base.css">
+    <style type='text/css'>
+        div.coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class="header medium">
+    <h1>Code coverage report for <span class="entity">src/common.ts</span></h1>
+    <h2>
+        Statements: <span class="metric">50% <small>(46 / 92)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">32.43% <small>(12 / 37)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">54.29% <small>(19 / 35)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">50% <small>(44 / 88)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
+    </h2>
+    <div class="path"><a href="../index.html">All files</a> &#187; <a href="index.html">src/</a> &#187; common.ts</div>
+</div>
+<div class="body">
+<pre><table class="coverage">
+<tr><td class="line-count">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186</td><td class="line-coverage"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">13</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">3</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">3</span>
+<span class="cline-any cline-yes">3</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+&nbsp;
+import * as cp from 'child_process';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+&nbsp;
+let extensionPath: string;
+&nbsp;
+export function setExtensionPath(path: string) {
+    extensionPath = path;
+}
+&nbsp;
+export function getExtensionPath() {
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!extensionPath) {
+<span class="cstat-no" title="statement not covered" >        throw new Error('Failed to set extension path');</span>
+    }
+&nbsp;
+    return extensionPath;
+}
+&nbsp;
+export function isBoolean(obj: any): obj is boolean {
+    return obj === true || <span class="branch-1 cbranch-no" title="branch not covered" >obj === false;</span>
+}
+&nbsp;
+export function sum&lt;T&gt;(arr: T[], selector: (item: T) =&gt; number): number {
+    return arr.reduce((prev, curr) =&gt; prev + selector(curr), 0);
+}
+&nbsp;
+/** Retrieve the length of an array. Returns 0 if the array is `undefined`. */
+export function safeLength&lt;T&gt;(arr: T[] | undefined) {
+    return arr ? arr.length : <span class="branch-1 cbranch-no" title="branch not covered" >0;</span>
+}
+&nbsp;
+export function buildPromiseChain&lt;T, TResult&gt;(array: T[], builder: (item: T) =&gt; Promise&lt;TResult&gt;): Promise&lt;TResult&gt; {
+    return array.reduce(
+        (promise, n) =&gt; promise.then(() =&gt; builder(n)),
+        Promise.resolve&lt;TResult&gt;(null));
+}
+&nbsp;
+export function execChildProcess(command: string, workingDirectory: string = getExtensionPath()): Promise&lt;string&gt; {
+    return new Promise&lt;string&gt;((resolve, reject) =&gt; {
+        cp.exec(command, { cwd: workingDirectory, maxBuffer: 500 * 1024 }, (error, stdout, stderr) =&gt; {
+            <span class="missing-if-branch" title="if path not taken" >I</span>if (error) {
+<span class="cstat-no" title="statement not covered" >                reject(error);</span>
+            }
+            else <span class="missing-if-branch" title="if path not taken" >I</span>if (stderr &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >stderr.length &gt; 0)</span> {
+<span class="cstat-no" title="statement not covered" >                reject(new Error(stderr));</span>
+            }
+            else {
+                resolve(stdout);
+            }
+        });
+    });
+}
+&nbsp;
+export function getUnixChildProcessIds(pid: number<span class="fstat-no" title="function not covered" >): Promise&lt;number[]&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    return new Promise&lt;number[]&gt;((resolve, reject) =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+        let ps = <span class="cstat-no" title="statement not covered" >cp.exec('ps -A -o ppid,pid', (error, stdout, stderr) =&gt;<span class="fstat-no" title="function not covered" ></span></span>
+        {
+<span class="cstat-no" title="statement not covered" >            if (error) {</span>
+<span class="cstat-no" title="statement not covered" >                return reject(error);</span>
+            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (stderr) {</span>
+<span class="cstat-no" title="statement not covered" >                return reject(stderr);</span>
+            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (!stdout) {</span>
+<span class="cstat-no" title="statement not covered" >                return resolve([]);</span>
+            }
+&nbsp;
+            let lines = <span class="cstat-no" title="statement not covered" >stdout.split(os.EOL);</span>
+            let pairs = <span class="cstat-no" title="statement not covered" >lines.map(line =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >line.trim().split(/\s+/))</span></span>;</span>
+&nbsp;
+            let children = <span class="cstat-no" title="statement not covered" >[];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            for (let pair of pairs) {</span>
+                let ppid = <span class="cstat-no" title="statement not covered" >parseInt(pair[0]);</span>
+<span class="cstat-no" title="statement not covered" >                if (ppid === pid) {</span>
+<span class="cstat-no" title="statement not covered" >                    children.push(parseInt(pair[1]));</span>
+                }
+            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            resolve(children);</span>
+        });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        ps.on('error', reject);</span>
+    });
+}
+&nbsp;
+export function fileExists(filePath: string): Promise&lt;boolean&gt; {
+    return new Promise&lt;boolean&gt;((resolve, reject) =&gt; {
+        fs.stat(filePath, (err, stats) =&gt; {
+            <span class="missing-if-branch" title="else path not taken" >E</span>if (stats &amp;&amp; stats.isFile()) {
+                resolve(true);
+            }
+            else {
+<span class="cstat-no" title="statement not covered" >                resolve(false);</span>
+            }
+        });
+    });
+}
+&nbsp;
+export function deleteIfExists(filePath: string<span class="fstat-no" title="function not covered" >): Promise&lt;void&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    return fileExists(filePath)</span>
+    .then((exists: boolean) =&gt;<span class="fstat-no" title="function not covered" > {</span>
+<span class="cstat-no" title="statement not covered" >        return new Promise&lt;void&gt;((resolve, reject) =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >            if (!exists) {</span>
+<span class="cstat-no" title="statement not covered" >                return resolve();</span>
+            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            fs.unlink(filePath, err =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >                if (err) {</span>
+<span class="cstat-no" title="statement not covered" >                    return reject(err);</span>
+                }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                resolve();</span>
+            });
+        });
+    });
+}
+&nbsp;
+export enum InstallFileType {
+    Begin,
+    Lock
+}
+&nbsp;
+function getInstallFilePath(type: InstallFileType): string {
+    let installFile = 'install.' + InstallFileType[type];
+    return path.resolve(getExtensionPath(), installFile);
+}
+&nbsp;
+export function installFileExists(type: InstallFileType): Promise&lt;boolean&gt; {
+    return fileExists(getInstallFilePath(type));
+}
+&nbsp;
+export function touchInstallFile(type: InstallFileType<span class="fstat-no" title="function not covered" >): Promise&lt;void&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    return new Promise&lt;void&gt;((resolve, reject) =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >        fs.writeFile(getInstallFilePath(type), '', err =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >            if (err) {</span>
+<span class="cstat-no" title="statement not covered" >                reject(err);</span>
+<span class="cstat-no" title="statement not covered" >                return;</span>
+            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            resolve();</span>
+        });
+    });
+}
+&nbsp;
+export function deleteInstallFile(type: InstallFileType<span class="fstat-no" title="function not covered" >): Promise&lt;void&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    return new Promise&lt;void&gt;((resolve, reject) =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >        fs.unlink(getInstallFilePath(type), err =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >            if (err) {</span>
+<span class="cstat-no" title="statement not covered" >                reject(err);</span>
+<span class="cstat-no" title="statement not covered" >                return;</span>
+            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            resolve();</span>
+        });
+    });
+}
+&nbsp;
+export function convertNativePathToPosix(pathString: string): string {
+    let parts = pathString.split(path.sep);
+    return parts.join(path.posix.sep);
+}
+&nbsp;
+/**
+ * This function checks to see if a subfolder is part of folder.
+ * 
+ * Assumes subfolder and folder are absolute paths and have consistent casing.
+ * 
+ * @param subfolder subfolder to check if it is part of the folder parameter
+ * @param folder folder to check aganist
+ */
+export function isSubfolderOf(subfolder: string, folder: string<span class="fstat-no" title="function not covered" >): boolean {</span>
+    const subfolderArray: string[] = <span class="cstat-no" title="statement not covered" >subfolder.split(path.sep);</span>
+    const folderArray: string[] = <span class="cstat-no" title="statement not covered" >folder.split(path.sep);</span>
+&nbsp;
+    // Check to see that every sub directory in subfolder exists in folder.
+<span class="cstat-no" title="statement not covered" >    return subfolderArray.length &lt;= folderArray.length &amp;&amp; subfolderArray.every((subpath, index) =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >folderArray[index] === subpath)</span></span>;</span>
+}</pre></td></tr>
+</table></pre>
+
+</div>
+<div class="footer">
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Mar 09 2018 19:23:26 GMT-0800 (PST)</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>

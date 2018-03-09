@@ -32,6 +32,9 @@ install:
 
 script:
   - npm test --silent
+  - npm run cov:instrument
+  - npm test --silent
+  - npm run cov:report
 
 after_failure:
   - ./.travis/printLogs.sh

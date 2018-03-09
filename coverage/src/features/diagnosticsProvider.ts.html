@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/features/diagnosticsProvider.ts</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../../prettify.css">
+    <link rel="stylesheet" href="../../base.css">
+    <style type='text/css'>
+        div.coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class="header medium">
+    <h1>Code coverage report for <span class="entity">src/features/diagnosticsProvider.ts</span></h1>
+    <h2>
+        Statements: <span class="metric">77.61% <small>(104 / 134)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">56.45% <small>(35 / 62)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">81.58% <small>(31 / 38)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">77.52% <small>(100 / 129)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
+    </h2>
+    <div class="path"><a href="../../index.html">All files</a> &#187; <a href="index.html">src/features/</a> &#187; diagnosticsProvider.ts</div>
+</div>
+<div class="body">
+<pre><table class="coverage">
+<tr><td class="line-count">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311</td><td class="line-coverage"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8</span>
+<span class="cline-any cline-yes">8</span>
+<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">9</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-yes">3</span>
+<span class="cline-any cline-yes">3</span>
+<span class="cline-any cline-yes">3</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-yes">3</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8</span>
+<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8</span>
+<span class="cline-any cline-yes">8</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">62</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">34</span>
+<span class="cline-any cline-yes">34</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">34</span>
+<span class="cline-any cline-yes">30</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">9</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8</span>
+<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44</span>
+<span class="cline-any cline-yes">44</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44</span>
+<span class="cline-any cline-yes">44</span>
+<span class="cline-any cline-yes">44</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">40</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44</span>
+<span class="cline-any cline-yes">44</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+&nbsp;
+import { OmniSharpServer } from '../omnisharp/server';
+import AbstractSupport from './abstractProvider';
+import * as protocol from '../omnisharp/protocol';
+import * as serverUtils from '../omnisharp/utils';
+import { toRange } from '../omnisharp/typeConvertion';
+import * as vscode from 'vscode';
+import TelemetryReporter from 'vscode-extension-telemetry';
+&nbsp;
+export class Advisor {
+&nbsp;
+    private _disposable: vscode.Disposable;
+    private _server: OmniSharpServer;
+    private _packageRestoreCounter: number = 0;
+    private _projectSourceFileCounts: { [path: string]: number } = Object.create(null);
+&nbsp;
+    constructor(server: OmniSharpServer) {
+        this._server = server;
+&nbsp;
+        let d1 = server.onProjectChange(this._onProjectChange, this);
+        let d2 = server.onProjectAdded(this._onProjectAdded, this);
+        let d3 = server.onProjectRemoved(this._onProjectRemoved, this);
+        let d4 = server.onBeforePackageRestore(this._onBeforePackageRestore, this);
+        let d5 = server.onPackageRestore(this._onPackageRestore, this);
+        this._disposable = vscode.Disposable.from(d1, d2, d3, d4, d5);
+    }
+&nbsp;
+    public dispose<span class="fstat-no" title="function not covered" >() {</span>
+<span class="cstat-no" title="statement not covered" >        this._disposable.dispose();</span>
+    }
+&nbsp;
+    public shouldValidateFiles(): boolean {
+        return this._isServerStarted()
+            &amp;&amp; !this._isRestoringPackages();
+    }
+&nbsp;
+    public shouldValidateProject(): boolean {
+        return this._isServerStarted()
+            &amp;&amp; !this._isRestoringPackages()
+            &amp;&amp; !this._isHugeProject();
+    }
+&nbsp;
+    private _updateProjectFileCount(path: string, fileCount: number): void {
+        this._projectSourceFileCounts[path] = fileCount;
+    }
+&nbsp;
+    private _addOrUpdateProjectFileCount(info: protocol.ProjectInformationResponse): void {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (info.DotNetProject &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >info.DotNetProject.SourceFiles)</span> {
+<span class="cstat-no" title="statement not covered" >            this._updateProjectFileCount(info.DotNetProject.Path, info.DotNetProject.SourceFiles.length);</span>
+        }
+&nbsp;
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (info.MsBuildProject &amp;&amp; info.MsBuildProject.SourceFiles) {
+            this._updateProjectFileCount(info.MsBuildProject.Path, info.MsBuildProject.SourceFiles.length);
+        }
+    }
+&nbsp;
+    private _removeProjectFileCount(info: protocol.ProjectInformationResponse<span class="fstat-no" title="function not covered" >): void {</span>
+<span class="cstat-no" title="statement not covered" >        if (info.DotNetProject &amp;&amp; info.DotNetProject.SourceFiles) {</span>
+<span class="cstat-no" title="statement not covered" >            delete this._updateProjectFileCount[info.DotNetProject.Path];</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (info.MsBuildProject &amp;&amp; info.MsBuildProject.SourceFiles) {</span>
+<span class="cstat-no" title="statement not covered" >            delete this._updateProjectFileCount[info.MsBuildProject.Path];</span>
+        }
+    }
+&nbsp;
+    private _onProjectAdded(info: protocol.ProjectInformationResponse): void {
+        this._addOrUpdateProjectFileCount(info);
+    }
+&nbsp;
+    private _onProjectRemoved(info: protocol.ProjectInformationResponse<span class="fstat-no" title="function not covered" >): void {</span>
+<span class="cstat-no" title="statement not covered" >        this._removeProjectFileCount(info);</span>
+    }
+&nbsp;
+    private _onProjectChange(info: protocol.ProjectInformationResponse): void {
+        this._addOrUpdateProjectFileCount(info);
+    }
+&nbsp;
+    private _onBeforePackageRestore<span class="fstat-no" title="function not covered" >(): void {</span>
+<span class="cstat-no" title="statement not covered" >        this._packageRestoreCounter += 1;</span>
+    }
+&nbsp;
+    private _onPackageRestore<span class="fstat-no" title="function not covered" >(): void {</span>
+<span class="cstat-no" title="statement not covered" >        this._packageRestoreCounter -= 1;</span>
+    }
+&nbsp;
+    private _isRestoringPackages(): boolean {
+        return this._packageRestoreCounter &gt; 0;
+    }
+&nbsp;
+    private _isServerStarted(): boolean {
+        return this._server.isRunning();
+    }
+&nbsp;
+    private _isHugeProject(): boolean {
+        let sourceFileCount = 0;
+        for (let key in this._projectSourceFileCounts) {
+            sourceFileCount += this._projectSourceFileCounts[key];
+            <span class="missing-if-branch" title="if path not taken" >I</span>if (sourceFileCount &gt; 1000) {
+<span class="cstat-no" title="statement not covered" >                return true;</span>
+            }
+        }
+&nbsp;
+        return false;
+    }
+}
+&nbsp;
+export default function reportDiagnostics(server: OmniSharpServer, reporter: TelemetryReporter, advisor: Advisor): vscode.Disposable {
+    return new DiagnosticsProvider(server, reporter, advisor);
+}
+&nbsp;
+class DiagnosticsProvider extends AbstractSupport {
+&nbsp;
+    private _validationAdvisor: Advisor;
+    private _disposable: vscode.Disposable;
+    private _documentValidations: { [uri: string]: vscode.CancellationTokenSource } = Object.create(null);
+    private _projectValidation: vscode.CancellationTokenSource;
+    private _diagnostics: vscode.DiagnosticCollection;
+&nbsp;
+    constructor(server: OmniSharpServer, reporter: TelemetryReporter, validationAdvisor: Advisor) {
+        super(server, reporter);
+&nbsp;
+        this._validationAdvisor = validationAdvisor;
+        this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
+&nbsp;
+        let d1 = this._server.onPackageRestore(this._validateProject, this);
+        let d2 = this._server.onProjectChange(this._validateProject, this);
+        let d4 = vscode.workspace.onDidOpenTextDocument(event =&gt; this._onDocumentAddOrChange(event), this);
+        let d3 = vscode.workspace.onDidChangeTextDocument(event =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >this._onDocumentAddOrChange(event.document),</span></span> this);
+        let d5 = vscode.workspace.onDidCloseTextDocument(this._onDocumentRemove, this);
+        this._disposable = vscode.Disposable.from(this._diagnostics, d1, d2, d3, d4, d5);
+&nbsp;
+        // Go ahead and check for diagnostics in the currently visible editors.
+        for (let editor of vscode.window.visibleTextEditors) {
+            let document = <span class="cstat-no" title="statement not covered" >editor.document;</span>
+<span class="cstat-no" title="statement not covered" >            if (document.languageId === 'csharp' &amp;&amp; document.uri.scheme === 'file') {</span>
+<span class="cstat-no" title="statement not covered" >                this._validateDocument(document);</span>
+            }
+        }
+    }
+&nbsp;
+    public dispose<span class="fstat-no" title="function not covered" >(): void {</span>
+<span class="cstat-no" title="statement not covered" >        if (this._projectValidation) {</span>
+<span class="cstat-no" title="statement not covered" >            this._projectValidation.dispose();</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        for (let key in this._documentValidations) {</span>
+<span class="cstat-no" title="statement not covered" >            this._documentValidations[key].dispose();</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        this._disposable.dispose();</span>
+    }
+&nbsp;
+    private _onDocumentAddOrChange(document: vscode.TextDocument): void {
+        if (document.languageId === 'csharp' &amp;&amp; document.uri.scheme === 'file') {
+            this._validateDocument(document);
+            this._validateProject();
+        }
+    }
+&nbsp;
+    private _onDocumentRemove(document: vscode.TextDocument) {
+        let key = document.uri.toString();
+        let didChange = false;
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (this._diagnostics[key]) {
+<span class="cstat-no" title="statement not covered" >            didChange = true;</span>
+<span class="cstat-no" title="statement not covered" >            this._diagnostics[key].dispose();</span>
+<span class="cstat-no" title="statement not covered" >            delete this._diagnostics[key];</span>
+        }
+        if (this._documentValidations[key]) {
+            didChange = true;
+            this._documentValidations[key].cancel();
+            delete this._documentValidations[key];
+        }
+        if (didChange) {
+            this._validateProject();
+        }
+    }
+&nbsp;
+    private _validateDocument(document: vscode.TextDocument): void {
+        // If we've already started computing for this document, cancel that work.
+        let key = document.uri.toString();
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (this._documentValidations[key]) {
+<span class="cstat-no" title="statement not covered" >            this._documentValidations[key].cancel();</span>
+        }
+&nbsp;
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!this._validationAdvisor.shouldValidateFiles()) {
+<span class="cstat-no" title="statement not covered" >            return;</span>
+        }
+&nbsp;
+        let source = new vscode.CancellationTokenSource();
+        let handle = setTimeout(() =&gt; {
+            serverUtils.codeCheck(this._server, { FileName: document.fileName }, source.token).then(value =&gt; {
+&nbsp;
+                let quickFixes = value.QuickFixes.filter(DiagnosticsProvider._shouldInclude);
+&nbsp;
+                // Easy case: If there are no diagnostics in the file, we can clear it quickly.
+                <span class="missing-if-branch" title="if path not taken" >I</span>if (quickFixes.length === 0) {
+<span class="cstat-no" title="statement not covered" >                    if (this._diagnostics.has(document.uri)) {</span>
+<span class="cstat-no" title="statement not covered" >                        this._diagnostics.delete(document.uri);</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    return;</span>
+                }
+&nbsp;
+                // (re)set new diagnostics for this document
+                let diagnostics = quickFixes.map(DiagnosticsProvider._asDiagnostic);
+&nbsp;
+                this._diagnostics.set(document.uri, diagnostics);
+            });
+        }, 750);
+&nbsp;
+        source.token.onCancellationRequested(() =&gt; clearTimeout(handle));
+        this._documentValidations[key] = source;
+    }
+&nbsp;
+    private _validateProject(): void {
+        // If we've already started computing for this project, cancel that work.
+        if (this._projectValidation) {
+            this._projectValidation.cancel();
+        }
+&nbsp;
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!this._validationAdvisor.shouldValidateProject()) {
+<span class="cstat-no" title="statement not covered" >            return;</span>
+        }
+&nbsp;
+        this._projectValidation = new vscode.CancellationTokenSource();
+        let handle = setTimeout(() =&gt; {
+&nbsp;
+            serverUtils.codeCheck(this._server, { FileName: null }, this._projectValidation.token).then(value =&gt; {
+&nbsp;
+                let quickFixes = value.QuickFixes
+                    .filter(DiagnosticsProvider._shouldInclude)
+                    .sort((a, b) =&gt; a.FileName.localeCompare(b.FileName));
+&nbsp;
+                let entries: [vscode.Uri, vscode.Diagnostic[]][] = [];
+                let lastEntry: [vscode.Uri, vscode.Diagnostic[]];
+&nbsp;
+                for (let quickFix of quickFixes) {
+&nbsp;
+                    let diag = DiagnosticsProvider._asDiagnostic(quickFix);
+                    let uri = vscode.Uri.file(quickFix.FileName);
+&nbsp;
+                    if (lastEntry &amp;&amp; lastEntry[0].toString() === uri.toString()) {
+                        lastEntry[1].push(diag);
+                    } else {
+                        // We're replacing all diagnostics in this file. Pushing an entry with undefined for
+                        // the diagnostics first ensures that the previous diagnostics for this file are
+                        // cleared. Otherwise, new entries will be merged with the old ones.
+                        entries.push([uri, undefined]);
+                        lastEntry = [uri, [diag]];
+                        entries.push(lastEntry);
+                    }
+                }
+&nbsp;
+                // Clear diagnostics for files that no longer have any diagnostics.
+                this._diagnostics.forEach((uri, diagnostics) =&gt; {
+                    if (!entries.find(tuple =&gt; tuple[0].toString() === uri.toString())) {
+                        this._diagnostics.delete(uri);
+                    }
+                });
+&nbsp;
+                // replace all entries
+                this._diagnostics.set(entries);
+            });
+        }, 3000);
+&nbsp;
+        // clear timeout on cancellation
+        this._projectValidation.token.onCancellationRequested(() =&gt; {
+            clearTimeout(handle);
+        });
+    }
+&nbsp;
+    private static _shouldInclude(quickFix: protocol.QuickFix): boolean {
+        const config = vscode.workspace.getConfiguration('csharp');
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (config.get('suppressHiddenDiagnostics', true)) {
+<span class="cstat-no" title="statement not covered" >            return quickFix.LogLevel.toLowerCase() !== 'hidden';</span>
+        } else {
+            return true;
+        }
+    }
+&nbsp;
+    // --- data converter
+&nbsp;
+    private static _asDiagnostic(quickFix: protocol.QuickFix): vscode.Diagnostic {
+        let severity = DiagnosticsProvider._asDiagnosticSeverity(quickFix.LogLevel);
+        let message = `${quickFix.Text} [${quickFix.Projects.map(n =&gt; DiagnosticsProvider._asProjectLabel(n)).join(', ')}]`;
+        return new vscode.Diagnostic(toRange(quickFix), message, severity);
+    }
+&nbsp;
+    private static _asDiagnosticSeverity(logLevel: string): vscode.DiagnosticSeverity {
+        switch (logLevel.toLowerCase()) {
+            case 'error':
+                return vscode.DiagnosticSeverity.Error;
+<span class="branch-1 cbranch-no" title="branch not covered" >            case 'warning':</span>
+<span class="cstat-no" title="statement not covered" >                return vscode.DiagnosticSeverity.Warning;</span>
+            // info and hidden
+            default:
+                return vscode.DiagnosticSeverity.Information;
+        }
+    }
+&nbsp;
+    private static _asProjectLabel(projectName: string): string {
+        const idx = projectName.indexOf('+');
+        return projectName.substr(idx + 1);
+    }
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+
+</div>
+<div class="footer">
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Mar 09 2018 19:23:26 GMT-0800 (PST)</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/CSharpExtDownloader.ts</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../prettify.css">
+    <link rel="stylesheet" href="../base.css">
+    <style type='text/css'>
+        div.coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class="header low">
+    <h1>Code coverage report for <span class="entity">src/CSharpExtDownloader.ts</span></h1>
+    <h2>
+        Statements: <span class="metric">11.63% <small>(5 / 43)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">0% <small>(0 / 2)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">0% <small>(0 / 2)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">11.63% <small>(5 / 43)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
+    </h2>
+    <div class="path"><a href="../index.html">All files</a> &#187; <a href="index.html">src/</a> &#187; CSharpExtDownloader.ts</div>
+</div>
+<div class="body">
+<pre><table class="coverage">
+<tr><td class="line-count">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88</td><td class="line-coverage"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+&nbsp;
+import * as vscode from 'vscode';
+import TelemetryReporter from 'vscode-extension-telemetry';
+import * as util from './common';
+import { Logger } from './logger';
+import { PackageManager } from './packages';
+import { PlatformInformation } from './platform';
+import { GetStatus, GetNetworkConfiguration, ReportInstallationError, SendInstallationTelemetry } from './downloader.helper';
+&nbsp;
+/*
+ * Class used to download the runtime dependencies of the C# Extension
+ */
+export class CSharpExtDownloader {
+    public constructor(
+        private <span class="cstat-no" title="statement not covered" >channel: vscode.OutputChannel,</span>
+        private <span class="cstat-no" title="statement not covered" >logger: Logger,</span>
+        private <span class="cstat-no" title="statement not covered" >reporter: TelemetryReporter </span>/* optional */,
+        private <span class="cstat-no" title="statement not covered" >packageJSON: any<span class="fstat-no" title="function not covered" >)</span> {</span>
+    }
+&nbsp;
+    public async installRuntimeDependencies<span class="fstat-no" title="function not covered" >(): Promise&lt;boolean&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        this.logger.append('Installing C# dependencies...');</span>
+<span class="cstat-no" title="statement not covered" >        this.channel.show();</span>
+&nbsp;
+        let status = <span class="cstat-no" title="statement not covered" >GetStatus();</span>
+&nbsp;
+        // Sends "AcquisitionStart" telemetry to indicate an acquisition  started.
+<span class="cstat-no" title="statement not covered" >        if (this.reporter) {</span>
+<span class="cstat-no" title="statement not covered" >            this.reporter.sendTelemetryEvent("AcquisitionStart");</span>
+        }
+&nbsp;
+        let platformInfo: PlatformInformation;
+        let packageManager: PackageManager;
+        let installationStage = <span class="cstat-no" title="statement not covered" >'touchBeginFile';</span>
+        let success = <span class="cstat-no" title="statement not covered" >false;</span>
+&nbsp;
+        let telemetryProps: any = <span class="cstat-no" title="statement not covered" >{};</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        try {</span>
+<span class="cstat-no" title="statement not covered" >            await util.touchInstallFile(util.InstallFileType.Begin);</span>
+<span class="cstat-no" title="statement not covered" >            installationStage = 'getPlatformInfo';</span>
+<span class="cstat-no" title="statement not covered" >            platformInfo = await PlatformInformation.GetCurrent();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            packageManager = new PackageManager(platformInfo, this.packageJSON);</span>
+<span class="cstat-no" title="statement not covered" >            this.logger.appendLine();</span>
+            // Display platform information and RID followed by a blank line
+<span class="cstat-no" title="statement not covered" >            this.logger.appendLine(`Platform: ${platformInfo.toString()}`);</span>
+<span class="cstat-no" title="statement not covered" >            this.logger.appendLine();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            installationStage = 'downloadPackages';</span>
+&nbsp;
+            let networkConfiguration = <span class="cstat-no" title="statement not covered" >GetNetworkConfiguration();</span>
+            const proxy = <span class="cstat-no" title="statement not covered" >networkConfiguration.Proxy;</span>
+            const strictSSL = <span class="cstat-no" title="statement not covered" >networkConfiguration.StrictSSL;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            await packageManager.DownloadPackages(this.logger, status, proxy, strictSSL);</span>
+<span class="cstat-no" title="statement not covered" >            this.logger.appendLine();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            installationStage = 'installPackages';</span>
+<span class="cstat-no" title="statement not covered" >            await packageManager.InstallPackages(this.logger, status);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            installationStage = 'touchLockFile';</span>
+<span class="cstat-no" title="statement not covered" >            await util.touchInstallFile(util.InstallFileType.Lock);</span>
+            
+<span class="cstat-no" title="statement not covered" >            installationStage = 'completeSuccess';</span>
+<span class="cstat-no" title="statement not covered" >            success = true;</span>
+        }
+        catch (error) {
+<span class="cstat-no" title="statement not covered" >            ReportInstallationError(this.logger, error, telemetryProps, installationStage);</span>
+        }
+        finally {
+<span class="cstat-no" title="statement not covered" >            SendInstallationTelemetry(this.logger, this.reporter, telemetryProps, installationStage, platformInfo);</span>
+<span class="cstat-no" title="statement not covered" >            status.dispose();</span>
+            // We do this step at the end so that we clean up the begin file in the case that we hit above catch block
+            // Attach a an empty catch to this so that errors here do not propogate
+<span class="cstat-no" title="statement not covered" >            try {</span>
+<span class="cstat-no" title="statement not covered" >                util.deleteInstallFile(util.InstallFileType.Begin);</span>
+            }
+            catch (error) { }
+<span class="cstat-no" title="statement not covered" >            return success;</span>
+        }
+    }
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+
+</div>
+<div class="footer">
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Mar 09 2018 19:23:26 GMT-0800 (PST)</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>

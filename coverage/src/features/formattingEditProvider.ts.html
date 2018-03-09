@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/features/formattingEditProvider.ts</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../../prettify.css">
+    <link rel="stylesheet" href="../../base.css">
+    <style type='text/css'>
+        div.coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class="header low">
+    <h1>Code coverage report for <span class="entity">src/features/formattingEditProvider.ts</span></h1>
+    <h2>
+        Statements: <span class="metric">30.77% <small>(4 / 13)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">0% <small>(0 / 8)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">0% <small>(0 / 5)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">30.77% <small>(4 / 13)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
+    </h2>
+    <div class="path"><a href="../../index.html">All files</a> &#187; <a href="index.html">src/features/</a> &#187; formattingEditProvider.ts</div>
+</div>
+<div class="body">
+<pre><table class="coverage">
+<tr><td class="line-count">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54</td><td class="line-coverage"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+&nbsp;
+'use strict';
+&nbsp;
+import AbstractSupport from './abstractProvider';
+import * as protocol from '../omnisharp/protocol';
+import * as serverUtils from '../omnisharp/utils';
+import {DocumentRangeFormattingEditProvider, FormattingOptions, CancellationToken, TextEdit, TextDocument, Range, Position} from 'vscode';
+&nbsp;
+export default class FormattingSupport extends AbstractSupport implements DocumentRangeFormattingEditProvider {
+&nbsp;
+    public provideDocumentRangeFormattingEdits(document: TextDocument, range: Range, options: FormattingOptions, token: CancellationToken<span class="fstat-no" title="function not covered" >): Promise&lt;TextEdit[]&gt; {</span>
+&nbsp;
+        let request = &lt;protocol.FormatRangeRequest&gt;<span class="cstat-no" title="statement not covered" >{</span>
+            FileName: document.fileName,
+            Line: range.start.line + 1,
+            Column: range.start.character + 1,
+            EndLine: range.end.line + 1,
+            EndColumn: range.end.character + 1
+        };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return serverUtils.formatRange(this._server, request, token).then(res =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >            if (res &amp;&amp; Array.isArray(res.Changes)) {</span>
+<span class="cstat-no" title="statement not covered" >                return res.Changes.map(FormattingSupport._asEditOptionation);</span>
+            }
+        });
+    }
+&nbsp;
+    public provideOnTypeFormattingEdits(document: TextDocument, position: Position, ch: string, options: FormattingOptions, token: CancellationToken<span class="fstat-no" title="function not covered" >): Promise&lt;TextEdit[]&gt; {</span>
+&nbsp;
+        let request = &lt;protocol.FormatAfterKeystrokeRequest&gt; <span class="cstat-no" title="statement not covered" >{</span>
+            FileName: document.fileName,
+            Line: position.line + 1,
+            Column: position.character + 1,
+            Character: ch
+        };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return serverUtils.formatAfterKeystroke(this._server, request, token).then(res =&gt;<span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >            if (res &amp;&amp; Array.isArray(res.Changes)) {</span>
+<span class="cstat-no" title="statement not covered" >                return res.Changes.map(FormattingSupport._asEditOptionation);</span>
+            }
+        });
+    }
+&nbsp;
+    private static _asEditOptionation(change: protocol.TextChange<span class="fstat-no" title="function not covered" >): TextEdit {</span>
+<span class="cstat-no" title="statement not covered" >        return new TextEdit(</span>
+            new Range(change.StartLine - 1, change.StartColumn - 1, change.EndLine - 1, change.EndColumn - 1),
+            change.NewText);
+    }
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+
+</div>
+<div class="footer">
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Mar 09 2018 19:23:26 GMT-0800 (PST)</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

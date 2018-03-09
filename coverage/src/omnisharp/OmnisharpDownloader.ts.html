@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/omnisharp/OmnisharpDownloader.ts</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../../prettify.css">
+    <link rel="stylesheet" href="../../base.css">
+    <style type='text/css'>
+        div.coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class="header high">
+    <h1>Code coverage report for <span class="entity">src/omnisharp/OmnisharpDownloader.ts</span></h1>
+    <h2>
+        Statements: <span class="metric">91.3% <small>(42 / 46)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">50% <small>(1 / 2)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">100% <small>(3 / 3)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">91.3% <small>(42 / 46)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
+    </h2>
+    <div class="path"><a href="../../index.html">All files</a> &#187; <a href="index.html">src/omnisharp/</a> &#187; OmnisharpDownloader.ts</div>
+</div>
+<div class="body">
+<pre><table class="coverage">
+<tr><td class="line-count">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93</td><td class="line-coverage"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+&nbsp;
+import * as vscode from 'vscode';
+import { PackageManager, Package, Status } from '../packages';
+import { PlatformInformation } from '../platform';
+import { Logger } from '../logger';
+import TelemetryReporter from 'vscode-extension-telemetry';
+import { GetPackagesFromVersion, GetVersionFilePackage } from './OmnisharpPackageCreator';
+import { GetStatus, ReportInstallationError, SendInstallationTelemetry, GetNetworkConfiguration } from '../downloader.helper';
+&nbsp;
+export class OmnisharpDownloader {
+    private status: Status;
+    private proxy: string;
+    private strictSSL: boolean;
+    private packageManager: PackageManager;
+    private telemetryProps: any;
+&nbsp;
+    public constructor(
+        private channel: vscode.OutputChannel,
+        private logger: Logger,
+        private packageJSON: any,
+        private platformInfo: PlatformInformation,
+        private reporter?: TelemetryReporter) {
+&nbsp;
+        this.status = GetStatus();
+        let networkConfiguration = GetNetworkConfiguration();
+        this.proxy = networkConfiguration.Proxy;
+        this.strictSSL = networkConfiguration.StrictSSL;
+        this.telemetryProps = {};
+        this.packageManager = new PackageManager(this.platformInfo, this.packageJSON);
+    }
+&nbsp;
+    public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string) {
+        this.logger.append('Installing Omnisharp Packages...');
+        this.channel.show();
+&nbsp;
+        let installationStage = '';
+        
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (this.reporter) {
+            this.reporter.sendTelemetryEvent("AcquisitionStart");
+        }
+&nbsp;
+        try {
+            installationStage = 'logPlatformInfo';
+            this.logger.appendLine();
+            this.logger.appendLine(`Platform: ${this.platformInfo.toString()}`);
+            this.logger.appendLine();
+&nbsp;
+            installationStage = 'getPackageInfo';
+            let packages: Package[] = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
+&nbsp;
+            installationStage = 'downloadPackages';
+            // Specify the packages that the package manager needs to download
+            this.packageManager.SetVersionPackagesForDownload(packages);
+            await this.packageManager.DownloadPackages(this.logger, this.status, this.proxy, this.strictSSL);
+&nbsp;
+            this.logger.appendLine();
+&nbsp;
+            installationStage = 'installPackages';
+            await this.packageManager.InstallPackages(this.logger, this.status);
+&nbsp;
+            installationStage = 'completeSuccess';
+        }
+        catch (error) {
+<span class="cstat-no" title="statement not covered" >            ReportInstallationError(this.logger, error, this.telemetryProps, installationStage);</span>
+<span class="cstat-no" title="statement not covered" >            throw error;/</span>/ throw the error up to the server
+        }
+        finally {
+            SendInstallationTelemetry(this.logger, this.reporter, this.telemetryProps, installationStage, this.platformInfo);
+            this.status.dispose();
+        }
+    }
+&nbsp;
+    public async GetLatestVersion(serverUrl: string, latestVersionFileServerPath: string): Promise&lt;string&gt; {
+        let installationStage = 'getLatestVersionInfoFile';
+        try {
+            this.logger.appendLine('Getting latest build information...');
+            this.logger.appendLine();
+            //The package manager needs a package format to download, hence we form a package for the latest version file
+            let filePackage = GetVersionFilePackage(serverUrl, latestVersionFileServerPath);
+            //Fetch the latest version information from the file
+            return await this.packageManager.GetLatestVersionFromFile(this.logger, this.status, this.proxy, this.strictSSL, filePackage);
+        }
+        catch (error) {
+<span class="cstat-no" title="statement not covered" >            ReportInstallationError(this.logger, error, this.telemetryProps, installationStage);</span>
+<span class="cstat-no" title="statement not covered" >            throw error;</span>
+        }
+    }
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+
+</div>
+<div class="footer">
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Mar 09 2018 19:23:26 GMT-0800 (PST)</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

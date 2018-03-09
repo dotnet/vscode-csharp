@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/json.ts</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../prettify.css">
+    <link rel="stylesheet" href="../base.css">
+    <style type='text/css'>
+        div.coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class="header low">
+    <h1>Code coverage report for <span class="entity">src/json.ts</span></h1>
+    <h2>
+        Statements: <span class="metric">1.54% <small>(1 / 65)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">0% <small>(0 / 56)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">0% <small>(0 / 8)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">1.54% <small>(1 / 65)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
+    </h2>
+    <div class="path"><a href="../index.html">All files</a> &#187; <a href="index.html">src/</a> &#187; json.ts</div>
+</div>
+<div class="body">
+<pre><table class="coverage">
+<tr><td class="line-count">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218</td><td class="line-coverage"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+&nbsp;
+const enum CharCode {
+    asterisk = 0x2a,     // *
+    backSlash = 0x5c,    // \
+    closeBrace = 0x7d,   // }
+    closeBracket = 0x5d, // ]
+    comma = 0x2c,        // ,
+    doubleQuote = 0x22,  // "
+    slash = 0x2f,        // /
+&nbsp;
+    byteOrderMark = 0xfeff,
+&nbsp;
+    // line terminator characters (see https://en.wikipedia.org/wiki/Newline#Unicode)
+    carriageReturn = 0x0d,
+    formFeed = 0x0c,
+    lineFeed = 0x0a,
+    lineSeparator = 0x2028,
+    nextLine = 0x85,
+    paragraphSeparator = 0x2029,
+    verticalTab = 0x0b,
+&nbsp;
+    // whitespace characters (see https://en.wikipedia.org/wiki/Whitespace_character#Unicode)
+    tab = 0x09,
+    space = 0x20,
+    nonBreakingSpace = 0xa0,
+    ogham = 0x1680,
+    enQuad = 0x2000,
+    emQuad = 0x2001,
+    enSpace = 0x2002,
+    emSpace = 0x2003,
+    threePerEmSpace = 0x2004,
+    fourPerEmSpace = 0x2005,
+    sixPerEmSpace = 0x2006,
+    figureSpace = 0x2007,
+    punctuationSpace = 0x2008,
+    thinSpace = 0x2009,
+    hairSpace = 0x200a,
+    zeroWidthSpace = 0x200b,
+    narrowNoBreakSpace = 0x202f,
+    mathematicalSpace = 0x205f,
+    ideographicSpace = 0x3000,
+}
+&nbsp;
+function isLineBreak(code: number<span class="fstat-no" title="function not covered" >) {</span>
+<span class="cstat-no" title="statement not covered" >    return code === CharCode.lineFeed</span>
+        || code === CharCode.carriageReturn
+        || code === CharCode.verticalTab
+        || code === CharCode.formFeed
+        || code === CharCode.lineSeparator
+        || code === CharCode.paragraphSeparator;
+}
+&nbsp;
+function isWhitespace(code: number<span class="fstat-no" title="function not covered" >) {</span>
+<span class="cstat-no" title="statement not covered" >    return code === CharCode.space</span>
+        || code === CharCode.tab
+        || code === CharCode.lineFeed
+        || code === CharCode.verticalTab
+        || code === CharCode.formFeed
+        || code === CharCode.carriageReturn
+        || code === CharCode.nextLine
+        || code === CharCode.nonBreakingSpace
+        || code === CharCode.ogham
+        || (code &gt;= CharCode.enQuad &amp;&amp; code &lt;= CharCode.zeroWidthSpace)
+        || code === CharCode.lineSeparator
+        || code === CharCode.paragraphSeparator
+        || code === CharCode.narrowNoBreakSpace
+        || code === CharCode.mathematicalSpace
+        || code === CharCode.ideographicSpace
+        || code === CharCode.byteOrderMark;
+}
+&nbsp;
+function cleanJsonText(text: string<span class="fstat-no" title="function not covered" >) {</span>
+&nbsp;
+    let parts: string[] = <span class="cstat-no" title="statement not covered" >[];</span>
+    let partStart = <span class="cstat-no" title="statement not covered" >0;</span>
+&nbsp;
+    let index = <span class="cstat-no" title="statement not covered" >0;</span>
+    let length = <span class="cstat-no" title="statement not covered" >text.length;</span>
+&nbsp;
+<span class="fstat-no" title="function not covered" >    function next(): number | undefined {</span>
+        const result = <span class="cstat-no" title="statement not covered" >peek();</span>
+<span class="cstat-no" title="statement not covered" >        index++;</span>
+<span class="cstat-no" title="statement not covered" >        return result;</span>
+    }
+&nbsp;
+    function peek(offset: number = 0<span class="fstat-no" title="function not covered" >): number | undefined {</span>
+<span class="cstat-no" title="statement not covered" >        if ((index + offset) &lt; length) {</span>
+<span class="cstat-no" title="statement not covered" >            return text.charCodeAt(index + offset);</span>
+        }
+        else {
+<span class="cstat-no" title="statement not covered" >            return undefined;</span>
+        }
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    function peekPastWhitespace(): number | undefined {</span>
+        let pos = <span class="cstat-no" title="statement not covered" >index;</span>
+        let code = <span class="cstat-no" title="statement not covered" >undefined;</span>
+        
+<span class="cstat-no" title="statement not covered" >        do {</span>
+<span class="cstat-no" title="statement not covered" >            code = text.charCodeAt(pos);</span>
+<span class="cstat-no" title="statement not covered" >            pos++;</span>
+        }
+        while (isWhitespace(code));
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return code;</span>
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    function scanString() {</span>
+<span class="cstat-no" title="statement not covered" >        while (true) {</span>
+<span class="cstat-no" title="statement not covered" >            if (index &gt;= length) { // string ended unexpectedly</span>
+<span class="cstat-no" title="statement not covered" >                break;</span>
+            }
+&nbsp;
+            let code = <span class="cstat-no" title="statement not covered" >next();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (code === CharCode.doubleQuote) {</span>
+                // End of string. We're done
+<span class="cstat-no" title="statement not covered" >                break;</span>
+            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (code === CharCode.backSlash) {</span>
+                // Skip escaped character. We don't care about verifying the escape sequence.
+                // We just don't want to accidentally scan an escaped double-quote as the end of the string.
+<span class="cstat-no" title="statement not covered" >                index++;</span>
+            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (isLineBreak(code)) {</span>
+                // string ended unexpectedly
+<span class="cstat-no" title="statement not covered" >                break;</span>
+            }
+        }
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    while (true) {</span>
+        let code = <span class="cstat-no" title="statement not covered" >next();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        switch (code) {</span>
+            // byte-order mark
+            case CharCode.byteOrderMark:
+                // We just skip the byte-order mark
+<span class="cstat-no" title="statement not covered" >                parts.push(text.substring(partStart, index - 1));</span>
+<span class="cstat-no" title="statement not covered" >                partStart = index;</span>
+&nbsp;
+            // strings
+            case CharCode.doubleQuote:
+<span class="cstat-no" title="statement not covered" >                scanString();</span>
+<span class="cstat-no" title="statement not covered" >                break;</span>
+&nbsp;
+            // comments
+            case CharCode.slash:
+                // Single-line comment
+<span class="cstat-no" title="statement not covered" >                if (peek() === CharCode.slash) {</span>
+                    // Be careful not to include the first slash in the text part.
+<span class="cstat-no" title="statement not covered" >                    parts.push(text.substring(partStart, index - 1));</span>
+&nbsp;
+                    // Start after the second slash and scan until a line-break character is encountered.
+<span class="cstat-no" title="statement not covered" >                    index++;</span>
+<span class="cstat-no" title="statement not covered" >                    while (index &lt; length) {</span>
+<span class="cstat-no" title="statement not covered" >                        if (isLineBreak(peek())) {</span>
+<span class="cstat-no" title="statement not covered" >                            break;</span>
+                        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        index++;</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    partStart = index;</span>
+                }
+&nbsp;
+                // Multi-line comment
+<span class="cstat-no" title="statement not covered" >                if (peek() === CharCode.asterisk) {</span>
+                    // Be careful not to include the first slash in the text part.
+<span class="cstat-no" title="statement not covered" >                    parts.push(text.substring(partStart, index - 1));</span>
+&nbsp;
+                    // Start after the asterisk and scan until a */ is encountered.
+<span class="cstat-no" title="statement not covered" >                    index++;</span>
+<span class="cstat-no" title="statement not covered" >                    while (index &lt; length) {</span>
+<span class="cstat-no" title="statement not covered" >                        if (peek() === CharCode.asterisk &amp;&amp; peek(1) === CharCode.slash) {</span>
+<span class="cstat-no" title="statement not covered" >                            index += 2;</span>
+<span class="cstat-no" title="statement not covered" >                            break;</span>
+                        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        index++;</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    partStart = index;</span>
+                }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                break;</span>
+&nbsp;
+            case CharCode.comma:
+                // Ignore trailing commas in object member lists and array element lists
+                let nextCode = <span class="cstat-no" title="statement not covered" >peekPastWhitespace();</span>
+<span class="cstat-no" title="statement not covered" >                if (nextCode === CharCode.closeBrace || nextCode === CharCode.closeBracket) {</span>
+<span class="cstat-no" title="statement not covered" >                    parts.push(text.substring(partStart, index - 1));</span>
+<span class="cstat-no" title="statement not covered" >                    partStart = index;</span>
+                }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                break;</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (index &gt;= length &amp;&amp; index &gt; partStart) {</span>
+<span class="cstat-no" title="statement not covered" >            parts.push(text.substring(partStart, length));</span>
+<span class="cstat-no" title="statement not covered" >            break;</span>
+        }
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return parts.join('');</span>
+}
+&nbsp;
+export function tolerantParse(text: string<span class="fstat-no" title="function not covered" >) {</span>
+<span class="cstat-no" title="statement not covered" >    text = cleanJsonText(text);</span>
+<span class="cstat-no" title="statement not covered" >    return JSON.parse(text);</span>
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+
+</div>
+<div class="footer">
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Mar 09 2018 19:23:26 GMT-0800 (PST)</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>
