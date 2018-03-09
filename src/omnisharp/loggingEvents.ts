@@ -8,8 +8,6 @@ import { Request } from "./requestQueue";
 import * as protocol from './protocol';
 import { IObserver } from "rx";
 
-export type EventObserver = IObserver<BaseEvent>;
-
 export interface BaseEvent{
 }
 

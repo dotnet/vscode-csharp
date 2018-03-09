@@ -7,20 +7,21 @@ import * as util from './common';
 import { GetNetworkConfiguration, GetStatus } from './downloader.helper';
 import { PackageManager } from './packages';
 import { PlatformInformation } from './platform';
-import { EventObserver, PackageInstallation, PlatformInfoEvent, InstallationSuccess, InstallationFailure } from './omnisharp/loggingEvents';
+import { PackageInstallation, PlatformInfoEvent, InstallationSuccess, InstallationFailure } from './omnisharp/loggingEvents';
+import { EventStream } from './EventStream';
 
 /*
  * Class used to download the runtime dependencies of the C# Extension
  */
 export class CSharpExtDownloader {
     public constructor(
-        private sink: EventObserver,
+        private eventStream: EventStream,
         private packageJSON: any,
         private platformInfo: PlatformInformation) {
     }
 
     public async installRuntimeDependencies(): Promise<boolean> {
-        this.sink.onNext(new PackageInstallation("C# dependencies" ));
+        this.eventStream.post(new PackageInstallation("C# dependencies" ));
 
         let status = GetStatus();
         let installationStage = 'touchBeginFile';
@@ -31,7 +32,7 @@ export class CSharpExtDownloader {
 
             let packageManager = new PackageManager(this.platformInfo, this.packageJSON);
             // Display platform information and RID
-            this.sink.onNext(new PlatformInfoEvent(this.platformInfo ));
+            this.eventStream.post(new PlatformInfoEvent(this.platformInfo ));
 
             installationStage = 'downloadPackages';
 
@@ -39,19 +40,19 @@ export class CSharpExtDownloader {
             const proxy = networkConfiguration.Proxy;
             const strictSSL = networkConfiguration.StrictSSL;
 
-            await packageManager.DownloadPackages(this.sink, status, proxy, strictSSL);
+            await packageManager.DownloadPackages(this.eventStream, status, proxy, strictSSL);
 
             installationStage = 'installPackages';
-            await packageManager.InstallPackages(this.sink, status);
+            await packageManager.InstallPackages(this.eventStream, status);
 
             installationStage = 'touchLockFile';
             await util.touchInstallFile(util.InstallFileType.Lock);
 
             success = true;
-            this.sink.onNext(new InstallationSuccess());
+            this.eventStream.post(new InstallationSuccess());
         }
         catch (error) {
-            this.sink.onNext(new InstallationFailure(installationStage, error));
+            this.eventStream.post(new InstallationFailure(installationStage, error));
         }
         finally {
             status.dispose();

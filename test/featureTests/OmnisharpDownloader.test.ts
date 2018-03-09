@@ -10,8 +10,7 @@ import { Logger } from '../../src/logger';
 import { OmnisharpDownloader } from '../../src/omnisharp/OmnisharpDownloader';
 import { rimraf } from 'async-file';
 import { PlatformInformation } from '../../src/platform';
-import { Subject } from 'rx';
-import { BaseEvent } from '../../src/omnisharp/loggingEvents';
+import { EventStream } from '../../src/EventStream';
 
 const tmp = require('tmp');
 const chai = require("chai");
@@ -22,8 +21,8 @@ suite("DownloadAndInstallExperimentalVersion : Gets the version packages, downlo
     let tmpDir = null;
     const version = "1.2.3";
     const platformInfo = new PlatformInformation("win32", "x86");
-    const sink = new Subject<BaseEvent>();
-    const downloader = GetTestOmnisharpDownloader(sink, platformInfo);
+    const eventStream = new EventStream();
+    const downloader = GetTestOmnisharpDownloader(eventStream, platformInfo);
     const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
     const installPath = ".omnisharp/experimental/";
 
@@ -53,7 +52,7 @@ suite("DownloadAndInstallExperimentalVersion : Gets the version packages, downlo
     });
 });
 
-export function GetTestOmnisharpDownloader(sink: Subject<BaseEvent>, platformInfo: PlatformInformation): OmnisharpDownloader{
+export function GetTestOmnisharpDownloader(sink: EventStream, platformInfo: PlatformInformation): OmnisharpDownloader{
     return new OmnisharpDownloader(sink, GetTestPackageJSON(), platformInfo);
 }
 

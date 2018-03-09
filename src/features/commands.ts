@@ -16,13 +16,14 @@ import * as vscode from 'vscode';
 import { DotNetAttachItemsProviderFactory, AttachPicker, RemoteAttachPicker } from './processPicker';
 import { generateAssets } from '../assets';
 import { getAdapterExecutionCommand } from '../coreclr-debug/activate';
-import { EventObserver, CommandShowOutput, CommandDotNetRestoreStart, CommandDotNetRestoreProgress, CommandDotNetRestoreSucceeded, CommandDotNetRestoreFailed } from '../omnisharp/loggingEvents';
+import { CommandShowOutput, CommandDotNetRestoreStart, CommandDotNetRestoreProgress, CommandDotNetRestoreSucceeded, CommandDotNetRestoreFailed } from '../omnisharp/loggingEvents';
+import { EventStream } from '../EventStream';
 
-export default function registerCommands(server: OmniSharpServer, sink: EventObserver) {
+export default function registerCommands(server: OmniSharpServer, eventStream: EventStream) {
     let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server));
     let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', () => pickProjectAndStart(server));
-    let d3 = vscode.commands.registerCommand('o.showOutput', () => sink.onNext(new CommandShowOutput()));
-    let d4 = vscode.commands.registerCommand('dotnet.restore', () => dotnetRestoreAllProjects(server, sink));
+    let d3 = vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new CommandShowOutput()));
+    let d4 = vscode.commands.registerCommand('dotnet.restore', () => dotnetRestoreAllProjects(server, eventStream));
 
     // register empty handler for csharp.installDebugger
     // running the command activates the extension, which is all we need for installation to kickoff
@@ -40,8 +41,8 @@ export default function registerCommands(server: OmniSharpServer, sink: EventObs
     let d8 = vscode.commands.registerCommand('csharp.listRemoteProcess', (args) => RemoteAttachPicker.ShowAttachEntries(args));
 
     // Register command for adapter executable command.
-    let d9 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', (args) => getAdapterExecutionCommand(sink));
-    let d10 = vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', (args) => getAdapterExecutionCommand(sink));
+    let d9 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', (args) => getAdapterExecutionCommand(eventStream));
+    let d10 = vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', (args) => getAdapterExecutionCommand(eventStream));
 
     return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10);
 }
@@ -85,7 +86,7 @@ interface Command {
     execute(): Thenable<any>;
 }
 
-function projectsToCommands(projects: protocol.ProjectDescriptor[], sink: EventObserver): Promise<Command>[] {
+function projectsToCommands(projects: protocol.ProjectDescriptor[], eventStream: EventStream): Promise<Command>[] {
     return projects.map(project => {
         let projectDirectory = project.Directory;
 
@@ -103,7 +104,7 @@ function projectsToCommands(projects: protocol.ProjectDescriptor[], sink: EventO
                     label: `dotnet restore - (${project.Name || path.basename(project.Directory)})`,
                     description: projectDirectory,
                     execute() {
-                        return dotnetRestore(projectDirectory, sink);
+                        return dotnetRestore(projectDirectory, eventStream);
                     }
                 });
             });
@@ -111,7 +112,7 @@ function projectsToCommands(projects: protocol.ProjectDescriptor[], sink: EventO
     });
 }
 
-export function dotnetRestoreAllProjects(server: OmniSharpServer, sink: EventObserver) : Promise<void> {
+export function dotnetRestoreAllProjects(server: OmniSharpServer, eventStream: EventStream) : Promise<void> {
 
     if (!server.isRunning()) {
         return Promise.reject('OmniSharp server is not running.');
@@ -125,7 +126,7 @@ export function dotnetRestoreAllProjects(server: OmniSharpServer, sink: EventObs
             return Promise.reject("No .NET Core projects found");
         }
 
-        let commandPromises = projectsToCommands(descriptors, sink);
+        let commandPromises = projectsToCommands(descriptors, eventStream);
 
         return Promise.all(commandPromises).then(commands => {
             return vscode.window.showQuickPick(commands);
@@ -137,7 +138,7 @@ export function dotnetRestoreAllProjects(server: OmniSharpServer, sink: EventObs
     });
 }
 
-export function dotnetRestoreForProject(server: OmniSharpServer, filePath: string, sink: EventObserver) {
+export function dotnetRestoreForProject(server: OmniSharpServer, filePath: string, eventStream: EventStream) {
 
     if (!server.isRunning()) {
         return Promise.reject('OmniSharp server is not running.');
@@ -153,15 +154,15 @@ export function dotnetRestoreForProject(server: OmniSharpServer, filePath: strin
 
         for (let descriptor of descriptors) {
             if (descriptor.FilePath === filePath) {
-                return dotnetRestore(descriptor.Directory, sink, filePath);
+                return dotnetRestore(descriptor.Directory, eventStream, filePath);
             }
         }
     });
 }
 
-function dotnetRestore(cwd: string, sink: EventObserver, filePath?: string) {
+function dotnetRestore(cwd: string, eventStream: EventStream, filePath?: string) {
     return new Promise<void>((resolve, reject) => {
-        sink.onNext(new CommandDotNetRestoreStart());
+        eventStream.post(new CommandDotNetRestoreStart());
 
         let cmd = 'dotnet';
         let args = ['restore'];
@@ -174,11 +175,11 @@ function dotnetRestore(cwd: string, sink: EventObserver, filePath?: string) {
 
         function handleData(stream: NodeJS.ReadableStream) {
             stream.on('data', chunk => {
-                sink.onNext(new CommandDotNetRestoreProgress(chunk.toString()));
+                eventStream.post(new CommandDotNetRestoreProgress(chunk.toString()));
             });
 
             stream.on('err', err => {
-                sink.onNext(new CommandDotNetRestoreProgress(`ERROR: ${err}`));
+                eventStream.post(new CommandDotNetRestoreProgress(`ERROR: ${err}`));
             });
         }
 
@@ -186,12 +187,12 @@ function dotnetRestore(cwd: string, sink: EventObserver, filePath?: string) {
         handleData(dotnet.stderr);
 
         dotnet.on('close', (code, signal) => {
-            sink.onNext(new CommandDotNetRestoreSucceeded(`Done: ${code}.`));
+            eventStream.post(new CommandDotNetRestoreSucceeded(`Done: ${code}.`));
             resolve();
         });
 
         dotnet.on('error', err => {
-            sink.onNext(new CommandDotNetRestoreFailed(`ERROR: ${err}` ));
+            eventStream.post(new CommandDotNetRestoreFailed(`ERROR: ${err}` ));
             reject(err);
         });
     });

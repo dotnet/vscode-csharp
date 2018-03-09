@@ -31,18 +31,19 @@ import forwardChanges from '../features/changeForwarding';
 import registerCommands from '../features/commands';
 import reportStatus from '../features/status';
 import { PlatformInformation } from '../platform';
-import { EventObserver, ProjectJsonDeprecatedWarning, OmnisharpStart } from './loggingEvents';
+import { ProjectJsonDeprecatedWarning, OmnisharpStart } from './loggingEvents';
+import { EventStream } from '../EventStream';
 
 export let omnisharp: OmniSharpServer;
 
-export function activate(context: vscode.ExtensionContext, sink: EventObserver, packageJSON: any, platformInfo: PlatformInformation) {
+export function activate(context: vscode.ExtensionContext, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
         scheme: 'file' // only files from disk
     };
 
     const options = Options.Read();
-    const server = new OmniSharpServer(sink, packageJSON, platformInfo);
+    const server = new OmniSharpServer(eventStream, packageJSON, platformInfo);
 
     omnisharp = server;
     const advisor = new Advisor(server); // create before server is started
@@ -59,7 +60,7 @@ export function activate(context: vscode.ExtensionContext, sink: EventObserver, 
         localDisposables.push(vscode.languages.registerDefinitionProvider(documentSelector, definitionProvider));
         localDisposables.push(vscode.languages.registerDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
         localDisposables.push(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server)));
-        const testManager = new TestManager(server, sink);
+        const testManager = new TestManager(server, eventStream);
         localDisposables.push(testManager);
         localDisposables.push(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, testManager)));
         localDisposables.push(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server)));
@@ -86,8 +87,8 @@ export function activate(context: vscode.ExtensionContext, sink: EventObserver, 
         vscode.Disposable.from(...localDisposables).dispose();
     }));
 
-    disposables.push(registerCommands(server, sink));
-    disposables.push(reportStatus(server, sink));
+    disposables.push(registerCommands(server, eventStream));
+    disposables.push(reportStatus(server, eventStream));
 
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
         disposables.push(server.onServerStart(() => {
@@ -112,7 +113,7 @@ export function activate(context: vscode.ExtensionContext, sink: EventObserver, 
                         const moreDetailItem: vscode.MessageItem = { title: 'More Detail' };
                         vscode.window.showWarningMessage(shortMessage, moreDetailItem)
                             .then(item => {
-                                sink.onNext(new ProjectJsonDeprecatedWarning());
+                                eventStream.post(new ProjectJsonDeprecatedWarning());
                             });
                     }
                 });
@@ -139,7 +140,7 @@ export function activate(context: vscode.ExtensionContext, sink: EventObserver, 
 
                 // TODO: Add measurements for script.
 
-                sink.onNext(new OmnisharpStart('OmniSharp.Start', measures));
+                eventStream.post(new OmnisharpStart('OmniSharp.Start', measures));
             });
     }));
 

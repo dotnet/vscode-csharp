@@ -20,7 +20,8 @@ import { TelemetryObserver } from './observers/TelemetryObserver';
 import { OmnisharpChannelObserver } from './observers/OmnisharpChannelObserver';
 import { DotnetLoggerObserver } from './observers/DotnetLoggerObserver';
 import { OmnisharpDebugModeLoggerObserver } from './observers/OmnisharpDebugModeLoggerObserver';
-import { BaseEvent, ActivationFailure, EventObserver } from './omnisharp/loggingEvents';
+import { BaseEvent, ActivationFailure } from './omnisharp/loggingEvents';
+import { EventStream } from './EventStream';
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 
@@ -44,19 +45,19 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel);
     let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel);
 
-    const sink = new Subject<BaseEvent>();
-    sink.subscribe(dotnetChannelObserver.post);
-    sink.subscribe(dotnetLoggerObserver.post);
+    const eventStream = new EventStream();
+    eventStream.subscribe(dotnetChannelObserver.post);
+    eventStream.subscribe(dotnetLoggerObserver.post);
 
-    sink.subscribe(csharpchannelObserver.post);
-    sink.subscribe(csharpLogObserver.post);
+    eventStream.subscribe(csharpchannelObserver.post);
+    eventStream.subscribe(csharpLogObserver.post);
 
-    sink.subscribe(omnisharpLogObserver.post);
-    sink.subscribe(omnisharpChannelObserver.post);
+    eventStream.subscribe(omnisharpLogObserver.post);
+    eventStream.subscribe(omnisharpChannelObserver.post);
     const debugMode = false;
     if (debugMode) {
         let omnisharpDebugModeLoggerObserver = new OmnisharpDebugModeLoggerObserver(omnisharpChannel);
-        sink.subscribe(omnisharpDebugModeLoggerObserver.post);
+        eventStream.subscribe(omnisharpDebugModeLoggerObserver.post);
     }
     
     let platformInfo: PlatformInformation;
@@ -64,16 +65,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
         platformInfo = await PlatformInformation.GetCurrent();
     }
     catch (error) {
-        sink.onNext(new ActivationFailure());
+        eventStream.post(new ActivationFailure());
     }
 
     let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter);
-    sink.subscribe(telemetryObserver.onNext);
+    eventStream.subscribe(telemetryObserver.post);
 
-    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, sink, platformInfo);
+    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo);
 
     // activate language services
-    let omniSharpPromise = OmniSharp.activate(context, sink, extension.packageJSON, platformInfo);
+    let omniSharpPromise = OmniSharp.activate(context, eventStream, extension.packageJSON, platformInfo);
 
     // register JSON completion & hover providers for project.json
     context.subscriptions.push(addJSONProviders());
@@ -81,7 +82,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     let coreClrDebugPromise = Promise.resolve();
     if (runtimeDependenciesExist) {
         // activate coreclr-debug
-        coreClrDebugPromise = coreclrdebug.activate(extension, context, platformInfo, sink);
+        coreClrDebugPromise = coreclrdebug.activate(extension, context, platformInfo, eventStream);
     }
 
     return {
@@ -93,11 +94,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     };
 }
 
-function ensureRuntimeDependencies(extension: vscode.Extension<any>, sink: EventObserver, platformInfo: PlatformInformation): Promise<boolean> {
+function ensureRuntimeDependencies(extension: vscode.Extension<any>, eventStream: EventStream, platformInfo: PlatformInformation): Promise<boolean> {
     return util.installFileExists(util.InstallFileType.Lock)
         .then(exists => {
             if (!exists) {
-                const downloader = new CSharpExtDownloader(sink, extension.packageJSON, platformInfo);
+                const downloader = new CSharpExtDownloader(eventStream, extension.packageJSON, platformInfo);
                 return downloader.installRuntimeDependencies();
             } else {
                 return true;

@@ -20,7 +20,7 @@ export class TelemetryObserver {
         this.reporter = reporterCreator();
     }
 
-    public onNext = (event: BaseEvent) => {
+    public post = (event: BaseEvent) => {
         let telemetryProps = this.getTelemetryProps();
         switch (event.constructor.name) {
             case PackageInstallation.name:

@@ -63,7 +63,7 @@ export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
     }
 
     private handleOmnisharpEventPacketReceived(event: OmnisharpEventPacketReceived) {
-        if (!this._isFilterableOutput(event)) {
+        if (this._isFilterableOutput(event)) {
             let output = `[${this.getLogLevelPrefix(event.logLevel)}]: ${event.name}${os.EOL}${event.message}`;
 
             const newLinePlusPadding = os.EOL + "        ";
