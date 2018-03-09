@@ -5,39 +5,38 @@
 
 import { should, expect } from 'chai';
 import { DotNetChannelObserver } from "../../../src/observers/DotnetChannelObserver";
-import { MessageType, Message, ActionWithMessage } from '../../../src/omnisharp/messageType';
 import { getNullChannel } from './Fakes';
-import * as CreateMessage from './CreateMessage';
+import { CommandDotNetRestoreStart, BaseEvent } from '../../../src/omnisharp/loggingEvents';
 
 suite("DotnetChannelObserver", () => {
     suiteSetup(() => should());
 
     [
-        CreateMessage.CommandDotNetRestoreStart()
-    ].forEach((message: Message) => {
-        test(`Clears the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
+        new CommandDotNetRestoreStart()
+    ].forEach((event: BaseEvent) => {
+        test(`Clears the channel for ${event.constructor.name}`, () => {
             let hasCleared = false;
             let observer = new DotNetChannelObserver({
                 ...getNullChannel(),
                 clear: () => { hasCleared = true; }
             });
 
-            observer.onNext(message);
+            observer.onNext(event);
             expect(hasCleared).to.be.true;
         });
     });
 
     [
-        CreateMessage.CommandDotNetRestoreStart()
-    ].forEach((message: Message) => {
-        test(`Shows the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
+        new CommandDotNetRestoreStart()
+    ].forEach((event: BaseEvent) => {
+        test(`Shows the channel for ${event.constructor.name}`, () => {
             let hasShown = false;
             let observer = new DotNetChannelObserver({
                 ...getNullChannel(),
                 show: () => { hasShown = true; }
             });
 
-            observer.onNext(message);
+            observer.onNext(event);
             expect(hasShown).to.be.true;
         });
     });

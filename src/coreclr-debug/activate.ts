@@ -12,33 +12,23 @@ import * as common from './../common';
 import { CoreClrDebugUtil, DotnetInfo, } from './util';
 
 import { PlatformInformation } from './../platform';
-import { MessageObserver, MessageType } from '../omnisharp/messageType';
+import { DebuggerPreRequisiteWarning, DebuggerPreRequisiteFailure, EventObserver, DebuggerNotInstalledFailure } from '../omnisharp/loggingEvents';
 
 let _debugUtil: CoreClrDebugUtil = null;
 
-export async function activate(thisExtension : vscode.Extension<any>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, sink: MessageObserver) {
+export async function activate(thisExtension : vscode.Extension<any>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, sink: EventObserver) {
     _debugUtil = new CoreClrDebugUtil(context.extensionPath);
 
     if (!CoreClrDebugUtil.existsSync(_debugUtil.debugAdapterDir())) {
         if (platformInformation) {
             if (platformInformation.architecture !== "x86_64") {
                 if (platformInformation.isWindows() && platformInformation.architecture === "x86") {
-                    sink.onNext({ 
-                        type: MessageType.DebuggerPreRequisiteWarning, 
-                        message:  `[WARNING]: x86 Windows is not currently supported by the .NET Core debugger. Debugging will not be available.`
-                    });
+                    sink.onNext(new DebuggerPreRequisiteWarning(`[WARNING]: x86 Windows is not currently supported by the .NET Core debugger. Debugging will not be available.`));
                 } else {
-                    sink.onNext({ 
-                        type: MessageType.DebuggerPreRequisiteWarning, 
-                        message: `[WARNING]: Processor architecture '${platformInformation.architecture}' is not currently supported by the .NET Core debugger. Debugging will not be available.`
-                    });
+                    sink.onNext(new DebuggerPreRequisiteWarning(`[WARNING]: Processor architecture '${platformInformation.architecture}' is not currently supported by the .NET Core debugger. Debugging will not be available.`));
                 }
             } else {
-                sink.onNext({ 
-                    type: MessageType.DebuggerPreRequisiteFailure, 
-                    message: "[ERROR]: C# Extension failed to install the debugger package"
-                });
-
+                sink.onNext(new DebuggerPreRequisiteFailure("[ERROR]: C# Extension failed to install the debugger package")); 
                 showInstallErrorMessage();
             }
         }
@@ -47,16 +37,12 @@ export async function activate(thisExtension : vscode.Extension<any>, context: v
     }
 }
 
-async function completeDebuggerInstall(sink: MessageObserver) : Promise<boolean> {
+async function completeDebuggerInstall(sink: EventObserver) : Promise<boolean> {
     return _debugUtil.checkDotNetCli()
         .then((dotnetInfo: DotnetInfo) => {
 
             if (os.platform() === "darwin" && !CoreClrDebugUtil.isMacOSSupported()) {
-                sink.onNext({ 
-                    type: MessageType.DebuggerPreRequisiteFailure, 
-                    message: "[ERROR] The debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer." 
-                });
-
+                sink.onNext(new DebuggerPreRequisiteFailure("[ERROR] The debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer." ));
                 return false;
             }
 
@@ -69,13 +55,8 @@ async function completeDebuggerInstall(sink: MessageObserver) : Promise<boolean>
             // Check for dotnet tools failed. pop the UI
             // err is a DotNetCliError but use defaults in the unexpected case that it's not
             showDotnetToolsWarning(err.ErrorMessage || _debugUtil.defaultDotNetCliErrorMessage());
-            sink.onNext({ 
-                type: MessageType.DebuggerPreRequisiteWarning, 
-                message: err.ErrorString || err
-            });
-            
+            sink.onNext(new DebuggerPreRequisiteWarning(err.ErrorString || err));
             // TODO: log telemetry?
-
             return false;
         });
 }
@@ -119,7 +100,7 @@ interface AdapterExecutableCommand {
 // The default extension manifest calls this command as the adapterExecutableCommand
 // If the debugger components have not finished downloading, the proxy displays an error message to the user
 // Else it will launch the debug adapter
-export async function getAdapterExecutionCommand(sink: MessageObserver): Promise<AdapterExecutableCommand> {
+export async function getAdapterExecutionCommand(sink: EventObserver): Promise<AdapterExecutableCommand> {
     let util = new CoreClrDebugUtil(common.getExtensionPath());
 
     // Check for .debugger folder. Handle if it does not exist.
@@ -135,7 +116,7 @@ export async function getAdapterExecutionCommand(sink: MessageObserver): Promise
         // install.Lock does not exist, need to wait for packages to finish downloading.
         let installLock: boolean = await common.installFileExists(common.InstallFileType.Lock);
         if (!installLock) {
-            sink.onNext({type: MessageType.DebuggerNotInstalledFailure});
+            sink.onNext(new DebuggerNotInstalledFailure());
             throw new Error('The C# extension is still downloading packages. Please see progress in the output window below.');
         }
         // install.complete does not exist, check dotnetCLI to see if we can complete.
@@ -144,7 +125,7 @@ export async function getAdapterExecutionCommand(sink: MessageObserver): Promise
 
             if (!success)
             {
-                sink.onNext({type: MessageType.DebuggerNotInstalledFailure});
+                sink.onNext(new DebuggerNotInstalledFailure());
                 throw new Error('Failed to complete the installation of the C# extension. Please see the error in the output window below.');
             }
         }

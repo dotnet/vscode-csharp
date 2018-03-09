@@ -3,24 +3,23 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { should, expect } from 'chai';
-import { Message, MessageType } from '../../../src/omnisharp/messageType';
 import { getNullChannel } from './Fakes';
-import * as CreateMessage from './CreateMessage';
 import { OmnisharpChannelObserver } from '../../../src/observers/OmnisharpChannelObserver';
+import { BaseEvent, OmnisharpFailure } from '../../../src/omnisharp/loggingEvents';
 
 suite("OmnisharpChannelObserver", () => {
     suiteSetup(() => should());
     [
-        CreateMessage.OmnisharpFailure("errorMessage", "error"),
-    ].forEach((message: Message) => {
-        test(`Shows the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
+        new OmnisharpFailure("errorMessage", new Error("error")),
+    ].forEach((event: BaseEvent) => {
+        test(`Shows the channel for ${event.constructor.name}`, () => {
             let hasShown = false;
             let observer = new OmnisharpChannelObserver({
                 ...getNullChannel(),
                 show: () => { hasShown = true; }
             });
 
-            observer.onNext(message);
+            observer.onNext(event);
             expect(hasShown).to.be.true;
         });
     });

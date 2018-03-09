@@ -9,7 +9,6 @@ import * as vscode from 'vscode';
 import { AddAssetResult, addAssetsIfNecessary } from '../assets';
 import reportDiagnostics, { Advisor } from '../features/diagnosticsProvider';
 import { safeLength, sum } from '../common';
-
 import { CSharpConfigurationProvider } from '../configurationProvider';
 import CodeActionProvider from '../features/codeActionProvider';
 import CodeLensProvider from '../features/codeLensProvider';
@@ -21,7 +20,6 @@ import DocumentSymbolProvider from '../features/documentSymbolProvider';
 import FormatProvider from '../features/formattingEditProvider';
 import HoverProvider from '../features/hoverProvider';
 import ImplementationProvider from '../features/implementationProvider';
-import { MessageObserver, MessageType } from './messageType';
 import { OmniSharpServer } from './server';
 import { Options } from './options';
 import ReferenceProvider from '../features/referenceProvider';
@@ -33,10 +31,11 @@ import forwardChanges from '../features/changeForwarding';
 import registerCommands from '../features/commands';
 import reportStatus from '../features/status';
 import { PlatformInformation } from '../platform';
+import { EventObserver, ProjectJsonDeprecatedWarning, OmnisharpStart } from './loggingEvents';
 
 export let omnisharp: OmniSharpServer;
 
-export function activate(context: vscode.ExtensionContext, sink: MessageObserver, packageJSON: any, platformInfo: PlatformInformation) {
+export function activate(context: vscode.ExtensionContext, sink: EventObserver, packageJSON: any, platformInfo: PlatformInformation) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
         scheme: 'file' // only files from disk
@@ -113,9 +112,7 @@ export function activate(context: vscode.ExtensionContext, sink: MessageObserver
                         const moreDetailItem: vscode.MessageItem = { title: 'More Detail' };
                         vscode.window.showWarningMessage(shortMessage, moreDetailItem)
                             .then(item => {
-                                sink.onNext({
-                                    type: MessageType.ProjectJsonDeprecatedWarning
-                                });
+                                sink.onNext(new ProjectJsonDeprecatedWarning());
                             });
                     }
                 });
@@ -126,7 +123,7 @@ export function activate(context: vscode.ExtensionContext, sink: MessageObserver
     disposables.push(server.onServerStart(() => {
         let measures: { [key: string]: number } = {};
 
-         utils.requestWorkspaceInformation(server)
+        utils.requestWorkspaceInformation(server)
             .then(workspaceInfo => {
                 if (workspaceInfo.DotNet && workspaceInfo.DotNet.Projects.length > 0) {
                     measures['projectjson.projectcount'] = workspaceInfo.DotNet.Projects.length;
@@ -142,11 +139,7 @@ export function activate(context: vscode.ExtensionContext, sink: MessageObserver
 
                 // TODO: Add measurements for script.
 
-                sink.onNext({ 
-                    type: MessageType.OmnisharpStart,
-                    eventName: 'OmniSharp.Start',
-                    measures
-                });
+                sink.onNext(new OmnisharpStart('OmniSharp.Start', measures));
             });
     }));
 
@@ -167,6 +160,6 @@ export function activate(context: vscode.ExtensionContext, sink: MessageObserver
     disposables.push(vscode.debug.registerDebugConfigurationProvider('coreclr', new CSharpConfigurationProvider(server)));
 
     context.subscriptions.push(...disposables);
-    
+
     return new Promise<string>(resolve => server.onServerStart(e => resolve(e)));
 }

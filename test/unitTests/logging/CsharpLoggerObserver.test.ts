@@ -4,12 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should, expect } from 'chai';
-import { MessageType, Message } from '../../../src/omnisharp/messageType';
 import { getNullChannel } from './Fakes';
-import * as CreateMessage from './CreateMessage';
 import { CsharpLoggerObserver } from '../../../src/observers/CsharpLoggerObserver';
 import { PlatformInformation } from '../../../src/platform';
 import { PackageError } from '../../../src/packages';
+import { DownloadStart, DownloadProgress, DownloadSuccess, DownloadFailure, BaseEvent, PlatformInfoEvent, InstallationFailure, DebuggerPreRequisiteFailure, DebuggerPreRequisiteWarning } from '../../../src/omnisharp/loggingEvents';
 
 suite("CsharpLoggerObserver: Download Messages", () => {
     suiteSetup(() => should());
@@ -20,35 +19,35 @@ suite("CsharpLoggerObserver: Download Messages", () => {
             expected: ""
         },
         {
-            events: [CreateMessage.DownloadStart("Started")],
+            events: [new DownloadStart("Started")],
             expected: "Started"
         },
         {
-            events: [CreateMessage.DownloadStart("Started"), CreateMessage.DownloadProgress(100)],
+            events: [new DownloadStart("Started"), new DownloadProgress(100)],
             expected: "Started...................."
         },
         {
-            events: [CreateMessage.DownloadStart("Started"), CreateMessage.DownloadProgress(10), CreateMessage.DownloadProgress(50), CreateMessage.DownloadProgress(100)],
+            events: [new DownloadStart("Started"), new DownloadProgress(10), new DownloadProgress(50), new DownloadProgress(100)],
             expected: "Started...................."
         },
         {
-            events: [CreateMessage.DownloadStart("Started"), CreateMessage.DownloadProgress(10), CreateMessage.DownloadProgress(50)],
+            events: [new DownloadStart("Started"), new DownloadProgress(10), new DownloadProgress(50)],
             expected: "Started.........."
         },
         {
-            events: [CreateMessage.DownloadStart("Started"), CreateMessage.DownloadProgress(50)],
+            events: [new DownloadStart("Started"), new DownloadProgress(50)],
             expected: "Started.........."
         },
         {
-            events: [CreateMessage.DownloadStart("Started"), CreateMessage.DownloadProgress(50), CreateMessage.DownloadProgress(50), CreateMessage.DownloadProgress(50)],
+            events: [new DownloadStart("Started"), new DownloadProgress(50), new DownloadProgress(50), new DownloadProgress(50)],
             expected: "Started.........."
         },
         {
-            events: [CreateMessage.DownloadStart("Started"), CreateMessage.DownloadProgress(100), CreateMessage.DownloadSuccess("Done")],
+            events: [new DownloadStart("Started"), new DownloadProgress(100), new DownloadSuccess("Done")],
             expected: "Started....................Done\n"
         },
         {
-            events: [CreateMessage.DownloadStart("Started"), CreateMessage.DownloadProgress(50), CreateMessage.DownloadFailure("Failed")],
+            events: [new DownloadStart("Started"), new DownloadProgress(50), new DownloadFailure("Failed")],
             expected: "Started..........Failed\n"
         },
     ].forEach((element) => {
@@ -61,7 +60,7 @@ suite("CsharpLoggerObserver: Download Messages", () => {
                 append: (text?: string) => { logOutput += text; }
             });
 
-            element.events.forEach((message: Message) => observer.onNext(message));
+            element.events.forEach((message: BaseEvent) => observer.onNext(message));
             expect(logOutput).to.be.equal(element.expected);
         });
     });
@@ -76,10 +75,7 @@ suite('CsharpLoggerObsever', () => {
             append: (text?: string) => { logOutput += text ? text : "\n"; }
         });
 
-        let message = <Message>{
-            type: MessageType.PlatformInfo,
-            info: new PlatformInformation("MyPlatform", "MyArchitecture")
-        };
+        let message = new PlatformInfoEvent(new PlatformInformation("MyPlatform", "MyArchitecture"));
 
         observer.onNext(message);
         expect(logOutput).to.contain("MyPlatform");
@@ -97,7 +93,7 @@ suite('CsharpLoggerObsever', () => {
         }
     ].forEach((element) =>
         test('InstallationFailure: Stage, Error and Inner Errors are logged', () => {
-            let message = CreateMessage.InstallationFailure(element.stage, element.error);
+            let message = new InstallationFailure(element.stage, element.error);
             let logOutput = "";
             let observer = new CsharpLoggerObserver({
                 ...getNullChannel(),
@@ -116,15 +112,15 @@ suite('CsharpLoggerObsever', () => {
 
     [
         {
-            message: CreateMessage.DebuggerPreRequisiteFailure('Some failure message'),
+            message: new DebuggerPreRequisiteFailure('Some failure message'),
             expected: `Some failure message\n`
         },
         {
-            message: CreateMessage.DebuggerPreRequisiteWarning("Some warning message"),
+            message: new DebuggerPreRequisiteWarning("Some warning message"),
             expected: `Some warning message\n`
         }
     ].forEach((element) =>
-        test(`${CreateMessage.DisplayMessageType(element.message)} is shown`, () => {
+        test(`${element.message.constructor.name} is shown`, () => {
             let logOutput = "";
             let observer = new CsharpLoggerObserver({
                 ...getNullChannel(),

@@ -11,8 +11,8 @@ import { rimraf } from 'async-file';
 import { GetTestOmnisharpDownloader } from './OmnisharpDownloader.test';
 import { OmnisharpManager } from '../../src/omnisharp/OmnisharpManager';
 import { Subject } from 'rx';
-import { Message } from '../../src/omnisharp/messageType';
 import { OmnisharpDownloader } from '../../src/omnisharp/OmnisharpDownloader';
+import { BaseEvent } from '../../src/omnisharp/loggingEvents';
 
 const chai = require("chai");
 chai.use(require("chai-as-promised"));
@@ -26,7 +26,7 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
     const installPath = ".omnisharp/experimental";
     const versionFilepathInServer = "releases/testVersionInfo.txt";
     const useMono = false;
-    const sink = new Subject<Message>();
+    const sink = new Subject<BaseEvent>();
     const manager = GetTestOmnisharpManager(sink, platformInfo);
     let extensionPath: string;
     let tmpDir: any;
@@ -110,7 +110,7 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
     });
 });
 
-function GetTestOmnisharpManager(sink: Subject<Message>, platformInfo: PlatformInformation) {
+function GetTestOmnisharpManager(sink: Subject<BaseEvent>, platformInfo: PlatformInformation) {
     let downloader = GetTestOmnisharpDownloader(sink, platformInfo);
     return new OmnisharpManager(downloader, platformInfo);
 }

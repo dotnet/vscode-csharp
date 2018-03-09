@@ -3,62 +3,83 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Message, MessageType, OmnisharpEventPacketReceived } from "../omnisharp/messageType";
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import * as os from 'os';
+import { BaseEvent, OmnisharpRequestMessage, OmnisharpServerEnqueueRequest, OmnisharpServerDequeueRequest, OmnisharpServerProcessRequestComplete, OmnisharpServerVerboseMessage, OmnisharpServerProcessRequestStart, OmnisharpEventPacketReceived } from "../omnisharp/loggingEvents";
 
 export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
-    public onNext = (message: Message) => {
-        switch(message.type){
-            case MessageType.OmnisharpRequestMessage:
-                this.logger.append(`makeRequest: ${message.request.command} (${message.id})`);
-                if (message.request.data) {
-                    this.logger.append(`, data=${JSON.stringify(message.request.data)}`);
-                }
-                this.logger.appendLine();
-            break;
-        case MessageType.OmnisharpServerEnqueueRequest:
-                this.logger.appendLine(`Enqueue ${message.name} request for ${message.command}.`);
-                this.logger.appendLine();
-            break;
-        case MessageType.OmnisharpServerDequeueRequest:
-                this.logger.appendLine(`Dequeue ${message.name} request for ${message.command} (${message.id}).`);
-                this.logger.appendLine();
-            break;
-        case MessageType.OmnisharpServerProcessRequestStart:
-                this.logger.appendLine(`Processing ${message.name} queue`);
-                this.logger.increaseIndent();
-            break;
-        case MessageType.OmnisharpServerProcessRequestComplete:
-                this.logger.decreaseIndent();
-            break;
-        case MessageType.OmnisharpServerVerboseMessage:
-                this.logger.appendLine(message.message);
-                this.logger.appendLine();
+    public onNext = (event: BaseEvent) => {
+        switch (event.constructor.name) {
+            case OmnisharpRequestMessage.name:
+                this.handleOmnisharpRequestMessage(<OmnisharpRequestMessage>event);
                 break;
-            
-            //what to do of this ?
-        case MessageType.OmnisharpEventPacketReceived:
-            if (this._isFilterableOutput(message)) {
-                let output = `[${this.getLogLevelPrefix(message.logLevel)}]: ${message.name}${os.EOL}${message.message}`;
-
-                const newLinePlusPadding = os.EOL + "        ";
-                output = output.replace(os.EOL, newLinePlusPadding);
-
-                this.logger.appendLine(output);
-            }
-            break;
+            case OmnisharpServerEnqueueRequest.name:
+                this.handleOmnisharpServerEnqueueRequest(<OmnisharpServerEnqueueRequest>event);
+                break;
+            case OmnisharpServerDequeueRequest.name:
+                this.handleOmnisharpServerDequeueRequest(<OmnisharpServerDequeueRequest>event);
+                break;
+            case OmnisharpServerProcessRequestStart.name:
+                this.handleOmnisharpProcessRequestStart(<OmnisharpServerEnqueueRequest>event);
+                break;
+            case OmnisharpServerProcessRequestComplete.name:
+                this.logger.decreaseIndent();
+                break;
+            case OmnisharpServerVerboseMessage.name:
+                this.handleOmnisharpServerVerboseMessage(<OmnisharpServerVerboseMessage>event);
+                break;
+            case OmnisharpEventPacketReceived.name:
+                this.handleOmnisharpEventPacketReceived(<OmnisharpEventPacketReceived>event);
+                break;
         }
-        
     }
 
-    private _isFilterableOutput(message: OmnisharpEventPacketReceived) {
+    private handleOmnisharpRequestMessage(event: OmnisharpRequestMessage) {
+        this.logger.append(`makeRequest: ${event.request.command} (${event.id})`);
+        if (event.request.data) {
+            this.logger.append(`, data=${JSON.stringify(event.request.data)}`);
+        }
+        this.logger.appendLine();
+    }
+
+    private handleOmnisharpServerEnqueueRequest(event: OmnisharpServerEnqueueRequest) {
+        this.logger.appendLine(`Enqueue ${event.name} request for ${event.command}.`);
+        this.logger.appendLine();
+    }
+
+    private handleOmnisharpServerDequeueRequest(event: OmnisharpServerDequeueRequest) {
+        this.logger.appendLine(`Dequeue ${event.name} request for ${event.command} (${event.id}).`);
+        this.logger.appendLine();
+    }
+
+    private handleOmnisharpProcessRequestStart(event: OmnisharpServerProcessRequestStart) {
+        this.logger.appendLine(`Processing ${event.name} queue`);
+        this.logger.increaseIndent();
+    }
+
+    private handleOmnisharpServerVerboseMessage(event: OmnisharpServerVerboseMessage) {
+        this.logger.appendLine(event.message);
+        this.logger.appendLine();
+    }
+
+    private handleOmnisharpEventPacketReceived(event: OmnisharpEventPacketReceived) {
+        if (!this._isFilterableOutput(event)) {
+            let output = `[${this.getLogLevelPrefix(event.logLevel)}]: ${event.name}${os.EOL}${event.message}`;
+
+            const newLinePlusPadding = os.EOL + "        ";
+            output = output.replace(os.EOL, newLinePlusPadding);
+
+            this.logger.appendLine(output);
+        }
+    }
+
+    private _isFilterableOutput(event: OmnisharpEventPacketReceived) {
         // filter messages like: /codecheck: 200 339ms
         const timing200Pattern = /^\/[\/\w]+: 200 \d+ms/;
 
-        return message.logLevel === "INFORMATION"
-            && message.name === "OmniSharp.Middleware.LoggingMiddleware"
-            && timing200Pattern.test(message.message);
+        return event.logLevel === "INFORMATION"
+            && event.name === "OmniSharp.Middleware.LoggingMiddleware"
+            && timing200Pattern.test(event.message);
     }
 
     private getLogLevelPrefix(logLevel: string) {

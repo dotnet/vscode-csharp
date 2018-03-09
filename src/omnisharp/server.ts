@@ -10,10 +10,8 @@ import * as vscode from 'vscode';
 
 import { ChildProcess, exec } from 'child_process';
 import { LaunchTarget, findLaunchTargets } from './launcher';
-import { MessageObserver, MessageType } from './messageType';
 import { ReadLine, createInterface } from 'readline';
 import { Request, RequestQueueCollection } from './requestQueue';
-
 import { DelayTracker } from './delayTracker';
 import { EventEmitter } from 'events';
 import { OmnisharpManager } from './OmnisharpManager';
@@ -22,6 +20,7 @@ import { PlatformInformation } from '../platform';
 import { launchOmniSharp } from './launcher';
 import { setTimeout } from 'timers';
 import { OmnisharpDownloader } from './OmnisharpDownloader';
+import { EventObserver, OmnisharpDelayTrackerEventMeasures, OmnisharpFailure, OmnisharpInitialisation, OmnisharpLaunch, OmnisharpServerMessage, OmnisharpServerVerboseMessage, OmnisharpEventPacketReceived, OmnisharpRequestMessage } from './loggingEvents';
 
 enum ServerState {
     Starting,
@@ -83,9 +82,9 @@ export class OmniSharpServer {
     private _options: Options;
 
     private _omnisharpManager: OmnisharpManager;
-    private _sink: MessageObserver;
+    private _sink: EventObserver;
 
-    constructor(sink: MessageObserver, packageJSON: any, platformInfo: PlatformInformation) {
+    constructor(sink: EventObserver, packageJSON: any, platformInfo: PlatformInformation) {
         this._sink = sink;
         this._requestQueue = new RequestQueueCollection(this._sink, 8, request => this._makeRequest(request));
         let downloader = new OmnisharpDownloader(this._sink, packageJSON, platformInfo);
@@ -134,7 +133,7 @@ export class OmniSharpServer {
                 const measures = tracker.getMeasures();
                 tracker.clearMeasures();
 
-                this._sink.onNext({ type: MessageType.OmnisharpDelayTrackerEventMeasures, eventName, measures });
+                this._sink.onNext(new OmnisharpDelayTrackerEventMeasures(eventName, measures));
             }
         }
     }
@@ -258,17 +257,17 @@ export class OmniSharpServer {
                 launchPath = await this._omnisharpManager.GetOmnisharpPath(this._options.path, this._options.useMono, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
             }
             catch (error) {
-                this._sink.onNext({ type: MessageType.OmnisharpFailure, message: `Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error: error });
+                this._sink.onNext(new OmnisharpFailure(`Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));
                 return;
             }
         }
 
-        this._sink.onNext({ type: MessageType.OmnisharpInitialisation, timeStamp: new Date(), solutionPath: solutionPath });
+        this._sink.onNext(new OmnisharpInitialisation(new Date(), solutionPath));
 
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
         return launchOmniSharp(cwd, args, launchPath).then(value => {
-            this._sink.onNext({ type: MessageType.OmnisharpLaunch, usingMono: value.usingMono, command: value.command, pid: value.process.pid });
+            this._sink.onNext(new OmnisharpLaunch(value.usingMono, value.command, value.process.pid));
 
             this._serverProcess = value.process;
             this._delayTrackers = {};
@@ -482,7 +481,7 @@ export class OmniSharpServer {
         line = line.trim();
 
         if (line[0] !== '{') {
-            this._sink.onNext({ type: MessageType.OmnisharpServerMessage, message: line });
+            this._sink.onNext(new OmnisharpServerMessage(line));
             return;
         }
 
@@ -508,7 +507,7 @@ export class OmniSharpServer {
                 this._handleEventPacket(<protocol.WireProtocol.EventPacket>packet);
                 break;
             default:
-                this._sink.onNext({ type: MessageType.OmnisharpServerMessage, message: `Unknown packet type: ${packet.Type}` });
+                this._sink.onNext(new OmnisharpServerMessage(`Unknown packet type: ${packet.Type}`));
                 break;
         }
     }
@@ -517,11 +516,11 @@ export class OmniSharpServer {
         const request = this._requestQueue.dequeue(packet.Command, packet.Request_seq);
 
         if (!request) {
-            this._sink.onNext({ type: MessageType.OmnisharpServerMessage, message: `Received response for ${packet.Command} but could not find request.` });
+            this._sink.onNext(new OmnisharpServerMessage(`Received response for ${packet.Command} but could not find request.`));
             return;
         }
 
-        this._sink.onNext({ type: MessageType.OmnisharpServerVerboseMessage, message: `handleResponse: ${packet.Command} (${packet.Request_seq})` });
+        this._sink.onNext(new OmnisharpServerVerboseMessage(`handleResponse: ${packet.Command} (${packet.Request_seq})`));
 
         if (packet.Success) {
             request.onSuccess(packet.Body);
@@ -536,7 +535,7 @@ export class OmniSharpServer {
     private _handleEventPacket(packet: protocol.WireProtocol.EventPacket): void {
         if (packet.Event === 'log') {
             const entry = <{ LogLevel: string; Name: string; Message: string; }>packet.Body;
-            this._sink.onNext({ type: MessageType.OmnisharpEventPacketReceived, logLevel: entry.LogLevel, name: entry.Name, message: entry.Message });
+            this._sink.onNext(new OmnisharpEventPacketReceived(entry.LogLevel, entry.Name, entry.Message));
         }
         else {
             // fwd all other events
@@ -554,7 +553,7 @@ export class OmniSharpServer {
             Arguments: request.data
         };
 
-        this._sink.onNext({ type: MessageType.OmnisharpRequestMessage, request: request, id: id });
+        this._sink.onNext(new OmnisharpRequestMessage(request, id));
         this._serverProcess.stdin.write(JSON.stringify(requestPacket) + '\n');
         return id;
     }

@@ -9,11 +9,11 @@ import {OmniSharpServer} from '../omnisharp/server';
 import {dotnetRestoreForProject} from './commands';
 import {basename} from 'path';
 import * as serverUtils from '../omnisharp/utils';
-import { MessageObserver, MessageType } from '../omnisharp/messageType';
+import { EventObserver, OmnisharpServerOnServerError, OmnisharpServerOnError, OmnisharpServerMsBuildProjectDiagnostics, OmnisharpServerUnresolvedDependencies, OmnisharpServerOnStdErr } from '../omnisharp/loggingEvents';
 
 const debounce = require('lodash.debounce');
 
-export default function reportStatus(server: OmniSharpServer, sink: MessageObserver) {
+export default function reportStatus(server: OmniSharpServer, sink: EventObserver) {
     return vscode.Disposable.from(
         reportServerStatus(server, sink),
         forwardOutput(server, sink),
@@ -207,30 +207,21 @@ export function reportDocumentStatus(server: OmniSharpServer): vscode.Disposable
 
 // ---- server status
 
-export function reportServerStatus(server: OmniSharpServer, sink: MessageObserver): vscode.Disposable{
+export function reportServerStatus(server: OmniSharpServer, sink: EventObserver): vscode.Disposable{
 
 
     let d0 = server.onServerError(err => {
-        sink.onNext({ 
-            type: MessageType.OmnisharpServerOnServerError,
-            message: '[ERROR] ' + err
-        });
+        sink.onNext(new OmnisharpServerOnServerError('[ERROR] ' + err));
     });
 
     let d1 = server.onError(message => {
-        sink.onNext({
-            type: MessageType.OmnisharpServerOnError,
-            errorMessage: message
-        });
+        sink.onNext(new OmnisharpServerOnError(message));
 
         showMessageSoon();
     });
 
     let d2 = server.onMsBuildProjectDiagnostics(message => {
-        sink.onNext({
-            type: MessageType.OmnisharpServerMsBuildProjectDiagnostics,
-            diagnostics: message
-        });
+        sink.onNext(new OmnisharpServerMsBuildProjectDiagnostics(message));
 
         if (message.Errors.length > 0) {
             showMessageSoon();
@@ -238,10 +229,7 @@ export function reportServerStatus(server: OmniSharpServer, sink: MessageObserve
     });
 
     let d3 = server.onUnresolvedDependencies(message => {
-        sink.onNext({
-            type: MessageType.OmnisharpServerUnresolvedDependencies,
-            unresolvedDependencies: message
-        });
+        sink.onNext(new OmnisharpServerUnresolvedDependencies(message));
 
         let csharpConfig = vscode.workspace.getConfiguration('csharp');
         if (!csharpConfig.get<boolean>('suppressDotnetRestoreNotification')) {
@@ -275,7 +263,7 @@ function showMessageSoon() {
 
 // --- mirror output in channel
 
-function forwardOutput(server: OmniSharpServer, sink: MessageObserver) {
+function forwardOutput(server: OmniSharpServer, sink: EventObserver) {
     return vscode.Disposable.from(
-        server.onStderr(message => sink.onNext({ type: MessageType.OmnisharpServerOnStdErr, message })));
+        server.onStderr(message => sink.onNext(new OmnisharpServerOnStdErr(message))));
 }

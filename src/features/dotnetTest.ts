@@ -11,11 +11,10 @@ import * as serverUtils from "../omnisharp/utils";
 import * as utils from '../common';
 import * as vscode from 'vscode';
 
-import { MessageObserver, MessageType } from '../omnisharp/messageType';
-
 import AbstractProvider from './abstractProvider';
 import { DebuggerEventsProtocol } from '../coreclr-debug/debuggerEventsProtocol';
 import { OmniSharpServer } from '../omnisharp/server';
+import { EventObserver, TestExecutionCountReport } from '../omnisharp/loggingEvents';
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 
@@ -25,9 +24,9 @@ export default class TestManager extends AbstractProvider {
     private _runCounts: { [testFrameworkName: string]: number };
     private _debugCounts: { [testFrameworkName: string]: number };
     private _telemetryIntervalId: NodeJS.Timer = undefined;
-    private _sink: MessageObserver;
+    private _sink: EventObserver;
 
-    constructor(server: OmniSharpServer, sink: MessageObserver) {
+    constructor(server: OmniSharpServer, sink: EventObserver) {
         super(server);
         this._sink = sink;
         
@@ -107,11 +106,7 @@ export default class TestManager extends AbstractProvider {
     }
 
     private _reportTelemetry(): void {
-        this._sink.onNext({ 
-            type: MessageType.TestExecutionCountReport,
-            debugCounts: this._debugCounts,
-            runCounts: this._runCounts });
-
+        this._sink.onNext(new TestExecutionCountReport(this._debugCounts,this._runCounts ));
         this._runCounts = undefined;
         this._debugCounts = undefined;
     }

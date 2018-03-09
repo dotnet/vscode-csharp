@@ -4,28 +4,27 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should, expect } from 'chai';
-import { MessageType, Message, ActionWithMessage } from '../../../src/omnisharp/messageType';
 import { getNullChannel } from './Fakes';
-import * as CreateMessage from './CreateMessage';
 import { DotnetLoggerObserver } from '../../../src/observers/DotnetLoggerObserver';
+import { CommandDotNetRestoreProgress, CommandDotNetRestoreSucceeded, CommandDotNetRestoreFailed, EventWithMessage } from '../../../src/omnisharp/loggingEvents';
 
 suite("DotnetLoggerObserver", () => {
     suiteSetup(() => should());
 
     [
-        CreateMessage.CommandDotNetRestoreProgress("Some message"),
-        CreateMessage.CommandDotNetRestoreSucceeded("Some message"),
-        CreateMessage.CommandDotNetRestoreFailed("Some message")
-    ].forEach((message: ActionWithMessage) => {
-        test(`Appends the text into the channel for ${CreateMessage.DisplayMessageType(message)}`, () => {
+        new CommandDotNetRestoreProgress("Some message"),
+        new CommandDotNetRestoreSucceeded("Some message"),
+        new CommandDotNetRestoreFailed("Some message")
+    ].forEach((event: EventWithMessage) => {
+        test(`Appends the text into the channel for ${event.constructor.name}`, () => {
             let appendedMessage = "";
             let observer = new DotnetLoggerObserver({
                 ...getNullChannel(),
                 append: (text: string) => { appendedMessage += text; },
             });
 
-            observer.onNext(message);
-            expect(appendedMessage).to.contain(message.message);
+            observer.onNext(event);
+            expect(appendedMessage).to.contain(event.message);
         });
     });
 });

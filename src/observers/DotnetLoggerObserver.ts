@@ -3,17 +3,18 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
-import { Message, MessageType } from "../omnisharp/messageType";
+import { BaseEvent, CommandDotNetRestoreProgress, CommandDotNetRestoreSucceeded, CommandDotNetRestoreFailed } from "../omnisharp/loggingEvents";
 
 export class DotnetLoggerObserver extends BaseLoggerObserver {
-    public onNext = (message: Message) => {
-        switch(message.type){
-            case MessageType.CommandDotNetRestoreProgress:
-                this.logger.append(message.message);
+    public onNext = (event: BaseEvent) => {
+        switch (event.constructor.name) {
+            case CommandDotNetRestoreProgress.name:
+                this.logger.append((<CommandDotNetRestoreProgress>event).message);
                 break;
-            case MessageType.CommandDotNetRestoreSucceeded:
-            case MessageType.CommandDotNetRestoreFailed:
-                this.logger.appendLine(message.message);
+            case CommandDotNetRestoreSucceeded.name:
+            this.logger.appendLine((<CommandDotNetRestoreSucceeded>event).message);    
+            case CommandDotNetRestoreFailed.name:
+                this.logger.appendLine((<CommandDotNetRestoreFailed>event).message);
                 break;
         }
     }

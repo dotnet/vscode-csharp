@@ -5,9 +5,9 @@
 
 import { GetNetworkConfiguration, GetStatus } from '../downloader.helper';
 import { GetPackagesFromVersion, GetVersionFilePackage } from './OmnisharpPackageCreator';
-import { MessageObserver, MessageType } from './messageType';
 import { Package, PackageManager, Status } from '../packages';
 import { PlatformInformation } from '../platform';
+import { EventObserver, PackageInstallation, PlatformInfoEvent, InstallationSuccess, InstallationFailure, InstallationProgress } from './loggingEvents';
 
 const defaultPackageManagerFactory: IPackageManagerFactory = (platformInfo, packageJSON) => new PackageManager(platformInfo, packageJSON);
 export interface IPackageManagerFactory {
@@ -21,7 +21,7 @@ export class OmnisharpDownloader {
     private packageManager: PackageManager;
 
     public constructor(
-        private sink: MessageObserver,
+        private sink: EventObserver,
         private packageJSON: any,
         private platformInfo: PlatformInformation,
         packageManagerFactory: IPackageManagerFactory = defaultPackageManagerFactory) {
@@ -34,12 +34,12 @@ export class OmnisharpDownloader {
     }
 
     public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string) {
-        this.sink.onNext({ type: MessageType.PackageInstallation, packageInfo: `Omnisharp Version = ${version}` });
+        this.sink.onNext(new PackageInstallation(`Omnisharp Version = ${version}`));
 
         let installationStage = '';
 
         try {
-            this.sink.onNext({ type: MessageType.PlatformInfo, info: this.platformInfo });
+            this.sink.onNext(new PlatformInfoEvent(this.platformInfo));
 
             installationStage = 'getPackageInfo';
             let packages: Package[] = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
@@ -52,10 +52,10 @@ export class OmnisharpDownloader {
             installationStage = 'installPackages';
             await this.packageManager.InstallPackages(this.sink, this.status);
 
-            this.sink.onNext({ type: MessageType.InstallationSuccess });
+            this.sink.onNext(new InstallationSuccess());
         }
         catch (error) {
-            this.sink.onNext({ type: MessageType.InstallationFailure, stage: installationStage, error: error });
+            this.sink.onNext(new InstallationFailure(installationStage, error));
             throw error;// throw the error up to the server
         }
         finally {
@@ -66,14 +66,14 @@ export class OmnisharpDownloader {
     public async GetLatestVersion(serverUrl: string, latestVersionFileServerPath: string): Promise<string> {
         let installationStage = 'getLatestVersionInfoFile';
         try {
-            this.sink.onNext({ type: MessageType.InstallationProgress, stage: installationStage, message: 'Getting latest build information...' });
+            this.sink.onNext(new InstallationProgress(installationStage, 'Getting latest build information...'));
             //The package manager needs a package format to download, hence we form a package for the latest version file
             let filePackage = GetVersionFilePackage(serverUrl, latestVersionFileServerPath);
             //Fetch the latest version information from the file
             return await this.packageManager.GetLatestVersionFromFile(this.sink, this.status, this.proxy, this.strictSSL, filePackage);
         }
         catch (error) {
-            this.sink.onNext({ type: MessageType.InstallationFailure, stage: installationStage, error: error });
+            this.sink.onNext(new InstallationFailure(installationStage, error));
             throw error;
         }
     }

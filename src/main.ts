@@ -7,7 +7,6 @@ import * as OmniSharp from './omnisharp/extension';
 import * as coreclrdebug from './coreclr-debug/activate';
 import * as util from './common';
 import * as vscode from 'vscode';
-import { Message, MessageObserver, MessageType } from './omnisharp/messageType';
 import { CSharpExtDownloader } from './CSharpExtDownloader';
 import { PlatformInformation } from './platform';
 import { Subject } from 'rx';
@@ -21,6 +20,7 @@ import { TelemetryObserver } from './observers/TelemetryObserver';
 import { OmnisharpChannelObserver } from './observers/OmnisharpChannelObserver';
 import { DotnetLoggerObserver } from './observers/DotnetLoggerObserver';
 import { OmnisharpDebugModeLoggerObserver } from './observers/OmnisharpDebugModeLoggerObserver';
+import { BaseEvent, ActivationFailure, EventObserver } from './omnisharp/loggingEvents';
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 
@@ -44,7 +44,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel);
     let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel);
 
-    const sink = new Subject<Message>();
+    const sink = new Subject<BaseEvent>();
     sink.subscribe(dotnetChannelObserver.onNext);
     sink.subscribe(dotnetLoggerObserver.onNext);
 
@@ -64,7 +64,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
         platformInfo = await PlatformInformation.GetCurrent();
     }
     catch (error) {
-        sink.onNext({ type: MessageType.ActivationFailure });
+        sink.onNext(new ActivationFailure());
     }
 
     let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter);
@@ -93,7 +93,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     };
 }
 
-function ensureRuntimeDependencies(extension: vscode.Extension<any>, sink: MessageObserver, platformInfo: PlatformInformation): Promise<boolean> {
+function ensureRuntimeDependencies(extension: vscode.Extension<any>, sink: EventObserver, platformInfo: PlatformInformation): Promise<boolean> {
     return util.installFileExists(util.InstallFileType.Lock)
         .then(exists => {
             if (!exists) {

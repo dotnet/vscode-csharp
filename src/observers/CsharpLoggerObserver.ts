@@ -3,70 +3,98 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Message, MessageType } from "./../omnisharp/messageType";
 import { PackageError } from "../packages";
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
+import { BaseEvent, ActivationFailure, PackageInstallation, PlatformInfoEvent, InstallationFailure, InstallationSuccess, InstallationProgress, DownloadStart, DownloadProgress, DownloadSuccess, DownloadFailure, DebuggerPreRequisiteFailure, DebuggerPreRequisiteWarning, ProjectJsonDeprecatedWarning, EventWithMessage } from "../omnisharp/loggingEvents";
 
-export class CsharpLoggerObserver extends BaseLoggerObserver{
+export class CsharpLoggerObserver extends BaseLoggerObserver {
     private dots: number;
 
-    public onNext = (message: Message) => {
-        switch (message.type) {
-            case MessageType.ActivationFailure:
+    public onNext = (event: BaseEvent) => {
+        switch (event.constructor.name) {
+            case ActivationFailure.name:
                 this.logger.appendLine("[ERROR]: C# Extension failed to get platform information.");
                 break;
-            case MessageType.PackageInstallation:
-                this.logger.append(`Installing ${message.packageInfo}...`);
-                this.logger.appendLine();
+            case PackageInstallation.name:
+                this.handlePackageInstallation(<PackageInstallation>event);
                 break;
-            case MessageType.PlatformInfo:
-                this.logger.appendLine(`Platform: ${message.info.toString()}`);
-                this.logger.appendLine();
+            case PlatformInfoEvent.name:
+                this.handlePlatformInfo(<PlatformInfoEvent>event);
                 break;
-            case MessageType.InstallationFailure:
-                this.logger.appendLine(`Failed at stage: ${message.stage}`);
-                if (message.error instanceof PackageError) {
-                    if (message.error.innerError) {
-                        this.logger.appendLine(message.error.innerError.toString());
-                    }
-                    else {
-                        this.logger.appendLine(message.error.message);
-                    }
-                }
-                else {
-                    // do not log raw errorMessage in telemetry as it is likely to contain PII.
-                    this.logger.appendLine(message.error.toString());
-                }
-                this.logger.appendLine();
+            case InstallationFailure.name:
+                this.handleInstallationFailure(<InstallationFailure>event);
                 break;
-            case MessageType.InstallationSuccess:
+            case InstallationSuccess.name:
                 this.logger.appendLine('Finished');
                 this.logger.appendLine();
                 break;
-            case MessageType.InstallationProgress:
-                this.logger.appendLine(message.message);
-                this.logger.appendLine();
+            case InstallationProgress.name:
+                this.handleInstallationProgress(<InstallationProgress>event);
                 break;
-            case MessageType.DownloadStart:
-                this.logger.append(message.message);
-                this.dots = 0;
+            case DownloadStart.name:
+                this.handleDownloadStart(<DownloadStart>event);
                 break;
-            case MessageType.DownloadProgress:
-                let newDots = Math.ceil(message.downloadPercentage / 5);
-                if (newDots > this.dots) {
-                    this.logger.append('.'.repeat(newDots - this.dots));
-                    this.dots = newDots;
-                }
+            case DownloadProgress.name:
+                this.handleDownloadProgress(<DownloadProgress>event);
                 break;
-            case MessageType.DownloadSuccess:
-            case MessageType.DownloadFailure:
-            case MessageType.DebuggerPreRequisiteFailure:
-            case MessageType.DebuggerPreRequisiteWarning:
-                this.logger.appendLine(message.message);
+            case DownloadSuccess.name:
+            case DownloadFailure.name:
+            case DebuggerPreRequisiteFailure.name:
+            case DebuggerPreRequisiteWarning.name:
+                this.handleEventWithMessage(<EventWithMessage>event);
                 break;
-            case MessageType.ProjectJsonDeprecatedWarning:
+            case ProjectJsonDeprecatedWarning.name:
                 this.logger.appendLine("Warning: project.json is no longer a supported project format for .NET Core applications. Update to the latest version of .NET Core (https://aka.ms/netcoredownload) and use 'dotnet migrate' to upgrade your project (see https://aka.ms/netcoremigrate for details).");
                 break;
         }
+    }
+
+    private handleEventWithMessage(event: EventWithMessage) {
+        this.logger.appendLine(event.message);
+    }
+
+    private handlePackageInstallation(event: PackageInstallation) {
+        this.logger.append(`Installing ${event.packageInfo}...`);
+        this.logger.appendLine();
+    }
+
+    private handlePlatformInfo(event: PlatformInfoEvent) {
+        this.logger.appendLine(`Platform: ${event.info.toString()}`);
+        this.logger.appendLine();
+    }
+
+    private handleInstallationFailure(event: InstallationFailure) {
+        this.logger.appendLine(`Failed at stage: ${event.stage}`);
+        if (event.error instanceof PackageError) {
+            if (event.error.innerError) {
+                this.logger.appendLine(event.error.innerError.toString());
+            }
+            else {
+                this.logger.appendLine(event.error.message);
+            }
+        }
+        else {
+            // do not log raw errorMessage in telemetry as it is likely to contain PII.
+            this.logger.appendLine(event.error.toString());
+        }
+        this.logger.appendLine();
+    }
+
+    private handleDownloadProgress(event: DownloadProgress) {
+        let newDots = Math.ceil(event.downloadPercentage / 5);
+        if (newDots > this.dots) {
+            this.logger.append('.'.repeat(newDots - this.dots));
+            this.dots = newDots;
+        }
+    }
+
+    private handleDownloadStart(event: DownloadStart) {
+        this.logger.append(event.message);
+        this.dots = 0;
+    }
+
+    private handleInstallationProgress(event: InstallationProgress) {
+        this.logger.appendLine(event.message);
+        this.logger.appendLine();
     }
 }
