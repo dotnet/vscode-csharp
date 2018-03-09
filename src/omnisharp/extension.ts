@@ -5,7 +5,6 @@
 
 import * as utils from './utils';
 import * as vscode from 'vscode';
-
 import { AddAssetResult, addAssetsIfNecessary } from '../assets';
 import reportDiagnostics, { Advisor } from '../features/diagnosticsProvider';
 import { safeLength, sum } from '../common';

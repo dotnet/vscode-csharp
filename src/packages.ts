@@ -192,7 +192,6 @@ function downloadPackage(pkg: Package, eventStream: EventStream, status: Status,
         // the CDN link.
         if (pkg.fallbackUrl) {
             result = result.catch((primaryUrlError) => {
-                //to do: currently we are replacing logger.append with appendLine. Look into this.
                 eventStream.post(new DownloadStart(`\tRetrying from '${pkg.fallbackUrl}' `));
                 return downloadFile(pkg.fallbackUrl, pkg, eventStream, status, proxy, strictSSL)
                     .then(() => eventStream.post(new DownloadSuccess(' Done!' )))

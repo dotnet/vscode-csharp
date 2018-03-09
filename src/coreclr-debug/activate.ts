@@ -8,7 +8,6 @@ import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as common from './../common';
-
 import { CoreClrDebugUtil, DotnetInfo, } from './util';
 import { PlatformInformation } from './../platform';
 import { DebuggerPreRequisiteWarning, DebuggerPreRequisiteFailure, DebuggerNotInstalledFailure } from '../omnisharp/loggingEvents';
