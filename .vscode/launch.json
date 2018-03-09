@@ -40,6 +40,12 @@
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
+            "env": {
+                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
+                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "OSVC_SUITE": "singleCsproj"
+            },
             "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
@@ -56,6 +62,12 @@
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
+            "env": {
+                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
+                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "OSVC_SUITE": "slnWithCsproj"
+            },
             "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
