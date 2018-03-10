@@ -27,8 +27,6 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
 
         await csharpExtension.exports.initializationFinished;
 
-        await csharpExtension.exports.initializationFinished;
-
         await vscode.commands.executeCommand("dotnet.generateAssets");
 
         await poll(async () => await fs.exists(testAssetWorkspace.launchJsonPath), 10000, 100);

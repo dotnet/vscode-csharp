@@ -41,7 +41,8 @@
     "postinstall": "node ./node_modules/vscode/bin/install",
     "cov:instrument": "rimraf ./coverage && rimraf ./.nyc_output && rimraf ./out && npm run compile && cd out && nyc instrument --require source-map-support/register --cwd ../ . . && cd ..",
     "cov:merge": "cd ./out && istanbul-combine -d ../coverage -r lcovonly ../.nyc_output/*.json && cd ..",
-    "cov:merge-html": "istanbul-combine -d ./coverage -r html ./.nyc_output/*.json"
+    "cov:merge-html": "istanbul-combine -d ./coverage -r html ./.nyc_output/*.json",
+    "cov:report": "npm run cov:merge && bash <(curl -s https://codecov.io/bash)"
   },
   "dependencies": {
     "fs-extra": "^5.0.0",
@@ -73,6 +74,7 @@
     "chai-arrays": "2.0.0",
     "chai-as-promised": "7.1.1",
     "chai-fs": "2.0.0",
+    "codecov": "^3.0.0",
     "copyfiles": "^1.2.0",
     "cross-env": "5.1.1",
     "del": "3.0.0",
