@@ -16,6 +16,7 @@ export class OmnisharpChannelObserver extends BaseChannelObserver {
                 break;
             case OmnisharpFailure.name:
                 this.showChannel();
+                break;
         }
     }
 }

@@ -12,7 +12,8 @@ export class DotnetLoggerObserver extends BaseLoggerObserver {
                 this.logger.append((<CommandDotNetRestoreProgress>event).message);
                 break;
             case CommandDotNetRestoreSucceeded.name:
-            this.logger.appendLine((<CommandDotNetRestoreSucceeded>event).message);    
+                this.logger.appendLine((<CommandDotNetRestoreSucceeded>event).message);
+                break;    
             case CommandDotNetRestoreFailed.name:
                 this.logger.appendLine((<CommandDotNetRestoreFailed>event).message);
                 break;

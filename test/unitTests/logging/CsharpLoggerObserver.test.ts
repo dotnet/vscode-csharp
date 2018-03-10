@@ -113,11 +113,11 @@ suite('CsharpLoggerObsever', () => {
     [
         {
             message: new DebuggerPreRequisiteFailure('Some failure message'),
-            expected: `Some failure message\n`
+            expected: `Some failure message`
         },
         {
             message: new DebuggerPreRequisiteWarning("Some warning message"),
-            expected: `Some warning message\n`
+            expected: `Some warning message`
         }
     ].forEach((element) =>
         test(`${element.message.constructor.name} is shown`, () => {
