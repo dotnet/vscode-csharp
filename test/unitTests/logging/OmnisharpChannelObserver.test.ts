@@ -5,22 +5,32 @@
 import { should, expect } from 'chai';
 import { getNullChannel } from './Fakes';
 import { OmnisharpChannelObserver } from '../../../src/observers/OmnisharpChannelObserver';
-import { BaseEvent, OmnisharpFailure } from '../../../src/omnisharp/loggingEvents';
+import { BaseEvent, OmnisharpFailure, CommandShowOutput } from '../../../src/omnisharp/loggingEvents';
+import * as vscode from '../../../src/vscodeAdapter';
 
 suite("OmnisharpChannelObserver", () => {
     suiteSetup(() => should());
-    [
-        new OmnisharpFailure("errorMessage", new Error("error")),
-    ].forEach((event: BaseEvent) => {
-        test(`Shows the channel for ${event.constructor.name}`, () => {
-            let hasShown = false;
-            let observer = new OmnisharpChannelObserver({
-                ...getNullChannel(),
-                show: () => { hasShown = true; }
-            });
-
-            observer.post(event);
-            expect(hasShown).to.be.true;
+    test(`OmnisharpFailure: Shows the channel`, () => {
+        let event = new OmnisharpFailure("errorMessage", new Error("error"));
+        let hasShown = false;
+        let observer = new OmnisharpChannelObserver({
+            ...getNullChannel(),
+            show: () => { hasShown = true; }
         });
+
+        observer.post(event);
+        expect(hasShown).to.be.true;
+    });
+
+    test('CommandShowOutput: Shows the channel', () => {
+        let event = new CommandShowOutput();
+        let testColumn: vscode.ViewColumn;
+        let observer = new OmnisharpChannelObserver({
+            ...getNullChannel(),
+            show: (column) => { testColumn = column;}
+        });
+
+        observer.post(event);
+        expect(testColumn).to.be.equal(vscode.ViewColumn.Three);
     });
 });

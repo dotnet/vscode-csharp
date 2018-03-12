@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from '../../../src/vscodeAdapter';
+import { ITelemetryReporter } from '../../../src/observers/TelemetryObserver';
 
 export const getNullChannel = (): vscode.OutputChannel => {
     let returnChannel: vscode.OutputChannel = {
@@ -16,4 +17,12 @@ export const getNullChannel = (): vscode.OutputChannel => {
         dispose: () => { }
     };
     return returnChannel;
+};
+
+export const getNullTelemetryReporter = (): ITelemetryReporter => {
+    let reporter: ITelemetryReporter = {
+        sendTelemetryEvent: (eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }) => { }
+    };
+
+    return reporter;
 };

@@ -25,13 +25,23 @@ suite("OmnisharpLoggerObserver", () => {
         new OmnisharpServerMsBuildProjectDiagnostics({
             FileName: "someFile",
             Warnings: [{ FileName: "warningFile", LogLevel: "", Text: "", StartLine: 0, EndLine: 0, StartColumn: 0, EndColumn: 0 }],
-            Errors: [{ FileName: "errorFile", LogLevel: "", Text: "", StartLine: 0, EndLine: 0, StartColumn: 0, EndColumn: 0 }]
+            Errors: []
         })
     ].forEach((event: OmnisharpServerMsBuildProjectDiagnostics) => {
-        test(`${event.constructor.name}: Logged message contains the Filename`, () => {
+        test(`${event.constructor.name}: Logged message contains the Filename if there is atleast one error or warning`, () => {
             observer.post(event);
             expect(logOutput).to.contain(event.diagnostics.FileName);
         });
+    });
+
+    test("OmnisharpServerMsBuildProjectDiagnostics: Logged message is empty if there are no warnings and erros", () => {
+        let event = new OmnisharpServerMsBuildProjectDiagnostics({
+            FileName: "someFile",
+            Warnings: [],
+            Errors: []
+        });
+        observer.post(event);
+        expect(logOutput).to.be.empty;
     });
 
     [

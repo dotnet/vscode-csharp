@@ -8,7 +8,7 @@ import { getNullChannel } from './Fakes';
 import { CsharpLoggerObserver } from '../../../src/observers/CsharpLoggerObserver';
 import { PlatformInformation } from '../../../src/platform';
 import { PackageError } from '../../../src/packages';
-import { DownloadStart, DownloadProgress, DownloadSuccess, DownloadFailure, BaseEvent, PlatformInfoEvent, InstallationFailure, DebuggerPreRequisiteFailure, DebuggerPreRequisiteWarning } from '../../../src/omnisharp/loggingEvents';
+import { DownloadStart, DownloadProgress, DownloadSuccess, DownloadFailure, BaseEvent, PlatformInfoEvent, InstallationFailure, DebuggerPreRequisiteFailure, DebuggerPreRequisiteWarning, ActivationFailure, ProjectJsonDeprecatedWarning, InstallationSuccess, InstallationProgress, PackageInstallation } from '../../../src/omnisharp/loggingEvents';
 
 suite("CsharpLoggerObserver: Download Messages", () => {
     suiteSetup(() => should());
@@ -68,47 +68,44 @@ suite("CsharpLoggerObserver: Download Messages", () => {
 
 suite('CsharpLoggerObsever', () => {
     suiteSetup(() => should());
+    let logOutput = "";
+    let observer = new CsharpLoggerObserver({
+        ...getNullChannel(),
+        append: (text?: string) => { logOutput += text || ""; },
+    });
+
+    setup(() => {
+        logOutput = "";
+    });
+
     test('PlatformInfo: Logs contain the Platform and Architecture', () => {
-        let logOutput = "";
-        let observer = new CsharpLoggerObserver({
-            ...getNullChannel(),
-            append: (text?: string) => { logOutput += text ? text : "\n"; }
-        });
-
-        let message = new PlatformInfoEvent(new PlatformInformation("MyPlatform", "MyArchitecture"));
-
-        observer.post(message);
+        let event = new PlatformInfoEvent(new PlatformInformation("MyPlatform", "MyArchitecture"));
+        observer.post(event);
         expect(logOutput).to.contain("MyPlatform");
         expect(logOutput).to.contain("MyArchitecture");
     });
 
-    [
-        {
-            stage: "someStage",
-            error: "someError"
-        },
-        {
-            stage: "someStage",
-            error: new PackageError("someError", null, "innerError")
-        }
-    ].forEach((element) =>
-        test('InstallationFailure: Stage, Error and Inner Errors are logged', () => {
-            let message = new InstallationFailure(element.stage, element.error);
-            let logOutput = "";
-            let observer = new CsharpLoggerObserver({
-                ...getNullChannel(),
-                append: (text?: string) => { logOutput += text || ""; },
-            });
+    test('InstallationFailure: Stage and Error is logged if not a PackageError', () => {
+        let event = new InstallationFailure("someStage", new Error("someError"));
+        observer.post(event);
+        expect(logOutput).to.contain(event.stage);
+        expect(logOutput).to.contain(event.error.toString());
+    });
 
-            observer.post(message);
-            expect(logOutput).to.contain(element.stage);
-            if (element.error instanceof PackageError) {
-                expect(logOutput).to.contain(element.error.innerError.toString());
-            } 
-            else {
-                expect(logOutput).to.contain(element.error.toString());
-            }
-        }));
+    test('InstallationFailure: Stage and Error is logged if a PackageError without inner error', () => {
+        let event = new InstallationFailure("someStage", new PackageError("someError", null, null));
+        observer.post(event);
+        expect(logOutput).to.contain(event.stage);
+        expect(logOutput).to.contain(event.error.message);
+    });
+
+    test('InstallationFailure: Stage and Inner error is logged if a PackageError without inner error', () => {
+        let event = new InstallationFailure("someStage", new PackageError("someError", null, "innerError"));
+        observer.post(event);
+        expect(logOutput).to.contain(event.stage);
+        expect(logOutput).to.contain(event.error.innerError.toString());
+    });
+
 
     [
         {
@@ -121,13 +118,38 @@ suite('CsharpLoggerObsever', () => {
         }
     ].forEach((element) =>
         test(`${element.message.constructor.name} is shown`, () => {
-            let logOutput = "";
-            let observer = new CsharpLoggerObserver({
-                ...getNullChannel(),
-                append: (text?: string) => { logOutput += text || ""; },
-            });
-
             observer.post(element.message);
             expect(logOutput).to.contain(element.expected);
         }));
+
+    test(`ActivationFailure: Some message is logged`, () => {
+        let event = new ActivationFailure();
+        observer.post(event);
+        expect(logOutput).to.not.be.empty;
+    });
+
+    test(`ProjectJsonDeprecatedWarning: Some message is logged`, () => {
+        let event = new ProjectJsonDeprecatedWarning();
+        observer.post(event);
+        expect(logOutput).to.not.be.empty;
+    });
+
+    test(`ProjectJsonDeprecatedWarning: Some message is logged`, () => {
+        let event = new InstallationSuccess();
+        observer.post(event);
+        expect(logOutput).to.not.be.empty;
+    });
+
+    test(`InstallationProgress: Progress message is logged`, () => {
+        let event = new InstallationProgress("someStage", "someMessage");
+        observer.post(event);
+        expect(logOutput).to.contain(event.message);
+    });
+
+    test('PackageInstallation: Package name is logged', () => {
+        let event = new PackageInstallation("somePackage");
+        observer.post(event);
+        expect(logOutput).to.contain(event.packageInfo);
+    });
+
 });

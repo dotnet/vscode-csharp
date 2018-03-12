@@ -4,9 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should, expect } from 'chai';
-
 import { getNullChannel } from './Fakes';
-
 import { CsharpChannelObserver } from '../../../src/observers/CsharpChannelObserver';
 import { InstallationFailure, PackageInstallation, DebuggerNotInstalledFailure, DebuggerPreRequisiteFailure, ProjectJsonDeprecatedWarning, BaseEvent } from '../../../src/omnisharp/loggingEvents';
 
