@@ -42,7 +42,7 @@
     "cov:instrument": "rimraf ./coverage && rimraf ./.nyc_output && rimraf ./out && npm run compile && cd out && nyc instrument --require source-map-support/register --cwd ../ . . && cd ..",
     "cov:merge": "cd ./out && istanbul-combine -d ../coverage -r lcovonly ../.nyc_output/*.json && cd ..",
     "cov:merge-html": "istanbul-combine -d ./coverage -r html ./.nyc_output/*.json",
-    "cov:report": "npm run cov:merge && bash <(curl -s https://codecov.io/bash)"
+    "cov:report": "npm run cov:merge && codecov"
   },
   "dependencies": {
     "fs-extra": "^5.0.0",
