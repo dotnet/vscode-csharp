@@ -51,7 +51,7 @@ export class DownloadProgress implements BaseEvent{
 }
 
 export class OmnisharpFailure implements BaseEvent{
-    constructor(public message: string, error: Error) { }
+    constructor(public message: string, public error: Error) { }
 }
 
 export class OmnisharpRequestMessage implements BaseEvent{
