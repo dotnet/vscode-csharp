@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 
-import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as common from './../common';
@@ -15,33 +14,48 @@ import { EventStream } from '../EventStream';
 
 let _debugUtil: CoreClrDebugUtil = null;
 
-export async function activate(thisExtension : vscode.Extension<any>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, eventStream: EventStream) {
+export async function activate(thisExtension: vscode.Extension<any>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, eventStream: EventStream) {
     _debugUtil = new CoreClrDebugUtil(context.extensionPath);
 
     if (!CoreClrDebugUtil.existsSync(_debugUtil.debugAdapterDir())) {
-        if (platformInformation) {
-            if (platformInformation.architecture !== "x86_64") {
-                if (platformInformation.isWindows() && platformInformation.architecture === "x86") {
-                    eventStream.post(new DebuggerPreRequisiteWarning(`[WARNING]: x86 Windows is not currently supported by the .NET Core debugger. Debugging will not be available.`));
-                } else {
-                    eventStream.post(new DebuggerPreRequisiteWarning(`[WARNING]: Processor architecture '${platformInformation.architecture}' is not currently supported by the .NET Core debugger. Debugging will not be available.`));
-                }
-            } else {
-                eventStream.post(new DebuggerPreRequisiteFailure("[ERROR]: C# Extension failed to install the debugger package")); 
-                showInstallErrorMessage();
-            }
+        let isInvalidArchitecture: boolean = await checkForInvalidArchitecture(platformInformation, eventStream);
+        if (!isInvalidArchitecture) {
+            eventStream.post(new DebuggerPreRequisiteFailure("[ERROR]: C# Extension failed to install the debugger package."));
+            showInstallErrorMessage(eventStream);
         }
     } else if (!CoreClrDebugUtil.existsSync(_debugUtil.installCompleteFilePath())) {
-        completeDebuggerInstall(eventStream);
+        completeDebuggerInstall(platformInformation, eventStream);
     }
 }
 
-async function completeDebuggerInstall(eventStream: EventStream) : Promise<boolean> {
-    return _debugUtil.checkDotNetCli()
-        .then((dotnetInfo: DotnetInfo) => {
+async function checkForInvalidArchitecture(platformInformation: PlatformInformation, eventStream: EventStream): Promise<boolean> {
+    if (platformInformation) {
+        if (platformInformation.isMacOS() && !CoreClrDebugUtil.isMacOSSupported()) {
+            eventStream.post(new DebuggerPreRequisiteFailure("[ERROR] The debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer."));
+            return true;
+        }
+        else if (platformInformation.architecture !== "x86_64") {
+            if (platformInformation.isWindows() && platformInformation.architecture === "x86") {
+                eventStream.post(new DebuggerPreRequisiteWarning(`[WARNING]: x86 Windows is not currently supported by the .NET Core debugger. Debugging will not be available.`));
+            } else {
+                eventStream.post(new DebuggerPreRequisiteWarning(`[WARNING]: Processor architecture '${platformInformation.architecture}' is not currently supported by the .NET Core debugger. Debugging will not be available.`));
+            }
+            return true;
+        }
+    }
 
-            if (os.platform() === "darwin" && !CoreClrDebugUtil.isMacOSSupported()) {
-                eventStream.post(new DebuggerPreRequisiteFailure("[ERROR] The debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer." ));
+    return false;
+}
+
+async function completeDebuggerInstall(platformInformation: PlatformInformation, eventStream: EventStream): Promise<boolean> {
+    return _debugUtil.checkDotNetCli()
+        .then(async (dotnetInfo: DotnetInfo) => {
+
+            let isInvalidArchitecture: boolean = await checkForInvalidArchitecture(platformInformation, eventStream);
+
+            if (isInvalidArchitecture) {
+                eventStream.post(new DebuggerNotInstalledFailure());
+                vscode.window.showErrorMessage('Failed to complete the installation of the C# extension. Please see the error in the output window below.');
                 return false;
             }
 
@@ -60,12 +74,12 @@ async function completeDebuggerInstall(eventStream: EventStream) : Promise<boole
         });
 }
 
-function showInstallErrorMessage() {
+function showInstallErrorMessage(eventStream : EventStream) {
+    eventStream.post(new DebuggerNotInstalledFailure());
     vscode.window.showErrorMessage("An error occured during installation of the .NET Core Debugger. The C# extension may need to be reinstalled.");
 }
 
-function showDotnetToolsWarning(message: string) : void
-{
+function showDotnetToolsWarning(message: string): void {
     const config = vscode.workspace.getConfiguration('csharp');
     if (!config.get('suppressDotnetInstallWarning', false)) {
         const getDotNetMessage = 'Get .NET CLI tools';
@@ -79,8 +93,7 @@ function showDotnetToolsWarning(message: string) : void
                     let dotnetcoreURL = 'https://www.microsoft.com/net/core';
 
                     // Windows redirects https://www.microsoft.com/net/core to https://www.microsoft.com/net/core#windowsvs2015
-                    if (process.platform == "win32")
-                    {
+                    if (process.platform == "win32") {
                         dotnetcoreURL = dotnetcoreURL + '#windowscmd';
                     }
 
@@ -99,12 +112,11 @@ interface AdapterExecutableCommand {
 // The default extension manifest calls this command as the adapterExecutableCommand
 // If the debugger components have not finished downloading, the proxy displays an error message to the user
 // Else it will launch the debug adapter
-export async function getAdapterExecutionCommand(eventStream: EventStream): Promise<AdapterExecutableCommand> {
+export async function getAdapterExecutionCommand(platformInfo: PlatformInformation, eventStream: EventStream): Promise<AdapterExecutableCommand> {
     let util = new CoreClrDebugUtil(common.getExtensionPath());
 
     // Check for .debugger folder. Handle if it does not exist.
-    if (!CoreClrDebugUtil.existsSync(util.debugAdapterDir()))
-    {
+    if (!CoreClrDebugUtil.existsSync(util.debugAdapterDir())) {
         // our install.complete file does not exist yet, meaning we have not completed the installation. Try to figure out what if anything the package manager is doing
         // the order in which files are dealt with is this:
         // 1. install.Begin is created
@@ -120,17 +132,16 @@ export async function getAdapterExecutionCommand(eventStream: EventStream): Prom
         }
         // install.complete does not exist, check dotnetCLI to see if we can complete.
         else if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {
-            let success: boolean = await completeDebuggerInstall(eventStream);
+            let success: boolean = await completeDebuggerInstall(platformInfo, eventStream);
 
-            if (!success)
-            {
+            if (!success) {
                 eventStream.post(new DebuggerNotInstalledFailure());
                 throw new Error('Failed to complete the installation of the C# extension. Please see the error in the output window below.');
             }
         }
     }
 
-    // debugger has finished install, kick off our debugger process
+    // debugger has finished installation, kick off our debugger process
     return {
         command: path.join(common.getExtensionPath(), ".debugger", "vsdbg-ui" + CoreClrDebugUtil.getPlatformExeExtension())
     };
