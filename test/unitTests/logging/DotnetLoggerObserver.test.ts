@@ -16,7 +16,7 @@ suite("DotnetLoggerObserver", () => {
         new CommandDotNetRestoreSucceeded("Some message"),
         new CommandDotNetRestoreFailed("Some message")
     ].forEach((event: EventWithMessage) => {
-        test(`Appends the text into the channel for ${event.constructor.name}`, () => {
+        test(`${event.constructor.name}: Message is logged`, () => {
             let appendedMessage = "";
             let observer = new DotnetLoggerObserver({
                 ...getNullChannel(),
