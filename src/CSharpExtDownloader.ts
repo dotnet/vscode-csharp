@@ -7,7 +7,7 @@ import * as util from './common';
 import { GetNetworkConfiguration, GetStatus } from './downloader.helper';
 import { PackageManager } from './packages';
 import { PlatformInformation } from './platform';
-import { PackageInstallation, PlatformInfoEvent, InstallationSuccess, InstallationFailure } from './omnisharp/loggingEvents';
+import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
 
 /*
@@ -32,10 +32,9 @@ export class CSharpExtDownloader {
 
             let packageManager = new PackageManager(this.platformInfo, this.packageJSON);
             // Display platform information and RID
-            this.eventStream.post(new PlatformInfoEvent(this.platformInfo ));
+            this.eventStream.post(new LogPlatformInfo(this.platformInfo ));
 
             installationStage = 'downloadPackages';
-
             let networkConfiguration = GetNetworkConfiguration();
             const proxy = networkConfiguration.Proxy;
             const strictSSL = networkConfiguration.StrictSSL;

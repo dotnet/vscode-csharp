@@ -59,7 +59,6 @@ export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
 
     private handleOmnisharpServerVerboseMessage(event: OmnisharpServerVerboseMessage) {
         this.logger.appendLine(event.message);
-        this.logger.appendLine();
     }
 
     private handleOmnisharpEventPacketReceived(event: OmnisharpEventPacketReceived) {

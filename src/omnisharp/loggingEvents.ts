@@ -33,7 +33,7 @@ export class PackageInstallation implements BaseEvent{
     constructor(public packageInfo: string) { }
 }
 
-export class PlatformInfoEvent implements BaseEvent{
+export class LogPlatformInfo implements BaseEvent{
     constructor(public info: PlatformInformation) { }
 }
 

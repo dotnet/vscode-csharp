@@ -8,7 +8,7 @@ import { getNullChannel } from './Fakes';
 import { CsharpLoggerObserver } from '../../../src/observers/CsharpLoggerObserver';
 import { PlatformInformation } from '../../../src/platform';
 import { PackageError } from '../../../src/packages';
-import { DownloadStart, DownloadProgress, DownloadSuccess, DownloadFailure, BaseEvent, PlatformInfoEvent, InstallationFailure, DebuggerPreRequisiteFailure, DebuggerPreRequisiteWarning, ActivationFailure, ProjectJsonDeprecatedWarning, InstallationSuccess, InstallationProgress, PackageInstallation } from '../../../src/omnisharp/loggingEvents';
+import { DownloadStart, DownloadProgress, DownloadSuccess, DownloadFailure, BaseEvent, LogPlatformInfo, InstallationFailure, DebuggerPreRequisiteFailure, DebuggerPreRequisiteWarning, ActivationFailure, ProjectJsonDeprecatedWarning, InstallationSuccess, InstallationProgress, PackageInstallation } from '../../../src/omnisharp/loggingEvents';
 
 suite("CsharpLoggerObserver: Download Messages", () => {
     suiteSetup(() => should());
@@ -79,7 +79,7 @@ suite('CsharpLoggerObsever', () => {
     });
 
     test('PlatformInfo: Logs contain the Platform and Architecture', () => {
-        let event = new PlatformInfoEvent(new PlatformInformation("MyPlatform", "MyArchitecture"));
+        let event = new LogPlatformInfo(new PlatformInformation("MyPlatform", "MyArchitecture"));
         observer.post(event);
         expect(logOutput).to.contain("MyPlatform");
         expect(logOutput).to.contain("MyArchitecture");

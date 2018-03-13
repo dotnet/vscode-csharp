@@ -5,7 +5,7 @@
 
 import { PackageError } from "../packages";
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
-import { BaseEvent, ActivationFailure, PackageInstallation, PlatformInfoEvent, InstallationFailure, InstallationSuccess, InstallationProgress, DownloadStart, DownloadProgress, DownloadSuccess, DownloadFailure, DebuggerPreRequisiteFailure, DebuggerPreRequisiteWarning, ProjectJsonDeprecatedWarning, EventWithMessage } from "../omnisharp/loggingEvents";
+import { BaseEvent, ActivationFailure, PackageInstallation, LogPlatformInfo, InstallationFailure, InstallationSuccess, InstallationProgress, DownloadStart, DownloadProgress, DownloadSuccess, DownloadFailure, DebuggerPreRequisiteFailure, DebuggerPreRequisiteWarning, ProjectJsonDeprecatedWarning, EventWithMessage } from "../omnisharp/loggingEvents";
 
 export class CsharpLoggerObserver extends BaseLoggerObserver {
     private dots: number;
@@ -18,8 +18,8 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
             case PackageInstallation.name:
                 this.handlePackageInstallation(<PackageInstallation>event);
                 break;
-            case PlatformInfoEvent.name:
-                this.handlePlatformInfo(<PlatformInfoEvent>event);
+            case LogPlatformInfo.name:
+                this.handlePlatformInfo(<LogPlatformInfo>event);
                 break;
             case InstallationFailure.name:
                 this.handleInstallationFailure(<InstallationFailure>event);
@@ -51,7 +51,6 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
 
     private handleEventWithMessage(event: EventWithMessage) {
         this.logger.appendLine(event.message);
-        this.logger.appendLine();
     }
 
     private handlePackageInstallation(event: PackageInstallation) {
@@ -59,7 +58,7 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
         this.logger.appendLine();
     }
 
-    private handlePlatformInfo(event: PlatformInfoEvent) {
+    private handlePlatformInfo(event: LogPlatformInfo) {
         this.logger.appendLine(`Platform: ${event.info.toString()}`);
         this.logger.appendLine();
     }

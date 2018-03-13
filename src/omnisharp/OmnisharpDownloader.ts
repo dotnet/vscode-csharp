@@ -7,7 +7,7 @@ import { GetNetworkConfiguration, GetStatus } from '../downloader.helper';
 import { GetPackagesFromVersion, GetVersionFilePackage } from './OmnisharpPackageCreator';
 import { Package, PackageManager, Status } from '../packages';
 import { PlatformInformation } from '../platform';
-import { PackageInstallation, PlatformInfoEvent, InstallationSuccess, InstallationFailure, InstallationProgress } from './loggingEvents';
+import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure, InstallationProgress } from './loggingEvents';
 import { EventStream } from '../EventStream';
 
 const defaultPackageManagerFactory: IPackageManagerFactory = (platformInfo, packageJSON) => new PackageManager(platformInfo, packageJSON);
@@ -39,7 +39,7 @@ export class OmnisharpDownloader {
         let installationStage = '';
 
         try {
-            this.eventStream.post(new PlatformInfoEvent(this.platformInfo));
+            this.eventStream.post(new LogPlatformInfo(this.platformInfo));
 
             installationStage = 'getPackageInfo';
             let packages: Package[] = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
