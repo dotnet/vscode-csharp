@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { BaseChannelObserver } from "./BaseChannelObserver";
-import { BaseEvent, PackageInstallation, InstallationFailure, DebuggerNotInstalledFailure, DebuggerPreRequisiteFailure, ProjectJsonDeprecatedWarning } from "../omnisharp/loggingEvents";
+import { BaseEvent, PackageInstallation, InstallationFailure, DebuggerNotInstalledFailure, DebuggerPrerequisiteFailure, ProjectJsonDeprecatedWarning } from "../omnisharp/loggingEvents";
 
 export class CsharpChannelObserver extends BaseChannelObserver {
     public post = (event: BaseEvent) => {
@@ -12,7 +12,7 @@ export class CsharpChannelObserver extends BaseChannelObserver {
             case PackageInstallation.name:
             case InstallationFailure.name:
             case DebuggerNotInstalledFailure.name:
-            case DebuggerPreRequisiteFailure.name:
+            case DebuggerPrerequisiteFailure.name:
             case ProjectJsonDeprecatedWarning.name:
                 this.showChannel();
                 break;

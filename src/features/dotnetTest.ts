@@ -29,7 +29,7 @@ export default class TestManager extends AbstractProvider {
     constructor(server: OmniSharpServer, eventStream: EventStream) {
         super(server);
         this._eventStream = eventStream;
-        
+
         // register commands
         let d1 = vscode.commands.registerCommand(
             'dotnet.test.run',
@@ -106,7 +106,7 @@ export default class TestManager extends AbstractProvider {
     }
 
     private _reportTelemetry(): void {
-        this._eventStream.post(new TestExecutionCountReport(this._debugCounts,this._runCounts ));
+        this._eventStream.post(new TestExecutionCountReport(this._debugCounts, this._runCounts));
         this._runCounts = undefined;
         this._debugCounts = undefined;
     }

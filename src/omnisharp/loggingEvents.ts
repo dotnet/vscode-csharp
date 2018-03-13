@@ -93,8 +93,8 @@ export class EventWithMessage implements BaseEvent{
     constructor(public message: string) { }
 }
 
-export class DebuggerPreRequisiteFailure extends EventWithMessage { }
-export class DebuggerPreRequisiteWarning extends EventWithMessage { }
+export class DebuggerPrerequisiteFailure extends EventWithMessage { }
+export class DebuggerPrerequisiteWarning extends EventWithMessage { }
 export class CommandDotNetRestoreProgress extends EventWithMessage { }
 export class CommandDotNetRestoreSucceeded extends EventWithMessage { }
 export class CommandDotNetRestoreFailed extends EventWithMessage { }

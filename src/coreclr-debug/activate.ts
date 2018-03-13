@@ -9,7 +9,7 @@ import * as vscode from 'vscode';
 import * as common from './../common';
 import { CoreClrDebugUtil, DotnetInfo, } from './util';
 import { PlatformInformation } from './../platform';
-import { DebuggerPreRequisiteWarning, DebuggerPreRequisiteFailure, DebuggerNotInstalledFailure } from '../omnisharp/loggingEvents';
+import { DebuggerPrerequisiteWarning, DebuggerPrerequisiteFailure, DebuggerNotInstalledFailure } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 
 let _debugUtil: CoreClrDebugUtil = null;
@@ -20,7 +20,7 @@ export async function activate(thisExtension: vscode.Extension<any>, context: vs
     if (!CoreClrDebugUtil.existsSync(_debugUtil.debugAdapterDir())) {
         let isInvalidArchitecture: boolean = await checkForInvalidArchitecture(platformInformation, eventStream);
         if (!isInvalidArchitecture) {
-            eventStream.post(new DebuggerPreRequisiteFailure("[ERROR]: C# Extension failed to install the debugger package."));
+            eventStream.post(new DebuggerPrerequisiteFailure("[ERROR]: C# Extension failed to install the debugger package."));
             showInstallErrorMessage(eventStream);
         }
     } else if (!CoreClrDebugUtil.existsSync(_debugUtil.installCompleteFilePath())) {
@@ -31,14 +31,14 @@ export async function activate(thisExtension: vscode.Extension<any>, context: vs
 async function checkForInvalidArchitecture(platformInformation: PlatformInformation, eventStream: EventStream): Promise<boolean> {
     if (platformInformation) {
         if (platformInformation.isMacOS() && !CoreClrDebugUtil.isMacOSSupported()) {
-            eventStream.post(new DebuggerPreRequisiteFailure("[ERROR] The debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer."));
+            eventStream.post(new DebuggerPrerequisiteFailure("[ERROR] The debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer."));
             return true;
         }
         else if (platformInformation.architecture !== "x86_64") {
             if (platformInformation.isWindows() && platformInformation.architecture === "x86") {
-                eventStream.post(new DebuggerPreRequisiteWarning(`[WARNING]: x86 Windows is not currently supported by the .NET Core debugger. Debugging will not be available.`));
+                eventStream.post(new DebuggerPrerequisiteWarning(`[WARNING]: x86 Windows is not currently supported by the .NET Core debugger. Debugging will not be available.`));
             } else {
-                eventStream.post(new DebuggerPreRequisiteWarning(`[WARNING]: Processor architecture '${platformInformation.architecture}' is not currently supported by the .NET Core debugger. Debugging will not be available.`));
+                eventStream.post(new DebuggerPrerequisiteWarning(`[WARNING]: Processor architecture '${platformInformation.architecture}' is not currently supported by the .NET Core debugger. Debugging will not be available.`));
             }
             return true;
         }
@@ -68,7 +68,7 @@ async function completeDebuggerInstall(platformInformation: PlatformInformation,
             // Check for dotnet tools failed. pop the UI
             // err is a DotNetCliError but use defaults in the unexpected case that it's not
             showDotnetToolsWarning(err.ErrorMessage || _debugUtil.defaultDotNetCliErrorMessage());
-            eventStream.post(new DebuggerPreRequisiteWarning(err.ErrorString || err));
+            eventStream.post(new DebuggerPrerequisiteWarning(err.ErrorString || err));
             // TODO: log telemetry?
             return false;
         });
