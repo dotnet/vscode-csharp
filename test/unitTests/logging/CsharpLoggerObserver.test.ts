@@ -44,11 +44,11 @@ suite("CsharpLoggerObserver: Download Messages", () => {
         },
         {
             events: [new DownloadStart("Started"), new DownloadProgress(100), new DownloadSuccess("Done")],
-            expected: "Started....................Done\n"
+            expected: "Started....................Done\n\n"
         },
         {
             events: [new DownloadStart("Started"), new DownloadProgress(50), new DownloadFailure("Failed")],
-            expected: "Started..........Failed\n"
+            expected: "Started..........Failed\n\n"
         },
     ].forEach((element) => {
         test(`Prints the download status to the logger as ${element.expected}`, () => {
