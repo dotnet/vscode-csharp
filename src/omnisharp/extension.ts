@@ -86,7 +86,7 @@ export function activate(context: vscode.ExtensionContext, eventStream: EventStr
         vscode.Disposable.from(...localDisposables).dispose();
     }));
 
-    disposables.push(registerCommands(server, eventStream));
+    disposables.push(registerCommands(server, eventStream,platformInfo));
     disposables.push(reportStatus(server, eventStream));
 
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
