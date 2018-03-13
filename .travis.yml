@@ -33,7 +33,12 @@ install:
 script:
   - npm test --silent
   - npm run cov:instrument
+  - ls
+  - cat ./.nyc_output/featureTests.json
+  - cat ./coverage/lcov.info
   - npm test --silent
+  - cat ./.nyc_output/featureTests.json
+  - cat ./coverage/lcov.info
   - npm run cov:report
 
 after_failure:
