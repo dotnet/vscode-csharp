@@ -51,6 +51,7 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
 
     private handleEventWithMessage(event: EventWithMessage) {
         this.logger.appendLine(event.message);
+        this.logger.appendLine();
     }
 
     private handlePackageInstallation(event: PackageInstallation) {

@@ -22,7 +22,6 @@ export class OmnisharpLoggerObserver extends BaseLoggerObserver {
                 break;
             case OmnisharpServerMessage.name:
                 this.logger.appendLine((<OmnisharpServerMessage>event).message);
-                this.logger.appendLine();
                 break;
             case OmnisharpServerOnServerError.name:
                 this.logger.appendLine((<OmnisharpServerOnServerError>event).message);
