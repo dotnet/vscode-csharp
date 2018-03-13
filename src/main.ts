@@ -20,7 +20,7 @@ import { TelemetryObserver } from './observers/TelemetryObserver';
 import { OmnisharpChannelObserver } from './observers/OmnisharpChannelObserver';
 import { DotnetLoggerObserver } from './observers/DotnetLoggerObserver';
 import { OmnisharpDebugModeLoggerObserver } from './observers/OmnisharpDebugModeLoggerObserver';
-import { BaseEvent, ActivationFailure } from './omnisharp/loggingEvents';
+import { ActivationFailure } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {

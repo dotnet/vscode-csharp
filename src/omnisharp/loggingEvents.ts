@@ -6,7 +6,6 @@
 import { PlatformInformation } from "../platform";
 import { Request } from "./requestQueue";
 import * as protocol from './protocol';
-import { IObserver } from "rx";
 
 export interface BaseEvent{
 }
