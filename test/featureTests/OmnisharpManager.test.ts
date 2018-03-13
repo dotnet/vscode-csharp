@@ -90,7 +90,7 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
     });
 
     test('Downloads package and returns launch path based on install path ', async () => {
-        let manager = GetTestOmnisharpManager(eventStream, new PlatformInformation("linux", "x64"));
+        let manager = GetTestOmnisharpManager(eventStream, platformInfo);
         let launchPath = await manager.GetOmnisharpPath("1.2.3", true, serverUrl, versionFilepathInServer, "installHere", extensionPath);
         launchPath.should.equal(path.resolve(extensionPath, 'installHere/1.2.3/OmniSharp.exe'));
     });
