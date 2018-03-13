@@ -9,7 +9,6 @@ import * as util from './common';
 import * as vscode from 'vscode';
 import { CSharpExtDownloader } from './CSharpExtDownloader';
 import { PlatformInformation } from './platform';
-import { Subject } from 'rx';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { addJSONProviders } from './features/json/jsonContributions';
 import { CsharpChannelObserver } from './observers/CsharpChannelObserver';
