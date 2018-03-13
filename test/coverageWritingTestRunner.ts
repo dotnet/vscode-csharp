@@ -63,15 +63,16 @@ console.log(`remapIstanbulPath: ${remapIstanbulPath}`);
             await fs.writeTextFile(rawCoverageJsonPath, JSON.stringify(__coverage__));
 
 
-            let result = await execAsync(`node ${remapIstanbulPath} -i ${rawCoverageJsonPath} -o ${rawCoverageJsonPath}`, {
+            let result = await execAsync(`node ${remapIstanbulPath} -i ${rawCoverageJsonPath} -o ${remappedCoverageJsonPath}`, {
                 cwd: outFolderPath
             });
-            let remappedResult = JSON.parse(await fs.readTextFile(rawCoverageJsonPath));
+            let remappedResult = JSON.parse(await fs.readTextFile(remappedCoverageJsonPath));
             let finalResult = {};
 
             for (let key in remappedResult){
                 if (remappedResult[key].path) {
                     let realPath = key.replace("../", "./");
+console.log(`${key} -> ${realPath}`)
                     finalResult[realPath] = remappedResult[key];
                     finalResult[realPath].path = realPath;
                 }
@@ -80,7 +81,7 @@ console.log(`remapIstanbulPath: ${remapIstanbulPath}`);
                 }
             }
 
-            await fs.writeTextFile(rawCoverageJsonPath, JSON.stringify(finalResult));
+            await fs.writeTextFile(remappedCoverageJsonPath, JSON.stringify(finalResult));
         }
     }
 }

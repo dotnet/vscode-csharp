@@ -37,6 +37,8 @@ script:
   - cat ./out/src/assets.js
   - npm test --silent
   - cat ./.nyc_output/featureTests.json
+  - echo BREAKBREAK
+  - cat ./.nyc_output/featureTests.remapped.json
   - npm run cov:report
   - cat ./coverage/lcov.info
 
