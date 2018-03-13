@@ -34,12 +34,11 @@ script:
   - npm test --silent
   - npm run cov:instrument
   - ls
-  - cat ./.nyc_output/featureTests.json
-  - cat ./coverage/lcov.info
+  - cat ./out/src/assets.js
   - npm test --silent
   - cat ./.nyc_output/featureTests.json
-  - cat ./coverage/lcov.info
   - npm run cov:report
+  - cat ./coverage/lcov.info
 
 after_failure:
   - ./.travis/printLogs.sh
