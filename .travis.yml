@@ -34,6 +34,7 @@ script:
   - ls ./node_modules
   - ls ./node_modules/remap-istanbul
   - ls ./node_modules/remap-istanbul/bin
+  - which node
   - npm test --silent
   - npm run cov:instrument
   - ls
