@@ -66,13 +66,16 @@ console.log(`remapIstanbulPath: ${remapIstanbulPath}`);
             let result = await execAsync(`node ${remapIstanbulPath} -i ${rawCoverageJsonPath} -o ${remappedCoverageJsonPath}`, {
                 cwd: outFolderPath
             });
+
+
             let remappedResult = JSON.parse(await fs.readTextFile(remappedCoverageJsonPath));
+console.log(JSON.stringify(remappedResult));
             let finalResult = {};
 
             for (let key in remappedResult){
                 if (remappedResult[key].path) {
                     let realPath = key.replace("../", "./");
-console.log(`${key} -> ${realPath}`)
+console.log(`${key} -> ${realPath}`);
                     finalResult[realPath] = remappedResult[key];
                     finalResult[realPath].path = realPath;
                 }
@@ -80,7 +83,7 @@ console.log(`${key} -> ${realPath}`)
                     finalResult[key] = remappedResult[key];
                 }
             }
-
+console.log(`done remapping ${finalResult}`);
             await fs.writeTextFile(remappedCoverageJsonPath, JSON.stringify(finalResult));
         }
     }
