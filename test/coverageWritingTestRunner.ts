@@ -67,12 +67,15 @@ export default class CoverageWritingTestRunner {
 
                 await fs.writeTextFile(rawCoverageJsonPath, JSON.stringify(__coverage__));
 
+                let whichStdout = await shelljs.asyncExec(`which node`);
 
-
-                let result = await shelljs.asyncExec(`${nodePath} ${remapIstanbulPath} -i ${rawCoverageJsonPath} -o ${remappedCoverageJsonPath}`, {
+                console.log(`stdout: ${whichStdout}`);
+                
+                let result = await shelljs.asyncExec(`${whichStdout} ${remapIstanbulPath} -i ${rawCoverageJsonPath} -o ${remappedCoverageJsonPath}`, {
                     cwd: outFolderPath
                 });
 
+                
 
                 let remappedResult = JSON.parse(await fs.readTextFile(remappedCoverageJsonPath));
 
