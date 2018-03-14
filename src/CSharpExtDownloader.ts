@@ -3,77 +3,57 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import TelemetryReporter from 'vscode-extension-telemetry';
 import * as util from './common';
-import { Logger } from './logger';
+import { GetNetworkConfiguration, GetStatus } from './downloader.helper';
 import { PackageManager } from './packages';
 import { PlatformInformation } from './platform';
-import { GetStatus, GetNetworkConfiguration, ReportInstallationError, SendInstallationTelemetry } from './downloader.helper';
+import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure } from './omnisharp/loggingEvents';
+import { EventStream } from './EventStream';
 
 /*
  * Class used to download the runtime dependencies of the C# Extension
  */
 export class CSharpExtDownloader {
     public constructor(
-        private channel: vscode.OutputChannel,
-        private logger: Logger,
-        private reporter: TelemetryReporter /* optional */,
-        private packageJSON: any) {
+        private eventStream: EventStream,
+        private packageJSON: any,
+        private platformInfo: PlatformInformation) {
     }
 
     public async installRuntimeDependencies(): Promise<boolean> {
-        this.logger.append('Installing C# dependencies...');
-        this.channel.show();
+        this.eventStream.post(new PackageInstallation("C# dependencies" ));
 
         let status = GetStatus();
-
-        // Sends "AcquisitionStart" telemetry to indicate an acquisition  started.
-        if (this.reporter) {
-            this.reporter.sendTelemetryEvent("AcquisitionStart");
-        }
-
-        let platformInfo: PlatformInformation;
-        let packageManager: PackageManager;
         let installationStage = 'touchBeginFile';
         let success = false;
 
-        let telemetryProps: any = {};
-
         try {
             await util.touchInstallFile(util.InstallFileType.Begin);
-            installationStage = 'getPlatformInfo';
-            platformInfo = await PlatformInformation.GetCurrent();
 
-            packageManager = new PackageManager(platformInfo, this.packageJSON);
-            this.logger.appendLine();
-            // Display platform information and RID followed by a blank line
-            this.logger.appendLine(`Platform: ${platformInfo.toString()}`);
-            this.logger.appendLine();
+            let packageManager = new PackageManager(this.platformInfo, this.packageJSON);
+            // Display platform information and RID
+            this.eventStream.post(new LogPlatformInfo(this.platformInfo ));
 
             installationStage = 'downloadPackages';
-
             let networkConfiguration = GetNetworkConfiguration();
             const proxy = networkConfiguration.Proxy;
             const strictSSL = networkConfiguration.StrictSSL;
 
-            await packageManager.DownloadPackages(this.logger, status, proxy, strictSSL);
-            this.logger.appendLine();
+            await packageManager.DownloadPackages(this.eventStream, status, proxy, strictSSL);
 
             installationStage = 'installPackages';
-            await packageManager.InstallPackages(this.logger, status);
+            await packageManager.InstallPackages(this.eventStream, status);
 
             installationStage = 'touchLockFile';
             await util.touchInstallFile(util.InstallFileType.Lock);
-            
-            installationStage = 'completeSuccess';
+
             success = true;
+            this.eventStream.post(new InstallationSuccess());
         }
         catch (error) {
-            ReportInstallationError(this.logger, error, telemetryProps, installationStage);
+            this.eventStream.post(new InstallationFailure(installationStage, error));
         }
         finally {
-            SendInstallationTelemetry(this.logger, this.reporter, telemetryProps, installationStage, platformInfo);
             status.dispose();
             // We do this step at the end so that we clean up the begin file in the case that we hit above catch block
             // Attach a an empty catch to this so that errors here do not propogate

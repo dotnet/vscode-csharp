@@ -10,7 +10,6 @@ import * as path from 'path';
 import poll from './poll';
 import { should, expect } from 'chai';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { RequestQueueCollection } from '../../src/omnisharp/requestQueue';
 import { OmniSharpServer } from '../../src/omnisharp/server';
 import { omnisharp } from '../../src/omnisharp/extension';
 

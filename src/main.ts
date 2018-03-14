@@ -7,13 +7,20 @@ import * as OmniSharp from './omnisharp/extension';
 import * as coreclrdebug from './coreclr-debug/activate';
 import * as util from './common';
 import * as vscode from 'vscode';
-
 import { CSharpExtDownloader } from './CSharpExtDownloader';
-import { Logger } from './logger';
+import { PlatformInformation } from './platform';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { addJSONProviders } from './features/json/jsonContributions';
-
-let _channel: vscode.OutputChannel = null;
+import { CsharpChannelObserver } from './observers/CsharpChannelObserver';
+import { CsharpLoggerObserver } from './observers/CsharpLoggerObserver';
+import { OmnisharpLoggerObserver } from './observers/OmnisharpLoggerObserver';
+import { DotNetChannelObserver } from './observers/DotnetChannelObserver';
+import { TelemetryObserver } from './observers/TelemetryObserver';
+import { OmnisharpChannelObserver } from './observers/OmnisharpChannelObserver';
+import { DotnetLoggerObserver } from './observers/DotnetLoggerObserver';
+import { OmnisharpDebugModeLoggerObserver } from './observers/OmnisharpDebugModeLoggerObserver';
+import { ActivationFailure } from './omnisharp/loggingEvents';
+import { EventStream } from './EventStream';
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 
@@ -24,39 +31,73 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     const reporter = new TelemetryReporter(extensionId, extensionVersion, aiKey);
 
     util.setExtensionPath(extension.extensionPath);
-
-    _channel = vscode.window.createOutputChannel('C#');
-
-    let logger = new Logger(text => _channel.append(text));
-
-    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, logger, reporter);
     
+    let dotnetChannel = vscode.window.createOutputChannel('.NET');
+    let dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
+    let dotnetLoggerObserver = new DotnetLoggerObserver(dotnetChannel);
+
+    let csharpChannel = vscode.window.createOutputChannel('C#');
+    let csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
+    let csharpLogObserver = new CsharpLoggerObserver(csharpChannel);
+
+    let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
+    let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel);
+    let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel);
+
+    const eventStream = new EventStream();
+    eventStream.subscribe(dotnetChannelObserver.post);
+    eventStream.subscribe(dotnetLoggerObserver.post);
+
+    eventStream.subscribe(csharpchannelObserver.post);
+    eventStream.subscribe(csharpLogObserver.post);
+
+    eventStream.subscribe(omnisharpLogObserver.post);
+    eventStream.subscribe(omnisharpChannelObserver.post);
+    const debugMode = false;
+    if (debugMode) {
+        let omnisharpDebugModeLoggerObserver = new OmnisharpDebugModeLoggerObserver(omnisharpChannel);
+        eventStream.subscribe(omnisharpDebugModeLoggerObserver.post);
+    }
+    
+    let platformInfo: PlatformInformation;
+    try {
+        platformInfo = await PlatformInformation.GetCurrent();
+    }
+    catch (error) {
+        eventStream.post(new ActivationFailure());
+    }
+
+    let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter);
+    eventStream.subscribe(telemetryObserver.post);
+
+    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo);
+
     // activate language services
-    let omniSharpPromise = OmniSharp.activate(context, reporter, _channel, logger, extension.packageJSON);
+    let omniSharpPromise = OmniSharp.activate(context, eventStream, extension.packageJSON, platformInfo);
 
     // register JSON completion & hover providers for project.json
     context.subscriptions.push(addJSONProviders());
-    
+
     let coreClrDebugPromise = Promise.resolve();
     if (runtimeDependenciesExist) {
         // activate coreclr-debug
-        coreClrDebugPromise = coreclrdebug.activate(extension, context, reporter, logger, _channel);
+        coreClrDebugPromise = coreclrdebug.activate(extension, context, platformInfo, eventStream);
     }
-    
+
     return {
         initializationFinished: Promise.all([omniSharpPromise, coreClrDebugPromise])
-        .then(promiseResult => {
-            // This promise resolver simply swallows the result of Promise.all. When we decide we want to expose this level of detail
-            // to other extensions then we will design that return type and implement it here.
-        })
+            .then(promiseResult => {
+                // This promise resolver simply swallows the result of Promise.all. When we decide we want to expose this level of detail
+                // to other extensions then we will design that return type and implement it here.
+            })
     };
 }
 
-function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger, reporter: TelemetryReporter): Promise<boolean> {
+function ensureRuntimeDependencies(extension: vscode.Extension<any>, eventStream: EventStream, platformInfo: PlatformInformation): Promise<boolean> {
     return util.installFileExists(util.InstallFileType.Lock)
         .then(exists => {
             if (!exists) {
-                const downloader = new CSharpExtDownloader(_channel, logger, reporter, extension.packageJSON);
+                const downloader = new CSharpExtDownloader(eventStream, extension.packageJSON, platformInfo);
                 return downloader.installRuntimeDependencies();
             } else {
                 return true;
