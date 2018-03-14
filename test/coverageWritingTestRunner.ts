@@ -60,31 +60,36 @@ console.log(`rawCoverageJsonPath: ${rawCoverageJsonPath}`);
 console.log(`remappedCoverageJsonPath: ${remappedCoverageJsonPath}`);
 console.log(`outFolderPath: ${outFolderPath}`);
 console.log(`remapIstanbulPath: ${remapIstanbulPath}`);
-            await fs.writeTextFile(rawCoverageJsonPath, JSON.stringify(__coverage__));
-
-
-            let result = await execAsync(`node ${remapIstanbulPath} -i ${rawCoverageJsonPath} -o ${remappedCoverageJsonPath}`, {
-                cwd: outFolderPath
-            });
-
-
-            let remappedResult = JSON.parse(await fs.readTextFile(remappedCoverageJsonPath));
+try
+   {         await fs.writeTextFile(rawCoverageJsonPath, JSON.stringify(__coverage__));
+   
+   
+               let result = await execAsync(`node ${remapIstanbulPath} -i ${rawCoverageJsonPath} -o ${remappedCoverageJsonPath}`, {
+                   cwd: outFolderPath
+               });
+   
+   
+               let remappedResult = JSON.parse(await fs.readTextFile(remappedCoverageJsonPath));
 console.log(JSON.stringify(remappedResult));
-            let finalResult = {};
-
-            for (let key in remappedResult){
-                if (remappedResult[key].path) {
-                    let realPath = key.replace("../", "./");
+               let finalResult = {};
+   
+               for (let key in remappedResult){
+                   if (remappedResult[key].path) {
+                       let realPath = key.replace("../", "./");
 console.log(`${key} -> ${realPath}`);
-                    finalResult[realPath] = remappedResult[key];
-                    finalResult[realPath].path = realPath;
-                }
-                else {
-                    finalResult[key] = remappedResult[key];
-                }
-            }
+                       finalResult[realPath] = remappedResult[key];
+                       finalResult[realPath].path = realPath;
+                   }
+                   else {
+                       finalResult[key] = remappedResult[key];
+                   }
+               }
 console.log(`done remapping ${finalResult}`);
-            await fs.writeTextFile(remappedCoverageJsonPath, JSON.stringify(finalResult));
-        }
+               await fs.writeTextFile(remappedCoverageJsonPath, JSON.stringify(finalResult));
+}
+catch (e) {
+	console.log(`ERRORERROR: ${JSON.stringify(e)}`);
+}
+   }
     }
 }
