@@ -52,12 +52,18 @@ export default class CoverageWritingTestRunner {
                 await fs.mkdir(nycFolderPath);
             }
 
+            let rawCoverageJsonPath: string;
+            let remappedCoverageJsonPath: string;
+            let outFolderPath: string;
+            let remapIstanbulPath: string;
+            let nodePath: string;
+
             try {
-                let rawCoverageJsonPath = path.join(nycFolderPath, `${process.env.OSVC_SUITE}.json`);
-                let remappedCoverageJsonPath = path.join(nycFolderPath, `${process.env.OSVC_SUITE}.remapped.json`);
-                let outFolderPath = path.join(process.env.CODE_EXTENSIONS_PATH, "out");
-                let remapIstanbulPath = path.join(process.env.CODE_EXTENSIONS_PATH, "node_modules", "remap-istanbul", "bin", "remap-istanbul.js");
-                let nodePath = shelljs.which("node");
+                rawCoverageJsonPath = path.join(nycFolderPath, `${process.env.OSVC_SUITE}.json`);
+                remappedCoverageJsonPath = path.join(nycFolderPath, `${process.env.OSVC_SUITE}.remapped.json`);
+                outFolderPath = path.join(process.env.CODE_EXTENSIONS_PATH, "out");
+                remapIstanbulPath = path.join(process.env.CODE_EXTENSIONS_PATH, "node_modules", "remap-istanbul", "bin", "remap-istanbul.js");
+                nodePath = shelljs.which("node");
 
                 await fs.writeTextFile(rawCoverageJsonPath, JSON.stringify(__coverage__));
 
@@ -94,6 +100,7 @@ export default class CoverageWritingTestRunner {
                 console.log(`* remappedCoverageJsonPath: ${remappedCoverageJsonPath}`);
                 console.log(`* outFolderPath: ${outFolderPath}`);
                 console.log(`* remapIstanbulPath: ${remapIstanbulPath}`);
+                console.log(`* nodePath: ${nodePath}`);
             }
         }
     }
