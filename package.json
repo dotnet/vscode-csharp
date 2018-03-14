@@ -74,6 +74,7 @@
     "@types/tmp": "0.0.33",
     "async-child-process": "^1.1.1",
     "async-file": "^2.0.2",
+    "async-shelljs": "^0.1.2",
     "chai": "4.1.2",
     "chai-arrays": "2.0.0",
     "chai-as-promised": "7.1.1",
