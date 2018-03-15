@@ -63,13 +63,14 @@ export default class CoverageWritingTestRunner {
                 remappedCoverageJsonPath = path.join(nycFolderPath, `${process.env.OSVC_SUITE}.remapped.json`);
                 outFolderPath = path.join(process.env.CODE_EXTENSIONS_PATH, "out");
                 remapIstanbulPath = path.join(process.env.CODE_EXTENSIONS_PATH, "node_modules", "remap-istanbul", "bin", "remap-istanbul.js");
-                nodePath = shelljs.which("node");
-
-                console.log(`NVM_BIN: ${process.env.NVM_BIN}`);
+                nodePath = process.env.NVM_BIN;
+                if (nodePath) {
+                	nodePath = `${nodePath}${path.delimiter}`;
+                }
 
                 await fs.writeTextFile(rawCoverageJsonPath, JSON.stringify(__coverage__));
                 
-                let result = await shelljs.asyncExec(`${process.env.NVM_BIN}/node ${remapIstanbulPath} -i ${rawCoverageJsonPath} -o ${remappedCoverageJsonPath}`, {
+                let result = await shelljs.asyncExec(`${nodePath}node ${remapIstanbulPath} -i ${rawCoverageJsonPath} -o ${remappedCoverageJsonPath}`, {
                     cwd: outFolderPath
                 });
 

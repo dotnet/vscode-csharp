@@ -34,11 +34,7 @@ script:
   - npm test --silent
   - npm run cov:instrument
   - npm test --silent
-  - head -n 10 ./.nyc_output/featureTests.json
-  - echo BREAKBREAK
-  - head -n 10 ./.nyc_output/featureTests.remapped.json
   - npm run cov:report
-  - head -n 10 ./coverage/lcov.info
 
 after_failure:
   - ./.travis/printLogs.sh
