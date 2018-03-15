@@ -31,20 +31,14 @@ install:
 - vsce package
 
 script:
-  - ls ./node_modules
-  - ls ./node_modules/remap-istanbul
-  - ls ./node_modules/remap-istanbul/bin
-  - which node
   - npm test --silent
   - npm run cov:instrument
-  - ls
-  - cat ./out/src/assets.js
   - npm test --silent
-  - cat ./.nyc_output/featureTests.json
+  - head -n 10 ./.nyc_output/featureTests.json
   - echo BREAKBREAK
-  - cat ./.nyc_output/featureTests.remapped.json
+  - head -n 10 ./.nyc_output/featureTests.remapped.json
   - npm run cov:report
-  - cat ./coverage/lcov.info
+  - head -n 10 ./coverage/lcov.info
 
 after_failure:
   - ./.travis/printLogs.sh
