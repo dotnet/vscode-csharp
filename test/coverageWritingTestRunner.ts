@@ -65,11 +65,11 @@ export default class CoverageWritingTestRunner {
                 remapIstanbulPath = path.join(process.env.CODE_EXTENSIONS_PATH, "node_modules", "remap-istanbul", "bin", "remap-istanbul.js");
                 nodePath = shelljs.which("node");
 
-                console.log(process.argv[0]);
+                console.log(`NVM_BIN: ${process.env.NVM_BIN}`);
 
                 await fs.writeTextFile(rawCoverageJsonPath, JSON.stringify(__coverage__));
                 
-                let result = await shelljs.asyncExec(`${process.argv[0]} ${remapIstanbulPath} -i ${rawCoverageJsonPath} -o ${remappedCoverageJsonPath}`, {
+                let result = await shelljs.asyncExec(`${process.env.NVM_BIN}/node ${remapIstanbulPath} -i ${rawCoverageJsonPath} -o ${remappedCoverageJsonPath}`, {
                     cwd: outFolderPath
                 });
 
