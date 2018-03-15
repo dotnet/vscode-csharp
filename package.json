@@ -40,8 +40,8 @@
     "test:runInVsCode": "node ./test/runVsCodeTestsWithAbsolutePaths.js",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "cov:instrument": "rimraf ./coverage && rimraf ./.nyc_output && rimraf ./out && npm run compile && cd out && nyc instrument --require source-map-support/register --cwd ../ . . && cd ..",
-    "cov:merge": "cd ./out && istanbul-combine -d ../coverage -r lcovonly ../.nyc_output/*.json && cd ..",
-    "cov:merge-html": "istanbul-combine -d ./coverage -r html ./.nyc_output/*.json",
+    "cov:merge": "cd ./out && istanbul-combine -d ../coverage -r lcovonly ../.nyc_output/*.remapped.json && cd ..",
+    "cov:merge-html": "istanbul-combine -d ./coverage -r html ./.nyc_output/*.remapped.json",
     "cov:report": "npm run cov:merge && codecov"
   },
   "dependencies": {
@@ -74,6 +74,7 @@
     "@types/tmp": "0.0.33",
     "async-child-process": "^1.1.1",
     "async-file": "^2.0.2",
+    "async-shelljs": "^0.1.2",
     "chai": "4.1.2",
     "chai-arrays": "2.0.0",
     "chai-as-promised": "7.1.1",
