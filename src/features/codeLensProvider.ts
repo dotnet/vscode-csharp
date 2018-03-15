@@ -14,7 +14,6 @@ import { toLocation, toRange } from '../omnisharp/typeConvertion';
 import AbstractProvider from './abstractProvider';
 import { OmniSharpServer } from '../omnisharp/server';
 import { Options } from '../omnisharp/options';
-import TelemetryReporter from 'vscode-extension-telemetry';
 import TestManager from './dotnetTest';
 
 class OmniSharpCodeLens extends vscode.CodeLens {
@@ -31,8 +30,8 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 
     private _options: Options;
 
-    constructor(server: OmniSharpServer, reporter: TelemetryReporter, testManager: TestManager) {
-        super(server, reporter);
+    constructor(server: OmniSharpServer, testManager: TestManager) {
+        super(server);
 
         this._resetCachedOptions();
 

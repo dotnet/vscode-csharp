@@ -5,18 +5,19 @@
 'use strict';
 
 import * as vscode from 'vscode';
+import * as serverUtils from '../omnisharp/utils';
 import {OmniSharpServer} from '../omnisharp/server';
 import {dotnetRestoreForProject} from './commands';
 import {basename} from 'path';
-import * as protocol from '../omnisharp/protocol';
-import * as serverUtils from '../omnisharp/utils';
+import { OmnisharpServerOnServerError, OmnisharpServerOnError, OmnisharpServerMsBuildProjectDiagnostics, OmnisharpServerUnresolvedDependencies, OmnisharpServerOnStdErr } from '../omnisharp/loggingEvents';
+import { EventStream } from '../EventStream';
 
 const debounce = require('lodash.debounce');
 
-export default function reportStatus(server: OmniSharpServer) {
+export default function reportStatus(server: OmniSharpServer, eventStream: EventStream) {
     return vscode.Disposable.from(
-        reportServerStatus(server),
-        forwardOutput(server),
+        reportServerStatus(server, eventStream),
+        forwardOutput(server, eventStream),
         reportDocumentStatus(server));
 }
 
@@ -207,57 +208,37 @@ export function reportDocumentStatus(server: OmniSharpServer): vscode.Disposable
 
 // ---- server status
 
-export function reportServerStatus(server: OmniSharpServer): vscode.Disposable{
+export function reportServerStatus(server: OmniSharpServer, eventStream: EventStream): vscode.Disposable{
 
-    function appendLine(value: string = '') {
-        server.getChannel().appendLine(value);
-    }
 
     let d0 = server.onServerError(err => {
-        appendLine('[ERROR] ' + err);
+        eventStream.post(new OmnisharpServerOnServerError('[ERROR] ' + err));
     });
 
     let d1 = server.onError(message => {
-        if (message.FileName) {
-            appendLine(`${message.FileName}(${message.Line},${message.Column})`);
-        }
-        appendLine(message.Text);
-        appendLine();
+        eventStream.post(new OmnisharpServerOnError(message));
+
         showMessageSoon();
     });
 
     let d2 = server.onMsBuildProjectDiagnostics(message => {
+        eventStream.post(new OmnisharpServerMsBuildProjectDiagnostics(message));
 
-        function asErrorMessage(message: protocol.MSBuildDiagnosticsMessage) {
-            let value = `${message.FileName}(${message.StartLine},${message.StartColumn}): Error: ${message.Text}`;
-            appendLine(value);
-        }
-
-        function asWarningMessage(message: protocol.MSBuildDiagnosticsMessage) {
-            let value = `${message.FileName}(${message.StartLine},${message.StartColumn}): Warning: ${message.Text}`;
-            appendLine(value);
-        }
-
-        if (message.Errors.length > 0 || message.Warnings.length > 0) {
-            appendLine(message.FileName);
-            message.Errors.forEach(error => asErrorMessage);
-            message.Warnings.forEach(warning => asWarningMessage);
-            appendLine();
-
-            if (message.Errors.length > 0) {
-                showMessageSoon();
-            }
+        if (message.Errors.length > 0) {
+            showMessageSoon();
         }
     });
 
     let d3 = server.onUnresolvedDependencies(message => {
+        eventStream.post(new OmnisharpServerUnresolvedDependencies(message));
+
         let csharpConfig = vscode.workspace.getConfiguration('csharp');
         if (!csharpConfig.get<boolean>('suppressDotnetRestoreNotification')) {
             let info = `There are unresolved dependencies from '${vscode.workspace.asRelativePath(message.FileName) }'. Please execute the restore command to continue.`;
 
             return vscode.window.showInformationMessage(info, 'Restore').then(value => {
                 if (value) {
-                    dotnetRestoreForProject(server, message.FileName);
+                    dotnetRestoreForProject(server, message.FileName, eventStream);
                 }
             });
         }
@@ -283,14 +264,7 @@ function showMessageSoon() {
 
 // --- mirror output in channel
 
-function forwardOutput(server: OmniSharpServer) {
-
-    const logChannel = server.getChannel();
-
-    function forward(message: string) {
-        logChannel.append(message);
-    }
-
+function forwardOutput(server: OmniSharpServer, eventStream: EventStream) {
     return vscode.Disposable.from(
-        server.onStderr(forward));
+        server.onStderr(message => eventStream.post(new OmnisharpServerOnStdErr(message))));
 }

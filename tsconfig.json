@@ -6,11 +6,10 @@
 		"lib": [
 			"es6"
 		],
-		"sourceMap": true,
-		"rootDir": "."
+		"inlineSourceMap": true,
+		"moduleResolution": "node"
 	},
 	"exclude": [
-		"node_modules",
 		"syntaxes",
 		".vscode-test"
 	]

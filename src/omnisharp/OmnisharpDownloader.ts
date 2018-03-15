@@ -3,51 +3,43 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import { PackageManager, Package, Status } from '../packages';
-import { PlatformInformation } from '../platform';
-import { Logger } from '../logger';
-import TelemetryReporter from 'vscode-extension-telemetry';
+import { GetNetworkConfiguration, GetStatus } from '../downloader.helper';
 import { GetPackagesFromVersion, GetVersionFilePackage } from './OmnisharpPackageCreator';
-import { GetStatus, ReportInstallationError, SendInstallationTelemetry, GetNetworkConfiguration } from '../downloader.helper';
+import { Package, PackageManager, Status } from '../packages';
+import { PlatformInformation } from '../platform';
+import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure, InstallationProgress } from './loggingEvents';
+import { EventStream } from '../EventStream';
+
+const defaultPackageManagerFactory: IPackageManagerFactory = (platformInfo, packageJSON) => new PackageManager(platformInfo, packageJSON);
+export interface IPackageManagerFactory {
+    (platformInfo: PlatformInformation, packageJSON: any): PackageManager;
+}
 
 export class OmnisharpDownloader {
     private status: Status;
     private proxy: string;
     private strictSSL: boolean;
     private packageManager: PackageManager;
-    private telemetryProps: any;
 
     public constructor(
-        private channel: vscode.OutputChannel,
-        private logger: Logger,
+        private eventStream: EventStream,
         private packageJSON: any,
         private platformInfo: PlatformInformation,
-        private reporter?: TelemetryReporter) {
+        packageManagerFactory: IPackageManagerFactory = defaultPackageManagerFactory) {
 
         this.status = GetStatus();
         let networkConfiguration = GetNetworkConfiguration();
         this.proxy = networkConfiguration.Proxy;
         this.strictSSL = networkConfiguration.StrictSSL;
-        this.telemetryProps = {};
-        this.packageManager = new PackageManager(this.platformInfo, this.packageJSON);
+        this.packageManager = packageManagerFactory(this.platformInfo, this.packageJSON);
     }
 
     public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string) {
-        this.logger.append('Installing Omnisharp Packages...');
-        this.channel.show();
-
+        this.eventStream.post(new PackageInstallation(`Omnisharp Version = ${version}`));
         let installationStage = '';
-        
-        if (this.reporter) {
-            this.reporter.sendTelemetryEvent("AcquisitionStart");
-        }
 
         try {
-            installationStage = 'logPlatformInfo';
-            this.logger.appendLine();
-            this.logger.appendLine(`Platform: ${this.platformInfo.toString()}`);
-            this.logger.appendLine();
+            this.eventStream.post(new LogPlatformInfo(this.platformInfo));
 
             installationStage = 'getPackageInfo';
             let packages: Package[] = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
@@ -55,21 +47,18 @@ export class OmnisharpDownloader {
             installationStage = 'downloadPackages';
             // Specify the packages that the package manager needs to download
             this.packageManager.SetVersionPackagesForDownload(packages);
-            await this.packageManager.DownloadPackages(this.logger, this.status, this.proxy, this.strictSSL);
-
-            this.logger.appendLine();
+            await this.packageManager.DownloadPackages(this.eventStream, this.status, this.proxy, this.strictSSL);
 
             installationStage = 'installPackages';
-            await this.packageManager.InstallPackages(this.logger, this.status);
+            await this.packageManager.InstallPackages(this.eventStream, this.status);
 
-            installationStage = 'completeSuccess';
+            this.eventStream.post(new InstallationSuccess());
         }
         catch (error) {
-            ReportInstallationError(this.logger, error, this.telemetryProps, installationStage);
+            this.eventStream.post(new InstallationFailure(installationStage, error));
             throw error;// throw the error up to the server
         }
         finally {
-            SendInstallationTelemetry(this.logger, this.reporter, this.telemetryProps, installationStage, this.platformInfo);
             this.status.dispose();
         }
     }
@@ -77,15 +66,14 @@ export class OmnisharpDownloader {
     public async GetLatestVersion(serverUrl: string, latestVersionFileServerPath: string): Promise<string> {
         let installationStage = 'getLatestVersionInfoFile';
         try {
-            this.logger.appendLine('Getting latest build information...');
-            this.logger.appendLine();
+            this.eventStream.post(new InstallationProgress(installationStage, 'Getting latest build information...'));
             //The package manager needs a package format to download, hence we form a package for the latest version file
             let filePackage = GetVersionFilePackage(serverUrl, latestVersionFileServerPath);
             //Fetch the latest version information from the file
-            return await this.packageManager.GetLatestVersionFromFile(this.logger, this.status, this.proxy, this.strictSSL, filePackage);
+            return await this.packageManager.GetLatestVersionFromFile(this.eventStream, this.status, this.proxy, this.strictSSL, filePackage);
         }
         catch (error) {
-            ReportInstallationError(this.logger, error, this.telemetryProps, installationStage);
+            this.eventStream.post(new InstallationFailure(installationStage, error));
             throw error;
         }
     }
