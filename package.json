@@ -31,7 +31,7 @@
     "watch": "tsc -watch -p ./",
     "tdd": "npm run test:unit -- --watch --watch-extensions ts",
     "test": "npm-run-all test:feature test:unit test:integration",
-    "test:unit": "mocha --opts mocha.opts",
+    "test:unit": "nyc mocha --ui tdd -- test/unitTests/**/*.test.ts",
     "test:feature": "cross-env OSVC_SUITE=featureTests CODE_EXTENSIONS_PATH=./ CODE_TESTS_PATH=./out/test/featureTests npm run test:runInVsCode",
     "test:integration": "npm-run-all test:integration:*",
     "test:integration:singleCsproj": "cross-env OSVC_SUITE=singleCsproj npm run test:runSuiteInVsCode",
@@ -43,6 +43,22 @@
     "cov:merge": "cd ./out && istanbul-combine -d ../coverage -r lcovonly ../.nyc_output/*.remapped.json && cd ..",
     "cov:merge-html": "istanbul-combine -d ./coverage -r html ./.nyc_output/*.remapped.json",
     "cov:report": "npm run cov:merge && codecov"
+  },
+  "nyc": { 
+    "include": [ 
+      "src/**/*.ts", 
+      "src/**/*.tsx" 
+    ], 
+    "extension": [ 
+      ".ts", 
+      ".tsx" 
+    ], 
+    "require": [ 
+      "ts-node/register", 
+      "source-map-support/register" 
+    ], 
+    "sourceMap": true, 
+    "instrument": true 
   },
   "dependencies": {
     "fs-extra": "^5.0.0",
