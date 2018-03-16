@@ -65,7 +65,7 @@ export default class CoverageWritingTestRunner {
                 remapIstanbulPath = path.join(process.env.CODE_EXTENSIONS_PATH, "node_modules", "remap-istanbul", "bin", "remap-istanbul.js");
                 nodePath = process.env.NVM_BIN;
                 if (nodePath) {
-                	nodePath = `${nodePath}${path.delimiter}`;
+                    nodePath = `${nodePath}${path.sep}`;
                 }
 
                 await fs.writeTextFile(rawCoverageJsonPath, JSON.stringify(__coverage__));
