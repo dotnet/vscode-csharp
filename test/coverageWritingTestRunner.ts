@@ -59,8 +59,8 @@ export default class CoverageWritingTestRunner {
             let nodePath: string;
 
             try {
-                rawCoverageJsonPath = path.join(nycFolderPath, `${process.env.OSVC_SUITE}.json`);
-                remappedCoverageJsonPath = path.join(nycFolderPath, `${process.env.OSVC_SUITE}.remapped.json`);
+                rawCoverageJsonPath = path.join(nycFolderPath, `${process.env.OSVC_SUITE}.json.raw`);
+                remappedCoverageJsonPath = path.join(nycFolderPath, `${process.env.OSVC_SUITE}.json`);
                 outFolderPath = path.join(process.env.CODE_EXTENSIONS_PATH, "out");
                 remapIstanbulPath = path.join(process.env.CODE_EXTENSIONS_PATH, "node_modules", "remap-istanbul", "bin", "remap-istanbul.js");
                 nodePath = process.env.NVM_BIN;
