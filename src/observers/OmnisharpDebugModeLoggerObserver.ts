@@ -20,7 +20,7 @@ export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
                 this.handleOmnisharpServerDequeueRequest(<OmnisharpServerDequeueRequest>event);
                 break;
             case OmnisharpServerProcessRequestStart.name:
-                this.handleOmnisharpProcessRequestStart(<OmnisharpServerEnqueueRequest>event);
+                this.handleOmnisharpProcessRequestStart(<OmnisharpServerProcessRequestStart>event);
                 break;
             case OmnisharpServerProcessRequestComplete.name:
                 this.logger.decreaseIndent();

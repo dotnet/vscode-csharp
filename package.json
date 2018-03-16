@@ -44,21 +44,21 @@
     "cov:merge-html": "istanbul-combine -d ./coverage -r html ./.nyc_output/*.json",
     "cov:report": "npm run cov:merge && codecov"
   },
-  "nyc": { 
-    "include": [ 
-      "src/**/*.ts", 
-      "src/**/*.tsx" 
-    ], 
-    "extension": [ 
-      ".ts", 
-      ".tsx" 
-    ], 
-    "require": [ 
-      "ts-node/register", 
-      "source-map-support/register" 
-    ], 
-    "sourceMap": true, 
-    "instrument": true 
+  "nyc": {
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.tsx"
+    ],
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "require": [
+      "ts-node/register",
+      "source-map-support/register"
+    ],
+    "sourceMap": true,
+    "instrument": true
   },
   "dependencies": {
     "fs-extra": "^5.0.0",
@@ -81,6 +81,7 @@
   "devDependencies": {
     "@types/chai": "4.0.8",
     "@types/chai-arrays": "1.0.2",
+    "@types/chai-string": "^1.4.0",
     "@types/fs-extra": "4.0.5",
     "@types/mkdirp": "0.5.1",
     "@types/mocha": "2.2.32",
@@ -95,6 +96,7 @@
     "chai-arrays": "2.0.0",
     "chai-as-promised": "7.1.1",
     "chai-fs": "2.0.0",
+    "chai-string": "^1.4.0",
     "codecov": "^3.0.0",
     "copyfiles": "^1.2.0",
     "cross-env": "5.1.1",
