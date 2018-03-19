@@ -44,7 +44,7 @@ class Status {
     }
 }
 
-export function reportDocumentStatus(server: OmniSharpServer): vscode.Disposable {
+function reportDocumentStatus(server: OmniSharpServer): vscode.Disposable {
 
     let disposables: vscode.Disposable[] = [];
     let localDisposables: vscode.Disposable[];
@@ -208,7 +208,7 @@ export function reportDocumentStatus(server: OmniSharpServer): vscode.Disposable
 
 // ---- server status
 
-export function reportServerStatus(server: OmniSharpServer, eventStream: EventStream): vscode.Disposable{
+function reportServerStatus(server: OmniSharpServer, eventStream: EventStream): vscode.Disposable{
 
 
     let d0 = server.onServerError(err => {

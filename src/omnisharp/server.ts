@@ -20,7 +20,7 @@ import { PlatformInformation } from '../platform';
 import { launchOmniSharp } from './launcher';
 import { setTimeout } from 'timers';
 import { OmnisharpDownloader } from './OmnisharpDownloader';
-import { OmnisharpDelayTrackerEventMeasures, OmnisharpFailure, OmnisharpInitialisation, OmnisharpLaunch, OmnisharpServerMessage, OmnisharpServerVerboseMessage, OmnisharpEventPacketReceived, OmnisharpRequestMessage } from './loggingEvents';
+import { OmnisharpDelayTrackerEventMeasures, OmnisharpFailure, OmnisharpInitialisation, OmnisharpLaunch, OmnisharpServerMessage, OmnisharpServerVerboseMessage, OmnisharpEventPacketReceived, OmnisharpRequestMessage, OmnisharpServerOnError } from './loggingEvents';
 import { EventStream } from '../EventStream';
 
 enum ServerState {
@@ -90,6 +90,10 @@ export class OmniSharpServer {
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
         let downloader = new OmnisharpDownloader(this.eventStream, packageJSON, platformInfo);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
+
+        this.onServerError((err: any) => {
+            this.eventStream.post(new OmnisharpServerOnError(err));
+        });
     }
 
     public isRunning(): boolean {
