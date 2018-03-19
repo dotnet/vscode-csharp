@@ -35,59 +35,59 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
         await vscode.commands.executeCommand("vscode.open", fileUri);
     });
 
-    
+
     test("Returns response with documentation as undefined when method does not have documentation", async function () {
-        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(19, 23));
+        let c = await GetSignatureHelp(fileUri, new vscode.Position(19, 23));
         expect(c.signatures[0].documentation).to.be.undefined;
     });
 
     test("Returns label when method does not have documentation", async function () {
-        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(19, 23));
-        let answer = `void sigHelp.noDocMethod()`;
-        expect(c.signatures[0].label).to.equal(answer);
+        let c = await GetSignatureHelp(fileUri, new vscode.Position(19, 23));
+        expect(c.signatures[0].label).to.equal(`void sigHelp.noDocMethod()`);
     });
 
     test("Returns summary as documentation for the method", async function () {
-        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(18, 18));
-        let answer = `DoWork is some method.`;
-        expect(c.signatures[0].documentation).to.equal(answer);
+        let c = await GetSignatureHelp(fileUri, new vscode.Position(18, 18));
+        expect(c.signatures[0].documentation).to.equal(`DoWork is some method.`);
     });
 
     test("Returns label for the method", async function () {
-        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(18, 18));
-        let answer = `void sigHelp.DoWork(int Int1, float Float1)`;
-        expect(c.signatures[0].label).to.equal(answer);
+        let c = await GetSignatureHelp(fileUri, new vscode.Position(18, 18));
+        expect(c.signatures[0].label).to.equal(`void sigHelp.DoWork(int Int1, float Float1, double Double1)`);
     });
 
     test("Returns label for the parameters", async function () {
-        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(18, 18));
-        let param1 = `int Int1`;
-        let param2 = `float Float1`;
-        expect(c.signatures[0].parameters[0].label).to.equal(param1);
-        expect(c.signatures[0].parameters[1].label).to.equal(param2);
+        let c = await GetSignatureHelp(fileUri, new vscode.Position(18, 18));
+        expect(c.signatures[0].parameters[0].label).to.equal(`int Int1`);
+        expect(c.signatures[0].parameters[1].label).to.equal(`float Float1`);
     });
 
     test("Returns documentation for the parameters", async function () {
-        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(18, 18));
-        let param1 = `**Int1**: Used to indicate status.`;
-        let param2 = `**Float1**: Used to specify context.`;
-        expect((<vscode.MarkdownString> c.signatures[0].parameters[0].documentation).value).to.equal(param1);
-        expect((<vscode.MarkdownString> c.signatures[0].parameters[1].documentation).value).to.equal(param2);
+        let c = await GetSignatureHelp(fileUri, new vscode.Position(18, 18));
+        expect((<vscode.MarkdownString>c.signatures[0].parameters[0].documentation).value).to.equal(`**Int1**: Used to indicate status.`);
+        expect((<vscode.MarkdownString>c.signatures[0].parameters[1].documentation).value).to.equal(`**Float1**: Used to specify context.`);
     });
 
     test("Signature Help identifies active parameter if there is no comma", async function () {
-        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(18, 18));
-        let answer = `int Int1`;
-        expect(c.signatures[0].parameters[c.activeParameter].label).to.equal(answer);
+        let c = await GetSignatureHelp(fileUri, new vscode.Position(18, 18));
+        expect(c.signatures[0].parameters[c.activeParameter].label).to.equal(`int Int1`);
     });
 
     test("Signature Help identifies active parameter based on comma", async function () {
-        let c = <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, new vscode.Position(18, 20));
-        let answer = `float Float1`;
-        expect(c.signatures[0].parameters[c.activeParameter].label).to.equal(answer);
+        let c = await GetSignatureHelp(fileUri, new vscode.Position(18, 20));
+        expect(c.signatures[0].parameters[c.activeParameter].label).to.equal(`float Float1`);
     });
 
-    suiteTeardown(async () => {
-        await testAssetWorkspace.cleanupWorkspace();
+    test("Signature Help identifies active parameter based on comma for multiple commas", async function () {
+        let c = await GetSignatureHelp(fileUri, new vscode.Position(18, 27));
+        expect(c.signatures[0].parameters[c.activeParameter].label).to.equal(`double Double1`);
     });
 });
+
+suiteTeardown(async () => {
+    await testAssetWorkspace.cleanupWorkspace();
+});
+
+async function GetSignatureHelp(fileUri: vscode.Uri, position: vscode.Position) {
+    return <vscode.SignatureHelp>await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", fileUri, position);
+}
