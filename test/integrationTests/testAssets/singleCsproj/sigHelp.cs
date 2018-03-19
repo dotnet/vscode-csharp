@@ -16,7 +16,7 @@ namespace Test
 
         public static void main()
         {
-            DoWork(4, 4.0f);
+            DoWork(4, 4.0f, 5.0);
             noDocMethod();
         }
     }
