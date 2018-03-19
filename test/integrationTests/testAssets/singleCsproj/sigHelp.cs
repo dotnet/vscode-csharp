@@ -6,7 +6,7 @@ namespace Test
         ///<summary>DoWork is some method.</summary>
         /// <param name="Int1">Used to indicate status.</param>
         /// <param name="Float1">Used to specify context.</param>
-        public static void DoWork(int Int1, float Float1)
+        public static void DoWork(int Int1, float Float1, double Double1)
         {
         }
 
