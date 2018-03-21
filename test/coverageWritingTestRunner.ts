@@ -46,7 +46,7 @@ export default class CoverageWritingTestRunner {
 
     private async writeCoverage(): Promise<void> {
         if (typeof __coverage__ !== 'undefined') {
-            let nycFolderPath = path.join(process.env.CODE_EXTENSIONS_PATH, ".nyc_output");
+            let nycFolderPath = path.join(process.env.CODE_EXTENSIONS_PATH, ".nyc_output", "integration");
 
             if (!(await fs.exists(nycFolderPath))) {
                 await fs.mkdir(nycFolderPath);
@@ -63,9 +63,9 @@ export default class CoverageWritingTestRunner {
                 remappedCoverageJsonPath = path.join(nycFolderPath, `${process.env.OSVC_SUITE}.json`);
                 outFolderPath = path.join(process.env.CODE_EXTENSIONS_PATH, "out");
                 remapIstanbulPath = path.join(process.env.CODE_EXTENSIONS_PATH, "node_modules", "remap-istanbul", "bin", "remap-istanbul.js");
-                nodePath = process.env.NVM_BIN;
-                if (nodePath) {
-                	nodePath = `${nodePath}${path.delimiter}`;
+                nodePath = "";
+                if (process.env.NVM_BIN) {
+                    nodePath = `${process.env.NVM_BIN}${path.sep}`;
                 }
 
                 await fs.writeTextFile(rawCoverageJsonPath, JSON.stringify(__coverage__));

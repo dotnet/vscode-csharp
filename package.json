@@ -31,7 +31,7 @@
     "watch": "tsc -watch -p ./",
     "tdd": "npm run test:unit -- --watch --watch-extensions ts",
     "test": "npm-run-all test:feature test:unit test:integration",
-    "test:unit": "nyc mocha --ui tdd -- test/unitTests/**/*.test.ts",
+    "test:unit": "nyc -r lcovonly --report-dir coverage/unit mocha --ui tdd -- test/unitTests/**/*.test.ts",
     "test:feature": "cross-env OSVC_SUITE=featureTests CODE_EXTENSIONS_PATH=./ CODE_TESTS_PATH=./out/test/featureTests npm run test:runInVsCode",
     "test:integration": "npm-run-all test:integration:*",
     "test:integration:singleCsproj": "cross-env OSVC_SUITE=singleCsproj npm run test:runSuiteInVsCode",
@@ -40,9 +40,11 @@
     "test:runInVsCode": "node ./test/runVsCodeTestsWithAbsolutePaths.js",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "cov:instrument": "rimraf ./coverage && rimraf ./.nyc_output && rimraf ./out && npm run compile && cd out && nyc instrument --require source-map-support/register --cwd ../ . . && cd ..",
-    "cov:merge": "cd ./out && istanbul-combine -d ../coverage -r lcovonly ../.nyc_output/*.json && cd ..",
-    "cov:merge-html": "istanbul-combine -d ./coverage -r html ./.nyc_output/*.json",
-    "cov:report": "npm run cov:merge && codecov"
+    "cov:merge": "cd ./out && istanbul-combine -d ../coverage/integration -r lcovonly ../.nyc_output/integration/*.json && cd ..",
+    "cov:merge-html": "istanbul-combine -d ./coverage -r html ./.nyc_output/integration/*.json",    
+    "cov:report": "npm-run-all cov:report:integration cov:report:unit",
+    "cov:report:unit": "codecov -f \"coverage/unit/lcov.info\" -F unit",
+    "cov:report:integration": "npm run cov:merge && codecov -f \"coverage/integration/lcov.info\" -F integration"
   },
   "nyc": {
     "include": [
