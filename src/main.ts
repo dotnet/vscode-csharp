@@ -21,6 +21,8 @@ import { DotnetLoggerObserver } from './observers/DotnetLoggerObserver';
 import { OmnisharpDebugModeLoggerObserver } from './observers/OmnisharpDebugModeLoggerObserver';
 import { ActivationFailure } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
+import { OmnisharpServerStatusObserver, ExecuteCommand, ShowWarningMessage } from './observers/ServerStatusObserver';
+import { InformationMessageObserver, ShowInformationMessage, GetConfiguration, WorkspaceAsRelativePath } from './observers/InformationMessageObserver';
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 
@@ -44,6 +46,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel);
     let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel);
 
+    let entry = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, Number.MIN_VALUE);
+    let showWarningMessage: ShowWarningMessage = (message: string, ...items: string[]) => vscode.window.showWarningMessage(message, ...items);
+    let executeCommand: ExecuteCommand = <T>(command: string, ...rest: any[]) => vscode.commands.executeCommand(command, ...rest);
+    let omnisharpServerStatusObserver = new OmnisharpServerStatusObserver(showWarningMessage, executeCommand); 
+    
+    let getConfiguration: GetConfiguration = (name: string) => vscode.workspace.getConfiguration(name);
+    let showInformationMessage: ShowInformationMessage = (message: string, ...items: string[]) => vscode.window.showInformationMessage(message, ...items);
+    let workspaceAsRelativePath:  WorkspaceAsRelativePath = (pathOrUri: string | vscode.Uri, includeWorkspaceFolder?: boolean) => vscode.workspace.asRelativePath(pathOrUri, includeWorkspaceFolder); 
+    let informationMessageObserver = new InformationMessageObserver(getConfiguration, showInformationMessage, workspaceAsRelativePath);
+
     const eventStream = new EventStream();
     eventStream.subscribe(dotnetChannelObserver.post);
     eventStream.subscribe(dotnetLoggerObserver.post);
@@ -53,6 +65,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     eventStream.subscribe(omnisharpLogObserver.post);
     eventStream.subscribe(omnisharpChannelObserver.post);
+
+    eventStream.subscribe(omnisharpServerStatusObserver.post);
+    eventStream.subscribe(informationMessageObserver.post);
+
     const debugMode = false;
     if (debugMode) {
         let omnisharpDebugModeLoggerObserver = new OmnisharpDebugModeLoggerObserver(omnisharpChannel);

@@ -24,7 +24,7 @@ export class OmnisharpLoggerObserver extends BaseLoggerObserver {
                 this.logger.appendLine((<OmnisharpServerMessage>event).message);
                 break;
             case OmnisharpServerOnServerError.name:
-                this.logger.appendLine((<OmnisharpServerOnServerError>event).message);
+                this.handleOmnisharpServerOnServerError(<OmnisharpServerOnServerError>event);
                 break;
             case OmnisharpServerOnError.name:
                 this.handleOmnisharpServerOnError(<OmnisharpServerOnError>event);
@@ -39,6 +39,10 @@ export class OmnisharpLoggerObserver extends BaseLoggerObserver {
                 this.handleOmnisharpEventPacketReceived(<OmnisharpEventPacketReceived>event);
                 break;
         }
+    }
+
+    private handleOmnisharpServerOnServerError(event: OmnisharpServerOnServerError) {
+        this.logger.appendLine('[ERROR] ' + event.err);
     }
 
     private handleOmnisharpInitialisation(event: OmnisharpInitialisation) {

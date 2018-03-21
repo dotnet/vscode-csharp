@@ -16,32 +16,7 @@ const debounce = require('lodash.debounce');
 
 export default function reportStatus(server: OmniSharpServer, eventStream: EventStream) {
     return vscode.Disposable.from(
-        reportServerStatus(server, eventStream),
-        forwardOutput(server, eventStream),
         reportDocumentStatus(server));
-}
-
-// --- document status
-
-let defaultSelector: vscode.DocumentSelector = [
-    'csharp', // c#-files OR
-    { pattern: '**/project.json' }, // project.json-files OR
-    { pattern: '**/*.sln' }, // any solution file OR
-    { pattern: '**/*.csproj' }, // an csproj file
-    { pattern: '**/*.csx' }, // C# script
-    { pattern: '**/*.cake' } // Cake script
-];
-
-class Status {
-
-    selector: vscode.DocumentSelector;
-    text: string;
-    command: string;
-    color: string;
-
-    constructor(selector: vscode.DocumentSelector) {
-        this.selector = selector;
-    }
 }
 
 function reportDocumentStatus(server: OmniSharpServer): vscode.Disposable {
@@ -50,7 +25,7 @@ function reportDocumentStatus(server: OmniSharpServer): vscode.Disposable {
     let localDisposables: vscode.Disposable[];
 
     let entry = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, Number.MIN_VALUE);
-    let defaultStatus = new Status(defaultSelector);
+    
     let projectStatus: Status;
 
     function render() {
@@ -82,33 +57,34 @@ function reportDocumentStatus(server: OmniSharpServer): vscode.Disposable {
 
     disposables.push(vscode.window.onDidChangeActiveTextEditor(render));
 
-    disposables.push(server.onServerError(err => {
+
+    /*disposables.push(server.onServerError(err => {
         defaultStatus.text = '$(flame) Error starting OmniSharp';
         defaultStatus.command = 'o.showOutput';
         defaultStatus.color = '';
         render();
-    }));
+    }));*/
 
-    disposables.push(server.onMultipleLaunchTargets(targets => {
+   /* disposables.push(server.onMultipleLaunchTargets(targets => {
         defaultStatus.text = '$(flame) Select project';
         defaultStatus.command = 'o.pickProjectAndStart';
         defaultStatus.color = 'rgb(90, 218, 90)';
         render();
-    }));
+    }));*/
 
-    disposables.push(server.onBeforeServerInstall(() => {
+    /*disposables.push(server.onBeforeServerInstall(() => {
         defaultStatus.text = '$(flame) Installing OmniSharp...';
         defaultStatus.command = 'o.showOutput';
         defaultStatus.color = '';
         render();
     }));
 
-    disposables.push(server.onBeforeServerStart(path => {
+    /*disposables.push(server.onBeforeServerStart(path => {
         defaultStatus.text = '$(flame) Starting...';
         defaultStatus.command = 'o.showOutput';
         defaultStatus.color = '';
         render();
-    }));
+    }));*/
 
     disposables.push(server.onServerStop(() => {
         projectStatus = undefined;
@@ -203,68 +179,4 @@ function reportDocumentStatus(server: OmniSharpServer): vscode.Disposable {
     }));
 
     return vscode.Disposable.from(...disposables);
-}
-
-
-// ---- server status
-
-function reportServerStatus(server: OmniSharpServer, eventStream: EventStream): vscode.Disposable{
-
-
-    let d0 = server.onServerError(err => {
-        eventStream.post(new OmnisharpServerOnServerError('[ERROR] ' + err));
-    });
-
-    let d1 = server.onError(message => {
-        eventStream.post(new OmnisharpServerOnError(message));
-
-        showMessageSoon();
-    });
-
-    let d2 = server.onMsBuildProjectDiagnostics(message => {
-        eventStream.post(new OmnisharpServerMsBuildProjectDiagnostics(message));
-
-        if (message.Errors.length > 0) {
-            showMessageSoon();
-        }
-    });
-
-    let d3 = server.onUnresolvedDependencies(message => {
-        eventStream.post(new OmnisharpServerUnresolvedDependencies(message));
-
-        let csharpConfig = vscode.workspace.getConfiguration('csharp');
-        if (!csharpConfig.get<boolean>('suppressDotnetRestoreNotification')) {
-            let info = `There are unresolved dependencies from '${vscode.workspace.asRelativePath(message.FileName) }'. Please execute the restore command to continue.`;
-
-            return vscode.window.showInformationMessage(info, 'Restore').then(value => {
-                if (value) {
-                    dotnetRestoreForProject(server, message.FileName, eventStream);
-                }
-            });
-        }
-    });
-
-    return vscode.Disposable.from(d0, d1, d2, d3);
-}
-
-// show user message
-let _messageHandle: NodeJS.Timer;
-function showMessageSoon() {
-    clearTimeout(_messageHandle);
-    _messageHandle = setTimeout(function() {
-
-        let message = "Some projects have trouble loading. Please review the output for more details.";
-        vscode.window.showWarningMessage(message, { title: "Show Output", command: 'o.showOutput' }).then(value => {
-            if (value) {
-                vscode.commands.executeCommand(value.command);
-            }
-        });
-    }, 1500);
-}
-
-// --- mirror output in channel
-
-function forwardOutput(server: OmniSharpServer, eventStream: EventStream) {
-    return vscode.Disposable.from(
-        server.onStderr(message => eventStream.post(new OmnisharpServerOnStdErr(message))));
 }

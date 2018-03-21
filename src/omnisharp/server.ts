@@ -20,7 +20,7 @@ import { PlatformInformation } from '../platform';
 import { launchOmniSharp } from './launcher';
 import { setTimeout } from 'timers';
 import { OmnisharpDownloader } from './OmnisharpDownloader';
-import { OmnisharpDelayTrackerEventMeasures, OmnisharpFailure, OmnisharpInitialisation, OmnisharpLaunch, OmnisharpServerMessage, OmnisharpServerVerboseMessage, OmnisharpEventPacketReceived, OmnisharpRequestMessage, OmnisharpServerOnError } from './loggingEvents';
+import * as ObservableEvents from './loggingEvents';
 import { EventStream } from '../EventStream';
 
 enum ServerState {
@@ -91,9 +91,37 @@ export class OmniSharpServer {
         let downloader = new OmnisharpDownloader(this.eventStream, packageJSON, platformInfo);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
 
-        this.onServerError((err: any) => {
-            this.eventStream.post(new OmnisharpServerOnError(err));
-        });
+        this._disposables.push(this.onServerError(err => 
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError(err))
+        ));
+
+        this._disposables.push(this.onError((message: protocol.ErrorMessage) => 
+            eventStream.post(new ObservableEvents.OmnisharpServerOnError(message))
+        )); 
+        
+        this._disposables.push(this.onMsBuildProjectDiagnostics((message:protocol.MSBuildProjectDiagnostics) => 
+            eventStream.post(new ObservableEvents.OmnisharpServerMsBuildProjectDiagnostics(message))
+        )); 
+
+        this._disposables.push(this.onUnresolvedDependencies((message: protocol.UnresolvedDependenciesMessage) => 
+            eventStream.post(new ObservableEvents.OmnisharpServerUnresolvedDependencies(message, this, this.eventStream))
+        ));
+
+        this._disposables.push(this.onStderr((message:string) =>
+            eventStream.post(new ObservableEvents.OmnisharpServerOnStdErr(message))
+        ));
+
+        this._disposables.push(this.onMultipleLaunchTargets((targets: LaunchTarget[]) => 
+            this.eventStream.post(new ObservableEvents.OmnisharpOnMultipleLaunchTargets(targets))
+        ));
+
+        this._disposables.push(this.onBeforeServerInstall(() =>
+            this.eventStream.post(new ObservableEvents.OmnisharpOnBeforeServerInstall())
+        ));
+
+        this._disposables.push(this.onBeforeServerStart(() =>
+            this.eventStream.post(new ObservableEvents.OmnisharpOnBeforeServerStart())
+        ));
     }
 
     public isRunning(): boolean {
