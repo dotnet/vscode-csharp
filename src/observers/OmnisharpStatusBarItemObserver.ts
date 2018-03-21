@@ -8,6 +8,7 @@ import * as ObservableEvent from "../omnisharp/loggingEvents";
 import { Status } from './status';
 import * as serverUtils from '../omnisharp/utils';
 import { basename } from 'path';
+import { OmniSharpServer } from '../omnisharp/server';
 
 const debounce = require('lodash.debounce');
 
@@ -68,7 +69,7 @@ export class OmnisharpStatusBarItemObserver {
         }
     }
 
-    private updateProjectInfo = () => {
+    private updateProjectInfo = (server: OmniSharpServer) => {
         serverUtils.requestWorkspaceInformation(server).then(info => {
 
             interface Project {
@@ -168,11 +169,12 @@ export class OmnisharpStatusBarItemObserver {
         this.localDisposables = undefined;
     }
 
-    private handleOmnisharpServerOnStart(event:ObservableEvent.OmnisharpServerOnStart) {
+    private handleOmnisharpServerOnStart(event: ObservableEvent.OmnisharpServerOnStart) {
         this.localDisposables = [];
         SetStatus(this.defaultStatus, '$(flame) Running', 'o.pickProjectAndStart', '');
         this.render();
-        let debouncedUpdateProjectInfo = debounce(this.updateProjectInfo, 1500, { leading: true });
+        let updateProjectInfoFunction = () => this.updateProjectInfo(event.server);
+        let debouncedUpdateProjectInfo = debounce(updateProjectInfoFunction, 1500, { leading: true });
         this.localDisposables.push(event.server.onProjectAdded(debouncedUpdateProjectInfo));
         this.localDisposables.push(event.server.onProjectChange(debouncedUpdateProjectInfo));
         this.localDisposables.push(event.server.onProjectRemoved(debouncedUpdateProjectInfo));
