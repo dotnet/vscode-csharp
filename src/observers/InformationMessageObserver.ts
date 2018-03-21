@@ -11,14 +11,12 @@ export interface GetConfiguration {
     (value: string): vscode.WorkspaceConfiguration;
 }
 
-export type ShowInformationMessage =
-    ((message: string, ...items: string[]) => Thenable<string | undefined>) |
-    ((message: string, options: vscode.MessageOptions, ...items: string[]) => Thenable<string | undefined>) |
-    (<T extends vscode.MessageItem>(message: string, ...items: T[]) => Thenable<T | undefined>) |
-    (<T extends vscode.MessageItem>(message: string, options: vscode.MessageOptions, ...items: T[]) => Thenable<T | undefined>);
+export interface ShowInformationMessage {
+    (message: string, ...items: string[]): Thenable<string | undefined>;
+}
 
 export interface WorkspaceAsRelativePath{
-    (pathOrUri: string | Uri, includeWorkspaceFolder?: boolean): string;
+    (path: string, includeWorkspaceFolder?: boolean): string;
 }
 
 export class InformationMessageObserver {

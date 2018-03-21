@@ -6,11 +6,9 @@
 import * as vscode from '../vscodeAdapter';
 import * as ObservableEvent from "../omnisharp/loggingEvents";
 
-export type ShowWarningMessage = 
-    ((message: string, ...items: string[]) => Thenable<string | undefined>)  | 
-    ((message: string, options: vscode.MessageOptions, ...items: string[]) => Thenable<string | undefined>) | 
-    (<T extends vscode.MessageItem>(message: string, ...items: T[]) => Thenable<T | undefined>) | 
-    (<T extends vscode.MessageItem>(message: string, options: vscode.MessageOptions, ...items: T[])=> Thenable<T | undefined>);
+export interface ShowWarningMessage{
+    (message: string, ...items: string[]): Thenable<string | undefined>;
+}
 
 export interface ExecuteCommand{
     <T>(command: string, ...rest: any[]): Thenable<T | undefined>;

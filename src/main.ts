@@ -53,7 +53,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     
     let getConfiguration: GetConfiguration = (name: string) => vscode.workspace.getConfiguration(name);
     let showInformationMessage: ShowInformationMessage = (message: string, ...items: string[]) => vscode.window.showInformationMessage(message, ...items);
-    let workspaceAsRelativePath:  WorkspaceAsRelativePath = (pathOrUri: string | vscode.Uri, includeWorkspaceFolder?: boolean) => vscode.workspace.asRelativePath(pathOrUri, includeWorkspaceFolder); 
+    let workspaceAsRelativePath:  WorkspaceAsRelativePath = (path: string, includeWorkspaceFolder?: boolean) => vscode.workspace.asRelativePath(path, includeWorkspaceFolder); 
     let informationMessageObserver = new InformationMessageObserver(getConfiguration, showInformationMessage, workspaceAsRelativePath);
 
     const eventStream = new EventStream();
