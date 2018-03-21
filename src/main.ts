@@ -19,10 +19,11 @@ import { TelemetryObserver } from './observers/TelemetryObserver';
 import { OmnisharpChannelObserver } from './observers/OmnisharpChannelObserver';
 import { DotnetLoggerObserver } from './observers/DotnetLoggerObserver';
 import { OmnisharpDebugModeLoggerObserver } from './observers/OmnisharpDebugModeLoggerObserver';
-import { ActivationFailure } from './omnisharp/loggingEvents';
+import { ActivationFailure, RenderOmnisharpStatusBarItem } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
-import { OmnisharpServerStatusObserver, ExecuteCommand, ShowWarningMessage } from './observers/ServerStatusObserver';
+import { OmnisharpServerStatusObserver, ExecuteCommand, ShowWarningMessage} from './observers/OmnisharpServerStatusObserver';
 import { InformationMessageObserver, ShowInformationMessage, GetConfiguration, WorkspaceAsRelativePath } from './observers/InformationMessageObserver';
+import { GetActiveTextEditor, OmnisharpStatusBarItemObserver, Match } from './observers/OmnisharpStatusBarItemObserver';
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 
@@ -46,15 +47,21 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel);
     let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel);
 
-    let entry = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, Number.MIN_VALUE);
+    
     let showWarningMessage: ShowWarningMessage = (message: string, ...items: string[]) => vscode.window.showWarningMessage(message, ...items);
     let executeCommand: ExecuteCommand = <T>(command: string, ...rest: any[]) => vscode.commands.executeCommand(command, ...rest);
+    
     let omnisharpServerStatusObserver = new OmnisharpServerStatusObserver(showWarningMessage, executeCommand); 
     
     let getConfiguration: GetConfiguration = (name: string) => vscode.workspace.getConfiguration(name);
     let showInformationMessage: ShowInformationMessage = (message: string, ...items: string[]) => vscode.window.showInformationMessage(message, ...items);
     let workspaceAsRelativePath:  WorkspaceAsRelativePath = (path: string, includeWorkspaceFolder?: boolean) => vscode.workspace.asRelativePath(path, includeWorkspaceFolder); 
     let informationMessageObserver = new InformationMessageObserver(getConfiguration, showInformationMessage, workspaceAsRelativePath);
+
+    let omnisharpStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, Number.MIN_VALUE);
+    let getActiveTextEditor: GetActiveTextEditor = () => vscode.window.activeTextEditor;
+    let match: Match = (selector: vscode.DocumentSelector, document: vscode.TextDocument) => vscode.languages.match(selector, document);
+    let omnisharpStatusBarObserver = new OmnisharpStatusBarItemObserver(getActiveTextEditor, match, omnisharpStatusBar);
 
     const eventStream = new EventStream();
     eventStream.subscribe(dotnetChannelObserver.post);
@@ -93,6 +100,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     // register JSON completion & hover providers for project.json
     context.subscriptions.push(addJSONProviders());
+    context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(() => {
+        eventStream.post(new RenderOmnisharpStatusBarItem());
+    }));
 
     let coreClrDebugPromise = Promise.resolve();
     if (runtimeDependenciesExist) {

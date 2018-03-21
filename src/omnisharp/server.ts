@@ -122,6 +122,14 @@ export class OmniSharpServer {
         this._disposables.push(this.onBeforeServerStart(() =>
             this.eventStream.post(new ObservableEvents.OmnisharpOnBeforeServerStart())
         ));
+
+        this._disposables.push(this.onServerStop(() =>
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnStop())
+        ));
+
+        this._disposables.push(this.onServerStart(() =>
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnStart(this))
+        ));
     }
 
     public isRunning(): boolean {
@@ -166,7 +174,7 @@ export class OmniSharpServer {
                 const measures = tracker.getMeasures();
                 tracker.clearMeasures();
 
-                this.eventStream.post(new OmnisharpDelayTrackerEventMeasures(eventName, measures));
+                this.eventStream.post(new ObservableEvents.OmnisharpDelayTrackerEventMeasures(eventName, measures));
             }
         }
     }
@@ -290,16 +298,16 @@ export class OmniSharpServer {
                 launchPath = await this._omnisharpManager.GetOmnisharpPath(this._options.path, this._options.useMono, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
             }
             catch (error) {
-                this.eventStream.post(new OmnisharpFailure(`Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));
+                this.eventStream.post(new ObservableEvents.OmnisharpFailure(`Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));
                 return;
             }
         }
 
-        this.eventStream.post(new OmnisharpInitialisation(new Date(), solutionPath));
+        this.eventStream.post(new ObservableEvents.OmnisharpInitialisation(new Date(), solutionPath));
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
         return launchOmniSharp(cwd, args, launchPath).then(value => {
-            this.eventStream.post(new OmnisharpLaunch(value.usingMono, value.command, value.process.pid));
+            this.eventStream.post(new ObservableEvents.OmnisharpLaunch(value.usingMono, value.command, value.process.pid));
 
             this._serverProcess = value.process;
             this._delayTrackers = {};
@@ -513,7 +521,7 @@ export class OmniSharpServer {
         line = line.trim();
 
         if (line[0] !== '{') {
-            this.eventStream.post(new OmnisharpServerMessage(line));
+            this.eventStream.post(new ObservableEvents.OmnisharpServerMessage(line));
             return;
         }
 
@@ -539,7 +547,7 @@ export class OmniSharpServer {
                 this._handleEventPacket(<protocol.WireProtocol.EventPacket>packet);
                 break;
             default:
-                this.eventStream.post(new OmnisharpServerMessage(`Unknown packet type: ${packet.Type}`));
+                this.eventStream.post(new ObservableEvents.OmnisharpServerMessage(`Unknown packet type: ${packet.Type}`));
                 break;
         }
     }
@@ -548,11 +556,11 @@ export class OmniSharpServer {
         const request = this._requestQueue.dequeue(packet.Command, packet.Request_seq);
 
         if (!request) {
-            this.eventStream.post(new OmnisharpServerMessage(`Received response for ${packet.Command} but could not find request.`));
+            this.eventStream.post(new ObservableEvents.OmnisharpServerMessage(`Received response for ${packet.Command} but could not find request.`));
             return;
         }
 
-        this.eventStream.post(new OmnisharpServerVerboseMessage(`handleResponse: ${packet.Command} (${packet.Request_seq})`));
+        this.eventStream.post(new ObservableEvents.OmnisharpServerVerboseMessage(`handleResponse: ${packet.Command} (${packet.Request_seq})`));
 
         if (packet.Success) {
             request.onSuccess(packet.Body);
@@ -567,7 +575,7 @@ export class OmniSharpServer {
     private _handleEventPacket(packet: protocol.WireProtocol.EventPacket): void {
         if (packet.Event === 'log') {
             const entry = <{ LogLevel: string; Name: string; Message: string; }>packet.Body;
-            this.eventStream.post(new OmnisharpEventPacketReceived(entry.LogLevel, entry.Name, entry.Message));
+            this.eventStream.post(new ObservableEvents.OmnisharpEventPacketReceived(entry.LogLevel, entry.Name, entry.Message));
         }
         else {
             // fwd all other events
@@ -585,7 +593,7 @@ export class OmniSharpServer {
             Arguments: request.data
         };
 
-        this.eventStream.post(new OmnisharpRequestMessage(request, id));
+        this.eventStream.post(new ObservableEvents.OmnisharpRequestMessage(request, id));
         this._serverProcess.stdin.write(JSON.stringify(requestPacket) + '\n');
         return id;
     }

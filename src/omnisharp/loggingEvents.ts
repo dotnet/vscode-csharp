@@ -6,6 +6,7 @@
 import { PlatformInformation } from "../platform";
 import { Request } from "./requestQueue";
 import * as protocol from './protocol';
+import * as vscode from '../vscodeAdapter';
 import { OmniSharpServer } from "./server";
 import { EventStream } from "../EventStream";
 import { LaunchTarget } from "./launcher";
@@ -97,11 +98,15 @@ export class OmnisharpServerOnServerError implements BaseEvent {
 }
 
 export class OmnisharpOnMultipleLaunchTargets implements BaseEvent {
-    constructor(private targets: LaunchTarget[]) { }
+    constructor(public targets: LaunchTarget[]) { }
 }
 
 export class EventWithMessage implements BaseEvent {
     constructor(public message: string) { }
+}
+
+export class OmnisharpServerOnStart implements BaseEvent {
+    constructor(public server: OmniSharpServer) { }
 }
 
 export class DebuggerPrerequisiteFailure extends EventWithMessage { }
@@ -116,7 +121,6 @@ export class OmnisharpServerOnStdErr extends EventWithMessage { }
 export class OmnisharpServerMessage extends EventWithMessage { }
 export class OmnisharpServerVerboseMessage extends EventWithMessage { }
 
-
 export class ActivationFailure implements BaseEvent { }
 export class CommandShowOutput implements BaseEvent { }
 export class DebuggerNotInstalledFailure implements BaseEvent { }
@@ -126,3 +130,5 @@ export class OmnisharpServerProcessRequestComplete implements BaseEvent { }
 export class ProjectJsonDeprecatedWarning implements BaseEvent { }
 export class OmnisharpOnBeforeServerStart implements BaseEvent { }
 export class OmnisharpOnBeforeServerInstall implements BaseEvent { }
+export class RenderOmnisharpStatusBarItem implements BaseEvent { }
+export class OmnisharpServerOnStop implements BaseEvent { }

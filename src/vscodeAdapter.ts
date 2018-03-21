@@ -168,6 +168,52 @@ export interface WorkspaceConfiguration {
     readonly [key: string]: any;
 }
 
+/**
+ * The configuration target
+ */
+export enum ConfigurationTarget {
+    /**
+     * Global configuration
+    */
+    Global = 1,
+
+    /**
+     * Workspace configuration
+     */
+    Workspace = 2,
+
+    /**
+     * Workspace folder configuration
+     */
+    WorkspaceFolder = 3
+}
+
+/**
+ * Represents the alignment of status bar items.
+ */
+export enum StatusBarAlignment {
+
+    /**
+     * Aligned to the left side.
+     */
+    Left = 1,
+
+    /**
+     * Aligned to the right side.
+     */
+    Right = 2
+}
+
+export interface ThemeColor {
+
+    /**
+     * Creates a reference to a theme color.
+     * @param id of the color. The available colors are listed in https://code.visualstudio.com/docs/getstarted/theme-color-reference.
+     */
+    constructor(id: string);
+}
+
+
 export interface StatusBarItem {
 
     /**
@@ -243,7 +289,7 @@ export interface DocumentFilter {
     pattern?: GlobPattern;
 }
 
-export class RelativePattern {
+export interface RelativePattern {
 
     /**
      * A base file path to which this pattern will be matched against relatively.
@@ -267,7 +313,7 @@ export class RelativePattern {
      * @param pattern A file glob pattern like `*.{ts,js}` that will be matched on file paths
      * relative to the base path.
      */
-    constructor(base: WorkspaceFolder | string, pattern: string)
+    constructor(base: WorkspaceFolder | string, pattern: string);
 }
 
 export interface WorkspaceFolder {
@@ -318,98 +364,246 @@ export interface MessageItem {
     isCloseAffordance?: boolean;
 }
 
-export class Uri {
+
+/**
+     * Represents an editor that is attached to a [document](#TextDocument).
+     */
+export interface TextEditor {
 
     /**
-     * Create an URI from a file system path. The [scheme](#Uri.scheme)
-     * will be `file`.
+     * The document associated with this text editor. The document will be the same for the entire lifetime of this text editor.
+     */
+    document: TextDocument;
+
+    /**
+     * The primary selection on this text editor. Shorthand for `TextEditor.selections[0]`.
+     */
+    selection: Selection;
+
+    /**
+     * The selections in this text editor. The primary selection is always at index 0.
+     */
+    selections: Selection[];
+
+    /**
+     * Text editor options.
+     */
+    options: TextEditorOptions;
+
+    /**
+     * The column in which this editor shows. Will be `undefined` in case this
+     * isn't one of the three main editors, e.g an embedded editor.
+     */
+    viewColumn?: ViewColumn;
+
+    /**
+     * Perform an edit on the document associated with this text editor.
      *
-     * @param path A file system or UNC path.
-     * @return A new Uri instance.
-     */
-    static file(path: string): Uri;
-
-    /**
-     * Create an URI from a string. Will throw if the given value is not
-     * valid.
+     * The given callback-function is invoked with an [edit-builder](#TextEditorEdit) which must
+     * be used to make edits. Note that the edit-builder is only valid while the
+     * callback executes.
      *
-     * @param value The string value of an Uri.
-     * @return A new Uri instance.
+     * @param callback A function which can create edits using an [edit-builder](#TextEditorEdit).
+     * @param options The undo/redo behavior around this edit. By default, undo stops will be created before and after this edit.
+     * @return A promise that resolves with a value indicating if the edits could be applied.
      */
-    static parse(value: string): Uri;
+    edit(callback: (editBuilder: TextEditorEdit) => void, options?: { undoStopBefore: boolean; undoStopAfter: boolean; }): Thenable<boolean>;
 
     /**
-     * Use the `file` and `parse` factory functions to create new `Uri` objects.
-     */
-    private constructor(scheme: string, authority: string, path: string, query: string, fragment: string);
-
-    /**
-     * Scheme is the `http` part of `http://www.msft.com/some/path?query#fragment`.
-     * The part before the first colon.
-     */
-    readonly scheme: string;
-
-    /**
-     * Authority is the `www.msft.com` part of `http://www.msft.com/some/path?query#fragment`.
-     * The part between the first double slashes and the next slash.
-     */
-    readonly authority: string;
-
-    /**
-     * Path is the `/some/path` part of `http://www.msft.com/some/path?query#fragment`.
-     */
-    readonly path: string;
-
-    /**
-     * Query is the `query` part of `http://www.msft.com/some/path?query#fragment`.
-     */
-    readonly query: string;
-
-    /**
-     * Fragment is the `fragment` part of `http://www.msft.com/some/path?query#fragment`.
-     */
-    readonly fragment: string;
-
-    /**
-     * The string representing the corresponding file system path of this Uri.
+     * Insert a [snippet](#SnippetString) and put the editor into snippet mode. "Snippet mode"
+     * means the editor adds placeholders and additionals cursors so that the user can complete
+     * or accept the snippet.
      *
-     * Will handle UNC paths and normalize windows drive letters to lower-case. Also
-     * uses the platform specific path separator. Will *not* validate the path for
-     * invalid characters and semantics. Will *not* look at the scheme of this Uri.
+     * @param snippet The snippet to insert in this edit.
+     * @param location Position or range at which to insert the snippet, defaults to the current editor selection or selections.
+     * @param options The undo/redo behavior around this edit. By default, undo stops will be created before and after this edit.
+     * @return A promise that resolves with a value indicating if the snippet could be inserted. Note that the promise does not signal
+     * that the snippet is completely filled-in or accepted.
      */
-    readonly fsPath: string;
+    insertSnippet(snippet: SnippetString, location?: Position | Range | Position[] | Range[], options?: { undoStopBefore: boolean; undoStopAfter: boolean; }): Thenable<boolean>;
 
     /**
-     * Derive a new Uri from this Uri.
+     * Adds a set of decorations to the text editor. If a set of decorations already exists with
+     * the given [decoration type](#TextEditorDecorationType), they will be replaced.
      *
-     * ```ts
-     * let file = Uri.parse('before:some/file/path');
-     * let other = file.with({ scheme: 'after' });
-     * assert.ok(other.toString() === 'after:some/file/path');
-     * ```
+     * @see [createTextEditorDecorationType](#window.createTextEditorDecorationType).
      *
-     * @param change An object that describes a change to this Uri. To unset components use `null` or
-     *  the empty string.
-     * @return A new Uri that reflects the given change. Will return `this` Uri if the change
-     *  is not changing anything.
+     * @param decorationType A decoration type.
+     * @param rangesOrOptions Either [ranges](#Range) or more detailed [options](#DecorationOptions).
      */
-    with(change: { scheme?: string; authority?: string; path?: string; query?: string; fragment?: string }): Uri;
+    setDecorations(decorationType: TextEditorDecorationType, rangesOrOptions: Range[] | DecorationOptions[]): void;
 
     /**
-     * Returns a string representation of this Uri. The representation and normalization
-     * of a URI depends on the scheme. The resulting string can be safely used with
-     * [Uri.parse](#Uri.parse).
+     * Scroll as indicated by `revealType` in order to reveal the given range.
      *
-     * @param skipEncoding Do not percentage-encode the result, defaults to `false`. Note that
-     *	the `#` and `?` characters occuring in the path will always be encoded.
-     * @returns A string representation of this Uri.
+     * @param range A range.
+     * @param revealType The scrolling strategy for revealing `range`.
      */
-    toString(skipEncoding?: boolean): string;
+    revealRange(range: Range, revealType?: TextEditorRevealType): void;
 
     /**
-     * Returns a JSON representation of this Uri.
+     * ~~Show the text editor.~~
      *
-     * @return An object.
+     * @deprecated Use [window.showTextDocument](#window.showTextDocument)
+     *
+     * @param column The [column](#ViewColumn) in which to show this editor.
+     * instead. This method shows unexpected behavior and will be removed in the next major update.
      */
-    toJSON(): any;
+    show(column?: ViewColumn): void;
+
+    /**
+     * ~~Hide the text editor.~~
+     *
+     * @deprecated Use the command `workbench.action.closeActiveEditor` instead.
+     * This method shows unexpected behavior and will be removed in the next major update.
+     */
+    hide(): void;
+}
+export interface TextDocument {
+
+    /**
+     * The associated URI for this document. Most documents have the __file__-scheme, indicating that they
+     * represent files on disk. However, some documents may have other schemes indicating that they are not
+     * available on disk.
+     */
+    readonly uri: Uri;
+
+    /**
+     * The file system path of the associated resource. Shorthand
+     * notation for [TextDocument.uri.fsPath](#TextDocument.uri). Independent of the uri scheme.
+     */
+    readonly fileName: string;
+
+    /**
+     * Is this document representing an untitled file.
+     */
+    readonly isUntitled: boolean;
+
+    /**
+     * The identifier of the language associated with this document.
+     */
+    readonly languageId: string;
+
+    /**
+     * The version number of this document (it will strictly increase after each
+     * change, including undo/redo).
+     */
+    readonly version: number;
+
+    /**
+     * `true` if there are unpersisted changes.
+     */
+    readonly isDirty: boolean;
+
+    /**
+     * `true` if the document have been closed. A closed document isn't synchronized anymore
+     * and won't be re-used when the same resource is opened again.
+     */
+    readonly isClosed: boolean;
+
+    /**
+     * Save the underlying file.
+     *
+     * @return A promise that will resolve to true when the file
+     * has been saved. If the file was not dirty or the save failed,
+     * will return false.
+     */
+    save(): Thenable<boolean>;
+
+    /**
+     * The [end of line](#EndOfLine) sequence that is predominately
+     * used in this document.
+     */
+    readonly eol: EndOfLine;
+
+    /**
+     * The number of lines in this document.
+     */
+    readonly lineCount: number;
+
+    /**
+     * Returns a text line denoted by the line number. Note
+     * that the returned object is *not* live and changes to the
+     * document are not reflected.
+     *
+     * @param line A line number in [0, lineCount).
+     * @return A [line](#TextLine).
+     */
+    lineAt(line: number): TextLine;
+
+    /**
+     * Returns a text line denoted by the position. Note
+     * that the returned object is *not* live and changes to the
+     * document are not reflected.
+     *
+     * The position will be [adjusted](#TextDocument.validatePosition).
+     *
+     * @see [TextDocument.lineAt](#TextDocument.lineAt)
+     * @param position A position.
+     * @return A [line](#TextLine).
+     */
+    lineAt(position: Position): TextLine;
+
+    /**
+     * Converts the position to a zero-based offset.
+     *
+     * The position will be [adjusted](#TextDocument.validatePosition).
+     *
+     * @param position A position.
+     * @return A valid zero-based offset.
+     */
+    offsetAt(position: Position): number;
+
+    /**
+     * Converts a zero-based offset to a position.
+     *
+     * @param offset A zero-based offset.
+     * @return A valid [position](#Position).
+     */
+    positionAt(offset: number): Position;
+
+    /**
+     * Get the text of this document. A substring can be retrieved by providing
+     * a range. The range will be [adjusted](#TextDocument.validateRange).
+     *
+     * @param range Include only the text included by the range.
+     * @return The text inside the provided range or the entire text.
+     */
+    getText(range?: Range): string;
+
+    /**
+     * Get a word-range at the given position. By default words are defined by
+     * common separators, like space, -, _, etc. In addition, per languge custom
+     * [word definitions](#LanguageConfiguration.wordPattern) can be defined. It
+     * is also possible to provide a custom regular expression.
+     *
+     * * *Note 1:* A custom regular expression must not match the empty string and
+     * if it does, it will be ignored.
+     * * *Note 2:* A custom regular expression will fail to match multiline strings
+     * and in the name of speed regular expressions should not match words with
+     * spaces. Use [`TextLine.text`](#TextLine.text) for more complex, non-wordy, scenarios.
+     *
+     * The position will be [adjusted](#TextDocument.validatePosition).
+     *
+     * @param position A position.
+     * @param regex Optional regular expression that describes what a word is.
+     * @return A range spanning a word, or `undefined`.
+     */
+    getWordRangeAtPosition(position: Position, regex?: RegExp): Range | undefined;
+
+    /**
+     * Ensure a range is completely contained in this document.
+     *
+     * @param range A range.
+     * @return The given range or a new, adjusted range.
+     */
+    validateRange(range: Range): Range;
+
+    /**
+     * Ensure a position is contained in the range of this document.
+     *
+     * @param position A position.
+     * @return The given position or a new, adjusted position.
+     */
+    validatePosition(position: Position): Position;
 }
