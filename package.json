@@ -43,8 +43,8 @@
     "cov:merge": "cd ./out && istanbul-combine -d ../coverage/integration -r lcovonly ../.nyc_output/integration/*.json && cd ..",
     "cov:merge-html": "istanbul-combine -d ./coverage -r html ./.nyc_output/integration/*.json",    
     "cov:report": "npm-run-all cov:report:integration cov:report:unit",
-    "cov:report:unit": "codecov --file ./coverage/unit/lcov.info",
-    "cov:report:integration": "npm run cov:merge && codecov"
+    "cov:report:unit": "codecov -f \"coverage/unit/lcov.info\" -F unit",
+    "cov:report:integration": "npm run cov:merge && codecov -f \"coverage/integration/lcov.info\" -F integration"
   },
   "nyc": {
     "include": [
