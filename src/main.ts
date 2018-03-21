@@ -37,44 +37,42 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     util.setExtensionPath(extension.extensionPath);
 
+    const eventStream = new EventStream();
+
     let dotnetChannel = vscode.window.createOutputChannel('.NET');
     let dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
     let dotnetLoggerObserver = new DotnetLoggerObserver(dotnetChannel);
+    eventStream.subscribe(dotnetChannelObserver.post);
+    eventStream.subscribe(dotnetLoggerObserver.post);
 
     let csharpChannel = vscode.window.createOutputChannel('C#');
     let csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
     let csharpLogObserver = new CsharpLoggerObserver(csharpChannel);
+    eventStream.subscribe(csharpchannelObserver.post);
+    eventStream.subscribe(csharpLogObserver.post);
 
     let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
     let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel);
     let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel);
+    eventStream.subscribe(omnisharpLogObserver.post);
+    eventStream.subscribe(omnisharpChannelObserver.post);
 
     let showWarningMessage: ShowWarningMessage = (message: string, ...items: string[]) => vscode.window.showWarningMessage(message, ...items);
     let executeCommand: ExecuteCommand = <T>(command: string, ...rest: any[]) => vscode.commands.executeCommand(command, ...rest);
     let omnisharpServerStatusObserver = new OmnisharpServerStatusObserver(showWarningMessage, executeCommand);
+    eventStream.subscribe(omnisharpServerStatusObserver.post);
 
     let getConfiguration: GetConfiguration = (name: string) => vscode.workspace.getConfiguration(name);
     let showInformationMessage: ShowInformationMessage = (message: string, ...items: string[]) => vscode.window.showInformationMessage(message, ...items);
     let workspaceAsRelativePath: WorkspaceAsRelativePath = (path: string, includeWorkspaceFolder?: boolean) => vscode.workspace.asRelativePath(path, includeWorkspaceFolder);
     let informationMessageObserver = new InformationMessageObserver(getConfiguration, showInformationMessage, workspaceAsRelativePath);
+    eventStream.subscribe(informationMessageObserver.post);
 
     let omnisharpStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, Number.MIN_VALUE));
     let getActiveTextEditor: GetActiveTextEditor = () => new TextEditorAdapter(vscode.window.activeTextEditor);
     let match: Match = (selector: vscode.DocumentSelector, document: any) => vscode.languages.match(selector, <vscode.TextDocument>document);
     let omnisharpStatusBarObserver = new OmnisharpStatusBarItemObserver(getActiveTextEditor, match, omnisharpStatusBar);
-
-    const eventStream = new EventStream();
-    eventStream.subscribe(dotnetChannelObserver.post);
-    eventStream.subscribe(dotnetLoggerObserver.post);
-
-    eventStream.subscribe(csharpchannelObserver.post);
-    eventStream.subscribe(csharpLogObserver.post);
-
-    eventStream.subscribe(omnisharpLogObserver.post);
-    eventStream.subscribe(omnisharpChannelObserver.post);
-
-    eventStream.subscribe(omnisharpServerStatusObserver.post);
-    eventStream.subscribe(informationMessageObserver.post);
+    eventStream.subscribe(omnisharpStatusBarObserver.post);
 
     const debugMode = false;
     if (debugMode) {
