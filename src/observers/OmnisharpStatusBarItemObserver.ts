@@ -9,6 +9,8 @@ import { Status } from './status';
 import * as serverUtils from '../omnisharp/utils';
 import { basename } from 'path';
 import { OmniSharpServer } from '../omnisharp/server';
+import { CompositeDisposable, Subject } from 'rx';
+import { ProjectInformationResponse } from '../omnisharp/protocol';
 
 const debounce = require('lodash.debounce');
 
@@ -27,13 +29,13 @@ export interface GetActiveTextEditor {
 }
 
 export interface Match {
-    (selector: vscode.DocumentSelector, document: vscode.TextDocument): number;
+    (selector: vscode.DocumentSelector, document: any): number;
 }
 
 export class OmnisharpStatusBarItemObserver {
     private defaultStatus: Status;
     private projectStatus: Status;
-    private localDisposables: vscode.Disposable[];
+    private localDisposables: CompositeDisposable;
 
     constructor(private getActiveTextEditor: GetActiveTextEditor, private match: Match, private statusBar: vscode.StatusBarItem) {
         this.defaultStatus = new Status(defaultSelector);
@@ -161,23 +163,23 @@ export class OmnisharpStatusBarItemObserver {
     private handleOmnisharpServerOnStop() {
         this.projectStatus = undefined;
         this.defaultStatus.text = undefined;
-
-        if (this.localDisposables) {
-            vscode.Disposable.from(...this.localDisposables).dispose();
-        }
-
+        let disposables =  this.localDisposables;
         this.localDisposables = undefined;
+
+        if (disposables) {
+            disposables.dispose();
+        }
     }
 
     private handleOmnisharpServerOnStart(event: ObservableEvent.OmnisharpServerOnStart) {
-        this.localDisposables = [];
+        this.localDisposables = new CompositeDisposable();
         SetStatus(this.defaultStatus, '$(flame) Running', 'o.pickProjectAndStart', '');
         this.render();
         let updateProjectInfoFunction = () => this.updateProjectInfo(event.server);
         let debouncedUpdateProjectInfo = debounce(updateProjectInfoFunction, 1500, { leading: true });
-        this.localDisposables.push(event.server.onProjectAdded(debouncedUpdateProjectInfo));
-        this.localDisposables.push(event.server.onProjectChange(debouncedUpdateProjectInfo));
-        this.localDisposables.push(event.server.onProjectRemoved(debouncedUpdateProjectInfo));
+        this.localDisposables.add(event.server.onProjectAdded(debouncedUpdateProjectInfo));
+        this.localDisposables.add(event.server.onProjectChange(debouncedUpdateProjectInfo));
+        this.localDisposables.add(event.server.onProjectRemoved(debouncedUpdateProjectInfo));
     }
 }
 

@@ -21,9 +21,11 @@ import { DotnetLoggerObserver } from './observers/DotnetLoggerObserver';
 import { OmnisharpDebugModeLoggerObserver } from './observers/OmnisharpDebugModeLoggerObserver';
 import { ActivationFailure, RenderOmnisharpStatusBarItem } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
-import { OmnisharpServerStatusObserver, ExecuteCommand, ShowWarningMessage} from './observers/OmnisharpServerStatusObserver';
+import { OmnisharpServerStatusObserver, ExecuteCommand, ShowWarningMessage } from './observers/OmnisharpServerStatusObserver';
 import { InformationMessageObserver, ShowInformationMessage, GetConfiguration, WorkspaceAsRelativePath } from './observers/InformationMessageObserver';
 import { GetActiveTextEditor, OmnisharpStatusBarItemObserver, Match } from './observers/OmnisharpStatusBarItemObserver';
+import { TextEditorAdapter } from './textEditorAdapter';
+import { StatusBarItemAdapter } from './statusBarItemAdapter';
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 
@@ -34,7 +36,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     const reporter = new TelemetryReporter(extensionId, extensionVersion, aiKey);
 
     util.setExtensionPath(extension.extensionPath);
-    
+
     let dotnetChannel = vscode.window.createOutputChannel('.NET');
     let dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
     let dotnetLoggerObserver = new DotnetLoggerObserver(dotnetChannel);
@@ -47,20 +49,18 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel);
     let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel);
 
-    
     let showWarningMessage: ShowWarningMessage = (message: string, ...items: string[]) => vscode.window.showWarningMessage(message, ...items);
     let executeCommand: ExecuteCommand = <T>(command: string, ...rest: any[]) => vscode.commands.executeCommand(command, ...rest);
-    
-    let omnisharpServerStatusObserver = new OmnisharpServerStatusObserver(showWarningMessage, executeCommand); 
-    
+    let omnisharpServerStatusObserver = new OmnisharpServerStatusObserver(showWarningMessage, executeCommand);
+
     let getConfiguration: GetConfiguration = (name: string) => vscode.workspace.getConfiguration(name);
     let showInformationMessage: ShowInformationMessage = (message: string, ...items: string[]) => vscode.window.showInformationMessage(message, ...items);
-    let workspaceAsRelativePath:  WorkspaceAsRelativePath = (path: string, includeWorkspaceFolder?: boolean) => vscode.workspace.asRelativePath(path, includeWorkspaceFolder); 
+    let workspaceAsRelativePath: WorkspaceAsRelativePath = (path: string, includeWorkspaceFolder?: boolean) => vscode.workspace.asRelativePath(path, includeWorkspaceFolder);
     let informationMessageObserver = new InformationMessageObserver(getConfiguration, showInformationMessage, workspaceAsRelativePath);
 
-    let omnisharpStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, Number.MIN_VALUE);
-    let getActiveTextEditor: GetActiveTextEditor = () => vscode.window.activeTextEditor;
-    let match: Match = (selector: vscode.DocumentSelector, document: vscode.TextDocument) => vscode.languages.match(selector, document);
+    let omnisharpStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, Number.MIN_VALUE));
+    let getActiveTextEditor: GetActiveTextEditor = () => new TextEditorAdapter(vscode.window.activeTextEditor);
+    let match: Match = (selector: vscode.DocumentSelector, document: any) => vscode.languages.match(selector, <vscode.TextDocument>document);
     let omnisharpStatusBarObserver = new OmnisharpStatusBarItemObserver(getActiveTextEditor, match, omnisharpStatusBar);
 
     const eventStream = new EventStream();
@@ -81,7 +81,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
         let omnisharpDebugModeLoggerObserver = new OmnisharpDebugModeLoggerObserver(omnisharpChannel);
         eventStream.subscribe(omnisharpDebugModeLoggerObserver.post);
     }
-    
+
     let platformInfo: PlatformInformation;
     try {
         platformInfo = await PlatformInformation.GetCurrent();

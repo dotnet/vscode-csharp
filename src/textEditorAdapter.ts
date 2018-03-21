@@ -3,16 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from '../vscodeAdapter';
+import * as vscodeAdapter from './vscodeAdapter';
+import * as vscode from 'vscode';
 
-export class Status {
+export class TextEditorAdapter implements vscodeAdapter.TextEditor {
+    
+    get document(): any {
+        return this.textEditor.document;
+    }
 
-    selector: vscode.DocumentSelector;
-    text: string;
-    command: string;
-    color: string;
-
-    constructor(selector: vscode.DocumentSelector) {
-        this.selector = selector;
+    constructor(private textEditor: vscode.TextEditor) {
     }
 }

@@ -22,6 +22,7 @@ import { setTimeout } from 'timers';
 import { OmnisharpDownloader } from './OmnisharpDownloader';
 import * as ObservableEvents from './loggingEvents';
 import { EventStream } from '../EventStream';
+import { Disposable } from 'rx';
 
 enum ServerState {
     Starting,
@@ -258,10 +259,10 @@ export class OmniSharpServer {
         return this._addListener(Events.Started, listener);
     }
 
-    private _addListener(event: string, listener: (e: any) => any, thisArg?: any): vscode.Disposable {
+    private _addListener(event: string, listener: (e: any) => any, thisArg?: any): Disposable {
         listener = thisArg ? listener.bind(thisArg) : listener;
         this._eventBus.addListener(event, listener);
-        return new vscode.Disposable(() => this._eventBus.removeListener(event, listener));
+        return Disposable.create(() => this._eventBus.removeListener(event, listener));
     }
 
     protected _fireEvent(event: string, args: any): void {
