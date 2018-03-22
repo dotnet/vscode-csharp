@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { should, expect } from 'chai';
-import { getNullChannel } from './Fakes';
+import { getNullChannel, getMSBuildDiagnosticsMessage, getOmnisharpMSBuildProjectDiagnostics } from './Fakes';
 import { OmnisharpLoggerObserver } from '../../../src/observers/OmnisharpLoggerObserver';
 import { OmnisharpServerMsBuildProjectDiagnostics, EventWithMessage, OmnisharpServerOnStdErr, OmnisharpServerMessage, OmnisharpServerOnServerError, OmnisharpInitialisation, OmnisharpLaunch, OmnisharpServerOnError, OmnisharpFailure, OmnisharpEventPacketReceived } from '../../../src/omnisharp/loggingEvents';
 import { MSBuildDiagnosticsMessage } from '../../../src/omnisharp/protocol';
@@ -21,35 +21,24 @@ suite("OmnisharpLoggerObserver", () => {
         logOutput = "";
     });
 
-    [
-        new OmnisharpServerMsBuildProjectDiagnostics({
-            FileName: "someFile",
-            Warnings: [{ FileName: "warningFile", LogLevel: "", Text: "", StartLine: 0, EndLine: 0, StartColumn: 0, EndColumn: 0 }],
-            Errors: []
-        })
-    ].forEach((event: OmnisharpServerMsBuildProjectDiagnostics) => {
-        test(`${event.constructor.name}: Logged message contains the Filename if there is atleast one error or warning`, () => {
-            observer.post(event);
-            expect(logOutput).to.contain(event.diagnostics.FileName);
-        });
+    test(`OmnisharpServerMsBuildProjectDiagnostics: Logged message contains the Filename if there is atleast one error or warning`, () => {
+        let event = getOmnisharpMSBuildProjectDiagnostics("someFile",
+            [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)],
+            []);
+        observer.post(event);
+        expect(logOutput).to.contain(event.diagnostics.FileName);
     });
 
     test("OmnisharpServerMsBuildProjectDiagnostics: Logged message is empty if there are no warnings and erros", () => {
-        let event = new OmnisharpServerMsBuildProjectDiagnostics({
-            FileName: "someFile",
-            Warnings: [],
-            Errors: []
-        });
+        let event = getOmnisharpMSBuildProjectDiagnostics("someFile", [], []);
         observer.post(event);
         expect(logOutput).to.be.empty;
     });
 
     [
-        new OmnisharpServerMsBuildProjectDiagnostics({
-            FileName: "someFile",
-            Warnings: [{ FileName: "warningFile", LogLevel: "", Text: "someWarningText", StartLine: 1, EndLine: 2, StartColumn: 3, EndColumn: 4 }],
-            Errors: [{ FileName: "errorFile", LogLevel: "", Text: "someErrorText", StartLine: 5, EndLine: 6, StartColumn: 7, EndColumn: 8 }]
-        })
+        getOmnisharpMSBuildProjectDiagnostics("someFile",
+            [getMSBuildDiagnosticsMessage("warningFile", "", "someWarningText", 1, 2, 3, 4)],
+            [getMSBuildDiagnosticsMessage("errorFile", "", "someErrorText", 5, 6, 7, 8)])
     ].forEach((event: OmnisharpServerMsBuildProjectDiagnostics) => {
         test(`${event.constructor.name}: Logged message contains the Filename, StartColumn, StartLine and Text for the diagnostic warnings`, () => {
             observer.post(event);

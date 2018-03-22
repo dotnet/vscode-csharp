@@ -5,6 +5,8 @@
 
 import * as vscode from '../../../src/vscodeAdapter';
 import { ITelemetryReporter } from '../../../src/observers/TelemetryObserver';
+import { MSBuildDiagnosticsMessage } from '../../../src/omnisharp/protocol';
+import { OmnisharpServerMsBuildProjectDiagnostics } from '../../../src/omnisharp/loggingEvents';
 
 export const getNullChannel = (): vscode.OutputChannel => {
     let returnChannel: vscode.OutputChannel = {
@@ -26,3 +28,29 @@ export const getNullTelemetryReporter = (): ITelemetryReporter => {
 
     return reporter;
 };
+
+export function getOmnisharpMSBuildProjectDiagnostics(fileName: string, warnings: MSBuildDiagnosticsMessage[], errors: MSBuildDiagnosticsMessage[]): OmnisharpServerMsBuildProjectDiagnostics {
+    return new OmnisharpServerMsBuildProjectDiagnostics({
+        FileName: fileName,
+        Warnings: warnings,
+        Errors: errors
+    });
+}
+
+export function getMSBuildDiagnosticsMessage(logLevel: string,
+    fileName: string,
+    text: string,
+    startLine: number,
+    startColumn: number,
+    endLine: number,
+    endColumn: number): MSBuildDiagnosticsMessage{
+    return {
+        LogLevel: logLevel,
+        FileName: fileName,
+        Text: text,
+        StartLine: startLine,
+        StartColumn: startColumn,
+        EndLine: endLine,
+        EndColumn: endColumn
+    };
+}
