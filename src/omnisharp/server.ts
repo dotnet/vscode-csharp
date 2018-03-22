@@ -22,7 +22,7 @@ import { setTimeout } from 'timers';
 import { OmnisharpDownloader } from './OmnisharpDownloader';
 import * as ObservableEvents from './loggingEvents';
 import { EventStream } from '../EventStream';
-import { Disposable } from 'rx';
+import { Disposable, CompositeDisposable } from 'rx';
 
 enum ServerState {
     Starting,
@@ -69,9 +69,8 @@ const latestVersionFileServerPath = 'releases/versioninfo.txt';
 export class OmniSharpServer {
 
     private static _nextId = 1;
-
     private _readLine: ReadLine;
-    private _disposables: vscode.Disposable[] = [];
+    private _disposables: CompositeDisposable = new CompositeDisposable(Disposable.empty);
 
     private _delayTrackers: { [requestName: string]: DelayTracker };
     private _telemetryIntervalId: NodeJS.Timer = undefined;
@@ -91,46 +90,6 @@ export class OmniSharpServer {
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
         let downloader = new OmnisharpDownloader(this.eventStream, packageJSON, platformInfo);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
-
-        this._disposables.push(this.onServerError(err => 
-            this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError(err))
-        ));
-
-        this._disposables.push(this.onError((message: protocol.ErrorMessage) => 
-            eventStream.post(new ObservableEvents.OmnisharpServerOnError(message))
-        )); 
-        
-        this._disposables.push(this.onMsBuildProjectDiagnostics((message:protocol.MSBuildProjectDiagnostics) => 
-            eventStream.post(new ObservableEvents.OmnisharpServerMsBuildProjectDiagnostics(message))
-        )); 
-
-        this._disposables.push(this.onUnresolvedDependencies((message: protocol.UnresolvedDependenciesMessage) => 
-            eventStream.post(new ObservableEvents.OmnisharpServerUnresolvedDependencies(message, this, this.eventStream))
-        ));
-
-        this._disposables.push(this.onStderr((message:string) =>
-            eventStream.post(new ObservableEvents.OmnisharpServerOnStdErr(message))
-        ));
-
-        this._disposables.push(this.onMultipleLaunchTargets((targets: LaunchTarget[]) => 
-            this.eventStream.post(new ObservableEvents.OmnisharpOnMultipleLaunchTargets(targets))
-        ));
-
-        this._disposables.push(this.onBeforeServerInstall(() =>
-            this.eventStream.post(new ObservableEvents.OmnisharpOnBeforeServerInstall())
-        ));
-
-        this._disposables.push(this.onBeforeServerStart(() =>
-            this.eventStream.post(new ObservableEvents.OmnisharpOnBeforeServerStart())
-        ));
-
-        this._disposables.push(this.onServerStop(() =>
-            this.eventStream.post(new ObservableEvents.OmnisharpServerOnStop())
-        ));
-
-        this._disposables.push(this.onServerStart(() =>
-            this.eventStream.post(new ObservableEvents.OmnisharpServerOnStart(this))
-        ));
     }
 
     public isRunning(): boolean {
@@ -272,6 +231,52 @@ export class OmniSharpServer {
     // --- start, stop, and connect
 
     private async _start(launchTarget: LaunchTarget): Promise<void> {
+        
+        let disposables = new CompositeDisposable();
+        disposables.add(this.onServerError(err => 
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError(err))
+        ));
+
+        disposables.add(this.onError((message: protocol.ErrorMessage) => 
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnError(message))
+        )); 
+        
+        disposables.add(this.onMsBuildProjectDiagnostics((message:protocol.MSBuildProjectDiagnostics) => 
+            this.eventStream.post(new ObservableEvents.OmnisharpServerMsBuildProjectDiagnostics(message))
+        )); 
+
+        disposables.add(this.onUnresolvedDependencies((message: protocol.UnresolvedDependenciesMessage) => 
+            this.eventStream.post(new ObservableEvents.OmnisharpServerUnresolvedDependencies(message, this, this.eventStream))
+        ));
+
+        disposables.add(this.onStderr((message:string) =>
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnStdErr(message))
+        ));
+
+        disposables.add(this.onMultipleLaunchTargets((targets: LaunchTarget[]) => 
+            this.eventStream.post(new ObservableEvents.OmnisharpOnMultipleLaunchTargets(targets))
+        ));
+
+        disposables.add(this.onBeforeServerInstall(() =>
+            this.eventStream.post(new ObservableEvents.OmnisharpOnBeforeServerInstall())
+        ));
+
+        disposables.add(this.onBeforeServerStart(() =>
+            this.eventStream.post(new ObservableEvents.OmnisharpOnBeforeServerStart())
+        ));
+
+        disposables.add(this.onServerStop(() =>
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnStop())
+        ));
+
+        disposables.add(this.onServerStart(() => {
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnStart(this));
+        }));
+
+        this._disposables = new CompositeDisposable(Disposable.create(() => {
+            disposables.dispose();
+        }));
+        
         this._setState(ServerState.Starting);
         this._launchTarget = launchTarget;
 
@@ -329,9 +334,7 @@ export class OmniSharpServer {
 
     public stop(): Promise<void> {
 
-        while (this._disposables.length) {
-            this._disposables.pop().dispose();
-        }
+        this._disposables.dispose();
 
         let cleanupPromise: Promise<void>;
 
@@ -511,7 +514,7 @@ export class OmniSharpServer {
 
         this._readLine.addListener('line', lineReceived);
 
-        this._disposables.push(new vscode.Disposable(() => {
+        this._disposables.add(Disposable.create(() => {
             this._readLine.removeListener('line', lineReceived);
         }));
 

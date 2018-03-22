@@ -145,8 +145,8 @@ export class OmnisharpStatusBarItemObserver {
 
         if (this.projectStatus && this.match(this.projectStatus.selector, document)) {
             status = this.projectStatus;
-        } else if (this.projectStatus.text && this.match(this.projectStatus.selector, document)) {
-            status = this.projectStatus;
+        } else if (this.defaultStatus.text && this.match(this.defaultStatus.selector, document)) {
+            status = this.defaultStatus;
         }
 
         if (status) {
