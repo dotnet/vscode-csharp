@@ -19,11 +19,11 @@ import { TelemetryObserver } from './observers/TelemetryObserver';
 import { OmnisharpChannelObserver } from './observers/OmnisharpChannelObserver';
 import { DotnetLoggerObserver } from './observers/DotnetLoggerObserver';
 import { OmnisharpDebugModeLoggerObserver } from './observers/OmnisharpDebugModeLoggerObserver';
-import { ActivationFailure, RenderOmnisharpStatusBarItem } from './omnisharp/loggingEvents';
+import { ActivationFailure, ActiveTextEditorChanged } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
 import { OmnisharpServerStatusObserver, ExecuteCommand, ShowWarningMessage } from './observers/OmnisharpServerStatusObserver';
 import { InformationMessageObserver, ShowInformationMessage, GetConfiguration, WorkspaceAsRelativePath } from './observers/InformationMessageObserver';
-import { GetActiveTextEditor, OmnisharpStatusBarItemObserver, Match } from './observers/OmnisharpStatusBarItemObserver';
+import { GetActiveTextEditor, OmnisharpStatusBarObserver, Match } from './observers/OmnisharpStatusBarObserver';
 import { TextEditorAdapter } from './textEditorAdapter';
 import { StatusBarItemAdapter } from './statusBarItemAdapter';
 
@@ -71,7 +71,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     let omnisharpStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, Number.MIN_VALUE));
     let getActiveTextEditor: GetActiveTextEditor = () => new TextEditorAdapter(vscode.window.activeTextEditor);
     let match: Match = (selector: vscode.DocumentSelector, document: any) => vscode.languages.match(selector, <vscode.TextDocument>document);
-    let omnisharpStatusBarObserver = new OmnisharpStatusBarItemObserver(getActiveTextEditor, match, omnisharpStatusBar);
+    let omnisharpStatusBarObserver = new OmnisharpStatusBarObserver(getActiveTextEditor, match, omnisharpStatusBar);
     eventStream.subscribe(omnisharpStatusBarObserver.post);
 
     const debugMode = false;
@@ -99,7 +99,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     // register JSON completion & hover providers for project.json
     context.subscriptions.push(addJSONProviders());
     context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(() => {
-        eventStream.post(new RenderOmnisharpStatusBarItem());
+        eventStream.post(new ActiveTextEditorChanged());
     }));
 
     let coreClrDebugPromise = Promise.resolve();

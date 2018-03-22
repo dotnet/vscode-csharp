@@ -130,5 +130,5 @@ export class OmnisharpServerProcessRequestComplete implements BaseEvent { }
 export class ProjectJsonDeprecatedWarning implements BaseEvent { }
 export class OmnisharpOnBeforeServerStart implements BaseEvent { }
 export class OmnisharpOnBeforeServerInstall implements BaseEvent { }
-export class RenderOmnisharpStatusBarItem implements BaseEvent { }
+export class ActiveTextEditorChanged implements BaseEvent { }
 export class OmnisharpServerOnStop implements BaseEvent { }

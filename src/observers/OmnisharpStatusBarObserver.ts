@@ -23,7 +23,6 @@ let defaultSelector: vscode.DocumentSelector = [
     { pattern: '**/*.cake' } // Cake script
 ];
 
-
 export interface GetActiveTextEditor {
     (): vscode.TextEditor;
 }
@@ -32,7 +31,7 @@ export interface Match {
     (selector: vscode.DocumentSelector, document: any): number;
 }
 
-export class OmnisharpStatusBarItemObserver {
+export class OmnisharpStatusBarObserver {
     private defaultStatus: Status;
     private projectStatus: Status;
     private localDisposables: CompositeDisposable;
@@ -59,7 +58,7 @@ export class OmnisharpStatusBarItemObserver {
                 SetStatus(this.defaultStatus, '$(flame) Starting...', 'o.showOutput', '');
                 this.render();
                 break;
-            case ObservableEvent.RenderOmnisharpStatusBarItem.name:
+            case ObservableEvent.ActiveTextEditorChanged.name:
                 this.render();
                 break;
             case ObservableEvent.OmnisharpServerOnStop.name:

@@ -20,7 +20,7 @@ export interface WorkspaceAsRelativePath{
 }
 
 export class InformationMessageObserver {
-    constructor(private getConfiguration: GetConfiguration, private showInformationMessage: ShowInformationMessage, private worksapaceAsRelativePath : WorkspaceAsRelativePath) {
+    constructor(private getConfiguration: GetConfiguration, private showInformationMessage: ShowInformationMessage, private workspaceAsRelativePath : WorkspaceAsRelativePath) {
     }
 
     public post = (event: ObservableEvent.BaseEvent) => {
@@ -34,7 +34,7 @@ export class InformationMessageObserver {
     private handleOmnisharpServerUnresolvedDependencies(event: ObservableEvent.OmnisharpServerUnresolvedDependencies) {
         let csharpConfig = this.getConfiguration('csharp');
         if (!csharpConfig.get<boolean>('suppressDotnetRestoreNotification')) {
-            let info = `There are unresolved dependencies from '${this.worksapaceAsRelativePath(event.unresolvedDependencies.FileName)}'. Please execute the restore command to continue.`;
+            let info = `There are unresolved dependencies from '${this.workspaceAsRelativePath(event.unresolvedDependencies.FileName)}'. Please execute the restore command to continue.`;
 
             return this.showInformationMessage(info, 'Restore').then(value => {
                 if (value) {
