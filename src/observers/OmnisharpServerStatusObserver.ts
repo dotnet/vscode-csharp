@@ -7,7 +7,7 @@ import * as vscode from '../vscodeAdapter';
 import * as ObservableEvent from "../omnisharp/loggingEvents";
 
 export interface ShowWarningMessage {
-    showWarningMessage(message: string, ...items: string[]): Thenable<string | undefined>;
+    (message: string, options: vscode.MessageOptions, ...items: string[]): Thenable<string | undefined>;
 }
 
 export interface ExecuteCommand {
@@ -56,6 +56,6 @@ export class OmnisharpServerStatusObserver {
                 }
             });
         };
-        this._messageHandle = this.setTimeOut(function\, 1500);
+        this._messageHandle = this.setTimeOut(functionToCall, 1500);
     }
 }
