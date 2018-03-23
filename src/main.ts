@@ -21,7 +21,7 @@ import { DotnetLoggerObserver } from './observers/DotnetLoggerObserver';
 import { OmnisharpDebugModeLoggerObserver } from './observers/OmnisharpDebugModeLoggerObserver';
 import { ActivationFailure, ActiveTextEditorChanged } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
-import { OmnisharpServerStatusObserver, ExecuteCommand, ShowWarningMessage } from './observers/OmnisharpServerStatusObserver';
+import { OmnisharpServerStatusObserver, ExecuteCommand, ShowWarningMessage, MessageItemWithCommand } from './observers/OmnisharpServerStatusObserver';
 import { InformationMessageObserver, ShowInformationMessage, GetConfiguration, WorkspaceAsRelativePath } from './observers/InformationMessageObserver';
 import { GetActiveTextEditor, OmnisharpStatusBarObserver, Match } from './observers/OmnisharpStatusBarObserver';
 import { TextEditorAdapter } from './textEditorAdapter';
@@ -57,9 +57,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     eventStream.subscribe(omnisharpLogObserver.post);
     eventStream.subscribe(omnisharpChannelObserver.post);
 
-    let showWarningMessage: ShowWarningMessage = (message: string, ...items: string[]) => vscode.window.showWarningMessage(message, ...items);
-    let executeCommand: ExecuteCommand = <T>(command: string, ...rest: any[]) => vscode.commands.executeCommand(command, ...rest);
-    let omnisharpServerStatusObserver = new OmnisharpServerStatusObserver(showWarningMessage, executeCommand, clearTimeout, setTimeout);
+    let showWarningMessage: ShowWarningMessage<MessageItemWithCommand> = <T extends vscode.MessageItem>(message: string, ...items: T[]) => vscode.window.showWarningMessage(message, ...items);
+    let executeCommand: ExecuteCommand<string> = <T>(command: string, ...rest: any[]) => vscode.commands.executeCommand(command, ...rest);
+    let omnisharpServerStatusObserver = new OmnisharpServerStatusObserver(showWarningMessage, executeCommand);
     eventStream.subscribe(omnisharpServerStatusObserver.post);
 
     let getConfiguration: GetConfiguration = (name: string) => vscode.workspace.getConfiguration(name);

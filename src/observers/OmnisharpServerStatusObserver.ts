@@ -5,33 +5,40 @@
 
 import * as vscode from '../vscodeAdapter';
 import * as ObservableEvent from "../omnisharp/loggingEvents";
+import { Scheduler, Subject } from 'rx';
 
-export interface ShowWarningMessage {
-    <T extends vscode.MessageItem>(message: string, ...items: T[]): Thenable<T | undefined>;
+export interface MessageItemWithCommand extends vscode.MessageItem{
+    command: string;
 }
 
-export interface ExecuteCommand {
-    <T>(command: string, ...rest: any[]): Thenable<T | undefined>;
+export interface ShowWarningMessage<T extends vscode.MessageItem> {
+    (message: string, ...items: T[]): Thenable<T | undefined>;
 }
 
-export interface ClearTimeOut {
-    (timeoutId: NodeJS.Timer): void;
-}
-
-export interface SetTimeOut {
-    (callback: (...args: any[]) => void, ms: number, ...args: any[]): NodeJS.Timer;
+export interface ExecuteCommand<T> {
+    (command: string, ...rest: any[]): Thenable<T | undefined>;
 }
 
 export class OmnisharpServerStatusObserver {
     private _messageHandle: NodeJS.Timer;
+    private subject: Subject<ObservableEvent.BaseEvent>;
 
-    constructor(private showWarningMessage: ShowWarningMessage, private executeCommand: ExecuteCommand, private clearTimeOut: ClearTimeOut, private setTimeOut : SetTimeOut ) {
+    constructor(private showWarningMessage: ShowWarningMessage<MessageItemWithCommand>, private executeCommand: ExecuteCommand<string>, scheduler?: Scheduler) {
+        this.subject = new Subject<ObservableEvent.BaseEvent>();
+        this.subject.debounce(1500).subscribe(async (event) => {
+            let message = "Some projects have trouble loading. Please review the output for more details.";
+            let value = await this.showWarningMessage(message, { title: "Show Output", command: 'o.showOutput' });
+            if (value) {
+                console.log(value);
+                this.executeCommand(value.command);
+            }
+        });
     }
 
     public post = (event: ObservableEvent.BaseEvent) => {
         switch (event.constructor.name) {
             case ObservableEvent.OmnisharpServerOnError.name:
-                this.showMessageSoon();
+                this.subject.onNext(event);
                 break;
             case ObservableEvent.OmnisharpServerMsBuildProjectDiagnostics.name:
                 this.handleOmnisharpServerMsBuildProjectDiagnostics(<ObservableEvent.OmnisharpServerMsBuildProjectDiagnostics>event);
@@ -41,20 +48,8 @@ export class OmnisharpServerStatusObserver {
 
     private handleOmnisharpServerMsBuildProjectDiagnostics(event: ObservableEvent.OmnisharpServerMsBuildProjectDiagnostics) {
         if (event.diagnostics.Errors.length > 0) {
-            this.showMessageSoon();
+            //this.showMessageSoon();
+            this.subject.onNext(event);
         }
-    }
-
-    private showMessageSoon() {
-        this.clearTimeOut(this._messageHandle);
-        let functionToCall = () => {
-            let message = "Some projects have trouble loading. Please review the output for more details.";
-            this.showWarningMessage(message, { title: "Show Output", command: 'o.showOutput' }).then(value => {
-                if (value) {
-                    this.executeCommand(value.command);
-                }
-            });
-        };
-        this._messageHandle = this.setTimeOut(functionToCall, 1500);
     }
 }

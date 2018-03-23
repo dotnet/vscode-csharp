@@ -4,40 +4,49 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should, expect } from 'chai';
-import { OmnisharpServerStatusObserver } from '../../../src/observers/OmnisharpServerStatusObserver';
+import * as rx from 'rx';
+import { OmnisharpServerStatusObserver, ShowWarningMessage, MessageItemWithCommand, ExecuteCommand } from '../../../src/observers/OmnisharpServerStatusObserver';
 import { resolve } from 'path';
 import { getOmnisharpMSBuildProjectDiagnostics, getMSBuildDiagnosticsMessage } from './Fakes';
+import * as vscode from '../../../src/vscodeAdapter';
 
 suite('OmnisharpServerStatusObserver', () => {
     suiteSetup(() => should());
     let output = '';
-    setup(() => {
-        output = ''; 
-    });
-    
-    let warningFunction = (message, ...items) => {
+    let scheduler: rx.HistoricalScheduler;
+    let observer: OmnisharpServerStatusObserver;
+
+    let warningFunction : ShowWarningMessage<MessageItemWithCommand> = (message, ...items) => {
+        output += "show warning message called";
         output += message;
-        output += items;
-        return Promise.resolve("hello");
+        items.forEach(element => {
+            output += element.title;
+            output += element.command;
+        });
+
+        let testMessage : MessageItemWithCommand = {
+            title: "myTitle",
+            command: "myCommand"
+        };
+        
+        return Promise.resolve(testMessage);
+    };    
+
+    let executeCommand: ExecuteCommand<string> = (command, ...rest) => {
+        output += "execute command called";
+        output += command;
+        return Promise.resolve("execute command resolved");
     };
+    
+    setup(() => {
+        output = '';
+        scheduler = new rx.HistoricalScheduler(0, (x, y) => {
+            return x > y ? 1 : -1;
+        });
+        observer = new OmnisharpServerStatusObserver(warningFunction, executeCommand, scheduler);
+    });
 
-    let executeCommand = <T>(command, ...rest) => {
-        return new Promise<T>((resolve, reject) => { resolve(); });
-    };
-
-    let clearTimeOut = (timeoutid: NodeJS.Timer) => {
-        output += timeoutid;
-    };
-
-    let setTimeout = (callback: (...args: any[]) => void, ms: number, ...args: any[]) => {
-        callback();
-        let x: NodeJS.Timer;
-        return x;
-    };
-
-    let observer = new OmnisharpServerStatusObserver(warningFunction, executeCommand, clearTimeOut, setTimeout);
-
-    test('OmnisharpServerMsBuildProjectDiagnostics: No action is taken if the errors arry is empty', () => {
+    test('OmnisharpServerMsBuildProjectDiagnostics: No action is taken if the errors array is empty', () => {
         let event = getOmnisharpMSBuildProjectDiagnostics("someFile",
             [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)],
             []);
@@ -45,11 +54,16 @@ suite('OmnisharpServerStatusObserver', () => {
         expect(output).to.be.empty;
     });
 
-    test('OmnisharpServerMsBuildProjectDiagnostics: No action is taken if the errors arry is empty', () => {
+    test('OmnisharpServerMsBuildProjectDiagnostics: No action is taken if the errors array is empty', () => {
         let event = getOmnisharpMSBuildProjectDiagnostics("someFile",
             [getMSBuildDiagnosticsMessage("warningFile", "", "", 1, 2, 3, 4)],
             [getMSBuildDiagnosticsMessage("errorFile", "", "", 5, 6, 7, 8)]);
         observer.post(event);
-        expect(output).to.be.empty;
+        scheduler.advanceBy(1500);
+        console.log(output);
+        expect(output).to.contain("Show Output");
+        expect(output).to.contain("o.showOutput");
+        expect(output).to.contain("show warning message called");
+        expect(output).to.contain("execute command called");
     });
 });

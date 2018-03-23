@@ -261,9 +261,9 @@ export class OmniSharpServer {
             this.eventStream.post(new ObservableEvents.OmnisharpOnBeforeServerInstall())
         ));
 
-        disposables.add(this.onBeforeServerStart(() =>
-            this.eventStream.post(new ObservableEvents.OmnisharpOnBeforeServerStart())
-        ));
+        disposables.add(this.onBeforeServerStart(() => {
+            this.eventStream.post(new ObservableEvents.OmnisharpOnBeforeServerStart());
+        }));
 
         disposables.add(this.onServerStop(() =>
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnStop())
