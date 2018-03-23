@@ -7,7 +7,7 @@ import * as vscode from '../vscodeAdapter';
 import * as ObservableEvent from "../omnisharp/loggingEvents";
 
 export interface ShowWarningMessage {
-    (message: string, options: vscode.MessageOptions, ...items: string[]): Thenable<string | undefined>;
+    <T extends vscode.MessageItem>(message: string, ...items: T[]): Thenable<T | undefined>;
 }
 
 export interface ExecuteCommand {
@@ -48,7 +48,6 @@ export class OmnisharpServerStatusObserver {
     private showMessageSoon() {
         this.clearTimeOut(this._messageHandle);
         let functionToCall = () => {
-
             let message = "Some projects have trouble loading. Please review the output for more details.";
             this.showWarningMessage(message, { title: "Show Output", command: 'o.showOutput' }).then(value => {
                 if (value) {
