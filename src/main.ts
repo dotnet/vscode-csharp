@@ -59,7 +59,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     let showWarningMessage: ShowWarningMessage = (message: string, ...items: string[]) => vscode.window.showWarningMessage(message, ...items);
     let executeCommand: ExecuteCommand = <T>(command: string, ...rest: any[]) => vscode.commands.executeCommand(command, ...rest);
-    let omnisharpServerStatusObserver = new OmnisharpServerStatusObserver(showWarningMessage, executeCommand);
+    let omnisharpServerStatusObserver = new OmnisharpServerStatusObserver(showWarningMessage, executeCommand, clearTimeout, setTimeout);
     eventStream.subscribe(omnisharpServerStatusObserver.post);
 
     let getConfiguration: GetConfiguration = (name: string) => vscode.workspace.getConfiguration(name);

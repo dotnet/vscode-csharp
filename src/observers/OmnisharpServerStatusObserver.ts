@@ -7,17 +7,25 @@ import * as vscode from '../vscodeAdapter';
 import * as ObservableEvent from "../omnisharp/loggingEvents";
 
 export interface ShowWarningMessage {
-    (message: string, ...items: string[]): Thenable<string | undefined>;
+    showWarningMessage(message: string, ...items: string[]): Thenable<string | undefined>;
 }
 
 export interface ExecuteCommand {
     <T>(command: string, ...rest: any[]): Thenable<T | undefined>;
 }
 
+export interface ClearTimeOut {
+    (timeoutId: NodeJS.Timer): void;
+}
+
+export interface SetTimeOut {
+    (callback: (...args: any[]) => void, ms: number, ...args: any[]): NodeJS.Timer;
+}
+
 export class OmnisharpServerStatusObserver {
     private _messageHandle: NodeJS.Timer;
 
-    constructor(private showWarningMessage: ShowWarningMessage, private executeCommand: ExecuteCommand) {
+    constructor(private showWarningMessage: ShowWarningMessage, private executeCommand: ExecuteCommand, private clearTimeOut: ClearTimeOut, private setTimeOut : SetTimeOut ) {
     }
 
     public post = (event: ObservableEvent.BaseEvent) => {
@@ -38,8 +46,8 @@ export class OmnisharpServerStatusObserver {
     }
 
     private showMessageSoon() {
-        clearTimeout(this._messageHandle);
-        this._messageHandle = setTimeout(function () {
+        this.clearTimeOut(this._messageHandle);
+        let functionToCall = () => {
 
             let message = "Some projects have trouble loading. Please review the output for more details.";
             this.showWarningMessage(message, { title: "Show Output", command: 'o.showOutput' }).then(value => {
@@ -47,6 +55,7 @@ export class OmnisharpServerStatusObserver {
                     this.executeCommand(value.command);
                 }
             });
-        }, 1500);
+        };
+        this._messageHandle = this.setTimeOut(function\, 1500);
     }
 }
