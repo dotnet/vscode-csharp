@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from '../vscodeAdapter';
-import * as ObservableEvent from "../omnisharp/loggingEvents";
 import { Scheduler, Subject } from 'rx';
+import { BaseEvent, OmnisharpServerOnError, OmnisharpServerMsBuildProjectDiagnostics } from '../omnisharp/loggingEvents';
 
 export interface MessageItemWithCommand extends vscode.MessageItem {
     command: string;
@@ -19,13 +19,13 @@ export interface ExecuteCommand<T> {
     (command: string, ...rest: any[]): Thenable<T | undefined>;
 }
 
-export class OmnisharpServerStatusObserver {
+export class WarningMessageObserver {
     private _messageHandle: NodeJS.Timer;
-    private subject: Subject<ObservableEvent.BaseEvent>;
+    private warningMessageDebouncer: Subject<BaseEvent>;
 
     constructor(private showWarningMessage: ShowWarningMessage<MessageItemWithCommand>, private executeCommand: ExecuteCommand<string>, scheduler?: Scheduler) {
-        this.subject = new Subject<ObservableEvent.BaseEvent>();
-        this.subject.debounce(1500, scheduler).subscribe(event => {
+        this.warningMessageDebouncer = new Subject<BaseEvent>();
+        this.warningMessageDebouncer.debounce(1500, scheduler).subscribe(event => {
             let message = "Some projects have trouble loading. Please review the output for more details.";
             this.showWarningMessage(message, { title: "Show Output", command: 'o.showOutput' }).then(value => {
                 if (value) {
@@ -35,20 +35,20 @@ export class OmnisharpServerStatusObserver {
         });
     }
 
-    public post = (event: ObservableEvent.BaseEvent) => {
+    public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
-            case ObservableEvent.OmnisharpServerOnError.name:
-                this.subject.onNext(event);
+            case OmnisharpServerOnError.name:
+                this.warningMessageDebouncer.onNext(event);
                 break;
-            case ObservableEvent.OmnisharpServerMsBuildProjectDiagnostics.name:
-                this.handleOmnisharpServerMsBuildProjectDiagnostics(<ObservableEvent.OmnisharpServerMsBuildProjectDiagnostics>event);
+            case OmnisharpServerMsBuildProjectDiagnostics.name:
+                this.handleOmnisharpServerMsBuildProjectDiagnostics(<OmnisharpServerMsBuildProjectDiagnostics>event);
                 break;
         }
     }
 
-    private handleOmnisharpServerMsBuildProjectDiagnostics(event: ObservableEvent.OmnisharpServerMsBuildProjectDiagnostics) {
+    private handleOmnisharpServerMsBuildProjectDiagnostics(event: OmnisharpServerMsBuildProjectDiagnostics) {
         if (event.diagnostics.Errors.length > 0) {
-            this.subject.onNext(event);
+            this.warningMessageDebouncer.onNext(event);
         }
     }
 }

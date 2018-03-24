@@ -5,7 +5,7 @@
 
 import { should, expect } from 'chai';
 import * as rx from 'rx';
-import { OmnisharpServerStatusObserver, ShowWarningMessage, MessageItemWithCommand, ExecuteCommand } from '../../../src/observers/OmnisharpServerStatusObserver';
+import { WarningMessageObserver, ShowWarningMessage, MessageItemWithCommand, ExecuteCommand } from '../../../src/observers/WarningMessageObserver';
 import { resolve } from 'path';
 import { getOmnisharpMSBuildProjectDiagnosticsEvent, getMSBuildDiagnosticsMessage, getOmnisharpServerOnErrorEvent } from './Fakes';
 import * as vscode from '../../../src/vscodeAdapter';
@@ -15,7 +15,7 @@ suite('OmnisharpServerStatusObserver', () => {
     suiteSetup(() => should());
     let output = '';
     let scheduler: rx.HistoricalScheduler;
-    let observer: OmnisharpServerStatusObserver;
+    let observer: WarningMessageObserver;
     let commandExecuted: () => void;
 
     let warningFunction: ShowWarningMessage<MessageItemWithCommand> = (message, ...items) => {
@@ -49,7 +49,7 @@ suite('OmnisharpServerStatusObserver', () => {
         scheduler = new rx.HistoricalScheduler(0, (x, y) => {
             return x > y ? 1 : -1;
         });
-        observer = new OmnisharpServerStatusObserver(warningFunction, executeCommand, scheduler);
+        observer = new WarningMessageObserver(warningFunction, executeCommand, scheduler);
     });
 
     test('OmnisharpServerMsBuildProjectDiagnostics: No action is taken if the errors array is empty', () => {
