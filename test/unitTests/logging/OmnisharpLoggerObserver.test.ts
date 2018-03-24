@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { should, expect } from 'chai';
-import { getNullChannel, getMSBuildDiagnosticsMessage, getOmnisharpMSBuildProjectDiagnostics } from './Fakes';
+import { getNullChannel, getMSBuildDiagnosticsMessage, getOmnisharpMSBuildProjectDiagnosticsEvent } from './Fakes';
 import { OmnisharpLoggerObserver } from '../../../src/observers/OmnisharpLoggerObserver';
 import { OmnisharpServerMsBuildProjectDiagnostics, EventWithMessage, OmnisharpServerOnStdErr, OmnisharpServerMessage, OmnisharpServerOnServerError, OmnisharpInitialisation, OmnisharpLaunch, OmnisharpServerOnError, OmnisharpFailure, OmnisharpEventPacketReceived } from '../../../src/omnisharp/loggingEvents';
 import { MSBuildDiagnosticsMessage } from '../../../src/omnisharp/protocol';
@@ -22,7 +22,7 @@ suite("OmnisharpLoggerObserver", () => {
     });
 
     test(`OmnisharpServerMsBuildProjectDiagnostics: Logged message contains the Filename if there is atleast one error or warning`, () => {
-        let event = getOmnisharpMSBuildProjectDiagnostics("someFile",
+        let event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
             [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)],
             []);
         observer.post(event);
@@ -30,13 +30,13 @@ suite("OmnisharpLoggerObserver", () => {
     });
 
     test("OmnisharpServerMsBuildProjectDiagnostics: Logged message is empty if there are no warnings and erros", () => {
-        let event = getOmnisharpMSBuildProjectDiagnostics("someFile", [], []);
+        let event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile", [], []);
         observer.post(event);
         expect(logOutput).to.be.empty;
     });
 
     [
-        getOmnisharpMSBuildProjectDiagnostics("someFile",
+        getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
             [getMSBuildDiagnosticsMessage("warningFile", "", "someWarningText", 1, 2, 3, 4)],
             [getMSBuildDiagnosticsMessage("errorFile", "", "someErrorText", 5, 6, 7, 8)])
     ].forEach((event: OmnisharpServerMsBuildProjectDiagnostics) => {

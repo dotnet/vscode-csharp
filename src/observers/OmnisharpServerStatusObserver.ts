@@ -7,7 +7,7 @@ import * as vscode from '../vscodeAdapter';
 import * as ObservableEvent from "../omnisharp/loggingEvents";
 import { Scheduler, Subject } from 'rx';
 
-export interface MessageItemWithCommand extends vscode.MessageItem{
+export interface MessageItemWithCommand extends vscode.MessageItem {
     command: string;
 }
 
@@ -25,13 +25,13 @@ export class OmnisharpServerStatusObserver {
 
     constructor(private showWarningMessage: ShowWarningMessage<MessageItemWithCommand>, private executeCommand: ExecuteCommand<string>, scheduler?: Scheduler) {
         this.subject = new Subject<ObservableEvent.BaseEvent>();
-        this.subject.debounce(1500).subscribe(async (event) => {
+        this.subject.debounce(1500, scheduler).subscribe(event => {
             let message = "Some projects have trouble loading. Please review the output for more details.";
-            let value = await this.showWarningMessage(message, { title: "Show Output", command: 'o.showOutput' });
-            if (value) {
-                console.log(value);
-                this.executeCommand(value.command);
-            }
+            this.showWarningMessage(message, { title: "Show Output", command: 'o.showOutput' }).then(value => {
+                if (value) {
+                    this.executeCommand(value.command);
+                }
+            });
         });
     }
 
@@ -48,7 +48,6 @@ export class OmnisharpServerStatusObserver {
 
     private handleOmnisharpServerMsBuildProjectDiagnostics(event: ObservableEvent.OmnisharpServerMsBuildProjectDiagnostics) {
         if (event.diagnostics.Errors.length > 0) {
-            //this.showMessageSoon();
             this.subject.onNext(event);
         }
     }

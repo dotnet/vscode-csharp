@@ -6,7 +6,7 @@
 import * as vscode from '../../../src/vscodeAdapter';
 import { ITelemetryReporter } from '../../../src/observers/TelemetryObserver';
 import { MSBuildDiagnosticsMessage } from '../../../src/omnisharp/protocol';
-import { OmnisharpServerMsBuildProjectDiagnostics } from '../../../src/omnisharp/loggingEvents';
+import { OmnisharpServerMsBuildProjectDiagnostics, OmnisharpServerOnError } from '../../../src/omnisharp/loggingEvents';
 
 export const getNullChannel = (): vscode.OutputChannel => {
     let returnChannel: vscode.OutputChannel = {
@@ -29,7 +29,7 @@ export const getNullTelemetryReporter = (): ITelemetryReporter => {
     return reporter;
 };
 
-export function getOmnisharpMSBuildProjectDiagnostics(fileName: string, warnings: MSBuildDiagnosticsMessage[], errors: MSBuildDiagnosticsMessage[]): OmnisharpServerMsBuildProjectDiagnostics {
+export function getOmnisharpMSBuildProjectDiagnosticsEvent(fileName: string, warnings: MSBuildDiagnosticsMessage[], errors: MSBuildDiagnosticsMessage[]): OmnisharpServerMsBuildProjectDiagnostics {
     return new OmnisharpServerMsBuildProjectDiagnostics({
         FileName: fileName,
         Warnings: warnings,
@@ -43,7 +43,7 @@ export function getMSBuildDiagnosticsMessage(logLevel: string,
     startLine: number,
     startColumn: number,
     endLine: number,
-    endColumn: number): MSBuildDiagnosticsMessage{
+    endColumn: number): MSBuildDiagnosticsMessage {
     return {
         LogLevel: logLevel,
         FileName: fileName,
@@ -54,3 +54,12 @@ export function getMSBuildDiagnosticsMessage(logLevel: string,
         EndColumn: endColumn
     };
 }
+
+export function getOmnisharpServerOnErrorEvent(text: string, fileName: string, line: number, column: number): OmnisharpServerOnError {
+    return new OmnisharpServerOnError({
+        Text: text,
+        FileName: fileName,
+        Line: line,
+        Column: column
+    });
+} 
