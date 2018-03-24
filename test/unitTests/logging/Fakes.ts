@@ -4,6 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from '../../../src/vscodeAdapter';
+
+import { DocumentSelector, MessageItem, TextDocument, Uri } from '../../../src/vscodeAdapter';
+
 import { ITelemetryReporter } from '../../../src/observers/TelemetryObserver';
 import { MSBuildDiagnosticsMessage } from '../../../src/omnisharp/protocol';
 import { OmnisharpServerMsBuildProjectDiagnostics, OmnisharpServerOnError } from '../../../src/omnisharp/loggingEvents';
@@ -63,3 +66,35 @@ export function getOmnisharpServerOnErrorEvent(text: string, fileName: string, l
         Column: column
     });
 } 
+
+export function getFakeVsCode() : vscode.vscode {
+    return {
+        commands: {
+            executeCommand: <T>(command: string, ...rest: any[]) => {
+                throw new Error("Not Implemented");
+            }
+        },
+        languages: {
+            match: (selector: DocumentSelector, document: TextDocument) => {
+                throw new Error("Not Implemented");
+            }
+        },
+        window: {
+            activeTextEditor: undefined,
+            showInformationMessage: (message: string, ...items: string[]) => {
+                throw new Error("Not Implemented");
+            },
+            showWarningMessage: <T extends MessageItem>(message: string, ...items: T[]) => {
+                throw new Error("Not Implemented");
+            }
+        },
+        workspace: {            
+            getConfiguration: (section?: string, resource?: Uri) => {
+                throw new Error("Not Implemented");
+            },
+            asRelativePath: (pathOrUri: string | Uri, includeWorkspaceFolder?: boolean) => {
+                throw new Error("Not Implemented");
+            }
+        }
+    };
+}

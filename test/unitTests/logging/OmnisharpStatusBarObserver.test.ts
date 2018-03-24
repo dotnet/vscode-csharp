@@ -3,27 +3,31 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { should, expect } from 'chai';
-import { OmnisharpStatusBarObserver, GetActiveTextEditor, Match } from '../../../src/observers/OmnisharpStatusBarObserver';
-import * as vscode from '../../../src/vscodeAdapter';
-import { OmnisharpServerOnServerError, OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpOnMultipleLaunchTargets } from '../../../src/omnisharp/loggingEvents';
+import { DocumentSelector, StatusBarItem, vscode } from '../../../src/vscodeAdapter';
+import { OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpOnMultipleLaunchTargets, OmnisharpServerOnServerError } from '../../../src/omnisharp/loggingEvents';
+import { expect, should } from 'chai';
+
+import { OmnisharpStatusBarObserver } from '../../../src/observers/OmnisharpStatusBarObserver';
+import { getFakeVsCode } from './Fakes';
 
 suite('OmnisharpServerStatusObserver', () => {
     suiteSetup(() => should());
     let output = '';
     let showCalled: boolean;
     setup(() => {
-        output = ''; 
+        output = '';
         showCalled = false;
     });
 
-    let getActiveTextEditor: GetActiveTextEditor = () => { return { document: "hello" }; };
-    let matchFunction: Match = (selector: vscode.DocumentSelector, document: any) => { return 2; };
-    let statusBar = <vscode.StatusBarItem>{
-        show: () => { showCalled = true;}
+    let vscode: vscode = getFakeVsCode();
+    vscode.window.activeTextEditor = { document: "hello" };
+    vscode.languages.match = (selector: DocumentSelector, document: any) => { return 2; };
+
+    let statusBar = <StatusBarItem>{
+        show: () => { showCalled = true; }
     };
 
-    let observer = new OmnisharpStatusBarObserver(getActiveTextEditor, matchFunction, statusBar);
+    let observer = new OmnisharpStatusBarObserver(vscode, statusBar);
 
     test('OnServerError: If there is no project status, default status should be shown which includes error and flame', () => {
         let event = new OmnisharpServerOnServerError("someError");
@@ -58,9 +62,9 @@ suite('OmnisharpServerStatusObserver', () => {
     });
 
 
-    
 
-    
+
+
 
 
 });
