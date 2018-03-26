@@ -30,10 +30,10 @@ suite('OmnisharpServerStatusObserver', () => {
         return undefined;
     };
 
+
     vscode.commands.executeCommand = <T>(command, ...rest) => {
         invokedCommand = command;
         return undefined;
-    };
 
     setup(() => {
         scheduler = new rx.HistoricalScheduler(0, (x, y) => {
@@ -55,23 +55,19 @@ suite('OmnisharpServerStatusObserver', () => {
         expect(invokedCommand).to.be.undefined;
     });
 
-    
     [
         getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
             [getMSBuildDiagnosticsMessage("warningFile", "", "", 1, 2, 3, 4)],
             [getMSBuildDiagnosticsMessage("errorFile", "", "", 5, 6, 7, 8)]),
-        getOmnisharpServerOnErrorEvent("someText", "someFile", 1, 2)
+            getOmnisharpServerOnErrorEvent("someText", "someFile", 1, 2)
     ].forEach((event: BaseEvent) => {
         test(`${event.constructor.name}: Debouce function`, () => {
-            let event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
-                [getMSBuildDiagnosticsMessage("warningFile", "", "", 1, 2, 3, 4)],
-                [getMSBuildDiagnosticsMessage("errorFile", "", "", 5, 6, 7, 8)]);
             observer.post(event);
             scheduler.advanceBy(1000); //since the debounce time is 1500 no output should be there
             expect(invokedCommand).to.be.undefined;
         });
-    
-        test(`${event.constructor.name}: If a event is fired within 1500ms the first event is debounced`, () => {
+
+        test(`${event.constructor.name}: If an event is fired within 1500ms the first event is debounced`, () => {
             observer.post(event);
             scheduler.advanceBy(1000);
             expect(invokedCommand).to.be.undefined;
@@ -84,12 +80,12 @@ suite('OmnisharpServerStatusObserver', () => {
         });
 
         test(`${event.constructor.name}: Show warning message and execute command are called`, () => {
-            let event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
-                [getMSBuildDiagnosticsMessage("warningFile", "", "", 1, 2, 3, 4)],
-                [getMSBuildDiagnosticsMessage("errorFile", "", "", 5, 6, 7, 8)]);
-    
             observer.post(event);
             scheduler.advanceBy(1500);
         });
+    });
+
+    teardown(() => {
+        commandExecuted = undefined;
     });
 });

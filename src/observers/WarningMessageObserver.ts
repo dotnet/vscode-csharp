@@ -13,8 +13,8 @@ export interface MessageItemWithCommand extends MessageItem{
 } 
 
 export class WarningMessageObserver {
-    private _messageHandle: NodeJS.Timer;
-    private subject: Subject<ObservableEvent.BaseEvent>;
+
+    private warningMessageDebouncer: Subject<BaseEvent>;
 
     constructor(private vscode: vscode, scheduler?: Scheduler) {
         this.subject = new Subject<ObservableEvent.BaseEvent>();

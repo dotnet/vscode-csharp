@@ -6,7 +6,6 @@
 import { PlatformInformation } from "../platform";
 import { Request } from "./requestQueue";
 import * as protocol from './protocol';
-import * as vscode from '../vscodeAdapter';
 import { OmniSharpServer } from "./server";
 import { EventStream } from "../EventStream";
 import { LaunchTarget } from "./launcher";
