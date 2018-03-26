@@ -58,7 +58,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     eventStream.subscribe(omnisharpChannelObserver.post);
 
     let showWarningMessage: ShowWarningMessage<MessageItemWithCommand> = <T extends vscode.MessageItem>(message: string, ...items: T[]) => vscode.window.showWarningMessage(message, ...items);
-    let executeCommand: ExecuteCommand<string> = <T>(command: string, ...rest: any[]) => vscode.commands.executeCommand(command, ...rest);
+    let executeCommand: ExecuteCommand<string> = (command: string, ...rest: any[]) => vscode.commands.executeCommand(command, ...rest);
     let omnisharpServerStatusObserver = new WarningMessageObserver(showWarningMessage, executeCommand);
     eventStream.subscribe(omnisharpServerStatusObserver.post);
 

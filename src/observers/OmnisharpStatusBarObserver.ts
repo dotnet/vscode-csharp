@@ -9,8 +9,7 @@ import { Status } from './status';
 import * as serverUtils from '../omnisharp/utils';
 import { basename } from 'path';
 import { OmniSharpServer } from '../omnisharp/server';
-import { CompositeDisposable, Subject } from 'rx';
-import { ProjectInformationResponse } from '../omnisharp/protocol';
+import { CompositeDisposable } from 'rx';
 
 const debounce = require('lodash.debounce');
 

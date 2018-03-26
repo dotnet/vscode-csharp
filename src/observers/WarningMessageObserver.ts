@@ -20,7 +20,6 @@ export interface ExecuteCommand<T> {
 }
 
 export class WarningMessageObserver {
-    private _messageHandle: NodeJS.Timer;
     private warningMessageDebouncer: Subject<BaseEvent>;
 
     constructor(private showWarningMessage: ShowWarningMessage<MessageItemWithCommand>, private executeCommand: ExecuteCommand<string>, scheduler?: Scheduler) {
