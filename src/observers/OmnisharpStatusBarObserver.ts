@@ -4,12 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from '../vscodeAdapter';
-import * as ObservableEvent from "../omnisharp/loggingEvents";
 import { Status } from './status';
 import * as serverUtils from '../omnisharp/utils';
 import { basename } from 'path';
 import { OmniSharpServer } from '../omnisharp/server';
-import { CompositeDisposable } from 'rx';
+import { CompositeDisposable, Subject } from 'rx';
+import { BaseEvent, OmnisharpServerOnServerError, OmnisharpOnMultipleLaunchTargets, OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, ActiveTextEditorChanged, OmnisharpServerOnStop, OmnisharpServerOnStart } from '../omnisharp/loggingEvents';
 
 const debounce = require('lodash.debounce');
 
@@ -39,32 +39,32 @@ export class OmnisharpStatusBarObserver {
         this.defaultStatus = new Status(defaultSelector);
     }
 
-    public post = (event: ObservableEvent.BaseEvent) => {
+    public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
-            case ObservableEvent.OmnisharpServerOnServerError.name:
+            case OmnisharpServerOnServerError.name:
                 SetStatus(this.defaultStatus, '$(flame) Error starting OmniSharp', 'o.showOutput', '');
                 this.render();
                 break;
-            case ObservableEvent.OmnisharpOnMultipleLaunchTargets.name:
+            case OmnisharpOnMultipleLaunchTargets.name:
                 SetStatus(this.defaultStatus, '$(flame) Select project', 'o.pickProjectAndStart', 'rgb(90, 218, 90)');
                 this.render();
                 break;
-            case ObservableEvent.OmnisharpOnBeforeServerInstall.name:
+            case OmnisharpOnBeforeServerInstall.name:
                 SetStatus(this.defaultStatus, '$(flame) Installing OmniSharp...', 'o.showOutput', '');
                 this.render();
                 break;
-            case ObservableEvent.OmnisharpOnBeforeServerStart.name:
+            case OmnisharpOnBeforeServerStart.name:
                 SetStatus(this.defaultStatus, '$(flame) Starting...', 'o.showOutput', '');
                 this.render();
                 break;
-            case ObservableEvent.ActiveTextEditorChanged.name:
+            case ActiveTextEditorChanged.name:
                 this.render();
                 break;
-            case ObservableEvent.OmnisharpServerOnStop.name:
+            case OmnisharpServerOnStop.name:
                 this.handleOmnisharpServerOnStop();
                 break;
-            case ObservableEvent.OmnisharpServerOnStart.name:
-                this.handleOmnisharpServerOnStart(<ObservableEvent.OmnisharpServerOnStart>event);
+            case OmnisharpServerOnStart.name:
+                this.handleOmnisharpServerOnStart(<OmnisharpServerOnStart>event);
                 break;
         }
     }
@@ -169,10 +169,11 @@ export class OmnisharpStatusBarObserver {
         }
     }
 
-    private handleOmnisharpServerOnStart(event: ObservableEvent.OmnisharpServerOnStart) {
+    private handleOmnisharpServerOnStart(event: OmnisharpServerOnStart) {
         this.localDisposables = new CompositeDisposable();
         SetStatus(this.defaultStatus, '$(flame) Running', 'o.pickProjectAndStart', '');
         this.render();
+        let updateProjectDebouncer = new Subject<BaseEvent>();
         let updateProjectInfoFunction = () => this.updateProjectInfo(event.server);
         let debouncedUpdateProjectInfo = debounce(updateProjectInfoFunction, 1500, { leading: true });
         this.localDisposables.add(event.server.onProjectAdded(debouncedUpdateProjectInfo));

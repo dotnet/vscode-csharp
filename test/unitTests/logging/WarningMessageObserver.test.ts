@@ -37,7 +37,6 @@ suite('OmnisharpServerStatusObserver', () => {
     let executeCommand: ExecuteCommand<string> = (command, ...rest) => {
         output += "execute command called";
         output += command;
-        console.log(output);
         return new Promise(resolve => {
             resolve("execute command resolved");
             commandExecuted();
@@ -59,7 +58,6 @@ suite('OmnisharpServerStatusObserver', () => {
         observer.post(event);
         expect(output).to.be.empty;
     });
-
 
     [
         getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
@@ -91,6 +89,7 @@ suite('OmnisharpServerStatusObserver', () => {
                 expect(output).to.contain("o.showOutput");
                 expect(output).to.contain("show warning message called");
                 expect(output).to.contain("execute command called");
+                expect(output).to.contain("myCommand");
                 done();
             };
 
