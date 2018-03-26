@@ -20,7 +20,9 @@ const util = require('./out/src/common');
 const child_process = require('child_process');
 const optionsSchemaGenerator = require('./out/src/tools/GenerateOptionsSchema');
 const packageDependencyUpdater = require('./out/src/tools/UpdatePackageDependencies');
+const eventStream = require('./src/EventStream');
 
+const EventStream = eventStream.EventStream;
 const Logger = logger.Logger;
 const PackageManager = packages.PackageManager;
 const LinuxDistribution = platform.LinuxDistribution;
@@ -51,6 +53,7 @@ gulp.task('updatePackageDependencies', () => {
 // Install Tasks
 function install(platformInfo, packageJSON) {
     const packageManager = new PackageManager(platformInfo, packageJSON);
+    let eventStream = new EventStream();
     const logger = new Logger(message => process.stdout.write(message));
     const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'), logger);
 
