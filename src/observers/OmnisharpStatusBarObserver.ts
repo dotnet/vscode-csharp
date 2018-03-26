@@ -3,17 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from '../vscodeAdapter';
-import { Status } from './status';
+
+import * as ObservableEvent from "../omnisharp/loggingEvents";
 import * as serverUtils from '../omnisharp/utils';
-import { basename } from 'path';
+
+import { CompositeDisposable, Subject } from 'rx';
+import { DocumentFilter, DocumentSelector, StatusBarItem, vscode } from '../vscodeAdapter';
+
 import { OmniSharpServer } from '../omnisharp/server';
-import { CompositeDisposable, Subject, Scheduler } from 'rx';
-import { BaseEvent, OmnisharpServerOnServerError, OmnisharpOnMultipleLaunchTargets, OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, ActiveTextEditorChanged, OmnisharpServerOnStop, OmnisharpServerOnStart } from '../omnisharp/loggingEvents';
+import { ProjectInformationResponse } from '../omnisharp/protocol';
+import { Status } from './status';
+import { basename } from 'path';
 
-const debounce = require('lodash.debounce');
-
-let defaultSelector: vscode.DocumentSelector = [
+let defaultSelector: DocumentSelector = [
     'csharp', // c#-files OR
     { pattern: '**/project.json' }, // project.json-files OR
     { pattern: '**/*.sln' }, // any solution file OR
@@ -22,14 +24,6 @@ let defaultSelector: vscode.DocumentSelector = [
     { pattern: '**/*.cake' } // Cake script
 ];
 
-export interface GetActiveTextEditor {
-    (): vscode.TextEditor;
-}
-
-export interface Match {
-    (selector: vscode.DocumentSelector, document: any): number;
-}
-
 export class OmnisharpStatusBarObserver {
     private defaultStatus: Status;
     private projectStatus: Status;
@@ -37,7 +31,7 @@ export class OmnisharpStatusBarObserver {
     private updateProjectDebouncer: Subject<OmniSharpServer>;
     private firstUpdateProject: boolean;
 
-    constructor(private getActiveTextEditor: GetActiveTextEditor, private match: Match, private statusBar: vscode.StatusBarItem, scheduler: Scheduler) {
+    constructor(private vscode: vscode, private statusBar: StatusBarItem) {
         this.defaultStatus = new Status(defaultSelector);
         this.updateProjectDebouncer = new Subject<OmniSharpServer>();
         this.updateProjectDebouncer.debounce(1500, scheduler).subscribe((server: OmniSharpServer) => { this.updateProjectInfo(server); });
@@ -83,7 +77,7 @@ export class OmnisharpStatusBarObserver {
                 SourceFiles: string[];
             }
 
-            let fileNames: vscode.DocumentFilter[] = [];
+            let fileNames: DocumentFilter[] = [];
             let label: string;
 
             function addProjectFileNames(project: Project) {
@@ -138,7 +132,7 @@ export class OmnisharpStatusBarObserver {
     }
 
     private render = () => {
-        let activeTextEditor = this.getActiveTextEditor();
+        let activeTextEditor = this.vscode.window.activeTextEditor;
         if (!activeTextEditor) {
             this.statusBar.hide();
             return;
@@ -147,9 +141,9 @@ export class OmnisharpStatusBarObserver {
         let document = activeTextEditor.document;
         let status: Status;
 
-        if (this.projectStatus && this.match(this.projectStatus.selector, document)) {
+        if (this.projectStatus && this.vscode.languages.match(this.projectStatus.selector, document)) {
             status = this.projectStatus;
-        } else if (this.defaultStatus.text && this.match(this.defaultStatus.selector, document)) {
+        } else if (this.defaultStatus.text && this.vscode.languages.match(this.defaultStatus.selector, document)) {
             status = this.defaultStatus;
         }
 

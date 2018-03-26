@@ -7,25 +7,27 @@ import * as OmniSharp from './omnisharp/extension';
 import * as coreclrdebug from './coreclr-debug/activate';
 import * as util from './common';
 import * as vscode from 'vscode';
+
+import { ActivationFailure, ActiveTextEditorChanged } from './omnisharp/loggingEvents';
+import { MessageItemWithCommand, WarningMessageObserver } from './observers/WarningMessageObserver';
+
 import { CSharpExtDownloader } from './CSharpExtDownloader';
-import { PlatformInformation } from './platform';
-import TelemetryReporter from 'vscode-extension-telemetry';
-import { addJSONProviders } from './features/json/jsonContributions';
 import { CsharpChannelObserver } from './observers/CsharpChannelObserver';
 import { CsharpLoggerObserver } from './observers/CsharpLoggerObserver';
-import { OmnisharpLoggerObserver } from './observers/OmnisharpLoggerObserver';
 import { DotNetChannelObserver } from './observers/DotnetChannelObserver';
-import { TelemetryObserver } from './observers/TelemetryObserver';
-import { OmnisharpChannelObserver } from './observers/OmnisharpChannelObserver';
 import { DotnetLoggerObserver } from './observers/DotnetLoggerObserver';
-import { OmnisharpDebugModeLoggerObserver } from './observers/OmnisharpDebugModeLoggerObserver';
-import { ActivationFailure, ActiveTextEditorChanged } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
-import { WarningMessageObserver, ExecuteCommand, ShowWarningMessage, MessageItemWithCommand } from './observers/WarningMessageObserver';
-import { InformationMessageObserver, ShowInformationMessage, GetConfiguration, WorkspaceAsRelativePath } from './observers/InformationMessageObserver';
-import { GetActiveTextEditor, OmnisharpStatusBarObserver, Match } from './observers/OmnisharpStatusBarObserver';
-import { TextEditorAdapter } from './textEditorAdapter';
+import { InformationMessageObserver } from './observers/InformationMessageObserver';
+import { OmnisharpChannelObserver } from './observers/OmnisharpChannelObserver';
+import { OmnisharpDebugModeLoggerObserver } from './observers/OmnisharpDebugModeLoggerObserver';
+import { OmnisharpLoggerObserver } from './observers/OmnisharpLoggerObserver';
+import { OmnisharpStatusBarObserver } from './observers/OmnisharpStatusBarObserver';
+import { PlatformInformation } from './platform';
 import { StatusBarItemAdapter } from './statusBarItemAdapter';
+import { TelemetryObserver } from './observers/TelemetryObserver';
+import TelemetryReporter from 'vscode-extension-telemetry';
+import { TextEditorAdapter } from './textEditorAdapter';
+import { addJSONProviders } from './features/json/jsonContributions';
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 
@@ -57,21 +59,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     eventStream.subscribe(omnisharpLogObserver.post);
     eventStream.subscribe(omnisharpChannelObserver.post);
 
-    let showWarningMessage: ShowWarningMessage<MessageItemWithCommand> = <T extends vscode.MessageItem>(message: string, ...items: T[]) => vscode.window.showWarningMessage(message, ...items);
-    let executeCommand: ExecuteCommand<string> = (command: string, ...rest: any[]) => vscode.commands.executeCommand(command, ...rest);
-    let omnisharpServerStatusObserver = new WarningMessageObserver(showWarningMessage, executeCommand);
+    let omnisharpServerStatusObserver = new WarningMessageObserver(vscode);
     eventStream.subscribe(omnisharpServerStatusObserver.post);
 
-    let getConfiguration: GetConfiguration = (name: string) => vscode.workspace.getConfiguration(name);
-    let showInformationMessage: ShowInformationMessage = (message: string, ...items: string[]) => vscode.window.showInformationMessage(message, ...items);
-    let workspaceAsRelativePath: WorkspaceAsRelativePath = (path: string, includeWorkspaceFolder?: boolean) => vscode.workspace.asRelativePath(path, includeWorkspaceFolder);
-    let informationMessageObserver = new InformationMessageObserver(getConfiguration, showInformationMessage, workspaceAsRelativePath);
+    let informationMessageObserver = new InformationMessageObserver(vscode);
     eventStream.subscribe(informationMessageObserver.post);
 
     let omnisharpStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, Number.MIN_VALUE));
-    let getActiveTextEditor: GetActiveTextEditor = () => new TextEditorAdapter(vscode.window.activeTextEditor);
-    let match: Match = (selector: vscode.DocumentSelector, document: any) => vscode.languages.match(selector, <vscode.TextDocument>document);
-    let omnisharpStatusBarObserver = new OmnisharpStatusBarObserver(getActiveTextEditor, match, omnisharpStatusBar);
+    let omnisharpStatusBarObserver = new OmnisharpStatusBarObserver(vscode, omnisharpStatusBar);
     eventStream.subscribe(omnisharpStatusBarObserver.post);
 
     const debugMode = false;

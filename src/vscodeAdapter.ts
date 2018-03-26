@@ -299,6 +299,100 @@ export interface TextEditor {
      */
     document: any;
 }
+/**
+	 * A universal resource identifier representing either a file on disk
+	 * or another resource, like untitled resources.
+	 */
+export interface Uri {
+
+    /**
+     * Create an URI from a file system path. The [scheme](#Uri.scheme)
+     * will be `file`.
+     *
+     * @param path A file system or UNC path.
+     * @return A new Uri instance.
+     */
+    file(path: string): Uri;
+
+    /**
+     * Create an URI from a string. Will throw if the given value is not
+     * valid.
+     *
+     * @param value The string value of an Uri.
+     * @return A new Uri instance.
+     */
+    parse(value: string): Uri;
+
+    /**
+     * Scheme is the `http` part of `http://www.msft.com/some/path?query#fragment`.
+     * The part before the first colon.
+     */
+    readonly scheme: string;
+
+    /**
+     * Authority is the `www.msft.com` part of `http://www.msft.com/some/path?query#fragment`.
+     * The part between the first double slashes and the next slash.
+     */
+    readonly authority: string;
+
+    /**
+     * Path is the `/some/path` part of `http://www.msft.com/some/path?query#fragment`.
+     */
+    readonly path: string;
+
+    /**
+     * Query is the `query` part of `http://www.msft.com/some/path?query#fragment`.
+     */
+    readonly query: string;
+
+    /**
+     * Fragment is the `fragment` part of `http://www.msft.com/some/path?query#fragment`.
+     */
+    readonly fragment: string;
+
+    /**
+     * The string representing the corresponding file system path of this Uri.
+     *
+     * Will handle UNC paths and normalize windows drive letters to lower-case. Also
+     * uses the platform specific path separator. Will *not* validate the path for
+     * invalid characters and semantics. Will *not* look at the scheme of this Uri.
+     */
+    readonly fsPath: string;
+
+    /**
+     * Derive a new Uri from this Uri.
+     *
+     * ```ts
+     * let file = Uri.parse('before:some/file/path');
+     * let other = file.with({ scheme: 'after' });
+     * assert.ok(other.toString() === 'after:some/file/path');
+     * ```
+     *
+     * @param change An object that describes a change to this Uri. To unset components use `null` or
+     *  the empty string.
+     * @return A new Uri that reflects the given change. Will return `this` Uri if the change
+     *  is not changing anything.
+     */
+    with(change: { scheme?: string; authority?: string; path?: string; query?: string; fragment?: string }): Uri;
+
+    /**
+     * Returns a string representation of this Uri. The representation and normalization
+     * of a URI depends on the scheme. The resulting string can be safely used with
+     * [Uri.parse](#Uri.parse).
+     *
+     * @param skipEncoding Do not percentage-encode the result, defaults to `false`. Note that
+     *	the `#` and `?` characters occuring in the path will always be encoded.
+     * @returns A string representation of this Uri.
+     */
+    toString(skipEncoding?: boolean): string;
+
+    /**
+     * Returns a JSON representation of this Uri.
+     *
+     * @return An object.
+     */
+    toJSON(): any;
+}
 
 export interface MessageItem {
 
@@ -312,4 +406,444 @@ export interface MessageItem {
      * 'Close' action.
      */
     isCloseAffordance?: boolean;
+}
+
+/**
+ * Represents a text document, such as a source file. Text documents have
+ * [lines](#TextLine) and knowledge about an underlying resource like a file.
+ */
+export interface TextDocument {
+
+    /**
+     * The associated URI for this document. Most documents have the __file__-scheme, indicating that they
+     * represent files on disk. However, some documents may have other schemes indicating that they are not
+     * available on disk.
+     */
+    readonly uri: Uri;
+
+    /**
+     * The file system path of the associated resource. Shorthand
+     * notation for [TextDocument.uri.fsPath](#TextDocument.uri). Independent of the uri scheme.
+     */
+    readonly fileName: string;
+
+    /**
+     * Is this document representing an untitled file.
+     */
+    readonly isUntitled: boolean;
+
+    /**
+     * The identifier of the language associated with this document.
+     */
+    readonly languageId: string;
+
+    /**
+     * The version number of this document (it will strictly increase after each
+     * change, including undo/redo).
+     */
+    readonly version: number;
+
+    /**
+     * `true` if there are unpersisted changes.
+     */
+    readonly isDirty: boolean;
+
+    /**
+     * `true` if the document have been closed. A closed document isn't synchronized anymore
+     * and won't be re-used when the same resource is opened again.
+     */
+    readonly isClosed: boolean;
+
+    /**
+     * Save the underlying file.
+     *
+     * @return A promise that will resolve to true when the file
+     * has been saved. If the file was not dirty or the save failed,
+     * will return false.
+     */
+    save(): Thenable<boolean>;
+
+    /**
+     * The [end of line](#EndOfLine) sequence that is predominately
+     * used in this document.
+     */
+    readonly eol: EndOfLine;
+
+    /**
+     * The number of lines in this document.
+     */
+    readonly lineCount: number;
+
+    /**
+     * Returns a text line denoted by the line number. Note
+     * that the returned object is *not* live and changes to the
+     * document are not reflected.
+     *
+     * @param line A line number in [0, lineCount).
+     * @return A [line](#TextLine).
+     */
+    lineAt(line: number): TextLine;
+
+    /**
+     * Returns a text line denoted by the position. Note
+     * that the returned object is *not* live and changes to the
+     * document are not reflected.
+     *
+     * The position will be [adjusted](#TextDocument.validatePosition).
+     *
+     * @see [TextDocument.lineAt](#TextDocument.lineAt)
+     * @param position A position.
+     * @return A [line](#TextLine).
+     */
+    lineAt(position: Position): TextLine;
+
+    /**
+     * Converts the position to a zero-based offset.
+     *
+     * The position will be [adjusted](#TextDocument.validatePosition).
+     *
+     * @param position A position.
+     * @return A valid zero-based offset.
+     */
+    offsetAt(position: Position): number;
+
+    /**
+     * Converts a zero-based offset to a position.
+     *
+     * @param offset A zero-based offset.
+     * @return A valid [position](#Position).
+     */
+    positionAt(offset: number): Position;
+
+    /**
+     * Get the text of this document. A substring can be retrieved by providing
+     * a range. The range will be [adjusted](#TextDocument.validateRange).
+     *
+     * @param range Include only the text included by the range.
+     * @return The text inside the provided range or the entire text.
+     */
+    getText(range?: Range): string;
+
+    /**
+     * Get a word-range at the given position. By default words are defined by
+     * common separators, like space, -, _, etc. In addition, per languge custom
+     * [word definitions](#LanguageConfiguration.wordPattern) can be defined. It
+     * is also possible to provide a custom regular expression.
+     *
+     * * *Note 1:* A custom regular expression must not match the empty string and
+     * if it does, it will be ignored.
+     * * *Note 2:* A custom regular expression will fail to match multiline strings
+     * and in the name of speed regular expressions should not match words with
+     * spaces. Use [`TextLine.text`](#TextLine.text) for more complex, non-wordy, scenarios.
+     *
+     * The position will be [adjusted](#TextDocument.validatePosition).
+     *
+     * @param position A position.
+     * @param regex Optional regular expression that describes what a word is.
+     * @return A range spanning a word, or `undefined`.
+     */
+    getWordRangeAtPosition(position: Position, regex?: RegExp): Range | undefined;
+
+    /**
+     * Ensure a range is completely contained in this document.
+     *
+     * @param range A range.
+     * @return The given range or a new, adjusted range.
+     */
+    validateRange(range: Range): Range;
+
+    /**
+     * Ensure a position is contained in the range of this document.
+     *
+     * @param position A position.
+     * @return The given position or a new, adjusted position.
+     */
+    validatePosition(position: Position): Position;
+}
+
+/**
+ * Represents an end of line character sequence in a [document](#TextDocument).
+ */
+export enum EndOfLine {
+    /**
+     * The line feed `\n` character.
+     */
+    LF = 1,
+    /**
+     * The carriage return line feed `\r\n` sequence.
+     */
+    CRLF = 2
+}
+
+/**
+ * Represents a line and character position, such as
+ * the position of the cursor.
+ *
+ * Position objects are __immutable__. Use the [with](#Position.with) or
+ * [translate](#Position.translate) methods to derive new positions
+ * from an existing position.
+ */
+export interface Position {
+
+    /**
+     * The zero-based line value.
+     */
+    readonly line: number;
+
+    /**
+     * The zero-based character value.
+     */
+    readonly character: number;
+
+    /**
+     * @param line A zero-based line value.
+     * @param character A zero-based character value.
+     */
+    constructor(line: number, character: number);
+
+    /**
+     * Check if `other` is before this position.
+     *
+     * @param other A position.
+     * @return `true` if position is on a smaller line
+     * or on the same line on a smaller character.
+     */
+    isBefore(other: Position): boolean;
+
+    /**
+     * Check if `other` is before or equal to this position.
+     *
+     * @param other A position.
+     * @return `true` if position is on a smaller line
+     * or on the same line on a smaller or equal character.
+     */
+    isBeforeOrEqual(other: Position): boolean;
+
+    /**
+     * Check if `other` is after this position.
+     *
+     * @param other A position.
+     * @return `true` if position is on a greater line
+     * or on the same line on a greater character.
+     */
+    isAfter(other: Position): boolean;
+
+    /**
+     * Check if `other` is after or equal to this position.
+     *
+     * @param other A position.
+     * @return `true` if position is on a greater line
+     * or on the same line on a greater or equal character.
+     */
+    isAfterOrEqual(other: Position): boolean;
+
+    /**
+     * Check if `other` equals this position.
+     *
+     * @param other A position.
+     * @return `true` if the line and character of the given position are equal to
+     * the line and character of this position.
+     */
+    isEqual(other: Position): boolean;
+
+    /**
+     * Compare this to `other`.
+     *
+     * @param other A position.
+     * @return A number smaller than zero if this position is before the given position,
+     * a number greater than zero if this position is after the given position, or zero when
+     * this and the given position are equal.
+     */
+    compareTo(other: Position): number;
+
+    /**
+     * Create a new position relative to this position.
+     *
+     * @param lineDelta Delta value for the line value, default is `0`.
+     * @param characterDelta Delta value for the character value, default is `0`.
+     * @return A position which line and character is the sum of the current line and
+     * character and the corresponding deltas.
+     */
+    translate(lineDelta?: number, characterDelta?: number): Position;
+
+    /**
+     * Derived a new position relative to this position.
+     *
+     * @param change An object that describes a delta to this position.
+     * @return A position that reflects the given delta. Will return `this` position if the change
+     * is not changing anything.
+     */
+    translate(change: { lineDelta?: number; characterDelta?: number; }): Position;
+
+    /**
+     * Create a new position derived from this position.
+     *
+     * @param line Value that should be used as line value, default is the [existing value](#Position.line)
+     * @param character Value that should be used as character value, default is the [existing value](#Position.character)
+     * @return A position where line and character are replaced by the given values.
+     */
+    with(line?: number, character?: number): Position;
+
+    /**
+     * Derived a new position from this position.
+     *
+     * @param change An object that describes a change to this position.
+     * @return A position that reflects the given change. Will return `this` position if the change
+     * is not changing anything.
+     */
+    with(change: { line?: number; character?: number; }): Position;
+}
+
+export interface Range {
+
+    /**
+     * The start position. It is before or equal to [end](#Range.end).
+     */
+    readonly start: Position;
+
+    /**
+     * The end position. It is after or equal to [start](#Range.start).
+     */
+    readonly end: Position;
+
+    /**
+     * `true` if `start` and `end` are equal.
+     */
+    isEmpty: boolean;
+
+    /**
+     * `true` if `start.line` and `end.line` are equal.
+     */
+    isSingleLine: boolean;
+
+    /**
+     * Check if a position or a range is contained in this range.
+     *
+     * @param positionOrRange A position or a range.
+     * @return `true` if the position or range is inside or equal
+     * to this range.
+     */
+    contains(positionOrRange: Position | Range): boolean;
+
+    /**
+     * Check if `other` equals this range.
+     *
+     * @param other A range.
+     * @return `true` when start and end are [equal](#Position.isEqual) to
+     * start and end of this range.
+     */
+    isEqual(other: Range): boolean;
+
+    /**
+     * Intersect `range` with this range and returns a new range or `undefined`
+     * if the ranges have no overlap.
+     *
+     * @param range A range.
+     * @return A range of the greater start and smaller end positions. Will
+     * return undefined when there is no overlap.
+     */
+    intersection(range: Range): Range | undefined;
+
+    /**
+     * Compute the union of `other` with this range.
+     *
+     * @param other A range.
+     * @return A range of smaller start position and the greater end position.
+     */
+    union(other: Range): Range;
+
+    /**
+     * Derived a new range from this range.
+     *
+     * @param start A position that should be used as start. The default value is the [current start](#Range.start).
+     * @param end A position that should be used as end. The default value is the [current end](#Range.end).
+     * @return A range derived from this range with the given start and end position.
+     * If start and end are not different `this` range will be returned.
+     */
+    with(start?: Position, end?: Position): Range;
+
+    /**
+     * Derived a new range from this range.
+     *
+     * @param change An object that describes a change to this range.
+     * @return A range that reflects the given change. Will return `this` range if the change
+     * is not changing anything.
+     */
+    with(change: { start?: Position, end?: Position }): Range;
+}
+
+/**
+ * Represents a line of text, such as a line of source code.
+ *
+ * TextLine objects are __immutable__. When a [document](#TextDocument) changes,
+ * previously retrieved lines will not represent the latest state.
+ */
+export interface TextLine {
+
+    /**
+     * The zero-based line number.
+     */
+    readonly lineNumber: number;
+
+    /**
+     * The text of this line without the line separator characters.
+     */
+    readonly text: string;
+
+    /**
+     * The range this line covers without the line separator characters.
+     */
+    readonly range: Range;
+
+    /**
+     * The range this line covers with the line separator characters.
+     */
+    readonly rangeIncludingLineBreak: Range;
+
+    /**
+     * The offset of the first character which is not a whitespace character as defined
+     * by `/\s/`. **Note** that if a line is all whitespaces the length of the line is returned.
+     */
+    readonly firstNonWhitespaceCharacterIndex: number;
+
+    /**
+     * Whether this line is whitespace only, shorthand
+     * for [TextLine.firstNonWhitespaceCharacterIndex](#TextLine.firstNonWhitespaceCharacterIndex) === [TextLine.text.length](#TextLine.text).
+     */
+    readonly isEmptyOrWhitespace: boolean;
+}
+
+/**
+ * Thenable is a common denominator between ES6 promises, Q, jquery.Deferred, WinJS.Promise,
+ * and others. This API makes no assumption about what promise libary is being used which
+ * enables reusing existing code without migrating to a specific promise implementation. Still,
+ * we recommend the use of native promises which are available in this editor.
+ */
+interface Thenable<T> {
+    /**
+	* Attaches callbacks for the resolution and/or rejection of the Promise.
+	* @param onfulfilled The callback to execute when the Promise is resolved.
+	* @param onrejected The callback to execute when the Promise is rejected.
+	* @returns A Promise for the completion of which ever callback is executed.
+	*/
+    then<TResult>(onfulfilled?: (value: T) => TResult | Thenable<TResult>, onrejected?: (reason: any) => TResult | Thenable<TResult>): Thenable<TResult>;
+    then<TResult>(onfulfilled?: (value: T) => TResult | Thenable<TResult>, onrejected?: (reason: any) => void): Thenable<TResult>;
+}
+
+export interface vscode {
+    commands: {
+        executeCommand: <T>(command: string, ...rest: any[]) => Thenable<T | undefined>;
+    };
+    languages: {
+        match: (selector: DocumentSelector, document: TextDocument) => number;
+    };
+    window: {
+        activeTextEditor: TextEditor | undefined;
+        showInformationMessage: (message: string, ...items: string[]) => Thenable<string | undefined>;
+        showWarningMessage: <T extends MessageItem>(message: string, ...items: T[]) => Thenable<T | undefined>;
+    };
+    workspace: {
+        getConfiguration: (section?: string, resource?: Uri) => WorkspaceConfiguration;
+        asRelativePath: (pathOrUri: string | Uri, includeWorkspaceFolder?: boolean) => string;
+    };
 }
