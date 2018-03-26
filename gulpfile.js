@@ -20,13 +20,15 @@ const util = require('./out/src/common');
 const child_process = require('child_process');
 const optionsSchemaGenerator = require('./out/src/tools/GenerateOptionsSchema');
 const packageDependencyUpdater = require('./out/src/tools/UpdatePackageDependencies');
-const eventStream = require('./src/EventStream');
+const eventStream = require('./out/src/EventStream');
+const csharpLoggerObserver = require('./out/src/observers/CsharpLoggerObserver');
 
 const EventStream = eventStream.EventStream;
 const Logger = logger.Logger;
 const PackageManager = packages.PackageManager;
 const LinuxDistribution = platform.LinuxDistribution;
 const PlatformInformation = platform.PlatformInformation;
+const CsharpLoggerObserver = csharpLoggerObserver.CsharpLoggerObserver;
 
 function cleanSync(deleteVsix) {
     del.sync('install.*');
@@ -55,11 +57,13 @@ function install(platformInfo, packageJSON) {
     const packageManager = new PackageManager(platformInfo, packageJSON);
     let eventStream = new EventStream();
     const logger = new Logger(message => process.stdout.write(message));
+    let stdoutObserver = new CsharpLoggerObserver(logger);
+    eventStream.subscribe(stdoutObserver.post);
     const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'), logger);
 
-    return packageManager.DownloadPackages(logger)
+    return packageManager.DownloadPackages(eventStream)
         .then(() => {
-            return packageManager.InstallPackages(logger);
+            return packageManager.InstallPackages(eventStream);
         })
         .then(() => {
             return util.touchInstallFile(util.InstallFileType.Lock)
@@ -98,7 +102,7 @@ function doPackageSync(packageName) {
 
 function doOfflinePackage(platformInfo, packageName, packageJSON) {
     if (process.platform === 'win32') {
-        throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
+        //throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
     }
 
     cleanSync(false);
