@@ -8,7 +8,7 @@ import { Status } from './status';
 import * as serverUtils from '../omnisharp/utils';
 import { basename } from 'path';
 import { OmniSharpServer } from '../omnisharp/server';
-import { CompositeDisposable, Subject } from 'rx';
+import { CompositeDisposable, Subject, Scheduler } from 'rx';
 import { BaseEvent, OmnisharpServerOnServerError, OmnisharpOnMultipleLaunchTargets, OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, ActiveTextEditorChanged, OmnisharpServerOnStop, OmnisharpServerOnStart } from '../omnisharp/loggingEvents';
 
 const debounce = require('lodash.debounce');
@@ -34,9 +34,14 @@ export class OmnisharpStatusBarObserver {
     private defaultStatus: Status;
     private projectStatus: Status;
     private localDisposables: CompositeDisposable;
+    private updateProjectDebouncer: Subject<OmniSharpServer>;
+    private firstUpdateProject: boolean;
 
-    constructor(private getActiveTextEditor: GetActiveTextEditor, private match: Match, private statusBar: vscode.StatusBarItem) {
+    constructor(private getActiveTextEditor: GetActiveTextEditor, private match: Match, private statusBar: vscode.StatusBarItem, scheduler: Scheduler) {
         this.defaultStatus = new Status(defaultSelector);
+        this.updateProjectDebouncer = new Subject<OmniSharpServer>();
+        this.updateProjectDebouncer.debounce(1500, scheduler).subscribe((server: OmniSharpServer) => { this.updateProjectInfo(server); });
+        this.firstUpdateProject = true;
     }
 
     public post = (event: BaseEvent) => {
@@ -70,6 +75,7 @@ export class OmnisharpStatusBarObserver {
     }
 
     private updateProjectInfo = (server: OmniSharpServer) => {
+        this.firstUpdateProject = false;
         serverUtils.requestWorkspaceInformation(server).then(info => {
 
             interface Project {
@@ -161,7 +167,7 @@ export class OmnisharpStatusBarObserver {
     private handleOmnisharpServerOnStop() {
         this.projectStatus = undefined;
         this.defaultStatus.text = undefined;
-        let disposables =  this.localDisposables;
+        let disposables = this.localDisposables;
         this.localDisposables = undefined;
 
         if (disposables) {
@@ -173,12 +179,18 @@ export class OmnisharpStatusBarObserver {
         this.localDisposables = new CompositeDisposable();
         SetStatus(this.defaultStatus, '$(flame) Running', 'o.pickProjectAndStart', '');
         this.render();
-        let updateProjectDebouncer = new Subject<BaseEvent>();
-        let updateProjectInfoFunction = () => this.updateProjectInfo(event.server);
-        let debouncedUpdateProjectInfo = debounce(updateProjectInfoFunction, 1500, { leading: true });
-        this.localDisposables.add(event.server.onProjectAdded(debouncedUpdateProjectInfo));
-        this.localDisposables.add(event.server.onProjectChange(debouncedUpdateProjectInfo));
-        this.localDisposables.add(event.server.onProjectRemoved(debouncedUpdateProjectInfo));
+        let updateTracker = () => {
+            if (this.firstUpdateProject) {
+                this.updateProjectInfo(event.server);
+            }
+            else {
+                this.updateProjectDebouncer.onNext(event.server);
+            }
+        };
+        
+        this.localDisposables.add(event.server.onProjectAdded(updateTracker));
+        this.localDisposables.add(event.server.onProjectChange(updateTracker));
+        this.localDisposables.add(event.server.onProjectRemoved(updateTracker));
     }
 }
 
