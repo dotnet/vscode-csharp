@@ -9,6 +9,7 @@ import * as util from './common';
 import * as vscode from 'vscode';
 
 import { ActivationFailure, ActiveTextEditorChanged } from './omnisharp/loggingEvents';
+import { MessageItemWithCommand, WarningMessageObserver } from './observers/WarningMessageObserver';
 
 import { CSharpExtDownloader } from './CSharpExtDownloader';
 import { CsharpChannelObserver } from './observers/CsharpChannelObserver';
@@ -16,10 +17,12 @@ import { CsharpLoggerObserver } from './observers/CsharpLoggerObserver';
 import { DotNetChannelObserver } from './observers/DotnetChannelObserver';
 import { DotnetLoggerObserver } from './observers/DotnetLoggerObserver';
 import { EventStream } from './EventStream';
-import { WarningMessageObserver, ExecuteCommand, ShowWarningMessage, MessageItemWithCommand } from './observers/WarningMessageObserver';
-import { InformationMessageObserver, ShowInformationMessage, GetConfiguration, WorkspaceAsRelativePath } from './observers/InformationMessageObserver';
-import { GetActiveTextEditor, OmnisharpStatusBarObserver, Match } from './observers/OmnisharpStatusBarObserver';
-import { TextEditorAdapter } from './textEditorAdapter';
+import { InformationMessageObserver } from './observers/InformationMessageObserver';
+import { OmnisharpChannelObserver } from './observers/OmnisharpChannelObserver';
+import { OmnisharpDebugModeLoggerObserver } from './observers/OmnisharpDebugModeLoggerObserver';
+import { OmnisharpLoggerObserver } from './observers/OmnisharpLoggerObserver';
+import { OmnisharpStatusBarObserver } from './observers/OmnisharpStatusBarObserver';
+import { PlatformInformation } from './platform';
 import { StatusBarItemAdapter } from './statusBarItemAdapter';
 import { TelemetryObserver } from './observers/TelemetryObserver';
 import TelemetryReporter from 'vscode-extension-telemetry';
@@ -56,9 +59,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     eventStream.subscribe(omnisharpLogObserver.post);
     eventStream.subscribe(omnisharpChannelObserver.post);
 
-    let showWarningMessage: ShowWarningMessage<MessageItemWithCommand> = <T extends vscode.MessageItem>(message: string, ...items: T[]) => vscode.window.showWarningMessage(message, ...items);
-    let executeCommand: ExecuteCommand<string> = <T>(command: string, ...rest: any[]) => vscode.commands.executeCommand(command, ...rest);
-    let omnisharpServerStatusObserver = new WarningMessageObserver(showWarningMessage, executeCommand);
+    let omnisharpServerStatusObserver = new WarningMessageObserver(vscode);
     eventStream.subscribe(omnisharpServerStatusObserver.post);
 
     let informationMessageObserver = new InformationMessageObserver(vscode);
