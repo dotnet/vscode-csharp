@@ -102,7 +102,7 @@ function doPackageSync(packageName) {
 
 function doOfflinePackage(platformInfo, packageName, packageJSON) {
     if (process.platform === 'win32') {
-        //throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
+        throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
     }
 
     cleanSync(false);
