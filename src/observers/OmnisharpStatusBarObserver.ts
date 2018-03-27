@@ -27,7 +27,7 @@ export class OmnisharpStatusBarObserver {
     private updateProjectDebouncer: Subject<OmniSharpServer>;
     private firstUpdateProject: boolean;
 
-    constructor(private vscode: vscode, private statusBar: StatusBarItem, scheduler?: Scheduler) {
+    constructor(private vscode: vscode, private statusBarItem: StatusBarItem, scheduler?: Scheduler) {
         this.defaultStatus = new Status(defaultSelector);
         this.updateProjectDebouncer = new Subject<OmniSharpServer>();
         this.updateProjectDebouncer.debounce(1500, scheduler).subscribe((server: OmniSharpServer) => { this.updateProjectInfo(server); });
@@ -130,7 +130,7 @@ export class OmnisharpStatusBarObserver {
     private render = () => {
         let activeTextEditor = this.vscode.window.activeTextEditor;
         if (!activeTextEditor) {
-            this.statusBar.hide();
+            this.statusBarItem.hide();
             return;
         }
 
@@ -144,14 +144,14 @@ export class OmnisharpStatusBarObserver {
         }
 
         if (status) {
-            this.statusBar.text = status.text;
-            this.statusBar.command = status.command;
-            this.statusBar.color = status.color;
-            this.statusBar.show();
+            this.statusBarItem.text = status.text;
+            this.statusBarItem.command = status.command;
+            this.statusBarItem.color = status.color;
+            this.statusBarItem.show();
             return;
         }
 
-        this.statusBar.hide();
+        this.statusBarItem.hide();
     }
 
     private handleOmnisharpServerOnStop() {
