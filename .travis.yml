@@ -31,7 +31,6 @@ install:
 - vsce package
 
 script:
-  - npm test --silent
   - npm run cov:instrument
   - npm test --silent
   - npm run cov:report
