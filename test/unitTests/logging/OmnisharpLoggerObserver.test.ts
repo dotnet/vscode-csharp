@@ -21,42 +21,44 @@ suite("OmnisharpLoggerObserver", () => {
         logOutput = "";
     });
 
-    test(`OmnisharpServerMsBuildProjectDiagnostics: Logged message contains the Filename if there is atleast one error or warning`, () => {
-        let event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
-            [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)],
-            []);
-        observer.post(event);
-        expect(logOutput).to.contain(event.diagnostics.FileName);
-    });
-
-    test("OmnisharpServerMsBuildProjectDiagnostics: Logged message is empty if there are no warnings and erros", () => {
-        let event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile", [], []);
-        observer.post(event);
-        expect(logOutput).to.be.empty;
-    });
-
-    [
-        getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
-            [getMSBuildDiagnosticsMessage("warningFile", "", "someWarningText", 1, 2, 3, 4)],
-            [getMSBuildDiagnosticsMessage("errorFile", "", "someErrorText", 5, 6, 7, 8)])
-    ].forEach((event: OmnisharpServerMsBuildProjectDiagnostics) => {
-        test(`${event.constructor.name}: Logged message contains the Filename, StartColumn, StartLine and Text for the diagnostic warnings`, () => {
+    suite('OmnisharpServerMsBuildProjectDiagnostics', () => {
+        test(`Logged message contains the Filename if there is atleast one error or warning`, () => {
+            let event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
+                [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)],
+                []);
             observer.post(event);
-            event.diagnostics.Warnings.forEach(element => {
-                expect(logOutput).to.contain(element.FileName);
-                expect(logOutput).to.contain(element.StartLine);
-                expect(logOutput).to.contain(element.StartColumn);
-                expect(logOutput).to.contain(element.Text);
-            });
+            expect(logOutput).to.contain(event.diagnostics.FileName);
         });
 
-        test(`${event.constructor.name}: Logged message contains the Filename, StartColumn, StartLine and Text for the diagnostics errors`, () => {
+        test("Logged message is empty if there are no warnings and erros", () => {
+            let event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile", [], []);
             observer.post(event);
-            event.diagnostics.Errors.forEach(element => {
-                expect(logOutput).to.contain(element.FileName);
-                expect(logOutput).to.contain(element.StartLine);
-                expect(logOutput).to.contain(element.StartColumn);
-                expect(logOutput).to.contain(element.Text);
+            expect(logOutput).to.be.empty;
+        });
+
+        [
+            getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
+                [getMSBuildDiagnosticsMessage("warningFile", "", "someWarningText", 1, 2, 3, 4)],
+                [getMSBuildDiagnosticsMessage("errorFile", "", "someErrorText", 5, 6, 7, 8)])
+        ].forEach((event: OmnisharpServerMsBuildProjectDiagnostics) => {
+            test(`Logged message contains the Filename, StartColumn, StartLine and Text for the diagnostic warnings`, () => {
+                observer.post(event);
+                event.diagnostics.Warnings.forEach(element => {
+                    expect(logOutput).to.contain(element.FileName);
+                    expect(logOutput).to.contain(element.StartLine);
+                    expect(logOutput).to.contain(element.StartColumn);
+                    expect(logOutput).to.contain(element.Text);
+                });
+            });
+
+            test(`${event.constructor.name}: Logged message contains the Filename, StartColumn, StartLine and Text for the diagnostics errors`, () => {
+                observer.post(event);
+                event.diagnostics.Errors.forEach(element => {
+                    expect(logOutput).to.contain(element.FileName);
+                    expect(logOutput).to.contain(element.StartLine);
+                    expect(logOutput).to.contain(element.StartColumn);
+                    expect(logOutput).to.contain(element.Text);
+                });
             });
         });
     });
@@ -107,29 +109,31 @@ suite("OmnisharpLoggerObserver", () => {
         });
     });
 
-    [
-        new OmnisharpServerOnError({ Text: "someText", FileName: "someFile", Line: 1, Column: 2 }),
-    ].forEach((event: OmnisharpServerOnError) => {
-        test(`${event.constructor.name}: Contains the error message text`, () => {
-            observer.post(event);
-            expect(logOutput).to.contain(event.errorMessage.Text);
-        });
+    suite('OmnisharpServerOnError', () => {
+        [
+            new OmnisharpServerOnError({ Text: "someText", FileName: "someFile", Line: 1, Column: 2 }),
+        ].forEach((event: OmnisharpServerOnError) => {
+            test('Contains the error message text', () => {
+                observer.post(event);
+                expect(logOutput).to.contain(event.errorMessage.Text);
+            });
 
-        test(`${event.constructor.name}: Contains the error message FileName, Line and column if FileName is not null`, () => {
-            observer.post(event);
-            if (event.errorMessage.FileName) {
+            test(`Contains the error message FileName, Line and column if FileName is not null`, () => {
+                observer.post(event);
                 expect(logOutput).to.contain(event.errorMessage.FileName);
                 expect(logOutput).to.contain(event.errorMessage.Line);
                 expect(logOutput).to.contain(event.errorMessage.Column);
-            }
+            });
+        });
+
+        test(`Doesnot throw error if FileName is null`, () => {
+            let event = new OmnisharpServerOnError({ Text: "someText", FileName: null, Line: 1, Column: 2 });
+            let fn = function () { observer.post(event); };
+            expect(fn).to.not.throw(Error);
         });
     });
 
-    test(`OmnisharpServerOnError: Doesnot throw error if FileName is null`, () => {
-        let event = new OmnisharpServerOnError({ Text: "someText", FileName: null, Line: 1, Column: 2 });
-        let fn = function () { observer.post(event); };
-        expect(fn).to.not.throw(Error);
-    });
+
 
     test('OmnisharpFailure: Failure message is logged', () => {
         let event = new OmnisharpFailure("failureMessage", new Error("errorMessage"));
@@ -137,30 +141,34 @@ suite("OmnisharpLoggerObserver", () => {
         expect(logOutput).to.contain(event.message);
     });
 
-    [
-        new OmnisharpEventPacketReceived("TRACE", "foo", "someMessage"),
-        new OmnisharpEventPacketReceived("DEBUG", "foo", "someMessage"),
-        new OmnisharpEventPacketReceived("INFORMATION", "foo", "someMessage"),
-        new OmnisharpEventPacketReceived("WARNING", "foo", "someMessage"),
-        new OmnisharpEventPacketReceived("ERROR", "foo", "someMessage"),
-        new OmnisharpEventPacketReceived("CRITICAL", "foo", "someMessage"),
-    ].forEach((event: OmnisharpEventPacketReceived) => {
-        test(`OmnisharpEventPacketReceived: ${event.logLevel} messages are logged with name and the message`, () => {
+    suite('OmnisharpEventPacketReceived', () => {
+        [
+            new OmnisharpEventPacketReceived("TRACE", "foo", "someMessage"),
+            new OmnisharpEventPacketReceived("DEBUG", "foo", "someMessage"),
+            new OmnisharpEventPacketReceived("INFORMATION", "foo", "someMessage"),
+            new OmnisharpEventPacketReceived("WARNING", "foo", "someMessage"),
+            new OmnisharpEventPacketReceived("ERROR", "foo", "someMessage"),
+            new OmnisharpEventPacketReceived("CRITICAL", "foo", "someMessage"),
+        ].forEach((event: OmnisharpEventPacketReceived) => {
+            test(`${event.logLevel} messages are logged with name and the message`, () => {
+                observer.post(event);
+                expect(logOutput).to.contain(event.name);
+                expect(logOutput).to.contain(event.message);
+            });
+        });
+    
+        test('Throws error on unknown log level', () => {
+            let event = new OmnisharpEventPacketReceived("random log level", "foo", "someMessage");
+            let fn = function () { observer.post(event); };
+            expect(fn).to.throw(Error);
+        });
+    
+        test(`Information messages with name OmniSharp.Middleware.LoggingMiddleware and follow pattern /^\/[\/\w]+: 200 \d+ms/ are not logged`, () => {
+            let event = new OmnisharpEventPacketReceived("INFORMATION", "OmniSharp.Middleware.LoggingMiddleware", "/codecheck: 200 339ms");
             observer.post(event);
-            expect(logOutput).to.contain(event.name);
-            expect(logOutput).to.contain(event.message);
+            expect(logOutput).to.be.empty;
         });
     });
 
-    test('OmnisharpEventPacketReceived: Throws error on unknown log level', () => {
-        let event = new OmnisharpEventPacketReceived("random log level", "foo", "someMessage");
-        let fn = function () { observer.post(event); };
-        expect(fn).to.throw(Error);
-    });
-
-    test(`OmnisharpEventPacketReceived: Information messages with name OmniSharp.Middleware.LoggingMiddleware and follow pattern /^\/[\/\w]+: 200 \d+ms/ are not logged`, () => {
-        let event = new OmnisharpEventPacketReceived("INFORMATION", "OmniSharp.Middleware.LoggingMiddleware", "/codecheck: 200 339ms");
-        observer.post(event);
-        expect(logOutput).to.be.empty;
-    });
+    
 });
