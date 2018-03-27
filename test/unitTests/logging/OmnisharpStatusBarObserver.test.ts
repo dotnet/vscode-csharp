@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { DocumentSelector, StatusBarItem, vscode } from '../../../src/vscodeAdapter';
-import { OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpOnMultipleLaunchTargets, OmnisharpServerOnServerError } from '../../../src/omnisharp/loggingEvents';
+import { OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpOnMultipleLaunchTargets, OmnisharpServerOnServerError, OmnisharpServerOnStart } from '../../../src/omnisharp/loggingEvents';
 import { expect, should } from 'chai';
 import { OmnisharpStatusBarObserver } from '../../../src/observers/OmnisharpStatusBarObserver';
 import { getFakeVsCode } from './Fakes';
@@ -28,31 +28,43 @@ suite('OmnisharpServerStatusObserver', () => {
 
     let observer = new OmnisharpStatusBarObserver(vscode, statusBar);
 
-    test('OnServerError: If there is no project status, default status should be shown which includes error and flame', () => {
+    test('OnServerError: If there is no project status, default status should be shown with the error text', () => {
         let event = new OmnisharpServerOnServerError("someError");
         observer.post(event);
         expect(showCalled).to.be.true;
         expect(statusBar.text).to.equal(`$(flame) Error starting OmniSharp`);
+        expect(statusBar.command).to.equal('o.showOutput');
     });
 
-    test('OnBeforeServerInstall: If there is no project status, default status should be shown which includes install and flame', () => {
+    test('OnBeforeServerInstall: If there is no project status, default status should be shown with the install text', () => {
         let event = new OmnisharpOnBeforeServerInstall();
         observer.post(event);
         expect(showCalled).to.be.true;
         expect(statusBar.text).to.be.equal('$(flame) Installing OmniSharp...');
+        expect(statusBar.command).to.equal('o.showOutput');
     });
 
-    test('OnBeforeServerStart: If there is no project status, default status should be shown which includes start and flame', () => {
+    test('OnBeforeServerStart: If there is no project status, default status should be shown as Starting..', () => {
         let event = new OmnisharpOnBeforeServerStart();
         observer.post(event);
         expect(showCalled).to.be.true;
         expect(statusBar.text).to.be.equal('$(flame) Starting...');
+        expect(statusBar.command).to.equal('o.showOutput');
     });
 
-    test('OnMultipleLaunchTargets: If there is no project status, default status should be shown which includes select project and flame', () => {
+    test('OnMultipleLaunchTargets: If there is no project status, default status should be shown with select project', () => {
         let event = new OmnisharpOnMultipleLaunchTargets([]);
         observer.post(event);
         expect(showCalled).to.be.true;
         expect(statusBar.text).to.be.equal('$(flame) Select project');
+        expect(statusBar.command).to.equal('o.pickProjectAndStart');
+    });
+
+    test('OnServerStart: If there is no project status, default status should be shown as Running', () => {
+        let event = new OmnisharpServerOnStart();
+        observer.post(event);
+        expect(showCalled).to.be.true;
+        expect(statusBar.text).to.be.equal('$(flame) Running');
+        expect(statusBar.command).to.equal('o.pickProjectAndStart');
     });
 });
