@@ -4,9 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from '../../../src/vscodeAdapter';
-
 import { DocumentSelector, MessageItem, TextDocument, Uri } from '../../../src/vscodeAdapter';
-
 import { ITelemetryReporter } from '../../../src/observers/TelemetryObserver';
 import { MSBuildDiagnosticsMessage } from '../../../src/omnisharp/protocol';
 import { OmnisharpServerMsBuildProjectDiagnostics, OmnisharpServerOnError } from '../../../src/omnisharp/loggingEvents';

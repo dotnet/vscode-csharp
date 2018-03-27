@@ -9,8 +9,7 @@ import * as util from './common';
 import * as vscode from 'vscode';
 
 import { ActivationFailure, ActiveTextEditorChanged } from './omnisharp/loggingEvents';
-import { MessageItemWithCommand, WarningMessageObserver } from './observers/WarningMessageObserver';
-
+import { WarningMessageObserver } from './observers/WarningMessageObserver';
 import { CSharpExtDownloader } from './CSharpExtDownloader';
 import { CsharpChannelObserver } from './observers/CsharpChannelObserver';
 import { CsharpLoggerObserver } from './observers/CsharpLoggerObserver';
@@ -26,7 +25,6 @@ import { PlatformInformation } from './platform';
 import { StatusBarItemAdapter } from './statusBarItemAdapter';
 import { TelemetryObserver } from './observers/TelemetryObserver';
 import TelemetryReporter from 'vscode-extension-telemetry';
-import { TextEditorAdapter } from './textEditorAdapter';
 import { addJSONProviders } from './features/json/jsonContributions';
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {

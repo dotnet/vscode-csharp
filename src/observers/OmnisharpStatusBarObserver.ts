@@ -3,17 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
-import * as ObservableEvent from "../omnisharp/loggingEvents";
 import * as serverUtils from '../omnisharp/utils';
-
-import { CompositeDisposable, Subject } from 'rx';
+import { CompositeDisposable, Subject, Scheduler } from 'rx';
 import { DocumentFilter, DocumentSelector, StatusBarItem, vscode } from '../vscodeAdapter';
-
 import { OmniSharpServer } from '../omnisharp/server';
-import { ProjectInformationResponse } from '../omnisharp/protocol';
 import { Status } from './status';
 import { basename } from 'path';
+import { OmnisharpServerOnServerError, BaseEvent, OmnisharpOnMultipleLaunchTargets, OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, ActiveTextEditorChanged, OmnisharpServerOnStop, OmnisharpServerOnStart } from "../omnisharp/loggingEvents";
 
 let defaultSelector: DocumentSelector = [
     'csharp', // c#-files OR
@@ -31,7 +27,7 @@ export class OmnisharpStatusBarObserver {
     private updateProjectDebouncer: Subject<OmniSharpServer>;
     private firstUpdateProject: boolean;
 
-    constructor(private vscode: vscode, private statusBar: StatusBarItem) {
+    constructor(private vscode: vscode, private statusBar: StatusBarItem, scheduler?: Scheduler) {
         this.defaultStatus = new Status(defaultSelector);
         this.updateProjectDebouncer = new Subject<OmniSharpServer>();
         this.updateProjectDebouncer.debounce(1500, scheduler).subscribe((server: OmniSharpServer) => { this.updateProjectInfo(server); });
