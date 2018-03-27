@@ -279,11 +279,10 @@ export class OmniSharpServer {
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnStart());
         }));
 
-        //should we do this on start
         disposables.add(this.onProjectAdded(this.updateTracker));
         disposables.add(this.onProjectChange(this.updateTracker));
-        disposables.add(this.onProjectRemoved(this.updateTracker));
-
+        disposables.add(this.onProjectRemoved(this.updateTracker)); 
+        
         this._disposables = new CompositeDisposable(Disposable.create(() => {
             disposables.dispose();
         }));

@@ -100,10 +100,6 @@ export class OmnisharpOnMultipleLaunchTargets implements BaseEvent {
     constructor(public targets: LaunchTarget[]) { }
 }
 
-/*export class OmnisharpServerOnStart implements BaseEvent {
-    constructor(public server: OmniSharpServer) { }
-}*/
-
 export class WorkspaceInformationUpdated implements BaseEvent {
     constructor(public info: protocol.WorkspaceInformationResponse) { }
 }

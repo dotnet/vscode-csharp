@@ -3,13 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-//import * as serverUtils from '../omnisharp/utils';
-import { CompositeDisposable, Subject, Scheduler } from 'rx';
 import { DocumentFilter, DocumentSelector, StatusBarItem, vscode } from '../vscodeAdapter';
-import { OmniSharpServer } from '../omnisharp/server';
 import { Status } from './status';
 import { basename } from 'path';
-import { OmnisharpServerOnServerError, BaseEvent, OmnisharpOnMultipleLaunchTargets, OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, ActiveTextEditorChanged, OmnisharpServerOnStop, OmnisharpServerOnStart, ProjectModified, WorkspaceInformationUpdated } from "../omnisharp/loggingEvents";
+import { OmnisharpServerOnServerError, BaseEvent, OmnisharpOnMultipleLaunchTargets, OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, ActiveTextEditorChanged, OmnisharpServerOnStop, OmnisharpServerOnStart, WorkspaceInformationUpdated } from "../omnisharp/loggingEvents";
 
 let defaultSelector: DocumentSelector = [
     'csharp', // c#-files OR
@@ -23,15 +20,9 @@ let defaultSelector: DocumentSelector = [
 export class OmnisharpStatusBarObserver {
     private defaultStatus: Status;
     private projectStatus: Status;
-    private localDisposables: CompositeDisposable;
-    private updateProjectDebouncer: Subject<OmniSharpServer>;
-    private firstUpdateProject: boolean;
 
-    constructor(private vscode: vscode, private statusBarItem: StatusBarItem, scheduler?: Scheduler) {
+    constructor(private vscode: vscode, private statusBarItem: StatusBarItem) {
         this.defaultStatus = new Status(defaultSelector);
-        /*this.updateProjectDebouncer = new Subject<OmniSharpServer>();
-        this.updateProjectDebouncer.debounce(1500, scheduler).subscribe((server: OmniSharpServer) => { this.updateProjectInfo(server); });
-        this.firstUpdateProject = true;*/
     }
 
     public post = (event: BaseEvent) => {
@@ -56,13 +47,15 @@ export class OmnisharpStatusBarObserver {
                 this.render();
                 break;
             case OmnisharpServerOnStop.name:
-                this.handleOmnisharpServerOnStop();
+                this.projectStatus = undefined;
+                this.defaultStatus.text = undefined;
                 break;
             case OmnisharpServerOnStart.name:
-                this.handleOmnisharpServerOnStart(<OmnisharpServerOnStart>event);
+                SetStatus(this.defaultStatus, '$(flame) Running', 'o.pickProjectAndStart', '');
+                this.render();
                 break;
             case WorkspaceInformationUpdated.name:
-                this.handleWorkspaceInformationUpdated(<WorkspaceInformationUpdated>event);     
+                this.handleWorkspaceInformationUpdated(<WorkspaceInformationUpdated>event);
         }
     }
 
@@ -103,14 +96,6 @@ export class OmnisharpStatusBarObserver {
         this.render();
     }
 
-    /*private updateProjectInfo = (server: OmniSharpServer) => {
-        this.firstUpdateProject = false;
-        serverUtils.requestWorkspaceInformation(server).then(info => {
-
-            
-        });
-    }*/
-
     private render = () => {
         let activeTextEditor = this.vscode.window.activeTextEditor;
         if (!activeTextEditor) {
@@ -136,35 +121,6 @@ export class OmnisharpStatusBarObserver {
         }
 
         this.statusBarItem.hide();
-    }
-
-    private handleOmnisharpServerOnStop() {
-        this.projectStatus = undefined;
-        this.defaultStatus.text = undefined;
-        let disposables = this.localDisposables;
-        this.localDisposables = undefined;
-
-        if (disposables) {
-            disposables.dispose();
-        }
-    }
-
-    private handleOmnisharpServerOnStart(event: OmnisharpServerOnStart) {
-        //this.localDisposables = new CompositeDisposable();
-        SetStatus(this.defaultStatus, '$(flame) Running', 'o.pickProjectAndStart', '');
-        this.render();
-        /*let updateTracker = () => {
-            if (this.firstUpdateProject) {
-                this.updateProjectInfo(event.server);
-            }
-            else {
-                this.updateProjectDebouncer.onNext(event.server);
-            }
-        };
-        
-        this.localDisposables.add(event.server.onProjectAdded(updateTracker));
-        this.localDisposables.add(event.server.onProjectChange(updateTracker));
-        this.localDisposables.add(event.server.onProjectRemoved(updateTracker));*/
     }
 }
 
