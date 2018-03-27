@@ -4,8 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as ObservableEvent from "../omnisharp/loggingEvents";
-
-import { dotnetRestoreForProject } from '../features/commands';
 import { vscode } from '../vscodeAdapter';
 
 export class InformationMessageObserver {
@@ -26,7 +24,7 @@ export class InformationMessageObserver {
             let info = `There are unresolved dependencies from '${this.vscode.workspace.asRelativePath(event.unresolvedDependencies.FileName)}'. Please execute the restore command to continue.`;
             return this.vscode.window.showInformationMessage(info, 'Restore').then(value => {
                 if (value) {
-                    dotnetRestoreForProject(event.server, event.unresolvedDependencies.FileName, event.eventStream);
+                    this.vscode.commands.executeCommand('dotnet.restore', event.unresolvedDependencies.FileName);
                 }
             });
         }

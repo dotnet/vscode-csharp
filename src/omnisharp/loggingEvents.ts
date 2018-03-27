@@ -6,8 +6,6 @@
 import { PlatformInformation } from "../platform";
 import { Request } from "./requestQueue";
 import * as protocol from './protocol';
-import { OmniSharpServer } from "./server";
-import { EventStream } from "../EventStream";
 import { LaunchTarget } from "./launcher";
 
 export interface BaseEvent {
@@ -73,7 +71,7 @@ export class OmnisharpServerMsBuildProjectDiagnostics implements BaseEvent {
 }
 
 export class OmnisharpServerUnresolvedDependencies implements BaseEvent {
-    constructor(public unresolvedDependencies: protocol.UnresolvedDependenciesMessage, public server: OmniSharpServer, public eventStream: EventStream) { }
+    constructor(public unresolvedDependencies: protocol.UnresolvedDependenciesMessage) { }
 }
 
 export class OmnisharpServerEnqueueRequest implements BaseEvent {

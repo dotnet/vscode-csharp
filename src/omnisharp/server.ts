@@ -252,7 +252,7 @@ export class OmniSharpServer {
         ));
 
         disposables.add(this.onUnresolvedDependencies((message: protocol.UnresolvedDependenciesMessage) =>
-            this.eventStream.post(new ObservableEvents.OmnisharpServerUnresolvedDependencies(message, this, this.eventStream))
+            this.eventStream.post(new ObservableEvents.OmnisharpServerUnresolvedDependencies(message))
         ));
 
         disposables.add(this.onStderr((message: string) =>
