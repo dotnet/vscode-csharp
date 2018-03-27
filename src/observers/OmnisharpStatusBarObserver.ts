@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as serverUtils from '../omnisharp/utils';
+//import * as serverUtils from '../omnisharp/utils';
 import { CompositeDisposable, Subject, Scheduler } from 'rx';
 import { DocumentFilter, DocumentSelector, StatusBarItem, vscode } from '../vscodeAdapter';
 import { OmniSharpServer } from '../omnisharp/server';
 import { Status } from './status';
 import { basename } from 'path';
-import { OmnisharpServerOnServerError, BaseEvent, OmnisharpOnMultipleLaunchTargets, OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, ActiveTextEditorChanged, OmnisharpServerOnStop, OmnisharpServerOnStart } from "../omnisharp/loggingEvents";
+import { OmnisharpServerOnServerError, BaseEvent, OmnisharpOnMultipleLaunchTargets, OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, ActiveTextEditorChanged, OmnisharpServerOnStop, OmnisharpServerOnStart, ProjectModified, WorkspaceInformationUpdated } from "../omnisharp/loggingEvents";
 
 let defaultSelector: DocumentSelector = [
     'csharp', // c#-files OR
@@ -29,9 +29,9 @@ export class OmnisharpStatusBarObserver {
 
     constructor(private vscode: vscode, private statusBarItem: StatusBarItem, scheduler?: Scheduler) {
         this.defaultStatus = new Status(defaultSelector);
-        this.updateProjectDebouncer = new Subject<OmniSharpServer>();
+        /*this.updateProjectDebouncer = new Subject<OmniSharpServer>();
         this.updateProjectDebouncer.debounce(1500, scheduler).subscribe((server: OmniSharpServer) => { this.updateProjectInfo(server); });
-        this.firstUpdateProject = true;
+        this.firstUpdateProject = true;*/
     }
 
     public post = (event: BaseEvent) => {
@@ -61,71 +61,55 @@ export class OmnisharpStatusBarObserver {
             case OmnisharpServerOnStart.name:
                 this.handleOmnisharpServerOnStart(<OmnisharpServerOnStart>event);
                 break;
+            case WorkspaceInformationUpdated.name:
+                this.handleWorkspaceInformationUpdated(<WorkspaceInformationUpdated>event);     
         }
     }
 
-    private updateProjectInfo = (server: OmniSharpServer) => {
+    private handleWorkspaceInformationUpdated(event: WorkspaceInformationUpdated) {
+        interface Project {
+            Path: string;
+            SourceFiles: string[];
+        }
+
+        let fileNames: DocumentFilter[] = [];
+        let label: string;
+
+        function addProjectFileNames(project: Project) {
+            fileNames.push({ pattern: project.Path });
+
+            if (project.SourceFiles) {
+                for (let sourceFile of project.SourceFiles) {
+                    fileNames.push({ pattern: sourceFile });
+                }
+            }
+        }
+
+        let info = event.info;
+        // show sln-file if applicable
+        if (info.MsBuild && info.MsBuild.SolutionPath) {
+            label = basename(info.MsBuild.SolutionPath); //workspace.getRelativePath(info.MsBuild.SolutionPath);
+            fileNames.push({ pattern: info.MsBuild.SolutionPath });
+
+            for (let project of info.MsBuild.Projects) {
+                addProjectFileNames(project);
+            }
+        }
+
+        // set project info
+        this.projectStatus = new Status(fileNames);
+        SetStatus(this.projectStatus, '$(flame) ' + label, 'o.pickProjectAndStart');
+        SetStatus(this.defaultStatus, '$(flame) Switch projects', 'o.pickProjectAndStart');
+        this.render();
+    }
+
+    /*private updateProjectInfo = (server: OmniSharpServer) => {
         this.firstUpdateProject = false;
         serverUtils.requestWorkspaceInformation(server).then(info => {
 
-            interface Project {
-                Path: string;
-                SourceFiles: string[];
-            }
-
-            let fileNames: DocumentFilter[] = [];
-            let label: string;
-
-            function addProjectFileNames(project: Project) {
-                fileNames.push({ pattern: project.Path });
-
-                if (project.SourceFiles) {
-                    for (let sourceFile of project.SourceFiles) {
-                        fileNames.push({ pattern: sourceFile });
-                    }
-                }
-            }
-
-            function addDnxOrDotNetProjects(projects: Project[]) {
-                let count = 0;
-
-                for (let project of projects) {
-                    count += 1;
-                    addProjectFileNames(project);
-                }
-
-                if (!label) {
-                    if (count === 1) {
-                        label = basename(projects[0].Path); //workspace.getRelativePath(info.Dnx.Projects[0].Path);
-                    }
-                    else {
-                        label = `${count} projects`;
-                    }
-                }
-            }
-
-            // show sln-file if applicable
-            if (info.MsBuild && info.MsBuild.SolutionPath) {
-                label = basename(info.MsBuild.SolutionPath); //workspace.getRelativePath(info.MsBuild.SolutionPath);
-                fileNames.push({ pattern: info.MsBuild.SolutionPath });
-
-                for (let project of info.MsBuild.Projects) {
-                    addProjectFileNames(project);
-                }
-            }
-
-            // show .NET Core projects if applicable
-            if (info.DotNet) {
-                addDnxOrDotNetProjects(info.DotNet.Projects);
-            }
-
-            // set project info
-            this.projectStatus = new Status(fileNames);
-            SetStatus(this.projectStatus, '$(flame) ' + label, 'o.pickProjectAndStart');
-            SetStatus(this.defaultStatus, '$(flame) Switch projects', 'o.pickProjectAndStart');
-            this.render();
+            
         });
-    }
+    }*/
 
     private render = () => {
         let activeTextEditor = this.vscode.window.activeTextEditor;
@@ -166,10 +150,10 @@ export class OmnisharpStatusBarObserver {
     }
 
     private handleOmnisharpServerOnStart(event: OmnisharpServerOnStart) {
-        this.localDisposables = new CompositeDisposable();
+        //this.localDisposables = new CompositeDisposable();
         SetStatus(this.defaultStatus, '$(flame) Running', 'o.pickProjectAndStart', '');
         this.render();
-        let updateTracker = () => {
+        /*let updateTracker = () => {
             if (this.firstUpdateProject) {
                 this.updateProjectInfo(event.server);
             }
@@ -180,7 +164,7 @@ export class OmnisharpStatusBarObserver {
         
         this.localDisposables.add(event.server.onProjectAdded(updateTracker));
         this.localDisposables.add(event.server.onProjectChange(updateTracker));
-        this.localDisposables.add(event.server.onProjectRemoved(updateTracker));
+        this.localDisposables.add(event.server.onProjectRemoved(updateTracker));*/
     }
 }
 

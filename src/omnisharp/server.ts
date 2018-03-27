@@ -7,6 +7,7 @@ import * as path from 'path';
 import * as protocol from './protocol';
 import * as utils from '../common';
 import * as vscode from 'vscode';
+import * as serverUtils from '../omnisharp/utils';
 
 import { ChildProcess, exec } from 'child_process';
 import { LaunchTarget, findLaunchTargets } from './launcher';
@@ -22,7 +23,7 @@ import { setTimeout } from 'timers';
 import { OmnisharpDownloader } from './OmnisharpDownloader';
 import * as ObservableEvents from './loggingEvents';
 import { EventStream } from '../EventStream';
-import { Disposable, CompositeDisposable } from 'rx';
+import { Disposable, CompositeDisposable, Subject } from 'rx';
 
 enum ServerState {
     Starting,
@@ -84,12 +85,17 @@ export class OmniSharpServer {
 
     private _omnisharpManager: OmnisharpManager;
     private eventStream: EventStream;
+    private updateProjectDebouncer: Subject<ObservableEvents.ProjectModified>;
+    private firstUpdateProject: boolean;
 
     constructor(eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation) {
         this.eventStream = eventStream;
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
         let downloader = new OmnisharpDownloader(this.eventStream, packageJSON, platformInfo);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
+        this.updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
+        this.updateProjectDebouncer.debounce(1500).subscribe((event) => { this.updateProjectInfo(); });
+        this.firstUpdateProject = true;
     }
 
     public isRunning(): boolean {
@@ -231,29 +237,29 @@ export class OmniSharpServer {
     // --- start, stop, and connect
 
     private async _start(launchTarget: LaunchTarget): Promise<void> {
-        
+
         let disposables = new CompositeDisposable();
-        disposables.add(this.onServerError(err => 
+        disposables.add(this.onServerError(err =>
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError(err))
         ));
 
-        disposables.add(this.onError((message: protocol.ErrorMessage) => 
+        disposables.add(this.onError((message: protocol.ErrorMessage) =>
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnError(message))
-        )); 
-        
-        disposables.add(this.onMsBuildProjectDiagnostics((message:protocol.MSBuildProjectDiagnostics) => 
-            this.eventStream.post(new ObservableEvents.OmnisharpServerMsBuildProjectDiagnostics(message))
-        )); 
+        ));
 
-        disposables.add(this.onUnresolvedDependencies((message: protocol.UnresolvedDependenciesMessage) => 
+        disposables.add(this.onMsBuildProjectDiagnostics((message: protocol.MSBuildProjectDiagnostics) =>
+            this.eventStream.post(new ObservableEvents.OmnisharpServerMsBuildProjectDiagnostics(message))
+        ));
+
+        disposables.add(this.onUnresolvedDependencies((message: protocol.UnresolvedDependenciesMessage) =>
             this.eventStream.post(new ObservableEvents.OmnisharpServerUnresolvedDependencies(message, this, this.eventStream))
         ));
 
-        disposables.add(this.onStderr((message:string) =>
+        disposables.add(this.onStderr((message: string) =>
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnStdErr(message))
         ));
 
-        disposables.add(this.onMultipleLaunchTargets((targets: LaunchTarget[]) => 
+        disposables.add(this.onMultipleLaunchTargets((targets: LaunchTarget[]) =>
             this.eventStream.post(new ObservableEvents.OmnisharpOnMultipleLaunchTargets(targets))
         ));
 
@@ -270,13 +276,18 @@ export class OmniSharpServer {
         ));
 
         disposables.add(this.onServerStart(() => {
-            this.eventStream.post(new ObservableEvents.OmnisharpServerOnStart(this));
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnStart());
         }));
+
+        //should we do this on start
+        disposables.add(this.onProjectAdded(this.updateTracker));
+        disposables.add(this.onProjectChange(this.updateTracker));
+        disposables.add(this.onProjectRemoved(this.updateTracker));
 
         this._disposables = new CompositeDisposable(Disposable.create(() => {
             disposables.dispose();
         }));
-        
+
         this._setState(ServerState.Starting);
         this._launchTarget = launchTarget;
 
@@ -330,6 +341,23 @@ export class OmniSharpServer {
             this._fireEvent(Events.ServerError, err);
             return this.stop();
         });
+    }
+
+    // we could move this to a project updated observer and pass the server there. But we will need the event stream also there :(
+    private updateTracker = () => {
+        if (this.firstUpdateProject) {
+            this.updateProjectInfo();
+        }
+        else {
+            this.updateProjectDebouncer.onNext(new ObservableEvents.ProjectModified());
+        }
+    }
+
+    private updateProjectInfo = async () => {
+        this.firstUpdateProject = false;
+        let info = await serverUtils.requestWorkspaceInformation(this);
+        //once we get the info, push the event into the event stream
+        this.eventStream.post(new ObservableEvents.WorkspaceInformationUpdated(info));
     }
 
     public stop(): Promise<void> {

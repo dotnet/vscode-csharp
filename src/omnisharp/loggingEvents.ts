@@ -100,12 +100,16 @@ export class OmnisharpOnMultipleLaunchTargets implements BaseEvent {
     constructor(public targets: LaunchTarget[]) { }
 }
 
-export class EventWithMessage implements BaseEvent {
-    constructor(public message: string) { }
+/*export class OmnisharpServerOnStart implements BaseEvent {
+    constructor(public server: OmniSharpServer) { }
+}*/
+
+export class WorkspaceInformationUpdated implements BaseEvent {
+    constructor(public info: protocol.WorkspaceInformationResponse) { }
 }
 
-export class OmnisharpServerOnStart implements BaseEvent {
-    constructor(public server: OmniSharpServer) { }
+export class EventWithMessage implements BaseEvent {
+    constructor(public message: string) { }
 }
 
 export class DebuggerPrerequisiteFailure extends EventWithMessage { }
@@ -120,6 +124,7 @@ export class OmnisharpServerOnStdErr extends EventWithMessage { }
 export class OmnisharpServerMessage extends EventWithMessage { }
 export class OmnisharpServerVerboseMessage extends EventWithMessage { }
 
+export class ProjectModified implements BaseEvent { }
 export class ActivationFailure implements BaseEvent { }
 export class CommandShowOutput implements BaseEvent { }
 export class DebuggerNotInstalledFailure implements BaseEvent { }
@@ -131,3 +136,4 @@ export class OmnisharpOnBeforeServerStart implements BaseEvent { }
 export class OmnisharpOnBeforeServerInstall implements BaseEvent { }
 export class ActiveTextEditorChanged implements BaseEvent { }
 export class OmnisharpServerOnStop implements BaseEvent { }
+export class OmnisharpServerOnStart implements BaseEvent { }
