@@ -41,7 +41,7 @@
     "postinstall": "node ./node_modules/vscode/bin/install",
     "cov:instrument": "rimraf ./coverage && rimraf ./.nyc_output && rimraf ./out && npm run compile && cd out && nyc instrument --require source-map-support/register --cwd ../ . . && cd ..",
     "cov:merge": "cd ./out && istanbul-combine -d ../coverage/integration -r lcovonly ../.nyc_output/integration/*.json && cd ..",
-    "cov:merge-html": "istanbul-combine -d ./coverage -r html ./.nyc_output/integration/*.json",    
+    "cov:merge-html": "istanbul-combine -d ./coverage -r html ./.nyc_output/integration/*.json",
     "cov:report": "npm-run-all cov:report:integration cov:report:unit",
     "cov:report:unit": "codecov -f \"coverage/unit/lcov.info\" -F unit",
     "cov:report:integration": "npm run cov:merge && codecov -f \"coverage/integration/lcov.info\" -F integration"
@@ -72,7 +72,6 @@
     "mkdirp": "^0.5.1",
     "open": "*",
     "request-light": "^0.2.0",
-    "rx": "^4.1.0",
     "rxjs": "^5.5.6",
     "semver": "*",
     "tmp": "0.0.33",
