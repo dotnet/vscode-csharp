@@ -5,9 +5,12 @@
 
 import * as rx from 'rx';
 import { InformationMessageObserver } from '../../../src/observers/InformationMessageObserver';
-import { expect, should } from 'chai';
+import { use as chaiUse, expect, should } from 'chai';
 import { vscode, Uri } from '../../../src/vscodeAdapter';
 import { getFakeVsCode, getNullWorkspaceConfiguration, getUnresolvedDependenices } from './Fakes';
+
+chaiUse(require('chai-as-promised'));
+chaiUse(require('chai-string'));
 
 suite("InformationMessageObserver", () => {
     suiteSetup(() => should()); 

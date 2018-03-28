@@ -8,7 +8,7 @@ import * as protocol from '../../../src/omnisharp/protocol';
 import { DocumentSelector, MessageItem, TextDocument, Uri } from '../../../src/vscodeAdapter';
 import { ITelemetryReporter } from '../../../src/observers/TelemetryObserver';
 import { MSBuildDiagnosticsMessage } from '../../../src/omnisharp/protocol';
-import { OmnisharpServerMsBuildProjectDiagnostics, OmnisharpServerOnError, OmnisharpServerUnresolvedDependencies } from '../../../src/omnisharp/loggingEvents';
+import { OmnisharpServerMsBuildProjectDiagnostics, OmnisharpServerOnError, OmnisharpServerUnresolvedDependencies, WorkspaceInformationUpdated } from '../../../src/omnisharp/loggingEvents';
 
 export const getNullChannel = (): vscode.OutputChannel => {
     let returnChannel: vscode.OutputChannel = {
@@ -33,7 +33,7 @@ export const getNullTelemetryReporter = (): ITelemetryReporter => {
 
 export const getNullWorkspaceConfiguration = (): vscode.WorkspaceConfiguration => {
     let workspace: vscode.WorkspaceConfiguration = {
-        get:<T> (section: string) => {
+        get: <T>(section: string) => {
             return true;
         },
         has: (section: string) => { return true; },
@@ -120,3 +120,18 @@ export function getFakeVsCode(): vscode.vscode {
         }
     };
 }
+
+export function getMSBuildWorkspaceInformation(msBuildSolutionPath: string, msBuildProjects: protocol.MSBuildProject[]): protocol.MsBuildWorkspaceInformation {
+    return {
+        SolutionPath: msBuildSolutionPath,
+        Projects: msBuildProjects
+    };
+}
+
+export function getWorkspaceInformationUpdated(msbuild: protocol.MsBuildWorkspaceInformation): WorkspaceInformationUpdated {
+    let a: protocol.WorkspaceInformationResponse = {
+        MsBuild: msbuild
+    };
+
+    return new WorkspaceInformationUpdated(a);
+} 
