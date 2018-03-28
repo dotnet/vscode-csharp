@@ -51,7 +51,7 @@ suite("OmnisharpLoggerObserver", () => {
                 });
             });
 
-            test(`${event.constructor.name}: Logged message contains the Filename, StartColumn, StartLine and Text for the diagnostics errors`, () => {
+            test(`Logged message contains the Filename, StartColumn, StartLine and Text for the diagnostics errors`, () => {
                 observer.post(event);
                 event.diagnostics.Errors.forEach(element => {
                     expect(logOutput).to.contain(element.FileName);

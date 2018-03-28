@@ -4,10 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from '../../../src/vscodeAdapter';
+import * as protocol from '../../../src/omnisharp/protocol';
 import { DocumentSelector, MessageItem, TextDocument, Uri } from '../../../src/vscodeAdapter';
 import { ITelemetryReporter } from '../../../src/observers/TelemetryObserver';
 import { MSBuildDiagnosticsMessage } from '../../../src/omnisharp/protocol';
-import { OmnisharpServerMsBuildProjectDiagnostics, OmnisharpServerOnError } from '../../../src/omnisharp/loggingEvents';
+import { OmnisharpServerMsBuildProjectDiagnostics, OmnisharpServerOnError, OmnisharpServerUnresolvedDependencies } from '../../../src/omnisharp/loggingEvents';
 
 export const getNullChannel = (): vscode.OutputChannel => {
     let returnChannel: vscode.OutputChannel = {
@@ -28,6 +29,22 @@ export const getNullTelemetryReporter = (): ITelemetryReporter => {
     };
 
     return reporter;
+};
+
+export const getNullWorkspaceConfiguration = (): vscode.WorkspaceConfiguration => {
+    let workspace: vscode.WorkspaceConfiguration = {
+        get:<T> (section: string) => {
+            return true;
+        },
+        has: (section: string) => { return true; },
+        inspect: () => {
+            return {
+                key: "somekey"
+            };
+        },
+        update: () => { return Promise.resolve(); },
+    };
+    return workspace;
 };
 
 export function getOmnisharpMSBuildProjectDiagnosticsEvent(fileName: string, warnings: MSBuildDiagnosticsMessage[], errors: MSBuildDiagnosticsMessage[]): OmnisharpServerMsBuildProjectDiagnostics {
@@ -63,9 +80,16 @@ export function getOmnisharpServerOnErrorEvent(text: string, fileName: string, l
         Line: line,
         Column: column
     });
-} 
+}
 
-export function getFakeVsCode() : vscode.vscode {
+export function getUnresolvedDependenices(fileName: string): OmnisharpServerUnresolvedDependencies {
+    return new OmnisharpServerUnresolvedDependencies({
+        UnresolvedDependencies: [],
+        FileName: fileName
+    });
+}
+
+export function getFakeVsCode(): vscode.vscode {
     return {
         commands: {
             executeCommand: <T>(command: string, ...rest: any[]) => {
@@ -86,7 +110,7 @@ export function getFakeVsCode() : vscode.vscode {
                 throw new Error("Not Implemented");
             }
         },
-        workspace: {            
+        workspace: {
             getConfiguration: (section?: string, resource?: Uri) => {
                 throw new Error("Not Implemented");
             },
