@@ -6,20 +6,20 @@
 import * as chai from 'chai';
 import * as glob from 'glob-promise';
 import * as path from 'path';
-import { invokeCommand } from './testAssets/testAssets';
+import { invokeNode } from './testAssets/testAssets';
 import { PlatformInformation } from '../../src/platform';
 import * as fs from 'async-file';
 
 suite("Offline packaging of VSIX", function () {
     let vsixFiles: string[];
-    this.timeout(2000000);
+    this.timeout(1000000);
    
     suiteSetup(() => {
         chai.should();
         let args: string[] = [];
         args.push(path.join("node_modules", "gulp", "bin", "gulp.js"));
         args.push("package:offline");
-        invokeCommand(args);
+        invokeNode(args);
         vsixFiles = glob.sync(path.join(process.cwd(), '**', '*.vsix'));
     });
 

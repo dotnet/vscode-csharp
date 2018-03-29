@@ -6,7 +6,7 @@
 import * as cp from 'child_process';
 import * as path from 'path';
 
-export function invokeCommand(args: string[]){
+export function invokeNode(args: string[]){
     let proc = cp.spawnSync('node', args);
     if (proc.error) {
         console.error(proc.error.toString());
