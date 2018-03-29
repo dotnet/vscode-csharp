@@ -4,15 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as cp from 'child_process';
+import * as path from 'path';
 
-export function invokeCommand(command: string): Promise<{ stdout: string, stderr: string }> {
-    return new Promise((resolve, reject) => {
-        let child = cp.exec(command,
-            (err, stdout, stderr) => {
-                return err ? reject(err) : resolve({
-                    stdout: stdout,
-                    stderr: stderr
-                });
-            });
-    });
+export function invokeCommand(args: string[]){
+    let proc = cp.spawnSync('node', args);
+    if (proc.error) {
+        console.error(proc.error.toString());
+    }
 }
