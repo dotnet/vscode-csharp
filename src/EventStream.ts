@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { Subject } from "rx";
+import { Subject } from "rxjs/Subject";
 import { BaseEvent } from "./omnisharp/loggingEvents";
 
 export class EventStream {
@@ -13,7 +13,7 @@ export class EventStream {
     }
 
     public post(event: BaseEvent) {
-        this.sink.onNext(event);
+        this.sink.next(event);
     }
 
     public subscribe(eventHandler: (event: BaseEvent) => void) {
