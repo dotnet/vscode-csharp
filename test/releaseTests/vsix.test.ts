@@ -21,10 +21,11 @@ suite("Omnisharp-Vscode VSIX", async () => {
     });
 
     vsixFiles.forEach(element => {
-        const maximumVsixSizeInBytes = 5 * 1024 * 1024;
+        const sizeInMB = 5;
+        const maximumVsixSizeInBytes = sizeInMB * 1024 * 1024;
 
         suite(`Given ${element}`, () => {
-            test(`Then its size is less than 1MB`, async () => {
+            test(`Then its size is less than ${sizeInMB}MB`, async () => {
                 const stats = await fs.stat(element);
                 stats.size.should.be.lessThan(maximumVsixSizeInBytes);
             });
