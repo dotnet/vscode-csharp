@@ -4,13 +4,14 @@
  * ------------------------------------------------------------------------------------------ */
 
 import * as child_process from 'child_process';
-import * as fs from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
 import { PlatformInformation } from '../platform';
 import { getExtensionPath } from '../common';
+
+const fs = require('fs-extra');
 
 export interface AttachItem extends vscode.QuickPickItem {
     id: string;
