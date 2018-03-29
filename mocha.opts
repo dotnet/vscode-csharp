@@ -1,5 +1,3 @@
 --ui tdd
 --require source-map-support/register
 --require ts-node/register
-
-test/unitTests/**/*.test.@(ts|tsx)
