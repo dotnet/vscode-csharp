@@ -12,9 +12,8 @@ import * as fs from 'async-file';
 
 suite("Offline packaging of VSIX", function () {
     let vsixFiles: string[];
-    this.timeout(200000);
-    //const packageJSON = JSON.parse(await fs.readFile('package.json'));
-        
+    this.timeout(2000000);
+   
     suiteSetup(() => {
         chai.should();
         let args: string[] = [];
@@ -37,5 +36,5 @@ suite("Offline packaging of VSIX", function () {
             vsixFiles.findIndex(elem => elem.indexOf(element.platform) != -1).should.not.be.equal(-1);
             vsixFiles.findIndex(elem => elem.indexOf(element.architecture) != -1).should.not.be.equal(-1);
         });
-    })
+    });
 });
