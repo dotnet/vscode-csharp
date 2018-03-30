@@ -3,16 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from '../vscodeAdapter';
+import { should } from 'chai';
 
-export class Status {
-
-    selector: vscode.DocumentSelector;
-    text: string;
-    command: string;
-    color: string;
-
-    constructor(selector: vscode.DocumentSelector) {
-        this.selector = selector;
-    }
-}
+suite('ProjectStatusBarObserver', () => {
+    suiteSetup(() => should());
+    
+    
+});

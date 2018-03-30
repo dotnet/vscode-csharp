@@ -6,46 +6,28 @@
 import { DocumentFilter, DocumentSelector, StatusBarItem, vscode } from '../vscodeAdapter';
 import { basename } from 'path';
 import { OmnisharpServerOnServerError, BaseEvent, OmnisharpOnMultipleLaunchTargets, OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, ActiveTextEditorChanged, OmnisharpServerOnStop, OmnisharpServerOnStart, WorkspaceInformationUpdated } from "../omnisharp/loggingEvents";
-
-let defaultSelector: DocumentSelector = [
-    'csharp', // c#-files OR
-    { pattern: '**/project.json' }, // project.json-files OR
-    { pattern: '**/*.sln' }, // any solution file OR
-    { pattern: '**/*.csproj' }, // an csproj file
-    { pattern: '**/*.csx' }, // C# script
-    { pattern: '**/*.cake' } // Cake script
-];
-
 export class OmnisharpStatusBarObserver {
-
     constructor(private vscode: vscode, private statusBarItem: StatusBarItem) {
     }
-//This should not care about the 
+/* Notes: Since we have removed the listeners and the disposables from the server start and stop event, 
+we will not show up the status bar item :) 
+*/
     public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
-            case OmnisharpServerOnServerError.name:
-                this.SetAndRenderStatusBar('$(flame) Error starting OmniSharp', 'o.showOutput', '');
-                break;
             case OmnisharpOnMultipleLaunchTargets.name:
-                this.SetAndRenderStatusBar('$(flame) Select project', 'o.pickProjectAndStart', 'rgb(90, 218, 90)');
-                break;
-            case OmnisharpOnBeforeServerInstall.name:
-                this.SetAndRenderStatusBar('$(flame) Installing OmniSharp...', 'o.showOutput', '');
-                break;
-            case OmnisharpOnBeforeServerStart.name:
-                this.SetAndRenderStatusBar('$(flame) Starting...', 'o.showOutput', '');
+                SetStatus(this.defaultStatus, '$(flame) Select project', 'o.pickProjectAndStart', 'rgb(90, 218, 90)');
+                this.render();
                 break;
             case ActiveTextEditorChanged.name:
+                this.render();
                 break;
             case OmnisharpServerOnStop.name:
-            this.statusBarItem.text = undefined;
-            this.statusBarItem.command = command;
-            this.statusBarItem.color = color;
-            this.statusBarItem.show();
-
+                this.projectStatus = undefined;
+                this.defaultStatus.text = undefined;
                 break;
             case OmnisharpServerOnStart.name:
-                this.SetAndRenderStatusBar('$(flame) Running', 'o.pickProjectAndStart', '');
+                SetStatus(this.defaultStatus, '$(flame) Running', 'o.pickProjectAndStart', '');
+                this.render();
                 break;
             case WorkspaceInformationUpdated.name:
                 this.handleWorkspaceInformationUpdated(<WorkspaceInformationUpdated>event);
@@ -123,4 +105,3 @@ export class OmnisharpStatusBarObserver {
         this.statusBarItem.show();
     }
 }
-
