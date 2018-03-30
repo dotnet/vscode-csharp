@@ -5,6 +5,7 @@
 
 const fs = require('fs-extra');
 
+import * as parser from 'jsonc-parser';
 import * as path from 'path';
 import * as serverUtils from './omnisharp/utils';
 import * as vscode from 'vscode';
@@ -14,7 +15,6 @@ import { AssetGenerator, addTasksJsonIfNecessary, createAttachConfiguration, cre
 import { OmniSharpServer } from './omnisharp/server';
 import { containsDotNetCoreProjects } from './omnisharp/protocol';
 import { isSubfolderOf } from './common';
-import { parse } from 'jsonc-parser';
 
 export class CSharpConfigurationProvider implements vscode.DebugConfigurationProvider {
     private server: OmniSharpServer;
@@ -33,8 +33,7 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
         const solutionPathOrFolder: string = this.server.getSolutionPathOrFolder();
 
         // Make sure folder, folder.uri, and solutionPathOrFolder are defined.
-        if (!folder || !folder.uri || !solutionPathOrFolder)
-        {
+        if (!folder || !folder.uri || !solutionPathOrFolder) {
             return Promise.resolve(false);
         }
 
@@ -43,8 +42,7 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
         return fs.lstat(solutionPathOrFolder).then(stat => {
             return stat.isFile();
         }).then(isFile => {
-            if (isFile)
-            {
+            if (isFile) {
                 serverFolder = path.dirname(solutionPathOrFolder);
             }
 
@@ -61,28 +59,28 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
 	 */
     provideDebugConfigurations(folder: vscode.WorkspaceFolder | undefined, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration[]> {
         return serverUtils.requestWorkspaceInformation(this.server).then(info => {
-            return this.checkWorkspaceInformationMatchesWorkspaceFolder(folder).then(workspaceMatches => { 
+            return this.checkWorkspaceInformationMatchesWorkspaceFolder(folder).then(workspaceMatches => {
                 const generator = new AssetGenerator(info);
                 if (workspaceMatches && containsDotNetCoreProjects(info)) {
                     const dotVscodeFolder: string = path.join(folder.uri.fsPath, '.vscode');
                     const tasksJsonPath: string = path.join(dotVscodeFolder, 'tasks.json');
-                    
+
                     // Make sure .vscode folder exists, addTasksJsonIfNecessary will fail to create tasks.json if the folder does not exist. 
                     return fs.ensureDir(dotVscodeFolder).then(() => {
                         // Check to see if tasks.json exists.
                         return fs.pathExists(tasksJsonPath);
                     }).then(tasksJsonExists => {
                         // Enable addTasksJson if it does not exist.
-                        return addTasksJsonIfNecessary(generator, {addTasksJson: !tasksJsonExists});
+                        return addTasksJsonIfNecessary(generator, { addTasksJson: !tasksJsonExists });
                     }).then(() => {
                         const isWebProject = generator.hasWebServerDependency();
                         const launchJson: string = generator.createLaunchJson(isWebProject);
 
                         // jsonc-parser's parse function parses a JSON string with comments into a JSON object. However, this removes the comments. 
-                        return parse(launchJson);
+                        return parser.parse(launchJson);
                     });
                 }
-                
+
                 // Error to be caught in the .catch() below to write default C# configurations
                 throw new Error("Does not contain .NET Core projects.");
             });
@@ -90,13 +88,13 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
             // Provider will always create an launch.json file. Providing default C# configurations.
             // jsonc-parser's parse to convert to JSON object without comments. 
             return [
-                parse(createLaunchConfiguration(
-                    "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll", 
-                    '${workspaceFolder}')), 
-                parse(createWebLaunchConfiguration(
-                    "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll", 
+                parser.parse(createLaunchConfiguration(
+                    "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll",
                     '${workspaceFolder}')),
-                parse(createAttachConfiguration())
+                parser.parse(createWebLaunchConfiguration(
+                    "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll",
+                    '${workspaceFolder}')),
+                parser.parse(createAttachConfiguration())
             ];
         });
     }
@@ -107,5 +105,5 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
     resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, config: vscode.DebugConfiguration, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration> {
         // vsdbg does the error checking
         return config;
-    }   
+    }
 }

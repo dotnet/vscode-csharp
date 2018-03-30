@@ -7,7 +7,6 @@ import * as vscode from '../vscodeAdapter';
 
 import { BaseEvent } from '../omnisharp/loggingEvents';
 import { Logger } from "../logger";
-import { Observer } from 'rxjs/Observer';
 
 export abstract class BaseLoggerObserver {
     public logger: Logger;

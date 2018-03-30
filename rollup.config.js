@@ -58,11 +58,11 @@ export default {
       main: true
     }),
     typescript({
-        // tsconfigOverride: {
-        //     compilerOptions: {
-        //         module: "ES2015"
-        //     }
-        // }
+        tsconfigOverride: {
+            compilerOptions: {
+                module: "ES2015"
+            }
+        }
     }),
     uglify()
   ]
