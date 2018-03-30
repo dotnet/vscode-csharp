@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 
-import * as jsoncParser from 'jsonc-parser';
+const parser = require('jsonc-parser');
 
 import {
     CancellationToken,
@@ -36,9 +36,9 @@ export interface ISuggestionsCollector {
 
 export interface IJSONContribution {
     getDocumentSelector(): DocumentSelector;
-    getInfoContribution(fileName: string, location: jsoncParser.Location): Thenable<MarkedString[]>;
-    collectPropertySuggestions(fileName: string, location: jsoncParser.Location, currentWord: string, addValue: boolean, isLast: boolean, result: ISuggestionsCollector): Thenable<any>;
-    collectValueSuggestions(fileName: string, location: jsoncParser.Location, result: ISuggestionsCollector): Thenable<any>;
+    getInfoContribution(fileName: string, location: any): Thenable<MarkedString[]>;
+    collectPropertySuggestions(fileName: string, location: any, currentWord: string, addValue: boolean, isLast: boolean, result: ISuggestionsCollector): Thenable<any>;
+    collectValueSuggestions(fileName: string, location: any, result: ISuggestionsCollector): Thenable<any>;
     collectDefaultSuggestions(fileName: string, result: ISuggestionsCollector): Thenable<any>;
     resolveSuggestion?(item: CompletionItem): Thenable<CompletionItem>;
 }
@@ -74,7 +74,7 @@ export class JSONHoverProvider implements HoverProvider {
 
     public provideHover(document: TextDocument, position: Position, token: CancellationToken): Thenable<Hover> {
         let offset = document.offsetAt(position);
-        let location = jsoncParser.getLocation(document.getText(), offset);
+        let location = parser.getLocation(document.getText(), offset);
         let node = location.previousNode;
         if (node && node.offset <= offset && offset <= node.offset + node.length) {
             let promise = this.jsonContribution.getInfoContribution(document.fileName, location);
@@ -115,7 +115,7 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
         let isIncomplete = false;
 
         let offset = document.offsetAt(position);
-        let location = jsoncParser.getLocation(document.getText(), offset);
+        let location = parser.getLocation(document.getText(), offset);
 
         let node = location.previousNode;
         if (node && node.offset <= offset && offset <= node.offset + node.length && (node.type === 'property' || node.type === 'string' || node.type === 'number' || node.type === 'boolean' || node.type === 'null')) {
@@ -145,10 +145,10 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
 
         if (location.isAtPropertyKey) {
             let addValue = !location.previousNode || !location.previousNode.columnOffset && (offset == (location.previousNode.offset + location.previousNode.length));
-            let scanner = jsoncParser.createScanner(document.getText(), true);
+            let scanner = parser.createScanner(document.getText(), true);
             scanner.setPosition(offset);
             scanner.scan();
-            let isLast = scanner.getToken() === jsoncParser.SyntaxKind.CloseBraceToken || scanner.getToken() === jsoncParser.SyntaxKind.EOF;
+            let isLast = scanner.getToken() === parser.SyntaxKind.CloseBraceToken || scanner.getToken() === parser.SyntaxKind.EOF;
             collectPromise = this.jsonContribution.collectPropertySuggestions(document.fileName, location, currentWord, addValue, isLast, collector);
         } else {
             if (location.path.length === 0) {

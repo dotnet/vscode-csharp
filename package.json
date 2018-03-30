@@ -113,6 +113,7 @@
     "rollup-plugin-commonjs": "^9.1.0",
     "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-typescript2": "^0.12.0",
     "rollup-plugin-uglify": "^3.0.0",
     "rxjs": "^5.5.6",

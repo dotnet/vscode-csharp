@@ -5,7 +5,7 @@
 
 const fs = require('fs-extra');
 
-import * as parser from 'jsonc-parser';
+const parser = require('jsonc-parser');
 import * as path from 'path';
 import * as serverUtils from './omnisharp/utils';
 import * as vscode from 'vscode';
