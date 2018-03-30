@@ -41,7 +41,7 @@
     "test:runInVsCode": "node ./test/runVsCodeTestsWithAbsolutePaths.js",
     "test:release": "mocha --opts ./mocha.opts test/releaseTests/**/*.test.ts",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "cov:instrument": "rimraf ./coverage && rimraf ./.nyc_output && rimraf ./out && npm run compile && cd out && nyc instrument --require source-map-support/register --cwd ../ . . && cd ..",
+    "cov:instrument": "rimraf ./coverage && rimraf ./.nyc_output && cd out && nyc instrument --require source-map-support/register --cwd ../ . . && cd ..",
     "cov:merge": "cd ./out && istanbul-combine -d ../coverage/integration -r lcovonly ../.nyc_output/integration/*.json && cd ..",
     "cov:merge-html": "istanbul-combine -d ./coverage -r html ./.nyc_output/integration/*.json",
     "cov:report": "npm-run-all cov:report:integration cov:report:unit",
