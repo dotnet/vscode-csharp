@@ -5,16 +5,19 @@
 
 import * as fs from 'fs';
 import * as https from 'https';
-import * as mkdirp from 'mkdirp';
 import * as path from 'path';
 import * as tmp from 'tmp';
-import { parse as parseUrl } from 'url';
-import * as yauzl from 'yauzl';
 import * as util from './common';
+import * as yauzl from 'yauzl';
+
+import { DownloadFailure, DownloadProgress, DownloadStart, DownloadSuccess, InstallationProgress } from './omnisharp/loggingEvents';
+
+import { EventStream } from './EventStream';
 import { PlatformInformation } from './platform';
 import { getProxyAgent } from './proxy';
-import { DownloadSuccess, DownloadStart, DownloadFailure, DownloadProgress, InstallationProgress } from './omnisharp/loggingEvents';
-import { EventStream } from './EventStream';
+import { parse as parseUrl } from 'url';
+
+const mkdirp = require('mkdirp');
 
 export interface Package {
     description: string;

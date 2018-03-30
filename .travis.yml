@@ -26,7 +26,7 @@ addons:
 
 install:
 - npm install
-- npm run compile
+- npm run compile:release
 - npm install -g vsce
 - vsce package
 

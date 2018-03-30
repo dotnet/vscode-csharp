@@ -1,6 +1,14 @@
 .vscode/**
+.editorconfig/**
+.travis/**
+.logs/**
+
+.omnisharp/**
+.rpt2_cache/**
+.debugger/**
 typings/**
 out/test/**
+out/src/**
 test/**
 src/**
 **/*.map

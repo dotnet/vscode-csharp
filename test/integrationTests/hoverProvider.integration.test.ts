@@ -4,14 +4,15 @@
 *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'async-file';
-import * as vscode from 'vscode';
 import * as path from 'path';
+import * as vscode from 'vscode';
 
-import poll from './poll';
-import { should, expect } from 'chai';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import { expect, should } from 'chai';
+
 import { OmniSharpServer } from '../../src/omnisharp/server';
 import { omnisharp } from '../../src/omnisharp/extension';
+import poll from './poll';
+import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -34,7 +35,6 @@ suite(`Hover Provider: ${testAssetWorkspace.description}`, function () {
         let dir = path.dirname(testAssetWorkspace.projects[0].projectDirectoryPath);
         let loc = path.join(dir, fileName);
         let fileUri = vscode.Uri.file(loc);
-        await omnisharp.waitForEmptyEventQueue();
 
         await vscode.commands.executeCommand("vscode.open", fileUri);
         let c = await vscode.commands.executeCommand("vscode.executeHoverProvider", fileUri, new vscode.Position(10, 29));

@@ -5,9 +5,12 @@
 
 import * as utils from './utils';
 import * as vscode from 'vscode';
+
 import { AddAssetResult, addAssetsIfNecessary } from '../assets';
+import { OmnisharpStart, ProjectJsonDeprecatedWarning } from './loggingEvents';
 import reportDiagnostics, { Advisor } from '../features/diagnosticsProvider';
 import { safeLength, sum } from '../common';
+
 import { CSharpConfigurationProvider } from '../configurationProvider';
 import CodeActionProvider from '../features/codeActionProvider';
 import CodeLensProvider from '../features/codeLensProvider';
@@ -16,11 +19,13 @@ import DefinitionMetadataDocumentProvider from '../features/definitionMetadataDo
 import DefinitionProvider from '../features/definitionProvider';
 import DocumentHighlightProvider from '../features/documentHighlightProvider';
 import DocumentSymbolProvider from '../features/documentSymbolProvider';
+import { EventStream } from '../EventStream';
 import FormatProvider from '../features/formattingEditProvider';
 import HoverProvider from '../features/hoverProvider';
 import ImplementationProvider from '../features/implementationProvider';
 import { OmniSharpServer } from './server';
 import { Options } from './options';
+import { PlatformInformation } from '../platform';
 import ReferenceProvider from '../features/referenceProvider';
 import RenameProvider from '../features/renameProvider';
 import SignatureHelpProvider from '../features/signatureHelpProvider';
@@ -29,13 +34,10 @@ import WorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
 import forwardChanges from '../features/changeForwarding';
 import registerCommands from '../features/commands';
 import reportStatus from '../features/status';
-import { PlatformInformation } from '../platform';
-import { ProjectJsonDeprecatedWarning, OmnisharpStart } from './loggingEvents';
-import { EventStream } from '../EventStream';
 
 export let omnisharp: OmniSharpServer;
 
-export function activate(context: vscode.ExtensionContext, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation) {
+export function activateExtension(context: vscode.ExtensionContext, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
         scheme: 'file' // only files from disk
@@ -161,5 +163,5 @@ export function activate(context: vscode.ExtensionContext, eventStream: EventStr
 
     context.subscriptions.push(...disposables);
 
-    return new Promise<string>(resolve => server.onServerStart(e => resolve(e)));
+    return new Promise<OmniSharpServer>(resolve => server.onServerStart(e => resolve(server)));
 }
