@@ -39,6 +39,7 @@
     "test:runSuiteInVsCode": "cross-env CODE_EXTENSIONS_PATH=./ CODE_TESTS_PATH=./out/test/integrationTests CODE_TESTS_WORKSPACE=./test/integrationTests/testAssets/$OSVC_SUITE npm run test:runInVsCode",
     "test:runInVsCode": "node ./test/runVsCodeTestsWithAbsolutePaths.js",
     "test:release": "mocha --opts ./mocha.opts test/releaseTests/**/*.test.ts",
+    "test:artifacts": "mocha --opts ./mocha.opts test/artifactTests/**/*.test.ts",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "cov:instrument": "rimraf ./coverage && rimraf ./.nyc_output && rimraf ./out && npm run compile && cd out && nyc instrument --require source-map-support/register --cwd ../ . . && cd ..",
     "cov:merge": "cd ./out && istanbul-combine -d ../coverage/integration -r lcovonly ../.nyc_output/integration/*.json && cd ..",
