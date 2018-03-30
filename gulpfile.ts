@@ -5,21 +5,24 @@
 
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const del = require('del');
-const gulp = require('gulp');
-const mocha = require('gulp-mocha');
-const tslint = require('gulp-tslint');
-const vsce = require('vsce');
-const debugUtil = require('./out/src/coreclr-debug/util');
-const packages = require('./out/src/packages');
-const logger = require('./out/src/logger');
-const platform = require('./out/src/platform');
-const util = require('./out/src/common');
-const child_process = require('child_process');
-const optionsSchemaGenerator = require('./out/src/tools/GenerateOptionsSchema');
-const packageDependencyUpdater = require('./out/src/tools/UpdatePackageDependencies');
+import * as child_process from 'child_process';
+import * as debugUtil from './src/coreclr-debug/util';
+import * as del from 'del';
+import * as fs from 'fs';
+import * as gulp from 'gulp';
+import * as logger from './src/logger';
+import * as mocha from 'gulp-mocha';
+import * as optionsSchemaGenerator from './src/tools/GenerateOptionsSchema';
+import * as packageDependencyUpdater from './src/tools/UpdatePackageDependencies';
+import * as packages from './src/packages';
+import * as path from 'path';
+import * as platform from './src/platform';
+import * as util from './src/common';
+import * as vsce from 'vsce';
+
+import { CsharpLoggerObserver } from './src/observers/CsharpLoggerObserver';
+import { EventStream } from './src/EventStream';
+import tslint from 'gulp-tslint';
 
 const Logger = logger.Logger;
 const PackageManager = packages.PackageManager;
@@ -51,15 +54,18 @@ gulp.task('updatePackageDependencies', () => {
 // Install Tasks
 function install(platformInfo, packageJSON) {
     const packageManager = new PackageManager(platformInfo, packageJSON);
+    const eventStream = new EventStream();
     const logger = new Logger(message => process.stdout.write(message));
-    const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'), logger);
+    let stdoutObserver = new CsharpLoggerObserver(logger);
+    eventStream.subscribe(stdoutObserver.post);
+    const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'));
 
-    return packageManager.DownloadPackages(logger)
+    return packageManager.DownloadPackages(eventStream, undefined, undefined, undefined)
         .then(() => {
-            return packageManager.InstallPackages(logger);
+            return packageManager.InstallPackages(eventStream, undefined);
         })
         .then(() => {
-            return util.touchInstallFile(util.InstallFileType.Lock)
+            return util.touchInstallFile(util.InstallFileType.Lock);
         })
         .then(() => {
             return debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());
@@ -76,10 +82,10 @@ gulp.task('install', ['clean'], () => {
 });
 
 /// Packaging (VSIX) Tasks
-function doPackageSync(packageName) {
+function doPackageSync(packageName?) {
 
-    var vsceArgs = [];
-    vsceArgs.push(path.join(__dirname, 'node_modules', 'vsce', 'out', 'vsce'))
+    let vsceArgs = [];
+    vsceArgs.push(path.join(__dirname, 'node_modules', 'vsce', 'out', 'vsce'));
     vsceArgs.push('package'); // package command
 
     if (packageName !== undefined) {
@@ -87,7 +93,7 @@ function doPackageSync(packageName) {
         vsceArgs.push(packageName);
     }
 
-    var proc = child_process.spawnSync('node', vsceArgs);
+    let proc = child_process.spawnSync('node', vsceArgs);
     if (proc.error) {
         console.error(proc.error.toString());
     }
@@ -106,7 +112,7 @@ function doOfflinePackage(platformInfo, packageName, packageJSON) {
 }
 
 function getPackageJSON() {
-    return JSON.parse(fs.readFileSync('package.json'));
+    return JSON.parse(fs.readFileSync('package.json').toString());
 }
 
 gulp.task('package:clean', () => {
@@ -120,17 +126,17 @@ gulp.task('package:online', ['clean'], () => {
 gulp.task('package:offline', ['clean'], () => {
     util.setExtensionPath(__dirname);
 
-    var packageJSON = getPackageJSON();
-    var name = packageJSON.name;
-    var version = packageJSON.version;
-    var packageName = name + '.' + version;
+    const packageJSON = getPackageJSON();
+    const name = packageJSON.name;
+    const version = packageJSON.version;
+    const packageName = name + '.' + version;
 
-    var packages = [];
+    const packages = [];
     packages.push(new PlatformInformation('win32', 'x86_64'));
     packages.push(new PlatformInformation('darwin', 'x86_64'));
     packages.push(new PlatformInformation('linux', 'x86_64'));
 
-    var promise = Promise.resolve();
+    let promise = Promise.resolve();
 
     packages.forEach(platformInfo => {
         promise = promise
@@ -151,9 +157,9 @@ const allTypeScript = [
 
 const lintReporter = (output, file, options) => {
     //emits: src/helloWorld.c:5:3: warning: implicit declaration of function ‘prinft’
-    var relativeBase = file.base.substring(file.cwd.length + 1).replace('\\', '/');
+    const relativeBase = file.base.substring(file.cwd.length + 1).replace('\\', '/');
     output.forEach(e => {
-        var message = relativeBase + e.name + ':' + (e.startPosition.line + 1) + ':' + (e.startPosition.character + 1) + ': ' + e.failure;
+        const message = relativeBase + e.name + ':' + (e.startPosition.line + 1) + ':' + (e.startPosition.character + 1) + ': ' + e.failure;
         console.log('[tslint] ' + message);
     });
 };
@@ -164,8 +170,8 @@ gulp.task('tslint', () => {
             program: require('tslint').Linter.createProgram("./tsconfig.json"),
             configuration: "./tslint.json"
         }))
-        .pipe(tslint.report(lintReporter, {
+        .pipe(tslint.report({
             summarizeFailureOutput: false,
             emitError: false
-        }))
+        }));
 });

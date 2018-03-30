@@ -57,7 +57,13 @@ export default {
       jsnext: true,
       main: true
     }),
-    typescript(/*{ plugin options }*/),
+    typescript({
+        // tsconfigOverride: {
+        //     compilerOptions: {
+        //         module: "ES2015"
+        //     }
+        // }
+    }),
     uglify()
   ]
 };
