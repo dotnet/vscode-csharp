@@ -28,7 +28,7 @@
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
     "compile": "tsc -p ./ && gulp tslint",
-    "compile:release": "rollup -c && gulp tslint",
+    "compile:release": "npm run compile && rollup -c && gulp tslint",
     "watch": "tsc -watch -p ./",
     "tdd": "mocha --opts ./mocha.opts --watch --watch-extensions ts test/unitTests/**/*.test.ts*",
     "test": "npm-run-all test:feature test:unit test:integration",
