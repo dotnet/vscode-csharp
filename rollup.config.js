@@ -7,7 +7,7 @@ import uglify from 'rollup-plugin-uglify';
 export default {
   input: 'src/main.ts',
   output: {
-    file: 'out/src/main.js',
+    file: 'out/main.js',
     format: 'cjs',
     sourcemap: 'inline'
   },
@@ -64,6 +64,6 @@ export default {
             }
         }
     }),
-    uglify()
+    //uglify()
   ]
 };

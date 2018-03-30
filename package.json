@@ -24,7 +24,7 @@
   "keywords": [
     "multi-root ready"
   ],
-  "main": "./out/src/main",
+  "main": "./out/main",
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
     "compile": "tsc -p ./ && gulp tslint",
