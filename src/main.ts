@@ -7,20 +7,21 @@ import * as OmniSharp from './omnisharp/extension';
 import * as coreclrdebug from './coreclr-debug/activate';
 import * as util from './common';
 import * as vscode from 'vscode';
+
+import { ActivationFailure } from './omnisharp/loggingEvents';
 import { CSharpExtDownloader } from './CSharpExtDownloader';
-import { PlatformInformation } from './platform';
-import TelemetryReporter from 'vscode-extension-telemetry';
-import { addJSONProviders } from './features/json/jsonContributions';
 import { CsharpChannelObserver } from './observers/CsharpChannelObserver';
 import { CsharpLoggerObserver } from './observers/CsharpLoggerObserver';
-import { OmnisharpLoggerObserver } from './observers/OmnisharpLoggerObserver';
 import { DotNetChannelObserver } from './observers/DotnetChannelObserver';
-import { TelemetryObserver } from './observers/TelemetryObserver';
-import { OmnisharpChannelObserver } from './observers/OmnisharpChannelObserver';
 import { DotnetLoggerObserver } from './observers/DotnetLoggerObserver';
-import { OmnisharpDebugModeLoggerObserver } from './observers/OmnisharpDebugModeLoggerObserver';
-import { ActivationFailure } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
+import { OmnisharpChannelObserver } from './observers/OmnisharpChannelObserver';
+import { OmnisharpDebugModeLoggerObserver } from './observers/OmnisharpDebugModeLoggerObserver';
+import { OmnisharpLoggerObserver } from './observers/OmnisharpLoggerObserver';
+import { PlatformInformation } from './platform';
+import { TelemetryObserver } from './observers/TelemetryObserver';
+import TelemetryReporter from 'vscode-extension-telemetry';
+import { addJSONProviders } from './features/json/jsonContributions';
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 
@@ -84,8 +85,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
         coreClrDebugPromise = coreclrdebug.activate(extension, context, platformInfo, eventStream);
     }
 
+    
     return {
-        initializationFinished: Promise.all([omniSharpPromise, coreClrDebugPromise])
+        initializationFinished: Promise.all([omniSharpPromise.then(o => o.waitForEmptyEventQueue()), coreClrDebugPromise])
             .then(promiseResult => {
                 // This promise resolver simply swallows the result of Promise.all. When we decide we want to expose this level of detail
                 // to other extensions then we will design that return type and implement it here.

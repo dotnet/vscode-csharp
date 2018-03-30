@@ -3,13 +3,14 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information. 
 *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
 import * as path from 'path';
+import * as vscode from 'vscode';
 
-import poll from './poll';
-import { should, expect } from 'chai';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import { expect, should } from 'chai';
+
 import { omnisharp } from '../../src/omnisharp/extension';
+import poll from './poll';
+import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -31,7 +32,7 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
         let dir = path.dirname(testAssetWorkspace.projects[0].projectDirectoryPath);
         let loc = path.join(dir, fileName);
         fileUri = vscode.Uri.file(loc);
-        await omnisharp.waitForEmptyEventQueue();
+        
         await vscode.commands.executeCommand("vscode.open", fileUri);
     });
 
