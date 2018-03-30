@@ -37,7 +37,7 @@ import reportStatus from '../features/status';
 
 export let omnisharp: OmniSharpServer;
 
-export function activate(context: vscode.ExtensionContext, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation) {
+export function activateExtension(context: vscode.ExtensionContext, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
         scheme: 'file' // only files from disk

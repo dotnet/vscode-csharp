@@ -14,7 +14,7 @@ import { EventStream } from '../EventStream';
 
 let _debugUtil: CoreClrDebugUtil = null;
 
-export async function activate(thisExtension: vscode.Extension<any>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, eventStream: EventStream) {
+export async function activateDbg(thisExtension: vscode.Extension<any>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, eventStream: EventStream) {
     _debugUtil = new CoreClrDebugUtil(context.extensionPath);
 
     if (!CoreClrDebugUtil.existsSync(_debugUtil.debugAdapterDir())) {
