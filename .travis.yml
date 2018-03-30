@@ -34,6 +34,7 @@ script:
   - npm run cov:instrument
   - npm test --silent
   - npm run cov:report
+  - npm run test:release
 
 after_failure:
   - ./.travis/printLogs.sh
