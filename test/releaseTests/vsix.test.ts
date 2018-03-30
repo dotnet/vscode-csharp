@@ -13,7 +13,6 @@ let vsixFiles = glob.sync(path.join(process.cwd(), '**', '*.vsix'));
 suite("Omnisharp-Vscode VSIX", async () => {
     suiteSetup(async () => {
         chai.should();
-
     });
 
     test("At least one vsix file should be produced", () => {
@@ -21,7 +20,7 @@ suite("Omnisharp-Vscode VSIX", async () => {
     });
 
     vsixFiles.forEach(element => {
-        const sizeInMB = 5;
+        const sizeInMB = 1;
         const maximumVsixSizeInBytes = sizeInMB * 1024 * 1024;
 
         suite(`Given ${element}`, () => {
