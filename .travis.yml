@@ -37,6 +37,7 @@ script:
   - npm run test:artifacts
   - if [ $TRAVIS_PULL_REQUEST_BRANCH == "" ]; then
       npm run test:release
+    fi
 
 after_failure:
   - ./.travis/printLogs.sh
