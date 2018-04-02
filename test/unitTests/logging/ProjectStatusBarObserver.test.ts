@@ -26,7 +26,7 @@ suite('ProjectStatusBarObserver', () => {
     };
 
     let observer = new ProjectStatusBarObserver(vscode, statusBarItem);
-    
+
     test('OnMultipleLaunchTargets: If there is no project status yet, status bar is shown with the select project option and the comand to pick a project', () => {
         let event = new OmnisharpOnMultipleLaunchTargets([]);
         observer.post(event);
@@ -36,7 +36,7 @@ suite('ProjectStatusBarObserver', () => {
     });
 
     // What to do of this test case here ??????
-    
+
     /*suite('WorkspaceInformationUpdated', () => {
         test('Project status is shown', () => {
             let event = getWorkspaceInformationUpdated(null);
@@ -46,13 +46,11 @@ suite('ProjectStatusBarObserver', () => {
             expect(statusBarItem.command).to.equal('o.pickProjectAndStart');
         });*/
 
-        test('Project status is shown', () => {
-            let event = getWorkspaceInformationUpdated(getMSBuildWorkspaceInformation("somePath", []));
-            observer.post(event);
-            expect(showCalled).to.be.true;
-            expect(statusBarItem.text).to.be.equal(event.info.MsBuild.SolutionPath);
-            expect(statusBarItem.command).to.equal('o.pickProjectAndStart');
-        });
+    test('Project status is shown', () => {
+        let event = getWorkspaceInformationUpdated(getMSBuildWorkspaceInformation("somePath", []));
+        observer.post(event);
+        expect(showCalled).to.be.true;
+        expect(statusBarItem.text).to.be.equal(event.info.MsBuild.SolutionPath);
+        expect(statusBarItem.command).to.equal('o.pickProjectAndStart');
     });
-    
 });
