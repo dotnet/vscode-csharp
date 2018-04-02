@@ -83,7 +83,7 @@ gulp.task('install', ['clean'], () => {
 });
 
 /// Packaging (VSIX) Tasks
-function doPackageSync(packageName) {
+function doPackageSync(packageName, outputFolder) {
 
     var vsceArgs = [];
     vsceArgs.push(path.join(__dirname, 'node_modules', 'vsce', 'out', 'vsce'))
@@ -91,7 +91,13 @@ function doPackageSync(packageName) {
 
     if (packageName !== undefined) {
         vsceArgs.push('-o');
-        vsceArgs.push(packageName);
+        if (outputFolder) {
+            //if we have specified an output folder then put the files in that output folder
+            vsceArgs.push(path.join(outputFolder, packageName));
+        }
+        else {
+            vsceArgs.push(packageName);
+        }
     }
 
     var proc = child_process.spawnSync('node', vsceArgs);
@@ -100,7 +106,7 @@ function doPackageSync(packageName) {
     }
 }
 
-function doOfflinePackage(platformInfo, packageName, packageJSON) {
+function doOfflinePackage(platformInfo, packageName, packageJSON, outputFolder) {
     if (process.platform === 'win32') {
         throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
     }
@@ -108,7 +114,7 @@ function doOfflinePackage(platformInfo, packageName, packageJSON) {
     cleanSync(false);
     return install(platformInfo, packageJSON)
         .then(() => {
-            doPackageSync(packageName + '-' + platformInfo.platform + '-' + platformInfo.architecture + '.vsix');
+            doPackageSync(packageName + '-' + platformInfo.platform + '-' + platformInfo.architecture + '.vsix', outputFolder);
         });
 }
 
@@ -124,14 +130,28 @@ gulp.task('package:online', ['clean'], () => {
     doPackageSync();
 });
 
-gulp.task('package:offline', ['clean'], () => {
+gulp.task('package:offline', () => {
     util.setExtensionPath(__dirname);
+
+    var argv = require('minimist')(process.argv.slice(2), { boolean: ['retainVsix'] });
+    if (argv['retainVsix']) {
+        //if user doesnot want to clean up the existing vsix packages
+        cleanSync(false);
+    }
+    else {
+        cleanSync(true);
+    }
+    
+    var outputFolder;
+    if (argv['o']) {
+        outputFolder = argv['o'];
+    }
 
     var packageJSON = getPackageJSON();
     var name = packageJSON.name;
     var version = packageJSON.version;
     var packageName = name + '.' + version;
-
+    
     var packages = [];
     packages.push(new PlatformInformation('win32', 'x86_64'));
     packages.push(new PlatformInformation('darwin', 'x86_64'));
@@ -142,7 +162,7 @@ gulp.task('package:offline', ['clean'], () => {
     packages.forEach(platformInfo => {
         promise = promise
             .then(() => {
-                return doOfflinePackage(platformInfo, packageName, packageJSON);
+                return doOfflinePackage(platformInfo, packageName, packageJSON, outputFolder);
             });
     });
 
