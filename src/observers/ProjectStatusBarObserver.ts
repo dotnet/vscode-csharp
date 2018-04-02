@@ -6,17 +6,16 @@
 import { DocumentFilter, DocumentSelector, StatusBarItem, vscode } from '../vscodeAdapter';
 import { basename } from 'path';
 import { OmnisharpServerOnServerError, BaseEvent, OmnisharpOnMultipleLaunchTargets, OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, ActiveTextEditorChanged, OmnisharpServerOnStop, OmnisharpServerOnStart, WorkspaceInformationUpdated } from "../omnisharp/loggingEvents";
+import { BaseStatusBarItemObserver } from './BaseStatusBarItemObserver';
 
-export class ProjectStatusBarObserver {
-    constructor(private vscode: vscode, private statusBarItem: StatusBarItem) {
-    }
-/* Notes: Since we have removed the listeners and the disposables from the server start and stop event, 
-we will not show up the status bar item :) 
-*/
+export class ProjectStatusBarObserver  extends BaseStatusBarItemObserver{
+    /* Notes: Since we have removed the listeners and the disposables from the server start and stop event, 
+    we will not show up the status bar item :) 
+    */
     public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case OmnisharpOnMultipleLaunchTargets.name:
-                this.SetAndRenderStatusBar('Select project', 'o.pickProjectAndStart', 'rgb(90, 218, 90)');
+                this.SetAndShowStatusBar('Select project', 'o.pickProjectAndStart', 'rgb(90, 218, 90)');
                 break;
             case ActiveTextEditorChanged.name:
                 //this.render();
@@ -57,6 +56,11 @@ we will not show up the status bar item :)
 
         let info = event.info;
         // show sln-file if applicable
+
+        // if we remove the matching then this whole concept of making the filenames array doesnot make any sense\
+        // What to do ?????
+        // And is it possible that we have the inof but no msbuild so that label is undefined
+        // should we include the set thing inside the if ????
         if (info.MsBuild && info.MsBuild.SolutionPath) {
             label = basename(info.MsBuild.SolutionPath); //workspace.getRelativePath(info.MsBuild.SolutionPath);
             fileNames.push({ pattern: info.MsBuild.SolutionPath });
@@ -66,13 +70,6 @@ we will not show up the status bar item :)
             }
         }
 
-        this.SetAndRenderStatusBar(label, 'o.pickProjectAndStart');
-    }
-
-    private SetAndRenderStatusBar(text: string, command: string, color?: string) {
-        this.statusBarItem.text = text;
-        this.statusBarItem.command = command;
-        this.statusBarItem.color = color;
-        this.statusBarItem.show();
+        this.SetAndShowStatusBar(label, 'o.pickProjectAndStart');
     }
 }
