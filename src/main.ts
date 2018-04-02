@@ -26,6 +26,7 @@ import { StatusBarItemAdapter } from './statusBarItemAdapter';
 import { TelemetryObserver } from './observers/TelemetryObserver';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { addJSONProviders } from './features/json/jsonContributions';
+import { ProjectStatusBarObserver } from './observers/ProjectStatusBarObserver';
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 
@@ -63,9 +64,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     let informationMessageObserver = new InformationMessageObserver(vscode);
     eventStream.subscribe(informationMessageObserver.post);
 
-    let omnisharpStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, Number.MIN_VALUE));
+    let omnisharpStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, Number.MIN_VALUE));
     let omnisharpStatusBarObserver = new OmnisharpStatusBarObserver(vscode, omnisharpStatusBar);
     eventStream.subscribe(omnisharpStatusBarObserver.post);
+
+    let projectStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left));
+    let projectStatusBarObserver = new ProjectStatusBarObserver(vscode, projectStatusBar);
+    eventStream.subscribe(projectStatusBarObserver.post);
 
     const debugMode = false;
     if (debugMode) {

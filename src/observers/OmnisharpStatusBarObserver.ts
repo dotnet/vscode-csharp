@@ -7,27 +7,18 @@ import { DocumentFilter, DocumentSelector, StatusBarItem, vscode } from '../vsco
 import { basename } from 'path';
 import { OmnisharpServerOnServerError, BaseEvent, OmnisharpOnMultipleLaunchTargets, OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, ActiveTextEditorChanged, OmnisharpServerOnStop, OmnisharpServerOnStart, WorkspaceInformationUpdated } from "../omnisharp/loggingEvents";
 
-let defaultSelector: DocumentSelector = [
-    'csharp', // c#-files OR
-    { pattern: '**/project.json' }, // project.json-files OR
-    { pattern: '**/*.sln' }, // any solution file OR
-    { pattern: '**/*.csproj' }, // an csproj file
-    { pattern: '**/*.csx' }, // C# script
-    { pattern: '**/*.cake' } // Cake script
-];
-
 export class OmnisharpStatusBarObserver {
 
     constructor(private vscode: vscode, private statusBarItem: StatusBarItem) {
     }
-//This should not care about the 
+    //This should not care about the 
     public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case OmnisharpServerOnServerError.name:
                 this.SetAndRenderStatusBar('$(flame) Error starting OmniSharp', 'o.showOutput', '');
                 break;
             case OmnisharpOnMultipleLaunchTargets.name:
-                this.SetAndRenderStatusBar('$(flame) Select project', 'o.pickProjectAndStart', 'rgb(90, 218, 90)');
+                this.SetAndRenderStatusBar('$(flame) Select project', 'o.showOutput', 'rgb(90, 218, 90)');
                 break;
             case OmnisharpOnBeforeServerInstall.name:
                 this.SetAndRenderStatusBar('$(flame) Installing OmniSharp...', 'o.showOutput', '');
@@ -38,82 +29,15 @@ export class OmnisharpStatusBarObserver {
             case ActiveTextEditorChanged.name:
                 break;
             case OmnisharpServerOnStop.name:
-            this.statusBarItem.text = undefined;
-            this.statusBarItem.command = command;
-            this.statusBarItem.color = color;
-            this.statusBarItem.show();
-
+                this.statusBarItem.text = undefined;
+                this.statusBarItem.command = undefined;
+                this.statusBarItem.color = undefined;
+                this.statusBarItem.hide();
                 break;
             case OmnisharpServerOnStart.name:
-                this.SetAndRenderStatusBar('$(flame) Running', 'o.pickProjectAndStart', '');
+                this.SetAndRenderStatusBar('$(flame) Running', 'o.showOutput', '');
                 break;
-            case WorkspaceInformationUpdated.name:
-                this.handleWorkspaceInformationUpdated(<WorkspaceInformationUpdated>event);
         }
-    }
-
-    private handleWorkspaceInformationUpdated(event: WorkspaceInformationUpdated) {
-        interface Project {
-            Path: string;
-            SourceFiles: string[];
-        }
-
-        let fileNames: DocumentFilter[] = [];
-        let label: string;
-
-        function addProjectFileNames(project: Project) {
-            fileNames.push({ pattern: project.Path });
-
-            if (project.SourceFiles) {
-                for (let sourceFile of project.SourceFiles) {
-                    fileNames.push({ pattern: sourceFile });
-                }
-            }
-        }
-
-        let info = event.info;
-        // show sln-file if applicable
-        if (info.MsBuild && info.MsBuild.SolutionPath) {
-            label = basename(info.MsBuild.SolutionPath); //workspace.getRelativePath(info.MsBuild.SolutionPath);
-            fileNames.push({ pattern: info.MsBuild.SolutionPath });
-
-            for (let project of info.MsBuild.Projects) {
-                addProjectFileNames(project);
-            }
-        }
-
-        // set project info
-        this.projectStatus = new Status(fileNames);
-        SetStatus(this.projectStatus, '$(flame) ' + label, 'o.pickProjectAndStart');
-        SetStatus(this.defaultStatus, '$(flame) Switch projects', 'o.pickProjectAndStart');
-        this.render();
-    }
-
-    private render = () => {
-        let activeTextEditor = this.vscode.window.activeTextEditor;
-        if (!activeTextEditor) {
-            this.statusBarItem.hide();
-            return;
-        }
-
-        let document = activeTextEditor.document;
-        let status: Status;
-
-        if (this.projectStatus && this.vscode.languages.match(this.projectStatus.selector, document)) {
-            status = this.projectStatus;
-        } else if (this.defaultStatus.text && this.vscode.languages.match(this.defaultStatus.selector, document)) {
-            status = this.defaultStatus;
-        }
-
-        if (status) {
-            this.statusBarItem.text = status.text;
-            this.statusBarItem.command = status.command;
-            this.statusBarItem.color = status.color;
-            this.statusBarItem.show();
-            return;
-        }
-
-        this.statusBarItem.hide();
     }
 
     private SetAndRenderStatusBar(text: string, command: string, color?: string) {
