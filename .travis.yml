@@ -35,7 +35,7 @@ script:
   - npm test --silent
   - npm run cov:report
   - npm run test:artifacts
-  - test $TRAVIS_TAG != "master" && npm run test:release
+  - test $TRAVIS_TAG != ""master"" && test $TRAVIS_PULL_REQUEST_BRANCH = """" && npm run test:release
 
 after_failure:
   - ./.travis/printLogs.sh
