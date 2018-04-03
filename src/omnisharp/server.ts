@@ -361,8 +361,6 @@ export class OmniSharpServer {
 
     public stop(): Promise<void> {
 
-        this._disposables.dispose();
-
         let cleanupPromise: Promise<void>;
 
         if (this._telemetryIntervalId !== undefined) {
@@ -407,6 +405,7 @@ export class OmniSharpServer {
             this._serverProcess = null;
             this._setState(ServerState.Stopped);
             this._fireEvent(Events.ServerStop, this);
+            this._disposables.dispose();
         });
     }
 
