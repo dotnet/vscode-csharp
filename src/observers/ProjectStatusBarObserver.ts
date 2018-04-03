@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { DocumentFilter, DocumentSelector, StatusBarItem, vscode } from '../vscodeAdapter';
+import { DocumentFilter } from '../vscodeAdapter';
 import { basename } from 'path';
-import { OmnisharpServerOnServerError, BaseEvent, OmnisharpOnMultipleLaunchTargets, OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, ActiveTextEditorChanged, OmnisharpServerOnStop, OmnisharpServerOnStart, WorkspaceInformationUpdated } from "../omnisharp/loggingEvents";
+import { BaseEvent, OmnisharpOnMultipleLaunchTargets, ActiveTextEditorChanged, WorkspaceInformationUpdated } from "../omnisharp/loggingEvents";
 import { BaseStatusBarItemObserver } from './BaseStatusBarItemObserver';
 
 export class ProjectStatusBarObserver  extends BaseStatusBarItemObserver{

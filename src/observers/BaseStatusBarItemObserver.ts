@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { vscode, StatusBarItem } from '../vscodeAdapter';
-import { ViewColumn } from "../vscodeAdapter";
 import { BaseEvent } from '../omnisharp/loggingEvents';
 
 export abstract class BaseStatusBarItemObserver {
