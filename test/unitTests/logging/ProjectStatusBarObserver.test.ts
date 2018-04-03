@@ -7,31 +7,40 @@ import { expect, should } from 'chai';
 import { getFakeVsCode, getWorkspaceInformationUpdated, getMSBuildWorkspaceInformation } from './Fakes';
 import { vscode, StatusBarItem } from '../../../src/vscodeAdapter';
 import { ProjectStatusBarObserver } from '../../../src/observers/ProjectStatusBarObserver';
-import { OmnisharpOnMultipleLaunchTargets } from '../../../src/omnisharp/loggingEvents';
+import { OmnisharpOnMultipleLaunchTargets, OmnisharpServerOnStop } from '../../../src/omnisharp/loggingEvents';
 
 suite('ProjectStatusBarObserver', () => {
     suiteSetup(() => should());
+    
     let output = '';
     let showCalled: boolean;
+    let hideCalled: boolean;
+    let statusBarItem = <StatusBarItem>{
+        show: () => { showCalled = true; },
+        hide: () => { hideCalled = true; }
+    };
+    let observer = new ProjectStatusBarObserver(statusBarItem);
+
     setup(() => {
         output = '';
         showCalled = false;
+        hideCalled = false;
     });
 
-    let vscode: vscode = getFakeVsCode();
-    vscode.window.activeTextEditor = { document: undefined };
+    test('OnServerStop: Status bar is hidden and the attributes are set to undefined', () => {
+        let event = new OmnisharpServerOnStop();
+        observer.post(event);
+        expect(hideCalled).to.be.true;
+        expect(statusBarItem.text).to.be.undefined;
+        expect(statusBarItem.command).to.be.undefined;
+        expect(statusBarItem.color).to.be.undefined;
+    });
 
-    let statusBarItem = <StatusBarItem>{
-        show: () => { showCalled = true; }
-    };
-
-    let observer = new ProjectStatusBarObserver(vscode, statusBarItem);
-
-    test('OnMultipleLaunchTargets: If there is no project status yet, status bar is shown with the select project option and the comand to pick a project', () => {
+    test('OnMultipleLaunchTargets: Status bar is shown with the select project option and the comand to pick a project', () => {
         let event = new OmnisharpOnMultipleLaunchTargets([]);
         observer.post(event);
         expect(showCalled).to.be.true;
-        expect(statusBarItem.text).to.be.equal('Select project');
+        expect(statusBarItem.text).to.contain('Select project');
         expect(statusBarItem.command).to.equal('o.pickProjectAndStart');
     });
 
@@ -50,7 +59,7 @@ suite('ProjectStatusBarObserver', () => {
         let event = getWorkspaceInformationUpdated(getMSBuildWorkspaceInformation("somePath", []));
         observer.post(event);
         expect(showCalled).to.be.true;
-        expect(statusBarItem.text).to.be.equal(event.info.MsBuild.SolutionPath);
+        expect(statusBarItem.text).to.contain(event.info.MsBuild.SolutionPath);
         expect(statusBarItem.command).to.equal('o.pickProjectAndStart');
     });
 });

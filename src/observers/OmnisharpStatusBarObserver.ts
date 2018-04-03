@@ -8,7 +8,6 @@ import { OmnisharpServerOnServerError, BaseEvent, OmnisharpOnBeforeServerInstall
 import { BaseStatusBarItemObserver } from './BaseStatusBarItemObserver';
 
 export class OmnisharpStatusBarObserver extends BaseStatusBarItemObserver {
-    //This should not care about the 
     public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case OmnisharpServerOnServerError.name:
@@ -24,7 +23,7 @@ export class OmnisharpStatusBarObserver extends BaseStatusBarItemObserver {
                 this.ResetAndHideStatusBar();
                 break;
             case OmnisharpServerOnStart.name:
-                this.SetAndShowStatusBar('$(flame)', 'o.showOutput', '');
+                this.SetAndShowStatusBar('$(flame) Running', 'o.showOutput', '');
                 break;
         }
     }

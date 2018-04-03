@@ -13,10 +13,10 @@ export class ProjectStatusBarObserver extends BaseStatusBarItemObserver {
     public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case OmnisharpOnMultipleLaunchTargets.name:
-                this.SetAndShowStatusBar('Select project', 'o.pickProjectAndStart', 'rgb(90, 218, 90)');
+                this.SetAndShowStatusBar('$(file-submodule) Select project', 'o.pickProjectAndStart', 'rgb(90, 218, 90)');
                 break;
             case OmnisharpServerOnStop.name:
-                this.ResetAndHideStatusBar();    
+                this.ResetAndHideStatusBar();
                 break;
             case WorkspaceInformationUpdated.name:
                 this.handleWorkspaceInformationUpdated(<WorkspaceInformationUpdated>event);
@@ -26,7 +26,6 @@ export class ProjectStatusBarObserver extends BaseStatusBarItemObserver {
     private handleWorkspaceInformationUpdated(event: WorkspaceInformationUpdated) {
 
         let label: string;
-
         let info = event.info;
 
         //Search for a way to check for the cake and the script project
@@ -40,6 +39,6 @@ export class ProjectStatusBarObserver extends BaseStatusBarItemObserver {
             label = basename(info.ScriptCs.Path);
         }
 
-        this.SetAndShowStatusBar(label, 'o.pickProjectAndStart');
+        this.SetAndShowStatusBar('$(file-directory) ' + label, 'o.pickProjectAndStart');
     }
 }
