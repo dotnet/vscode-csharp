@@ -18,3 +18,4 @@ test/**/.vscode
 coverage/
 
 \.DS_Store
+vsix/

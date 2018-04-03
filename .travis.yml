@@ -32,7 +32,7 @@ install:
 
 script:
   - npm run cov:instrument
-  - npm test --silent
+  - CODE_EXTENSIONS_PATH=./ npm test --silent
   - npm run cov:report
   - npm run test:artifacts
   - 'if [[ "$TRAVIS_TAG" != "master" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then npm run test:release; fi'

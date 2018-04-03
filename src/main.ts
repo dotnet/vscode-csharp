@@ -107,7 +107,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     }
 
     return {
-        initializationFinished: Promise.all([omniSharpPromise, coreClrDebugPromise])
+        initializationFinished: Promise.all([omniSharpPromise.then(o => o.waitForEmptyEventQueue()), coreClrDebugPromise])
             .then(promiseResult => {
                 // This promise resolver simply swallows the result of Promise.all. When we decide we want to expose this level of detail
                 // to other extensions then we will design that return type and implement it here.
