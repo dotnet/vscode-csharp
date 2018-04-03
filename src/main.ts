@@ -65,11 +65,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     eventStream.subscribe(informationMessageObserver.post);
 
     let omnisharpStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, Number.MIN_VALUE));
-    let omnisharpStatusBarObserver = new OmnisharpStatusBarObserver(vscode, omnisharpStatusBar);
+    let omnisharpStatusBarObserver = new OmnisharpStatusBarObserver(omnisharpStatusBar);
     eventStream.subscribe(omnisharpStatusBarObserver.post);
 
     let projectStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left));
-    let projectStatusBarObserver = new ProjectStatusBarObserver(vscode, projectStatusBar);
+    let projectStatusBarObserver = new ProjectStatusBarObserver(projectStatusBar);
     eventStream.subscribe(projectStatusBarObserver.post);
 
     const debugMode = false;

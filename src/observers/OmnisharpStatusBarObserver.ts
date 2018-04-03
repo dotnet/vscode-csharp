@@ -20,9 +20,6 @@ export class OmnisharpStatusBarObserver extends BaseStatusBarItemObserver {
             case OmnisharpOnBeforeServerStart.name:
                 this.SetAndShowStatusBar('$(flame) Starting...', 'o.showOutput', '');
                 break;
-            // Do we need active text editor here ????
-            case ActiveTextEditorChanged.name:
-                break;
             case OmnisharpServerOnStop.name:
                 this.ResetAndHideStatusBar();
                 break;

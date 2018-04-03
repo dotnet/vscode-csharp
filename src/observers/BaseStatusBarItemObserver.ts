@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { vscode, StatusBarItem } from '../vscodeAdapter';
+import { StatusBarItem } from '../vscodeAdapter';
 import { BaseEvent } from '../omnisharp/loggingEvents';
 
 export abstract class BaseStatusBarItemObserver {
 
-    constructor(private vscode: vscode, private statusBarItem: StatusBarItem) {
+    constructor(private statusBarItem: StatusBarItem) {
     }
 
     public SetAndShowStatusBar(text: string, command: string, color?: string) {
