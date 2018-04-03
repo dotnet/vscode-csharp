@@ -34,6 +34,7 @@ export class ProjectStatusBarObserver  extends BaseStatusBarItemObserver{
                 this.handleWorkspaceInformationUpdated(<WorkspaceInformationUpdated>event);
         }
     }
+    //care about stop
 
     private handleWorkspaceInformationUpdated(event: WorkspaceInformationUpdated) {
         interface Project {
