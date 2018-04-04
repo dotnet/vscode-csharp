@@ -34,7 +34,8 @@ script:
   - npm run cov:instrument
   - npm test --silent
   - npm run cov:report
-  - npm run test:release
+  - npm run test:artifacts
+  - 'if [[ "$TRAVIS_TAG" != "master" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then npm run test:release; fi'
 
 after_failure:
   - ./.travis/printLogs.sh

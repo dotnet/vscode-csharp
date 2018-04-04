@@ -9,8 +9,13 @@ import { BaseEvent } from '../omnisharp/loggingEvents';
 
 export abstract class BaseLoggerObserver {
     public logger: Logger;
-    constructor(channel: vscode.OutputChannel) {
-        this.logger = new Logger((message) => channel.append(message));
+    constructor(channel: vscode.OutputChannel | Logger) {
+        if (channel instanceof Logger) {
+            this.logger = channel as Logger;
+        }
+        else {
+            this.logger = new Logger((message) => channel.append(message));
+        }    
     }
     
     abstract post: (event: BaseEvent) => void;
