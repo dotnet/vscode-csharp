@@ -23,18 +23,14 @@ export class ProjectStatusBarObserver extends BaseStatusBarItemObserver {
     }
 
     private handleWorkspaceInformationUpdated(event: WorkspaceInformationUpdated) {
-
         let label: string;
         let info = event.info;
-
-        //Search for a way to check for the cake and the script project
         if (info.MsBuild && info.MsBuild.SolutionPath) {
             label = basename(info.MsBuild.SolutionPath); //workspace.getRelativePath(info.MsBuild.SolutionPath);
+            this.SetAndShowStatusBar('$(file-directory) ' + label, 'o.pickProjectAndStart');
         }
-        /*else if (info.Script && info.ScriptCs.Path) {
-            label = basename(info.ScriptCs.Path);
-        }*/
-
-        this.SetAndShowStatusBar('$(file-directory) ' + label, 'o.pickProjectAndStart');
+        else {
+            this.ResetAndHideStatusBar();
+        }
     }
 }

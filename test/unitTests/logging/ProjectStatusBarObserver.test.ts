@@ -11,7 +11,7 @@ import { OmnisharpOnMultipleLaunchTargets, OmnisharpServerOnStop } from '../../.
 
 suite('ProjectStatusBarObserver', () => {
     suiteSetup(() => should());
-    
+
     let output = '';
     let showCalled: boolean;
     let hideCalled: boolean;
@@ -44,22 +44,21 @@ suite('ProjectStatusBarObserver', () => {
         expect(statusBarItem.command).to.equal('o.pickProjectAndStart');
     });
 
-    // What to do of this test case here ??????
-
-    /*suite('WorkspaceInformationUpdated', () => {
-        test('Project status is shown', () => {
+    suite('WorkspaceInformationUpdated', () => {
+        test('Project status is hidden if there is no MSBuild Object', () => {
             let event = getWorkspaceInformationUpdated(null);
             observer.post(event);
-            expect(showCalled).to.be.true;
-            expect(statusBarItem.text).to.be.equal('$(flame) ');
-            expect(statusBarItem.command).to.equal('o.pickProjectAndStart');
-        });*/
+            expect(hideCalled).to.be.true;
+            expect(statusBarItem.text).to.be.undefined;
+            expect(statusBarItem.command).to.be.undefined;
+        });
 
-    test('Project status is shown', () => {
-        let event = getWorkspaceInformationUpdated(getMSBuildWorkspaceInformation("somePath", []));
-        observer.post(event);
-        expect(showCalled).to.be.true;
-        expect(statusBarItem.text).to.contain(event.info.MsBuild.SolutionPath);
-        expect(statusBarItem.command).to.equal('o.pickProjectAndStart');
+        test('Project status is shown if there is an MSBuild object', () => {
+            let event = getWorkspaceInformationUpdated(getMSBuildWorkspaceInformation("somePath", []));
+            observer.post(event);
+            expect(showCalled).to.be.true;
+            expect(statusBarItem.text).to.contain(event.info.MsBuild.SolutionPath);
+            expect(statusBarItem.command).to.equal('o.pickProjectAndStart');
+        });
     });
 });
