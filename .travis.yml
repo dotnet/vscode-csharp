@@ -31,8 +31,9 @@ install:
 - vsce package
 
 script:
+  - npm run unpackage:vsix
   - npm run cov:instrument
-  - CODE_EXTENSIONS_PATH=./ npm test --silent
+  - npm test --silent
   - npm run cov:report
   - npm run test:artifacts
   - 'if [[ "$TRAVIS_TAG" != "master" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then npm run test:release; fi'
