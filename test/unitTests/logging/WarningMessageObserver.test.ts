@@ -14,7 +14,7 @@ import { Observable } from 'rx';
 chaiUse(require('chai-as-promised'));
 chaiUse(require('chai-string'));
 
-suite('OmnisharpServerStatusObserver', () => {
+suite('WarningMessageObserver', () => {
     suiteSetup(() => should());
 
     let doClickOk: () => void;

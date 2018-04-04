@@ -13,7 +13,7 @@ chaiUse(require('chai-as-promised'));
 chaiUse(require('chai-string'));
 
 suite("InformationMessageObserver", () => {
-    suiteSetup(() => should()); 
+    suiteSetup(() => should());
 
     let doClickOk: () => void;
     let doClickCancel: () => void;
@@ -25,7 +25,7 @@ suite("InformationMessageObserver", () => {
     let infoMessage;
     let relativePath;
     let invokedCommand;
-    let observer: InformationMessageObserver =  new InformationMessageObserver(vscode);
+    let observer: InformationMessageObserver = new InformationMessageObserver(vscode);
 
     vscode.window.showInformationMessage = (message: string, ...items: string[]) => {
         infoMessage = message;
@@ -46,11 +46,10 @@ suite("InformationMessageObserver", () => {
         return undefined;
     };
 
-    vscode.workspace.asRelativePath = (pathOrUri?: string | Uri, includeWorspaceFolder? : boolean) => {
+    vscode.workspace.asRelativePath = (pathOrUri?: string | Uri, includeWorspaceFolder?: boolean) => {
         relativePath = pathOrUri;
         return relativePath;
     };
-
 
     setup(() => {
         infoMessage = undefined;
@@ -61,67 +60,61 @@ suite("InformationMessageObserver", () => {
         });
     });
 
-    test('If suppress dotnet configuration is set to true, the information message is not shown', () => {
+    suite('OmnisharpServerUnresolvedDependencies', () => {
         let event = getUnresolvedDependenices("someFile");
-        vscode.workspace.getConfiguration = (section?: string, resource?: Uri) => {
-            return {
-                ...getNullWorkspaceConfiguration(),
-                get: <T> (section: string) => {
-                    return true;// suppress the restore information
-            }};
-        };
-        observer.post(event);
-        expect(infoMessage).to.be.undefined;
-    });
 
-    test('If suppress dotnet configuration is set to false, the information message is shown', async () => {
-        let event = getUnresolvedDependenices("someFile");
-        vscode.workspace.getConfiguration = (section?: string, resource?: Uri) => {
-            return {
-                ...getNullWorkspaceConfiguration(),
-                get: <T> (section: string) => {
-                    return false; // do not suppress the restore info
-            }};
-        };
+        suite('Suppress Dotnet Restore Notification is true', () => {
+            setup(() => {
+                vscode.workspace.getConfiguration = (section?: string, resource?: Uri) => {
+                    return {
+                        ...getNullWorkspaceConfiguration(),
+                        get: <T>(section: string) => {
+                            return true;// suppress the restore information
+                        }
+                    };
+                };
+            });
 
-        observer.post(event);
-        expect(relativePath).to.not.be.empty;
-        expect(infoMessage).to.not.be.empty;
-        doClickOk();
-        await commandDone;
-        expect(invokedCommand).to.be.equal('dotnet.restore');
-    });
+            test('The information message is not shown', () => {    
+                observer.post(event);
+                expect(infoMessage).to.be.undefined;
+            });
+        });
+        
+        suite('Suppress Dotnet Restore Notification is false', () => {
+            setup(() => {
+                vscode.workspace.getConfiguration = (section?: string, resource?: Uri) => {
+                    return {
+                        ...getNullWorkspaceConfiguration(),
+                        get: <T>(section: string) => {
+                            return false; // do not suppress the restore info
+                        }
+                    };
+                };
+            });
 
-    test('Given an information message if the user clicks Restore, the command is executed', async () => {
-        let event = getUnresolvedDependenices("someFile");
-        vscode.workspace.getConfiguration = (section?: string, resource?: Uri) => {
-            return {
-                ...getNullWorkspaceConfiguration(),
-                get: <T> (section: string) => {
-                    return false; // do not suppress the restore info
-            }};
-        };
-
-        observer.post(event);
-        doClickOk();
-        await commandDone;
-        expect(invokedCommand).to.be.equal('dotnet.restore');
-    });
-
-    
-    test('Given an information message if the user clicks cancel, the command is not executed', async () => {
-        let event = getUnresolvedDependenices("someFile");
-        vscode.workspace.getConfiguration = (section?: string, resource?: Uri) => {
-            return {
-                ...getNullWorkspaceConfiguration(),
-                get: <T> (section: string) => {
-                    return false; // do not suppress the restore info
-            }};
-        };
-
-        observer.post(event);
-        doClickCancel();
-        await expect(rx.Observable.fromPromise(commandDone).timeout(1).toPromise()).to.be.rejected;
-        expect(invokedCommand).to.be.undefined;
+            test('The information message is shown', async () => {
+                observer.post(event);
+                expect(relativePath).to.not.be.empty;
+                expect(infoMessage).to.not.be.empty;
+                doClickOk();
+                await commandDone;
+                expect(invokedCommand).to.be.equal('dotnet.restore');
+            });
+        
+            test('Given an information message if the user clicks Restore, the command is executed', async () => {
+                observer.post(event);
+                doClickOk();
+                await commandDone;
+                expect(invokedCommand).to.be.equal('dotnet.restore');
+            });
+        
+            test('Given an information message if the user clicks cancel, the command is not executed', async () => {
+                observer.post(event);
+                doClickCancel();
+                await expect(rx.Observable.fromPromise(commandDone).timeout(1).toPromise()).to.be.rejected;
+                expect(invokedCommand).to.be.undefined;
+            });
+        });   
     });
 });
