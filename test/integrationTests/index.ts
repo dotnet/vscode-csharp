@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from "fs";
+import * as path from "path";
 
 import { SubscribeToAllLoggers } from "../../src/logger";
 import coverageWritingTestRunner from "../coverageWritingTestRunner";
@@ -32,12 +33,14 @@ testRunner.configure({
     useColors: true // colored output from test results
 });
 
-if (process.env.OSVC_SUITE) {
-    if (!fs.existsSync("./.logs")) {
-        fs.mkdirSync("./.logs");
+if (process.env.CODE_EXTENSIONS_PATH && process.env.OSVC_SUITE) {
+    let logDirPath = path.join(process.env.CODE_EXTENSIONS_PATH, "./.logs");
+    
+    if (!fs.existsSync(logDirPath)) {
+        fs.mkdirSync(logDirPath);
     }
 
-    let logFilePath = `./.logs/${process.env.OSVC_SUITE}.log`;
+    let logFilePath =  path.join(logDirPath, `${process.env.OSVC_SUITE}.log`);
 
     SubscribeToAllLoggers(message => fs.appendFileSync(logFilePath, message));
 }
