@@ -31,12 +31,9 @@ export class ProjectStatusBarObserver extends BaseStatusBarItemObserver {
         if (info.MsBuild && info.MsBuild.SolutionPath) {
             label = basename(info.MsBuild.SolutionPath); //workspace.getRelativePath(info.MsBuild.SolutionPath);
         }
-        else if (info.Cake && info.Cake.Path) {
-            label = basename(info.Cake.Path);
-        }
-        else if (info.ScriptCs && info.ScriptCs.Path) {
+        /*else if (info.Script && info.ScriptCs.Path) {
             label = basename(info.ScriptCs.Path);
-        }
+        }*/
 
         this.SetAndShowStatusBar('$(file-directory) ' + label, 'o.pickProjectAndStart');
     }
