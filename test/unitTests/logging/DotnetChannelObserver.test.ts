@@ -10,34 +10,24 @@ import { CommandDotNetRestoreStart, BaseEvent } from '../../../src/omnisharp/log
 
 suite("DotnetChannelObserver", () => {
     suiteSetup(() => should());
+    let hasShown: boolean;
+    let hasCleared: boolean;
 
-    [
-        new CommandDotNetRestoreStart()
-    ].forEach((event: BaseEvent) => {
-        test(`Clears the channel for ${event.constructor.name}`, () => {
-            let hasCleared = false;
-            let observer = new DotNetChannelObserver({
-                ...getNullChannel(),
-                clear: () => { hasCleared = true; }
-            });
-
-            observer.post(event);
-            expect(hasCleared).to.be.true;
-        });
+    let observer = new DotNetChannelObserver({
+        ...getNullChannel(),
+        clear: () => { hasCleared = true; },
+        show: () => { hasShown = true; }
     });
 
-    [
-        new CommandDotNetRestoreStart()
-    ].forEach((event: BaseEvent) => {
-        test(`Shows the channel for ${event.constructor.name}`, () => {
-            let hasShown = false;
-            let observer = new DotNetChannelObserver({
-                ...getNullChannel(),
-                show: () => { hasShown = true; }
-            });
+    setup(() => {
+        hasShown = false;
+        hasCleared = false;
+    });
 
-            observer.post(event);
-            expect(hasShown).to.be.true;
-        });
+    test(`CommandDotNetRestoreStart : Clears and shows the channel`, () => {
+        let event = new CommandDotNetRestoreStart();
+        observer.post(event);
+        expect(hasCleared).to.be.true;
+        expect(hasShown).to.be.true;
     });
 });
