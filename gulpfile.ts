@@ -204,5 +204,5 @@ gulp.task('unpackage:vsix', () => {
     const version = packageJSON.version;  
     const packageName = `${name}-${version}.vsix`;  
 
-    fs.createReadStream(packageName).pipe(unzip.Extract({ path: 'output/path' })); 
+    fs.createReadStream(packageName).pipe(unzip.Extract({ path: 'vsix' })); 
 });  
