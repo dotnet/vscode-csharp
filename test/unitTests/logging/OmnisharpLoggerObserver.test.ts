@@ -93,12 +93,6 @@ suite("OmnisharpLoggerObserver", () => {
         });
     });
 
-    test(`OmnisharpServerOnError: Doesnot throw error if FileName is null`, () => {
-        let event = new OmnisharpServerOnError({ Text: "someText", FileName: null, Line: 1, Column: 2 });
-        let fn = function () { observer.post(event); };
-        expect(fn).to.not.throw(Error);
-    });
-
     test('OmnisharpFailure: Failure message is logged', () => {
         let event = new OmnisharpFailure("failureMessage", new Error("errorMessage"));
         observer.post(event);
@@ -120,13 +114,13 @@ suite("OmnisharpLoggerObserver", () => {
                 expect(logOutput).to.contain(event.message);
             });
         });
-    
+
         test('Throws error on unknown log level', () => {
             let event = new OmnisharpEventPacketReceived("random log level", "foo", "someMessage");
             let fn = function () { observer.post(event); };
             expect(fn).to.throw(Error);
         });
-    
+
         test(`Information messages with name OmniSharp.Middleware.LoggingMiddleware and follow pattern /^\/[\/\w]+: 200 \d+ms/ are not logged`, () => {
             let event = new OmnisharpEventPacketReceived("INFORMATION", "OmniSharp.Middleware.LoggingMiddleware", "/codecheck: 200 339ms");
             observer.post(event);
@@ -139,13 +133,13 @@ suite("OmnisharpLoggerObserver", () => {
             new OmnisharpLaunch(true, "someCommand", 4),
             new OmnisharpLaunch(false, "someCommand", 4)
         ].forEach((event: OmnisharpLaunch) => {
-            
+
             test(`Command and Pid are displayed`, () => {
                 observer.post(event);
                 expect(logOutput).to.contain(event.command);
                 expect(logOutput).to.contain(event.pid);
             });
-            
+
             test(`Message is displayed depending on usingMono value`, () => {
                 observer.post(event);
                 if (event.usingMono) {
@@ -153,6 +147,32 @@ suite("OmnisharpLoggerObserver", () => {
                 }
                 else {
                     expect(logOutput).to.contain("OmniSharp server started");
+                }
+            });
+        });
+    });
+
+    suite('OmnisharpServerOnError', () => {
+        test(`Doesnot throw error if FileName is null`, () => {
+            let event = new OmnisharpServerOnError({ Text: "someText", FileName: null, Line: 1, Column: 2 });
+            let fn = function () { observer.post(event); };
+            expect(fn).to.not.throw(Error);
+        });
+    
+        [
+            new OmnisharpServerOnError({ Text: "someText", FileName: "someFile", Line: 1, Column: 2 }),
+        ].forEach((event: OmnisharpServerOnError) => {
+            test(`Contains the error message text`, () => {
+                observer.post(event);
+                expect(logOutput).to.contain(event.errorMessage.Text);
+            });
+    
+            test(`Contains the error message FileName, Line and column if FileName is not null`, () => {
+                observer.post(event);
+                if (event.errorMessage.FileName) {
+                    expect(logOutput).to.contain(event.errorMessage.FileName);
+                    expect(logOutput).to.contain(event.errorMessage.Line);
+                    expect(logOutput).to.contain(event.errorMessage.Column);
                 }
             });
         });
