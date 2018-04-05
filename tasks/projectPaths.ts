@@ -24,10 +24,11 @@ export const nycPath = path.join(nodeModulesPath, 'nyc', 'bin', 'nyc.js');
 
 export const packageJsonPath = path.join(rootPath, "package.json");
 
+export const packedVsixOutputRoot = commandLineOptions.vsixPackagingOutputFolder || rootPath;
 export const unpackedVsixPath = path.join(rootPath, "vsix");
 export const unpackedExtensionPath = path.join(unpackedVsixPath, "extension");
 
-export const codeExtensionPath = commandLineOptions.codeExtensionPath || unpackedExtensionPath;
+export const codeExtensionPath = commandLineOptions.codeExtensionPath || rootPath;
 
 export const testRootPath = path.join(rootPath, "out", "test");
 export const testAssetsRootPath = path.join(rootPath, "test", "integrationTests", "testAssets");
