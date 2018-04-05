@@ -7,6 +7,8 @@ import { getNullChannel } from './Fakes';
 import { OmnisharpServerVerboseMessage, EventWithMessage, OmnisharpRequestMessage, OmnisharpServerEnqueueRequest, OmnisharpServerDequeueRequest, OmnisharpServerProcessRequestStart, OmnisharpEventPacketReceived, OmnisharpServerProcessRequestComplete } from '../../../src/omnisharp/loggingEvents';
 import { OmnisharpDebugModeLoggerObserver } from '../../../src/observers/OmnisharpDebugModeLoggerObserver';
 
+use(require("chai-string"));
+
 suite("OmnisharpDebugModeLoggerObserver", () => {
     suiteSetup(() => should());
     let logOutput = "";
