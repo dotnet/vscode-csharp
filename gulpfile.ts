@@ -15,15 +15,17 @@ import * as path from 'path';
 import * as unzip from 'unzip2';
 import * as util from './src/common';
 
+import { codeExtensionPath, offlineVscodeignorePath, vscodeignorePath } from './tasks/projectPaths';
+
 import { CsharpLoggerObserver } from './src/observers/CsharpLoggerObserver';
 import { EventStream } from './src/EventStream';
 import { Logger } from './src/logger';
 import { PackageManager } from './src/packages';
 import { PlatformInformation } from './src/platform';
+import { commandLineOptions } from './tasks/commandLineArguments';
 import { getPackageJSON } from './tasks/packageJson';
 import spawnNode from './tasks/spawnNode';
 import tslint from 'gulp-tslint';
-import { vscodeignorePath, offlineVscodeignorePath } from './tasks/projectPaths';
 
 require('./tasks/testTasks');
 require('./tasks/onlinePackagingTasks');
@@ -77,20 +79,14 @@ gulp.task('vsix:offline:package', () => {
 });
 
 function doPackageOffline() {
-    util.setExtensionPath(__dirname);
-
-    let argv = require('minimist')(process.argv.slice(2), { boolean: ['retainVsix'] });
-    if (argv['retainVsix']) {
+    util.setExtensionPath(codeExtensionPath);
+    
+    if (commandLineOptions.retainVsix) {
         //if user doesnot want to clean up the existing vsix packages
         cleanSync(false);
     }
     else {
         cleanSync(true);
-    }
-
-    let outputFolder;
-    if (argv['o']) {
-        outputFolder = argv['o'];
     }
 
     const packageJSON = getPackageJSON();
@@ -108,7 +104,7 @@ function doPackageOffline() {
 
     packages.forEach(platformInfo => {
         promise = promise
-            .then(() => doOfflinePackage(platformInfo, packageName, packageJSON, outputFolder));
+            .then(() => doOfflinePackage(platformInfo, packageName, packageJSON, commandLineOptions.outputFolder));
     });
 
     return promise;

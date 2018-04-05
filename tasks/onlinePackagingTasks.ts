@@ -12,19 +12,21 @@ import * as gulp from 'gulp';
 import * as path from 'path';
 import * as unzip from 'unzip2';
 import * as util from '../src/common';
-import spawnNode from './spawnNode';
-import { getPackageJSON } from './packageJson';
-import { unpackedVsixPath, rootPath, vscePath, vscodeignorePath, onlineVscodeignorePath, offlineVscodeignorePath } from './projectPaths';
-import { PlatformInformation } from '../src/platform';
-import { PackageManager } from '../src/packages';
-import { EventStream } from '../src/EventStream';
+
+import { offlineVscodeignorePath, onlineVscodeignorePath, rootPath, unpackedVsixPath, vscePath, vscodeignorePath } from './projectPaths';
+
 import { CsharpLoggerObserver } from '../src/observers/CsharpLoggerObserver';
+import { EventStream } from '../src/EventStream';
 import { Logger } from '../src/logger';
+import { PackageManager } from '../src/packages';
+import { PlatformInformation } from '../src/platform';
+import { getPackageJSON } from './packageJson';
+import spawnNode from './spawnNode';
 
 gulp.task('vsix:online:unpackage', () => {
-    const packageJSON = getPackageJSON();  
-    const name = packageJSON.name; 
-    const version = packageJSON.version;  
+    const packageJSON = getPackageJSON();
+    const name = packageJSON.name;
+    const version = packageJSON.version;
     const packageName = `${name}-${version}.vsix`;
     const packagePath = path.join(rootPath, packageName);
 
@@ -38,15 +40,15 @@ gulp.task('vsix:online:package', (onError) => {
     fs.copyFileSync(onlineVscodeignorePath, vscodeignorePath);
 
     let onDone = (reason) => {
-        
+
         onError(reason);
     };
 
     return spawnNode([vscePath, 'package'])
         .then(() => {
-            del(vscodeignorePath);    
+            del(vscodeignorePath);
         }, (error) => {
             del(vscodeignorePath);
-            throw error; 
+            throw error;
         });
 });

@@ -7,8 +7,10 @@
 
 import * as gulp from 'gulp';
 import * as path from 'path';
+
+import { codeExtensionPath, nodePath, nycPath, rootPath, runnerPath, testAssetsRootPath, testRootPath, unitTestCoverageRootPath } from './projectPaths';
 import { execFile, spawn } from 'child_process';
-import { testRootPath, nodePath, runnerPath, unpackedExtensionPath, testAssetsRootPath, rootPath, nycPath, unitTestCoverageRootPath } from './projectPaths';
+
 import spawnNode from './spawnNode';
 
 const gulpSequence = require('gulp-sequence');
@@ -63,7 +65,7 @@ function runIntegrationTest(testAssetName: string) {
     let env = {
         OSVC_SUITE: testAssetName,
         CODE_TESTS_PATH: path.join(testRootPath, "integrationTests"),
-        CODE_EXTENSIONS_PATH: unpackedExtensionPath,
+        CODE_EXTENSIONS_PATH: codeExtensionPath,
         CODE_TESTS_WORKSPACE: path.join(testAssetsRootPath, testAssetName),
         CODE_WORKSPACE_ROOT: rootPath,
     };

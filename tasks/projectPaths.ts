@@ -7,7 +7,10 @@
 
 import * as gulp from 'gulp';
 import * as path from 'path';
+
 import { execFile, spawn } from 'child_process';
+
+import { commandLineOptions } from './commandLineArguments';
 
 export const rootPath = path.resolve(__dirname, '..');
 
@@ -23,6 +26,8 @@ export const packageJsonPath = path.join(rootPath, "package.json");
 
 export const unpackedVsixPath = path.join(rootPath, "vsix");
 export const unpackedExtensionPath = path.join(unpackedVsixPath, "extension");
+
+export const codeExtensionPath = commandLineOptions.codeExtensionPath || unpackedExtensionPath;
 
 export const testRootPath = path.join(rootPath, "out", "test");
 export const testAssetsRootPath = path.join(rootPath, "test", "integrationTests", "testAssets");

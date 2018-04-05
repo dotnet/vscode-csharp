@@ -27,13 +27,12 @@ addons:
 install:
 - npm install
 - npm run compile
-- npm install -g vsce
-- vsce package
+- npm run gulp 'vsix:online:package'
 
 script:
-  - npm run unpackage:vsix
+  - npm run gulp 'vsix:online:unpackage'
   - npm run cov:instrument
-  - npm test --silent
+  - npm run gulp test
   - npm run cov:report
   - npm run test:artifacts
   - 'if [[ "$TRAVIS_TAG" != "master" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then npm run test:release; fi'

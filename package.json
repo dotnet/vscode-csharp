@@ -30,7 +30,7 @@
     "compile": "tsc -p ./ && gulp tslint",
     "watch": "tsc -watch -p ./",
     "tdd": "mocha --opts ./mocha.opts --watch --watch-extensions ts test/unitTests/**/*.test.ts*",
-    "test": "npm-run-all test:feature test:unit test:integration",
+    "test": "gulp test",
     "test:unit": "gulp test:unit",
     "test:feature": "gulp test:feature",
     "test:integration": "gulp test:integration",
@@ -45,7 +45,8 @@
     "cov:report": "npm-run-all cov:report:integration cov:report:unit",
     "cov:report:unit": "codecov -f \"coverage/unit/lcov.info\" -F unit",
     "cov:report:integration": "npm run cov:merge && codecov -f \"coverage/integration/lcov.info\" -F integration",
-    "unpackage:vsix": "gulp unpackage:vsix"
+    "unpackage:vsix": "gulp vsix:online:unpackage",
+    "gulp": "gulp"
   },
   "nyc": {
     "include": [
@@ -85,6 +86,7 @@
     "@types/chai-as-promised": "^7.1.0",
     "@types/chai-string": "^1.4.0",
     "@types/fs-extra": "^5.0.1",
+    "@types/minimist": "^1.2.0",
     "@types/mkdirp": "^0.5.2",
     "@types/mocha": "^2.2.48",
     "@types/node": "^9.4.7",
