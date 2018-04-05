@@ -11,16 +11,15 @@ import { execFile, spawn } from 'child_process';
 import { testRootPath, nodePath, runnerPath, unpackedExtensionPath, testAssetsRootPath, rootPath } from './projectPaths';
 import spawnNode from './spawnNode';
 
-gulp.task("test", ["test:feature", "test:integration"], () => {
+const gulpSequence = require('gulp-sequence');
 
-});
+gulp.task("test", gulpSequence("test:feature", "test:integration"));
 
 gulp.task(
-    "test:integration", [
+    "test:integration", gulpSequence(
         "test:integration:singleCsproj",
         "test:integration:slnWithCsproj"
-    ], () => {
-});
+    ));
 
 gulp.task("test:integration:singleCsproj", () => {
     return runIntegrationTest("singleCsproj");
