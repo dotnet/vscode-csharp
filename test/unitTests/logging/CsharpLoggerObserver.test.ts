@@ -85,21 +85,21 @@ suite('CsharpLoggerObsever', () => {
         expect(logOutput).to.contain("MyArchitecture");
     });
 
-    test('InstallationFailure: Stage and Error is logged if not a PackageError', () => {
+    test('Event.InstallationFailure: Stage and Error is logged if not a PackageError', () => {
         let event = new Event.InstallationFailure("someStage", new Error("someError"));
         observer.post(event);
         expect(logOutput).to.contain(event.stage);
         expect(logOutput).to.contain(event.error.toString());
     });
 
-    test('InstallationFailure: Stage and Error is logged if a PackageError without inner error', () => {
+    test('Event.InstallationFailure: Stage and Error is logged if a PackageError without inner error', () => {
         let event = new Event.InstallationFailure("someStage", new PackageError("someError", null, null));
         observer.post(event);
         expect(logOutput).to.contain(event.stage);
         expect(logOutput).to.contain(event.error.message);
     });
 
-    test('InstallationFailure: Stage and Inner error is logged if a PackageError without inner error', () => {
+    test('Event.InstallationFailure: Stage and Inner error is logged if a PackageError without inner error', () => {
         let event = new Event.InstallationFailure("someStage", new PackageError("someError", null, "innerError"));
         observer.post(event);
         expect(logOutput).to.contain(event.stage);
@@ -122,25 +122,25 @@ suite('CsharpLoggerObsever', () => {
             expect(logOutput).to.contain(element.expected);
         }));
 
-    test(`ActivaltionFailure: Some message is logged`, () => {
+    test(`Event.ActivaltionFailure: Some message is logged`, () => {
         let event = new Event.ActivationFailure();
         observer.post(event);
         expect(logOutput).to.not.be.empty;
     });
 
-    test(`ProjectJsonDeprecatedWarning: Some message is logged`, () => {
+    test(`Event.ProjectJsonDeprecatedWarning: Some message is logged`, () => {
         let event = new Event.ProjectJsonDeprecatedWarning();
         observer.post(event);
         expect(logOutput).to.not.be.empty;
     });
 
-    test(`ProjectJsonDeprecatedWarning: Some message is logged`, () => {
+    test(`Event.ProjectJsonDeprecatedWarning: Some message is logged`, () => {
         let event = new Event.InstallationSuccess();
         observer.post(event);
         expect(logOutput).to.not.be.empty;
     });
 
-    test(`InstallationProgress: Progress message is logged`, () => {
+    test(`Event.InstallationProgress: Progress message is logged`, () => {
         let event = new Event.InstallationProgress("someStage", "someMessage");
         observer.post(event);
         expect(logOutput).to.contain(event.message);
@@ -151,4 +151,5 @@ suite('CsharpLoggerObsever', () => {
         observer.post(event);
         expect(logOutput).to.contain(event.packageInfo);
     });
+
 });
