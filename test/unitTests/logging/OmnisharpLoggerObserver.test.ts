@@ -139,11 +139,13 @@ suite("OmnisharpLoggerObserver", () => {
             new OmnisharpLaunch(true, "someCommand", 4),
             new OmnisharpLaunch(false, "someCommand", 4)
         ].forEach((event: OmnisharpLaunch) => {
+            
             test(`Command and Pid are displayed`, () => {
                 observer.post(event);
                 expect(logOutput).to.contain(event.command);
                 expect(logOutput).to.contain(event.pid);
             });
+            
             test(`Message is displayed depending on usingMono value`, () => {
                 observer.post(event);
                 if (event.usingMono) {
@@ -155,5 +157,4 @@ suite("OmnisharpLoggerObserver", () => {
             });
         });
     });
-
 });
