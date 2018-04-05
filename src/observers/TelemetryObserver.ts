@@ -2,109 +2,88 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { should, expect } from 'chai';
-import { getNullTelemetryReporter } from './Fakes';
-import { TelemetryObserver } from '../../../src/observers/TelemetryObserver';
-import { PlatformInformation } from '../../../src/platform';
-import { PackageInstallation, InstallationFailure, InstallationSuccess, TestExecutionCountReport, TelemetryEventWithMeasures, OmnisharpDelayTrackerEventMeasures, OmnisharpStart } from '../../../src/omnisharp/loggingEvents';
-import { PackageError, Package } from '../../../src/packages';
 
-const chai = require('chai');
-chai.use(require('chai-arrays'));
+import { PackageError } from "../packages";
+import { PlatformInformation } from "../platform";
+import { BaseEvent, PackageInstallation, InstallationFailure, InstallationSuccess, OmnisharpDelayTrackerEventMeasures, OmnisharpStart, TestExecutionCountReport, TelemetryEventWithMeasures } from "../omnisharp/loggingEvents";
 
-suite('TelemetryReporterObserver', () => {
-    suiteSetup(() => should());
-    let platformInfo = new PlatformInformation("platform", "architecture");
-    let name = "";
-    let property = null;
-    let measure = [];
-    let observer = new TelemetryObserver(platformInfo, () => {
-        return {
-            ...getNullTelemetryReporter,
-            sendTelemetryEvent: (eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }) => {
-                name += eventName;
-                property = properties;
-                measure.push(measures);
+export interface ITelemetryReporter {
+    sendTelemetryEvent(eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }): void;
+}
+
+export class TelemetryObserver {
+    private reporter: ITelemetryReporter;
+    private platformInfo: PlatformInformation;
+
+    constructor(platformInfo: PlatformInformation, reporterCreator: () => ITelemetryReporter) {
+        this.platformInfo = platformInfo;
+        this.reporter = reporterCreator();
+    }
+
+    public post = (event: BaseEvent) => {
+        let telemetryProps = this.getTelemetryProps();
+        switch (event.constructor.name) {
+            case PackageInstallation.name:
+                this.reporter.sendTelemetryEvent("AcquisitionStart");
+                break;
+            case InstallationFailure.name:
+                this.handleInstallationFailure(<InstallationFailure>event, telemetryProps);
+                break;
+            case InstallationSuccess.name:
+                this.handleInstallationSuccess(telemetryProps);
+                break;
+            case OmnisharpDelayTrackerEventMeasures.name:
+            case OmnisharpStart.name:
+                this.handleTelemetryEventMeasures(<TelemetryEventWithMeasures>event);
+                break;
+            case TestExecutionCountReport.name:
+                this.handleTestExecutionCountReport(<TestExecutionCountReport>event);
+                break;
+        }
+    }
+
+    private handleTelemetryEventMeasures(event: TelemetryEventWithMeasures) {
+        this.reporter.sendTelemetryEvent(event.eventName, null, event.measures);
+    }
+
+    private handleInstallationSuccess(telemetryProps: any) {
+        telemetryProps['installStage'] = 'completeSuccess';
+        this.reporter.sendTelemetryEvent('Acquisition', telemetryProps);
+    }
+
+    private handleInstallationFailure(event: InstallationFailure, telemetryProps: any) {
+        telemetryProps['installStage'] = event.stage;
+        if (event.error instanceof PackageError) {
+            // we can log the message in a PackageError to telemetry as we do not put PII in PackageError messages
+            telemetryProps['error.message'] = event.error.message;
+
+            if (event.error.pkg) {
+                telemetryProps['error.packageUrl'] = event.error.pkg.url;
             }
+        }
+
+        this.reporter.sendTelemetryEvent('Acquisition', telemetryProps);
+    }
+
+    private handleTestExecutionCountReport(event: TestExecutionCountReport) {
+        if (event.debugCounts) {
+            this.reporter.sendTelemetryEvent('DebugTest', null, event.debugCounts);
+        }
+        if (event.runCounts) {
+            this.reporter.sendTelemetryEvent('RunTest', null, event.runCounts);
+        }
+    }
+
+    private getTelemetryProps() {
+        let telemetryProps = {
+            'platform.architecture': this.platformInfo.architecture,
+            'platform.platform': this.platformInfo.platform
         };
-    });
 
-    setup(() => {
-        name = "";
-        property = null;
-        measure = [];
-    });
+        if (this.platformInfo.distribution) {
+            telemetryProps['platform.distribution'] = this.platformInfo.distribution.toTelemetryString();
+        }
 
-    test('PackageInstallation: AcquisitionStart is reported', () => {
-        let event = new PackageInstallation("somePackage");
-        observer.post(event);
-        expect(name).to.be.not.empty;
-    });
-
-    test("InstallationFailure: Telemetry Props contains platform information, install stage and an event name", () => {
-        let event = new InstallationFailure("someStage", "someError");
-        observer.post(event);
-        expect(property).to.have.property("platform.architecture", platformInfo.architecture);
-        expect(property).to.have.property("platform.platform", platformInfo.platform);
-        expect(property).to.have.property("installStage");
-        expect(name).to.not.be.empty;
-    });
-
-    test(`InstallationFailure: Telemetry Props contains message and packageUrl if error is package error`, () => {
-        let error = new PackageError("someError", <Package>{ "description": "foo", "url": "someurl" });
-        let event = new InstallationFailure("someStage", error);
-        observer.post(event);
-        expect(property).to.have.property("error.message", error.message);
-        expect(property).to.have.property("error.packageUrl", error.pkg.url);
-    });
-
-    test('InstallationSuccess: Telemetry props contain installation stage', () => {
-        let event = new InstallationSuccess();
-        observer.post(event);
-        expect(name).to.be.equal("Acquisition");
-        expect(property).to.have.property("installStage", "completeSuccess");
-    });
-
-    test('TestExecutionCountReport: SendTelemetryEvent is called for "RunTest" and "DebugTest"', () => {
-        let event = new TestExecutionCountReport({ "framework1": 20 }, { "framework2": 30 });
-        observer.post(event);
-        expect(name).to.contain("RunTest");
-        expect(name).to.contain("DebugTest");
-        expect(measure).to.be.containingAllOf([event.debugCounts, event.runCounts]);
-    });
-
-    test('TestExecutionCountReport: SendTelemetryEvent is not called for empty run count', () => {
-        let event = new TestExecutionCountReport({ "framework1": 20 }, null);
-        observer.post(event);
-        expect(name).to.not.contain("RunTest");
-        expect(name).to.contain("DebugTest");
-        expect(measure).to.be.containingAllOf([event.debugCounts]);
-    });
-
-    test('TestExecutionCountReport: SendTelemetryEvent is not called for empty debug count', () => {
-        let event = new TestExecutionCountReport(null, { "framework1": 20 });
-        observer.post(event);
-        expect(name).to.contain("RunTest");
-        expect(name).to.not.contain("DebugTest");
-        expect(measure).to.be.containingAllOf([event.runCounts]);
-    });
-
-    test('TestExecutionCountReport: SendTelemetryEvent is not called for empty debug and run counts', () => {
-        let event = new TestExecutionCountReport(null, null);
-        observer.post(event);
-        expect(name).to.be.empty;
-        expect(measure).to.be.empty;
-    });
-    
-    [
-        new OmnisharpDelayTrackerEventMeasures("someEvent", { someKey: 1 }),
-        new OmnisharpStart("startEvent", { someOtherKey: 2 })
-    ].forEach((event: TelemetryEventWithMeasures) => {
-        test(`${event.constructor.name}`, () => {
-            observer.post(event);
-            expect(name).to.contain(event.eventName);
-            expect(measure).to.be.containingAllOf([event.measures]);
-        });
-    });
-   
-});
+        return telemetryProps;
+    }
+}
