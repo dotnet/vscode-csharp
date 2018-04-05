@@ -7,8 +7,7 @@
 .vscode/**
 .vscode-test/**
 coverage/**
-out/**
-!out/main.js
+out/test/**
 src/**
 tasks/**
 test/**
