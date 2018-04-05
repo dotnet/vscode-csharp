@@ -313,7 +313,6 @@ export interface Uri {
      * @param path A file system or UNC path.
      * @return A new Uri instance.
      */
-    file(path: string): Uri;
 
     /**
      * Create an URI from a string. Will throw if the given value is not
@@ -322,8 +321,6 @@ export interface Uri {
      * @param value The string value of an Uri.
      * @return A new Uri instance.
      */
-    parse(value: string): Uri;
-
     /**
      * Scheme is the `http` part of `http://www.msft.com/some/path?query#fragment`.
      * The part before the first colon.
@@ -600,7 +597,6 @@ export interface Position {
      * @param line A zero-based line value.
      * @param character A zero-based character value.
      */
-    constructor(line: number, character: number);
 
     /**
      * Check if `other` is before this position.
