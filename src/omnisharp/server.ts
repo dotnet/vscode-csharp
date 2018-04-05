@@ -279,9 +279,9 @@ export class OmniSharpServer {
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnStart());
         }));
 
-        this._disposables.add(this.onProjectAdded(this.updateTracker));
-        this._disposables.add(this.onProjectChange(this.updateTracker));
-        this._disposables.add(this.onProjectRemoved(this.updateTracker)); 
+        this._disposables.add(this.onProjectAdded(this.debounceUpdateProjectWithLeadingTrue));
+        this._disposables.add(this.onProjectChange(this.debounceUpdateProjectWithLeadingTrue));
+        this._disposables.add(this.onProjectRemoved(this.debounceUpdateProjectWithLeadingTrue)); 
 
         this._setState(ServerState.Starting);
         this._launchTarget = launchTarget;
@@ -338,7 +338,10 @@ export class OmniSharpServer {
         });
     }
 
-    private updateTracker = () => {
+    private debounceUpdateProjectWithLeadingTrue = () => {
+        // Call the updateProjectInfo directly if it is the first time, otherwise debounce the request
+        // This needs to be done so that we have a project information for the first incoming request
+
         if (this.firstUpdateProject) {
             this.updateProjectInfo();
         }
