@@ -1,19 +1,38 @@
+!.debugger/**
+.logs/**
+.nyc_output/**
+!.omnisharp/**
+.rpt2_cache/**
+.travis/**
 .vscode/**
-typings/**
-out/test/**
-test/**
+.vscode-test/**
+coverage/**
+out/**
+!out/main.js
 src/**
-**/*.map
+tasks/**
+test/**
+typings/**
+vsix/**
 
+**/*.map
+*.vsix
+
+.editorconfig
 .gitignore
 .travis.yml
-tsconfig.json
+gulpfile.ts
+!install.Lock
 ISSUE_TEMPLATE
+mocha.opts
+*.vscodeignore
+package-lock.json
+package.json
+test-plan.md
+tsconfig.json
 tslint.json
-gulpfile.js
+wallaby.js
 
-**/.nyc_output/**
-**/coverage/**
 
 +RuntimeLicenses/dependencies/*
 coreclr-debug/install.log
