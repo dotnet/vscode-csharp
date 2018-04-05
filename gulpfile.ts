@@ -15,6 +15,7 @@ require('./tasks/testTasks');
 require('./tasks/onlinePackagingTasks');
 require('./tasks/offlinePackagingTasks');
 require('./tasks/backcompatTasks');
+require('./tasks/coverageTasks');
 
 gulp.task('generateOptionsSchema', () => {
     optionsSchemaGenerator.GenerateOptionsSchema();

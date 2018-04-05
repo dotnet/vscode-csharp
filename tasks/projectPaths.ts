@@ -29,13 +29,16 @@ export const packedVsixOutputRoot = commandLineOptions.vsixPackagingOutputFolder
 export const unpackedVsixPath = path.join(rootPath, "vsix");
 export const unpackedExtensionPath = path.join(unpackedVsixPath, "extension");
 
+
 export const codeExtensionPath = commandLineOptions.codeExtensionPath || rootPath;
+export const codeExtensionSourcesPath = path.join(codeExtensionPath, "out");
 
 export const testRootPath = path.join(rootPath, "out", "test");
 export const testAssetsRootPath = path.join(rootPath, "test", "integrationTests", "testAssets");
 export const runnerPath = path.join(rootPath, 'test/runVsCodeTestsWithAbsolutePaths.js');
 
 export const coverageRootPath = path.join(rootPath, 'coverage');
+export const nycOutputPath = path.join(rootPath, '.nyc_output');
 export const unitTestCoverageRootPath = path.join(coverageRootPath, 'unit');
 
 export const nodePath = path.join(process.env.NVM_BIN
