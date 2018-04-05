@@ -297,8 +297,9 @@ export interface TextEditor {
     /**
      * The document associated with this text editor. The document will be the same for the entire lifetime of this text editor.
      */
-    document: any;
+    document: TextDocument;
 }
+
 /**
 	 * A universal resource identifier representing either a file on disk
 	 * or another resource, like untitled resources.
