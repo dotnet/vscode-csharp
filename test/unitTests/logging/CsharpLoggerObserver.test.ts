@@ -122,7 +122,7 @@ suite("CsharpLoggerObserver", () => {
             expect(logOutput).to.contain(element.expected);
         }));
 
-    test(`ActivaltionFailure: Some message is logged`, () => {
+    test(`ActivationFailure: Some message is logged`, () => {
         let event = new Event.ActivationFailure();
         observer.post(event);
         expect(logOutput).to.not.be.empty;
