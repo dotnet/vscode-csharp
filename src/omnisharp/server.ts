@@ -85,7 +85,7 @@ export class OmniSharpServer {
 
     private _omnisharpManager: OmnisharpManager;
     private eventStream: EventStream;
-    private updateProjectDebouncer: Subject<ObservableEvents.ProjectModified>;
+    private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
     private firstUpdateProject: boolean;
 
     constructor(eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation) {
@@ -93,7 +93,6 @@ export class OmniSharpServer {
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
         let downloader = new OmnisharpDownloader(this.eventStream, packageJSON, platformInfo);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
-        this.updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
         this.updateProjectDebouncer.debounce(1500).subscribe((event) => { this.updateProjectInfo(); });
         this.firstUpdateProject = true;
     }
@@ -342,7 +341,6 @@ export class OmniSharpServer {
         });
     }
 
-    // we could move this to a project updated observer and pass the server there. But we will need the event stream also there :(
     private updateTracker = () => {
         if (this.firstUpdateProject) {
             this.updateProjectInfo();
