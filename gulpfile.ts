@@ -25,7 +25,7 @@ import spawnNode from './tasks/spawnNode';
 import tslint from 'gulp-tslint';
 import { vscodeignorePath, offlineVscodeignorePath } from './tasks/projectPaths';
 
-require('./tasks/integrationTestTasks');
+require('./tasks/testTasks');
 require('./tasks/onlinePackagingTasks');
 
 gulp.task('generateOptionsSchema', () => {
