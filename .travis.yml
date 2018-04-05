@@ -5,7 +5,6 @@ node_js:
 
 env:
 - CODE_VERSION=1.18.0
-- CODE_WORKSPACE_ROOT=$TRAVIS_BUILD_DIR
 
 before_install:
   - if [ $TRAVIS_OS_NAME == "linux" ]; then
