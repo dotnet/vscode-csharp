@@ -75,13 +75,19 @@ suite("OmnisharpLoggerObserver", () => {
     [
         new OmnisharpServerOnStdErr("on std error message"),
         new OmnisharpServerMessage("server message"),
-        new OmnisharpServerOnServerError("on server error message"),
     ].forEach((event: EventWithMessage) => {
         test(`${event.constructor.name}: Message is logged`, () => {
             observer.post(event);
             expect(logOutput).to.contain(event.message);
         });
     });
+
+    test(`OmnisharpServerOnServerError: Message is logged`, () => {
+        let event = new OmnisharpServerOnServerError("on server error message");
+        observer.post(event);
+        expect(logOutput).to.contain(event.err);
+    });
+
 
     [
         new OmnisharpInitialisation(new Date(5), "somePath"),
