@@ -62,7 +62,7 @@ suite("OmnisharpDebugModeLoggerObserver", () => {
     });
 
     suite('OmnisharpEventPacketReceived', () => {
-        test(`Information messages with name OmniSharp.Middleware.LoggingMiddleware and follow pattern /^\/[\/\w]+: 200 \d+ms/ are not logged`, () => {
+        test(`Information messages with name OmniSharp.Middleware.LoggingMiddleware and follow pattern /^\/[\/\w]+: 200 \d+ms/ are logged`, () => {
             let event = new OmnisharpEventPacketReceived("INFORMATION", "OmniSharp.Middleware.LoggingMiddleware", "/codecheck: 200 339ms");
             observer.post(event);
             expect(logOutput).to.contain(event.message);
@@ -77,7 +77,7 @@ suite("OmnisharpDebugModeLoggerObserver", () => {
             new OmnisharpEventPacketReceived("ERROR", "foo", "someMessage"),
             new OmnisharpEventPacketReceived("CRITICAL", "foo", "someMessage"),
         ].forEach((event: OmnisharpEventPacketReceived) => {
-            test(`${event.logLevel} messages are logged with name and the message`, () => {
+            test(`${event.logLevel} messages are not logged`, () => {
                 observer.post(event);
                 expect(logOutput).to.be.empty;
             });
