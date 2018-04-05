@@ -237,51 +237,53 @@ export class OmniSharpServer {
 
     private async _start(launchTarget: LaunchTarget): Promise<void> {
 
-        this._disposables = new CompositeDisposable();
+        let disposables = new CompositeDisposable();
 
-        this._disposables.add(this.onServerError(err =>
+        disposables.add(this.onServerError(err =>
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError(err))
         ));
 
-        this._disposables.add(this.onError((message: protocol.ErrorMessage) =>
+        disposables.add(this.onError((message: protocol.ErrorMessage) =>
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnError(message))
         ));
 
-        this._disposables.add(this.onMsBuildProjectDiagnostics((message: protocol.MSBuildProjectDiagnostics) =>
+        disposables.add(this.onMsBuildProjectDiagnostics((message: protocol.MSBuildProjectDiagnostics) =>
             this.eventStream.post(new ObservableEvents.OmnisharpServerMsBuildProjectDiagnostics(message))
         ));
 
-        this._disposables.add(this.onUnresolvedDependencies((message: protocol.UnresolvedDependenciesMessage) =>
+        disposables.add(this.onUnresolvedDependencies((message: protocol.UnresolvedDependenciesMessage) =>
             this.eventStream.post(new ObservableEvents.OmnisharpServerUnresolvedDependencies(message))
         ));
 
-        this._disposables.add(this.onStderr((message: string) =>
+        disposables.add(this.onStderr((message: string) =>
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnStdErr(message))
         ));
 
-        this._disposables.add(this.onMultipleLaunchTargets((targets: LaunchTarget[]) =>
+        disposables.add(this.onMultipleLaunchTargets((targets: LaunchTarget[]) =>
             this.eventStream.post(new ObservableEvents.OmnisharpOnMultipleLaunchTargets(targets))
         ));
 
-        this._disposables.add(this.onBeforeServerInstall(() =>
+        disposables.add(this.onBeforeServerInstall(() =>
             this.eventStream.post(new ObservableEvents.OmnisharpOnBeforeServerInstall())
         ));
 
-        this._disposables.add(this.onBeforeServerStart(() => {
+        disposables.add(this.onBeforeServerStart(() => {
             this.eventStream.post(new ObservableEvents.OmnisharpOnBeforeServerStart());
         }));
 
-        this._disposables.add(this.onServerStop(() =>
+        disposables.add(this.onServerStop(() =>
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnStop())
         ));
 
-        this._disposables.add(this.onServerStart(() => {
+        disposables.add(this.onServerStart(() => {
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnStart());
         }));
 
-        this._disposables.add(this.onProjectAdded(this.debounceUpdateProjectWithLeadingTrue));
-        this._disposables.add(this.onProjectChange(this.debounceUpdateProjectWithLeadingTrue));
-        this._disposables.add(this.onProjectRemoved(this.debounceUpdateProjectWithLeadingTrue)); 
+        disposables.add(this.onProjectAdded(this.debounceUpdateProjectWithLeadingTrue));
+        disposables.add(this.onProjectChange(this.debounceUpdateProjectWithLeadingTrue));
+        disposables.add(this.onProjectRemoved(this.debounceUpdateProjectWithLeadingTrue));
+
+        this._disposables = disposables;
 
         this._setState(ServerState.Starting);
         this._launchTarget = launchTarget;
@@ -406,7 +408,9 @@ export class OmniSharpServer {
             this._serverProcess = null;
             this._setState(ServerState.Stopped);
             this._fireEvent(Events.ServerStop, this);
-            disposables.dispose();
+            if (disposables) {
+                disposables.dispose();
+            }
         });
     }
 
