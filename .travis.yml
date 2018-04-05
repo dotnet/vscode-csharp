@@ -26,13 +26,13 @@ addons:
 
 install:
 - npm install
-- npm run compile
-- npm run gulp 'vsix:online:package'
+- npm i -g gulp
+- gulp 'vsix:online:package'
 
 script:
-  - npm run gulp 'vsix:online:unpackage'
+  - gulp 'vsix:online:unpackage'
   - npm run cov:instrument
-  - npm run gulp test
+  - gulp test -- --codeExtensionPath ./vsix/extension
   - npm run cov:report
   - npm run test:artifacts
   - 'if [[ "$TRAVIS_TAG" != "master" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then npm run test:release; fi'

@@ -9,8 +9,11 @@ import * as minimist from 'minimist';
 import * as path from 'path';
 
 let argv = minimist(process.argv.slice(2), { 
-    boolean: ['retainVsix'], 
-    string: ['o', 'codeExtensionPath'] });
+    boolean: ['retainVsix']
+});
+
+console.log(argv['codeExtensionPath']);
+console.log(makePathAbsolute(argv['codeExtensionPath']));
 
 export const commandLineOptions ={
     retainVsix: !!argv['retainVsix'],
@@ -19,8 +22,8 @@ export const commandLineOptions ={
 };
 
 function makePathAbsolute(originalPath: string) {
-    if (!originalPath) {
-        return originalPath;
+    if (!originalPath || originalPath == '') {
+        return undefined;
     }
 
     if (path.isAbsolute(originalPath)) {

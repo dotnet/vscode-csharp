@@ -8,7 +8,7 @@
 import * as gulp from 'gulp';
 import * as path from 'path';
 
-import { codeExtensionPath, nodePath, nycPath, rootPath, runnerPath, testAssetsRootPath, testRootPath, unitTestCoverageRootPath } from './projectPaths';
+import { codeExtensionPath, nodePath, nycPath, rootPath, runnerPath, testAssetsRootPath, testRootPath, unitTestCoverageRootPath, mochaPath } from './projectPaths';
 import { execFile, spawn } from 'child_process';
 
 import spawnNode from './spawnNode';
@@ -39,7 +39,7 @@ gulp.task("test:unit", () => {
         'lcovonly',
         '--report-dir',
         unitTestCoverageRootPath,
-        'mocha',
+        mochaPath,
         '--ui',
         'tdd',
         '--',
