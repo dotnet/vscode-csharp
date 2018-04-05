@@ -6,9 +6,10 @@
 'use strict';
 
 import { SpawnOptions, ChildProcess, spawn } from "child_process";
+import { join, Result } from "async-child-process";
 import { nodePath, rootPath } from "./projectPaths";
 
-export default function spawnNode(onError, args?: string[], options?: SpawnOptions): ChildProcess {
+export default function spawnNode(args?: string[], options?: SpawnOptions): Promise<Result> {
     if (!options) {
         options = {
             env: {}
@@ -28,7 +29,6 @@ export default function spawnNode(onError, args?: string[], options?: SpawnOptio
 
     spawned.stdout.on('data', (data) => console.log(data.toString()));
     spawned.stderr.on('data', (data) => console.log(data.toString()));
-    spawned.on('exit', (code, signal) => onError(code));
 
-    return spawned;
+    return join(spawned);
 }

@@ -11,7 +11,7 @@ import { execFile, spawn } from 'child_process';
 import { testRootPath, nodePath, runnerPath, unpackedExtensionPath, testAssetsRootPath, rootPath } from './projectPaths';
 import spawnNode from './spawnNode';
 
-gulp.task("test", ["test:feature", "test:integration"], (onError) => {
+gulp.task("test", ["test:feature", "test:integration"], () => {
 
 });
 
@@ -19,36 +19,30 @@ gulp.task(
     "test:integration", [
         "test:integration:singleCsproj",
         "test:integration:slnWithCsproj"
-    ], (onError) => {
+    ], () => {
 });
 
-gulp.task("test:integration:singleCsproj", (onError) => {
-    runIntegrationTest(onError, "singleCsproj");
+gulp.task("test:integration:singleCsproj", () => {
+    return runIntegrationTest("singleCsproj");
 });
 
-gulp.task("test:integration:slnWithCsproj", (onError) => {
-    runIntegrationTest(onError, "slnWithCsproj");
+gulp.task("test:integration:slnWithCsproj", () => {
+    return runIntegrationTest("slnWithCsproj");
 });
 
-gulp.task("test:feature", (onError) => {
+gulp.task("test:feature", () => {
     let env = {
         ...process.env,
         OSVC_SUITE: "featureTests",
         CODE_TESTS_PATH: path.join(testRootPath, "featureTests")
     };
 
-    console.log(JSON.stringify(env, null, '\t'));
-
-    execFile(nodePath, [runnerPath], {
+    return spawnNode([ runnerPath ], {
         env
-    }, (err, stdout, stderr) => {
-        console.log(stdout);
-        console.log(stderr);
-        onError(err);
     });
 });
 
-function runIntegrationTest(onError, testAssetName: string) {
+function runIntegrationTest(testAssetName: string) {
     let env = {
         OSVC_SUITE: testAssetName,
         CODE_TESTS_PATH: path.join(testRootPath, "integrationTests"),
@@ -57,5 +51,5 @@ function runIntegrationTest(onError, testAssetName: string) {
         CODE_WORKSPACE_ROOT: rootPath,
     };
 
-    spawnNode(onError, [runnerPath], { env, cwd: rootPath});
+    return spawnNode([runnerPath], { env, cwd: rootPath});
 }

@@ -63,22 +63,20 @@ const lintReporter = (output, file, options) => {
 
 
 
-gulp.task('vsix:offline:package', (onError) => {
+gulp.task('vsix:offline:package', () => {
     del.sync(vscodeignorePath);
 
     fs.copyFileSync(offlineVscodeignorePath, vscodeignorePath);
 
-    let onDone = (reason) => {
-        del(vscodeignorePath);
-        onError(reason);
-    };
-
-    doPackageOffline(onError)
-        .then(v => del(vscodeignorePath), e => onError(e))
-        .then(() => onError);
+    return doPackageOffline()
+        .then(v => del(vscodeignorePath), 
+            e => {
+                del(vscodeignorePath);
+                throw e;
+            });
 });
 
-function doPackageOffline(onError) {
+function doPackageOffline() {
     util.setExtensionPath(__dirname);
 
     let argv = require('minimist')(process.argv.slice(2), { boolean: ['retainVsix'] });
@@ -100,18 +98,17 @@ function doPackageOffline(onError) {
     const version = packageJSON.version;
     const packageName = name + '.' + version;
 
-    const packages = [];
-    packages.push(new PlatformInformation('win32', 'x86_64'));
-    packages.push(new PlatformInformation('darwin', 'x86_64'));
-    packages.push(new PlatformInformation('linux', 'x86_64'));
+    const packages = [
+        new PlatformInformation('win32', 'x86_64'),
+        new PlatformInformation('darwin', 'x86_64'),
+        new PlatformInformation('linux', 'x86_64')
+    ];
 
     let promise = Promise.resolve();
 
     packages.forEach(platformInfo => {
         promise = promise
-            .then(() => {
-                return doOfflinePackage(onError, platformInfo, packageName, packageJSON, outputFolder);
-            });
+            .then(() => doOfflinePackage(platformInfo, packageName, packageJSON, outputFolder));
     });
 
     return promise;
@@ -127,16 +124,15 @@ function cleanSync(deleteVsix) {
     }
 }
 
-function doOfflinePackage(onError, platformInfo, packageName, packageJSON, outputFolder) {
+function doOfflinePackage(platformInfo, packageName, packageJSON, outputFolder) {
     if (process.platform === 'win32') {
         throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
     }
 
     cleanSync(false);
+
     return install(platformInfo, packageJSON)
-        .then(() => {
-            doPackageSync(onError, packageName + '-' + platformInfo.platform + '-' + platformInfo.architecture + '.vsix', outputFolder);
-        });
+        .then(() => doPackageSync(packageName + '-' + platformInfo.platform + '-' + platformInfo.architecture + '.vsix', outputFolder));
 }
 
 // Install Tasks
@@ -161,7 +157,7 @@ function install(platformInfo, packageJSON) {
 }
 
 /// Packaging (VSIX) Tasks
-function doPackageSync(onError, packageName, outputFolder) {
+function doPackageSync(packageName, outputFolder) {
 
     let vsceArgs = [];
     vsceArgs.push(path.join(__dirname, 'node_modules', 'vsce', 'out', 'vsce'));
@@ -178,5 +174,5 @@ function doPackageSync(onError, packageName, outputFolder) {
         }
     }
 
-    spawnNode(onError, vsceArgs);
+    return spawnNode(vsceArgs);
 }
