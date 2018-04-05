@@ -10,64 +10,9 @@ import { PlatformInformation } from '../../../src/platform';
 import { PackageError } from '../../../src/packages';
 import * as Event from '../../../src/omnisharp/loggingEvents';
 
-suite("CsharpLoggerObserver: Download Messages", () => {
+suite("CsharpLoggerObserver", () => {
     suiteSetup(() => should());
 
-    [
-        {
-            events: [],
-            expected: ""
-        },
-        {
-            events: [new Event.DownloadStart("Started")],
-            expected: "Started"
-        },
-        {
-            events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(100)],
-            expected: "Started...................."
-        },
-        {
-            events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(10), new Event.DownloadProgress(50), new Event.DownloadProgress(100)],
-            expected: "Started...................."
-        },
-        {
-            events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(10), new Event.DownloadProgress(50)],
-            expected: "Started.........."
-        },
-        {
-            events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(50)],
-            expected: "Started.........."
-        },
-        {
-            events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(50), new Event.DownloadProgress(50), new Event.DownloadProgress(50)],
-            expected: "Started.........."
-        },
-        {
-            events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(100), new Event.DownloadSuccess("Done")],
-            expected: "Started....................Done\n"
-        },
-        {
-            events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(50), new Event.DownloadFailure("Failed")],
-            expected: "Started..........Failed\n"
-        },
-    ].forEach((element) => {
-        test(`Prints the download status to the logger as ${element.expected}`, () => {
-            let logOutput = "";
-
-            let observer = new CsharpLoggerObserver({
-                ...getNullChannel(),
-                appendLine: (text?: string) => { logOutput += `${text}\n`; },
-                append: (text?: string) => { logOutput += text; }
-            });
-
-            element.events.forEach((message: Event.BaseEvent) => observer.post(message));
-            expect(logOutput).to.be.equal(element.expected);
-        });
-    });
-});
-
-suite('CsharpLoggerObsever', () => {
-    suiteSetup(() => should());
     let logOutput = "";
     let observer = new CsharpLoggerObserver({
         ...getNullChannel(),
@@ -85,27 +30,82 @@ suite('CsharpLoggerObsever', () => {
         expect(logOutput).to.contain("MyArchitecture");
     });
 
-    test('Event.InstallationFailure: Stage and Error is logged if not a PackageError', () => {
-        let event = new Event.InstallationFailure("someStage", new Error("someError"));
-        observer.post(event);
-        expect(logOutput).to.contain(event.stage);
-        expect(logOutput).to.contain(event.error.toString());
+    suite("InstallationFailure", () => {
+        test('Stage and Error is logged if not a PackageError', () => {
+            let event = new Event.InstallationFailure("someStage", new Error("someError"));
+            observer.post(event);
+            expect(logOutput).to.contain(event.stage);
+            expect(logOutput).to.contain(event.error.toString());
+        });
+    
+        test('Stage and Error is logged if a PackageError without inner error', () => {
+            let event = new Event.InstallationFailure("someStage", new PackageError("someError", null, null));
+            observer.post(event);
+            expect(logOutput).to.contain(event.stage);
+            expect(logOutput).to.contain(event.error.message);
+        });
+    
+        test('Stage and Inner error is logged if a PackageError without inner error', () => {
+            let event = new Event.InstallationFailure("someStage", new PackageError("someError", null, "innerError"));
+            observer.post(event);
+            expect(logOutput).to.contain(event.stage);
+            expect(logOutput).to.contain(event.error.innerError.toString());
+        });
     });
 
-    test('Event.InstallationFailure: Stage and Error is logged if a PackageError without inner error', () => {
-        let event = new Event.InstallationFailure("someStage", new PackageError("someError", null, null));
-        observer.post(event);
-        expect(logOutput).to.contain(event.stage);
-        expect(logOutput).to.contain(event.error.message);
+    suite('Download',() => {
+        [
+            {
+                events: [],
+                expected: ""
+            },
+            {
+                events: [new Event.DownloadStart("Started")],
+                expected: "Started"
+            },
+            {
+                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(100)],
+                expected: "Started...................."
+            },
+            {
+                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(10), new Event.DownloadProgress(50), new Event.DownloadProgress(100)],
+                expected: "Started...................."
+            },
+            {
+                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(10), new Event.DownloadProgress(50)],
+                expected: "Started.........."
+            },
+            {
+                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(50)],
+                expected: "Started.........."
+            },
+            {
+                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(50), new Event.DownloadProgress(50), new Event.DownloadProgress(50)],
+                expected: "Started.........."
+            },
+            {
+                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(100), new Event.DownloadSuccess("Done")],
+                expected: "Started....................Done\n"
+            },
+            {
+                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(50), new Event.DownloadFailure("Failed")],
+                expected: "Started..........Failed\n"
+            },
+        ].forEach((element) => {
+            test(`Prints the download status to the logger as ${element.expected}`, () => {
+                let logOutput = "";
+    
+                let observer = new CsharpLoggerObserver({
+                    ...getNullChannel(),
+                    appendLine: (text?: string) => { logOutput += `${text}\n`; },
+                    append: (text?: string) => { logOutput += text; }
+                });
+    
+                element.events.forEach((message: Event.BaseEvent) => observer.post(message));
+                expect(logOutput).to.be.equal(element.expected);
+            });
+        });
     });
-
-    test('Event.InstallationFailure: Stage and Inner error is logged if a PackageError without inner error', () => {
-        let event = new Event.InstallationFailure("someStage", new PackageError("someError", null, "innerError"));
-        observer.post(event);
-        expect(logOutput).to.contain(event.stage);
-        expect(logOutput).to.contain(event.error.innerError.toString());
-    });
-
 
     [
         {
@@ -122,25 +122,25 @@ suite('CsharpLoggerObsever', () => {
             expect(logOutput).to.contain(element.expected);
         }));
 
-    test(`Event.ActivaltionFailure: Some message is logged`, () => {
+    test(`ActivationFailure: Some message is logged`, () => {
         let event = new Event.ActivationFailure();
         observer.post(event);
         expect(logOutput).to.not.be.empty;
     });
 
-    test(`Event.ProjectJsonDeprecatedWarning: Some message is logged`, () => {
+    test(`ProjectJsonDeprecatedWarning: Some message is logged`, () => {
         let event = new Event.ProjectJsonDeprecatedWarning();
         observer.post(event);
         expect(logOutput).to.not.be.empty;
     });
 
-    test(`Event.ProjectJsonDeprecatedWarning: Some message is logged`, () => {
+    test(`InstallationSuccess: Some message is logged`, () => {
         let event = new Event.InstallationSuccess();
         observer.post(event);
         expect(logOutput).to.not.be.empty;
     });
 
-    test(`Event.InstallationProgress: Progress message is logged`, () => {
+    test(`InstallationProgress: Progress message is logged`, () => {
         let event = new Event.InstallationProgress("someStage", "someMessage");
         observer.post(event);
         expect(logOutput).to.contain(event.message);
@@ -151,5 +151,4 @@ suite('CsharpLoggerObsever', () => {
         observer.post(event);
         expect(logOutput).to.contain(event.packageInfo);
     });
-
 });

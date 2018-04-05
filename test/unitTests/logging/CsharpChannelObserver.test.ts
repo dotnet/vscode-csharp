@@ -17,7 +17,7 @@ suite("CsharpChannelObserver", () => {
         new DebuggerPrerequisiteFailure("some failure"),
         new ProjectJsonDeprecatedWarning()
     ].forEach((event: BaseEvent) => {
-        test(`Shows the channel for ${event.constructor.name}`, () => {
+        test(`${event.constructor.name}: Channel is shown`, () => {
             let hasShown = false;
 
             let observer = new CsharpChannelObserver({
