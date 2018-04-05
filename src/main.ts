@@ -7,20 +7,26 @@ import * as OmniSharp from './omnisharp/extension';
 import * as coreclrdebug from './coreclr-debug/activate';
 import * as util from './common';
 import * as vscode from 'vscode';
+
+import { ActivationFailure, ActiveTextEditorChanged } from './omnisharp/loggingEvents';
+import { WarningMessageObserver } from './observers/WarningMessageObserver';
 import { CSharpExtDownloader } from './CSharpExtDownloader';
-import { PlatformInformation } from './platform';
-import TelemetryReporter from 'vscode-extension-telemetry';
-import { addJSONProviders } from './features/json/jsonContributions';
 import { CsharpChannelObserver } from './observers/CsharpChannelObserver';
 import { CsharpLoggerObserver } from './observers/CsharpLoggerObserver';
-import { OmnisharpLoggerObserver } from './observers/OmnisharpLoggerObserver';
 import { DotNetChannelObserver } from './observers/DotnetChannelObserver';
-import { TelemetryObserver } from './observers/TelemetryObserver';
-import { OmnisharpChannelObserver } from './observers/OmnisharpChannelObserver';
 import { DotnetLoggerObserver } from './observers/DotnetLoggerObserver';
-import { OmnisharpDebugModeLoggerObserver } from './observers/OmnisharpDebugModeLoggerObserver';
-import { ActivationFailure } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
+import { InformationMessageObserver } from './observers/InformationMessageObserver';
+import { OmnisharpChannelObserver } from './observers/OmnisharpChannelObserver';
+import { OmnisharpDebugModeLoggerObserver } from './observers/OmnisharpDebugModeLoggerObserver';
+import { OmnisharpLoggerObserver } from './observers/OmnisharpLoggerObserver';
+import { OmnisharpStatusBarObserver } from './observers/OmnisharpStatusBarObserver';
+import { PlatformInformation } from './platform';
+import { StatusBarItemAdapter } from './statusBarItemAdapter';
+import { TelemetryObserver } from './observers/TelemetryObserver';
+import TelemetryReporter from 'vscode-extension-telemetry';
+import { addJSONProviders } from './features/json/jsonContributions';
+import { ProjectStatusBarObserver } from './observers/ProjectStatusBarObserver';
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 
@@ -31,34 +37,47 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     const reporter = new TelemetryReporter(extensionId, extensionVersion, aiKey);
 
     util.setExtensionPath(extension.extensionPath);
-    
+
+    const eventStream = new EventStream();
+
     let dotnetChannel = vscode.window.createOutputChannel('.NET');
     let dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
     let dotnetLoggerObserver = new DotnetLoggerObserver(dotnetChannel);
+    eventStream.subscribe(dotnetChannelObserver.post);
+    eventStream.subscribe(dotnetLoggerObserver.post);
 
     let csharpChannel = vscode.window.createOutputChannel('C#');
     let csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
     let csharpLogObserver = new CsharpLoggerObserver(csharpChannel);
+    eventStream.subscribe(csharpchannelObserver.post);
+    eventStream.subscribe(csharpLogObserver.post);
 
     let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
     let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel);
     let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel);
-
-    const eventStream = new EventStream();
-    eventStream.subscribe(dotnetChannelObserver.post);
-    eventStream.subscribe(dotnetLoggerObserver.post);
-
-    eventStream.subscribe(csharpchannelObserver.post);
-    eventStream.subscribe(csharpLogObserver.post);
-
     eventStream.subscribe(omnisharpLogObserver.post);
     eventStream.subscribe(omnisharpChannelObserver.post);
+
+    let warningMessageObserver = new WarningMessageObserver(vscode);
+    eventStream.subscribe(warningMessageObserver.post);
+
+    let informationMessageObserver = new InformationMessageObserver(vscode);
+    eventStream.subscribe(informationMessageObserver.post);
+
+    let omnisharpStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, Number.MIN_VALUE));
+    let omnisharpStatusBarObserver = new OmnisharpStatusBarObserver(omnisharpStatusBar);
+    eventStream.subscribe(omnisharpStatusBarObserver.post);
+
+    let projectStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left));
+    let projectStatusBarObserver = new ProjectStatusBarObserver(projectStatusBar);
+    eventStream.subscribe(projectStatusBarObserver.post);
+
     const debugMode = false;
     if (debugMode) {
         let omnisharpDebugModeLoggerObserver = new OmnisharpDebugModeLoggerObserver(omnisharpChannel);
         eventStream.subscribe(omnisharpDebugModeLoggerObserver.post);
     }
-    
+
     let platformInfo: PlatformInformation;
     try {
         platformInfo = await PlatformInformation.GetCurrent();
@@ -77,6 +96,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     // register JSON completion & hover providers for project.json
     context.subscriptions.push(addJSONProviders());
+    context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(() => {
+        eventStream.post(new ActiveTextEditorChanged());
+    }));
 
     let coreClrDebugPromise = Promise.resolve();
     if (runtimeDependenciesExist) {

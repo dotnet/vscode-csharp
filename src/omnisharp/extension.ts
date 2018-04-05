@@ -28,7 +28,6 @@ import TestManager from '../features/dotnetTest';
 import WorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
 import forwardChanges from '../features/changeForwarding';
 import registerCommands from '../features/commands';
-import reportStatus from '../features/status';
 import { PlatformInformation } from '../platform';
 import { ProjectJsonDeprecatedWarning, OmnisharpStart } from './loggingEvents';
 import { EventStream } from '../EventStream';
@@ -87,7 +86,6 @@ export function activate(context: vscode.ExtensionContext, eventStream: EventStr
     }));
 
     disposables.push(registerCommands(server, eventStream,platformInfo));
-    disposables.push(reportStatus(server, eventStream));
 
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
         disposables.push(server.onServerStart(() => {
