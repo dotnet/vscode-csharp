@@ -71,7 +71,7 @@ export class OmniSharpServer {
 
     private static _nextId = 1;
     private _readLine: ReadLine;
-    private _disposables: CompositeDisposable = new CompositeDisposable(Disposable.empty);
+    private _disposables: CompositeDisposable;
 
     private _delayTrackers: { [requestName: string]: DelayTracker };
     private _telemetryIntervalId: NodeJS.Timer = undefined;
