@@ -8,7 +8,7 @@
 import * as gulp from 'gulp';
 import * as path from 'path';
 
-import { codeExtensionPath, nodePath, nycPath, rootPath, runnerPath, testAssetsRootPath, testRootPath, unitTestCoverageRootPath, mochaPath } from './projectPaths';
+import { codeExtensionPath, nodePath, nycPath, rootPath, testAssetsRootPath, testRootPath, unitTestCoverageRootPath, mochaPath, vscodeTestHostPath } from './projectPaths';
 import { execFile, spawn } from 'child_process';
 
 import spawnNode from './spawnNode';
@@ -27,7 +27,7 @@ gulp.task("test:feature", () => {
         CODE_TESTS_PATH: path.join(testRootPath, "featureTests")
     };
 
-    return spawnNode([runnerPath], {
+    return spawnNode([vscodeTestHostPath], {
         env
     });
 });
@@ -70,5 +70,5 @@ function runIntegrationTest(testAssetName: string) {
         CODE_WORKSPACE_ROOT: rootPath,
     };
 
-    return spawnNode([runnerPath], { env, cwd: rootPath });
+    return spawnNode([vscodeTestHostPath], { env, cwd: rootPath });
 }

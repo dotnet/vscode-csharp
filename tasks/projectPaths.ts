@@ -24,6 +24,7 @@ export const nycPath = path.join(nodeModulesPath, 'nyc', 'bin', 'nyc.js');
 export const mochaPath = path.join(nodeModulesPath, 'mocha', 'bin', 'mocha');
 export const istanbulCombinePath = path.join(nodeModulesPath, 'istanbul-combine', 'cli.js');
 export const codecovPath = path.join(nodeModulesPath, 'codecov', 'bin', 'codecov');
+export const vscodeTestHostPath = path.join(nodeModulesPath, 'vscode', 'bin', 'test');
 
 export const packageJsonPath = path.join(rootPath, "package.json");
 
@@ -37,7 +38,6 @@ export const codeExtensionSourcesPath = path.join(codeExtensionPath, "out");
 
 export const testRootPath = path.join(rootPath, "out", "test");
 export const testAssetsRootPath = path.join(rootPath, "test", "integrationTests", "testAssets");
-export const runnerPath = path.join(rootPath, 'test/runVsCodeTestsWithAbsolutePaths.js');
 
 export const coverageRootPath = path.join(rootPath, 'coverage');
 export const unitTestCoverageRootPath = path.join(coverageRootPath, 'unit');
