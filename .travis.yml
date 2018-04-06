@@ -27,10 +27,10 @@ addons:
 install:
 - npm install
 - npm i -g gulp
-- gulp 'vsix:online:package'
+- gulp 'vsix:release:package'
 
 script:
-  - gulp 'vsix:online:unpackage'
+  - gulp 'vsix:release:unpackage'
   - gulp cov:instrument --codeExtensionPath ./vsix/extension
   - gulp test --codeExtensionPath ./vsix/extension
   - gulp cov:report --codeExtensionPath ./vsix/extension

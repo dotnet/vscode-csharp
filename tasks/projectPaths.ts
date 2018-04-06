@@ -7,16 +7,14 @@
 
 import * as gulp from 'gulp';
 import * as path from 'path';
-
 import { execFile, spawn } from 'child_process';
-
 import { commandLineOptions } from './commandLineArguments';
 
 export const rootPath = path.resolve(__dirname, '..');
 
 export const vscodeignorePath = path.join(rootPath, '.vscodeignore');
 export const offlineVscodeignorePath = path.join(rootPath, 'offline.vscodeignore');
-export const onlineVscodeignorePath = path.join(rootPath, 'online.vscodeignore');
+export const onlineVscodeignorePath = path.join(rootPath, 'release.vscodeignore');
 
 export const nodeModulesPath = path.join(rootPath, 'node_modules');
 export const vscePath = path.join(nodeModulesPath, 'vsce', 'out', 'vsce');
@@ -27,10 +25,9 @@ export const codecovPath = path.join(nodeModulesPath, 'codecov', 'bin', 'codecov
 
 export const packageJsonPath = path.join(rootPath, "package.json");
 
-export const packedVsixOutputRoot = commandLineOptions.vsixPackagingOutputFolder || rootPath;
+export const packedVsixOutputRoot = commandLineOptions.outputFolder || rootPath;
 export const unpackedVsixPath = path.join(rootPath, "vsix");
 export const unpackedExtensionPath = path.join(unpackedVsixPath, "extension");
-
 
 export const codeExtensionPath = commandLineOptions.codeExtensionPath || rootPath;
 export const codeExtensionSourcesPath = path.join(codeExtensionPath, "out");

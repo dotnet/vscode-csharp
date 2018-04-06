@@ -45,7 +45,7 @@
     "cov:report": "npm-run-all cov:report:integration cov:report:unit",
     "cov:report:unit": "gulp cov:report:unit",
     "cov:report:integration": "gulp cov:report:integration",
-    "unpackage:vsix": "gulp vsix:online:unpackage",
+    "unpackage:vsix": "gulp vsix:release:unpackage",
     "gulp": "gulp"
   },
   "nyc": {

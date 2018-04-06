@@ -14,7 +14,7 @@ let argv = minimist(process.argv.slice(2), {
 
 export const commandLineOptions ={
     retainVsix: !!argv['retainVsix'],
-    vsixPackagingOutputFolder:  makePathAbsolute(argv['o']),
+    outputFolder:  makePathAbsolute(argv['o']),
     codeExtensionPath: makePathAbsolute(argv['codeExtensionPath'])
 };
 
