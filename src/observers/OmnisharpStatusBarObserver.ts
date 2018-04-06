@@ -10,31 +10,29 @@ export class OmnisharpStatusBarObserver extends BaseStatusBarItemObserver {
     public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case OmnisharpServerOnServerError.name:
-                this.SetTextAndShowStatusBar('$(flame) Error starting OmniSharp', 'o.showOutput', '');
+                this.SetAndShowStatusBar('$(flame)', 'o.showOutput', 'rgb(218,0,0)', 'Error starting OmniSharp');
                 break;
             case OmnisharpOnBeforeServerInstall.name:
-                this.SetTextAndShowStatusBar('$(flame) Installing OmniSharp...', 'o.showOutput', '');
+                this.SetAndShowStatusBar('$(flame) Installing OmniSharp...', 'o.showOutput', '', '');
                 break;
             case OmnisharpOnBeforeServerStart.name:
-                this.SetTextAndShowStatusBar('$(flame) Starting...', 'o.showOutput', '');
+                this.SetAndShowStatusBar('$(flame)', 'o.showOutput', 'rgb(218,218,0)', 'Starting OmniSharp server');
                 break;
             case OmnisharpServerOnStop.name:
                 this.ResetAndHideStatusBar();
                 break;
             case OmnisharpServerOnStart.name:
-                this.SetTextAndShowStatusBar('$(flame) Running', 'o.showOutput', '');
+                this.SetAndShowStatusBar('$(flame)', 'o.showOutput', 'rgb(0, 218, 0)', 'OmniSharp server is Running');
                 break;
             case DownloadStart.name:
-                this.SetTextAndShowStatusBar("$(cloud-download) Downloading packages");
-                this.SetToolTipAndShowStatusBar(`Downloading package '${(<DownloadStart>event).packageDescription}...' `);
+                this.SetAndShowStatusBar("$(cloud-download) Downloading packages", '', '', `Downloading package '${(<DownloadStart>event).packageDescription}...' `);
                 break;
             case InstallationProgress.name:
-                this.SetTextAndShowStatusBar("$(desktop-download) Installing packages...");
-                this.SetToolTipAndShowStatusBar(`Installing package '${(<InstallationProgress>event).packageDescription}'`);
+                this.SetAndShowStatusBar("$(desktop-download) Installing packages...", '', '', `Installing package '${(<InstallationProgress>event).packageDescription}'`);
                 break;
             case DownloadProgress.name:
                 let progressEvent = <DownloadProgress>event;
-                this.SetToolTipAndShowStatusBar(`Downloading package '${progressEvent.packageDescription}'... ${progressEvent.downloadPercentage}%`);
+                this.SetAndShowStatusBar("$(cloud-download) Downloading packages", '', '', `Downloading package '${progressEvent.packageDescription}'... ${progressEvent.downloadPercentage}%`);
                 break;
         }
     }

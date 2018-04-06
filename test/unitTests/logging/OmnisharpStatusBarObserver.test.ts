@@ -34,8 +34,9 @@ suite('OmnisharpStatusBarObserver', () => {
         let event = new OmnisharpServerOnServerError("someError");
         observer.post(event);
         expect(showCalled).to.be.true;
-        expect(statusBarItem.text).to.equal(`$(flame) Error starting OmniSharp`);
+        expect(statusBarItem.text).to.equal(`$(flame)`);
         expect(statusBarItem.command).to.equal('o.showOutput');
+        expect(statusBarItem.tooltip).to.equal('Error starting OmniSharp');
     });
 
     test('OnBeforeServerInstall: Status bar is shown with the installation text', () => {
@@ -50,16 +51,18 @@ suite('OmnisharpStatusBarObserver', () => {
         let event = new OmnisharpOnBeforeServerStart();
         observer.post(event);
         expect(showCalled).to.be.true;
-        expect(statusBarItem.text).to.be.equal('$(flame) Starting...');
+        expect(statusBarItem.text).to.be.equal('$(flame)');
         expect(statusBarItem.command).to.equal('o.showOutput');
+        expect(statusBarItem.tooltip).to.equal('Starting OmniSharp server');
     });
 
     test('OnServerStart: Status bar is shown with the flame and "Running" text', () => {
         let event = new OmnisharpServerOnStart();
         observer.post(event);
         expect(showCalled).to.be.true;
-        expect(statusBarItem.text).to.be.equal('$(flame) Running');
+        expect(statusBarItem.text).to.be.equal('$(flame)');
         expect(statusBarItem.command).to.equal('o.showOutput');
+        expect(statusBarItem.tooltip).to.be.equal('OmniSharp server is Running');
     });
 
     test('OnServerStop: Status bar is hidden and the attributes are set to undefined', () => {
