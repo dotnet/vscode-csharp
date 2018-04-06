@@ -22,6 +22,8 @@ export const nodeModulesPath = path.join(rootPath, 'node_modules');
 export const vscePath = path.join(nodeModulesPath, 'vsce', 'out', 'vsce');
 export const nycPath = path.join(nodeModulesPath, 'nyc', 'bin', 'nyc.js');
 export const mochaPath = path.join(nodeModulesPath, 'mocha', 'bin', 'mocha');
+export const istanbulCombinePath = path.join(nodeModulesPath, 'istanbul-combine', 'cli.js');
+export const codecovPath = path.join(nodeModulesPath, 'codecov', 'bin', 'codecov');
 
 export const packageJsonPath = path.join(rootPath, "package.json");
 
@@ -38,8 +40,11 @@ export const testAssetsRootPath = path.join(rootPath, "test", "integrationTests"
 export const runnerPath = path.join(rootPath, 'test/runVsCodeTestsWithAbsolutePaths.js');
 
 export const coverageRootPath = path.join(rootPath, 'coverage');
-export const nycOutputPath = path.join(rootPath, '.nyc_output');
 export const unitTestCoverageRootPath = path.join(coverageRootPath, 'unit');
+export const integrationTestCoverageRootPath = path.join(coverageRootPath, 'integration');
+
+export const nycOutputPath = path.join(rootPath, '.nyc_output');
+export const integrationTestNycOutputPath = path.join(nycOutputPath, 'integration');
 
 export const nodePath = path.join(process.env.NVM_BIN
     ? `${process.env.NVM_BIN}${path.sep}`

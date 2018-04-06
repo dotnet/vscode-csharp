@@ -9,10 +9,8 @@ import * as gulp from 'gulp';
 import * as path from 'path';
 import * as del from 'del';
 import spawnNode from './spawnNode';
-import { coverageRootPath, nycOutputPath, nycPath, codeExtensionSourcesPath } from './projectPaths';
+import { coverageRootPath, nycOutputPath, nycPath, codeExtensionSourcesPath, integrationTestCoverageRootPath, integrationTestNycOutputPath, istanbulCombinePath, codecovPath, unitTestCoverageRootPath } from './projectPaths';
 
-
-// "cov:instrument": "cd ./vsix/extension/out && nyc instrument --require source-map-support/register --cwd ../ . . && cd ../../../",
 gulp.task("cov:instrument", () => {
     del(coverageRootPath);
     del(nycOutputPath);
@@ -24,6 +22,58 @@ gulp.task("cov:instrument", () => {
         'source-map-support/register',
         '.',
         '.'
+    ], {
+        cwd: codeExtensionSourcesPath
+    });
+});
+
+gulp.task("cov:merge", () => {
+    return spawnNode([
+        istanbulCombinePath,
+        '-d',
+        integrationTestCoverageRootPath,
+        '-r',
+        'lcovonly',
+        `${integrationTestNycOutputPath}/*.json`
+    ], {
+        cwd: codeExtensionSourcesPath
+    });
+});
+
+gulp.task("cov:merge-html", () => {
+    return spawnNode([
+        istanbulCombinePath,
+        '-d',
+        integrationTestCoverageRootPath,
+        '-r',
+        'html',
+        `${integrationTestNycOutputPath}/*.json`
+    ], {
+        cwd: codeExtensionSourcesPath
+    });
+});
+
+gulp.task("cov:report", ["cov:report:integration", "cov:report:unit"]);
+
+gulp.task("cov:report:integration", ["cov:merge"], () => {
+    return spawnNode([
+        codecovPath,
+        '-f',
+        path.join(integrationTestCoverageRootPath, 'lcov.info'),
+        '-F',
+        'integration'
+    ], {
+        cwd: codeExtensionSourcesPath
+    });
+});
+
+gulp.task("cov:report:unit", () => {
+    return spawnNode([
+        codecovPath,
+        '-f',
+        path.join(unitTestCoverageRootPath, 'lcov.info'),
+        '-F',
+        'unit'
     ], {
         cwd: codeExtensionSourcesPath
     });
