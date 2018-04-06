@@ -12,9 +12,7 @@ import * as gulp from 'gulp';
 import * as path from 'path';
 import * as unzip from 'unzip2';
 import * as util from '../src/common';
-
 import { offlineVscodeignorePath, onlineVscodeignorePath, rootPath, unpackedVsixPath, vscePath, vscodeignorePath } from './projectPaths';
-
 import { CsharpLoggerObserver } from '../src/observers/CsharpLoggerObserver';
 import { EventStream } from '../src/EventStream';
 import { Logger } from '../src/logger';
@@ -23,7 +21,7 @@ import { PlatformInformation } from '../src/platform';
 import { getPackageJSON } from './packageJson';
 import spawnNode from './spawnNode';
 
-gulp.task('vsix:online:unpackage', () => {
+gulp.task('vsix:release:unpackage', () => {
     const packageJSON = getPackageJSON();
     const name = packageJSON.name;
     const version = packageJSON.version;
@@ -34,7 +32,7 @@ gulp.task('vsix:online:unpackage', () => {
     fs.createReadStream(packageName).pipe(unzip.Extract({ path: unpackedVsixPath }));
 });
 
-gulp.task('vsix:online:package', (onError) => {
+gulp.task('vsix:release:package', (onError) => {
     del.sync(vscodeignorePath);
 
     fs.copyFileSync(onlineVscodeignorePath, vscodeignorePath);
