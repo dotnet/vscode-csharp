@@ -53,7 +53,8 @@ suite("CsharpLoggerObserver", () => {
         });
     });
 
-    suite('Download',() => {
+    suite('Download', () => {
+        let packageName = "somePackage";
         [
             {
                 events: [],
@@ -64,31 +65,31 @@ suite("CsharpLoggerObserver", () => {
                 expected: "Started"
             },
             {
-                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(100)],
+                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(100, packageName)],
                 expected: "Started...................."
             },
             {
-                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(10), new Event.DownloadProgress(50), new Event.DownloadProgress(100)],
+                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(10, packageName), new Event.DownloadProgress(50, packageName), new Event.DownloadProgress(100, packageName)],
                 expected: "Started...................."
             },
             {
-                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(10), new Event.DownloadProgress(50)],
+                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(10, packageName), new Event.DownloadProgress(50, packageName)],
                 expected: "Started.........."
             },
             {
-                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(50)],
+                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(50, packageName)],
                 expected: "Started.........."
             },
             {
-                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(50), new Event.DownloadProgress(50), new Event.DownloadProgress(50)],
+                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(50, packageName), new Event.DownloadProgress(50, packageName), new Event.DownloadProgress(50, packageName)],
                 expected: "Started.........."
             },
             {
-                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(100), new Event.DownloadSuccess("Done")],
+                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(100, packageName), new Event.DownloadSuccess("Done")],
                 expected: "Started....................Done\n"
             },
             {
-                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(50), new Event.DownloadFailure("Failed")],
+                events: [new Event.DownloadStart("Started"), new Event.DownloadProgress(50, packageName), new Event.DownloadFailure("Failed")],
                 expected: "Started..........Failed\n"
             },
         ].forEach((element) => {
@@ -141,9 +142,9 @@ suite("CsharpLoggerObserver", () => {
     });
 
     test(`InstallationProgress: Progress message is logged`, () => {
-        let event = new Event.InstallationProgress("someStage", "someMessage");
+        let event = new Event.InstallationProgress("someStage", "somPackage");
         observer.post(event);
-        expect(logOutput).to.contain(event.message);
+        expect(logOutput).to.contain(event.packageDescription);
     });
 
     test('PackageInstallation: Package name is logged', () => {
