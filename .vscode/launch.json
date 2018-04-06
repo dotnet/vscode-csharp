@@ -25,6 +25,7 @@
                 "--extensionTestsPath=${workspaceRoot}/out/test/featureTests"
             ],
             "env": {
+                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
                 "CODE_TESTS_PATH": "${workspaceRoot}/out/test/featureTests",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "featureTests"
@@ -46,6 +47,7 @@
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
+                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
                 "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
                 "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -68,6 +70,7 @@
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
+                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
                 "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
                 "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",

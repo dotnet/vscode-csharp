@@ -31,7 +31,6 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
         let dir = path.dirname(testAssetWorkspace.projects[0].projectDirectoryPath);
         let loc = path.join(dir, fileName);
         fileUri = vscode.Uri.file(loc);
-        await omnisharp.waitForEmptyEventQueue();
         await vscode.commands.executeCommand("vscode.open", fileUri);
     });
 
