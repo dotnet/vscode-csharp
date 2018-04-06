@@ -34,7 +34,6 @@ suite(`Hover Provider: ${testAssetWorkspace.description}`, function () {
         let dir = path.dirname(testAssetWorkspace.projects[0].projectDirectoryPath);
         let loc = path.join(dir, fileName);
         let fileUri = vscode.Uri.file(loc);
-        await omnisharp.waitForEmptyEventQueue();
 
         await vscode.commands.executeCommand("vscode.open", fileUri);
         let c = await vscode.commands.executeCommand("vscode.executeHoverProvider", fileUri, new vscode.Position(10, 29));
