@@ -37,11 +37,6 @@ gulp.task('vsix:release:package', (onError) => {
 
     fs.copyFileSync(onlineVscodeignorePath, vscodeignorePath);
 
-    let onDone = (reason) => {
-
-        onError(reason);
-    };
-
     return spawnNode([vscePath, 'package'])
         .then(() => {
             del(vscodeignorePath);

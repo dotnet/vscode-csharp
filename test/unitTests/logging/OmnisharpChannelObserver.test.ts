@@ -22,16 +22,4 @@ suite("OmnisharpChannelObserver", () => {
         observer.post(event);
         expect(hasShown).to.be.true;
     });
-
-    test('CommandShowOutput: Shows the channel', () => {
-        let event = new CommandShowOutput();
-        let testColumn: vscode.ViewColumn;
-        let observer = new OmnisharpChannelObserver({
-            ...getNullChannel(),
-            show: (column?: ViewColumn, preserveFocus?: boolean) => { testColumn = column;}
-        });
-
-        observer.post(event);
-        expect(testColumn).to.be.equal(vscode.ViewColumn.Three);
-    });
 });

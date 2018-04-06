@@ -21,6 +21,7 @@ import { getPackageJSON } from '../tasks/packageJson';
 import { Logger } from '../src/logger';
 import { PackageManager } from '../src/packages';
 import { PlatformInformation } from '../src/platform';
+import { Result } from 'async-child-process';
 
 gulp.task('vsix:offline:package', () => {
     del.sync(vscodeignorePath);
@@ -57,7 +58,7 @@ function doPackageOffline() {
         new PlatformInformation('linux', 'x86_64')
     ];
 
-    let promise = Promise.resolve();
+    let promise: Promise<Result> = Promise.resolve<Result>(null);
 
     packages.forEach(platformInfo => {
         promise = promise
