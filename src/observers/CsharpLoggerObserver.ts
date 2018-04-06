@@ -55,7 +55,7 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
     }
 
     private handleDownloadSizeObtained(event: Event.DownloadSizeObtained) {
-        this.logger.append(`(${Math.ceil(event.packageSize / 1024)} KB) `);
+        this.logger.append(`(${Math.ceil(event.packageSize / 1024)} KB)`);
     }
 
     private handleDownloadFallback(event: Event.DownloadFallBack) {
@@ -100,7 +100,7 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
     }
 
     private handleDownloadStart(event: Event.DownloadStart) {
-        this.logger.append(`Downloading package '${event.packageDescription}'... `);
+        this.logger.append(`Downloading package '${event.packageDescription}' `);
         this.dots = 0;
     }
 

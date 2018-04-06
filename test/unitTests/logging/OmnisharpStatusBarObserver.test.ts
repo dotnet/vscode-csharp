@@ -4,19 +4,21 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { DocumentSelector, StatusBarItem } from '../../../src/vscodeAdapter';
-import { OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpOnMultipleLaunchTargets, OmnisharpServerOnServerError, OmnisharpServerOnStart, OmnisharpServerOnStop } from '../../../src/omnisharp/loggingEvents';
+import { OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpOnMultipleLaunchTargets, OmnisharpServerOnServerError, OmnisharpServerOnStart, OmnisharpServerOnStop, DownloadStart, InstallationProgress, DownloadProgress } from '../../../src/omnisharp/loggingEvents';
 import { expect, should } from 'chai';
 import { OmnisharpStatusBarObserver } from '../../../src/observers/OmnisharpStatusBarObserver';
 import { getFakeVsCode, getWorkspaceInformationUpdated, getMSBuildWorkspaceInformation } from './Fakes';
 
 suite('OmnisharpStatusBarObserver', () => {
     suiteSetup(() => should());
-    let output = '';
     let showCalled: boolean;
     let hideCalled: boolean;
 
     setup(() => {
-        output = '';
+        statusBarItem.text = undefined;
+        statusBarItem.color = undefined;
+        statusBarItem.command = undefined;
+        statusBarItem.tooltip = undefined;
         showCalled = false;
         hideCalled = false;
     });
@@ -67,5 +69,26 @@ suite('OmnisharpStatusBarObserver', () => {
         expect(statusBarItem.text).to.be.undefined;
         expect(statusBarItem.command).to.be.undefined;
         expect(statusBarItem.color).to.be.undefined;
+    });
+
+    test('DownloadStart: Text and tooltip are set ', () => {
+        let event = new DownloadStart("somePackage");
+        observer.post(event);
+        expect(statusBarItem.text).to.contain("Downloading packages");
+        expect(statusBarItem.tooltip).to.contain(event.packageDescription);
+    });
+
+    test('InstallationProgress: Text and tooltip are set', () => {
+        let event = new InstallationProgress("someStage", "somePackage");
+        observer.post(event);
+        expect(statusBarItem.text).to.contain("Installing packages");
+        expect(statusBarItem.tooltip).to.contain(event.packageDescription);
+    });
+
+    test('DownloadProgress: Tooltip contains package description and download percentage', () => {
+        let event = new DownloadProgress(50, "somePackage");
+        observer.post(event);
+        expect(statusBarItem.tooltip).to.contain(event.packageDescription);
+        expect(statusBarItem.tooltip).to.contain(event.downloadPercentage);
     });
 });
