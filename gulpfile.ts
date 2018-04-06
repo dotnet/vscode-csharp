@@ -8,10 +8,7 @@
 import * as gulp from 'gulp';
 import * as optionsSchemaGenerator from './src/tools/GenerateOptionsSchema';
 import * as packageDependencyUpdater from './src/tools/UpdatePackageDependencies';
-
 import tslint from 'gulp-tslint';
-import { PlatformInformation } from './src/platform';
-import { PackageManager } from './src/packages';
 
 require('./tasks/testTasks');
 require('./tasks/onlinePackagingTasks');
@@ -29,9 +26,11 @@ gulp.task('updatePackageDependencies', () => {
 
 gulp.task('tslint', () => {
     gulp.src([
-        'src/**/*.ts',
+        '**/*.ts',
         '!**/*.d.ts',
-        '!**/typings**'
+        '!**/typings**',
+        '!node_modules/**',
+        '!vsix/**'
     ])
         .pipe(tslint({
             program: require('tslint').Linter.createProgram("./tsconfig.json"),

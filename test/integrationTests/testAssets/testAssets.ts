@@ -76,7 +76,7 @@ export class TestAssetWorkspace {
 
     invokeGit(args: string, workingDirectory: string): Promise<{ stdout: string, stderr: string }> {
         return new Promise((resolve, reject) => {
-            let child = cp.exec('git ' + args, { cwd: path.dirname(workingDirectory) },
+            cp.exec('git ' + args, { cwd: path.dirname(workingDirectory) },
                 (err, stdout, stderr) => {
                     return err ? reject(err) : resolve({
                         stdout: stdout,

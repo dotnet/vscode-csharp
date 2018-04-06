@@ -2,18 +2,10 @@
  * Copyright (C) Microsoft Corporation. All rights reserved.
  *--------------------------------------------------------*/
 
-import shelljs = require("async-shelljs");
 import path = require('path');
 const fs = require('async-file');
-import Mocha = require('mocha');
-import istanbul = require('istanbul');
-const loadCoverage = require('remap-istanbul/lib/loadCoverage');
-const remap = require('remap-istanbul/lib/remap');
-const writeReport = require('remap-istanbul/lib/writeReport');
 
 declare var __coverage__: any;
-let glob = require('glob');
-let remapIstanbul = require('remap-istanbul');
 
 export default class CoverageWritingTestRunner {
     constructor(private baseRunner: any) {
@@ -64,12 +56,6 @@ export default class CoverageWritingTestRunner {
                     }
 
                     await fs.writeTextFile(rawCoverageJsonPath, JSON.stringify(__coverage__));
-
-                    let result = await shelljs.asyncExec(`${nodePath}node ${remapIstanbulPath} -i ${rawCoverageJsonPath} -o ${remappedCoverageJsonPath}`, {
-                        cwd: outFolderPath
-                    });
-
-
 
                     let remappedResult = JSON.parse(await fs.readTextFile(remappedCoverageJsonPath));
 

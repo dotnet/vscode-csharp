@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as rx from 'rx';
-import { MessageItemWithCommand, WarningMessageObserver } from '../../../src/observers/WarningMessageObserver';
+import { WarningMessageObserver } from '../../../src/observers/WarningMessageObserver';
 import { use as chaiUse, expect, should } from 'chai';
 import { getFakeVsCode, getMSBuildDiagnosticsMessage, getOmnisharpMSBuildProjectDiagnosticsEvent, getOmnisharpServerOnErrorEvent } from './Fakes';
 import { BaseEvent } from '../../../src/omnisharp/loggingEvents';

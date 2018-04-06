@@ -6,8 +6,6 @@
 import * as path from 'path';
 import * as tmp from 'tmp';
 import * as util from '../../src/common';
-import { should } from 'chai';
-import { Logger } from '../../src/logger';
 import { OmnisharpDownloader } from '../../src/omnisharp/OmnisharpDownloader';
 import { rimraf } from 'async-file';
 import { PlatformInformation } from '../../src/platform';

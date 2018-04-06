@@ -3,15 +3,11 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information. 
 *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'async-file';
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-import poll from './poll';
 import { should, expect } from 'chai';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { OmniSharpServer } from '../../src/omnisharp/server';
-import { omnisharp } from '../../src/omnisharp/extension';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));

@@ -3,10 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'async-file';
 import * as vscode from 'vscode';
-
-import poll from './poll';
 import { should, expect } from 'chai';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
@@ -35,7 +32,7 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function() {
             (s) => { return s.title == "Rename file to C.cs"; }
         );
         expect(command, "Didn't find rename class command");
-        await vscode.commands.executeCommand(command.command, ...command.arguments)
+        await vscode.commands.executeCommand(command.command, ...command.arguments);
         expect(vscode.window.activeTextEditor.document.fileName).contains("C.cs");
     });
 

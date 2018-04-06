@@ -10,7 +10,6 @@ import { PlatformInformation } from "../../src/platform";
 import { rimraf } from 'async-file';
 import { GetTestOmnisharpDownloader } from './OmnisharpDownloader.test';
 import { OmnisharpManager } from '../../src/omnisharp/OmnisharpManager';
-import { OmnisharpDownloader } from '../../src/omnisharp/OmnisharpDownloader';
 import { EventStream } from '../../src/EventStream';
 
 const chai = require("chai");
@@ -72,7 +71,6 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
     });
 
     test('Downloads package from given url and installs them at the specified path', async () => {
-        let launchPath = await manager.GetOmnisharpPath("1.2.3", useMono, serverUrl, versionFilepathInServer, installPath, extensionPath);
         let exists = await util.fileExists(path.resolve(extensionPath, `.omnisharp/experimental/1.2.3/install_check_1.2.3.txt`));
         exists.should.equal(true);
     });

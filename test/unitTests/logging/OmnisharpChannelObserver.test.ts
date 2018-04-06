@@ -5,9 +5,7 @@
 import { should, expect } from 'chai';
 import { getNullChannel } from './Fakes';
 import { OmnisharpChannelObserver } from '../../../src/observers/OmnisharpChannelObserver';
-import { BaseEvent, OmnisharpFailure, CommandShowOutput } from '../../../src/omnisharp/loggingEvents';
-import * as vscode from '../../../src/vscodeAdapter';
-import { ViewColumn } from 'vscode';
+import { OmnisharpFailure } from '../../../src/omnisharp/loggingEvents';
 
 suite("OmnisharpChannelObserver", () => {
     suiteSetup(() => should());
