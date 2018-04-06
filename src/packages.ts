@@ -13,7 +13,7 @@ import * as yauzl from 'yauzl';
 import * as util from './common';
 import { PlatformInformation } from './platform';
 import { getProxyAgent } from './proxy';
-import { DownloadSuccess, DownloadStart, DownloadFailure, DownloadProgress, InstallationProgress } from './omnisharp/loggingEvents';
+import { DownloadSuccess, DownloadStart, DownloadFailure, DownloadProgress, InstallationProgress, DownloadFallBack, DownloadSizeObtained } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
 
 export interface Package {
@@ -29,12 +29,6 @@ export interface Package {
 
     // Path to use to test if the package has already been installed
     installTestPath?: string;
-}
-
-export interface Status {
-    setMessage: (text: string) => void;
-    setDetail: (text: string) => void;
-    dispose?: () => void;
 }
 
 export class PackageError extends Error {
@@ -57,17 +51,17 @@ export class PackageManager {
         tmp.setGracefulCleanup();
     }
 
-    public DownloadPackages(eventStream: EventStream, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
+    public DownloadPackages(eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<void> {
         return this.GetPackages()
             .then(packages => {
-                return util.buildPromiseChain(packages, pkg => maybeDownloadPackage(pkg, eventStream, status, proxy, strictSSL));
+                return util.buildPromiseChain(packages, pkg => maybeDownloadPackage(pkg, eventStream, proxy, strictSSL));
             });
     }
 
-    public InstallPackages(eventStream: EventStream, status: Status): Promise<void> {
+    public InstallPackages(eventStream: EventStream): Promise<void> {
         return this.GetPackages()
             .then(packages => {
-                return util.buildPromiseChain(packages, pkg => installPackage(pkg, eventStream, status));
+                return util.buildPromiseChain(packages, pkg => installPackage(pkg, eventStream));
             });
     }
 
@@ -113,10 +107,10 @@ export class PackageManager {
         resolvePackageBinaries(this.allPackages);
     }
 
-    public async GetLatestVersionFromFile(eventStream: EventStream, status: Status, proxy: string, strictSSL: boolean, filePackage: Package): Promise<string> {
+    public async GetLatestVersionFromFile(eventStream: EventStream, proxy: string, strictSSL: boolean, filePackage: Package): Promise<string> {
         try {
             let latestVersion: string;
-            await maybeDownloadPackage(filePackage, eventStream, status, proxy, strictSSL);
+            await maybeDownloadPackage(filePackage, eventStream, proxy, strictSSL);
             if (filePackage.tmpFile) {
                 latestVersion = fs.readFileSync(filePackage.tmpFile.name, 'utf8');
                 //Delete the temporary file created
@@ -149,29 +143,19 @@ function getBaseInstallPath(pkg: Package): string {
     return basePath;
 }
 
-function getNoopStatus(): Status {
-    return {
-        setMessage: text => { },
-        setDetail: text => { }
-    };
-}
-
-function maybeDownloadPackage(pkg: Package, eventStream: EventStream, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
+function maybeDownloadPackage(pkg: Package, eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<void> {
     return doesPackageTestPathExist(pkg).then((exists: boolean) => {
         if (!exists) {
-            return downloadPackage(pkg, eventStream, status, proxy, strictSSL);
+            return downloadPackage(pkg, eventStream, proxy, strictSSL);
         } else {
             eventStream.post(new DownloadSuccess(`Skipping package '${pkg.description}' (already downloaded).`));
         }
     });
 }
 
-function downloadPackage(pkg: Package, eventStream: EventStream, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
-    status = status || getNoopStatus();
+function downloadPackage(pkg: Package, eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<void> {
 
-    eventStream.post(new DownloadStart(`Downloading package '${pkg.description}' ` ));
-    status.setMessage("$(cloud-download) Downloading packages");
-    status.setDetail(`Downloading package '${pkg.description}'...`);
+    eventStream.post(new DownloadStart(pkg.description));
 
     return new Promise<tmp.SynchrounousResult>((resolve, reject) => {
         tmp.file({ prefix: 'package-' }, (err, path, fd, cleanupCallback) => {
@@ -184,17 +168,17 @@ function downloadPackage(pkg: Package, eventStream: EventStream, status: Status,
     }).then(tmpResult => {
         pkg.tmpFile = tmpResult;
 
-        let result = downloadFile(pkg.url, pkg, eventStream, status, proxy, strictSSL)
-            .then(() => eventStream.post(new DownloadSuccess(` Done!` )));
+        let result = downloadFile(pkg.url, pkg, eventStream, proxy, strictSSL)
+            .then(() => eventStream.post(new DownloadSuccess(` Done!`)));
 
         // If the package has a fallback Url, and downloading from the primary Url failed, try again from 
         // the fallback. This is used for debugger packages as some users have had issues downloading from
         // the CDN link.
         if (pkg.fallbackUrl) {
             result = result.catch((primaryUrlError) => {
-                eventStream.post(new DownloadStart(`\tRetrying from '${pkg.fallbackUrl}' `));
-                return downloadFile(pkg.fallbackUrl, pkg, eventStream, status, proxy, strictSSL)
-                    .then(() => eventStream.post(new DownloadSuccess(' Done!' )))
+                eventStream.post(new DownloadFallBack(pkg.fallbackUrl));
+                return downloadFile(pkg.fallbackUrl, pkg, eventStream, proxy, strictSSL)
+                    .then(() => eventStream.post(new DownloadSuccess(' Done!')))
                     .catch(() => primaryUrlError);
             });
         }
@@ -203,7 +187,7 @@ function downloadPackage(pkg: Package, eventStream: EventStream, status: Status,
     });
 }
 
-function downloadFile(urlString: string, pkg: Package, eventStream: EventStream, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
+function downloadFile(urlString: string, pkg: Package, eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<void> {
     const url = parseUrl(urlString);
 
     const options: https.RequestOptions = {
@@ -221,12 +205,12 @@ function downloadFile(urlString: string, pkg: Package, eventStream: EventStream,
         let request = https.request(options, response => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
-                return resolve(downloadFile(response.headers.location, pkg, eventStream, status, proxy, strictSSL));
+                return resolve(downloadFile(response.headers.location, pkg, eventStream, proxy, strictSSL));
             }
 
             if (response.statusCode != 200) {
                 // Download failed - print error message
-                eventStream.post(new DownloadFailure(`failed (error code '${response.statusCode}')` ));
+                eventStream.post(new DownloadFailure(`failed (error code '${response.statusCode}')`));
                 return reject(new PackageError(response.statusCode.toString(), pkg));
             }
 
@@ -236,7 +220,7 @@ function downloadFile(urlString: string, pkg: Package, eventStream: EventStream,
             let downloadPercentage = 0;
             let tmpFile = fs.createWriteStream(null, { fd: pkg.tmpFile.fd });
 
-            eventStream.post(new DownloadStart(`(${Math.ceil(packageSize / 1024)} KB) ` ));
+            eventStream.post(new DownloadSizeObtained(packageSize));
 
             response.on('data', data => {
                 downloadedBytes += data.length;
@@ -244,11 +228,9 @@ function downloadFile(urlString: string, pkg: Package, eventStream: EventStream,
                 // Update status bar item with percentage
                 let newPercentage = Math.ceil(100 * (downloadedBytes / packageSize));
                 if (newPercentage !== downloadPercentage) {
-                    status.setDetail(`Downloading package '${pkg.description}'... ${downloadPercentage}%`);
                     downloadPercentage = newPercentage;
+                    eventStream.post(new DownloadProgress(downloadPercentage, pkg.description));
                 }
-
-                eventStream.post(new DownloadProgress(downloadPercentage));
             });
 
             response.on('end', () => {
@@ -272,19 +254,14 @@ function downloadFile(urlString: string, pkg: Package, eventStream: EventStream,
     });
 }
 
-function installPackage(pkg: Package, eventStream: EventStream, status?: Status): Promise<void> {
+function installPackage(pkg: Package, eventStream: EventStream): Promise<void> {
     const installationStage = 'installPackages';
     if (!pkg.tmpFile) {
         // Download of this package was skipped, so there is nothing to install
         return Promise.resolve();
     }
 
-    status = status || getNoopStatus();
-
-    eventStream.post(new InstallationProgress(installationStage, `Installing package '${pkg.description}'`));
- 
-    status.setMessage("$(desktop-download) Installing packages...");
-    status.setDetail(`Installing package '${pkg.description}'`);
+    eventStream.post(new InstallationProgress(installationStage, pkg.description));
 
     return new Promise<void>((resolve, baseReject) => {
         const reject = (err) => {

@@ -12,7 +12,7 @@ export class ProjectStatusBarObserver extends BaseStatusBarItemObserver {
     public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case OmnisharpOnMultipleLaunchTargets.name:
-                this.SetAndShowStatusBar('$(file-submodule) Select project', 'o.pickProjectAndStart', 'rgb(90, 218, 90)');
+                this.SetTextAndShowStatusBar('$(file-submodule) Select project', 'o.pickProjectAndStart', 'rgb(90, 218, 90)');
                 break;
             case OmnisharpServerOnStop.name:
                 this.ResetAndHideStatusBar();
@@ -27,7 +27,7 @@ export class ProjectStatusBarObserver extends BaseStatusBarItemObserver {
         let info = event.info;
         if (info.MsBuild && info.MsBuild.SolutionPath) {
             label = basename(info.MsBuild.SolutionPath); //workspace.getRelativePath(info.MsBuild.SolutionPath);
-            this.SetAndShowStatusBar('$(file-directory) ' + label, 'o.pickProjectAndStart');
+            this.SetTextAndShowStatusBar('$(file-directory) ' + label, 'o.pickProjectAndStart');
         }
         else {
             this.ResetAndHideStatusBar();
