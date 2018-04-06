@@ -9,7 +9,8 @@
 		"inlineSourceMap": true,
 		"moduleResolution": "node",
 		"alwaysStrict": true,
-		"noImplicitAny": true
+		"noImplicitAny": true,
+		"skipLibCheck": true
 	},
 	"exclude": [
 		"syntaxes",

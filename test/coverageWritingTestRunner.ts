@@ -25,10 +25,10 @@ export default class CoverageWritingTestRunner {
 
     public run(testRoot: string, clb: any) {
         let promiseResolve: any;
-        let clbArgsLocal: { error, failures?: number };
+        let clbArgsLocal: { error: any, failures?: number };
 
-        new Promise<{ error, failures?: number }>(function (resolve, reject) {
-            promiseResolve = (error, failures?: number) => resolve({ error, failures });
+        new Promise<{ error: any, failures?: number }>(function (resolve, reject) {
+            promiseResolve = (error: any, failures?: number) => resolve({ error, failures });
         })
             .then(clbArgs => {
                 clbArgsLocal = clbArgs;
@@ -73,7 +73,7 @@ export default class CoverageWritingTestRunner {
 
                     let remappedResult = JSON.parse(await fs.readTextFile(remappedCoverageJsonPath));
 
-                    let finalResult = {};
+                    let finalResult = <{[details: string] : { path: string }}>{};
 
                     for (let key in remappedResult) {
                         if (remappedResult[key].path) {

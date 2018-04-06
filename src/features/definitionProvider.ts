@@ -9,11 +9,12 @@ import {GoToDefinitionRequest, MetadataRequest, MetadataSource} from '../omnisha
 import {createRequest, toLocation, toLocationFromUri} from '../omnisharp/typeConvertion';
 import AbstractSupport from './abstractProvider';
 import DefinitionMetadataDocumentProvider from './definitionMetadataDocumentProvider';
+import { OmniSharpServer } from '../omnisharp/server';
 
 export default class CSharpDefinitionProvider extends AbstractSupport implements DefinitionProvider {
     private _definitionMetadataDocumentProvider: DefinitionMetadataDocumentProvider;
 
-    constructor(server, definitionMetadataDocumentProvider: DefinitionMetadataDocumentProvider) {
+    constructor(server: OmniSharpServer, definitionMetadataDocumentProvider: DefinitionMetadataDocumentProvider) {
         super(server);
 
         this._definitionMetadataDocumentProvider = definitionMetadataDocumentProvider;

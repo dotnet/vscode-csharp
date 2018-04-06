@@ -24,13 +24,13 @@ suite('WarningMessageObserver', () => {
         signalCommandDone = () => { resolve(); };
     });
 
-    let warningMessage;
-    let invokedCommand;
+    let warningMessage: string;
+    let invokedCommand: string;
     let scheduler: rx.HistoricalScheduler;
     let observer: WarningMessageObserver;
     let vscode: vscode = getFakeVsCode();
 
-    vscode.window.showWarningMessage = <T>(message, ...items) => {
+    vscode.window.showWarningMessage = <T>(message: string, ...items: T[]) => {
         warningMessage = message;
 
         return new Promise<T>(resolve => {
@@ -44,7 +44,7 @@ suite('WarningMessageObserver', () => {
         });
     };
 
-    vscode.commands.executeCommand = <T>(command, ...rest) => {
+    vscode.commands.executeCommand = <T>(command: string, ...rest: any[]) => {
         invokedCommand = command;
         signalCommandDone();
         return undefined;

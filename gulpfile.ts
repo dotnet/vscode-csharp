@@ -42,12 +42,3 @@ gulp.task('tslint', () => {
             emitError: false
         }));
 });
-
-const lintReporter = (output, file, options) => {
-    //emits: src/helloWorld.c:5:3: warning: implicit declaration of function ‘prinft’
-    let relativeBase = file.base.substring(file.cwd.length + 1).replace('\\', '/');
-    output.forEach(e => {
-        let message = relativeBase + e.name + ':' + (e.startPosition.line + 1) + ':' + (e.startPosition.character + 1) + ': ' + e.failure;
-        console.log('[tslint] ' + message);
-    });
-};

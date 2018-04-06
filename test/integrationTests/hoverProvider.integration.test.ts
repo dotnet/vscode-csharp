@@ -36,7 +36,7 @@ suite(`Hover Provider: ${testAssetWorkspace.description}`, function () {
         let fileUri = vscode.Uri.file(loc);
 
         await vscode.commands.executeCommand("vscode.open", fileUri);
-        let c = await vscode.commands.executeCommand("vscode.executeHoverProvider", fileUri, new vscode.Position(10, 29));
+        let c = <vscode.Hover[]>(await vscode.commands.executeCommand("vscode.executeHoverProvider", fileUri, new vscode.Position(10, 29)));
         let answer: string =
             `Checks if object is tagged with the tag.
 
@@ -46,7 +46,7 @@ Parameters:
 \t\ttagName: Name of the tag.
 
 Returns true if object is tagged with tag.`;
-        expect(c[0].contents[0].value).to.equal(answer);
+        expect((<{ language: string; value: string }>c[0].contents[0]).value).to.equal(answer);
     });
 
     teardown(async () => {

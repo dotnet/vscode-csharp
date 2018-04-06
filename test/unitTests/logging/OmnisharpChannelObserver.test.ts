@@ -7,6 +7,7 @@ import { getNullChannel } from './Fakes';
 import { OmnisharpChannelObserver } from '../../../src/observers/OmnisharpChannelObserver';
 import { BaseEvent, OmnisharpFailure, CommandShowOutput } from '../../../src/omnisharp/loggingEvents';
 import * as vscode from '../../../src/vscodeAdapter';
+import { ViewColumn } from 'vscode';
 
 suite("OmnisharpChannelObserver", () => {
     suiteSetup(() => should());
@@ -27,7 +28,7 @@ suite("OmnisharpChannelObserver", () => {
         let testColumn: vscode.ViewColumn;
         let observer = new OmnisharpChannelObserver({
             ...getNullChannel(),
-            show: (column) => { testColumn = column;}
+            show: (column?: ViewColumn, preserveFocus?: boolean) => { testColumn = column;}
         });
 
         observer.post(event);

@@ -95,7 +95,7 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
 
     public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken): Thenable<CompletionList> {
         let currentWord = this.getCurrentWord(document, position);
-        let overwriteRange = null;
+        let overwriteRange: Range = null;
         let items: CompletionItem[] = [];
         let isIncomplete = false;
 

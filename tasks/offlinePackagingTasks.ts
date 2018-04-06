@@ -11,7 +11,6 @@ import * as del from 'del';
 import * as fs from 'fs';
 import * as gulp from 'gulp';
 import * as path from 'path';
-import * as unzip from 'unzip2';
 import * as util from '../src/common';
 import spawnNode from '../tasks/spawnNode';
 import { codeExtensionPath, offlineVscodeignorePath, vscodeignorePath, vscePath, packedVsixOutputRoot } from '../tasks/projectPaths';
@@ -68,7 +67,7 @@ function doPackageOffline() {
     return promise;
 }
 
-function cleanSync(deleteVsix) {
+function cleanSync(deleteVsix: boolean) {
     del.sync('install.*');
     del.sync('.omnisharp*');
     del.sync('.debugger');
@@ -78,7 +77,7 @@ function cleanSync(deleteVsix) {
     }
 }
 
-function doOfflinePackage(platformInfo, packageName, packageJSON, outputFolder) {
+function doOfflinePackage(platformInfo: PlatformInformation, packageName: string, packageJSON: any, outputFolder: string) {
     if (process.platform === 'win32') {
         throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
     }
@@ -90,7 +89,7 @@ function doOfflinePackage(platformInfo, packageName, packageJSON, outputFolder) 
 }
 
 // Install Tasks
-function install(platformInfo, packageJSON) {
+function install(platformInfo: PlatformInformation, packageJSON: any) {
     const packageManager = new PackageManager(platformInfo, packageJSON);
     let eventStream = new EventStream();
     const logger = new Logger(message => process.stdout.write(message));
@@ -112,7 +111,7 @@ function install(platformInfo, packageJSON) {
 }
 
 /// Packaging (VSIX) Tasks
-function doPackageSync(packageName, outputFolder) {
+function doPackageSync(packageName: string, outputFolder: string) {
 
     let vsceArgs = [];
     vsceArgs.push(vscePath);
