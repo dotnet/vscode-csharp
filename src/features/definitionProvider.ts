@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import * as serverUtils from '../omnisharp/utils';
 import {CancellationToken, DefinitionProvider, Location, Position, TextDocument, Uri} from 'vscode';
 import {GoToDefinitionRequest, MetadataRequest, MetadataSource} from '../omnisharp/protocol';

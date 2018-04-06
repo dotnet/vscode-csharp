@@ -1,5 +1,6 @@
 {
 	"compilerOptions": {
+		"alwaysStrict": true,
 		"target": "es6",
 		"module": "commonjs",
 		"outDir": "out",

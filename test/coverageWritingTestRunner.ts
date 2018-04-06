@@ -2,9 +2,6 @@
  * Copyright (C) Microsoft Corporation. All rights reserved.
  *--------------------------------------------------------*/
 
-
-'use strict';
-
 import shelljs = require("async-shelljs");
 import path = require('path');
 const fs = require('async-file');
