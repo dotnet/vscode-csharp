@@ -98,9 +98,9 @@ function install(platformInfo, packageJSON) {
     eventStream.subscribe(stdoutObserver.post);
     const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'));
 
-    return packageManager.DownloadPackages(eventStream, undefined, undefined, undefined)
+    return packageManager.DownloadPackages(eventStream, undefined, undefined)
         .then(() => {
-            return packageManager.InstallPackages(eventStream, undefined);
+            return packageManager.InstallPackages(eventStream);
         })
         .then(() => {
 
