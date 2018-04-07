@@ -7,9 +7,8 @@
 
 import { SpawnOptions, spawn } from "child_process";
 import { join, Result } from "async-child-process";
-import { nodePath, rootPath } from "./projectPaths";
 
-export default async function spawnNode(args?: string[], options?: SpawnOptions): Promise<Result> {
+export default async function spawnGit(args?: string[], options?: SpawnOptions): Promise<Result> {
     if (!options) {
         options = {
             env: {}
@@ -17,7 +16,6 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
     }
     
     let optionsWithFullEnvironment = {
-        cwd: rootPath,
         ...options,
         env: {
             ...process.env,
@@ -25,7 +23,7 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
         }
     };
     
-    let spawned = spawn(nodePath, args, optionsWithFullEnvironment);
+    let spawned = spawn('git', args, optionsWithFullEnvironment);
 
     spawned.stdout.on('data', (data) => console.log(data.toString()));
     spawned.stderr.on('data', (data) => console.log(data.toString()));

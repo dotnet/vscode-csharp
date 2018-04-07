@@ -33,19 +33,19 @@ export default class TestManager extends AbstractProvider {
         // register commands
         let d1 = vscode.commands.registerCommand(
             'dotnet.test.run',
-            (testMethod, fileName, testFrameworkName) => this._runDotnetTest(testMethod, fileName, testFrameworkName));
+            async (testMethod, fileName, testFrameworkName) => this._runDotnetTest(testMethod, fileName, testFrameworkName));
 
         let d2 = vscode.commands.registerCommand(
             'dotnet.test.debug',
-            (testMethod, fileName, testFrameworkName) => this._debugDotnetTest(testMethod, fileName, testFrameworkName));
+            async (testMethod, fileName, testFrameworkName) => this._debugDotnetTest(testMethod, fileName, testFrameworkName));
 
         let d4 = vscode.commands.registerCommand(
             'dotnet.classTests.run',
-            (methodsInClass, fileName, testFrameworkName) => this._runDotnetTestsInClass(methodsInClass, fileName, testFrameworkName));
+            async (methodsInClass, fileName, testFrameworkName) => this._runDotnetTestsInClass(methodsInClass, fileName, testFrameworkName));
 
         let d5 = vscode.commands.registerCommand(
             'dotnet.classTests.debug',
-            (methodsInClass, fileName, testFrameworkName) => this._debugDotnetTestsInClass(methodsInClass, fileName, testFrameworkName));
+            async (methodsInClass, fileName, testFrameworkName) => this._debugDotnetTestsInClass(methodsInClass, fileName, testFrameworkName));
 
         this._telemetryIntervalId = setInterval(() =>
             this._reportTelemetry(), TelemetryReportingDelay);
@@ -111,12 +111,12 @@ export default class TestManager extends AbstractProvider {
         this._debugCounts = undefined;
     }
 
-    private _saveDirtyFiles(): Promise<boolean> {
+    private async _saveDirtyFiles(): Promise<boolean> {
         return Promise.resolve(
             vscode.workspace.saveAll(/*includeUntitled*/ false));
     }
 
-    private _runTest(fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string): Promise<protocol.V2.DotNetTestResult[]> {
+    private async _runTest(fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string): Promise<protocol.V2.DotNetTestResult[]> {
         const request: protocol.V2.RunTestRequest = {
             FileName: fileName,
             MethodName: testMethod,
@@ -128,7 +128,7 @@ export default class TestManager extends AbstractProvider {
             .then(response => response.Results);
     }
 
-    private _reportResults(results: protocol.V2.DotNetTestResult[]): Promise<void> {
+    private async _reportResults(results: protocol.V2.DotNetTestResult[]): Promise<void> {
         const totalTests = results.length;
         const output = this._getOutputChannel();
 
@@ -190,7 +190,7 @@ export default class TestManager extends AbstractProvider {
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
 
         return this._runTest(fileName, testMethod, testFrameworkName, targetFrameworkVersion)
-            .then(results => this._reportResults(results))
+            .then(async results => this._reportResults(results))
             .then(() => listener.dispose())
             .catch(reason => {
                 listener.dispose();
@@ -209,7 +209,7 @@ export default class TestManager extends AbstractProvider {
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
 
         return this._runTestsInClass(fileName, testFrameworkName, targetFrameworkVersion, methodsInClass)
-            .then(results => this._reportResults(results))
+            .then(async results => this._reportResults(results))
             .then(() => listener.dispose())
             .catch(reason => {
                 listener.dispose();
@@ -217,7 +217,7 @@ export default class TestManager extends AbstractProvider {
             });
     }
 
-    private _runTestsInClass(fileName: string, testFrameworkName: string, targetFrameworkVersion: string, methodsToRun: string[]): Promise<protocol.V2.DotNetTestResult[]> {
+    private async _runTestsInClass(fileName: string, testFrameworkName: string, targetFrameworkVersion: string, methodsToRun: string[]): Promise<protocol.V2.DotNetTestResult[]> {
         const request: protocol.V2.RunTestsInClassRequest = {
             FileName: fileName,
             TestFrameworkName: testFrameworkName,
@@ -256,7 +256,7 @@ export default class TestManager extends AbstractProvider {
         return result;
     }
 
-    private _getLaunchConfigurationForVSTest(fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener): Promise<any> {
+    private async _getLaunchConfigurationForVSTest(fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener): Promise<any> {
         const output = this._getOutputChannel();
 
         // Listen for test messages while getting start info.
@@ -278,7 +278,7 @@ export default class TestManager extends AbstractProvider {
             });
     }
 
-    private _getLaunchConfigurationForLegacy(fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string): Promise<any> {
+    private async _getLaunchConfigurationForLegacy(fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string): Promise<any> {
         const output = this._getOutputChannel();
 
         // Listen for test messages while getting start info.
@@ -300,7 +300,7 @@ export default class TestManager extends AbstractProvider {
             });
     }
 
-    private _getLaunchConfiguration(debugType: string, fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener): Promise<any> {
+    private async _getLaunchConfiguration(debugType: string, fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener): Promise<any> {
         switch (debugType) {
             case 'legacy':
                 return this._getLaunchConfigurationForLegacy(fileName, testMethod, testFrameworkName, targetFrameworkVersion);
@@ -382,14 +382,14 @@ export default class TestManager extends AbstractProvider {
             });
     }
 
-    private _getLaunchConfigurationForClass(debugType: string, fileName: string, methodsToRun: string[], testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener): Promise<any> {
+    private async _getLaunchConfigurationForClass(debugType: string, fileName: string, methodsToRun: string[], testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener): Promise<any> {
         if (debugType == 'vstest') {
             return this._getLaunchConfigurationForVSTestClass(fileName, methodsToRun, testFrameworkName, targetFrameworkVersion, debugEventListener);
         }
         throw new Error(`Unexpected debug type: ${debugType}`);
     }
 
-    private _getLaunchConfigurationForVSTestClass(fileName: string, methodsToRun: string[], testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener): Promise<any> {
+    private async _getLaunchConfigurationForVSTestClass(fileName: string, methodsToRun: string[], testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener): Promise<any> {
         const output = this._getOutputChannel();
 
         const listener = this._server.onTestMessage(e => {
@@ -434,7 +434,7 @@ class DebugEventListener {
         }
     }
 
-    public start(): Promise<void> {
+    public async start(): Promise<void> {
 
         // We use our process id as part of the pipe name, so if we still somehow have an old instance running, close it.
         if (DebugEventListener.s_activeInstance !== null) {
@@ -473,7 +473,7 @@ class DebugEventListener {
             });
         });
 
-        return this.removeSocketFileIfExists().then(() => {
+        return this.removeSocketFileIfExists().then(async () => {
             return new Promise<void>((resolve, reject) => {
                 let isStarted: boolean = false;
                 this._serverSocket.on('error', (err: Error) => {
@@ -542,7 +542,7 @@ class DebugEventListener {
         this.close();
     }
 
-    private removeSocketFileIfExists(): Promise<void> {
+    private async removeSocketFileIfExists(): Promise<void> {
         if (os.platform() === 'win32') {
             // Win32 doesn't use the file system for pipe names
             return Promise.resolve();

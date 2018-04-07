@@ -10,7 +10,7 @@ import {DocumentSymbolProvider, SymbolInformation, TextDocument, CancellationTok
 
 export default class OmnisharpDocumentSymbolProvider extends AbstractSupport implements DocumentSymbolProvider {
 
-    public provideDocumentSymbols(document: TextDocument, token: CancellationToken): Promise<SymbolInformation[]> {
+    public async provideDocumentSymbols(document: TextDocument, token: CancellationToken): Promise<SymbolInformation[]> {
 
         return serverUtils.currentFileMembersAsTree(this._server, { FileName: document.fileName }, token).then(tree => {
             let ret: SymbolInformation[] = [];

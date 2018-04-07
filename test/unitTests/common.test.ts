@@ -13,11 +13,11 @@ suite("Common", () => {
     suiteSetup(() => should());
 
     suite("buildPromiseChain", () => {
-        test("produce a sequence of promises", () => {
+        test("produce a sequence of promises", async () => {
             let array: number[] = [];
             let items = [1, 2, 3, 4, 5];
 
-            let promise = buildPromiseChain(items, n => new Promise((resolve, reject) => {
+            let promise = buildPromiseChain(items, async n => new Promise((resolve, reject) => {
                 array.push(n);
                 resolve();
             }));

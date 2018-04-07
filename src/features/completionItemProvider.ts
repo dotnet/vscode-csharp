@@ -23,7 +23,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
         ';', '+', '-', '*', '/', '%', '&', '|', '^', '!',
         '~', '=', '<', '>', '?', '@', '#', '\'', '\"', '\\'];
 
-    public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionList> {
+    public async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionList> {
 
         let wordToComplete = '';
         let range = document.getWordRangeAtPosition(position);

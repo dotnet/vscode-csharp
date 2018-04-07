@@ -27,7 +27,7 @@ suite("InformationMessageObserver", () => {
     let invokedCommand: string;
     let observer: InformationMessageObserver = new InformationMessageObserver(vscode);
 
-    vscode.window.showInformationMessage = (message: string, ...items: string[]) => {
+    vscode.window.showInformationMessage = async (message: string, ...items: string[]) => {
         infoMessage = message;
         return new Promise<string>(resolve => {
             doClickCancel = () => {

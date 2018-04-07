@@ -201,6 +201,7 @@ function cleanJsonText(text: string) {
                 }
 
                 break;
+            default: 
         }
 
         if (index >= length && index > partStart) {

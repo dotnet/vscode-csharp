@@ -11,7 +11,7 @@ import * as del from 'del';
 import spawnNode from './spawnNode';
 import { coverageRootPath, nycOutputPath, nycPath, codeExtensionSourcesPath, integrationTestCoverageRootPath, integrationTestNycOutputPath, istanbulCombinePath, codecovPath, unitTestCoverageRootPath } from './projectPaths';
 
-gulp.task("cov:instrument", () => {
+gulp.task("cov:instrument", async () => {
     del(coverageRootPath);
     del(nycOutputPath);
 
@@ -27,7 +27,7 @@ gulp.task("cov:instrument", () => {
     });
 });
 
-gulp.task("cov:merge", () => {
+gulp.task("cov:merge", async () => {
     return spawnNode([
         istanbulCombinePath,
         '-d',
@@ -40,7 +40,7 @@ gulp.task("cov:merge", () => {
     });
 });
 
-gulp.task("cov:merge-html", () => {
+gulp.task("cov:merge-html", async () => {
     return spawnNode([
         istanbulCombinePath,
         '-d',
@@ -55,7 +55,7 @@ gulp.task("cov:merge-html", () => {
 
 gulp.task("cov:report", ["cov:report:integration", "cov:report:unit"]);
 
-gulp.task("cov:report:integration", ["cov:merge"], () => {
+gulp.task("cov:report:integration", ["cov:merge"], async () => {
     return spawnNode([
         codecovPath,
         '-f',
@@ -67,7 +67,7 @@ gulp.task("cov:report:integration", ["cov:merge"], () => {
     });
 });
 
-gulp.task("cov:report:unit", () => {
+gulp.task("cov:report:unit", async () => {
     return spawnNode([
         codecovPath,
         '-f',

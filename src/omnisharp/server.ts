@@ -320,7 +320,7 @@ export class OmniSharpServer {
         this.eventStream.post(new ObservableEvents.OmnisharpInitialisation(new Date(), solutionPath));
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
-        return launchOmniSharp(cwd, args, launchPath).then(value => {
+        return launchOmniSharp(cwd, args, launchPath).then(async value => {
             this.eventStream.post(new ObservableEvents.OmnisharpLaunch(value.usingMono, value.command, value.process.pid));
 
             this._serverProcess = value.process;
@@ -334,7 +334,7 @@ export class OmniSharpServer {
             this._telemetryIntervalId = setInterval(() => this._reportTelemetry(), TelemetryReportingDelay);
         }).then(() => {
             this._requestQueue.drain();
-        }).catch(err => {
+        }).catch(async err => {
             this._fireEvent(Events.ServerError, err);
             return this.stop();
         });
@@ -359,7 +359,7 @@ export class OmniSharpServer {
         this.eventStream.post(new ObservableEvents.WorkspaceInformationUpdated(info));
     }
 
-    public stop(): Promise<void> {
+    public async stop(): Promise<void> {
 
         let cleanupPromise: Promise<void>;
 
@@ -422,7 +422,7 @@ export class OmniSharpServer {
     }
 
     public autoStart(preferredPath: string): Thenable<void> {
-        return findLaunchTargets().then(launchTargets => {
+        return findLaunchTargets().then(async launchTargets => {
             // If there aren't any potential launch targets, we create file watcher and try to
             // start the server again once a *.sln, *.csproj, project.json, CSX or Cake file is created.
             if (launchTargets.length === 0) {
@@ -466,7 +466,7 @@ export class OmniSharpServer {
 
     // --- requests et al
 
-    public makeRequest<TResponse>(command: string, data?: any, token?: vscode.CancellationToken): Promise<TResponse> {
+    public async makeRequest<TResponse>(command: string, data?: any, token?: vscode.CancellationToken): Promise<TResponse> {
 
         if (this._getState() !== ServerState.Started) {
             return Promise.reject<TResponse>('server has been stopped or not started');
@@ -503,7 +503,7 @@ export class OmniSharpServer {
         });
     }
 
-    private _doConnect(): Promise<void> {
+    private async _doConnect(): Promise<void> {
 
         this._serverProcess.stderr.on('data', (data: any) => {
             this._fireEvent('stderr', String(data));
