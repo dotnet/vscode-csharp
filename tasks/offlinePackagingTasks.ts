@@ -58,7 +58,7 @@ function doPackageOffline() {
         new PlatformInformation('linux', 'x86_64')
     ];
 
-    let promise: Promise<Result> = Promise.resolve<Result>(null);
+    let promise = Promise.resolve<Result>(null);
 
     packages.forEach(platformInfo => {
         promise = promise

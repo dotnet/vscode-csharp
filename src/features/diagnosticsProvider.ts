@@ -168,11 +168,13 @@ class DiagnosticsProvider extends AbstractSupport {
             didChange = true;
             this._diagnostics.delete(key);
         }
-        
-        if (this._documentValidations[key.toString()]) {
+
+        let keyString = key.toString();
+
+        if (this._documentValidations[keyString]) {
             didChange = true;
-            this._documentValidations[key.toString()].cancel();
-            delete this._documentValidations[key.toString()];
+            this._documentValidations[keyString].cancel();
+            delete this._documentValidations[keyString];
         }
         if (didChange) {
             this._validateProject();

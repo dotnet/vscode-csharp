@@ -222,7 +222,7 @@ function GetOSSpecificJSON() {
     return {
         pipeCwd: "${workspaceFolder}",
         pipeProgram: "pipeProgram",
-        pipeArgs: (<string[]>[]),
+        pipeArgs: <string[]>[],
         windows: {
             pipeProgram: "Windows pipeProgram",
             pipeArgs: "windows"

@@ -10,7 +10,8 @@
 		"moduleResolution": "node",
 		"alwaysStrict": true,
 		"noImplicitAny": true,
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"noImplicitThis": true,
 	},
 	"exclude": [
 		"syntaxes",
