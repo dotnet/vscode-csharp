@@ -4,16 +4,18 @@
 
     "files.exclude": {
         "out": true,
-        "typings": false
+        "typings": false,
+        "vsix": true
     },
 
     "search.exclude": {
         "**/node_modules": true,
-        "out/": true
+        "out/": true,
+        "vsix/": true
     },
 
     "csharp.suppressDotnetRestoreNotification": true,
-   
+
     "tslint.rulesDirectory": "node_modules/tslint-microsoft-contrib",
     "typescript.tsdk": "./node_modules/typescript/lib",
     "mocha.enabled": true

@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import { Url, parse as parseUrl } from 'url';
 import { isBoolean } from './common';
 import HttpProxyAgent = require('http-proxy-agent');

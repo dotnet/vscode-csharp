@@ -9,7 +9,6 @@ import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { toRange } from '../omnisharp/typeConvertion';
 import * as vscode from 'vscode';
-import TelemetryReporter from 'vscode-extension-telemetry';
 
 export class Advisor {
 
@@ -60,11 +59,11 @@ export class Advisor {
 
     private _removeProjectFileCount(info: protocol.ProjectInformationResponse): void {
         if (info.DotNetProject && info.DotNetProject.SourceFiles) {
-            delete this._updateProjectFileCount[info.DotNetProject.Path];
+            delete this._projectSourceFileCounts[info.DotNetProject.Path];
         }
 
         if (info.MsBuildProject && info.MsBuildProject.SourceFiles) {
-            delete this._updateProjectFileCount[info.MsBuildProject.Path];
+            delete this._projectSourceFileCounts[info.MsBuildProject.Path];
         }
     }
 
@@ -109,8 +108,8 @@ export class Advisor {
     }
 }
 
-export default function reportDiagnostics(server: OmniSharpServer, reporter: TelemetryReporter, advisor: Advisor): vscode.Disposable {
-    return new DiagnosticsProvider(server, reporter, advisor);
+export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor): vscode.Disposable {
+    return new DiagnosticsProvider(server, advisor);
 }
 
 class DiagnosticsProvider extends AbstractSupport {
@@ -121,8 +120,8 @@ class DiagnosticsProvider extends AbstractSupport {
     private _projectValidation: vscode.CancellationTokenSource;
     private _diagnostics: vscode.DiagnosticCollection;
 
-    constructor(server: OmniSharpServer, reporter: TelemetryReporter, validationAdvisor: Advisor) {
-        super(server, reporter);
+    constructor(server: OmniSharpServer, validationAdvisor: Advisor) {
+        super(server);
 
         this._validationAdvisor = validationAdvisor;
         this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
@@ -163,17 +162,19 @@ class DiagnosticsProvider extends AbstractSupport {
     }
 
     private _onDocumentRemove(document: vscode.TextDocument) {
-        let key = document.uri.toString();
+        let key = document.uri;
         let didChange = false;
-        if (this._diagnostics[key]) {
+        if (this._diagnostics.get(key)) {
             didChange = true;
-            this._diagnostics[key].dispose();
-            delete this._diagnostics[key];
+            this._diagnostics.delete(key);
         }
-        if (this._documentValidations[key]) {
+
+        let keyString = key.toString();
+
+        if (this._documentValidations[keyString]) {
             didChange = true;
-            this._documentValidations[key].cancel();
-            delete this._documentValidations[key];
+            this._documentValidations[keyString].cancel();
+            delete this._documentValidations[keyString];
         }
         if (didChange) {
             this._validateProject();

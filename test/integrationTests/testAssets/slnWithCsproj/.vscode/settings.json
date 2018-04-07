@@ -1,3 +1,4 @@
 {
-    "omnisharp.defaultLaunchSolution": "slnWithCsproj.sln"
+    "omnisharp.defaultLaunchSolution": "slnWithCsproj.sln",
+    "omnisharp.path": "latest"
 }

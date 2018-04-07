@@ -2,14 +2,12 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-'use strict';
 
 import * as path from 'path';
 import * as fs from 'fs';
 import * as semver from 'semver';
 import * as os from 'os';
 import { execChildProcess } from './../common';
-import { Logger } from './../logger';
 
 const MINIMUM_SUPPORTED_DOTNET_CLI: string = '1.0.0-preview2-003121';
 
@@ -31,7 +29,7 @@ export class CoreClrDebugUtil
     private _debugAdapterDir: string = '';
     private _installCompleteFilePath: string = '';
 
-    constructor(extensionDir: string, logger: Logger) {
+    constructor(extensionDir: string) {
         this._extensionDir = extensionDir;
         this._debugAdapterDir = path.join(this._extensionDir, '.debugger');
         this._installCompleteFilePath = path.join(this._debugAdapterDir, 'install.complete');

@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import * as path from 'path';
 
 export module Requests {
@@ -398,6 +396,7 @@ export interface SignatureHelpItem {
     Label: string;
     Documentation: string;
     Parameters: SignatureHelpParameter[];
+    StructuredDocumentation: DocumentationComment;
 }
 
 export interface SignatureHelpParameter {

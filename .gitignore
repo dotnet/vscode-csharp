@@ -12,5 +12,10 @@ install.*
 
 test/**/singleCsproj/.vscode
 .logs/
+.nyc_output/
+coverage/
 
 \.DS_Store
+vsix/
+
+\.vscodeignore

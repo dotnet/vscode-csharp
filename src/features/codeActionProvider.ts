@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import * as vscode from 'vscode';
 import { OmniSharpServer } from '../omnisharp/server';
 import AbstractProvider from './abstractProvider';
@@ -12,7 +10,6 @@ import * as protocol from '../omnisharp/protocol';
 import { toRange2 } from '../omnisharp/typeConvertion';
 import * as serverUtils from '../omnisharp/utils';
 import { Options } from '../omnisharp/options';
-import TelemetryReporter from 'vscode-extension-telemetry';
 import { FileModificationType } from '../omnisharp/protocol';
 import { Uri } from 'vscode';
 
@@ -21,8 +18,8 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
     private _options: Options;
     private _commandId: string;
 
-    constructor(server: OmniSharpServer, reporter: TelemetryReporter) {
-        super(server, reporter);
+    constructor(server: OmniSharpServer) {
+        super(server);
 
         this._commandId = 'omnisharp.runCodeAction';
 

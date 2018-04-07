@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import { spawn, ChildProcess } from 'child_process';
 import { satisfies } from 'semver';
 import { PlatformInformation } from '../platform';
@@ -224,9 +222,9 @@ export interface LaunchResult {
     usingMono: boolean;
 }
 
-export function launchOmniSharp(cwd: string, args: string[]): Promise<LaunchResult> {
+export function launchOmniSharp(cwd: string, args: string[], launchPath: string): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        launch(cwd, args)
+        launch(cwd, args, launchPath)
             .then(result => {
                 // async error - when target not not ENEOT
                 result.process.on('error', err => {
@@ -242,7 +240,7 @@ export function launchOmniSharp(cwd: string, args: string[]): Promise<LaunchResu
     });
 }
 
-function launch(cwd: string, args: string[]): Promise<LaunchResult> {
+function launch(cwd: string, args: string[], launchPath: string): Promise<LaunchResult> {
     return PlatformInformation.GetCurrent().then(platformInfo => {
         const options = Options.Read();
 
@@ -255,18 +253,18 @@ function launch(cwd: string, args: string[]): Promise<LaunchResult> {
             args.push(`formattingOptions:indentationSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
         }
 
-        // If the user has provide a path to OmniSharp, we'll use that.
-        if (options.path) {
+        // If the user has provided an absolute path or the specified version has been installed successfully, we'll use the path.
+        if (launchPath) {
             if (platformInfo.isWindows()) {
-                return launchWindows(options.path, cwd, args);
+                return launchWindows(launchPath, cwd, args);
             }
 
             // If we're launching on macOS/Linux, we have two possibilities:
             //   1. Launch using Mono
             //   2. Launch process directly (e.g. a 'run' script)
             return options.useMono
-                ? launchNixMono(options.path, cwd, args)
-                : launchNix(options.path, cwd, args);
+                ? launchNixMono(launchPath, cwd, args)
+                : launchNix(launchPath, cwd, args);
         }
 
         // If the user has not provided a path, we'll use the locally-installed OmniSharp

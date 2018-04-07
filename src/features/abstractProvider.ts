@@ -3,21 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
-import { OmniSharpServer } from '../omnisharp/server';
 import { Disposable } from 'vscode';
-import TelemetryReporter from 'vscode-extension-telemetry';
+import { OmniSharpServer } from '../omnisharp/server';
 
 export default abstract class AbstractProvider {
 
     protected _server: OmniSharpServer;
-    protected _reporter: TelemetryReporter;
     private _disposables: Disposable[];
 
-    constructor(server: OmniSharpServer, reporter: TelemetryReporter) {
+    constructor(server: OmniSharpServer) {
         this._server = server;
-        this._reporter = reporter;
         this._disposables = [];
     }
 

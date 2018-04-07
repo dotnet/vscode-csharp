@@ -6,12 +6,16 @@
 		"lib": [
 			"es6"
 		],
-		"sourceMap": true,
-		"rootDir": "."
+		"inlineSourceMap": true,
+		"moduleResolution": "node",
+		"alwaysStrict": true,
+		"noImplicitAny": true,
+		"skipLibCheck": true,
+		"noImplicitThis": true,
 	},
 	"exclude": [
-		"node_modules",
 		"syntaxes",
-		".vscode-test"
+		".vscode-test",
+		"vsix"
 	]
 }
