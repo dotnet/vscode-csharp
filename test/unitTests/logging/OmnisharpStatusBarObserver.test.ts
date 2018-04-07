@@ -7,7 +7,6 @@ import { StatusBarItem } from '../../../src/vscodeAdapter';
 import { OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpServerOnServerError, OmnisharpServerOnStart, OmnisharpServerOnStop } from '../../../src/omnisharp/loggingEvents';
 import { expect, should } from 'chai';
 import { OmnisharpStatusBarObserver } from '../../../src/observers/OmnisharpStatusBarObserver';
-import { getFakeVsCode, getWorkspaceInformationUpdated, getMSBuildWorkspaceInformation } from './Fakes';
 
 suite('OmnisharpStatusBarObserver', () => {
     suiteSetup(() => should());

@@ -7,10 +7,7 @@
 
 import * as gulp from 'gulp';
 import * as path from 'path';
-
 import { codeExtensionPath, nycPath, rootPath, testAssetsRootPath, testRootPath, unitTestCoverageRootPath, mochaPath, vscodeTestHostPath } from './projectPaths';
-import { execFile, spawn } from 'child_process';
-
 import spawnNode from './spawnNode';
 
 const gulpSequence = require('gulp-sequence');
