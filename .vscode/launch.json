@@ -22,19 +22,19 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/featureTests"
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/out/test/featureTests"
             ],
             "env": {
-                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/featureTests",
-                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "CODE_WORKSPACE_ROOT": "${workspaceFolder}",
+                "CODE_TESTS_PATH": "${workspaceFolder}/out/test/featureTests",
+                "CODE_EXTENSIONS_PATH": "${workspaceFolder}",
                 "OSVC_SUITE": "featureTests"
             },
             "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceRoot}/out/test/**/*.js"
+                "${workspaceFolder}/out/test/**/*.js"
             ]
         },
         {
@@ -47,9 +47,9 @@
                 "--extensionDevelopmentPath=${workspaceFolder}"
             ],
             "env": {
-                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/featureTests",
-                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "CODE_WORKSPACE_ROOT": "${workspaceFolder}",
+                "CODE_TESTS_PATH": "${workspaceFolder}/out/test/featureTests",
+                "CODE_EXTENSIONS_PATH": "${workspaceFolder}",
                 "OSVC_SUITE": "featureTests"
             },
             "stopOnEntry": false,
@@ -68,10 +68,10 @@
                 "--extensionDevelopmentPath=${workspaceFolder}"
             ],
             "env": {
-                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
-                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
-                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "CODE_WORKSPACE_ROOT": "${workspaceFolder}",
+                "CODE_TESTS_PATH": "${workspaceFolder}/out/test/integrationTests",
+                "CODE_TESTS_WORKSPACE": "${workspaceFolder}/test/integrationTests/testAssets/singleCsproj",
+                "CODE_EXTENSIONS_PATH": "${workspaceFolder}",
                 "OSVC_SUITE": "singleCsproj"
             },
             "stopOnEntry": false,
@@ -90,10 +90,10 @@
                 "--extensionTestsPath=${workspaceFolder}/out/test/unitTests"
             ],
             "env": {
-                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
-                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
-                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "CODE_WORKSPACE_ROOT": "${workspaceFolder}",
+                "CODE_TESTS_PATH": "${workspaceFolder}/out/test/integrationTests",
+                "CODE_TESTS_WORKSPACE": "${workspaceFolder}/test/integrationTests/testAssets/slnWithCsproj",
+                "CODE_EXTENSIONS_PATH": "${workspaceFolder}",
                 "OSVC_SUITE": "slnWithCsproj"
             },
             "stopOnEntry": false,

@@ -27,7 +27,6 @@ export interface LaunchTarget {
     description: string;
     directory: string;
     target: string;
-    isDefault: boolean;
     kind: LaunchTargetKind;
 }
 
@@ -104,12 +103,10 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
             // Add .sln files if there are .csproj files
             if (hasCsProjFiles && isSolution(resource)) {
                 hasSlnFile = true;
-
                 targets.push({
                     label: path.basename(resource.fsPath),
                     description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
                     target: resource.fsPath,
-                    isDefault: false,
                     directory: path.dirname(resource.fsPath),
                     kind: LaunchTargetKind.Solution
                 });
@@ -125,7 +122,6 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                     label: path.basename(resource.fsPath),
                     description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
                     target: dirname,
-                    isDefault: false,
                     directory: dirname,
                     kind: LaunchTargetKind.ProjectJson
                 });
@@ -150,7 +146,6 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                 label: path.basename(folderPath),
                 description: '',
                 target: folderPath,
-                isDefault: false,
                 directory: folderPath,
                 kind: LaunchTargetKind.Folder
             });
@@ -162,7 +157,6 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                 label: "CSX",
                 description: path.basename(folderPath),
                 target: folderPath,
-                isDefault: false,
                 directory: folderPath,
                 kind: LaunchTargetKind.Csx
             });
@@ -174,7 +168,6 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                 label: "Cake",
                 description: path.basename(folderPath),
                 target: folderPath,
-                isDefault: false,
                 directory: folderPath,
                 kind: LaunchTargetKind.Cake
             });
@@ -182,14 +175,6 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
     });
 
     let rtnTargets: LaunchTarget[];
-
-    const options = Options.Read();
-
-    for (let target of targets) {
-        if (path.basename(target.target) === options.defaultLaunchSolution) {
-            target.isDefault = true;
-        }
-    }
 
     rtnTargets = targets.sort((a, b) => a.directory.localeCompare(b.directory));
 

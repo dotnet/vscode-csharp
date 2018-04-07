@@ -10,7 +10,10 @@ install.*
 
 *.vsix
 
-test/**/singleCsproj/.vscode
+
+test/**/.vscode/launch.json
+test/**/.vscode/tasks.json
+
 .logs/
 .nyc_output/
 coverage/
