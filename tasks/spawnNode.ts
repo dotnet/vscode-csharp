@@ -5,7 +5,7 @@
 
 'use strict';
 
-import { SpawnOptions, ChildProcess, spawn } from "child_process";
+import { SpawnOptions, spawn } from "child_process";
 import { join, Result } from "async-child-process";
 import { nodePath, rootPath } from "./projectPaths";
 

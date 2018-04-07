@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import AbstractSupport from './abstractProvider';
 import * as serverUtils from '../omnisharp/utils';
 import { createRequest } from '../omnisharp/typeConvertion';

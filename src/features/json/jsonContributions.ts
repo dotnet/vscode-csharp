@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-'use strict';
 
 import { Location, getLocation, createScanner, SyntaxKind } from 'jsonc-parser';
 import { ProjectJSONContribution } from './projectJSONContribution';
@@ -96,7 +95,7 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
 
     public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken): Thenable<CompletionList> {
         let currentWord = this.getCurrentWord(document, position);
-        let overwriteRange = null;
+        let overwriteRange: Range = null;
         let items: CompletionItem[] = [];
         let isIncomplete = false;
 

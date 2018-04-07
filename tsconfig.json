@@ -7,7 +7,11 @@
 			"es6"
 		],
 		"inlineSourceMap": true,
-		"moduleResolution": "node"
+		"moduleResolution": "node",
+		"alwaysStrict": true,
+		"noImplicitAny": true,
+		"skipLibCheck": true,
+		"noImplicitThis": true,
 	},
 	"exclude": [
 		"syntaxes",

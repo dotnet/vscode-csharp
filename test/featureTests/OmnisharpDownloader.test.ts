@@ -4,21 +4,19 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
+import * as tmp from 'tmp';
 import * as util from '../../src/common';
-import { should } from 'chai';
-import { Logger } from '../../src/logger';
 import { OmnisharpDownloader } from '../../src/omnisharp/OmnisharpDownloader';
 import { rimraf } from 'async-file';
 import { PlatformInformation } from '../../src/platform';
 import { EventStream } from '../../src/EventStream';
 
-const tmp = require('tmp');
 const chai = require("chai");
 chai.use(require("chai-as-promised"));
 let expect = chai.expect;
 
 suite("DownloadAndInstallExperimentalVersion : Gets the version packages, downloads and installs them", () => {
-    let tmpDir = null;
+    let tmpDir: tmp.SynchrounousResult = null;
     const version = "1.2.3";
     const platformInfo = new PlatformInformation("win32", "x86");
     const eventStream = new EventStream();

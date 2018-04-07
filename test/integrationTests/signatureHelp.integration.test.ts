@@ -6,10 +6,8 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-import poll from './poll';
 import { should, expect } from 'chai';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { omnisharp } from '../../src/omnisharp/extension';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));

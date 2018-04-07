@@ -5,8 +5,7 @@
 import { should, expect } from 'chai';
 import { getNullChannel } from './Fakes';
 import { OmnisharpChannelObserver } from '../../../src/observers/OmnisharpChannelObserver';
-import { BaseEvent, OmnisharpFailure, CommandShowOutput } from '../../../src/omnisharp/loggingEvents';
-import * as vscode from '../../../src/vscodeAdapter';
+import { OmnisharpFailure } from '../../../src/omnisharp/loggingEvents';
 
 suite("OmnisharpChannelObserver", () => {
     suiteSetup(() => should());
@@ -20,17 +19,5 @@ suite("OmnisharpChannelObserver", () => {
 
         observer.post(event);
         expect(hasShown).to.be.true;
-    });
-
-    test('CommandShowOutput: Shows the channel', () => {
-        let event = new CommandShowOutput();
-        let testColumn: vscode.ViewColumn;
-        let observer = new OmnisharpChannelObserver({
-            ...getNullChannel(),
-            show: (column) => { testColumn = column;}
-        });
-
-        observer.post(event);
-        expect(testColumn).to.be.equal(vscode.ViewColumn.Three);
     });
 });

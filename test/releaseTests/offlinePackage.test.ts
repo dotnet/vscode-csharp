@@ -9,13 +9,12 @@ import * as path from 'path';
 import { invokeNode } from './testAssets/testAssets';
 import { PlatformInformation } from '../../src/platform';
 import { rimraf } from 'async-file';
-
-let tmp = require('tmp');
+import * as tmp from 'tmp';
 
 suite("Offline packaging of VSIX", function () {
     let vsixFiles: string[];
     this.timeout(1000000);
-    let tmpDir = null;
+    let tmpDir: tmp.SynchrounousResult = null;
 
     suiteSetup(() => {
         chai.should();

@@ -287,7 +287,7 @@ function installPackage(pkg: Package, eventStream: EventStream, status?: Status)
     status.setDetail(`Installing package '${pkg.description}'`);
 
     return new Promise<void>((resolve, baseReject) => {
-        const reject = (err) => {
+        const reject = (err: any) => {
             // If anything goes wrong with unzip, make sure we delete the test path (if there is one)
             // so we will retry again later
             const testPath = getPackageTestPath(pkg);

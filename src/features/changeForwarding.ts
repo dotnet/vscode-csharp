@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import {Disposable, Uri, workspace} from 'vscode';
 import {OmniSharpServer} from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
@@ -32,7 +30,7 @@ function forwardDocumentChanges(server: OmniSharpServer): Disposable {
 
 function forwardFileChanges(server: OmniSharpServer): Disposable {
 
-    function onFileSystemEvent(changeType: FileChangeType): (Uri) => void {
+    function onFileSystemEvent(changeType: FileChangeType): (uri: Uri) => void {
         return function(uri: Uri) 
         {
             if (!server.isRunning()) {

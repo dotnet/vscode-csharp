@@ -60,7 +60,7 @@ export class AssetGenerator {
         this.initializeProjectData(workspaceInfo);
     }
 
-    private initializeProjectData(workspaceInfo: protocol.WorkspaceInformationResponse) {
+    private initializeProjectData(workspaceInfo: protocol.WorkspaceInformationResponse): void {
         // TODO: For now, assume the Debug configuration. Eventually, we'll need to revisit
         // this when we allow selecting configurations.
         const configurationName = 'Debug';
@@ -105,7 +105,7 @@ export class AssetGenerator {
             }
         }
 
-        return undefined;
+        return;
     }
 
     public hasWebServerDependency(): boolean {

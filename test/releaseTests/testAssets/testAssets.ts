@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as cp from 'child_process';
-import * as path from 'path';
 
 export function invokeNode(args: string[]){
     let proc = cp.spawnSync('node', args);

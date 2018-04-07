@@ -16,8 +16,8 @@ suite('TelemetryReporterObserver', () => {
     suiteSetup(() => should());
     let platformInfo = new PlatformInformation("platform", "architecture");
     let name = "";
-    let property = null;
-    let measure = [];
+    let property: { [key: string]: string } = null;
+    let measure: { [key: string]: number }[] = [];
     let observer = new TelemetryObserver(platformInfo, () => {
         return {
             ...getNullTelemetryReporter,

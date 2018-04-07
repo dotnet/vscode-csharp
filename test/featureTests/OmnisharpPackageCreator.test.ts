@@ -13,7 +13,7 @@ suite("GetOmnisharpPackage : Output package depends on the input package and oth
     let serverUrl: string;
     let version: string;
     let installPath: string;
-    let inputPackages: any;
+    let inputPackages: Package[];
 
     suiteSetup(() => {
         serverUrl = "http://serverUrl";
