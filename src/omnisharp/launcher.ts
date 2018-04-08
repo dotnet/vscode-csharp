@@ -294,7 +294,7 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
         '"' + argsCopy.map(escapeIfNeeded).join(' ') + '"'
     ].join(' ')];
 
-    let process = spawn('cmd', argsCopy, <any>{
+    let process = spawn('cmd', argsCopy, {
         windowsVerbatimArguments: true,
         detached: false,
         cwd: cwd

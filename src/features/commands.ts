@@ -89,7 +89,7 @@ function pickProjectAndStart(server: OmniSharpServer) {
 interface Command {
     label: string;
     description: string;
-    execute(): Thenable<any>;
+    execute(): Thenable<void>;
 }
 
 function projectsToCommands(projects: protocol.ProjectDescriptor[], eventStream: EventStream): Promise<Command>[] {
