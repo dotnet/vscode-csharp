@@ -48,7 +48,7 @@ function GetPackage(inputPackage: Package, serverUrl: string, version: string, i
         "url": `${serverUrl}/releases/${version}/omnisharp-${inputPackage.platformId}.zip`,
         "installPath": `${installPath}/${version}`,
         "installTestPath": `./${installPath}/${version}/${installBinary}`,
-        "fallBackUrl": null //setting to null so that we dont use the fallback url of the default packages
+        "fallbackUrl": "" //setting to empty so that we dont use the fallback url of the default packages
     };
 
     return versionPackage;

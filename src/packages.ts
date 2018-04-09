@@ -176,7 +176,7 @@ async function downloadPackage(pkg: Package, eventStream: EventStream, proxy: st
         // the CDN link.
         if (pkg.fallbackUrl) {
             result = result.catch(async (primaryUrlError) => {
-                eventStream.post(new DownloadStart(`\tRetrying from '${pkg.fallbackUrl}' `));
+                eventStream.post(new DownloadFallBack(pkg.fallbackUrl));
                 return downloadFile(pkg.fallbackUrl, pkg, eventStream, proxy, strictSSL)
                     .then(() => eventStream.post(new DownloadSuccess(' Done!' )))
                     .catch(() => primaryUrlError);
