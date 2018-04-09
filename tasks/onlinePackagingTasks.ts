@@ -28,11 +28,10 @@ gulp.task('vsix:release:package', async (onError) => {
 
     fs.copyFileSync(onlineVscodeignorePath, vscodeignorePath);
 
-    return spawnNode([vscePath, 'package'])
-        .then(() => {
-            del(vscodeignorePath);
-        }, (error) => {
-            del(vscodeignorePath);
-            throw error;
-        });
+    try {
+        await spawnNode([vscePath, 'package']);
+    }
+    finally {
+        await del(vscodeignorePath);
+    }
 });
