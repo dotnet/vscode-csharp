@@ -94,8 +94,8 @@ async function install(platformInfo: PlatformInformation, packageJSON: any) {
     eventStream.subscribe(stdoutObserver.post);
     const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'));
 
-    await packageManager.DownloadPackages(eventStream, undefined, undefined, undefined);
-    await packageManager.InstallPackages(eventStream, undefined);
+    await packageManager.DownloadPackages(eventStream, undefined, undefined);
+    await packageManager.InstallPackages(eventStream);
     await util.touchInstallFile(util.InstallFileType.Lock);
     await debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());
 }

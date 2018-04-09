@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { GetNetworkConfiguration, GetStatus } from '../downloader.helper';
+import { GetNetworkConfiguration } from '../downloader.helper';
 import { GetPackagesFromVersion, GetVersionFilePackage } from './OmnisharpPackageCreator';
-import { Package, PackageManager, Status } from '../packages';
+import { Package, PackageManager } from '../packages';
 import { PlatformInformation } from '../platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure, InstallationProgress } from './loggingEvents';
 import { EventStream } from '../EventStream';
@@ -16,7 +16,6 @@ export interface IPackageManagerFactory {
 }
 
 export class OmnisharpDownloader {
-    private status: Status;
     private proxy: string;
     private strictSSL: boolean;
     private packageManager: PackageManager;
@@ -27,7 +26,6 @@ export class OmnisharpDownloader {
         private platformInfo: PlatformInformation,
         packageManagerFactory: IPackageManagerFactory = defaultPackageManagerFactory) {
 
-        this.status = GetStatus();
         let networkConfiguration = GetNetworkConfiguration();
         this.proxy = networkConfiguration.Proxy;
         this.strictSSL = networkConfiguration.StrictSSL;
@@ -47,19 +45,16 @@ export class OmnisharpDownloader {
             installationStage = 'downloadPackages';
             // Specify the packages that the package manager needs to download
             this.packageManager.SetVersionPackagesForDownload(packages);
-            await this.packageManager.DownloadPackages(this.eventStream, this.status, this.proxy, this.strictSSL);
+            await this.packageManager.DownloadPackages(this.eventStream, this.proxy, this.strictSSL);
 
             installationStage = 'installPackages';
-            await this.packageManager.InstallPackages(this.eventStream, this.status);
+            await this.packageManager.InstallPackages(this.eventStream);
 
             this.eventStream.post(new InstallationSuccess());
         }
         catch (error) {
             this.eventStream.post(new InstallationFailure(installationStage, error));
             throw error;// throw the error up to the server
-        }
-        finally {
-            this.status.dispose();
         }
     }
 
@@ -70,7 +65,7 @@ export class OmnisharpDownloader {
             //The package manager needs a package format to download, hence we form a package for the latest version file
             let filePackage = GetVersionFilePackage(serverUrl, latestVersionFileServerPath);
             //Fetch the latest version information from the file
-            return await this.packageManager.GetLatestVersionFromFile(this.eventStream, this.status, this.proxy, this.strictSSL, filePackage);
+            return await this.packageManager.GetLatestVersionFromFile(this.eventStream, this.proxy, this.strictSSL, filePackage);
         }
         catch (error) {
             this.eventStream.post(new InstallationFailure(installationStage, error));

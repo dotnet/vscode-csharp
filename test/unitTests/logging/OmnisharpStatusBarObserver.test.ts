@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { StatusBarItem } from '../../../src/vscodeAdapter';
-import { OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpServerOnServerError, OmnisharpServerOnStart, OmnisharpServerOnStop } from '../../../src/omnisharp/loggingEvents';
+import { OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpServerOnServerError, OmnisharpServerOnStart, OmnisharpServerOnStop, DownloadStart, InstallationProgress, DownloadProgress } from '../../../src/omnisharp/loggingEvents';
 import { expect, should } from 'chai';
 import { OmnisharpStatusBarObserver } from '../../../src/observers/OmnisharpStatusBarObserver';
 
@@ -14,6 +14,10 @@ suite('OmnisharpStatusBarObserver', () => {
     let hideCalled: boolean;
 
     setup(() => {
+        statusBarItem.text = undefined;
+        statusBarItem.color = undefined;
+        statusBarItem.command = undefined;
+        statusBarItem.tooltip = undefined;
         showCalled = false;
         hideCalled = false;
     });
@@ -29,8 +33,9 @@ suite('OmnisharpStatusBarObserver', () => {
         let event = new OmnisharpServerOnServerError("someError");
         observer.post(event);
         expect(showCalled).to.be.true;
-        expect(statusBarItem.text).to.equal(`$(flame) Error starting OmniSharp`);
+        expect(statusBarItem.text).to.equal(`$(flame)`);
         expect(statusBarItem.command).to.equal('o.showOutput');
+        expect(statusBarItem.tooltip).to.equal('Error starting OmniSharp');
     });
 
     test('OnBeforeServerInstall: Status bar is shown with the installation text', () => {
@@ -45,16 +50,18 @@ suite('OmnisharpStatusBarObserver', () => {
         let event = new OmnisharpOnBeforeServerStart();
         observer.post(event);
         expect(showCalled).to.be.true;
-        expect(statusBarItem.text).to.be.equal('$(flame) Starting...');
+        expect(statusBarItem.text).to.be.equal('$(flame)');
         expect(statusBarItem.command).to.equal('o.showOutput');
+        expect(statusBarItem.tooltip).to.equal('Starting OmniSharp server');
     });
 
     test('OnServerStart: Status bar is shown with the flame and "Running" text', () => {
         let event = new OmnisharpServerOnStart();
         observer.post(event);
         expect(showCalled).to.be.true;
-        expect(statusBarItem.text).to.be.equal('$(flame) Running');
+        expect(statusBarItem.text).to.be.equal('$(flame)');
         expect(statusBarItem.command).to.equal('o.showOutput');
+        expect(statusBarItem.tooltip).to.be.equal('OmniSharp server is running');
     });
 
     test('OnServerStop: Status bar is hidden and the attributes are set to undefined', () => {
@@ -64,5 +71,26 @@ suite('OmnisharpStatusBarObserver', () => {
         expect(statusBarItem.text).to.be.undefined;
         expect(statusBarItem.command).to.be.undefined;
         expect(statusBarItem.color).to.be.undefined;
+    });
+
+    test('DownloadStart: Text and tooltip are set ', () => {
+        let event = new DownloadStart("somePackage");
+        observer.post(event);
+        expect(statusBarItem.text).to.contain("Downloading packages");
+        expect(statusBarItem.tooltip).to.contain(event.packageDescription);
+    });
+
+    test('InstallationProgress: Text and tooltip are set', () => {
+        let event = new InstallationProgress("someStage", "somePackage");
+        observer.post(event);
+        expect(statusBarItem.text).to.contain("Installing packages");
+        expect(statusBarItem.tooltip).to.contain(event.packageDescription);
+    });
+
+    test('DownloadProgress: Tooltip contains package description and download percentage', () => {
+        let event = new DownloadProgress(50, "somePackage");
+        observer.post(event);
+        expect(statusBarItem.tooltip).to.contain(event.packageDescription);
+        expect(statusBarItem.tooltip).to.contain(event.downloadPercentage);
     });
 });
