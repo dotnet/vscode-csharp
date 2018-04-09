@@ -43,7 +43,7 @@ suite("GetOmnisharpPackage : Output package depends on the input package and oth
         resultPackage.architectures.should.equal(testPackage.architectures);
         assert.equal(resultPackage.binaries, testPackage.binaries);
         resultPackage.platforms.should.equal(testPackage.platforms);
-        expect(resultPackage.fallbackUrl).should.be.empty;
+        expect(resultPackage.fallbackUrl).to.be.empty;
     });
 
     test('Version information is appended to the description', () => {
