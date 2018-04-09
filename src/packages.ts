@@ -57,21 +57,21 @@ export class PackageManager {
         tmp.setGracefulCleanup();
     }
 
-    public DownloadPackages(eventStream: EventStream, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
+    public async DownloadPackages(eventStream: EventStream, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
         return this.GetPackages()
-            .then(packages => {
-                return util.buildPromiseChain(packages, pkg => maybeDownloadPackage(pkg, eventStream, status, proxy, strictSSL));
+            .then(async packages => {
+                return util.buildPromiseChain(packages, async pkg => maybeDownloadPackage(pkg, eventStream, status, proxy, strictSSL));
             });
     }
 
-    public InstallPackages(eventStream: EventStream, status: Status): Promise<void> {
+    public async InstallPackages(eventStream: EventStream, status: Status): Promise<void> {
         return this.GetPackages()
-            .then(packages => {
-                return util.buildPromiseChain(packages, pkg => installPackage(pkg, eventStream, status));
+            .then(async packages => {
+                return util.buildPromiseChain(packages, async pkg => installPackage(pkg, eventStream, status));
             });
     }
 
-    private GetAllPackages(): Promise<Package[]> {
+    private async GetAllPackages(): Promise<Package[]> {
         return new Promise<Package[]>((resolve, reject) => {
             if (this.allPackages) {
                 resolve(this.allPackages);
@@ -91,7 +91,7 @@ export class PackageManager {
         });
     }
 
-    private GetPackages(): Promise<Package[]> {
+    private async GetPackages(): Promise<Package[]> {
         return this.GetAllPackages()
             .then(list => {
                 return list.filter(pkg => {
@@ -156,8 +156,8 @@ function getNoopStatus(): Status {
     };
 }
 
-function maybeDownloadPackage(pkg: Package, eventStream: EventStream, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
-    return doesPackageTestPathExist(pkg).then((exists: boolean) => {
+async function maybeDownloadPackage(pkg: Package, eventStream: EventStream, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
+    return doesPackageTestPathExist(pkg).then(async (exists: boolean) => {
         if (!exists) {
             return downloadPackage(pkg, eventStream, status, proxy, strictSSL);
         } else {
@@ -166,7 +166,7 @@ function maybeDownloadPackage(pkg: Package, eventStream: EventStream, status: St
     });
 }
 
-function downloadPackage(pkg: Package, eventStream: EventStream, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
+async function downloadPackage(pkg: Package, eventStream: EventStream, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
     status = status || getNoopStatus();
 
     eventStream.post(new DownloadStart(`Downloading package '${pkg.description}' ` ));
@@ -181,7 +181,7 @@ function downloadPackage(pkg: Package, eventStream: EventStream, status: Status,
 
             resolve(<tmp.SynchrounousResult>{ name: path, fd: fd, removeCallback: cleanupCallback });
         });
-    }).then(tmpResult => {
+    }).then(async tmpResult => {
         pkg.tmpFile = tmpResult;
 
         let result = downloadFile(pkg.url, pkg, eventStream, status, proxy, strictSSL)
@@ -191,7 +191,7 @@ function downloadPackage(pkg: Package, eventStream: EventStream, status: Status,
         // the fallback. This is used for debugger packages as some users have had issues downloading from
         // the CDN link.
         if (pkg.fallbackUrl) {
-            result = result.catch((primaryUrlError) => {
+            result = result.catch(async (primaryUrlError) => {
                 eventStream.post(new DownloadStart(`\tRetrying from '${pkg.fallbackUrl}' `));
                 return downloadFile(pkg.fallbackUrl, pkg, eventStream, status, proxy, strictSSL)
                     .then(() => eventStream.post(new DownloadSuccess(' Done!' )))
@@ -203,7 +203,7 @@ function downloadPackage(pkg: Package, eventStream: EventStream, status: Status,
     });
 }
 
-function downloadFile(urlString: string, pkg: Package, eventStream: EventStream, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
+async function downloadFile(urlString: string, pkg: Package, eventStream: EventStream, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
     const url = parseUrl(urlString);
 
     const options: https.RequestOptions = {
@@ -272,7 +272,7 @@ function downloadFile(urlString: string, pkg: Package, eventStream: EventStream,
     });
 }
 
-function installPackage(pkg: Package, eventStream: EventStream, status?: Status): Promise<void> {
+async function installPackage(pkg: Package, eventStream: EventStream, status?: Status): Promise<void> {
     const installationStage = 'installPackages';
     if (!pkg.tmpFile) {
         // Download of this package was skipped, so there is nothing to install
@@ -362,7 +362,7 @@ function installPackage(pkg: Package, eventStream: EventStream, status?: Status)
     });
 }
 
-function doesPackageTestPathExist(pkg: Package): Promise<boolean> {
+async function doesPackageTestPathExist(pkg: Package): Promise<boolean> {
     const testPath = getPackageTestPath(pkg);
     if (testPath) {
         return util.fileExists(testPath);

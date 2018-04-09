@@ -6,7 +6,6 @@
 'use strict';
 
 import * as path from 'path';
-import { execFile, spawn } from 'child_process';
 import { commandLineOptions } from './commandLineArguments';
 
 export const rootPath = path.resolve(__dirname, '..');

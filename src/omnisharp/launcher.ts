@@ -204,7 +204,7 @@ export interface LaunchResult {
     usingMono: boolean;
 }
 
-export function launchOmniSharp(cwd: string, args: string[], launchPath: string): Promise<LaunchResult> {
+export async function launchOmniSharp(cwd: string, args: string[], launchPath: string): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
         launch(cwd, args, launchPath)
             .then(result => {
@@ -222,7 +222,7 @@ export function launchOmniSharp(cwd: string, args: string[], launchPath: string)
     });
 }
 
-function launch(cwd: string, args: string[], launchPath: string): Promise<LaunchResult> {
+async function launch(cwd: string, args: string[], launchPath: string): Promise<LaunchResult> {
     return PlatformInformation.GetCurrent().then(platformInfo => {
         const options = Options.Read();
 
@@ -259,7 +259,7 @@ function launch(cwd: string, args: string[], launchPath: string): Promise<Launch
         // If it's possible to launch on a global Mono, we'll do that. Otherwise, run with our
         // locally installed Mono runtime.
         return canLaunchMono()
-            .then(() => {
+            .then(async () => {
                 return launchNixMono(path.join(basePath, 'omnisharp', 'OmniSharp.exe'), cwd, args);
             })
             .catch(_ => {
@@ -320,7 +320,7 @@ function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResul
     };
 }
 
-function launchNixMono(launchPath: string, cwd: string, args: string[]): Promise<LaunchResult> {
+async function launchNixMono(launchPath: string, cwd: string, args: string[]): Promise<LaunchResult> {
     return canLaunchMono()
         .then(() => {
             let argsCopy = args.slice(0); // create copy of details args
@@ -340,7 +340,7 @@ function launchNixMono(launchPath: string, cwd: string, args: string[]): Promise
         });
 }
 
-function canLaunchMono(): Promise<void> {
+async function canLaunchMono(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         hasMono('>=5.2.0').then(success => {
             if (success) {
@@ -353,7 +353,7 @@ function canLaunchMono(): Promise<void> {
     });
 }
 
-export function hasMono(range?: string): Promise<boolean> {
+export async function hasMono(range?: string): Promise<boolean> {
     const versionRegexp = /(\d+\.\d+\.\d+)/;
 
     return new Promise<boolean>((resolve, reject) => {

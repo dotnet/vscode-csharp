@@ -76,7 +76,7 @@ export class ProjectJSONContribution implements IJSONContribution {
                 }
             }
             return Promise.reject<T>(localize('json.nugget.error.indexaccess', 'Request to {0} failed: {1}', url, success.responseText));
-        }, (error: XHRResponse) => {
+        }, async (error: XHRResponse) => {
             return Promise.reject<T>(localize('json.nugget.error.access', 'Request to {0} failed: {1}', url, getErrorStatusDescription(error.status)));
         });
     }

@@ -23,7 +23,7 @@ export default class CoverageWritingTestRunner {
         new Promise<{ error: any, failures?: number }>(function (resolve, reject) {
             promiseResolve = (error: any, failures?: number) => resolve({ error, failures });
         })
-            .then(clbArgs => {
+            .then(async clbArgs => {
                 clbArgsLocal = clbArgs;
                 return this.writeCoverage();
             })

@@ -35,13 +35,13 @@ export function safeLength<T>(arr: T[] | undefined) {
     return arr ? arr.length : 0;
 }
 
-export function buildPromiseChain<T, TResult>(array: T[], builder: (item: T) => Promise<TResult>): Promise<TResult> {
+export async function buildPromiseChain<T, TResult>(array: T[], builder: (item: T) => Promise<TResult>): Promise<TResult> {
     return array.reduce(
-        (promise, n) => promise.then(() => builder(n)),
+        async (promise, n) => promise.then(async () => builder(n)),
         Promise.resolve<TResult>(null));
 }
 
-export function execChildProcess(command: string, workingDirectory: string = getExtensionPath()): Promise<string> {
+export async function execChildProcess(command: string, workingDirectory: string = getExtensionPath()): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         cp.exec(command, { cwd: workingDirectory, maxBuffer: 500 * 1024 }, (error, stdout, stderr) => {
             if (error) {
@@ -57,7 +57,7 @@ export function execChildProcess(command: string, workingDirectory: string = get
     });
 }
 
-export function getUnixChildProcessIds(pid: number): Promise<number[]> {
+export async function getUnixChildProcessIds(pid: number): Promise<number[]> {
     return new Promise<number[]>((resolve, reject) => {
         let ps = cp.exec('ps -A -o ppid,pid', (error, stdout, stderr) =>
         {
@@ -92,7 +92,7 @@ export function getUnixChildProcessIds(pid: number): Promise<number[]> {
     });
 }
 
-export function fileExists(filePath: string): Promise<boolean> {
+export async function fileExists(filePath: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
         fs.stat(filePath, (err, stats) => {
             if (stats && stats.isFile()) {
@@ -105,9 +105,9 @@ export function fileExists(filePath: string): Promise<boolean> {
     });
 }
 
-export function deleteIfExists(filePath: string): Promise<void> {
+export async function deleteIfExists(filePath: string): Promise<void> {
     return fileExists(filePath)
-    .then((exists: boolean) => {
+    .then(async (exists: boolean) => {
         return new Promise<void>((resolve, reject) => {
             if (!exists) {
                 return resolve();
@@ -134,11 +134,11 @@ function getInstallFilePath(type: InstallFileType): string {
     return path.resolve(getExtensionPath(), installFile);
 }
 
-export function installFileExists(type: InstallFileType): Promise<boolean> {
+export async function installFileExists(type: InstallFileType): Promise<boolean> {
     return fileExists(getInstallFilePath(type));
 }
 
-export function touchInstallFile(type: InstallFileType): Promise<void> {
+export async function touchInstallFile(type: InstallFileType): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         fs.writeFile(getInstallFilePath(type), '', err => {
             if (err) {
@@ -151,7 +151,7 @@ export function touchInstallFile(type: InstallFileType): Promise<void> {
     });
 }
 
-export function deleteInstallFile(type: InstallFileType): Promise<void> {
+export async function deleteInstallFile(type: InstallFileType): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         fs.unlink(getInstallFilePath(type), err => {
             if (err) {

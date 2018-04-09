@@ -28,7 +28,7 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
      * Note: serverUtils.requestWorkspaceInformation only retrieves one folder for multi-root workspaces. Therefore, generator will be incorrect for all folders
      * except the first in a workspace. Currently, this only works if the requested folder is the same as the server's solution path or folder.
      */
-    private checkWorkspaceInformationMatchesWorkspaceFolder(folder: vscode.WorkspaceFolder | undefined): Promise<boolean> {
+    private async checkWorkspaceInformationMatchesWorkspaceFolder(folder: vscode.WorkspaceFolder | undefined): Promise<boolean> {
         const solutionPathOrFolder: string = this.server.getSolutionPathOrFolder();
 
         // Make sure folder, folder.uri, and solutionPathOrFolder are defined.
@@ -59,18 +59,18 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
 	 * Returns a list of initial debug configurations based on contextual information, e.g. package.json or folder.
 	 */
     provideDebugConfigurations(folder: vscode.WorkspaceFolder | undefined, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration[]> {
-        return serverUtils.requestWorkspaceInformation(this.server).then(info => {
-            return this.checkWorkspaceInformationMatchesWorkspaceFolder(folder).then(workspaceMatches => { 
+        return serverUtils.requestWorkspaceInformation(this.server).then(async info => {
+            return this.checkWorkspaceInformationMatchesWorkspaceFolder(folder).then(async workspaceMatches => { 
                 const generator = new AssetGenerator(info);
                 if (workspaceMatches && containsDotNetCoreProjects(info)) {
                     const dotVscodeFolder: string = path.join(folder.uri.fsPath, '.vscode');
                     const tasksJsonPath: string = path.join(dotVscodeFolder, 'tasks.json');
                     
                     // Make sure .vscode folder exists, addTasksJsonIfNecessary will fail to create tasks.json if the folder does not exist. 
-                    return fs.ensureDir(dotVscodeFolder).then(() => {
+                    return fs.ensureDir(dotVscodeFolder).then(async () => {
                         // Check to see if tasks.json exists.
                         return fs.pathExists(tasksJsonPath);
-                    }).then(tasksJsonExists => {
+                    }).then(async tasksJsonExists => {
                         // Enable addTasksJson if it does not exist.
                         return addTasksJsonIfNecessary(generator, {addTasksJson: !tasksJsonExists});
                     }).then(() => {

@@ -23,20 +23,20 @@ import { PackageManager } from '../src/packages';
 import { PlatformInformation } from '../src/platform';
 import { Result } from 'async-child-process';
 
-gulp.task('vsix:offline:package', () => {
+gulp.task('vsix:offline:package', async () => {
     del.sync(vscodeignorePath);
 
     fs.copyFileSync(offlineVscodeignorePath, vscodeignorePath);
 
     return doPackageOffline()
-        .then(v => del(vscodeignorePath),
+        .then(async v => del(vscodeignorePath),
             e => {
                 del(vscodeignorePath);
                 throw e;
             });
 });
 
-function doPackageOffline() {
+async function doPackageOffline() {
     util.setExtensionPath(codeExtensionPath);
 
     if (commandLineOptions.retainVsix) {
@@ -62,7 +62,7 @@ function doPackageOffline() {
 
     packages.forEach(platformInfo => {
         promise = promise
-            .then(() => doOfflinePackage(platformInfo, packageName, packageJSON, packedVsixOutputRoot));
+            .then(async () => doOfflinePackage(platformInfo, packageName, packageJSON, packedVsixOutputRoot));
     });
 
     return promise;
@@ -78,7 +78,7 @@ function cleanSync(deleteVsix: boolean) {
     }
 }
 
-function doOfflinePackage(platformInfo: PlatformInformation, packageName: string, packageJSON: any, outputFolder: string) {
+async function doOfflinePackage(platformInfo: PlatformInformation, packageName: string, packageJSON: any, outputFolder: string) {
     if (process.platform === 'win32') {
         throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
     }
@@ -86,11 +86,11 @@ function doOfflinePackage(platformInfo: PlatformInformation, packageName: string
     cleanSync(false);
 
     return install(platformInfo, packageJSON)
-        .then(() => doPackageSync(packageName + '-' + platformInfo.platform + '-' + platformInfo.architecture + '.vsix', outputFolder));
+        .then(async () => doPackageSync(packageName + '-' + platformInfo.platform + '-' + platformInfo.architecture + '.vsix', outputFolder));
 }
 
 // Install Tasks
-function install(platformInfo: PlatformInformation, packageJSON: any) {
+async function install(platformInfo: PlatformInformation, packageJSON: any) {
     const packageManager = new PackageManager(platformInfo, packageJSON);
     let eventStream = new EventStream();
     const logger = new Logger(message => process.stdout.write(message));
@@ -99,20 +99,20 @@ function install(platformInfo: PlatformInformation, packageJSON: any) {
     const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'));
 
     return packageManager.DownloadPackages(eventStream, undefined, undefined, undefined)
-        .then(() => {
+        .then(async () => {
             return packageManager.InstallPackages(eventStream, undefined);
         })
-        .then(() => {
+        .then(async () => {
 
             return util.touchInstallFile(util.InstallFileType.Lock);
         })
-        .then(() => {
+        .then(async () => {
             return debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());
         });
 }
 
 /// Packaging (VSIX) Tasks
-function doPackageSync(packageName: string, outputFolder: string) {
+async function doPackageSync(packageName: string, outputFolder: string) {
 
     let vsceArgs = [];
     vsceArgs.push(vscePath);

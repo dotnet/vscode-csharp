@@ -11,7 +11,7 @@ import {ReferenceProvider, Location, TextDocument, CancellationToken, Position} 
 
 export default class OmnisharpReferenceProvider extends AbstractSupport implements ReferenceProvider {
 
-    public provideReferences(document: TextDocument, position: Position, options: { includeDeclaration: boolean;}, token: CancellationToken): Promise<Location[]> {
+    public async provideReferences(document: TextDocument, position: Position, options: { includeDeclaration: boolean;}, token: CancellationToken): Promise<Location[]> {
 
         let req = createRequest<protocol.FindUsagesRequest>(document, position);
         req.OnlyThisFile = false;

@@ -107,7 +107,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     }
 
     return {
-        initializationFinished: Promise.all([omniSharpPromise.then(o => o.waitForEmptyEventQueue()), coreClrDebugPromise])
+        initializationFinished: Promise.all([omniSharpPromise.then(async o => o.waitForEmptyEventQueue()), coreClrDebugPromise])
             .then(promiseResult => {
                 // This promise resolver simply swallows the result of Promise.all. When we decide we want to expose this level of detail
                 // to other extensions then we will design that return type and implement it here.
@@ -115,7 +115,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     };
 }
 
-function ensureRuntimeDependencies(extension: vscode.Extension<any>, eventStream: EventStream, platformInfo: PlatformInformation): Promise<boolean> {
+async function ensureRuntimeDependencies(extension: vscode.Extension<any>, eventStream: EventStream, platformInfo: PlatformInformation): Promise<boolean> {
     return util.installFileExists(util.InstallFileType.Lock)
         .then(exists => {
             if (!exists) {

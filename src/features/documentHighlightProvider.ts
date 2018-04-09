@@ -11,7 +11,7 @@ import {DocumentHighlightProvider, DocumentHighlight, DocumentHighlightKind, Can
 
 export default class OmnisharpDocumentHighlightProvider extends AbstractSupport implements DocumentHighlightProvider {
 
-    public provideDocumentHighlights(resource: TextDocument, position: Position, token: CancellationToken): Promise<DocumentHighlight[]> {
+    public async provideDocumentHighlights(resource: TextDocument, position: Position, token: CancellationToken): Promise<DocumentHighlight[]> {
 
         let req = createRequest<protocol.FindUsagesRequest>(resource, position);
         req.OnlyThisFile = true;
