@@ -21,19 +21,18 @@ import { getPackageJSON } from '../tasks/packageJson';
 import { Logger } from '../src/logger';
 import { PackageManager } from '../src/packages';
 import { PlatformInformation } from '../src/platform';
-import { Result } from 'async-child-process';
 
 gulp.task('vsix:offline:package', async () => {
     del.sync(vscodeignorePath);
 
     fs.copyFileSync(offlineVscodeignorePath, vscodeignorePath);
 
-    return doPackageOffline()
-        .then(async v => del(vscodeignorePath),
-            e => {
-                del(vscodeignorePath);
-                throw e;
-            });
+    try {
+        await doPackageOffline();
+    }
+    finally {
+        del(vscodeignorePath);
+    }
 });
 
 async function doPackageOffline() {
@@ -58,14 +57,9 @@ async function doPackageOffline() {
         new PlatformInformation('linux', 'x86_64')
     ];
 
-    let promise = Promise.resolve<Result>(null);
-
-    packages.forEach(platformInfo => {
-        promise = promise
-            .then(async () => doOfflinePackage(platformInfo, packageName, packageJSON, packedVsixOutputRoot));
-    });
-
-    return promise;
+    for (let platformInfo of packages) {
+        await doOfflinePackage(platformInfo, packageName, packageJSON, packedVsixOutputRoot);
+    }
 }
 
 function cleanSync(deleteVsix: boolean) {
@@ -85,8 +79,10 @@ async function doOfflinePackage(platformInfo: PlatformInformation, packageName: 
 
     cleanSync(false);
 
-    return install(platformInfo, packageJSON)
-        .then(async () => doPackageSync(packageName + '-' + platformInfo.platform + '-' + platformInfo.architecture + '.vsix', outputFolder));
+    const packageFileName = `${packageName}-${platformInfo.platform}-${platformInfo.architecture}.vsix`;
+
+    await install(platformInfo, packageJSON);
+    await doPackageSync(packageFileName, outputFolder);
 }
 
 // Install Tasks
@@ -98,17 +94,10 @@ async function install(platformInfo: PlatformInformation, packageJSON: any) {
     eventStream.subscribe(stdoutObserver.post);
     const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'));
 
-    return packageManager.DownloadPackages(eventStream, undefined, undefined, undefined)
-        .then(async () => {
-            return packageManager.InstallPackages(eventStream, undefined);
-        })
-        .then(async () => {
-
-            return util.touchInstallFile(util.InstallFileType.Lock);
-        })
-        .then(async () => {
-            return debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());
-        });
+    await packageManager.DownloadPackages(eventStream, undefined, undefined, undefined);
+    await packageManager.InstallPackages(eventStream, undefined);
+    await util.touchInstallFile(util.InstallFileType.Lock);
+    await debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());
 }
 
 /// Packaging (VSIX) Tasks
