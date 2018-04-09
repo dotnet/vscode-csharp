@@ -2,21 +2,11 @@
  * Copyright (C) Microsoft Corporation. All rights reserved.
  *--------------------------------------------------------*/
 
-
-'use strict';
-
-import shelljs = require("async-shelljs");
+ import shelljs = require("async-shelljs"); 
 import path = require('path');
 const fs = require('async-file');
-import Mocha = require('mocha');
-import istanbul = require('istanbul');
-const loadCoverage = require('remap-istanbul/lib/loadCoverage');
-const remap = require('remap-istanbul/lib/remap');
-const writeReport = require('remap-istanbul/lib/writeReport');
 
 declare var __coverage__: any;
-let glob = require('glob');
-let remapIstanbul = require('remap-istanbul');
 
 export default class CoverageWritingTestRunner {
     constructor(private baseRunner: any) {
@@ -28,12 +18,12 @@ export default class CoverageWritingTestRunner {
 
     public run(testRoot: string, clb: any) {
         let promiseResolve: any;
-        let clbArgsLocal: { error, failures?: number };
+        let clbArgsLocal: { error: any, failures?: number };
 
-        new Promise<{ error, failures?: number }>(function (resolve, reject) {
-            promiseResolve = (error, failures?: number) => resolve({ error, failures });
+        new Promise<{ error: any, failures?: number }>(function (resolve, reject) {
+            promiseResolve = (error: any, failures?: number) => resolve({ error, failures });
         })
-            .then(clbArgs => {
+            .then(async clbArgs => {
                 clbArgsLocal = clbArgs;
                 return this.writeCoverage();
             })
@@ -68,15 +58,13 @@ export default class CoverageWritingTestRunner {
 
                     await fs.writeTextFile(rawCoverageJsonPath, JSON.stringify(__coverage__));
 
-                    let result = await shelljs.asyncExec(`${nodePath}node ${remapIstanbulPath} -i ${rawCoverageJsonPath} -o ${remappedCoverageJsonPath}`, {
-                        cwd: outFolderPath
-                    });
-
-
+                    await shelljs.asyncExec(`${nodePath}node ${remapIstanbulPath} -i ${rawCoverageJsonPath} -o ${remappedCoverageJsonPath}`, { 
+                        cwd: outFolderPath 
+                    }); 
 
                     let remappedResult = JSON.parse(await fs.readTextFile(remappedCoverageJsonPath));
 
-                    let finalResult = {};
+                    let finalResult = <{[details: string] : { path: string }}>{};
 
                     for (let key in remappedResult) {
                         if (remappedResult[key].path) {

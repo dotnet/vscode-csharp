@@ -6,7 +6,6 @@ import { should, expect } from 'chai';
 import { getNullChannel } from './Fakes';
 import { OmnisharpLoggerObserver } from '../../../src/observers/OmnisharpLoggerObserver';
 import { OmnisharpServerMsBuildProjectDiagnostics, EventWithMessage, OmnisharpServerOnStdErr, OmnisharpServerMessage, OmnisharpServerOnServerError, OmnisharpInitialisation, OmnisharpLaunch, OmnisharpServerOnError, OmnisharpFailure, OmnisharpEventPacketReceived } from '../../../src/omnisharp/loggingEvents';
-import { MSBuildDiagnosticsMessage } from '../../../src/omnisharp/protocol';
 
 suite("OmnisharpLoggerObserver", () => {
     suiteSetup(() => should());

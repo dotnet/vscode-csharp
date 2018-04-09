@@ -3,11 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as cp from 'child_process';
+// Sample Query: https://api-v2v3search-0.nuget.org/autocomplete
 
-export function invokeNode(args: string[]){
-    let proc = cp.spawnSync('node', args);
-    if (proc.error) {
-        console.error(proc.error.toString());
-    }
+ export default interface NuGetSearchAutocompleteServiceResponse {
+    data: string[];
 }

@@ -42,7 +42,7 @@ export const getNullWorkspaceConfiguration = (): vscode.WorkspaceConfiguration =
                 key: "somekey"
             };
         },
-        update: () => { return Promise.resolve(); },
+        update: async () => { return Promise.resolve(); },
     };
     return workspace;
 };

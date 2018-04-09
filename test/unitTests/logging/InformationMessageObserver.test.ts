@@ -22,12 +22,12 @@ suite("InformationMessageObserver", () => {
         signalCommandDone = () => { resolve(); };
     });
     let vscode: vscode = getFakeVsCode();
-    let infoMessage;
-    let relativePath;
-    let invokedCommand;
+    let infoMessage: string;
+    let relativePath: string;
+    let invokedCommand: string;
     let observer: InformationMessageObserver = new InformationMessageObserver(vscode);
 
-    vscode.window.showInformationMessage = (message: string, ...items: string[]) => {
+    vscode.window.showInformationMessage = async (message: string, ...items: string[]) => {
         infoMessage = message;
         return new Promise<string>(resolve => {
             doClickCancel = () => {
@@ -46,7 +46,7 @@ suite("InformationMessageObserver", () => {
         return undefined;
     };
 
-    vscode.workspace.asRelativePath = (pathOrUri?: string | Uri, includeWorspaceFolder?: boolean) => {
+    vscode.workspace.asRelativePath = (pathOrUri?: string, includeWorspaceFolder?: boolean) => {
         relativePath = pathOrUri;
         return relativePath;
     };

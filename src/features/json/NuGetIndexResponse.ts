@@ -3,11 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as cp from 'child_process';
+// Sample Request: https://api.nuget.org/v3/index.json
+ export default interface NuGetIndexResponse {
+     resources: NuGetResource[];
+ }
 
-export function invokeNode(args: string[]){
-    let proc = cp.spawnSync('node', args);
-    if (proc.error) {
-        console.error(proc.error.toString());
-    }
-}
+ interface NuGetResource {
+     '@type': string;
+     '@id': string;
+ }

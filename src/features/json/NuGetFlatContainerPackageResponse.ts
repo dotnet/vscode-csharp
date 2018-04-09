@@ -3,11 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as cp from 'child_process';
-
-export function invokeNode(args: string[]){
-    let proc = cp.spawnSync('node', args);
-    if (proc.error) {
-        console.error(proc.error.toString());
-    }
+ // Sample Request: https://api.nuget.org/v3-flatcontainer/FluentAssertions/index.json
+ 
+export default interface NuGetFlatContainerPackageResponse {
+    versions: string[];
 }

@@ -3,11 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as cp from 'child_process';
+// Sample Request: https://api-v2v3search-0.nuget.org/query?q=newtonsoft.json&take=5
 
-export function invokeNode(args: string[]){
-    let proc = cp.spawnSync('node', args);
-    if (proc.error) {
-        console.error(proc.error.toString());
-    }
+export default interface NuGetSearchQueryServiceResponse {
+    data: NuGetSearchQueryServiceDataElement[];
+}
+
+interface NuGetSearchQueryServiceDataElement {
+    id: string;
+    description: string;
+    version: string;
 }

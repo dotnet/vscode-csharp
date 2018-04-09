@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import * as vscode from 'vscode';
 import { OmniSharpServer } from '../omnisharp/server';
 import AbstractProvider from './abstractProvider';
@@ -36,7 +34,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
         this._options = Options.Read();
     }
 
-    public provideCodeActions(document: vscode.TextDocument, range: vscode.Range, context: vscode.CodeActionContext, token: vscode.CancellationToken): Promise<vscode.Command[]> {
+    public async provideCodeActions(document: vscode.TextDocument, range: vscode.Range, context: vscode.CodeActionContext, token: vscode.CancellationToken): Promise<vscode.Command[]> {
         if (this._options.disableCodeActions) {
             return;
         }
@@ -101,12 +99,12 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
                     arguments: [runRequest]
                 };
             });
-        }, (error) => {
+        }, async (error) => {
             return Promise.reject(`Problem invoking 'GetCodeActions' on OmniSharp server: ${error}`);
         });
     }
 
-    private _runCodeAction(req: protocol.V2.RunCodeActionRequest): Promise<any> {
+    private async _runCodeAction(req: protocol.V2.RunCodeActionRequest): Promise<boolean | string | {}> {
 
         return serverUtils.runCodeAction(this._server, req).then(response => {
 
@@ -178,7 +176,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
                         })
                  : next;
                 }
-            }, (error) => {
+            }, async (error) => {
             return Promise.reject(`Problem invoking 'RunCodeAction' on OmniSharp server: ${error}`);
         });
     }

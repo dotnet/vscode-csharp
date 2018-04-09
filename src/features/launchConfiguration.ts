@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as cp from 'child_process';
+import { DebugConfiguration } from "vscode";
 
-export function invokeNode(args: string[]){
-    let proc = cp.spawnSync('node', args);
-    if (proc.error) {
-        console.error(proc.error.toString());
-    }
+export default interface LaunchConfiguration extends DebugConfiguration {
+    debuggerEventsPipeName?: string;
+    program?: string;
+    args?: string;
+    cwd?: string;
 }

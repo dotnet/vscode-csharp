@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-'use strict';
 
 import { Location, getLocation, createScanner, SyntaxKind } from 'jsonc-parser';
 import { ProjectJSONContribution } from './projectJSONContribution';
@@ -23,9 +22,9 @@ export interface ISuggestionsCollector {
 export interface IJSONContribution {
     getDocumentSelector(): DocumentSelector;
     getInfoContribution(fileName: string, location: Location): Thenable<MarkedString[]>;
-    collectPropertySuggestions(fileName: string, location: Location, currentWord: string, addValue: boolean, isLast: boolean, result: ISuggestionsCollector): Thenable<any>;
-    collectValueSuggestions(fileName: string, location: Location, result: ISuggestionsCollector): Thenable<any>;
-    collectDefaultSuggestions(fileName: string, result: ISuggestionsCollector): Thenable<any>;
+    collectPropertySuggestions(fileName: string, location: Location, currentWord: string, addValue: boolean, isLast: boolean, result: ISuggestionsCollector): Thenable<void>;
+    collectValueSuggestions(fileName: string, location: Location, result: ISuggestionsCollector): Thenable<void>;
+    collectDefaultSuggestions(fileName: string, result: ISuggestionsCollector): Thenable<void>;
     resolveSuggestion?(item: CompletionItem): Thenable<CompletionItem>;
 }
 
@@ -96,7 +95,7 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
 
     public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken): Thenable<CompletionList> {
         let currentWord = this.getCurrentWord(document, position);
-        let overwriteRange = null;
+        let overwriteRange: Range = null;
         let items: CompletionItem[] = [];
         let isIncomplete = false;
 
@@ -127,7 +126,7 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
             log: (message: string) => console.log(message)
         };
 
-        let collectPromise: Thenable<any> = null;
+        let collectPromise: Thenable<void> = null;
 
         if (location.isAtPropertyKey) {
             let addValue = !location.previousNode || !location.previousNode.columnOffset && (offset == (location.previousNode.offset + location.previousNode.length));

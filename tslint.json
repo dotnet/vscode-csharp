@@ -5,6 +5,7 @@
         "no-duplicate-variable": true,
         "no-var-keyword": true,
         "promise-must-complete": true,
+        "promise-function-async": true,
         "curly": true,
         "semicolon": true,
         "indent": [true, "spaces", 4],

@@ -11,7 +11,6 @@ import * as del from 'del';
 import * as fs from 'fs';
 import * as gulp from 'gulp';
 import * as path from 'path';
-import * as unzip from 'unzip2';
 import * as util from '../src/common';
 import spawnNode from '../tasks/spawnNode';
 import { codeExtensionPath, offlineVscodeignorePath, vscodeignorePath, vscePath, packedVsixOutputRoot } from '../tasks/projectPaths';
@@ -23,20 +22,20 @@ import { Logger } from '../src/logger';
 import { PackageManager } from '../src/packages';
 import { PlatformInformation } from '../src/platform';
 
-gulp.task('vsix:offline:package', () => {
+gulp.task('vsix:offline:package', async () => {
     del.sync(vscodeignorePath);
 
     fs.copyFileSync(offlineVscodeignorePath, vscodeignorePath);
 
-    return doPackageOffline()
-        .then(v => del(vscodeignorePath),
-            e => {
-                del(vscodeignorePath);
-                throw e;
-            });
+    try {
+        await doPackageOffline();
+    }
+    finally {
+        del(vscodeignorePath);
+    }
 });
 
-function doPackageOffline() {
+async function doPackageOffline() {
     util.setExtensionPath(codeExtensionPath);
 
     if (commandLineOptions.retainVsix) {
@@ -58,17 +57,12 @@ function doPackageOffline() {
         new PlatformInformation('linux', 'x86_64')
     ];
 
-    let promise = Promise.resolve();
-
-    packages.forEach(platformInfo => {
-        promise = promise
-            .then(() => doOfflinePackage(platformInfo, packageName, packageJSON, packedVsixOutputRoot));
-    });
-
-    return promise;
+    for (let platformInfo of packages) {
+        await doOfflinePackage(platformInfo, packageName, packageJSON, packedVsixOutputRoot);
+    }
 }
 
-function cleanSync(deleteVsix) {
+function cleanSync(deleteVsix: boolean) {
     del.sync('install.*');
     del.sync('.omnisharp*');
     del.sync('.debugger');
@@ -78,19 +72,21 @@ function cleanSync(deleteVsix) {
     }
 }
 
-function doOfflinePackage(platformInfo, packageName, packageJSON, outputFolder) {
+async function doOfflinePackage(platformInfo: PlatformInformation, packageName: string, packageJSON: any, outputFolder: string) {
     if (process.platform === 'win32') {
         throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
     }
 
     cleanSync(false);
 
-    return install(platformInfo, packageJSON)
-        .then(() => doPackageSync(packageName + '-' + platformInfo.platform + '-' + platformInfo.architecture + '.vsix', outputFolder));
+    const packageFileName = `${packageName}-${platformInfo.platform}-${platformInfo.architecture}.vsix`;
+
+    await install(platformInfo, packageJSON);
+    await doPackageSync(packageFileName, outputFolder);
 }
 
 // Install Tasks
-function install(platformInfo, packageJSON) {
+async function install(platformInfo: PlatformInformation, packageJSON: any) {
     const packageManager = new PackageManager(platformInfo, packageJSON);
     let eventStream = new EventStream();
     const logger = new Logger(message => process.stdout.write(message));
@@ -98,21 +94,14 @@ function install(platformInfo, packageJSON) {
     eventStream.subscribe(stdoutObserver.post);
     const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'));
 
-    return packageManager.DownloadPackages(eventStream, undefined, undefined)
-        .then(() => {
-            return packageManager.InstallPackages(eventStream);
-        })
-        .then(() => {
-
-            return util.touchInstallFile(util.InstallFileType.Lock);
-        })
-        .then(() => {
-            return debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());
-        });
+    await packageManager.DownloadPackages(eventStream, undefined, undefined);
+    await packageManager.InstallPackages(eventStream);
+    await util.touchInstallFile(util.InstallFileType.Lock);
+    await debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());
 }
 
 /// Packaging (VSIX) Tasks
-function doPackageSync(packageName, outputFolder) {
+async function doPackageSync(packageName: string, outputFolder: string) {
 
     let vsceArgs = [];
     vsceArgs.push(vscePath);

@@ -38,16 +38,6 @@ export interface OutputChannel {
     show(preserveFocus?: boolean): void;
 
     /**
-     * ~~Reveal this channel in the UI.~~
-     *
-     * @deprecated Use the overload with just one parameter (`show(preserveFocus?: boolean): void`).
-     *
-     * @param column This argument is **deprecated** and will be ignored.
-     * @param preserveFocus When `true` the channel will not take focus.
-     */
-    show(column?: ViewColumn, preserveFocus?: boolean): void;
-
-    /**
      * Hide this channel from the UI.
      */
     hide(): void;

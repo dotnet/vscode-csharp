@@ -4,15 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { expect, should } from 'chai';
-import { getFakeVsCode, getWorkspaceInformationUpdated, getMSBuildWorkspaceInformation } from './Fakes';
-import { vscode, StatusBarItem } from '../../../src/vscodeAdapter';
+import { getWorkspaceInformationUpdated, getMSBuildWorkspaceInformation } from './Fakes';
+import { StatusBarItem } from '../../../src/vscodeAdapter';
 import { ProjectStatusBarObserver } from '../../../src/observers/ProjectStatusBarObserver';
 import { OmnisharpOnMultipleLaunchTargets, OmnisharpServerOnStop } from '../../../src/omnisharp/loggingEvents';
 
 suite('ProjectStatusBarObserver', () => {
     suiteSetup(() => should());
 
-    let output = '';
     let showCalled: boolean;
     let hideCalled: boolean;
     let statusBarItem = <StatusBarItem>{
@@ -22,7 +21,6 @@ suite('ProjectStatusBarObserver', () => {
     let observer = new ProjectStatusBarObserver(statusBarItem);
 
     setup(() => {
-        output = '';
         showCalled = false;
         hideCalled = false;
     });
