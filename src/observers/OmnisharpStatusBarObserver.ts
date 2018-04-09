@@ -13,7 +13,7 @@ export class OmnisharpStatusBarObserver extends BaseStatusBarItemObserver {
                 this.SetAndShowStatusBar('$(flame)', 'o.showOutput', 'rgb(218,0,0)', 'Error starting OmniSharp');
                 break;
             case OmnisharpOnBeforeServerInstall.name:
-                this.SetAndShowStatusBar('$(flame) Installing OmniSharp...', 'o.showOutput', '', '');
+                this.SetAndShowStatusBar('$(flame) Installing OmniSharp...', 'o.showOutput');
                 break;
             case OmnisharpOnBeforeServerStart.name:
                 this.SetAndShowStatusBar('$(flame)', 'o.showOutput', 'rgb(218,218,0)', 'Starting OmniSharp server');
@@ -22,7 +22,7 @@ export class OmnisharpStatusBarObserver extends BaseStatusBarItemObserver {
                 this.ResetAndHideStatusBar();
                 break;
             case OmnisharpServerOnStart.name:
-                this.SetAndShowStatusBar('$(flame)', 'o.showOutput', 'rgb(0, 218, 0)', 'OmniSharp server is Running');
+                this.SetAndShowStatusBar('$(flame)', 'o.showOutput', 'rgb(0, 218, 0)', 'OmniSharp server is running');
                 break;
             case DownloadStart.name:
                 this.SetAndShowStatusBar("$(cloud-download) Downloading packages", '', '', `Downloading package '${(<DownloadStart>event).packageDescription}...' `);
