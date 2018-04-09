@@ -27,11 +27,12 @@ import { TelemetryObserver } from './observers/TelemetryObserver';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { addJSONProviders } from './features/json/jsonContributions';
 import { ProjectStatusBarObserver } from './observers/ProjectStatusBarObserver';
+import CSharpExtensionExports from './CSharpExtensionExports';
 
-export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
+export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
     const extensionId = 'ms-vscode.csharp';
-    const extension = vscode.extensions.getExtension(extensionId);
+    const extension = vscode.extensions.getExtension<CSharpExtensionExports>(extensionId);
     const extensionVersion = extension.packageJSON.version;
     const aiKey = extension.packageJSON.contributes.debuggers[0].aiKey;
     const reporter = new TelemetryReporter(extensionId, extensionVersion, aiKey);
@@ -115,7 +116,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     };
 }
 
-async function ensureRuntimeDependencies(extension: vscode.Extension<any>, eventStream: EventStream, platformInfo: PlatformInformation): Promise<boolean> {
+async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation): Promise<boolean> {
     return util.installFileExists(util.InstallFileType.Lock)
         .then(exists => {
             if (!exists) {

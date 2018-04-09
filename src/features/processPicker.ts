@@ -504,7 +504,7 @@ async function execChildProcess(process: string, workingDirectory: string): Prom
 // VSCode cannot find the path "c:\windows\system32\bash.exe" as bash.exe is only available on 64bit OS. 
 // It can be invoked from "c:\windows\sysnative\bash.exe", so adding "c:\windows\sysnative" to path if we identify
 // VSCode is running in windows and doesn't have it in the path.
-async function GetSysNativePathIfNeeded(): Promise<any> {
+async function GetSysNativePathIfNeeded(): Promise<NodeJS.ProcessEnv> {
     return PlatformInformation.GetCurrent().then(platformInfo => {
         let env = process.env;
         if (platformInfo.isWindows() && platformInfo.architecture === "x86_64") {

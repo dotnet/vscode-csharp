@@ -15,6 +15,7 @@ import { DebuggerEventsProtocol } from '../coreclr-debug/debuggerEventsProtocol'
 import { OmniSharpServer } from '../omnisharp/server';
 import { TestExecutionCountReport } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
+import LaunchConfiguration from './launchConfiguration';
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 
@@ -241,22 +242,29 @@ export default class TestManager extends AbstractProvider {
             result = {};
         }
 
-        if (!result.type) {
-            result.type = "coreclr";
-        }
+        let launchConfiguration: LaunchConfiguration = {
+            ...result,
+            type: result.type || "coreclr",
+            name: ".NET Test Launch",
+            request: "launch",
+            debuggerEventsPipeName: debuggerEventsPipeName,
+            program: program,
+            args: args,
+            cwd: cwd
+        };
+
 
         // Now fill in the rest of the options
-        result.name = ".NET Test Launch";
-        result.request = "launch";
-        result.debuggerEventsPipeName = debuggerEventsPipeName;
-        result.program = program;
-        result.args = args;
-        result.cwd = cwd;
 
-        return result;
+        return launchConfiguration;
     }
 
-    private async _getLaunchConfigurationForVSTest(fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener): Promise<any> {
+    private async _getLaunchConfigurationForVSTest(
+        fileName: string,
+        testMethod: string,
+        testFrameworkName: string,
+        targetFrameworkVersion: string,
+        debugEventListener: DebugEventListener): Promise<LaunchConfiguration> {
         const output = this._getOutputChannel();
 
         // Listen for test messages while getting start info.
@@ -274,11 +282,15 @@ export default class TestManager extends AbstractProvider {
         return serverUtils.debugTestGetStartInfo(this._server, request)
             .then(response => {
                 listener.dispose();
-                return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath());
+                return this._createLaunchConfiguration(
+                    response.FileName,
+                    response.Arguments,
+                    response.WorkingDirectory,
+                    debugEventListener.pipePath());
             });
     }
 
-    private async _getLaunchConfigurationForLegacy(fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string): Promise<any> {
+    private async _getLaunchConfigurationForLegacy(fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string): Promise<LaunchConfiguration> {
         const output = this._getOutputChannel();
 
         // Listen for test messages while getting start info.
@@ -300,7 +312,13 @@ export default class TestManager extends AbstractProvider {
             });
     }
 
-    private async _getLaunchConfiguration(debugType: string, fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener): Promise<any> {
+    private async _getLaunchConfiguration(
+        debugType: string,
+        fileName: string,
+        testMethod: string,
+        testFrameworkName: string,
+        targetFrameworkVersion: string,
+        debugEventListener: DebugEventListener): Promise<LaunchConfiguration> {
         switch (debugType) {
             case 'legacy':
                 return this._getLaunchConfigurationForLegacy(fileName, testMethod, testFrameworkName, targetFrameworkVersion);
@@ -382,14 +400,25 @@ export default class TestManager extends AbstractProvider {
             });
     }
 
-    private async _getLaunchConfigurationForClass(debugType: string, fileName: string, methodsToRun: string[], testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener): Promise<any> {
+    private async _getLaunchConfigurationForClass(
+        debugType: string,
+        fileName: string,
+        methodsToRun: string[],
+        testFrameworkName: string,
+        targetFrameworkVersion: string,
+        debugEventListener: DebugEventListener): Promise<LaunchConfiguration> {
         if (debugType == 'vstest') {
             return this._getLaunchConfigurationForVSTestClass(fileName, methodsToRun, testFrameworkName, targetFrameworkVersion, debugEventListener);
         }
         throw new Error(`Unexpected debug type: ${debugType}`);
     }
 
-    private async _getLaunchConfigurationForVSTestClass(fileName: string, methodsToRun: string[], testFrameworkName: string, targetFrameworkVersion: string, debugEventListener: DebugEventListener): Promise<any> {
+    private async _getLaunchConfigurationForVSTestClass(
+        fileName: string,
+        methodsToRun: string[],
+        testFrameworkName: string,
+        targetFrameworkVersion: string,
+        debugEventListener: DebugEventListener): Promise<LaunchConfiguration> {
         const output = this._getOutputChannel();
 
         const listener = this._server.onTestMessage(e => {

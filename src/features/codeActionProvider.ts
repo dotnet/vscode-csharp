@@ -104,7 +104,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
         });
     }
 
-    private async _runCodeAction(req: protocol.V2.RunCodeActionRequest): Promise<any> {
+    private async _runCodeAction(req: protocol.V2.RunCodeActionRequest): Promise<boolean | string | {}> {
 
         return serverUtils.runCodeAction(this._server, req).then(response => {
 
