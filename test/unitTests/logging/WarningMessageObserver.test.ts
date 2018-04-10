@@ -54,7 +54,7 @@ suite('WarningMessageObserver', () => {
         scheduler = new rx.HistoricalScheduler(0, (x, y) => {
             return x > y ? 1 : -1;
         });
-        observer = new WarningMessageObserver(vscode, scheduler);
+        observer = new WarningMessageObserver(vscode, () => false, scheduler);
         warningMessage = undefined;
         invokedCommand = undefined;
         commandDone = new Promise<void>(resolve => {
@@ -68,6 +68,15 @@ suite('WarningMessageObserver', () => {
             []);
         observer.post(event);
         expect(invokedCommand).to.be.undefined;
+    });
+
+    test('OmnisharpServerMsBuildProjectDiagnostics: No event is posted if warning is disabled', () => {
+        let newObserver = new WarningMessageObserver(vscode, () => true, scheduler);
+        let event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
+            [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)],
+            [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)]);
+        newObserver.post(event);
+        expect(warningMessage).to.be.undefined;
     });
 
     [
