@@ -18,6 +18,9 @@ Enables the use of pre-release builds of Omnisharp. Downloading a pre-release bu
   * "latest" - Use the latest CI build
   * `version` - Use a specific version of OmniSharp. Example: `1.29.2-beta.60`
 
+#### Misc
+* Enables suppressing the "some projects had trouble loading" popup using the `omnisharp.disableMsBuildDiagnosticWarning` option
+
 ## 1.14.0 (February 14, 2018)
 
 #### C# Language Support
