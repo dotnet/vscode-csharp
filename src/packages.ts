@@ -61,6 +61,13 @@ export class PackageManager {
     }
 
     private async GetAllPackages(): Promise<Package[]> {
+        if (this.allPackages) {
+            return this.allPackages;
+        }
+        else {
+            throw new PackageError("Package manifest does not exist.");
+        }
+
         return new Promise<Package[]>((resolve, reject) => {
             if (this.allPackages) {
                 resolve(this.allPackages);
@@ -117,7 +124,7 @@ function resolvePackageBinaries(packages: Package[]) {
                 pkg.binaries = pkg.binaries.map(value => path.resolve(getBaseInstallPath(pkg), value));
             }
         }
-    }    
+    }
 }
 
 function getBaseInstallPath(pkg: Package): string {
@@ -139,10 +146,8 @@ async function maybeDownloadPackage(pkg: Package, eventStream: EventStream, prox
 }
 
 async function downloadPackage(pkg: Package, eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<void> {
-
     eventStream.post(new DownloadStart(pkg.description));
-
-    return new Promise<tmp.SynchrounousResult>((resolve, reject) => {
+    const tmpResult = await new Promise<tmp.SynchrounousResult>((resolve, reject) => {
         tmp.file({ prefix: 'package-' }, (err, path, fd, cleanupCallback) => {
             if (err) {
                 return reject(new PackageError('Error from tmp.file', pkg, err));
@@ -150,26 +155,32 @@ async function downloadPackage(pkg: Package, eventStream: EventStream, proxy: st
 
             resolve(<tmp.SynchrounousResult>{ name: path, fd: fd, removeCallback: cleanupCallback });
         });
-    }).then(async tmpResult => {
-        pkg.tmpFile = tmpResult;
+    });
 
-        let result = downloadFile(pkg.url, pkg, eventStream, proxy, strictSSL)
-            .then(() => eventStream.post(new DownloadSuccess(` Done!`)));
+    pkg.tmpFile = tmpResult;
 
+    try {
+        await downloadFile(pkg.url, pkg, eventStream, proxy, strictSSL);
+        eventStream.post(new DownloadSuccess(` Done!`));
+    }
+    catch (primaryUrlError) {
         // If the package has a fallback Url, and downloading from the primary Url failed, try again from 
         // the fallback. This is used for debugger packages as some users have had issues downloading from
-        // the CDN link.
+        // the CDN link
         if (pkg.fallbackUrl) {
-            result = result.catch(async (primaryUrlError) => {
-                eventStream.post(new DownloadFallBack(pkg.fallbackUrl));
-                return downloadFile(pkg.fallbackUrl, pkg, eventStream, proxy, strictSSL)
-                    .then(() => eventStream.post(new DownloadSuccess(' Done!')))
-                    .catch(() => primaryUrlError);
-            });
+            eventStream.post(new DownloadFallBack(pkg.fallbackUrl));
+            try {
+                await downloadFile(pkg.fallbackUrl, pkg, eventStream, proxy, strictSSL);
+                eventStream.post(new DownloadSuccess(' Done!'));
+            }
+            catch (fallbackUrlError) {
+                throw primaryUrlError;
+            }
         }
-
-        return result;
-    });
+        else {
+            throw primaryUrlError;
+        }
+    }
 }
 
 async function downloadFile(urlString: string, pkg: Package, eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<void> {
@@ -179,6 +190,7 @@ async function downloadFile(urlString: string, pkg: Package, eventStream: EventS
         host: url.host,
         path: url.path,
         agent: getProxyAgent(url, proxy, strictSSL),
+        port : url.port,
         rejectUnauthorized: util.isBoolean(strictSSL) ? strictSSL : true
     };
 
