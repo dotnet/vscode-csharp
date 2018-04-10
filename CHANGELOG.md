@@ -7,7 +7,7 @@
 
 #### Debugger
 
-* Adds support for [Source Link](https://github.com/dotnet/core/blob/master/Documentation/diagnostics/source_link.md), Symbol Servers and other more advanced symbol options ([#373](https://github.com/OmniSharp/omnisharp-vscode/issues/373))
+* Adds support for [Source Link](https://aka.ms/SourceLinkSpec), Symbol Servers and other more advanced symbol options ([#373](https://github.com/OmniSharp/omnisharp-vscode/issues/373))
 * Adds launch.json option to suppress Just-In-Time compiler optimizations.
 * Due to the previous two items and work from the .NET Team, it is now possible to easily debug into ASP.NET itself in projects running against .NET Core 2.1 preview 1. Support for debugging into all the managed code in .NET Core will come in future .NET Core 2.1 builds. Instructions are in the [wiki](https://github.com/OmniSharp/omnisharp-vscode/wiki/Debugging-into-the-.NET-Framework-itself).
 
