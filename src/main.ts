@@ -120,7 +120,7 @@ async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExten
     return util.installFileExists(util.InstallFileType.Lock)
         .then(exists => {
             if (!exists) {
-                const downloader = new CSharpExtDownloader(eventStream, extension.packageJSON, platformInfo);
+                const downloader = new CSharpExtDownloader(vscode, eventStream, extension.packageJSON, platformInfo);
                 return downloader.installRuntimeDependencies();
             } else {
                 return true;

@@ -6,7 +6,7 @@
 import * as rx from 'rx';
 import { WarningMessageObserver } from '../../../src/observers/WarningMessageObserver';
 import { use as chaiUse, expect, should } from 'chai';
-import { getFakeVsCode, getMSBuildDiagnosticsMessage, getOmnisharpMSBuildProjectDiagnosticsEvent, getOmnisharpServerOnErrorEvent } from './Fakes';
+import { getFakeVsCode, getMSBuildDiagnosticsMessage, getOmnisharpMSBuildProjectDiagnosticsEvent, getOmnisharpServerOnErrorEvent } from '../testAssets/Fakes';
 import { BaseEvent } from '../../../src/omnisharp/loggingEvents';
 import { vscode } from '../../../src/vscodeAdapter';
 import { Observable } from 'rx';

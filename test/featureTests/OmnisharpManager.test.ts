@@ -8,9 +8,9 @@ import * as util from '../../src/common';
 import { should } from "chai";
 import { PlatformInformation } from "../../src/platform";
 import { rimraf } from 'async-file';
-import { GetTestOmnisharpDownloader } from './OmnisharpDownloader.test';
 import { OmnisharpManager } from '../../src/omnisharp/OmnisharpManager';
 import { EventStream } from '../../src/EventStream';
+import { GetTestOmnisharpDownloader } from './testAssets/testAssets';
 
 const chai = require("chai");
 chai.use(require("chai-as-promised"));

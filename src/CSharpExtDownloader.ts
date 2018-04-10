@@ -4,20 +4,32 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as util from './common';
-import { GetNetworkConfiguration } from './downloader.helper';
-import { PackageManager, Package } from './packages';
+import { GetNetworkConfiguration, defaultPackageManagerFactory, IPackageManagerFactory } from './downloader.helper';
+import { PackageManager } from './packages';
 import { PlatformInformation } from './platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
+import { vscode } from './vscodeAdapter';
 
 /*
  * Class used to download the runtime dependencies of the C# Extension
  */
 export class CSharpExtDownloader {
+    private proxy: string;
+    private strictSSL: boolean;
+    private packageManager: PackageManager;
+
     public constructor(
+        vscode: vscode,
         private eventStream: EventStream,
         private packageJSON: any,
-        private platformInfo: PlatformInformation) {
+        private platformInfo: PlatformInformation,
+        packageManagerFactory: IPackageManagerFactory = defaultPackageManagerFactory) {
+
+        let networkConfiguration = GetNetworkConfiguration(vscode);
+        this.proxy = networkConfiguration.Proxy;
+        this.strictSSL = networkConfiguration.StrictSSL;
+        this.packageManager = packageManagerFactory(this.platformInfo);
     }
 
     public async installRuntimeDependencies(): Promise<boolean> {
@@ -27,22 +39,17 @@ export class CSharpExtDownloader {
 
         try {
             await util.touchInstallFile(util.InstallFileType.Begin);
-
-            let packageManager = new PackageManager(this.platformInfo);
+            
             // Display platform information and RID
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
 
+            let runTimeDependencies = this.GetRunTimeDependenciesPackages(); 
             installationStage = 'downloadPackages';
-            // shoule we move this to the omnisharp manager and then unify the downloaders
-            let packages = this.GetRunTimeDependenciesPackages();
-            let networkConfiguration = GetNetworkConfiguration();
-            const proxy = networkConfiguration.Proxy;
-            const strictSSL = networkConfiguration.StrictSSL;
-
-            let downloadedPackages = await packageManager.DownloadPackages(packages, this.eventStream, proxy, strictSSL);
+                       
+            let downloadedPackages = await this.packageManager.DownloadPackages(runTimeDependencies, this.eventStream, this.proxy, this.strictSSL);
 
             installationStage = 'installPackages';
-            await packageManager.InstallPackages(downloadedPackages, this.eventStream);
+            await this.packageManager.InstallPackages(downloadedPackages,this.eventStream);
 
             installationStage = 'touchLockFile';
             await util.touchInstallFile(util.InstallFileType.Lock);
