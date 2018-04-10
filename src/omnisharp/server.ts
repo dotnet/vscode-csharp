@@ -305,6 +305,8 @@ export class OmniSharpServer {
             args.push('--debug');
         }
 
+        args.push("--ignore", this._options.excludedFiles || "");
+
         let launchPath: string;
         if (this._options.path) {
             try {

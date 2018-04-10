@@ -18,7 +18,8 @@ export class Options {
         public useFormatting?: boolean,
         public showReferencesCodeLens?: boolean,
         public showTestsCodeLens?: boolean,
-        public disableCodeActions?: boolean) { }
+        public disableCodeActions?: boolean,
+        public excludedFiles?: string) { }
 
     public static Read(): Options {
         // Extra effort is taken below to ensure that legacy versions of options
@@ -59,6 +60,19 @@ export class Options {
 
         const disableCodeActions = csharpConfig.get<boolean>('disableCodeActions', false);
 
+        let excludeFilesOption = vscode.workspace.getConfiguration().get<{[i: string] : boolean }>('files.exclude');
+        let excludeFilesString = "";
+        for (let field in excludeFilesOption)
+        {
+            if (excludeFilesOption[field])
+            {
+                excludeFilesString += field;
+                excludeFilesString += ";"
+            }
+        }
+
+        const excludedFiles =  excludeFilesString;
+
         return new Options(path, 
             useMono, 
             waitForDebugger,
@@ -70,6 +84,7 @@ export class Options {
             useFormatting,
             showReferencesCodeLens,
             showTestsCodeLens,
-            disableCodeActions);
+            disableCodeActions,
+            excludedFiles);
     }
 }
