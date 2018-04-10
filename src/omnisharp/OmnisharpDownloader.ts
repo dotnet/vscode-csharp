@@ -5,7 +5,7 @@
 
 import { GetNetworkConfiguration, IPackageManagerFactory, defaultPackageManagerFactory } from '../downloader.helper';
 import { GetPackagesFromVersion, GetVersionFilePackage } from './OmnisharpPackageCreator';
-import { Package, PackageManager } from '../packages';
+import { PackageManager } from '../packages';
 import { PlatformInformation } from '../platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure, InstallationProgress } from './loggingEvents';
 import { EventStream } from '../EventStream';

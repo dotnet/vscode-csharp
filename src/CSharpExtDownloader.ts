@@ -5,7 +5,7 @@
 
 import * as util from './common';
 import { GetNetworkConfiguration, defaultPackageManagerFactory, IPackageManagerFactory } from './downloader.helper';
-import { PackageManager } from './packages';
+import { PackageManager, Package } from './packages';
 import { PlatformInformation } from './platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
@@ -43,9 +43,9 @@ export class CSharpExtDownloader {
             // Display platform information and RID
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
 
-            let runTimeDependencies = this.GetRunTimeDependenciesPackages(); 
+            let runTimeDependencies = this.GetRunTimeDependenciesPackages();
+            
             installationStage = 'downloadPackages';
-                       
             let downloadedPackages = await this.packageManager.DownloadPackages(runTimeDependencies, this.eventStream, this.proxy, this.strictSSL);
 
             installationStage = 'installPackages';

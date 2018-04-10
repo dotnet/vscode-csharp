@@ -19,7 +19,7 @@ import { CsharpLoggerObserver } from '../src/observers/CsharpLoggerObserver';
 import { EventStream } from '../src/EventStream';
 import { getPackageJSON } from '../tasks/packageJson';
 import { Logger } from '../src/logger';
-import { PackageManager } from '../src/packages';
+import { PackageManager, Package } from '../src/packages';
 import { PlatformInformation } from '../src/platform';
 
 gulp.task('vsix:offline:package', async () => {
@@ -93,9 +93,10 @@ async function install(platformInfo: PlatformInformation, packageJSON: any) {
     let stdoutObserver = new CsharpLoggerObserver(logger);
     eventStream.subscribe(stdoutObserver.post);
     const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'));
+    let runTimeDependencies = JSON.parse(JSON.stringify(<Package[]>packageJSON.runtimeDependencies));
 
-    await packageManager.DownloadPackages(eventStream, undefined, undefined);
-    await packageManager.InstallPackages(eventStream);
+    let downloadedPackages = await packageManager.DownloadPackages(runTimeDependencies, eventStream, undefined, undefined);
+    await packageManager.InstallPackages(downloadedPackages, eventStream);
     await util.touchInstallFile(util.InstallFileType.Lock);
     await debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());
 }

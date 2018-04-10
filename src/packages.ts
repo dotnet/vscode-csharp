@@ -124,7 +124,7 @@ function getBaseInstallPath(pkg: Package): string {
 }
 
 async function maybeDownloadPackage(pkg: Package, eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<Package> {
-    let exists = doesPackageTestPathExist(pkg);
+    let exists = await doesPackageTestPathExist(pkg);
     if (!exists) {
         return downloadPackage(pkg, eventStream, proxy, strictSSL);
     } else {
