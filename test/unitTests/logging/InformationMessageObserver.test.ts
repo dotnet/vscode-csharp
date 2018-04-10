@@ -3,11 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as rx from 'rx';
 import { InformationMessageObserver } from '../../../src/observers/InformationMessageObserver';
 import { use as chaiUse, expect, should } from 'chai';
 import { vscode, Uri } from '../../../src/vscodeAdapter';
 import { getFakeVsCode, getNullWorkspaceConfiguration, getUnresolvedDependenices } from './Fakes';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/fromPromise';
+import 'rxjs/add/operator/timeout';
 
 chaiUse(require('chai-as-promised'));
 chaiUse(require('chai-string'));
@@ -112,7 +114,7 @@ suite("InformationMessageObserver", () => {
             test('Given an information message if the user clicks cancel, the command is not executed', async () => {
                 observer.post(event);
                 doClickCancel();
-                await expect(rx.Observable.fromPromise(commandDone).timeout(1).toPromise()).to.be.rejected;
+                await expect(Observable.fromPromise(commandDone).timeout(1).toPromise()).to.be.rejected;
                 expect(invokedCommand).to.be.undefined;
             });
         });   

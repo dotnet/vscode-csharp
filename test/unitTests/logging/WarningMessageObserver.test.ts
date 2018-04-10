@@ -3,13 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as rx from 'rx';
 import { WarningMessageObserver } from '../../../src/observers/WarningMessageObserver';
-import { use as chaiUse, expect, should } from 'chai';
+import { assert, use as chaiUse, expect, should } from 'chai';
 import { getFakeVsCode, getMSBuildDiagnosticsMessage, getOmnisharpMSBuildProjectDiagnosticsEvent, getOmnisharpServerOnErrorEvent } from './Fakes';
 import { BaseEvent } from '../../../src/omnisharp/loggingEvents';
 import { vscode } from '../../../src/vscodeAdapter';
-import { Observable } from 'rx';
+import { TestScheduler } from 'rxjs/testing/TestScheduler';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/fromPromise';
 
 chaiUse(require('chai-as-promised'));
 chaiUse(require('chai-string'));
@@ -26,7 +27,7 @@ suite('WarningMessageObserver', () => {
 
     let warningMessage: string;
     let invokedCommand: string;
-    let scheduler: rx.HistoricalScheduler;
+    let scheduler: TestScheduler;
     let observer: WarningMessageObserver;
     let vscode: vscode = getFakeVsCode();
 
@@ -51,9 +52,7 @@ suite('WarningMessageObserver', () => {
     };
 
     setup(() => {
-        scheduler = new rx.HistoricalScheduler(0, (x, y) => {
-            return x > y ? 1 : -1;
-        });
+        scheduler = new TestScheduler(assert.deepEqual);
         observer = new WarningMessageObserver(vscode, scheduler);
         warningMessage = undefined;
         invokedCommand = undefined;
