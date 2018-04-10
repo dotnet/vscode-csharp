@@ -18,13 +18,12 @@ export function GetTestOmnisharpDownloader(sink: EventStream, platformInfo: Plat
             ...getNullWorkspaceConfiguration(),
         };
     };
-    return new OmnisharpDownloader(vscode, sink, GetTestPackageJSON(), platformInfo);
+    return new OmnisharpDownloader(vscode, sink, testPackageJSON, platformInfo);
 }
 
 //Since we need only the runtime dependencies of packageJSON for the downloader create a testPackageJSON
 //with just that
-export function GetTestPackageJSON() {
-    let testpackageJSON = {
+export let testPackageJSON =  {
         "runtimeDependencies": [
             {
                 "description": "OmniSharp for Windows (.NET 4.6 / x86)",
@@ -139,6 +138,3 @@ export function GetTestPackageJSON() {
             }
         ]
     };
-
-    return testpackageJSON;
-}
