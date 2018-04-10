@@ -19,7 +19,7 @@ Enables the use of pre-release builds of Omnisharp. Downloading a pre-release bu
   * `version` - Use a specific version of OmniSharp. Example: `1.29.2-beta.60`
 
 #### Misc
-* Enables suppressing the "some projects had trouble loading" popup using the `omnisharp.disableMsBuildDiagnosticWarning` option
+* Enables suppressing the "some projects had trouble loading" popup using the `omnisharp.disableMsBuildDiagnosticWarning` option ([#2110]https://github.com/OmniSharp/omnisharp-vscode/issues/2110)
 
 ## 1.14.0 (February 14, 2018)
 
