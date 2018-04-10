@@ -10,7 +10,11 @@ import { BaseEvent } from '../../../src/omnisharp/loggingEvents';
 import { vscode } from '../../../src/vscodeAdapter';
 import { TestScheduler } from 'rxjs/testing/TestScheduler';
 import { Observable } from 'rxjs/Observable';
+import "rxjs/add/operator/map";
+import "rxjs/add/operator/debounceTime";
+import 'rxjs/add/operator/timeout';
 import 'rxjs/add/observable/fromPromise';
+import 'rxjs/add/observable/timer';
 
 chaiUse(require('chai-as-promised'));
 chaiUse(require('chai-string'));
@@ -25,14 +29,14 @@ suite('WarningMessageObserver', () => {
         signalCommandDone = () => { resolve(); };
     });
 
-    let warningMessage: string;
+    let warningMessages: string[];
     let invokedCommand: string;
     let scheduler: TestScheduler;
     let observer: WarningMessageObserver;
     let vscode: vscode = getFakeVsCode();
 
     vscode.window.showWarningMessage = async <T>(message: string, ...items: T[]) => {
-        warningMessage = message;
+        warningMessages.push(message);
 
         return new Promise<T>(resolve => {
             doClickCancel = () => {
@@ -53,8 +57,9 @@ suite('WarningMessageObserver', () => {
 
     setup(() => {
         scheduler = new TestScheduler(assert.deepEqual);
+        scheduler.maxFrames = 9000;
         observer = new WarningMessageObserver(vscode, scheduler);
-        warningMessage = undefined;
+        warningMessages = [];
         invokedCommand = undefined;
         commandDone = new Promise<void>(resolve => {
             signalCommandDone = () => { resolve(); };
@@ -76,35 +81,67 @@ suite('WarningMessageObserver', () => {
         getOmnisharpServerOnErrorEvent("someText", "someFile", 1, 2)
     ].forEach((event: BaseEvent) => {
         suite(`${event.constructor.name}`, () => {
+
             test(`When the event is fired then a warning message is displayed`, () => {
-                observer.post(event);
-                scheduler.advanceBy(1500); //since the debounce time is 1500 no output should be there
-                expect(warningMessage).to.be.equal("Some projects have trouble loading. Please review the output for more details.");
+                let marble = `${timeToMarble(1500)}a--|`;
+                let eventList = scheduler.createHotObservable(marble, { a: event });
+                scheduler.expectObservable(eventList.map(e => observer.post(e)));
+                scheduler.flush();
+                expect(warningMessages.length).to.be.equal(1);
+                expect(warningMessages[0]).to.be.equal("Some projects have trouble loading. Please review the output for more details.");
             });
 
             test(`When events are fired rapidly, then they are debounced by 1500 ms`, () => {
-                observer.post(event);
-                scheduler.advanceBy(1000);
-                expect(warningMessage).to.be.undefined;
-                observer.post(event);
-                scheduler.advanceBy(500);
-                expect(warningMessage).to.be.undefined;
-                scheduler.advanceBy(1000);
-                expect(warningMessage).to.not.be.empty;
-                //once there is a silence for 1500 ms the function will be invoked
+                let marble = `${timeToMarble(1000)}a${timeToMarble(500)}b${timeToMarble(500)}c--|`;
+
+                let eventB =  getOmnisharpMSBuildProjectDiagnosticsEvent("BFile",
+                [getMSBuildDiagnosticsMessage("warningFile", "", "", 1, 2, 3, 4)],
+                [getMSBuildDiagnosticsMessage("errorFile", "", "", 5, 6, 7, 8)]);
+
+                let eventC =  getOmnisharpMSBuildProjectDiagnosticsEvent("CFile",
+                [getMSBuildDiagnosticsMessage("warningFile", "", "", 1, 2, 3, 4)],
+                [getMSBuildDiagnosticsMessage("errorFile", "", "", 5, 6, 7, 8)]);
+
+                let eventList = scheduler.createHotObservable(marble, { a: event, b: eventB, c: eventC });
+                scheduler.expectObservable(eventList.map(e => observer.post(e)));
+                scheduler.flush();
+                expect(warningMessages.length).to.be.equal(1);
+                expect(warningMessages[0]).to.be.equal("Some projects have trouble loading. Please review the output for more details.");
+            });
+
+            test(`When events are 1500 ms apart, then they are not debounced`, () => {
+                let marble = `${timeToMarble(1000)}a${timeToMarble(500)}b${timeToMarble(1500)}c--|`;
+
+                let eventB =  getOmnisharpMSBuildProjectDiagnosticsEvent("BFile",
+                [getMSBuildDiagnosticsMessage("warningFile", "", "", 1, 2, 3, 4)],
+                [getMSBuildDiagnosticsMessage("errorFile", "", "", 5, 6, 7, 8)]);
+
+                let eventC =  getOmnisharpMSBuildProjectDiagnosticsEvent("CFile",
+                [getMSBuildDiagnosticsMessage("warningFile", "", "", 1, 2, 3, 4)],
+                [getMSBuildDiagnosticsMessage("errorFile", "", "", 5, 6, 7, 8)]);
+
+                let eventList = scheduler.createHotObservable(marble, { a: event, b: eventB, c: eventC });
+                scheduler.expectObservable(eventList.map(e => observer.post(e)));
+                scheduler.flush();
+                expect(warningMessages.length).to.be.equal(2);
+                expect(warningMessages[0]).to.be.equal("Some projects have trouble loading. Please review the output for more details.");
             });
 
             test(`Given a warning message, when the user clicks ok the command is executed`, async () => {
-                observer.post(event);
-                scheduler.advanceBy(1500);
+                let marble = `${timeToMarble(1500)}a--|`;
+                let eventList = scheduler.createHotObservable(marble, { a: event });
+                scheduler.expectObservable(eventList.map(e => observer.post(e)));
+                scheduler.flush();
                 doClickOk();
                 await commandDone;
                 expect(invokedCommand).to.be.equal("o.showOutput");
             });
 
             test(`Given a warning message, when the user clicks cancel the command is not executed`, async () => {
-                observer.post(event);
-                scheduler.advanceBy(1500);
+                let marble = `${timeToMarble(1500)}a--|`;
+                let eventList = scheduler.createHotObservable(marble, { a: event });
+                scheduler.expectObservable(eventList.map(e => observer.post(e)));
+                scheduler.flush();
                 doClickCancel();
                 await expect(Observable.fromPromise(commandDone).timeout(1).toPromise()).to.be.rejected;
                 expect(invokedCommand).to.be.undefined;
@@ -112,3 +149,11 @@ suite('WarningMessageObserver', () => {
         });
     });
 });
+
+function timeToMarble(timeinMilliseconds: number): string {
+    let marble = "";
+    for (let i = 0; i < (timeinMilliseconds / 10); i++) {
+        marble += "-";
+    }
+    return marble;
+}
