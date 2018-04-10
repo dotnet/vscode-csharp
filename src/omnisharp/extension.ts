@@ -41,7 +41,7 @@ export async function activate(context: vscode.ExtensionContext, eventStream: Ev
     };
 
     const options = Options.Read();
-    const server = new OmniSharpServer(eventStream, packageJSON, platformInfo);
+    const server = new OmniSharpServer(vscode, eventStream, packageJSON, platformInfo);
 
     omnisharp = server;
     const advisor = new Advisor(server); // create before server is started
