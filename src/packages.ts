@@ -41,52 +41,48 @@ export class PackageError extends Error {
 }
 
 export class PackageManager {
-    private allPackages: Package[];
-
     public constructor(
         private platformInfo: PlatformInformation) {
-
         // Ensure our temp files get cleaned up in case of error.
         tmp.setGracefulCleanup();
     }
 
-    public async DownloadPackages(eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<void> {
-        let packages = await this.GetPackages();
-        return util.buildPromiseChain(packages, async pkg => maybeDownloadPackage(pkg, eventStream, proxy, strictSSL));
+    public async DownloadPackages(packages: Package[], eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<Package[]> {
+        let packagesToDownload = await this.GetPackages(packages);
+        for(let pkg of packagesToDownload){
+            await maybeDownloadPackage(pkg, eventStream, proxy, strictSSL);
+        }
+        return packagesToDownload;
     }
 
-    public async InstallPackages(eventStream: EventStream): Promise<void> {
-        let packages = await this.GetPackages();
-        return util.buildPromiseChain(packages, async pkg => installPackage(pkg, eventStream));
+    public async InstallPackages(packages: Package[], eventStream: EventStream): Promise<void> {
+        let packagesToInstall = await this.GetPackages(packages);
+        return util.buildPromiseChain(packagesToInstall, async pkg => installPackage(pkg, eventStream));
     }
 
-    private async GetAllPackages(): Promise<Package[]> {
-        if (this.allPackages) {
-            return this.allPackages;
+    public async GetPackages(packages: Package[]) {
+        let filteredPackages = await this.FilterPackages(packages);
+        resolvePackageBinaries(filteredPackages);
+        return filteredPackages;
+    }
+
+    private async FilterPackages(packages: Package[]) {
+        if (packages) {
+            return packages.filter(pkg => {
+                if (pkg.architectures && pkg.architectures.indexOf(this.platformInfo.architecture) === -1) {
+                    return false;
+                }
+
+                if (pkg.platforms && pkg.platforms.indexOf(this.platformInfo.platform) === -1) {
+                    return false;
+                }
+
+                return true;
+            });
         }
         else {
             throw new PackageError("Package manifest does not exist.");
         }
-    }
-
-    private async GetPackages(): Promise<Package[]> {
-        let list = await this.GetAllPackages();
-        return list.filter(pkg => {
-            if (pkg.architectures && pkg.architectures.indexOf(this.platformInfo.architecture) === -1) {
-                return false;
-            }
-
-            if (pkg.platforms && pkg.platforms.indexOf(this.platformInfo.platform) === -1) {
-                return false;
-            }
-
-            return true;
-        });
-    }
-
-    public SetPackagesToDownload(packages: Package[]) {
-        this.allPackages = packages;
-        resolvePackageBinaries(this.allPackages);
     }
 
     public async GetLatestVersionFromFile(eventStream: EventStream, proxy: string, strictSSL: boolean, filePackage: Package): Promise<string> {
@@ -127,16 +123,17 @@ function getBaseInstallPath(pkg: Package): string {
     return basePath;
 }
 
-async function maybeDownloadPackage(pkg: Package, eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<void> {
+async function maybeDownloadPackage(pkg: Package, eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<Package> {
     let exists = doesPackageTestPathExist(pkg);
     if (!exists) {
         return downloadPackage(pkg, eventStream, proxy, strictSSL);
     } else {
         eventStream.post(new DownloadSuccess(`Skipping package '${pkg.description}' (already downloaded).`));
+        return pkg;
     }
 }
 
-async function downloadPackage(pkg: Package, eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<void> {
+async function downloadPackage(pkg: Package, eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<Package> {
     eventStream.post(new DownloadStart(pkg.description));
     const tmpResult = await new Promise<tmp.SynchrounousResult>((resolve, reject) => {
         tmp.file({ prefix: 'package-' }, (err, path, fd, cleanupCallback) => {
@@ -153,6 +150,7 @@ async function downloadPackage(pkg: Package, eventStream: EventStream, proxy: st
     try {
         await downloadFile(pkg.url, pkg, eventStream, proxy, strictSSL);
         eventStream.post(new DownloadSuccess(` Done!`));
+        return pkg; //return the downloaded package
     }
     catch (primaryUrlError) {
         // If the package has a fallback Url, and downloading from the primary Url failed, try again from 
@@ -163,6 +161,7 @@ async function downloadPackage(pkg: Package, eventStream: EventStream, proxy: st
             try {
                 await downloadFile(pkg.fallbackUrl, pkg, eventStream, proxy, strictSSL);
                 eventStream.post(new DownloadSuccess(' Done!'));
+                return pkg;
             }
             catch (fallbackUrlError) {
                 throw primaryUrlError;
@@ -181,7 +180,7 @@ async function downloadFile(urlString: string, pkg: Package, eventStream: EventS
         host: url.host,
         path: url.path,
         agent: getProxyAgent(url, proxy, strictSSL),
-        port : url.port,
+        port: url.port,
         rejectUnauthorized: util.isBoolean(strictSSL) ? strictSSL : true
     };
 

@@ -39,12 +39,10 @@ export class CSharpExtDownloader {
             const proxy = networkConfiguration.Proxy;
             const strictSSL = networkConfiguration.StrictSSL;
 
-            packageManager.SetPackagesToDownload(packages);
-
-            await packageManager.DownloadPackages(this.eventStream, proxy, strictSSL);
+            let downloadedPackages = await packageManager.DownloadPackages(packages, this.eventStream, proxy, strictSSL);
 
             installationStage = 'installPackages';
-            await packageManager.InstallPackages(this.eventStream);
+            await packageManager.InstallPackages(downloadedPackages, this.eventStream);
 
             installationStage = 'touchLockFile';
             await util.touchInstallFile(util.InstallFileType.Lock);

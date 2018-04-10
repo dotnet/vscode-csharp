@@ -40,15 +40,14 @@ export class OmnisharpDownloader {
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
 
             installationStage = 'getPackageInfo';
-            let packages: Package[] = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
+            let packages = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
 
             installationStage = 'downloadPackages';
-            // Specify the packages that the package manager needs to download
-            this.packageManager.SetPackagesToDownload(packages);
-            await this.packageManager.DownloadPackages(this.eventStream, this.proxy, this.strictSSL);
+
+            let downloadedPackages = await this.packageManager.DownloadPackages(packages, this.eventStream, this.proxy, this.strictSSL);
 
             installationStage = 'installPackages';
-            await this.packageManager.InstallPackages(this.eventStream);
+            await this.packageManager.InstallPackages(downloadedPackages, this.eventStream);
 
             this.eventStream.post(new InstallationSuccess());
         }

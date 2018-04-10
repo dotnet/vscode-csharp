@@ -87,7 +87,7 @@ async function doOfflinePackage(platformInfo: PlatformInformation, packageName: 
 
 // Install Tasks
 async function install(platformInfo: PlatformInformation, packageJSON: any) {
-    const packageManager = new PackageManager(platformInfo, packageJSON);
+    const packageManager = new PackageManager(platformInfo);
     let eventStream = new EventStream();
     const logger = new Logger(message => process.stdout.write(message));
     let stdoutObserver = new CsharpLoggerObserver(logger);
