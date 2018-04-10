@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as util from './common';
-import { GetNetworkConfiguration } from './downloader.helper';
+import { GetNetworkConfiguration, defaultPackageManagerFactory, IPackageManagerFactory } from './downloader.helper';
 import { PackageManager } from './packages';
 import { PlatformInformation } from './platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure } from './omnisharp/loggingEvents';
@@ -15,11 +15,21 @@ import { vscode } from './vscodeAdapter';
  * Class used to download the runtime dependencies of the C# Extension
  */
 export class CSharpExtDownloader {
+    private proxy: string;
+    private strictSSL: boolean;
+    private packageManager: PackageManager;
+
     public constructor(
-        private vscode : vscode,
+        vscode: vscode,
         private eventStream: EventStream,
         private packageJSON: any,
-        private platformInfo: PlatformInformation) {
+        private platformInfo: PlatformInformation,
+        packageManagerFactory: IPackageManagerFactory = defaultPackageManagerFactory) {
+
+        let networkConfiguration = GetNetworkConfiguration(vscode);
+        this.proxy = networkConfiguration.Proxy;
+        this.strictSSL = networkConfiguration.StrictSSL;
+        this.packageManager = packageManagerFactory(this.platformInfo, this.packageJSON);
     }
 
     public async installRuntimeDependencies(): Promise<boolean> {
@@ -30,19 +40,14 @@ export class CSharpExtDownloader {
         try {
             await util.touchInstallFile(util.InstallFileType.Begin);
 
-            let packageManager = new PackageManager(this.platformInfo, this.packageJSON);
             // Display platform information and RID
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
 
             installationStage = 'downloadPackages';
-            let networkConfiguration = GetNetworkConfiguration(this.vscode);
-            const proxy = networkConfiguration.Proxy;
-            const strictSSL = networkConfiguration.StrictSSL;
-
-            await packageManager.DownloadPackages(this.eventStream, proxy, strictSSL);
+            await this.packageManager.DownloadPackages(this.eventStream, this.proxy, this.strictSSL);
 
             installationStage = 'installPackages';
-            await packageManager.InstallPackages(this.eventStream);
+            await this.packageManager.InstallPackages(this.eventStream);
 
             installationStage = 'touchLockFile';
             await util.touchInstallFile(util.InstallFileType.Lock);
