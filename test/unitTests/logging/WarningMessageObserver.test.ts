@@ -86,7 +86,7 @@ suite('WarningMessageObserver', () => {
         suite(`${event.constructor.name}`, () => {
 
             test(`When the event is fired then a warning message is displayed`, () => {
-                let marble = `${timeToMarble(1500)}a--|`;
+                let marble = `${timeToMarble(1500)}a`;
                 let marble_event_map = { a: event };
                 let eventList = scheduler.createHotObservable(marble, marble_event_map);
                 eventList.subscribe(e => observer.post(e));
@@ -98,7 +98,7 @@ suite('WarningMessageObserver', () => {
             });
 
             test(`When events are fired rapidly, then they are debounced by 1500 ms`, () => {
-                let marble = `${timeToMarble(1000)}a${timeToMarble(500)}b${timeToMarble(500)}c--|`;
+                let marble = `${timeToMarble(1000)}a${timeToMarble(500)}b${timeToMarble(500)}c`;
 
                 let eventB = getOmnisharpMSBuildProjectDiagnosticsEvent("BFile",
                     [getMSBuildDiagnosticsMessage("warningFile", "", "", 1, 2, 3, 4)],
@@ -119,7 +119,7 @@ suite('WarningMessageObserver', () => {
             });
 
             test(`When events are 1500 ms apart, then they are not debounced`, () => {
-                let marble = `${timeToMarble(1000)}a${timeToMarble(490)}b${timeToMarble(1500)}c--|`;
+                let marble = `${timeToMarble(1000)}a${timeToMarble(490)}b${timeToMarble(1500)}c`;
 
                 let eventB = getOmnisharpMSBuildProjectDiagnosticsEvent("BFile",
                     [getMSBuildDiagnosticsMessage("warningFile", "", "", 1, 2, 3, 4)],
@@ -143,7 +143,7 @@ suite('WarningMessageObserver', () => {
             });
 
             test(`Given a warning message, when the user clicks ok the command is executed`, async () => {
-                let marble = `${timeToMarble(1500)}a--|`;
+                let marble = `${timeToMarble(1500)}a`;
                 let eventList = scheduler.createHotObservable(marble, { a: event });
                 scheduler.expectObservable(eventList.map(e => observer.post(e)));
                 scheduler.flush();
