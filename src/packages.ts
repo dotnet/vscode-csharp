@@ -67,15 +67,6 @@ export class PackageManager {
         else {
             throw new PackageError("Package manifest does not exist.");
         }
-
-        return new Promise<Package[]>((resolve, reject) => {
-            if (this.allPackages) {
-                resolve(this.allPackages);
-            }
-            else {
-                reject(new PackageError("Package manifest does not exist."));
-            }
-        });
     }
 
     private async GetPackages(): Promise<Package[]> {
