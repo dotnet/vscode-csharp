@@ -44,39 +44,25 @@ export class PackageManager {
     private allPackages: Package[];
 
     public constructor(
-        private platformInfo: PlatformInformation,
-        private packageJSON: any) {
+        private platformInfo: PlatformInformation) {
 
         // Ensure our temp files get cleaned up in case of error.
         tmp.setGracefulCleanup();
     }
 
     public async DownloadPackages(eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<void> {
-        return this.GetPackages()
-            .then(async packages => {
-                return util.buildPromiseChain(packages, async pkg => maybeDownloadPackage(pkg, eventStream, proxy, strictSSL));
-            });
+        let packages = await this.GetPackages();
+        return util.buildPromiseChain(packages, async pkg => maybeDownloadPackage(pkg, eventStream, proxy, strictSSL));
     }
 
     public async InstallPackages(eventStream: EventStream): Promise<void> {
-        return this.GetPackages()
-            .then(async packages => {
-                return util.buildPromiseChain(packages, async pkg => installPackage(pkg, eventStream));
-            });
+        let packages = await this.GetPackages();
+        return util.buildPromiseChain(packages, async pkg => installPackage(pkg, eventStream));
     }
 
     private async GetAllPackages(): Promise<Package[]> {
         return new Promise<Package[]>((resolve, reject) => {
             if (this.allPackages) {
-                resolve(this.allPackages);
-            }
-            else if (this.packageJSON.runtimeDependencies) {
-                this.allPackages = JSON.parse(JSON.stringify(<Package[]>this.packageJSON.runtimeDependencies));
-                //Copying the packages by value and not by reference so that there are no side effects
-
-                // Convert relative binary paths to absolute
-                resolvePackageBinaries(this.allPackages);
-
                 resolve(this.allPackages);
             }
             else {
@@ -86,23 +72,21 @@ export class PackageManager {
     }
 
     private async GetPackages(): Promise<Package[]> {
-        return this.GetAllPackages()
-            .then(list => {
-                return list.filter(pkg => {
-                    if (pkg.architectures && pkg.architectures.indexOf(this.platformInfo.architecture) === -1) {
-                        return false;
-                    }
+        let list = await this.GetAllPackages();
+        return list.filter(pkg => {
+            if (pkg.architectures && pkg.architectures.indexOf(this.platformInfo.architecture) === -1) {
+                return false;
+            }
 
-                    if (pkg.platforms && pkg.platforms.indexOf(this.platformInfo.platform) === -1) {
-                        return false;
-                    }
+            if (pkg.platforms && pkg.platforms.indexOf(this.platformInfo.platform) === -1) {
+                return false;
+            }
 
-                    return true;
-                });
-            });
+            return true;
+        });
     }
 
-    public SetVersionPackagesForDownload(packages: Package[]) {
+    public SetPackagesToDownload(packages: Package[]) {
         this.allPackages = packages;
         resolvePackageBinaries(this.allPackages);
     }
@@ -127,11 +111,13 @@ export class PackageManager {
 
 function resolvePackageBinaries(packages: Package[]) {
     // Convert relative binary paths to absolute
-    for (let pkg of packages) {
-        if (pkg.binaries) {
-            pkg.binaries = pkg.binaries.map(value => path.resolve(getBaseInstallPath(pkg), value));
+    if (packages) {
+        for (let pkg of packages) {
+            if (pkg.binaries) {
+                pkg.binaries = pkg.binaries.map(value => path.resolve(getBaseInstallPath(pkg), value));
+            }
         }
-    }
+    }    
 }
 
 function getBaseInstallPath(pkg: Package): string {
@@ -144,13 +130,12 @@ function getBaseInstallPath(pkg: Package): string {
 }
 
 async function maybeDownloadPackage(pkg: Package, eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<void> {
-    return doesPackageTestPathExist(pkg).then(async (exists: boolean) => {
-        if (!exists) {
-            return downloadPackage(pkg, eventStream, proxy, strictSSL);
-        } else {
-            eventStream.post(new DownloadSuccess(`Skipping package '${pkg.description}' (already downloaded).`));
-        }
-    });
+    let exists = doesPackageTestPathExist(pkg);
+    if (!exists) {
+        return downloadPackage(pkg, eventStream, proxy, strictSSL);
+    } else {
+        eventStream.post(new DownloadSuccess(`Skipping package '${pkg.description}' (already downloaded).`));
+    }
 }
 
 async function downloadPackage(pkg: Package, eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<void> {
@@ -178,7 +163,7 @@ async function downloadPackage(pkg: Package, eventStream: EventStream, proxy: st
             result = result.catch(async (primaryUrlError) => {
                 eventStream.post(new DownloadFallBack(pkg.fallbackUrl));
                 return downloadFile(pkg.fallbackUrl, pkg, eventStream, proxy, strictSSL)
-                    .then(() => eventStream.post(new DownloadSuccess(' Done!' )))
+                    .then(() => eventStream.post(new DownloadSuccess(' Done!')))
                     .catch(() => primaryUrlError);
             });
         }

@@ -10,9 +10,9 @@ import { PlatformInformation } from '../platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure, InstallationProgress } from './loggingEvents';
 import { EventStream } from '../EventStream';
 
-const defaultPackageManagerFactory: IPackageManagerFactory = (platformInfo, packageJSON) => new PackageManager(platformInfo, packageJSON);
+const defaultPackageManagerFactory: IPackageManagerFactory = (platformInfo) => new PackageManager(platformInfo);
 export interface IPackageManagerFactory {
-    (platformInfo: PlatformInformation, packageJSON: any): PackageManager;
+    (platformInfo: PlatformInformation): PackageManager;
 }
 
 export class OmnisharpDownloader {
@@ -29,7 +29,7 @@ export class OmnisharpDownloader {
         let networkConfiguration = GetNetworkConfiguration();
         this.proxy = networkConfiguration.Proxy;
         this.strictSSL = networkConfiguration.StrictSSL;
-        this.packageManager = packageManagerFactory(this.platformInfo, this.packageJSON);
+        this.packageManager = packageManagerFactory(this.platformInfo);
     }
 
     public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string) {
@@ -44,7 +44,7 @@ export class OmnisharpDownloader {
 
             installationStage = 'downloadPackages';
             // Specify the packages that the package manager needs to download
-            this.packageManager.SetVersionPackagesForDownload(packages);
+            this.packageManager.SetPackagesToDownload(packages);
             await this.packageManager.DownloadPackages(this.eventStream, this.proxy, this.strictSSL);
 
             installationStage = 'installPackages';

@@ -5,7 +5,7 @@
 
 import * as util from './common';
 import { GetNetworkConfiguration } from './downloader.helper';
-import { PackageManager } from './packages';
+import { PackageManager, Package } from './packages';
 import { PlatformInformation } from './platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
@@ -28,14 +28,18 @@ export class CSharpExtDownloader {
         try {
             await util.touchInstallFile(util.InstallFileType.Begin);
 
-            let packageManager = new PackageManager(this.platformInfo, this.packageJSON);
+            let packageManager = new PackageManager(this.platformInfo);
             // Display platform information and RID
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
 
             installationStage = 'downloadPackages';
+            // shoule we move this to the omnisharp manager and then unify the downloaders
+            let packages = this.GetRunTimeDependenciesPackages();
             let networkConfiguration = GetNetworkConfiguration();
             const proxy = networkConfiguration.Proxy;
             const strictSSL = networkConfiguration.StrictSSL;
+
+            packageManager.SetPackagesToDownload(packages);
 
             await packageManager.DownloadPackages(this.eventStream, proxy, strictSSL);
 
@@ -61,4 +65,12 @@ export class CSharpExtDownloader {
             return success;
         }
     }
+
+    public GetRunTimeDependenciesPackages(): Package[] {
+        if (this.packageJSON.runtimeDependencies) {
+            return JSON.parse(JSON.stringify(<Package[]>this.packageJSON.runtimeDependencies));
+        }
+
+        return null;
+    }    
 }
