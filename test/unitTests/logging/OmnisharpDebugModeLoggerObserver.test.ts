@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { use, should, expect } from 'chai';
-import { getNullChannel } from './Fakes';
+import { getNullChannel } from '../testAssets/Fakes';
 import { OmnisharpServerVerboseMessage, EventWithMessage, OmnisharpRequestMessage, OmnisharpServerEnqueueRequest, OmnisharpServerDequeueRequest, OmnisharpServerProcessRequestStart, OmnisharpEventPacketReceived, OmnisharpServerProcessRequestComplete } from '../../../src/omnisharp/loggingEvents';
 import { OmnisharpDebugModeLoggerObserver } from '../../../src/observers/OmnisharpDebugModeLoggerObserver';
 
