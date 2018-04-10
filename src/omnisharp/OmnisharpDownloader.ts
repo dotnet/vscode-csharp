@@ -9,6 +9,7 @@ import { Package, PackageManager } from '../packages';
 import { PlatformInformation } from '../platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure, InstallationProgress } from './loggingEvents';
 import { EventStream } from '../EventStream';
+import { vscode } from '../vscodeAdapter';
 
 const defaultPackageManagerFactory: IPackageManagerFactory = (platformInfo, packageJSON) => new PackageManager(platformInfo, packageJSON);
 export interface IPackageManagerFactory {
@@ -21,12 +22,13 @@ export class OmnisharpDownloader {
     private packageManager: PackageManager;
 
     public constructor(
+        private vscode: vscode,
         private eventStream: EventStream,
         private packageJSON: any,
         private platformInfo: PlatformInformation,
         packageManagerFactory: IPackageManagerFactory = defaultPackageManagerFactory) {
 
-        let networkConfiguration = GetNetworkConfiguration();
+        let networkConfiguration = GetNetworkConfiguration(this.vscode);
         this.proxy = networkConfiguration.Proxy;
         this.strictSSL = networkConfiguration.StrictSSL;
         this.packageManager = packageManagerFactory(this.platformInfo, this.packageJSON);

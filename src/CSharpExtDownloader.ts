@@ -9,12 +9,14 @@ import { PackageManager } from './packages';
 import { PlatformInformation } from './platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
+import { vscode } from './vscodeAdapter';
 
 /*
  * Class used to download the runtime dependencies of the C# Extension
  */
 export class CSharpExtDownloader {
     public constructor(
+        private vscode : vscode,
         private eventStream: EventStream,
         private packageJSON: any,
         private platformInfo: PlatformInformation) {
@@ -33,7 +35,7 @@ export class CSharpExtDownloader {
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
 
             installationStage = 'downloadPackages';
-            let networkConfiguration = GetNetworkConfiguration();
+            let networkConfiguration = GetNetworkConfiguration(this.vscode);
             const proxy = networkConfiguration.Proxy;
             const strictSSL = networkConfiguration.StrictSSL;
 
