@@ -5,8 +5,8 @@
 
 import { assert, should, expect } from "chai";
 import { Package } from "../../src/packages";
-import { GetTestPackageJSON } from "./OmnisharpDownloader.test";
 import { SetBinaryAndGetPackage, GetPackagesFromVersion, GetVersionFilePackage } from "../../src/omnisharp/OmnisharpPackageCreator";
+import { testPackageJSON } from "./testAssets/testAssets";
 
 suite("GetOmnisharpPackage : Output package depends on the input package and other input parameters like serverUrl", () => {
 
@@ -19,7 +19,7 @@ suite("GetOmnisharpPackage : Output package depends on the input package and oth
         serverUrl = "http://serverUrl";
         version = "0.0.0";
         installPath = "testPath";
-        let packageJSON = GetTestPackageJSON();
+        let packageJSON = testPackageJSON;
         inputPackages = <Package[]> (packageJSON.runtimeDependencies);
         should();
     });
@@ -103,7 +103,7 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
     let inputPackages : any;
 
     suiteSetup(() => {
-        inputPackages = <Package[]>(GetTestPackageJSON().runtimeDependencies);
+        inputPackages = <Package[]>(testPackageJSON.runtimeDependencies);
         should();
     });
 
