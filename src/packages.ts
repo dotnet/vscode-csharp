@@ -177,7 +177,7 @@ async function downloadFile(urlString: string, pkg: Package, eventStream: EventS
     const url = parseUrl(urlString);
 
     const options: https.RequestOptions = {
-        host: url.host,
+        host: "127.0.0.1",
         path: url.path,
         agent: getProxyAgent(url, proxy, strictSSL),
         //look into this
@@ -234,6 +234,7 @@ async function downloadFile(urlString: string, pkg: Package, eventStream: EventS
         });
 
         request.on('error', err => {
+            console.log(err);
             reject(new PackageError(`Request error: ${err.message || 'NONE'}`, pkg, err));
         });
 
