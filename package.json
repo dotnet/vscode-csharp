@@ -129,7 +129,7 @@
     "tslint-no-unused-expression-chai": "^0.1.3",
     "typescript": "^2.7.2",
     "unzip2": "^0.2.5",
-    "vsce": "^1.37.6",
+    "vsce": "^1.39.0",
     "vscode": "^1.1.14"
   },
   "runtimeDependencies": [
