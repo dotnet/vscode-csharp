@@ -180,6 +180,7 @@ async function downloadFile(urlString: string, pkg: Package, eventStream: EventS
         host: url.host,
         path: url.path,
         agent: getProxyAgent(url, proxy, strictSSL),
+        //look into this
         port: url.port,
         rejectUnauthorized: util.isBoolean(strictSSL) ? strictSSL : true
     };
