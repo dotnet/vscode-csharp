@@ -26,6 +26,8 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
         }
     };
     
+    console.log(`starting ${nodePath} ${args.join(' ')}`);
+
     let spawned = spawn(nodePath, args, optionsWithFullEnvironment);
     
     // spawned.stderr.pipe(process.stdout);
