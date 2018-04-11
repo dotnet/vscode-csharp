@@ -17,7 +17,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
         ' ', '{', '}', '[', ']', '(', ')', '.', ',', ':',
         ';', '+', '-', '*', '/', '%', '&', '|', '^', '!',
         '~', '=', '<', '>', '?', '@', '#', '\'', '\"', '\\'];
-    
+
     private static CommitCharactersWithoutSpace = [
         '{', '}', '[', ']', '(', ')', '.', ',', ':',
         ';', '+', '-', '*', '/', '%', '&', '|', '^', '!',
@@ -66,10 +66,10 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
                 completion.commitCharacters = response.IsSuggestionMode
                     ? OmniSharpCompletionItemProvider.CommitCharactersWithoutSpace
                     : OmniSharpCompletionItemProvider.AllCommitCharacters;
-
-                let array = completions[completion.label];
+                let completionKey = `[${completion.kind}]_[${completion.label}]`;
+                let array = completions[completionKey];
                 if (!array) {
-                    completions[completion.label] = [completion];
+                    completions[completionKey] = [completion];
                 }
                 else {
                     array.push(completion);
@@ -91,7 +91,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
                     // indicate that there is more
                     suggestion.detail = `${suggestion.detail} (+ ${overloadCount} overload(s))`;
                 }
-                
+
                 result.push(suggestion);
             }
 
