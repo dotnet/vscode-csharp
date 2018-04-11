@@ -35,7 +35,7 @@ script:
   - gulp test --codeExtensionPath ./vsix/extension
   - gulp cov:report --codeExtensionPath ./vsix/extension
   - npm run test:artifacts
-  - 'if [[ "$TRAVIS_TAG" != "master" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then npm run test:release; fi'
+  - 'if [[ "$TRAVIS_BRANCH" != "master" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then npm run test:release; fi'
 
 after_failure:
   - ./.travis/printLogs.sh
