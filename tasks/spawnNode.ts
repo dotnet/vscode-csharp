@@ -18,6 +18,8 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
     
     let optionsWithFullEnvironment = {
         cwd: rootPath,
+        detached: true,
+        stdio: [ 'ignore', 1, 2 ], 
         ...options,
         env: {
             ...process.env,
@@ -26,7 +28,7 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
     };
     
     let spawned = spawn(nodePath, args, optionsWithFullEnvironment);
-
+    spawned.unref(); 
     spawned.stdout.on('data', (data) => console.log(data.toString()));
     spawned.stderr.on('data', (data) => console.log(data.toString()));
 
