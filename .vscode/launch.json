@@ -2,6 +2,23 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Unit tests",
+            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+            "args": [
+                "-u",
+                "tdd",
+                "--timeout",
+                "999999",
+                "--colors",
+                "${workspaceFolder}/out/test/unitTests/**/*.test.js"
+            ],
+            "sourceMaps": true,
+            "internalConsoleOptions": "openOnSessionStart",
+            "outFiles" :["${workspaceRoot}/out/test/**/*.js"]
+        },
+        {
             "name": "Launch Extension",
             "type": "extensionHost",
             "request": "launch",

@@ -177,10 +177,9 @@ async function downloadFile(urlString: string, pkg: Package, eventStream: EventS
     const url = parseUrl(urlString);
 
     const options: https.RequestOptions = {
-        host: "127.0.0.1",
+        host: url.hostname,
         path: url.path,
         agent: getProxyAgent(url, proxy, strictSSL),
-        //look into this
         port: url.port,
         rejectUnauthorized: util.isBoolean(strictSSL) ? strictSSL : true
     };
