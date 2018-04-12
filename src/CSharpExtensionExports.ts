@@ -4,5 +4,5 @@
  *--------------------------------------------------------------------------------------------*/
 
  export default interface CSharpExtensionExports {
-    initializationFinished: Promise<void>;
+    initializationFinished: () => Promise<void>;
  }
