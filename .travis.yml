@@ -12,6 +12,7 @@ before_install:
       sh -e /etc/init.d/xvfb start;
       sleep 3;
     fi
+  - dpkg --compare-versions `npm -v` ge 5.8 || npm i -g npm@^5.8
 
 addons:
   apt:
@@ -25,7 +26,7 @@ addons:
       - dotnet-sdk-2.0.2
 
 install:
-- npm install
+- npm ci
 - npm i -g gulp
 - gulp 'vsix:release:package'
 

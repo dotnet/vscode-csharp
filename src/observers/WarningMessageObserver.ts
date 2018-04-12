@@ -5,7 +5,7 @@
 
 import { MessageItem, vscode } from '../vscodeAdapter';
 import { BaseEvent, OmnisharpServerOnError, OmnisharpServerMsBuildProjectDiagnostics } from "../omnisharp/loggingEvents";
-import { Scheduler } from 'rxjs/scheduler';
+import { Scheduler } from 'rxjs/Scheduler';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/debounceTime';
 
