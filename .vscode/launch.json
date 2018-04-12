@@ -16,6 +16,25 @@
             ]
         },
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Unit tests",
+            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+            "args": [
+                "-u",
+                "tdd",
+                "--timeout",
+                "999999",
+                "--colors",
+                "${workspaceFolder}/out/test/unitTests/**/*.test.js"
+            ],
+            "sourceMaps": true,
+            "internalConsoleOptions": "openOnSessionStart",
+            "outFiles": [
+                "${workspaceRoot}/out/test/**/*.js"
+            ]
+        },
+        {
             "name": "Launch Feature Tests",
             "type": "extensionHost",
             "request": "launch",
