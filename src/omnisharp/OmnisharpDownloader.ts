@@ -3,13 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { GetNetworkConfiguration, IPackageManagerFactory, defaultPackageManagerFactory } from '../downloader.helper';
 import { GetPackagesFromVersion, GetVersionFilePackage } from './OmnisharpPackageCreator';
-import { PackageManager } from '../packages';
 import { PlatformInformation } from '../platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure, InstallationProgress } from './loggingEvents';
 import { EventStream } from '../EventStream';
 import { vscode } from '../vscodeAdapter';
+import { PackageManager } from '../packageManager/PackageManager';
 
 
 export class OmnisharpDownloader {
@@ -18,16 +17,12 @@ export class OmnisharpDownloader {
     private packageManager: PackageManager;
 
     public constructor(
-        vscode: vscode,
+        private vscode: vscode,
         private eventStream: EventStream,
         private packageJSON: any,
-        private platformInfo: PlatformInformation,
-        packageManagerFactory: IPackageManagerFactory = defaultPackageManagerFactory) {
+        private platformInfo: PlatformInformation) {
 
-        let networkConfiguration = GetNetworkConfiguration(vscode);
-        this.proxy = networkConfiguration.Proxy;
-        this.strictSSL = networkConfiguration.StrictSSL;
-        this.packageManager = packageManagerFactory(this.platformInfo);
+        this.packageManager = new PackageManager();
     }
 
     public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string) {
@@ -40,12 +35,8 @@ export class OmnisharpDownloader {
             installationStage = 'getPackageInfo';
             let packages = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
 
-            installationStage = 'downloadPackages';
-
-            let downloadedPackages = await this.packageManager.DownloadPackages(packages, this.eventStream, this.proxy, this.strictSSL);
-
-            installationStage = 'installPackages';
-            await this.packageManager.InstallPackages(downloadedPackages, this.eventStream);
+            installationStage = 'downloadAndInstallPackages';
+            await this.packageManager.DownloadAndInstallPackages(packages, this.vscode, this.platformInfo, this.eventStream);
 
             this.eventStream.post(new InstallationSuccess());
         }

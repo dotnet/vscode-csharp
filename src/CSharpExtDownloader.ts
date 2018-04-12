@@ -4,32 +4,25 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as util from './common';
-import { GetNetworkConfiguration, defaultPackageManagerFactory, IPackageManagerFactory } from './downloader.helper';
-import { PackageManager, Package } from './packages';
 import { PlatformInformation } from './platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
 import { vscode } from './vscodeAdapter';
+import { PackageManager } from './packageManager/PackageManager';
+import { Package } from './packageManager/packages';
 
 /*
  * Class used to download the runtime dependencies of the C# Extension
  */
 export class CSharpExtDownloader {
-    private proxy: string;
-    private strictSSL: boolean;
     private packageManager: PackageManager;
 
     public constructor(
-        vscode: vscode,
+        private vscode: vscode,
         private eventStream: EventStream,
         private packageJSON: any,
-        private platformInfo: PlatformInformation,
-        packageManagerFactory: IPackageManagerFactory = defaultPackageManagerFactory) {
-
-        let networkConfiguration = GetNetworkConfiguration(vscode);
-        this.proxy = networkConfiguration.Proxy;
-        this.strictSSL = networkConfiguration.StrictSSL;
-        this.packageManager = packageManagerFactory(this.platformInfo);
+        private platformInfo: PlatformInformation) {
+        this.packageManager = new PackageManager();
     }
 
     public async installRuntimeDependencies(): Promise<boolean> {
@@ -45,12 +38,10 @@ export class CSharpExtDownloader {
 
             let runTimeDependencies = this.GetRunTimeDependenciesPackages();
             
-            installationStage = 'downloadPackages';
-            let downloadedPackages = await this.packageManager.DownloadPackages(runTimeDependencies, this.eventStream, this.proxy, this.strictSSL);
+            installationStage = 'downloadAndInstallPackages';
+            await this.packageManager.DownloadAndInstallPackages(runTimeDependencies, this.vscode, this.platformInfo, this.eventStream);
 
-            installationStage = 'installPackages';
-            await this.packageManager.InstallPackages(downloadedPackages,this.eventStream);
-
+            // We probably dont need the install.Lock thing now as we are directly testing the package test path
             installationStage = 'touchLockFile';
             await util.touchInstallFile(util.InstallFileType.Lock);
 
