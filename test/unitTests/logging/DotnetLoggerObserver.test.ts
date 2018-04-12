@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should, expect } from 'chai';
-import { getNullChannel } from './Fakes';
+import { getNullChannel } from '../testAssets/Fakes';
 import { DotnetLoggerObserver } from '../../../src/observers/DotnetLoggerObserver';
 import { CommandDotNetRestoreProgress, CommandDotNetRestoreSucceeded, CommandDotNetRestoreFailed, EventWithMessage } from '../../../src/omnisharp/loggingEvents';
 

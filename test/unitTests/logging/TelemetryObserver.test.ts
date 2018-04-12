@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { should, expect } from 'chai';
-import { getNullTelemetryReporter } from './Fakes';
 import { TelemetryObserver } from '../../../src/observers/TelemetryObserver';
 import { PlatformInformation } from '../../../src/platform';
 import { PackageInstallation, InstallationFailure, InstallationSuccess, TestExecutionCountReport, TelemetryEventWithMeasures, OmnisharpDelayTrackerEventMeasures, OmnisharpStart } from '../../../src/omnisharp/loggingEvents';
 import { PackageError, Package } from '../../../src/packages';
+import { getNullTelemetryReporter } from '../testAssets/Fakes';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));

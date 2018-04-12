@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { expect, should } from 'chai';
-import { getWorkspaceInformationUpdated, getMSBuildWorkspaceInformation } from './Fakes';
+import { getWorkspaceInformationUpdated, getMSBuildWorkspaceInformation } from '../testAssets/Fakes';
 import { StatusBarItem } from '../../../src/vscodeAdapter';
 import { ProjectStatusBarObserver } from '../../../src/observers/ProjectStatusBarObserver';
 import { OmnisharpOnMultipleLaunchTargets, OmnisharpServerOnStop } from '../../../src/omnisharp/loggingEvents';

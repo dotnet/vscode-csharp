@@ -7,7 +7,7 @@ import * as rx from 'rx';
 import { InformationMessageObserver } from '../../../src/observers/InformationMessageObserver';
 import { use as chaiUse, expect, should } from 'chai';
 import { vscode, Uri } from '../../../src/vscodeAdapter';
-import { getFakeVsCode, getNullWorkspaceConfiguration, getUnresolvedDependenices } from './Fakes';
+import { getFakeVsCode, getNullWorkspaceConfiguration, getUnresolvedDependenices } from '../testAssets/Fakes';
 
 chaiUse(require('chai-as-promised'));
 chaiUse(require('chai-string'));

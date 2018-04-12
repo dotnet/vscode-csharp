@@ -3,17 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { GetNetworkConfiguration } from '../downloader.helper';
+import { GetNetworkConfiguration, IPackageManagerFactory, defaultPackageManagerFactory } from '../downloader.helper';
 import { GetPackagesFromVersion, GetVersionFilePackage } from './OmnisharpPackageCreator';
 import { Package, PackageManager } from '../packages';
 import { PlatformInformation } from '../platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure, InstallationProgress } from './loggingEvents';
 import { EventStream } from '../EventStream';
+import { vscode } from '../vscodeAdapter';
 
-const defaultPackageManagerFactory: IPackageManagerFactory = (platformInfo, packageJSON) => new PackageManager(platformInfo, packageJSON);
-export interface IPackageManagerFactory {
-    (platformInfo: PlatformInformation, packageJSON: any): PackageManager;
-}
 
 export class OmnisharpDownloader {
     private proxy: string;
@@ -21,12 +18,13 @@ export class OmnisharpDownloader {
     private packageManager: PackageManager;
 
     public constructor(
+        vscode: vscode,
         private eventStream: EventStream,
         private packageJSON: any,
         private platformInfo: PlatformInformation,
         packageManagerFactory: IPackageManagerFactory = defaultPackageManagerFactory) {
 
-        let networkConfiguration = GetNetworkConfiguration();
+        let networkConfiguration = GetNetworkConfiguration(vscode);
         this.proxy = networkConfiguration.Proxy;
         this.strictSSL = networkConfiguration.StrictSSL;
         this.packageManager = packageManagerFactory(this.platformInfo, this.packageJSON);

@@ -6,8 +6,8 @@
 import * as path from 'path';
 import * as protocol from './protocol';
 import * as utils from '../common';
-import * as vscode from 'vscode';
 import * as serverUtils from '../omnisharp/utils';
+import { vscode, CancellationToken } from '../vscodeAdapter';
 
 import { ChildProcess, exec } from 'child_process';
 import { LaunchTarget, findLaunchTargets } from './launcher';
@@ -87,14 +87,17 @@ export class OmniSharpServer {
     private eventStream: EventStream;
     private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
     private firstUpdateProject: boolean;
+    private vscode: vscode;
 
-    constructor(eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation) {
+    constructor(vscode: vscode, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation) {
         this.eventStream = eventStream;
+        this.vscode = vscode;
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
-        let downloader = new OmnisharpDownloader(this.eventStream, packageJSON, platformInfo);
+        let downloader = new OmnisharpDownloader(this.vscode, this.eventStream, packageJSON, platformInfo);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
         this.updateProjectDebouncer.debounce(1500).subscribe((event) => { this.updateProjectInfo(); });
         this.firstUpdateProject = true;
+
     }
 
     public isRunning(): boolean {
@@ -428,7 +431,7 @@ export class OmniSharpServer {
             if (launchTargets.length === 0) {
                 return new Promise<void>((resolve, reject) => {
                     // 1st watch for files
-                    let watcher = vscode.workspace.createFileSystemWatcher('{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
+                    let watcher = this.vscode.workspace.createFileSystemWatcher('{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
                         /*ignoreCreateEvents*/ false,
                         /*ignoreChangeEvents*/ true,
                         /*ignoreDeleteEvents*/ true);
@@ -466,7 +469,7 @@ export class OmniSharpServer {
 
     // --- requests et al
 
-    public async makeRequest<TResponse>(command: string, data?: any, token?: vscode.CancellationToken): Promise<TResponse> {
+    public async makeRequest<TResponse>(command: string, data?: any, token?: CancellationToken): Promise<TResponse> {
 
         if (this._getState() !== ServerState.Started) {
             return Promise.reject<TResponse>('server has been stopped or not started');
@@ -516,7 +519,7 @@ export class OmniSharpServer {
         });
 
         const promise = new Promise<void>((resolve, reject) => {
-            let listener: vscode.Disposable;
+            let listener: Disposable;
 
             // Convert the timeout from the seconds to milliseconds, which is required by setTimeout().
             const timeoutDuration = this._options.projectLoadTimeout * 1000;
