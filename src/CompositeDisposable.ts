@@ -12,10 +12,6 @@ export default class CompositeDisposable extends Disposable {
     constructor (...disposables: Disposable[]){ 
         super(() => this.disposables.unsubscribe()); 
  
-        if (!disposables || disposables.length < 1) { 
-            throw new Error("disposables cannot be null or empty."); 
-        } 
- 
         for (const disposable of disposables) { 
             if (disposable) { 
                 this.disposables.add(disposable.dispose); 

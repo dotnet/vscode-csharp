@@ -6,6 +6,7 @@
 import * as vscode from 'vscode';
 import { should, expect } from 'chai';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import CSharpExtensionExports from '../../src/CSharpExtensionExports';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -15,12 +16,16 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function() {
     suiteSetup(async function() {
         should();
 
-        let csharpExtension = vscode.extensions.getExtension("ms-vscode.csharp");
+        let csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-vscode.csharp");
         if (!csharpExtension.isActive) {
             await csharpExtension.activate();
         }
-
-        await csharpExtension.exports.initializationFinished;
+        try {
+            await csharpExtension.exports.initializationFinished();
+        }
+        catch (err) {
+            console.log(JSON.stringify(err));
+        }
 
     });
 
