@@ -23,8 +23,11 @@ import { setTimeout } from 'timers';
 import { OmnisharpDownloader } from './OmnisharpDownloader';
 import * as ObservableEvents from './loggingEvents';
 import { EventStream } from '../EventStream';
-import { Disposable, CompositeDisposable, Subject } from 'rx';
 import { NetworkSettingsProvider } from '../NetworkSettings';
+import { Subject } from 'rxjs/Subject';
+import 'rxjs/add/operator/debounceTime';
+import CompositeDisposable from '../CompositeDisposable';
+import Disposable from '../Disposable';
 
 enum ServerState {
     Starting,
@@ -96,7 +99,7 @@ export class OmniSharpServer {
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
         let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, packageJSON, platformInfo);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
-        this.updateProjectDebouncer.debounce(1500).subscribe((event) => { this.updateProjectInfo(); });
+        this.updateProjectDebouncer.debounceTime(1500).subscribe((event) => { this.updateProjectInfo(); });
         this.firstUpdateProject = true;
 
     }
@@ -230,7 +233,7 @@ export class OmniSharpServer {
     private _addListener(event: string, listener: (e: any) => any, thisArg?: any): Disposable {
         listener = thisArg ? listener.bind(thisArg) : listener;
         this._eventBus.addListener(event, listener);
-        return Disposable.create(() => this._eventBus.removeListener(event, listener));
+        return new Disposable(() => this._eventBus.removeListener(event, listener));
     }
 
     protected _fireEvent(event: string, args: any): void {
@@ -352,7 +355,7 @@ export class OmniSharpServer {
             this.updateProjectInfo();
         }
         else {
-            this.updateProjectDebouncer.onNext(new ObservableEvents.ProjectModified());
+            this.updateProjectDebouncer.next(new ObservableEvents.ProjectModified());
         }
     }
 
@@ -549,7 +552,7 @@ export class OmniSharpServer {
 
         this._readLine.addListener('line', lineReceived);
 
-        this._disposables.add(Disposable.create(() => {
+        this._disposables.add(new Disposable(() => {
             this._readLine.removeListener('line', lineReceived);
         }));
 

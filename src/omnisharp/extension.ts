@@ -159,5 +159,7 @@ export async function activate(context: vscode.ExtensionContext, eventStream: Ev
 
     context.subscriptions.push(...disposables);
 
-    return new Promise<OmniSharpServer>(resolve => server.onServerStart(e => resolve(server))); 
+    return new Promise<OmniSharpServer>(resolve => 
+        server.onServerStart(e => 
+            resolve(server))); 
 }
