@@ -31,18 +31,18 @@ import registerCommands from '../features/commands';
 import { PlatformInformation } from '../platform';
 import { ProjectJsonDeprecatedWarning, OmnisharpStart } from './loggingEvents';
 import { EventStream } from '../EventStream';
+import { NetworkSettingsProvider } from '../NetworkSettings';
 
 export let omnisharp: OmniSharpServer;
 
-export async function activate(context: vscode.ExtensionContext, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation) {
+export async function activate(context: vscode.ExtensionContext, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
         scheme: 'file' // only files from disk
     };
 
     const options = Options.Read();
-    const server = new OmniSharpServer(vscode, eventStream, packageJSON, platformInfo);
-
+    const server = new OmniSharpServer(vscode, provider, eventStream, packageJSON, platformInfo);
     omnisharp = server;
     const advisor = new Advisor(server); // create before server is started
     const disposables: vscode.Disposable[] = [];
