@@ -53,6 +53,9 @@
       "src/**/*.ts",
       "src/**/*.tsx"
     ],
+    "exclude": [
+      "**/*.d.ts"
+    ],
     "extension": [
       ".ts",
       ".tsx"
@@ -62,7 +65,8 @@
       "source-map-support/register"
     ],
     "sourceMap": true,
-    "instrument": true
+    "instrument": true,
+    "all": true
   },
   "dependencies": {
     "fs-extra": "^5.0.0",
