@@ -7,11 +7,11 @@ import { Package, PackageError, doesPackageTestPathExist } from "./packages";
 import { PlatformInformation } from "../platform";
 
 export async function filterPackages(packages: Package[], platformInfo: PlatformInformation) {
-    let platformPackages = await filterPlatformPackages(packages, platformInfo);
+    let platformPackages = filterPlatformPackages(packages, platformInfo);
     return filterAlreadyInstalledPackages(platformPackages);
 }
 
-async function filterPlatformPackages(packages: Package[], platformInfo: PlatformInformation) {
+function filterPlatformPackages(packages: Package[], platformInfo: PlatformInformation) {
     if (packages) {
         return packages.filter(pkg => {
             if (pkg.architectures && pkg.architectures.indexOf(platformInfo.architecture) === -1) {
@@ -31,7 +31,13 @@ async function filterPlatformPackages(packages: Package[], platformInfo: Platfor
 }
 
 async function filterAlreadyInstalledPackages(packages: Package[]) {
-    return packages.filter(async pkg => {
-        return !(await doesPackageTestPathExist(pkg)); //return true if the package doesnot exist
-    });
+    let packagesToInstall = [];
+    for (let pkg of packages) {
+        let exists = await doesPackageTestPathExist(pkg);
+        if (!exists) {
+            packagesToInstall.push(pkg);
+        }
+    }
+    
+    return packagesToInstall;
 }
