@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as util from './common';
 import { PlatformInformation } from './platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
@@ -28,19 +29,27 @@ export class CSharpExtDownloader {
         let installationStage = '';
 
         try {
+
+            await util.touchInstallFile(util.InstallFileType.Begin);
             // Display platform information and RID
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
             let runTimeDependencies = this.GetRunTimeDependenciesPackages();
             installationStage = 'downloadAndInstallPackages';
             await DownloadAndInstallPackages(runTimeDependencies, this.provider, this.platformInfo, this.eventStream);
-            //To do: We need to resolve the package binaries and the paths 
+            installationStage = 'touchLockFile';
+            await util.touchInstallFile(util.InstallFileType.Lock);
             success = true;
+
             this.eventStream.post(new InstallationSuccess());
         }
         catch (error) {
             this.eventStream.post(new InstallationFailure(installationStage, error));
         }
         finally {
+            try {
+                util.deleteInstallFile(util.InstallFileType.Begin);
+            }
+            catch (error) { }
             return success;
         }
     }

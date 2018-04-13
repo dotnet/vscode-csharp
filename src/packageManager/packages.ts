@@ -35,32 +35,6 @@ export class PackageError extends NestedError {
     }
 }
 
-/*export class PackageManager {
-    public constructor() { 
-  
-
-    public async GetLatestVersionFromFile(eventStream: EventStream, proxy: string, strictSSL: boolean, filePackage: Package): Promise<string> {
-        try {
-            let latestVersion: string; 
-            await maybeDownloadPackage(filePackage, eventStream, proxy, strictSSL);
-            if (filePackage.tmpFile) {
-                latestVersion = fs.readFileSync(filePackage.tmpFile.name, 'utf8');
-                //Delete the temporary file created
-                filePackage.tmpFile.removeCallback();
-            }
-
-            return latestVersion;
-        }
-        catch (error) {
-            throw new Error(`Could not download the latest version file due to ${error.toString()}`);
-        }
-    }
-}*/
-
-/*
-Reolve all the paths here
-*/
-
 export async function doesPackageTestPathExist(pkg: Package): Promise<boolean> {
     const testPath = getPackageTestPath(pkg);
     if (testPath) {
