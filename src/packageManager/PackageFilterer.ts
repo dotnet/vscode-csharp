@@ -6,6 +6,8 @@
 import { Package, PackageError, doesPackageTestPathExist } from "./packages";
 import { PlatformInformation } from "../platform";
 
+const { filterAsync } = require('node-filter-async');
+
 export async function filterPackages(packages: Package[], platformInfo: PlatformInformation) {
     let platformPackages = filterPlatformPackages(packages, platformInfo);
     return filterAlreadyInstalledPackages(platformPackages);
@@ -31,13 +33,7 @@ function filterPlatformPackages(packages: Package[], platformInfo: PlatformInfor
 }
 
 async function filterAlreadyInstalledPackages(packages: Package[]) {
-    let packagesToInstall = [];
-    for (let pkg of packages) {
-        let exists = await doesPackageTestPathExist(pkg);
-        if (!exists) {
-            packagesToInstall.push(pkg);
-        }
-    }
-    
-    return packagesToInstall;
+    return filterAsync(packages, async (pkg: Package) => {
+        return !(await doesPackageTestPathExist(pkg));
+      });
 }
