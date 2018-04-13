@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PackageError } from "../packages";
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import * as Event from "../omnisharp/loggingEvents";
+import { PackageError } from "../packageManager/packages";
 export class CsharpLoggerObserver extends BaseLoggerObserver {
     private dots: number;
 

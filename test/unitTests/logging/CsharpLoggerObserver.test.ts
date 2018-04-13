@@ -7,8 +7,8 @@ import { should, expect } from 'chai';
 import { getNullChannel } from '../testAssets/Fakes';
 import { CsharpLoggerObserver } from '../../../src/observers/CsharpLoggerObserver';
 import { PlatformInformation } from '../../../src/platform';
-import { PackageError } from '../../../src/packages';
 import * as Event from '../../../src/omnisharp/loggingEvents';
+import { PackageError } from '../../../src/packageManager/packages';
 
 suite("CsharpLoggerObserver", () => {
     suiteSetup(() => should());
