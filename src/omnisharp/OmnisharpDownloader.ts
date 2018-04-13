@@ -4,15 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs';
-import * as tmp from 'tmp';
 import { GetPackagesFromVersion } from './OmnisharpPackageCreator';
 import { PlatformInformation } from '../platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure, InstallationProgress } from './loggingEvents';
 import { EventStream } from '../EventStream';
-import { DownloadAndInstallPackages } from '../packageManager/PackageManager';
 import { NetworkSettingsProvider } from '../NetworkSettings';
+import { DownloadAndInstallPackages } from '../packageManager/PackageManager';
+import { createTmpFile, TmpFile } from '../packageManager/CreateTmpFile';
 import { DownloadPackage } from '../packageManager/PackageDownloader';
-import { TmpFileManager } from '../packageManager/TmpFileManager';
 
 export class OmnisharpDownloader {
 
@@ -46,10 +45,10 @@ export class OmnisharpDownloader {
         let description = "Latest Omnisharp Version Information";
         let url = `${serverUrl}/${latestVersionFileServerPath}`;
         let latestVersion: string;
-        let tmpFileManager = new TmpFileManager();
+        let tmpFile: TmpFile;
         try {
             this.eventStream.post(new InstallationProgress(installationStage, 'Getting latest build information...'));
-            let tmpFile = await tmpFileManager.GetTmpFile();
+            tmpFile = await createTmpFile();
             latestVersion = await this.DownloadLatestVersionFile(tmpFile, description, url, ""); // no fallback url
             return latestVersion;
         }
@@ -58,12 +57,14 @@ export class OmnisharpDownloader {
             throw error;
         }
         finally {
-            tmpFileManager.CleanUpTmpFile();
+            if (tmpFile) {
+                tmpFile.dispose();
+            }
         }
     }
 
     //To do: This component will move in a separate file
-    private async DownloadLatestVersionFile(tmpFile: tmp.SynchrounousResult, description: string, url: string, fallbackUrl: string): Promise<string> {
+    private async DownloadLatestVersionFile(tmpFile: TmpFile, description: string, url: string, fallbackUrl: string): Promise<string> {
         await DownloadPackage(tmpFile.fd, description, url, "", this.eventStream, this.provider);
         return fs.readFileSync(tmpFile.name, 'utf8');
     }

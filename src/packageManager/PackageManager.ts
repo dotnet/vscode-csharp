@@ -10,17 +10,16 @@ import { InstallPackage } from './PackageInstaller';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
 import { filterPackages } from "./PackageFilterer";
-import { TmpFileManager } from './TmpFIleManager';
+import { createTmpFile, TmpFile } from "./CreateTmpFile";
 
 //Package manager needs a list of packages to be filtered based on platformInfo then download and install them
 export async function DownloadAndInstallPackages(packages: Package[], provider: NetworkSettingsProvider, platformInfo: PlatformInformation, eventStream: EventStream) {
     let filteredPackages = await filterPackages(packages, platformInfo);
+    let tmpFile: TmpFile;
     if (filteredPackages) {
         for (let pkg of filteredPackages) {
-            let tmpFileManager: TmpFileManager;
             try {
-                tmpFileManager = new TmpFileManager();
-                let tmpFile = await tmpFileManager.GetTmpFile();
+                tmpFile = await createTmpFile();
                 await DownloadPackage(tmpFile.fd, pkg.description, pkg.url, pkg.fallbackUrl, eventStream, provider);
                 await InstallPackage(tmpFile.fd, pkg.description, pkg.installPath, pkg.installTestPath, pkg.binaries, eventStream);
             }
@@ -34,10 +33,9 @@ export async function DownloadAndInstallPackages(packages: Package[], provider: 
             }
             finally {
                 //clean the temporary file
-                if (tmpFileManager) {
-                    await tmpFileManager.CleanUpTmpFile();
+                if (tmpFile) {
+                    await tmpFile.dispose();
                 }
-                tmpFileManager = null;
             }
         }
     }
