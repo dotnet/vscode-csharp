@@ -10,7 +10,7 @@ import { PackageInstallation, LogPlatformInfo, InstallationSuccess, Installation
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import { DownloadAndInstallPackages } from '../packageManager/PackageManager';
-import { createTmpFile, TmpFile } from '../packageManager/CreateTmpFile';
+import { createTmpFile, TmpFile } from '../CreateTmpFile';
 import { DownloadPackage } from '../packageManager/PackageDownloader';
 
 export class OmnisharpDownloader {

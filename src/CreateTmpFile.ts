@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as tmp from 'tmp';
-import { NestedError } from './packages';
+import { NestedError } from './packageManager/packages';
 
 export async function createTmpFile(): Promise<TmpFile> {
     const tmpFile = await new Promise<tmp.SynchrounousResult>((resolve, reject) => {

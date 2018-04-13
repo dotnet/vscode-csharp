@@ -10,6 +10,7 @@ import { rimraf } from 'async-file';
 import { EventStream } from '../../../src/EventStream';
 import { DownloadPackage } from '../../../src/packageManager/PackageDownloader';
 import NetworkSettings from '../../../src/NetworkSettings';
+import { TmpFile, createTmpFile } from '../../../src/CreateTmpFile';
 
 let ServerMock = require("mock-http-server");
 const chai = require("chai");
@@ -25,18 +26,17 @@ suite("PackageDownloader : The package is downloaded ", () => {
             cert: fs.readFileSync("test/unitTests/testAssets/public.pem")
         });
 
-    let tmpFile: tmp.SynchrounousResult = null;
+    let tmpFile: TmpFile;
     const eventStream = new EventStream();
     const serverUrl = "https://127.0.0.1:9002";
 
     setup(function (done) {
         server.start(done);
-        tmpFile = tmp.fileSync();
-        util.setExtensionPath(tmpFile.name);
     });
 
-    teardown(function (done) {
-        server.stop(done);
+    setup(async () => {
+        tmpFile = await createTmpFile();
+        util.setExtensionPath(tmpFile.name);
     });
 
     test('Packages are downloaded from the specified server url and installed at the specified path', async () => {
@@ -64,11 +64,11 @@ suite("PackageDownloader : The package is downloaded ", () => {
         expect(stats.size).to.not.equal(0);
     });
 
-    teardown(async () => {
-        if (tmpFile) {
-            await rimraf(tmpFile.name);
-        }
+    teardown(function (done) {
+        server.stop(done);
 
-        tmpFile = null;
+        if (tmpFile) {
+            tmpFile.dispose();
+        }
     });
 });

@@ -10,7 +10,7 @@ import { InstallPackage } from './PackageInstaller';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
 import { filterPackages } from "./PackageFilterer";
-import { createTmpFile, TmpFile } from "./CreateTmpFile";
+import { createTmpFile, TmpFile } from "../CreateTmpFile";
 
 //Package manager needs a list of packages to be filtered based on platformInfo then download and install them
 export async function DownloadAndInstallPackages(packages: Package[], provider: NetworkSettingsProvider, platformInfo: PlatformInformation, eventStream: EventStream) {
