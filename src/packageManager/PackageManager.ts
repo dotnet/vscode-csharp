@@ -4,61 +4,42 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { PlatformInformation } from "../platform";
-import { Package, PackageError, doesPackageTestPathExist } from './packages';
-import { PackageDownloader } from './PackageDownloader';
-import { PackageInstaller } from './PackageInstaller';
-import { vscode } from '../vscodeAdapter';
+import { Package, PackageError, NestedError } from './packages';
+import { DownloadPackage } from './PackageDownloader';
+import { InstallPackage } from './PackageInstaller';
 import { EventStream } from '../EventStream';
+import { NetworkSettingsProvider } from "../NetworkSettings";
+import { filterPackages } from "./PackageFilterer";
+import { TmpFileManager } from './TmpFIleManager';
 
-export class PackageManager {
-    public constructor() {
-    }
-
-    private async filterPackages(packages: Package[], platformInfo: PlatformInformation) {
-        let platformPackages = await filterPlatformPackages(packages, platformInfo);
-        return filterAlreadyInstalledPackages(platformPackages);
-    }
-
-    public async DownloadAndInstallPackages(packages: Package[], vscode: vscode, platformInfo: PlatformInformation, eventStream: EventStream) {
-        let filteredPackages = await this.filterPackages(packages, platformInfo);
-        if (filteredPackages) {
-            let downloader = new PackageDownloader();
-            let installer = new PackageInstaller();
-            for (let pkg of filteredPackages) {
-                await downloader.DownloadPackage(pkg, vscode, eventStream);
-                // see into error handling as well
-                await installer.InstallPackage(pkg, eventStream);
+//Package manager needs a list of packages to be filtered based on platformInfo then download and install them
+export async function DownloadAndInstallPackages(packages: Package[], provider: NetworkSettingsProvider, platformInfo: PlatformInformation, eventStream: EventStream) {
+    let filteredPackages = await filterPackages(packages, platformInfo);
+    if (filteredPackages) {
+        for (let pkg of filteredPackages) {
+            let tmpFileManager: TmpFileManager;
+            try {
+                tmpFileManager = new TmpFileManager();
+                let tmpFile = await tmpFileManager.GetTmpFile();
+                await DownloadPackage(tmpFile.fd, pkg.description, pkg.url, pkg.fallbackUrl, eventStream, provider);
+                await InstallPackage(tmpFile.fd, pkg.description, pkg.installPath, pkg.installTestPath, pkg.binaries, eventStream);
+            }
+            catch (error) {
+                if (error instanceof NestedError) {
+                    throw new PackageError(error.message, pkg, error.err);
+                }
+                else {
+                    throw error;
+                }
+            }
+            finally {
+                //clean the temporary file
+                if (tmpFileManager) {
+                    await tmpFileManager.CleanUpTmpFile();
+                }
+                tmpFileManager = null;
             }
         }
     }
 }
 
-async function filterPlatformPackages(packages: Package[], platformInfo: PlatformInformation) {
-    if (packages) {
-        return packages.filter(pkg => {
-            if (pkg.architectures && pkg.architectures.indexOf(platformInfo.architecture) === -1) {
-                return false;
-            }
-
-            if (pkg.platforms && pkg.platforms.indexOf(platformInfo.platform) === -1) {
-                return false;
-            }
-
-            return true;
-        });
-    }
-    else {
-        throw new PackageError("Package manifest does not exist.");
-    }
-}
-
-async function filterAlreadyInstalledPackages(packages: Package[]) {
-    return packages.filter(async pkg => {
-        if (await doesPackageTestPathExist(pkg)) {
-            return false; // do not download the already installed packages
-        }
-        else {
-            return true;
-        }
-    });
-}

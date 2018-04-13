@@ -3,56 +3,21 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as tmp from 'tmp';
 import * as https from 'https';
 import * as util from '../common';
 import * as fs from 'fs';
 import { EventStream } from "../EventStream";
 import { DownloadSuccess, DownloadStart, DownloadFallBack, DownloadFailure, DownloadProgress, DownloadSizeObtained } from "../omnisharp/loggingEvents";
-import { Package, PackageError } from "./packages";
+import { NestedError } from "./packages";
 import { parse as parseUrl } from 'url';
 import { getProxyAgent } from './proxy';
-import { vscode } from '../vscodeAdapter';
+import { NetworkSettingsProvider } from '../NetworkSettings';
 
-export class PackageDownloader {
-    constructor() {
-        // Ensure our temp files get cleaned up in case of error.
-        tmp.setGracefulCleanup();
-    }
-
-    public async DownloadPackage(description: string, url: string, fallbackUrl: string, vscode: vscode, eventStream: EventStream) {
-        const config = vscode.workspace.getConfiguration();
-        const proxy = config.get<string>('http.proxy');
-        const strictSSL = config.get('http.proxyStrictSSL', true);
-        return downloadPackage(pkg, eventStream, proxy, strictSSL);
-    }
-}
-
-// We dont need this as we are already doing this check in the package manager
-/*async function maybeDownloadPackage(pkg: Package, eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<Package> {
-    let exists = await doesPackageTestPathExist(pkg);
-    if (!exists) {
-        return downloadPackage(pkg, eventStream, proxy, strictSSL);
-    } else {
-        eventStream.post(new DownloadSuccess(`Skipping package '${pkg.description}' (already downloaded).`));
-        return pkg;
-    }
-}*/
-
-async function downloadPackage(description: string, url: string, fallbackUrl: string, eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<Package> {
+export async function DownloadPackage(fd: number, description: string, url: string, fallbackUrl: string, eventStream: EventStream, provider: NetworkSettingsProvider){
     eventStream.post(new DownloadStart(description));
-    const tmpResult = await new Promise<tmp.SynchrounousResult>((resolve, reject) => {
-        tmp.file({ prefix: 'package-' }, (err, path, fd, cleanupCallback) => {
-            if (err) {
-                return reject(new PackageError('Error from tmp.file', description, err));
-            }
-
-            resolve(<tmp.SynchrounousResult>{ name: path, fd: fd, removeCallback: cleanupCallback });
-        });
-    });
-
+    
     try {
-        await downloadFile(tmpResult, description,url, eventStream, proxy, strictSSL);
+        await downloadFile(fd, description, url, eventStream, provider);
         eventStream.post(new DownloadSuccess(` Done!`));
     }
     catch (primaryUrlError) {
@@ -62,7 +27,7 @@ async function downloadPackage(description: string, url: string, fallbackUrl: st
         if (fallbackUrl) {
             eventStream.post(new DownloadFallBack(fallbackUrl));
             try {
-                await downloadFile(tmpFile, description, fallbackUrl, eventStream, proxy, strictSSL);
+                await downloadFile(fd, description, fallbackUrl, eventStream, provider);
                 eventStream.post(new DownloadSuccess(' Done!'));
             }
             catch (fallbackUrlError) {
@@ -75,9 +40,11 @@ async function downloadPackage(description: string, url: string, fallbackUrl: st
     }
 }
 
-async function downloadFile(tmpFile: tmp.SynchrounousResult, description: string, urlString: string, eventStream: EventStream, proxy: string, strictSSL: boolean): Promise<void> {
+async function downloadFile(fd: number, description: string, urlString: string, eventStream: EventStream, provider: NetworkSettingsProvider): Promise<void> {
     const url = parseUrl(urlString);
-
+    const networkSettings = provider();
+    const proxy = networkSettings.proxy;
+    const strictSSL = networkSettings.strictSSL;
     const options: https.RequestOptions = {
         host: url.hostname,
         path: url.path,
@@ -87,27 +54,25 @@ async function downloadFile(tmpFile: tmp.SynchrounousResult, description: string
     };
 
     return new Promise<void>((resolve, reject) => {
-        if (!tmpFile || tmpFile.fd == 0) {
-            return reject(new PackageError("Temporary package file unavailable", pkg));
-        }
+
 
         let request = https.request(options, response => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
-                return resolve(downloadFile(tmpFile, description, response.headers.location, eventStream, proxy, strictSSL));
+                return resolve(downloadFile(fd, description, response.headers.location, eventStream, provider));
             }
 
             if (response.statusCode != 200) {
                 // Download failed - print error message
                 eventStream.post(new DownloadFailure(`failed (error code '${response.statusCode}')`));
-                return reject(new PackageError(response.statusCode.toString(), description));
+                return reject(new NestedError(response.statusCode.toString()));
             }
 
             // Downloading - hook up events
             let packageSize = parseInt(response.headers['content-length'], 10);
             let downloadedBytes = 0;
             let downloadPercentage = 0;
-            let tmpFile = fs.createWriteStream(null, { fd: tmpFile.fd });
+            let tmpFile = fs.createWriteStream(null, { fd });
 
             eventStream.post(new DownloadSizeObtained(packageSize));
 
@@ -127,7 +92,7 @@ async function downloadFile(tmpFile: tmp.SynchrounousResult, description: string
             });
 
             response.on('error', err => {
-                reject(new PackageError(`Reponse error: ${err.message || 'NONE'}`, description, err));
+                reject(new NestedError(`Reponse error: ${err.message || 'NONE'}`, err));
             });
 
             // Begin piping data from the response to the package file
@@ -136,7 +101,7 @@ async function downloadFile(tmpFile: tmp.SynchrounousResult, description: string
 
         request.on('error', err => {
             console.log(err);
-            reject(new PackageError(`Request error: ${err.message || 'NONE'}`, description, err));
+            reject(new NestedError(`Request error: ${err.message || 'NONE'}`, err));
         });
 
         // Execute the request
