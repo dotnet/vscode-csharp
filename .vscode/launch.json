@@ -2,6 +2,20 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Extension",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceRoot}"
+            ],
+            "stopOnEntry": false,
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/out/src/**/*.js"
+            ]
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "Launch Unit tests",
@@ -16,20 +30,8 @@
             ],
             "sourceMaps": true,
             "internalConsoleOptions": "openOnSessionStart",
-            "outFiles" :["${workspaceRoot}/out/test/**/*.js"]
-        },
-        {
-            "name": "Launch Extension",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": [
-                "--extensionDevelopmentPath=${workspaceRoot}"
-            ],
-            "stopOnEntry": false,
-            "sourceMaps": true,
             "outFiles": [
-                "${workspaceRoot}/out/src/**/*.js"
+                "${workspaceRoot}/out/test/**/*.js"
             ]
         },
         {
