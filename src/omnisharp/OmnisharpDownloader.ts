@@ -3,26 +3,24 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { GetPackagesFromVersion, GetVersionFilePackage } from './OmnisharpPackageCreator';
+import * as fs from 'fs';
+import * as tmp from 'tmp';
+import { GetPackagesFromVersion } from './OmnisharpPackageCreator';
 import { PlatformInformation } from '../platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure, InstallationProgress } from './loggingEvents';
 import { EventStream } from '../EventStream';
-import { vscode } from '../vscodeAdapter';
-import { PackageManager } from '../packageManager/PackageManager';
-
+import { DownloadAndInstallPackages } from '../packageManager/PackageManager';
+import { NetworkSettingsProvider } from '../NetworkSettings';
+import { DownloadPackage } from '../packageManager/PackageDownloader';
+import { TmpFileManager } from '../packageManager/TmpFileManager';
 
 export class OmnisharpDownloader {
-    private proxy: string;
-    private strictSSL: boolean;
-    private packageManager: PackageManager;
 
     public constructor(
-        private vscode: vscode,
+        private provider: NetworkSettingsProvider,
         private eventStream: EventStream,
         private packageJSON: any,
         private platformInfo: PlatformInformation) {
-
-        this.packageManager = new PackageManager();
     }
 
     public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string) {
@@ -31,13 +29,10 @@ export class OmnisharpDownloader {
 
         try {
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
-
             installationStage = 'getPackageInfo';
             let packages = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
-
             installationStage = 'downloadAndInstallPackages';
-            await this.packageManager.DownloadAndInstallPackages(packages, this.vscode, this.platformInfo, this.eventStream);
-
+            await DownloadAndInstallPackages(packages, this.provider, this.platformInfo, this.eventStream);
             this.eventStream.post(new InstallationSuccess());
         }
         catch (error) {
@@ -46,18 +41,30 @@ export class OmnisharpDownloader {
         }
     }
 
-    public async GetLatestVersion(serverUrl: string, latestVersionFileServerPath: string): Promise<string> {
+    public async GetLatestVersion(serverUrl: string, latestVersionFileServerPath: string) {
         let installationStage = 'getLatestVersionInfoFile';
+        let description = "Latest Omnisharp Version Information";
+        let url = `${serverUrl}/${latestVersionFileServerPath}`;
+        let latestVersion: string;
+        let tmpFileManager = new TmpFileManager();
         try {
             this.eventStream.post(new InstallationProgress(installationStage, 'Getting latest build information...'));
-            //The package manager needs a package format to download, hence we form a package for the latest version file
-            let filePackage = GetVersionFilePackage(serverUrl, latestVersionFileServerPath);
-            //Fetch the latest version information from the file
-            return await this.packageManager.GetLatestVersionFromFile(this.eventStream, this.proxy, this.strictSSL, filePackage);
+            let tmpFile = await tmpFileManager.GetTmpFile();
+            latestVersion = await this.DownloadLatestVersionFile(tmpFile, description, url, ""); // no fallback url
+            return latestVersion;
         }
         catch (error) {
             this.eventStream.post(new InstallationFailure(installationStage, error));
             throw error;
         }
+        finally {
+            tmpFileManager.CleanUpTmpFile();
+        }
+    }
+
+    //To do: This component will move in a separate file
+    private async DownloadLatestVersionFile(tmpFile: tmp.SynchrounousResult, description: string, url: string, fallbackUrl: string): Promise<string> {
+        await DownloadPackage(tmpFile.fd, description, url, "", this.eventStream, this.provider);
+        return fs.readFileSync(tmpFile.name, 'utf8');
     }
 }
