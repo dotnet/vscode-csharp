@@ -9,7 +9,7 @@ import { EventStream } from '../../../src/EventStream';
 import { DownloadPackage } from '../../../src/packageManager/PackageDownloader';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { TmpFile, createTmpFile } from '../../../src/CreateTmpFile';
-import { BaseEvent, DownloadStart } from '../../../src/omnisharp/loggingEvents';
+import { BaseEvent } from '../../../src/omnisharp/loggingEvents';
 
 let ServerMock = require("mock-http-server");
 const chai = require("chai");
