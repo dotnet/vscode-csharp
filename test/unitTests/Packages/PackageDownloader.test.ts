@@ -4,20 +4,19 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs';
-import * as tmp from 'tmp';
 import * as util from '../../../src/common';
-import { rimraf } from 'async-file';
 import { EventStream } from '../../../src/EventStream';
 import { DownloadPackage } from '../../../src/packageManager/PackageDownloader';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { TmpFile, createTmpFile } from '../../../src/CreateTmpFile';
+import { BaseEvent, DownloadStart } from '../../../src/omnisharp/loggingEvents';
 
 let ServerMock = require("mock-http-server");
 const chai = require("chai");
 chai.use(require("chai-as-promised"));
 let expect = chai.expect;
 
-suite("PackageDownloader : The package is downloaded ", () => {
+suite("PackageDownloader", () => {
     let server = new ServerMock({ host: "127.0.0.1", port: 9001 },
         {
             host: "localhost",
@@ -29,6 +28,7 @@ suite("PackageDownloader : The package is downloaded ", () => {
     let tmpFile: TmpFile;
     const eventStream = new EventStream();
     const serverUrl = "https://127.0.0.1:9002";
+    const description = "Test file";
 
     setup(function (done) {
         server.start(done);
@@ -39,29 +39,43 @@ suite("PackageDownloader : The package is downloaded ", () => {
         util.setExtensionPath(tmpFile.name);
     });
 
-    test('Packages are downloaded from the specified server url and installed at the specified path', async () => {
+    test('File is downloaded from the specified url', async () => {
         server.on({
             method: 'GET',
             path: '/resource',
             reply: {
                 status: 200,
                 headers: { "content-type": "text/plain" },
-                body: "something"
+                body: "Test content"
             }
         });
 
-        let description = "Latest version information file";
         let url = `${serverUrl}/resource`;
 
-        try {
-            await DownloadPackage(tmpFile.fd, description, url, "", eventStream, () => new NetworkSettings(undefined, false));
-        }
-        catch (error) {
-            console.log(error);
-        }
-
+        await DownloadPackage(tmpFile.fd, description, url, "", eventStream, () => new NetworkSettings(undefined, false));
         const stats = fs.statSync(tmpFile.name);
+        let text = fs.readFileSync(tmpFile.name, "utf8");
+        expect(text).to.be.equal("Test content");
         expect(stats.size).to.not.equal(0);
+    });
+
+    test('Events is created when the file is downloaded successfully', async () => {
+        server.on({
+            method: 'GET',
+            path: '/resource',
+            reply: {
+                status: 200,
+                headers: { "content-type": "text/plain" },
+                body: "Test content"
+            }
+        });
+
+        let url = `${serverUrl}/resource`;
+        let eventBus: BaseEvent[] = [];
+        eventStream.subscribe((event) => eventBus.push(event));
+        await DownloadPackage(tmpFile.fd, description, url, "", eventStream, () => new NetworkSettings(undefined, false));
+        console.log(eventBus);
+        //expect(eventBus).to.include([new DownloadStart('Test file')]);
     });
 
     teardown(function (done) {
