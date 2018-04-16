@@ -7,7 +7,7 @@ import * as path from 'path';
 import * as util from '../common';
 import { Package } from './packages';
 
-export async function ResolveFilePaths(pkg: Package) {
+export function ResolveFilePaths(pkg: Package) {
     pkg.installTestPath = ResolvePackageTestPath(pkg);
     pkg.installPath = ResolveBaseInstallPath(pkg);
     pkg.binaries = ResolvePackageBinaries(pkg);
@@ -19,7 +19,7 @@ function ResolvePackageTestPath(pkg: Package): string {
     }
     
     if (pkg.installTestPath) {
-        pkg.installTestPath = path.join(util.getExtensionPath(), pkg.installTestPath);
+        return path.join(util.getExtensionPath(), pkg.installTestPath);
     }
     else {
         return null;
@@ -27,7 +27,11 @@ function ResolvePackageTestPath(pkg: Package): string {
 }
 
 function ResolvePackageBinaries(pkg: Package) {
-    return pkg.binaries.map(value => path.resolve(ResolveBaseInstallPath(pkg), value));
+    if (pkg.binaries) {
+        return pkg.binaries.map(value => path.resolve(ResolveBaseInstallPath(pkg), value)); 
+    }
+
+    return null;
 }
 
 function ResolveBaseInstallPath(pkg: Package): string {

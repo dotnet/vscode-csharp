@@ -9,7 +9,7 @@ import { EventStream } from '../../../src/EventStream';
 import { DownloadPackage } from '../../../src/packageManager/PackageDownloader';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { TmpFile, createTmpFile } from '../../../src/CreateTmpFile';
-import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, DownloadFallBack } from '../../../src/omnisharp/loggingEvents';
+import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, DownloadFallBack, DownloadFailure } from '../../../src/omnisharp/loggingEvents';
 
 let ServerMock = require("mock-http-server");
 const chai = require("chai");
@@ -25,10 +25,13 @@ suite("PackageDownloader", () => {
             key: fs.readFileSync("test/unitTests/testAssets/private.pem"),
             cert: fs.readFileSync("test/unitTests/testAssets/public.pem")
         });
-    
+
     let tmpFile: TmpFile;
     const eventStream = new EventStream();
     const fileDescription = "Test file";
+    const networkSettingsProvider = () => new NetworkSettings(undefined, false);
+    let eventBus: BaseEvent[];
+    eventStream.subscribe((event) => eventBus.push(event));
 
     setup(function (done) {
         server.start(done);
@@ -37,6 +40,7 @@ suite("PackageDownloader", () => {
     setup(async () => {
         tmpFile = await createTmpFile();
         util.setExtensionPath(tmpFile.name);
+        eventBus = [];
     });
 
     suite('Response status Code is 200', () => {
@@ -53,7 +57,7 @@ suite("PackageDownloader", () => {
             {
                 description: "Download succeeds from the primary url",
                 url: "https://127.0.0.1:9002/resource",
-                fallBackUrl: "", 
+                fallBackUrl: "",
                 eventsSequence: [DownloadStart.name, DownloadSizeObtained.name, DownloadProgress.name, DownloadSuccess.name]
             },
             {
@@ -66,18 +70,17 @@ suite("PackageDownloader", () => {
             suite(elem.description, () => {
                 test('File is downloaded', async () => {
                     server.on(requestHandlerOptions);
-                    await DownloadPackage(tmpFile.fd, fileDescription, elem.url, elem.fallBackUrl, eventStream, () => new NetworkSettings(undefined, false));
+                    await DownloadPackage(tmpFile.fd, fileDescription, elem.url, elem.fallBackUrl, eventStream, networkSettingsProvider);
                     const stats = fs.statSync(tmpFile.name);
                     expect(stats.size).to.not.equal(0);
                     let text = fs.readFileSync(tmpFile.name, "utf8");
                     expect(text).to.be.equal("Test content");
                 });
-            
+
                 test('Events are created in the correct order', async () => {
                     server.on(requestHandlerOptions);
-                    let eventBus: BaseEvent[] = [];
-                    eventStream.subscribe((event) => eventBus.push(event));
-                    await DownloadPackage(tmpFile.fd, fileDescription, elem.url, elem.fallBackUrl, eventStream, () => new NetworkSettings(undefined, false));
+
+                    await DownloadPackage(tmpFile.fd, fileDescription, elem.url, elem.fallBackUrl, eventStream, networkSettingsProvider);
                     let eventNames = eventBus.map(elem => elem.constructor.name);
                     //Check whether these events appear in the expected order
                     expect(eventNames).to.have.ordered.members(elem.eventsSequence);
@@ -86,7 +89,7 @@ suite("PackageDownloader", () => {
         });
     });
 
-    /*suite('Response Status Code is 301', () => {
+    suite('Response Status Code is 301', () => {
         const url = "https://127.0.0.1:9002/resource";
         const requestHandlerOptions = {
             method: 'GET',
@@ -114,13 +117,31 @@ suite("PackageDownloader", () => {
         test('File is downloaded from the redirect url', async () => {
             server.on(requestHandlerOptions);
             server.on(requestHandlerOptionsRedirect);
-            await DownloadPackage(tmpFile.fd, description, url, "", eventStream, () => new NetworkSettings(undefined, false));
+            await DownloadPackage(tmpFile.fd, fileDescription, "https://127.0.0.1:9002/getResource", "", eventStream, networkSettingsProvider);
             const stats = fs.statSync(tmpFile.name);
             expect(stats.size).to.not.equal(0);
             let text = fs.readFileSync(tmpFile.name, "utf8");
             expect(text).to.be.equal("Test content");
         });
-    });*/
+    });
+
+    suite('Response status code is not 301, 302 or 200', () => {
+        const url = "https://127.0.0.1:9002/resource";
+        const requestHandlerOptions = {
+            method: 'GET',
+            path: '/resource',
+            reply: {
+                status: 404
+            }
+        };
+
+        test('Error is thrown when the download fails', async () => {
+            server.on(requestHandlerOptions);
+            expect(DownloadPackage(tmpFile.fd, fileDescription, url, "", eventStream, networkSettingsProvider)).be.rejectedWith(Error);
+            let eventNames = eventBus.map(elem => elem.constructor.name);
+            expect(eventNames).to.be.containing(DownloadFailure.name);
+        });
+    });
 
     teardown(function (done) {
         server.stop(done);
