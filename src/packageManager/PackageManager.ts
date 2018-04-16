@@ -13,6 +13,7 @@ import { filterPackages } from "./PackageFilterer";
 import { createTmpFile, TmpFile } from "../CreateTmpFile";
 
 //Package manager needs a list of packages to be filtered based on platformInfo then download and install them
+//Note that the packages that this component will install needs absolute paths for the installPath, intsallTestPath and the binaries
 export async function DownloadAndInstallPackages(packages: Package[], provider: NetworkSettingsProvider, platformInfo: PlatformInformation, eventStream: EventStream) {
     let filteredPackages = await filterPackages(packages, platformInfo);
     let tmpFile: TmpFile;

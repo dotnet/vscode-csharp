@@ -3,8 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Package, PackageError, doesPackageTestPathExist } from "./packages";
+import { Package, PackageError } from "./packages";
 import { PlatformInformation } from "../platform";
+import * as util from '../common';
 
 const { filterAsync } = require('node-filter-async');
 
@@ -34,6 +35,7 @@ function filterPlatformPackages(packages: Package[], platformInfo: PlatformInfor
 
 async function filterAlreadyInstalledPackages(packages: Package[]) {
     return filterAsync(packages, async (pkg: Package) => {
-        return !(await doesPackageTestPathExist(pkg));
+        //If the file is present at the install test path then filter it
+        return !(await util.fileExists(pkg.installTestPath));
       });
 }

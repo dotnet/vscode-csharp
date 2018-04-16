@@ -12,6 +12,7 @@ import { NetworkSettingsProvider } from '../NetworkSettings';
 import { DownloadAndInstallPackages } from '../packageManager/PackageManager';
 import { createTmpFile, TmpFile } from '../CreateTmpFile';
 import { DownloadPackage } from '../packageManager/PackageDownloader';
+import { ResolveFilePaths } from '../packageManager/PackageFilePathResolver';
 
 export class OmnisharpDownloader {
 
@@ -30,6 +31,7 @@ export class OmnisharpDownloader {
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
             installationStage = 'getPackageInfo';
             let packages = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
+            packages.forEach(pkg => ResolveFilePaths(pkg));
             installationStage = 'downloadAndInstallPackages';
             await DownloadAndInstallPackages(packages, this.provider, this.platformInfo, this.eventStream);
             this.eventStream.post(new InstallationSuccess());

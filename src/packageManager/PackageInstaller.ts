@@ -16,8 +16,6 @@ import { NestedError } from './packages';
 export async function InstallPackage(fd: number, description: string, installPath: string, installTestPath: string, binaries: string[], eventStream: EventStream): Promise<void> {
     const installationStage = 'installPackages';
 
-    //to do:  do not resolve the package binaries here
-    resolvePackageBinaries(binaries, installPath);
     eventStream.post(new InstallationProgress(installationStage, description));
 
     return new Promise<void>((resolve, reject) => {
@@ -34,7 +32,7 @@ export async function InstallPackage(fd: number, description: string, installPat
             zipFile.readEntry();
 
             zipFile.on('entry', (entry: yauzl.Entry) => {
-                let absoluteEntryPath = path.resolve(getBaseInstallPath(installPath), entry.fileName);
+                let absoluteEntryPath = path.resolve(installPath, entry.fileName);
 
                 if (entry.fileName.endsWith('/')) {
                     // Directory - create it
@@ -82,19 +80,3 @@ export async function InstallPackage(fd: number, description: string, installPat
     });
 }
 
-//to do: remove these functions from here into a separate component
-function resolvePackageBinaries(binaries: string[], installPath: string) {
-    // Convert relative binary paths to absolute
-    if (binaries) {
-        binaries = binaries.map(value => path.resolve(getBaseInstallPath(installPath), value));
-    }
-}
-
-export function getBaseInstallPath(installPath: string): string {
-    let basePath = util.getExtensionPath();
-    if (installPath) {
-        basePath = path.join(basePath, installPath);
-    }
-
-    return basePath;
-}

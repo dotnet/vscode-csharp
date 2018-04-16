@@ -3,9 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as path from 'path';
-import * as util from '../common';
-
 export interface Package {
     description: string;
     url: string;
@@ -35,22 +32,4 @@ export class PackageError extends NestedError {
     }
 }
 
-export async function doesPackageTestPathExist(pkg: Package): Promise<boolean> {
-    const testPath = getPackageTestPath(pkg);
-    if (testPath) {
-        return util.fileExists(testPath);
-    }
-    else {
-        return Promise.resolve(false);
-    }
-}
-
-export function getPackageTestPath(pkg: Package): string {
-    if (pkg.installTestPath) {
-        return path.join(util.getExtensionPath(), pkg.installTestPath);
-    }
-    else {
-        return null;
-    }
-}
 

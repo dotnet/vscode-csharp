@@ -9,11 +9,12 @@ import { EventStream } from '../../../src/EventStream';
 import { DownloadPackage } from '../../../src/packageManager/PackageDownloader';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { TmpFile, createTmpFile } from '../../../src/CreateTmpFile';
-import { BaseEvent } from '../../../src/omnisharp/loggingEvents';
+import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess } from '../../../src/omnisharp/loggingEvents';
 
 let ServerMock = require("mock-http-server");
 const chai = require("chai");
 chai.use(require("chai-as-promised"));
+chai.use(require('chai-arrays'));
 let expect = chai.expect;
 
 suite("PackageDownloader", () => {
@@ -54,9 +55,10 @@ suite("PackageDownloader", () => {
 
         await DownloadPackage(tmpFile.fd, description, url, "", eventStream, () => new NetworkSettings(undefined, false));
         const stats = fs.statSync(tmpFile.name);
+        expect(stats.size).to.not.equal(0);
         let text = fs.readFileSync(tmpFile.name, "utf8");
         expect(text).to.be.equal("Test content");
-        expect(stats.size).to.not.equal(0);
+       
     });
 
     test('Events is created when the file is downloaded successfully', async () => {
@@ -74,8 +76,9 @@ suite("PackageDownloader", () => {
         let eventBus: BaseEvent[] = [];
         eventStream.subscribe((event) => eventBus.push(event));
         await DownloadPackage(tmpFile.fd, description, url, "", eventStream, () => new NetworkSettings(undefined, false));
-        console.log(eventBus);
-        //expect(eventBus).to.include([new DownloadStart('Test file')]);
+        let eventNames = eventBus.map(elem => elem.constructor.name);
+        //Check whether these events appear in the expected order
+        expect(eventNames).to.have.ordered.members([DownloadStart.name, DownloadSizeObtained.name, DownloadProgress.name, DownloadSuccess.name]);
     });
 
     teardown(function (done) {
