@@ -54,8 +54,6 @@ async function downloadFile(fd: number, description: string, urlString: string, 
     };
 
     return new Promise<void>((resolve, reject) => {
-
-
         let request = https.request(options, response => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
@@ -100,7 +98,6 @@ async function downloadFile(fd: number, description: string, urlString: string, 
         });
 
         request.on('error', err => {
-            console.log(err);
             reject(new NestedError(`Request error: ${err.message || 'NONE'}`, err));
         });
 
