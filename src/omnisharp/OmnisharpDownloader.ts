@@ -11,7 +11,7 @@ import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import { DownloadAndInstallPackages } from '../packageManager/PackageManager';
 import { createTmpFile, TmpAsset } from '../CreateTmpAsset';
-import { DownloadPackage } from '../packageManager/PackageDownloader';
+import { DownloadPackage } from '../packageManager/FileDownloader';
 import { ResolveFilePaths } from '../packageManager/PackageFilePathResolver';
 
 export class OmnisharpDownloader {

@@ -78,7 +78,7 @@ suite('PackageInstaller', () => {
         tmpInstallDir.dispose();
     });
 
-    function createTestZipAsync(dirPath: string, filesToAdd: Array<{ content: string, path: string }>): Promise<void> {
+    async function createTestZipAsync(dirPath: string, filesToAdd: Array<{ content: string, path: string }>): Promise<{}> {
         let output = fs.createWriteStream(dirPath);
 
         return new Promise((resolve, reject) => {
