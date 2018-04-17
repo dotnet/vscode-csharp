@@ -4,8 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 import * as tmp from 'tmp';
 import { NestedError } from './packageManager/packages';
+import { rimraf } from 'async-file';
 
-export async function createTmpFile(): Promise<TmpFile> {
+export async function createTmpFile(): Promise<TmpAsset> {
     const tmpFile = await new Promise<tmp.SynchrounousResult>((resolve, reject) => {
         tmp.file({ prefix: 'package-' }, (err, path, fd, cleanupCallback) => {
             if (err) {
@@ -22,11 +23,33 @@ export async function createTmpFile(): Promise<TmpFile> {
     return {
         fd: tmpFile.fd,
         name: tmpFile.name,
-        dispose: tmpFile.removeCallback
-    };
+        dispose: () => {
+            if (tmpFile) {
+                tmpFile.removeCallback();
+            }
+        }
+    };    
 }
 
-export interface TmpFile {
+export function createTmpDir(unsafeCleanup: boolean): TmpAsset {
+    let tmpDir = tmp.dirSync();
+    return {
+        fd: tmpDir.fd,
+        name: tmpDir.name,
+        dispose: async () => {
+            if (tmpDir) {
+                if (unsafeCleanup) {
+                    await rimraf(tmpDir.name);
+                }
+                else {
+                    tmpDir.removeCallback();
+                }    
+            }
+        }   
+    };
+}    
+
+export interface TmpAsset {
     fd: number;
     name: string;
     dispose: () => void;

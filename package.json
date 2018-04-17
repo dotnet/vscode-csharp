@@ -81,6 +81,7 @@
     "yauzl": "^2.5.0"
   },
   "devDependencies": {
+    "@types/archiver": "^2.1.1",
     "@types/chai": "^4.1.2",
     "@types/chai-arrays": "1.0.2",
     "@types/chai-as-promised": "^7.1.0",
@@ -96,6 +97,7 @@
     "@types/node": "^9.4.7",
     "@types/semver": "^5.5.0",
     "@types/tmp": "0.0.33",
+    "archiver": "^2.1.1",
     "async-child-process": "^1.1.1",
     "async-file": "^2.0.2",
     "async-shelljs": "^0.1.2",

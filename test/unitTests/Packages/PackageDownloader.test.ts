@@ -8,7 +8,7 @@ import * as util from '../../../src/common';
 import { EventStream } from '../../../src/EventStream';
 import { DownloadPackage } from '../../../src/packageManager/PackageDownloader';
 import NetworkSettings from '../../../src/NetworkSettings';
-import { TmpFile, createTmpFile } from '../../../src/CreateTmpFile';
+import { TmpAsset, createTmpFile } from '../../../src/CreateTmpAsset';
 import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, DownloadFallBack } from '../../../src/omnisharp/loggingEvents';
 
 let ServerMock = require("mock-http-server");
@@ -26,7 +26,7 @@ suite("PackageDownloader", () => {
             cert: fs.readFileSync("test/unitTests/testAssets/public.pem")
         });
 
-    let tmpFile: TmpFile;
+    let tmpFile: TmpAsset;
     const eventStream = new EventStream();
     const fileDescription = "Test file";
     const networkSettingsProvider = () => new NetworkSettings(undefined, false);
@@ -79,7 +79,6 @@ suite("PackageDownloader", () => {
 
                 test('Events are created in the correct order', async () => {
                     server.on(requestHandlerOptions);
-
                     await DownloadPackage(tmpFile.fd, fileDescription, elem.url, elem.fallBackUrl, eventStream, networkSettingsProvider);
                     let eventNames = eventBus.map(elem => elem.constructor.name);
                     //Check whether these events appear in the expected order

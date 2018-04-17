@@ -12,13 +12,12 @@ import { InstallationProgress } from "../omnisharp/loggingEvents";
 import { NestedError } from './packages';
 
 
-export async function InstallPackage(fd: number, description: string, installPath: string, installTestPath: string, binaries: string[], eventStream: EventStream): Promise<void> {
+export async function InstallPackage(fd: number, description: string, installPath: string, binaries: string[], eventStream: EventStream): Promise<void> {
     const installationStage = 'installPackages';
 
     eventStream.post(new InstallationProgress(installationStage, description));
 
     return new Promise<void>((resolve, reject) => {
-        //to do: there was a code to unlink the file here. look into that!!!!
         if (fd == 0) {
             return reject(new NestedError('Downloaded file unavailable'));
         }
@@ -52,8 +51,7 @@ export async function InstallPackage(fd: number, description: string, installPat
 
                         mkdirp(path.dirname(absoluteEntryPath), { mode: 0o775 }, err => {
                             if (err) {
-                                return reject({ message: "", error: err });
-                                //new PackageError('Error creating directory for zip file entry', pkg, err));
+                                return reject(new NestedError('Error creating directory for zip file entry', err));
                             }
 
                             // Make sure executable files have correct permissions when extracted

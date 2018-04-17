@@ -10,7 +10,7 @@ import { PackageInstallation, LogPlatformInfo, InstallationSuccess, Installation
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import { DownloadAndInstallPackages } from '../packageManager/PackageManager';
-import { createTmpFile, TmpFile } from '../CreateTmpFile';
+import { createTmpFile, TmpAsset } from '../CreateTmpAsset';
 import { DownloadPackage } from '../packageManager/PackageDownloader';
 import { ResolveFilePaths } from '../packageManager/PackageFilePathResolver';
 
@@ -47,7 +47,7 @@ export class OmnisharpDownloader {
         let description = "Latest Omnisharp Version Information";
         let url = `${serverUrl}/${latestVersionFileServerPath}`;
         let latestVersion: string;
-        let tmpFile: TmpFile;
+        let tmpFile: TmpAsset;
         try {
             this.eventStream.post(new InstallationProgress(installationStage, 'Getting latest build information...'));
             tmpFile = await createTmpFile();
@@ -59,14 +59,12 @@ export class OmnisharpDownloader {
             throw error;
         }
         finally {
-            if (tmpFile) {
-                tmpFile.dispose();
-            }
+            tmpFile.dispose();
         }
     }
 
     //To do: This component will move in a separate file
-    private async DownloadLatestVersionFile(tmpFile: TmpFile, description: string, url: string, fallbackUrl: string): Promise<string> {
+    private async DownloadLatestVersionFile(tmpFile: TmpAsset, description: string, url: string, fallbackUrl: string): Promise<string> {
         await DownloadPackage(tmpFile.fd, description, url, "", this.eventStream, this.provider);
         return fs.readFileSync(tmpFile.name, 'utf8');
     }
