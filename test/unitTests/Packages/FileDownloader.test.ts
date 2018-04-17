@@ -17,8 +17,6 @@ chai.use(require("chai-as-promised"));
 chai.use(require('chai-arrays'));
 let expect = chai.expect;
 
-//to do: fail on http
-//to do: test for proxy
 suite("PackageDownloader", () => {
     let server = new ServerMock({ host: "localhost", port: 9000 },
         {
@@ -139,14 +137,19 @@ suite("PackageDownloader", () => {
             expect(DownloadPackage(tmpFile.fd, fileDescription, errorUrl, "", eventStream, networkSettingsProvider)).be.rejectedWith(Error);
         });
 
-        test('Download Start and Download Failure events are created', () => {
-
+        test('Download Start and Download Failure events are created', async () => {
+            let eventsSequence = [
+                new DownloadStart(fileDescription),
+                new DownloadFailure("failed (error code '404')")
+            ];
+            try {
+                await DownloadPackage(tmpFile.fd, fileDescription, errorUrl, "", eventStream, networkSettingsProvider);
+            }
+            catch (error) {
+                expect(eventBus).to.be.deep.equal(eventsSequence);
+            }
         });
     });
-
-    /*test('Fails if http url is provided', async () => {
-        await DownloadPackage(tmpFile.fd, fileDescription, "http://127.0.0.1/resource", "", eventStream, networkSettingsProvider);
-    });*/
 
     teardown(async () => {
         await new Promise((resolve, reject) => server.stop(resolve));

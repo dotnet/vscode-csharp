@@ -12,7 +12,9 @@ import { createTmpDir, TmpAsset } from '../../../src/CreateTmpAsset';
 import { InstallPackage } from '../../../src/packageManager/ZipInstaller';
 import { EventStream } from '../../../src/EventStream';
 import { PlatformInformation } from '../../../src/platform';
+import { BaseEvent, InstallationProgress } from '../../../src/omnisharp/loggingEvents';
 
+chai.use(require("chai-as-promised"));
 let expect = chai.expect;
 
 suite('PackageInstaller', () => {
@@ -40,10 +42,14 @@ suite('PackageInstaller', () => {
         },
     ];
 
+    const fileDescription = "somefile";
     const eventStream = new EventStream();
+    let eventBus: BaseEvent[];
+    eventStream.subscribe((event) => eventBus.push(event));
     let allFiles: Array<{ content: string, path: string }>;
 
     setup(async () => {
+        eventBus = [];
         tmpSourceDir = await createTmpDir(true);
         tmpInstallDir = await createTmpDir(true);
         allFiles = [...files, ...binaries];
@@ -53,23 +59,40 @@ suite('PackageInstaller', () => {
     });
 
     test('The folder is unzipped and all the files are present at the expected paths', async () => {
-        await InstallPackage(fd, "somePackage", tmpInstallDir.name, [], eventStream);
+        await InstallPackage(fd, fileDescription, tmpInstallDir.name, [], eventStream);
         for (let elem of allFiles) {
             let filePath = path.join(tmpInstallDir.name, elem.path);
             expect(await util.fileExists(filePath)).to.be.true;
         }
     });
 
+    test('The folder is unzipped and all the expected events are created', async () => {
+        await InstallPackage(fd, fileDescription, tmpInstallDir.name, [], eventStream);
+        let eventSequence: BaseEvent[] = [
+            new InstallationProgress('installPackages', fileDescription)
+        ];
+        expect(eventBus).to.be.deep.equal(eventSequence);
+    });
+
     test('The folder is unzipped and the binaries have the expected permissions(except on Windows)', async () => {
         if (!(await PlatformInformation.GetCurrent()).isWindows()) {
             let resolvedBinaryPaths = binaries.map(binary => path.join(tmpInstallDir.name, binary.path));
-            await InstallPackage(fd, "somePackage", tmpInstallDir.name, resolvedBinaryPaths, eventStream);
+            await InstallPackage(fd, fileDescription, tmpInstallDir.name, resolvedBinaryPaths, eventStream);
             for (let binaryPath of resolvedBinaryPaths) {
                 expect(await util.fileExists(binaryPath)).to.be.true;
                 let mode = (await fs.stat(binaryPath)).mode;
                 expect(mode).to.be.equal(0o755);
             }
         }
+    });
+
+    test('Error is thrown on incorrect install path', async () => {
+        expect(InstallPackage(fd, fileDescription, "someRandomPath", [], eventStream)).to.be.rejected;
+    });
+
+    test('Error is thrown on invalid input file', async () => {
+        //providing a random file descriptor
+        expect(InstallPackage(fd + Math.random(), fileDescription, "someRandomPath", [], eventStream)).to.be.rejected;
     });
 
     teardown(async () => {
