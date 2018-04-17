@@ -5,14 +5,14 @@
 
 import * as fs from 'async-file';
 import * as path from 'path';
-//import * as tmp from 'tmp';
-import { createTmpDir, TmpAsset } from '../../../src/CreateTmpAsset';
+import * as chai from 'chai';
 import * as util from '../../../src/common';
+import * as archiver from 'archiver';
+import { createTmpDir, TmpAsset } from '../../../src/CreateTmpAsset';
 import { InstallPackage } from '../../../src/packageManager/ZipInstaller';
 import { EventStream } from '../../../src/EventStream';
 import { PlatformInformation } from '../../../src/platform';
-import * as archiver from 'archiver';
-const chai = require("chai");
+
 let expect = chai.expect;
 
 suite('PackageInstaller', () => {
@@ -62,11 +62,11 @@ suite('PackageInstaller', () => {
 
     test('The folder is unzipped and the binaries have the expected permissions(except on Windows)', async () => {
         if (!(await PlatformInformation.GetCurrent()).isWindows()) {
-            await InstallPackage(fd, "somePackage", tmpInstallDir.name, binaries.map(binary => binary.path), eventStream);
-            for (let elem of binaries) {
-                let filePath = path.join(tmpInstallDir.name, elem.path);
-                expect(await util.fileExists(filePath)).to.be.true;
-                let mode = (await fs.stat(filePath)).mode;
+            let resolvedBinaryPaths = binaries.map(binary => path.join(tmpInstallDir.name, binary.path));
+            await InstallPackage(fd, "somePackage", tmpInstallDir.name, resolvedBinaryPaths, eventStream);
+            for (let binaryPath of resolvedBinaryPaths) {
+                expect(await util.fileExists(binaryPath)).to.be.true;
+                let mode = (await fs.stat(binaryPath)).mode;
                 expect(mode).to.be.equal(0o755);
             }
         }
