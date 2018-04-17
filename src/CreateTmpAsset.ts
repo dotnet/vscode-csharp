@@ -53,7 +53,7 @@ export async function createTmpDir(unsafeCleanup: boolean): Promise<TmpAsset> {
 }
 
 export interface TmpAsset {
-        fd?: number;
+        fd: number;
         name: string;
         dispose: () => void;
     }

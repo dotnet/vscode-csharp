@@ -4,24 +4,26 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs';
+import * as chai from 'chai';
 import * as util from '../../../src/common';
 import { EventStream } from '../../../src/EventStream';
 import { DownloadPackage } from '../../../src/packageManager/PackageDownloader';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { TmpAsset, createTmpFile } from '../../../src/CreateTmpAsset';
-import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, DownloadFallBack } from '../../../src/omnisharp/loggingEvents';
+import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, DownloadFallBack, DownloadFailure } from '../../../src/omnisharp/loggingEvents';
 
 let ServerMock = require("mock-http-server");
-const chai = require("chai");
 chai.use(require("chai-as-promised"));
 chai.use(require('chai-arrays'));
 let expect = chai.expect;
 
+//to do: fail on http
+//to do: test for proxy
 suite("PackageDownloader", () => {
-    let server = new ServerMock(null,
+    let server = new ServerMock({ host: "localhost", port: 9000 },
         {
             host: "localhost",
-            port: 9002,
+            port: 8080,
             key: fs.readFileSync("test/unitTests/testAssets/private.pem"),
             cert: fs.readFileSync("test/unitTests/testAssets/public.pem")
         });
@@ -32,44 +34,81 @@ suite("PackageDownloader", () => {
     const networkSettingsProvider = () => new NetworkSettings(undefined, false);
     let eventBus: BaseEvent[];
     eventStream.subscribe((event) => eventBus.push(event));
+    const httpsServerUrl = "https://127.0.0.1:8080";
+    const correctUrlPath = `/resource`;
+    const redirectUrlPath = '/redirectResource';
+    const errorUrlPath = '/errorResource';
+    const correctUrl = `${httpsServerUrl}${correctUrlPath}`;
+    const redirectUrl = `${httpsServerUrl}${redirectUrlPath}`;
+    const errorUrl = `${httpsServerUrl}${errorUrlPath}`;
 
-    setup(function (done) {
-        server.start(done);
-    });
+    const requestOptions = {
+        method: 'GET',
+        path: correctUrlPath,
+        reply: {
+            status: 200,
+            headers: { "content-type": "text/plain" },
+            body: "Test content"
+        }
+    };
+
+    const requestOptionsRedirect = {
+        method: 'GET',
+        path: redirectUrlPath,
+        reply: {
+            status: 301,
+            headers: {
+                "location": correctUrl
+            },
+        }
+    };
+
+    const requestOptionsError = {
+        method: 'GET',
+        path: errorUrlPath,
+        reply: {
+            status: 404,
+        }
+    };
 
     setup(async () => {
+        await new Promise(resolve => server.start(resolve));
         tmpFile = await createTmpFile();
         util.setExtensionPath(tmpFile.name);
         eventBus = [];
+        server.on(requestOptions);
+        server.on(requestOptionsError);
+        server.on(requestOptionsRedirect);
     });
 
-    suite('Response status Code is 200', () => {
-        const requestHandlerOptions = {
-            method: 'GET',
-            path: '/resource',
-            reply: {
-                status: 200,
-                headers: { "content-type": "text/plain" },
-                body: "Test content"
-            }
-        };
+    suite('If the response status Code is 200, the download succeeds', () => {
+
         [
             {
-                description: "Download succeeds from the primary url",
-                url: "https://127.0.0.1:9002/resource",
+                description: "Primary url",
+                url: correctUrl,
                 fallBackUrl: "",
-                eventsSequence: [DownloadStart.name, DownloadSizeObtained.name, DownloadProgress.name, DownloadSuccess.name]
+                eventsSequence: [
+                    new DownloadStart(fileDescription),
+                    new DownloadSizeObtained(12),
+                    new DownloadProgress(100, fileDescription),
+                    new DownloadSuccess(' Done!')]
             },
             {
-                description: "Download succeeds from the fallback url",
-                url: "",
-                fallBackUrl: "https://127.0.0.1:9002/resource",
-                eventsSequence: [DownloadStart.name, DownloadFallBack.name, DownloadSizeObtained.name, DownloadProgress.name, DownloadSuccess.name]
+                description: "Fallback url",
+                url: errorUrl,
+                fallBackUrl: correctUrl,
+                eventsSequence: [
+                    new DownloadStart(fileDescription),
+                    new DownloadFailure("failed (error code '404')"),
+                    new DownloadFallBack(correctUrl),
+                    new DownloadSizeObtained(12),
+                    new DownloadProgress(100, fileDescription),
+                    new DownloadSuccess(' Done!')]
             }
         ].forEach((elem) => {
             suite(elem.description, () => {
                 test('File is downloaded', async () => {
-                    server.on(requestHandlerOptions);
                     await DownloadPackage(tmpFile.fd, fileDescription, elem.url, elem.fallBackUrl, eventStream, networkSettingsProvider);
                     const stats = fs.statSync(tmpFile.name);
                     expect(stats.size).to.not.equal(0);
@@ -78,45 +117,16 @@ suite("PackageDownloader", () => {
                 });
 
                 test('Events are created in the correct order', async () => {
-                    server.on(requestHandlerOptions);
                     await DownloadPackage(tmpFile.fd, fileDescription, elem.url, elem.fallBackUrl, eventStream, networkSettingsProvider);
-                    let eventNames = eventBus.map(elem => elem.constructor.name);
-                    //Check whether these events appear in the expected order
-                    expect(eventNames).to.have.ordered.members(elem.eventsSequence);
+                    expect(eventBus).to.be.deep.equal(elem.eventsSequence);
                 });
             });
         });
     });
 
-    suite('Response Status Code is 301', () => {
-        const url = "https://127.0.0.1:9002/resource";
-        const requestHandlerOptions = {
-            method: 'GET',
-            path: '/getResource',
-            reply: {
-                status: 301,
-                headers: {
-                    "location": url
-                },
-            }
-        };
-
-        const requestHandlerOptionsRedirect = {
-            method: 'GET',
-            path: '/resource',
-            reply: {
-                status: 200,
-                headers: {
-                    "content-type": "text/plain",
-                },
-                body: "Test content"
-            }
-        };
-
+    suite('If the response status Code is 301, redirect occurs and the download succeeds', () => {
         test('File is downloaded from the redirect url', async () => {
-            server.on(requestHandlerOptions);
-            server.on(requestHandlerOptionsRedirect);
-            await DownloadPackage(tmpFile.fd, fileDescription, "https://127.0.0.1:9002/getResource", "", eventStream, networkSettingsProvider);
+            await DownloadPackage(tmpFile.fd, fileDescription, redirectUrl, "", eventStream, networkSettingsProvider);
             const stats = fs.statSync(tmpFile.name);
             expect(stats.size).to.not.equal(0);
             let text = fs.readFileSync(tmpFile.name, "utf8");
@@ -124,27 +134,22 @@ suite("PackageDownloader", () => {
         });
     });
 
-    suite('Response status code is not 301, 302 or 200', () => {
-        const url = "https://127.0.0.1:9002/resource";
-        const requestHandlerOptions = {
-            method: 'GET',
-            path: '/resource',
-            reply: {
-                status: 404
-            }
-        };
+    suite('If the response status code is not 301, 302 or 200 then the download fails', () => {
+        test('Error is thrown', async () => {
+            expect(DownloadPackage(tmpFile.fd, fileDescription, errorUrl, "", eventStream, networkSettingsProvider)).be.rejectedWith(Error);
+        });
 
-        test('Error is thrown when the download fails', async () => {
-            server.on(requestHandlerOptions);
-            expect(DownloadPackage(tmpFile.fd, fileDescription, url, "", eventStream, networkSettingsProvider)).be.rejectedWith(Error);
-            //let eventNames = eventBus.map(elem => elem.constructor.name);
-            //expect(eventNames).to.be.containing(DownloadFailure.name);
+        test('Download Start and Download Failure events are created', () => {
+
         });
     });
 
-    teardown(function (done) {
-        server.stop(done);
+    /*test('Fails if http url is provided', async () => {
+        await DownloadPackage(tmpFile.fd, fileDescription, "http://127.0.0.1/resource", "", eventStream, networkSettingsProvider);
+    });*/
 
+    teardown(async () => {
+        await new Promise((resolve, reject) => server.stop(resolve));
         if (tmpFile) {
             tmpFile.dispose();
         }
