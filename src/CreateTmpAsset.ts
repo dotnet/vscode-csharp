@@ -23,34 +23,37 @@ export async function createTmpFile(): Promise<TmpAsset> {
     return {
         fd: tmpFile.fd,
         name: tmpFile.name,
-        dispose: () => {
-            if (tmpFile) {
-                tmpFile.removeCallback();
-            }
-        }
-    };    
+        dispose: () => tmpFile.removeCallback()
+    };
 }
 
-export function createTmpDir(unsafeCleanup: boolean): TmpAsset {
-    let tmpDir = tmp.dirSync();
+export async function createTmpDir(unsafeCleanup: boolean): Promise<TmpAsset> {
+    const tmpDir = await new Promise<tmp.SynchrounousResult>((resolve, reject) => {
+        tmp.dir({ unsafeCleanup }, (err, path, cleanupCallback) => {
+            if (err) {
+                return reject(new NestedError('Error from tmp.file', err));
+            }
+
+            resolve(<tmp.SynchrounousResult>{ name: path, removeCallback: cleanupCallback });
+        });
+    });
+    
     return {
         fd: tmpDir.fd,
         name: tmpDir.name,
-        dispose: async () => {
-            if (tmpDir) {
-                if (unsafeCleanup) {
-                    await rimraf(tmpDir.name);
-                }
-                else {
-                    tmpDir.removeCallback();
-                }    
+        dispose: () => {
+            if (unsafeCleanup) {
+                rimraf(tmpDir.name);//to delete directories that have folders inside them
             }
-        }   
+            else {
+                tmpDir.removeCallback();
+            }    
+        }
     };
-}    
+}
 
 export interface TmpAsset {
-    fd: number;
-    name: string;
-    dispose: () => void;
-}
+        fd?: number;
+        name: string;
+        dispose: () => void;
+    }

@@ -59,9 +59,11 @@ export class OmnisharpDownloader {
             throw error;
         }
         finally {
-            tmpFile.dispose();
+            if (tmpFile) {
+                tmpFile.dispose();
+            }
         }
-    }
+    }    
 
     //To do: This component will move in a separate file
     private async DownloadLatestVersionFile(tmpFile: TmpAsset, description: string, url: string, fallbackUrl: string): Promise<string> {
