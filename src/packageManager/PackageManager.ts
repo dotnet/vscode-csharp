@@ -5,8 +5,8 @@
 
 import { PlatformInformation } from "../platform";
 import { Package, PackageError, NestedError } from './packages';
-import { DownloadPackage } from './PackageDownloader';
-import { InstallPackage } from './PackageInstaller';
+import { DownloadPackage } from './FileDownloader';
+import { InstallPackage } from './ZipInstaller';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
 import { filterPackages } from "./PackageFilterer";

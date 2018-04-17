@@ -8,7 +8,7 @@ import * as path from 'path';
 //import * as tmp from 'tmp';
 import { createTmpDir, TmpAsset } from '../../../src/CreateTmpAsset';
 import * as util from '../../../src/common';
-import { InstallPackage } from '../../../src/packageManager/PackageInstaller';
+import { InstallPackage } from '../../../src/packageManager/ZipInstaller';
 import { EventStream } from '../../../src/EventStream';
 import { PlatformInformation } from '../../../src/platform';
 import * as archiver from 'archiver';

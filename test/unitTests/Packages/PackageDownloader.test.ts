@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as chai from 'chai';
 import * as util from '../../../src/common';
 import { EventStream } from '../../../src/EventStream';
-import { DownloadPackage } from '../../../src/packageManager/PackageDownloader';
+import { DownloadPackage } from '../../../src/packageManager/FileDownloader';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { TmpAsset, createTmpFile } from '../../../src/CreateTmpAsset';
 import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, DownloadFallBack, DownloadFailure } from '../../../src/omnisharp/loggingEvents';
