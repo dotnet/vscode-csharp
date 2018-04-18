@@ -56,6 +56,7 @@ suite('PackageInstaller', () => {
         testDirPath = tmpSourceDir.name + "/test.zip";
         await createTestZipAsync(testDirPath, allFiles);
         fd = await fs.open(path.resolve(testDirPath), 'r');
+        util.setExtensionPath(tmpInstallDir.name);
     });
 
     test('The folder is unzipped and all the files are present at the expected paths', async () => {
@@ -81,13 +82,9 @@ suite('PackageInstaller', () => {
             for (let binaryPath of resolvedBinaryPaths) {
                 expect(await util.fileExists(binaryPath)).to.be.true;
                 let mode = (await fs.stat(binaryPath)).mode;
-                expect(mode).to.be.equal(0o755);
+                expect(mode & 0o7777).to.be.equal(0o755, `Expected mode for path ${binaryPath}`);
             }
         }
-    });
-
-    test('Error is thrown on incorrect install path', async () => {
-        expect(InstallPackage(fd, fileDescription, "someRandomPath", [], eventStream)).to.be.rejected;
     });
 
     test('Error is thrown on invalid input file', async () => {
