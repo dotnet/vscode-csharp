@@ -5,7 +5,7 @@
 
 import * as path from 'path';
 import * as util from '../common';
-import { Package } from './packages';
+import { Package } from './Package';
 
 export function ResolveFilePaths(pkg: Package) {
     pkg.installTestPath = ResolvePackageTestPath(pkg);

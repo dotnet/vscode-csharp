@@ -8,7 +8,7 @@ import { getNullChannel } from '../testAssets/Fakes';
 import { CsharpLoggerObserver } from '../../../src/observers/CsharpLoggerObserver';
 import { PlatformInformation } from '../../../src/platform';
 import * as Event from '../../../src/omnisharp/loggingEvents';
-import { PackageError } from '../../../src/packageManager/packages';
+import { PackageError } from '../../../src/packageManager/Package';
 
 suite("CsharpLoggerObserver", () => {
     suiteSetup(() => should());

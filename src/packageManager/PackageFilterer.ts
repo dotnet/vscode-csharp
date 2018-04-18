@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Package, PackageError } from "./packages";
+import { Package, PackageError } from "./Package";
 import { PlatformInformation } from "../platform";
 import * as util from '../common';
 import { ResolvePackageTestPath } from "./PackageFilePathResolver";

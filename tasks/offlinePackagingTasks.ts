@@ -20,7 +20,7 @@ import { EventStream } from '../src/EventStream';
 import { getPackageJSON } from '../tasks/packageJson';
 import { Logger } from '../src/logger';
 import { PlatformInformation } from '../src/platform';
-import { Package } from '../src/packageManager/packages';
+import { Package } from '../src/packageManager/Package';
 import { DownloadAndInstallPackages } from '../src/packageManager/PackageManager';
 import NetworkSettings from '../src/NetworkSettings';
 

@@ -9,7 +9,7 @@ import * as yauzl from 'yauzl';
 import * as path from 'path';
 import { EventStream } from "../EventStream";
 import { InstallationProgress } from "../omnisharp/loggingEvents";
-import { NestedError } from './packages';
+import { NestedError } from './Package';
 
 
 export async function InstallPackage(fd: number, description: string, installPath: string, binaries: string[], eventStream: EventStream): Promise<void> {

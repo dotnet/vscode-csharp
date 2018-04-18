@@ -8,7 +8,7 @@ import * as util from '../common';
 import * as fs from 'fs';
 import { EventStream } from "../EventStream";
 import { DownloadSuccess, DownloadStart, DownloadFallBack, DownloadFailure, DownloadProgress, DownloadSizeObtained } from "../omnisharp/loggingEvents";
-import { NestedError } from "./packages";
+import { NestedError } from "./Package";
 import { parse as parseUrl } from 'url';
 import { getProxyAgent } from './proxy';
 import { NetworkSettingsProvider } from '../NetworkSettings';

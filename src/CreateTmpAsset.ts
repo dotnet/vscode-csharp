@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as tmp from 'tmp';
-import { NestedError } from './packageManager/packages';
+import { NestedError } from './packageManager/Package';
 import { rimraf } from 'async-file';
 
 export async function createTmpFile(): Promise<TmpAsset> {
