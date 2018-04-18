@@ -42,7 +42,7 @@ export class OmnisharpDownloader {
         }
     }
 
-    public async GetLatestVersion(serverUrl: string, latestVersionFileServerPath: string) {
+    public async GetLatestVersion(serverUrl: string, latestVersionFileServerPath: string): Promise<string> {
         let installationStage = 'getLatestVersionInfoFile';
         let description = "Latest Omnisharp Version Information";
         let url = `${serverUrl}/${latestVersionFileServerPath}`;

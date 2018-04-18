@@ -13,11 +13,11 @@ import { parse as parseUrl } from 'url';
 import { getProxyAgent } from './proxy';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 
-export async function DownloadFile(fd: number, description: string, url: string, fallbackUrl: string, eventStream: EventStream, provider: NetworkSettingsProvider){
+export async function DownloadFile(fd: number, description: string, url: string, fallbackUrl: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider){
     eventStream.post(new DownloadStart(description));
     
     try {
-        await downloadFile(fd, description, url, eventStream, provider);
+        await downloadFile(fd, description, url, eventStream, networkSettingsProvider);
         eventStream.post(new DownloadSuccess(` Done!`));
     }
     catch (primaryUrlError) {
@@ -27,7 +27,7 @@ export async function DownloadFile(fd: number, description: string, url: string,
         if (fallbackUrl) {
             eventStream.post(new DownloadFallBack(fallbackUrl));
             try {
-                await downloadFile(fd, description, fallbackUrl, eventStream, provider);
+                await downloadFile(fd, description, fallbackUrl, eventStream, networkSettingsProvider);
                 eventStream.post(new DownloadSuccess(' Done!'));
             }
             catch (fallbackUrlError) {
@@ -40,9 +40,9 @@ export async function DownloadFile(fd: number, description: string, url: string,
     }
 }
 
-async function downloadFile(fd: number, description: string, urlString: string, eventStream: EventStream, provider: NetworkSettingsProvider): Promise<void> {
+async function downloadFile(fd: number, description: string, urlString: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider): Promise<void> {
     const url = parseUrl(urlString);
-    const networkSettings = provider();
+    const networkSettings = networkSettingsProvider();
     const proxy = networkSettings.proxy;
     const strictSSL = networkSettings.strictSSL;
     const options: https.RequestOptions = {
@@ -61,7 +61,7 @@ async function downloadFile(fd: number, description: string, urlString: string, 
         let request = https.request(options, response => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
-                return resolve(downloadFile(fd, description, response.headers.location, eventStream, provider));
+                return resolve(downloadFile(fd, description, response.headers.location, eventStream, networkSettingsProvider));
             }
 
             if (response.statusCode != 200) {

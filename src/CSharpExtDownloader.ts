@@ -60,6 +60,6 @@ export class CSharpExtDownloader {
             return JSON.parse(JSON.stringify(<Package[]>this.packageJSON.runtimeDependencies));
         }
 
-        return null;
+        throw new Error("No runtime dependencies found");
     }
 }
