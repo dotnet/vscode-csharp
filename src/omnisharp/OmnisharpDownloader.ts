@@ -11,7 +11,7 @@ import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import { DownloadAndInstallPackages } from '../packageManager/PackageManager';
 import { createTmpFile, TmpAsset } from '../CreateTmpAsset';
-import { DownloadPackage } from '../packageManager/FileDownloader';
+import { DownloadFile } from '../packageManager/FileDownloader';
 import { ResolveFilePaths } from '../packageManager/PackageFilePathResolver';
 
 export class OmnisharpDownloader {
@@ -46,13 +46,12 @@ export class OmnisharpDownloader {
         let installationStage = 'getLatestVersionInfoFile';
         let description = "Latest Omnisharp Version Information";
         let url = `${serverUrl}/${latestVersionFileServerPath}`;
-        let latestVersion: string;
         let tmpFile: TmpAsset;
         try {
             this.eventStream.post(new InstallationProgress(installationStage, 'Getting latest build information...'));
             tmpFile = await createTmpFile();
-            latestVersion = await this.DownloadLatestVersionFile(tmpFile, description, url, ""); // no fallback url
-            return latestVersion;
+            await DownloadFile(tmpFile.fd, description, url, "", this.eventStream, this.provider);
+            return fs.readFileSync(tmpFile.name, 'utf8');
         }
         catch (error) {
             this.eventStream.post(new InstallationFailure(installationStage, error));
@@ -63,11 +62,5 @@ export class OmnisharpDownloader {
                 tmpFile.dispose();
             }
         }
-    }    
-
-    //To do: This component will move in a separate file
-    private async DownloadLatestVersionFile(tmpFile: TmpAsset, description: string, url: string, fallbackUrl: string): Promise<string> {
-        await DownloadPackage(tmpFile.fd, description, url, "", this.eventStream, this.provider);
-        return fs.readFileSync(tmpFile.name, 'utf8');
     }
 }

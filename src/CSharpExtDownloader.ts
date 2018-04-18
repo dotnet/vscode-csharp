@@ -41,7 +41,6 @@ export class CSharpExtDownloader {
             installationStage = 'touchLockFile';
             await util.touchInstallFile(util.InstallFileType.Lock);
             success = true;
-
             this.eventStream.post(new InstallationSuccess());
         }
         catch (error) {

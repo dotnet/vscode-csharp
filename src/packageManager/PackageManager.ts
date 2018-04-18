@@ -5,7 +5,7 @@
 
 import { PlatformInformation } from "../platform";
 import { Package, PackageError, NestedError } from './packages';
-import { DownloadPackage } from './FileDownloader';
+import { DownloadFile } from './FileDownloader';
 import { InstallPackage } from './ZipInstaller';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
@@ -21,7 +21,7 @@ export async function DownloadAndInstallPackages(packages: Package[], provider: 
         for (let pkg of filteredPackages) {
             try {
                 tmpFile = await createTmpFile();
-                await DownloadPackage(tmpFile.fd, pkg.description, pkg.url, pkg.fallbackUrl, eventStream, provider);
+                await DownloadFile(tmpFile.fd, pkg.description, pkg.url, pkg.fallbackUrl, eventStream, provider);
                 await InstallPackage(tmpFile.fd, pkg.description, pkg.installPath, pkg.binaries, eventStream);
             }
             catch (error) {

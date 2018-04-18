@@ -13,13 +13,9 @@ export function ResolveFilePaths(pkg: Package) {
     pkg.binaries = ResolvePackageBinaries(pkg);
 }
 
-function ResolvePackageTestPath(pkg: Package): string {
-    if (path.isAbsolute(pkg.installTestPath)) {
-        return pkg.installTestPath;
-    }
-    
+export function ResolvePackageTestPath(pkg: Package): string {
     if (pkg.installTestPath) {
-        return path.join(util.getExtensionPath(), pkg.installTestPath);
+        return path.resolve(util.getExtensionPath(), pkg.installTestPath);
     }
     else {
         return null;
@@ -35,10 +31,6 @@ function ResolvePackageBinaries(pkg: Package) {
 }
 
 function ResolveBaseInstallPath(pkg: Package): string {
-    if (path.isAbsolute(pkg.installPath)) {
-        return pkg.installPath;
-    }
-
     let basePath = util.getExtensionPath();
     if (pkg.installPath) {
         basePath = path.join(basePath, pkg.installPath);

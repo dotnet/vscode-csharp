@@ -31,7 +31,7 @@ export async function createTmpDir(unsafeCleanup: boolean): Promise<TmpAsset> {
     const tmpDir = await new Promise<tmp.SynchrounousResult>((resolve, reject) => {
         tmp.dir({ unsafeCleanup }, (err, path, cleanupCallback) => {
             if (err) {
-                return reject(new NestedError('Error from tmp.file', err));
+                return reject(new NestedError('Error from tmp.dir', err));
             }
 
             resolve(<tmp.SynchrounousResult>{ name: path, removeCallback: cleanupCallback });

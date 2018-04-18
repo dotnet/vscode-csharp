@@ -13,7 +13,7 @@ import { parse as parseUrl } from 'url';
 import { getProxyAgent } from './proxy';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 
-export async function DownloadPackage(fd: number, description: string, url: string, fallbackUrl: string, eventStream: EventStream, provider: NetworkSettingsProvider){
+export async function DownloadFile(fd: number, description: string, url: string, fallbackUrl: string, eventStream: EventStream, provider: NetworkSettingsProvider){
     eventStream.post(new DownloadStart(description));
     
     try {
@@ -54,6 +54,10 @@ async function downloadFile(fd: number, description: string, urlString: string, 
     };
 
     return new Promise<void>((resolve, reject) => {
+        if (fd == 0) {
+            reject(new NestedError("Temporary package file unavailable"));
+        }
+
         let request = https.request(options, response => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location

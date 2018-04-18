@@ -91,8 +91,8 @@ suite('PackageInstaller', () => {
     });
 
     test('Error is thrown on invalid input file', async () => {
-        //providing a random file descriptor
-        expect(InstallPackage(fd + Math.random(), fileDescription, "someRandomPath", [], eventStream)).to.be.rejected;
+        //fd=0 means there is no file
+        expect(InstallPackage(0, fileDescription, "someRandomPath", [], eventStream)).to.be.rejected;
     });
 
     teardown(async () => {

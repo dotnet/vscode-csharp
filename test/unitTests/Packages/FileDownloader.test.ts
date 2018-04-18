@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as chai from 'chai';
 import * as util from '../../../src/common';
 import { EventStream } from '../../../src/EventStream';
-import { DownloadPackage } from '../../../src/packageManager/FileDownloader';
+import { DownloadFile } from '../../../src/packageManager/FileDownloader';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { TmpAsset, createTmpFile } from '../../../src/CreateTmpAsset';
 import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, DownloadFallBack, DownloadFailure } from '../../../src/omnisharp/loggingEvents';
@@ -107,7 +107,7 @@ suite("PackageDownloader", () => {
         ].forEach((elem) => {
             suite(elem.description, () => {
                 test('File is downloaded', async () => {
-                    await DownloadPackage(tmpFile.fd, fileDescription, elem.url, elem.fallBackUrl, eventStream, networkSettingsProvider);
+                    await DownloadFile(tmpFile.fd, fileDescription, elem.url, elem.fallBackUrl, eventStream, networkSettingsProvider);
                     const stats = fs.statSync(tmpFile.name);
                     expect(stats.size).to.not.equal(0);
                     let text = fs.readFileSync(tmpFile.name, "utf8");
@@ -115,7 +115,7 @@ suite("PackageDownloader", () => {
                 });
 
                 test('Events are created in the correct order', async () => {
-                    await DownloadPackage(tmpFile.fd, fileDescription, elem.url, elem.fallBackUrl, eventStream, networkSettingsProvider);
+                    await DownloadFile(tmpFile.fd, fileDescription, elem.url, elem.fallBackUrl, eventStream, networkSettingsProvider);
                     expect(eventBus).to.be.deep.equal(elem.eventsSequence);
                 });
             });
@@ -124,7 +124,7 @@ suite("PackageDownloader", () => {
 
     suite('If the response status Code is 301, redirect occurs and the download succeeds', () => {
         test('File is downloaded from the redirect url', async () => {
-            await DownloadPackage(tmpFile.fd, fileDescription, redirectUrl, "", eventStream, networkSettingsProvider);
+            await DownloadFile(tmpFile.fd, fileDescription, redirectUrl, "", eventStream, networkSettingsProvider);
             const stats = fs.statSync(tmpFile.name);
             expect(stats.size).to.not.equal(0);
             let text = fs.readFileSync(tmpFile.name, "utf8");
@@ -134,7 +134,7 @@ suite("PackageDownloader", () => {
 
     suite('If the response status code is not 301, 302 or 200 then the download fails', () => {
         test('Error is thrown', async () => {
-            expect(DownloadPackage(tmpFile.fd, fileDescription, errorUrl, "", eventStream, networkSettingsProvider)).be.rejectedWith(Error);
+            expect(DownloadFile(tmpFile.fd, fileDescription, errorUrl, "", eventStream, networkSettingsProvider)).be.rejectedWith(Error);
         });
 
         test('Download Start and Download Failure events are created', async () => {
@@ -143,12 +143,17 @@ suite("PackageDownloader", () => {
                 new DownloadFailure("failed (error code '404')")
             ];
             try {
-                await DownloadPackage(tmpFile.fd, fileDescription, errorUrl, "", eventStream, networkSettingsProvider);
+                await DownloadFile(tmpFile.fd, fileDescription, errorUrl, "", eventStream, networkSettingsProvider);
             }
             catch (error) {
                 expect(eventBus).to.be.deep.equal(eventsSequence);
             }
         });
+    });
+
+    test('Error is thrown on invalid input file', async () => {
+        //fd=0 means there is no file
+        expect(DownloadFile(0, fileDescription, errorUrl, "", eventStream, networkSettingsProvider)).to.be.rejected;
     });
 
     teardown(async () => {
