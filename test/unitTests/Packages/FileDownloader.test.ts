@@ -39,35 +39,10 @@ suite("FileDownloader", () => {
     const correctUrl = `${httpsServerUrl}${correctUrlPath}`;
     const redirectUrl = `${httpsServerUrl}${redirectUrlPath}`;
     const errorUrl = `${httpsServerUrl}${errorUrlPath}`;
-
-    const requestOptions = {
-        method: 'GET',
-        path: correctUrlPath,
-        reply: {
-            status: 200,
-            headers: { "content-type": "text/plain" },
-            body: "Test content"
-        }
-    };
-
-    const requestOptionsRedirect = {
-        method: 'GET',
-        path: redirectUrlPath,
-        reply: {
-            status: 301,
-            headers: {
-                "location": correctUrl
-            },
-        }
-    };
-
-    const requestOptionsError = {
-        method: 'GET',
-        path: errorUrlPath,
-        reply: {
-            status: 404,
-        }
-    };
+    
+    const requestOptions = getResponseHandlerOptions('GET', correctUrlPath, 200, { "content-type": "text/plain" }, "Test content");
+    const requestOptionsError = getResponseHandlerOptions('GET', errorUrlPath, 404);
+    const requestOptionsRedirect = getResponseHandlerOptions('GET', redirectUrlPath, 301, { "location": correctUrl });
 
     setup(async () => {
         await new Promise(resolve => server.start(resolve));
@@ -163,3 +138,15 @@ suite("FileDownloader", () => {
         }
     });
 });
+
+function getResponseHandlerOptions(method: string, path: string, reply_status: number, reply_headers?: any, reply_body?: string) {
+    return {
+        method,
+        path,
+        reply: {
+            status: reply_status,
+            headers: reply_headers,
+            body: reply_body
+        }
+    };
+}
