@@ -4,8 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import * as chai from 'chai';
 import * as util from '../../../src/common';
-import * as fs from 'async-file';
-import { createTmpDir, createTmpFile, TmpAsset } from "../../../src/CreateTmpAsset";
+import { createTmpFile, TmpAsset } from "../../../src/CreateTmpAsset";
 import { PlatformInformation } from "../../../src/platform";
 import { filterPackages } from "../../../src/packageManager/PackageFilterer";
 import { ResolveFilePaths } from "../../../src/packageManager/PackageFilePathResolver";
