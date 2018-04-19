@@ -11,17 +11,17 @@ import { EventStream } from "../EventStream";
 import { InstallationProgress } from "../omnisharp/loggingEvents";
 import { NestedError } from './Package';
 
-export async function InstallPackage(fd: number, description: string, installPath: string, binaries: string[], eventStream: EventStream): Promise<void> {
+export async function InstallPackage(sourceFileDescriptor: number, description: string, destinationInstallPath: string, binaries: string[], eventStream: EventStream): Promise<void> {
     const installationStage = 'installPackages';
 
     eventStream.post(new InstallationProgress(installationStage, description));
 
     return new Promise<void>((resolve, reject) => {
-        if (fd == 0) {
+        if (sourceFileDescriptor == 0) {
             return reject(new NestedError('Downloaded file unavailable'));
         }
 
-        yauzl.fromFd(fd, { lazyEntries: true }, (err, zipFile) => {
+        yauzl.fromFd(sourceFileDescriptor, { lazyEntries: true }, (err, zipFile) => {
             if (err) {
                 return reject(new NestedError('Immediate zip file error', err));
             }
@@ -29,7 +29,7 @@ export async function InstallPackage(fd: number, description: string, installPat
             zipFile.readEntry();
 
             zipFile.on('entry', (entry: yauzl.Entry) => {
-                let absoluteEntryPath = path.resolve(installPath, entry.fileName);
+                let absoluteEntryPath = path.resolve(destinationInstallPath, entry.fileName);
 
                 if (entry.fileName.endsWith('/')) {
                     // Directory - create it

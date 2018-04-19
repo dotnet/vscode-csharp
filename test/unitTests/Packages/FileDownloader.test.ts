@@ -17,7 +17,7 @@ chai.use(require("chai-as-promised"));
 chai.use(require('chai-arrays'));
 let expect = chai.expect;
 
-suite("PackageDownloader", () => {
+suite("FileDownloader", () => {
     let server = new ServerMock({ host: "localhost", port: 9000 },
         {
             host: "localhost",

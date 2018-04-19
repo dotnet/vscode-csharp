@@ -8,7 +8,7 @@ import * as path from 'path';
 import * as chai from 'chai';
 import * as util from '../../../src/common';
 import * as archiver from 'archiver';
-import { createTmpDir, TmpAsset } from '../../../src/CreateTmpAsset';
+import { createTmpDir, TmpAsset, createTmpFile } from '../../../src/CreateTmpAsset';
 import { InstallPackage } from '../../../src/packageManager/ZipInstaller';
 import { EventStream } from '../../../src/EventStream';
 import { PlatformInformation } from '../../../src/platform';
@@ -17,11 +17,13 @@ import { BaseEvent, InstallationProgress } from '../../../src/omnisharp/loggingE
 chai.use(require("chai-as-promised"));
 let expect = chai.expect;
 
-suite('PackageInstaller', () => {
+suite('ZipInstaller', () => {
     let tmpSourceDir: TmpAsset;
     let tmpInstallDir: TmpAsset;
     let testDirPath: string;
-    let fd: number;
+    let zipFileDescriptor: number;
+    let txtFile: TmpAsset;
+    let installationPath: string;
 
     const files = [
         {
@@ -52,23 +54,25 @@ suite('PackageInstaller', () => {
         eventBus = [];
         tmpSourceDir = await createTmpDir(true);
         tmpInstallDir = await createTmpDir(true);
+        installationPath = tmpInstallDir.name;
+        txtFile = await createTmpFile();
         allFiles = [...files, ...binaries];
         testDirPath = tmpSourceDir.name + "/test.zip";
         await createTestZipAsync(testDirPath, allFiles);
-        fd = await fs.open(path.resolve(testDirPath), 'r');
+        zipFileDescriptor = await fs.open(path.resolve(testDirPath), 'r');
         util.setExtensionPath(tmpInstallDir.name);
     });
 
     test('The folder is unzipped and all the files are present at the expected paths', async () => {
-        await InstallPackage(fd, fileDescription, tmpInstallDir.name, [], eventStream);
+        await InstallPackage(zipFileDescriptor, fileDescription, installationPath, [], eventStream);
         for (let elem of allFiles) {
-            let filePath = path.join(tmpInstallDir.name, elem.path);
+            let filePath = path.join(installationPath, elem.path);
             expect(await util.fileExists(filePath)).to.be.true;
         }
     });
 
     test('The folder is unzipped and all the expected events are created', async () => {
-        await InstallPackage(fd, fileDescription, tmpInstallDir.name, [], eventStream);
+        await InstallPackage(zipFileDescriptor, fileDescription, installationPath, [], eventStream);
         let eventSequence: BaseEvent[] = [
             new InstallationProgress('installPackages', fileDescription)
         ];
@@ -77,8 +81,8 @@ suite('PackageInstaller', () => {
 
     test('The folder is unzipped and the binaries have the expected permissions(except on Windows)', async () => {
         if (!((await PlatformInformation.GetCurrent()).isWindows())) {
-            let resolvedBinaryPaths = binaries.map(binary => path.join(tmpInstallDir.name, binary.path));
-            await InstallPackage(fd, fileDescription, tmpInstallDir.name, resolvedBinaryPaths, eventStream);
+            let resolvedBinaryPaths = binaries.map(binary => path.join(installationPath, binary.path));
+            await InstallPackage(zipFileDescriptor, fileDescription, installationPath, resolvedBinaryPaths, eventStream);
             for (let binaryPath of resolvedBinaryPaths) {
                 expect(await util.fileExists(binaryPath)).to.be.true;
                 let mode = (await fs.stat(binaryPath)).mode;
@@ -87,13 +91,17 @@ suite('PackageInstaller', () => {
         }
     });
 
+    test('Error is thrown when the file is not a zip', async () => {
+        expect(InstallPackage(txtFile.fd, "Text File", installationPath, [], eventStream)).to.be.rejected;
+    });
+
     test('Error is thrown on invalid input file', async () => {
         //fd=0 means there is no file
         expect(InstallPackage(0, fileDescription, "someRandomPath", [], eventStream)).to.be.rejected;
     });
 
     teardown(async () => {
-        await fs.close(fd);
+        await fs.close(zipFileDescriptor);
         tmpSourceDir.dispose();
         tmpInstallDir.dispose();
     });

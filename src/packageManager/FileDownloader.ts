@@ -13,11 +13,11 @@ import { parse as parseUrl } from 'url';
 import { getProxyAgent } from './proxy';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 
-export async function DownloadFile(fd: number, description: string, url: string, fallbackUrl: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider){
+export async function DownloadFile(destinationFileDescriptor: number, description: string, url: string, fallbackUrl: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider){
     eventStream.post(new DownloadStart(description));
     
     try {
-        await downloadFile(fd, description, url, eventStream, networkSettingsProvider);
+        await downloadFile(destinationFileDescriptor, description, url, eventStream, networkSettingsProvider);
         eventStream.post(new DownloadSuccess(` Done!`));
     }
     catch (primaryUrlError) {
@@ -27,7 +27,7 @@ export async function DownloadFile(fd: number, description: string, url: string,
         if (fallbackUrl) {
             eventStream.post(new DownloadFallBack(fallbackUrl));
             try {
-                await downloadFile(fd, description, fallbackUrl, eventStream, networkSettingsProvider);
+                await downloadFile(destinationFileDescriptor, description, fallbackUrl, eventStream, networkSettingsProvider);
                 eventStream.post(new DownloadSuccess(' Done!'));
             }
             catch (fallbackUrlError) {

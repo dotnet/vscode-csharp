@@ -14,8 +14,8 @@ import { Package } from "../../../src/packageManager/Package";
 let expect = chai.expect;
 
 suite('PackageFilterer', () => {
-    let tmpDir: TmpAsset;
     let tmpFile: TmpAsset;
+    const extensionPath = "ExtensionPath";
     const packages = <Package[]>[
         {   
             "description": "Platfrom1-Architecture1 uninstalled package",
@@ -51,10 +51,10 @@ suite('PackageFilterer', () => {
     ];
 
     setup(async () => {
-        tmpDir = await createTmpDir(true);
         tmpFile = await createTmpFile();
         packages[1].installTestPath = tmpFile.name;
-        util.setExtensionPath(tmpDir.name);
+        util.setExtensionPath(extensionPath);
+        // we need to set the extension path because fileresolver uses it
         packages.forEach(pkg => ResolveFilePaths(pkg));
     });
 
@@ -77,7 +77,6 @@ suite('PackageFilterer', () => {
     });
 
     teardown(() => {
-        tmpDir.dispose();
         tmpFile.dispose();
     });
 });
