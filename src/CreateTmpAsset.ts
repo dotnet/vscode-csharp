@@ -23,7 +23,7 @@ export async function createTmpFile(): Promise<TmpAsset> {
     return {
         fd: tmpFile.fd,
         name: tmpFile.name,
-        dispose: () => tmpFile.removeCallback()
+        dispose: tmpFile.removeCallback
     };
 }
 
@@ -37,7 +37,7 @@ export async function createTmpDir(unsafeCleanup: boolean): Promise<TmpAsset> {
             resolve(<tmp.SynchrounousResult>{ name: path, removeCallback: cleanupCallback });
         });
     });
-    
+
     return {
         fd: tmpDir.fd,
         name: tmpDir.name,
@@ -47,13 +47,13 @@ export async function createTmpDir(unsafeCleanup: boolean): Promise<TmpAsset> {
             }
             else {
                 tmpDir.removeCallback();
-            }    
+            }
         }
     };
 }
 
 export interface TmpAsset {
-        fd: number;
-        name: string;
-        dispose: () => void;
-    }
+    fd: number;
+    name: string;
+    dispose: () => void;
+}

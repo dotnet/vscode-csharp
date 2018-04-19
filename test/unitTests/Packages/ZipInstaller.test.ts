@@ -76,7 +76,7 @@ suite('PackageInstaller', () => {
     });
 
     test('The folder is unzipped and the binaries have the expected permissions(except on Windows)', async () => {
-        if (!(await PlatformInformation.GetCurrent()).isWindows()) {
+        if (!((await PlatformInformation.GetCurrent()).isWindows())) {
             let resolvedBinaryPaths = binaries.map(binary => path.join(tmpInstallDir.name, binary.path));
             await InstallPackage(fd, fileDescription, tmpInstallDir.name, resolvedBinaryPaths, eventStream);
             for (let binaryPath of resolvedBinaryPaths) {
