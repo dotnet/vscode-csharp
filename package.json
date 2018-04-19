@@ -78,7 +78,7 @@
     "tmp": "0.0.33",
     "vscode-debugprotocol": "^1.6.1",
     "vscode-extension-telemetry": "0.0.15",
-    "yauzl": "^2.5.0"
+    "yauzl": "^2.9.1"
   },
   "devDependencies": {
     "@types/archiver": "^2.1.1",
@@ -97,6 +97,7 @@
     "@types/node": "^9.4.7",
     "@types/semver": "^5.5.0",
     "@types/tmp": "0.0.33",
+    "@types/yauzl": "^2.9.0",
     "archiver": "^2.1.1",
     "async-child-process": "^1.1.1",
     "async-file": "^2.0.2",

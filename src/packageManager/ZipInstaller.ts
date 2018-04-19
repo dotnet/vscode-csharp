@@ -5,12 +5,11 @@
 
 import * as fs from 'fs';
 import * as mkdirp from 'mkdirp';
-import * as yauzl from 'yauzl';
 import * as path from 'path';
+import * as yauzl from 'yauzl';
 import { EventStream } from "../EventStream";
 import { InstallationProgress } from "../omnisharp/loggingEvents";
 import { NestedError } from './Package';
-
 
 export async function InstallPackage(fd: number, description: string, installPath: string, binaries: string[], eventStream: EventStream): Promise<void> {
     const installationStage = 'installPackages';
