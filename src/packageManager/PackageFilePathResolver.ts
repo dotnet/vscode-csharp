@@ -33,7 +33,7 @@ function ResolvePackageBinaries(pkg: Package) {
 function ResolveBaseInstallPath(pkg: Package): string {
     let basePath = util.getExtensionPath();
     if (pkg.installPath) {
-        basePath = path.join(basePath, pkg.installPath);
+        basePath = path.resolve(basePath, pkg.installPath);
     }
 
     return basePath;
