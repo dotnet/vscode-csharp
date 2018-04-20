@@ -10,7 +10,7 @@
 * Adds support for [Source Link](https://aka.ms/SourceLinkSpec), Symbol Servers and other more advanced symbol options ([#373](https://github.com/OmniSharp/omnisharp-vscode/issues/373))
 * Adds launch.json option to suppress Just-In-Time compiler optimizations.
 * Due to the previous two items and work from the .NET Team, it is now possible to easily debug into ASP.NET itself in projects running against .NET Core 2.1 preview 1. Support for debugging into all the managed code in .NET Core will come in future .NET Core 2.1 builds. Instructions are in the [wiki](https://github.com/OmniSharp/omnisharp-vscode/wiki/Debugging-into-the-.NET-Framework-itself).
-* Added the codelens to Run and Debug all tests in a class.([#420](https://github.com/OmniSharp/omnisharp-vscode/issues/420), PR: [#1961](https://github.com/OmniSharp/omnisharp-vscode/pull/1961))
+* Added the codelens to Run and Debug all tests in a class.([#420](https://github.com/OmniSharp/omnisharp-vscode/issues/420), PR: [#1961](https://github.com/OmniSharp/omnisharp-vscode/pull/1961); PR: [omnisharp-roslyn#1089](https://github.com/OmniSharp/omnisharp-roslyn/pull/1089))
 
 #### Specify OmniSharp Version
 Enables the use of pre-release builds of Omnisharp. Downloading a pre-release build of Omnisharp allows the C# extension for VS Code to use features that have been merged into the "master" branch of omnisharp-roslyn(https://github.com/OmniSharp/omnisharp-roslyn) but that have not been officially released
