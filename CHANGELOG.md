@@ -19,6 +19,10 @@ Enables the use of pre-release builds of Omnisharp. Downloading a pre-release bu
   * "latest" - Use the latest CI build
   * `version` - Use a specific version of OmniSharp. Example: `1.29.2-beta.60`
 
+#### Editor
+
+* Updated the Omnisharp Status Bar to appear on left instead of right because it displays the project level info(which is a characteristic of the elements on the left side of the window) and removed ambiguities in its behavior.([#2146](https://github.com/OmniSharp/omnisharp-vscode/issues/2146), PR: [@2133](https://github.com/OmniSharp/omnisharp-vscode/pull/2133))
+
 ## 1.14.0 (February 14, 2018)
 
 #### C# Language Support
