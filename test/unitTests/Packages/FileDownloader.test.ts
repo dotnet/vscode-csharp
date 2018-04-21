@@ -40,7 +40,7 @@ suite("FileDownloader", () => {
     const correctUrl = `${httpsServerUrl}${correctUrlPath}`;
     const redirectUrl = `${httpsServerUrl}${redirectUrlPath}`;
     const errorUrl = `${httpsServerUrl}${errorUrlPath}`;
-    
+
     const requestOptions = getResponseHandlerOptions('GET', correctUrlPath, 200, { "content-type": "text/plain" }, "Test content");
     const requestOptionsError = getResponseHandlerOptions('GET', errorUrlPath, 404);
     const requestOptionsRedirect = getResponseHandlerOptions('GET', redirectUrlPath, 301, { "location": correctUrl });

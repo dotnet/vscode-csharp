@@ -16,6 +16,7 @@ import NetworkSettings from '../../../src/NetworkSettings';
 import { PlatformInformation } from '../../../src/platform';
 import { EventStream } from '../../../src/EventStream';
 import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationProgress } from '../../../src/omnisharp/loggingEvents';
+const getPort = require('get-port');
 
 chai.use(require("chai-as-promised"));
 let expect = chai.expect;
@@ -46,10 +47,11 @@ suite("Package Manager", () => {
         tmpSourceDir = await CreateTmpDir(true);
         tmpInstallDir = await CreateTmpDir(true);
         installationPath = tmpInstallDir.name;
-        packages = [<Package>{ url: "https://localhost:8000", description: packageDescription, installPath: installationPath }];
         allFiles = [...Files, ...Binaries];
         testDirPath = tmpSourceDir.name + "/test.zip";
         await createTestZipAsync(testDirPath, allFiles);
+        let port = await getPort();
+        packages = [<Package>{ url: `https://localhost:${port}`, description: packageDescription, installPath: installationPath }];
         server = https.createServer(options, (req, response) => {
             let stat = fs.statSync(testDirPath);
             response.writeHead(200, {
@@ -59,7 +61,7 @@ suite("Package Manager", () => {
 
             let readStream = fs.createReadStream(testDirPath);
             readStream.pipe(response);
-        }).listen(8000);
+        }).listen(port);
     });
 
     test("Downloads the package and installs at the specified path", async () => {
