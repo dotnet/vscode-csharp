@@ -10,7 +10,7 @@ import { PackageInstallation, LogPlatformInfo, InstallationSuccess, Installation
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import { DownloadAndInstallPackages } from '../packageManager/PackageManager';
-import { createTmpFile, TmpAsset } from '../CreateTmpAsset';
+import { CreateTmpFile, TmpAsset } from '../CreateTmpAsset';
 import { DownloadFile } from '../packageManager/FileDownloader';
 import { ResolveFilePaths } from '../packageManager/PackageFilePathResolver';
 
@@ -49,7 +49,7 @@ export class OmnisharpDownloader {
         let tmpFile: TmpAsset;
         try {
             this.eventStream.post(new InstallationProgress(installationStage, 'Getting latest build information...'));
-            tmpFile = await createTmpFile();
+            tmpFile = await CreateTmpFile();
             await DownloadFile(tmpFile.fd, description, url, "", this.eventStream, this.provider);
             return fs.readFileSync(tmpFile.name, 'utf8');
         }

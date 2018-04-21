@@ -7,12 +7,12 @@ import * as fs from 'async-file';
 import * as path from 'path';
 import * as chai from 'chai';
 import * as util from '../../../src/common';
-import * as archiver from 'archiver';
-import { createTmpDir, TmpAsset, createTmpFile } from '../../../src/CreateTmpAsset';
+import { CreateTmpDir, TmpAsset, CreateTmpFile } from '../../../src/CreateTmpAsset';
 import { InstallPackage } from '../../../src/packageManager/ZipInstaller';
 import { EventStream } from '../../../src/EventStream';
 import { PlatformInformation } from '../../../src/platform';
 import { BaseEvent, InstallationProgress } from '../../../src/omnisharp/loggingEvents';
+import { Files, Binaries, createTestZipAsync } from '../testAssets/CreateTestZip';
 
 chai.use(require("chai-as-promised"));
 let expect = chai.expect;
@@ -25,25 +25,6 @@ suite('ZipInstaller', () => {
     let txtFile: TmpAsset;
     let installationPath: string;
 
-    const files = [
-        {
-            content: "File 1",
-            path: "file1.txt",
-
-        },
-        {
-            content: "File 2",
-            path: "folder/file2.txt"
-        }
-    ];
-
-    const binaries = [
-        {
-            content: "Binary 1",
-            path: "binary1.txt"
-        },
-    ];
-
     const fileDescription = "somefile";
     const eventStream = new EventStream();
     let eventBus: BaseEvent[];
@@ -52,11 +33,11 @@ suite('ZipInstaller', () => {
 
     setup(async () => {
         eventBus = [];
-        tmpSourceDir = await createTmpDir(true);
-        tmpInstallDir = await createTmpDir(true);
+        tmpSourceDir = await CreateTmpDir(true);
+        tmpInstallDir = await CreateTmpDir(true);
         installationPath = tmpInstallDir.name;
-        txtFile = await createTmpFile();
-        allFiles = [...files, ...binaries];
+        txtFile = await CreateTmpFile();
+        allFiles = [...Files, ...Binaries];
         testDirPath = tmpSourceDir.name + "/test.zip";
         await createTestZipAsync(testDirPath, allFiles);
         zipFileDescriptor = await fs.open(path.resolve(testDirPath), 'r');
@@ -81,7 +62,7 @@ suite('ZipInstaller', () => {
 
     test('The folder is unzipped and the binaries have the expected permissions(except on Windows)', async () => {
         if (!((await PlatformInformation.GetCurrent()).isWindows())) {
-            let resolvedBinaryPaths = binaries.map(binary => path.join(installationPath, binary.path));
+            let resolvedBinaryPaths = Binaries.map(binary => path.join(installationPath, binary.path));
             await InstallPackage(zipFileDescriptor, fileDescription, installationPath, resolvedBinaryPaths, eventStream);
             for (let binaryPath of resolvedBinaryPaths) {
                 expect(await util.fileExists(binaryPath)).to.be.true;
@@ -105,29 +86,4 @@ suite('ZipInstaller', () => {
         tmpSourceDir.dispose();
         tmpInstallDir.dispose();
     });
-
-    async function createTestZipAsync(dirPath: string, filesToAdd: Array<{ content: string, path: string }>): Promise<{}> {
-        let output = fs.createWriteStream(dirPath);
-
-        return new Promise((resolve, reject) => {
-            output.on('close', function () {
-                resolve(); // the installer needs to wait for the filestream to be closed here
-            });
-
-            let archive = archiver('zip');
-            archive.on('warning', function (err: any) {
-                if (err.code === 'ENOENT') {
-                    console.log(err);
-                } else {
-                    // throw error
-                    reject(err);
-                }
-            });
-
-            archive.on('error', reject);
-            archive.pipe(output);
-            filesToAdd.forEach(elem => archive.append(elem.content, { name: elem.path }));
-            archive.finalize();
-        });
-    }
 });

@@ -6,7 +6,7 @@ import * as tmp from 'tmp';
 import { NestedError } from './packageManager/Package';
 import { rimraf } from 'async-file';
 
-export async function createTmpFile(): Promise<TmpAsset> {
+export async function CreateTmpFile(): Promise<TmpAsset> {
     const tmpFile = await new Promise<tmp.SynchrounousResult>((resolve, reject) => {
         tmp.file({ prefix: 'package-' }, (err, path, fd, cleanupCallback) => {
             if (err) {
@@ -27,7 +27,7 @@ export async function createTmpFile(): Promise<TmpAsset> {
     };
 }
 
-export async function createTmpDir(unsafeCleanup: boolean): Promise<TmpAsset> {
+export async function CreateTmpDir(unsafeCleanup: boolean): Promise<TmpAsset> {
     const tmpDir = await new Promise<tmp.SynchrounousResult>((resolve, reject) => {
         tmp.dir({ unsafeCleanup }, (err, path, cleanupCallback) => {
             if (err) {

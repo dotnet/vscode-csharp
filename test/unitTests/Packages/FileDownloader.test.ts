@@ -9,7 +9,7 @@ import * as util from '../../../src/common';
 import { EventStream } from '../../../src/EventStream';
 import { DownloadFile } from '../../../src/packageManager/FileDownloader';
 import NetworkSettings from '../../../src/NetworkSettings';
-import { TmpAsset, createTmpFile } from '../../../src/CreateTmpAsset';
+import { TmpAsset, CreateTmpFile } from '../../../src/CreateTmpAsset';
 import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, DownloadFallBack, DownloadFailure } from '../../../src/omnisharp/loggingEvents';
 
 let ServerMock = require("mock-http-server");
@@ -17,6 +17,7 @@ chai.use(require("chai-as-promised"));
 chai.use(require('chai-arrays'));
 let expect = chai.expect;
 
+//to do:look into http url thing
 suite("FileDownloader", () => {
     let server = new ServerMock({ host: "localhost", port: 9000 },
         {
@@ -46,7 +47,7 @@ suite("FileDownloader", () => {
 
     setup(async () => {
         await new Promise(resolve => server.start(resolve));
-        tmpFile = await createTmpFile();
+        tmpFile = await CreateTmpFile();
         util.setExtensionPath(tmpFile.name);
         eventBus = [];
         server.on(requestOptions);

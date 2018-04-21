@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import * as chai from 'chai';
 import * as util from '../../../src/common';
-import { createTmpFile, TmpAsset } from "../../../src/CreateTmpAsset";
+import { CreateTmpFile, TmpAsset } from "../../../src/CreateTmpAsset";
 import { PlatformInformation } from "../../../src/platform";
 import { filterPackages } from "../../../src/packageManager/PackageFilterer";
 import { ResolveFilePaths } from "../../../src/packageManager/PackageFilePathResolver";
@@ -50,7 +50,7 @@ suite('PackageFilterer', () => {
     ];
 
     setup(async () => {
-        tmpFile = await createTmpFile();
+        tmpFile = await CreateTmpFile();
         packages[1].installTestPath = tmpFile.name;
         util.setExtensionPath(extensionPath);
         // we need to set the extension path because fileresolver uses it

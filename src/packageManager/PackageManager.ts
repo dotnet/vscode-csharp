@@ -10,7 +10,7 @@ import { InstallPackage } from './ZipInstaller';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
 import { filterPackages } from "./PackageFilterer";
-import { createTmpFile, TmpAsset } from "../CreateTmpAsset";
+import { CreateTmpFile, TmpAsset } from "../CreateTmpAsset";
 
 //Package manager needs a list of packages to be filtered based on platformInfo then download and install them
 //Note that the packages that this component will install needs absolute paths for the installPath, intsallTestPath and the binaries
@@ -20,7 +20,7 @@ export async function DownloadAndInstallPackages(packages: Package[], provider: 
     if (filteredPackages) {
         for (let pkg of filteredPackages) {
             try {
-                tmpFile = await createTmpFile();
+                tmpFile = await CreateTmpFile();
                 await DownloadFile(tmpFile.fd, pkg.description, pkg.url, pkg.fallbackUrl, eventStream, provider);
                 await InstallPackage(tmpFile.fd, pkg.description, pkg.installPath, pkg.binaries, eventStream);
             }
