@@ -10,7 +10,7 @@
 * Adds support for [Source Link](https://aka.ms/SourceLinkSpec), Symbol Servers and other more advanced symbol options ([#373](https://github.com/OmniSharp/omnisharp-vscode/issues/373))
 * Adds launch.json option to suppress Just-In-Time compiler optimizations.
 * Due to the previous two items and work from the .NET Team, it is now possible to easily debug into ASP.NET itself in projects running against .NET Core 2.1 preview 1. Support for debugging into all the managed code in .NET Core will come in future .NET Core 2.1 builds. Instructions are in the [wiki](https://github.com/OmniSharp/omnisharp-vscode/wiki/Debugging-into-the-.NET-Framework-itself).
-* Added the codelens to Run and Debug all tests in a class.([#420](https://github.com/OmniSharp/omnisharp-vscode/issues/420), PR: [#1961](https://github.com/OmniSharp/omnisharp-vscode/pull/1961); PR: [omnisharp-roslyn#1089](https://github.com/OmniSharp/omnisharp-roslyn/pull/1089))
+* Adds a Code Lens indicator for runnning and debugging all tests in a class. ([#420](https://github.com/OmniSharp/omnisharp-vscode/issues/420), PR: [#1961](https://github.com/OmniSharp/omnisharp-vscode/pull/1961); PR: [omnisharp-roslyn#1089](https://github.com/OmniSharp/omnisharp-roslyn/pull/1089))
 
 #### Specify OmniSharp Version
 Enables the use of pre-release builds of Omnisharp. Downloading a pre-release build of Omnisharp allows the C# extension for VS Code to use features that have been merged into the "master" branch of omnisharp-roslyn(https://github.com/OmniSharp/omnisharp-roslyn) but that have not been officially released
@@ -21,7 +21,12 @@ Enables the use of pre-release builds of Omnisharp. Downloading a pre-release bu
 
 #### Editor
 
-* Updated the Omnisharp Status Bar to appear on left instead of right because it displays the project level info(which is a characteristic of the elements on the left side of the window) and removed ambiguities in its behavior.([#2146](https://github.com/OmniSharp/omnisharp-vscode/issues/2146), PR: [@2133](https://github.com/OmniSharp/omnisharp-vscode/pull/2133))
+* Splits the OmniSharp status bar in two parts both of which appear on the left and have specific responsibilities. ([#2146](https://github.com/OmniSharp/omnisharp-vscode/issues/2146), PR: [@2133](https://github.com/OmniSharp/omnisharp-vscode/pull/2133))
+  * Omnisharp Server Status Bar - Shows the various states that the OmniSharp server initialisation might be in(eg: Downloading, Installing, etc). The flame would be green when the server is initilaised and running properly and red if there is an error.
+  * Project Information Status Bar - 
+    * It will display the workspace level information irrespective of the document in the active text editor.  
+    * If a project is already selected, the status bar would display the name of the currently selected project and clicking on which would display a menu to switch other projects in the workspace. 
+    * If there are multiple possible launch targets, it would display 'Select Project', clicking on which would display a menu to select one.
 
 ## 1.14.0 (February 14, 2018)
 
