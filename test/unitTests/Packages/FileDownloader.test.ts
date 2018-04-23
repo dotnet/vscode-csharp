@@ -28,6 +28,23 @@ suite("FileDownloader", () => {
     const networkSettingsProvider = () => new NetworkSettings(undefined, false);
     const eventStream = new EventStream();
     let eventBus: BaseEvent[];
+    const getPrimaryURLEvents = () => {
+        return [
+            new DownloadStart(fileDescription),
+            new DownloadSizeObtained(12),
+            new DownloadProgress(100, fileDescription),
+            new DownloadSuccess(' Done!')];
+    };
+
+    const getFallBackURLEvents = () => {
+        return [
+            new DownloadStart(fileDescription),
+            new DownloadFailure("failed (error code '404')"),
+            new DownloadFallBack(`${httpsServerUrl}${correctUrlPath}`),
+            new DownloadSizeObtained(12),
+            new DownloadProgress(100, fileDescription),
+            new DownloadSuccess(' Done!')];
+    };
     eventStream.subscribe((event) => eventBus.push(event));
 
     let server: any;
@@ -65,28 +82,18 @@ suite("FileDownloader", () => {
                 description: "Primary url",
                 urlPath: correctUrlPath,
                 fallBackUrlPath: "",
-                eventsSequence: [
-                    new DownloadStart(fileDescription),
-                    new DownloadSizeObtained(12),
-                    new DownloadProgress(100, fileDescription),
-                    new DownloadSuccess(' Done!')]
+                getEventSequence: getPrimaryURLEvents
             },
             {
                 description: "Fallback url",
                 urlPath: errorUrlPath,
                 fallBackUrlPath: correctUrlPath,
-                eventsSequence: [
-                    new DownloadStart(fileDescription),
-                    new DownloadFailure("failed (error code '404')"),
-                    new DownloadFallBack(`${httpsServerUrl}${correctUrlPath}`),
-                    new DownloadSizeObtained(12),
-                    new DownloadProgress(100, fileDescription),
-                    new DownloadSuccess(' Done!')]
+                getEventSequence: getFallBackURLEvents
             }
         ].forEach((elem) => {
             suite(elem.description, () => {
                 test('File is downloaded', async () => {
-                    await DownloadFile(tmpFile.fd, fileDescription, `${httpsServerUrl}${elem.urlPath}`, `${httpsServerUrl}${elem.fallBackUrlPath}`, eventStream, networkSettingsProvider);
+                    await DownloadFile(tmpFile.fd, fileDescription, getURL(elem.urlPath), getURL(elem.fallBackUrlPath), eventStream, networkSettingsProvider);
                     const stats = await fs.stat(tmpFile.name);
                     expect(stats.size).to.not.equal(0);
                     let text = await fs.readFile(tmpFile.name, 'utf8');
@@ -94,8 +101,8 @@ suite("FileDownloader", () => {
                 });
 
                 test('Events are created in the correct order', async () => {
-                    await DownloadFile(tmpFile.fd, fileDescription, `${httpsServerUrl}${elem.urlPath}`, `${httpsServerUrl}${elem.fallBackUrlPath}`, eventStream, networkSettingsProvider);
-                    expect(eventBus).to.be.deep.equal(elem.eventsSequence);
+                    await DownloadFile(tmpFile.fd, fileDescription, getURL(elem.urlPath), getURL(elem.fallBackUrlPath), eventStream, networkSettingsProvider);
+                    expect(eventBus).to.be.deep.equal(elem.getEventSequence());
                 });
             });
         });
@@ -103,7 +110,7 @@ suite("FileDownloader", () => {
 
     suite('If the response status Code is 301, redirect occurs and the download succeeds', () => {
         test('File is downloaded from the redirect url', async () => {
-            await DownloadFile(tmpFile.fd, fileDescription, `${httpsServerUrl}${redirectUrlPath}`, "", eventStream, networkSettingsProvider);
+            await DownloadFile(tmpFile.fd, fileDescription, getURL(redirectUrlPath), "", eventStream, networkSettingsProvider);
             const stats = await fs.stat(tmpFile.name);
             expect(stats.size).to.not.equal(0);
             let text = await fs.readFile(tmpFile.name, "utf8");
@@ -113,7 +120,7 @@ suite("FileDownloader", () => {
 
     suite('If the response status code is not 301, 302 or 200 then the download fails', () => {
         test('Error is thrown', async () => {
-            expect(DownloadFile(tmpFile.fd, fileDescription, `${httpsServerUrl}${errorUrlPath}`, "", eventStream, networkSettingsProvider)).be.rejectedWith(Error);
+            expect(DownloadFile(tmpFile.fd, fileDescription, getURL(errorUrlPath), "", eventStream, networkSettingsProvider)).be.rejected;
         });
 
         test('Download Start and Download Failure events are created', async () => {
@@ -122,7 +129,7 @@ suite("FileDownloader", () => {
                 new DownloadFailure("failed (error code '404')")
             ];
             try {
-                await DownloadFile(tmpFile.fd, fileDescription, `${httpsServerUrl}${errorUrlPath}`, "", eventStream, networkSettingsProvider);
+                await DownloadFile(tmpFile.fd, fileDescription, getURL(errorUrlPath), "", eventStream, networkSettingsProvider);
             }
             catch (error) {
                 expect(eventBus).to.be.deep.equal(eventsSequence);
@@ -132,7 +139,7 @@ suite("FileDownloader", () => {
 
     test('Error is thrown on invalid input file', async () => {
         //fd=0 means there is no file
-        expect(DownloadFile(0, fileDescription, `${httpsServerUrl}${errorUrlPath}`, "", eventStream, networkSettingsProvider)).to.be.rejected;
+        expect(DownloadFile(0, fileDescription, getURL(errorUrlPath), "", eventStream, networkSettingsProvider)).to.be.rejected;
     });
 
     teardown(async () => {
@@ -141,6 +148,10 @@ suite("FileDownloader", () => {
             tmpFile.dispose();
         }
     });
+
+    function getURL(urlPath: string) {
+        return `${httpsServerUrl}${urlPath}`;
+    }
 });
 
 

@@ -51,7 +51,6 @@ suite("Package Manager", () => {
                 key: await fs.readFile("test/unitTests/testAssets/private.pem"),
                 cert: await fs.readFile("test/unitTests/testAssets/public.pem")
             });
-
     });
 
     setup(async () => {
@@ -71,13 +70,10 @@ suite("Package Manager", () => {
         testDirPath = tmpSourceDir.name + "/test.zip";
         await createTestZipAsync(testDirPath, allFiles);
         await new Promise(resolve => server.start(resolve)); //start the server
-        let buffer: any;
-        let stat = await fs.stat(testDirPath);
-        buffer = await fs.readFile(testDirPath);
         server.on(getRequestHandler('GET', '/package', 200, {
             "content-type": "application/zip",
-            "content-length": stat.size
-        }, buffer));
+            "content-length": (await fs.stat(testDirPath)).size
+        },  await fs.readFile(testDirPath)));
     });
 
     test("Downloads the package and installs at the specified path", async () => {

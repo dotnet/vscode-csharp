@@ -43,7 +43,6 @@ export class OmnisharpDownloader {
     }
 
     public async GetLatestVersion(serverUrl: string, latestVersionFileServerPath: string): Promise<string> {
-        let installationStage = 'getLatestVersionInfoFile';
         let description = "Latest Omnisharp Version Information";
         let url = `${serverUrl}/${latestVersionFileServerPath}`;
         let tmpFile: TmpAsset;
@@ -54,7 +53,7 @@ export class OmnisharpDownloader {
             return fs.readFileSync(tmpFile.name, 'utf8');
         }
         catch (error) {
-            this.eventStream.post(new InstallationFailure(installationStage, error));
+            this.eventStream.post(new InstallationFailure('getLatestVersionInfoFile', error));
             throw error;
         }
         finally {
