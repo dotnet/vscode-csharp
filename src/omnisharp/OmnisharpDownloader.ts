@@ -17,7 +17,7 @@ import { ResolveFilePaths } from '../packageManager/PackageFilePathResolver';
 export class OmnisharpDownloader {
 
     public constructor(
-        private provider: NetworkSettingsProvider,
+        private networkSettingsProvider: NetworkSettingsProvider,
         private eventStream: EventStream,
         private packageJSON: any,
         private platformInfo: PlatformInformation) {
@@ -33,7 +33,7 @@ export class OmnisharpDownloader {
             let packages = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
             packages.forEach(pkg => ResolveFilePaths(pkg));
             installationStage = 'downloadAndInstallPackages';
-            await DownloadAndInstallPackages(packages, this.provider, this.platformInfo, this.eventStream);
+            await DownloadAndInstallPackages(packages, this.networkSettingsProvider, this.platformInfo, this.eventStream);
             this.eventStream.post(new InstallationSuccess());
         }
         catch (error) {
@@ -49,7 +49,7 @@ export class OmnisharpDownloader {
         try {
             this.eventStream.post(new LatestBuildDownloadStart());
             tmpFile = await CreateTmpFile();
-            await DownloadFile(tmpFile.fd, description, url, "", this.eventStream, this.provider);
+            await DownloadFile(tmpFile.fd, description, url, "", this.eventStream, this.networkSettingsProvider);
             return fs.readFileSync(tmpFile.name, 'utf8');
         }
         catch (error) {
