@@ -6,7 +6,7 @@
 import * as fs from 'fs';
 import { GetPackagesFromVersion } from './OmnisharpPackageCreator';
 import { PlatformInformation } from '../platform';
-import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure, InstallationProgress } from './loggingEvents';
+import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure, LatestBuildDownloadStart } from './loggingEvents';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import { DownloadAndInstallPackages } from '../packageManager/PackageManager';
@@ -48,7 +48,7 @@ export class OmnisharpDownloader {
         let url = `${serverUrl}/${latestVersionFileServerPath}`;
         let tmpFile: TmpAsset;
         try {
-            this.eventStream.post(new InstallationProgress(installationStage, 'Getting latest build information...'));
+            this.eventStream.post(new LatestBuildDownloadStart());
             tmpFile = await CreateTmpFile();
             await DownloadFile(tmpFile.fd, description, url, "", this.eventStream, this.provider);
             return fs.readFileSync(tmpFile.name, 'utf8');

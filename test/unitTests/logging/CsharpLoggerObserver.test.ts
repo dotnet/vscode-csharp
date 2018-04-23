@@ -142,7 +142,7 @@ suite("CsharpLoggerObserver", () => {
     });
 
     test(`InstallationProgress: Progress message is logged`, () => {
-        let event = new Event.InstallationProgress("someStage", "somPackage");
+        let event = new Event.InstallationStart("somPackage");
         observer.post(event);
         expect(logOutput).to.contain(event.packageDescription);
     });

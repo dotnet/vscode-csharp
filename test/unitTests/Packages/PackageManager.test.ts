@@ -3,8 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as https from 'https';
-import * as fs from 'fs';
+import * as fs from 'async-file';
 import * as path from 'path';
 import * as chai from 'chai';
 import * as util from '../../../src/common';
@@ -15,16 +14,19 @@ import { DownloadAndInstallPackages } from '../../../src/packageManager/PackageM
 import NetworkSettings from '../../../src/NetworkSettings';
 import { PlatformInformation } from '../../../src/platform';
 import { EventStream } from '../../../src/EventStream';
-import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationProgress } from '../../../src/omnisharp/loggingEvents';
-const getPort = require('get-port');
+import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart } from '../../../src/omnisharp/loggingEvents';
+import { getRequestHandler } from '../testAssets/MockHttpServerRequestHandler';
 
 chai.use(require("chai-as-promised"));
-let expect = chai.expect;
+const expect = chai.expect;
+const ServerMock = require("mock-http-server");
+const getPort = require('get-port');
 
 suite("Package Manager", () => {
     let tmpSourceDir: TmpAsset;
     let tmpInstallDir: TmpAsset;
-    let server: https.Server;
+    let server: any;
+    let downloadUrl: string;
     let testDirPath: string;
     let allFiles: Array<{ content: string, path: string }>;
     let installationPath: string;
@@ -35,37 +37,51 @@ suite("Package Manager", () => {
     const eventStream = new EventStream();
     eventStream.subscribe(event => eventBus.push(event));
 
-    const platformInfo = new PlatformInformation("win32", "x86");
+    const windowsPlatformInfo = new PlatformInformation("win32", "x86");
+    const linuxPlatformInfo = new PlatformInformation("linux", "x86");
     const networkSettingsProvider = () => new NetworkSettings(undefined, false);
-    const options = {
-        key: fs.readFileSync("test/unitTests/testAssets/private.pem"),
-        cert: fs.readFileSync("test/unitTests/testAssets/public.pem")
-    };
+
+    suiteSetup(async () => {
+        let port = await getPort();
+        downloadUrl = `https://localhost:${port}/package`;
+        server = new ServerMock(null,
+            {
+                host: "localhost",
+                port: port,
+                key: await fs.readFile("test/unitTests/testAssets/private.pem"),
+                cert: await fs.readFile("test/unitTests/testAssets/public.pem")
+            });
+
+    });
 
     setup(async () => {
         eventBus = [];
         tmpSourceDir = await CreateTmpDir(true);
         tmpInstallDir = await CreateTmpDir(true);
         installationPath = tmpInstallDir.name;
+        packages = <Package[]>[
+            {
+                url: downloadUrl,
+                description: packageDescription,
+                installPath: installationPath,
+                platforms: [windowsPlatformInfo.platform],
+                architectures: [windowsPlatformInfo.architecture]
+            }];
         allFiles = [...Files, ...Binaries];
         testDirPath = tmpSourceDir.name + "/test.zip";
         await createTestZipAsync(testDirPath, allFiles);
-        let port = await getPort();
-        packages = [<Package>{ url: `https://localhost:${port}`, description: packageDescription, installPath: installationPath }];
-        server = https.createServer(options, (req, response) => {
-            let stat = fs.statSync(testDirPath);
-            response.writeHead(200, {
-                'Content-Type': 'application/zip',
-                'Content-Length': stat.size
-            });
-
-            let readStream = fs.createReadStream(testDirPath);
-            readStream.pipe(response);
-        }).listen(port);
+        await new Promise(resolve => server.start(resolve)); //start the server
+        let buffer: any;
+        let stat = await fs.stat(testDirPath);
+        buffer = await fs.readFile(testDirPath);
+        server.on(getRequestHandler('GET', '/package', 200, {
+            "content-type": "application/zip",
+            "content-length": stat.size
+        }, buffer));
     });
 
     test("Downloads the package and installs at the specified path", async () => {
-        await DownloadAndInstallPackages(packages, networkSettingsProvider, platformInfo, eventStream);
+        await DownloadAndInstallPackages(packages, networkSettingsProvider, windowsPlatformInfo, eventStream);
         for (let elem of allFiles) {
             let filePath = path.join(installationPath, elem.path);
             expect(await util.fileExists(filePath)).to.be.true;
@@ -78,16 +94,28 @@ suite("Package Manager", () => {
             new DownloadSizeObtained(396),
             new DownloadProgress(100, packageDescription),
             new DownloadSuccess(' Done!'),
-            new InstallationProgress('installPackages', packageDescription)
+            new InstallationStart(packageDescription)
         ];
 
-        await DownloadAndInstallPackages(packages, networkSettingsProvider, platformInfo, eventStream);
+        await DownloadAndInstallPackages(packages, networkSettingsProvider, windowsPlatformInfo, eventStream);
         expect(eventBus).to.be.deep.equal(eventsSequence);
     });
 
-    teardown(() => {
-        tmpSourceDir.dispose();
-        tmpInstallDir.dispose();
-        server.close();
+    test("Installs only the platform specific packages", async () => {
+        //since there is no linux package specified no package should be installed
+        await DownloadAndInstallPackages(packages, networkSettingsProvider, linuxPlatformInfo, eventStream);
+        let files = await fs.readdir(tmpInstallDir.name);
+        expect(files.length).to.equal(0);
+    });
+
+    teardown(async () => {
+        if (tmpSourceDir) {
+            tmpSourceDir.dispose();
+        }
+        if (tmpInstallDir) {
+            tmpInstallDir.dispose();
+        }
+
+        await new Promise((resolve, reject) => server.stop(resolve));
     });
 });

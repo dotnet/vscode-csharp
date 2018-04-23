@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-export interface MockHttpServerRequestOptions {
+export interface MockHttpServerRequestHandler {
     method: string;
     path: string;
     reply: {
@@ -14,7 +14,7 @@ export interface MockHttpServerRequestOptions {
 
 }
 
-export function getResponseHandlerOptions(method: string, path: string, reply_status: number, reply_headers?: any, reply_body?: any): MockHttpServerRequestOptions {
+export function getRequestHandler(method: string, path: string, reply_status: number, reply_headers?: any, reply_body?: any): MockHttpServerRequestHandler {
     return {
         method,
         path,

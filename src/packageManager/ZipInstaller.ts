@@ -8,13 +8,11 @@ import * as mkdirp from 'mkdirp';
 import * as path from 'path';
 import * as yauzl from 'yauzl';
 import { EventStream } from "../EventStream";
-import { InstallationProgress } from "../omnisharp/loggingEvents";
+import { InstallationStart } from "../omnisharp/loggingEvents";
 import { NestedError } from './Package';
 
-export async function InstallPackage(sourceFileDescriptor: number, description: string, destinationInstallPath: string, binaries: string[], eventStream: EventStream): Promise<void> {
-    const installationStage = 'installPackages';
-
-    eventStream.post(new InstallationProgress(installationStage, description));
+export async function InstallZip(sourceFileDescriptor: number, description: string, destinationInstallPath: string, binaries: string[], eventStream: EventStream): Promise<void> {
+    eventStream.post(new InstallationStart(description));
 
     return new Promise<void>((resolve, reject) => {
         if (sourceFileDescriptor == 0) {

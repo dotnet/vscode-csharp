@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs';
+import * as fs from 'async-file';
 import * as chai from 'chai';
 import * as util from '../../../src/common';
 import { EventStream } from '../../../src/EventStream';
@@ -11,7 +11,7 @@ import { DownloadFile } from '../../../src/packageManager/FileDownloader';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { TmpAsset, CreateTmpFile } from '../../../src/CreateTmpAsset';
 import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, DownloadFallBack, DownloadFailure } from '../../../src/omnisharp/loggingEvents';
-import { getResponseHandlerOptions, MockHttpServerRequestOptions } from '../testAssets/MockHttpServerRequestOptions';
+import { getRequestHandler } from '../testAssets/MockHttpServerRequestHandler';
 
 const getPort = require('get-port');
 const ServerMock = require("mock-http-server");
@@ -33,24 +33,18 @@ suite("FileDownloader", () => {
     let server: any;
     let httpsServerUrl: string;
     let tmpFile: TmpAsset;
-    let requestOptions: MockHttpServerRequestOptions;
-    let requestOptionsError: MockHttpServerRequestOptions;
-    let requestOptionsRedirect: MockHttpServerRequestOptions;
-    
+
     suiteSetup(async () => {
         let port = await getPort();
         server = new ServerMock(null,
             {
                 host: "localhost",
                 port: port,
-                key: fs.readFileSync("test/unitTests/testAssets/private.pem"),
-                cert: fs.readFileSync("test/unitTests/testAssets/public.pem")
+                key: await fs.readFile("test/unitTests/testAssets/private.pem"),
+                cert: await fs.readFile("test/unitTests/testAssets/public.pem")
             });
 
         httpsServerUrl = `https://127.0.0.1:${port}`;
-        requestOptions = getResponseHandlerOptions('GET', correctUrlPath, 200, { "content-type": "text/plain" }, "Test content");
-        requestOptionsError = getResponseHandlerOptions('GET', errorUrlPath, 404);
-        requestOptionsRedirect = getResponseHandlerOptions('GET', redirectUrlPath, 301, { "location": `${httpsServerUrl}${correctUrlPath}` });
     });
 
 
@@ -59,9 +53,9 @@ suite("FileDownloader", () => {
         tmpFile = await CreateTmpFile();
         util.setExtensionPath(tmpFile.name);
         eventBus = [];
-        server.on(requestOptions);
-        server.on(requestOptionsError);
-        server.on(requestOptionsRedirect);
+        server.on(getRequestHandler('GET', correctUrlPath, 200, { "content-type": "text/plain" }, "Test content"));
+        server.on(getRequestHandler('GET', errorUrlPath, 404));
+        server.on(getRequestHandler('GET', redirectUrlPath, 301, { "location": `${httpsServerUrl}${correctUrlPath}` }));
     });
 
     suite('If the response status Code is 200, the download succeeds', () => {
@@ -93,9 +87,9 @@ suite("FileDownloader", () => {
             suite(elem.description, () => {
                 test('File is downloaded', async () => {
                     await DownloadFile(tmpFile.fd, fileDescription, `${httpsServerUrl}${elem.urlPath}`, `${httpsServerUrl}${elem.fallBackUrlPath}`, eventStream, networkSettingsProvider);
-                    const stats = fs.statSync(tmpFile.name);
+                    const stats = await fs.stat(tmpFile.name);
                     expect(stats.size).to.not.equal(0);
-                    let text = fs.readFileSync(tmpFile.name, "utf8");
+                    let text = await fs.readFile(tmpFile.name, 'utf8');
                     expect(text).to.be.equal("Test content");
                 });
 
@@ -110,9 +104,9 @@ suite("FileDownloader", () => {
     suite('If the response status Code is 301, redirect occurs and the download succeeds', () => {
         test('File is downloaded from the redirect url', async () => {
             await DownloadFile(tmpFile.fd, fileDescription, `${httpsServerUrl}${redirectUrlPath}`, "", eventStream, networkSettingsProvider);
-            const stats = fs.statSync(tmpFile.name);
+            const stats = await fs.stat(tmpFile.name);
             expect(stats.size).to.not.equal(0);
-            let text = fs.readFileSync(tmpFile.name, "utf8");
+            let text = await fs.readFile(tmpFile.name, "utf8");
             expect(text).to.be.equal("Test content");
         });
     });

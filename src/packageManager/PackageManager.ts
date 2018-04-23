@@ -6,7 +6,7 @@
 import { PlatformInformation } from "../platform";
 import { Package, PackageError, NestedError } from './Package';
 import { DownloadFile } from './FileDownloader';
-import { InstallPackage } from './ZipInstaller';
+import { InstallZip } from './ZipInstaller';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
 import { filterPackages } from "./PackageFilterer";
@@ -22,7 +22,7 @@ export async function DownloadAndInstallPackages(packages: Package[], provider: 
             try {
                 tmpFile = await CreateTmpFile();
                 await DownloadFile(tmpFile.fd, pkg.description, pkg.url, pkg.fallbackUrl, eventStream, provider);
-                await InstallPackage(tmpFile.fd, pkg.description, pkg.installPath, pkg.binaries, eventStream);
+                await InstallZip(tmpFile.fd, pkg.description, pkg.installPath, pkg.binaries, eventStream);
             }
             catch (error) {
                 if (error instanceof NestedError) {

@@ -8,10 +8,10 @@ import * as path from 'path';
 import * as chai from 'chai';
 import * as util from '../../../src/common';
 import { CreateTmpDir, TmpAsset, CreateTmpFile } from '../../../src/CreateTmpAsset';
-import { InstallPackage } from '../../../src/packageManager/ZipInstaller';
+import { InstallZip } from '../../../src/packageManager/ZipInstaller';
 import { EventStream } from '../../../src/EventStream';
 import { PlatformInformation } from '../../../src/platform';
-import { BaseEvent, InstallationProgress } from '../../../src/omnisharp/loggingEvents';
+import { BaseEvent, InstallationStart } from '../../../src/omnisharp/loggingEvents';
 import { Files, Binaries, createTestZipAsync } from '../testAssets/CreateTestZip';
 
 chai.use(require("chai-as-promised"));
@@ -45,7 +45,7 @@ suite('ZipInstaller', () => {
     });
 
     test('The folder is unzipped and all the files are present at the expected paths', async () => {
-        await InstallPackage(zipFileDescriptor, fileDescription, installationPath, [], eventStream);
+        await InstallZip(zipFileDescriptor, fileDescription, installationPath, [], eventStream);
         for (let elem of allFiles) {
             let filePath = path.join(installationPath, elem.path);
             expect(await util.fileExists(filePath)).to.be.true;
@@ -53,9 +53,9 @@ suite('ZipInstaller', () => {
     });
 
     test('The folder is unzipped and all the expected events are created', async () => {
-        await InstallPackage(zipFileDescriptor, fileDescription, installationPath, [], eventStream);
+        await InstallZip(zipFileDescriptor, fileDescription, installationPath, [], eventStream);
         let eventSequence: BaseEvent[] = [
-            new InstallationProgress('installPackages', fileDescription)
+            new InstallationStart(fileDescription)
         ];
         expect(eventBus).to.be.deep.equal(eventSequence);
     });
@@ -63,7 +63,7 @@ suite('ZipInstaller', () => {
     test('The folder is unzipped and the binaries have the expected permissions(except on Windows)', async () => {
         if (!((await PlatformInformation.GetCurrent()).isWindows())) {
             let resolvedBinaryPaths = Binaries.map(binary => path.join(installationPath, binary.path));
-            await InstallPackage(zipFileDescriptor, fileDescription, installationPath, resolvedBinaryPaths, eventStream);
+            await InstallZip(zipFileDescriptor, fileDescription, installationPath, resolvedBinaryPaths, eventStream);
             for (let binaryPath of resolvedBinaryPaths) {
                 expect(await util.fileExists(binaryPath)).to.be.true;
                 let mode = (await fs.stat(binaryPath)).mode;
@@ -73,12 +73,12 @@ suite('ZipInstaller', () => {
     });
 
     test('Error is thrown when the file is not a zip', async () => {
-        expect(InstallPackage(txtFile.fd, "Text File", installationPath, [], eventStream)).to.be.rejected;
+        expect(InstallZip(txtFile.fd, "Text File", installationPath, [], eventStream)).to.be.rejected;
     });
 
     test('Error is thrown on invalid input file', async () => {
         //fd=0 means there is no file
-        expect(InstallPackage(0, fileDescription, "someRandomPath", [], eventStream)).to.be.rejected;
+        expect(InstallZip(0, fileDescription, "someRandomPath", [], eventStream)).to.be.rejected;
     });
 
     teardown(async () => {
