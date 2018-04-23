@@ -15,9 +15,9 @@
 #### Specify OmniSharp Version
 Enables the use of pre-release builds of Omnisharp. Downloading a pre-release build of Omnisharp allows the C# extension for VS Code to use features that have been merged into the "master" branch of omnisharp-roslyn(https://github.com/OmniSharp/omnisharp-roslyn) but that have not been officially released
 * Adds support to use the "omnisharp.path" option to download a specific copy of OmniSharp. The possible values for this option are:
-  * Some absolute path - Use a local copy of OmniSharp. The value must point to a directory which contains OmniSharp, typically a user's build output directory for the OmniSharp-Roslyn project. Example: C:\omnisharp-roslyn\artifacts\publish\OmniSharp.Stdio\win7-x64\OmniSharp.exe.
-  * "latest" - Use the latest CI build
-  * `version` - Use a specific version of OmniSharp. Example: `1.29.2-beta.60`
+  * `<Path to the omnisharp executable>` - Use a local copy of OmniSharp. The value must point to a directory which contains OmniSharp, typically a user's build output directory for the OmniSharp-Roslyn project. Example: C:\omnisharp-roslyn\artifacts\publish\OmniSharp.Stdio\win7-x64\OmniSharp.exe.
+  * `latest` - Use the latest CI build
+  * `<version>` - Use a specific version of OmniSharp. Example: `1.29.2-beta.60`
 
 #### Editor
 
@@ -25,7 +25,7 @@ Enables the use of pre-release builds of Omnisharp. Downloading a pre-release bu
   * Omnisharp Server Status Bar - Shows the various states that the OmniSharp server initialisation might be in(eg: Downloading, Installing, etc). The flame would be green when the server is initilaised and running properly and red if there is an error.
   * Project Information Status Bar - 
     * It will display the workspace level information irrespective of the document in the active text editor.  
-    * If a project is already selected, the status bar would display the name of the currently selected project and clicking on which would display a menu to switch other projects in the workspace. 
+    * If a project is already selected, the status bar would display the name of the selected project and clicking on it would display a menu to switch to other projects in the workspace. 
     * If there are multiple possible launch targets, it would display 'Select Project', clicking on which would display a menu to select one.
 
 ## 1.14.0 (February 14, 2018)
