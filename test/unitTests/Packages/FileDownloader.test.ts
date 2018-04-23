@@ -11,39 +11,48 @@ import { DownloadFile } from '../../../src/packageManager/FileDownloader';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { TmpAsset, CreateTmpFile } from '../../../src/CreateTmpAsset';
 import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, DownloadFallBack, DownloadFailure } from '../../../src/omnisharp/loggingEvents';
+import { getResponseHandlerOptions, MockHttpServerRequestOptions } from '../testAssets/MockHttpServerRequestOptions';
 
-let ServerMock = require("mock-http-server");
+const getPort = require('get-port');
+const ServerMock = require("mock-http-server");
 chai.use(require("chai-as-promised"));
 chai.use(require('chai-arrays'));
-let expect = chai.expect;
+const expect = chai.expect;
 
 //to do:look into http url thing
 suite("FileDownloader", () => {
-    let server = new ServerMock({ host: "localhost", port: 9000 },
-        {
-            host: "localhost",
-            port: 8080,
-            key: fs.readFileSync("test/unitTests/testAssets/private.pem"),
-            cert: fs.readFileSync("test/unitTests/testAssets/public.pem")
-        });
-
-    let tmpFile: TmpAsset;
-    const eventStream = new EventStream();
     const fileDescription = "Test file";
-    const networkSettingsProvider = () => new NetworkSettings(undefined, false);
-    let eventBus: BaseEvent[];
-    eventStream.subscribe((event) => eventBus.push(event));
-    const httpsServerUrl = "https://127.0.0.1:8080";
     const correctUrlPath = `/resource`;
     const redirectUrlPath = '/redirectResource';
     const errorUrlPath = '/errorResource';
-    const correctUrl = `${httpsServerUrl}${correctUrlPath}`;
-    const redirectUrl = `${httpsServerUrl}${redirectUrlPath}`;
-    const errorUrl = `${httpsServerUrl}${errorUrlPath}`;
+    const networkSettingsProvider = () => new NetworkSettings(undefined, false);
+    const eventStream = new EventStream();
+    let eventBus: BaseEvent[];
+    eventStream.subscribe((event) => eventBus.push(event));
 
-    const requestOptions = getResponseHandlerOptions('GET', correctUrlPath, 200, { "content-type": "text/plain" }, "Test content");
-    const requestOptionsError = getResponseHandlerOptions('GET', errorUrlPath, 404);
-    const requestOptionsRedirect = getResponseHandlerOptions('GET', redirectUrlPath, 301, { "location": correctUrl });
+    let server: any;
+    let httpsServerUrl: string;
+    let tmpFile: TmpAsset;
+    let requestOptions: MockHttpServerRequestOptions;
+    let requestOptionsError: MockHttpServerRequestOptions;
+    let requestOptionsRedirect: MockHttpServerRequestOptions;
+    
+    suiteSetup(async () => {
+        let port = await getPort();
+        server = new ServerMock(null,
+            {
+                host: "localhost",
+                port: port,
+                key: fs.readFileSync("test/unitTests/testAssets/private.pem"),
+                cert: fs.readFileSync("test/unitTests/testAssets/public.pem")
+            });
+
+        httpsServerUrl = `https://127.0.0.1:${port}`;
+        requestOptions = getResponseHandlerOptions('GET', correctUrlPath, 200, { "content-type": "text/plain" }, "Test content");
+        requestOptionsError = getResponseHandlerOptions('GET', errorUrlPath, 404);
+        requestOptionsRedirect = getResponseHandlerOptions('GET', redirectUrlPath, 301, { "location": `${httpsServerUrl}${correctUrlPath}` });
+    });
+
 
     setup(async () => {
         await new Promise(resolve => server.start(resolve));
@@ -60,8 +69,8 @@ suite("FileDownloader", () => {
         [
             {
                 description: "Primary url",
-                url: correctUrl,
-                fallBackUrl: "",
+                urlPath: correctUrlPath,
+                fallBackUrlPath: "",
                 eventsSequence: [
                     new DownloadStart(fileDescription),
                     new DownloadSizeObtained(12),
@@ -70,12 +79,12 @@ suite("FileDownloader", () => {
             },
             {
                 description: "Fallback url",
-                url: errorUrl,
-                fallBackUrl: correctUrl,
+                urlPath: errorUrlPath,
+                fallBackUrlPath: correctUrlPath,
                 eventsSequence: [
                     new DownloadStart(fileDescription),
                     new DownloadFailure("failed (error code '404')"),
-                    new DownloadFallBack(correctUrl),
+                    new DownloadFallBack(`${httpsServerUrl}${correctUrlPath}`),
                     new DownloadSizeObtained(12),
                     new DownloadProgress(100, fileDescription),
                     new DownloadSuccess(' Done!')]
@@ -83,7 +92,7 @@ suite("FileDownloader", () => {
         ].forEach((elem) => {
             suite(elem.description, () => {
                 test('File is downloaded', async () => {
-                    await DownloadFile(tmpFile.fd, fileDescription, elem.url, elem.fallBackUrl, eventStream, networkSettingsProvider);
+                    await DownloadFile(tmpFile.fd, fileDescription, `${httpsServerUrl}${elem.urlPath}`, `${httpsServerUrl}${elem.fallBackUrlPath}`, eventStream, networkSettingsProvider);
                     const stats = fs.statSync(tmpFile.name);
                     expect(stats.size).to.not.equal(0);
                     let text = fs.readFileSync(tmpFile.name, "utf8");
@@ -91,7 +100,7 @@ suite("FileDownloader", () => {
                 });
 
                 test('Events are created in the correct order', async () => {
-                    await DownloadFile(tmpFile.fd, fileDescription, elem.url, elem.fallBackUrl, eventStream, networkSettingsProvider);
+                    await DownloadFile(tmpFile.fd, fileDescription, `${httpsServerUrl}${elem.urlPath}`, `${httpsServerUrl}${elem.fallBackUrlPath}`, eventStream, networkSettingsProvider);
                     expect(eventBus).to.be.deep.equal(elem.eventsSequence);
                 });
             });
@@ -100,7 +109,7 @@ suite("FileDownloader", () => {
 
     suite('If the response status Code is 301, redirect occurs and the download succeeds', () => {
         test('File is downloaded from the redirect url', async () => {
-            await DownloadFile(tmpFile.fd, fileDescription, redirectUrl, "", eventStream, networkSettingsProvider);
+            await DownloadFile(tmpFile.fd, fileDescription, `${httpsServerUrl}${redirectUrlPath}`, "", eventStream, networkSettingsProvider);
             const stats = fs.statSync(tmpFile.name);
             expect(stats.size).to.not.equal(0);
             let text = fs.readFileSync(tmpFile.name, "utf8");
@@ -110,7 +119,7 @@ suite("FileDownloader", () => {
 
     suite('If the response status code is not 301, 302 or 200 then the download fails', () => {
         test('Error is thrown', async () => {
-            expect(DownloadFile(tmpFile.fd, fileDescription, errorUrl, "", eventStream, networkSettingsProvider)).be.rejectedWith(Error);
+            expect(DownloadFile(tmpFile.fd, fileDescription, `${httpsServerUrl}${errorUrlPath}`, "", eventStream, networkSettingsProvider)).be.rejectedWith(Error);
         });
 
         test('Download Start and Download Failure events are created', async () => {
@@ -119,7 +128,7 @@ suite("FileDownloader", () => {
                 new DownloadFailure("failed (error code '404')")
             ];
             try {
-                await DownloadFile(tmpFile.fd, fileDescription, errorUrl, "", eventStream, networkSettingsProvider);
+                await DownloadFile(tmpFile.fd, fileDescription, `${httpsServerUrl}${errorUrlPath}`, "", eventStream, networkSettingsProvider);
             }
             catch (error) {
                 expect(eventBus).to.be.deep.equal(eventsSequence);
@@ -129,7 +138,7 @@ suite("FileDownloader", () => {
 
     test('Error is thrown on invalid input file', async () => {
         //fd=0 means there is no file
-        expect(DownloadFile(0, fileDescription, errorUrl, "", eventStream, networkSettingsProvider)).to.be.rejected;
+        expect(DownloadFile(0, fileDescription, `${httpsServerUrl}${errorUrlPath}`, "", eventStream, networkSettingsProvider)).to.be.rejected;
     });
 
     teardown(async () => {
@@ -140,14 +149,4 @@ suite("FileDownloader", () => {
     });
 });
 
-function getResponseHandlerOptions(method: string, path: string, reply_status: number, reply_headers?: any, reply_body?: string) {
-    return {
-        method,
-        path,
-        reply: {
-            status: reply_status,
-            headers: reply_headers,
-            body: reply_body
-        }
-    };
-}
+

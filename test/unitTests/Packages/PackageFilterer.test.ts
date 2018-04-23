@@ -47,6 +47,17 @@ suite('PackageFilterer', () => {
             "architectures": [ "architecture1" ],
             "installTestPath": "path4"
         },
+        {
+            "description": "Platfrom1-Architecture2 uninstalled package",
+            "platforms": [ "platform1" ],
+            "architectures": [ "architecture2" ],
+            "installTestPath": "path3"
+        },
+        {
+            "description": "Platfrom3-Architecture3 with no installTestPath specified",
+            "platforms": [ "platform3" ],
+            "architectures": [ "architecture3" ],
+        },
     ];
 
     setup(async () => {
@@ -73,6 +84,15 @@ suite('PackageFilterer', () => {
         expect(filteredPackages[0].description).to.be.equal("Platfrom1-Architecture1 uninstalled package");
         expect(filteredPackages[0].platforms[0]).to.be.equal("platform1");
         expect(filteredPackages[0].architectures[0]).to.be.equal("architecture1");
+    });
+
+    test('Doesnot filter the package if install test path is not specified', async () => {
+        let platformInfo = new PlatformInformation("platform3", "architecture3");
+        let filteredPackages = await filterPackages(packages, platformInfo);
+        expect(filteredPackages.length).to.be.equal(1);
+        expect(filteredPackages[0].description).to.be.equal("Platfrom3-Architecture3 with no installTestPath specified");
+        expect(filteredPackages[0].platforms[0]).to.be.equal("platform3");
+        expect(filteredPackages[0].architectures[0]).to.be.equal("architecture3");
     });
 
     teardown(() => {
