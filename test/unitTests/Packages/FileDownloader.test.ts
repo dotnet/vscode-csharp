@@ -19,7 +19,6 @@ chai.use(require("chai-as-promised"));
 chai.use(require('chai-arrays'));
 const expect = chai.expect;
 
-//to do:look into http url thing
 suite("FileDownloader", () => {
     const fileDescription = "Test file";
     const correctUrlPath = `/resource`;

@@ -8,12 +8,12 @@ import * as util from '../common';
 import * as fs from 'fs';
 import { EventStream } from "../EventStream";
 import { DownloadSuccess, DownloadStart, DownloadFallBack, DownloadFailure, DownloadProgress, DownloadSizeObtained } from "../omnisharp/loggingEvents";
-import { NestedError } from "./Package";
+import { NestedError } from "../NestedError";
 import { parse as parseUrl } from 'url';
 import { getProxyAgent } from './proxy';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 
-export async function DownloadFile(destinationFileDescriptor: number, description: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider, url: string, fallbackUrl?: string,){
+export async function DownloadFile(destinationFileDescriptor: number, description: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider, url: string, fallbackUrl?: string){
     eventStream.post(new DownloadStart(description));
     
     try {
