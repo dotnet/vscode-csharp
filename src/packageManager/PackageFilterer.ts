@@ -43,6 +43,6 @@ async function filterAlreadyInstalledPackages(packages: Package[]): Promise<Pack
             return true;
         }
 
-        return !(await util.fileExists(ResolvePackageTestPath(pkg)));
+        return !(await util.fileExists(testPath));
       });
 }

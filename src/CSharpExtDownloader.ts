@@ -18,7 +18,7 @@ import { ResolveFilePaths } from './packageManager/PackageFilePathResolver';
 export class CSharpExtDownloader {
 
     public constructor(
-        private provider: NetworkSettingsProvider,
+        private networkSettingsProvider: NetworkSettingsProvider,
         private eventStream: EventStream,
         private packageJSON: any,
         private platformInfo: PlatformInformation) {
@@ -26,40 +26,38 @@ export class CSharpExtDownloader {
 
     public async installRuntimeDependencies(): Promise<boolean> {
         this.eventStream.post(new PackageInstallation("C# dependencies"));
-        let success = false;
-        let installationStage = '';
+        let installationStage = 'touchBeginFile';
 
         try {
-
             await util.touchInstallFile(util.InstallFileType.Begin);
             // Display platform information and RID
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
-            let runTimeDependencies = this.GetRunTimeDependenciesPackages();
+            let runTimeDependencies = GetRunTimeDependenciesPackages(this.packageJSON);
             runTimeDependencies.forEach(pkg => ResolveFilePaths(pkg));
             installationStage = 'downloadAndInstallPackages';
-            await DownloadAndInstallPackages(runTimeDependencies, this.provider, this.platformInfo, this.eventStream);
+            await DownloadAndInstallPackages(runTimeDependencies, this.networkSettingsProvider, this.platformInfo, this.eventStream);
             installationStage = 'touchLockFile';
             await util.touchInstallFile(util.InstallFileType.Lock);
-            success = true;
             this.eventStream.post(new InstallationSuccess());
+            return true;
         }
         catch (error) {
             this.eventStream.post(new InstallationFailure(installationStage, error));
+            return false;
         }
         finally {
             try {
                 util.deleteInstallFile(util.InstallFileType.Begin);
             }
             catch (error) { }
-            return success;
         }
     }
+}
 
-    private GetRunTimeDependenciesPackages(): Package[] {
-        if (this.packageJSON.runtimeDependencies) {
-            return JSON.parse(JSON.stringify(<Package[]>this.packageJSON.runtimeDependencies));
-        }
-
-        throw new Error("No runtime dependencies found");
+export function GetRunTimeDependenciesPackages(packageJSON: any): Package[] {
+    if (packageJSON.runtimeDependencies) {
+        return JSON.parse(JSON.stringify(<Package[]>packageJSON.runtimeDependencies));
     }
+
+    throw new Error("No runtime dependencies found");
 }

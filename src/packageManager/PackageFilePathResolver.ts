@@ -17,14 +17,13 @@ export function ResolvePackageTestPath(pkg: Package): string {
     if (pkg.installTestPath) {
         return path.resolve(util.getExtensionPath(), pkg.installTestPath);
     }
-    else {
-        return null;
-    }
+
+    return null;
 }
 
 function ResolvePackageBinaries(pkg: Package) {
     if (pkg.binaries) {
-        return pkg.binaries.map(value => path.resolve(ResolveBaseInstallPath(pkg), value)); 
+        return pkg.binaries.map(value => path.resolve(ResolveBaseInstallPath(pkg), value));
     }
 
     return null;
