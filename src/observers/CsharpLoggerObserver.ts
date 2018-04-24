@@ -5,7 +5,8 @@
 
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import * as Event from "../omnisharp/loggingEvents";
-import { PackageError } from "../packageManager/Package";
+import { PackageError } from "../packageManager/PackageError";
+
 export class CsharpLoggerObserver extends BaseLoggerObserver {
     private dots: number;
 

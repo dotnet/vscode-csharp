@@ -5,7 +5,7 @@
 
 import { PlatformInformation } from "../platform";
 import { BaseEvent, PackageInstallation, InstallationFailure, InstallationSuccess, OmnisharpDelayTrackerEventMeasures, OmnisharpStart, TestExecutionCountReport, TelemetryEventWithMeasures } from "../omnisharp/loggingEvents";
-import { PackageError } from "../packageManager/Package";
+import { PackageError } from "../packageManager/PackageError";
 
 export interface ITelemetryReporter {
     sendTelemetryEvent(eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }): void;

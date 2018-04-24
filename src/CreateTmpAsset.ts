@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as tmp from 'tmp';
-import { NestedError } from './packageManager/Package';
 import { rimraf } from 'async-file';
+import { NestedError } from './NestedError';
 
 export async function CreateTmpFile(): Promise<TmpAsset> {
     const tmpFile = await new Promise<tmp.SynchrounousResult>((resolve, reject) => {

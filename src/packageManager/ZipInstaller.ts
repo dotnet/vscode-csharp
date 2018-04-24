@@ -9,7 +9,7 @@ import * as path from 'path';
 import * as yauzl from 'yauzl';
 import { EventStream } from "../EventStream";
 import { InstallationStart } from "../omnisharp/loggingEvents";
-import { NestedError } from './Package';
+import { NestedError } from '../NestedError';
 
 export async function InstallZip(sourceFileDescriptor: number, description: string, destinationInstallPath: string, binaries: string[], eventStream: EventStream): Promise<void> {
     eventStream.post(new InstallationStart(description));
