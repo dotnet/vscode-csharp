@@ -21,7 +21,7 @@ export async function DownloadAndInstallPackages(packages: Package[], provider: 
         for (let pkg of filteredPackages) {
             try {
                 tmpFile = await CreateTmpFile();
-                await DownloadFile(tmpFile.fd, pkg.description, pkg.url, pkg.fallbackUrl, eventStream, provider);
+                await DownloadFile(tmpFile.fd, pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
                 await InstallZip(tmpFile.fd, pkg.description, pkg.installPath, pkg.binaries, eventStream);
             }
             catch (error) {
@@ -35,7 +35,7 @@ export async function DownloadAndInstallPackages(packages: Package[], provider: 
             finally {
                 //clean the temporary file
                 if (tmpFile) {
-                    await tmpFile.dispose();
+                    tmpFile.dispose();
                 }
             }
         }

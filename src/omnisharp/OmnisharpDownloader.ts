@@ -24,7 +24,7 @@ export class OmnisharpDownloader {
     }
 
     public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string) {
-        this.eventStream.post(new PackageInstallation(`Omnisharp Version = ${version}`));
+        this.eventStream.post(new PackageInstallation(`OmniSharp Version = ${version}`));
         let installationStage = '';
 
         try {
@@ -49,7 +49,7 @@ export class OmnisharpDownloader {
         try {
             this.eventStream.post(new LatestBuildDownloadStart());
             tmpFile = await CreateTmpFile();
-            await DownloadFile(tmpFile.fd, description, url, "", this.eventStream, this.networkSettingsProvider);
+            await DownloadFile(tmpFile.fd, description, this.eventStream, this.networkSettingsProvider, url);
             return fs.readFileSync(tmpFile.name, 'utf8');
         }
         catch (error) {

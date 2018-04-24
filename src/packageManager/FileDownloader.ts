@@ -13,7 +13,7 @@ import { parse as parseUrl } from 'url';
 import { getProxyAgent } from './proxy';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 
-export async function DownloadFile(destinationFileDescriptor: number, description: string, url: string, fallbackUrl: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider){
+export async function DownloadFile(destinationFileDescriptor: number, description: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider, url: string, fallbackUrl?: string,){
     eventStream.post(new DownloadStart(description));
     
     try {

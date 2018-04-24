@@ -14,7 +14,7 @@ export interface NetworkSettingsProvider {
     (): NetworkSettings;
 }
 
-export async function vscodeNetworkSettingsProvider(vscode: vscode): Promise<NetworkSettingsProvider> {
+export function vscodeNetworkSettingsProvider(vscode: vscode): NetworkSettingsProvider {
     return () => {
         const config = vscode.workspace.getConfiguration();
         const proxy = config.get<string>('http.proxy');
