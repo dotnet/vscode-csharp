@@ -96,6 +96,8 @@ suite('PackageFilterer', () => {
     });
 
     teardown(() => {
-        tmpFile.dispose();
+        if (tmpFile) {
+            tmpFile.dispose();
+        }    
     });
 });
