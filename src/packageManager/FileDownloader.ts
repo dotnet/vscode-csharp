@@ -64,7 +64,7 @@ async function downloadFile(fd: number, description: string, urlString: string, 
                 return resolve(downloadFile(fd, description, response.headers.location, eventStream, networkSettingsProvider));
             }
 
-            if (response.statusCode != 200) {
+            else if (response.statusCode != 200) {
                 // Download failed - print error message
                 eventStream.post(new DownloadFailure(`failed (error code '${response.statusCode}')`));
                 return reject(new NestedError(response.statusCode.toString()));
