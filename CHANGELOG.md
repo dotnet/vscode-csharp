@@ -22,11 +22,11 @@ Enables the use of pre-release builds of Omnisharp. Downloading a pre-release bu
 #### Editor
 
 * Splits the OmniSharp status bar item into two parts, both of which appear on the left and have specific responsibilities. ([#2146](https://github.com/OmniSharp/omnisharp-vscode/issues/2146), PR: [@2133](https://github.com/OmniSharp/omnisharp-vscode/pull/2133))
-  * OmniSharp server status bar item - Shows the various states that the OmniSharp server initialization might be in (eg: Downloading, Installing, etc). The flame icon is green when the server is initilaized and running properly, or red if there is an error.
+  * OmniSharp server status bar item - Shows the various stages that the OmniSharp server initialization might be in (eg: Downloading, Installing, etc). The flame icon is green when the server is initialized and running properly, or red if there is an error.
   * Project Information status bar item - 
-    * Displays the project information regardless of the currently active document.  
-    * If a project is already selected, the status bar displays the name of the selected project and clicking on it displays a menu to switch to other projects in the workspace. 
-    * If there are multiple possible launch targets, it displays 'Select Project', clicking on which displays a menu to select one.
+    * Displays the name of the selected project regardless of the currently active document.  
+    * If a project is already selected, it displays the name of the selected project. Clicking on it displays a menu to switch to other projects in the workspace. 
+    * If there are multiple possible launch targets, it displays 'Select Project'. Clicking on it displays a menu to select one.
 
 ## 1.14.0 (February 14, 2018)
 
