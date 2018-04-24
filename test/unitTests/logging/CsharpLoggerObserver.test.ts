@@ -7,8 +7,8 @@ import { should, expect } from 'chai';
 import { getNullChannel } from '../testAssets/Fakes';
 import { CsharpLoggerObserver } from '../../../src/observers/CsharpLoggerObserver';
 import { PlatformInformation } from '../../../src/platform';
-import { PackageError } from '../../../src/packages';
 import * as Event from '../../../src/omnisharp/loggingEvents';
+import { PackageError } from '../../../src/packageManager/PackageError';
 
 suite("CsharpLoggerObserver", () => {
     suiteSetup(() => should());
@@ -142,7 +142,7 @@ suite("CsharpLoggerObserver", () => {
     });
 
     test(`InstallationProgress: Progress message is logged`, () => {
-        let event = new Event.InstallationProgress("someStage", "somPackage");
+        let event = new Event.InstallationStart("somPackage");
         observer.post(event);
         expect(logOutput).to.contain(event.packageDescription);
     });

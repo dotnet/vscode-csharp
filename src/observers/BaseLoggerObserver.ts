@@ -11,7 +11,7 @@ export abstract class BaseLoggerObserver {
     public logger: Logger;
     constructor(channel: vscode.OutputChannel | Logger) {
         if (channel instanceof Logger) {
-            this.logger = channel as Logger;
+            this.logger = channel;
         }
         else {
             this.logger = new Logger((message) => channel.append(message));

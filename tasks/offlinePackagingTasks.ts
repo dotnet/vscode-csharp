@@ -19,8 +19,10 @@ import { CsharpLoggerObserver } from '../src/observers/CsharpLoggerObserver';
 import { EventStream } from '../src/EventStream';
 import { getPackageJSON } from '../tasks/packageJson';
 import { Logger } from '../src/logger';
-import { PackageManager } from '../src/packages';
 import { PlatformInformation } from '../src/platform';
+import { DownloadAndInstallPackages } from '../src/packageManager/PackageManager';
+import NetworkSettings from '../src/NetworkSettings';
+import { GetRunTimeDependenciesPackages } from '../src/CSharpExtDownloader';
 
 gulp.task('vsix:offline:package', async () => {
     del.sync(vscodeignorePath);
@@ -87,16 +89,14 @@ async function doOfflinePackage(platformInfo: PlatformInformation, packageName: 
 
 // Install Tasks
 async function install(platformInfo: PlatformInformation, packageJSON: any) {
-    const packageManager = new PackageManager(platformInfo, packageJSON);
     let eventStream = new EventStream();
     const logger = new Logger(message => process.stdout.write(message));
     let stdoutObserver = new CsharpLoggerObserver(logger);
     eventStream.subscribe(stdoutObserver.post);
     const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'));
-
-    await packageManager.DownloadPackages(eventStream, undefined, undefined);
-    await packageManager.InstallPackages(eventStream);
-    await util.touchInstallFile(util.InstallFileType.Lock);
+    let runTimeDependencies = GetRunTimeDependenciesPackages(packageJSON);
+    let provider = () => new NetworkSettings(undefined, undefined);
+    await DownloadAndInstallPackages(runTimeDependencies, provider, platformInfo, eventStream);
     await debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());
 }
 
