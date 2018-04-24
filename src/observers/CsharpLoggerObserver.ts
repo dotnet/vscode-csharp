@@ -3,9 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PackageError } from "../packages";
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import * as Event from "../omnisharp/loggingEvents";
+import { PackageError } from "../packageManager/PackageError";
+
 export class CsharpLoggerObserver extends BaseLoggerObserver {
     private dots: number;
 
@@ -27,8 +28,8 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
                 this.logger.appendLine('Finished');
                 this.logger.appendLine();
                 break;
-            case Event.InstallationProgress.name:
-                this.handleInstallationProgress(<Event.InstallationProgress>event);
+            case Event.InstallationStart.name:
+                this.handleInstallationStart(<Event.InstallationStart>event);
                 break;
             case Event.DownloadStart.name:
                 this.handleDownloadStart(<Event.DownloadStart>event);
@@ -50,6 +51,9 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
                 break;
             case Event.DownloadSizeObtained.name:
                 this.handleDownloadSizeObtained(<Event.DownloadSizeObtained>event);
+                break;
+            case Event.LatestBuildDownloadStart.name:
+                this.logger.appendLine("Getting latest OmniSharp version information");
                 break;
         }
     }
@@ -104,7 +108,7 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
         this.dots = 0;
     }
 
-    private handleInstallationProgress(event: Event.InstallationProgress) {
+    private handleInstallationStart(event: Event.InstallationStart) {
         this.logger.appendLine(`Installing package '${event.packageDescription}'`);
         this.logger.appendLine();
     }

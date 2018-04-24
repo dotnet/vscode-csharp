@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { StatusBarItem } from '../../../src/vscodeAdapter';
-import { OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpServerOnServerError, OmnisharpServerOnStart, OmnisharpServerOnStop, DownloadStart, InstallationProgress, DownloadProgress } from '../../../src/omnisharp/loggingEvents';
+import { OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpServerOnServerError, OmnisharpServerOnStart, OmnisharpServerOnStop, DownloadStart, InstallationStart, DownloadProgress } from '../../../src/omnisharp/loggingEvents';
 import { expect, should } from 'chai';
 import { OmnisharpStatusBarObserver } from '../../../src/observers/OmnisharpStatusBarObserver';
 
@@ -81,7 +81,7 @@ suite('OmnisharpStatusBarObserver', () => {
     });
 
     test('InstallationProgress: Text and tooltip are set', () => {
-        let event = new InstallationProgress("someStage", "somePackage");
+        let event = new InstallationStart("somePackage");
         observer.post(event);
         expect(statusBarItem.text).to.contain("Installing packages");
         expect(statusBarItem.tooltip).to.contain(event.packageDescription);
