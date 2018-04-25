@@ -9,8 +9,9 @@ import * as util from '../common';
 import { OmnisharpDownloader } from './OmnisharpDownloader';
 import { PlatformInformation } from '../platform';
 
-export interface OmniSharpLaunchInfo {
+export interface LaunchInfo {
     LaunchPath: string;
+    MonoLaunchPath?: string;
 }
 
 export class OmnisharpManager {
@@ -19,33 +20,34 @@ export class OmnisharpManager {
         private platformInfo: PlatformInformation) {
     }
 
-    public async GetOmnisharpPath(omnisharpPath: string, useMono: boolean, serverUrl: string, latestVersionFileServerPath: string, installPath: string, extensionPath: string): Promise<OmniSharpLaunchInfo> {
+    public async GetOmniSharpLaunchInfo(omnisharpPath: string, serverUrl: string, latestVersionFileServerPath: string, installPath: string, extensionPath: string): Promise<LaunchInfo> {
         // Looks at the options path, installs the dependencies and returns the path to be loaded by the omnisharp server
         if (path.isAbsolute(omnisharpPath)) {
-            if (await util.fileExists(omnisharpPath)) {
-                return { LaunchPath: omnisharpPath };
-            }
-            else {
+            if (!await util.fileExists(omnisharpPath)) {
                 throw new Error('The system could not find the specified path');
             }
+
+            return {
+                LaunchPath: omnisharpPath
+            };
         }
-        else if (omnisharpPath == "latest") {
-            return await this.InstallLatestAndReturnLaunchPath(useMono, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
+        else if (omnisharpPath === 'latest') {
+            return await this.InstallLatestAndReturnLaunchPath(serverUrl, latestVersionFileServerPath, installPath, extensionPath);
         }
 
-        //If the path is neither a valid path on disk not the string "latest", treat it as a version 
-        return await this.InstallVersionAndReturnLaunchPath(omnisharpPath, useMono, serverUrl, installPath, extensionPath);
+        // If the path is neither a valid path on disk not the string "latest", treat it as a version 
+        return await this.InstallVersionAndReturnLaunchPath(omnisharpPath, serverUrl, installPath, extensionPath);
     }
 
-    private async InstallLatestAndReturnLaunchPath(useMono: boolean, serverUrl: string, latestVersionFileServerPath: string, installPath: string, extensionPath: string): Promise<OmniSharpLaunchInfo> {
+    private async InstallLatestAndReturnLaunchPath(serverUrl: string, latestVersionFileServerPath: string, installPath: string, extensionPath: string): Promise<LaunchInfo> {
         let version = await this.downloader.GetLatestVersion(serverUrl, latestVersionFileServerPath);
-        return await this.InstallVersionAndReturnLaunchPath(version, useMono, serverUrl, installPath, extensionPath);
+        return await this.InstallVersionAndReturnLaunchPath(version, serverUrl, installPath, extensionPath);
     }
 
-    private async InstallVersionAndReturnLaunchPath(version: string, useMono: boolean, serverUrl: string, installPath: string, extensionPath: string) {
+    private async InstallVersionAndReturnLaunchPath(version: string, serverUrl: string, installPath: string, extensionPath: string): Promise<LaunchInfo> {
         if (semver.valid(version)) {
             await this.downloader.DownloadAndInstallOmnisharp(version, serverUrl, installPath);
-            return GetLaunchPathForVersion(this.platformInfo, version, installPath, extensionPath, useMono);
+            return GetLaunchPathForVersion(this.platformInfo, version, installPath, extensionPath);
         }
         else {
             throw new Error(`Invalid OmniSharp version - ${version}`);
@@ -53,7 +55,7 @@ export class OmnisharpManager {
     }
 }
 
-function GetLaunchPathForVersion(platformInfo: PlatformInformation, version: string, installPath: string, extensionPath: string, useMono: boolean): OmniSharpLaunchInfo {
+function GetLaunchPathForVersion(platformInfo: PlatformInformation, version: string, installPath: string, extensionPath: string): LaunchInfo {
     if (!version) {
         throw new Error('Invalid Version');
     }
@@ -61,12 +63,13 @@ function GetLaunchPathForVersion(platformInfo: PlatformInformation, version: str
     let basePath = path.resolve(extensionPath, installPath, version);
 
     if (platformInfo.isWindows()) {
-        return { LaunchPath: path.join(basePath, 'OmniSharp.exe') };
-    }
-    if (useMono) {
-        return { LaunchPath: path.join(basePath, 'omnisharp', 'OmniSharp.exe') };
+        return {
+            LaunchPath: path.join(basePath, 'OmniSharp.exe')
+        };
     }
 
-    return { LaunchPath: path.join(basePath, 'run') };
+    return {
+        LaunchPath: path.join(basePath, 'run'),
+        MonoLaunchPath: path.join(basePath, 'omnisharp', 'OmniSharp.exe')
+    };
 }
-

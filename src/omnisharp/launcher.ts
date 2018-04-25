@@ -10,7 +10,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as util from '../common';
 import { Options } from './options';
-import { OmniSharpLaunchInfo } from './OmnisharpManager';
+import { LaunchInfo } from './OmnisharpManager';
 
 export enum LaunchTargetKind {
     Solution,
@@ -205,7 +205,7 @@ export interface LaunchResult {
     usingMono: boolean;
 }
 
-export async function launchOmniSharp(cwd: string, args: string[], launchInfo: OmniSharpLaunchInfo): Promise<LaunchResult> {
+export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
         launch(cwd, args, launchInfo)
             .then(result => {
@@ -223,7 +223,7 @@ export async function launchOmniSharp(cwd: string, args: string[], launchInfo: O
     });
 }
 
-async function launch(cwd: string, args: string[], launchInfo: OmniSharpLaunchInfo): Promise<LaunchResult> {
+async function launch(cwd: string, args: string[], launchInfo: LaunchInfo): Promise<LaunchResult> {
     return PlatformInformation.GetCurrent().then(platformInfo => {
         const options = Options.Read();
 
