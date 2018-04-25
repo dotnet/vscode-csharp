@@ -14,7 +14,7 @@ export abstract class BaseChannelObserver {
     abstract post: (event: BaseEvent) => void;
 
     public showChannel(preserveFocusOrColumn?: boolean) {
-        this.channel.show(preserveFocusOrColumn as boolean);
+        this.channel.show(preserveFocusOrColumn);
     }
 
     public clearChannel() {

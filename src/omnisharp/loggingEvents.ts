@@ -38,8 +38,8 @@ export class LogPlatformInfo implements BaseEvent {
     constructor(public info: PlatformInformation) { }
 }
 
-export class InstallationProgress implements BaseEvent {
-    constructor(public stage: string, public packageDescription: string) { }
+export class InstallationStart implements BaseEvent {
+    constructor(public packageDescription: string) { }
 }
 
 export class InstallationFailure implements BaseEvent {
@@ -142,3 +142,4 @@ export class OmnisharpOnBeforeServerInstall implements BaseEvent { }
 export class ActiveTextEditorChanged implements BaseEvent { }
 export class OmnisharpServerOnStop implements BaseEvent { }
 export class OmnisharpServerOnStart implements BaseEvent { }
+export class LatestBuildDownloadStart implements BaseEvent { }

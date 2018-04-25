@@ -29,6 +29,7 @@ import { addJSONProviders } from './features/json/jsonContributions';
 import { ProjectStatusBarObserver } from './observers/ProjectStatusBarObserver';
 import CSharpExtensionExports from './CSharpExtensionExports';
 import { Options } from './omnisharp/options';
+import { vscodeNetworkSettingsProvider, NetworkSettingsProvider } from './NetworkSettings';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -91,10 +92,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter);
     eventStream.subscribe(telemetryObserver.post);
 
-    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo);
-
+    let networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
+    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo, networkSettingsProvider);
+    
     // activate language services
-    let omniSharpPromise = OmniSharp.activate(context, eventStream, extension.packageJSON, platformInfo);
+    let omniSharpPromise = OmniSharp.activate(context, eventStream, extension.packageJSON, platformInfo, networkSettingsProvider);
 
     // register JSON completion & hover providers for project.json
     context.subscriptions.push(addJSONProviders());
@@ -117,11 +119,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     };
 }
 
-async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation): Promise<boolean> {
+async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, networkSettingsProvider : NetworkSettingsProvider): Promise<boolean> {
     return util.installFileExists(util.InstallFileType.Lock)
         .then(exists => {
             if (!exists) {
-                const downloader = new CSharpExtDownloader(vscode, eventStream, extension.packageJSON, platformInfo);
+                const downloader = new CSharpExtDownloader(networkSettingsProvider, eventStream, extension.packageJSON, platformInfo);
                 return downloader.installRuntimeDependencies();
             } else {
                 return true;

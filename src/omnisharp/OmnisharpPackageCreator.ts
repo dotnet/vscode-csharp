@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Package } from "../packages";
+import { Package } from "../packageManager/Package";
 
 export function GetPackagesFromVersion(version: string, runTimeDependencies: Package[], serverUrl: string, installPath: string): Package[] {
     if (!version) {
@@ -54,9 +54,3 @@ function GetPackage(inputPackage: Package, serverUrl: string, version: string, i
     return versionPackage;
 }
 
-export function GetVersionFilePackage(serverUrl: string, pathInServer: string): Package {
-    return <Package>{
-        "description": "Latest version information file",
-        "url": `${serverUrl}/${pathInServer}`
-    };
-}
