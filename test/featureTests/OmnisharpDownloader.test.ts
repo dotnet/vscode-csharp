@@ -27,7 +27,6 @@ suite("DownloadAndInstallExperimentalVersion : Gets the version packages, downlo
 
     setup(() => {
         tmpDir = tmp.dirSync();
-        util.setExtensionPath(tmpDir.name);
         downloader = GetTestOmnisharpDownloader(eventStream, platformInfo, tmpDir.name);
     });
 

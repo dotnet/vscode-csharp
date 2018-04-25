@@ -89,7 +89,6 @@ suite("Package Manager", () => {
     test("Downloads the package and installs at the specified path", async () => {
         await DownloadAndInstallPackages(packages, networkSettingsProvider, platformInfo1, eventStream);
         for (let elem of allFiles) {
-            //to do: look into how to make it better
             let filePath = path.join(package1.installPath, elem.path);
             expect(await util.fileExists(filePath)).to.be.true;
         }
