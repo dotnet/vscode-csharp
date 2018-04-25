@@ -9,7 +9,7 @@ import * as chai from 'chai';
 import * as util from '../../../src/common';
 import { CreateTmpDir, TmpAsset } from '../../../src/CreateTmpAsset';
 import { Binaries, Files, createTestZipAsync } from '../testAssets/CreateTestZip';
-import { Package } from '../../../src/packageManager/Package';
+import { PackageJSONPackage } from '../../../src/packageManager/Package';
 import { DownloadAndInstallPackages } from '../../../src/packageManager/PackageManager';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { PlatformInformation } from '../../../src/platform';
@@ -29,11 +29,10 @@ suite("Package Manager", () => {
     let downloadUrl: string;
     let testDirPath: string;
     let allFiles: Array<{ content: string, path: string }>;
-    let extensionPath: string;
     let eventBus: Array<BaseEvent>;
-    let package1: Package;
-    let package2: Package;
-    let packages: Package[];
+    let package1: PackageJSONPackage;
+    let package2: PackageJSONPackage;
+    let packages: PackageJSONPackage[];
     
     const eventStream = new EventStream();
     eventStream.subscribe(event => eventBus.push(event));
@@ -45,24 +44,6 @@ suite("Package Manager", () => {
     suiteSetup(async () => {
         let port = await getPort();
         downloadUrl = `https://localhost:${port}/package`;
-        package1 = <Package>
-            {
-                url: downloadUrl,
-                description: "Package 1",
-                installPath: "Path1",
-                platforms: [platformInfo1.platform],
-                architectures: [platformInfo1.architecture]
-            };
-
-        package2 = <Package>
-            {
-                url: downloadUrl,
-                description: "Package 2",
-                installPath: "Path2",
-                platforms: [platformInfo2.platform],
-                architectures: [platformInfo2.architecture]
-            };
-        packages = [package1, package2];
         server = new ServerMock(null,
             {
                 host: "localhost",
@@ -76,7 +57,25 @@ suite("Package Manager", () => {
         eventBus = [];
         tmpSourceDir = await CreateTmpDir(true);
         tmpInstallDir = await CreateTmpDir(true);
-        extensionPath = tmpInstallDir.name;
+        package1 = <PackageJSONPackage>
+            {
+                url: downloadUrl,
+                description: "Package 1",
+                installPath: path.resolve(tmpInstallDir.name,"Path1"),
+                platforms: [platformInfo1.platform],
+                architectures: [platformInfo1.architecture]
+            };
+
+        package2 = <PackageJSONPackage>
+            {
+                url: downloadUrl,
+                description: "Package 2",
+                installPath: path.resolve(tmpInstallDir.name,"Path2"),
+                platforms: [platformInfo2.platform],
+                architectures: [platformInfo2.architecture]
+            };
+        
+        packages = [package1, package2];
         allFiles = [...Files, ...Binaries];
         testDirPath = tmpSourceDir.name + "/test.zip";
         await createTestZipAsync(testDirPath, allFiles);
@@ -88,10 +87,10 @@ suite("Package Manager", () => {
     });
 
     test("Downloads the package and installs at the specified path", async () => {
-        await DownloadAndInstallPackages(packages, networkSettingsProvider, platformInfo1, eventStream, extensionPath);
+        await DownloadAndInstallPackages(packages, networkSettingsProvider, platformInfo1, eventStream);
         for (let elem of allFiles) {
             //to do: look into how to make it better
-            let filePath = path.join(extensionPath, package1.installPath, elem.path);
+            let filePath = path.join(package1.installPath, elem.path);
             expect(await util.fileExists(filePath)).to.be.true;
         }
     });
@@ -105,16 +104,14 @@ suite("Package Manager", () => {
             new InstallationStart(package1.description)
         ];
 
-        await DownloadAndInstallPackages(packages, networkSettingsProvider, platformInfo1, eventStream, extensionPath);
+        await DownloadAndInstallPackages(packages, networkSettingsProvider, platformInfo1, eventStream);
         expect(eventBus).to.be.deep.equal(eventsSequence);
     });
 
     test("Installs only the platform specific packages", async () => {
-        await DownloadAndInstallPackages(packages, networkSettingsProvider, platformInfo2, eventStream, extensionPath);
-        let path1 = path.join(extensionPath, package1.installPath);
-        let path2 = path.join(extensionPath, package2.installPath);
-        expect(await fs.exists(path2)).to.be.true;
-        expect(await fs.exists(path1)).to.be.false;
+        await DownloadAndInstallPackages(packages, networkSettingsProvider, platformInfo2, eventStream);
+        expect(await fs.exists(package2.installPath)).to.be.true;
+        expect(await fs.exists(package1.installPath)).to.be.false;
     });
 
     teardown(async () => {

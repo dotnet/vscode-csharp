@@ -12,6 +12,8 @@ import { NetworkSettingsProvider } from '../NetworkSettings';
 import { DownloadAndInstallPackages } from '../packageManager/PackageManager';
 import { CreateTmpFile, TmpAsset } from '../CreateTmpAsset';
 import { DownloadFile } from '../packageManager/FileDownloader';
+import { PackageJSONPackage } from '../packageManager/Package';
+import { Package } from '../packageManager/RunTimePackages';
 
 export class OmnisharpDownloader {
 
@@ -30,15 +32,21 @@ export class OmnisharpDownloader {
         try {
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
             installationStage = 'getPackageInfo';
-            let packages = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
+            let packages = this.GetResolvedPackagesFromVersion(version, this.packageJSON, serverUrl, installPath, this.extensionPath);
             installationStage = 'downloadAndInstallPackages';
-            await DownloadAndInstallPackages(packages, this.networkSettingsProvider, this.platformInfo, this.eventStream, this.extensionPath);
+            await DownloadAndInstallPackages(packages, this.networkSettingsProvider, this.platformInfo, this.eventStream);
             this.eventStream.post(new InstallationSuccess());
         }
         catch (error) {
             this.eventStream.post(new InstallationFailure(installationStage, error));
             throw error;// throw the error up to the server
         }
+    }
+
+    private GetResolvedPackagesFromVersion(version: string, packageJSON: any, serverUrl: string, installPath: string, extensionPath: string) {
+        let runTimeDependencies = <PackageJSONPackage[]>packageJSON.runtimeDependencies;
+        let packageJSONpackages = GetPackagesFromVersion(version, runTimeDependencies, serverUrl, installPath);
+        return packageJSONpackages.map(pkg => new Package(pkg, extensionPath));
     }
 
     public async GetLatestVersion(serverUrl: string, latestVersionFileServerPath: string): Promise<string> {

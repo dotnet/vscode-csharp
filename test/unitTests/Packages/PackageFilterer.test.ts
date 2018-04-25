@@ -8,8 +8,8 @@ import * as fs from 'async-file';
 import { TmpAsset, CreateTmpDir } from "../../../src/CreateTmpAsset";
 import { PlatformInformation } from "../../../src/platform";
 import { filterPackages } from "../../../src/packageManager/PackageFilterer";
-import { Package } from "../../../src/packageManager/Package";
-import { RunTimePackage } from '../../../src/packageManager/RunTimePackages';
+import { PackageJSONPackage } from "../../../src/packageManager/Package";
+import { Package } from '../../../src/packageManager/RunTimePackages';
 
 let expect = chai.expect;
 const platform_1 = "Platform-1";
@@ -21,8 +21,8 @@ const architecture_3 = "Architecture-3";
 
 suite('PackageFilterer', () => {
     let tmpDir: TmpAsset;
-    let runTimePackages: RunTimePackage[];
-    const packages = <Package[]>[
+    let packages: Package[];
+    const packageJSONpackages = <PackageJSONPackage[]>[
         {
             "description": "Package 1",
             "platforms": [platform_1],
@@ -63,14 +63,14 @@ suite('PackageFilterer', () => {
 
     setup(async () => {
         tmpDir = await CreateTmpDir(true);
-        runTimePackages = packages.map(pkg => new RunTimePackage(pkg, tmpDir.name));
+        packages = packageJSONpackages.map(pkg => new Package(pkg, tmpDir.name));
     });
 
     test('Filters the packages based on Platform Information', async () => {
         let platformInfo = new PlatformInformation(platform_2, architecture_2);
         /* Here we should have only package for platform2 and architecture2 and not others that have only platform2 and some other architecture 
         / or architecture2 and some other platform */
-        let filteredPackages = await filterPackages(runTimePackages, platformInfo);
+        let filteredPackages = await filterPackages(packages, platformInfo);
         expect(filteredPackages.length).to.be.equal(1);
         expect(filteredPackages[0].description).to.be.equal("Package 3");
         expect(filteredPackages[0].platforms[0]).to.be.equal(platform_2);
@@ -79,9 +79,9 @@ suite('PackageFilterer', () => {
 
     test('Returns only uninstalled packages', async () => {
         let platformInfo = new PlatformInformation(platform_1, architecture_1);
-        await fs.writeFile(runTimePackages[1].installTestPath, "Test file");// put an empty file at the test path
+        await fs.writeFile(packages[1].installTestPath, "Test file");// put a file at the test path
         //Package 2 should be filtered as the test file is present
-        let filteredPackages = await filterPackages(runTimePackages, platformInfo);
+        let filteredPackages = await filterPackages(packages, platformInfo);
         expect(filteredPackages.length).to.be.equal(1);
         expect(filteredPackages[0].description).to.be.equal("Package 1");
         expect(filteredPackages[0].platforms[0]).to.be.equal(platform_1);
@@ -90,7 +90,7 @@ suite('PackageFilterer', () => {
 
     test('Doesnot filter the package if install test path is not specified', async () => {
         let platformInfo = new PlatformInformation(platform_3, architecture_3);
-        let filteredPackages = await filterPackages(runTimePackages, platformInfo);
+        let filteredPackages = await filterPackages(packages, platformInfo);
         expect(filteredPackages.length).to.be.equal(1);
         expect(filteredPackages[0].description).to.be.equal("Package 6");
         expect(filteredPackages[0].platforms[0]).to.be.equal(platform_3);

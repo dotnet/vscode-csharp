@@ -12,13 +12,10 @@ import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
 import { filterPackages } from "./PackageFilterer";
 import { CreateTmpFile, TmpAsset } from "../CreateTmpAsset";
-import { RunTimePackage } from "./RunTimePackages";
-import { Package } from "./Package";
+import { Package } from "./RunTimePackages";
 
-export async function DownloadAndInstallPackages(packages: Package[], provider: NetworkSettingsProvider, platformInfo: PlatformInformation, eventStream: EventStream, extensionPath: string) {
-    //convert relative paths to absolute
-    let runtimePackages = packages.map(pkg => new RunTimePackage(pkg, extensionPath));
-    let filteredPackages = await filterPackages(runtimePackages, platformInfo);
+export async function DownloadAndInstallPackages(packages: Package[], provider: NetworkSettingsProvider, platformInfo: PlatformInformation, eventStream: EventStream) {
+    let filteredPackages = await filterPackages(packages, platformInfo);
     if (filteredPackages) {
         let tmpFile: TmpAsset;
         for (let pkg of filteredPackages) {

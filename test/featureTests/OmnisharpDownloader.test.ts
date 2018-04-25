@@ -10,6 +10,7 @@ import { rimraf } from 'async-file';
 import { PlatformInformation } from '../../src/platform';
 import { EventStream } from '../../src/EventStream';
 import { GetTestOmnisharpDownloader } from './testAssets/testAssets';
+import { OmnisharpDownloader } from '../../src/omnisharp/OmnisharpDownloader';
 
 const chai = require("chai");
 chai.use(require("chai-as-promised"));
@@ -17,16 +18,17 @@ let expect = chai.expect;
 
 suite("DownloadAndInstallExperimentalVersion : Gets the version packages, downloads and installs them", () => {
     let tmpDir: tmp.SynchrounousResult = null;
+    let downloader: OmnisharpDownloader;
     const version = "1.2.3";
     const platformInfo = new PlatformInformation("win32", "x86");
     const eventStream = new EventStream();
-    const downloader = GetTestOmnisharpDownloader(eventStream, platformInfo);
     const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
-    const installPath = ".omnisharp/experimental/";
+    const installPath = "somePath";
 
     setup(() => {
         tmpDir = tmp.dirSync();
         util.setExtensionPath(tmpDir.name);
+        downloader = GetTestOmnisharpDownloader(eventStream, platformInfo, tmpDir.name);
     });
 
     test('Throws error if request is made for a version that doesnot exist on the server', () => {

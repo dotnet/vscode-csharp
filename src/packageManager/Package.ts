@@ -3,8 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-export interface Package {
+export interface PackageJSONPackage {
     description: string;
+    version?: string;
     url: string;
     fallbackUrl?: string;
     installPath?: string;

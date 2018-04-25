@@ -5,12 +5,12 @@
 
 import * as fs from 'fs';
 import * as os from 'os';
-import { Package } from '../packageManager/Package';
+import { PackageJSONPackage } from '../packageManager/Package';
 
 
 interface PackageJSONFile
 {
-    runtimeDependencies : Package[];
+    runtimeDependencies : PackageJSONPackage[];
 }
 
 export function updatePackageDependencies() {
@@ -36,7 +36,7 @@ export function updatePackageDependencies() {
     let packageJSON: PackageJSONFile = JSON.parse(fs.readFileSync('package.json').toString());
     
     // map from lowercase filename to Package
-    const mapFileNameToDependency: { [key: string]: Package } = {};
+    const mapFileNameToDependency: { [key: string]: PackageJSONPackage } = {};
 
     // First build the map
     packageJSON.runtimeDependencies.forEach(dependency => {
@@ -48,7 +48,7 @@ export function updatePackageDependencies() {
         mapFileNameToDependency[fileName] = dependency;
     });
     
-    let findDependencyToUpdate = (url : string): Package => {
+    let findDependencyToUpdate = (url : string): PackageJSONPackage => {
         let fileName = getLowercaseFileNameFromUrl(url);
         let dependency = mapFileNameToDependency[fileName];
         if (dependency === undefined) {

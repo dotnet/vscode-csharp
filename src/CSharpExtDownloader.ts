@@ -8,8 +8,9 @@ import { PlatformInformation } from './platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
 import { DownloadAndInstallPackages } from './packageManager/PackageManager';
-import { Package } from './packageManager/Package';
+import { PackageJSONPackage } from './packageManager/Package';
 import { NetworkSettingsProvider } from './NetworkSettings';
+import { Package } from './packageManager/RunTimePackages';
 
 /*
  * Class used to download the runtime dependencies of the C# Extension
@@ -32,9 +33,9 @@ export class CSharpExtDownloader {
             await util.touchInstallFile(util.InstallFileType.Begin);
             // Display platform information and RID
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
-            let runTimeDependencies = GetRunTimeDependenciesPackages(this.packageJSON);
+            let runTimeDependencies = GetRunTimeDependenciesPackages(this.packageJSON, this.extensionPath);
             installationStage = 'downloadAndInstallPackages';
-            await DownloadAndInstallPackages(runTimeDependencies, this.networkSettingsProvider, this.platformInfo, this.eventStream, this.extensionPath);
+            await DownloadAndInstallPackages(runTimeDependencies, this.networkSettingsProvider, this.platformInfo, this.eventStream);
             installationStage = 'touchLockFile';
             await util.touchInstallFile(util.InstallFileType.Lock);
             this.eventStream.post(new InstallationSuccess());
@@ -53,9 +54,10 @@ export class CSharpExtDownloader {
     }
 }
 
-export function GetRunTimeDependenciesPackages(packageJSON: any): Package[] {
+export function GetRunTimeDependenciesPackages(packageJSON: any, extensionPath: string): PackageJSONPackage[] {
     if (packageJSON.runtimeDependencies) {
-        return <Package[]>packageJSON.runtimeDependencies;
+        let dependencies = <PackageJSONPackage[]>packageJSON.runtimeDependencies;
+        return dependencies.map(pkg => new Package(pkg, extensionPath));
     }
 
     throw new Error("No runtime dependencies found");

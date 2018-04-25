@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import { Package } from "./Package";
+import { PackageJSONPackage } from "./Package";
 
-export class RunTimePackage implements Package {
+export class Package{
     description: string;
     url: string;
     fallbackUrl?: string;
@@ -14,10 +14,9 @@ export class RunTimePackage implements Package {
     platforms: string[];
     architectures: string[];
     binaries: string[];
-    platformId?: string;
     installTestPath?: string;
 
-    constructor(pkg: Package, extensionPath: string) {
+    constructor(pkg: PackageJSONPackage, extensionPath: string) {
         this.description = pkg.description;
         this.url = pkg.url;
         this.fallbackUrl = pkg.fallbackUrl;
@@ -25,12 +24,11 @@ export class RunTimePackage implements Package {
         this.platforms = pkg.platforms;
         this.architectures = pkg.architectures;
         this.binaries = ResolvePackageBinaries(pkg, extensionPath);
-        this.platformId = pkg.platformId;
         this.installTestPath = ResolvePackageTestPath(pkg, extensionPath);
     }
 }
 
-export function ResolvePackageTestPath(pkg: Package, extensionPath: string): string {
+export function ResolvePackageTestPath(pkg: PackageJSONPackage, extensionPath: string): string {
     if (pkg.installTestPath) {
         return path.resolve(extensionPath, pkg.installTestPath);
     }
@@ -38,7 +36,7 @@ export function ResolvePackageTestPath(pkg: Package, extensionPath: string): str
     return null;
 }
 
-function ResolvePackageBinaries(pkg: Package, extensionPath: string) {
+function ResolvePackageBinaries(pkg: PackageJSONPackage, extensionPath: string) {
     if (pkg.binaries) {
         return pkg.binaries.map(value => path.resolve(ResolveBaseInstallPath(pkg, extensionPath), value));
     }
@@ -46,7 +44,7 @@ function ResolvePackageBinaries(pkg: Package, extensionPath: string) {
     return null;
 }
 
-function ResolveBaseInstallPath(pkg: Package, extensionPath: string): string {
+function ResolveBaseInstallPath(pkg: PackageJSONPackage, extensionPath: string): string {
     if (pkg.installPath) {
         return path.resolve(extensionPath, pkg.installPath);
     }

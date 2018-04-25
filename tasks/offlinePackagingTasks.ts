@@ -94,7 +94,7 @@ async function install(platformInfo: PlatformInformation, packageJSON: any) {
     let stdoutObserver = new CsharpLoggerObserver(logger);
     eventStream.subscribe(stdoutObserver.post);
     const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'));
-    let runTimeDependencies = GetRunTimeDependenciesPackages(packageJSON);
+    let runTimeDependencies = GetRunTimeDependenciesPackages(packageJSON, util.getExtensionPath());
     let provider = () => new NetworkSettings(undefined, undefined);
     await DownloadAndInstallPackages(runTimeDependencies, provider, platformInfo, eventStream);
     await debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());
