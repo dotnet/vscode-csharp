@@ -5,7 +5,6 @@
 
 export interface PackageJSONPackage {
     description: string;
-    version?: string;
     url: string;
     fallbackUrl?: string;
     installPath?: string;
