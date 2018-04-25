@@ -7,7 +7,7 @@
   "author": "Microsoft Corporation",
   "license": "SEE LICENSE IN RuntimeLicenses/license.txt",
   "icon": "images/csharpIcon.png",
-  "preview": true,
+  "preview": false,
   "bugs": {
     "url": "https://github.com/OmniSharp/omnisharp-vscode/issues"
   },
