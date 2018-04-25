@@ -15,7 +15,7 @@ import { ReadLine, createInterface } from 'readline';
 import { Request, RequestQueueCollection } from './requestQueue';
 import { DelayTracker } from './delayTracker';
 import { EventEmitter } from 'events';
-import { OmnisharpManager } from './OmnisharpManager';
+import { OmnisharpManager, OmniSharpLaunchInfo } from './OmnisharpManager';
 import { Options } from './options';
 import { PlatformInformation } from '../platform';
 import { launchOmniSharp } from './launcher';
@@ -312,11 +312,11 @@ export class OmniSharpServer {
             args.push('--debug');
         }
 
-        let launchPath: string;
+        let launchInfo: OmniSharpLaunchInfo;
         if (this._options.path) {
             try {
                 let extensionPath = utils.getExtensionPath();
-                launchPath = await this._omnisharpManager.GetOmnisharpPath(this._options.path, this._options.useMono, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
+                launchInfo = await this._omnisharpManager.GetOmnisharpPath(this._options.path, this._options.useMono, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
             }
             catch (error) {
                 this.eventStream.post(new ObservableEvents.OmnisharpFailure(`Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));
@@ -327,7 +327,7 @@ export class OmniSharpServer {
         this.eventStream.post(new ObservableEvents.OmnisharpInitialisation(new Date(), solutionPath));
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
-        return launchOmniSharp(cwd, args, launchPath).then(async value => {
+        return launchOmniSharp(cwd, args, launchInfo).then(async value => {
             this.eventStream.post(new ObservableEvents.OmnisharpLaunch(value.usingMono, value.command, value.process.pid));
 
             this._serverProcess = value.process;

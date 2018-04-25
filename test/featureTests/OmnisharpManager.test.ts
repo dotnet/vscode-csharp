@@ -56,18 +56,18 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
 
     test('Returns the same path if absolute path to an existing file is passed', async () => {
         tmpFile = tmp.fileSync();
-        let omnisharpPath = await manager.GetOmnisharpPath(tmpFile.name, useMono, serverUrl, versionFilepathInServer, installPath, extensionPath);
-        omnisharpPath.should.equal(tmpFile.name);
+        let launchInfo = await manager.GetOmnisharpPath(tmpFile.name, useMono, serverUrl, versionFilepathInServer, installPath, extensionPath);
+        launchInfo.LaunchPath.should.equal(tmpFile.name);
     });
 
     test('Installs the latest version and returns the launch path based on the version and platform', async () => {
-        let omnisharpPath = await manager.GetOmnisharpPath("latest", useMono, serverUrl, versionFilepathInServer, installPath, extensionPath);
-        omnisharpPath.should.equal(path.resolve(extensionPath, `.omnisharp/experimental/1.2.3/OmniSharp.exe`));
+        let launchInfo = await manager.GetOmnisharpPath("latest", useMono, serverUrl, versionFilepathInServer, installPath, extensionPath);
+        launchInfo.LaunchPath.should.equal(path.resolve(extensionPath, `.omnisharp/experimental/1.2.3/OmniSharp.exe`));
     });
 
     test('Installs the test version and returns the launch path based on the version and platform', async () => {
-        let omnisharpPath = await manager.GetOmnisharpPath("1.2.3", useMono, serverUrl, versionFilepathInServer, installPath, extensionPath);
-        omnisharpPath.should.equal(path.resolve(extensionPath, `.omnisharp/experimental/1.2.3/OmniSharp.exe`));
+        let launchInfo = await manager.GetOmnisharpPath("1.2.3", useMono, serverUrl, versionFilepathInServer, installPath, extensionPath);
+        launchInfo.LaunchPath.should.equal(path.resolve(extensionPath, `.omnisharp/experimental/1.2.3/OmniSharp.exe`));
     });
 
     test('Downloads package from given url and installs them at the specified path', async () => {
@@ -78,20 +78,20 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
 
     test('Downloads package and returns launch path based on platform - Not using mono on Linux ', async () => {
         let manager = GetTestOmnisharpManager(eventStream, new PlatformInformation("linux", "x64"));
-        let launchPath = await manager.GetOmnisharpPath("1.2.3", useMono, serverUrl, versionFilepathInServer, installPath, extensionPath);
-        launchPath.should.equal(path.resolve(extensionPath, '.omnisharp/experimental/1.2.3/run'));
+        let launchInfo = await manager.GetOmnisharpPath("1.2.3", useMono, serverUrl, versionFilepathInServer, installPath, extensionPath);
+        launchInfo.LaunchPath.should.equal(path.resolve(extensionPath, '.omnisharp/experimental/1.2.3/run'));
     });
 
     test('Downloads package and returns launch path based on platform - Using mono on Linux ', async () => {
         let manager = GetTestOmnisharpManager(eventStream, new PlatformInformation("linux", "x64"));
-        let launchPath = await manager.GetOmnisharpPath("1.2.3", true, serverUrl, versionFilepathInServer, installPath, extensionPath);
-        launchPath.should.equal(path.resolve(extensionPath, '.omnisharp/experimental/1.2.3/omnisharp/OmniSharp.exe'));
+        let launchInfo = await manager.GetOmnisharpPath("1.2.3", true, serverUrl, versionFilepathInServer, installPath, extensionPath);
+        launchInfo.LaunchPath.should.equal(path.resolve(extensionPath, '.omnisharp/experimental/1.2.3/omnisharp/OmniSharp.exe'));
     });
 
     test('Downloads package and returns launch path based on install path ', async () => {
         let manager = GetTestOmnisharpManager(eventStream, platformInfo);
-        let launchPath = await manager.GetOmnisharpPath("1.2.3", true, serverUrl, versionFilepathInServer, "installHere", extensionPath);
-        launchPath.should.equal(path.resolve(extensionPath, 'installHere/1.2.3/OmniSharp.exe'));
+        let launchInfo = await manager.GetOmnisharpPath("1.2.3", true, serverUrl, versionFilepathInServer, "installHere", extensionPath);
+        launchInfo.LaunchPath.should.equal(path.resolve(extensionPath, 'installHere/1.2.3/OmniSharp.exe'));
     });
 
     teardown(async () => {

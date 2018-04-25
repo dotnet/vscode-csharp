@@ -10,6 +10,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as util from '../common';
 import { Options } from './options';
+import { OmniSharpLaunchInfo } from './OmnisharpManager';
 
 export enum LaunchTargetKind {
     Solution,
@@ -204,9 +205,9 @@ export interface LaunchResult {
     usingMono: boolean;
 }
 
-export async function launchOmniSharp(cwd: string, args: string[], launchPath: string): Promise<LaunchResult> {
+export async function launchOmniSharp(cwd: string, args: string[], launchInfo: OmniSharpLaunchInfo): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        launch(cwd, args, launchPath)
+        launch(cwd, args, launchInfo)
             .then(result => {
                 // async error - when target not not ENEOT
                 result.process.on('error', err => {
@@ -222,7 +223,7 @@ export async function launchOmniSharp(cwd: string, args: string[], launchPath: s
     });
 }
 
-async function launch(cwd: string, args: string[], launchPath: string): Promise<LaunchResult> {
+async function launch(cwd: string, args: string[], launchInfo: OmniSharpLaunchInfo): Promise<LaunchResult> {
     return PlatformInformation.GetCurrent().then(platformInfo => {
         const options = Options.Read();
 
@@ -236,17 +237,17 @@ async function launch(cwd: string, args: string[], launchPath: string): Promise<
         }
 
         // If the user has provided an absolute path or the specified version has been installed successfully, we'll use the path.
-        if (launchPath) {
+        if (launchInfo.LaunchPath) {
             if (platformInfo.isWindows()) {
-                return launchWindows(launchPath, cwd, args);
+                return launchWindows(launchInfo.LaunchPath, cwd, args);
             }
 
             // If we're launching on macOS/Linux, we have two possibilities:
             //   1. Launch using Mono
             //   2. Launch process directly (e.g. a 'run' script)
             return options.useMono
-                ? launchNixMono(launchPath, cwd, args)
-                : launchNix(launchPath, cwd, args);
+                ? launchNixMono(launchInfo.LaunchPath, cwd, args)
+                : launchNix(launchInfo.LaunchPath, cwd, args);
         }
 
         // If the user has not provided a path, we'll use the locally-installed OmniSharp
