@@ -313,24 +313,22 @@ export class OmniSharpServer {
         }
 
         let launchInfo: LaunchInfo;
-        if (this._options.path) {
-            try {
-                let extensionPath = utils.getExtensionPath();
-                launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this._options.path, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
-            }
-            catch (error) {
-                this.eventStream.post(new ObservableEvents.OmnisharpFailure(`Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));
-                return;
-            }
+        try {
+            let extensionPath = utils.getExtensionPath();
+            launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this._options.path, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
+        }
+        catch (error) {
+            this.eventStream.post(new ObservableEvents.OmnisharpFailure(`Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));
+            return;
         }
 
         this.eventStream.post(new ObservableEvents.OmnisharpInitialisation(new Date(), solutionPath));
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
-        return launchOmniSharp(cwd, args, launchInfo).then(async value => {
-            this.eventStream.post(new ObservableEvents.OmnisharpLaunch(value.usingMono, value.command, value.process.pid));
+        return launchOmniSharp(cwd, args, launchInfo).then(async launchResult => {
+            this.eventStream.post(new ObservableEvents.OmnisharpLaunch(launchResult.monoVersion, launchResult.command, launchResult.process.pid));
 
-            this._serverProcess = value.process;
+            this._serverProcess = launchResult.process;
             this._delayTrackers = {};
             this._setState(ServerState.Started);
             this._fireEvent(Events.ServerStart, solutionPath);
