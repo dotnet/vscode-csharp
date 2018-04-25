@@ -93,15 +93,14 @@ export class OmniSharpServer {
     private firstUpdateProject: boolean;
     private vscode: vscode;
 
-    constructor(vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation) {
+    constructor(vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation, extensionPath: string) {
         this.eventStream = eventStream;
         this.vscode = vscode;
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
-        let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, packageJSON, platformInfo);
+        let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, platformInfo, packageJSON, extensionPath);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
         this.updateProjectDebouncer.debounceTime(1500).subscribe((event) => { this.updateProjectInfo(); });
         this.firstUpdateProject = true;
-
     }
 
     public isRunning(): boolean {

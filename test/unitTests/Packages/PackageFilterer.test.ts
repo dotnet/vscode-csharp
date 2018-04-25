@@ -2,102 +2,104 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+
 import * as chai from 'chai';
-import * as util from '../../../src/common';
-import { CreateTmpFile, TmpAsset } from "../../../src/CreateTmpAsset";
+import * as fs from 'async-file';
+import { TmpAsset, CreateTmpDir } from "../../../src/CreateTmpAsset";
 import { PlatformInformation } from "../../../src/platform";
 import { filterPackages } from "../../../src/packageManager/PackageFilterer";
-import { ResolveFilePaths } from "../../../src/packageManager/PackageFilePathResolver";
 import { Package } from "../../../src/packageManager/Package";
+import { RunTimePackage } from '../../../src/packageManager/RunTimePackages';
 
 let expect = chai.expect;
+const platform_1 = "Platform-1";
+const platform_2 = "Platform-2";
+const platform_3 = "Platform-3";
+const architecture_1 = "Architecture-1";
+const architecture_2 = "Architecture-2";
+const architecture_3 = "Architecture-3";
 
 suite('PackageFilterer', () => {
-    let tmpFile: TmpAsset;
-    const extensionPath = "ExtensionPath";
+    let tmpDir: TmpAsset;
+    let runTimePackages: RunTimePackage[];
     const packages = <Package[]>[
-        {   
-            "description": "Platfrom1-Architecture1 uninstalled package",
-            "platforms": [ "platform1" ],
-            "architectures": [ "architecture1" ],
+        {
+            "description": "Package 1",
+            "platforms": [platform_1],
+            "architectures": [architecture_1],
             "installTestPath": "path1"
         },
-        {   
-            //already installed package
-            "description": "Platfrom1-Architecture1 installed package",
-            "platforms": [ "platform1" ],
-            "architectures": [ "architecture1" ],
-            "installTestPath": "path5"
-        },
         {
-            "description": "Platfrom2-Architecture2 uninstalled package",
-            "platforms": [ "platform2" ],
-            "architectures": [ "architecture2" ],
+            //already installed package
+            "description": "Package 2",
+            "platforms": [platform_1],
+            "architectures": [architecture_1],
             "installTestPath": "path2"
         },
         {
-            "description": "Platfrom1-Architecture2 uninstalled package",
-            "platforms": [ "platform1" ],
-            "architectures": [ "architecture2" ],
+            "description": "Package 3",
+            "platforms": [platform_2],
+            "architectures": [architecture_2],
             "installTestPath": "path3"
         },
         {
-            "description": "Platfrom2-Architecture1 uninstalled package",
-            "platforms": [ "platform2" ],
-            "architectures": [ "architecture1" ],
+            "description": "Package 4",
+            "platforms": [platform_1],
+            "architectures": [architecture_2],
             "installTestPath": "path4"
         },
         {
-            "description": "Platfrom1-Architecture2 uninstalled package",
-            "platforms": [ "platform1" ],
-            "architectures": [ "architecture2" ],
-            "installTestPath": "path3"
+            "description": "Package 5",
+            "platforms": [platform_2],
+            "architectures": [architecture_1],
+            "installTestPath": "path4"
         },
         {
-            "description": "Platfrom3-Architecture3 with no installTestPath specified",
-            "platforms": [ "platform3" ],
-            "architectures": [ "architecture3" ],
+            "description": "Package 6",
+            "platforms": [platform_3],
+            "architectures": [architecture_3],
         },
     ];
 
     setup(async () => {
-        tmpFile = await CreateTmpFile();
-        packages[1].installTestPath = tmpFile.name;
-        util.setExtensionPath(extensionPath);
-        // we need to set the extension path because fileresolver uses it
-        packages.forEach(pkg => ResolveFilePaths(pkg));
+        tmpDir = await CreateTmpDir(true);
+        runTimePackages = packages.map(pkg => new RunTimePackage(pkg, tmpDir.name));
     });
 
     test('Filters the packages based on Platform Information', async () => {
-        let platformInfo = new PlatformInformation("platform2", "architecture2");
-        let filteredPackages = await filterPackages(packages, platformInfo);
+        let platformInfo = new PlatformInformation(platform_2, architecture_2);
+        /* Here we should have only package for platform2 and architecture2 and not others that have only platform2 and some other architecture 
+        / or architecture2 and some other platform */
+        let filteredPackages = await filterPackages(runTimePackages, platformInfo);
         expect(filteredPackages.length).to.be.equal(1);
-        expect(filteredPackages[0].description).to.be.equal("Platfrom2-Architecture2 uninstalled package");
-        expect(filteredPackages[0].platforms[0]).to.be.equal("platform2");
-        expect(filteredPackages[0].architectures[0]).to.be.equal("architecture2");
+        expect(filteredPackages[0].description).to.be.equal("Package 3");
+        expect(filteredPackages[0].platforms[0]).to.be.equal(platform_2);
+        expect(filteredPackages[0].architectures[0]).to.be.equal(architecture_2);
     });
 
     test('Returns only uninstalled packages', async () => {
-        let platformInfo = new PlatformInformation("platform1", "architecture1");
-        let filteredPackages = await filterPackages(packages, platformInfo);
+        let platformInfo = new PlatformInformation(platform_1, architecture_1);
+        await fs.writeFile(runTimePackages[1].installTestPath, "Test file");// put an empty file at the test path
+        //Package 2 should be filtered as the test file is present
+        let filteredPackages = await filterPackages(runTimePackages, platformInfo);
         expect(filteredPackages.length).to.be.equal(1);
-        expect(filteredPackages[0].description).to.be.equal("Platfrom1-Architecture1 uninstalled package");
-        expect(filteredPackages[0].platforms[0]).to.be.equal("platform1");
-        expect(filteredPackages[0].architectures[0]).to.be.equal("architecture1");
+        expect(filteredPackages[0].description).to.be.equal("Package 1");
+        expect(filteredPackages[0].platforms[0]).to.be.equal(platform_1);
+        expect(filteredPackages[0].architectures[0]).to.be.equal(architecture_1);
     });
 
     test('Doesnot filter the package if install test path is not specified', async () => {
-        let platformInfo = new PlatformInformation("platform3", "architecture3");
-        let filteredPackages = await filterPackages(packages, platformInfo);
+        let platformInfo = new PlatformInformation(platform_3, architecture_3);
+        let filteredPackages = await filterPackages(runTimePackages, platformInfo);
         expect(filteredPackages.length).to.be.equal(1);
-        expect(filteredPackages[0].description).to.be.equal("Platfrom3-Architecture3 with no installTestPath specified");
-        expect(filteredPackages[0].platforms[0]).to.be.equal("platform3");
-        expect(filteredPackages[0].architectures[0]).to.be.equal("architecture3");
+        expect(filteredPackages[0].description).to.be.equal("Package 6");
+        expect(filteredPackages[0].platforms[0]).to.be.equal(platform_3);
+        expect(filteredPackages[0].architectures[0]).to.be.equal(architecture_3);
     });
 
     teardown(() => {
-        if (tmpFile) {
-            tmpFile.dispose();
-        }    
+        if (tmpDir) {
+            tmpDir.dispose();
+        }
     });
 });

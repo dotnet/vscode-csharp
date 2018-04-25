@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { PlatformInformation } from "../platform";
-import { Package } from './Package';
 import { PackageError } from './PackageError';
 import { NestedError } from "../NestedError";
 import { DownloadFile } from './FileDownloader';
@@ -13,11 +12,13 @@ import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
 import { filterPackages } from "./PackageFilterer";
 import { CreateTmpFile, TmpAsset } from "../CreateTmpAsset";
+import { RunTimePackage } from "./RunTimePackages";
+import { Package } from "./Package";
 
-// Package manager needs a list of packages to be filtered based on platformInfo then download and install them
-// Note that the packages that this component will install needs absolute paths for the installPath, intsallTestPath and the binaries
-export async function DownloadAndInstallPackages(packages: Package[], provider: NetworkSettingsProvider, platformInfo: PlatformInformation, eventStream: EventStream) {
-    let filteredPackages = await filterPackages(packages, platformInfo);
+export async function DownloadAndInstallPackages(packages: Package[], provider: NetworkSettingsProvider, platformInfo: PlatformInformation, eventStream: EventStream, extensionPath: string) {
+    //convert relative paths to absolute
+    let runtimePackages = packages.map(pkg => new RunTimePackage(pkg, extensionPath));
+    let filteredPackages = await filterPackages(runtimePackages, platformInfo);
     if (filteredPackages) {
         let tmpFile: TmpAsset;
         for (let pkg of filteredPackages) {

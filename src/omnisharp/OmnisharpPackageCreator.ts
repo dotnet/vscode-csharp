@@ -13,7 +13,11 @@ export function GetPackagesFromVersion(version: string, runTimeDependencies: Pac
     let versionPackages = new Array<Package>();
     for (let inputPackage of runTimeDependencies) {
         if (inputPackage.platformId) {
+            //transform the omnisharp packages and push the others directly
             versionPackages.push(SetBinaryAndGetPackage(inputPackage, serverUrl, version, installPath));
+        }
+        else {
+            versionPackages.push(inputPackage);
         }
     }
 
@@ -43,12 +47,12 @@ function GetPackage(inputPackage: Package, serverUrl: string, version: string, i
         throw new Error('Invalid version');
     }
 
-    let versionPackage = {...inputPackage,
+    let versionPackage = <Package>{...inputPackage,
         "description": `${inputPackage.description}, Version = ${version}`,
         "url": `${serverUrl}/releases/${version}/omnisharp-${inputPackage.platformId}.zip`,
         "installPath": `${installPath}/${version}`,
         "installTestPath": `./${installPath}/${version}/${installBinary}`,
-        "fallbackUrl": "" //setting to empty so that we dont use the fallback url of the default packages
+        "fallbackUrl": undefined //setting to empty so that we dont use the fallback url of the default packages
     };
 
     return versionPackage;

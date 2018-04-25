@@ -35,14 +35,14 @@ import { NetworkSettingsProvider } from '../NetworkSettings';
 
 export let omnisharp: OmniSharpServer;
 
-export async function activate(context: vscode.ExtensionContext, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider) {
+export async function activate(context: vscode.ExtensionContext, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, extensionPath: string) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
         scheme: 'file' // only files from disk
     };
 
     const options = Options.Read();
-    const server = new OmniSharpServer(vscode, provider, eventStream, packageJSON, platformInfo);
+    const server = new OmniSharpServer(vscode, provider, eventStream, packageJSON, platformInfo, extensionPath);
     omnisharp = server;
     const advisor = new Advisor(server); // create before server is started
     const disposables: vscode.Disposable[] = [];
