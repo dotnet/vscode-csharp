@@ -48,7 +48,7 @@ export class OmnisharpManager {
             return GetLaunchPathForVersion(this.platformInfo, version, installPath, extensionPath, useMono);
         }
         else {
-            throw new Error(`Invalid omnisharp version - ${version}`);
+            throw new Error(`Invalid OmniSharp version - ${version}`);
         }
     }
 }
