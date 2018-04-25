@@ -7,7 +7,7 @@ import { TelemetryObserver } from '../../../src/observers/TelemetryObserver';
 import { PlatformInformation } from '../../../src/platform';
 import { PackageInstallation, InstallationFailure, InstallationSuccess, TestExecutionCountReport, TelemetryEventWithMeasures, OmnisharpDelayTrackerEventMeasures, OmnisharpStart } from '../../../src/omnisharp/loggingEvents';
 import { getNullTelemetryReporter } from '../testAssets/Fakes';
-import { PackageJSONPackage } from '../../../src/packageManager/Package';
+import { PackageJSONPackage } from '../../../src/packageManager/PackageJSONPackage';
 import { PackageError } from '../../../src/packageManager/PackageError';
 
 const chai = require('chai');

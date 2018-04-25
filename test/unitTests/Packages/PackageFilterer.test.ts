@@ -8,8 +8,8 @@ import * as fs from 'async-file';
 import { TmpAsset, CreateTmpDir } from "../../../src/CreateTmpAsset";
 import { PlatformInformation } from "../../../src/platform";
 import { filterPackages } from "../../../src/packageManager/PackageFilterer";
-import { PackageJSONPackage } from "../../../src/packageManager/Package";
-import { Package } from '../../../src/packageManager/RunTimePackages';
+import { PackageJSONPackage } from "../../../src/packageManager/PackageJSONPackage";
+import { Package } from '../../../src/packageManager/Package';
 
 let expect = chai.expect;
 const platform_1 = "Platform-1";

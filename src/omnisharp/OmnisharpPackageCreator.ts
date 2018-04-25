@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PackageJSONPackage } from "../packageManager/Package";
+import { PackageJSONPackage } from "../packageManager/PackageJSONPackage";
 
 export function GetPackagesFromVersion(version: string, runTimeDependencies: PackageJSONPackage[], serverUrl: string, installPath: string): PackageJSONPackage[] {
     if (!version) {

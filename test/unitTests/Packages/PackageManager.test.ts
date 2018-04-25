@@ -9,7 +9,7 @@ import * as chai from 'chai';
 import * as util from '../../../src/common';
 import { CreateTmpDir, TmpAsset } from '../../../src/CreateTmpAsset';
 import { Binaries, Files, createTestZipAsync } from '../testAssets/CreateTestZip';
-import { PackageJSONPackage } from '../../../src/packageManager/Package';
+import { PackageJSONPackage } from '../../../src/packageManager/PackageJSONPackage';
 import { DownloadAndInstallPackages } from '../../../src/packageManager/PackageManager';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { PlatformInformation } from '../../../src/platform';

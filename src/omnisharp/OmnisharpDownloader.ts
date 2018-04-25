@@ -12,8 +12,8 @@ import { NetworkSettingsProvider } from '../NetworkSettings';
 import { DownloadAndInstallPackages } from '../packageManager/PackageManager';
 import { CreateTmpFile, TmpAsset } from '../CreateTmpAsset';
 import { DownloadFile } from '../packageManager/FileDownloader';
-import { PackageJSONPackage } from '../packageManager/Package';
-import { Package } from '../packageManager/RunTimePackages';
+import { PackageJSONPackage } from '../packageManager/PackageJSONPackage';
+import { Package } from '../packageManager/Package';
 
 export class OmnisharpDownloader {
 

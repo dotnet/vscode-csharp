@@ -12,7 +12,7 @@ import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
 import { filterPackages } from "./PackageFilterer";
 import { CreateTmpFile, TmpAsset } from "../CreateTmpAsset";
-import { Package } from "./RunTimePackages";
+import { Package } from "./Package";
 
 export async function DownloadAndInstallPackages(packages: Package[], provider: NetworkSettingsProvider, platformInfo: PlatformInformation, eventStream: EventStream) {
     let filteredPackages = await filterPackages(packages, platformInfo);

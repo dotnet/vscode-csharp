@@ -8,9 +8,9 @@ import { PlatformInformation } from './platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
 import { DownloadAndInstallPackages } from './packageManager/PackageManager';
-import { PackageJSONPackage } from './packageManager/Package';
+import { PackageJSONPackage } from './packageManager/PackageJSONPackage';
 import { NetworkSettingsProvider } from './NetworkSettings';
-import { Package } from './packageManager/RunTimePackages';
+import { Package } from './packageManager/Package';
 
 /*
  * Class used to download the runtime dependencies of the C# Extension

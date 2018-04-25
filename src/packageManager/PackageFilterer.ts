@@ -6,7 +6,7 @@
 import { PlatformInformation } from "../platform";
 import * as util from '../common';
 import { PackageError } from "./PackageError";
-import { Package } from "./RunTimePackages";
+import { Package } from "./Package";
 
 const { filterAsync } = require('node-filter-async');
 
