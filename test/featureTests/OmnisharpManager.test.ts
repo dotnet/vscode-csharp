@@ -54,7 +54,7 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
 
     test('Returns default paths if no path is specified', async () => {
         let launchInfo = await manager.GetOmniSharpLaunchInfo(undefined, serverUrl, versionFilepathInServer, installPath, extensionPath);
-        launchInfo.LaunchPath.should.equal(path.resolve(extensionPath, '.omnisharp/omnisharp/OmniSharp.exe'));
+        launchInfo.LaunchPath.should.equal(path.resolve(extensionPath, '.omnisharp/OmniSharp.exe'));
         expect(launchInfo.MonoLaunchPath).to.be.undefined;
     });
 
