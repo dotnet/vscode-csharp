@@ -92,6 +92,7 @@ export class OmniSharpServer {
     private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
     private firstUpdateProject: boolean;
     private vscode: vscode;
+    private extensionPath: string;
 
     constructor(vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation, extensionPath: string) {
         this.eventStream = eventStream;
@@ -101,6 +102,7 @@ export class OmniSharpServer {
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
         this.updateProjectDebouncer.debounceTime(1500).subscribe((event) => { this.updateProjectInfo(); });
         this.firstUpdateProject = true;
+        this.extensionPath = extensionPath;
     }
 
     public isRunning(): boolean {
@@ -314,8 +316,7 @@ export class OmniSharpServer {
         let launchPath: string;
         if (this._options.path) {
             try {
-                let extensionPath = utils.getExtensionPath();
-                launchPath = await this._omnisharpManager.GetOmnisharpPath(this._options.path, this._options.useMono, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
+                launchPath = await this._omnisharpManager.GetOmnisharpPath(this._options.path, this._options.useMono, serverUrl, latestVersionFileServerPath, installPath, this.extensionPath);
             }
             catch (error) {
                 this.eventStream.post(new ObservableEvents.OmnisharpFailure(`Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));
