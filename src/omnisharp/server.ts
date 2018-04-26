@@ -325,7 +325,8 @@ export class OmniSharpServer {
         this.eventStream.post(new ObservableEvents.OmnisharpInitialisation(new Date(), solutionPath));
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
-        return launchOmniSharp(cwd, args, launchInfo).then(async launchResult => {
+        try {
+            let launchResult = await launchOmniSharp(cwd, args, launchInfo);
             this.eventStream.post(new ObservableEvents.OmnisharpLaunch(launchResult.monoVersion, launchResult.command, launchResult.process.pid));
 
             this._serverProcess = launchResult.process;
@@ -333,16 +334,15 @@ export class OmniSharpServer {
             this._setState(ServerState.Started);
             this._fireEvent(Events.ServerStart, solutionPath);
 
-            return this._doConnect();
-        }).then(() => {
-            // Start telemetry reporting
+            await this._doConnect();
+
             this._telemetryIntervalId = setInterval(() => this._reportTelemetry(), TelemetryReportingDelay);
-        }).then(() => {
             this._requestQueue.drain();
-        }).catch(async err => {
+        }
+        catch (err) {
             this._fireEvent(Events.ServerError, err);
             return this.stop();
-        });
+        }
     }
 
     private debounceUpdateProjectWithLeadingTrue = () => {
