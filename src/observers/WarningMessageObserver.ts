@@ -51,7 +51,7 @@ export class WarningMessageObserver {
 
     private handleOmnisharpServerMsBuildProjectDiagnostics(event: OmnisharpServerMsBuildProjectDiagnostics) {
         if (!this.disableMsBuildDiagnosticWarning() && event.diagnostics.Errors.length > 0) {
-            this.warningMessageDebouncer.onNext(event);
+            this.warningMessageDebouncer.next(event);
         }
     }
 }

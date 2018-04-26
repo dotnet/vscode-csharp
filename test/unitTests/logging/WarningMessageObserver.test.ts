@@ -83,7 +83,7 @@ suite('WarningMessageObserver', () => {
             [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)],
             [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)]);
         newObserver.post(event);
-        expect(warningMessage).to.be.undefined;
+        expect(warningMessages).to.be.empty;
     });
 
     [
