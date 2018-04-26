@@ -5,8 +5,8 @@
 
 import * as fs from 'fs';
 import * as os from 'os';
+import { Package } from '../packageManager/Package';
 
-import { Package } from '../packages';
 
 interface PackageJSONFile
 {

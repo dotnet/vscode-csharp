@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { OmnisharpServerOnServerError, BaseEvent, OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpServerOnStop, OmnisharpServerOnStart, DownloadStart, InstallationProgress, DownloadProgress } from "../omnisharp/loggingEvents";
+import { OmnisharpServerOnServerError, BaseEvent, OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpServerOnStop, OmnisharpServerOnStart, DownloadStart, InstallationStart, DownloadProgress } from "../omnisharp/loggingEvents";
 import { BaseStatusBarItemObserver } from './BaseStatusBarItemObserver';
 
 export class OmnisharpStatusBarObserver extends BaseStatusBarItemObserver {
@@ -27,8 +27,8 @@ export class OmnisharpStatusBarObserver extends BaseStatusBarItemObserver {
             case DownloadStart.name:
                 this.SetAndShowStatusBar("$(cloud-download) Downloading packages", '', '', `Downloading package '${(<DownloadStart>event).packageDescription}...' `);
                 break;
-            case InstallationProgress.name:
-                this.SetAndShowStatusBar("$(desktop-download) Installing packages...", '', '', `Installing package '${(<InstallationProgress>event).packageDescription}'`);
+            case InstallationStart.name:
+                this.SetAndShowStatusBar("$(desktop-download) Installing packages...", '', '', `Installing package '${(<InstallationStart>event).packageDescription}'`);
                 break;
             case DownloadProgress.name:
                 let progressEvent = <DownloadProgress>event;

@@ -23,7 +23,8 @@ import { setTimeout } from 'timers';
 import { OmnisharpDownloader } from './OmnisharpDownloader';
 import * as ObservableEvents from './loggingEvents';
 import { EventStream } from '../EventStream';
-import { Subject } from 'rxjs/Subject'; 
+import { NetworkSettingsProvider } from '../NetworkSettings';
+import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/debounceTime';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
@@ -92,11 +93,11 @@ export class OmniSharpServer {
     private firstUpdateProject: boolean;
     private vscode: vscode;
 
-    constructor(vscode: vscode, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation) {
+    constructor(vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation) {
         this.eventStream = eventStream;
         this.vscode = vscode;
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
-        let downloader = new OmnisharpDownloader(this.vscode, this.eventStream, packageJSON, platformInfo);
+        let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, packageJSON, platformInfo);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
         this.updateProjectDebouncer.debounceTime(1500).subscribe((event) => { this.updateProjectInfo(); });
         this.firstUpdateProject = true;
