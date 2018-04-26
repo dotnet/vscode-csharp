@@ -5,7 +5,7 @@
 
 import * as path from 'path';
 import * as util from '../../src/common';
-import { should } from "chai";
+import { expect, should } from "chai";
 import { PlatformInformation } from "../../src/platform";
 import { rimraf } from 'async-file';
 import { OmnisharpManager } from '../../src/omnisharp/OmnisharpManager';
@@ -14,7 +14,6 @@ import { GetTestOmnisharpDownloader } from './testAssets/testAssets';
 
 const chai = require("chai");
 chai.use(require("chai-as-promised"));
-let expect = chai.expect;
 
 const tmp = require('tmp');
 
@@ -53,6 +52,19 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
         expect(manager.GetOmniSharpLaunchInfo("a.b.c", serverUrl, versionFilepathInServer, installPath, extensionPath)).to.be.rejectedWith(Error);
     });
 
+    test('Returns default paths if no path is specified', async () => {
+        let launchInfo = await manager.GetOmniSharpLaunchInfo(undefined, serverUrl, versionFilepathInServer, installPath, extensionPath);
+        launchInfo.LaunchPath.should.equal(path.resolve(extensionPath, '.omnisharp/omnisharp/OmniSharp.exe'));
+        expect(launchInfo.MonoLaunchPath).to.be.undefined;
+    });
+
+    test('Returns default paths if no path is specified - Linux ', async () => {
+        let manager = GetTestOmnisharpManager(eventStream, new PlatformInformation("linux", "x64"));
+        let launchInfo = await manager.GetOmniSharpLaunchInfo(undefined, serverUrl, versionFilepathInServer, installPath, extensionPath);
+        launchInfo.LaunchPath.should.equal(path.resolve(extensionPath, '.omnisharp/run'));
+        launchInfo.MonoLaunchPath.should.equal(path.resolve(extensionPath, '.omnisharp/omnisharp/OmniSharp.exe'));
+    });
+
     test('Returns the same path if absolute path to an existing file is passed', async () => {
         tmpFile = tmp.fileSync();
         let launchInfo = await manager.GetOmniSharpLaunchInfo(tmpFile.name, serverUrl, versionFilepathInServer, installPath, extensionPath);
@@ -62,11 +74,13 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
     test('Installs the latest version and returns the launch path based on the version and platform', async () => {
         let launchInfo = await manager.GetOmniSharpLaunchInfo("latest", serverUrl, versionFilepathInServer, installPath, extensionPath);
         launchInfo.LaunchPath.should.equal(path.resolve(extensionPath, `.omnisharp/experimental/1.2.3/OmniSharp.exe`));
+        expect(launchInfo.MonoLaunchPath).to.be.undefined;
     });
 
     test('Installs the test version and returns the launch path based on the version and platform', async () => {
         let launchInfo = await manager.GetOmniSharpLaunchInfo("1.2.3", serverUrl, versionFilepathInServer, installPath, extensionPath);
         launchInfo.LaunchPath.should.equal(path.resolve(extensionPath, `.omnisharp/experimental/1.2.3/OmniSharp.exe`));
+        expect(launchInfo.MonoLaunchPath).to.be.undefined;
     });
 
     test('Downloads package from given url and installs them at the specified path', async () => {
@@ -86,6 +100,7 @@ suite('GetExperimentalOmnisharpPath : Returns Omnisharp experiment path dependin
         let manager = GetTestOmnisharpManager(eventStream, platformInfo);
         let launchInfo = await manager.GetOmniSharpLaunchInfo("1.2.3", serverUrl, versionFilepathInServer, "installHere", extensionPath);
         launchInfo.LaunchPath.should.equal(path.resolve(extensionPath, 'installHere/1.2.3/OmniSharp.exe'));
+        expect(launchInfo.MonoLaunchPath).to.be.undefined;
     });
 
     teardown(async () => {
