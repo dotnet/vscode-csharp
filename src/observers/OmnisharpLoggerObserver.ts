@@ -24,7 +24,7 @@ export class OmnisharpLoggerObserver extends BaseLoggerObserver {
                 this.logger.appendLine((<OmnisharpServerMessage>event).message);
                 break;
             case OmnisharpServerOnServerError.name:
-                this.logger.appendLine((<OmnisharpServerOnServerError>event).message);
+                this.handleOmnisharpServerOnServerError(<OmnisharpServerOnServerError>event);
                 break;
             case OmnisharpServerOnError.name:
                 this.handleOmnisharpServerOnError(<OmnisharpServerOnError>event);
@@ -41,6 +41,10 @@ export class OmnisharpLoggerObserver extends BaseLoggerObserver {
         }
     }
 
+    private handleOmnisharpServerOnServerError(event: OmnisharpServerOnServerError) {
+        this.logger.appendLine('[ERROR] ' + event.err);
+    }
+
     private handleOmnisharpInitialisation(event: OmnisharpInitialisation) {
         this.logger.appendLine(`Starting OmniSharp server at ${event.timeStamp.toLocaleString()}`);
         this.logger.increaseIndent();
@@ -50,8 +54,8 @@ export class OmnisharpLoggerObserver extends BaseLoggerObserver {
     }
 
     private handleOmnisharpLaunch(event: OmnisharpLaunch) {
-        if (event.usingMono) {
-            this.logger.appendLine(`OmniSharp server started with Mono`);
+        if (event.monoVersion) {
+            this.logger.appendLine(`OmniSharp server started with Mono ${event.monoVersion}`);
         }
         else {
             this.logger.appendLine(`OmniSharp server started`);

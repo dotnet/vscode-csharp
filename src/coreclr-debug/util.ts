@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-'use strict';
 
 import * as path from 'path';
 import * as fs from 'fs';
@@ -59,7 +58,7 @@ export class CoreClrDebugUtil
         return this._installCompleteFilePath;
     }
 
-    public static writeEmptyFile(path: string) : Promise<void> {
+    public static async writeEmptyFile(path: string) : Promise<void> {
         return new Promise<void>((resolve, reject) => {
             fs.writeFile(path, '', (err) => {
                 if (err) {
@@ -79,7 +78,7 @@ export class CoreClrDebugUtil
     // is new enough for us. 
     // Returns: a promise that returns a DotnetInfo class
     // Throws: An DotNetCliError() from the return promise if either dotnet does not exist or is too old. 
-    public checkDotNetCli(): Promise<DotnetInfo>
+    public async checkDotNetCli(): Promise<DotnetInfo>
     {
         let dotnetInfo = new DotnetInfo();
 

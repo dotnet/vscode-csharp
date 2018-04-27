@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
@@ -13,7 +11,7 @@ import {RenameProvider, WorkspaceEdit, TextDocument, Uri, CancellationToken, Pos
 
 export default class OmnisharpRenameProvider extends AbstractSupport implements RenameProvider {
 
-    public provideRenameEdits(document: TextDocument, position: Position, newName: string, token: CancellationToken): Promise<WorkspaceEdit> {
+    public async provideRenameEdits(document: TextDocument, position: Position, newName: string, token: CancellationToken): Promise<WorkspaceEdit> {
 
         let req = createRequest<protocol.RenameRequest>(document, position);
         req.WantsTextChanges = true;

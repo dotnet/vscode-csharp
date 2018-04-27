@@ -6,10 +6,8 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-import poll from './poll';
 import { should, expect } from 'chai';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { omnisharp } from '../../src/omnisharp/extension';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -31,7 +29,6 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
         let dir = path.dirname(testAssetWorkspace.projects[0].projectDirectoryPath);
         let loc = path.join(dir, fileName);
         fileUri = vscode.Uri.file(loc);
-        await omnisharp.waitForEmptyEventQueue();
         await vscode.commands.executeCommand("vscode.open", fileUri);
     });
 

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Package } from "../packages";
+import { Package } from "../packageManager/Package";
 
 export function GetPackagesFromVersion(version: string, runTimeDependencies: Package[], serverUrl: string, installPath: string): Package[] {
     if (!version) {
@@ -47,15 +47,10 @@ function GetPackage(inputPackage: Package, serverUrl: string, version: string, i
         "description": `${inputPackage.description}, Version = ${version}`,
         "url": `${serverUrl}/releases/${version}/omnisharp-${inputPackage.platformId}.zip`,
         "installPath": `${installPath}/${version}`,
-        "installTestPath": `./${installPath}/${version}/${installBinary}`
+        "installTestPath": `./${installPath}/${version}/${installBinary}`,
+        "fallbackUrl": "" //setting to empty so that we dont use the fallback url of the default packages
     };
 
     return versionPackage;
 }
 
-export function GetVersionFilePackage(serverUrl: string, pathInServer: string): Package {
-    return <Package>{
-        "description": "Latest version information file",
-        "url": `${serverUrl}/${pathInServer}`
-    };
-}

@@ -4,22 +4,22 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { assert, should, expect } from "chai";
-import { Package } from "../../src/packages";
-import { GetTestPackageJSON } from "./OmnisharpDownloader.test";
-import { SetBinaryAndGetPackage, GetPackagesFromVersion, GetVersionFilePackage } from "../../src/omnisharp/OmnisharpPackageCreator";
+import { SetBinaryAndGetPackage, GetPackagesFromVersion } from "../../src/omnisharp/OmnisharpPackageCreator";
+import { testPackageJSON } from "./testAssets/testAssets";
+import { Package } from "../../src/packageManager/Package";
 
 suite("GetOmnisharpPackage : Output package depends on the input package and other input parameters like serverUrl", () => {
 
     let serverUrl: string;
     let version: string;
     let installPath: string;
-    let inputPackages: any;
+    let inputPackages: Package[];
 
     suiteSetup(() => {
         serverUrl = "http://serverUrl";
         version = "0.0.0";
         installPath = "testPath";
-        let packageJSON = GetTestPackageJSON();
+        let packageJSON = testPackageJSON;
         inputPackages = <Package[]> (packageJSON.runtimeDependencies);
         should();
     });
@@ -36,13 +36,14 @@ suite("GetOmnisharpPackage : Output package depends on the input package and oth
         expect(fn).to.throw('Invalid version');
     });
 
-    test('Architectures, binaries and platforms do not change', () => {
+    test('Architectures, binaries and platforms do not change and fallback url is empty', () => {
         let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "os-architecture"));
         let resultPackage = SetBinaryAndGetPackage(testPackage, serverUrl, version, installPath);
 
         resultPackage.architectures.should.equal(testPackage.architectures);
         assert.equal(resultPackage.binaries, testPackage.binaries);
         resultPackage.platforms.should.equal(testPackage.platforms);
+        expect(resultPackage.fallbackUrl).to.be.empty;
     });
 
     test('Version information is appended to the description', () => {
@@ -102,7 +103,7 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
     let inputPackages : any;
 
     suiteSetup(() => {
-        inputPackages = <Package[]>(GetTestPackageJSON().runtimeDependencies);
+        inputPackages = <Package[]>(testPackageJSON.runtimeDependencies);
         should();
     });
 
@@ -194,16 +195,4 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
         outPackages.length.should.equal(1);
         outPackages[0].platformId.should.equal("win-x64");
     });
-});
-
-suite('GetVersionFilePackage : Gives the package for the latest file download', () => {
-    test('Contains the expected description', () => {
-        let testPackage = GetVersionFilePackage("someUrl", "somePath");
-        expect(testPackage.description).to.equal('Latest version information file');
-    }); 
-
-    test('Contains the url based on serverUrl and the pathInServer', () => {
-        let testPackage = GetVersionFilePackage("someUrl", "somePath");
-        expect(testPackage.url).to.equal('someUrl/somePath');
-    }); 
 });

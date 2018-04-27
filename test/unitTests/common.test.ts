@@ -7,17 +7,17 @@ import * as path from 'path';
 
 import { buildPromiseChain, isSubfolderOf, safeLength, sum } from '../../src/common';
 
-import { should } from 'chai';
+import { should, expect } from 'chai';
 
 suite("Common", () => {
     suiteSetup(() => should());
 
     suite("buildPromiseChain", () => {
-        test("produce a sequence of promises", () => {
+        test("produce a sequence of promises", async () => {
             let array: number[] = [];
             let items = [1, 2, 3, 4, 5];
 
-            let promise = buildPromiseChain(items, n => new Promise((resolve, reject) => {
+            let promise = buildPromiseChain(items, async n => new Promise((resolve, reject) => {
                 array.push(n);
                 resolve();
             }));
@@ -30,7 +30,7 @@ suite("Common", () => {
 
     suite("safeLength", () => {
         test("return 0 for empty array", () => {
-            let array = [];
+            let array: any[] = [];
             let result = safeLength(array);
             result.should.equal(0);
         });
@@ -73,28 +73,28 @@ suite("Common", () => {
             let subfolder: string = ["C:", "temp", "VS", "dotnetProject"].join(path.sep);
             let folder: string= ["C:", "temp", "VS", "dotnetProject"].join(path.sep);
 
-            isSubfolderOf(subfolder, folder).should.be.true;
+            expect(isSubfolderOf(subfolder, folder)).to.be.true;
         });
 
         test("correct subfolder", () => {
             let subfolder: string = ["C:", "temp", "VS"].join(path.sep);
             let folder: string= ["C:", "temp", "VS", "dotnetProject"].join(path.sep);
 
-            isSubfolderOf(subfolder, folder).should.be.true;
+            expect(isSubfolderOf(subfolder, folder)).to.be.true;
         });
 
         test("longer subfolder", () => {
             let subfolder: string = ["C:", "temp", "VS", "a", "b", "c"].join(path.sep);
             let folder: string= ["C:", "temp", "VS"].join(path.sep);
 
-            isSubfolderOf(subfolder, folder).should.be.false;
+            expect(isSubfolderOf(subfolder, folder)).to.be.false;
         });
 
         test("Different drive", () => {
             let subfolder: string = ["C:", "temp", "VS"].join(path.sep);
             let folder: string= ["E:", "temp", "VS"].join(path.sep);
 
-            isSubfolderOf(subfolder, folder).should.be.false;
+            expect(isSubfolderOf(subfolder, folder)).to.be.false;
         });
     });
 });

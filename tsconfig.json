@@ -7,10 +7,17 @@
 			"es6"
 		],
 		"inlineSourceMap": true,
-		"moduleResolution": "node"
+		"moduleResolution": "node",
+		"alwaysStrict": true,
+		"noImplicitAny": true,
+		"skipLibCheck": true,
+		"noImplicitThis": true,
+		"noUnusedLocals": true,
+		"noFallthroughCasesInSwitch": true, 
 	},
 	"exclude": [
 		"syntaxes",
-		".vscode-test"
+		".vscode-test",
+		"vsix"
 	]
 }

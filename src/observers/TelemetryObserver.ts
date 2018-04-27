@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PackageError } from "../packages";
 import { PlatformInformation } from "../platform";
 import { BaseEvent, PackageInstallation, InstallationFailure, InstallationSuccess, OmnisharpDelayTrackerEventMeasures, OmnisharpStart, TestExecutionCountReport, TelemetryEventWithMeasures } from "../omnisharp/loggingEvents";
+import { PackageError } from "../packageManager/PackageError";
 
 export interface ITelemetryReporter {
     sendTelemetryEvent(eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }): void;
@@ -46,12 +46,12 @@ export class TelemetryObserver {
         this.reporter.sendTelemetryEvent(event.eventName, null, event.measures);
     }
 
-    private handleInstallationSuccess(telemetryProps: any) {
+    private handleInstallationSuccess(telemetryProps: { [key: string]: string; }) {
         telemetryProps['installStage'] = 'completeSuccess';
         this.reporter.sendTelemetryEvent('Acquisition', telemetryProps);
     }
 
-    private handleInstallationFailure(event: InstallationFailure, telemetryProps: any) {
+    private handleInstallationFailure(event: InstallationFailure, telemetryProps: { [key: string]: string; }) {
         telemetryProps['installStage'] = event.stage;
         if (event.error instanceof PackageError) {
             // we can log the message in a PackageError to telemetry as we do not put PII in PackageError messages
@@ -75,7 +75,7 @@ export class TelemetryObserver {
     }
 
     private getTelemetryProps() {
-        let telemetryProps = {
+        let telemetryProps: { [key: string]: string } = {
             'platform.architecture': this.platformInfo.architecture,
             'platform.platform': this.platformInfo.platform
         };

@@ -3,25 +3,24 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import * as serverUtils from '../omnisharp/utils';
 import {CancellationToken, DefinitionProvider, Location, Position, TextDocument, Uri} from 'vscode';
 import {GoToDefinitionRequest, MetadataRequest, MetadataSource} from '../omnisharp/protocol';
 import {createRequest, toLocation, toLocationFromUri} from '../omnisharp/typeConvertion';
 import AbstractSupport from './abstractProvider';
 import DefinitionMetadataDocumentProvider from './definitionMetadataDocumentProvider';
+import { OmniSharpServer } from '../omnisharp/server';
 
 export default class CSharpDefinitionProvider extends AbstractSupport implements DefinitionProvider {
     private _definitionMetadataDocumentProvider: DefinitionMetadataDocumentProvider;
 
-    constructor(server, definitionMetadataDocumentProvider: DefinitionMetadataDocumentProvider) {
+    constructor(server: OmniSharpServer, definitionMetadataDocumentProvider: DefinitionMetadataDocumentProvider) {
         super(server);
 
         this._definitionMetadataDocumentProvider = definitionMetadataDocumentProvider;
     }
 
-    public provideDefinition(document: TextDocument, position: Position, token: CancellationToken): Promise<Location> {
+    public async provideDefinition(document: TextDocument, position: Position, token: CancellationToken): Promise<Location> {
 
         let req = <GoToDefinitionRequest>createRequest(document, position);
         req.WantMetadata = true;

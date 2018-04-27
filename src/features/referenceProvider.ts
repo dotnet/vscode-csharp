@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
@@ -13,7 +11,7 @@ import {ReferenceProvider, Location, TextDocument, CancellationToken, Position} 
 
 export default class OmnisharpReferenceProvider extends AbstractSupport implements ReferenceProvider {
 
-    public provideReferences(document: TextDocument, position: Position, options: { includeDeclaration: boolean;}, token: CancellationToken): Promise<Location[]> {
+    public async provideReferences(document: TextDocument, position: Position, options: { includeDeclaration: boolean;}, token: CancellationToken): Promise<Location[]> {
 
         let req = createRequest<protocol.FindUsagesRequest>(document, position);
         req.OnlyThisFile = false;

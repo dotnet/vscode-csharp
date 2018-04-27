@@ -28,22 +28,21 @@ import TestManager from '../features/dotnetTest';
 import WorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
 import forwardChanges from '../features/changeForwarding';
 import registerCommands from '../features/commands';
-import reportStatus from '../features/status';
 import { PlatformInformation } from '../platform';
 import { ProjectJsonDeprecatedWarning, OmnisharpStart } from './loggingEvents';
 import { EventStream } from '../EventStream';
+import { NetworkSettingsProvider } from '../NetworkSettings';
 
 export let omnisharp: OmniSharpServer;
 
-export function activate(context: vscode.ExtensionContext, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation) {
+export async function activate(context: vscode.ExtensionContext, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
         scheme: 'file' // only files from disk
     };
 
     const options = Options.Read();
-    const server = new OmniSharpServer(eventStream, packageJSON, platformInfo);
-
+    const server = new OmniSharpServer(vscode, provider, eventStream, packageJSON, platformInfo);
     omnisharp = server;
     const advisor = new Advisor(server); // create before server is started
     const disposables: vscode.Disposable[] = [];
@@ -87,7 +86,6 @@ export function activate(context: vscode.ExtensionContext, eventStream: EventStr
     }));
 
     disposables.push(registerCommands(server, eventStream,platformInfo));
-    disposables.push(reportStatus(server, eventStream));
 
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
         disposables.push(server.onServerStart(() => {
@@ -161,5 +159,7 @@ export function activate(context: vscode.ExtensionContext, eventStream: EventStr
 
     context.subscriptions.push(...disposables);
 
-    return new Promise<string>(resolve => server.onServerStart(e => resolve(e)));
+    return new Promise<OmniSharpServer>(resolve => 
+        server.onServerStart(e => 
+            resolve(server))); 
 }

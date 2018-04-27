@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.15.0-beta3",
+  "version": "1.15.0-beta5",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -29,24 +29,24 @@
     "vscode:prepublish": "tsc -p ./",
     "compile": "tsc -p ./ && gulp tslint",
     "watch": "tsc -watch -p ./",
-    "tdd": "npm run test:unit -- --watch --watch-extensions ts",
-    "test": "npm-run-all test:feature test:unit test:integration",
-    "test:unit": "nyc -r lcovonly --report-dir coverage/unit mocha --ui tdd -- test/unitTests/**/*.test.ts",
-    "test:feature": "cross-env OSVC_SUITE=featureTests CODE_EXTENSIONS_PATH=./ CODE_TESTS_PATH=./out/test/featureTests npm run test:runInVsCode",
-    "test:integration": "npm-run-all test:integration:*",
-    "test:integration:singleCsproj": "cross-env OSVC_SUITE=singleCsproj npm run test:runSuiteInVsCode",
-    "test:integration:slnWithCsproj": "cross-env OSVC_SUITE=slnWithCsproj npm run test:runSuiteInVsCode",
-    "test:runSuiteInVsCode": "cross-env CODE_EXTENSIONS_PATH=./ CODE_TESTS_PATH=./out/test/integrationTests CODE_TESTS_WORKSPACE=./test/integrationTests/testAssets/$OSVC_SUITE npm run test:runInVsCode",
-    "test:runInVsCode": "node ./test/runVsCodeTestsWithAbsolutePaths.js",
+    "tdd": "mocha --opts ./mocha.opts --watch --watch-extensions ts test/unitTests/**/*.test.ts*",
+    "test": "gulp test",
+    "test:unit": "gulp test:unit",
+    "test:feature": "gulp test:feature",
+    "test:integration": "gulp test:integration",
+    "test:integration:singleCsproj": "gulp test:integration:singleCsproj",
+    "test:integration:slnWithCsproj": "gulp test:integration:slnWithCsproj",
+    "test:release": "mocha --opts ./mocha.opts test/releaseTests/**/*.test.ts",
+    "test:artifacts": "mocha --opts ./mocha.opts test/artifactTests/**/*.test.ts",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "cov:instrument": "rimraf ./coverage && rimraf ./.nyc_output && rimraf ./out && npm run compile && cd out && nyc instrument --require source-map-support/register --cwd ../ . . && cd ..",
-    "cov:merge": "cd ./out && istanbul-combine -d ../coverage/integration -r lcovonly ../.nyc_output/integration/*.json && cd ..",
-    "cov:merge-html": "istanbul-combine -d ./coverage -r html ./.nyc_output/integration/*.json",
+    "cov:instrument": "gulp cov:instrument",
+    "cov:merge": "gulp cov:merge",
+    "cov:merge-html": "gulp cov:merge-html",
     "cov:report": "npm-run-all cov:report:integration cov:report:unit",
-    "cov:report:unit": "codecov -f \"coverage/unit/lcov.info\" -F unit",
-    "cov:report:integration": "npm run cov:merge && codecov -f \"coverage/integration/lcov.info\" -F integration",
-    "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
+    "cov:report:unit": "gulp cov:report:unit",
+    "cov:report:integration": "gulp cov:report:integration",
+    "unpackage:vsix": "gulp vsix:release:unpackage",
+    "gulp": "gulp"
   },
   "nyc": {
     "include": [
@@ -68,32 +68,38 @@
     "fs-extra": "^5.0.0",
     "http-proxy-agent": "^2.0.0",
     "https-proxy-agent": "^2.1.1",
-    "istanbul": "^0.4.5",
     "jsonc-parser": "^1.0.0",
-    "lodash.debounce": "^4.0.8",
     "mkdirp": "^0.5.1",
+    "node-filter-async": "0.0.4",
     "open": "*",
     "request-light": "^0.2.0",
-    "rx": "^4.1.0",
     "rxjs": "^5.5.6",
     "semver": "*",
     "tmp": "0.0.33",
     "vscode-debugprotocol": "^1.6.1",
     "vscode-extension-telemetry": "0.0.15",
-    "yauzl": "^2.5.0",
+    "yauzl": "^2.9.1",
     "snyk": "^1.74.0"
   },
   "devDependencies": {
+    "@types/archiver": "^2.1.1",
     "@types/chai": "^4.1.2",
     "@types/chai-arrays": "1.0.2",
+    "@types/chai-as-promised": "^7.1.0",
     "@types/chai-string": "^1.4.0",
+    "@types/del": "^3.0.1",
     "@types/fs-extra": "^5.0.1",
+    "@types/gulp": "^3.8.36",
+    "@types/gulp-mocha": "0.0.32",
+    "@types/istanbul": "^0.4.30",
+    "@types/minimist": "^1.2.0",
     "@types/mkdirp": "^0.5.2",
     "@types/mocha": "^2.2.48",
     "@types/node": "^9.4.7",
-    "@types/rx": "^4.1.1",
     "@types/semver": "^5.5.0",
     "@types/tmp": "0.0.33",
+    "@types/yauzl": "^2.9.0",
+    "archiver": "^2.1.1",
     "async-child-process": "^1.1.1",
     "async-file": "^2.0.2",
     "async-shelljs": "^0.1.2",
@@ -106,13 +112,19 @@
     "copyfiles": "^2.0.0",
     "cross-env": "^5.1.4",
     "del": "3.0.0",
+    "get-port": "^3.2.0",
+    "glob-promise": "^3.4.0",
     "gulp": "4.0.0",
     "gulp-mocha": "^5.0.0",
+    "gulp-sequence": "^1.0.0",
     "gulp-tslint": "^8.1.3",
+    "istanbul": "^0.4.5",
     "istanbul-combine": "^0.3.0",
     "ltcdr": "^2.2.1",
+    "minimist": "^1.2.0",
     "mocha": "^5.0.4",
     "mocha-typescript": "^1.1.12",
+    "mock-http-server": "^0.2.0",
     "npm-run-all": "^4.1.2",
     "nyc": "^11.6.0",
     "plist": "^3.0.1",
@@ -123,7 +135,8 @@
     "tslint-microsoft-contrib": "^5.0.3",
     "tslint-no-unused-expression-chai": "^0.1.3",
     "typescript": "^2.7.2",
-    "vsce": "^1.37.6",
+    "unzip2": "^0.2.5",
+    "vsce": "^1.39.0",
     "vscode": "^1.1.14"
   },
   "runtimeDependencies": [
@@ -209,8 +222,8 @@
     },
     {
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11709463/613b1473e1b85d7688b288818321b729/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-15-0/coreclr-debug-win7-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/12149320/af1529a62f43fb8a922eccf750bdf9f7/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-15-1/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -222,8 +235,8 @@
     },
     {
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11709463/613b1473e1b85d7688b288818321b729/coreclr-debug-osx-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-15-0/coreclr-debug-osx-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/12149320/af1529a62f43fb8a922eccf750bdf9f7/coreclr-debug-osx-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-15-1/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "darwin"
@@ -239,8 +252,8 @@
     },
     {
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/11709463/613b1473e1b85d7688b288818321b729/coreclr-debug-linux-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-15-0/coreclr-debug-linux-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/12149320/af1529a62f43fb8a922eccf750bdf9f7/coreclr-debug-linux-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-15-1/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -374,12 +387,12 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                  "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                   "default": []
                 },
                 "searchMicrosoftSymbolServer": {
                   "type": "boolean",
-                  "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                  "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                   "default": false
                 },
                 "cachePath": {
@@ -1088,12 +1101,12 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -1489,12 +1502,12 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -2150,12 +2163,12 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -2551,12 +2564,12 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {

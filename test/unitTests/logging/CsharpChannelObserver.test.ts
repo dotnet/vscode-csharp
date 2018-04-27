@@ -4,20 +4,20 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should, expect } from 'chai';
-import { getNullChannel } from './Fakes';
+import { getNullChannel } from '../testAssets/Fakes';
 import { CsharpChannelObserver } from '../../../src/observers/CsharpChannelObserver';
-import { InstallationFailure, PackageInstallation, DebuggerNotInstalledFailure, DebuggerPrerequisiteFailure, ProjectJsonDeprecatedWarning, BaseEvent } from '../../../src/omnisharp/loggingEvents';
+import { InstallationFailure, DebuggerNotInstalledFailure, DebuggerPrerequisiteFailure, ProjectJsonDeprecatedWarning, BaseEvent, DownloadStart } from '../../../src/omnisharp/loggingEvents';
 
 suite("CsharpChannelObserver", () => {
     suiteSetup(() => should());
     [
         new InstallationFailure("someStage", "someError"),
-        new PackageInstallation("somePackage"),
+        new DownloadStart("somePackage"),
         new DebuggerNotInstalledFailure(),
         new DebuggerPrerequisiteFailure("some failure"),
         new ProjectJsonDeprecatedWarning()
     ].forEach((event: BaseEvent) => {
-        test(`Shows the channel for ${event.constructor.name}`, () => {
+        test(`${event.constructor.name}: Channel is shown`, () => {
             let hasShown = false;
 
             let observer = new CsharpChannelObserver({
