@@ -17,8 +17,10 @@ import { getAdapterExecutionCommand } from '../coreclr-debug/activate';
 import { CommandShowOutput, CommandDotNetRestoreStart, CommandDotNetRestoreProgress, CommandDotNetRestoreSucceeded, CommandDotNetRestoreFailed } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 import { PlatformInformation } from '../platform';
+import CompositeDisposable from '../CompositeDisposable';
+import { IDisposable } from '../Disposable';
 
-export default function registerCommands(server: OmniSharpServer, eventStream: EventStream, platformInfo: PlatformInformation) {
+export default function registerCommands(server: OmniSharpServer, eventStream: EventStream, platformInfo: PlatformInformation): IDisposable {
     let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server));
     let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', () => pickProjectAndStart(server));
     let d3 = vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new CommandShowOutput()));
@@ -50,7 +52,7 @@ export default function registerCommands(server: OmniSharpServer, eventStream: E
     let d9 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream));
     let d10 = vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream));
 
-    return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10);
+    return new CompositeDisposable(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10);
 }
 
 function restartOmniSharp(server: OmniSharpServer) {

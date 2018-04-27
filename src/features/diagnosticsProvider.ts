@@ -9,10 +9,12 @@ import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { toRange } from '../omnisharp/typeConvertion';
 import * as vscode from 'vscode';
+import CompositeDisposable from '../CompositeDisposable';
+import { IDisposable } from '../Disposable';
 
 export class Advisor {
 
-    private _disposable: vscode.Disposable;
+    private _disposable: CompositeDisposable;
     private _server: OmniSharpServer;
     private _packageRestoreCounter: number = 0;
     private _projectSourceFileCounts: { [path: string]: number } = Object.create(null);
@@ -25,7 +27,7 @@ export class Advisor {
         let d3 = server.onProjectRemoved(this._onProjectRemoved, this);
         let d4 = server.onBeforePackageRestore(this._onBeforePackageRestore, this);
         let d5 = server.onPackageRestore(this._onPackageRestore, this);
-        this._disposable = vscode.Disposable.from(d1, d2, d3, d4, d5);
+        this._disposable = new CompositeDisposable(d1, d2, d3, d4, d5);
     }
 
     public dispose() {
@@ -108,14 +110,14 @@ export class Advisor {
     }
 }
 
-export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor): vscode.Disposable {
+export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor): IDisposable {
     return new DiagnosticsProvider(server, advisor);
 }
 
 class DiagnosticsProvider extends AbstractSupport {
 
     private _validationAdvisor: Advisor;
-    private _disposable: vscode.Disposable;
+    private _disposable: CompositeDisposable;
     private _documentValidations: { [uri: string]: vscode.CancellationTokenSource } = Object.create(null);
     private _projectValidation: vscode.CancellationTokenSource;
     private _diagnostics: vscode.DiagnosticCollection;
@@ -131,7 +133,7 @@ class DiagnosticsProvider extends AbstractSupport {
         let d4 = vscode.workspace.onDidOpenTextDocument(event => this._onDocumentAddOrChange(event), this);
         let d3 = vscode.workspace.onDidChangeTextDocument(event => this._onDocumentAddOrChange(event.document), this);
         let d5 = vscode.workspace.onDidCloseTextDocument(this._onDocumentRemove, this);
-        this._disposable = vscode.Disposable.from(this._diagnostics, d1, d2, d3, d4, d5);
+        this._disposable = new CompositeDisposable(this._diagnostics, d1, d2, d3, d4, d5);
 
         // Go ahead and check for diagnostics in the currently visible editors.
         for (let editor of vscode.window.visibleTextEditors) {

@@ -16,6 +16,8 @@ import { OmniSharpServer } from '../omnisharp/server';
 import { TestExecutionCountReport } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 import LaunchConfiguration from './launchConfiguration';
+import Disposable from '../Disposable';
+import CompositeDisposable from '../CompositeDisposable';
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 
@@ -51,7 +53,7 @@ export default class TestManager extends AbstractProvider {
         this._telemetryIntervalId = setInterval(() =>
             this._reportTelemetry(), TelemetryReportingDelay);
 
-        let d3 = new vscode.Disposable(() => {
+        let d3 = new Disposable(() => {
             if (this._telemetryIntervalId !== undefined) {
                 // Stop reporting telemetry
                 clearInterval(this._telemetryIntervalId);
@@ -60,13 +62,13 @@ export default class TestManager extends AbstractProvider {
             }
         });
 
-        this.addDisposables(d1, d2, d3, d4, d5);
+        this.addDisposables(new CompositeDisposable(d1, d2, d3, d4, d5));
     }
 
     private _getOutputChannel(): vscode.OutputChannel {
         if (this._channel === undefined) {
             this._channel = vscode.window.createOutputChannel(".NET Test Log");
-            this.addDisposables(this._channel);
+            this.addDisposables(new CompositeDisposable(this._channel));
         }
 
         return this._channel;

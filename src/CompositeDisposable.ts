@@ -4,12 +4,12 @@
  *--------------------------------------------------------------------------------------------*/ 
  
 import { Subscription } from "rxjs/Subscription"; 
-import Disposable from "./Disposable"; 
+import Disposable, { IDisposable } from "./Disposable"; 
  
 export default class CompositeDisposable extends Disposable { 
     private disposables = new Subscription(); 
  
-    constructor (...disposables: Disposable[]){ 
+    constructor (...disposables: IDisposable[]){ 
         super(() => this.disposables.unsubscribe()); 
  
         for (const disposable of disposables) { 
@@ -22,16 +22,11 @@ export default class CompositeDisposable extends Disposable {
         } 
     } 
  
-    public add(disposable: Disposable | {(): void}) { 
+    public add(disposable: IDisposable) { 
         if (!disposable) { 
             throw new Error("disposable cannot be null"); 
-        } 
- 
-        const actualDisposable =  
-            disposable.constructor.name === Disposable.name 
-                ? <Disposable>disposable 
-                : new Disposable(<{(): void}>disposable); 
+        }
          
-        this.disposables.add(actualDisposable.dispose); 
+        this.disposables.add(disposable.dispose); 
     } 
 }
