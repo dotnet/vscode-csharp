@@ -15,7 +15,7 @@ import { ReadLine, createInterface } from 'readline';
 import { Request, RequestQueueCollection } from './requestQueue';
 import { DelayTracker } from './delayTracker';
 import { EventEmitter } from 'events';
-import { OmnisharpManager } from './OmnisharpManager';
+import { OmnisharpManager, LaunchInfo } from './OmnisharpManager';
 import { Options } from './options';
 import { PlatformInformation } from '../platform';
 import { launchOmniSharp } from './launcher';
@@ -312,39 +312,37 @@ export class OmniSharpServer {
             args.push('--debug');
         }
 
-        let launchPath: string;
-        if (this._options.path) {
-            try {
-                let extensionPath = utils.getExtensionPath();
-                launchPath = await this._omnisharpManager.GetOmnisharpPath(this._options.path, this._options.useMono, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
-            }
-            catch (error) {
-                this.eventStream.post(new ObservableEvents.OmnisharpFailure(`Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));
-                return;
-            }
+        let launchInfo: LaunchInfo;
+        try {
+            let extensionPath = utils.getExtensionPath();
+            launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this._options.path, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
+        }
+        catch (error) {
+            this.eventStream.post(new ObservableEvents.OmnisharpFailure(`Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));
+            return;
         }
 
         this.eventStream.post(new ObservableEvents.OmnisharpInitialisation(new Date(), solutionPath));
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
-        return launchOmniSharp(cwd, args, launchPath).then(async value => {
-            this.eventStream.post(new ObservableEvents.OmnisharpLaunch(value.usingMono, value.command, value.process.pid));
+        try {
+            let launchResult = await launchOmniSharp(cwd, args, launchInfo);
+            this.eventStream.post(new ObservableEvents.OmnisharpLaunch(launchResult.monoVersion, launchResult.command, launchResult.process.pid));
 
-            this._serverProcess = value.process;
+            this._serverProcess = launchResult.process;
             this._delayTrackers = {};
             this._setState(ServerState.Started);
             this._fireEvent(Events.ServerStart, solutionPath);
 
-            return this._doConnect();
-        }).then(() => {
-            // Start telemetry reporting
+            await this._doConnect();
+
             this._telemetryIntervalId = setInterval(() => this._reportTelemetry(), TelemetryReportingDelay);
-        }).then(() => {
             this._requestQueue.drain();
-        }).catch(async err => {
+        }
+        catch (err) {
             this._fireEvent(Events.ServerError, err);
             return this.stop();
-        });
+        }
     }
 
     private debounceUpdateProjectWithLeadingTrue = () => {
