@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
@@ -12,7 +10,7 @@ import {DocumentRangeFormattingEditProvider, FormattingOptions, CancellationToke
 
 export default class FormattingSupport extends AbstractSupport implements DocumentRangeFormattingEditProvider {
 
-    public provideDocumentRangeFormattingEdits(document: TextDocument, range: Range, options: FormattingOptions, token: CancellationToken): Promise<TextEdit[]> {
+    public async provideDocumentRangeFormattingEdits(document: TextDocument, range: Range, options: FormattingOptions, token: CancellationToken): Promise<TextEdit[]> {
 
         let request = <protocol.FormatRangeRequest>{
             FileName: document.fileName,
@@ -29,7 +27,7 @@ export default class FormattingSupport extends AbstractSupport implements Docume
         });
     }
 
-    public provideOnTypeFormattingEdits(document: TextDocument, position: Position, ch: string, options: FormattingOptions, token: CancellationToken): Promise<TextEdit[]> {
+    public async provideOnTypeFormattingEdits(document: TextDocument, position: Position, ch: string, options: FormattingOptions, token: CancellationToken): Promise<TextEdit[]> {
 
         let request = <protocol.FormatAfterKeystrokeRequest> {
             FileName: document.fileName,

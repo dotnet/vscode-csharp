@@ -3,15 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import { spawn, ChildProcess } from 'child_process';
 import { satisfies } from 'semver';
 import { PlatformInformation } from '../platform';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import * as util from '../common';
 import { Options } from './options';
+import { LaunchInfo } from './OmnisharpManager';
 
 export enum LaunchTargetKind {
     Solution,
@@ -46,7 +44,7 @@ export function findLaunchTargets(): Thenable<LaunchTarget[]> {
     const options = Options.Read();
 
     return vscode.workspace.findFiles(
-            /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}', 
+            /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
             /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
             /*maxResults*/ options.maxProjectResults)
         .then(resourcesToLaunchTargets);
@@ -88,8 +86,7 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
 
     let targets: LaunchTarget[] = [];
 
-    workspaceFolderToUriMap.forEach((resources, folderIndex) => 
-    {
+    workspaceFolderToUriMap.forEach((resources, folderIndex) => {
         let hasCsProjFiles = false,
             hasSlnFile = false,
             hasProjectJson = false,
@@ -98,15 +95,15 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
             hasCake = false;
 
         hasCsProjFiles = resources.some(isCSharpProject);
-        
+
         let folder = vscode.workspace.workspaceFolders[folderIndex];
         let folderPath = folder.uri.fsPath;
-    
+
         resources.forEach(resource => {
             // Add .sln files if there are .csproj files
             if (hasCsProjFiles && isSolution(resource)) {
                 hasSlnFile = true;
-    
+
                 targets.push({
                     label: path.basename(resource.fsPath),
                     description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
@@ -115,13 +112,13 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                     kind: LaunchTargetKind.Solution
                 });
             }
-    
+
             // Add project.json files
             if (isProjectJson(resource)) {
                 const dirname = path.dirname(resource.fsPath);
                 hasProjectJson = true;
                 hasProjectJsonAtRoot = hasProjectJsonAtRoot || dirname === folderPath;
-    
+
                 targets.push({
                     label: path.basename(resource.fsPath),
                     description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
@@ -130,18 +127,18 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                     kind: LaunchTargetKind.ProjectJson
                 });
             }
-    
+
             // Discover if there is any CSX file
             if (!hasCSX && isCsx(resource)) {
                 hasCSX = true;
             }
-    
+
             // Discover if there is any Cake file
             if (!hasCake && isCake(resource)) {
                 hasCake = true;
             }
         });
-    
+
         // Add the root folder under the following circumstances:
         // * If there are .csproj files, but no .sln file, and none in the root.
         // * If there are project.json files, but none in the root.
@@ -154,7 +151,7 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                 kind: LaunchTargetKind.Folder
             });
         }
-    
+
         // if we noticed any CSX file(s), add a single CSX-specific target pointing at the root folder
         if (hasCSX) {
             targets.push({
@@ -165,7 +162,7 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                 kind: LaunchTargetKind.Csx
             });
         }
-    
+
         // if we noticed any Cake file(s), add a single Cake-specific target pointing at the root folder
         if (hasCake) {
             targets.push({
@@ -204,12 +201,12 @@ function isCake(resource: vscode.Uri): boolean {
 export interface LaunchResult {
     process: ChildProcess;
     command: string;
-    usingMono: boolean;
+    monoVersion?: string;
 }
 
-export function launchOmniSharp(cwd: string, args: string[]): Promise<LaunchResult> {
+export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        launch(cwd, args)
+        launch(cwd, args, launchInfo)
             .then(result => {
                 // async error - when target not not ENEOT
                 result.process.on('error', err => {
@@ -225,60 +222,51 @@ export function launchOmniSharp(cwd: string, args: string[]): Promise<LaunchResu
     });
 }
 
-function launch(cwd: string, args: string[]): Promise<LaunchResult> {
-    return PlatformInformation.GetCurrent().then(platformInfo => {
-        const options = Options.Read();
+async function launch(cwd: string, args: string[], launchInfo: LaunchInfo): Promise<LaunchResult> {
+    const platformInfo = await PlatformInformation.GetCurrent();
+    const options = Options.Read();
 
-        if (options.useEditorFormattingSettings) 
-        {
-            let globalConfig = vscode.workspace.getConfiguration();
-            let csharpConfig = vscode.workspace.getConfiguration('[csharp]');
+    if (options.useEditorFormattingSettings) {
+        let globalConfig = vscode.workspace.getConfiguration();
+        let csharpConfig = vscode.workspace.getConfiguration('[csharp]');
 
-            args.push(`formattingOptions:useTabs=${!getConfigurationValue(globalConfig, csharpConfig, 'editor.insertSpaces', true)}`);
-            args.push(`formattingOptions:tabSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
-            args.push(`formattingOptions:indentationSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
+        args.push(`formattingOptions:useTabs=${!getConfigurationValue(globalConfig, csharpConfig, 'editor.insertSpaces', true)}`);
+        args.push(`formattingOptions:tabSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
+        args.push(`formattingOptions:indentationSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
+    }
+
+    if (platformInfo.isWindows()) {
+        return launchWindows(launchInfo.LaunchPath, cwd, args);
+    }
+
+    let monoVersion = await getMonoVersion();
+    let isValidMonoAvailable = await satisfies(monoVersion, '>=5.2.0');
+
+    // If the user specifically said that they wanted to launch on Mono, respect their wishes.
+    if (options.useMono) {
+        if (!isValidMonoAvailable) {
+            throw new Error('Cannot start OmniSharp because Mono version >=5.2.0 is required.');
         }
 
-        // If the user has provide a path to OmniSharp, we'll use that.
-        if (options.path) {
-            if (platformInfo.isWindows()) {
-                return launchWindows(options.path, cwd, args);
-            }
+        return launchNixMono(launchInfo.LaunchPath, monoVersion, cwd, args);
+    }
 
-            // If we're launching on macOS/Linux, we have two possibilities:
-            //   1. Launch using Mono
-            //   2. Launch process directly (e.g. a 'run' script)
-            return options.useMono
-                ? launchNixMono(options.path, cwd, args)
-                : launchNix(options.path, cwd, args);
-        }
-
-        // If the user has not provided a path, we'll use the locally-installed OmniSharp
-        const basePath = path.resolve(util.getExtensionPath(), '.omnisharp');
-
-        if (platformInfo.isWindows()) {
-            return launchWindows(path.join(basePath, 'OmniSharp.exe'), cwd, args);
-        }
-
-        // If it's possible to launch on a global Mono, we'll do that. Otherwise, run with our
-        // locally installed Mono runtime.
-        return canLaunchMono()
-            .then(() => {
-                return launchNixMono(path.join(basePath, 'omnisharp', 'OmniSharp.exe'), cwd, args);
-            })
-            .catch(_ => {
-                return launchNix(path.join(basePath, 'run'), cwd, args);
-            });
-    });
+    // If we can launch on the global Mono, do so; otherwise, launch directly;
+    if (isValidMonoAvailable && launchInfo.MonoLaunchPath) {
+        return launchNixMono(launchInfo.MonoLaunchPath, monoVersion, cwd, args);
+    }
+    else {
+        return launchNix(launchInfo.LaunchPath, cwd, args);
+    }
 }
 
 function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csharpConfig: vscode.WorkspaceConfiguration,
     configurationPath: string, defaultValue: any): any {
-    
+
     if (csharpConfig[configurationPath] != undefined) {
         return csharpConfig[configurationPath];
     }
-    
+
     return globalConfig.get(configurationPath, defaultValue);
 }
 
@@ -287,7 +275,7 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
         const hasSpaceWithoutQuotes = /^[^"].* .*[^"]/;
         return hasSpaceWithoutQuotes.test(arg)
             ? `"${arg}"`
-            : arg.replace("&","^&");
+            : arg.replace("&", "^&");
     }
 
     let argsCopy = args.slice(0); // create copy of args
@@ -298,7 +286,7 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
         '"' + argsCopy.map(escapeIfNeeded).join(' ') + '"'
     ].join(' ')];
 
-    let process = spawn('cmd', argsCopy, <any>{
+    let process = spawn('cmd', argsCopy, {
         windowsVerbatimArguments: true,
         detached: false,
         cwd: cwd
@@ -307,7 +295,6 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
     return {
         process,
         command: launchPath,
-        usingMono: false
     };
 }
 
@@ -319,58 +306,41 @@ function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResul
 
     return {
         process,
-        command: launchPath,
-        usingMono: true
+        command: launchPath
     };
 }
 
-function launchNixMono(launchPath: string, cwd: string, args: string[]): Promise<LaunchResult> {
-    return canLaunchMono()
-        .then(() => {
-            let argsCopy = args.slice(0); // create copy of details args
-            argsCopy.unshift(launchPath);
-            argsCopy.unshift("--assembly-loader=strict");
+function launchNixMono(launchPath: string, monoVersion: string, cwd: string, args: string[]): LaunchResult {
+    let argsCopy = args.slice(0); // create copy of details args
+    argsCopy.unshift(launchPath);
+    argsCopy.unshift("--assembly-loader=strict");
 
-            let process = spawn('mono', argsCopy, {
-                detached: false,
-                cwd: cwd
-            });
-
-            return {
-                process,
-                command: launchPath,
-                usingMono: true
-            };
-        });
-}
-
-function canLaunchMono(): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-        hasMono('>=5.2.0').then(success => {
-            if (success) {
-                resolve();
-            }
-            else {
-                reject(new Error('Cannot start Omnisharp because Mono version >=5.2.0 is required.'));
-            }
-        });
+    let process = spawn('mono', argsCopy, {
+        detached: false,
+        cwd: cwd
     });
+
+    return {
+        process,
+        command: launchPath,
+        monoVersion, 
+    };
 }
 
-export function hasMono(range?: string): Promise<boolean> {
+async function getMonoVersion(): Promise<string> {
     const versionRegexp = /(\d+\.\d+\.\d+)/;
 
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
         let childprocess: ChildProcess;
         try {
             childprocess = spawn('mono', ['--version']);
         }
         catch (e) {
-            return resolve(false);
+            return resolve(undefined);
         }
 
         childprocess.on('error', function (err: any) {
-            resolve(false);
+            resolve(undefined);
         });
 
         let stdout = '';
@@ -379,20 +349,14 @@ export function hasMono(range?: string): Promise<boolean> {
         });
 
         childprocess.stdout.on('close', () => {
-            let match = versionRegexp.exec(stdout),
-                ret: boolean;
+            let match = versionRegexp.exec(stdout);
 
-            if (!match) {
-                ret = false;
-            }
-            else if (!range) {
-                ret = true;
+            if (match && match.length > 1) {
+                resolve(match[1]);
             }
             else {
-                ret = satisfies(match[1], range);
+                resolve(undefined);
             }
-
-            resolve(ret);
         });
     });
 }

@@ -19,6 +19,6 @@ export default async function poll<T>(getValue: () => T, duration: number, step:
     throw new Error("Polling did not succeed within the alotted duration."); 
 } 
  
-function sleep(ms = 0) {
+async function sleep(ms = 0) {
     return new Promise(r => setTimeout(r, ms)); 
 }

@@ -3,8 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Logger } from '../logger';
 import * as prioritization from './prioritization';
+import { OmnisharpServerProcessRequestComplete, OmnisharpServerProcessRequestStart, OmnisharpServerDequeueRequest, OmnisharpServerEnqueueRequest } from './loggingEvents';
+import { EventStream } from '../EventStream';
 
 export interface Request {
     command: string;
@@ -26,7 +27,7 @@ class RequestQueue {
     public constructor(
         private _name: string,
         private _maxSize: number,
-        private _logger: Logger,
+        private eventStream: EventStream,
         private _makeRequest: (request: Request) => number) {
     }
 
@@ -34,7 +35,7 @@ class RequestQueue {
      * Enqueue a new request.
      */
     public enqueue(request: Request) {
-        this._logger.appendLine(`Enqueue ${this._name} request for ${request.command}.`);
+        this.eventStream.post(new OmnisharpServerEnqueueRequest(this._name, request.command));
         this._pending.push(request);
     }
 
@@ -46,7 +47,7 @@ class RequestQueue {
 
         if (request) {
             this._waiting.delete(id);
-            this._logger.appendLine(`Dequeue ${this._name} request for ${request.command} (${id}).`);
+            this.eventStream.post(new OmnisharpServerDequeueRequest(this._name, request.command, id));
         }
 
         return request;
@@ -86,8 +87,7 @@ class RequestQueue {
             return;
         }
 
-        this._logger.appendLine(`Processing ${this._name} queue`);
-        this._logger.increaseIndent();
+        this.eventStream.post(new OmnisharpServerProcessRequestStart(this._name));
 
         const slots = this._maxSize - this._waiting.size;
 
@@ -102,8 +102,7 @@ class RequestQueue {
                 break;
             }
         }
-
-        this._logger.decreaseIndent();
+        this.eventStream.post(new OmnisharpServerProcessRequestComplete());
     }
 }
 
@@ -114,13 +113,13 @@ export class RequestQueueCollection {
     private _deferredQueue: RequestQueue;
 
     public constructor(
-        logger: Logger,
+        eventStream: EventStream,
         concurrency: number,
         makeRequest: (request: Request) => number
     ) {
-        this._priorityQueue = new RequestQueue('Priority', 1, logger, makeRequest);
-        this._normalQueue = new RequestQueue('Normal', concurrency, logger, makeRequest);
-        this._deferredQueue = new RequestQueue('Deferred', Math.max(Math.floor(concurrency / 4), 2), logger, makeRequest);
+        this._priorityQueue = new RequestQueue('Priority', 1, eventStream, makeRequest);
+        this._normalQueue = new RequestQueue('Normal', concurrency, eventStream, makeRequest);
+        this._deferredQueue = new RequestQueue('Deferred', Math.max(Math.floor(concurrency / 4), 2), eventStream, makeRequest);
     }
 
     private getQueue(command: string) {
@@ -135,11 +134,10 @@ export class RequestQueueCollection {
         }
     }
 
-    public isEmpty()
-    {
+    public isEmpty() {
         return !this._deferredQueue.hasPending()
-         && !this._normalQueue.hasPending()
-         && !this._priorityQueue.hasPending();
+            && !this._normalQueue.hasPending()
+            && !this._priorityQueue.hasPending();
     }
 
     public enqueue(request: Request) {

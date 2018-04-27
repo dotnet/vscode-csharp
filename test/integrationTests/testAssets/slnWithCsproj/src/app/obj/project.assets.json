@@ -211,7 +211,7 @@
   },
   "libraries": {
     "Microsoft.NETCore.App/2.0.0": {
-      "sha512": "/mzXF+UtZef+VpzzN88EpvFq5U6z4rj54ZMq/J968H6pcvyLOmcupmTRpJ3CJm8ILoCGh9WI7qpDdiKtuzswrQ==",
+      "sha512": "u30D3okjSE34FaNeF45fQn0pEe4HTfd5jIKpyun0DD9TK7G8WC4/xLn0ZjbHT/nvWznayTl36J2X2rT8tjx+Dw==",
       "type": "package",
       "path": "microsoft.netcore.app/2.0.0",
       "files": [
@@ -489,7 +489,7 @@
       ]
     },
     "Microsoft.NETCore.DotNetAppHost/2.0.0": {
-      "sha512": "L4GGkcI/Mxl8PKLRpFdGmLb5oI8sGIR05bDTGkzCoamAjdUl1Zhkov2swjEsZvKYT8kkdiz39LtwyGYuCJxm1A==",
+      "sha512": "YPFCzBe0Rh1wMZcJvbKfDMC2ARi7vPeeTcDcsf2m91Bs6NorZHiCQWznBcZqxnyq9WvkHDpgrS2yNiD5NkvLLQ==",
       "type": "package",
       "path": "microsoft.netcore.dotnetapphost/2.0.0",
       "files": [
@@ -525,7 +525,7 @@
       ]
     },
     "Microsoft.NETCore.Platforms/2.0.0": {
-      "sha512": "VdLJOCXhZaEMY7Hm2GKiULmn7IEPFE4XC5LPSfBVCUIA8YLZVh846gtfBJalsPQF2PlzdD7ecX7DZEulJ402ZQ==",
+      "sha512": "uh69u8rko8LLHnhuBkDxIpsj/GR8VWJhCUK5WziNhrsGmOCfmuFyhjHnYXZL4w6HMHmkkE822K09GovUVpJkdQ==",
       "type": "package",
       "path": "microsoft.netcore.platforms/2.0.0",
       "files": [
@@ -540,7 +540,7 @@
       ]
     },
     "NETStandard.Library/2.0.0": {
-      "sha512": "7jnbRU+L08FXKMxqUflxEXtVymWvNOrS8yHgu9s6EM8Anr6T/wIX4nZ08j/u3Asz+tCufp3YVwFSEvFTPYmBPA==",
+      "sha512": "mXtiDxroMxIxZXC07aA40ZvsjLawxCUpcu8ap/TLE8RzzXaeamhNkinkPLf5JPio4TA2r3anFSpQ14ZmG5QdhA==",
       "type": "package",
       "path": "netstandard.library/2.0.0",
       "files": [
@@ -680,37 +680,35 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\rchande\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "/Users/piotrp/code/github/piotrpMSFT/cli/.nuget/packages": {},
+    "/usr/local/share/dotnet/sdk/NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\omnisharp-vscode\\test\\integrationTests\\testAssets\\slnWithCsproj\\src\\app\\app.csproj",
+      "projectUniqueName": "/Users/piotrp/code/github/piotrpMSFT/omnisharp-vscode/test/integrationTests/testAssets/slnWithCsproj/src/app/app.csproj",
       "projectName": "app",
-      "projectPath": "C:\\omnisharp-vscode\\test\\integrationTests\\testAssets\\slnWithCsproj\\src\\app\\app.csproj",
-      "packagesPath": "C:\\Users\\rchande\\.nuget\\packages\\",
-      "outputPath": "C:\\omnisharp-vscode\\test\\integrationTests\\testAssets\\slnWithCsproj\\src\\app\\obj\\",
+      "projectPath": "/Users/piotrp/code/github/piotrpMSFT/omnisharp-vscode/test/integrationTests/testAssets/slnWithCsproj/src/app/app.csproj",
+      "packagesPath": "/Users/piotrp/code/github/piotrpMSFT/cli/.nuget/packages",
+      "outputPath": "/Users/piotrp/code/github/piotrpMSFT/omnisharp-vscode/test/integrationTests/testAssets/slnWithCsproj/src/app/obj/",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\rchande\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/piotrp/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\omnisharp-vscode\\test\\integrationTests\\testAssets\\slnWithCsproj\\src\\lib\\lib.csproj": {
-              "projectPath": "C:\\omnisharp-vscode\\test\\integrationTests\\testAssets\\slnWithCsproj\\src\\lib\\lib.csproj"
+            "/Users/piotrp/code/github/piotrpMSFT/omnisharp-vscode/test/integrationTests/testAssets/slnWithCsproj/src/lib/lib.csproj": {
+              "projectPath": "/Users/piotrp/code/github/piotrpMSFT/omnisharp-vscode/test/integrationTests/testAssets/slnWithCsproj/src/lib/lib.csproj"
             }
           }
         }

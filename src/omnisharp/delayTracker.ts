@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 const ImmedateDelayMax = 25;
 const NearImmediateDelayMax = 50;
 const ShortDelayMax = 250;

@@ -5,10 +5,13 @@
         "no-duplicate-variable": true,
         "no-var-keyword": true,
         "promise-must-complete": true,
+        "promise-function-async": true,
         "curly": true,
         "semicolon": true,
         "indent": [true, "spaces", 4],
         "file-header": [true, ".*"]
     },
-    "rulesDirectory": ["node_modules/tslint-microsoft-contrib", "node_modules/tslint-no-unused-expression-chai/rules"]
+    "rulesDirectory": [
+      "tslint-microsoft-contrib",
+      "tslint-no-unused-expression-chai"]
 }

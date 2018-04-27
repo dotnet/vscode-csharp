@@ -14,5 +14,10 @@ obj/
 bin/
 test/**/.vscode
 .logs/
+.nyc_output/
+coverage/
 
 \.DS_Store
+vsix/
+
+\.vscodeignore
