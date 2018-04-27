@@ -41,10 +41,12 @@
     "postinstall": "node ./node_modules/vscode/bin/install",
     "cov:instrument": "rimraf ./coverage && rimraf ./.nyc_output && rimraf ./out && npm run compile && cd out && nyc instrument --require source-map-support/register --cwd ../ . . && cd ..",
     "cov:merge": "cd ./out && istanbul-combine -d ../coverage/integration -r lcovonly ../.nyc_output/integration/*.json && cd ..",
-    "cov:merge-html": "istanbul-combine -d ./coverage -r html ./.nyc_output/integration/*.json",    
+    "cov:merge-html": "istanbul-combine -d ./coverage -r html ./.nyc_output/integration/*.json",
     "cov:report": "npm-run-all cov:report:integration cov:report:unit",
     "cov:report:unit": "codecov -f \"coverage/unit/lcov.info\" -F unit",
-    "cov:report:integration": "npm run cov:merge && codecov -f \"coverage/integration/lcov.info\" -F integration"
+    "cov:report:integration": "npm run cov:merge && codecov -f \"coverage/integration/lcov.info\" -F integration",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "nyc": {
     "include": [
@@ -78,7 +80,8 @@
     "tmp": "0.0.33",
     "vscode-debugprotocol": "^1.6.1",
     "vscode-extension-telemetry": "0.0.15",
-    "yauzl": "^2.5.0"
+    "yauzl": "^2.5.0",
+    "snyk": "^1.74.0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.2",
@@ -103,7 +106,7 @@
     "copyfiles": "^2.0.0",
     "cross-env": "^5.1.4",
     "del": "3.0.0",
-    "gulp": "3.9.1",
+    "gulp": "4.0.0",
     "gulp-mocha": "^5.0.0",
     "gulp-tslint": "^8.1.3",
     "istanbul-combine": "^0.3.0",
@@ -2636,5 +2639,6 @@
         }
       }
     ]
-  }
+  },
+  "snyk": true
 }
