@@ -13,7 +13,7 @@ export default class Disposable implements IDisposable {
         }
         
         if (onDispose instanceof Subscription) {
-            this.onDispose = () => onDispose.unsubscribe;
+            this.onDispose = () => onDispose.unsubscribe();
         }
         else {
             this.onDispose = onDispose;
