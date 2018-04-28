@@ -204,9 +204,9 @@ export interface LaunchResult {
     monoVersion?: string;
 }
 
-export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo): Promise<LaunchResult> {
+export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        launch(cwd, args, launchInfo)
+        launch(cwd, args, launchInfo, platformInfo)
             .then(result => {
                 // async error - when target not not ENEOT
                 result.process.on('error', err => {
@@ -222,8 +222,7 @@ export async function launchOmniSharp(cwd: string, args: string[], launchInfo: L
     });
 }
 
-async function launch(cwd: string, args: string[], launchInfo: LaunchInfo): Promise<LaunchResult> {
-    const platformInfo = await PlatformInformation.GetCurrent();
+async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation): Promise<LaunchResult> {
     const options = Options.Read();
 
     if (options.useEditorFormattingSettings) {
@@ -323,7 +322,7 @@ function launchNixMono(launchPath: string, monoVersion: string, cwd: string, arg
     return {
         process,
         command: launchPath,
-        monoVersion, 
+        monoVersion,
     };
 }
 
