@@ -20,7 +20,7 @@ export default abstract class AbstractProvider {
         this._disposables.add(disposables);
     }
 
-    dispose() {
+    dispose = () => {
         this._disposables.dispose();
     }
 }

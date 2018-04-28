@@ -144,7 +144,7 @@ class DiagnosticsProvider extends AbstractSupport {
         }
     }
 
-    public dispose(): void {
+    public dispose = () => {
         if (this._projectValidation) {
             this._projectValidation.dispose();
         }

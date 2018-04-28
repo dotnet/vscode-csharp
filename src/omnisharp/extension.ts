@@ -48,14 +48,14 @@ export async function activate(context: vscode.ExtensionContext, eventStream: Ev
     omnisharp = server;
     const advisor = new Advisor(server); // create before server is started
     const disposables = new CompositeDisposable();
-    const localDisposables = new CompositeDisposable();
+    let localDisposables : CompositeDisposable;
 
     disposables.add(server.onServerStart(() => {
         // register language feature provider on start
+        localDisposables = new CompositeDisposable();
         const definitionMetadataDocumentProvider = new DefinitionMetadataDocumentProvider();
         definitionMetadataDocumentProvider.register();
         localDisposables.add(definitionMetadataDocumentProvider);
-
         const definitionProvider = new DefinitionProvider(server, definitionMetadataDocumentProvider);
         localDisposables.add(vscode.languages.registerDefinitionProvider(documentSelector, definitionProvider));
         localDisposables.add(vscode.languages.registerDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
@@ -84,7 +84,10 @@ export async function activate(context: vscode.ExtensionContext, eventStream: Ev
 
     disposables.add(server.onServerStop(() => {
         // remove language feature providers on stop
-        localDisposables.dispose();
+        if (localDisposables) {
+            localDisposables.dispose();
+        }
+        localDisposables = null;
     }));
 
     disposables.add(registerCommands(server, eventStream,platformInfo));
