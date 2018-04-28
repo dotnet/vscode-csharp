@@ -191,7 +191,7 @@ export class RemoteAttachPicker {
         return args.map(arg => this.quoteArg(arg)).join(" ");
     }
 
-    public static async ShowAttachEntries(args: any): Promise<string> {
+    public static async ShowAttachEntries(args: any, platformInfo: PlatformInformation): Promise<string> {
         // Create remote attach output channel for errors.
         if (!RemoteAttachPicker._channel) {
             RemoteAttachPicker._channel = vscode.window.createOutputChannel('remote-attach');
@@ -216,7 +216,7 @@ export class RemoteAttachPicker {
             let pipeTransport = this.getPipeTransportOptions(args.pipeTransport, os.platform());
 
             return RemoteAttachPicker.createPipeCmd(pipeTransport.pipeProgram, pipeTransport.pipeArgs, pipeTransport.quoteArgs)
-                .then(async pipeCmd => RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd))
+                .then(async pipeCmd => RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd, platformInfo))
                 .then(processes => {
                     let attachPickOptions: vscode.QuickPickOptions = {
                         matchOnDescription: true,
@@ -229,10 +229,10 @@ export class RemoteAttachPicker {
         }
     }
 
-    public static async getRemoteOSAndProcesses(pipeCmd: string): Promise<AttachItem[]> {
+    public static async getRemoteOSAndProcesses(pipeCmd: string, platformInfo: PlatformInformation): Promise<AttachItem[]> {
         const scriptPath = path.join(getExtensionPath(), 'scripts', 'remoteProcessPickerScript');
 
-        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} < ${scriptPath}`, null, RemoteAttachPicker._channel).then(output => {
+        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} < ${scriptPath}`, null, RemoteAttachPicker._channel, platformInfo).then(output => {
             // OS will be on first line
             // Processess will follow if listed
             let lines = output.split(/\r?\n/);
@@ -504,23 +504,21 @@ async function execChildProcess(process: string, workingDirectory: string): Prom
 // VSCode cannot find the path "c:\windows\system32\bash.exe" as bash.exe is only available on 64bit OS. 
 // It can be invoked from "c:\windows\sysnative\bash.exe", so adding "c:\windows\sysnative" to path if we identify
 // VSCode is running in windows and doesn't have it in the path.
-async function GetSysNativePathIfNeeded(): Promise<NodeJS.ProcessEnv> {
-    return PlatformInformation.GetCurrent().then(platformInfo => {
-        let env = process.env;
-        if (platformInfo.isWindows() && platformInfo.architecture === "x86_64") {
-            let sysnative: String = process.env.WINDIR + "\\sysnative";
-            env.Path = process.env.PATH + ";" + sysnative;
-        }
+async function GetSysNativePathIfNeeded(platformInfo: PlatformInformation): Promise<NodeJS.ProcessEnv> {
+    let env = process.env;
+    if (platformInfo.isWindows() && platformInfo.architecture === "x86_64") {
+        let sysnative: String = process.env.WINDIR + "\\sysnative";
+        env.Path = process.env.PATH + ";" + sysnative;
+    }
 
-        return env;
-    });
+    return env;
 }
 
-async function execChildProcessAndOutputErrorToChannel(process: string, workingDirectory: string, channel: vscode.OutputChannel): Promise<string> {
+async function execChildProcessAndOutputErrorToChannel(process: string, workingDirectory: string, channel: vscode.OutputChannel, platformInfo: PlatformInformation): Promise<string> {
     channel.appendLine(`Executing: ${process}`);
 
     return new Promise<string>(async (resolve, reject) => {
-        return GetSysNativePathIfNeeded().then(newEnv => {
+        return GetSysNativePathIfNeeded(platformInfo).then(newEnv => {
             child_process.exec(process, { cwd: workingDirectory, env: newEnv, maxBuffer: 500 * 1024 }, (error: Error, stdout: string, stderr: string) => {
                 let channelOutput = "";
 
