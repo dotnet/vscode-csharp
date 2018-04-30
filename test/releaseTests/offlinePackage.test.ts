@@ -8,21 +8,19 @@ import * as glob from 'glob-promise';
 import * as path from 'path';
 import { invokeNode } from './testAssets/testAssets';
 import { PlatformInformation } from '../../src/platform';
-import { rimraf } from 'async-file';
-import * as tmp from 'tmp';
+import { TmpAsset, CreateTmpDir } from '../../src/CreateTmpAsset';
 
 suite("Offline packaging of VSIX", function () {
     let vsixFiles: string[];
     this.timeout(1000000);
-    let tmpDir: tmp.SynchrounousResult = null;
+    let tmpDir: TmpAsset;
 
-    suiteSetup(() => {
+    suiteSetup(async () => {
         chai.should();
-        tmpDir = tmp.dirSync();
+        tmpDir = await CreateTmpDir(true);
         let args: string[] = [];
         args.push(path.join("node_modules", "gulp", "bin", "gulp.js"));
         args.push("package:offline");
-        args.push("--retainVsix");// do not delete the existing vsix in the repo
         args.push(`-o`);
         args.push(tmpDir.name);
         invokeNode(args);
@@ -46,9 +44,7 @@ suite("Offline packaging of VSIX", function () {
 
     suiteTeardown(async () => {
         if (tmpDir) {
-            await rimraf(tmpDir.name);
+            tmpDir.dispose();
         }
-
-        tmpDir = null;
     });
 });
