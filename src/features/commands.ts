@@ -18,9 +18,8 @@ import { CommandShowOutput, CommandDotNetRestoreStart, CommandDotNetRestoreProgr
 import { EventStream } from '../EventStream';
 import { PlatformInformation } from '../platform';
 import CompositeDisposable from '../CompositeDisposable';
-import { IDisposable } from '../Disposable';
 
-export default function registerCommands(server: OmniSharpServer, eventStream: EventStream, platformInfo: PlatformInformation): IDisposable {
+export default function registerCommands(server: OmniSharpServer, eventStream: EventStream, platformInfo: PlatformInformation): CompositeDisposable {
     let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server));
     let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', () => pickProjectAndStart(server));
     let d3 = vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new CommandShowOutput()));

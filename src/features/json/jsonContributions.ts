@@ -50,7 +50,7 @@ export function addJSONProviders(): CompositeDisposable {
         subscriptions.add(languages.registerHoverProvider(selector, new JSONHoverProvider(contribution)));
     });
 
-    return new CompositeDisposable(subscriptions);
+    return subscriptions;
 }
 
 export class JSONHoverProvider implements HoverProvider {

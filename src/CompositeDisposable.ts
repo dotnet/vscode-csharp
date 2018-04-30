@@ -14,7 +14,7 @@ export default class CompositeDisposable extends Disposable {
 
         for (const disposable of disposables) {
             if (disposable) {
-                this.disposables.add(() => disposable.dispose());
+                this.add(disposable);
             }
             else {
                 throw new Error("null disposables are not supported");
