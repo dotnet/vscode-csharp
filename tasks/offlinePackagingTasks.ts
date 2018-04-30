@@ -14,7 +14,6 @@ import * as path from 'path';
 import * as util from '../src/common';
 import spawnNode from '../tasks/spawnNode';
 import { codeExtensionPath, offlineVscodeignorePath, vscodeignorePath, vscePath, packedVsixOutputRoot } from '../tasks/projectPaths';
-import { commandLineOptions } from '../tasks/commandLineArguments';
 import { CsharpLoggerObserver } from '../src/observers/CsharpLoggerObserver';
 import { EventStream } from '../src/EventStream';
 import { getPackageJSON } from '../tasks/packageJson';
@@ -38,16 +37,8 @@ gulp.task('vsix:offline:package', async () => {
 });
 
 async function doPackageOffline() {
+    cleanSync(true);
     util.setExtensionPath(codeExtensionPath);
-
-    if (commandLineOptions.retainVsix) {
-        //if user doesnot want to clean up the existing vsix packages
-        cleanSync(false);
-    }
-    else {
-        cleanSync(true);
-    }
-
     const packageJSON = getPackageJSON();
     const name = packageJSON.name;
     const version = packageJSON.version;
@@ -80,9 +71,7 @@ async function doOfflinePackage(platformInfo: PlatformInformation, packageName: 
     }
 
     cleanSync(false);
-
     const packageFileName = `${packageName}-${platformInfo.platform}-${platformInfo.architecture}.vsix`;
-
     await install(platformInfo, packageJSON);
     await doPackageSync(packageFileName, outputFolder);
 }
