@@ -18,6 +18,7 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
     
     let optionsWithFullEnvironment = {
         cwd: rootPath,
+        stdio: 'inherit', 
         ...options,
         env: {
             ...process.env,
@@ -25,10 +26,12 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
         }
     };
     
-    let spawned = spawn(nodePath, args, optionsWithFullEnvironment);
+    console.log(`starting ${nodePath} ${args.join(' ')}`);
 
-    spawned.stdout.on('data', (data) => console.log(data.toString()));
-    spawned.stderr.on('data', (data) => console.log(data.toString()));
+    let spawned = spawn(nodePath, args, optionsWithFullEnvironment);
+    
+    // spawned.stderr.pipe(process.stdout);
+    // spawned.stdout.pipe(process.stdout);
 
     return join(spawned);
 }

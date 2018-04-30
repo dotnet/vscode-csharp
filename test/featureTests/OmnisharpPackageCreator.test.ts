@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { assert, should, expect } from "chai";
-import { Package } from "../../src/packages";
-import { GetTestPackageJSON } from "./OmnisharpDownloader.test";
-import { SetBinaryAndGetPackage, GetPackagesFromVersion, GetVersionFilePackage } from "../../src/omnisharp/OmnisharpPackageCreator";
+import { SetBinaryAndGetPackage, GetPackagesFromVersion } from "../../src/omnisharp/OmnisharpPackageCreator";
+import { testPackageJSON } from "./testAssets/testAssets";
+import { Package } from "../../src/packageManager/Package";
 
 suite("GetOmnisharpPackage : Output package depends on the input package and other input parameters like serverUrl", () => {
 
@@ -19,7 +19,7 @@ suite("GetOmnisharpPackage : Output package depends on the input package and oth
         serverUrl = "http://serverUrl";
         version = "0.0.0";
         installPath = "testPath";
-        let packageJSON = GetTestPackageJSON();
+        let packageJSON = testPackageJSON;
         inputPackages = <Package[]> (packageJSON.runtimeDependencies);
         should();
     });
@@ -103,7 +103,7 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
     let inputPackages : any;
 
     suiteSetup(() => {
-        inputPackages = <Package[]>(GetTestPackageJSON().runtimeDependencies);
+        inputPackages = <Package[]>(testPackageJSON.runtimeDependencies);
         should();
     });
 
@@ -195,16 +195,4 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
         outPackages.length.should.equal(1);
         outPackages[0].platformId.should.equal("win-x64");
     });
-});
-
-suite('GetVersionFilePackage : Gives the package for the latest file download', () => {
-    test('Contains the expected description', () => {
-        let testPackage = GetVersionFilePackage("someUrl", "somePath");
-        expect(testPackage.description).to.equal('Latest version information file');
-    }); 
-
-    test('Contains the url based on serverUrl and the pathInServer', () => {
-        let testPackage = GetVersionFilePackage("someUrl", "somePath");
-        expect(testPackage.url).to.equal('someUrl/somePath');
-    }); 
 });

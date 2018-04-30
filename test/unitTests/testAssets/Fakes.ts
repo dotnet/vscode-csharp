@@ -5,7 +5,7 @@
 
 import * as vscode from '../../../src/vscodeAdapter';
 import * as protocol from '../../../src/omnisharp/protocol';
-import { DocumentSelector, MessageItem, TextDocument, Uri } from '../../../src/vscodeAdapter';
+import { DocumentSelector, MessageItem, TextDocument, Uri, GlobPattern } from '../../../src/vscodeAdapter';
 import { ITelemetryReporter } from '../../../src/observers/TelemetryObserver';
 import { MSBuildDiagnosticsMessage } from '../../../src/omnisharp/protocol';
 import { OmnisharpServerMsBuildProjectDiagnostics, OmnisharpServerOnError, OmnisharpServerUnresolvedDependencies, WorkspaceInformationUpdated } from '../../../src/omnisharp/loggingEvents';
@@ -33,13 +33,13 @@ export const getNullTelemetryReporter = (): ITelemetryReporter => {
 
 export const getNullWorkspaceConfiguration = (): vscode.WorkspaceConfiguration => {
     let workspace: vscode.WorkspaceConfiguration = {
-        get: <T>(section: string) => {
-            return true;
+        get: <T>(section: string): T| undefined => {
+            return undefined;
         },
-        has: (section: string) => { return true; },
+        has: (section: string) => { return undefined; },
         inspect: () => {
             return {
-                key: "somekey"
+                key: undefined
             };
         },
         update: async () => { return Promise.resolve(); },
@@ -115,6 +115,9 @@ export function getFakeVsCode(): vscode.vscode {
                 throw new Error("Not Implemented");
             },
             asRelativePath: (pathOrUri: string | Uri, includeWorkspaceFolder?: boolean) => {
+                throw new Error("Not Implemented");
+            },
+            createFileSystemWatcher: (globPattern: GlobPattern, ignoreCreateEvents?: boolean, ignoreChangeEvents?: boolean, ignoreDeleteEvents?: boolean) => {
                 throw new Error("Not Implemented");
             }
         }
