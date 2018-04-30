@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs';
+import * as fs from 'async-file';
 import * as mkdirp from 'mkdirp';
 import * as path from 'path';
 import * as yauzl from 'yauzl';
@@ -11,17 +11,17 @@ import { EventStream } from "../EventStream";
 import { InstallationStart } from "../omnisharp/loggingEvents";
 import { NestedError } from '../NestedError';
 
-export async function InstallZip(sourceFileDescriptor: number, description: string, destinationInstallPath: string, binaries: string[], eventStream: EventStream): Promise<void> {
+export async function InstallZip(sourcePath: string, description: string, destinationInstallPath: string, binaries: string[], eventStream: EventStream): Promise<void> {
     eventStream.post(new InstallationStart(description));
 
-    return new Promise<void>((resolve, reject) => {
-        if (sourceFileDescriptor == 0) {
-            return reject(new NestedError('Downloaded file unavailable'));
+    return new Promise<void>(async (resolve, reject) => {
+        if (!(await fs.exists(sourcePath))) {
+            return reject(new NestedError(`The source path: "${sourcePath}" doesn't exist`));
         }
 
-        yauzl.fromFd(sourceFileDescriptor, { lazyEntries: true }, (err, zipFile) => {
+        yauzl.open(sourcePath, { lazyEntries: true }, (err, zipFile) => {
             if (err) {
-                return reject(new NestedError('Immediate zip file error', err));
+                return reject(new NestedError(`Immediate zip file error: ${err}`));
             }
 
             zipFile.readEntry();

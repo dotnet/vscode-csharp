@@ -90,15 +90,23 @@ async function downloadFile(fd: number, description: string, urlString: string, 
             });
 
             response.on('end', () => {
+            tmpFile.on('error', err => {
+                reject(new NestedError(`Writestream error: ${err.message || 'NONE'}`, err)); 
+            });
+
+            tmpFile.on('finish', () => {
                 resolve();
             });
 
             response.on('error', err => {
                 reject(new NestedError(`Reponse error: ${err.message || 'NONE'}`, err));
+                tmpFile.end(); //close the writable stream if there is an error in the response
+                reject(new NestedError(`Response error: ${err.message || 'NONE'}`, err));
             });
 
             // Begin piping data from the response to the package file
             response.pipe(tmpFile, { end: false });
+            response.pipe(tmpFile);
         });
 
         request.on('error', err => {
