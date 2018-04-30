@@ -15,7 +15,7 @@ import { ReadLine, createInterface } from 'readline';
 import { Request, RequestQueueCollection } from './requestQueue';
 import { DelayTracker } from './delayTracker';
 import { EventEmitter } from 'events';
-import { OmnisharpManager } from './OmnisharpManager';
+import { OmnisharpManager, LaunchInfo } from './OmnisharpManager';
 import { Options } from './options';
 import { PlatformInformation } from '../platform';
 import { launchOmniSharp } from './launcher';
@@ -88,20 +88,15 @@ export class OmniSharpServer {
     private _options: Options;
 
     private _omnisharpManager: OmnisharpManager;
-    private eventStream: EventStream;
     private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
     private firstUpdateProject: boolean;
-    private vscode: vscode;
 
-    constructor(vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation) {
-        this.eventStream = eventStream;
-        this.vscode = vscode;
+    constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private eventStream: EventStream, packageJSON: any, private platformInfo: PlatformInformation) {
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
         let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, packageJSON, platformInfo);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
         this.updateProjectDebouncer.debounceTime(1500).subscribe((event) => { this.updateProjectInfo(); });
         this.firstUpdateProject = true;
-
     }
 
     public isRunning(): boolean {
@@ -312,39 +307,37 @@ export class OmniSharpServer {
             args.push('--debug');
         }
 
-        let launchPath: string;
-        if (this._options.path) {
-            try {
-                let extensionPath = utils.getExtensionPath();
-                launchPath = await this._omnisharpManager.GetOmnisharpPath(this._options.path, this._options.useMono, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
-            }
-            catch (error) {
-                this.eventStream.post(new ObservableEvents.OmnisharpFailure(`Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));
-                return;
-            }
+        let launchInfo: LaunchInfo;
+        try {
+            let extensionPath = utils.getExtensionPath();
+            launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this._options.path, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
+        }
+        catch (error) {
+            this.eventStream.post(new ObservableEvents.OmnisharpFailure(`Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));
+            return;
         }
 
         this.eventStream.post(new ObservableEvents.OmnisharpInitialisation(new Date(), solutionPath));
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
-        return launchOmniSharp(cwd, args, launchPath).then(async value => {
-            this.eventStream.post(new ObservableEvents.OmnisharpLaunch(value.usingMono, value.command, value.process.pid));
+        try {
+            let launchResult = await launchOmniSharp(cwd, args, launchInfo, this.platformInfo);
+            this.eventStream.post(new ObservableEvents.OmnisharpLaunch(launchResult.monoVersion, launchResult.command, launchResult.process.pid));
 
-            this._serverProcess = value.process;
+            this._serverProcess = launchResult.process;
             this._delayTrackers = {};
             this._setState(ServerState.Started);
             this._fireEvent(Events.ServerStart, solutionPath);
 
-            return this._doConnect();
-        }).then(() => {
-            // Start telemetry reporting
+            await this._doConnect();
+
             this._telemetryIntervalId = setInterval(() => this._reportTelemetry(), TelemetryReportingDelay);
-        }).then(() => {
             this._requestQueue.drain();
-        }).catch(async err => {
+        }
+        catch (err) {
             this._fireEvent(Events.ServerError, err);
             return this.stop();
-        });
+        }
     }
 
     private debounceUpdateProjectWithLeadingTrue = () => {

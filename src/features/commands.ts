@@ -44,7 +44,7 @@ export default function registerCommands(server: OmniSharpServer, eventStream: E
     let d7 = vscode.commands.registerCommand('dotnet.generateAssets', async () => generateAssets(server));
 
     // Register command for remote process picker for attach
-    let d8 = vscode.commands.registerCommand('csharp.listRemoteProcess', async (args) => RemoteAttachPicker.ShowAttachEntries(args));
+    let d8 = vscode.commands.registerCommand('csharp.listRemoteProcess', async (args) => RemoteAttachPicker.ShowAttachEntries(args, platformInfo));
 
     // Register command for adapter executable command.
     let d9 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream));

@@ -6,7 +6,7 @@
 
 [![Wallaby.js](https://img.shields.io/badge/wallaby.js-configured-green.svg)](https://wallabyjs.com)
 
-Welcome to the C# extension for Visual Studio Code! This preview provides the following features inside VS Code:
+Welcome to the C# extension for Visual Studio Code! This extension provides the following features inside VS Code:
 
 * Lightweight development tools for [.NET Core](https://dotnet.github.io).
 * Great C# editing support, including Syntax Highlighting, IntelliSense, Go to Definition, Find All References, etc.

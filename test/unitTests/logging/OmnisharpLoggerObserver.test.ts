@@ -135,8 +135,8 @@ suite("OmnisharpLoggerObserver", () => {
 
     suite('OmnisharpLaunch', () => {
         [
-            new OmnisharpLaunch(true, "someCommand", 4),
-            new OmnisharpLaunch(false, "someCommand", 4)
+            new OmnisharpLaunch("5.8.0", "someCommand", 4),
+            new OmnisharpLaunch(undefined, "someCommand", 4)
         ].forEach((event: OmnisharpLaunch) => {
 
             test(`Command and Pid are displayed`, () => {
@@ -147,8 +147,8 @@ suite("OmnisharpLoggerObserver", () => {
 
             test(`Message is displayed depending on usingMono value`, () => {
                 observer.post(event);
-                if (event.usingMono) {
-                    expect(logOutput).to.contain("OmniSharp server started with Mono");
+                if (event.monoVersion) {
+                    expect(logOutput).to.contain("OmniSharp server started with Mono 5.8.0");
                 }
                 else {
                     expect(logOutput).to.contain("OmniSharp server started");
