@@ -39,11 +39,13 @@ export function SetBinaryAndGetPackage(inputPackage: PackageJSONPackage, serverU
         installBinary = "mono.linux-x86_64";
     }
 
-    return <PackageJSONPackage>{...inputPackage,
-        "description": `${inputPackage.description}, Version = ${version}`,
-        "url": `${serverUrl}/releases/${version}/omnisharp-${inputPackage.platformId}.zip`,
-        "installPath": `${installPath}/${version}`,
-        "installTestPath": `./${installPath}/${version}/${installBinary}`,
-        "fallbackUrl": undefined //setting to empty so that we dont use the fallback url of the default packages
+    return <PackageJSONPackage>{
+        description: `${inputPackage.description}, Version = ${version}`,
+        url: `${serverUrl}/releases/${version}/omnisharp-${inputPackage.platformId}.zip`,
+        installPath: `${installPath}/${version}`,
+        platforms: inputPackage.platforms,
+        architectures: inputPackage.architectures,
+        binaries: inputPackage.binaries,
+        installTestPath: `./${installPath}/${version}/${installBinary}`
     };
 }
