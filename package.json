@@ -557,7 +557,7 @@
           "default": true,
           "description": "Specifes whether OmniSharp should use VS Code editor settings for C# code formatting (use of tabs, indentation size)."
         },
-        "omnisharp.disableMsBuildDiagnosticWarning": {
+        "omnisharp.disableMSBuildDiagnosticWarning": {
           "type": "boolean",
           "default": false,
           "description": "Specifies whether notifications should be shown if OmniSharp encounters warnings or errors loading a project. Note that these warnings/errors are always emitted to the OmniSharp log"
