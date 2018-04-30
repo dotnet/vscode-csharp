@@ -17,8 +17,9 @@ import { getAdapterExecutionCommand } from '../coreclr-debug/activate';
 import { CommandShowOutput, CommandDotNetRestoreStart, CommandDotNetRestoreProgress, CommandDotNetRestoreSucceeded, CommandDotNetRestoreFailed } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 import { PlatformInformation } from '../platform';
+import CompositeDisposable from '../CompositeDisposable';
 
-export default function registerCommands(server: OmniSharpServer, eventStream: EventStream, platformInfo: PlatformInformation) {
+export default function registerCommands(server: OmniSharpServer, eventStream: EventStream, platformInfo: PlatformInformation): CompositeDisposable {
     let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server));
     let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', () => pickProjectAndStart(server));
     let d3 = vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new CommandShowOutput()));
@@ -44,13 +45,13 @@ export default function registerCommands(server: OmniSharpServer, eventStream: E
     let d7 = vscode.commands.registerCommand('dotnet.generateAssets', async () => generateAssets(server));
 
     // Register command for remote process picker for attach
-    let d8 = vscode.commands.registerCommand('csharp.listRemoteProcess', async (args) => RemoteAttachPicker.ShowAttachEntries(args));
+    let d8 = vscode.commands.registerCommand('csharp.listRemoteProcess', async (args) => RemoteAttachPicker.ShowAttachEntries(args, platformInfo));
 
     // Register command for adapter executable command.
     let d9 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream));
     let d10 = vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream));
 
-    return vscode.Disposable.from(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10);
+    return new CompositeDisposable(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10);
 }
 
 function restartOmniSharp(server: OmniSharpServer) {

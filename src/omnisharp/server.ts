@@ -88,21 +88,15 @@ export class OmniSharpServer {
     private _options: Options;
 
     private _omnisharpManager: OmnisharpManager;
-    private eventStream: EventStream;
     private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
     private firstUpdateProject: boolean;
-    private vscode: vscode;
-    private extensionPath: string;
 
-    constructor(vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation, extensionPath: string) {
-        this.eventStream = eventStream;
-        this.vscode = vscode;
+    constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private eventStream: EventStream, packageJSON: any, private platformInfo: PlatformInformation, private extensionPath: string) {
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
         let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, platformInfo, packageJSON, extensionPath);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
         this.updateProjectDebouncer.debounceTime(1500).subscribe((event) => { this.updateProjectInfo(); });
         this.firstUpdateProject = true;
-        this.extensionPath = extensionPath;
     }
 
     public isRunning(): boolean {
@@ -326,7 +320,7 @@ export class OmniSharpServer {
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
         try {
-            let launchResult = await launchOmniSharp(cwd, args, launchInfo);
+            let launchResult = await launchOmniSharp(cwd, args, launchInfo, this.platformInfo);
             this.eventStream.post(new ObservableEvents.OmnisharpLaunch(launchResult.monoVersion, launchResult.command, launchResult.process.pid));
 
             this._serverProcess = launchResult.process;

@@ -50,6 +50,23 @@ Environment variables may be passed to your program using this schema:
         "myVariableName":"theValueGoesHere"
     }
 
+NOTE: Environment variables can also be configured through a `${cwd}/Properties/launchSettings.json` file, which is useful for environment variables that should be set in all development scenarios -- when the project is started from the command line (`dotnet run`), from Visual Studio Code, or Visual Studio.
+
+Example Properties/launchSettings.json file:
+
+```json
+{
+  "profiles": {
+    "ProfileNameGoesHere": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "myVariableName":"theValueGoesHere"
+      }
+    }
+  }
+}
+```
+
 ## Console (terminal) window
 By default, processes are launched with their console output (stdout/stderr) going to the VS Code Debugger Console. This is useful for executables that take their input from the network, files, etc. But this does NOT work for applications that want to read from the console (ex: `Console.ReadLine`). For these applications, use a setting such as the following:
 

@@ -7,10 +7,17 @@
 
 #### Debugger
 
-* Adds support for [Source Link](https://aka.ms/SourceLinkSpec), Symbol Servers and other more advanced symbol options ([#373](https://github.com/OmniSharp/omnisharp-vscode/issues/373))
-* Adds launch.json option to suppress Just-In-Time compiler optimizations.
-* Due to the previous two items and work from the .NET Team, it is now possible to easily debug into ASP.NET itself in projects running against .NET Core 2.1 preview 1. Support for debugging into all the managed code in .NET Core will come in future .NET Core 2.1 builds. Instructions are in the [wiki](https://github.com/OmniSharp/omnisharp-vscode/wiki/Debugging-into-the-.NET-Framework-itself).
-* Adds a Code Lens indicator for runnning and debugging all tests in a class. ([#420](https://github.com/OmniSharp/omnisharp-vscode/issues/420), PR: [#1961](https://github.com/OmniSharp/omnisharp-vscode/pull/1961); PR: [omnisharp-roslyn#1089](https://github.com/OmniSharp/omnisharp-roslyn/pull/1089))
+* New features:
+  * Adds support for [Source Link](https://aka.ms/SourceLinkSpec), Symbol Servers and other more advanced symbol options ([#373](https://github.com/OmniSharp/omnisharp-vscode/issues/373))
+  * Adds launch.json option to suppress Just-In-Time compiler optimizations.
+  * Due to the previous two items and work from the .NET Team, it is now possible to easily debug into ASP.NET itself in projects running against .NET Core 2.1. Instructions are in the [wiki](https://github.com/OmniSharp/omnisharp-vscode/wiki/Debugging-into-the-.NET-Framework-itself).
+  * Adds support for pulling in environment variables from `${cwd}/Properties/launchSettings.json`. This means that if you add environment variable configuration to your launchSettings.json file, they will now be used when you start your app from Visual Studio Code like they previously would be used from the command line (`dotnet run`), and from Visual Studio. ([#2017](https://github.com/OmniSharp/omnisharp-vscode/issues/2017))
+  * Adds a Code Lens indicator for running and debugging all tests in a class. ([#420](https://github.com/OmniSharp/omnisharp-vscode/issues/420), PR: [#1961](https://github.com/OmniSharp/omnisharp-vscode/pull/1961); PR: [omnisharp-roslyn#1089](https://github.com/OmniSharp/omnisharp-roslyn/pull/1089))
+
+* Bug fixes:
+  * On Linux, this reduces the native dependencies of the debugger to match the .NET Core 2.1 runtime. The Linux .NET Core 2.1 runtime reduced its native dependencies over all the previous versions, but the debugger still had the same dependencies as .NET Core 2.0. With this fix, the debugger will now continue to work on Linux after installing the .NET Core runtime and nothing else. ([#2199](https://github.com/OmniSharp/omnisharp-vscode/issues/2199))
+  * Fixes async call stacks with the .NET Core 2.1 runtime. ([#1892](https://github.com/OmniSharp/omnisharp-vscode/issues/1892))
+  * Fixes the debugger's browser launch code when launching projects configured to use Application Insights. ([2177](https://github.com/OmniSharp/omnisharp-vscode/issues/2177))
 
 #### Specify OmniSharp Version
 Enables the use of pre-release builds of Omnisharp. Downloading a pre-release build of Omnisharp allows the C# extension for VS Code to use features that have been merged into the "master" branch of omnisharp-roslyn(https://github.com/OmniSharp/omnisharp-roslyn) but that have not been officially released
@@ -27,6 +34,9 @@ Enables the use of pre-release builds of Omnisharp. Downloading a pre-release bu
     * Displays the name of the selected project regardless of the currently active document.  
     * If a project is already selected, it displays the name of the selected project. Clicking on it displays a menu to switch to other projects in the workspace. 
     * If there are multiple possible launch targets, it displays 'Select Project'. Clicking on it displays a menu to select one.
+
+#### Misc
+* Enables suppressing the "some projects had trouble loading" popup using the `omnisharp.disableMsBuildDiagnosticWarning` option ([#2110]https://github.com/OmniSharp/omnisharp-vscode/issues/2110)
 
 ## 1.14.0 (February 14, 2018)
 
