@@ -28,7 +28,7 @@ export class Package{
     }
 }
 
-export function ResolvePackageTestPath(pkg: PackageJSONPackage, extensionPath: string): string {
+function ResolvePackageTestPath(pkg: PackageJSONPackage, extensionPath: string): string {
     if (pkg.installTestPath) {
         return path.resolve(extensionPath, pkg.installTestPath);
     }
