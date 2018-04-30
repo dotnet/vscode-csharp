@@ -18,7 +18,8 @@ export class Options {
         public useFormatting?: boolean,
         public showReferencesCodeLens?: boolean,
         public showTestsCodeLens?: boolean,
-        public disableCodeActions?: boolean) { }
+        public disableCodeActions?: boolean,
+        public disableMSBuildDiagnosticWarning?: boolean) { }
 
     public static Read(): Options {
         // Extra effort is taken below to ensure that legacy versions of options
@@ -59,6 +60,8 @@ export class Options {
 
         const disableCodeActions = csharpConfig.get<boolean>('disableCodeActions', false);
 
+        const disableMSBuildDiagnosticWarning = omnisharpConfig.get<boolean>('disableMSBuildDiagnosticWarning');
+
         return new Options(path, 
             useMono, 
             waitForDebugger,
@@ -70,6 +73,7 @@ export class Options {
             useFormatting,
             showReferencesCodeLens,
             showTestsCodeLens,
-            disableCodeActions);
+            disableCodeActions,
+            disableMSBuildDiagnosticWarning);
     }
 }
