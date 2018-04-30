@@ -21,7 +21,7 @@ export async function InstallZip(sourcePath: string, description: string, destin
 
         yauzl.open(sourcePath, { lazyEntries: true }, (err, zipFile) => {
             if (err) {
-                return reject(new NestedError(`Immediate zip file error: ${err}`));
+                return reject(new NestedError(`Immediate zip file error:  ${err.message || 'NONE'}`));
             }
 
             zipFile.readEntry();
