@@ -16,7 +16,7 @@ export interface MessageItemWithCommand extends MessageItem {
 export class WarningMessageObserver {
     private warningMessageDebouncer: Subject<BaseEvent>;
 
-    constructor(private vscode: vscode, scheduler?: Scheduler) {
+    constructor(private vscode: vscode, private disableMsBuildDiagnosticWarning: () => boolean, scheduler?: Scheduler) {
         this.warningMessageDebouncer = new Subject<BaseEvent>();
         this.warningMessageDebouncer.debounceTime(1500, scheduler).subscribe(async event => {
             let message = "Some projects have trouble loading. Please review the output for more details.";
@@ -50,7 +50,7 @@ export class WarningMessageObserver {
     }
 
     private handleOmnisharpServerMsBuildProjectDiagnostics(event: OmnisharpServerMsBuildProjectDiagnostics) {
-        if (event.diagnostics.Errors.length > 0) {
+        if (!this.disableMsBuildDiagnosticWarning() && event.diagnostics.Errors.length > 0) {
             this.warningMessageDebouncer.next(event);
         }
     }

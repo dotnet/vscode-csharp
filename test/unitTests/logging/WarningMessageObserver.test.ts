@@ -61,7 +61,7 @@ suite('WarningMessageObserver', () => {
         assertionObservable = new Subject<string>();
         scheduler = new TestScheduler(assert.deepEqual);
         scheduler.maxFrames = 9000;
-        observer = new WarningMessageObserver(vscode, scheduler);
+        observer = new WarningMessageObserver(vscode, () => false, scheduler);
         warningMessages = [];
         invokedCommand = undefined;
         commandDone = new Promise<void>(resolve => {
@@ -75,6 +75,15 @@ suite('WarningMessageObserver', () => {
             []);
         observer.post(event);
         expect(invokedCommand).to.be.undefined;
+    });
+
+    test('OmnisharpServerMsBuildProjectDiagnostics: No event is posted if warning is disabled', () => {
+        let newObserver = new WarningMessageObserver(vscode, () => true, scheduler);
+        let event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
+            [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)],
+            [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)]);
+        newObserver.post(event);
+        expect(warningMessages).to.be.empty;
     });
 
     [
