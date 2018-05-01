@@ -32,7 +32,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
     }
 
     private _resetCachedOptions(): void {
-        this._options = Options.Read();
+        this._options = Options.Read(vscode);
     }
 
     public async provideCodeActions(document: vscode.TextDocument, range: vscode.Range, context: vscode.CodeActionContext, token: vscode.CancellationToken): Promise<vscode.Command[]> {

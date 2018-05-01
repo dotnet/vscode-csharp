@@ -41,7 +41,7 @@ export function findLaunchTargets(): Thenable<LaunchTarget[]> {
         return Promise.resolve([]);
     }
 
-    const options = Options.Read();
+    const options = Options.Read(vscode);
 
     return vscode.workspace.findFiles(
             /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
@@ -204,9 +204,9 @@ export interface LaunchResult {
     monoVersion?: string;
 }
 
-export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation): Promise<LaunchResult> {
+export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        launch(cwd, args, launchInfo, platformInfo)
+        launch(cwd, args, launchInfo, platformInfo, options)
             .then(result => {
                 // async error - when target not not ENEOT
                 result.process.on('error', err => {
@@ -222,9 +222,7 @@ export async function launchOmniSharp(cwd: string, args: string[], launchInfo: L
     });
 }
 
-async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation): Promise<LaunchResult> {
-    const options = Options.Read();
-
+async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options): Promise<LaunchResult> {
     if (options.useEditorFormattingSettings) {
         let globalConfig = vscode.workspace.getConfiguration();
         let csharpConfig = vscode.workspace.getConfiguration('[csharp]');

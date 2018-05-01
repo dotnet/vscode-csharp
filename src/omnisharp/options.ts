@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import { vscode, WorkspaceConfiguration } from '../vscodeAdapter';
 
 export class Options {
     constructor(
@@ -21,7 +21,7 @@ export class Options {
         public disableCodeActions: boolean,
         public disableMSBuildDiagnosticWarning: boolean) { }
 
-    public static Read(): Options {
+    public static Read(vscode: vscode): Options {
         // Extra effort is taken below to ensure that legacy versions of options
         // are supported below. In particular, these are:
         //
@@ -74,7 +74,7 @@ export class Options {
             disableMSBuildDiagnosticWarning);
     }
 
-    private static readPathOption(csharpConfig: vscode.WorkspaceConfiguration, omnisharpConfig: vscode.WorkspaceConfiguration): string | null {
+    private static readPathOption(csharpConfig: WorkspaceConfiguration, omnisharpConfig: WorkspaceConfiguration): string | null {
         if (omnisharpConfig.has('path')) {
             // If 'omnisharp.path' setting was found, use it.
             return omnisharpConfig.get<string>('path');
@@ -89,7 +89,7 @@ export class Options {
         }
     }
 
-    private static readUseGlobalMonoOption(omnisharpConfig: vscode.WorkspaceConfiguration, csharpConfig: vscode.WorkspaceConfiguration): string {
+    private static readUseGlobalMonoOption(omnisharpConfig: WorkspaceConfiguration, csharpConfig: WorkspaceConfiguration): string {
         function toUseGlobalMonoValue(value: boolean): string {
             // True means 'always' and false means 'auto'.
             return value ? "always" : "auto";
