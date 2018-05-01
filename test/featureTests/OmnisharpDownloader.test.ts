@@ -22,7 +22,7 @@ suite("DownloadAndInstallExperimentalVersion : Gets the version packages, downlo
     const eventStream = new EventStream();
     const downloader = GetTestOmnisharpDownloader(eventStream, platformInfo);
     const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
-    const installPath = ".omnisharp/experimental/";
+    const installPath = "somePath";
 
     setup(() => {
         tmpDir = tmp.dirSync();
