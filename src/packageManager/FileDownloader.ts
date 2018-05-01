@@ -73,7 +73,6 @@ async function downloadFile(description: string, urlString: string, eventStream:
             let packageSize = parseInt(response.headers['content-length'], 10);
             let downloadedBytes = 0;
             let downloadPercentage = 0;
-            //let tmpFile = fs.createWriteStream(null, { fd });
 
             eventStream.post(new DownloadSizeObtained(packageSize));
 
