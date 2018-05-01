@@ -12,9 +12,9 @@ import { parse as parseUrl } from 'url';
 import { getProxyAgent } from './proxy';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 
-export async function DownloadFile(description: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider, url: string, fallbackUrl?: string){
+export async function DownloadFile(description: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider, url: string, fallbackUrl?: string) {
     eventStream.post(new DownloadStart(description));
-    
+
     try {
         let buffer = await downloadFile(description, url, eventStream, networkSettingsProvider);
         eventStream.post(new DownloadSuccess(` Done!`));
@@ -96,9 +96,6 @@ async function downloadFile(description: string, urlString: string, eventStream:
             response.on('error', err => {
                 reject(new NestedError(`Reponse error: ${err.message || 'NONE'}`, err));
             });
-
-            // Begin piping data from the response to the package file
-           // response.pipe(tmpFile, { end: false });
         });
 
         request.on('error', err => {
