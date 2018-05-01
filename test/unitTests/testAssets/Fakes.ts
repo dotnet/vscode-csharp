@@ -32,8 +32,8 @@ export const getNullTelemetryReporter = (): ITelemetryReporter => {
 };
 
 export const getNullWorkspaceConfiguration = (): vscode.WorkspaceConfiguration => {
-    let workspace: vscode.WorkspaceConfiguration = {
-        get: <T>(section: string): T| undefined => {
+    let configuration: vscode.WorkspaceConfiguration = {
+        get: <T>(section: string): T | undefined => {
             return undefined;
         },
         has: (section: string) => { return undefined; },
@@ -42,9 +42,33 @@ export const getNullWorkspaceConfiguration = (): vscode.WorkspaceConfiguration =
                 key: undefined
             };
         },
-        update: async () => { return Promise.resolve(); },
+        update: async () => { return Promise.resolve(); }
     };
-    return workspace;
+
+    return configuration;
+};
+
+export const getWorkspaceConfiguration = (): vscode.WorkspaceConfiguration => {
+    let values: { [key: string]: any } = {};
+    
+    let configuration: vscode.WorkspaceConfiguration = {
+        get<T>(section: string, defaultValue?: T): T | undefined {
+            let result = <T>values[section];
+            return result === undefined && defaultValue !== undefined
+                ? defaultValue
+                : result;
+        },
+        has: (section: string) => {
+            return values[section] !== undefined;
+        },
+        inspect: () => { throw new Error("Not Implemented"); },
+        update: async (section: string, value: any, configurationTarget?: vscode.ConfigurationTarget | boolean) => {
+            values[section] = value;
+            return Promise.resolve();
+        }
+    };
+
+    return configuration;
 };
 
 export function getOmnisharpMSBuildProjectDiagnosticsEvent(fileName: string, warnings: MSBuildDiagnosticsMessage[], errors: MSBuildDiagnosticsMessage[]): OmnisharpServerMsBuildProjectDiagnostics {

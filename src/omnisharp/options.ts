@@ -38,8 +38,8 @@ export class Options {
         const waitForDebugger = omnisharpConfig.get<boolean>('waitForDebugger', false);
 
         // support the legacy "verbose" level as "debug"
-        let loggingLevel = omnisharpConfig.get<string>('loggingLevel');
-        if (loggingLevel.toLowerCase() === 'verbose') {
+        let loggingLevel = omnisharpConfig.get<string>('loggingLevel', 'information');
+        if (loggingLevel && loggingLevel.toLowerCase() === 'verbose') {
             loggingLevel = 'debug';
         }
 
@@ -56,7 +56,7 @@ export class Options {
 
         const disableCodeActions = csharpConfig.get<boolean>('disableCodeActions', false);
 
-        const disableMSBuildDiagnosticWarning = omnisharpConfig.get<boolean>('disableMSBuildDiagnosticWarning');
+        const disableMSBuildDiagnosticWarning = omnisharpConfig.get<boolean>('disableMSBuildDiagnosticWarning', false);
 
         return new Options(
             path, 
@@ -97,7 +97,7 @@ export class Options {
 
         if (omnisharpConfig.has('useGlobalMono')) {
             // If 'omnisharp.useGlobalMono' setting was found, just use it.
-            return omnisharpConfig.get<string>('useGlobalMono');
+            return omnisharpConfig.get<string>('useGlobalMono', "auto");
         }
         else if (omnisharpConfig.has('useMono')) {
             // BACKCOMPAT: If 'omnisharp.useMono' setting was found, true maps to "always" and false maps to "auto"
