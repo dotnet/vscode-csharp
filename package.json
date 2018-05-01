@@ -493,7 +493,7 @@
         "csharp.suppressProjectJsonWarning": {
           "type": "boolean",
           "default": false,
-          "description": "Suppress the warning that project.json is no longer a supported project format for .NET Core applications"
+          "description": "Suppress the warning that project.json is no longer a supported project format for .NET Core applications."
         },
         "csharp.suppressHiddenDiagnostics": {
           "type": "boolean",
@@ -544,7 +544,7 @@
         "omnisharp.autoStart": {
           "type": "boolean",
           "default": true,
-          "description": "Specifies whether the OmniSharp server will be automatically started or not. If false, OmniSharp can be started with the 'Restart OmniSharp' command"
+          "description": "Specifies whether the OmniSharp server will be automatically started or not. If false, OmniSharp can be started with the 'Restart OmniSharp' command."
         },
         "omnisharp.projectLoadTimeout": {
           "type": "number",
@@ -564,7 +564,7 @@
         "omnisharp.disableMSBuildDiagnosticWarning": {
           "type": "boolean",
           "default": false,
-          "description": "Specifies whether notifications should be shown if OmniSharp encounters warnings or errors loading a project. Note that these warnings/errors are always emitted to the OmniSharp log"
+          "description": "Specifies whether notifications should be shown if OmniSharp encounters warnings or errors loading a project. Note that these warnings/errors are always emitted to the OmniSharp log."
         }
       }
     },
