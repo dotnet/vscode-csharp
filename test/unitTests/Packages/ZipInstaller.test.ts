@@ -13,15 +13,12 @@ import { EventStream } from '../../../src/EventStream';
 import { PlatformInformation } from '../../../src/platform';
 import { BaseEvent, InstallationStart } from '../../../src/omnisharp/loggingEvents';
 import { Files, Binaries, createTestZipAsync } from '../testAssets/CreateTestZip';
-import ReadFileIntoBuffer from '../testAssets/ReadFileIntoBuffer';
 
 chai.use(require("chai-as-promised"));
 let expect = chai.expect;
 
 suite('ZipInstaller', () => {
-    let tmpSourceDir: TmpAsset;
     let tmpInstallDir: TmpAsset;
-    let testDirPath: string;
     let installationPath: string;
     let testBuffer: Buffer;
 
@@ -33,13 +30,10 @@ suite('ZipInstaller', () => {
 
     setup(async () => {
         eventBus = [];
-        tmpSourceDir = await CreateTmpDir(true);
         tmpInstallDir = await CreateTmpDir(true);
         installationPath = tmpInstallDir.name;
         allFiles = [...Files, ...Binaries];
-        testDirPath = tmpSourceDir.name + "/test.zip";
-        await createTestZipAsync(testDirPath, allFiles);
-        testBuffer = await ReadFileIntoBuffer(testDirPath);
+        testBuffer = await createTestZipAsync(allFiles);
         util.setExtensionPath(tmpInstallDir.name);
     });
 
@@ -76,7 +70,8 @@ suite('ZipInstaller', () => {
     });
 
     teardown(async () => {
-        tmpSourceDir.dispose();
-        tmpInstallDir.dispose();
+        if (tmpInstallDir) {
+            tmpInstallDir.dispose();
+        }
     });
 });

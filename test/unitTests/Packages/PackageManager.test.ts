@@ -23,11 +23,9 @@ const ServerMock = require("mock-http-server");
 const getPort = require('get-port');
 
 suite("Package Manager", () => {
-    let tmpSourceDir: TmpAsset;
     let tmpInstallDir: TmpAsset;
     let server: any;
     let downloadUrl: string;
-    let testDirPath: string;
     let allFiles: Array<{ content: string, path: string }>;
     let installationPath: string;
     let eventBus: Array<BaseEvent>;
@@ -55,7 +53,6 @@ suite("Package Manager", () => {
 
     setup(async () => {
         eventBus = [];
-        tmpSourceDir = await CreateTmpDir(true);
         tmpInstallDir = await CreateTmpDir(true);
         installationPath = tmpInstallDir.name;
         packages = <Package[]>[
@@ -67,13 +64,12 @@ suite("Package Manager", () => {
                 architectures: [windowsPlatformInfo.architecture]
             }];
         allFiles = [...Files, ...Binaries];
-        testDirPath = tmpSourceDir.name + "/test.zip";
-        await createTestZipAsync(testDirPath, allFiles);
+        let buffer = await createTestZipAsync(allFiles);
         await new Promise(resolve => server.start(resolve)); //start the server
         server.on(getRequestHandler('GET', '/package', 200, {
             "content-type": "application/zip",
-            "content-length": (await fs.stat(testDirPath)).size
-        },  await fs.readFile(testDirPath)));
+            "content-length": buffer.length
+        },  buffer));
     });
 
     test("Downloads the package and installs at the specified path", async () => {
@@ -105,9 +101,6 @@ suite("Package Manager", () => {
     });
 
     teardown(async () => {
-        if (tmpSourceDir) {
-            tmpSourceDir.dispose();
-        }
         if (tmpInstallDir) {
             tmpInstallDir.dispose();
         }
