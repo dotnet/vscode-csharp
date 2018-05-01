@@ -81,7 +81,7 @@ export class Options {
         }
         else if (csharpConfig.has('omnisharp')) {
             // BACKCOMPAT: If 'csharp.omnisharp' setting was found, use it.
-            return csharpConfig.get<string>('path');
+            return csharpConfig.get<string>('omnisharp');
         }
         else {
             // Otherwise, null.
