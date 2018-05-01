@@ -24,14 +24,13 @@ suite("GetOmnisharpPackage : Output package depends on the input package and oth
         should();
     });
 
-    test('Architectures, binaries and platforms do not change and fallback url is empty', () => {
+    test('Architectures, binaries and platforms do not change', () => {
         let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "os-architecture"));
         let resultPackage = SetBinaryAndGetPackage(testPackage, serverUrl, version, installPath);
 
         resultPackage.architectures.should.equal(testPackage.architectures);
         assert.equal(resultPackage.binaries, testPackage.binaries);
         resultPackage.platforms.should.equal(testPackage.platforms);
-        expect(resultPackage.fallbackUrl).to.be.undefined;
     });
 
     test('Version information is appended to the description', () => {
