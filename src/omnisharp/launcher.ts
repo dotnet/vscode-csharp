@@ -242,16 +242,18 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
     let isValidMonoAvailable = await satisfies(monoVersion, '>=5.2.0');
 
     // If the user specifically said that they wanted to launch on Mono, respect their wishes.
-    if (options.useMono) {
+    if (options.useGlobalMono === "always") {
         if (!isValidMonoAvailable) {
             throw new Error('Cannot start OmniSharp because Mono version >=5.2.0 is required.');
         }
 
-        return launchNixMono(launchInfo.LaunchPath, monoVersion, cwd, args);
+        const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
+
+        return launchNixMono(launchPath, monoVersion, cwd, args);
     }
 
     // If we can launch on the global Mono, do so; otherwise, launch directly;
-    if (isValidMonoAvailable && launchInfo.MonoLaunchPath) {
+    if (options.useGlobalMono === "auto" && isValidMonoAvailable && launchInfo.MonoLaunchPath) {
         return launchNixMono(launchInfo.MonoLaunchPath, monoVersion, cwd, args);
     }
     else {
