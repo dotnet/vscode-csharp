@@ -23,8 +23,8 @@ export async function DownloadAndInstallPackages(packages: Package[], provider: 
         for (let pkg of filteredPackages) {
             try {
                 tmpFile = await CreateTmpFile();
-                await DownloadFile(tmpFile.fd, pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
-                await InstallZip(tmpFile.fd, pkg.description, pkg.installPath, pkg.binaries, eventStream);
+                let buffer = await DownloadFile(tmpFile.fd, pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
+                await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
             }
             catch (error) {
                 if (error instanceof NestedError) {

@@ -49,8 +49,8 @@ export class OmnisharpDownloader {
         try {
             this.eventStream.post(new LatestBuildDownloadStart());
             tmpFile = await CreateTmpFile();
-            await DownloadFile(tmpFile.fd, description, this.eventStream, this.networkSettingsProvider, url);
-            return fs.readFileSync(tmpFile.name, 'utf8');
+            let versionBuffer = await DownloadFile(tmpFile.fd, description, this.eventStream, this.networkSettingsProvider, url);
+            return versionBuffer.toString('utf8');
         }
         catch (error) {
             this.eventStream.post(new InstallationFailure('getLatestVersionInfoFile', error));
