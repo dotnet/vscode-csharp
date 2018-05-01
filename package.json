@@ -521,7 +521,7 @@
         "omnisharp.useMono": {
           "type": "boolean",
           "default": false,
-          "description": "Launch OmniSharp with Mono."
+          "description": "Launch OmniSharp with Mono. Note that this option is only valid when 'omnisharp.path' is set to an absolute path."
         },
         "omnisharp.waitForDebugger": {
           "type": "boolean",
