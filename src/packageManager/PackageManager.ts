@@ -23,7 +23,7 @@ export async function DownloadAndInstallPackages(packages: Package[], provider: 
         for (let pkg of filteredPackages) {
             try {
                 tmpFile = await CreateTmpFile();
-                let buffer = await DownloadFile(tmpFile.fd, pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
+                let buffer = await DownloadFile(pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
                 await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
             }
             catch (error) {

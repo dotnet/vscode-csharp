@@ -15,10 +15,6 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
     eventStream.post(new InstallationStart(description));
 
     return new Promise<void>((resolve, reject) => {
-        /*if (sourceFileDescriptor == 0) {
-            return reject(new NestedError('Downloaded file unavailable'));
-        }*/
-
         yauzl.fromBuffer(buffer, { lazyEntries: true }, (err, zipFile) => {
             if (err) {
                 return reject(new NestedError('Immediate zip file error', err));

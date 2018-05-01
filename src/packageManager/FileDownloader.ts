@@ -12,11 +12,11 @@ import { parse as parseUrl } from 'url';
 import { getProxyAgent } from './proxy';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 
-export async function DownloadFile(destinationFileDescriptor: number, description: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider, url: string, fallbackUrl?: string){
+export async function DownloadFile(description: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider, url: string, fallbackUrl?: string){
     eventStream.post(new DownloadStart(description));
     
     try {
-        let buffer = await downloadFile(destinationFileDescriptor, description, url, eventStream, networkSettingsProvider);
+        let buffer = await downloadFile(description, url, eventStream, networkSettingsProvider);
         eventStream.post(new DownloadSuccess(` Done!`));
         return buffer;
     }
@@ -27,7 +27,7 @@ export async function DownloadFile(destinationFileDescriptor: number, descriptio
         if (fallbackUrl) {
             eventStream.post(new DownloadFallBack(fallbackUrl));
             try {
-                let buffer = await downloadFile(destinationFileDescriptor, description, fallbackUrl, eventStream, networkSettingsProvider);
+                let buffer = await downloadFile(description, fallbackUrl, eventStream, networkSettingsProvider);
                 eventStream.post(new DownloadSuccess(' Done!'));
                 return buffer;
             }
@@ -41,7 +41,7 @@ export async function DownloadFile(destinationFileDescriptor: number, descriptio
     }
 }
 
-async function downloadFile(fd: number, description: string, urlString: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider): Promise<Buffer> {
+async function downloadFile(description: string, urlString: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider): Promise<Buffer> {
     const url = parseUrl(urlString);
     const networkSettings = networkSettingsProvider();
     const proxy = networkSettings.proxy;
@@ -57,14 +57,10 @@ async function downloadFile(fd: number, description: string, urlString: string, 
     let buffers: any[] = [];
 
     return new Promise<Buffer>((resolve, reject) => {
-        if (fd == 0) {
-            reject(new NestedError("Temporary package file unavailable"));
-        }
-
         let request = https.request(options, response => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
-                return resolve(downloadFile(fd, description, response.headers.location, eventStream, networkSettingsProvider));
+                return resolve(downloadFile(description, response.headers.location, eventStream, networkSettingsProvider));
             }
 
             else if (response.statusCode != 200) {
