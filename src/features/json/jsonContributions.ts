@@ -9,8 +9,9 @@ import { configure as configureXHR, xhr } from 'request-light';
 
 import {
     CompletionItem, CompletionItemProvider, CompletionList, TextDocument, Position, Hover, HoverProvider,
-    CancellationToken, Range, TextEdit, MarkedString, DocumentSelector, languages, workspace, Disposable
+    CancellationToken, Range, TextEdit, MarkedString, DocumentSelector, languages, workspace
 } from 'vscode';
+import CompositeDisposable from '../../CompositeDisposable';
 
 export interface ISuggestionsCollector {
     add(suggestion: CompletionItem): void;
@@ -28,8 +29,8 @@ export interface IJSONContribution {
     resolveSuggestion?(item: CompletionItem): Thenable<CompletionItem>;
 }
 
-export function addJSONProviders(): Disposable {
-    let subscriptions: Disposable[] = [];
+export function addJSONProviders(): CompositeDisposable {
+    let subscriptions = new CompositeDisposable();
 
     // configure the XHR library with the latest proxy settings
     function configureHttpRequest() {
@@ -38,18 +39,18 @@ export function addJSONProviders(): Disposable {
     }
 
     configureHttpRequest();
-    subscriptions.push(workspace.onDidChangeConfiguration(e => configureHttpRequest()));
+    subscriptions.add(workspace.onDidChangeConfiguration(e => configureHttpRequest()));
 
     // register completion and hove providers for JSON setting file(s)
     let contributions = [new ProjectJSONContribution(xhr)];
     contributions.forEach(contribution => {
         let selector = contribution.getDocumentSelector();
         let triggerCharacters = ['"', ':', '.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-        subscriptions.push(languages.registerCompletionItemProvider(selector, new JSONCompletionItemProvider(contribution), ...triggerCharacters));
-        subscriptions.push(languages.registerHoverProvider(selector, new JSONHoverProvider(contribution)));
+        subscriptions.add(languages.registerCompletionItemProvider(selector, new JSONCompletionItemProvider(contribution), ...triggerCharacters));
+        subscriptions.add(languages.registerHoverProvider(selector, new JSONHoverProvider(contribution)));
     });
 
-    return Disposable.from(...subscriptions);
+    return subscriptions;
 }
 
 export class JSONHoverProvider implements HoverProvider {

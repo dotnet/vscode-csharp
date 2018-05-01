@@ -13,6 +13,7 @@ import AbstractProvider from './abstractProvider';
 import { OmniSharpServer } from '../omnisharp/server';
 import { Options } from '../omnisharp/options';
 import TestManager from './dotnetTest';
+import CompositeDisposable from '../CompositeDisposable';
 
 class OmniSharpCodeLens extends vscode.CodeLens {
 
@@ -34,7 +35,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         this._resetCachedOptions();
 
         let configChangedDisposable = vscode.workspace.onDidChangeConfiguration(this._resetCachedOptions, this);
-        this.addDisposables(configChangedDisposable);
+        this.addDisposables(new CompositeDisposable(configChangedDisposable));
     }
 
     private _resetCachedOptions(): void {

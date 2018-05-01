@@ -8,10 +8,13 @@
 import * as minimist from 'minimist';
 import * as path from 'path';
 
-let argv = minimist(process.argv.slice(2));
+let argv = minimist(process.argv.slice(2), {
+    boolean: ['retainVsix']
+});
 
-export const commandLineOptions ={
-    outputFolder:  makePathAbsolute(argv['o']),
+export const commandLineOptions = {
+    retainVsix: !!argv['retainVsix'],
+    outputFolder: makePathAbsolute(argv['o']),
     codeExtensionPath: makePathAbsolute(argv['codeExtensionPath'])
 };
 

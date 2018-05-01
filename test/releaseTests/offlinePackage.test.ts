@@ -21,6 +21,7 @@ suite("Offline packaging of VSIX", function () {
         let args: string[] = [];
         args.push(path.join("node_modules", "gulp", "bin", "gulp.js"));
         args.push("package:offline");
+        args.push("--retainVsix");// do not delete the existing vsix in the repo
         args.push(`-o`);
         args.push(tmpDir.name);
         invokeNode(args);
