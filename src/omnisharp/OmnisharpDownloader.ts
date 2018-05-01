@@ -49,7 +49,7 @@ export class OmnisharpDownloader {
         try {
             this.eventStream.post(new LatestBuildDownloadStart());
             tmpFile = await CreateTmpFile();
-            await DownloadFile(tmpFile.fd, description, this.eventStream, this.networkSettingsProvider, url);
+            await DownloadFile(tmpFile.name, description, this.eventStream, this.networkSettingsProvider, url);
             return fs.readFileSync(tmpFile.name, 'utf8');
         }
         catch (error) {

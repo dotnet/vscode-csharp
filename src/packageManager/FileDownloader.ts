@@ -13,11 +13,11 @@ import { parse as parseUrl } from 'url';
 import { getProxyAgent } from './proxy';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 
-export async function DownloadFile(destinationFileDescriptor: number, description: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider, url: string, fallbackUrl?: string){
+export async function DownloadFile(destinationPath: string,  description: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider, url: string, fallbackUrl?: string){
     eventStream.post(new DownloadStart(description));
     
     try {
-        await downloadFile(destinationFileDescriptor, description, url, eventStream, networkSettingsProvider);
+        await downloadFile(destinationPath, description, url, eventStream, networkSettingsProvider);
         eventStream.post(new DownloadSuccess(` Done!`));
     }
     catch (primaryUrlError) {
@@ -27,7 +27,7 @@ export async function DownloadFile(destinationFileDescriptor: number, descriptio
         if (fallbackUrl) {
             eventStream.post(new DownloadFallBack(fallbackUrl));
             try {
-                await downloadFile(destinationFileDescriptor, description, fallbackUrl, eventStream, networkSettingsProvider);
+                await downloadFile(destinationPath, description, fallbackUrl, eventStream, networkSettingsProvider);
                 eventStream.post(new DownloadSuccess(' Done!'));
             }
             catch (fallbackUrlError) {
@@ -40,7 +40,7 @@ export async function DownloadFile(destinationFileDescriptor: number, descriptio
     }
 }
 
-async function downloadFile(fd: number, description: string, urlString: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider): Promise<void> {
+async function downloadFile(destinationPath: string, description: string, urlString: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider): Promise<void> {
     const url = parseUrl(urlString);
     const networkSettings = networkSettingsProvider();
     const proxy = networkSettings.proxy;
@@ -54,14 +54,10 @@ async function downloadFile(fd: number, description: string, urlString: string, 
     };
 
     return new Promise<void>((resolve, reject) => {
-        if (fd == 0) {
-            reject(new NestedError("Temporary package file unavailable"));
-        }
-
         let request = https.request(options, response => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
-                return resolve(downloadFile(fd, description, response.headers.location, eventStream, networkSettingsProvider));
+                return resolve(downloadFile(destinationPath, description, response.headers.location, eventStream, networkSettingsProvider));
             }
 
             else if (response.statusCode != 200) {
@@ -74,7 +70,7 @@ async function downloadFile(fd: number, description: string, urlString: string, 
             let packageSize = parseInt(response.headers['content-length'], 10);
             let downloadedBytes = 0;
             let downloadPercentage = 0;
-            let tmpFile = fs.createWriteStream(null, { fd });
+            let tmpFile = fs.createWriteStream(destinationPath);
 
             eventStream.post(new DownloadSizeObtained(packageSize));
 
@@ -89,16 +85,21 @@ async function downloadFile(fd: number, description: string, urlString: string, 
                 }
             });
 
-            response.on('end', () => {
+            tmpFile.on('error', err => {
+                reject(new NestedError(`Writestream error: ${err.message || 'NONE'}`, err)); 
+            });
+
+            tmpFile.on('finish', () => {
                 resolve();
             });
 
             response.on('error', err => {
-                reject(new NestedError(`Reponse error: ${err.message || 'NONE'}`, err));
+                tmpFile.end(); //close the writable stream if there is an error in the response
+                reject(new NestedError(`Response error: ${err.message || 'NONE'}`, err));
             });
 
             // Begin piping data from the response to the package file
-            response.pipe(tmpFile, { end: false });
+            response.pipe(tmpFile);
         });
 
         request.on('error', err => {
