@@ -12,6 +12,7 @@ import * as serverUtils from '../omnisharp/utils';
 import { Options } from '../omnisharp/options';
 import { FileModificationType } from '../omnisharp/protocol';
 import { Uri } from 'vscode';
+import CompositeDisposable from '../CompositeDisposable';
 
 export default class CodeActionProvider extends AbstractProvider implements vscode.CodeActionProvider {
 
@@ -27,7 +28,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
 
         let d1 = vscode.workspace.onDidChangeConfiguration(this._resetCachedOptions, this);
         let d2 = vscode.commands.registerCommand(this._commandId, this._runCodeAction, this);
-        this.addDisposables(d1, d2);
+        this.addDisposables(new CompositeDisposable(d1, d2));
     }
 
     private _resetCachedOptions(): void {
