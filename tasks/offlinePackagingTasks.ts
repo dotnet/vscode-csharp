@@ -22,6 +22,7 @@ import { PlatformInformation } from '../src/platform';
 import { DownloadAndInstallPackages } from '../src/packageManager/PackageManager';
 import NetworkSettings from '../src/NetworkSettings';
 import { GetRunTimeDependenciesPackages } from '../src/CSharpExtDownloader';
+import { commandLineOptions } from '../tasks/commandLineArguments';
 
 gulp.task('vsix:offline:package', async () => {
     del.sync(vscodeignorePath);
@@ -37,7 +38,14 @@ gulp.task('vsix:offline:package', async () => {
 });
 
 async function doPackageOffline() {
-    cleanSync(true);
+    if (commandLineOptions.retainVsix) {
+        //if user doesnot want to clean up the existing vsix packages	
+        cleanSync(false);
+    }
+    else {
+        cleanSync(true);
+    }
+    
     util.setExtensionPath(codeExtensionPath);
     const packageJSON = getPackageJSON();
     const name = packageJSON.name;
