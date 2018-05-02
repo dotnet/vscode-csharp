@@ -24,7 +24,7 @@
 * "omnisharp.path": This option has been updated to enable the user to specify different versions of OmniSharp, including prerelease versions. ([#1909](https://github.com/OmniSharp/omnisharp-vscode/issues/1909), PR: [#2039](https://github.com/OmniSharp/omnisharp-vscode/pull/2039))
 
   Possible values for this option are:
-  * `<Path to the omnisharp executable>`: Use a local copy of OmniSharp. The value must point directly to the OmniSharp executable. This is typically the build output directory of the [omnisharp-roslyn](https://github.com/OmniSharp/omnisharp-roslyn) project on the current machine, for exampple, `C:/omnisharp-roslyn/artifacts/publish/OmniSharp.Stdio/win7-x64/OmniSharp.exe`.
+  * `<Path to the omnisharp executable>`: Use a local copy of OmniSharp. The value must point directly to the OmniSharp executable. This is typically the build output directory of the [omnisharp-roslyn](https://github.com/OmniSharp/omnisharp-roslyn) project on the current machine, for example, `C:/omnisharp-roslyn/artifacts/publish/OmniSharp.Stdio/win7-x64/OmniSharp.exe`.
   * `latest`: Use the latest CI build from [omnisharp-roslyn](https://github.com/OmniSharp/omnisharp-roslyn).
   * `<version>`: Use a specific version of OmniSharp. Example: `1.29.2-beta.60`
   If "omnisharp.path" is not set, the defalut version of OmniSharp for the current release of C# for VS Code is used.
@@ -48,7 +48,7 @@
 
 #### Misc
 
-* Enables suppressing the "some projects had trouble loading" popup using the `omnisharp.disableMSBuildDiagnosticWarning` option ([#2110]https://github.com/OmniSharp/omnisharp-vscode/issues/2110)
+* Enables suppressing the "Some projects have trouble loading" popup using the `omnisharp.disableMSBuildDiagnosticWarning` option ([#2110]https://github.com/OmniSharp/omnisharp-vscode/issues/2110)
 
 ## 1.14.0 (February 14, 2018)
 
