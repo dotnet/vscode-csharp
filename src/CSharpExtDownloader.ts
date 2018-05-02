@@ -8,9 +8,9 @@ import { PlatformInformation } from './platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
 import { DownloadAndInstallPackages } from './packageManager/PackageManager';
-import { Package } from './packageManager/Package';
+import { PackageJSONPackage } from './packageManager/PackageJSONPackage';
 import { NetworkSettingsProvider } from './NetworkSettings';
-import { ResolveFilePaths } from './packageManager/PackageFilePathResolver';
+import { Package } from './packageManager/Package';
 
 /*
  * Class used to download the runtime dependencies of the C# Extension
@@ -20,8 +20,9 @@ export class CSharpExtDownloader {
     public constructor(
         private networkSettingsProvider: NetworkSettingsProvider,
         private eventStream: EventStream,
+        private platformInfo: PlatformInformation,
         private packageJSON: any,
-        private platformInfo: PlatformInformation) {
+        private extensionPath: string) {
     }
 
     public async installRuntimeDependencies(): Promise<boolean> {
@@ -32,8 +33,7 @@ export class CSharpExtDownloader {
             await util.touchInstallFile(util.InstallFileType.Begin);
             // Display platform information and RID
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
-            let runTimeDependencies = GetRunTimeDependenciesPackages(this.packageJSON);
-            runTimeDependencies.forEach(pkg => ResolveFilePaths(pkg));
+            let runTimeDependencies = GetRunTimeDependenciesPackages(this.packageJSON, this.extensionPath);
             installationStage = 'downloadAndInstallPackages';
             await DownloadAndInstallPackages(runTimeDependencies, this.networkSettingsProvider, this.platformInfo, this.eventStream);
             installationStage = 'touchLockFile';
@@ -54,9 +54,10 @@ export class CSharpExtDownloader {
     }
 }
 
-export function GetRunTimeDependenciesPackages(packageJSON: any): Package[] {
+export function GetRunTimeDependenciesPackages(packageJSON: any, extensionPath: string): PackageJSONPackage[] {
     if (packageJSON.runtimeDependencies) {
-        return JSON.parse(JSON.stringify(<Package[]>packageJSON.runtimeDependencies));
+        let dependencies = <PackageJSONPackage[]>packageJSON.runtimeDependencies;
+        return dependencies.map(pkg => new Package(pkg, extensionPath));
     }
 
     throw new Error("No runtime dependencies found");

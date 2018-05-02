@@ -9,7 +9,7 @@ import * as chai from 'chai';
 import * as util from '../../../src/common';
 import { CreateTmpDir, TmpAsset } from '../../../src/CreateTmpAsset';
 import { Binaries, Files, createTestZipAsync } from '../testAssets/CreateTestZip';
-import { Package } from '../../../src/packageManager/Package';
+import { PackageJSONPackage } from '../../../src/packageManager/PackageJSONPackage';
 import { DownloadAndInstallPackages } from '../../../src/packageManager/PackageManager';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { PlatformInformation } from '../../../src/platform';
@@ -29,16 +29,16 @@ suite("Package Manager", () => {
     let downloadUrl: string;
     let testDirPath: string;
     let allFiles: Array<{ content: string, path: string }>;
-    let installationPath: string;
     let eventBus: Array<BaseEvent>;
-    let packages: Package[];
-
-    const packageDescription = "Test Package";
+    let package1: PackageJSONPackage;
+    let package2: PackageJSONPackage;
+    let packages: PackageJSONPackage[];
+    
     const eventStream = new EventStream();
     eventStream.subscribe(event => eventBus.push(event));
-
-    const windowsPlatformInfo = new PlatformInformation("win32", "x86");
-    const linuxPlatformInfo = new PlatformInformation("linux", "x86");
+    const platformInfo1 = new PlatformInformation("platform1", "architecture1");
+    const platformInfo2 = new PlatformInformation("platform2", "architecture2");
+    
     const networkSettingsProvider = () => new NetworkSettings(undefined, false);
 
     suiteSetup(async () => {
@@ -57,15 +57,25 @@ suite("Package Manager", () => {
         eventBus = [];
         tmpSourceDir = await CreateTmpDir(true);
         tmpInstallDir = await CreateTmpDir(true);
-        installationPath = tmpInstallDir.name;
-        packages = <Package[]>[
+        package1 = <PackageJSONPackage>
             {
                 url: downloadUrl,
-                description: packageDescription,
-                installPath: installationPath,
-                platforms: [windowsPlatformInfo.platform],
-                architectures: [windowsPlatformInfo.architecture]
-            }];
+                description: "Package 1",
+                installPath: path.resolve(tmpInstallDir.name,"Path1"),
+                platforms: [platformInfo1.platform],
+                architectures: [platformInfo1.architecture]
+            };
+
+        package2 = <PackageJSONPackage>
+            {
+                url: downloadUrl,
+                description: "Package 2",
+                installPath: path.resolve(tmpInstallDir.name,"Path2"),
+                platforms: [platformInfo2.platform],
+                architectures: [platformInfo2.architecture]
+            };
+        
+        packages = [package1, package2];
         allFiles = [...Files, ...Binaries];
         testDirPath = tmpSourceDir.name + "/test.zip";
         await createTestZipAsync(testDirPath, allFiles);
@@ -73,35 +83,34 @@ suite("Package Manager", () => {
         server.on(getRequestHandler('GET', '/package', 200, {
             "content-type": "application/zip",
             "content-length": (await fs.stat(testDirPath)).size
-        },  await fs.readFile(testDirPath)));
+        }, await fs.readFile(testDirPath)));
     });
 
     test("Downloads the package and installs at the specified path", async () => {
-        await DownloadAndInstallPackages(packages, networkSettingsProvider, windowsPlatformInfo, eventStream);
+        await DownloadAndInstallPackages(packages, networkSettingsProvider, platformInfo1, eventStream);
         for (let elem of allFiles) {
-            let filePath = path.join(installationPath, elem.path);
+            let filePath = path.join(package1.installPath, elem.path);
             expect(await util.fileExists(filePath)).to.be.true;
         }
     });
 
     test("Events are created in the correct order", async () => {
         let eventsSequence = [
-            new DownloadStart(packageDescription),
+            new DownloadStart(package1.description),
             new DownloadSizeObtained(396),
-            new DownloadProgress(100, packageDescription),
+            new DownloadProgress(100, package1.description),
             new DownloadSuccess(' Done!'),
-            new InstallationStart(packageDescription)
+            new InstallationStart(package1.description)
         ];
 
-        await DownloadAndInstallPackages(packages, networkSettingsProvider, windowsPlatformInfo, eventStream);
+        await DownloadAndInstallPackages(packages, networkSettingsProvider, platformInfo1, eventStream);
         expect(eventBus).to.be.deep.equal(eventsSequence);
     });
 
     test("Installs only the platform specific packages", async () => {
-        //since there is no linux package specified no package should be installed
-        await DownloadAndInstallPackages(packages, networkSettingsProvider, linuxPlatformInfo, eventStream);
-        let files = await fs.readdir(tmpInstallDir.name);
-        expect(files.length).to.equal(0);
+        await DownloadAndInstallPackages(packages, networkSettingsProvider, platformInfo2, eventStream);
+        expect(await fs.exists(package2.installPath)).to.be.true;
+        expect(await fs.exists(package1.installPath)).to.be.false;
     });
 
     teardown(async () => {
