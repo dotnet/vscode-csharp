@@ -5,7 +5,6 @@
 
 import * as https from 'https';
 import * as util from '../common';
-import * as fs from 'fs';
 import { EventStream } from "../EventStream";
 import { DownloadSuccess, DownloadStart, DownloadFallBack, DownloadFailure, DownloadProgress, DownloadSizeObtained } from "../omnisharp/loggingEvents";
 import { NestedError } from "../NestedError";
@@ -13,12 +12,13 @@ import { parse as parseUrl } from 'url';
 import { getProxyAgent } from './proxy';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 
-export async function DownloadFile(destinationFileDescriptor: number, description: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider, url: string, fallbackUrl?: string){
+export async function DownloadFile(description: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider, url: string, fallbackUrl?: string) {
     eventStream.post(new DownloadStart(description));
-    
+
     try {
-        await downloadFile(destinationFileDescriptor, description, url, eventStream, networkSettingsProvider);
+        let buffer = await downloadFile(description, url, eventStream, networkSettingsProvider);
         eventStream.post(new DownloadSuccess(` Done!`));
+        return buffer;
     }
     catch (primaryUrlError) {
         // If the package has a fallback Url, and downloading from the primary Url failed, try again from 
@@ -27,8 +27,9 @@ export async function DownloadFile(destinationFileDescriptor: number, descriptio
         if (fallbackUrl) {
             eventStream.post(new DownloadFallBack(fallbackUrl));
             try {
-                await downloadFile(destinationFileDescriptor, description, fallbackUrl, eventStream, networkSettingsProvider);
+                let buffer = await downloadFile(description, fallbackUrl, eventStream, networkSettingsProvider);
                 eventStream.post(new DownloadSuccess(' Done!'));
+                return buffer;
             }
             catch (fallbackUrlError) {
                 throw primaryUrlError;
@@ -40,7 +41,7 @@ export async function DownloadFile(destinationFileDescriptor: number, descriptio
     }
 }
 
-async function downloadFile(fd: number, description: string, urlString: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider): Promise<void> {
+async function downloadFile(description: string, urlString: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider): Promise<Buffer> {
     const url = parseUrl(urlString);
     const networkSettings = networkSettingsProvider();
     const proxy = networkSettings.proxy;
@@ -53,15 +54,13 @@ async function downloadFile(fd: number, description: string, urlString: string, 
         rejectUnauthorized: util.isBoolean(strictSSL) ? strictSSL : true
     };
 
-    return new Promise<void>((resolve, reject) => {
-        if (fd == 0) {
-            reject(new NestedError("Temporary package file unavailable"));
-        }
+    let buffers: any[] = [];
 
+    return new Promise<Buffer>((resolve, reject) => {
         let request = https.request(options, response => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
-                return resolve(downloadFile(fd, description, response.headers.location, eventStream, networkSettingsProvider));
+                return resolve(downloadFile(description, response.headers.location, eventStream, networkSettingsProvider));
             }
 
             else if (response.statusCode != 200) {
@@ -74,12 +73,12 @@ async function downloadFile(fd: number, description: string, urlString: string, 
             let packageSize = parseInt(response.headers['content-length'], 10);
             let downloadedBytes = 0;
             let downloadPercentage = 0;
-            let tmpFile = fs.createWriteStream(null, { fd });
 
             eventStream.post(new DownloadSizeObtained(packageSize));
 
             response.on('data', data => {
                 downloadedBytes += data.length;
+                buffers.push(data);
 
                 // Update status bar item with percentage
                 let newPercentage = Math.ceil(100 * (downloadedBytes / packageSize));
@@ -90,15 +89,12 @@ async function downloadFile(fd: number, description: string, urlString: string, 
             });
 
             response.on('end', () => {
-                resolve();
+                resolve(Buffer.concat(buffers));
             });
 
             response.on('error', err => {
-                reject(new NestedError(`Reponse error: ${err.message || 'NONE'}`, err));
+                reject(new NestedError(`Failed to download from ${urlString}. Error Message: ${err.message} || 'NONE'}`, err)); 
             });
-
-            // Begin piping data from the response to the package file
-            response.pipe(tmpFile, { end: false });
         });
 
         request.on('error', err => {

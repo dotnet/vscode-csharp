@@ -5,11 +5,9 @@
 
 import * as fs from 'async-file';
 import * as chai from 'chai';
-import * as util from '../../../src/common';
 import { EventStream } from '../../../src/EventStream';
 import { DownloadFile } from '../../../src/packageManager/FileDownloader';
 import NetworkSettings from '../../../src/NetworkSettings';
-import { TmpAsset, CreateTmpFile } from '../../../src/CreateTmpAsset';
 import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, DownloadFallBack, DownloadFailure } from '../../../src/omnisharp/loggingEvents';
 import { getRequestHandler } from '../testAssets/MockHttpServerRequestHandler';
 
@@ -48,7 +46,6 @@ suite("FileDownloader", () => {
 
     let server: any;
     let httpsServerUrl: string;
-    let tmpFile: TmpAsset;
 
     suiteSetup(async () => {
         let port = await getPort();
@@ -66,8 +63,6 @@ suite("FileDownloader", () => {
 
     setup(async () => {
         await new Promise(resolve => server.start(resolve));
-        tmpFile = await CreateTmpFile();
-        util.setExtensionPath(tmpFile.name);
         eventBus = [];
         server.on(getRequestHandler('GET', correctUrlPath, 200, { "content-type": "text/plain" }, "Test content"));
         server.on(getRequestHandler('GET', errorUrlPath, 404));
@@ -92,15 +87,13 @@ suite("FileDownloader", () => {
         ].forEach((elem) => {
             suite(elem.description, () => {
                 test('File is downloaded', async () => {
-                    await DownloadFile(tmpFile.fd, fileDescription, eventStream, networkSettingsProvider, getURL(elem.urlPath), getURL(elem.fallBackUrlPath));
-                    const stats = await fs.stat(tmpFile.name);
-                    expect(stats.size).to.not.equal(0);
-                    let text = await fs.readFile(tmpFile.name, 'utf8');
+                    let buffer = await DownloadFile(fileDescription, eventStream, networkSettingsProvider, getURL(elem.urlPath), getURL(elem.fallBackUrlPath));
+                    let text = buffer.toString('utf8');
                     expect(text).to.be.equal("Test content");
                 });
 
                 test('Events are created in the correct order', async () => {
-                    await DownloadFile(tmpFile.fd, fileDescription, eventStream, networkSettingsProvider,  getURL(elem.urlPath), getURL(elem.fallBackUrlPath));
+                    await DownloadFile(fileDescription, eventStream, networkSettingsProvider,  getURL(elem.urlPath), getURL(elem.fallBackUrlPath));
                     expect(eventBus).to.be.deep.equal(elem.getEventSequence());
                 });
             });
@@ -109,17 +102,15 @@ suite("FileDownloader", () => {
 
     suite('If the response status Code is 301, redirect occurs and the download succeeds', () => {
         test('File is downloaded from the redirect url', async () => {
-            await DownloadFile(tmpFile.fd, fileDescription, eventStream, networkSettingsProvider, getURL(redirectUrlPath));
-            const stats = await fs.stat(tmpFile.name);
-            expect(stats.size).to.not.equal(0);
-            let text = await fs.readFile(tmpFile.name, "utf8");
+            let buffer = await DownloadFile(fileDescription, eventStream, networkSettingsProvider, getURL(redirectUrlPath));
+            let text = buffer.toString('utf8');
             expect(text).to.be.equal("Test content");
         });
     });
 
     suite('If the response status code is not 301, 302 or 200 then the download fails', () => {
         test('Error is thrown', async () => {
-            expect(DownloadFile(tmpFile.fd, fileDescription, eventStream, networkSettingsProvider, getURL(errorUrlPath))).be.rejected;
+            expect(DownloadFile(fileDescription, eventStream, networkSettingsProvider, getURL(errorUrlPath))).be.rejected;
         });
 
         test('Download Start and Download Failure events are created', async () => {
@@ -128,7 +119,7 @@ suite("FileDownloader", () => {
                 new DownloadFailure("failed (error code '404')")
             ];
             try {
-                await DownloadFile(tmpFile.fd, fileDescription, eventStream, networkSettingsProvider, getURL(errorUrlPath));
+                await DownloadFile(fileDescription, eventStream, networkSettingsProvider, getURL(errorUrlPath));
             }
             catch (error) {
                 expect(eventBus).to.be.deep.equal(eventsSequence);
@@ -136,16 +127,8 @@ suite("FileDownloader", () => {
         });
     });
 
-    test('Error is thrown on invalid input file', async () => {
-        //fd=0 means there is no file
-        expect(DownloadFile(0, fileDescription, eventStream, networkSettingsProvider, getURL(errorUrlPath))).to.be.rejected;
-    });
-
     teardown(async () => {
         await new Promise((resolve, reject) => server.stop(resolve));
-        if (tmpFile) {
-            tmpFile.dispose();
-        }
     });
 
     function getURL(urlPath: string) {

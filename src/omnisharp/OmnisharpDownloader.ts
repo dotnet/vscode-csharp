@@ -3,14 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs';
 import { GetPackagesFromVersion } from './OmnisharpPackageCreator';
 import { PlatformInformation } from '../platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure, LatestBuildDownloadStart } from './loggingEvents';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import { DownloadAndInstallPackages } from '../packageManager/PackageManager';
-import { CreateTmpFile, TmpAsset } from '../CreateTmpAsset';
 import { DownloadFile } from '../packageManager/FileDownloader';
 import { ResolveFilePaths } from '../packageManager/PackageFilePathResolver';
 
@@ -43,23 +41,16 @@ export class OmnisharpDownloader {
     }
 
     public async GetLatestVersion(serverUrl: string, latestVersionFileServerPath: string): Promise<string> {
-        let description = "Latest Omnisharp Version Information";
+        let description = "Latest OmniSharp Version Information";
         let url = `${serverUrl}/${latestVersionFileServerPath}`;
-        let tmpFile: TmpAsset;
         try {
             this.eventStream.post(new LatestBuildDownloadStart());
-            tmpFile = await CreateTmpFile();
-            await DownloadFile(tmpFile.fd, description, this.eventStream, this.networkSettingsProvider, url);
-            return fs.readFileSync(tmpFile.name, 'utf8');
+            let versionBuffer = await DownloadFile(description, this.eventStream, this.networkSettingsProvider, url);
+            return versionBuffer.toString('utf8');
         }
         catch (error) {
             this.eventStream.post(new InstallationFailure('getLatestVersionInfoFile', error));
             throw error;
-        }
-        finally {
-            if (tmpFile) {
-                tmpFile.dispose();
-            }
         }
     }
 }
