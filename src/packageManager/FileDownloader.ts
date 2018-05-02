@@ -93,7 +93,7 @@ async function downloadFile(description: string, urlString: string, eventStream:
             });
 
             response.on('error', err => {
-                reject(new NestedError(`Reponse error: ${err.message || 'NONE'}`, err));
+                reject(new NestedError(`Failed to download from ${urlString}. Error Message: ${err.message} || 'NONE'}`, err)); 
             });
         });
 
