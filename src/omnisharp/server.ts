@@ -85,7 +85,6 @@ export class OmniSharpServer {
     private _launchTarget: LaunchTarget;
     private _requestQueue: RequestQueueCollection;
     private _serverProcess: ChildProcess;
-    private _options: Options;
 
     private _omnisharpManager: OmnisharpManager;
     private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
@@ -237,7 +236,7 @@ export class OmniSharpServer {
 
     // --- start, stop, and connect
 
-    private async _start(launchTarget: LaunchTarget): Promise<void> {
+    private async _start(launchTarget: LaunchTarget, options: Options): Promise<void> {
 
         let disposables = new CompositeDisposable();
 
@@ -292,7 +291,6 @@ export class OmniSharpServer {
 
         const solutionPath = launchTarget.target;
         const cwd = path.dirname(solutionPath);
-        this._options = Options.Read();
 
         let args = [
             '-s', solutionPath,
@@ -300,17 +298,17 @@ export class OmniSharpServer {
             '--stdio',
             'DotNet:enablePackageRestore=false',
             '--encoding', 'utf-8',
-            '--loglevel', this._options.loggingLevel
+            '--loglevel', options.loggingLevel
         ];
 
-        if (this._options.waitForDebugger === true) {
+        if (options.waitForDebugger === true) {
             args.push('--debug');
         }
 
         let launchInfo: LaunchInfo;
         try {
             let extensionPath = utils.getExtensionPath();
-            launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, this._options.path, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
+            launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
         }
         catch (error) {
             this.eventStream.post(new ObservableEvents.OmnisharpFailure(`Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));
@@ -321,7 +319,7 @@ export class OmniSharpServer {
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
         try {
-            let launchResult = await launchOmniSharp(cwd, args, launchInfo, this.platformInfo);
+            let launchResult = await launchOmniSharp(cwd, args, launchInfo, this.platformInfo, options);
             this.eventStream.post(new ObservableEvents.OmnisharpLaunch(launchResult.monoVersion, launchResult.command, launchResult.process.pid));
 
             this._serverProcess = launchResult.process;
@@ -329,7 +327,7 @@ export class OmniSharpServer {
             this._setState(ServerState.Started);
             this._fireEvent(Events.ServerStart, solutionPath);
 
-            await this._doConnect();
+            await this._doConnect(options);
 
             this._telemetryIntervalId = setInterval(() => this._reportTelemetry(), TelemetryReportingDelay);
             this._requestQueue.drain();
@@ -417,7 +415,10 @@ export class OmniSharpServer {
     public async restart(launchTarget: LaunchTarget = this._launchTarget): Promise<void> {
         if (launchTarget) {
             await this.stop();
-            await this._start(launchTarget);
+
+            const options = Options.Read(this.vscode);
+
+            await this._start(launchTarget, options);
         }
     }
 
@@ -503,7 +504,7 @@ export class OmniSharpServer {
         });
     }
 
-    private async _doConnect(): Promise<void> {
+    private async _doConnect(options: Options): Promise<void> {
 
         this._serverProcess.stderr.on('data', (data: any) => {
             this._fireEvent('stderr', String(data));
@@ -519,7 +520,7 @@ export class OmniSharpServer {
             let listener: Disposable;
 
             // Convert the timeout from the seconds to milliseconds, which is required by setTimeout().
-            const timeoutDuration = this._options.projectLoadTimeout * 1000;
+            const timeoutDuration = options.projectLoadTimeout * 1000;
 
             // timeout logic
             const handle = setTimeout(() => {
