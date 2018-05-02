@@ -68,7 +68,7 @@ module Events {
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
-const installPath = ".omnisharp/experimental";
+const installPath = ".omnisharp";
 const latestVersionFileServerPath = 'releases/versioninfo.txt';
 
 export class OmniSharpServer {
@@ -91,9 +91,9 @@ export class OmniSharpServer {
     private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
     private firstUpdateProject: boolean;
 
-    constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private eventStream: EventStream, packageJSON: any, private platformInfo: PlatformInformation, private extensionPath: string) {
+    constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private eventStream: EventStream, private packageJSON: any, private platformInfo: PlatformInformation, private extensionPath: string) {
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
-        let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, platformInfo, packageJSON, extensionPath);
+        let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, platformInfo, this.packageJSON, extensionPath);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
         this.updateProjectDebouncer.debounceTime(1500).subscribe((event) => { this.updateProjectInfo(); });
         this.firstUpdateProject = true;
@@ -309,7 +309,7 @@ export class OmniSharpServer {
 
         let launchInfo: LaunchInfo;
         try {
-            launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this._options.path, serverUrl, latestVersionFileServerPath, installPath, this.extensionPath);
+            launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo((this.packageJSON.defaults.omniSharp, this._options.path, serverUrl, latestVersionFileServerPath, installPath, this.extensionPath);
         }
         catch (error) {
             this.eventStream.post(new ObservableEvents.OmnisharpFailure(`Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));
