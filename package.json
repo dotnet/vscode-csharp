@@ -532,7 +532,7 @@
           "enumDescriptions": [
             "Automatically launch OmniSharp with \"mono\" if version 5.2.0 or greater is available on the PATH.",
             "Always launch OmniSharp with \"mono\". If version 5.2.0 or greater is not available on the PATH, an error will be printed.",
-            "Never launch OmniSHarp on a globally-installed Mono."
+            "Never launch OmniSharp on a globally-installed Mono."
           ],
           "description": "Launch OmniSharp with the globally-installed Mono. If set to \"always\", \"mono\" version 5.2.0 or greater must be available on the PATH. If set to \"auto\", OmniSharp will be launched with \"mono\" if version 5.2.0 or greater is available on the PATH."
         },
