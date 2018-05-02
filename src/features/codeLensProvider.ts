@@ -39,7 +39,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
     }
 
     private _resetCachedOptions(): void {
-        this._options = Options.Read();
+        this._options = Options.Read(vscode);
     }
 
     private static filteredSymbolNames: { [name: string]: boolean } = {
