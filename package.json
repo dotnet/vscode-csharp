@@ -68,6 +68,7 @@
     "instrument": true
   },
   "dependencies": {
+    "async-file": "^2.0.2",
     "fs-extra": "^5.0.0",
     "http-proxy-agent": "^2.0.0",
     "https-proxy-agent": "^2.1.1",
@@ -103,7 +104,6 @@
     "@types/yauzl": "^2.9.0",
     "archiver": "^2.1.1",
     "async-child-process": "^1.1.1",
-    "async-file": "^2.0.2",
     "async-shelljs": "^0.1.2",
     "chai": "4.1.2",
     "chai-arrays": "2.0.0",
