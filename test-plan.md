@@ -92,7 +92,7 @@ The easist way to verify that a project was successfully loaded is to open a .cs
 * In a project that uses globbing (.NET Core), use the VS Code file explorer to add a new file next to the csproj. Intellisense/sighelp/etc should be available in the new file
 * Add a new file and reference a type in it from a different file. Deleting from disk the file containing the referenced type  should produce error messages
 
-#### Omnisharp Options
+#### OmniSharp Options
 
   #### omnisharp.useMono (for Linux)
   For using this option, mono version greater than or equal to 5.2.0 must be installed. If that is not so, setting this option to true, should give an error.
@@ -107,6 +107,11 @@ The easist way to verify that a project was successfully loaded is to open a .cs
   * "latest" - The file containing the information about the latest CI build (https://roslynomnisharp.blob.core.windows.net/releases/versioninfo.txt), must be downloaded and accordingly the latest CI build from the "master" branch of omnisharp-roslyn should be downloaded and installed. If the installation is successful, the server must start and the OmniSharp path must include the .omnisharp folder followed by the version name and the executable. Eg: If the latest version is `1.29.2-beta.62`, the path displayed on Windows should be `.omnisharp/1.29.2-beta.62/OmniSharp.exe`.
   * All the above configurations should work, with and without setting the useMono option on Linux
   * The above behavior should be exhibited when a new vscode window is opened, as well as if the setting is modified and a "Restart OmniSharp"(Ctrl+Shift+P --> OmniSharp: Restart OmniSharp) is performed. 
+
+####  Status Bar Item
+The status bar item(s) must appear on the left side of the VS Code's status bar
+* When the extension is setting up the dependencies, the status bar item should show "Downloading packages"/"Installing packages".
+* Once the server has started, there should be two status bar items - one with a green flame (indicating that the OmniSharp server is running) and another with a folder icon and the name of the currently selected project/solution. Clicking on this element should show a command palette menu to select other projects/solution in the workspace.
 
 [1] For example,
 ```
