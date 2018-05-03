@@ -182,7 +182,7 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/mono.osx",
+      "installTestPath": "./.omnisharp/run",
       "platformId": "osx"
     },
     {
@@ -201,7 +201,7 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/mono.linux-x86",
+      "installTestPath": "./.omnisharp/run",
       "platformId": "linux-x86"
     },
     {
@@ -219,7 +219,7 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/mono.linux-x86_64",
+      "installTestPath": "./.omnisharp/run",
       "platformId": "linux-x64"
     },
     {
