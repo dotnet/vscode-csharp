@@ -118,8 +118,8 @@ export class DownloadSizeObtained implements BaseEvent {
     constructor(public packageSize: number) { }
 }
 
-export class ZipFileError implements BaseEvent {
-    constructor(public content: string) { }
+export class ArchiveError implements BaseEvent {
+    constructor(public message: string) { }
 }
 
 export class DebuggerPrerequisiteFailure extends EventWithMessage { }

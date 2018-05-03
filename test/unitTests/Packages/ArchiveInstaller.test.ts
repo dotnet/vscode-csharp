@@ -8,16 +8,16 @@ import * as path from 'path';
 import * as chai from 'chai';
 import * as util from '../../../src/common';
 import { CreateTmpDir, TmpAsset } from '../../../src/CreateTmpAsset';
-import { InstallZip } from '../../../src/packageManager/ZipInstaller';
+import { InstallArchive } from '../../../src/packageManager/ArchiveInstaller';
 import { EventStream } from '../../../src/EventStream';
 import { PlatformInformation } from '../../../src/platform';
-import { BaseEvent, InstallationStart } from '../../../src/omnisharp/loggingEvents';
+import { BaseEvent, InstallationStart, ArchiveError } from '../../../src/omnisharp/loggingEvents';
 import { Files, Binaries, createTestZipAsync } from '../testAssets/CreateTestZip';
 
 chai.use(require("chai-as-promised"));
 let expect = chai.expect;
 
-suite('ZipInstaller', () => {
+suite('ArchiveInstaller', () => {
     let tmpInstallDir: TmpAsset;
     let installationPath: string;
     let testBuffer: Buffer;
@@ -38,7 +38,7 @@ suite('ZipInstaller', () => {
     });
 
     test('The folder is unzipped and all the files are present at the expected paths', async () => {
-        await InstallZip(testBuffer, fileDescription, installationPath, [], eventStream);
+        await InstallArchive(testBuffer, fileDescription, installationPath, [], eventStream);
         for (let elem of allFiles) {
             let filePath = path.join(installationPath, elem.path);
             expect(await util.fileExists(filePath)).to.be.true;
@@ -46,7 +46,7 @@ suite('ZipInstaller', () => {
     });
 
     test('The folder is unzipped and all the expected events are created', async () => {
-        await InstallZip(testBuffer, fileDescription, installationPath, [], eventStream);
+        await InstallArchive(testBuffer, fileDescription, installationPath, [], eventStream);
         let eventSequence: BaseEvent[] = [
             new InstallationStart(fileDescription)
         ];
@@ -56,7 +56,7 @@ suite('ZipInstaller', () => {
     test('The folder is unzipped and the binaries have the expected permissions(except on Windows)', async () => {
         if (!((await PlatformInformation.GetCurrent()).isWindows())) {
             let resolvedBinaryPaths = Binaries.map(binary => path.join(installationPath, binary.path));
-            await InstallZip(testBuffer, fileDescription, installationPath, resolvedBinaryPaths, eventStream);
+            await InstallArchive(testBuffer, fileDescription, installationPath, resolvedBinaryPaths, eventStream);
             for (let binaryPath of resolvedBinaryPaths) {
                 expect(await util.fileExists(binaryPath)).to.be.true;
                 let mode = (await fs.stat(binaryPath)).mode;
@@ -65,8 +65,21 @@ suite('ZipInstaller', () => {
         }
     });
 
-    test('Error is thrown when the file is not a zip', async () => {
-        expect(InstallZip(new Buffer("My file", "utf8"), "Text File", installationPath, [], eventStream)).to.be.rejected;
+    test('Error is thrown when the buffer contains an invalid archive', async () => {
+        expect(InstallArchive(new Buffer("My file", "utf8"), "Text File", installationPath, [], eventStream)).to.be.rejected;
+    });
+
+    test('Error event is created when the buffer contains an invalid archive', async () => {
+        try {
+            await InstallArchive(new Buffer("some content", "utf8"), "Text File", installationPath, [], eventStream);
+        }
+        catch{
+            let eventSequence: BaseEvent[] = [
+                new InstallationStart("Text File"),
+                new ArchiveError("C# Extension was unable to download its dependencies. Please check your internet connection. If you use a proxy server, please visit https://aka.ms/VsCodeCsharpNetworking")
+            ];
+            expect(eventBus).to.be.deep.equal(eventSequence);
+        }
     });
 
     teardown(async () => {

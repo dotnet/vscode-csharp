@@ -8,17 +8,17 @@ import * as mkdirp from 'mkdirp';
 import * as path from 'path';
 import * as yauzl from 'yauzl';
 import { EventStream } from "../EventStream";
-import { InstallationStart, ZipFileError } from "../omnisharp/loggingEvents";
+import { InstallationStart, ArchiveError } from "../omnisharp/loggingEvents";
 import { NestedError } from '../NestedError';
 
-export async function InstallZip(buffer: Buffer, description: string, destinationInstallPath: string, binaries: string[], eventStream: EventStream): Promise<void> {
+export async function InstallArchive(buffer: Buffer, description: string, destinationInstallPath: string, binaries: string[], eventStream: EventStream): Promise<void> {
     eventStream.post(new InstallationStart(description));
 
     return new Promise<void>((resolve, reject) => {
-        yauzl.fromBuffer(buffer, { lazyEntries: true }, async (err, zipFile) => {
+        yauzl.fromBuffer(buffer, { lazyEntries: true }, (err, zipFile) => {
             if (err) {
-                eventStream.post(new ZipFileError(buffer.toString()));
-                return reject(new NestedError('Immediate zip file error', err));
+                eventStream.post(new ArchiveError("C# Extension was unable to download its dependencies. Please check your internet connection. If you use a proxy server, please visit https://aka.ms/VsCodeCsharpNetworking"));
+                return reject(new NestedError('Corrupted archive error'));
             }
 
             zipFile.readEntry();
