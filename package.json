@@ -521,10 +521,20 @@
           "default": null,
           "description": "Specifies the path to OmniSharp. This can be the absolute path to an OmniSharp executable, a specific version number, or \"latest\". If a version number or \"latest\" is specified, the appropriate version of OmniSharp will be downloaded on your behalf."
         },
-        "omnisharp.useMono": {
-          "type": "boolean",
-          "default": false,
-          "description": "Launch OmniSharp with Mono."
+        "omnisharp.useGlobalMono": {
+          "type": "string",
+          "default": "auto",
+          "enum": [
+            "auto",
+            "always",
+            "never"
+          ],
+          "enumDescriptions": [
+            "Automatically launch OmniSharp with \"mono\" if version 5.2.0 or greater is available on the PATH.",
+            "Always launch OmniSharp with \"mono\". If version 5.2.0 or greater is not available on the PATH, an error will be printed.",
+            "Never launch OmniSharp on a globally-installed Mono."
+          ],
+          "description": "Launch OmniSharp with the globally-installed Mono. If set to \"always\", \"mono\" version 5.2.0 or greater must be available on the PATH. If set to \"auto\", OmniSharp will be launched with \"mono\" if version 5.2.0 or greater is available on the PATH."
         },
         "omnisharp.waitForDebugger": {
           "type": "boolean",

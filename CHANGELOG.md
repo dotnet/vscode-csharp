@@ -19,24 +19,36 @@
   * Fixes async call stacks with the .NET Core 2.1 runtime. ([#1892](https://github.com/OmniSharp/omnisharp-vscode/issues/1892))
   * Fixes the debugger's browser launch code when launching projects configured to use Application Insights. ([2177](https://github.com/OmniSharp/omnisharp-vscode/issues/2177))
 
-#### Specify OmniSharp Version
-Enables the use of pre-release builds of Omnisharp. Downloading a pre-release build of Omnisharp allows the C# extension for VS Code to use features that have been merged into the "master" branch of omnisharp-roslyn(https://github.com/OmniSharp/omnisharp-roslyn) but that have not been officially released
-* Adds support to use the "omnisharp.path" option to download a specific copy of OmniSharp. The possible values for this option are:
-  * `<Path to the omnisharp executable>` - Use a local copy of OmniSharp. The value must point to a directory which contains OmniSharp, typically a user's build output directory for the OmniSharp-Roslyn project. Example: C:\omnisharp-roslyn\artifacts\publish\OmniSharp.Stdio\win7-x64\OmniSharp.exe.
-  * `latest` - Use the latest CI build
-  * `<version>` - Use a specific version of OmniSharp. Example: `1.29.2-beta.60`
+#### Options
 
-#### Editor
+* "omnisharp.path": This option has been updated to enable the user to specify different versions of OmniSharp, including prerelease versions. ([#1909](https://github.com/OmniSharp/omnisharp-vscode/issues/1909), PR: [#2039](https://github.com/OmniSharp/omnisharp-vscode/pull/2039))
 
-* Splits the OmniSharp status bar item into two parts, both of which appear on the left and have specific responsibilities. ([#2146](https://github.com/OmniSharp/omnisharp-vscode/issues/2146), PR: [@2133](https://github.com/OmniSharp/omnisharp-vscode/pull/2133))
-  * OmniSharp server status bar item - Shows the various stages that the OmniSharp server initialization might be in (eg: Downloading, Installing, etc). The flame icon is green when the server is initialized and running properly, or red if there is an error.
-  * Project Information status bar item - 
-    * Displays the name of the selected project regardless of the currently active document.  
-    * If a project is already selected, it displays the name of the selected project. Clicking on it displays a menu to switch to other projects in the workspace. 
+  Possible values for this option are:
+  * `<Path to the omnisharp executable>`: Use a local copy of OmniSharp. The value must point directly to the OmniSharp executable. This is typically the build output directory of the [omnisharp-roslyn](https://github.com/OmniSharp/omnisharp-roslyn) project on the current machine, for example, `C:/omnisharp-roslyn/artifacts/publish/OmniSharp.Stdio/win7-x64/OmniSharp.exe`.
+  * `latest`: Use the latest CI build from [omnisharp-roslyn](https://github.com/OmniSharp/omnisharp-roslyn).
+  * `<version>`: Use a specific version of OmniSharp. Example: `1.29.2-beta.60`
+  If "omnisharp.path" is not set, the defalut version of OmniSharp for the current release of C# for VS Code is used.
+
+* "omnisharp.useGlobalMono": This option replaces the old "omnisharp.useMono" option and controls whether or not OmniSharp will be launched with a globally-installed version of Mono. (PR: [#2244](https://github.com/OmniSharp/omnisharp-vscode/pull/2244))
+
+  There are three possible values:
+  * "auto": Automatically launch OmniSharp with `mono` if version 5.2.0 or greater is available on the PATH.
+  * "always": Always launch OmniSharp with `mono`. If version 5.2.0 or greater is not available on the PATH, an error will be printed.
+  * "never": Never launch OmniSharp on a globally-installed Mono.
+
+#### Status Bar
+
+* Splits the OmniSharp status bar item into two parts, both of which appear on the left side of VS Code's status bar and have specific responsibilities. ([#2146](https://github.com/OmniSharp/omnisharp-vscode/issues/2146), PR: [#2133](https://github.com/OmniSharp/omnisharp-vscode/pull/2133))
+  * OmniSharp Server info:
+    * Displays the current state of the  OmniSharp server, such as Downloading, Installing, etc. The flame icon is green when the server is initialized and running properly, or red if there is an error.
+  * Selected Project info:
+    * Displays the name of the selected project regardless of the currently active document.
+    * If a project is already selected, it displays the name of the selected project. Clicking on it displays a menu to switch to other projects in the workspace.
     * If there are multiple possible launch targets, it displays 'Select Project'. Clicking on it displays a menu to select one.
 
 #### Misc
-* Enables suppressing the "some projects had trouble loading" popup using the `omnisharp.disableMsBuildDiagnosticWarning` option ([#2110]https://github.com/OmniSharp/omnisharp-vscode/issues/2110)
+
+* Enables suppressing the "Some projects have trouble loading" popup using the `omnisharp.disableMSBuildDiagnosticWarning` option ([#2110]https://github.com/OmniSharp/omnisharp-vscode/issues/2110)
 
 ## 1.14.0 (February 14, 2018)
 

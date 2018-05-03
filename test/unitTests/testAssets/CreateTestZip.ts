@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as archiver from 'archiver';
-import * as fs from 'async-file';
 
 export const Files = [
     {
@@ -26,14 +25,9 @@ export const Binaries = [
 ];
 
 
-export async function createTestZipAsync(dirPath: string, filesToAdd: Array<{ content: string, path: string }>): Promise<{}> {
-    let output = fs.createWriteStream(dirPath);
-
-    return new Promise((resolve, reject) => {
-        output.on('close', function () {
-            resolve(); // the installer needs to wait for the filestream to be closed here
-        });
-
+export async function createTestZipAsync(filesToAdd: Array<{ content: string, path: string }>): Promise<Buffer> {
+    let buffers: any[] = [];
+    return new Promise<Buffer>((resolve, reject) => {
         let archive = archiver('zip');
         archive.on('warning', function (err: any) {
             if (err.code === 'ENOENT') {
@@ -43,9 +37,9 @@ export async function createTestZipAsync(dirPath: string, filesToAdd: Array<{ co
                 reject(err);
             }
         });
-
+        archive.on('data', data => buffers.push(data));
         archive.on('error', reject);
-        archive.pipe(output);
+        archive.on('end', () => resolve(Buffer.concat(buffers)));
         filesToAdd.forEach(elem => archive.append(elem.content, { name: elem.path }));
         archive.finalize();
     });
