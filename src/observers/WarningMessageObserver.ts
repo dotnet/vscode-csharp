@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { MessageItem, vscode } from '../vscodeAdapter';
-import { BaseEvent, OmnisharpServerOnError, OmnisharpServerMsBuildProjectDiagnostics, ZipError } from "../omnisharp/loggingEvents";
+import { BaseEvent, OmnisharpServerOnError, OmnisharpServerMsBuildProjectDiagnostics } from "../omnisharp/loggingEvents";
 import { Scheduler } from 'rxjs/Scheduler';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/debounceTime';
@@ -32,9 +32,6 @@ export class WarningMessageObserver {
             case OmnisharpServerMsBuildProjectDiagnostics.name:
                 this.handleOmnisharpServerMsBuildProjectDiagnostics(<OmnisharpServerMsBuildProjectDiagnostics>event);
                 break;
-            case ZipError.name:
-                this.handleZipError(<ZipError>event);
-                break;
         }
     }
 
@@ -42,10 +39,6 @@ export class WarningMessageObserver {
         if (!this.disableMsBuildDiagnosticWarning() && event.diagnostics.Errors.length > 0) {
             this.warningMessageDebouncer.next(event);
         }
-    }
-
-    private async handleZipError(event: ZipError) {
-        await showWarningMessage(this.vscode, event.message);
     }
 }
 

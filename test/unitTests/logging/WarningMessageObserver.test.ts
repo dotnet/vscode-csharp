@@ -6,7 +6,7 @@
 import { WarningMessageObserver } from '../../../src/observers/WarningMessageObserver';
 import { assert, use as chaiUse, expect, should } from 'chai';
 import { getFakeVsCode, getMSBuildDiagnosticsMessage, getOmnisharpMSBuildProjectDiagnosticsEvent, getOmnisharpServerOnErrorEvent } from '../testAssets/Fakes';
-import { BaseEvent, ZipError } from '../../../src/omnisharp/loggingEvents';
+import { BaseEvent } from '../../../src/omnisharp/loggingEvents';
 import { vscode } from '../../../src/vscodeAdapter';
 import { TestScheduler } from 'rxjs/testing/TestScheduler';
 import { Observable } from 'rxjs/Observable';
@@ -170,15 +170,6 @@ suite('WarningMessageObserver', () => {
                 await expect(Observable.fromPromise(commandDone).timeout(1).toPromise()).to.be.rejected;
                 expect(invokedCommand).to.be.undefined;
             });
-        });
-    });
-
-    suite('ZipError', () => {
-        test('When the event is fired then a warning message is displayed', () => {
-            let event = new ZipError("This is an error");
-            observer.post(event);
-            expect(warningMessages.length).to.be.equal(1);
-            expect(warningMessages[0]).to.be.equal("This is an error");
         });
     });
 });

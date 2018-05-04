@@ -900,6 +900,7 @@ export interface vscode {
         activeTextEditor: TextEditor | undefined;
         showInformationMessage: (message: string, ...items: string[]) => Thenable<string | undefined>;
         showWarningMessage: <T extends MessageItem>(message: string, ...items: T[]) => Thenable<T | undefined>;
+        showErrorMessage(message: string, ...items: string[]): Thenable<string | undefined>;
     };
     workspace: {
         getConfiguration: (section?: string, resource?: Uri) => WorkspaceConfiguration;
