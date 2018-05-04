@@ -111,7 +111,9 @@ The easist way to verify that a project was successfully loaded is to open a .cs
 ####  Status Bar Item
 The status bar item(s) must appear on the left side of the VS Code's status bar
 * When the extension is setting up the dependencies, the status bar item should show "Downloading packages"/"Installing packages".
-* Once the server has started, there should be two status bar items - one with a green flame (indicating that the OmniSharp server is running) and another with a folder icon and the name of the currently selected project/solution. Clicking on this element should show a command palette menu to select other projects/solution in the workspace.
+* Once the server has started, there should be two status bar items:
+  * OmniSharp status Bar item - It should show a green flame (indicating that the OmniSharp server is running) and clicking on it should show the OmniSharp log channel
+  * Project status bar item  - It should show and a folder icon and the name of the currently selected project/solution. Clicking on this element should show a command palette menu to select other projects/solutions in the workspace.
 
 [1] For example,
 ```
