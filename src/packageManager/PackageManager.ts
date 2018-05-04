@@ -8,7 +8,7 @@ import { Package } from './Package';
 import { PackageError } from './PackageError';
 import { NestedError } from "../NestedError";
 import { DownloadFile } from './FileDownloader';
-import { InstallArchive } from './ArchiveInstaller';
+import { InstallZip } from './ZipInstaller';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
 import { filterPackages } from "./PackageFilterer";
@@ -21,7 +21,7 @@ export async function DownloadAndInstallPackages(packages: Package[], provider: 
         for (let pkg of filteredPackages) {
             try {
                 let buffer = await DownloadFile(pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
-                await InstallArchive(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
+                await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
             }
             catch (error) {
                 if (error instanceof NestedError) {
