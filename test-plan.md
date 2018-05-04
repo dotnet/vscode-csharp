@@ -94,7 +94,13 @@ The easist way to verify that a project was successfully loaded is to open a .cs
 
 #### Omnisharp Options
 
-  #### omnisharp.useMono (for Linux)
+  #### omnisharp.useGlobalMono (for Linux/Mac)
+  This option can be set to any of the following values:
+  * "auto" - Will launch OmniSharp using mono if version>=5.2.0 is installed but will launch using the run script if that is not so.
+  * "always" - Will launch OmniSharp using mono if version>=5.2.0 is installed and will throw an error otherwise.
+  * "never" - Launches OmniSharp without using the global mono
+
+  The value of OmniSharp path displayed in the OmniSharp log can be used to know if OmniSharp has launched using mono or not. If it is running using global mono, the path will end with "OmniSharp.exe" else the path will end with "run". 
   For using this option, mono version greater than or equal to 5.2.0 must be installed. If that is not so, setting this option to true, should give an error.
   * If the option is not set, the OmniSharp path displayed in the "OmniSharp Log" should end with "run"
   * If the option is set, the OmniSharp path as mentioned above should end with "OmniSharp.exe"
