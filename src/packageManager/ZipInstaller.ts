@@ -17,8 +17,9 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
     return new Promise<void>((resolve, reject) => {
         yauzl.fromBuffer(buffer, { lazyEntries: true }, (err, zipFile) => {
             if (err) {
-                eventStream.post(new ZipError("C# Extension was unable to download its dependencies. Please check your internet connection. If you use a proxy server, please visit https://aka.ms/VsCodeCsharpNetworking"));
-                return reject(new NestedError('Corrupted zip error'));
+                let message = "C# Extension was unable to download its dependencies. Please check your internet connection. If you use a proxy server, please visit https://aka.ms/VsCodeCsharpNetworking";
+                eventStream.post(new ZipError(message));
+                return reject(new NestedError(message));
             }
 
             zipFile.readEntry();
