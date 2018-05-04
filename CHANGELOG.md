@@ -13,7 +13,6 @@
   * Adds launch.json option to suppress Just-In-Time compiler optimizations.
   * Due to the previous two items and work from the .NET Team, it is now possible to easily debug into ASP.NET itself in projects running against .NET Core 2.1. Instructions are in the [wiki](https://github.com/OmniSharp/omnisharp-vscode/wiki/Debugging-into-the-.NET-Framework-itself).
   * Adds support for pulling in environment variables from `${cwd}/Properties/launchSettings.json`. This means that if you add environment variable configuration to your launchSettings.json file, they will now be used when you start your app from Visual Studio Code like they previously would be used from the command line (`dotnet run`), and from Visual Studio. ([#2017](https://github.com/OmniSharp/omnisharp-vscode/issues/2017))
-  * Adds a Code Lens indicator for running and debugging all tests in a class. ([#420](https://github.com/OmniSharp/omnisharp-vscode/issues/420), PR: [#1961](https://github.com/OmniSharp/omnisharp-vscode/pull/1961); PR: [omnisharp-roslyn#1089](https://github.com/OmniSharp/omnisharp-roslyn/pull/1089))
 
 * Bug fixes:
 
@@ -91,7 +90,7 @@
 
 #### Testing
 
-* Added "debug all tests" and "run all tests" to the CodeLens that appears above test classes to allow running or debugging all tests in a class. ([#420](https://github.com/OmniSharp/omnisharp-vscode/issues/420), PR: [#1961](https://github.com/OmniSharp/omnisharp-vscode/pull/1961))
+* Added "debug all tests" and "run all tests" to the CodeLens that appears above test classes to allow running or debugging all tests in a class. ([#420](https://github.com/OmniSharp/omnisharp-vscode/issues/420), PRs: [#1961](https://github.com/OmniSharp/omnisharp-vscode/pull/1961), [omnisharp-roslyn#1089](https://github.com/OmniSharp/omnisharp-roslyn/pull/1089)
 
 #### Misc
 
