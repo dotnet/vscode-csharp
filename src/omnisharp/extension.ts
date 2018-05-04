@@ -29,7 +29,7 @@ import WorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
 import forwardChanges from '../features/changeForwarding';
 import registerCommands from '../features/commands';
 import { PlatformInformation } from '../platform';
-import { ProjectJsonDeprecatedWarning, OmnisharpStart } from './loggingEvents';
+import { ProjectJsonDeprecatedWarning, OmnisharpStart, WorkspaceConfigurationChanged } from './loggingEvents';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import CompositeDisposable from '../CompositeDisposable';
@@ -161,6 +161,7 @@ export async function activate(context: vscode.ExtensionContext, eventStream: Ev
 
     // Register ConfigurationProvider
     disposables.add(vscode.debug.registerDebugConfigurationProvider('coreclr', new CSharpConfigurationProvider(server)));
+    disposables.add(vscode.workspace.onDidChangeConfiguration(e => eventStream.post(new WorkspaceConfigurationChanged())));
 
     context.subscriptions.push(disposables);
 

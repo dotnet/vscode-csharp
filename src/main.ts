@@ -30,6 +30,7 @@ import { ProjectStatusBarObserver } from './observers/ProjectStatusBarObserver';
 import CSharpExtensionExports from './CSharpExtensionExports';
 import { Options } from './omnisharp/options';
 import { vscodeNetworkSettingsProvider, NetworkSettingsProvider } from './NetworkSettings';
+import OmniSharpConfigChangeObserver from './observers/OmniSharpConfigChangeObserver';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -74,6 +75,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     let projectStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left));
     let projectStatusBarObserver = new ProjectStatusBarObserver(projectStatusBar);
     eventStream.subscribe(projectStatusBarObserver.post);
+
+    let omnisharpConfigChangeObserver = new OmniSharpConfigChangeObserver(vscode);
+    eventStream.subscribe(omnisharpConfigChangeObserver.post);
 
     const debugMode = false;
     if (debugMode) {

@@ -143,3 +143,4 @@ export class ActiveTextEditorChanged implements BaseEvent { }
 export class OmnisharpServerOnStop implements BaseEvent { }
 export class OmnisharpServerOnStart implements BaseEvent { }
 export class LatestBuildDownloadStart implements BaseEvent { }
+export class WorkspaceConfigurationChanged implements BaseEvent { }
