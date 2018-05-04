@@ -33,7 +33,7 @@ export class WarningMessageObserver {
                 this.handleOmnisharpServerMsBuildProjectDiagnostics(<OmnisharpServerMsBuildProjectDiagnostics>event);
                 break;
             case ZipError.name:
-                this.handleArchiveError(<ZipError>event);
+                this.handleZipError(<ZipError>event);
                 break;
         }
     }
@@ -44,7 +44,7 @@ export class WarningMessageObserver {
         }
     }
 
-    private async handleArchiveError(event: ZipError) {
+    private async handleZipError(event: ZipError) {
         await showWarningMessage(this.vscode, event.message);
     }
 }

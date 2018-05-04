@@ -17,7 +17,7 @@ import { Files, Binaries, createTestZipAsync } from '../testAssets/CreateTestZip
 chai.use(require("chai-as-promised"));
 let expect = chai.expect;
 
-suite('ArchiveInstaller', () => {
+suite('ZipInstaller', () => {
     let tmpInstallDir: TmpAsset;
     let installationPath: string;
     let testBuffer: Buffer;
