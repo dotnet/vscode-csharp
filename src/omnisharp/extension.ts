@@ -34,6 +34,7 @@ import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
+import "rxjs/add/operator/map"; 
 
 export let omnisharp: OmniSharpServer;
 
@@ -53,6 +54,7 @@ export async function activate(context: vscode.ExtensionContext, eventStream: Ev
     disposables.add(server.onServerStart(() => {
         // register language feature provider on start
         localDisposables = new CompositeDisposable();
+        let optionStream = eventStream.filter((event) => event.constructor.name === WorkspaceConfigurationChanged.name).map(_ => Options.Read(vscode));
         const definitionMetadataDocumentProvider = new DefinitionMetadataDocumentProvider();
         definitionMetadataDocumentProvider.register();
         localDisposables.add(definitionMetadataDocumentProvider);
@@ -62,7 +64,7 @@ export async function activate(context: vscode.ExtensionContext, eventStream: Ev
         localDisposables.add(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server)));
         const testManager = new TestManager(server, eventStream);
         localDisposables.add(testManager);
-        localDisposables.add(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, testManager)));
+        localDisposables.add(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, testManager, optionStream)));
         localDisposables.add(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server)));
         localDisposables.add(vscode.languages.registerDocumentSymbolProvider(documentSelector, new DocumentSymbolProvider(server)));
         localDisposables.add(vscode.languages.registerReferenceProvider(documentSelector, new ReferenceProvider(server)));
@@ -75,7 +77,7 @@ export async function activate(context: vscode.ExtensionContext, eventStream: Ev
         localDisposables.add(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionItemProvider(server), '.', ' '));
         localDisposables.add(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server)));
         localDisposables.add(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server), '(', ','));
-        const codeActionProvider = new CodeActionProvider(server);
+        const codeActionProvider = new CodeActionProvider(server, optionStream);
         localDisposables.add(codeActionProvider);
         localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
         localDisposables.add(reportDiagnostics(server, advisor));

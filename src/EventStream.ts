@@ -4,6 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 import { Subject } from "rxjs/Subject";
 import { BaseEvent } from "./omnisharp/loggingEvents";
+import "rxjs/add/operator/filter"; 
+import { Observable } from "rxjs/Observable";
 
 export class EventStream {
     private sink: Subject<BaseEvent>;
@@ -19,4 +21,8 @@ export class EventStream {
     public subscribe(eventHandler: (event: BaseEvent) => void) {
         this.sink.subscribe(eventHandler);
     }
+
+    public filter(predicate: (value: BaseEvent, index: number) => boolean, thisArg?: any): Observable<BaseEvent> { 
+        return this.sink.filter(predicate, thisArg); 
+    } 
 }

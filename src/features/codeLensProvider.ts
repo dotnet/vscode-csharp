@@ -14,6 +14,8 @@ import { OmniSharpServer } from '../omnisharp/server';
 import { Options } from '../omnisharp/options';
 import TestManager from './dotnetTest';
 import CompositeDisposable from '../CompositeDisposable';
+import { Observable } from 'rxjs/Observable';
+import Disposable from '../Disposable';
 
 class OmniSharpCodeLens extends vscode.CodeLens {
 
@@ -29,17 +31,13 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 
     private _options: Options;
 
-    constructor(server: OmniSharpServer, testManager: TestManager) {
+    constructor(server: OmniSharpServer, testManager: TestManager, optionStream: Observable<Options>) {
         super(server);
 
-        this._resetCachedOptions();
-
-        let configChangedDisposable = vscode.workspace.onDidChangeConfiguration(this._resetCachedOptions, this);
-        this.addDisposables(new CompositeDisposable(configChangedDisposable));
-    }
-
-    private _resetCachedOptions(): void {
         this._options = Options.Read(vscode);
+
+        let configChangedDisposable = new Disposable(optionStream.subscribe(options => this._options = options)); 
+        this.addDisposables(new CompositeDisposable(configChangedDisposable));
     }
 
     private static filteredSymbolNames: { [name: string]: boolean } = {
