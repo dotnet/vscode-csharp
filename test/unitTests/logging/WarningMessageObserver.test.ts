@@ -5,8 +5,8 @@
 
 import { WarningMessageObserver } from '../../../src/observers/WarningMessageObserver';
 import { assert, use as chaiUse, expect, should } from 'chai';
-import { getFakeVsCode, getMSBuildDiagnosticsMessage, getOmnisharpMSBuildProjectDiagnosticsEvent, getOmnisharpServerOnErrorEvent } from '../testAssets/Fakes';
-import { BaseEvent } from '../../../src/omnisharp/loggingEvents';
+import { getMSBuildDiagnosticsMessage, getOmnisharpMSBuildProjectDiagnosticsEvent, getOmnisharpServerOnErrorEvent, getVSCodeWithConfig, getWorkspaceConfiguration, getFakeVsCode, updateWorkspaceConfig } from '../testAssets/Fakes';
+import { BaseEvent, WorkspaceConfigurationChanged } from '../../../src/omnisharp/loggingEvents';
 import { vscode } from '../../../src/vscodeAdapter';
 import { TestScheduler } from 'rxjs/testing/TestScheduler';
 import { Observable } from 'rxjs/Observable';
@@ -29,39 +29,38 @@ suite('WarningMessageObserver', () => {
     let commandDone = new Promise<void>(resolve => {
         signalCommandDone = () => { resolve(); };
     });
-
     let warningMessages: string[];
     let invokedCommand: string;
     let scheduler: TestScheduler;
     let assertionObservable: Subject<string>;
     let observer: WarningMessageObserver;
-    let vscode: vscode = getFakeVsCode();
-
-    vscode.window.showWarningMessage = async <T>(message: string, ...items: T[]) => {
-        warningMessages.push(message);
-        assertionObservable.next(`[${warningMessages.length}] ${message}`);
-        return new Promise<T>(resolve => {
-            doClickCancel = () => {
-                resolve(undefined);
-            };
-
-            doClickOk = () => {
-                resolve(items[0]);
-            };
-        });
-    };
-
-    vscode.commands.executeCommand = <T>(command: string, ...rest: any[]) => {
-        invokedCommand = command;
-        signalCommandDone();
-        return <T>undefined;
-    };
+    let vscode: vscode;
 
     setup(() => {
+        vscode = getVSCodeWithConfig();
+        vscode.window.showWarningMessage = async <T>(message: string, ...items: T[]) => {
+            warningMessages.push(message);
+            assertionObservable.next(`[${warningMessages.length}] ${message}`);
+            return new Promise<T>(resolve => {
+                doClickCancel = () => {
+                    resolve(undefined);
+                };
+
+                doClickOk = () => {
+                    resolve(items[0]);
+                };
+            });
+        };
+
+        vscode.commands.executeCommand = <T>(command: string, ...rest: any[]) => {
+            invokedCommand = command;
+            signalCommandDone();
+            return <T>undefined;
+        };
         assertionObservable = new Subject<string>();
         scheduler = new TestScheduler(assert.deepEqual);
         scheduler.maxFrames = 9000;
-        observer = new WarningMessageObserver(vscode, () => false, scheduler);
+        observer = new WarningMessageObserver(vscode, scheduler);
         warningMessages = [];
         invokedCommand = undefined;
         commandDone = new Promise<void>(resolve => {
@@ -78,11 +77,11 @@ suite('WarningMessageObserver', () => {
     });
 
     test('OmnisharpServerMsBuildProjectDiagnostics: No event is posted if warning is disabled', () => {
-        let newObserver = new WarningMessageObserver(vscode, () => true, scheduler);
+        updateWorkspaceConfig(vscode, 'omnisharp', 'disableMSBuildDiagnosticWarning', true);
         let event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
             [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)],
             [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)]);
-        newObserver.post(event);
+        observer.post(event);
         expect(warningMessages).to.be.empty;
     });
 
@@ -170,6 +169,17 @@ suite('WarningMessageObserver', () => {
                 await expect(Observable.fromPromise(commandDone).timeout(1).toPromise()).to.be.rejected;
                 expect(invokedCommand).to.be.undefined;
             });
+        });
+    });
+
+    suite('WorkspaceConfigChanged', () => {
+        test(`When the event is fired then a warning message is displayed`, () => {
+            expect(warningMessages.length).to.be.equal(0);
+            updateWorkspaceConfig(vscode, 'omnisharp', 'path', "somePath");
+            let event = new WorkspaceConfigurationChanged();
+            observer.post(event);
+            expect(warningMessages.length).to.be.equal(1);
+            expect(warningMessages[0]).to.be.equal("OmniSharp configuration has changed, please restart OmniSharp.");
         });
     });
 });

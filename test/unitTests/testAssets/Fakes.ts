@@ -5,7 +5,7 @@
 
 import * as vscode from '../../../src/vscodeAdapter';
 import * as protocol from '../../../src/omnisharp/protocol';
-import { DocumentSelector, MessageItem, TextDocument, Uri, GlobPattern } from '../../../src/vscodeAdapter';
+import { DocumentSelector, MessageItem, TextDocument, Uri, GlobPattern, WorkspaceConfiguration } from '../../../src/vscodeAdapter';
 import { ITelemetryReporter } from '../../../src/observers/TelemetryObserver';
 import { MSBuildDiagnosticsMessage } from '../../../src/omnisharp/protocol';
 import { OmnisharpServerMsBuildProjectDiagnostics, OmnisharpServerOnError, OmnisharpServerUnresolvedDependencies, WorkspaceInformationUpdated } from '../../../src/omnisharp/loggingEvents';
@@ -161,4 +161,32 @@ export function getWorkspaceInformationUpdated(msbuild: protocol.MsBuildWorkspac
     };
 
     return new WorkspaceInformationUpdated(a);
-} 
+}
+
+export function getVSCodeWithConfig(omnisharpConfig?: WorkspaceConfiguration, csharpConfig?: WorkspaceConfiguration) {
+    const vscode = getFakeVsCode();
+
+    const _omnisharpConfig = omnisharpConfig || getWorkspaceConfiguration();
+    const _csharpConfig = csharpConfig || getWorkspaceConfiguration();
+
+    vscode.workspace.getConfiguration = (section?, resource?) =>
+    {
+        if (section === 'omnisharp')
+        {
+            return _omnisharpConfig;
+        }
+
+        if (section === 'csharp')
+        {
+            return _csharpConfig;
+        }
+
+        return undefined;
+    };
+
+    return vscode;
+}
+
+export function updateWorkspaceConfig(vscode: vscode.vscode, section: string, config: string, value: any){
+    vscode.workspace.getConfiguration(section).update(config, value);
+}
