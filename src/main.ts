@@ -29,6 +29,7 @@ import { addJSONProviders } from './features/json/jsonContributions';
 import { ProjectStatusBarObserver } from './observers/ProjectStatusBarObserver';
 import CSharpExtensionExports from './CSharpExtensionExports';
 import { vscodeNetworkSettingsProvider, NetworkSettingsProvider } from './NetworkSettings';
+import { ErrorMessageObserver } from './observers/ErrorMessageObserver';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -65,6 +66,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
     let informationMessageObserver = new InformationMessageObserver(vscode);
     eventStream.subscribe(informationMessageObserver.post);
+
+    let errorMessageObserver = new ErrorMessageObserver(vscode);
+    eventStream.subscribe(errorMessageObserver.post);
 
     let omnisharpStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, Number.MIN_VALUE));
     let omnisharpStatusBarObserver = new OmnisharpStatusBarObserver(omnisharpStatusBar);

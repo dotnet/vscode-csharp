@@ -118,6 +118,10 @@ export class DownloadSizeObtained implements BaseEvent {
     constructor(public packageSize: number) { }
 }
 
+export class ZipError implements BaseEvent {
+    constructor(public message: string) { }
+}
+
 export class DebuggerPrerequisiteFailure extends EventWithMessage { }
 export class DebuggerPrerequisiteWarning extends EventWithMessage { }
 export class CommandDotNetRestoreProgress extends EventWithMessage { }

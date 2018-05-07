@@ -132,6 +132,9 @@ export function getFakeVsCode(): vscode.vscode {
             },
             showWarningMessage: <T extends MessageItem>(message: string, ...items: T[]) => {
                 throw new Error("Not Implemented");
+            },
+            showErrorMessage: (message: string, ...items: string[]) => {
+                throw new Error("Not Implemented");
             }
         },
         workspace: {
