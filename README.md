@@ -36,15 +36,12 @@ See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.14.0/
 
 * Currently, the C# debugger officially supports the following operating systems:
 
-  * Windows (64-bit only)
-  * macOS 10.12 (Sierra) and newer
-  * Ubuntu 14.04+ (and distros based on it)
-  * Debian 8.7+
-  * Red Hat Enterprise Linux (RHEL) / CentOS / Oracle Linux 7.3+
-  * Fedora 23 / 24 / 25
-  * OpenSUSE 42.2+
-
-This list is currently the same as the x64 .NET Core 2.0 operating systems (see [.NET Core list](https://github.com/dotnet/core/blob/master/roadmap.md#net-core-20---supported-os-versions)). Note that other Linux distributions will likely work as well as long as they include glibc, OpenSSL 1.0, and libunwind.
+  * X64 operating systems:
+    * Windows 7 SP1 and newer
+    * macOS 10.12 (Sierra) and newer
+    * Linux: see [.NET Core documentation](https://github.com/dotnet/core/blob/master/release-notes/2.0/2.0-supported-os.md#linux) for the list of supported distributions. Note that other Linux distributions will likely work as well as long as they include glibc and OpenSSL.
+  * ARM operating systems:
+    * Linux is supported as a remote debugging target
 
 ### Found a Bug?
 Please file any issues at https://github.com/OmniSharp/omnisharp-vscode/issues.
@@ -54,9 +51,7 @@ The C# extension now supports basic debugging capabilities! See http://aka.ms/vs
 
 ### Development
 
-First install:
-* Node.js (newer than 4.3.1)
-* Npm (newer 2.14.12)
+First install [Node.js (8+)](https://nodejs.org/).
 
 To **run and develop** do the following:
 
