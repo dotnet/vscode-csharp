@@ -8,7 +8,7 @@ import * as mkdirp from 'mkdirp';
 import * as path from 'path';
 import * as yauzl from 'yauzl';
 import { EventStream } from "../EventStream";
-import { InstallationStart } from "../omnisharp/loggingEvents";
+import { InstallationStart, ZipError } from "../omnisharp/loggingEvents";
 import { NestedError } from '../NestedError';
 
 export async function InstallZip(buffer: Buffer, description: string, destinationInstallPath: string, binaries: string[], eventStream: EventStream): Promise<void> {
@@ -17,7 +17,9 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
     return new Promise<void>((resolve, reject) => {
         yauzl.fromBuffer(buffer, { lazyEntries: true }, (err, zipFile) => {
             if (err) {
-                return reject(new NestedError('Immediate zip file error', err));
+                let message = "C# Extension was unable to download its dependencies. Please check your internet connection. If you use a proxy server, please visit https://aka.ms/VsCodeCsharpNetworking";
+                eventStream.post(new ZipError(message));
+                return reject(new NestedError(message));
             }
 
             zipFile.readEntry();
