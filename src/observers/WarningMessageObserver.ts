@@ -18,15 +18,12 @@ export class WarningMessageObserver {
     private warningMessageDebouncer: Subject<BaseEvent>;
     private options: Options;
 
-    constructor(private vscode: vscode, scheduler?: Scheduler) {
+    constructor(private vscode: vscode, private scheduler?: Scheduler) {
         this.options = this.readOmniSharpOptions();
         this.warningMessageDebouncer = new Subject<BaseEvent>();
-        this.warningMessageDebouncer.debounceTime(1500, scheduler).subscribe(async event => {
-            let message = "Some projects have trouble loading. Please review the output for more details.";
-            await showWarningMessage(this.vscode, message, { title: "Show Output", command: 'o.showOutput' });
-        });
+        this.setupDebounceHandler();
     }
-
+    
     public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case OmnisharpServerOnError.name:
@@ -36,29 +33,54 @@ export class WarningMessageObserver {
                 this.handleOmnisharpServerMsBuildProjectDiagnostics(<OmnisharpServerMsBuildProjectDiagnostics>event);
                 break;
             case WorkspaceConfigurationChanged.name:
-                this.handleWorkspaceConfigurationChanged();
+                this.handleWorkspaceConfigurationChanged(<WorkspaceConfigurationChanged>event);
                 break;
         }
     }
 
     private handleOmnisharpServerMsBuildProjectDiagnostics(event: OmnisharpServerMsBuildProjectDiagnostics) {
         let options = this.readOmniSharpOptions();
-        if (!options.disableMSBuildDiagnosticWarning  && event.diagnostics.Errors.length > 0) {
+        if (!options.disableMSBuildDiagnosticWarning && event.diagnostics.Errors.length > 0) {
             this.warningMessageDebouncer.next(event);
         }
     }
 
-    private async handleWorkspaceConfigurationChanged() {
+    private async handleWorkspaceConfigurationChanged(event: WorkspaceConfigurationChanged) {
         let newOptions = this.readOmniSharpOptions();
-        if (JSON.stringify(newOptions) != JSON.stringify(this.options)) {
-            let message = "OmniSharp configuration has changed. Would you like to relaunch the OmniSharp server with your changes?";
-            await showWarningMessage(this.vscode, message, { title: "Restart Now", command: 'o.restart' });
-            this.options = newOptions;
+        if (this.options.path != newOptions.path
+            || this.options.useGlobalMono != newOptions.useGlobalMono
+            || this.options.waitForDebugger != newOptions.waitForDebugger
+            || this.options.projectLoadTimeout != newOptions.projectLoadTimeout) {
+            this.warningMessageDebouncer.next(event);
         }
+        this.options = newOptions;
     }
 
     private readOmniSharpOptions() {
         return Options.Read(this.vscode);
+    }
+
+    private setupDebounceHandler() {
+        this.setupWorkspaceConfigurationChangeHandler();
+        this.setupOmnisharpErrorHandler();
+    }
+
+    private setupOmnisharpErrorHandler() {
+        this.warningMessageDebouncer.filter(event => ((event instanceof OmnisharpServerOnError) || (event instanceof OmnisharpServerMsBuildProjectDiagnostics)))
+            .debounceTime(1500, this.scheduler)
+            .subscribe(async event => {
+                let message = "Some projects have trouble loading. Please review the output for more details.";
+                await showWarningMessage(this.vscode, message, { title: "Show Output", command: 'o.showOutput' });
+            });
+    }
+
+    private setupWorkspaceConfigurationChangeHandler() {
+        this.warningMessageDebouncer.filter(event => event instanceof WorkspaceConfigurationChanged)
+            .debounceTime(1500, this.scheduler)
+            .subscribe(async event => {
+                let message = "OmniSharp configuration has changed. Would you like to relaunch the OmniSharp server with your changes?";
+                await showWarningMessage(this.vscode, message, { title: "Restart Now", command: 'o.restart' });
+            });
     }
 }
 

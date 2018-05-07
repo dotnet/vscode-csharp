@@ -27,7 +27,7 @@ suite('WarningMessageObserver', () => {
     let doClickCancel: () => void;
     let signalCommandDone: () => void;
     let commandDone = new Promise<void>(resolve => {
-        signalCommandDone = () =>  resolve();
+        signalCommandDone = () => resolve();
     });
     let warningMessages: string[];
     let invokedCommand: string;
@@ -53,8 +53,12 @@ suite('WarningMessageObserver', () => {
         let event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
             [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)],
             []);
-        observer.post(event);
-        expect(invokedCommand).to.be.undefined;
+        let marble = `a`;
+        let marble_event_map = { a: event };
+        let eventList = scheduler.createHotObservable(marble, marble_event_map);
+        eventList.subscribe(e => observer.post(e));
+        scheduler.flush();
+        expect(warningMessages).to.be.empty;
     });
 
     test('OmnisharpServerMsBuildProjectDiagnostics: No event is posted if warning is disabled', () => {
@@ -62,7 +66,11 @@ suite('WarningMessageObserver', () => {
         let event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
             [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)],
             [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)]);
-        observer.post(event);
+        let marble = `a`;
+        let marble_event_map = { a: event };
+        let eventList = scheduler.createHotObservable(marble, marble_event_map);
+        eventList.subscribe(e => observer.post(e));
+        scheduler.flush();
         expect(warningMessages).to.be.empty;
     });
 
@@ -73,7 +81,6 @@ suite('WarningMessageObserver', () => {
         getOmnisharpServerOnErrorEvent("someText", "someFile", 1, 2)
     ].forEach((event: BaseEvent) => {
         suite(`${event.constructor.name}`, () => {
-
             test(`When the event is fired then a warning message is displayed`, () => {
                 let marble = `${timeToMarble(1500)}a`;
                 let marble_event_map = { a: event };
@@ -154,14 +161,49 @@ suite('WarningMessageObserver', () => {
     });
 
     suite('WorkspaceConfigChanged', () => {
-        test(`When the event is fired then a warning message is displayed`, () => {
-            expect(warningMessages.length).to.be.equal(0);
-            updateWorkspaceConfig(vscode, 'omnisharp', 'path', "somePath");
-            let event = new WorkspaceConfigurationChanged();
-            observer.post(event);
-            expect(warningMessages.length).to.be.equal(1);
-            expect(warningMessages[0]).to.be.equal("OmniSharp configuration has changed. Would you like to relaunch the OmniSharp server with your changes?");
+        [
+            { section: 'omnisharp', config: 'path', value: "somePath" },
+            { section: 'omnisharp', config: 'useGlobalMono', value: "always" },
+            { section: 'omnisharp', config: 'waitForDebugger', value: true },
+            { section: 'omnisharp', config: 'projectLoadTimeout', value: 500 },
+        ].forEach(elem => {
+            test(`When the ${elem.section} ${elem.config} changes then a warning message is displayed`, () => {
+                expect(warningMessages.length).to.be.equal(0);
+                updateWorkspaceConfig(vscode, elem.section, elem.config, elem.value);
+                let event = new WorkspaceConfigurationChanged();
+                let marble = `${timeToMarble(1500)}a`;
+                let marble_event_map = { a: event };
+                let eventList = scheduler.createHotObservable(marble, marble_event_map);
+                eventList.subscribe(e => observer.post(e));
+                scheduler.expectObservable(assertionObservable).toBe(`${timeToMarble(3000)}a`, { a: '[1] OmniSharp configuration has changed. Would you like to relaunch the OmniSharp server with your changes?' });
+                scheduler.flush();
+                expect(warningMessages.length).to.be.equal(1);
+                expect(warningMessages[0]).to.be.equal("OmniSharp configuration has changed. Would you like to relaunch the OmniSharp server with your changes?");
+            });
         });
+        [
+            { section: 'omnisharp', config: 'loggingLevel', value: "debug" },
+            { section: 'omnisharp', config: 'autoStart', value: false },
+            { section: 'omnisharp', config: 'maxProjectResults', value: 100 },
+            { section: 'omnisharp', config: 'useEditorFormattingSettings', value: false },
+            { section: 'omnisharp', config: 'useFormatting', value: false },
+            { section: 'omnisharp', config: 'showReferencesCodeLens', value: false },
+            { section: 'omnisharp', config: 'showTestsCodeLens', value: false },
+            { section: 'omnisharp', config: 'disableCodeActions', value: true },
+        ].forEach(elem => {
+            test(`When the ${elem.section} ${elem.config} changes then a warning message is not displayed`, () => {
+                expect(warningMessages.length).to.be.equal(0);
+                updateWorkspaceConfig(vscode, elem.section, elem.config, elem.value);
+                let event = new WorkspaceConfigurationChanged();
+                let marble = `${timeToMarble(1500)}a`;
+                let marble_event_map = { a: event };
+                let eventList = scheduler.createHotObservable(marble, marble_event_map);
+                eventList.subscribe(e => observer.post(e));
+                scheduler.flush();
+                expect(warningMessages).to.be.empty;
+            });
+        });
+
     });
 
     function getVSCodeForWarningMessage(): vscode {
