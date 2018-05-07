@@ -51,7 +51,7 @@ export class WarningMessageObserver {
     private async handleWorkspaceConfigurationChanged() {
         let newOptions = this.readOmniSharpOptions();
         if (JSON.stringify(newOptions) != JSON.stringify(this.options)) {
-            let message = "OmniSharp configuration has changed, please restart OmniSharp.";
+            let message = "OmniSharp configuration has changed. Would you like to relaunch the OmniSharp server with your changes?";
             await showWarningMessage(this.vscode, message, { title: "Restart Now", command: 'o.restart' });
             this.options = newOptions;
         }

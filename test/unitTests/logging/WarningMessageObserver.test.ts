@@ -5,7 +5,7 @@
 
 import { WarningMessageObserver } from '../../../src/observers/WarningMessageObserver';
 import { assert, use as chaiUse, expect, should } from 'chai';
-import { getMSBuildDiagnosticsMessage, getOmnisharpMSBuildProjectDiagnosticsEvent, getOmnisharpServerOnErrorEvent, getVSCodeWithConfig, getWorkspaceConfiguration, getFakeVsCode, updateWorkspaceConfig } from '../testAssets/Fakes';
+import { getMSBuildDiagnosticsMessage, getOmnisharpMSBuildProjectDiagnosticsEvent, getOmnisharpServerOnErrorEvent, getVSCodeWithConfig, updateWorkspaceConfig } from '../testAssets/Fakes';
 import { BaseEvent, WorkspaceConfigurationChanged } from '../../../src/omnisharp/loggingEvents';
 import { vscode } from '../../../src/vscodeAdapter';
 import { TestScheduler } from 'rxjs/testing/TestScheduler';
@@ -27,7 +27,7 @@ suite('WarningMessageObserver', () => {
     let doClickCancel: () => void;
     let signalCommandDone: () => void;
     let commandDone = new Promise<void>(resolve => {
-        signalCommandDone = () => { resolve(); };
+        signalCommandDone = () =>  resolve();
     });
     let warningMessages: string[];
     let invokedCommand: string;
@@ -37,26 +37,7 @@ suite('WarningMessageObserver', () => {
     let vscode: vscode;
 
     setup(() => {
-        vscode = getVSCodeWithConfig();
-        vscode.window.showWarningMessage = async <T>(message: string, ...items: T[]) => {
-            warningMessages.push(message);
-            assertionObservable.next(`[${warningMessages.length}] ${message}`);
-            return new Promise<T>(resolve => {
-                doClickCancel = () => {
-                    resolve(undefined);
-                };
-
-                doClickOk = () => {
-                    resolve(items[0]);
-                };
-            });
-        };
-
-        vscode.commands.executeCommand = <T>(command: string, ...rest: any[]) => {
-            invokedCommand = command;
-            signalCommandDone();
-            return <T>undefined;
-        };
+        vscode = getVSCodeForWarningMessage();
         assertionObservable = new Subject<string>();
         scheduler = new TestScheduler(assert.deepEqual);
         scheduler.maxFrames = 9000;
@@ -179,9 +160,34 @@ suite('WarningMessageObserver', () => {
             let event = new WorkspaceConfigurationChanged();
             observer.post(event);
             expect(warningMessages.length).to.be.equal(1);
-            expect(warningMessages[0]).to.be.equal("OmniSharp configuration has changed, please restart OmniSharp.");
+            expect(warningMessages[0]).to.be.equal("OmniSharp configuration has changed. Would you like to relaunch the OmniSharp server with your changes?");
         });
     });
+
+    function getVSCodeForWarningMessage(): vscode {
+        let configuredVscode = getVSCodeWithConfig();
+        configuredVscode.window.showWarningMessage = async <T>(message: string, ...items: T[]) => {
+            warningMessages.push(message);
+            assertionObservable.next(`[${warningMessages.length}] ${message}`);
+            return new Promise<T>(resolve => {
+                doClickCancel = () => {
+                    resolve(undefined);
+                };
+
+                doClickOk = () => {
+                    resolve(items[0]);
+                };
+            });
+        };
+
+        configuredVscode.commands.executeCommand = <T>(command: string, ...rest: any[]) => {
+            invokedCommand = command;
+            signalCommandDone();
+            return <T>undefined;
+        };
+
+        return configuredVscode;
+    }
 });
 
 function timeToMarble(timeinMilliseconds: number): string {
@@ -191,3 +197,4 @@ function timeToMarble(timeinMilliseconds: number): string {
     }
     return marble;
 }
+

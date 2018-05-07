@@ -28,7 +28,6 @@ suite("Options tests", () => {
         options.showReferencesCodeLens.should.equal(true);
         options.showTestsCodeLens.should.equal(true);
         options.disableCodeActions.should.equal(false);
-        options.disableCodeActions.should.equal(false);
     });
 
     test('BACK-COMPAT: "omnisharp.loggingLevel": "verbose" == "omnisharp.loggingLevel": "debug"', () =>
