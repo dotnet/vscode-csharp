@@ -34,21 +34,24 @@ import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
+import "rxjs/add/operator/map";
+import { Observable } from 'rxjs/Observable';
 
 export let omnisharp: OmniSharpServer;
 
-export async function activate(context: vscode.ExtensionContext, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider) {
+export async function activate(context: vscode.ExtensionContext, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, optionStream: Observable<Options>) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
         scheme: 'file' // only files from disk
     };
 
-    const options = Options.Read(vscode);
-    const server = new OmniSharpServer(vscode, provider, eventStream, packageJSON, platformInfo);
+    
+    const server = new OmniSharpServer(vscode, provider, eventStream, packageJSON, platformInfo, optionStream);
     omnisharp = server;
     const advisor = new Advisor(server); // create before server is started
     const disposables = new CompositeDisposable();
-    let localDisposables : CompositeDisposable;
+    let localDisposables: CompositeDisposable;
+    let options = await optionStream.take(1).toPromise();
 
     disposables.add(server.onServerStart(() => {
         // register language feature provider on start
@@ -62,7 +65,7 @@ export async function activate(context: vscode.ExtensionContext, eventStream: Ev
         localDisposables.add(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server)));
         const testManager = new TestManager(server, eventStream);
         localDisposables.add(testManager);
-        localDisposables.add(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, testManager)));
+        localDisposables.add(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, testManager, optionStream)));
         localDisposables.add(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server)));
         localDisposables.add(vscode.languages.registerDocumentSymbolProvider(documentSelector, new DocumentSymbolProvider(server)));
         localDisposables.add(vscode.languages.registerReferenceProvider(documentSelector, new ReferenceProvider(server)));
@@ -75,7 +78,7 @@ export async function activate(context: vscode.ExtensionContext, eventStream: Ev
         localDisposables.add(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionItemProvider(server), '.', ' '));
         localDisposables.add(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server)));
         localDisposables.add(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server), '(', ','));
-        const codeActionProvider = new CodeActionProvider(server);
+        const codeActionProvider = new CodeActionProvider(server, optionStream);
         localDisposables.add(codeActionProvider);
         localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
         localDisposables.add(reportDiagnostics(server, advisor));
@@ -90,7 +93,7 @@ export async function activate(context: vscode.ExtensionContext, eventStream: Ev
         localDisposables = null;
     }));
 
-    disposables.add(registerCommands(server, eventStream,platformInfo));
+    disposables.add(registerCommands(server, eventStream, platformInfo, optionStream));
 
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
         disposables.add(server.onServerStart(() => {
@@ -160,11 +163,11 @@ export async function activate(context: vscode.ExtensionContext, eventStream: Ev
     }));
 
     // Register ConfigurationProvider
-    disposables.add(vscode.debug.registerDebugConfigurationProvider('coreclr', new CSharpConfigurationProvider(server)));
+    disposables.add(vscode.debug.registerDebugConfigurationProvider('coreclr', new CSharpConfigurationProvider(server)));   
 
     context.subscriptions.push(disposables);
 
-    return new Promise<OmniSharpServer>(resolve => 
-        server.onServerStart(e => 
-            resolve(server))); 
+    return new Promise<OmniSharpServer>(resolve =>
+        server.onServerStart(e =>
+            resolve(server)));
 }

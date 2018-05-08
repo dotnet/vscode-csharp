@@ -135,7 +135,7 @@ export class OmnisharpServerVerboseMessage extends EventWithMessage { }
 
 export class ProjectModified implements BaseEvent { }
 export class ActivationFailure implements BaseEvent { }
-export class CommandShowOutput implements BaseEvent { }
+export class ShowOmniSharpChannel implements BaseEvent { }
 export class DebuggerNotInstalledFailure implements BaseEvent { }
 export class CommandDotNetRestoreStart implements BaseEvent { }
 export class InstallationSuccess implements BaseEvent { }

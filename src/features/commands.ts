@@ -14,15 +14,17 @@ import * as vscode from 'vscode';
 import { DotNetAttachItemsProviderFactory, AttachPicker, RemoteAttachPicker } from './processPicker';
 import { generateAssets } from '../assets';
 import { getAdapterExecutionCommand } from '../coreclr-debug/activate';
-import { CommandShowOutput, CommandDotNetRestoreStart, CommandDotNetRestoreProgress, CommandDotNetRestoreSucceeded, CommandDotNetRestoreFailed } from '../omnisharp/loggingEvents';
+import { ShowOmniSharpChannel, CommandDotNetRestoreStart, CommandDotNetRestoreProgress, CommandDotNetRestoreSucceeded, CommandDotNetRestoreFailed } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 import { PlatformInformation } from '../platform';
 import CompositeDisposable from '../CompositeDisposable';
+import { Options } from '../omnisharp/options';
+import { Observable } from 'rxjs/Observable';
 
-export default function registerCommands(server: OmniSharpServer, eventStream: EventStream, platformInfo: PlatformInformation): CompositeDisposable {
-    let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server));
-    let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', () => pickProjectAndStart(server));
-    let d3 = vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new CommandShowOutput()));
+export default function registerCommands(server: OmniSharpServer, eventStream: EventStream, platformInfo: PlatformInformation, optionStream: Observable<Options>): CompositeDisposable {
+    let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server, eventStream));
+    let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', () => pickProjectAndStart(server, optionStream));
+    let d3 = vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new ShowOmniSharpChannel()));
     let d4 = vscode.commands.registerCommand('dotnet.restore', fileName => {
         if (fileName) {
             dotnetRestoreForProject(server, fileName, eventStream);
@@ -54,7 +56,9 @@ export default function registerCommands(server: OmniSharpServer, eventStream: E
     return new CompositeDisposable(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10);
 }
 
-function restartOmniSharp(server: OmniSharpServer) {
+function restartOmniSharp(server: OmniSharpServer, eventStream: EventStream) {
+    eventStream.post(new ShowOmniSharpChannel());
+    //show the channel when restarting omnisharp
     if (server.isRunning()) {
         server.restart();
     }
@@ -63,9 +67,9 @@ function restartOmniSharp(server: OmniSharpServer) {
     }
 }
 
-function pickProjectAndStart(server: OmniSharpServer) {
-
-    return findLaunchTargets().then(targets => {
+async function pickProjectAndStart(server: OmniSharpServer, optionStream: Observable<Options>) {
+    let options = await optionStream.take(1).toPromise();
+    return findLaunchTargets(options).then(targets => {
 
         let currentPath = server.getSolutionPathOrFolder();
         if (currentPath) {

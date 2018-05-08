@@ -26,8 +26,10 @@ import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/take';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
+import { Observable } from 'rxjs/Observable';
 
 enum ServerState {
     Starting,
@@ -90,7 +92,7 @@ export class OmniSharpServer {
     private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
     private firstUpdateProject: boolean;
 
-    constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private eventStream: EventStream, private packageJSON: any, private platformInfo: PlatformInformation) {
+    constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private eventStream: EventStream, private packageJSON: any, private platformInfo: PlatformInformation, private optionStream: Observable<Options>) {
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
         let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, this.packageJSON, platformInfo);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
@@ -415,15 +417,18 @@ export class OmniSharpServer {
     public async restart(launchTarget: LaunchTarget = this._launchTarget): Promise<void> {
         if (launchTarget) {
             await this.stop();
-
-            const options = Options.Read(this.vscode);
-
+            let options = await this.readOptions();
             await this._start(launchTarget, options);
         }
     }
 
-    public autoStart(preferredPath: string): Thenable<void> {
-        return findLaunchTargets().then(async launchTargets => {
+    private readOptions(): Promise<Options>{
+        return this.optionStream.take(1).toPromise();
+    }
+
+    public async autoStart(preferredPath: string): Promise<void> {
+        let options = await this.readOptions();
+        return findLaunchTargets(options).then(async launchTargets => {
             // If there aren't any potential launch targets, we create file watcher and try to
             // start the server again once a *.sln, *.csproj, project.json, CSX or Cake file is created.
             if (launchTargets.length === 0) {
