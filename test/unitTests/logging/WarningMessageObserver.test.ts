@@ -6,7 +6,6 @@
 import { WarningMessageObserver } from '../../../src/observers/WarningMessageObserver';
 import { assert, use as chaiUse, expect, should } from 'chai';
 import { getFakeVsCode, getMSBuildDiagnosticsMessage, getOmnisharpMSBuildProjectDiagnosticsEvent, getOmnisharpServerOnErrorEvent } from '../testAssets/Fakes';
-import { BaseEvent } from '../../../src/omnisharp/loggingEvents';
 import { vscode } from '../../../src/vscodeAdapter';
 import { TestScheduler } from 'rxjs/testing/TestScheduler';
 import { Observable } from 'rxjs/Observable';
