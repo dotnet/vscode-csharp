@@ -41,7 +41,7 @@ suite('WarningMessageObserver', () => {
         assertionObservable = new Subject<string>();
         scheduler = new TestScheduler(assert.deepEqual);
         scheduler.maxFrames = 9000;
-        observer = new WarningMessageObserver(vscode, scheduler);
+        observer = new WarningMessageObserver(vscode, null, scheduler);
         warningMessages = [];
         invokedCommand = undefined;
         commandDone = new Promise<void>(resolve => {
