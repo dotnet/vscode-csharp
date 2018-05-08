@@ -33,9 +33,6 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 
     constructor(server: OmniSharpServer, testManager: TestManager, optionStream: Observable<Options>) {
         super(server);
-
-        this._options = Options.Read(vscode);
-
         let configChangedDisposable = new Disposable(optionStream.subscribe(options => this._options = options)); 
         this.addDisposables(new CompositeDisposable(configChangedDisposable));
     }
@@ -48,7 +45,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
     };
 
     async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken) {
-        if (!this._options.showReferencesCodeLens && !this._options.showTestsCodeLens) {
+        if (this._options && !this._options.showReferencesCodeLens && !this._options.showTestsCodeLens) {
             return [];
         }
 

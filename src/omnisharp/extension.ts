@@ -29,32 +29,33 @@ import WorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
 import forwardChanges from '../features/changeForwarding';
 import registerCommands from '../features/commands';
 import { PlatformInformation } from '../platform';
-import { ProjectJsonDeprecatedWarning, OmnisharpStart, WorkspaceConfigurationChanged } from './loggingEvents';
+import { ProjectJsonDeprecatedWarning, OmnisharpStart } from './loggingEvents';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
-import "rxjs/add/operator/map"; 
+import "rxjs/add/operator/map";
+import { Observable } from 'rxjs/Observable';
 
 export let omnisharp: OmniSharpServer;
 
-export async function activate(context: vscode.ExtensionContext, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider) {
+export async function activate(context: vscode.ExtensionContext, eventStream: EventStream, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, optionStream: Observable<Options>) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
         scheme: 'file' // only files from disk
     };
 
-    const options = Options.Read(vscode);
-    const server = new OmniSharpServer(vscode, provider, eventStream, packageJSON, platformInfo);
+    
+    const server = new OmniSharpServer(vscode, provider, eventStream, packageJSON, platformInfo, optionStream);
     omnisharp = server;
     const advisor = new Advisor(server); // create before server is started
     const disposables = new CompositeDisposable();
-    let localDisposables : CompositeDisposable;
+    let localDisposables: CompositeDisposable;
+    let options = await optionStream.take(1).toPromise();
 
     disposables.add(server.onServerStart(() => {
         // register language feature provider on start
         localDisposables = new CompositeDisposable();
-        let optionStream = eventStream.filter((event) => event.constructor.name === WorkspaceConfigurationChanged.name).map(_ => Options.Read(vscode));
         const definitionMetadataDocumentProvider = new DefinitionMetadataDocumentProvider();
         definitionMetadataDocumentProvider.register();
         localDisposables.add(definitionMetadataDocumentProvider);
@@ -92,7 +93,7 @@ export async function activate(context: vscode.ExtensionContext, eventStream: Ev
         localDisposables = null;
     }));
 
-    disposables.add(registerCommands(server, eventStream,platformInfo));
+    disposables.add(registerCommands(server, eventStream, platformInfo, optionStream));
 
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
         disposables.add(server.onServerStart(() => {
@@ -163,11 +164,11 @@ export async function activate(context: vscode.ExtensionContext, eventStream: Ev
 
     // Register ConfigurationProvider
     disposables.add(vscode.debug.registerDebugConfigurationProvider('coreclr', new CSharpConfigurationProvider(server)));
-    disposables.add(vscode.workspace.onDidChangeConfiguration(e => eventStream.post(new WorkspaceConfigurationChanged())));
+    
 
     context.subscriptions.push(disposables);
 
-    return new Promise<OmniSharpServer>(resolve => 
-        server.onServerStart(e => 
-            resolve(server))); 
+    return new Promise<OmniSharpServer>(resolve =>
+        server.onServerStart(e =>
+            resolve(server)));
 }

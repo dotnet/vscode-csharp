@@ -25,15 +25,13 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
         super(server);
 
         this._commandId = 'omnisharp.runCodeAction';
-
-        this._options = Options.Read(vscode);
         let configChangedDisposable = new Disposable(optionStream.subscribe(options => this._options = options)); 
         let d2 = vscode.commands.registerCommand(this._commandId, this._runCodeAction, this);
         this.addDisposables(new CompositeDisposable(configChangedDisposable, d2));
     }
 
     public async provideCodeActions(document: vscode.TextDocument, range: vscode.Range, context: vscode.CodeActionContext, token: vscode.CancellationToken): Promise<vscode.Command[]> {
-        if (this._options.disableCodeActions) {
+        if (this._options && this._options.disableCodeActions) {
             return;
         }
 
