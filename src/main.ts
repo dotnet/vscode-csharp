@@ -31,6 +31,7 @@ import CSharpExtensionExports from './CSharpExtensionExports';
 import { Options } from './omnisharp/options';
 import { vscodeNetworkSettingsProvider, NetworkSettingsProvider } from './NetworkSettings';
 import { ErrorMessageObserver } from './observers/ErrorMessageObserver';
+import OptionStream from './observables/OptionStream';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -43,6 +44,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     util.setExtensionPath(extension.extensionPath);
 
     const eventStream = new EventStream();
+    const optionStream = new OptionStream(vscode);
 
     let dotnetChannel = vscode.window.createOutputChannel('.NET');
     let dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
@@ -62,7 +64,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     eventStream.subscribe(omnisharpLogObserver.post);
     eventStream.subscribe(omnisharpChannelObserver.post);
 
-    let warningMessageObserver = new WarningMessageObserver(vscode, () => Options.Read(vscode).disableMSBuildDiagnosticWarning || false);
+    let options = await optionStream.GetLatestOptions();
+    let warningMessageObserver = new WarningMessageObserver(vscode, () => options.disableMSBuildDiagnosticWarning || false);
     eventStream.subscribe(warningMessageObserver.post);
 
     let informationMessageObserver = new InformationMessageObserver(vscode);
@@ -98,15 +101,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
     let networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
     let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo, networkSettingsProvider);
-    
+
     // activate language services
-    let omniSharpPromise = OmniSharp.activate(context, eventStream, extension.packageJSON, platformInfo, networkSettingsProvider);
+    let omniSharpPromise = OmniSharp.activate(context, extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionStream);
 
     // register JSON completion & hover providers for project.json
     context.subscriptions.push(addJSONProviders());
     context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(() => {
         eventStream.post(new ActiveTextEditorChanged());
     }));
+    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => optionStream.post()));
 
     let coreClrDebugPromise = Promise.resolve();
     if (runtimeDependenciesExist) {
@@ -123,7 +127,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     };
 }
 
-async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, networkSettingsProvider : NetworkSettingsProvider): Promise<boolean> {
+async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, networkSettingsProvider: NetworkSettingsProvider): Promise<boolean> {
     return util.installFileExists(util.InstallFileType.Lock)
         .then(exists => {
             if (!exists) {
