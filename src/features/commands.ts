@@ -161,7 +161,7 @@ export async function dotnetRestoreSolution(server: OmniSharpServer, eventStream
     }
 
     for (let descriptor of descriptors) {
-        await dotnetRestore(descriptor.Directory, eventStream, descriptor.FilePath);
+        await dotnetRestore(descriptor.Directory, eventStream);
     }
 }
 
