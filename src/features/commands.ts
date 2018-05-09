@@ -24,15 +24,7 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
     let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server));
     let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionProvider));
     let d3 = vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new ShowOmniSharpChannel()));
-    let d4 = vscode.commands.registerCommand('dotnet.restore', fileName => {
-        if (fileName) {
-            dotnetRestoreForProject(server, fileName, eventStream);
-        }
-        else {
-            dotnetRestoreAllProjects(server, eventStream);
-        }
-    });
-
+    let d4 = vscode.commands.registerCommand('dotnet.restore.project', () => dotnetRestoreAllProjects(server, eventStream));
     let d5 = vscode.commands.registerCommand('dotnet.restore.solution', () => dotnetRestoreSolution(server, eventStream));
 
     // register empty handler for csharp.installDebugger
@@ -123,73 +115,39 @@ function projectsToCommands(projects: protocol.ProjectDescriptor[], eventStream:
 }
 
 export async function dotnetRestoreAllProjects(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
-
-    if (!server.isRunning()) {
-        return Promise.reject('OmniSharp server is not running.');
+    let descriptors = await getProjectDescriptors(server);
+    eventStream.post(new CommandDotNetRestoreStart());
+    let commands = await Promise.all(projectsToCommands(descriptors, eventStream));
+    let command = await vscode.window.showQuickPick(commands);
+    if (command) {
+        return command.execute();
     }
-
-    let info = await serverUtils.requestWorkspaceInformation(server);
-
-    let descriptors = protocol.getDotNetCoreProjectDescriptors(info);
-
-    if (descriptors.length === 0) {
-        return Promise.reject("No .NET Core projects found");
-    }
-
-    let commandPromises = projectsToCommands(descriptors, eventStream);
-
-    return Promise.all(commandPromises).then(commands => {
-        return vscode.window.showQuickPick(commands);
-    }).then(command => {
-        if (command) {
-            return command.execute();
-        }
-    });
 }
 
 export async function dotnetRestoreSolution(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
-
-    if (!server.isRunning()) {
-        return Promise.reject('OmniSharp server is not running.');
-    }
-
-    let info = await serverUtils.requestWorkspaceInformation(server);
-    let descriptors = protocol.getDotNetCoreProjectDescriptors(info);
-
-    if (descriptors.length === 0) {
-        return Promise.reject("No .NET Core projects found");
-    }
-
+    let descriptors = await getProjectDescriptors(server);
+    eventStream.post(new CommandDotNetRestoreStart());
     for (let descriptor of descriptors) {
         await dotnetRestore(descriptor.Directory, eventStream);
     }
 }
 
-export async function dotnetRestoreForProject(server: OmniSharpServer, filePath: string, eventStream: EventStream) {
-
+async function getProjectDescriptors(server: OmniSharpServer) {
     if (!server.isRunning()) {
         return Promise.reject('OmniSharp server is not running.');
     }
 
     let info = await serverUtils.requestWorkspaceInformation(server);
-
     let descriptors = protocol.getDotNetCoreProjectDescriptors(info);
-
     if (descriptors.length === 0) {
         return Promise.reject("No .NET Core projects found");
     }
 
-    for (let descriptor of descriptors) {
-        if (descriptor.FilePath === filePath) {
-            return dotnetRestore(descriptor.Directory, eventStream, filePath);
-        }
-    }
+    return descriptors;
 }
 
 async function dotnetRestore(cwd: string, eventStream: EventStream, filePath?: string) {
     return new Promise<void>((resolve, reject) => {
-        eventStream.post(new CommandDotNetRestoreStart());
-
         let cmd = 'dotnet';
         let args = ['restore'];
 
