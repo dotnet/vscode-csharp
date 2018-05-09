@@ -22,7 +22,7 @@ import OptionStream from '../observables/OptionStream';
 
 export default function registerCommands(server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionStream: OptionStream): CompositeDisposable {
     let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server));
-    let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', () => pickProjectAndStart(server, optionStream);
+    let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionStream));
     let d3 = vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new CommandShowOutput()));
     let d4 = vscode.commands.registerCommand('dotnet.restore', fileName => {
         if (fileName) {

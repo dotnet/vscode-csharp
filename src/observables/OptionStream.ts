@@ -28,7 +28,7 @@ export default class OptionStream {
         return new Disposable(this.optionStream.subscribe(observer));
     }
 
-    public GetLatestOptions(): Promise<Options> {
+    public async GetLatestOptions(): Promise<Options> {
         return this.optionStream.take(1).toPromise();
     }
 }

@@ -91,7 +91,7 @@ export class OmniSharpServer {
     private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
     private firstUpdateProject: boolean;
 
-    constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private eventStream: EventStream, private packageJSON: any, private platformInfo: PlatformInformation, private optionStream: OptionStream) {
+    constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private packageJSON: any, private platformInfo: PlatformInformation, private eventStream: EventStream, private optionStream: OptionStream) {
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
         let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, this.packageJSON, platformInfo);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
@@ -438,7 +438,7 @@ export class OmniSharpServer {
                         watcher.dispose();
                         resolve();
                     });
-                }).then(() => {
+                }).then(async () => {
                     // 2nd try again
                     return this.autoStart(preferredPath);
                 });

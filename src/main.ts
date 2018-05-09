@@ -28,7 +28,6 @@ import TelemetryReporter from 'vscode-extension-telemetry';
 import { addJSONProviders } from './features/json/jsonContributions';
 import { ProjectStatusBarObserver } from './observers/ProjectStatusBarObserver';
 import CSharpExtensionExports from './CSharpExtensionExports';
-import { Options } from './omnisharp/options';
 import { vscodeNetworkSettingsProvider, NetworkSettingsProvider } from './NetworkSettings';
 import { ErrorMessageObserver } from './observers/ErrorMessageObserver';
 import OptionStream from './observables/OptionStream';

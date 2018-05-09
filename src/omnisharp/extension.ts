@@ -44,7 +44,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     };
 
     const options = await optionStream.GetLatestOptions();
-    const server = new OmniSharpServer(vscode, provider, eventStream, packageJSON, platformInfo);
+    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionStream);
     omnisharp = server;
     const advisor = new Advisor(server); // create before server is started
     const disposables = new CompositeDisposable();
