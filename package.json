@@ -278,7 +278,7 @@
     "onCommand:o.pickProjectAndStart",
     "onCommand:o.showOutput",
     "onCommand:dotnet.restore.project",
-    "onCommand:dotnet.restore.solution",
+    "onCommand:dotnet.restore.all",
     "onCommand:dotnet.generateAssets",
     "onCommand:csharp.downloadDebugger",
     "onCommand:csharp.listProcess",
@@ -612,8 +612,8 @@
         "category": ".NET"
       },
       {
-        "command": "dotnet.restore.solution",
-        "title": "Restore Solution",
+        "command": "dotnet.restore.all",
+        "title": "Restore Packages",
         "category": ".NET"
       },
       {

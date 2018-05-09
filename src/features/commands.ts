@@ -25,7 +25,7 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
     let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionProvider));
     let d3 = vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new ShowOmniSharpChannel()));
     let d4 = vscode.commands.registerCommand('dotnet.restore.project', () => dotnetRestoreAllProjects(server, eventStream));
-    let d5 = vscode.commands.registerCommand('dotnet.restore.solution', () => dotnetRestoreSolution(server, eventStream));
+    let d5 = vscode.commands.registerCommand('dotnet.restore.all', () => dotnetRestoreSolution(server, eventStream));
 
     // register empty handler for csharp.installDebugger
     // running the command activates the extension, which is all we need for installation to kickoff

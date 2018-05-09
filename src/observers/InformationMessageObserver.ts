@@ -20,10 +20,11 @@ export class InformationMessageObserver {
     }
 
     private async handleOmnisharpServerUnresolvedDependencies(event: ObservableEvent.OmnisharpServerUnresolvedDependencies) {
+        //to do: determine if we need the unresolved dependecies message
         let csharpConfig = this.vscode.workspace.getConfiguration('csharp');
         if (!csharpConfig.get<boolean>('suppressDotnetRestoreNotification')) {
             let message = `There are unresolved dependencies in the solution'. Please execute the restore command to continue.`;
-            return showInformationMessage(this.vscode, message, {title: "Restore", command: "dotnet.restore.solution"});
+            return showInformationMessage(this.vscode, message, { title: "Restore", command: "dotnet.restore.solution" });
         }
     }
 }
