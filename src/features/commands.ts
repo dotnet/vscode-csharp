@@ -31,28 +31,30 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
         else {
             dotnetRestoreAllProjects(server, eventStream);
         }
-    }); 
+    });
+
+    let d5 = vscode.commands.registerCommand('dotnet.restore.solution', () => dotnetRestoreSolution(server, eventStream));
 
     // register empty handler for csharp.installDebugger
     // running the command activates the extension, which is all we need for installation to kickoff
-    let d5 = vscode.commands.registerCommand('csharp.downloadDebugger', () => { });
+    let d6 = vscode.commands.registerCommand('csharp.downloadDebugger', () => { });
 
     // register process picker for attach
     let attachItemsProvider = DotNetAttachItemsProviderFactory.Get();
     let attacher = new AttachPicker(attachItemsProvider);
-    let d6 = vscode.commands.registerCommand('csharp.listProcess', async () => attacher.ShowAttachEntries());
+    let d7 = vscode.commands.registerCommand('csharp.listProcess', async () => attacher.ShowAttachEntries());
 
     // Register command for generating tasks.json and launch.json assets.
-    let d7 = vscode.commands.registerCommand('dotnet.generateAssets', async () => generateAssets(server));
+    let d8 = vscode.commands.registerCommand('dotnet.generateAssets', async () => generateAssets(server));
 
     // Register command for remote process picker for attach
-    let d8 = vscode.commands.registerCommand('csharp.listRemoteProcess', async (args) => RemoteAttachPicker.ShowAttachEntries(args, platformInfo));
+    let d9 = vscode.commands.registerCommand('csharp.listRemoteProcess', async (args) => RemoteAttachPicker.ShowAttachEntries(args, platformInfo));
 
     // Register command for adapter executable command.
-    let d9 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream));
-    let d10 = vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream));
+    let d10 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream));
+    let d11 = vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream));
 
-    return new CompositeDisposable(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10);
+    return new CompositeDisposable(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11);
 }
 
 function restartOmniSharp(server: OmniSharpServer) {
@@ -126,24 +128,41 @@ export async function dotnetRestoreAllProjects(server: OmniSharpServer, eventStr
         return Promise.reject('OmniSharp server is not running.');
     }
 
-    return serverUtils.requestWorkspaceInformation(server).then(async info => {
+    let info = await serverUtils.requestWorkspaceInformation(server);
 
-        let descriptors = protocol.getDotNetCoreProjectDescriptors(info);
+    let descriptors = protocol.getDotNetCoreProjectDescriptors(info);
 
-        if (descriptors.length === 0) {
-            return Promise.reject("No .NET Core projects found");
+    if (descriptors.length === 0) {
+        return Promise.reject("No .NET Core projects found");
+    }
+
+    let commandPromises = projectsToCommands(descriptors, eventStream);
+
+    return Promise.all(commandPromises).then(commands => {
+        return vscode.window.showQuickPick(commands);
+    }).then(command => {
+        if (command) {
+            return command.execute();
         }
-
-        let commandPromises = projectsToCommands(descriptors, eventStream);
-
-        return Promise.all(commandPromises).then(commands => {
-            return vscode.window.showQuickPick(commands);
-        }).then(command => {
-            if (command) {
-                return command.execute();
-            }
-        });
     });
+}
+
+export async function dotnetRestoreSolution(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
+
+    if (!server.isRunning()) {
+        return Promise.reject('OmniSharp server is not running.');
+    }
+
+    let info = await serverUtils.requestWorkspaceInformation(server);
+    let descriptors = protocol.getDotNetCoreProjectDescriptors(info);
+
+    if (descriptors.length === 0) {
+        return Promise.reject("No .NET Core projects found");
+    }
+
+    for (let descriptor of descriptors) {
+        await dotnetRestore(descriptor.Directory, eventStream, descriptor.FilePath);
+    }
 }
 
 export async function dotnetRestoreForProject(server: OmniSharpServer, filePath: string, eventStream: EventStream) {
@@ -152,20 +171,19 @@ export async function dotnetRestoreForProject(server: OmniSharpServer, filePath:
         return Promise.reject('OmniSharp server is not running.');
     }
 
-    return serverUtils.requestWorkspaceInformation(server).then(async info => {
+    let info = await serverUtils.requestWorkspaceInformation(server);
 
-        let descriptors = protocol.getDotNetCoreProjectDescriptors(info);
+    let descriptors = protocol.getDotNetCoreProjectDescriptors(info);
 
-        if (descriptors.length === 0) {
-            return Promise.reject("No .NET Core projects found");
+    if (descriptors.length === 0) {
+        return Promise.reject("No .NET Core projects found");
+    }
+
+    for (let descriptor of descriptors) {
+        if (descriptor.FilePath === filePath) {
+            return dotnetRestore(descriptor.Directory, eventStream, filePath);
         }
-
-        for (let descriptor of descriptors) {
-            if (descriptor.FilePath === filePath) {
-                return dotnetRestore(descriptor.Directory, eventStream, filePath);
-            }
-        }
-    });
+    }
 }
 
 async function dotnetRestore(cwd: string, eventStream: EventStream, filePath?: string) {
