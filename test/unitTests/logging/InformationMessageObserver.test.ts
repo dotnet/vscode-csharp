@@ -37,42 +37,47 @@ suite("InformationMessageObserver", () => {
         });
     });
 
-    suite('OmnisharpServerUnresolvedDependencies', () => {
-        let event = getUnresolvedDependenices("someFile");
+    [
+        {
+            event: getUnresolvedDependenices("someFile"),
+            expectedCommand: "dotnet.restore"
+        }
+    ].forEach((elem) => {
+        suite(elem.event.constructor.name, () => {
+            suite('Suppress Dotnet Restore Notification is true', () => {
+                setup(() => updateConfig(vscode, 'csharp', 'suppressDotnetRestoreNotification', true));
 
-        suite('Suppress Dotnet Restore Notification is true', () => {
-            setup(() => updateConfig(vscode, 'csharp', 'suppressDotnetRestoreNotification', true));
-
-            test('The information message is not shown', () => {
-                observer.post(event);
-                expect(infoMessage).to.be.undefined;
-            });
-        });
-
-        suite('Suppress Dotnet Restore Notification is false', () => {
-            setup(() => updateConfig(vscode, 'csharp', 'suppressDotnetRestoreNotification', false));
-
-            test('The information message is shown', async () => {
-                observer.post(event);
-                expect(relativePath).to.not.be.empty;
-                expect(infoMessage).to.not.be.empty;
-                doClickOk();
-                await commandDone;
-                expect(invokedCommand).to.be.equal('dotnet.restore');
+                test('The information message is not shown', () => {
+                    observer.post(elem.event);
+                    expect(infoMessage).to.be.undefined;
+                });
             });
 
-            test('Given an information message if the user clicks Restore, the command is executed', async () => {
-                observer.post(event);
-                doClickOk();
-                await commandDone;
-                expect(invokedCommand).to.be.equal('dotnet.restore');
-            });
+            suite('Suppress Dotnet Restore Notification is false', () => {
+                setup(() => updateConfig(vscode, 'csharp', 'suppressDotnetRestoreNotification', false));
 
-            test('Given an information message if the user clicks cancel, the command is not executed', async () => {
-                observer.post(event);
-                doClickCancel();
-                await expect(Observable.fromPromise(commandDone).timeout(1).toPromise()).to.be.rejected;
-                expect(invokedCommand).to.be.undefined;
+                test('The information message is shown', async () => {
+                    observer.post(elem.event);
+                    expect(relativePath).to.not.be.empty;
+                    expect(infoMessage).to.not.be.empty;
+                    doClickOk();
+                    await commandDone;
+                    expect(invokedCommand).to.be.equal(elem.expectedCommand);
+                });
+
+                test('Given an information message if the user clicks Restore, the command is executed', async () => {
+                    observer.post(elem.event);
+                    doClickOk();
+                    await commandDone;
+                    expect(invokedCommand).to.be.equal(elem.expectedCommand);
+                });
+
+                test('Given an information message if the user clicks cancel, the command is not executed', async () => {
+                    observer.post(elem.event);
+                    doClickCancel();
+                    await expect(Observable.fromPromise(commandDone).timeout(1).toPromise()).to.be.rejected;
+                    expect(invokedCommand).to.be.undefined;
+                });
             });
         });
     });

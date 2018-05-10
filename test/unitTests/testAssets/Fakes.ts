@@ -5,7 +5,7 @@
 
 import * as vscode from '../../../src/vscodeAdapter';
 import * as protocol from '../../../src/omnisharp/protocol';
-import { DocumentSelector, MessageItem, TextDocument, Uri, GlobPattern, WorkspaceConfiguration } from '../../../src/vscodeAdapter';
+import { DocumentSelector, MessageItem, TextDocument, Uri, GlobPattern } from '../../../src/vscodeAdapter';
 import { ITelemetryReporter } from '../../../src/observers/TelemetryObserver';
 import { MSBuildDiagnosticsMessage } from '../../../src/omnisharp/protocol';
 import { OmnisharpServerMsBuildProjectDiagnostics, OmnisharpServerOnError, OmnisharpServerUnresolvedDependencies, WorkspaceInformationUpdated } from '../../../src/omnisharp/loggingEvents';
