@@ -20,21 +20,7 @@ export class WarningMessageObserver {
         this.warningMessageDebouncer = new Subject<BaseEvent>();
         this.warningMessageDebouncer.debounceTime(1500, scheduler).subscribe(async event => {
             let message = "Some projects have trouble loading. Please review the output for more details.";
-            let value: MessageItemWithCommand;
-            try {
-                value = await this.vscode.window.showWarningMessage<MessageItemWithCommand>(message, { title: "Show Output", command: 'o.showOutput' });
-            }
-            catch (err){
-                console.log(err);
-            }
-            if (value) {
-                try {
-                    await this.vscode.commands.executeCommand<string>(value.command);
-                }
-                catch (err) {
-                    console.log(err);
-                }
-            }
+            await showWarningMessage(this.vscode, message, { title: "Show Output", command: 'o.showOutput' });
         });
     }
 
@@ -53,5 +39,17 @@ export class WarningMessageObserver {
         if (!this.disableMsBuildDiagnosticWarning() && event.diagnostics.Errors.length > 0) {
             this.warningMessageDebouncer.next(event);
         }
+    }
+}
+
+async function showWarningMessage(vscode: vscode, message: string, ...items: MessageItemWithCommand[]) {
+    try {
+        let value = await vscode.window.showWarningMessage<MessageItemWithCommand>(message, ...items);
+        if (value && value.command) {
+            await vscode.commands.executeCommand<string>(value.command);
+        }
+    }
+    catch (err) {
+        console.log(err);
     }
 }

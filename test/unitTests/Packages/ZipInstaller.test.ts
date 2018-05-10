@@ -11,7 +11,7 @@ import { CreateTmpDir, TmpAsset } from '../../../src/CreateTmpAsset';
 import { InstallZip } from '../../../src/packageManager/ZipInstaller';
 import { EventStream } from '../../../src/EventStream';
 import { PlatformInformation } from '../../../src/platform';
-import { BaseEvent, InstallationStart } from '../../../src/omnisharp/loggingEvents';
+import { BaseEvent, InstallationStart, ZipError } from '../../../src/omnisharp/loggingEvents';
 import { Files, Binaries, createTestZipAsync } from '../testAssets/CreateTestZip';
 
 chai.use(require("chai-as-promised"));
@@ -65,8 +65,21 @@ suite('ZipInstaller', () => {
         }
     });
 
-    test('Error is thrown when the file is not a zip', async () => {
+    test('Error is thrown when the buffer contains an invalid zip', async () => {
         expect(InstallZip(new Buffer("My file", "utf8"), "Text File", installationPath, [], eventStream)).to.be.rejected;
+    });
+
+    test('Error event is created when the buffer contains an invalid zip', async () => {
+        try {
+            await InstallZip(new Buffer("some content", "utf8"), "Text File", installationPath, [], eventStream);
+        }
+        catch{
+            let eventSequence: BaseEvent[] = [
+                new InstallationStart("Text File"),
+                new ZipError("C# Extension was unable to download its dependencies. Please check your internet connection. If you use a proxy server, please visit https://aka.ms/VsCodeCsharpNetworking")
+            ];
+            expect(eventBus).to.be.deep.equal(eventSequence);
+        }
     });
 
     teardown(async () => {
