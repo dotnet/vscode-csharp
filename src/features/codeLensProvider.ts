@@ -6,14 +6,11 @@
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import * as vscode from 'vscode';
-
 import { toLocation, toRange } from '../omnisharp/typeConvertion';
-
 import AbstractProvider from './abstractProvider';
 import { OmniSharpServer } from '../omnisharp/server';
 import { Options } from '../omnisharp/options';
 import TestManager from './dotnetTest';
-import CompositeDisposable from '../CompositeDisposable';
 import OptionStream from '../observables/OptionStream';
 
 class OmniSharpCodeLens extends vscode.CodeLens {

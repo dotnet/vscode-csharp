@@ -9,7 +9,6 @@ import AbstractProvider from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import { toRange2 } from '../omnisharp/typeConvertion';
 import * as serverUtils from '../omnisharp/utils';
-import { Options } from '../omnisharp/options';
 import { FileModificationType } from '../omnisharp/protocol';
 import { Uri } from 'vscode';
 import CompositeDisposable from '../CompositeDisposable';
