@@ -28,13 +28,9 @@ class OmniSharpCodeLens extends vscode.CodeLens {
 
 export default class OmniSharpCodeLensProvider extends AbstractProvider implements vscode.CodeLensProvider {
 
-    private _options: Options;
-
-    constructor(server: OmniSharpServer, testManager: TestManager, optionStream: OptionStream) {
+    constructor(server: OmniSharpServer, testManager: TestManager, private optionStream: OptionStream) {
         super(server);
 
-        let configChangedDisposable = optionStream.subscribe(options => this._options = options);
-        this.addDisposables(new CompositeDisposable(configChangedDisposable));
     }
 
     private static filteredSymbolNames: { [name: string]: boolean } = {
@@ -45,7 +41,8 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
     };
 
     async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken) {
-        if (this._options && !this._options.showReferencesCodeLens && !this._options.showTestsCodeLens) {
+        let options = await this.optionStream.GetLatestOptions();
+        if (!options.showReferencesCodeLens && !options.showTestsCodeLens) {
             return [];
         }
 
@@ -53,29 +50,29 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         let ret: vscode.CodeLens[] = [];
 
         for (let node of tree.TopLevelTypeDefinitions) {
-            await this._convertQuickFix(ret, document.fileName, node);
+            await this._convertQuickFix(ret, document.fileName, node, options);
         }
 
         return ret;
     }
 
 
-    private async _convertQuickFix(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node): Promise<void> {
+    private async _convertQuickFix(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node, options: Options): Promise<void> {
 
         if (node.Kind === 'MethodDeclaration' && OmniSharpCodeLensProvider.filteredSymbolNames[node.Location.Text]) {
             return;
         }
 
         let lens = new OmniSharpCodeLens(fileName, toRange(node.Location));
-        if (this._options.showReferencesCodeLens) {
+        if (options.showReferencesCodeLens) {
             bucket.push(lens);
         }
 
         for (let child of node.ChildNodes) {
-            this._convertQuickFix(bucket, fileName, child);
+            this._convertQuickFix(bucket, fileName, child, options);
         }
 
-        if (this._options.showTestsCodeLens) {
+        if (options.showTestsCodeLens) {
             await this._updateCodeLensForTest(bucket, fileName, node);
         }
     }

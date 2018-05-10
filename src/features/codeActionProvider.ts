@@ -17,20 +17,19 @@ import OptionStream from '../observables/OptionStream';
 
 export default class CodeActionProvider extends AbstractProvider implements vscode.CodeActionProvider {
 
-    private _options: Options;
     private _commandId: string;
 
-    constructor(server: OmniSharpServer, optionStream: OptionStream) {
+    constructor(server: OmniSharpServer, private optionStream: OptionStream) {
         super(server);
 
         this._commandId = 'omnisharp.runCodeAction';
-        let d1 = optionStream.subscribe(options => this._options = options);
         let d2 = vscode.commands.registerCommand(this._commandId, this._runCodeAction, this);
-        this.addDisposables(new CompositeDisposable(d1, d2));
+        this.addDisposables(new CompositeDisposable(d2));
     }
 
     public async provideCodeActions(document: vscode.TextDocument, range: vscode.Range, context: vscode.CodeActionContext, token: vscode.CancellationToken): Promise<vscode.Command[]> {
-        if (this._options && this._options.disableCodeActions) {
+        let options = await this.optionStream.GetLatestOptions();
+        if (options.disableCodeActions) {
             return;
         }
 
