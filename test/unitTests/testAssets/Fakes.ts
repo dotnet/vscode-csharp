@@ -149,11 +149,11 @@ export function getWorkspaceInformationUpdated(msbuild: protocol.MsBuildWorkspac
     return new WorkspaceInformationUpdated(a);
 } 
 
-export function getVSCodeWithConfig(omnisharpConfig?: WorkspaceConfiguration, csharpConfig?: WorkspaceConfiguration) {
+export function getVSCodeWithConfig() {
     const vscode = getFakeVsCode();
 
-    const _omnisharpConfig = omnisharpConfig || getWorkspaceConfiguration();
-    const _csharpConfig = csharpConfig || getWorkspaceConfiguration();
+    const _omnisharpConfig = getWorkspaceConfiguration();
+    const _csharpConfig = getWorkspaceConfiguration();
 
     vscode.workspace.getConfiguration = (section?, resource?) =>
     {
