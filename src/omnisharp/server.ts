@@ -416,13 +416,13 @@ export class OmniSharpServer {
     public async restart(launchTarget: LaunchTarget = this._launchTarget): Promise<void> {
         if (launchTarget) {
             await this.stop();
-            const options = await this.optionStream.GetLatestOptions();
+            const options = this.optionStream.Options();
             await this._start(launchTarget, options);
         }
     }
 
     public async autoStart(preferredPath: string): Promise<void> {
-        const options = await this.optionStream.GetLatestOptions();
+        const options = this.optionStream.Options();
         return findLaunchTargets(options).then(async launchTargets => {
             // If there aren't any potential launch targets, we create file watcher and try to
             // start the server again once a *.sln, *.csproj, project.json, CSX or Cake file is created.

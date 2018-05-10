@@ -43,7 +43,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         scheme: 'file' // only files from disk
     };
 
-    const options = await optionStream.GetLatestOptions();
+    const options = optionStream.Options();
     const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionStream);
     omnisharp = server;
     const advisor = new Advisor(server); // create before server is started

@@ -38,7 +38,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
     };
 
     async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken) {
-        let options = await this.optionStream.GetLatestOptions();
+        let options = this.optionStream.Options();
         if (!options.showReferencesCodeLens && !options.showTestsCodeLens) {
             return [];
         }

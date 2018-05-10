@@ -63,7 +63,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     eventStream.subscribe(omnisharpLogObserver.post);
     eventStream.subscribe(omnisharpChannelObserver.post);
 
-    let options = await optionStream.GetLatestOptions();
+    let options = await optionStream.Options();
     let warningMessageObserver = new WarningMessageObserver(vscode, () => options.disableMSBuildDiagnosticWarning || false);
     eventStream.subscribe(warningMessageObserver.post);
 
@@ -109,7 +109,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(() => {
         eventStream.post(new ActiveTextEditorChanged());
     }));
-    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => optionStream.post()));
+
+    context.subscriptions.push(optionStream);
 
     let coreClrDebugPromise = Promise.resolve();
     if (runtimeDependenciesExist) {

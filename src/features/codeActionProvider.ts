@@ -27,7 +27,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
     }
 
     public async provideCodeActions(document: vscode.TextDocument, range: vscode.Range, context: vscode.CodeActionContext, token: vscode.CancellationToken): Promise<vscode.Command[]> {
-        let options = await this.optionStream.GetLatestOptions();
+        let options = this.optionStream.Options();
         if (options.disableCodeActions) {
             return;
         }
