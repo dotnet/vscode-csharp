@@ -5,41 +5,15 @@
 
 import { should, expect } from 'chai';
 import { Options } from '../../src/omnisharp/options';
-import { getFakeVsCode, getWorkspaceConfiguration } from './testAssets/Fakes';
-import { WorkspaceConfiguration } from '../../src/vscodeAdapter';
-
-function getVSCode(omnisharpConfig?: WorkspaceConfiguration, csharpConfig?: WorkspaceConfiguration) {
-    const vscode = getFakeVsCode();
-
-    const _omnisharpConfig = omnisharpConfig || getWorkspaceConfiguration();
-    const _csharpConfig = csharpConfig || getWorkspaceConfiguration();
-
-    vscode.workspace.getConfiguration = (section?, resource?) =>
-    {
-        if (section === 'omnisharp')
-        {
-            return _omnisharpConfig;
-        }
-
-        if (section === 'csharp')
-        {
-            return _csharpConfig;
-        }
-
-        return undefined;
-    };
-
-    return vscode;
-}
+import { getVSCodeWithConfig, updateConfig } from './testAssets/Fakes';
 
 suite("Options tests", () => {
     suiteSetup(() => should());
 
     test('Verify defaults', () =>
     {
-        const vscode = getVSCode();
+        const vscode = getVSCodeWithConfig();
         const options = Options.Read(vscode);
-
         expect(options.path).to.be.null;
         options.useGlobalMono.should.equal("auto");
         options.waitForDebugger.should.equal(false);
@@ -57,9 +31,8 @@ suite("Options tests", () => {
 
     test('BACK-COMPAT: "omnisharp.loggingLevel": "verbose" == "omnisharp.loggingLevel": "debug"', () =>
     {
-        const omnisharpConfig = getWorkspaceConfiguration();
-        omnisharpConfig.update('loggingLevel', "verbose");
-        const vscode = getVSCode(omnisharpConfig);
+        const vscode = getVSCodeWithConfig();
+        updateConfig(vscode, 'omnisharp', 'loggingLevel', "verbose");
 
         const options = Options.Read(vscode);
 
@@ -67,11 +40,10 @@ suite("Options tests", () => {
     });
 
     test('BACK-COMPAT: "omnisharp.useMono": true == "omnisharp.useGlobalMono": "always"', () =>
-    {
-        const omnisharpConfig = getWorkspaceConfiguration();
-        omnisharpConfig.update('useMono', true);
-        const vscode = getVSCode(omnisharpConfig);
-
+    {   
+        const vscode = getVSCodeWithConfig();
+        updateConfig(vscode, 'omnisharp', 'useMono', true);
+        
         const options = Options.Read(vscode);
 
         options.useGlobalMono.should.equal("always");
@@ -79,10 +51,9 @@ suite("Options tests", () => {
 
     test('BACK-COMPAT: "omnisharp.useMono": false == "omnisharp.useGlobalMono": "auto"', () =>
     {
-        const omnisharpConfig = getWorkspaceConfiguration();
-        omnisharpConfig.update('useMono', false);
-        const vscode = getVSCode(omnisharpConfig);
-
+        const vscode = getVSCodeWithConfig();
+        updateConfig(vscode, 'omnisharp', 'useMono', false);
+    
         const options = Options.Read(vscode);
 
         options.useGlobalMono.should.equal("auto");
@@ -90,9 +61,8 @@ suite("Options tests", () => {
 
     test('BACK-COMPAT: "csharp.omnisharpUsesMono": true == "omnisharp.useGlobalMono": "always"', () =>
     {
-        const csharpConfig = getWorkspaceConfiguration();
-        csharpConfig.update('omnisharpUsesMono', true);
-        const vscode = getVSCode(undefined, csharpConfig);
+        const vscode = getVSCodeWithConfig();
+        updateConfig(vscode, 'csharp', 'omnisharpUsesMono', true);
 
         const options = Options.Read(vscode);
 
@@ -101,9 +71,8 @@ suite("Options tests", () => {
 
     test('BACK-COMPAT: "csharp.omnisharpUsesMono": false == "omnisharp.useGlobalMono": "auto"', () =>
     {
-        const csharpConfig = getWorkspaceConfiguration();
-        csharpConfig.update('omnisharpUsesMono', false);
-        const vscode = getVSCode(undefined, csharpConfig);
+        const vscode = getVSCodeWithConfig();
+        updateConfig(vscode, 'csharp', 'omnisharpUsesMono', false);
 
         const options = Options.Read(vscode);
 
@@ -112,9 +81,8 @@ suite("Options tests", () => {
 
     test('BACK-COMPAT: "csharp.omnisharp" is used if it is set and "omnisharp.path" is not', () =>
     {
-        const csharpConfig = getWorkspaceConfiguration();
-        csharpConfig.update('omnisharp', 'OldPath');
-        const vscode = getVSCode(undefined, csharpConfig);
+        const vscode = getVSCodeWithConfig();
+        updateConfig(vscode, 'csharp', 'omnisharp', 'OldPath');
 
         const options = Options.Read(vscode);
 
@@ -123,11 +91,9 @@ suite("Options tests", () => {
 
     test('BACK-COMPAT: "csharp.omnisharp" is not used if "omnisharp.path" is set', () =>
     {
-        const omnisharpConfig = getWorkspaceConfiguration();
-        omnisharpConfig.update('path', 'NewPath');
-        const csharpConfig = getWorkspaceConfiguration();
-        csharpConfig.update('omnisharp', 'OldPath');
-        const vscode = getVSCode(omnisharpConfig, csharpConfig);
+        const vscode = getVSCodeWithConfig();
+        updateConfig(vscode, 'omnisharp', 'path', 'NewPath');
+        updateConfig(vscode, 'csharp', 'omnisharp', 'OldPath');
 
         const options = Options.Read(vscode);
 
