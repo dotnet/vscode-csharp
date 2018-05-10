@@ -54,3 +54,6 @@ deploy:
   on:
     repo: OmniSharp/omnisharp-vscode
     tags: true
+  overwrite: true
+
+after_deploy: "find . -type f -name '*.vsix'"
