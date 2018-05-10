@@ -3,7 +3,7 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.15.0 _(Not Yet Released)_
+## 1.15.0 (May 10, 2018)
 
 #### Debugger
 
