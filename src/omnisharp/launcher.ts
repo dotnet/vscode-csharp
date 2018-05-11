@@ -235,12 +235,12 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
     }
 
     let monoVersion = await getMonoVersion();
-    let isValidMonoAvailable = await satisfies(monoVersion, '>=5.2.0');
+    let isValidMonoAvailable = await satisfies(monoVersion, '>=5.8.1');
 
     // If the user specifically said that they wanted to launch on Mono, respect their wishes.
     if (options.useGlobalMono === "always") {
         if (!isValidMonoAvailable) {
-            throw new Error('Cannot start OmniSharp because Mono version >=5.2.0 is required.');
+            throw new Error('Cannot start OmniSharp because Mono version >=5.8.1 is required.');
         }
 
         const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
