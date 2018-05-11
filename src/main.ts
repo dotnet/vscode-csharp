@@ -63,8 +63,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     eventStream.subscribe(omnisharpLogObserver.post);
     eventStream.subscribe(omnisharpChannelObserver.post);
 
-    let options = optionStream.Options();
-    let warningMessageObserver = new WarningMessageObserver(vscode, () => options.disableMSBuildDiagnosticWarning || false);
+    let warningMessageObserver = new WarningMessageObserver(vscode, () => optionStream.Options().disableMSBuildDiagnosticWarning || false);
     eventStream.subscribe(warningMessageObserver.post);
 
     let informationMessageObserver = new InformationMessageObserver(vscode);
