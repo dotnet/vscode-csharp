@@ -64,8 +64,8 @@ function restartOmniSharp(server: OmniSharpServer) {
     }
 }
 
-async function pickProjectAndStart(server: OmniSharpServer, optionObserver: OptionProvider) {
-    let options = optionObserver.GetLatestOptions();
+async function pickProjectAndStart(server: OmniSharpServer, optionProvider: OptionProvider) {
+    let options = optionProvider.GetLatestOptions();
     return findLaunchTargets(options).then(targets => {
 
         let currentPath = server.getSolutionPathOrFolder();
