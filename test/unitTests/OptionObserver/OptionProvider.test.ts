@@ -10,7 +10,7 @@ import { vscode, ConfigurationChangeEvent } from "../../../src/vscodeAdapter";
 import Disposable from "../../../src/Disposable";
 import OptionProvider from '../../../src/observers/OptionProvider';
 
-suite('OptionStream', () => {
+suite('OptionProvider', () => {
     suiteSetup(() => should());
 
     let vscode: vscode;
