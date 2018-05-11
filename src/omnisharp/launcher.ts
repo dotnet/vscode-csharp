@@ -36,12 +36,10 @@ export interface LaunchTarget {
  * (if it doesn't contain a `project.json` file, but `project.json` files exist). In addition, the root folder
  * is included if there are any `*.csproj` files present, but a `*.sln* file is not found.
  */
-export function findLaunchTargets(): Thenable<LaunchTarget[]> {
+export function findLaunchTargets(options: Options): Thenable<LaunchTarget[]> {
     if (!vscode.workspace.workspaceFolders) {
         return Promise.resolve([]);
     }
-
-    const options = Options.Read(vscode);
 
     return vscode.workspace.findFiles(
             /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',

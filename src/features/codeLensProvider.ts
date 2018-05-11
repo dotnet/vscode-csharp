@@ -6,14 +6,12 @@
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import * as vscode from 'vscode';
-
 import { toLocation, toRange } from '../omnisharp/typeConvertion';
-
 import AbstractProvider from './abstractProvider';
 import { OmniSharpServer } from '../omnisharp/server';
 import { Options } from '../omnisharp/options';
 import TestManager from './dotnetTest';
-import CompositeDisposable from '../CompositeDisposable';
+import OptionProvider from '../observers/OptionProvider';
 
 class OmniSharpCodeLens extends vscode.CodeLens {
 
@@ -27,19 +25,9 @@ class OmniSharpCodeLens extends vscode.CodeLens {
 
 export default class OmniSharpCodeLensProvider extends AbstractProvider implements vscode.CodeLensProvider {
 
-    private _options: Options;
-
-    constructor(server: OmniSharpServer, testManager: TestManager) {
+    constructor(server: OmniSharpServer, testManager: TestManager, private optionProvider: OptionProvider) {
         super(server);
 
-        this._resetCachedOptions();
-
-        let configChangedDisposable = vscode.workspace.onDidChangeConfiguration(this._resetCachedOptions, this);
-        this.addDisposables(new CompositeDisposable(configChangedDisposable));
-    }
-
-    private _resetCachedOptions(): void {
-        this._options = Options.Read(vscode);
     }
 
     private static filteredSymbolNames: { [name: string]: boolean } = {
@@ -50,7 +38,8 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
     };
 
     async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken) {
-        if (!this._options.showReferencesCodeLens && !this._options.showTestsCodeLens) {
+        let options = this.optionProvider.GetLatestOptions();
+        if (!options.showReferencesCodeLens && !options.showTestsCodeLens) {
             return [];
         }
 
@@ -58,29 +47,29 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         let ret: vscode.CodeLens[] = [];
 
         for (let node of tree.TopLevelTypeDefinitions) {
-            await this._convertQuickFix(ret, document.fileName, node);
+            await this._convertQuickFix(ret, document.fileName, node, options);
         }
 
         return ret;
     }
 
 
-    private async _convertQuickFix(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node): Promise<void> {
+    private async _convertQuickFix(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node, options: Options): Promise<void> {
 
         if (node.Kind === 'MethodDeclaration' && OmniSharpCodeLensProvider.filteredSymbolNames[node.Location.Text]) {
             return;
         }
 
         let lens = new OmniSharpCodeLens(fileName, toRange(node.Location));
-        if (this._options.showReferencesCodeLens) {
+        if (options.showReferencesCodeLens) {
             bucket.push(lens);
         }
 
         for (let child of node.ChildNodes) {
-            this._convertQuickFix(bucket, fileName, child);
+            this._convertQuickFix(bucket, fileName, child, options);
         }
 
-        if (this._options.showTestsCodeLens) {
+        if (options.showTestsCodeLens) {
             await this._updateCodeLensForTest(bucket, fileName, node);
         }
     }
