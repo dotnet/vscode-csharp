@@ -12,13 +12,13 @@ import * as serverUtils from '../omnisharp/utils';
 import { FileModificationType } from '../omnisharp/protocol';
 import { Uri } from 'vscode';
 import CompositeDisposable from '../CompositeDisposable';
-import { OptionObserver } from '../observers/OptionObserver';
+import OptionProvider from '../observers/OptionProvider';
 
 export default class CodeActionProvider extends AbstractProvider implements vscode.CodeActionProvider {
 
     private _commandId: string;
 
-    constructor(server: OmniSharpServer, private optionObserver: OptionObserver) {
+    constructor(server: OmniSharpServer, private optionProvider: OptionProvider) {
         super(server);
         this._commandId = 'omnisharp.runCodeAction';
         let registerCommandDisposable = vscode.commands.registerCommand(this._commandId, this._runCodeAction, this);
@@ -26,7 +26,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
     }
 
     public async provideCodeActions(document: vscode.TextDocument, range: vscode.Range, context: vscode.CodeActionContext, token: vscode.CancellationToken): Promise<vscode.Command[]> {
-        let options = this.optionObserver.Options();
+        let options = this.optionProvider.GetLatestOptions();
         if (options.disableCodeActions) {
             return;
         }

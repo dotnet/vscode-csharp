@@ -31,7 +31,7 @@ import CSharpExtensionExports from './CSharpExtensionExports';
 import { vscodeNetworkSettingsProvider, NetworkSettingsProvider } from './NetworkSettings';
 import { ErrorMessageObserver } from './observers/ErrorMessageObserver';
 import OptionStream from './observables/OptionStream';
-import { OptionObserver } from './observers/OptionObserver';
+import  OptionProvider from './observers/OptionProvider';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -45,7 +45,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
     const eventStream = new EventStream();
     const optionStream = new OptionStream(vscode);
-    let optionObserver = new OptionObserver(optionStream);
+    let optionProvider = new OptionProvider(optionStream);
 
     let dotnetChannel = vscode.window.createOutputChannel('.NET');
     let dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
@@ -65,7 +65,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     eventStream.subscribe(omnisharpLogObserver.post);
     eventStream.subscribe(omnisharpChannelObserver.post);
 
-    let warningMessageObserver = new WarningMessageObserver(vscode, () => optionObserver.Options().disableMSBuildDiagnosticWarning || false);
+    let warningMessageObserver = new WarningMessageObserver(vscode, () => optionProvider.GetLatestOptions().disableMSBuildDiagnosticWarning || false);
     eventStream.subscribe(warningMessageObserver.post);
 
     let informationMessageObserver = new InformationMessageObserver(vscode);
@@ -103,7 +103,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo, networkSettingsProvider);
 
     // activate language services
-    let omniSharpPromise = OmniSharp.activate(context, extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionObserver);
+    let omniSharpPromise = OmniSharp.activate(context, extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionProvider);
 
     // register JSON completion & hover providers for project.json
     context.subscriptions.push(addJSONProviders());

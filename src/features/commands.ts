@@ -18,11 +18,11 @@ import { CommandShowOutput, CommandDotNetRestoreStart, CommandDotNetRestoreProgr
 import { EventStream } from '../EventStream';
 import { PlatformInformation } from '../platform';
 import CompositeDisposable from '../CompositeDisposable';
-import { OptionObserver } from '../observers/OptionObserver';
+import OptionProvider from '../observers/OptionProvider';
 
-export default function registerCommands(server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionObserver: OptionObserver): CompositeDisposable {
+export default function registerCommands(server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionProvider: OptionProvider): CompositeDisposable {
     let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server));
-    let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionObserver));
+    let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionProvider));
     let d3 = vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new CommandShowOutput()));
     let d4 = vscode.commands.registerCommand('dotnet.restore', fileName => {
         if (fileName) {
@@ -64,8 +64,8 @@ function restartOmniSharp(server: OmniSharpServer) {
     }
 }
 
-async function pickProjectAndStart(server: OmniSharpServer, optionObserver: OptionObserver) {
-    let options = optionObserver.Options();
+async function pickProjectAndStart(server: OmniSharpServer, optionObserver: OptionProvider) {
+    let options = optionObserver.GetLatestOptions();
     return findLaunchTargets(options).then(targets => {
 
         let currentPath = server.getSolutionPathOrFolder();

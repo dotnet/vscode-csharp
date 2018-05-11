@@ -6,14 +6,14 @@
 import { Options } from "../omnisharp/options";
 import OptionStream from "../observables/OptionStream";
 
-export class OptionObserver {
+export default class OptionProvider {
     private options: Options;
 
     constructor(optionStream: OptionStream) {
         optionStream.subscribe(options => this.options = options);
     }
 
-    public Options(): Options {
+    public GetLatestOptions(): Options {
         if (!this.options) {
             throw new Error("Error reading OmniSharp options");
         }

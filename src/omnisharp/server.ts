@@ -28,7 +28,7 @@ import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/debounceTime';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
-import { OptionObserver } from '../observers/OptionObserver';
+import OptionProvider from '../observers/OptionProvider';
 
 enum ServerState {
     Starting,
@@ -91,7 +91,7 @@ export class OmniSharpServer {
     private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
     private firstUpdateProject: boolean;
 
-    constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private packageJSON: any, private platformInfo: PlatformInformation, private eventStream: EventStream, private optionObserver: OptionObserver) {
+    constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private packageJSON: any, private platformInfo: PlatformInformation, private eventStream: EventStream, private optionProvider: OptionProvider) {
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
         let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, this.packageJSON, platformInfo);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
@@ -416,13 +416,13 @@ export class OmniSharpServer {
     public async restart(launchTarget: LaunchTarget = this._launchTarget): Promise<void> {
         if (launchTarget) {
             await this.stop();
-            const options = this.optionObserver.Options();
+            const options = this.optionProvider.GetLatestOptions();
             await this._start(launchTarget, options);
         }
     }
 
     public autoStart(preferredPath: string): Thenable<void> {
-        const options = this.optionObserver.Options();
+        const options = this.optionProvider.GetLatestOptions();
         return findLaunchTargets(options).then(async launchTargets => {
             // If there aren't any potential launch targets, we create file watcher and try to
             // start the server again once a *.sln, *.csproj, project.json, CSX or Cake file is created.
