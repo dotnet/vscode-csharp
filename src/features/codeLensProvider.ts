@@ -11,7 +11,7 @@ import AbstractProvider from './abstractProvider';
 import { OmniSharpServer } from '../omnisharp/server';
 import { Options } from '../omnisharp/options';
 import TestManager from './dotnetTest';
-import OptionStream from '../observables/OptionStream';
+import { OptionObserver } from '../observers/OptionObserver';
 
 class OmniSharpCodeLens extends vscode.CodeLens {
 
@@ -25,7 +25,7 @@ class OmniSharpCodeLens extends vscode.CodeLens {
 
 export default class OmniSharpCodeLensProvider extends AbstractProvider implements vscode.CodeLensProvider {
 
-    constructor(server: OmniSharpServer, testManager: TestManager, private optionStream: OptionStream) {
+    constructor(server: OmniSharpServer, testManager: TestManager, private optionObserver: OptionObserver) {
         super(server);
 
     }
@@ -38,7 +38,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
     };
 
     async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken) {
-        let options = this.optionStream.Options();
+        let options = this.optionObserver.Options();
         if (!options.showReferencesCodeLens && !options.showTestsCodeLens) {
             return [];
         }

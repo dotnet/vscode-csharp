@@ -4,13 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Options } from "../omnisharp/options";
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { vscode } from "../vscodeAdapter";
 import 'rxjs/add/operator/take';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import Disposable, { IDisposable } from "../Disposable";
+import { Subject } from "rxjs/Subject";
 
 export default class OptionStream {
-    private optionStream: BehaviorSubject<Options>;
+    private optionStream: Subject<Options>;
     private disposable: IDisposable;
 
     constructor(vscode: vscode) {
@@ -29,14 +30,5 @@ export default class OptionStream {
 
     public subscribe(observer: (options: Options) => void): Disposable {
         return new Disposable(this.optionStream.subscribe(observer));
-    }
-
-    public Options(): Options {
-        try {
-            return this.optionStream.value;
-        }
-        catch (err) {
-            throw new Error("Error reading Omnisharp options");
-        }
     }
 }

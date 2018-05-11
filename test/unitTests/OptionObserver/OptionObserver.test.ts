@@ -4,26 +4,28 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should, expect } from 'chai';
-import { getVSCodeWithConfig, updateConfig } from "./testAssets/Fakes";
-import OptionStream from "../../src/observables/OptionStream";
-import { vscode, ConfigurationChangeEvent } from "../../src/vscodeAdapter";
-import Disposable from "../../src/Disposable";
+import { getVSCodeWithConfig, updateConfig } from "../testAssets/Fakes";
+import OptionStream from "../../../src/observables/OptionStream";
+import { vscode, ConfigurationChangeEvent } from "../../../src/vscodeAdapter";
+import Disposable from "../../../src/Disposable";
+import { OptionObserver } from '../../../src/observers/OptionObserver';
 
 suite('OptionStream', () => {
     suiteSetup(() => should());
 
     let vscode: vscode;
     let listenerFunction: Array<(e: ConfigurationChangeEvent) => any>;
-    let optionStream: OptionStream;
+    let optionObserver: OptionObserver;
     
     setup(() => {
         listenerFunction = new Array<(e: ConfigurationChangeEvent) => any>();
         vscode = getVSCode(listenerFunction);
-        optionStream = new OptionStream(vscode);
+        let optionStream = new OptionStream(vscode);
+        optionObserver = new OptionObserver(optionStream);
     });
 
     test("Gives the default options if there is no change", () => {
-        let options = optionStream.Options();
+        let options = optionObserver.Options();
         expect(options.path).to.be.null;
         options.useGlobalMono.should.equal("auto");
         options.waitForDebugger.should.equal(false);
@@ -43,7 +45,7 @@ suite('OptionStream', () => {
         let changingConfig = "omnisharp";
         updateConfig(vscode, changingConfig, 'path', "somePath");
         listenerFunction.forEach(listener => listener(getConfigChangeEvent(changingConfig)));
-        let options = optionStream.Options();
+        let options = optionObserver.Options();
         expect(options.path).to.be.equal("somePath");
     });
 
@@ -51,7 +53,7 @@ suite('OptionStream', () => {
         let changingConfig = 'csharp';
         updateConfig(vscode, changingConfig, 'disableCodeActions', true);
         listenerFunction.forEach(listener => listener(getConfigChangeEvent(changingConfig)));
-        let options = optionStream.Options();
+        let options = optionObserver.Options();
         expect(options.disableCodeActions).to.be.equal(true);
     });
 });

@@ -33,18 +33,18 @@ import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
-import OptionStream from '../observables/OptionStream';
+import { OptionObserver } from '../observers/OptionObserver';
 
 export let omnisharp: OmniSharpServer;
 
-export async function activate(context: vscode.ExtensionContext, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, eventStream: EventStream, optionStream: OptionStream) {
+export async function activate(context: vscode.ExtensionContext, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, eventStream: EventStream, optionObserver: OptionObserver) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
         scheme: 'file' // only files from disk
     };
 
-    const options = optionStream.Options();
-    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionStream);
+    const options = optionObserver.Options();
+    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionObserver);
     omnisharp = server;
     const advisor = new Advisor(server); // create before server is started
     const disposables = new CompositeDisposable();
@@ -62,7 +62,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables.add(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server)));
         const testManager = new TestManager(server, eventStream);
         localDisposables.add(testManager);
-        localDisposables.add(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, testManager, optionStream)));
+        localDisposables.add(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, testManager, optionObserver)));
         localDisposables.add(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server)));
         localDisposables.add(vscode.languages.registerDocumentSymbolProvider(documentSelector, new DocumentSymbolProvider(server)));
         localDisposables.add(vscode.languages.registerReferenceProvider(documentSelector, new ReferenceProvider(server)));
@@ -75,7 +75,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables.add(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionItemProvider(server), '.', ' '));
         localDisposables.add(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server)));
         localDisposables.add(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server), '(', ','));
-        const codeActionProvider = new CodeActionProvider(server, optionStream);
+        const codeActionProvider = new CodeActionProvider(server, optionObserver);
         localDisposables.add(codeActionProvider);
         localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
         localDisposables.add(reportDiagnostics(server, advisor));
@@ -90,7 +90,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables = null;
     }));
 
-    disposables.add(registerCommands(server, platformInfo, eventStream, optionStream));
+    disposables.add(registerCommands(server, platformInfo, eventStream, optionObserver));
 
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
         disposables.add(server.onServerStart(() => {
