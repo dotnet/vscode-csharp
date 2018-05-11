@@ -45,7 +45,7 @@
     "cov:instrument": "gulp cov:instrument",
     "cov:merge": "gulp cov:merge",
     "cov:merge-html": "gulp cov:merge-html",
-    "cov:report": "npm-run-all cov:report:integration cov:report:unit cov:report feature",
+    "cov:report": "npm-run-all cov:report:integration cov:report:unit cov:report:feature",
     "cov:report:unit": "gulp cov:report:unit",
     "cov:report:integration": "gulp cov:report:integration",
     "cov:report:feature": "gulp cov:report:feature",
