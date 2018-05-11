@@ -14,6 +14,9 @@ export class OptionObserver {
     }
 
     public Options(): Options {
+        if (!this.options) {
+            throw new Error("Error reading OmniSharp options");
+        }
         return this.options;
     }
 }
