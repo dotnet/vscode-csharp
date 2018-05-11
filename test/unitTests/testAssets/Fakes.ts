@@ -31,23 +31,6 @@ export const getNullTelemetryReporter = (): ITelemetryReporter => {
     return reporter;
 };
 
-export const getNullWorkspaceConfiguration = (): vscode.WorkspaceConfiguration => {
-    let configuration: vscode.WorkspaceConfiguration = {
-        get: <T>(section: string): T | undefined => {
-            return undefined;
-        },
-        has: (section: string) => { return undefined; },
-        inspect: () => {
-            return {
-                key: undefined
-            };
-        },
-        update: async () => { return Promise.resolve(); }
-    };
-
-    return configuration;
-};
-
 export const getWorkspaceConfiguration = (): vscode.WorkspaceConfiguration => {
     let values: { [key: string]: any } = {};
     
@@ -165,3 +148,32 @@ export function getWorkspaceInformationUpdated(msbuild: protocol.MsBuildWorkspac
 
     return new WorkspaceInformationUpdated(a);
 } 
+
+export function getVSCodeWithConfig() {
+    const vscode = getFakeVsCode();
+
+    const _omnisharpConfig = getWorkspaceConfiguration();
+    const _csharpConfig = getWorkspaceConfiguration();
+
+    vscode.workspace.getConfiguration = (section?, resource?) =>
+    {
+        if (section === 'omnisharp')
+        {
+            return _omnisharpConfig;
+        }
+
+        if (section === 'csharp')
+        {
+            return _csharpConfig;
+        }
+
+        return undefined;
+    };
+
+    return vscode;
+}
+
+export function updateConfig(vscode: vscode.vscode, section: string, config: string, value: any) {
+    let workspaceConfig = vscode.workspace.getConfiguration(section);
+    workspaceConfig.update(config, value);
+}

@@ -7,19 +7,9 @@
 import { EventStream } from "../../../src/EventStream";
 import { PlatformInformation } from "../../../src/platform";
 import { OmnisharpDownloader } from "../../../src/omnisharp/OmnisharpDownloader";
-import { getFakeVsCode, getNullWorkspaceConfiguration } from "../../unitTests/testAssets/Fakes";
-import { Uri } from "../../../src/vscodeAdapter";
 import NetworkSettings from "../../../src/NetworkSettings";
 
-
 export function GetTestOmnisharpDownloader(sink: EventStream, platformInfo: PlatformInformation): OmnisharpDownloader {
-    let vscode = getFakeVsCode();
-    vscode.workspace.getConfiguration = (section?: string, resource?: Uri) => {
-        return {
-            ...getNullWorkspaceConfiguration(),
-        };
-    };
-
     return new OmnisharpDownloader(() => new NetworkSettings(undefined, undefined), sink, testPackageJSON, platformInfo);
 }
 
