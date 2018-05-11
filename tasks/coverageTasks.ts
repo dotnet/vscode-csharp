@@ -9,7 +9,7 @@ import * as gulp from 'gulp';
 import * as path from 'path';
 import * as del from 'del';
 import spawnNode from './spawnNode';
-import { coverageRootPath, nycOutputPath, nycPath, codeExtensionSourcesPath, integrationTestCoverageRootPath, integrationTestNycOutputPath, istanbulCombinePath, codecovPath, unitTestCoverageRootPath } from './projectPaths';
+import { coverageRootPath, nycOutputPath, nycPath, codeExtensionSourcesPath, integrationTestCoverageRootPath, integrationTestNycOutputPath, istanbulCombinePath, codecovPath, unitTestCoverageRootPath, featureTestCoverageRootPath } from './projectPaths';
 
 gulp.task("cov:instrument", async () => {
     del(coverageRootPath);
@@ -53,7 +53,7 @@ gulp.task("cov:merge-html", async () => {
     });
 });
 
-gulp.task("cov:report", ["cov:report:integration", "cov:report:unit"]);
+gulp.task("cov:report", ["cov:report:integration", "cov:report:unit", "cov:report:feature"]);
 
 gulp.task("cov:report:integration", ["cov:merge"], async () => {
     return spawnNode([
@@ -74,6 +74,18 @@ gulp.task("cov:report:unit", async () => {
         path.join(unitTestCoverageRootPath, 'lcov.info'),
         '-F',
         'unit'
+    ], {
+        cwd: codeExtensionSourcesPath
+    });
+});
+
+gulp.task("cov:report:feature", async () => {
+    return spawnNode([
+        codecovPath,
+        '-f',
+        path.join(featureTestCoverageRootPath, 'lcov.info'),
+        '-F',
+        'feature'
     ], {
         cwd: codeExtensionSourcesPath
     });

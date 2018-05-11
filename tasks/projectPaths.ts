@@ -36,6 +36,7 @@ export const testAssetsRootPath = path.join(rootPath, "test", "integrationTests"
 
 export const coverageRootPath = path.join(rootPath, 'coverage');
 export const unitTestCoverageRootPath = path.join(coverageRootPath, 'unit');
+export const featureTestCoverageRootPath = path.join(coverageRootPath, 'feature');
 export const integrationTestCoverageRootPath = path.join(coverageRootPath, 'integration');
 
 export const nycOutputPath = path.join(rootPath, '.nyc_output');
