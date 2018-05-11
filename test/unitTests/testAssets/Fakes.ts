@@ -130,7 +130,7 @@ export function getFakeVsCode(): vscode.vscode {
             createFileSystemWatcher: (globPattern: GlobPattern, ignoreCreateEvents?: boolean, ignoreChangeEvents?: boolean, ignoreDeleteEvents?: boolean) => {
                 throw new Error("Not Implemented");
             },
-            onDidChangeConfiguration: (listener: (e: ConfigurationChangeEvent) => any, thisArgs?: any, disposables?: Disposable[]) => {
+            onDidChangeConfiguration: (listener: (e: ConfigurationChangeEvent) => any, thisArgs?: any, disposables?: Disposable[]): Disposable => {
                 throw new Error("Not Implemented");
             }
         }

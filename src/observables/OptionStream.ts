@@ -15,7 +15,12 @@ export default class OptionStream {
 
     constructor(vscode: vscode) {
         this.optionStream = new BehaviorSubject<Options>(Options.Read(vscode));
-        this.disposable = vscode.workspace.onDidChangeConfiguration(e => this.optionStream.next(Options.Read(vscode)));
+        this.disposable = vscode.workspace.onDidChangeConfiguration(e => {
+            //if the omnisharp or csharp configuration are affected only then read the options
+            if (e.affectsConfiguration('omnisharp') || e.affectsConfiguration('csharp')) {
+                this.optionStream.next(Options.Read(vscode));
+            }
+        });
     }
 
     public dispose = () => {
@@ -27,11 +32,11 @@ export default class OptionStream {
     }
 
     public Options(): Options {
-        let options = this.optionStream.value;
-        if (!options) {
+        try {
+            return this.optionStream.value;
+        }
+        catch (err) {
             throw new Error("Error reading Omnisharp options");
         }
-
-        return options;
     }
 }
