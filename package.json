@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.15.2",
+  "version": "1.15.2-beta1",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -146,7 +146,7 @@
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/12245767/0c5c04bed389ea023a731f6da6d31ab8/omnisharp-win-x86-1.30.1.zip",
       "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.30.1.zip",
-      "installPath": ".omnisharp/1.31.0",
+      "installPath": ".omnisharp/1.30.1",
       "platforms": [
         "win32"
       ],
@@ -159,8 +159,8 @@
     {
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/12245763/b72bb97e2890bc67301aa8aca3cd382e/omnisharp-win-x64-1.30.1.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.31.0.zip",
-      "installPath": ".omnisharp/1.31.0",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.30.1.zip",
+      "installPath": ".omnisharp/1.30.1",
       "platforms": [
         "win32"
       ],
