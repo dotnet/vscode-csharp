@@ -421,7 +421,7 @@ export class OmniSharpServer {
         }
     }
 
-    public async autoStart(preferredPath: string): Promise<void> {
+    public autoStart(preferredPath: string): Thenable<void> {
         const options = this.optionStream.Options();
         return findLaunchTargets(options).then(async launchTargets => {
             // If there aren't any potential launch targets, we create file watcher and try to
@@ -438,7 +438,7 @@ export class OmniSharpServer {
                         watcher.dispose();
                         resolve();
                     });
-                }).then(async () => {
+                }).then(() => {
                     // 2nd try again
                     return this.autoStart(preferredPath);
                 });

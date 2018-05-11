@@ -47,12 +47,12 @@ suite('OptionStream', () => {
         expect(options.path).to.be.equal("somePath");
     });
 
-    test("Gives the latest options if there are changes in omnisharp config", () => {
+    test("Gives the latest options if there are changes in csharp config", () => {
         let changingConfig = 'csharp';
-        updateConfig(vscode, changingConfig, 'omnisharpUsesMono', true);
+        updateConfig(vscode, changingConfig, 'disableCodeActions', true);
         listenerFunction.forEach(listener => listener(getConfigChangeEvent(changingConfig)));
         let options = optionStream.Options();
-        expect(options.useGlobalMono).to.be.equal("always");
+        expect(options.disableCodeActions).to.be.equal(true);
     });
 });
 
