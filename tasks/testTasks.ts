@@ -7,7 +7,7 @@
 
 import * as gulp from 'gulp';
 import * as path from 'path';
-import { codeExtensionPath, nycPath, rootPath, testAssetsRootPath, testRootPath, unitTestCoverageRootPath, mochaPath, vscodeTestHostPath } from './projectPaths';
+import { codeExtensionPath, nycPath, rootPath, testAssetsRootPath, testRootPath, unitTestCoverageRootPath, mochaPath, vscodeTestHostPath, featureTestCoverageRootPath } from './projectPaths';
 import spawnNode from './spawnNode';
 
 const gulpSequence = require('gulp-sequence');
@@ -24,9 +24,15 @@ gulp.task("test:feature", async () => {
         CODE_TESTS_PATH: path.join(testRootPath, "featureTests")
     };
 
-    return spawnNode([vscodeTestHostPath], {
-        env
-    });
+    return spawnNode(
+        [nycPath,
+            '-r',
+            'lcovonly',
+            '--report-dir',
+            featureTestCoverageRootPath,
+            vscodeTestHostPath], {
+            env
+        });
 });
 
 gulp.task("test:unit", async () => {
