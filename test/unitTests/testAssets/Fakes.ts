@@ -5,7 +5,7 @@
 
 import * as vscode from '../../../src/vscodeAdapter';
 import * as protocol from '../../../src/omnisharp/protocol';
-import { DocumentSelector, MessageItem, TextDocument, Uri, GlobPattern } from '../../../src/vscodeAdapter';
+import { DocumentSelector, MessageItem, TextDocument, Uri, GlobPattern, ConfigurationChangeEvent, Disposable } from '../../../src/vscodeAdapter';
 import { ITelemetryReporter } from '../../../src/observers/TelemetryObserver';
 import { MSBuildDiagnosticsMessage } from '../../../src/omnisharp/protocol';
 import { OmnisharpServerMsBuildProjectDiagnostics, OmnisharpServerOnError, OmnisharpServerUnresolvedDependencies, WorkspaceInformationUpdated } from '../../../src/omnisharp/loggingEvents';
@@ -33,7 +33,7 @@ export const getNullTelemetryReporter = (): ITelemetryReporter => {
 
 export const getWorkspaceConfiguration = (): vscode.WorkspaceConfiguration => {
     let values: { [key: string]: any } = {};
-    
+
     let configuration: vscode.WorkspaceConfiguration = {
         get<T>(section: string, defaultValue?: T): T | undefined {
             let result = <T>values[section];
@@ -128,6 +128,9 @@ export function getFakeVsCode(): vscode.vscode {
                 throw new Error("Not Implemented");
             },
             createFileSystemWatcher: (globPattern: GlobPattern, ignoreCreateEvents?: boolean, ignoreChangeEvents?: boolean, ignoreDeleteEvents?: boolean) => {
+                throw new Error("Not Implemented");
+            },
+            onDidChangeConfiguration: (listener: (e: ConfigurationChangeEvent) => any, thisArgs?: any, disposables?: Disposable[]): Disposable => {
                 throw new Error("Not Implemented");
             }
         }
