@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.15.1",
+  "version": "1.15.2",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -24,8 +24,8 @@
   "keywords": [
     "multi-root ready"
   ],
-  "defaults":{
-    "omniSharp" : "1.30.0"
+  "defaults": {
+    "omniSharp": "1.30.1"
   },
   "main": "./out/src/main",
   "scripts": {
@@ -144,9 +144,9 @@
   "runtimeDependencies": [
     {
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12168336/be303385c06ad88bc3e33fa38cc09760/omnisharp-win-x86-1.30.0.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.30.0.zip",
-      "installPath": ".omnisharp/1.30.0",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/12245767/0c5c04bed389ea023a731f6da6d31ab8/omnisharp-win-x86-1.30.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.30.1.zip",
+      "installPath": ".omnisharp/1.30.1",
       "platforms": [
         "win32"
       ],
@@ -158,9 +158,9 @@
     },
     {
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12168337/159fcd61baf209a6b10d371fa5b2817d/omnisharp-win-x64-1.30.0.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.30.0.zip",
-      "installPath": ".omnisharp/1.30.0",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/12245763/b72bb97e2890bc67301aa8aca3cd382e/omnisharp-win-x64-1.30.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.30.1.zip",
+      "installPath": ".omnisharp/1.30.1",
       "platforms": [
         "win32"
       ],
@@ -172,9 +172,9 @@
     },
     {
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12168334/94b1fbb0c67cb3320c8eaaa75fa49c5d/omnisharp-osx-1.30.0.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.30.0.zip",
-      "installPath": ".omnisharp/1.30.0",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/12245766/987fff9362fc85ba8f00d9a31889623c/omnisharp-osx-1.30.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.30.1.zip",
+      "installPath": ".omnisharp/1.30.1",
       "platforms": [
         "darwin"
       ],
@@ -187,9 +187,9 @@
     },
     {
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12168335/c8f77432262698d7012ce1105588f974/omnisharp-linux-x86-1.30.0.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.30.0.zip",
-      "installPath": ".omnisharp/1.30.0",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/12245764/3026884a5425856a0de04f1e468d25a8/omnisharp-linux-x86-1.30.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.30.1.zip",
+      "installPath": ".omnisharp/1.30.1",
       "platforms": [
         "linux"
       ],
@@ -206,9 +206,9 @@
     },
     {
       "description": "OmniSharp for Linux (x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12168333/63644667dd9c8a6320d3aef3ac2fb901/omnisharp-linux-x64-1.30.0.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.30.0.zip",
-      "installPath": ".omnisharp/1.30.0",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/12245765/02c6e1855587e0f6b0be479d5ce88d62/omnisharp-linux-x64-1.30.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.30.1.zip",
+      "installPath": ".omnisharp/1.30.1",
       "platforms": [
         "linux"
       ],
@@ -224,8 +224,8 @@
     },
     {
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12149320/af1529a62f43fb8a922eccf750bdf9f7/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-15-1/coreclr-debug-win7-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/12267706/d27a74d91a12c0e78222081afdf8e0bb/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-15-2/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
