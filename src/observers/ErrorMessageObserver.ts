@@ -21,7 +21,7 @@ export class ErrorMessageObserver {
         }
     }
 
-    private handleZipError(event: ZipError) {
+    private handleZipError(event: ZipError): Promise<void> {
         return ShowErrorMessage(this.vscode, event.message);
     }
 }
