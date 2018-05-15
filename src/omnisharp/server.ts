@@ -294,7 +294,7 @@ export class OmniSharpServer {
         const solutionPath = launchTarget.target;
         const cwd = path.dirname(solutionPath);
 
-        this._options = Options.Read();
+        this._options = Options.Read(this.vscode);
 
         let args = [
             '-s', solutionPath,
@@ -447,7 +447,7 @@ export class OmniSharpServer {
                 });
             }
 
-            this._options = Options.Read();
+            this._options = Options.Read(this.vscode);
 
             const defaultLaunchSolutionConfigValue = this._options.defaultLaunchSolution;
 
