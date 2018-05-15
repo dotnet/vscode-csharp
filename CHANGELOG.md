@@ -3,7 +3,8 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.15.2 (May 11, 1018)
+## 1.15.2 (May 15, 1018)
+
 * Fixed a 1.30.0 regression that prevented the script project system from working on Unix-based systems ([omnisharp-roslyn#1184](https://github.com/OmniSharp/omnisharp-roslyn/pull/1184), PR: [omnisharp-roslyn#1185](https://github.com/OmniSharp/omnisharp-roslyn/pull/1185)) _(Contributed by [@filipw](https://github.com/filipw))_
 * Fixed a regression that could cause the debugger to crash on Windows ([#2297](https://github.com/OmniSharp/omnisharp-vscode/issues/2297)).
 

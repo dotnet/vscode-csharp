@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.15.2-beta1",
+  "version": "1.15.2",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -24,8 +24,8 @@
   "keywords": [
     "multi-root ready"
   ],
-  "defaults":{
-    "omniSharp" : "1.30.1"
+  "defaults": {
+    "omniSharp": "1.30.1"
   },
   "main": "./out/src/main",
   "scripts": {
