@@ -3,9 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PackageError } from "../packages";
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import * as Event from "../omnisharp/loggingEvents";
+import { PackageError } from "../packageManager/PackageError";
+
 export class CsharpLoggerObserver extends BaseLoggerObserver {
     private dots: number;
 
@@ -27,8 +28,8 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
                 this.logger.appendLine('Finished');
                 this.logger.appendLine();
                 break;
-            case Event.InstallationProgress.name:
-                this.handleInstallationProgress(<Event.InstallationProgress>event);
+            case Event.InstallationStart.name:
+                this.handleInstallationStart(<Event.InstallationStart>event);
                 break;
             case Event.DownloadStart.name:
                 this.handleDownloadStart(<Event.DownloadStart>event);
@@ -45,7 +46,24 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
             case Event.ProjectJsonDeprecatedWarning.name:
                 this.logger.appendLine("Warning: project.json is no longer a supported project format for .NET Core applications. Update to the latest version of .NET Core (https://aka.ms/netcoredownload) and use 'dotnet migrate' to upgrade your project (see https://aka.ms/netcoremigrate for details).");
                 break;
+            case Event.DownloadFallBack.name:
+                this.handleDownloadFallback(<Event.DownloadFallBack>event);
+                break;
+            case Event.DownloadSizeObtained.name:
+                this.handleDownloadSizeObtained(<Event.DownloadSizeObtained>event);
+                break;
+            case Event.LatestBuildDownloadStart.name:
+                this.logger.appendLine("Getting latest OmniSharp version information");
+                break;
         }
+    }
+
+    private handleDownloadSizeObtained(event: Event.DownloadSizeObtained) {
+        this.logger.append(`(${Math.ceil(event.packageSize / 1024)} KB)`);
+    }
+
+    private handleDownloadFallback(event: Event.DownloadFallBack) {
+        this.logger.append(`\tRetrying from '${event.fallbackUrl}' `);
     }
 
     private handleEventWithMessage(event: Event.EventWithMessage) {
@@ -81,19 +99,17 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
 
     private handleDownloadProgress(event: Event.DownloadProgress) {
         let newDots = Math.ceil(event.downloadPercentage / 5);
-        if (newDots > this.dots) {
-            this.logger.append('.'.repeat(newDots - this.dots));
-            this.dots = newDots;
-        }
+        this.logger.append('.'.repeat(newDots - this.dots));
+        this.dots = newDots;
     }
 
     private handleDownloadStart(event: Event.DownloadStart) {
-        this.logger.append(event.message);
+        this.logger.append(`Downloading package '${event.packageDescription}' `);
         this.dots = 0;
     }
 
-    private handleInstallationProgress(event: Event.InstallationProgress) {
-        this.logger.appendLine(event.message);
+    private handleInstallationStart(event: Event.InstallationStart) {
+        this.logger.appendLine(`Installing package '${event.packageDescription}'`);
         this.logger.appendLine();
     }
 }

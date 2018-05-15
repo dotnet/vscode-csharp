@@ -10,6 +10,10 @@ import { IJSONContribution, ISuggestionsCollector } from './jsonContributions';
 import { XHRRequest, XHRResponse, getErrorStatusDescription } from 'request-light';
 
 import { Location } from 'jsonc-parser';
+import NuGetIndexResponse from './NuGetIndexResponse';
+import NuGetSearchAutocompleteServiceResponse from './NuGetSearchAutocompleteServiceResponse';
+import NuGetFlatContainerPackageResponse from './NuGetFlatContainerPackageResponse';
+import NuGetSearchQueryServiceResponse from './NuGetSearchQueryServiceResponse';
 
 const localize = nls.loadMessageBundle();
 
@@ -36,10 +40,10 @@ export class ProjectJSONContribution implements IJSONContribution {
 
     private getNugetIndex(): Thenable<NugetServices> {
         if (!this.nugetIndexPromise) {
-            this.nugetIndexPromise = this.makeJSONRequest<any>(FEED_INDEX_URL).then(indexContent => {
+            this.nugetIndexPromise = this.makeJSONRequest<NuGetIndexResponse>(FEED_INDEX_URL).then(indexContent => {
                 let services: NugetServices = {};
                 if (indexContent && Array.isArray(indexContent.resources)) {
-                    let resources = <any[]>indexContent.resources;
+                    let resources = indexContent.resources;
                     for (let i = resources.length - 1; i >= 0; i--) {
                         let type = resources[i]['@type'];
                         let id = resources[i]['@id'];
@@ -76,12 +80,18 @@ export class ProjectJSONContribution implements IJSONContribution {
                 }
             }
             return Promise.reject<T>(localize('json.nugget.error.indexaccess', 'Request to {0} failed: {1}', url, success.responseText));
-        }, (error: XHRResponse) => {
+        }, async (error: XHRResponse) => {
             return Promise.reject<T>(localize('json.nugget.error.access', 'Request to {0} failed: {1}', url, getErrorStatusDescription(error.status)));
         });
     }
 
-    public collectPropertySuggestions(resource: string, location: Location, currentWord: string, addValue: boolean, isLast: boolean, result: ISuggestionsCollector): Thenable<any> {
+    public collectPropertySuggestions(
+        resource: string, 
+        location: Location, 
+        currentWord: string, 
+        addValue: boolean, 
+        isLast: boolean, 
+        result: ISuggestionsCollector): Thenable<void> {
         if ((location.matches(['dependencies']) || location.matches(['frameworks', '*', 'dependencies']) || location.matches(['frameworks', '*', 'frameworkAssemblies']))) {
 
             return this.getNugetService('SearchAutocompleteService').then(service => {
@@ -91,9 +101,9 @@ export class ProjectJSONContribution implements IJSONContribution {
                 } else {
                     queryUrl = service + '?take=' + LIMIT;
                 }
-                return this.makeJSONRequest<any>(queryUrl).then(resultObj => {
+                return this.makeJSONRequest<NuGetSearchAutocompleteServiceResponse>(queryUrl).then(resultObj => {
                     if (Array.isArray(resultObj.data)) {
-                        let results = <any[]>resultObj.data;
+                        let results = resultObj.data;
                         for (let i = 0; i < results.length; i++) {
                             let name = results[i];
                             let insertText = JSON.stringify(name);
@@ -123,15 +133,15 @@ export class ProjectJSONContribution implements IJSONContribution {
         return null;
     }
 
-    public collectValueSuggestions(resource: string, location: Location, result: ISuggestionsCollector): Thenable<any> {
+    public collectValueSuggestions(resource: string, location: Location, result: ISuggestionsCollector): Thenable<void> {
         if ((location.matches(['dependencies', '*']) || location.matches(['frameworks', '*', 'dependencies', '*']) || location.matches(['frameworks', '*', 'frameworkAssemblies', '*']))) {
             return this.getNugetService('PackageBaseAddress/3.0.0').then(service => {
                 let currentKey = location.path[location.path.length - 1];
                 if (typeof currentKey === 'string') {
                     let queryUrl = service + currentKey + '/index.json';
-                    return this.makeJSONRequest<any>(queryUrl).then(obj => {
+                    return this.makeJSONRequest<NuGetFlatContainerPackageResponse>(queryUrl).then(obj => {
                         if (Array.isArray(obj.versions)) {
-                            let results = <any[]>obj.versions;
+                            let results = obj.versions;
                             for (let i = 0; i < results.length; i++) {
                                 let curr = results[i];
                                 let name = JSON.stringify(curr);
@@ -156,7 +166,7 @@ export class ProjectJSONContribution implements IJSONContribution {
         return null;
     }
 
-    public collectDefaultSuggestions(resource: string, result: ISuggestionsCollector): Thenable<any> {
+    public collectDefaultSuggestions(resource: string, result: ISuggestionsCollector): Thenable<null> {
         let defaultValue = {
             'version': '{{1.0.0-*}}',
             'dependencies': {},
@@ -192,9 +202,9 @@ export class ProjectJSONContribution implements IJSONContribution {
     private getInfo(pack: string): Thenable<{ description?: string; version?: string }> {
         return this.getNugetService('SearchQueryService').then(service => {
             let queryUrl = service + '?q=' + encodeURIComponent(pack) + '&take=' + 5;
-            return this.makeJSONRequest<any>(queryUrl).then(resultObj => {
+            return this.makeJSONRequest<NuGetSearchQueryServiceResponse>(queryUrl).then(resultObj => {
                 if (Array.isArray(resultObj.data)) {
-                    let results = <any[]>resultObj.data;
+                    let results = resultObj.data;
                     let info: { description?: string; version?: string } = {};
                     for (let i = 0; i < results.length; i++) {
                         let res = results[i];

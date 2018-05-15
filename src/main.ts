@@ -27,11 +27,16 @@ import { TelemetryObserver } from './observers/TelemetryObserver';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import { addJSONProviders } from './features/json/jsonContributions';
 import { ProjectStatusBarObserver } from './observers/ProjectStatusBarObserver';
+import CSharpExtensionExports from './CSharpExtensionExports';
+import { vscodeNetworkSettingsProvider, NetworkSettingsProvider } from './NetworkSettings';
+import { ErrorMessageObserver } from './observers/ErrorMessageObserver';
+import OptionStream from './observables/OptionStream';
+import  OptionProvider from './observers/OptionProvider';
 
-export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
+export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
     const extensionId = 'ms-vscode.csharp';
-    const extension = vscode.extensions.getExtension(extensionId);
+    const extension = vscode.extensions.getExtension<CSharpExtensionExports>(extensionId);
     const extensionVersion = extension.packageJSON.version;
     const aiKey = extension.packageJSON.contributes.debuggers[0].aiKey;
     const reporter = new TelemetryReporter(extensionId, extensionVersion, aiKey);
@@ -39,6 +44,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     util.setExtensionPath(extension.extensionPath);
 
     const eventStream = new EventStream();
+    const optionStream = new OptionStream(vscode);
+    let optionProvider = new OptionProvider(optionStream);
 
     let dotnetChannel = vscode.window.createOutputChannel('.NET');
     let dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
@@ -58,11 +65,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     eventStream.subscribe(omnisharpLogObserver.post);
     eventStream.subscribe(omnisharpChannelObserver.post);
 
-    let warningMessageObserver = new WarningMessageObserver(vscode);
+    let warningMessageObserver = new WarningMessageObserver(vscode, () => optionProvider.GetLatestOptions().disableMSBuildDiagnosticWarning || false);
     eventStream.subscribe(warningMessageObserver.post);
 
     let informationMessageObserver = new InformationMessageObserver(vscode);
     eventStream.subscribe(informationMessageObserver.post);
+
+    let errorMessageObserver = new ErrorMessageObserver(vscode);
+    eventStream.subscribe(errorMessageObserver.post);
 
     let omnisharpStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, Number.MIN_VALUE));
     let omnisharpStatusBarObserver = new OmnisharpStatusBarObserver(omnisharpStatusBar);
@@ -89,16 +99,19 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter);
     eventStream.subscribe(telemetryObserver.post);
 
-    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo);
+    let networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
+    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo, networkSettingsProvider);
 
     // activate language services
-    let omniSharpPromise = OmniSharp.activate(context, eventStream, extension.packageJSON, platformInfo);
+    let omniSharpPromise = OmniSharp.activate(context, extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionProvider);
 
     // register JSON completion & hover providers for project.json
     context.subscriptions.push(addJSONProviders());
     context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(() => {
         eventStream.post(new ActiveTextEditorChanged());
     }));
+
+    context.subscriptions.push(optionStream);
 
     let coreClrDebugPromise = Promise.resolve();
     if (runtimeDependenciesExist) {
@@ -107,19 +120,19 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     }
 
     return {
-        initializationFinished: Promise.all([omniSharpPromise.then(o => o.waitForEmptyEventQueue()), coreClrDebugPromise])
-            .then(promiseResult => {
-                // This promise resolver simply swallows the result of Promise.all. When we decide we want to expose this level of detail
-                // to other extensions then we will design that return type and implement it here.
-            })
+        initializationFinished: async () => {
+            let omniSharp = await omniSharpPromise;
+            await omniSharp.waitForEmptyEventQueue();
+            await coreClrDebugPromise;
+        }
     };
 }
 
-function ensureRuntimeDependencies(extension: vscode.Extension<any>, eventStream: EventStream, platformInfo: PlatformInformation): Promise<boolean> {
+async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, networkSettingsProvider: NetworkSettingsProvider): Promise<boolean> {
     return util.installFileExists(util.InstallFileType.Lock)
         .then(exists => {
             if (!exists) {
-                const downloader = new CSharpExtDownloader(eventStream, extension.packageJSON, platformInfo);
+                const downloader = new CSharpExtDownloader(networkSettingsProvider, eventStream, extension.packageJSON, platformInfo);
                 return downloader.installRuntimeDependencies();
             } else {
                 return true;

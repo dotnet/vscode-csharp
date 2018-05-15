@@ -23,16 +23,15 @@ gulp.task('vsix:release:unpackage', () => {
     fs.createReadStream(packageName).pipe(unzip.Extract({ path: unpackedVsixPath }));
 });
 
-gulp.task('vsix:release:package', (onError) => {
+gulp.task('vsix:release:package', async (onError) => {
     del.sync(vscodeignorePath);
 
     fs.copyFileSync(onlineVscodeignorePath, vscodeignorePath);
 
-    return spawnNode([vscePath, 'package'])
-        .then(() => {
-            del(vscodeignorePath);
-        }, (error) => {
-            del(vscodeignorePath);
-            throw error;
-        });
+    try {
+        await spawnNode([vscePath, 'package']);
+    }
+    finally {
+        await del(vscodeignorePath);
+    }
 });

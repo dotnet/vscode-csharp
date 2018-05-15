@@ -22,12 +22,12 @@ export class LinuxDistribution {
         public version: string,
         public idLike?: string[]) { }
 
-    public static GetCurrent(): Promise<LinuxDistribution> {
+    public static async GetCurrent(): Promise<LinuxDistribution> {
         // Try /etc/os-release and fallback to /usr/lib/os-release per the synopsis
         // at https://www.freedesktop.org/software/systemd/man/os-release.html.
         return LinuxDistribution.FromFilePath('/etc/os-release')
-            .catch(() => LinuxDistribution.FromFilePath('/usr/lib/os-release'))
-            .catch(() => Promise.resolve(new LinuxDistribution(unknown, unknown)));
+            .catch(async () => LinuxDistribution.FromFilePath('/usr/lib/os-release'))
+            .catch(async () => Promise.resolve(new LinuxDistribution(unknown, unknown)));
     }
 
     public toString(): string {
@@ -62,7 +62,7 @@ export class LinuxDistribution {
         }
     }
 
-    private static FromFilePath(filePath: string): Promise<LinuxDistribution> {
+    private static async FromFilePath(filePath: string): Promise<LinuxDistribution> {
         return new Promise<LinuxDistribution>((resolve, reject) => {
             fs.readFile(filePath, 'utf8', (error, data) => {
                 if (error) {
@@ -156,7 +156,7 @@ export class PlatformInformation {
         return result;
     }
 
-    public static GetCurrent(): Promise<PlatformInformation> {
+    public static async GetCurrent(): Promise<PlatformInformation> {
         let platform = os.platform();
         let architecturePromise: Promise<string>;
         let distributionPromise: Promise<LinuxDistribution>;
@@ -181,13 +181,12 @@ export class PlatformInformation {
                 throw new Error(`Unsupported platform: ${platform}`);
         }
 
-        return Promise.all<any>([architecturePromise, distributionPromise])
-            .then(([arch, distro]) => {
-                return new PlatformInformation(platform, arch, distro);
-            });
+        const platformData: [string, LinuxDistribution] = await Promise.all([architecturePromise, distributionPromise]);
+        
+        return new PlatformInformation(platform, platformData[0], platformData[1]);
     }
 
-    private static GetWindowsArchitecture(): Promise<string> {
+    private static async GetWindowsArchitecture(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             if (process.env.PROCESSOR_ARCHITECTURE === 'x86' && process.env.PROCESSOR_ARCHITEW6432 === undefined) {
                 resolve('x86');
@@ -198,7 +197,7 @@ export class PlatformInformation {
         });
     }
 
-    private static GetUnixArchitecture(): Promise<string> {
+    private static async GetUnixArchitecture(): Promise<string> {
         return util.execChildProcess('uname -m')
             .then(architecture => {
                 if (architecture) {

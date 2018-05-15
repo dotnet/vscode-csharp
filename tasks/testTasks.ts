@@ -7,10 +7,7 @@
 
 import * as gulp from 'gulp';
 import * as path from 'path';
-
 import { codeExtensionPath, nycPath, rootPath, testAssetsRootPath, testRootPath, unitTestCoverageRootPath, mochaPath, vscodeTestHostPath } from './projectPaths';
-import { execFile, spawn } from 'child_process';
-
 import spawnNode from './spawnNode';
 
 const gulpSequence = require('gulp-sequence');
@@ -20,7 +17,7 @@ gulp.task("test", gulpSequence(
     "test:unit",
     "test:integration"));
 
-gulp.task("test:feature", () => {
+gulp.task("test:feature", async () => {
     let env = {
         ...process.env,
         OSVC_SUITE: "featureTests",
@@ -32,7 +29,7 @@ gulp.task("test:feature", () => {
     });
 });
 
-gulp.task("test:unit", () => {
+gulp.task("test:unit", async () => {
     return spawnNode([
         nycPath,
         '-r',
@@ -53,15 +50,15 @@ gulp.task(
         "test:integration:slnWithCsproj"
     ));
 
-gulp.task("test:integration:singleCsproj", () => {
+gulp.task("test:integration:singleCsproj", async () => {
     return runIntegrationTest("singleCsproj");
 });
 
-gulp.task("test:integration:slnWithCsproj", () => {
+gulp.task("test:integration:slnWithCsproj", async () => {
     return runIntegrationTest("slnWithCsproj");
 });
 
-function runIntegrationTest(testAssetName: string) {
+async function runIntegrationTest(testAssetName: string) {
     let env = {
         OSVC_SUITE: testAssetName,
         CODE_TESTS_PATH: path.join(testRootPath, "integrationTests"),

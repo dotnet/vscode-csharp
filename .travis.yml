@@ -12,6 +12,7 @@ before_install:
       sh -e /etc/init.d/xvfb start;
       sleep 3;
     fi
+  - dpkg --compare-versions `npm -v` ge 5.8 || npm i -g npm@^5.8
 
 addons:
   apt:
@@ -25,7 +26,7 @@ addons:
       - dotnet-sdk-2.0.2
 
 install:
-- npm install
+- npm ci
 - npm i -g gulp
 - gulp 'vsix:release:package'
 
@@ -35,7 +36,7 @@ script:
   - gulp test --codeExtensionPath ./vsix/extension
   - gulp cov:report --codeExtensionPath ./vsix/extension
   - npm run test:artifacts
-  - 'if [[ "$TRAVIS_TAG" != "master" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then npm run test:release; fi'
+  - 'if [[ "$TRAVIS_BRANCH" != "master" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then npm run test:release; fi'
 
 after_failure:
   - ./.travis/printLogs.sh
@@ -53,3 +54,6 @@ deploy:
   on:
     repo: OmniSharp/omnisharp-vscode
     tags: true
+  overwrite: true
+
+after_deploy: "find . -type f -name '*.vsix'"

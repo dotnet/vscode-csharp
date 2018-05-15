@@ -12,6 +12,8 @@
 		"noImplicitAny": true,
 		"skipLibCheck": true,
 		"noImplicitThis": true,
+		"noUnusedLocals": true,
+		"noFallthroughCasesInSwitch": true, 
 	},
 	"exclude": [
 		"syntaxes",

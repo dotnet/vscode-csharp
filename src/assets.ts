@@ -295,8 +295,8 @@ function hasAddOperations(operations: Operations) {
     return operations.addLaunchJson || operations.addLaunchJson;
 }
 
-function getOperations(generator: AssetGenerator) {
-    return getBuildOperations(generator.tasksJsonPath).then(operations =>
+async function getOperations(generator: AssetGenerator) {
+    return getBuildOperations(generator.tasksJsonPath).then(async operations =>
         getLaunchOperations(generator.launchJsonPath, operations));
 }
 
@@ -343,7 +343,7 @@ function getBuildTasks(tasksConfiguration: tasks.TaskConfiguration): tasks.TaskD
     return result;
 }
 
-function getBuildOperations(tasksJsonPath: string) {
+async function getBuildOperations(tasksJsonPath: string) {
     return new Promise<Operations>((resolve, reject) => {
         fs.exists(tasksJsonPath, exists => {
             if (exists) {
@@ -375,7 +375,7 @@ function getBuildOperations(tasksJsonPath: string) {
     });
 }
 
-function getLaunchOperations(launchJsonPath: string, operations: Operations) {
+async function getLaunchOperations(launchJsonPath: string, operations: Operations) {
     return new Promise<Operations>((resolve, reject) => {
         return fs.exists(launchJsonPath, exists => {
             if (exists) {
@@ -399,7 +399,7 @@ interface PromptItem extends vscode.MessageItem {
     result: PromptResult;
 }
 
-function promptToAddAssets(workspaceFolder: vscode.WorkspaceFolder) {
+async function promptToAddAssets(workspaceFolder: vscode.WorkspaceFolder) {
     return new Promise<PromptResult>((resolve, reject) => {
         const yesItem: PromptItem = { title: 'Yes', result: PromptResult.Yes };
         const noItem: PromptItem = { title: 'Not Now', result: PromptResult.No, isCloseAffordance: true };
@@ -413,7 +413,7 @@ function promptToAddAssets(workspaceFolder: vscode.WorkspaceFolder) {
     });
 }
 
-export function addTasksJsonIfNecessary(generator: AssetGenerator, operations: Operations) {
+export async function addTasksJsonIfNecessary(generator: AssetGenerator, operations: Operations) {
     return new Promise<void>((resolve, reject) => {
         if (!operations.addTasksJson) {
             return resolve();
@@ -443,7 +443,7 @@ function indentJsonString(json: string, numSpaces: number = 4): string {
     return json.split('\n').map(line => ' '.repeat(numSpaces) + line).join('\n').trim();
 }
 
-function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: Operations) {
+async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: Operations) {
     return new Promise<void>((resolve, reject) => {
         if (!operations.addLaunchJson) {
             return resolve();
@@ -489,7 +489,7 @@ function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: Operati
     });
 }
 
-function addAssets(generator: AssetGenerator, operations: Operations) {
+async function addAssets(generator: AssetGenerator, operations: Operations) {
     const promises = [
         addTasksJsonIfNecessary(generator, operations),
         addLaunchJsonIfNecessary(generator, operations)
@@ -505,13 +505,13 @@ export enum AddAssetResult {
     Cancelled
 }
 
-export function addAssetsIfNecessary(server: OmniSharpServer): Promise<AddAssetResult> {
+export async function addAssetsIfNecessary(server: OmniSharpServer): Promise<AddAssetResult> {
     return new Promise<AddAssetResult>((resolve, reject) => {
         if (!vscode.workspace.workspaceFolders) {
             return resolve(AddAssetResult.NotApplicable);
         }
 
-        serverUtils.requestWorkspaceInformation(server).then(info => {
+        serverUtils.requestWorkspaceInformation(server).then(async info => {
             // If there are no .NET Core projects, we won't bother offering to add assets.
             if (protocol.containsDotNetCoreProjects(info)) {
                 const generator = new AssetGenerator(info);
@@ -541,7 +541,7 @@ export function addAssetsIfNecessary(server: OmniSharpServer): Promise<AddAssetR
     });
 }
 
-function doesAnyAssetExist(generator: AssetGenerator) {
+async function doesAnyAssetExist(generator: AssetGenerator) {
     return new Promise<boolean>((resolve, reject) => {
         fs.exists(generator.launchJsonPath, exists => {
             if (exists) {
@@ -556,14 +556,14 @@ function doesAnyAssetExist(generator: AssetGenerator) {
     });
 }
 
-function deleteAssets(generator: AssetGenerator) {
+async function deleteAssets(generator: AssetGenerator) {
     return Promise.all([
         util.deleteIfExists(generator.launchJsonPath),
         util.deleteIfExists(generator.tasksJsonPath)
     ]);
 }
 
-function shouldGenerateAssets(generator: AssetGenerator) {
+async function shouldGenerateAssets(generator: AssetGenerator) {
     return new Promise<boolean>((resolve, reject) => {
         doesAnyAssetExist(generator).then(res => {
             if (res) {

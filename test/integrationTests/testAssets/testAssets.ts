@@ -6,7 +6,7 @@
 import * as fs from 'async-file';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import * as cp from 'child_process';
+import spawnGit from './spawnGit';
 
 export class TestAssetProject {
     constructor(project: ITestAssetProject) {
@@ -69,21 +69,9 @@ export class TestAssetWorkspace {
     async cleanupWorkspace(): Promise<void> {
         for (let project of this.projects) {
             let wd = path.dirname(project.projectDirectoryPath);
-            await this.invokeGit("clean -xdf . ", wd);
-            await this.invokeGit("checkout -- .", wd);
+            await spawnGit(["clean", "-xdf", "."], { cwd: wd });
+            await spawnGit(["checkout", "--", "."], { cwd: wd });
         }
-    }
-
-    invokeGit(args: string, workingDirectory: string): Promise<{ stdout: string, stderr: string }> {
-        return new Promise((resolve, reject) => {
-            cp.exec('git ' + args, { cwd: path.dirname(workingDirectory) },
-                (err, stdout, stderr) => {
-                    return err ? reject(err) : resolve({
-                        stdout: stdout,
-                        stderr: stderr
-                    });
-                });
-        });
     }
 
     description: string;

@@ -2,7 +2,7 @@
  * Copyright (C) Microsoft Corporation. All rights reserved.
  *--------------------------------------------------------*/
 
- import shelljs = require("async-shelljs"); 
+ import shelljs = require("async-shelljs");
 import path = require('path');
 const fs = require('async-file');
 
@@ -23,7 +23,7 @@ export default class CoverageWritingTestRunner {
         new Promise<{ error: any, failures?: number }>(function (resolve, reject) {
             promiseResolve = (error: any, failures?: number) => resolve({ error, failures });
         })
-            .then(clbArgs => {
+            .then(async clbArgs => {
                 clbArgsLocal = clbArgs;
                 return this.writeCoverage();
             })
@@ -58,9 +58,9 @@ export default class CoverageWritingTestRunner {
 
                     await fs.writeTextFile(rawCoverageJsonPath, JSON.stringify(__coverage__));
 
-                    await shelljs.asyncExec(`${nodePath}node ${remapIstanbulPath} -i ${rawCoverageJsonPath} -o ${remappedCoverageJsonPath}`, { 
-                        cwd: outFolderPath 
-                    }); 
+                    await shelljs.asyncExec(`${nodePath}node ${remapIstanbulPath} -i ${rawCoverageJsonPath} -o ${remappedCoverageJsonPath}`, {
+                        cwd: outFolderPath
+                    });
 
                     let remappedResult = JSON.parse(await fs.readTextFile(remappedCoverageJsonPath));
 

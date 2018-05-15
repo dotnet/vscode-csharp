@@ -27,7 +27,7 @@ export class OmnisharpInitialisation implements BaseEvent {
 }
 
 export class OmnisharpLaunch implements BaseEvent {
-    constructor(public usingMono: boolean, public command: string, public pid: number) { }
+    constructor(public monoVersion: string, public command: string, public pid: number) { }
 }
 
 export class PackageInstallation implements BaseEvent {
@@ -38,8 +38,8 @@ export class LogPlatformInfo implements BaseEvent {
     constructor(public info: PlatformInformation) { }
 }
 
-export class InstallationProgress implements BaseEvent {
-    constructor(public stage: string, public message: string) { }
+export class InstallationStart implements BaseEvent {
+    constructor(public packageDescription: string) { }
 }
 
 export class InstallationFailure implements BaseEvent {
@@ -47,7 +47,7 @@ export class InstallationFailure implements BaseEvent {
 }
 
 export class DownloadProgress implements BaseEvent {
-    constructor(public downloadPercentage: number) { }
+    constructor(public downloadPercentage: number, public packageDescription: string) { }
 }
 
 export class OmnisharpFailure implements BaseEvent {
@@ -106,12 +106,27 @@ export class EventWithMessage implements BaseEvent {
     constructor(public message: string) { }
 }
 
+export class DownloadStart implements BaseEvent {
+    constructor(public packageDescription: string) { }
+}
+
+export class DownloadFallBack implements BaseEvent {
+    constructor(public fallbackUrl: string) { }
+}
+
+export class DownloadSizeObtained implements BaseEvent {
+    constructor(public packageSize: number) { }
+}
+
+export class ZipError implements BaseEvent {
+    constructor(public message: string) { }
+}
+
 export class DebuggerPrerequisiteFailure extends EventWithMessage { }
 export class DebuggerPrerequisiteWarning extends EventWithMessage { }
 export class CommandDotNetRestoreProgress extends EventWithMessage { }
 export class CommandDotNetRestoreSucceeded extends EventWithMessage { }
 export class CommandDotNetRestoreFailed extends EventWithMessage { }
-export class DownloadStart extends EventWithMessage { }
 export class DownloadSuccess extends EventWithMessage { }
 export class DownloadFailure extends EventWithMessage { }
 export class OmnisharpServerOnStdErr extends EventWithMessage { }
@@ -131,3 +146,4 @@ export class OmnisharpOnBeforeServerInstall implements BaseEvent { }
 export class ActiveTextEditorChanged implements BaseEvent { }
 export class OmnisharpServerOnStop implements BaseEvent { }
 export class OmnisharpServerOnStart implements BaseEvent { }
+export class LatestBuildDownloadStart implements BaseEvent { }

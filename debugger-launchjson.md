@@ -50,6 +50,23 @@ Environment variables may be passed to your program using this schema:
         "myVariableName":"theValueGoesHere"
     }
 
+NOTE: Environment variables can also be configured through a `${cwd}/Properties/launchSettings.json` file, which is useful for environment variables that should be set in all development scenarios -- when the project is started from the command line (`dotnet run`), from Visual Studio Code, or Visual Studio.
+
+Example Properties/launchSettings.json file:
+
+```json
+{
+  "profiles": {
+    "ProfileNameGoesHere": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "myVariableName":"theValueGoesHere"
+      }
+    }
+  }
+}
+```
+
 ## Console (terminal) window
 By default, processes are launched with their console output (stdout/stderr) going to the VS Code Debugger Console. This is useful for executables that take their input from the network, files, etc. But this does NOT work for applications that want to read from the console (ex: `Console.ReadLine`). For these applications, use a setting such as the following:
 
@@ -183,7 +200,7 @@ The `symbolOptions` element allows customization of how the debugger searches fo
 
 ## Source Link options
 
-Source Link is a feature that makes it so that when you are debugging code that was built on another computer, such as code coming from a nuget package, the debugger can automatically bring up matching source code by downloading it from the web. To make this work, the .pdb files for the code you are debugging contains data that maps the source files in the DLL to a URL that the debugger can download from. More information about Source Link can be found at [https://github.com/dotnet/core/blob/master/Documentation/diagnostics/source_link.md](https://github.com/dotnet/core/blob/master/Documentation/diagnostics/source_link.md).
+Source Link is a feature that makes it so that when you are debugging code that was built on another computer, such as code coming from a nuget package, the debugger can automatically bring up matching source code by downloading it from the web. To make this work, the .pdb files for the code you are debugging contains data that maps the source files in the DLL to a URL that the debugger can download from. More information about Source Link can be found at [https://aka.ms/SourceLinkSpec](https://aka.ms/SourceLinkSpec).
 
 The `sourceLinkOptions` element in launch.json allows customization of Source Link behavior by URL. It is a map from URL to Source Link options for that URL. Wildcards are supported in the URL name. Currently the only customization is if Source Link is enabled for that URL, but more options may be added in the future.
 

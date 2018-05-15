@@ -92,21 +92,34 @@ The easist way to verify that a project was successfully loaded is to open a .cs
 * In a project that uses globbing (.NET Core), use the VS Code file explorer to add a new file next to the csproj. Intellisense/sighelp/etc should be available in the new file
 * Add a new file and reference a type in it from a different file. Deleting from disk the file containing the referenced type  should produce error messages
 
-#### Omnisharp Options
+#### OmniSharp Options
 
-  #### omnisharp.useMono (for Linux)
+  #### omnisharp.useGlobalMono (for Linux/Mac)
+  This option can be set to any of the following values:
+  * "auto" - Will launch OmniSharp using mono if version>=5.2.0 is installed but will launch using the run script if that is not so.
+  * "always" - Will launch OmniSharp using mono if version>=5.2.0 is installed and will throw an error otherwise.
+  * "never" - Launches OmniSharp without using the global mono
+
+  The value of OmniSharp path displayed in the OmniSharp log can be used to know if OmniSharp has launched using mono or not. If it is running using global mono, the path will end with "OmniSharp.exe" else the path will end with "run". 
   For using this option, mono version greater than or equal to 5.2.0 must be installed. If that is not so, setting this option to true, should give an error.
   * If the option is not set, the OmniSharp path displayed in the "OmniSharp Log" should end with "run"
   * If the option is set, the OmniSharp path as mentioned above should end with "OmniSharp.exe"
 
   #### omnisharp.path
   Setting this path to any of the values as listed below, should start the OmniSharp server and display the correct OmniSharp path in the `OmniSharp Log`(View --> Output--> OmniSharp Log).
-  * undefined - OmniSharp server must start using the copy of omnisharp shipped with the extension, that is, the OmniSharp path must be the extension path, followed by .omnisharp followed by the platform-specific executable.
+  * undefined - OmniSharp server must start using the copy of omnisharp shipped with the extension, that is, the OmniSharp path must be the extension path, followed by .omnisharp followed by the default omnisharp version as present in the package.json and the platform-specific executable.
   * Some absolute path - OmniSharp server must start using the local copy of OmniSharp pointed to by the path and the same must be displayed as the Omnisharp path. Example:C:\omnisharp-roslyn\artifacts\publish\OmniSharp.Stdio\win7-x64\OmniSharp.exe. 
-  * "<version>" - The specified version must be downloaded and installed (The status of download/install can be seen in the `C#` log). If the installation is successful, the server must start and the OmniSharp path must include the .omnisharp/experimental folder followed by the version name and the executable. Eg: If the version is `1.29.2-beta.60`, the path displayed on Windows should be `.omnisharp/experimental/1.29.2-beta.60/OmniSharp.exe`.
-  * "latest" - The file containing the information about the latest CI build (https://roslynomnisharp.blob.core.windows.net/releases/versioninfo.txt), must be downloaded and accordingly the latest CI build from the "master" branch of omnisharp-roslyn should be downloaded and installed. If the installation is successful, the server must start and the OmniSharp path must include the .omnisharp/experimental folder followed by the version name and the executable. Eg: If the latest version is `1.29.2-beta.62`, the path displayed on Windows should be `.omnisharp/experimental/1.29.2-beta.62/OmniSharp.exe`.
+  * "<version>" - The specified version must be downloaded and installed (The status of download/install can be seen in the `C#` log). If the installation is successful, the server must start and the OmniSharp path must include the .omnisharp folder followed by the version name and the executable. Eg: If the version is `1.29.2-beta.60`, the path displayed on Windows should be `.omnisharp/1.29.2-beta.60/OmniSharp.exe`.
+  * "latest" - The file containing the information about the latest CI build (https://roslynomnisharp.blob.core.windows.net/releases/versioninfo.txt), must be downloaded and accordingly the latest CI build from the "master" branch of omnisharp-roslyn should be downloaded and installed. If the installation is successful, the server must start and the OmniSharp path must include the .omnisharp folder followed by the version name and the executable. Eg: If the latest version is `1.29.2-beta.62`, the path displayed on Windows should be `.omnisharp/1.29.2-beta.62/OmniSharp.exe`.
   * All the above configurations should work, with and without setting the useMono option on Linux
   * The above behavior should be exhibited when a new vscode window is opened, as well as if the setting is modified and a "Restart OmniSharp"(Ctrl+Shift+P --> OmniSharp: Restart OmniSharp) is performed. 
+
+####  Status Bar Item
+The status bar item(s) must appear on the left side of the VS Code's status bar
+* When the extension is setting up the dependencies, the status bar item should show "Downloading packages"/"Installing packages".
+* Once the server has started, there should be two status bar items:
+  * OmniSharp status Bar item - It should show a green flame (indicating that the OmniSharp server is running) and clicking on it should show the OmniSharp log channel
+  * Project status bar item  - It should show and a folder icon and the name of the currently selected project/solution. Clicking on this element should show a command palette menu to select other projects/solutions in the workspace.
 
 [1] For example,
 ```

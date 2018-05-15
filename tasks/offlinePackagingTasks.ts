@@ -14,39 +14,39 @@ import * as path from 'path';
 import * as util from '../src/common';
 import spawnNode from '../tasks/spawnNode';
 import { codeExtensionPath, offlineVscodeignorePath, vscodeignorePath, vscePath, packedVsixOutputRoot } from '../tasks/projectPaths';
-import { commandLineOptions } from '../tasks/commandLineArguments';
 import { CsharpLoggerObserver } from '../src/observers/CsharpLoggerObserver';
 import { EventStream } from '../src/EventStream';
 import { getPackageJSON } from '../tasks/packageJson';
 import { Logger } from '../src/logger';
-import { PackageManager } from '../src/packages';
 import { PlatformInformation } from '../src/platform';
-import { Result } from 'async-child-process';
+import { DownloadAndInstallPackages } from '../src/packageManager/PackageManager';
+import NetworkSettings from '../src/NetworkSettings';
+import { GetRunTimeDependenciesPackages } from '../src/CSharpExtDownloader';
+import { commandLineOptions } from '../tasks/commandLineArguments';
 
-gulp.task('vsix:offline:package', () => {
+gulp.task('vsix:offline:package', async () => {
     del.sync(vscodeignorePath);
 
     fs.copyFileSync(offlineVscodeignorePath, vscodeignorePath);
 
-    return doPackageOffline()
-        .then(v => del(vscodeignorePath),
-            e => {
-                del(vscodeignorePath);
-                throw e;
-            });
+    try {
+        await doPackageOffline();
+    }
+    finally {
+        del(vscodeignorePath);
+    }
 });
 
-function doPackageOffline() {
-    util.setExtensionPath(codeExtensionPath);
-
+async function doPackageOffline() {
     if (commandLineOptions.retainVsix) {
-        //if user doesnot want to clean up the existing vsix packages
+        //if user doesnot want to clean up the existing vsix packages	
         cleanSync(false);
     }
     else {
         cleanSync(true);
     }
-
+    
+    util.setExtensionPath(codeExtensionPath);
     const packageJSON = getPackageJSON();
     const name = packageJSON.name;
     const version = packageJSON.version;
@@ -58,14 +58,9 @@ function doPackageOffline() {
         new PlatformInformation('linux', 'x86_64')
     ];
 
-    let promise = Promise.resolve<Result>(null);
-
-    packages.forEach(platformInfo => {
-        promise = promise
-            .then(() => doOfflinePackage(platformInfo, packageName, packageJSON, packedVsixOutputRoot));
-    });
-
-    return promise;
+    for (let platformInfo of packages) {
+        await doOfflinePackage(platformInfo, packageName, packageJSON, packedVsixOutputRoot);
+    }
 }
 
 function cleanSync(deleteVsix: boolean) {
@@ -78,41 +73,32 @@ function cleanSync(deleteVsix: boolean) {
     }
 }
 
-function doOfflinePackage(platformInfo: PlatformInformation, packageName: string, packageJSON: any, outputFolder: string) {
+async function doOfflinePackage(platformInfo: PlatformInformation, packageName: string, packageJSON: any, outputFolder: string) {
     if (process.platform === 'win32') {
         throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
     }
 
     cleanSync(false);
-
-    return install(platformInfo, packageJSON)
-        .then(() => doPackageSync(packageName + '-' + platformInfo.platform + '-' + platformInfo.architecture + '.vsix', outputFolder));
+    const packageFileName = `${packageName}-${platformInfo.platform}-${platformInfo.architecture}.vsix`;
+    await install(platformInfo, packageJSON);
+    await doPackageSync(packageFileName, outputFolder);
 }
 
 // Install Tasks
-function install(platformInfo: PlatformInformation, packageJSON: any) {
-    const packageManager = new PackageManager(platformInfo, packageJSON);
+async function install(platformInfo: PlatformInformation, packageJSON: any) {
     let eventStream = new EventStream();
     const logger = new Logger(message => process.stdout.write(message));
     let stdoutObserver = new CsharpLoggerObserver(logger);
     eventStream.subscribe(stdoutObserver.post);
     const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'));
-
-    return packageManager.DownloadPackages(eventStream, undefined, undefined, undefined)
-        .then(() => {
-            return packageManager.InstallPackages(eventStream, undefined);
-        })
-        .then(() => {
-
-            return util.touchInstallFile(util.InstallFileType.Lock);
-        })
-        .then(() => {
-            return debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());
-        });
+    let runTimeDependencies = GetRunTimeDependenciesPackages(packageJSON);
+    let provider = () => new NetworkSettings(undefined, undefined);
+    await DownloadAndInstallPackages(runTimeDependencies, provider, platformInfo, eventStream);
+    await debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());
 }
 
 /// Packaging (VSIX) Tasks
-function doPackageSync(packageName: string, outputFolder: string) {
+async function doPackageSync(packageName: string, outputFolder: string) {
 
     let vsceArgs = [];
     vsceArgs.push(vscePath);

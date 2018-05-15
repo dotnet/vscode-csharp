@@ -144,7 +144,8 @@ function cleanJsonText(text: string) {
                 // We just skip the byte-order mark
                 parts.push(text.substring(partStart, index - 1));
                 partStart = index;
-
+                break;
+                
             // strings
             case CharCode.doubleQuote:
                 scanString();
@@ -200,6 +201,7 @@ function cleanJsonText(text: string) {
                 }
 
                 break;
+            default: 
         }
 
         if (index >= length && index > partStart) {

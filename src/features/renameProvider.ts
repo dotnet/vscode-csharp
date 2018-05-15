@@ -11,7 +11,7 @@ import {RenameProvider, WorkspaceEdit, TextDocument, Uri, CancellationToken, Pos
 
 export default class OmnisharpRenameProvider extends AbstractSupport implements RenameProvider {
 
-    public provideRenameEdits(document: TextDocument, position: Position, newName: string, token: CancellationToken): Promise<WorkspaceEdit> {
+    public async provideRenameEdits(document: TextDocument, position: Position, newName: string, token: CancellationToken): Promise<WorkspaceEdit> {
 
         let req = createRequest<protocol.RenameRequest>(document, position);
         req.WantsTextChanges = true;

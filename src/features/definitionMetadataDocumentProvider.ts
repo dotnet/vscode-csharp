@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Disposable, TextDocument, TextDocumentContentProvider, Uri, workspace } from 'vscode';
-
+import { TextDocument, TextDocumentContentProvider, Uri, workspace } from 'vscode';
 import { MetadataResponse } from '../omnisharp/protocol';
+import { IDisposable } from '../Disposable';
 
-export default class DefinitionMetadataDocumentProvider implements TextDocumentContentProvider, Disposable {
+export default class DefinitionMetadataDocumentProvider implements TextDocumentContentProvider, IDisposable {
     readonly scheme = "omnisharp-metadata";
-    private _registration : Disposable;
+    private _registration : IDisposable;
     private _documents: Map<string, MetadataResponse>;
-    private _documentClosedSubscription: Disposable;
+    private _documentClosedSubscription: IDisposable;
 
     constructor() {
         this._documents = new Map<string, MetadataResponse>();

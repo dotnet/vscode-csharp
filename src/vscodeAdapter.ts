@@ -251,6 +251,42 @@ export interface StatusBarItem {
     dispose(): void;
 }
 
+export interface Event<T> {
+
+    /**
+     * A function that represents an event to which you subscribe by calling it with
+     * a listener function as argument.
+     *
+     * @param listener The listener function will be called when the event happens.
+     * @param thisArgs The `this`-argument which will be used when calling the event listener.
+     * @param disposables An array to which a [disposable](#Disposable) will be added.
+     * @return A disposable which unsubscribes the event listener.
+     */
+    (listener: (e: T) => any, thisArgs?: any, disposables?: Disposable[]): Disposable;
+}
+
+export interface Disposable {
+    /**
+     * Dispose this object.
+     */
+    dispose(): any;
+}
+
+
+export interface CancellationToken {
+
+    /**
+     * Is `true` when the token has been cancelled, `false` otherwise.
+     */
+    isCancellationRequested: boolean;
+
+    /**
+     * An [event](#Event) which fires upon cancellation.
+     */
+    onCancellationRequested: Event<any>;
+}
+
+
 export interface DocumentFilter {
 
     /**
@@ -800,6 +836,55 @@ export interface TextLine {
     readonly isEmptyOrWhitespace: boolean;
 }
 
+export interface FileSystemWatcher extends Disposable {
+
+    /**
+     * true if this file system watcher has been created such that
+     * it ignores creation file system events.
+     */
+    ignoreCreateEvents: boolean;
+
+    /**
+     * true if this file system watcher has been created such that
+     * it ignores change file system events.
+     */
+    ignoreChangeEvents: boolean;
+
+    /**
+     * true if this file system watcher has been created such that
+     * it ignores delete file system events.
+     */
+    ignoreDeleteEvents: boolean;
+
+    /**
+     * An event which fires on file/folder creation.
+     */
+    onDidCreate: Event<Uri>;
+
+    /**
+     * An event which fires on file/folder change.
+     */
+    onDidChange: Event<Uri>;
+
+    /**
+     * An event which fires on file/folder deletion.
+     */
+    onDidDelete: Event<Uri>;
+}
+
+export interface ConfigurationChangeEvent {
+
+    /**
+     * Returns `true` if the given section for the given resource (if provided) is affected.
+     *
+     * @param section Configuration name, supports _dotted_ names.
+     * @param resource A resource Uri.
+     * @return `true` if the given section for the given resource (if provided) is affected.
+     */
+    affectsConfiguration(section: string, resource?: Uri): boolean;
+}
+
+
 /**
  * Thenable is a common denominator between ES6 promises, Q, jquery.Deferred, WinJS.Promise,
  * and others. This API makes no assumption about what promise libary is being used which
@@ -828,9 +913,12 @@ export interface vscode {
         activeTextEditor: TextEditor | undefined;
         showInformationMessage: (message: string, ...items: string[]) => Thenable<string | undefined>;
         showWarningMessage: <T extends MessageItem>(message: string, ...items: T[]) => Thenable<T | undefined>;
+        showErrorMessage(message: string, ...items: string[]): Thenable<string | undefined>;
     };
     workspace: {
         getConfiguration: (section?: string, resource?: Uri) => WorkspaceConfiguration;
         asRelativePath: (pathOrUri: string | Uri, includeWorkspaceFolder?: boolean) => string;
+        createFileSystemWatcher(globPattern: GlobPattern, ignoreCreateEvents?: boolean, ignoreChangeEvents?: boolean, ignoreDeleteEvents?: boolean): FileSystemWatcher;
+        onDidChangeConfiguration: Event<ConfigurationChangeEvent>;
     };
 }

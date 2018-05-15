@@ -8,8 +8,8 @@ import { satisfies } from 'semver';
 import { PlatformInformation } from '../platform';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import * as util from '../common';
 import { Options } from './options';
+import { LaunchInfo } from './OmnisharpManager';
 
 export enum LaunchTargetKind {
     Solution,
@@ -36,12 +36,10 @@ export interface LaunchTarget {
  * (if it doesn't contain a `project.json` file, but `project.json` files exist). In addition, the root folder
  * is included if there are any `*.csproj` files present, but a `*.sln* file is not found.
  */
-export function findLaunchTargets(): Thenable<LaunchTarget[]> {
+export function findLaunchTargets(options: Options): Thenable<LaunchTarget[]> {
     if (!vscode.workspace.workspaceFolders) {
         return Promise.resolve([]);
     }
-
-    const options = Options.Read();
 
     return vscode.workspace.findFiles(
             /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
@@ -204,12 +202,12 @@ function isCake(resource: vscode.Uri): boolean {
 export interface LaunchResult {
     process: ChildProcess;
     command: string;
-    usingMono: boolean;
+    monoVersion?: string;
 }
 
-export function launchOmniSharp(cwd: string, args: string[], launchPath: string): Promise<LaunchResult> {
+export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        launch(cwd, args, launchPath)
+        launch(cwd, args, launchInfo, platformInfo, options)
             .then(result => {
                 // async error - when target not not ENEOT
                 result.process.on('error', err => {
@@ -225,50 +223,41 @@ export function launchOmniSharp(cwd: string, args: string[], launchPath: string)
     });
 }
 
-function launch(cwd: string, args: string[], launchPath: string): Promise<LaunchResult> {
-    return PlatformInformation.GetCurrent().then(platformInfo => {
-        const options = Options.Read();
+async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options): Promise<LaunchResult> {
+    if (options.useEditorFormattingSettings) {
+        let globalConfig = vscode.workspace.getConfiguration();
+        let csharpConfig = vscode.workspace.getConfiguration('[csharp]');
 
-        if (options.useEditorFormattingSettings) {
-            let globalConfig = vscode.workspace.getConfiguration();
-            let csharpConfig = vscode.workspace.getConfiguration('[csharp]');
+        args.push(`formattingOptions:useTabs=${!getConfigurationValue(globalConfig, csharpConfig, 'editor.insertSpaces', true)}`);
+        args.push(`formattingOptions:tabSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
+        args.push(`formattingOptions:indentationSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
+    }
 
-            args.push(`formattingOptions:useTabs=${!getConfigurationValue(globalConfig, csharpConfig, 'editor.insertSpaces', true)}`);
-            args.push(`formattingOptions:tabSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
-            args.push(`formattingOptions:indentationSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
+    if (platformInfo.isWindows()) {
+        return launchWindows(launchInfo.LaunchPath, cwd, args);
+    }
+
+    let monoVersion = await getMonoVersion();
+    let isValidMonoAvailable = await satisfies(monoVersion, '>=5.8.1');
+
+    // If the user specifically said that they wanted to launch on Mono, respect their wishes.
+    if (options.useGlobalMono === "always") {
+        if (!isValidMonoAvailable) {
+            throw new Error('Cannot start OmniSharp because Mono version >=5.8.1 is required.');
         }
 
-        // If the user has provided an absolute path or the specified version has been installed successfully, we'll use the path.
-        if (launchPath) {
-            if (platformInfo.isWindows()) {
-                return launchWindows(launchPath, cwd, args);
-            }
+        const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
 
-            // If we're launching on macOS/Linux, we have two possibilities:
-            //   1. Launch using Mono
-            //   2. Launch process directly (e.g. a 'run' script)
-            return options.useMono
-                ? launchNixMono(launchPath, cwd, args)
-                : launchNix(launchPath, cwd, args);
-        }
+        return launchNixMono(launchPath, monoVersion, cwd, args);
+    }
 
-        // If the user has not provided a path, we'll use the locally-installed OmniSharp
-        const basePath = path.resolve(util.getExtensionPath(), '.omnisharp');
-
-        if (platformInfo.isWindows()) {
-            return launchWindows(path.join(basePath, 'OmniSharp.exe'), cwd, args);
-        }
-
-        // If it's possible to launch on a global Mono, we'll do that. Otherwise, run with our
-        // locally installed Mono runtime.
-        return canLaunchMono()
-            .then(() => {
-                return launchNixMono(path.join(basePath, 'omnisharp', 'OmniSharp.exe'), cwd, args);
-            })
-            .catch(_ => {
-                return launchNix(path.join(basePath, 'run'), cwd, args);
-            });
-    });
+    // If we can launch on the global Mono, do so; otherwise, launch directly;
+    if (options.useGlobalMono === "auto" && isValidMonoAvailable && launchInfo.MonoLaunchPath) {
+        return launchNixMono(launchInfo.MonoLaunchPath, monoVersion, cwd, args);
+    }
+    else {
+        return launchNix(launchInfo.LaunchPath, cwd, args);
+    }
 }
 
 function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csharpConfig: vscode.WorkspaceConfiguration,
@@ -297,7 +286,7 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
         '"' + argsCopy.map(escapeIfNeeded).join(' ') + '"'
     ].join(' ')];
 
-    let process = spawn('cmd', argsCopy, <any>{
+    let process = spawn('cmd', argsCopy, {
         windowsVerbatimArguments: true,
         detached: false,
         cwd: cwd
@@ -306,7 +295,6 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
     return {
         process,
         command: launchPath,
-        usingMono: false
     };
 }
 
@@ -318,58 +306,41 @@ function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResul
 
     return {
         process,
-        command: launchPath,
-        usingMono: true
+        command: launchPath
     };
 }
 
-function launchNixMono(launchPath: string, cwd: string, args: string[]): Promise<LaunchResult> {
-    return canLaunchMono()
-        .then(() => {
-            let argsCopy = args.slice(0); // create copy of details args
-            argsCopy.unshift(launchPath);
-            argsCopy.unshift("--assembly-loader=strict");
+function launchNixMono(launchPath: string, monoVersion: string, cwd: string, args: string[]): LaunchResult {
+    let argsCopy = args.slice(0); // create copy of details args
+    argsCopy.unshift(launchPath);
+    argsCopy.unshift("--assembly-loader=strict");
 
-            let process = spawn('mono', argsCopy, {
-                detached: false,
-                cwd: cwd
-            });
-
-            return {
-                process,
-                command: launchPath,
-                usingMono: true
-            };
-        });
-}
-
-function canLaunchMono(): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-        hasMono('>=5.2.0').then(success => {
-            if (success) {
-                resolve();
-            }
-            else {
-                reject(new Error('Cannot start Omnisharp because Mono version >=5.2.0 is required.'));
-            }
-        });
+    let process = spawn('mono', argsCopy, {
+        detached: false,
+        cwd: cwd
     });
+
+    return {
+        process,
+        command: launchPath,
+        monoVersion,
+    };
 }
 
-export function hasMono(range?: string): Promise<boolean> {
+async function getMonoVersion(): Promise<string> {
     const versionRegexp = /(\d+\.\d+\.\d+)/;
 
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
         let childprocess: ChildProcess;
         try {
             childprocess = spawn('mono', ['--version']);
         }
         catch (e) {
-            return resolve(false);
+            return resolve(undefined);
         }
 
         childprocess.on('error', function (err: any) {
-            resolve(false);
+            resolve(undefined);
         });
 
         let stdout = '';
@@ -378,20 +349,14 @@ export function hasMono(range?: string): Promise<boolean> {
         });
 
         childprocess.stdout.on('close', () => {
-            let match = versionRegexp.exec(stdout),
-                ret: boolean;
+            let match = versionRegexp.exec(stdout);
 
-            if (!match) {
-                ret = false;
-            }
-            else if (!range) {
-                ret = true;
+            if (match && match.length > 1) {
+                resolve(match[1]);
             }
             else {
-                ret = satisfies(match[1], range);
+                resolve(undefined);
             }
-
-            resolve(ret);
         });
     });
 }
