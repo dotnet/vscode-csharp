@@ -39,6 +39,7 @@ suite('OptionProvider', () => {
         options.showTestsCodeLens.should.equal(true);
         options.disableCodeActions.should.equal(false);
         options.disableCodeActions.should.equal(false);
+        expect(options.defaultLaunchSolution).to.be.undefined;
     });
 
     test("Gives the latest options if there are changes in omnisharp config", () => {
