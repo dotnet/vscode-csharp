@@ -3,15 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { MessageItem, vscode } from '../vscodeAdapter';
+import { vscode } from '../vscodeAdapter';
 import { BaseEvent, OmnisharpServerOnError, OmnisharpServerMsBuildProjectDiagnostics } from "../omnisharp/loggingEvents";
 import { Scheduler } from 'rxjs/Scheduler';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/debounceTime';
-
-export interface MessageItemWithCommand extends MessageItem {
-    command: string;
-}
+import ShowWarningMessage from './utils/ShowWarningMessage';
 
 export class WarningMessageObserver {
     private warningMessageDebouncer: Subject<BaseEvent>;
@@ -20,7 +17,7 @@ export class WarningMessageObserver {
         this.warningMessageDebouncer = new Subject<BaseEvent>();
         this.warningMessageDebouncer.debounceTime(1500, scheduler).subscribe(async event => {
             let message = "Some projects have trouble loading. Please review the output for more details.";
-            await showWarningMessage(this.vscode, message, { title: "Show Output", command: 'o.showOutput' });
+            await ShowWarningMessage(this.vscode, message, { title: "Show Output", command: 'o.showOutput' });
         });
     }
 
@@ -39,17 +36,5 @@ export class WarningMessageObserver {
         if (!this.disableMsBuildDiagnosticWarning() && event.diagnostics.Errors.length > 0) {
             this.warningMessageDebouncer.next(event);
         }
-    }
-}
-
-async function showWarningMessage(vscode: vscode, message: string, ...items: MessageItemWithCommand[]) {
-    try {
-        let value = await vscode.window.showWarningMessage<MessageItemWithCommand>(message, ...items);
-        if (value && value.command) {
-            await vscode.commands.executeCommand<string>(value.command);
-        }
-    }
-    catch (err) {
-        console.log(err);
     }
 }
