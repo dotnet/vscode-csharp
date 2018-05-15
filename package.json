@@ -60,12 +60,15 @@
       ".ts",
       ".tsx"
     ],
+    "exclude":[
+      "**/node_modules/**"
+    ],
     "require": [
-      "ts-node/register",
       "source-map-support/register"
     ],
     "sourceMap": true,
-    "instrument": true
+    "instrument": true,
+    "all": true
   },
   "dependencies": {
     "async-file": "2.0.2",

@@ -30,6 +30,8 @@ gulp.task("test:unit", async () => {
         '--report-dir',
         unitTestCoverageRootPath,
         mochaPath,
+        '--require',
+        'ts-node/register',
         '--ui',
         'tdd',
         '--',
