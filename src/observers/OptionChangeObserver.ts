@@ -20,7 +20,7 @@ function ConfigChangeObservable(optionObservable: Observable<Options>): Observab
     });
 }
 
-export function ShowOmniSharpConfigChangePrompt(optionObservable: Observable<Options>, vscode: vscode) {
+export function ShowOmniSharpConfigChangePrompt(optionObservable: Observable<Options>, vscode: vscode): Disposable {
     let subscription = ConfigChangeObservable(optionObservable)
         .subscribe(_ => {
             let message = "OmniSharp configuration has changed. Would you like to relaunch the OmniSharp server with your changes?";
