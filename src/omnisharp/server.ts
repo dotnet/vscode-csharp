@@ -321,6 +321,7 @@ export class OmniSharpServer {
 
         try {
             let launchResult = await launchOmniSharp(cwd, args, launchInfo, this.platformInfo, options);
+            this.eventStream.post(new ObservableEvents.ShowOmniSharpChannel());
             this.eventStream.post(new ObservableEvents.OmnisharpLaunch(launchResult.monoVersion, launchResult.command, launchResult.process.pid));
 
             this._serverProcess = launchResult.process;
@@ -416,6 +417,7 @@ export class OmniSharpServer {
     public async restart(launchTarget: LaunchTarget = this._launchTarget): Promise<void> {
         if (launchTarget) {
             await this.stop();
+            this.eventStream.post(new ObservableEvents.OmnisharpRestart());
             const options = this.optionProvider.GetLatestOptions();
             await this._start(launchTarget, options);
         }
