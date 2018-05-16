@@ -9,6 +9,7 @@ import OptionStream from "../../../src/observables/OptionStream";
 import { vscode, ConfigurationChangeEvent } from "../../../src/vscodeAdapter";
 import Disposable from "../../../src/Disposable";
 import OptionProvider from '../../../src/observers/OptionProvider';
+import { GetConfigChangeEvent } from '../testAssets/GetConfigChangeEvent';
 
 suite('OptionProvider', () => {
     suiteSetup(() => should());
@@ -44,7 +45,7 @@ suite('OptionProvider', () => {
     test("Gives the latest options if there are changes in omnisharp config", () => {
         let changingConfig = "omnisharp";
         updateConfig(vscode, changingConfig, 'path', "somePath");
-        listenerFunction.forEach(listener => listener(getConfigChangeEvent(changingConfig)));
+        listenerFunction.forEach(listener => listener(GetConfigChangeEvent(changingConfig)));
         let options = optionProvider.GetLatestOptions();
         expect(options.path).to.be.equal("somePath");
     });
@@ -52,7 +53,7 @@ suite('OptionProvider', () => {
     test("Gives the latest options if there are changes in csharp config", () => {
         let changingConfig = 'csharp';
         updateConfig(vscode, changingConfig, 'disableCodeActions', true);
-        listenerFunction.forEach(listener => listener(getConfigChangeEvent(changingConfig)));
+        listenerFunction.forEach(listener => listener(GetConfigChangeEvent(changingConfig)));
         let options = optionProvider.GetLatestOptions();
         expect(options.disableCodeActions).to.be.equal(true);
     });
@@ -66,10 +67,4 @@ function getVSCode(listenerFunction: Array<(e: ConfigurationChangeEvent) => any>
     };
 
     return vscode;
-}
-
-function getConfigChangeEvent(changingConfig: string): ConfigurationChangeEvent {
-    return {
-        affectsConfiguration: (section: string) => section == changingConfig
-    };
 }

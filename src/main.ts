@@ -34,6 +34,7 @@ import OptionStream from './observables/OptionStream';
 import  OptionProvider from './observers/OptionProvider';
 import DotNetTestChannelObserver from './observers/DotnetTestChannelObserver';
 import DotNetTestLoggerObserver from './observers/DotnetTestLoggerObserver';
+import { ShowOmniSharpConfigHasChanged } from './observers/OptionChangeObserver';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -120,6 +121,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     }));
 
     context.subscriptions.push(optionStream);
+    context.subscriptions.push(ShowOmniSharpConfigHasChanged(optionStream, vscode));
 
     let coreClrDebugPromise = Promise.resolve();
     if (runtimeDependenciesExist) {
