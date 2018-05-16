@@ -6,29 +6,19 @@
 import { Options } from "../omnisharp/options";
 import { vscode } from "../vscodeAdapter";
 import 'rxjs/add/operator/take';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import Disposable, { IDisposable } from "../Disposable";
-import { Subject } from "rxjs/Subject";
+import 'rxjs/add/operator/publishBehavior';
+import { Observable } from "rxjs/Observable";
+import { Observer } from "rxjs/Observer";
 
-export default class OptionStream {
-    private optionStream: Subject<Options>;
-    private disposable: IDisposable;
-
-    constructor(vscode: vscode) {
-        this.optionStream = new BehaviorSubject<Options>(Options.Read(vscode));
-        this.disposable = vscode.workspace.onDidChangeConfiguration(e => {
+export function createOptionStream(vscode: vscode): Observable<Options> {
+    return Observable.create((observer: Observer<Options>) => {
+        let disposable = vscode.workspace.onDidChangeConfiguration(e => {
             //if the omnisharp or csharp configuration are affected only then read the options
             if (e.affectsConfiguration('omnisharp') || e.affectsConfiguration('csharp')) {
-                this.optionStream.next(Options.Read(vscode));
+                observer.next(Options.Read(vscode));
             }
         });
-    }
 
-    public dispose = () => {
-        this.disposable.dispose();
-    }
-
-    public subscribe(observer: (options: Options) => void): Disposable {
-        return new Disposable(this.optionStream.subscribe(observer));
-    }
+        return () => disposable.dispose();
+    }).publishBehavior(Options.Read(vscode)).refCount();
 }

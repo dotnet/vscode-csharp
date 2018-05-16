@@ -4,19 +4,26 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Options } from "../omnisharp/options";
-import OptionStream from "../observables/OptionStream";
+import { Subscription } from "rxjs/Subscription";
+import { Observable } from "rxjs/Observable";
 
 export default class OptionProvider {
     private options: Options;
+    private subscription: Subscription;
 
-    constructor(optionStream: OptionStream) {
-        optionStream.subscribe(options => this.options = options);
+    constructor(optionObservable: Observable<Options>) {
+        this.subscription = optionObservable.subscribe(options => this.options = options);
     }
 
     public GetLatestOptions(): Options {
         if (!this.options) {
             throw new Error("Error reading OmniSharp options");
         }
+
         return this.options;
+    }
+
+    public dispose = () => {
+        this.subscription.unsubscribe();
     }
 }

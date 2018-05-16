@@ -3,21 +3,31 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information. 
  *--------------------------------------------------------------------------------------------*/
 
-import OptionStream from "../observables/OptionStream";
 import { vscode } from "../vscodeAdapter";
 import { Options } from "../omnisharp/options";
 import ShowInformationMessage from "./utils/ShowInformationMessage";
+import { Observable } from "rxjs/Observable";
+import Disposable from "../Disposable";
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/distinctUntilChanged';
 
-export function ShowOmniSharpConfigHasChanged(optionStream: OptionStream, vscode: vscode) {
+function ConfigChangeObservable(optionObservable: Observable<Options>): Observable<Options> {
     let options: Options;
-    return optionStream.subscribe(newOptions => {
-        if (options && hasChanged(options, newOptions)) {
+    return optionObservable. filter(newOptions => {
+        let changed = (options && hasChanged(options, newOptions));
+        options = newOptions;
+        return changed;
+    });
+}
+
+export function ShowOmniSharpConfigChangePrompt(optionObservable: Observable<Options>, vscode: vscode) {
+    let subscription = ConfigChangeObservable(optionObservable)
+        .subscribe(_ => {
             let message = "OmniSharp configuration has changed. Would you like to relaunch the OmniSharp server with your changes?";
             ShowInformationMessage(vscode, message, { title: "Restart Now", command: 'o.restart' });
-        }
+        });
 
-        options = newOptions;
-    });
+    return new Disposable(subscription);
 }
 
 function hasChanged(oldOptions: Options, newOptions: Options): boolean {

@@ -30,11 +30,11 @@ import { ProjectStatusBarObserver } from './observers/ProjectStatusBarObserver';
 import CSharpExtensionExports from './CSharpExtensionExports';
 import { vscodeNetworkSettingsProvider, NetworkSettingsProvider } from './NetworkSettings';
 import { ErrorMessageObserver } from './observers/ErrorMessageObserver';
-import OptionStream from './observables/OptionStream';
+import { createOptionStream } from './observables/OptionStream';
 import  OptionProvider from './observers/OptionProvider';
 import DotNetTestChannelObserver from './observers/DotnetTestChannelObserver';
 import DotNetTestLoggerObserver from './observers/DotnetTestLoggerObserver';
-import { ShowOmniSharpConfigHasChanged } from './observers/OptionChangeObserver';
+import { ShowOmniSharpConfigChangePrompt } from './observers/OptionChangeObserver';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -47,7 +47,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     util.setExtensionPath(extension.extensionPath);
 
     const eventStream = new EventStream();
-    const optionStream = new OptionStream(vscode);
+    const optionStream = createOptionStream(vscode);
     let optionProvider = new OptionProvider(optionStream);
 
     let dotnetChannel = vscode.window.createOutputChannel('.NET');
@@ -120,8 +120,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         eventStream.post(new ActiveTextEditorChanged());
     }));
 
-    context.subscriptions.push(optionStream);
-    context.subscriptions.push(ShowOmniSharpConfigHasChanged(optionStream, vscode));
+    context.subscriptions.push(optionProvider);
+    context.subscriptions.push(ShowOmniSharpConfigChangePrompt(optionStream, vscode));
 
     let coreClrDebugPromise = Promise.resolve();
     if (runtimeDependenciesExist) {
