@@ -321,7 +321,6 @@ export class OmniSharpServer {
 
         try {
             let launchResult = await launchOmniSharp(cwd, args, launchInfo, this.platformInfo, options);
-            this.eventStream.post(new ObservableEvents.ShowOmniSharpChannel());
             this.eventStream.post(new ObservableEvents.OmnisharpLaunch(launchResult.monoVersion, launchResult.command, launchResult.process.pid));
 
             this._serverProcess = launchResult.process;
