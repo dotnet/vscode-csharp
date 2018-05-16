@@ -38,7 +38,7 @@ suite("InformationMessageObserver", () => {
     [
         {
             event: getUnresolvedDependenices("someFile"),
-            expectedCommand: "dotnet.restore.solution"
+            expectedCommand: "dotnet.restore.all"
         }
     ].forEach((elem) => {
         suite(elem.event.constructor.name, () => {

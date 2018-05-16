@@ -24,8 +24,8 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
     let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server));
     let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionProvider));
     let d3 = vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new ShowOmniSharpChannel()));
-    let d4 = vscode.commands.registerCommand('dotnet.restore.project', () => dotnetRestoreAllProjects(server, eventStream));
-    let d5 = vscode.commands.registerCommand('dotnet.restore.all', () => dotnetRestoreSolution(server, eventStream));
+    let d4 = vscode.commands.registerCommand('dotnet.restore.project', () => pickProjectAndDotnetRestore(server, eventStream));
+    let d5 = vscode.commands.registerCommand('dotnet.restore.all', () => dotnetRestoreAllProjects(server, eventStream));
 
     // register empty handler for csharp.installDebugger
     // running the command activates the extension, which is all we need for installation to kickoff
@@ -58,7 +58,7 @@ function restartOmniSharp(server: OmniSharpServer) {
     }
 }
 
-async function pickProjectAndStart(server: OmniSharpServer, optionProvider: OptionProvider) {
+async function pickProjectAndStart(server: OmniSharpServer, optionProvider: OptionProvider): Promise<void> {
     let options = optionProvider.GetLatestOptions();
     return findLaunchTargets(options).then(targets => {
 
@@ -114,7 +114,7 @@ function projectsToCommands(projects: protocol.ProjectDescriptor[], eventStream:
     });
 }
 
-export async function dotnetRestoreAllProjects(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
+async function pickProjectAndDotnetRestore(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
     let descriptors = await getProjectDescriptors(server);
     eventStream.post(new CommandDotNetRestoreStart());
     let commands = await Promise.all(projectsToCommands(descriptors, eventStream));
@@ -124,7 +124,7 @@ export async function dotnetRestoreAllProjects(server: OmniSharpServer, eventStr
     }
 }
 
-export async function dotnetRestoreSolution(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
+async function dotnetRestoreAllProjects(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
     let descriptors = await getProjectDescriptors(server);
     eventStream.post(new CommandDotNetRestoreStart());
     for (let descriptor of descriptors) {
@@ -132,7 +132,7 @@ export async function dotnetRestoreSolution(server: OmniSharpServer, eventStream
     }
 }
 
-async function getProjectDescriptors(server: OmniSharpServer) {
+async function getProjectDescriptors(server: OmniSharpServer): Promise<protocol.ProjectDescriptor[]> {
     if (!server.isRunning()) {
         return Promise.reject('OmniSharp server is not running.');
     }
@@ -146,7 +146,7 @@ async function getProjectDescriptors(server: OmniSharpServer) {
     return descriptors;
 }
 
-async function dotnetRestore(cwd: string, eventStream: EventStream, filePath?: string) {
+async function dotnetRestore(cwd: string, eventStream: EventStream, filePath?: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         let cmd = 'dotnet';
         let args = ['restore'];
