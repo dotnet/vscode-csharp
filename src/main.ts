@@ -30,11 +30,11 @@ import { ProjectStatusBarObserver } from './observers/ProjectStatusBarObserver';
 import CSharpExtensionExports from './CSharpExtensionExports';
 import { vscodeNetworkSettingsProvider, NetworkSettingsProvider } from './NetworkSettings';
 import { ErrorMessageObserver } from './observers/ErrorMessageObserver';
-import { createOptionStream } from './observables/OptionStream';
 import  OptionProvider from './observers/OptionProvider';
 import DotNetTestChannelObserver from './observers/DotnetTestChannelObserver';
 import DotNetTestLoggerObserver from './observers/DotnetTestLoggerObserver';
 import { ShowOmniSharpConfigChangePrompt } from './observers/OptionChangeObserver';
+import createOptionStream from './observables/CreateOptionStream';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 

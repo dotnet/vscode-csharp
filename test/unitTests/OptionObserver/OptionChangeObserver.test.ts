@@ -37,7 +37,7 @@ suite("OmniSharpConfigChangeObserver", () => {
             signalCommandDone = () => { resolve(); };
         });
     });
-
+    
     [
         { config: "omnisharp", section: "path", value: "somePath" },
         { config: "omnisharp", section: "waitForDebugger", value: true },
@@ -68,25 +68,27 @@ suite("OmniSharpConfigChangeObserver", () => {
                 expect(invokedCommand).to.be.equal("o.restart");
             });
         });
-    });
-
-    [
-        { config: "csharp", section: 'disableCodeActions', value: true },
-        { config: "csharp", section: 'testsCodeLens.enabled', value: false },
-        { config: "omnisharp", section: 'referencesCodeLens.enabled', value: false },
-        { config: "csharp", section: 'format.enable', value: false },
-        { config: "omnisharp", section: 'useEditorFormattingSettings', value: false },
-        { config: "omnisharp", section: 'maxProjectResults', value: 1000 },
-        { config: "omnisharp", section: 'projectLoadTimeout', value: 1000 },
-        { config: "omnisharp", section: 'autoStart', value: false },
-        { config: "omnisharp", section: 'loggingLevel', value: 'verbose' }
-    ].forEach(elem => {
-        test(`The information message is not shown when ${elem.config} ${elem.section} changes`, async () => {
-            expect(infoMessage).to.be.undefined;
-            expect(invokedCommand).to.be.undefined;
-            updateConfig(vscode, elem.config, elem.section, elem.value);
-            optionObservable.next(Options.Read(vscode));
-            expect(infoMessage).to.be.undefined;
+        });
+    
+    suite('Information Message is not shown on change in',() => {
+        [
+            { config: "csharp", section: 'disableCodeActions', value: true },
+            { config: "csharp", section: 'testsCodeLens.enabled', value: false },
+            { config: "omnisharp", section: 'referencesCodeLens.enabled', value: false },
+            { config: "csharp", section: 'format.enable', value: false },
+            { config: "omnisharp", section: 'useEditorFormattingSettings', value: false },
+            { config: "omnisharp", section: 'maxProjectResults', value: 1000 },
+            { config: "omnisharp", section: 'projectLoadTimeout', value: 1000 },
+            { config: "omnisharp", section: 'autoStart', value: false },
+            { config: "omnisharp", section: 'loggingLevel', value: 'verbose' }
+        ].forEach(elem => {
+            test(`${elem.config} ${elem.section}`, async () => {
+                expect(infoMessage).to.be.undefined;
+                expect(invokedCommand).to.be.undefined;
+                updateConfig(vscode, elem.config, elem.section, elem.value);
+                optionObservable.next(Options.Read(vscode));
+                expect(infoMessage).to.be.undefined;
+            });
         });
     });
 
