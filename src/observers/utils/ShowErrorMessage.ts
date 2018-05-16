@@ -5,7 +5,7 @@
 
 import { vscode } from "../../vscodeAdapter";
 
-export default async function ShowErrorMessage(vscode: vscode, message: string, ...items: string[]) {
+export default async function showErrorMessage(vscode: vscode, message: string, ...items: string[]) {
     try {
         await vscode.window.showErrorMessage(message, ...items);
     }

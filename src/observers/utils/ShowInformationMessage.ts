@@ -6,7 +6,7 @@
 import { vscode } from "../../vscodeAdapter";
 import  MessageItemWithCommand from "./MessageItemWithCommand";
 
-export default async function ShowInformationMessage(vscode: vscode, message: string, ...items: MessageItemWithCommand[]) {
+export default async function showInformationMessage(vscode: vscode, message: string, ...items: MessageItemWithCommand[]) {
     try {
         let value = await vscode.window.showInformationMessage<MessageItemWithCommand>(message, ...items);
         if (value && value.command) {

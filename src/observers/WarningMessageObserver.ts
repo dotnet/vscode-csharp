@@ -8,7 +8,7 @@ import { BaseEvent, OmnisharpServerOnError, OmnisharpServerMsBuildProjectDiagnos
 import { Scheduler } from 'rxjs/Scheduler';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/debounceTime';
-import ShowWarningMessage from './utils/ShowWarningMessage';
+import showWarningMessage from './utils/ShowWarningMessage';
 
 export class WarningMessageObserver {
     private warningMessageDebouncer: Subject<BaseEvent>;
@@ -17,7 +17,7 @@ export class WarningMessageObserver {
         this.warningMessageDebouncer = new Subject<BaseEvent>();
         this.warningMessageDebouncer.debounceTime(1500, scheduler).subscribe(async event => {
             let message = "Some projects have trouble loading. Please review the output for more details.";
-            await ShowWarningMessage(this.vscode, message, { title: "Show Output", command: 'o.showOutput' });
+            await showWarningMessage(this.vscode, message, { title: "Show Output", command: 'o.showOutput' });
         });
     }
 

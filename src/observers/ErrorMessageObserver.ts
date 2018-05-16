@@ -6,7 +6,7 @@
 
 import { BaseEvent, ZipError } from "../omnisharp/loggingEvents";
 import { vscode } from "../vscodeAdapter";
-import ShowErrorMessage from "./utils/ShowErrorMessage";
+import showErrorMessage from "./utils/ShowErrorMessage";
 
 export class ErrorMessageObserver {
 
@@ -22,6 +22,6 @@ export class ErrorMessageObserver {
     }
 
     private handleZipError(event: ZipError): Promise<void> {
-        return ShowErrorMessage(this.vscode, event.message);
+        return showErrorMessage(this.vscode, event.message);
     }
 }
