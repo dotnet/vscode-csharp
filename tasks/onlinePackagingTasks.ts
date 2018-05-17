@@ -20,7 +20,7 @@ gulp.task('vsix:release:unpackage', () => {
     const packageName = `${name}-${version}.vsix`;
 
     del.sync(unpackedVsixPath);
-    fs.createReadStream(packageName).pipe(unzip.Extract({ path: unpackedVsixPath }));
+    return fs.createReadStream(packageName).pipe(unzip.Extract({ path: unpackedVsixPath }));
 });
 
 gulp.task('vsix:release:package', async (onError) => {
