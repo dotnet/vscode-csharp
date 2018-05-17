@@ -118,7 +118,6 @@
     "glob-promise": "^3.4.0",
     "gulp": "^4.0.0",
     "gulp-mocha": "^5.0.0",
-    "gulp-sequence": "^1.0.0",
     "gulp-tslint": "^8.1.3",
     "istanbul": "^0.4.5",
     "istanbul-combine": "^0.3.0",
