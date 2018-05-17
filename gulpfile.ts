@@ -25,7 +25,7 @@ gulp.task('updatePackageDependencies', () => {
 });
 
 gulp.task('tslint', () => {
-    gulp.src([
+    return gulp.src([
         '**/*.ts',
         '!**/*.d.ts',
         '!**/typings**',
