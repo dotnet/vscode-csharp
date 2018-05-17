@@ -53,9 +53,8 @@ gulp.task("cov:merge-html", async () => {
     });
 });
 
-gulp.task("cov:report", ["cov:report:integration", "cov:report:unit"]);
 
-gulp.task("cov:report:integration", ["cov:merge"], async () => {
+gulp.task("cov:report:integration", gulp.series("cov:merge", async () => {
     return spawnNode([
         codecovPath,
         '-f',
@@ -65,7 +64,7 @@ gulp.task("cov:report:integration", ["cov:merge"], async () => {
     ], {
         cwd: codeExtensionSourcesPath
     });
-});
+}));
 
 gulp.task("cov:report:unit", async () => {
     return spawnNode([
@@ -78,3 +77,5 @@ gulp.task("cov:report:unit", async () => {
         cwd: codeExtensionSourcesPath
     });
 });
+
+gulp.task("cov:report", gulp.parallel("cov:report:integration", "cov:report:unit"));
