@@ -18,7 +18,7 @@ export const nodeModulesPath = path.join(rootPath, 'node_modules');
 export const vscePath = path.join(nodeModulesPath, 'vsce', 'out', 'vsce');
 export const nycPath = path.join(nodeModulesPath, 'nyc', 'bin', 'nyc.js');
 export const mochaPath = path.join(nodeModulesPath, 'mocha', 'bin', 'mocha');
-export const istanbulCombinePath = path.join(nodeModulesPath, 'istanbul-combine', 'cli.js');
+export const istanbulPath = path.join(nodeModulesPath, 'istanbul', 'lib', 'cli.js');
 export const codecovPath = path.join(nodeModulesPath, 'codecov', 'bin', 'codecov');
 export const vscodeTestHostPath = path.join(nodeModulesPath, 'vscode', 'bin', 'test');
 
