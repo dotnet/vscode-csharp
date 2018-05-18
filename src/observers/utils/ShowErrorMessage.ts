@@ -3,8 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
+import { vscode } from "../../vscodeAdapter";
 
-import * as gulp from 'gulp';
-
-gulp.task('package:offline', gulp.series('vsix:offline:package'));
+export default async function showErrorMessage(vscode: vscode, message: string, ...items: string[]) {
+    try {
+        await vscode.window.showErrorMessage(message, ...items);
+    }
+    catch (err) {
+        console.log(err);
+    }
+}

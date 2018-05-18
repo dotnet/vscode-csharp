@@ -84,15 +84,15 @@ suite("InformationMessageObserver", () => {
 
     function getVsCode() {
         let vscode = getVSCodeWithConfig();
-        vscode.window.showInformationMessage = async (message: string, ...items: string[]) => {
+        vscode.window.showInformationMessage = async <T>(message: string, ...items: T[]) => {
             infoMessage = message;
-            return new Promise<string>(resolve => {
+            return new Promise<T>(resolve => {
                 doClickCancel = () => {
                     resolve(undefined);
                 };
 
                 doClickOk = () => {
-                    resolve(message);
+                    resolve(...items);
                 };
             });
         };

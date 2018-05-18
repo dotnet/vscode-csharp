@@ -110,7 +110,7 @@ export function getFakeVsCode(): vscode.vscode {
         },
         window: {
             activeTextEditor: undefined,
-            showInformationMessage: (message: string, ...items: string[]) => {
+            showInformationMessage:  <T extends MessageItem>(message: string, ...items: T[]) => {
                 throw new Error("Not Implemented");
             },
             showWarningMessage: <T extends MessageItem>(message: string, ...items: T[]) => {

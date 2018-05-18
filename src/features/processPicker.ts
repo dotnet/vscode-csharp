@@ -43,6 +43,7 @@ export class AttachPicker {
 interface IPipeTransportOptions {
     pipeProgram: string;
     pipeArgs: string | string[];
+    pipeCwd: string;
     quoteArgs: boolean;
 }
 
@@ -89,18 +90,21 @@ export class RemoteAttachPicker {
     public static getPipeTransportOptions(pipeTransport: any, osPlatform: string): IPipeTransportOptions {
         let pipeProgram: string = pipeTransport.pipeProgram;
         let pipeArgs: string[] | string = pipeTransport.pipeArgs;
+        let pipeCwd: string = pipeTransport.pipeCwd;
         let quoteArgs: boolean = pipeTransport.quoteArgs != null ? pipeTransport.quoteArgs : true; // default value is true
         let platformSpecificPipeTransportOptions: IPipeTransportOptions = this.getPlatformSpecificPipeTransportOptions(pipeTransport, osPlatform);
 
         if (platformSpecificPipeTransportOptions) {
             pipeProgram = platformSpecificPipeTransportOptions.pipeProgram || pipeProgram;
             pipeArgs = platformSpecificPipeTransportOptions.pipeArgs || pipeArgs;
+            pipeCwd = platformSpecificPipeTransportOptions.pipeCwd || pipeCwd;
             quoteArgs = platformSpecificPipeTransportOptions.quoteArgs != null ? platformSpecificPipeTransportOptions.quoteArgs : quoteArgs;
         }
 
         return {
             pipeProgram: pipeProgram,
             pipeArgs: pipeArgs,
+            pipeCwd: pipeCwd,
             quoteArgs: quoteArgs
         };
     }
@@ -216,7 +220,7 @@ export class RemoteAttachPicker {
             let pipeTransport = this.getPipeTransportOptions(args.pipeTransport, os.platform());
 
             return RemoteAttachPicker.createPipeCmd(pipeTransport.pipeProgram, pipeTransport.pipeArgs, pipeTransport.quoteArgs)
-                .then(async pipeCmd => RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd, platformInfo))
+                .then(async pipeCmd => RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd, pipeTransport.pipeCwd, platformInfo))
                 .then(processes => {
                     let attachPickOptions: vscode.QuickPickOptions = {
                         matchOnDescription: true,
@@ -229,10 +233,10 @@ export class RemoteAttachPicker {
         }
     }
 
-    public static async getRemoteOSAndProcesses(pipeCmd: string, platformInfo: PlatformInformation): Promise<AttachItem[]> {
+    public static async getRemoteOSAndProcesses(pipeCmd: string, pipeCwd: string, platformInfo: PlatformInformation): Promise<AttachItem[]> {
         const scriptPath = path.join(getExtensionPath(), 'scripts', 'remoteProcessPickerScript');
 
-        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} < ${scriptPath}`, null, RemoteAttachPicker._channel, platformInfo).then(output => {
+        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} < ${scriptPath}`, pipeCwd, RemoteAttachPicker._channel, platformInfo).then(output => {
             // OS will be on first line
             // Processess will follow if listed
             let lines = output.split(/\r?\n/);
@@ -501,7 +505,7 @@ async function execChildProcess(process: string, workingDirectory: string): Prom
     });
 }
 
-// VSCode cannot find the path "c:\windows\system32\bash.exe" as bash.exe is only available on 64bit OS. 
+// VSCode cannot find the path "c:\windows\system32\bash.exe" as bash.exe is only available on 64bit OS.
 // It can be invoked from "c:\windows\sysnative\bash.exe", so adding "c:\windows\sysnative" to path if we identify
 // VSCode is running in windows and doesn't have it in the path.
 async function GetSysNativePathIfNeeded(platformInfo: PlatformInformation): Promise<NodeJS.ProcessEnv> {
