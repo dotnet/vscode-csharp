@@ -613,7 +613,7 @@
       },
       {
         "command": "dotnet.restore.all",
-        "title": "Restore Packages",
+        "title": "Restore All Projects",
         "category": ".NET"
       },
       {
