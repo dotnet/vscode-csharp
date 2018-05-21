@@ -3,31 +3,39 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseEvent, DotnetTestRunStart, DotnetTestRunMessage, ReportDotnetTestResults } from "../omnisharp/loggingEvents";
+import { BaseEvent, DotnetTestRunStart, DotnetTestMessage, ReportDotnetTestResults, DotnetTestDebugStart } from "../omnisharp/loggingEvents";
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import * as protocol from '../omnisharp/protocol';
 
 export default class DotnetTestLoggerObserver extends BaseLoggerObserver {
-    
+
     public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case DotnetTestRunStart.name:
                 this.handleDotnetTestRunStart(<DotnetTestRunStart>event);
                 break;
-            case DotnetTestRunMessage.name:
-                this.logger.appendLine((<DotnetTestRunMessage>event).message);
+            case DotnetTestMessage.name:
+                this.logger.appendLine((<DotnetTestMessage>event).message);
                 break;
             case ReportDotnetTestResults.name:
                 this.handleReportDotnetTestResults(<ReportDotnetTestResults>event);
                 break;
+            case DotnetTestDebugStart.name:
+                this.handleDotnetTestDebugStart(<DotnetTestDebugStart>event);
+                break;
         }
+    }
+
+    private handleDotnetTestDebugStart(event: DotnetTestDebugStart) {
+        this.logger.appendLine(`Debugging method ${event.testMethod}...`);
+        this.logger.appendLine('');
     }
 
     private handleDotnetTestRunStart(event: DotnetTestRunStart): any {
         this.logger.appendLine(`Running test ${event.testMethod}...`);
         this.logger.appendLine('');
     }
-    
+
     private handleReportDotnetTestResults(event: ReportDotnetTestResults) {
         const results = event.results;
         const totalTests = results.length;
