@@ -3,8 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
+import { MessageItem } from "../../vscodeAdapter";
 
-import * as gulp from 'gulp';
-
-gulp.task('package:offline', gulp.series('vsix:offline:package'));
+export default interface MessageItemWithCommand extends MessageItem {
+    command: string;
+    args?: any;
+}

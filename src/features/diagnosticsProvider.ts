@@ -133,7 +133,9 @@ class DiagnosticsProvider extends AbstractSupport {
         let d4 = vscode.workspace.onDidOpenTextDocument(event => this._onDocumentAddOrChange(event), this);
         let d3 = vscode.workspace.onDidChangeTextDocument(event => this._onDocumentAddOrChange(event.document), this);
         let d5 = vscode.workspace.onDidCloseTextDocument(this._onDocumentRemove, this);
-        this._disposable = new CompositeDisposable(this._diagnostics, d1, d2, d3, d4, d5);
+        let d6 = vscode.window.onDidChangeActiveTextEditor(event => this._onDidChangeActiveTextEditor(event), this);
+        let d7 = vscode.window.onDidChangeWindowState(event => this._OnDidChangeWindowState(event), this);
+        this._disposable = new CompositeDisposable(this._diagnostics, d1, d2, d3, d4, d5, d6, d7);
 
         // Go ahead and check for diagnostics in the currently visible editors.
         for (let editor of vscode.window.visibleTextEditors) {
@@ -156,6 +158,19 @@ class DiagnosticsProvider extends AbstractSupport {
         this._disposable.dispose();
     }
 
+    private _OnDidChangeWindowState(windowState: vscode.WindowState): void {
+        if (windowState.focused === true) {
+            this._onDidChangeActiveTextEditor(vscode.window.activeTextEditor);
+        }
+    }
+
+    private _onDidChangeActiveTextEditor(textEditor: vscode.TextEditor): void {
+        // active text editor can be undefined.
+        if (textEditor != undefined && textEditor.document != null) { 
+            this._onDocumentAddOrChange(textEditor.document);
+        }
+    }
+
     private _onDocumentAddOrChange(document: vscode.TextDocument): void {
         if (document.languageId === 'csharp' && document.uri.scheme === 'file') {
             this._validateDocument(document);
@@ -163,7 +178,7 @@ class DiagnosticsProvider extends AbstractSupport {
         }
     }
 
-    private _onDocumentRemove(document: vscode.TextDocument) {
+    private _onDocumentRemove(document: vscode.TextDocument): void {
         let key = document.uri;
         let didChange = false;
         if (this._diagnostics.get(key)) {

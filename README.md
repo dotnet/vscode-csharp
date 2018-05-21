@@ -30,7 +30,7 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * Improvements for projects containing XAML files
 * Many other bug fixes!
 
-See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.15.0/CHANGELOG.md) for more detail.
+See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.15.2/CHANGELOG.md) for more detail.
 
 ### Supported Operating Systems for Debugging
 
