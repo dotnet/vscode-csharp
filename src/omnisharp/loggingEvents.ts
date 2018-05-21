@@ -134,6 +134,10 @@ export class DotnetTestDebugStart implements BaseEvent {
     constructor(public testMethod: string) { }
 }
 
+export class DebugStart implements BaseEvent {
+    constructor(public targetProcessId: number) { }
+}
+
 export class DebuggerPrerequisiteFailure extends EventWithMessage { }
 export class DebuggerPrerequisiteWarning extends EventWithMessage { }
 export class CommandDotNetRestoreProgress extends EventWithMessage { }
@@ -146,6 +150,7 @@ export class OmnisharpServerMessage extends EventWithMessage { }
 export class OmnisharpServerVerboseMessage extends EventWithMessage { }
 export class DotnetTestMessage extends EventWithMessage { }
 export class DotnetTestRunFailure extends EventWithMessage { }
+export class DebuggerWarning extends EventWithMessage { }
 
 export class ProjectModified implements BaseEvent { }
 export class ActivationFailure implements BaseEvent { }
@@ -163,3 +168,4 @@ export class OmnisharpServerOnStart implements BaseEvent { }
 export class LatestBuildDownloadStart implements BaseEvent { }
 export class OmnisharpRestart implements BaseEvent { }
 export class DotnetTestsInClassRunStart implements BaseEvent { }
+export class DebugComplete implements BaseEvent { }

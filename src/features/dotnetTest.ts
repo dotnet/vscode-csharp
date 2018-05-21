@@ -13,7 +13,7 @@ import * as vscode from 'vscode';
 import AbstractProvider from './abstractProvider';
 import { DebuggerEventsProtocol } from '../coreclr-debug/debuggerEventsProtocol';
 import { OmniSharpServer } from '../omnisharp/server';
-import { TestExecutionCountReport, ReportDotnetTestResults, DotnetTestRunStart, DotnetTestMessage, DotnetTestRunFailure, DotnetTestsInClassRunStart } from '../omnisharp/loggingEvents';
+import { TestExecutionCountReport, ReportDotnetTestResults, DotnetTestRunStart, DotnetTestMessage, DotnetTestRunFailure, DotnetTestsInClassRunStart, DebuggerWarning, DebugStart, DebugComplete } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 import LaunchConfiguration from './launchConfiguration';
 import Disposable from '../Disposable';
@@ -433,19 +433,19 @@ class DebugEventListener {
                     event = DebuggerEventsProtocol.decodePacket(buffer);
                 }
                 catch (e) {
-                    this._outputChannel.appendLine("Warning: Invalid event received from debugger");
+                    this._eventStream.post(new DebuggerWarning("'Invalid' event received from debugger"));
                     return;
                 }
 
                 switch (event.eventType) {
                     case DebuggerEventsProtocol.EventType.ProcessLaunched:
                         let processLaunchedEvent = <DebuggerEventsProtocol.ProcessLaunchedEvent>(event);
-                        this._outputChannel.appendLine(`Started debugging process #${processLaunchedEvent.targetProcessId}.`);
+                        this._eventStream.post(new DebugStart(processLaunchedEvent.targetProcessId));
                         this.onProcessLaunched(processLaunchedEvent.targetProcessId);
                         break;
 
                     case DebuggerEventsProtocol.EventType.DebuggingStopped:
-                        this._outputChannel.appendLine("Debugging complete.\n");
+                        this._eventStream.post(new DebugComplete());
                         this.onDebuggingStopped();
                         break;
                 }
@@ -463,7 +463,7 @@ class DebugEventListener {
                     if (!isStarted) {
                         reject(err.message);
                     } else {
-                        this._outputChannel.appendLine("Warning: Communications error on debugger event channel. " + err.message);
+                        this._eventStream.post(new DebuggerWarning(`Communications error on debugger event channel. ${err.message}`));
                     }
                 });
 
@@ -502,7 +502,7 @@ class DebugEventListener {
         };
 
         const disposable = this._server.onTestMessage(e => {
-            this._outputChannel.appendLine(e.Message);
+            this._eventStream.post(new DotnetTestMessage(e.Message));
         });
 
         serverUtils.debugTestLaunch(this._server, request)

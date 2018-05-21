@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseEvent, DotnetTestRunStart, DotnetTestMessage, ReportDotnetTestResults, DotnetTestDebugStart } from "../omnisharp/loggingEvents";
+import { BaseEvent, DotnetTestRunStart, DotnetTestMessage, ReportDotnetTestResults, DotnetTestDebugStart, DebuggerWarning, DebugStart, DebugComplete } from "../omnisharp/loggingEvents";
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import * as protocol from '../omnisharp/protocol';
 
@@ -23,7 +23,20 @@ export default class DotnetTestLoggerObserver extends BaseLoggerObserver {
             case DotnetTestDebugStart.name:
                 this.handleDotnetTestDebugStart(<DotnetTestDebugStart>event);
                 break;
+            case DebuggerWarning.name:
+                this.handleDebuggerWarning(<DebuggerWarning>event);
+                break;
+            case DebugStart.name:
+                this.handleDebugStart(<DebugStart>event);
+                break;
+            case DebugComplete.name:
+                this.logger.appendLine("Debugging complete.\n");
+                break;
         }
+    }
+
+    private handleDebuggerWarning(event: DebuggerWarning) {
+        this.logger.appendLine(`Warning: ${event.message}`);
     }
 
     private handleDotnetTestDebugStart(event: DotnetTestDebugStart) {
@@ -34,6 +47,10 @@ export default class DotnetTestLoggerObserver extends BaseLoggerObserver {
     private handleDotnetTestRunStart(event: DotnetTestRunStart): any {
         this.logger.appendLine(`Running test ${event.testMethod}...`);
         this.logger.appendLine('');
+    }
+
+    private handleDebugStart(event: DebugStart) {
+        this.logger.appendLine(`Started debugging process #${event.targetProcessId}.`);
     }
 
     private handleReportDotnetTestResults(event: ReportDotnetTestResults) {
