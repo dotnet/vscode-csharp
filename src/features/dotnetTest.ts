@@ -13,7 +13,7 @@ import * as vscode from 'vscode';
 import AbstractProvider from './abstractProvider';
 import { DebuggerEventsProtocol } from '../coreclr-debug/debuggerEventsProtocol';
 import { OmniSharpServer } from '../omnisharp/server';
-import { TestExecutionCountReport, ReportDotnetTestResults, DotnetTestRunStart, DotnetTestMessage, DotnetTestRunFailure, DotnetTestsInClassRunStart, DebuggerWarning, DebugStart, DebugComplete } from '../omnisharp/loggingEvents';
+import { TestExecutionCountReport, ReportDotnetTestResults, DotnetTestRunStart, DotnetTestMessage, DotnetTestRunFailure, DotnetTestsInClassRunStart, DebuggerWarning, DebugStart, DebugComplete, DotnetTestDebugStart, DotnetTestsInClassDebugStart } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 import LaunchConfiguration from './launchConfiguration';
 import Disposable from '../Disposable';
@@ -323,6 +323,8 @@ export default class TestManager extends AbstractProvider {
         // We support to styles of 'dotnet test' for debugging: The legacy 'project.json' testing, and the newer csproj support
         // using VS Test. These require a different level of communication.
 
+        this._eventStream.post(new DotnetTestDebugStart(testMethod));
+
         let { debugType, debugEventListener, targetFrameworkVersion } = await this._recordDebugAndGetDebugValues(fileName, testFrameworkName);
 
         return this._getLaunchConfiguration(debugType, fileName, testMethod, testFrameworkName, targetFrameworkVersion, debugEventListener)
@@ -339,6 +341,8 @@ export default class TestManager extends AbstractProvider {
     }
 
     private async _debugDotnetTestsInClass(methodsToRun: string[], fileName: string, testFrameworkName: string) {
+
+        this._eventStream.post(new DotnetTestsInClassDebugStart());
 
         let { debugType, debugEventListener, targetFrameworkVersion } = await this._recordDebugAndGetDebugValues(fileName, testFrameworkName);
 
@@ -433,7 +437,7 @@ class DebugEventListener {
                     event = DebuggerEventsProtocol.decodePacket(buffer);
                 }
                 catch (e) {
-                    this._eventStream.post(new DebuggerWarning("'Invalid' event received from debugger"));
+                    this._eventStream.post(new DebuggerWarning("Invalid event received from debugger"));
                     return;
                 }
 

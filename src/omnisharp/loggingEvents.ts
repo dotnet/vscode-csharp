@@ -168,4 +168,5 @@ export class OmnisharpServerOnStart implements BaseEvent { }
 export class LatestBuildDownloadStart implements BaseEvent { }
 export class OmnisharpRestart implements BaseEvent { }
 export class DotnetTestsInClassRunStart implements BaseEvent { }
+export class DotnetTestsInClassDebugStart implements BaseEvent { }
 export class DebugComplete implements BaseEvent { }
