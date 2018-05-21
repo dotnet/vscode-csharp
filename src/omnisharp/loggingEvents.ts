@@ -151,6 +151,7 @@ export class OmnisharpServerVerboseMessage extends EventWithMessage { }
 export class DotnetTestMessage extends EventWithMessage { }
 export class DotnetTestRunFailure extends EventWithMessage { }
 export class DebuggerWarning extends EventWithMessage { }
+export class DebuggerStartFailure extends EventWithMessage { }
 
 export class ProjectModified implements BaseEvent { }
 export class ActivationFailure implements BaseEvent { }

@@ -13,7 +13,7 @@ import * as vscode from 'vscode';
 import AbstractProvider from './abstractProvider';
 import { DebuggerEventsProtocol } from '../coreclr-debug/debuggerEventsProtocol';
 import { OmniSharpServer } from '../omnisharp/server';
-import { TestExecutionCountReport, ReportDotnetTestResults, DotnetTestRunStart, DotnetTestMessage, DotnetTestRunFailure, DotnetTestsInClassRunStart, DebuggerWarning, DebugStart, DebugComplete, DotnetTestDebugStart, DotnetTestsInClassDebugStart } from '../omnisharp/loggingEvents';
+import { TestExecutionCountReport, ReportDotnetTestResults, DotnetTestRunStart, DotnetTestMessage, DotnetTestRunFailure, DotnetTestsInClassRunStart, DebuggerWarning, DebugStart, DebugComplete, DotnetTestDebugStart, DotnetTestsInClassDebugStart, DebuggerStartFailure } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 import LaunchConfiguration from './launchConfiguration';
 import Disposable from '../Disposable';
@@ -157,8 +157,10 @@ export default class TestManager extends AbstractProvider {
             this._eventStream.post(new ReportDotnetTestResults(results));
         }
         catch (reason) {
-            listener.dispose();
             this._eventStream.post(new DotnetTestRunFailure(reason));
+        }
+        finally {
+            listener.dispose();
         }
     }
 
@@ -178,8 +180,10 @@ export default class TestManager extends AbstractProvider {
             this._eventStream.post(new ReportDotnetTestResults(results));
         }
         catch (reason) {
-            listener.dispose();
             this._eventStream.post(new DotnetTestRunFailure(reason));
+        }
+        finally {
+            listener.dispose();
         }
     }
 
@@ -333,7 +337,7 @@ export default class TestManager extends AbstractProvider {
                 return vscode.debug.startDebugging(workspaceFolder, config);
             })
             .catch(reason => {
-                vscode.window.showErrorMessage(`Failed to start debugger: ${reason}`);
+                this._eventStream.post(new DebuggerStartFailure(reason));
                 if (debugEventListener != null) {
                     debugEventListener.close();
                 }
@@ -352,7 +356,7 @@ export default class TestManager extends AbstractProvider {
                 return vscode.debug.startDebugging(workspaceFolder, config);
             })
             .catch(reason => {
-                vscode.window.showErrorMessage(`Failed to start debugger: ${reason}`);
+                this._eventStream.post(new DebuggerStartFailure(reason));
                 if (debugEventListener != null) {
                     debugEventListener.close();
                 }

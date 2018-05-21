@@ -3,8 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
-import { BaseEvent, ZipError, DotnetTestRunFailure } from "../omnisharp/loggingEvents";
+import { BaseEvent, ZipError, DotnetTestRunFailure, DebuggerStartFailure } from "../omnisharp/loggingEvents";
 import { vscode } from "../vscodeAdapter";
 import showErrorMessage from "./utils/ShowErrorMessage";
 
@@ -21,6 +20,9 @@ export class ErrorMessageObserver {
             case DotnetTestRunFailure.name:
                 this.handleDotnetTestRunFailure(<DotnetTestRunFailure>event);
                 break;
+            case DebuggerStartFailure.name:
+                this.handleDebuggerStartFailure(<DebuggerStartFailure>event);
+                break;
         }
     }
 
@@ -30,5 +32,9 @@ export class ErrorMessageObserver {
 
     private handleDotnetTestRunFailure(event: DotnetTestRunFailure) {
         showErrorMessage(this.vscode,`Failed to run test because ${event.message}.`);
+    }
+
+    private handleDebuggerStartFailure(event: DebuggerStartFailure) {
+        showErrorMessage(this.vscode, `Failed to start debugger: ${event.message}`);
     }
 }
