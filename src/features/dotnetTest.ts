@@ -13,7 +13,7 @@ import * as vscode from 'vscode';
 import AbstractProvider from './abstractProvider';
 import { DebuggerEventsProtocol } from '../coreclr-debug/debuggerEventsProtocol';
 import { OmniSharpServer } from '../omnisharp/server';
-import { TestExecutionCountReport, ReportDotnetTestResults, DotnetTestRunStart, DotnetTestRunMessage, DotnetTestRunFailure } from '../omnisharp/loggingEvents';
+import { TestExecutionCountReport, ReportDotnetTestResults, DotnetTestRunStart, DotnetTestRunMessage, DotnetTestRunFailure, DotnetTestsInClassRunStart } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 import LaunchConfiguration from './launchConfiguration';
 import Disposable from '../Disposable';
@@ -22,7 +22,6 @@ import CompositeDisposable from '../CompositeDisposable';
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 
 export default class TestManager extends AbstractProvider {
-    private _channel: vscode.OutputChannel;
 
     private _runCounts: { [testFrameworkName: string]: number };
     private _debugCounts: { [testFrameworkName: string]: number };
@@ -122,35 +121,6 @@ export default class TestManager extends AbstractProvider {
             .then(response => response.Results);
     }
 
-    private async _reportResults(results: protocol.V2.DotNetTestResult[], eventStream: EventStream): Promise<void> {
-        const totalTests = results.length;
-        const output = this._getOutputChannel();
-
-        let totalPassed = 0, totalFailed = 0, totalSkipped = 0;
-        for (let result of results) {
-            output.appendLine(`${result.MethodName}: ${result.Outcome}`);
-            switch (result.Outcome) {
-                case protocol.V2.TestOutcomes.Failed:
-                    totalFailed += 1;
-                    break;
-                case protocol.V2.TestOutcomes.Passed:
-                    totalPassed += 1;
-                    break;
-                case protocol.V2.TestOutcomes.Skipped:
-                    totalSkipped += 1;
-                    break;
-            }
-        }
-
-        eventStream.post(new ReportDotnetTestResults(totalTests, totalPassed))
-
-        output.appendLine('');
-        output.appendLine(`Total tests: ${totalTests}. Passed: ${totalPassed}. Failed: ${totalFailed}. Skipped: ${totalSkipped}`);
-        output.appendLine('');
-
-        return Promise.resolve();
-    }
-
     private async _recordRunAndGetFrameworkVersion(fileName: string, testFrameworkName: string) {
 
         await this._saveDirtyFiles();
@@ -193,22 +163,24 @@ export default class TestManager extends AbstractProvider {
     }
 
     private async _runDotnetTestsInClass(methodsInClass: string[], fileName: string, testFrameworkName: string, eventStream: EventStream) {
-        const output = this._getOutputChannel();
 
-        output.show();
+        //to do: try to get the class name here
+        eventStream.post(new DotnetTestsInClassRunStart());
+        
         const listener = this._server.onTestMessage(e => {
-            output.appendLine(e.Message);
+            eventStream.post(new DotnetTestRunMessage(e.Message));
         });
 
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
 
-        return this._runTestsInClass(fileName, testFrameworkName, targetFrameworkVersion, methodsInClass)
-            .then(async results => this._reportResults(results))
-            .then(() => listener.dispose())
-            .catch(reason => {
-                listener.dispose();
-                vscode.window.showErrorMessage(`Failed to run tests because ${reason}.`);
-            });
+        try {
+            let results = await this._runTestsInClass(fileName, testFrameworkName, targetFrameworkVersion, methodsInClass);
+            eventStream.post(new ReportDotnetTestResults(results));
+        }
+        catch (reason) {
+            listener.dispose();
+            eventStream.post(new DotnetTestRunFailure(reason));
+        }
     }
 
     private async _runTestsInClass(fileName: string, testFrameworkName: string, targetFrameworkVersion: string, methodsToRun: string[]): Promise<protocol.V2.DotNetTestResult[]> {

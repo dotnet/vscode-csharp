@@ -123,7 +123,7 @@ export class ZipError implements BaseEvent {
 }
 
 export class ReportDotnetTestResults implements BaseEvent {
-    constructor(results: protocol.V2.DotNetTestResult[]) { }
+    constructor(public results: protocol.V2.DotNetTestResult[]) { }
 }
 
 export class DotnetTestRunStart implements BaseEvent {
@@ -158,3 +158,4 @@ export class OmnisharpServerOnStop implements BaseEvent { }
 export class OmnisharpServerOnStart implements BaseEvent { }
 export class LatestBuildDownloadStart implements BaseEvent { }
 export class OmnisharpRestart implements BaseEvent { }
+export class DotnetTestsInClassRunStart implements BaseEvent { }
