@@ -22,12 +22,12 @@ suite("DotnetTestChannelObserver", () => {
 
     [
         new DotnetTestRunStart("foo"),
-        new DotnetTestRunFailure("some failure"),   
-        new DotnetTestsInClassRunStart(), 
+        new DotnetTestRunFailure("some failure"),
+        new DotnetTestsInClassRunStart(),
         new DotnetTestDebugStart("foo"),
         new DotnetTestsInClassDebugStart()
     ].forEach((event: BaseEvent) => {
-        test(`CommandDotNetRestoreStart : Clears and shows the channel`, () => {
+        test(`${event.constructor.name}: Channel is shown`, () => {
             expect(hasShown).to.be.false;
             observer.post(event);
             expect(hasShown).to.be.true;
