@@ -122,6 +122,14 @@ export class ZipError implements BaseEvent {
     constructor(public message: string) { }
 }
 
+export class ReportDotnetTestResults implements BaseEvent {
+    constructor(results: protocol.V2.DotNetTestResult[]) { }
+}
+
+export class DotnetTestRunStart implements BaseEvent {
+    constructor(public testMethod: string) { }
+}
+
 export class DebuggerPrerequisiteFailure extends EventWithMessage { }
 export class DebuggerPrerequisiteWarning extends EventWithMessage { }
 export class CommandDotNetRestoreProgress extends EventWithMessage { }
@@ -132,6 +140,8 @@ export class DownloadFailure extends EventWithMessage { }
 export class OmnisharpServerOnStdErr extends EventWithMessage { }
 export class OmnisharpServerMessage extends EventWithMessage { }
 export class OmnisharpServerVerboseMessage extends EventWithMessage { }
+export class DotnetTestRunMessage extends EventWithMessage { }
+export class DotnetTestRunFailure extends EventWithMessage { }
 
 export class ProjectModified implements BaseEvent { }
 export class ActivationFailure implements BaseEvent { }

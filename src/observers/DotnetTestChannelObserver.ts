@@ -4,12 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { BaseChannelObserver } from "./BaseChannelObserver";
-import { BaseEvent } from "../omnisharp/loggingEvents";
+import { BaseEvent, DotnetTestRunStart, DotnetTestRunFailure } from "../omnisharp/loggingEvents";
 
-export default class DotnetTestLogChannelObserver extends BaseChannelObserver {
+export default class DotnetTestChannelObserver extends BaseChannelObserver {
     public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
-            
+            case DotnetTestRunStart.name:
+            case DotnetTestRunFailure.name:    
+                this.showChannel();
+                break;
         }
     }
 }

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 
-import { BaseEvent, ZipError } from "../omnisharp/loggingEvents";
+import { BaseEvent, ZipError, DotnetTestRunFailure } from "../omnisharp/loggingEvents";
 import { vscode } from "../vscodeAdapter";
 import showErrorMessage from "./utils/ShowErrorMessage";
 
@@ -18,10 +18,17 @@ export class ErrorMessageObserver {
             case ZipError.name:
                 this.handleZipError(<ZipError>event);
                 break;
+            case DotnetTestRunFailure.name:
+                this.handleDotnetTestRunFailure(<DotnetTestRunFailure>event);
+                break;
         }
     }
 
     private handleZipError(event: ZipError) {
         showErrorMessage(this.vscode, event.message);
+    }
+
+    private handleDotnetTestRunFailure(event: DotnetTestRunFailure) {
+        showErrorMessage(this.vscode,`Failed to run test because ${event.message}.`);
     }
 }
