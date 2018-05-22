@@ -3,11 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { expect } from 'chai';
+import * as chai from 'chai';
 import { getNullChannel } from '../testAssets/Fakes';
 import { EventWithMessage, DotNetTestDebugWarning, DotNetTestDebugStart, BaseEvent, DotNetTestRunStart, DotNetTestDebugProcessStart, DotNetTestMessage, DotNetTestDebugComplete, ReportDotNetTestResults } from '../../../src/omnisharp/loggingEvents';
 import DotNetTestLoggerObserver from '../../../src/observers/DotnetTestLoggerObserver';
 import * as protocol from '../../../src/omnisharp/protocol';
+
+const expect = chai.expect;
+chai.use(require('chai-string'));
 
 suite(`${DotNetTestLoggerObserver.name}`, () => {
     let appendedMessage: string;
@@ -65,16 +68,19 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
         test(`Displays the outcome of each test`, () => {
             observer.post(event);
             event.results.forEach(result => {
-                expect(appendedMessage).to.contain(`${result.MethodName}: ${result.Outcome}`);
+                expect(appendedMessage).to.containIgnoreCase(`${result.MethodName}:\n    Outcome: ${result.Outcome}`);
             });
         });
 
         test(`Displays the total outcome`, () => {
             observer.post(event);
-            expect(appendedMessage).to.contain(`Total tests: ${event.results.length}. Passed: 1. Failed: 2. Skipped: 1`);
-            event.results.forEach(result => {
-                expect(appendedMessage).to.contain(`${result.MethodName}: ${result.Outcome}`);
-            });
+            expect(appendedMessage).to.contain(`Total tests: 4. Passed: 1. Failed: 2. Skipped: 1`);
+        });
+
+        test('Displays the error message if any is present', () => {
+            observer.post(event);
+            expect(appendedMessage).to.contain("foo:\n    Outcome: Failed\n    Error Message: assertion failed");
+            expect(appendedMessage).to.contain("failinator:\n    Outcome: Failed\n    Error Message: error occured");
         });
     });
 });

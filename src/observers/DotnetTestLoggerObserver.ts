@@ -80,7 +80,7 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
     }
 
     private logTestResult(result: protocol.V2.DotNetTestResult) {
-        this.logger.appendLine(`${result.MethodName}: ${processOutcome(result.Outcome)}`);
+        this.logger.appendLine(`${result.MethodName}:`);
         this.logger.increaseIndent();
         this.logger.appendLine(`Outcome: ${processOutcome(result.Outcome)}`);
         if (result.ErrorMessage) {
@@ -91,6 +91,6 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
     }
 }
 
-function processOutcome(input: string) {
+export function processOutcome(input: string) {
     return input.charAt(0).toUpperCase() + input.slice(1);
 }
