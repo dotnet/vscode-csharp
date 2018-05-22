@@ -62,14 +62,14 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
                 getDotNetTestResults("passinator", "passed", "", ""),
             ]);
 
-        test(`${event.constructor.name}: Displays the outcome of each test`, () => {
+        test(`Displays the outcome of each test`, () => {
             observer.post(event);
             event.results.forEach(result => {
                 expect(appendedMessage).to.contain(`${result.MethodName}: ${result.Outcome}`);
             });
         });
 
-        test(`${event.constructor.name}: Displays the total outcome`, () => {
+        test(`Displays the total outcome`, () => {
             observer.post(event);
             expect(appendedMessage).to.contain(`Total tests: ${event.results.length}. Passed: 1. Failed: 2. Skipped: 1`);
             event.results.forEach(result => {
