@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseEvent, ZipError, DotnetTestRunFailure, DebuggerStartFailure } from "../omnisharp/loggingEvents";
+import { BaseEvent, ZipError, DotNetTestRunFailure, DotNetTestDebugStartFailure } from "../omnisharp/loggingEvents";
 import { vscode } from "../vscodeAdapter";
 import showErrorMessage from "./utils/ShowErrorMessage";
 
@@ -17,11 +17,11 @@ export class ErrorMessageObserver {
             case ZipError.name:
                 this.handleZipError(<ZipError>event);
                 break;
-            case DotnetTestRunFailure.name:
-                this.handleDotnetTestRunFailure(<DotnetTestRunFailure>event);
+            case DotNetTestRunFailure.name:
+                this.handleDotnetTestRunFailure(<DotNetTestRunFailure>event);
                 break;
-            case DebuggerStartFailure.name:
-                this.handleDebuggerStartFailure(<DebuggerStartFailure>event);
+            case DotNetTestDebugStartFailure.name:
+                this.handleDotNetTestDebugStartFailure(<DotNetTestDebugStartFailure>event);
                 break;
         }
     }
@@ -30,11 +30,11 @@ export class ErrorMessageObserver {
         showErrorMessage(this.vscode, event.message);
     }
 
-    private handleDotnetTestRunFailure(event: DotnetTestRunFailure) {
+    private handleDotnetTestRunFailure(event: DotNetTestRunFailure) {
         showErrorMessage(this.vscode,`Failed to run test because ${event.message}.`);
     }
 
-    private handleDebuggerStartFailure(event: DebuggerStartFailure) {
+    private handleDotNetTestDebugStartFailure(event: DotNetTestDebugStartFailure) {
         showErrorMessage(this.vscode, `Failed to start debugger: ${event.message}`);
     }
 }

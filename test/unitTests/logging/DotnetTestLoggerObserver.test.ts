@@ -5,12 +5,13 @@
 
 import { expect } from 'chai';
 import { getNullChannel } from '../testAssets/Fakes';
-import { EventWithMessage, DebuggerWarning, DotnetTestDebugStart, BaseEvent, DotnetTestRunStart, DebugStart, DotnetTestMessage, DebugComplete } from '../../../src/omnisharp/loggingEvents';
-import DotnetTestLoggerObserver from '../../../src/observers/DotnetTestLoggerObserver';
+import { EventWithMessage, DotNetTestDebugWarning, DotNetTestDebugStart, BaseEvent, DotNetTestRunStart, DotNetTestDebugProcessStart, DotNetTestMessage, DotNetTestDebugComplete, ReportDotNetTestResults } from '../../../src/omnisharp/loggingEvents';
+import DotNetTestLoggerObserver from '../../../src/observers/DotnetTestLoggerObserver';
+import * as protocol from '../../../src/omnisharp/protocol';
 
-suite("DotnetTestLoggerObserver", () => {
+suite(`${DotNetTestLoggerObserver.name}`, () => {
     let appendedMessage: string;
-    let observer = new DotnetTestLoggerObserver({
+    let observer = new DotNetTestLoggerObserver({
         ...getNullChannel(),
         append: (text: string) => { appendedMessage += text; },
     });
@@ -20,8 +21,8 @@ suite("DotnetTestLoggerObserver", () => {
     });
 
     [
-        new DebuggerWarning("some warning"),
-        new DotnetTestMessage("some message")
+        new DotNetTestDebugWarning("some warning"),
+        new DotNetTestMessage("some message")
     ].forEach((event: EventWithMessage) => {
         test(`${event.constructor.name}: Message is logged`, () => {
             observer.post(event);
@@ -30,8 +31,8 @@ suite("DotnetTestLoggerObserver", () => {
     });
 
     [
-        new DotnetTestDebugStart("foo"),
-        new DotnetTestRunStart("foo")
+        new DotNetTestDebugStart("foo"),
+        new DotNetTestRunStart("foo")
     ].forEach((event: BaseEvent) => {
         test(`${event.constructor.name}: Test method is logged`, () => {
             expect(appendedMessage).to.be.empty;
@@ -40,15 +41,49 @@ suite("DotnetTestLoggerObserver", () => {
         });
     });
 
-    test(`${DebugStart.constructor.name}: Target process id is logged`, () => {
-        let event = new DebugStart(111);
+    test(`${DotNetTestDebugProcessStart.name}: Target process id is logged`, () => {
+        let event = new DotNetTestDebugProcessStart(111);
         observer.post(event);
         expect(appendedMessage).to.contain(event.targetProcessId);
     });
 
-    test(`${DebugComplete.constructor.name}: Target process id is logged`, () => {
-        let event = new DebugComplete();
+    test(`${DotNetTestDebugComplete.name}: Message is logged`, () => {
+        let event = new DotNetTestDebugComplete();
         observer.post(event);
         expect(appendedMessage).to.not.be.empty;
     });
+
+    suite(`${ReportDotNetTestResults.name}`, () => {
+        let event = new ReportDotNetTestResults(
+            [
+                getDotNetTestResults("foo", "failed", "assertion failed", ""),
+                getDotNetTestResults("failinator", "failed", "error occured", ""),
+                getDotNetTestResults("bar", "skipped", "", ""),
+                getDotNetTestResults("passinator", "passed", "", ""),
+            ]);
+
+        test(`${event.constructor.name}: Displays the outcome of each test`, () => {
+            observer.post(event);
+            event.results.forEach(result => {
+                expect(appendedMessage).to.contain(`${result.MethodName}: ${result.Outcome}`);
+            });
+        });
+
+        test(`${event.constructor.name}: Displays the total outcome`, () => {
+            observer.post(event);
+            expect(appendedMessage).to.contain(`Total tests: ${event.results.length}. Passed: 1. Failed: 2. Skipped: 1`);
+            event.results.forEach(result => {
+                expect(appendedMessage).to.contain(`${result.MethodName}: ${result.Outcome}`);
+            });
+        });
+    });
 });
+
+function getDotNetTestResults(methodname: string, outcome: string, errorMessage: string, errorStackTrace: string): protocol.V2.DotNetTestResult {
+    return {
+        MethodName: methodname,
+        Outcome: outcome,
+        ErrorMessage: errorMessage,
+        ErrorStackTrace: errorStackTrace
+    };
+}

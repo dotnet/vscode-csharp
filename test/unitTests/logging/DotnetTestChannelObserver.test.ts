@@ -5,7 +5,7 @@
 
 import { expect } from 'chai';
 import { getNullChannel } from '../testAssets/Fakes';
-import { BaseEvent, DotnetTestsInClassDebugStart, DotnetTestRunStart, DotnetTestRunFailure, DotnetTestsInClassRunStart, DotnetTestDebugStart } from '../../../src/omnisharp/loggingEvents';
+import { BaseEvent, DotNetTestsInClassDebugStart, DotNetTestRunStart, DotNetTestRunFailure, DotNetTestsInClassRunStart, DotNetTestDebugStart } from '../../../src/omnisharp/loggingEvents';
 import DotnetTestChannelObserver from '../../../src/observers/DotnetTestChannelObserver';
 
 suite("DotnetTestChannelObserver", () => {
@@ -21,11 +21,11 @@ suite("DotnetTestChannelObserver", () => {
     });
 
     [
-        new DotnetTestRunStart("foo"),
-        new DotnetTestRunFailure("some failure"),
-        new DotnetTestsInClassRunStart(),
-        new DotnetTestDebugStart("foo"),
-        new DotnetTestsInClassDebugStart()
+        new DotNetTestRunStart("foo"),
+        new DotNetTestRunFailure("some failure"),
+        new DotNetTestsInClassRunStart(),
+        new DotNetTestDebugStart("foo"),
+        new DotNetTestsInClassDebugStart()
     ].forEach((event: BaseEvent) => {
         test(`${event.constructor.name}: Channel is shown`, () => {
             expect(hasShown).to.be.false;

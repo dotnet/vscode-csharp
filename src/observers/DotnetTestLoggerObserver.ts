@@ -3,57 +3,57 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseEvent, DotnetTestRunStart, DotnetTestMessage, ReportDotnetTestResults, DotnetTestDebugStart, DebuggerWarning, DebugStart, DebugComplete } from "../omnisharp/loggingEvents";
+import { BaseEvent, DotNetTestRunStart, DotNetTestMessage, ReportDotNetTestResults, DotNetTestDebugStart, DotNetTestDebugWarning, DotNetTestDebugProcessStart, DotNetTestDebugComplete } from "../omnisharp/loggingEvents";
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import * as protocol from '../omnisharp/protocol';
 
-export default class DotnetTestLoggerObserver extends BaseLoggerObserver {
+export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
 
     public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
-            case DotnetTestRunStart.name:
-                this.handleDotnetTestRunStart(<DotnetTestRunStart>event);
+            case DotNetTestRunStart.name:
+                this.handleDotnetTestRunStart(<DotNetTestRunStart>event);
                 break;
-            case DotnetTestMessage.name:
-                this.logger.appendLine((<DotnetTestMessage>event).message);
+            case DotNetTestMessage.name:
+                this.logger.appendLine((<DotNetTestMessage>event).message);
                 break;
-            case ReportDotnetTestResults.name:
-                this.handleReportDotnetTestResults(<ReportDotnetTestResults>event);
+            case ReportDotNetTestResults.name:
+                this.handleReportDotnetTestResults(<ReportDotNetTestResults>event);
                 break;
-            case DotnetTestDebugStart.name:
-                this.handleDotnetTestDebugStart(<DotnetTestDebugStart>event);
+            case DotNetTestDebugStart.name:
+                this.handleDotnetTestDebugStart(<DotNetTestDebugStart>event);
                 break;
-            case DebuggerWarning.name:
-                this.handleDebuggerWarning(<DebuggerWarning>event);
+            case DotNetTestDebugWarning.name:
+                this.handleDotNetTestDebugWarning(<DotNetTestDebugWarning>event);
                 break;
-            case DebugStart.name:
-                this.handleDebugStart(<DebugStart>event);
+            case DotNetTestDebugProcessStart.name:
+                this.handleDotNetTestDebugProcessStart(<DotNetTestDebugProcessStart>event);
                 break;
-            case DebugComplete.name:
+            case DotNetTestDebugComplete.name:
                 this.logger.appendLine("Debugging complete.\n");
                 break;
         }
     }
 
-    private handleDebuggerWarning(event: DebuggerWarning) {
+    private handleDotNetTestDebugWarning(event: DotNetTestDebugWarning) {
         this.logger.appendLine(`Warning: ${event.message}`);
     }
 
-    private handleDotnetTestDebugStart(event: DotnetTestDebugStart) {
+    private handleDotnetTestDebugStart(event: DotNetTestDebugStart) {
         this.logger.appendLine(`Debugging method ${event.testMethod}...`);
         this.logger.appendLine('');
     }
 
-    private handleDotnetTestRunStart(event: DotnetTestRunStart): any {
+    private handleDotnetTestRunStart(event: DotNetTestRunStart): any {
         this.logger.appendLine(`Running test ${event.testMethod}...`);
         this.logger.appendLine('');
     }
 
-    private handleDebugStart(event: DebugStart) {
+    private handleDotNetTestDebugProcessStart(event: DotNetTestDebugProcessStart) {
         this.logger.appendLine(`Started debugging process #${event.targetProcessId}.`);
     }
 
-    private handleReportDotnetTestResults(event: ReportDotnetTestResults) {
+    private handleReportDotnetTestResults(event: ReportDotNetTestResults) {
         const results = event.results;
         const totalTests = results.length;
 

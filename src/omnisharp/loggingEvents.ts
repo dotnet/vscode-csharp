@@ -122,19 +122,19 @@ export class ZipError implements BaseEvent {
     constructor(public message: string) { }
 }
 
-export class ReportDotnetTestResults implements BaseEvent {
+export class ReportDotNetTestResults implements BaseEvent {
     constructor(public results: protocol.V2.DotNetTestResult[]) { }
 }
 
-export class DotnetTestRunStart implements BaseEvent {
+export class DotNetTestRunStart implements BaseEvent {
     constructor(public testMethod: string) { }
 }
 
-export class DotnetTestDebugStart implements BaseEvent {
+export class DotNetTestDebugStart implements BaseEvent {
     constructor(public testMethod: string) { }
 }
 
-export class DebugStart implements BaseEvent {
+export class DotNetTestDebugProcessStart implements BaseEvent {
     constructor(public targetProcessId: number) { }
 }
 
@@ -148,10 +148,10 @@ export class DownloadFailure extends EventWithMessage { }
 export class OmnisharpServerOnStdErr extends EventWithMessage { }
 export class OmnisharpServerMessage extends EventWithMessage { }
 export class OmnisharpServerVerboseMessage extends EventWithMessage { }
-export class DotnetTestMessage extends EventWithMessage { }
-export class DotnetTestRunFailure extends EventWithMessage { }
-export class DebuggerWarning extends EventWithMessage { }
-export class DebuggerStartFailure extends EventWithMessage { }
+export class DotNetTestMessage extends EventWithMessage { }
+export class DotNetTestRunFailure extends EventWithMessage { }
+export class DotNetTestDebugWarning extends EventWithMessage { }
+export class DotNetTestDebugStartFailure extends EventWithMessage { }
 
 export class ProjectModified implements BaseEvent { }
 export class ActivationFailure implements BaseEvent { }
@@ -168,6 +168,6 @@ export class OmnisharpServerOnStop implements BaseEvent { }
 export class OmnisharpServerOnStart implements BaseEvent { }
 export class LatestBuildDownloadStart implements BaseEvent { }
 export class OmnisharpRestart implements BaseEvent { }
-export class DotnetTestsInClassRunStart implements BaseEvent { }
-export class DotnetTestsInClassDebugStart implements BaseEvent { }
-export class DebugComplete implements BaseEvent { }
+export class DotNetTestsInClassRunStart implements BaseEvent { }
+export class DotNetTestsInClassDebugStart implements BaseEvent { }
+export class DotNetTestDebugComplete implements BaseEvent { }

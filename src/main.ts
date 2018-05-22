@@ -32,8 +32,8 @@ import { vscodeNetworkSettingsProvider, NetworkSettingsProvider } from './Networ
 import { ErrorMessageObserver } from './observers/ErrorMessageObserver';
 import OptionStream from './observables/OptionStream';
 import  OptionProvider from './observers/OptionProvider';
-import DotnetTestChannelObserver from './observers/DotnetTestChannelObserver';
-import DotnetTestLoggerObserver from './observers/DotnetTestLoggerObserver';
+import DotNetTestChannelObserver from './observers/DotnetTestChannelObserver';
+import DotNetTestLoggerObserver from './observers/DotnetTestLoggerObserver';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -56,8 +56,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     eventStream.subscribe(dotnetLoggerObserver.post);
 
     let dotnetTestChannel = vscode.window.createOutputChannel(".NET Test Log");
-    let dotnetTestChannelObserver = new DotnetTestChannelObserver(dotnetTestChannel);
-    let dotnetTestLoggerObserver = new DotnetTestLoggerObserver(dotnetTestChannel);
+    let dotnetTestChannelObserver = new DotNetTestChannelObserver(dotnetTestChannel);
+    let dotnetTestLoggerObserver = new DotNetTestLoggerObserver(dotnetTestChannel);
     eventStream.subscribe(dotnetTestChannelObserver.post);
     eventStream.subscribe(dotnetTestLoggerObserver.post);
     

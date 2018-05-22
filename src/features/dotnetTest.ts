@@ -13,7 +13,7 @@ import * as vscode from 'vscode';
 import AbstractProvider from './abstractProvider';
 import { DebuggerEventsProtocol } from '../coreclr-debug/debuggerEventsProtocol';
 import { OmniSharpServer } from '../omnisharp/server';
-import { TestExecutionCountReport, ReportDotnetTestResults, DotnetTestRunStart, DotnetTestMessage, DotnetTestRunFailure, DotnetTestsInClassRunStart, DebuggerWarning, DebugStart, DebugComplete, DotnetTestDebugStart, DotnetTestsInClassDebugStart, DebuggerStartFailure } from '../omnisharp/loggingEvents';
+import { TestExecutionCountReport, ReportDotNetTestResults, DotNetTestRunStart, DotNetTestMessage, DotNetTestRunFailure, DotNetTestsInClassRunStart, DotNetTestDebugWarning, DotNetTestDebugProcessStart, DotNetTestDebugComplete, DotNetTestDebugStart, DotNetTestsInClassDebugStart, DotNetTestDebugStartFailure } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 import LaunchConfiguration from './launchConfiguration';
 import Disposable from '../Disposable';
@@ -144,20 +144,20 @@ export default class TestManager extends AbstractProvider {
 
     private async _runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string) {
 
-        this._eventStream.post(new DotnetTestRunStart(testMethod));
+        this._eventStream.post(new DotNetTestRunStart(testMethod));
 
         const listener = this._server.onTestMessage(e => {
-            this._eventStream.post(new DotnetTestMessage(e.Message));
+            this._eventStream.post(new DotNetTestMessage(e.Message));
         });
 
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
 
         try {
             let results = await this._runTest(fileName, testMethod, testFrameworkName, targetFrameworkVersion);
-            this._eventStream.post(new ReportDotnetTestResults(results));
+            this._eventStream.post(new ReportDotNetTestResults(results));
         }
         catch (reason) {
-            this._eventStream.post(new DotnetTestRunFailure(reason));
+            this._eventStream.post(new DotNetTestRunFailure(reason));
         }
         finally {
             listener.dispose();
@@ -167,20 +167,20 @@ export default class TestManager extends AbstractProvider {
     private async _runDotnetTestsInClass(methodsInClass: string[], fileName: string, testFrameworkName: string) {
 
         //to do: try to get the class name here
-        this._eventStream.post(new DotnetTestsInClassRunStart());
+        this._eventStream.post(new DotNetTestsInClassRunStart());
 
         const listener = this._server.onTestMessage(e => {
-            this._eventStream.post(new DotnetTestMessage(e.Message));
+            this._eventStream.post(new DotNetTestMessage(e.Message));
         });
 
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
 
         try {
             let results = await this._runTestsInClass(fileName, testFrameworkName, targetFrameworkVersion, methodsInClass);
-            this._eventStream.post(new ReportDotnetTestResults(results));
+            this._eventStream.post(new ReportDotNetTestResults(results));
         }
         catch (reason) {
-            this._eventStream.post(new DotnetTestRunFailure(reason));
+            this._eventStream.post(new DotNetTestRunFailure(reason));
         }
         finally {
             listener.dispose();
@@ -237,7 +237,7 @@ export default class TestManager extends AbstractProvider {
 
         // Listen for test messages while getting start info.
         const listener = this._server.onTestMessage(e => {
-            this._eventStream.post(new DotnetTestMessage(e.Message));
+            this._eventStream.post(new DotNetTestMessage(e.Message));
         });
 
         const request: protocol.V2.DebugTestGetStartInfoRequest = {
@@ -262,7 +262,7 @@ export default class TestManager extends AbstractProvider {
 
         // Listen for test messages while getting start info.
         const listener = this._server.onTestMessage(e => {
-            this._eventStream.post(new DotnetTestMessage(e.Message));
+            this._eventStream.post(new DotNetTestMessage(e.Message));
         });
 
         const request: protocol.V2.GetTestStartInfoRequest = {
@@ -327,7 +327,7 @@ export default class TestManager extends AbstractProvider {
         // We support to styles of 'dotnet test' for debugging: The legacy 'project.json' testing, and the newer csproj support
         // using VS Test. These require a different level of communication.
 
-        this._eventStream.post(new DotnetTestDebugStart(testMethod));
+        this._eventStream.post(new DotNetTestDebugStart(testMethod));
 
         let { debugType, debugEventListener, targetFrameworkVersion } = await this._recordDebugAndGetDebugValues(fileName, testFrameworkName);
 
@@ -337,7 +337,7 @@ export default class TestManager extends AbstractProvider {
                 return vscode.debug.startDebugging(workspaceFolder, config);
             })
             .catch(reason => {
-                this._eventStream.post(new DebuggerStartFailure(reason));
+                this._eventStream.post(new DotNetTestDebugStartFailure(reason));
                 if (debugEventListener != null) {
                     debugEventListener.close();
                 }
@@ -346,7 +346,7 @@ export default class TestManager extends AbstractProvider {
 
     private async _debugDotnetTestsInClass(methodsToRun: string[], fileName: string, testFrameworkName: string) {
 
-        this._eventStream.post(new DotnetTestsInClassDebugStart());
+        this._eventStream.post(new DotNetTestsInClassDebugStart());
 
         let { debugType, debugEventListener, targetFrameworkVersion } = await this._recordDebugAndGetDebugValues(fileName, testFrameworkName);
 
@@ -356,7 +356,7 @@ export default class TestManager extends AbstractProvider {
                 return vscode.debug.startDebugging(workspaceFolder, config);
             })
             .catch(reason => {
-                this._eventStream.post(new DebuggerStartFailure(reason));
+                this._eventStream.post(new DotNetTestDebugStartFailure(reason));
                 if (debugEventListener != null) {
                     debugEventListener.close();
                 }
@@ -384,7 +384,7 @@ export default class TestManager extends AbstractProvider {
         debugEventListener: DebugEventListener): Promise<LaunchConfiguration> {
 
         const listener = this._server.onTestMessage(e => {
-            this._eventStream.post(new DotnetTestMessage(e.Message));
+            this._eventStream.post(new DotNetTestMessage(e.Message));
         });
 
         const request: protocol.V2.DebugTestClassGetStartInfoRequest = {
@@ -441,19 +441,19 @@ class DebugEventListener {
                     event = DebuggerEventsProtocol.decodePacket(buffer);
                 }
                 catch (e) {
-                    this._eventStream.post(new DebuggerWarning("Invalid event received from debugger"));
+                    this._eventStream.post(new DotNetTestDebugWarning("Invalid event received from debugger"));
                     return;
                 }
 
                 switch (event.eventType) {
                     case DebuggerEventsProtocol.EventType.ProcessLaunched:
                         let processLaunchedEvent = <DebuggerEventsProtocol.ProcessLaunchedEvent>(event);
-                        this._eventStream.post(new DebugStart(processLaunchedEvent.targetProcessId));
+                        this._eventStream.post(new DotNetTestDebugProcessStart(processLaunchedEvent.targetProcessId));
                         this.onProcessLaunched(processLaunchedEvent.targetProcessId);
                         break;
 
                     case DebuggerEventsProtocol.EventType.DebuggingStopped:
-                        this._eventStream.post(new DebugComplete());
+                        this._eventStream.post(new DotNetTestDebugComplete());
                         this.onDebuggingStopped();
                         break;
                 }
@@ -471,7 +471,7 @@ class DebugEventListener {
                     if (!isStarted) {
                         reject(err.message);
                     } else {
-                        this._eventStream.post(new DebuggerWarning(`Communications error on debugger event channel. ${err.message}`));
+                        this._eventStream.post(new DotNetTestDebugWarning(`Communications error on debugger event channel. ${err.message}`));
                     }
                 });
 
@@ -510,7 +510,7 @@ class DebugEventListener {
         };
 
         const disposable = this._server.onTestMessage(e => {
-            this._eventStream.post(new DotnetTestMessage(e.Message));
+            this._eventStream.post(new DotNetTestMessage(e.Message));
         });
 
         serverUtils.debugTestLaunch(this._server, request)
