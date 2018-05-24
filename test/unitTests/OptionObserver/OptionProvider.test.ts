@@ -5,71 +5,35 @@
 
 import { should, expect } from 'chai';
 import { getVSCodeWithConfig, updateConfig } from "../testAssets/Fakes";
-import OptionStream from "../../../src/observables/OptionStream";
-import { vscode, ConfigurationChangeEvent } from "../../../src/vscodeAdapter";
-import Disposable from "../../../src/Disposable";
+import { vscode } from "../../../src/vscodeAdapter";
 import OptionProvider from '../../../src/observers/OptionProvider';
+import { Subject } from 'rxjs/Subject';
+import { Options } from '../../../src/omnisharp/options';
 
 suite('OptionProvider', () => {
     suiteSetup(() => should());
 
     let vscode: vscode;
-    let listenerFunction: Array<(e: ConfigurationChangeEvent) => any>;
     let optionProvider: OptionProvider;
+    let optionObservable: Subject<Options>;
     
     setup(() => {
-        listenerFunction = new Array<(e: ConfigurationChangeEvent) => any>();
-        vscode = getVSCode(listenerFunction);
-        let optionStream = new OptionStream(vscode);
-        optionProvider = new OptionProvider(optionStream);
+        vscode = getVSCodeWithConfig();
+        optionObservable = new Subject<Options>();
+        optionProvider = new OptionProvider(optionObservable);
     });
 
-    test("Gives the default options if there is no change", () => {
-        let options = optionProvider.GetLatestOptions();
-        expect(options.path).to.be.null;
-        options.useGlobalMono.should.equal("auto");
-        options.waitForDebugger.should.equal(false);
-        options.loggingLevel.should.equal("information");
-        options.autoStart.should.equal(true);
-        options.projectLoadTimeout.should.equal(60);
-        options.maxProjectResults.should.equal(250);
-        options.useEditorFormattingSettings.should.equal(true);
-        options.useFormatting.should.equal(true);
-        options.showReferencesCodeLens.should.equal(true);
-        options.showTestsCodeLens.should.equal(true);
-        options.disableCodeActions.should.equal(false);
-        options.disableCodeActions.should.equal(false);
+    test("Throws exception when no options are pushed", () => {
+        expect(optionProvider.GetLatestOptions).to.throw();
     });
 
-    test("Gives the latest options if there are changes in omnisharp config", () => {
+    test("Gives the latest options when options are changed", () => {
         let changingConfig = "omnisharp";
         updateConfig(vscode, changingConfig, 'path', "somePath");
-        listenerFunction.forEach(listener => listener(getConfigChangeEvent(changingConfig)));
+        optionObservable.next(Options.Read(vscode));
+        updateConfig(vscode, changingConfig, 'path', "anotherPath");
+        optionObservable.next(Options.Read(vscode));
         let options = optionProvider.GetLatestOptions();
-        expect(options.path).to.be.equal("somePath");
-    });
-
-    test("Gives the latest options if there are changes in csharp config", () => {
-        let changingConfig = 'csharp';
-        updateConfig(vscode, changingConfig, 'disableCodeActions', true);
-        listenerFunction.forEach(listener => listener(getConfigChangeEvent(changingConfig)));
-        let options = optionProvider.GetLatestOptions();
-        expect(options.disableCodeActions).to.be.equal(true);
+        expect(options.path).to.be.equal("anotherPath");
     });
 });
-
-function getVSCode(listenerFunction: Array<(e: ConfigurationChangeEvent) => any>): vscode {
-    let vscode = getVSCodeWithConfig();
-    vscode.workspace.onDidChangeConfiguration = (listener: (e: ConfigurationChangeEvent) => any, thisArgs?: any, disposables?: Disposable[]) => {
-        listenerFunction.push(listener);
-        return new Disposable(() => { });
-    };
-
-    return vscode;
-}
-
-function getConfigChangeEvent(changingConfig: string): ConfigurationChangeEvent {
-    return {
-        affectsConfiguration: (section: string) => section == changingConfig
-    };
-}
