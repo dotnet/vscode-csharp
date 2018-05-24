@@ -79,8 +79,8 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
 
         test('Displays the error message and error stack trace if any is present', () => {
             observer.post(event);
-            expect(appendedMessage).to.contain("foo:\n    Outcome: Failed\n    Error Message: assertion failed\n    Error StackTrace: stacktrace1");
-            expect(appendedMessage).to.contain("failinator:\n    Outcome: Failed\n    Error Message: error occured\n    Error StackTrace: stacktrace2");
+            expect(appendedMessage).to.contain("foo:\n    Outcome: Failed\n    Error Message: assertion failed\n    Stack Trace: stacktrace1");
+            expect(appendedMessage).to.contain("failinator:\n    Outcome: Failed\n    Error Message: error occured\n    Stack Trace: stacktrace2");
         });
     });
 });

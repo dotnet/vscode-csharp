@@ -89,7 +89,7 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
         }
 
         if (result.ErrorStackTrace) {
-            this.logger.appendLine(`Error StackTrace: ${result.ErrorStackTrace}`);
+            this.logger.appendLine(`Stack Trace: ${result.ErrorStackTrace}`);
         }
 
         this.logger.appendLine();
