@@ -8,6 +8,7 @@ import * as path from 'path';
 
 import { should, expect } from 'chai';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import CSharpExtensionExports from '../../src/CSharpExtensionExports';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -18,12 +19,12 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
 
-        let csharpExtension = vscode.extensions.getExtension("ms-vscode.csharp");
+        let csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-vscode.csharp");
         if (!csharpExtension.isActive) {
             await csharpExtension.activate();
         }
 
-        await csharpExtension.exports.initializationFinished;
+        await csharpExtension.exports.initializationFinished();
 
         let fileName = 'sigHelp.cs';
         let dir = path.dirname(testAssetWorkspace.projects[0].projectDirectoryPath);
