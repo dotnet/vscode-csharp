@@ -24,19 +24,14 @@ export function ShowOmniSharpConfigChangePrompt(optionObservable: Observable<Opt
     let subscription = ConfigChangeObservable(optionObservable)
         .subscribe(_ => {
             let message = "OmniSharp configuration has changed. Would you like to relaunch the OmniSharp server with your changes?";
-            ShowInformationMessage(vscode, message, { title: "Restart Now", command: 'o.restart' });
+            ShowInformationMessage(vscode, message, { title: "Restart OmniSharp", command: 'o.restart' });
         });
 
     return new Disposable(subscription);
 }
 
 function hasChanged(oldOptions: Options, newOptions: Options): boolean {
-    if (oldOptions.path != newOptions.path ||
+    return (oldOptions.path != newOptions.path ||
         oldOptions.useGlobalMono != newOptions.useGlobalMono ||
-        oldOptions.waitForDebugger != newOptions.waitForDebugger) {
-
-        return true;
-    }
-
-    return false;
+        oldOptions.waitForDebugger != newOptions.waitForDebugger);
 }
