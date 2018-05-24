@@ -85,7 +85,13 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
         this.logger.appendLine(`Outcome: ${processOutcome(result.Outcome)}`);
         if (result.ErrorMessage) {
             this.logger.appendLine(`Error Message: ${result.ErrorMessage}`);
+            
         }
+
+        if (result.ErrorStackTrace) {
+            this.logger.appendLine(`Error StackTrace: ${result.ErrorStackTrace}`);
+        }
+
         this.logger.appendLine();
         this.logger.decreaseIndent();
     }
