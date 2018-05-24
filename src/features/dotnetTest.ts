@@ -245,7 +245,7 @@ export default class TestManager extends AbstractProvider {
             TargetFrameworkVersion: targetFrameworkVersion
         };
 
-        let response = await serverUtils.debugTestGetStartInfo(this._server, request); serverUtils.debugTestGetStartInfo(this._server, request);
+        let response = await serverUtils.debugTestGetStartInfo(this._server, request);
         listener.dispose();
         return this._createLaunchConfiguration(
             response.FileName,
