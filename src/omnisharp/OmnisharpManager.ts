@@ -8,6 +8,7 @@ import * as semver from 'semver';
 import * as util from '../common';
 import { OmnisharpDownloader } from './OmnisharpDownloader';
 import { PlatformInformation } from '../platform';
+import { OmniSharpDownloadSettings } from './OmniSharpDownloadSettings';
 
 export interface LaunchInfo {
     LaunchPath: string;
@@ -20,10 +21,11 @@ export class OmnisharpManager {
         private platformInfo: PlatformInformation) {
     }
 
-    public async GetOmniSharpLaunchInfo(defaultOmnisharpVersion: string, omnisharpPath: string, serverUrl: string, latestVersionFileServerPath: string, installPath: string, extensionPath: string): Promise<LaunchInfo> {
+    public async GetOmniSharpLaunchInfo(omnisharpDownloadSettings: OmniSharpDownloadSettings): Promise<LaunchInfo> {
+        let omnisharpPath = omnisharpDownloadSettings.omniSharpPath;
         if (!omnisharpPath) {
             // If omnisharpPath was not specified, return the default path.
-            let basePath = path.resolve(extensionPath, '.omnisharp', defaultOmnisharpVersion);
+            let basePath = path.resolve(omnisharpDownloadSettings.extensionPath, '.omnisharp', omnisharpDownloadSettings.defaultOmniSharpVersion);
             return this.GetLaunchInfo(this.platformInfo, basePath);
         }
 
@@ -38,22 +40,22 @@ export class OmnisharpManager {
             };
         }
         else if (omnisharpPath === 'latest') {
-            return await this.InstallLatestAndReturnLaunchInfo(serverUrl, latestVersionFileServerPath, installPath, extensionPath);
+            return await this.InstallLatestAndReturnLaunchInfo(omnisharpDownloadSettings);
         }
 
         // If the path is neither a valid path on disk not the string "latest", treat it as a version 
-        return await this.InstallVersionAndReturnLaunchInfo(omnisharpPath, serverUrl, installPath, extensionPath);
+        return await this.InstallVersionAndReturnLaunchInfo(omnisharpPath, omnisharpDownloadSettings);
     }
 
-    private async InstallLatestAndReturnLaunchInfo(serverUrl: string, latestVersionFileServerPath: string, installPath: string, extensionPath: string): Promise<LaunchInfo> {
-        let version = await this.downloader.GetLatestVersion(serverUrl, latestVersionFileServerPath);
-        return await this.InstallVersionAndReturnLaunchInfo(version, serverUrl, installPath, extensionPath);
+    private async InstallLatestAndReturnLaunchInfo(omnisharpDownloadSettings: OmniSharpDownloadSettings): Promise<LaunchInfo> {
+        let version = await this.downloader.GetLatestVersion(`${omnisharpDownloadSettings.downloadServerUrl}/${omnisharpDownloadSettings.latestVersionFileServerPath}`);
+        return await this.InstallVersionAndReturnLaunchInfo(version, omnisharpDownloadSettings);
     }
 
-    private async InstallVersionAndReturnLaunchInfo(version: string, serverUrl: string, installPath: string, extensionPath: string): Promise<LaunchInfo> {
+    private async InstallVersionAndReturnLaunchInfo(version: string, omnisharpDownloadSettings: OmniSharpDownloadSettings): Promise<LaunchInfo> {
         if (semver.valid(version)) {
-            await this.downloader.DownloadAndInstallOmnisharp(version, serverUrl, installPath);
-            return this.GetLaunchPathForVersion(this.platformInfo, version, installPath, extensionPath);
+            await this.downloader.DownloadAndInstallOmnisharp(version, omnisharpDownloadSettings.downloadServerUrl, omnisharpDownloadSettings.installPath);
+            return this.GetLaunchPathForVersion(this.platformInfo, version, omnisharpDownloadSettings.installPath, omnisharpDownloadSettings.extensionPath);
         }
         else {
             throw new Error(`Invalid OmniSharp version - ${version}`);

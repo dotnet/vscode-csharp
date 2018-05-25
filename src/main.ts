@@ -35,6 +35,11 @@ import DotNetTestChannelObserver from './observers/DotnetTestChannelObserver';
 import DotNetTestLoggerObserver from './observers/DotnetTestLoggerObserver';
 import { ShowOmniSharpConfigChangePrompt } from './observers/OptionChangeObserver';
 import createOptionStream from './observables/CreateOptionStream';
+import { OmniSharpDownloadSettings } from './omnisharp/OmniSharpDownloadSettings';
+
+const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
+const installPath = ".omnisharp";
+const latestVersionFileServerPath = 'releases/versioninfo.txt';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -111,8 +116,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     let networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
     let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo, networkSettingsProvider);
 
+    let omnisharpSettings = new OmniSharpDownloadSettings(() => optionProvider.GetLatestOptions().path,
+        serverUrl, latestVersionFileServerPath, installPath, extension.extensionPath, extension.packageJSON);
+
     // activate language services
-    let omniSharpPromise = OmniSharp.activate(context, extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionProvider);
+    let omniSharpPromise = OmniSharp.activate(context, extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionProvider, omnisharpSettings);
 
     // register JSON completion & hover providers for project.json
     context.subscriptions.push(addJSONProviders());
