@@ -3,13 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { OmnisharpServerOnServerError, BaseEvent, OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpServerOnStop, OmnisharpServerOnStart, DownloadStart, InstallationStart, DownloadProgress } from "../omnisharp/loggingEvents";
+import { OmnisharpServerOnServerError, BaseEvent, OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpServerOnStop, OmnisharpServerOnStart, DownloadStart, InstallationStart, DownloadProgress, OmnisharpServerOnStdErr } from "../omnisharp/loggingEvents";
 import { BaseStatusBarItemObserver } from './BaseStatusBarItemObserver';
 
 export class OmnisharpStatusBarObserver extends BaseStatusBarItemObserver {
     public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case OmnisharpServerOnServerError.name:
+            case OmnisharpServerOnStdErr.name:
                 this.SetAndShowStatusBar('$(flame)', 'o.showOutput', 'rgb(218,0,0)', 'Error starting OmniSharp');
                 break;
             case OmnisharpOnBeforeServerInstall.name:
