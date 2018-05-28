@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { StatusBarItem } from '../../../src/vscodeAdapter';
-import { OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpServerOnServerError, OmnisharpServerOnStart, OmnisharpServerOnStop, DownloadStart, InstallationStart, DownloadProgress } from '../../../src/omnisharp/loggingEvents';
+import { OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpServerOnServerError, OmnisharpServerOnStart, OmnisharpServerOnStop, DownloadStart, InstallationStart, DownloadProgress, OmnisharpServerOnStdErr, BaseEvent } from '../../../src/omnisharp/loggingEvents';
 import { expect, should } from 'chai';
 import { OmnisharpStatusBarObserver } from '../../../src/observers/OmnisharpStatusBarObserver';
 
@@ -29,14 +29,19 @@ suite('OmnisharpStatusBarObserver', () => {
 
     let observer = new OmnisharpStatusBarObserver( statusBarItem);
 
-    test('OnServerError: Status bar is shown with the error text', () => {
-        let event = new OmnisharpServerOnServerError("someError");
-        observer.post(event);
-        expect(showCalled).to.be.true;
-        expect(statusBarItem.text).to.equal(`$(flame)`);
-        expect(statusBarItem.command).to.equal('o.showOutput');
-        expect(statusBarItem.tooltip).to.equal('Error starting OmniSharp');
+    [
+        new OmnisharpServerOnServerError("someError"),
+        new OmnisharpServerOnStdErr("std error")
+    ].forEach((event: BaseEvent)=>{
+        test(`${event.constructor.name}: Status bar is shown with the error text`, () => {
+            observer.post(event);
+            expect(showCalled).to.be.true;
+            expect(statusBarItem.text).to.equal(`$(flame)`);
+            expect(statusBarItem.command).to.equal('o.showOutput');
+            expect(statusBarItem.tooltip).to.equal('Error starting OmniSharp');
+        });
     });
+    
 
     test('OnBeforeServerInstall: Status bar is shown with the installation text', () => {
         let event = new OmnisharpOnBeforeServerInstall();
