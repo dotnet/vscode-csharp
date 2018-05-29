@@ -21,32 +21,33 @@ import CompositeDisposable from '../CompositeDisposable';
 import OptionProvider from '../observers/OptionProvider';
 
 export default function registerCommands(server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionProvider: OptionProvider): CompositeDisposable {
-    let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server));
-    let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionProvider));
-    let d3 = vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new ShowOmniSharpChannel()));
-    let d4 = vscode.commands.registerCommand('dotnet.restore.project', () => pickProjectAndDotnetRestore(server, eventStream));
-    let d5 = vscode.commands.registerCommand('dotnet.restore.all', () => dotnetRestoreAllProjects(server, eventStream));
+    let disposable = new CompositeDisposable();
+    disposable.add(vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server)));
+    disposable.add(vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionProvider)));
+    disposable.add(vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new ShowOmniSharpChannel())));
+    disposable.add(vscode.commands.registerCommand('dotnet.restore.project', () => pickProjectAndDotnetRestore(server, eventStream)));
+    disposable.add(vscode.commands.registerCommand('dotnet.restore.all', () => dotnetRestoreAllProjects(server, eventStream)));
 
     // register empty handler for csharp.installDebugger
     // running the command activates the extension, which is all we need for installation to kickoff
-    let d6 = vscode.commands.registerCommand('csharp.downloadDebugger', () => { });
+    disposable.add(vscode.commands.registerCommand('csharp.downloadDebugger', () => { }));
 
     // register process picker for attach
     let attachItemsProvider = DotNetAttachItemsProviderFactory.Get();
     let attacher = new AttachPicker(attachItemsProvider);
-    let d7 = vscode.commands.registerCommand('csharp.listProcess', async () => attacher.ShowAttachEntries());
+    disposable.add(vscode.commands.registerCommand('csharp.listProcess', async () => attacher.ShowAttachEntries()));
 
     // Register command for generating tasks.json and launch.json assets.
-    let d8 = vscode.commands.registerCommand('dotnet.generateAssets', async () => generateAssets(server));
+    disposable.add(vscode.commands.registerCommand('dotnet.generateAssets', async () => generateAssets(server)));
 
     // Register command for remote process picker for attach
-    let d9 = vscode.commands.registerCommand('csharp.listRemoteProcess', async (args) => RemoteAttachPicker.ShowAttachEntries(args, platformInfo));
+    disposable.add(vscode.commands.registerCommand('csharp.listRemoteProcess', async (args) => RemoteAttachPicker.ShowAttachEntries(args, platformInfo)));
 
     // Register command for adapter executable command.
-    let d10 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream));
-    let d11 = vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream));
+    disposable.add(vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream)));
+    disposable.add(vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream)));
 
-    return new CompositeDisposable(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11);
+    return new CompositeDisposable(disposable);
 }
 
 function restartOmniSharp(server: OmniSharpServer) {
