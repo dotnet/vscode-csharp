@@ -27,12 +27,11 @@ suite('OmnisharpStatusBarObserver', () => {
         hide: () => { hideCalled = true; }
     };
 
-    let observer = new OmnisharpStatusBarObserver( statusBarItem);
+    let observer = new OmnisharpStatusBarObserver(statusBarItem);
 
     [
         new OmnisharpServerOnServerError("someError"),
-        new OmnisharpServerOnStdErr("std error")
-    ].forEach((event: BaseEvent)=>{
+    ].forEach((event: BaseEvent) => {
         test(`${event.constructor.name}: Status bar is shown with the error text`, () => {
             observer.post(event);
             expect(showCalled).to.be.true;
@@ -41,7 +40,17 @@ suite('OmnisharpStatusBarObserver', () => {
             expect(statusBarItem.tooltip).to.equal('Error starting OmniSharp');
         });
     });
-    
+
+    test(`${OmnisharpServerOnStdErr.name}: Status bar is shown with the error text`, () => {
+        let event = new OmnisharpServerOnStdErr("std error");
+        observer.post(event);
+        expect(showCalled).to.be.true;
+        
+        expect(statusBarItem.text).to.equal(`$(flame)`);
+        expect(statusBarItem.command).to.equal('o.showOutput');
+        expect(statusBarItem.tooltip).to.contain(event.message);
+    });
+
 
     test('OnBeforeServerInstall: Status bar is shown with the installation text', () => {
         let event = new OmnisharpOnBeforeServerInstall();

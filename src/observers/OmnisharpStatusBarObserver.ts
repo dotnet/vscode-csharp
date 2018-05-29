@@ -10,8 +10,11 @@ export class OmnisharpStatusBarObserver extends BaseStatusBarItemObserver {
     public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case OmnisharpServerOnServerError.name:
-            case OmnisharpServerOnStdErr.name:
                 this.SetAndShowStatusBar('$(flame)', 'o.showOutput', 'rgb(218,0,0)', 'Error starting OmniSharp');
+                break;
+            case OmnisharpServerOnStdErr.name:
+                let msg = (<OmnisharpServerOnStdErr>event).message;
+                this.SetAndShowStatusBar('$(flame)', 'o.showOutput', 'rgb(218,0,0)', `OmniSharp process errored:${msg}`);
                 break;
             case OmnisharpOnBeforeServerInstall.name:
                 this.SetAndShowStatusBar('$(flame) Installing OmniSharp...', 'o.showOutput');
