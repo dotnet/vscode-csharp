@@ -7,8 +7,9 @@ import * as chai from 'chai';
 import { EventStream } from '../../../src/EventStream';
 import { DownloadFile } from '../../../src/packageManager/FileDownloader';
 import NetworkSettings from '../../../src/NetworkSettings';
-import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, DownloadFallBack, DownloadFailure } from '../../../src/omnisharp/loggingEvents';
+import { DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, DownloadFallBack, DownloadFailure } from '../../../src/omnisharp/loggingEvents';
 import MockHttpsServer from '../testAssets/MockHttpsServer';
+import TestEventBus from '../testAssets/TestEventBus';
 
 chai.use(require("chai-as-promised"));
 chai.use(require('chai-arrays'));
@@ -21,7 +22,7 @@ suite("FileDownloader", () => {
     const errorUrlPath = '/errorResource';
     const networkSettingsProvider = () => new NetworkSettings(undefined, false);
     const eventStream = new EventStream();
-    let eventBus: BaseEvent[];
+    let eventBus: TestEventBus;
     const getPrimaryURLEvents = () => {
         return [
             new DownloadStart(fileDescription),
@@ -39,14 +40,13 @@ suite("FileDownloader", () => {
             new DownloadProgress(100, fileDescription),
             new DownloadSuccess(' Done!')];
     };
-    eventStream.subscribe((event) => eventBus.push(event));
 
     let server: MockHttpsServer;
 
     setup(async () => {
         server = await MockHttpsServer.CreateMockHttpsServer();
         await server.start();
-        eventBus = [];
+        eventBus = new TestEventBus(eventStream);
         server.addRequestHandler('GET', correctUrlPath, 200, { "content-type": "text/plain" }, "Test content");
         server.addRequestHandler('GET', errorUrlPath, 404);
         server.addRequestHandler('GET', redirectUrlPath, 301, { "location": `${server.baseUrl}${correctUrlPath}` });
@@ -77,7 +77,7 @@ suite("FileDownloader", () => {
 
                 test('Events are created in the correct order', async () => {
                     await DownloadFile(fileDescription, eventStream, networkSettingsProvider,  getURL(elem.urlPath), getURL(elem.fallBackUrlPath));
-                    expect(eventBus).to.be.deep.equal(elem.getEventSequence());
+                    expect(eventBus.getEvents()).to.be.deep.equal(elem.getEventSequence());
                 });
             });
         });
@@ -105,13 +105,14 @@ suite("FileDownloader", () => {
                 await DownloadFile(fileDescription, eventStream, networkSettingsProvider, getURL(errorUrlPath));
             }
             catch (error) {
-                expect(eventBus).to.be.deep.equal(eventsSequence);
+                expect(eventBus.getEvents()).to.be.deep.equal(eventsSequence);
             }
         });
     });
 
     teardown(async () => {
         await server.stop();
+        eventBus.dispose();
     });
 
     function getURL(urlPath: string) {
