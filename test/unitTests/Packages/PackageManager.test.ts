@@ -14,9 +14,10 @@ import { DownloadAndInstallPackages } from '../../../src/packageManager/PackageM
 import NetworkSettings from '../../../src/NetworkSettings';
 import { PlatformInformation } from '../../../src/platform';
 import { EventStream } from '../../../src/EventStream';
-import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart } from '../../../src/omnisharp/loggingEvents';
+import { DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart } from '../../../src/omnisharp/loggingEvents';
 import MockHttpsServer from '../testAssets/MockHttpsServer';
 import { createTestFile } from '../testAssets/TestFile';
+import TestEventBus from '../testAssets/TestEventBus';
 
 chai.use(require("chai-as-promised"));
 const expect = chai.expect;
@@ -26,20 +27,20 @@ suite("Package Manager", () => {
     let server: MockHttpsServer;
     let testZip: TestZip;
     let installationPath: string;
-    let eventBus: Array<BaseEvent>;
+    let eventStream: EventStream;
+    let eventBus: TestEventBus;
     let packages: Package[];
 
     const packageDescription = "Test Package";
-    const eventStream = new EventStream();
-    eventStream.subscribe(event => eventBus.push(event));
 
     const windowsPlatformInfo = new PlatformInformation("win32", "x86");
     const linuxPlatformInfo = new PlatformInformation("linux", "x86");
     const networkSettingsProvider = () => new NetworkSettings(undefined, false);
 
     setup(async () => {
+        eventStream = new EventStream();
         server = await MockHttpsServer.CreateMockHttpsServer();
-        eventBus = [];
+        eventBus = new TestEventBus(eventStream);
         tmpInstallDir = await CreateTmpDir(true);
         installationPath = tmpInstallDir.name;
         packages = <Package[]>[
@@ -77,7 +78,7 @@ suite("Package Manager", () => {
         ];
 
         await DownloadAndInstallPackages(packages, networkSettingsProvider, windowsPlatformInfo, eventStream);
-        expect(eventBus).to.be.deep.equal(eventsSequence);
+        expect(eventBus.getEvents()).to.be.deep.equal(eventsSequence);
     });
 
     test("Installs only the platform specific packages", async () => {
@@ -93,5 +94,6 @@ suite("Package Manager", () => {
         }
 
         await server.stop();
+        eventBus.dispose();
     });
 });
