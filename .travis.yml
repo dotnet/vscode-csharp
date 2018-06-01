@@ -24,6 +24,9 @@ addons:
       - g++-4.9
       - libsecret-1-dev
       - dotnet-sdk-2.0.2
+  sonarcloud:
+    organization: "vdcode-omnisharp"
+    token: $SONAR_TOKEN
 
 install:
 - npm ci
@@ -37,6 +40,7 @@ script:
   - gulp cov:report --codeExtensionPath ./vsix/extension
   - npm run test:artifacts
   - 'if [[ "$TRAVIS_BRANCH" != "master" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then npm run test:release; fi'
+  - bash sonar.sh
 
 after_failure:
   - ./.travis/printLogs.sh

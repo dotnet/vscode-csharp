@@ -22,3 +22,5 @@ coverage/
 vsix/
 
 \.vscodeignore
+
+\.scannerwork/
