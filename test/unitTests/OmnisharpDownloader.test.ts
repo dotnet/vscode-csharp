@@ -15,7 +15,8 @@ import MockHttpsServer from "./testAssets/MockHttpsServer";
 import {expect} from 'chai';
 import TestZip from "./testAssets/TestZip";
 import { createTestFile } from "./testAssets/TestFile";
-import { PackageInstallation, LogPlatformInfo, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart, InstallationSuccess, BaseEvent } from "../../src/omnisharp/loggingEvents";
+import { PackageInstallation, LogPlatformInfo, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart, InstallationSuccess } from "../../src/omnisharp/loggingEvents";
+import TestEventBus from "./testAssets/TestEventBus";
 
 suite('OmnisharpDownloader', () => {
     const networkSettingsProvider = () => new NetworkSettings(undefined, false);
@@ -28,12 +29,11 @@ suite('OmnisharpDownloader', () => {
     const version = "1.2.3";
     let tmpDir: TmpAsset;
     let testZip: TestZip;
-    let eventBus: Array<BaseEvent>;
+    let eventBus: TestEventBus;
 
     setup(async () => {
-        eventBus = [];
         eventStream = new EventStream();
-        eventStream.subscribe(event => eventBus.push(event));
+        eventBus = new TestEventBus(eventStream);
         downloader = new OmnisharpDownloader(networkSettingsProvider, eventStream, testPackageJSON, platformInfo);
         tmpDir = await CreateTmpDir(true);
         extensionPath = tmpDir.name;
@@ -71,13 +71,14 @@ suite('OmnisharpDownloader', () => {
             new InstallationSuccess() 
         ]; 
  
-        expect(eventBus).to.be.empty; 
+        expect(eventBus.getEvents()).to.be.empty; 
         await downloader.DownloadAndInstallOmnisharp(version, server.baseUrl, installPath); 
-        expect(eventBus).to.be.deep.equal(expectedSequence); 
+        expect(eventBus.getEvents()).to.be.deep.equal(expectedSequence); 
     }); 
 
     teardown(async () => {
         tmpDir.dispose();
         await server.stop();
+        eventBus.dispose();
     });
 });
