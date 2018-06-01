@@ -14,6 +14,7 @@ before_install:
     fi
   - dpkg --compare-versions `npm -v` ge 5.8 || npm i -g npm@^5.8
 
+
 addons:
   apt:
     sources:
@@ -40,7 +41,7 @@ script:
   - gulp cov:report --codeExtensionPath ./vsix/extension
   - npm run test:artifacts
   - 'if [[ "$TRAVIS_BRANCH" != "master" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then npm run test:release; fi'
-  - bash sonar.sh
+  - sonar-scanner -X -Dsonar.projectVersion=1.15.2 -Dproject.settings=./sonar-project.properties -Dsonar.branch.name=$TRAVIS_BRANCH
 
 after_failure:
   - ./.travis/printLogs.sh
