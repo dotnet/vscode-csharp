@@ -8,6 +8,7 @@ import * as path from 'path';
 export module Requests {
     export const AddToProject = '/addtoproject';
     export const AutoComplete = '/autocomplete';
+    export const BlockStructure = '/blockstructure';
     export const CodeCheck = '/codecheck';
     export const CodeFormat = '/codeformat';
     export const ChangeBuffer = '/changebuffer';
@@ -622,6 +623,18 @@ export namespace V2 {
     export interface TestMessageEvent {
         MessageLevel: string;
         Message: string;
+    }
+
+    export interface BlockStructureResponse
+    {
+        Spans: BlockSpan[]
+    }
+
+    export interface BlockSpan {
+        TextSpan: Range;
+        HintSpan: Range;
+        BannerText: string;
+        Type: string;
     }
 }
 

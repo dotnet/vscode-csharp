@@ -75,6 +75,7 @@
     "jsonc-parser": "1.0.0",
     "mkdirp": "0.5.1",
     "node-filter-async": "0.0.4",
+    "npm": "^6.1.0",
     "open": "*",
     "request-light": "0.2.2",
     "rxjs": "5.5.6",
@@ -137,7 +138,7 @@
     "typescript": "2.8.3",
     "unzip2": "0.2.5",
     "vsce": "1.40.0",
-    "vscode": "1.1.17"
+    "vscode": "1.1.18"
   },
   "runtimeDependencies": [
     {
@@ -269,7 +270,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.18.0"
+    "vscode": "^1.23.0"
   },
   "activationEvents": [
     "onDebug",
