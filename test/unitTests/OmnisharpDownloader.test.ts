@@ -6,7 +6,6 @@
 import { OmnisharpDownloader } from "../../src/omnisharp/OmnisharpDownloader";
 import NetworkSettings from "../../src/NetworkSettings";
 import { EventStream } from "../../src/EventStream";
-import { testPackageJSON } from "../featureTests/testAssets/testAssets";
 import { PlatformInformation } from "../../src/platform";
 import { CreateTmpDir, TmpAsset } from "../../src/CreateTmpAsset";
 import * as util from '../../src/common';
@@ -17,6 +16,7 @@ import TestZip from "./testAssets/TestZip";
 import { createTestFile } from "./testAssets/TestFile";
 import { PackageInstallation, LogPlatformInfo, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart, InstallationSuccess } from "../../src/omnisharp/loggingEvents";
 import TestEventBus from "./testAssets/TestEventBus";
+import { testPackageJSON } from "./testAssets/testAssets";
 
 suite('OmnisharpDownloader', () => {
     const networkSettingsProvider = () => new NetworkSettings(undefined, false);
