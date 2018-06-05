@@ -470,6 +470,11 @@
                 }
               }
             },
+            "useSnapshotDebugger": {
+              "type": "boolean",
+              "description": "If true then Snapshot Debugger will be used rather than live debugger.",
+              "default": false
+            },
             "type": {
               "type": "string",
               "enum": [
@@ -1599,6 +1604,11 @@
                     }
                   }
                 }
+              },
+              "useSnapshotDebugger": {
+                "type": "boolean",
+                "description": "If true then Snapshot Debugger will be used rather than live debugger.",
+                "default": false
               }
             }
           }
@@ -2661,6 +2671,11 @@
                     }
                   }
                 }
+              },
+              "useSnapshotDebugger": {
+                "type": "boolean",
+                "description": "If true then Snapshot Debugger will be used rather than live debugger.",
+                "default": false
               }
             }
           }
