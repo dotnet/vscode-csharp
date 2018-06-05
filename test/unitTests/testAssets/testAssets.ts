@@ -4,17 +4,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { EventStream } from "../../../src/EventStream";
-import { PlatformInformation } from "../../../src/platform";
-import { OmnisharpDownloader } from "../../../src/omnisharp/OmnisharpDownloader";
-import NetworkSettings from "../../../src/NetworkSettings";
-
-export function GetTestOmnisharpDownloader(sink: EventStream, platformInfo: PlatformInformation): OmnisharpDownloader {
-    return new OmnisharpDownloader(() => new NetworkSettings(undefined, undefined), sink, testPackageJSON, platformInfo);
-}
-
-//Since we need only the runtime dependencies of packageJSON for the downloader create a testPackageJSON
-//with just that
 export let testPackageJSON = {
     "runtimeDependencies": [
         {
