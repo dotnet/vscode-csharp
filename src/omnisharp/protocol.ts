@@ -631,9 +631,7 @@ export namespace V2 {
     }
 
     export interface BlockSpan {
-        TextSpan: Range;
-        HintSpan: Range;
-        BannerText: string;
+        Range: Range;
         Type: string;
     }
 }
