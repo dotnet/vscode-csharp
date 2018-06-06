@@ -463,6 +463,11 @@
           "default": {
             "*": { "enabled": true }
           }
+        },
+        "useSnapshotDebugger": {
+          "type": "boolean",
+          "description": "If true then Snapshot Debugger will be used rather than live debugger.",
+          "default" : false
         }
       }
     },
