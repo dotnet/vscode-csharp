@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { OmnisharpDownloader } from "../../src/omnisharp/OmnisharpDownloader";
 import NetworkSettings from "../../src/NetworkSettings";
 import { EventStream } from "../../src/EventStream";
 import { PlatformInformation } from "../../src/platform";
