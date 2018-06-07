@@ -39,18 +39,4 @@ export class OmnisharpDownloader {
             throw error;// throw the error up to the server
         }
     }
-
-    public async GetLatestVersion(serverUrl: string, latestVersionFileServerPath: string): Promise<string> {
-        let description = "Latest OmniSharp Version Information";
-        let url = `${serverUrl}/${latestVersionFileServerPath}`;
-        try {
-            this.eventStream.post(new LatestBuildDownloadStart());
-            let versionBuffer = await DownloadFile(description, this.eventStream, this.networkSettingsProvider, url);
-            return versionBuffer.toString('utf8');
-        }
-        catch (error) {
-            this.eventStream.post(new InstallationFailure('getLatestVersionInfoFile', error));
-            throw error;
-        }
-    }
 }
