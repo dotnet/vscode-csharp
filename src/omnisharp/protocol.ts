@@ -609,6 +609,8 @@ export namespace V2 {
         Outcome: string;
         ErrorMessage: string;
         ErrorStackTrace: string;
+        StandardOutput: string[];
+        StandardError: string[];
     }
 
     export interface RunTestResponse {

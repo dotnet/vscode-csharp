@@ -151,7 +151,7 @@
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.omnisharp/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.30.1/OmniSharp.exe",
       "platformId": "win-x86"
     },
     {
@@ -165,7 +165,7 @@
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.30.1/OmniSharp.exe",
       "platformId": "win-x64"
     },
     {
@@ -180,7 +180,7 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/run",
+      "installTestPath": "./.omnisharp/1.30.1/run",
       "platformId": "osx"
     },
     {
@@ -199,7 +199,7 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/run",
+      "installTestPath": "./.omnisharp/1.30.1/run",
       "platformId": "linux-x86"
     },
     {
@@ -217,7 +217,7 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/run",
+      "installTestPath": "./.omnisharp/1.30.1/run",
       "platformId": "linux-x64"
     },
     {
