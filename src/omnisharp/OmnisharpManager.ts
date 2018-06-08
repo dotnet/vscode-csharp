@@ -17,7 +17,7 @@ export interface LaunchInfo {
 
 export class OmnisharpManager {
     public constructor(
-        private installPackages: (packages: Package[]) => Promise<boolean>,
+        private installRuntimeDependencies: (packages: Package[]) => Promise<boolean>,
         private getLatestVersion: () => Promise<string>,
         private getPackagesForVersion: (version: string) => Package[],
         private platformInfo: PlatformInformation) {
@@ -57,7 +57,7 @@ export class OmnisharpManager {
         if (semver.valid(version)) {
             let packages = this.getPackagesForVersion(version);
             packages.forEach(pkg => ResolveFilePaths(pkg));
-            await this.installPackages(packages);
+            await this.installRuntimeDependencies(packages);
             return this.GetLaunchPathForVersion(this.platformInfo, version, installPath, extensionPath);
         }
         else {

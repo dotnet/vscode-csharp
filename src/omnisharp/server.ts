@@ -28,9 +28,9 @@ import 'rxjs/add/operator/debounceTime';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
-import { installRuntimeDependencies } from '../InstallRuntimeDependencies';
+import { installCSharpExtDependencies } from '../InstallCSharpExtDependencies';
 import { Package } from '../packageManager/Package';
-import { GetLatestOmniSharpVersion } from './GetLatestOmniSharpVersion';
+import { getLatestOmniSharpVersion } from './GetLatestOmniSharpVersion';
 import { GetPackagesFromVersion } from './OmnisharpPackageCreator';
 
 enum ServerState {
@@ -96,8 +96,8 @@ export class OmniSharpServer {
 
     constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private packageJSON: any, private platformInfo: PlatformInformation, private eventStream: EventStream, private optionProvider: OptionProvider) {
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
-        let installPackages = (runtimeDependencies: Package[]) => installRuntimeDependencies(eventStream, platformInfo, networkSettingsProvider, runtimeDependencies);
-        let getLatestVersion = () => GetLatestOmniSharpVersion(latestVersionUrl, eventStream, networkSettingsProvider);
+        let installPackages = (runtimeDependencies: Package[]) => installCSharpExtDependencies(eventStream, platformInfo, networkSettingsProvider, runtimeDependencies);
+        let getLatestVersion = () => getLatestOmniSharpVersion(latestVersionUrl, eventStream, networkSettingsProvider);
         let getPackagesForVersion = (version: string) => GetPackagesFromVersion(version, packageJSON.runtimeDependencies, serverUrl, installPath);
         this._omnisharpManager = new OmnisharpManager(installPackages, getLatestVersion, getPackagesForVersion, platformInfo);
         this.updateProjectDebouncer.debounceTime(1500).subscribe((event) => { this.updateProjectInfo(); });

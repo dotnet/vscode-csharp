@@ -15,7 +15,7 @@ import { NetworkSettingsProvider } from './NetworkSettings';
  * Function used to download and install the runtime dependencies of the C# Extension
  */
 
-export async function installRuntimeDependencies(eventStream: EventStream, platformInfo: PlatformInformation, networkSettingsProvider: NetworkSettingsProvider, runtimeDependencies: Package[]): Promise<boolean> {
+export async function installCSharpExtDependencies(eventStream: EventStream, platformInfo: PlatformInformation, networkSettingsProvider: NetworkSettingsProvider, runtimeDependencies: Package[]): Promise<boolean> {
     eventStream.post(new PackageInstallation("C# dependencies"));
     let installationStage = 'touchBeginFile';
 
