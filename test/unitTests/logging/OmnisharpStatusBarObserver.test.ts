@@ -6,7 +6,7 @@
 import { StatusBarItem } from '../../../src/vscodeAdapter';
 import { OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpServerOnServerError, OmnisharpServerOnStart, OmnisharpServerOnStop, DownloadStart, InstallationStart, DownloadProgress, OmnisharpServerOnStdErr, BaseEvent } from '../../../src/omnisharp/loggingEvents';
 import { expect, should } from 'chai';
-import { OmnisharpStatusBarObserver } from '../../../src/observers/OmnisharpStatusBarObserver';
+import { OmnisharpStatusBarObserver, StatusBarColors } from '../../../src/observers/OmnisharpStatusBarObserver';
 
 suite('OmnisharpStatusBarObserver', () => {
     suiteSetup(() => should());
@@ -38,6 +38,7 @@ suite('OmnisharpStatusBarObserver', () => {
             expect(statusBarItem.text).to.equal(`$(flame)`);
             expect(statusBarItem.command).to.equal('o.showOutput');
             expect(statusBarItem.tooltip).to.equal('Error starting OmniSharp');
+            expect(statusBarItem.color).to.equal(StatusBarColors.Red);
         });
     });
 
@@ -45,7 +46,7 @@ suite('OmnisharpStatusBarObserver', () => {
         let event = new OmnisharpServerOnStdErr("std error");
         observer.post(event);
         expect(showCalled).to.be.true;
-        
+        expect(statusBarItem.color).to.equal(StatusBarColors.Red);
         expect(statusBarItem.text).to.equal(`$(flame)`);
         expect(statusBarItem.command).to.equal('o.showOutput');
         expect(statusBarItem.tooltip).to.contain(event.message);
@@ -64,6 +65,7 @@ suite('OmnisharpStatusBarObserver', () => {
         let event = new OmnisharpOnBeforeServerStart();
         observer.post(event);
         expect(showCalled).to.be.true;
+        expect(statusBarItem.color).to.equal(StatusBarColors.Yellow);
         expect(statusBarItem.text).to.be.equal('$(flame)');
         expect(statusBarItem.command).to.equal('o.showOutput');
         expect(statusBarItem.tooltip).to.equal('Starting OmniSharp server');
@@ -76,6 +78,7 @@ suite('OmnisharpStatusBarObserver', () => {
         expect(statusBarItem.text).to.be.equal('$(flame)');
         expect(statusBarItem.command).to.equal('o.showOutput');
         expect(statusBarItem.tooltip).to.be.equal('OmniSharp server is running');
+        expect(statusBarItem.color).to.be.equal(StatusBarColors.Green);
     });
 
     test('OnServerStop: Status bar is hidden and the attributes are set to undefined', () => {
