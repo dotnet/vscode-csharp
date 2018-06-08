@@ -8,10 +8,6 @@ import { NetworkSettingsProvider } from "../NetworkSettings";
 import { LatestBuildDownloadStart, InstallationFailure } from "./loggingEvents";
 import { DownloadFile } from "../packageManager/FileDownloader";
 
-export interface IGetLatestOmniSharpVersion {
-    (): string;
-}
-
 export async function getLatestOmniSharpVersion(url: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider): Promise<string> {
     let description = "Latest OmniSharp Version Information";
     try {
