@@ -6,28 +6,39 @@
 import * as path from 'path';
 import * as semver from 'semver';
 import * as util from '../common';
-import { PlatformInformation } from '../platform';
 import { Package } from '../packageManager/Package';
 import { ResolveFilePaths } from '../packageManager/PackageFilePathResolver';
+import { OmniSharpLaunchInfo } from './LaunchInfo';
 
-export interface LaunchInfo {
-    LaunchPath: string;
-    MonoLaunchPath?: string;
+export interface IGetLatestVersion {
+    (): Promise<string>;
+}
+
+export interface IGetVersionPackages {
+    (version: string): Package[];
+}
+
+export interface IInstallRuntimeDependencies {
+    (packages: Package[]): Promise<boolean>;
+}
+
+export interface IGetOmniSharpLaunchInfo {
+    (path: string): OmniSharpLaunchInfo;
 }
 
 export class OmnisharpManager {
     public constructor(
-        private installRuntimeDependencies: (packages: Package[]) => Promise<boolean>,
-        private getLatestVersion: () => Promise<string>,
-        private getPackagesForVersion: (version: string) => Package[],
-        private platformInfo: PlatformInformation) {
+        private installRuntimeDependencies: IInstallRuntimeDependencies,
+        private getLatestVersion: IGetLatestVersion,
+        private getPackagesForVersion: IGetVersionPackages,
+        private getOmniSharpLaunchInfo: IGetOmniSharpLaunchInfo) {
     }
 
-    public async GetOmniSharpLaunchInfo(defaultOmnisharpVersion: string, omnisharpPath: string, installPath: string, extensionPath: string): Promise<LaunchInfo> {
+    public async GetOmniSharpLaunchInfo(defaultOmnisharpVersion: string, omnisharpPath: string, installPath: string, extensionPath: string): Promise<OmniSharpLaunchInfo> {
         if (!omnisharpPath) {
             // If omnisharpPath was not specified, return the default path.
             let basePath = path.resolve(extensionPath, '.omnisharp', defaultOmnisharpVersion);
-            return this.GetLaunchInfo(this.platformInfo, basePath);
+            return this.getOmniSharpLaunchInfo(basePath);
         }
 
         // Looks at the options path, installs the dependencies and returns the path to be loaded by the omnisharp server
@@ -48,43 +59,29 @@ export class OmnisharpManager {
         return await this.InstallVersionAndReturnLaunchInfo(omnisharpPath, installPath, extensionPath);
     }
 
-    private async InstallLatestAndReturnLaunchInfo(installPath: string, extensionPath: string): Promise<LaunchInfo> {
+    private async InstallLatestAndReturnLaunchInfo(installPath: string, extensionPath: string): Promise<OmniSharpLaunchInfo> {
         let version = await this.getLatestVersion();
         return await this.InstallVersionAndReturnLaunchInfo(version, installPath, extensionPath);
     }
 
-    private async InstallVersionAndReturnLaunchInfo(version: string, installPath: string, extensionPath: string): Promise<LaunchInfo> {
+    private async InstallVersionAndReturnLaunchInfo(version: string, installPath: string, extensionPath: string): Promise<OmniSharpLaunchInfo> {
         if (semver.valid(version)) {
             let packages = this.getPackagesForVersion(version);
             packages.forEach(pkg => ResolveFilePaths(pkg));
             await this.installRuntimeDependencies(packages);
-            return this.GetLaunchPathForVersion(this.platformInfo, version, installPath, extensionPath);
+            return this.GetLaunchPathForVersion(version, installPath, extensionPath);
         }
         else {
             throw new Error(`Invalid OmniSharp version - ${version}`);
         }
     }
 
-    private GetLaunchPathForVersion(platformInfo: PlatformInformation, version: string, installPath: string, extensionPath: string): LaunchInfo {
+    private GetLaunchPathForVersion(version: string, installPath: string, extensionPath: string): OmniSharpLaunchInfo {
         if (!version) {
             throw new Error('Invalid Version');
         }
 
         let basePath = path.resolve(extensionPath, installPath, version);
-
-        return this.GetLaunchInfo(platformInfo, basePath);
-    }
-
-    private GetLaunchInfo(platformInfo: PlatformInformation, basePath: string): LaunchInfo {
-        if (platformInfo.isWindows()) {
-            return {
-                LaunchPath: path.join(basePath, 'OmniSharp.exe')
-            };
-        }
-
-        return {
-            LaunchPath: path.join(basePath, 'run'),
-            MonoLaunchPath: path.join(basePath, 'omnisharp', 'OmniSharp.exe')
-        };
+        return this.getOmniSharpLaunchInfo(basePath);
     }
 }

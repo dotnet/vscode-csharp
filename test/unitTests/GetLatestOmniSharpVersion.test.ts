@@ -35,7 +35,7 @@ suite(getLatestOmniSharpVersion.name, () => {
 
     suite('The file to be downloaded exists', () => {
         test('Returns the latest version', async () => {
-            let version = await getLatestOmniSharpVersion(`${server.baseUrl}/${latestPath}`, eventStream, networkSettingsProvider)
+            let version = await getLatestOmniSharpVersion(`${server.baseUrl}/${latestPath}`, eventStream, networkSettingsProvider);
             expect(version).to.be.equal(latestVersion);
         });
 
@@ -47,7 +47,7 @@ suite(getLatestOmniSharpVersion.name, () => {
                 new DownloadProgress(100, 'Latest OmniSharp Version Information'),
                 new DownloadSuccess(' Done!')
             ];
-            await getLatestOmniSharpVersion(`${server.baseUrl}/${latestPath}`, eventStream, networkSettingsProvider)
+            await getLatestOmniSharpVersion(`${server.baseUrl}/${latestPath}`, eventStream, networkSettingsProvider);
             expect(eventBus.getEvents()).to.be.deep.equal(expectedEvents);
         });
     });
