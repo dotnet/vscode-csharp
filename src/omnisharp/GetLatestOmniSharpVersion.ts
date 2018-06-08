@@ -16,7 +16,7 @@ export async function getLatestOmniSharpVersion(url: string, eventStream: EventS
         return versionBuffer.toString('utf8');
     }
     catch (error) {
-        eventStream.post(new InstallationFailure('getLatestVersionInfoFile', error));
+        eventStream.post(new InstallationFailure('getLatestVersionInfoFile', error.toString()));
         throw error;
     }
 }
