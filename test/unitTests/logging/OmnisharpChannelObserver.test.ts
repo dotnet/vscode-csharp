@@ -5,7 +5,7 @@
 import { expect } from 'chai';
 import { getNullChannel } from '../testAssets/Fakes';
 import { OmnisharpChannelObserver } from '../../../src/observers/OmnisharpChannelObserver';
-import { OmnisharpFailure, ShowOmniSharpChannel, BaseEvent, OmnisharpRestart } from '../../../src/omnisharp/loggingEvents';
+import { OmnisharpFailure, ShowOmniSharpChannel, BaseEvent, OmnisharpRestart, OmnisharpServerOnStdErr } from '../../../src/omnisharp/loggingEvents';
 
 suite("OmnisharpChannelObserver", () => {
 
@@ -25,7 +25,8 @@ suite("OmnisharpChannelObserver", () => {
 
     [
         new OmnisharpFailure("errorMessage", new Error("error")),
-        new ShowOmniSharpChannel()
+        new ShowOmniSharpChannel(),
+        new OmnisharpServerOnStdErr("std err")
     ].forEach((event: BaseEvent) => {
         test(`${event.constructor.name}: Channel is shown`, () => {
             expect(hasShown).to.be.false;

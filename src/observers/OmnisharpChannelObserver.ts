@@ -4,16 +4,15 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { BaseChannelObserver } from "./BaseChannelObserver";
-import { BaseEvent, ShowOmniSharpChannel, OmnisharpFailure, OmnisharpRestart } from '../omnisharp/loggingEvents';
+import { BaseEvent, ShowOmniSharpChannel, OmnisharpFailure, OmnisharpRestart, OmnisharpServerOnStdErr } from '../omnisharp/loggingEvents';
 
 export class OmnisharpChannelObserver extends BaseChannelObserver {
 
     public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case ShowOmniSharpChannel.name:
-                this.showChannel();
-                break;
             case OmnisharpFailure.name:
+            case OmnisharpServerOnStdErr.name:
                 this.showChannel();
                 break;
             case OmnisharpRestart.name:
