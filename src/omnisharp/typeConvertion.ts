@@ -62,30 +62,3 @@ export function createRequest<T extends protocol.Request>(document: vscode.TextD
 
     return <T>request;
 }
-
-export function toDocumentSymbol(bucket: vscode.SymbolInformation[], node: protocol.Node, containerLabel?: string): void {
-
-    let ret = new vscode.SymbolInformation(node.Location.Text, kinds[node.Kind],
-        toRange(node.Location),
-        undefined, containerLabel);
-
-    if (node.ChildNodes) {
-        for (let child of node.ChildNodes) {
-            toDocumentSymbol(bucket, child, ret.name);
-        }
-    }
-    bucket.push(ret);
-}
-
-let kinds: { [kind: string]: vscode.SymbolKind; } = Object.create(null);
-kinds['NamespaceDeclaration'] = vscode.SymbolKind.Namespace;
-kinds['ClassDeclaration'] = vscode.SymbolKind.Class;
-kinds['FieldDeclaration'] = vscode.SymbolKind.Field;
-kinds['PropertyDeclaration'] = vscode.SymbolKind.Property;
-kinds['EventFieldDeclaration'] = vscode.SymbolKind.Property;
-kinds['MethodDeclaration'] = vscode.SymbolKind.Method;
-kinds['EnumDeclaration'] = vscode.SymbolKind.Enum;
-kinds['StructDeclaration'] = vscode.SymbolKind.Enum;
-kinds['EnumMemberDeclaration'] = vscode.SymbolKind.Property;
-kinds['InterfaceDeclaration'] = vscode.SymbolKind.Interface;
-kinds['VariableDeclaration'] = vscode.SymbolKind.Variable;
