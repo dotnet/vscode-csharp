@@ -11,7 +11,6 @@ export module Requests {
     export const CodeCheck = '/codecheck';
     export const CodeFormat = '/codeformat';
     export const ChangeBuffer = '/changebuffer';
-    export const CurrentFileMembersAsTree = '/currentfilemembersastree';
     export const FilesChanged = '/filesChanged';
     export const FindSymbols = '/findsymbols';
     export const FindUsages = '/findusages';
@@ -253,17 +252,6 @@ export interface GetCodeActionsResponse {
 export interface SyntaxFeature {
     Name: string;
     Data: string;
-}
-
-export interface Node {
-    ChildNodes: Node[];
-    Location: QuickFix;
-    Kind: string;
-    Features: SyntaxFeature[];
-}
-
-export interface CurrentFileMembersAsTreeResponse {
-    TopLevelTypeDefinitions: Node[];
 }
 
 export interface AutoCompleteRequest extends Request {
