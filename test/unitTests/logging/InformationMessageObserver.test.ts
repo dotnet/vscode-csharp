@@ -19,9 +19,7 @@ suite("InformationMessageObserver", () => {
     let doClickOk: () => void;
     let doClickCancel: () => void;
     let signalCommandDone: () => void;
-    let commandDone = new Promise<void>(resolve => {
-        signalCommandDone = () => { resolve(); };
-    });
+    let commandDone: Promise<void>;
     let vscode = getVsCode();
     let infoMessage: string;
     let relativePath: string;
@@ -29,9 +27,6 @@ suite("InformationMessageObserver", () => {
     let observer: InformationMessageObserver = new InformationMessageObserver(vscode);
 
     setup(() => {
-        infoMessage = undefined;
-        relativePath = undefined;
-        invokedCommand = undefined;
         commandDone = new Promise<void>(resolve => {
             signalCommandDone = () => { resolve(); };
         });
@@ -80,6 +75,15 @@ suite("InformationMessageObserver", () => {
                 });
             });
         });
+        });
+    
+    teardown(() => {
+        commandDone = undefined; 
+        infoMessage = undefined;
+        relativePath = undefined;
+        invokedCommand = undefined;
+        doClickCancel = undefined;
+        doClickOk = undefined;
     });
 
     function getVsCode() {

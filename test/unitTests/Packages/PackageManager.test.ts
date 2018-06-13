@@ -8,73 +8,61 @@ import * as path from 'path';
 import * as chai from 'chai';
 import * as util from '../../../src/common';
 import { CreateTmpDir, TmpAsset } from '../../../src/CreateTmpAsset';
-import { Binaries, Files, createTestZipAsync } from '../testAssets/CreateTestZip';
+import  TestZip  from '../testAssets/TestZip';
 import { Package } from '../../../src/packageManager/Package';
 import { DownloadAndInstallPackages } from '../../../src/packageManager/PackageManager';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { PlatformInformation } from '../../../src/platform';
 import { EventStream } from '../../../src/EventStream';
-import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart } from '../../../src/omnisharp/loggingEvents';
-import { getRequestHandler } from '../testAssets/MockHttpServerRequestHandler';
+import { DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart } from '../../../src/omnisharp/loggingEvents';
+import MockHttpsServer from '../testAssets/MockHttpsServer';
+import { createTestFile } from '../testAssets/TestFile';
+import TestEventBus from '../testAssets/TestEventBus';
 
 chai.use(require("chai-as-promised"));
 const expect = chai.expect;
-const ServerMock = require("mock-http-server");
-const getPort = require('get-port');
 
 suite("Package Manager", () => {
     let tmpInstallDir: TmpAsset;
-    let server: any;
-    let downloadUrl: string;
-    let allFiles: Array<{ content: string, path: string }>;
+    let server: MockHttpsServer;
+    let testZip: TestZip;
     let installationPath: string;
-    let eventBus: Array<BaseEvent>;
+    let eventStream: EventStream;
+    let eventBus: TestEventBus;
     let packages: Package[];
 
     const packageDescription = "Test Package";
-    const eventStream = new EventStream();
-    eventStream.subscribe(event => eventBus.push(event));
 
     const windowsPlatformInfo = new PlatformInformation("win32", "x86");
     const linuxPlatformInfo = new PlatformInformation("linux", "x86");
     const networkSettingsProvider = () => new NetworkSettings(undefined, false);
 
-    suiteSetup(async () => {
-        let port = await getPort();
-        downloadUrl = `https://localhost:${port}/package`;
-        server = new ServerMock(null,
-            {
-                host: "localhost",
-                port: port,
-                key: await fs.readFile("test/unitTests/testAssets/private.pem"),
-                cert: await fs.readFile("test/unitTests/testAssets/public.pem")
-            });
-    });
-
     setup(async () => {
-        eventBus = [];
+        eventStream = new EventStream();
+        server = await MockHttpsServer.CreateMockHttpsServer();
+        eventBus = new TestEventBus(eventStream);
         tmpInstallDir = await CreateTmpDir(true);
         installationPath = tmpInstallDir.name;
         packages = <Package[]>[
             {
-                url: downloadUrl,
+                url: `${server.baseUrl}/package`,
                 description: packageDescription,
                 installPath: installationPath,
                 platforms: [windowsPlatformInfo.platform],
                 architectures: [windowsPlatformInfo.architecture]
             }];
-        allFiles = [...Files, ...Binaries];
-        let buffer = await createTestZipAsync(allFiles);
-        await new Promise(resolve => server.start(resolve)); //start the server
-        server.on(getRequestHandler('GET', '/package', 200, {
+
+        testZip = await TestZip.createTestZipAsync(createTestFile("Foo", "foo.txt"));
+        await server.start();
+        server.addRequestHandler('GET', '/package', 200, {
             "content-type": "application/zip",
-            "content-length": buffer.length
-        },  buffer));
+            "content-length": testZip.size
+        }, testZip.buffer);
     });
 
     test("Downloads the package and installs at the specified path", async () => {
         await DownloadAndInstallPackages(packages, networkSettingsProvider, windowsPlatformInfo, eventStream);
-        for (let elem of allFiles) {
+        for (let elem of testZip.files) {
             let filePath = path.join(installationPath, elem.path);
             expect(await util.fileExists(filePath)).to.be.true;
         }
@@ -83,14 +71,14 @@ suite("Package Manager", () => {
     test("Events are created in the correct order", async () => {
         let eventsSequence = [
             new DownloadStart(packageDescription),
-            new DownloadSizeObtained(396),
+            new DownloadSizeObtained(testZip.size),
             new DownloadProgress(100, packageDescription),
             new DownloadSuccess(' Done!'),
             new InstallationStart(packageDescription)
         ];
 
         await DownloadAndInstallPackages(packages, networkSettingsProvider, windowsPlatformInfo, eventStream);
-        expect(eventBus).to.be.deep.equal(eventsSequence);
+        expect(eventBus.getEvents()).to.be.deep.equal(eventsSequence);
     });
 
     test("Installs only the platform specific packages", async () => {
@@ -105,6 +93,7 @@ suite("Package Manager", () => {
             tmpInstallDir.dispose();
         }
 
-        await new Promise((resolve, reject) => server.stop(resolve));
+        await server.stop();
+        eventBus.dispose();
     });
 });

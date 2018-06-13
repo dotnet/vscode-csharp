@@ -5,8 +5,8 @@
 
 import { assert, should, expect } from "chai";
 import { SetBinaryAndGetPackage, GetPackagesFromVersion } from "../../src/omnisharp/OmnisharpPackageCreator";
-import { testPackageJSON } from "./testAssets/testAssets";
 import { Package } from "../../src/packageManager/Package";
+import { testPackageJSON } from "./testAssets/testAssets";
 
 suite("GetOmnisharpPackage : Output package depends on the input package and other input parameters like serverUrl", () => {
 

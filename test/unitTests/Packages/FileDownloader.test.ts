@@ -3,16 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'async-file';
 import * as chai from 'chai';
 import { EventStream } from '../../../src/EventStream';
 import { DownloadFile } from '../../../src/packageManager/FileDownloader';
 import NetworkSettings from '../../../src/NetworkSettings';
-import { BaseEvent, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, DownloadFallBack, DownloadFailure } from '../../../src/omnisharp/loggingEvents';
-import { getRequestHandler } from '../testAssets/MockHttpServerRequestHandler';
+import { DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, DownloadFallBack, DownloadFailure } from '../../../src/omnisharp/loggingEvents';
+import MockHttpsServer from '../testAssets/MockHttpsServer';
+import TestEventBus from '../testAssets/TestEventBus';
 
-const getPort = require('get-port');
-const ServerMock = require("mock-http-server");
 chai.use(require("chai-as-promised"));
 chai.use(require('chai-arrays'));
 const expect = chai.expect;
@@ -24,7 +22,7 @@ suite("FileDownloader", () => {
     const errorUrlPath = '/errorResource';
     const networkSettingsProvider = () => new NetworkSettings(undefined, false);
     const eventStream = new EventStream();
-    let eventBus: BaseEvent[];
+    let eventBus: TestEventBus;
     const getPrimaryURLEvents = () => {
         return [
             new DownloadStart(fileDescription),
@@ -37,36 +35,21 @@ suite("FileDownloader", () => {
         return [
             new DownloadStart(fileDescription),
             new DownloadFailure("failed (error code '404')"),
-            new DownloadFallBack(`${httpsServerUrl}${correctUrlPath}`),
+            new DownloadFallBack(`${server.baseUrl}${correctUrlPath}`),
             new DownloadSizeObtained(12),
             new DownloadProgress(100, fileDescription),
             new DownloadSuccess(' Done!')];
     };
-    eventStream.subscribe((event) => eventBus.push(event));
 
-    let server: any;
-    let httpsServerUrl: string;
-
-    suiteSetup(async () => {
-        let port = await getPort();
-        server = new ServerMock(null,
-            {
-                host: "localhost",
-                port: port,
-                key: await fs.readFile("test/unitTests/testAssets/private.pem"),
-                cert: await fs.readFile("test/unitTests/testAssets/public.pem")
-            });
-
-        httpsServerUrl = `https://127.0.0.1:${port}`;
-    });
-
+    let server: MockHttpsServer;
 
     setup(async () => {
-        await new Promise(resolve => server.start(resolve));
-        eventBus = [];
-        server.on(getRequestHandler('GET', correctUrlPath, 200, { "content-type": "text/plain" }, "Test content"));
-        server.on(getRequestHandler('GET', errorUrlPath, 404));
-        server.on(getRequestHandler('GET', redirectUrlPath, 301, { "location": `${httpsServerUrl}${correctUrlPath}` }));
+        server = await MockHttpsServer.CreateMockHttpsServer();
+        await server.start();
+        eventBus = new TestEventBus(eventStream);
+        server.addRequestHandler('GET', correctUrlPath, 200, { "content-type": "text/plain" }, "Test content");
+        server.addRequestHandler('GET', errorUrlPath, 404);
+        server.addRequestHandler('GET', redirectUrlPath, 301, { "location": `${server.baseUrl}${correctUrlPath}` });
     });
 
     suite('If the response status Code is 200, the download succeeds', () => {
@@ -94,7 +77,7 @@ suite("FileDownloader", () => {
 
                 test('Events are created in the correct order', async () => {
                     await DownloadFile(fileDescription, eventStream, networkSettingsProvider,  getURL(elem.urlPath), getURL(elem.fallBackUrlPath));
-                    expect(eventBus).to.be.deep.equal(elem.getEventSequence());
+                    expect(eventBus.getEvents()).to.be.deep.equal(elem.getEventSequence());
                 });
             });
         });
@@ -122,17 +105,18 @@ suite("FileDownloader", () => {
                 await DownloadFile(fileDescription, eventStream, networkSettingsProvider, getURL(errorUrlPath));
             }
             catch (error) {
-                expect(eventBus).to.be.deep.equal(eventsSequence);
+                expect(eventBus.getEvents()).to.be.deep.equal(eventsSequence);
             }
         });
     });
 
     teardown(async () => {
-        await new Promise((resolve, reject) => server.stop(resolve));
+        await server.stop();
+        eventBus.dispose();
     });
 
     function getURL(urlPath: string) {
-        return `${httpsServerUrl}${urlPath}`;
+        return `${server.baseUrl}${urlPath}`;
     }
 });
 

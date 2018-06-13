@@ -26,7 +26,6 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function() {
         catch (err) {
             console.log(JSON.stringify(err));
         }
-
     });
 
     test("Code actions can rename and open files", async () => {
