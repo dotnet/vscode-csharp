@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { StatusBarItem } from '../../../src/vscodeAdapter';
-import { OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpServerOnServerError, OmnisharpServerOnStart, OmnisharpServerOnStop, DownloadStart, InstallationStart, DownloadProgress } from '../../../src/omnisharp/loggingEvents';
+import { OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpServerOnServerError, OmnisharpServerOnStart, OmnisharpServerOnStop, DownloadStart, InstallationStart, DownloadProgress, OmnisharpServerOnStdErr, BaseEvent } from '../../../src/omnisharp/loggingEvents';
 import { expect, should } from 'chai';
-import { OmnisharpStatusBarObserver } from '../../../src/observers/OmnisharpStatusBarObserver';
+import { OmnisharpStatusBarObserver, StatusBarColors } from '../../../src/observers/OmnisharpStatusBarObserver';
 
 suite('OmnisharpStatusBarObserver', () => {
     suiteSetup(() => should());
@@ -27,16 +27,31 @@ suite('OmnisharpStatusBarObserver', () => {
         hide: () => { hideCalled = true; }
     };
 
-    let observer = new OmnisharpStatusBarObserver( statusBarItem);
+    let observer = new OmnisharpStatusBarObserver(statusBarItem);
 
-    test('OnServerError: Status bar is shown with the error text', () => {
-        let event = new OmnisharpServerOnServerError("someError");
+    [
+        new OmnisharpServerOnServerError("someError"),
+    ].forEach((event: BaseEvent) => {
+        test(`${event.constructor.name}: Status bar is shown with the error text`, () => {
+            observer.post(event);
+            expect(showCalled).to.be.true;
+            expect(statusBarItem.text).to.equal(`$(flame)`);
+            expect(statusBarItem.command).to.equal('o.showOutput');
+            expect(statusBarItem.tooltip).to.equal('Error starting OmniSharp');
+            expect(statusBarItem.color).to.equal(StatusBarColors.Red);
+        });
+    });
+
+    test(`${OmnisharpServerOnStdErr.name}: Status bar is shown with the error text`, () => {
+        let event = new OmnisharpServerOnStdErr("std error");
         observer.post(event);
         expect(showCalled).to.be.true;
+        expect(statusBarItem.color).to.equal(StatusBarColors.Red);
         expect(statusBarItem.text).to.equal(`$(flame)`);
         expect(statusBarItem.command).to.equal('o.showOutput');
-        expect(statusBarItem.tooltip).to.equal('Error starting OmniSharp');
+        expect(statusBarItem.tooltip).to.contain(event.message);
     });
+
 
     test('OnBeforeServerInstall: Status bar is shown with the installation text', () => {
         let event = new OmnisharpOnBeforeServerInstall();
@@ -50,6 +65,7 @@ suite('OmnisharpStatusBarObserver', () => {
         let event = new OmnisharpOnBeforeServerStart();
         observer.post(event);
         expect(showCalled).to.be.true;
+        expect(statusBarItem.color).to.equal(StatusBarColors.Yellow);
         expect(statusBarItem.text).to.be.equal('$(flame)');
         expect(statusBarItem.command).to.equal('o.showOutput');
         expect(statusBarItem.tooltip).to.equal('Starting OmniSharp server');
@@ -62,6 +78,7 @@ suite('OmnisharpStatusBarObserver', () => {
         expect(statusBarItem.text).to.be.equal('$(flame)');
         expect(statusBarItem.command).to.equal('o.showOutput');
         expect(statusBarItem.tooltip).to.be.equal('OmniSharp server is running');
+        expect(statusBarItem.color).to.be.equal(StatusBarColors.Green);
     });
 
     test('OnServerStop: Status bar is hidden and the attributes are set to undefined', () => {

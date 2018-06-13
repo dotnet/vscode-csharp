@@ -9,6 +9,10 @@
 
 * Improved diagnostics by refreshing them when the active editor changes or the current window is focused. (PR: [#2317](https://github.com/OmniSharp/omnisharp-vscode/pull/2317)) _(Contributed by [@SirIntruder](https://github.com/SirIntruder))
 
+#### Testing
+
+* Added test execution output to the output of the Run/Debug Test CodeLens. (PR: [#2337](https://github.com/OmniSharp/omnisharp-vscode/pull/2337), [#2343](https://github.com/OmniSharp/omnisharp-vscode/pull/2343), [omnisharp-roslyn#1203](https://github.com/OmniSharp/omnisharp-roslyn/pull/1203))
+
 ## 1.15.2 (May 15, 1018)
 
 * Fixed a 1.30.0 regression that prevented the script project system from working on Unix-based systems ([omnisharp-roslyn#1184](https://github.com/OmniSharp/omnisharp-roslyn/pull/1184), PR: [omnisharp-roslyn#1185](https://github.com/OmniSharp/omnisharp-roslyn/pull/1185)) _(Contributed by [@filipw](https://github.com/filipw))_
