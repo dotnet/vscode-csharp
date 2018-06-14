@@ -172,11 +172,7 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
         }
     });
 
-    let rtnTargets: LaunchTarget[];
-
-    rtnTargets = targets.sort((a, b) => a.directory.localeCompare(b.directory));
-
-    return rtnTargets;
+    return targets.sort((a, b) => a.directory.localeCompare(b.directory));
 }
 
 function isCSharpProject(resource: vscode.Uri): boolean {
