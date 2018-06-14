@@ -86,7 +86,6 @@ export class OmniSharpServer {
     private _launchTarget: LaunchTarget;
     private _requestQueue: RequestQueueCollection;
     private _serverProcess: ChildProcess;
-    private _options: Options;
 
     private _omnisharpManager: OmnisharpManager;
     private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
@@ -294,8 +293,6 @@ export class OmniSharpServer {
         const solutionPath = launchTarget.target;
         const cwd = path.dirname(solutionPath);
 
-        this._options = Options.Read(this.vscode);
-
         let args = [
             '-s', solutionPath,
             '--hostPID', process.pid.toString(),
@@ -448,39 +445,30 @@ export class OmniSharpServer {
                 });
             }
 
-            this._options = Options.Read(this.vscode);
+            const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().defaultLaunchSolution;
 
-            const defaultLaunchSolutionConfigValue = this._options.defaultLaunchSolution;
+            // First, try to launch against something that matches the user's preferred target
+            const defaultLaunchSolutionTarget = launchTargets.find((a) => (path.basename(a.target) === defaultLaunchSolutionConfigValue));
+            if (defaultLaunchSolutionTarget) {
+                return this.restart(defaultLaunchSolutionTarget);
+            }
 
-            // does the configured target actually exist
-            const defaultLaunchSolutionTarget = launchTargets.filter((a) => (path.basename(a.target) === defaultLaunchSolutionConfigValue));
+            // If there's more than one launch target, we start the server if one of the targets
+            // matches the preferred path. Otherwise, we fire the "MultipleLaunchTargets" event,
+            // which is handled in status.ts to display the launch target selector.
+            if (launchTargets.length > 1 && preferredPath) {
 
-            // If there's more than one target, 
-            if (launchTargets.length > 1) {
-                // launch the server with the default solution if configured by setting `omnisharp.defaultLaunchSolution`.
-                // The user can still manually switch solutions, if there are multiple, from  the 'Omnisharp: Select Project command'
-                if (defaultLaunchSolutionTarget.length > 0) {
-                    // start server with default solution file                    
-                    return this.restart(defaultLaunchSolutionTarget[0]);
-                }
-                else {
-                    // Launch the server with preferred path if one of the targets matches the preferred path. Otherwise, we fire the "MultipleLaunchTargets" event,
-                    // which is handled in status.ts to display the launch target selector.
-                    if (preferredPath) {
-
-                        for (let launchTarget of launchTargets) {
-
-                            if (launchTarget.target === preferredPath) {
-                                // start preferred path
-                                return this.restart(launchTarget);
-                            }
-                        }
-
-                        this._fireEvent(Events.MultipleLaunchTargets, launchTargets);
-                        return Promise.reject<void>(undefined);
+                for (let launchTarget of launchTargets) {
+                    if (launchTarget.target === preferredPath) {
+                        // start preferred path
+                        return this.restart(launchTarget);
                     }
                 }
+
+                this._fireEvent(Events.MultipleLaunchTargets, launchTargets);
+                return Promise.reject<void>(undefined);
             }
+
             // If there's only one target, just start
             return this.restart(launchTargets[0]);
         });

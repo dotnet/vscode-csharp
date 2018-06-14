@@ -2669,15 +2669,6 @@
               }
             }
           }
-        },
-        "windows": {
-          "program": "./.debugger/vsdbg-ui.exe"
-        },
-        "osx": {
-          "program": "./.debugger/vsdbg-ui"
-        },
-        "linux": {
-          "program": "./.debugger/vsdbg-ui"
         }
       }
     ]
