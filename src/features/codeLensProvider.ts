@@ -33,14 +33,15 @@ class ReferencesCodeLens extends OmniSharpCodeLens {
     constructor(
         range: protocol.V2.Range,
         fileName: string) {
-            super(range, fileName);
+        super(range, fileName);
     }
 }
 
 abstract class TestCodeLens extends OmniSharpCodeLens {
     constructor(
         range: protocol.V2.Range,
-        fileName: string, 
+        fileName: string,
+        public isTestContainer: boolean,
         public testFramework: string,
         public testMethodNames: string[]) {
 
@@ -51,22 +52,24 @@ abstract class TestCodeLens extends OmniSharpCodeLens {
 class RunTestsCodeLens extends TestCodeLens {
     constructor(
         range: protocol.V2.Range,
-        fileName: string, 
+        fileName: string,
+        isTestContainer: boolean,
         testFramework: string,
         testMethodNames: string[]) {
 
-        super(range, fileName, testFramework, testMethodNames);
+        super(range, fileName, isTestContainer, testFramework, testMethodNames);
     }
 }
 
 class DebugTestsCodeLens extends TestCodeLens {
     constructor(
         range: protocol.V2.Range,
-        fileName: string, 
+        fileName: string,
+        isTestContainer: boolean,
         testFramework: string,
         testMethodNames: string[]) {
 
-        super(range, fileName, testFramework, testMethodNames);
+        super(range, fileName, isTestContainer, testFramework, testMethodNames);
     }
 }
 
@@ -131,7 +134,8 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
     }
 
     private async resolveTestCodeLens(codeLens: TestCodeLens, singularTitle: string, singularCommandName: string, pluralTitle: string, pluralCommandName: string): Promise<vscode.CodeLens> {
-        if (codeLens.testMethodNames.length === 1) {
+        if (!codeLens.isTestContainer) {
+            // This is just a single test method, not a container.
             codeLens.command = {
                 title: singularTitle,
                 command: singularCommandName,
@@ -140,20 +144,19 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 
             return codeLens;
         }
-        else if (codeLens.testMethodNames.length > 1) {
-            const projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: codeLens.fileName });
+        
+        const projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: codeLens.fileName });
 
-            // We do not support running all tests on legacy projects.
-            if (projectInfo.MsBuildProject && !projectInfo.DotNetProject) {
-                codeLens.command = {
-                    title: pluralTitle,
-                    command: pluralCommandName,
-                    arguments: [codeLens.testMethodNames, codeLens.fileName, codeLens.testFramework]
-                };
-            }
-
-            return codeLens;
+        // We do not support running all tests on legacy projects.
+        if (projectInfo.MsBuildProject && !projectInfo.DotNetProject) {
+            codeLens.command = {
+                title: pluralTitle,
+                command: pluralCommandName,
+                arguments: [codeLens.testMethodNames, codeLens.fileName, codeLens.testFramework]
+            };
         }
+
+        return codeLens;
     }
 }
 
@@ -171,7 +174,7 @@ function createCodeLenses(elements: Structure.CodeElement[], fileName: string, o
 
 function createCodeLensesForElement(element: Structure.CodeElement, fileName: string, options: Options): vscode.CodeLens[] {
     let results: vscode.CodeLens[] = [];
-   
+
     if (options.showReferencesCodeLens && isValidElementForReferencesCodeLens(element)) {
         let range = element.Ranges[SymbolRangeNames.Name];
         if (range) {
@@ -185,8 +188,8 @@ function createCodeLensesForElement(element: Structure.CodeElement, fileName: st
             let range = element.Ranges[SymbolRangeNames.Name];
 
             if (range && testFramework && testMethodName) {
-                results.push(new RunTestsCodeLens(range, fileName, testFramework, [testMethodName]));
-                results.push(new DebugTestsCodeLens(range, fileName, testFramework, [testMethodName]));
+                results.push(new RunTestsCodeLens(range, fileName, /*isTestContainer*/ false, testFramework, [testMethodName]));
+                results.push(new DebugTestsCodeLens(range, fileName, /*isTestContainer*/ false, testFramework, [testMethodName]));
             }
         }
         else if (isValidClassForTestCodeLens(element)) {
@@ -207,9 +210,9 @@ function createCodeLensesForElement(element: Structure.CodeElement, fileName: st
                 }
             }
 
-            results.push(new RunTestsCodeLens(range, fileName, testFramework, testMethodNames));
-            results.push(new DebugTestsCodeLens(range, fileName, testFramework, testMethodNames));
-    }
+            results.push(new RunTestsCodeLens(range, fileName, /*isTestContainer*/ true, testFramework, testMethodNames));
+            results.push(new DebugTestsCodeLens(range, fileName, /*isTestContainer*/ true, testFramework, testMethodNames));
+        }
     }
 
     return results;
