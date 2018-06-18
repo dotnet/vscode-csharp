@@ -7,7 +7,7 @@ import * as fs from 'async-file';
 import * as vscode from 'vscode';
 
 import poll from './poll';
-import { should } from 'chai';
+import { should, expect } from 'chai';
 import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
@@ -36,7 +36,8 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
             vscode.debug.onDidTerminateDebugSession((e) => resolve());
         });
 
-        vscode.debug.activeDebugSession.type.should.equal("coreclr");
+        expect(vscode.debug.activeDebugSession).not.to.be.undefined;
+        expect(vscode.debug.activeDebugSession.type).to.equal("coreclr");
 
         await debugSessionTerminated;
     });

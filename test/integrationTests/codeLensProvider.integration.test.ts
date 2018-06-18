@@ -44,7 +44,7 @@ suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
     });
 
     test("Returns all resolved code lenses", async function () {
-        let codeLenses = await GetCodeLenses(fileUri, 2);
+        let codeLenses = await GetCodeLenses(fileUri, 100);
         expect(codeLenses.length).to.equal(2);
 
         for (let codeLens of codeLenses) {
