@@ -14,14 +14,14 @@ const chai = require('chai');
 chai.use(require('chai-arrays'));
 chai.use(require('chai-fs'));
 
-suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
+suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
 
     suiteSetup(async function () {
         should();
         await activateCSharpExtension();
 
-        let fileName = 'documentSymbols.cs';
+        let fileName = 'Program.cs';
         let projectDirectory = path.dirname(testAssetWorkspace.projects[0].projectDirectoryPath);
         let filePath = path.join(projectDirectory, fileName);
         fileUri = vscode.Uri.file(filePath);
@@ -29,9 +29,25 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
         await vscode.commands.executeCommand("vscode.open", fileUri);
     });
 
-    test("Returns all elements", async function () {
-        let symbols = await GetDocumentSymbols(fileUri);
-        expect(symbols.length).to.equal(25);
+    test("Returns all code lenses", async function () {
+        let codeLenses = await GetCodeLenses(fileUri);
+        expect(codeLenses.length).to.equal(2);
+
+        for (let codeLens of codeLenses) {
+            expect(codeLens.isResolved).to.be.false;
+            expect(codeLens.command).to.be.undefined;
+        }
+    });
+
+    test("Returns all resolved code lenses", async function () {
+        let codeLenses = await GetCodeLenses(fileUri, 2);
+        expect(codeLenses.length).to.equal(2);
+
+        for (let codeLens of codeLenses) {
+            expect(codeLens.isResolved).to.be.true;
+            expect(codeLens.command).not.to.be.undefined;
+            expect(codeLens.command.title).to.equal("0 references");
+        }
     });
 });
 
@@ -39,6 +55,6 @@ suiteTeardown(async () => {
     await testAssetWorkspace.cleanupWorkspace();
 });
 
-async function GetDocumentSymbols(fileUri: vscode.Uri) {
-    return <vscode.SymbolInformation[]>await vscode.commands.executeCommand("vscode.executeDocumentSymbolProvider", fileUri);
+async function GetCodeLenses(fileUri: vscode.Uri, resolvedItemCount?: number) {
+    return <vscode.CodeLens[]>await vscode.commands.executeCommand("vscode.executeCodeLensProvider", fileUri, resolvedItemCount);
 }
