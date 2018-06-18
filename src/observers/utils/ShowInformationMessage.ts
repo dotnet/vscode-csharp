@@ -4,18 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { vscode } from "../../vscodeAdapter";
-import  MessageItemWithCommand from "./MessageItemWithCommand";
+import MessageItemWithCommand from "./MessageItemWithCommand";
 
 export default async function showInformationMessage(vscode: vscode, message: string, ...items: MessageItemWithCommand[]) {
     try {
         let value = await vscode.window.showInformationMessage<MessageItemWithCommand>(message, ...items);
         if (value && value.command) {
-            if (value.args) {
-                vscode.commands.executeCommand(value.command, value.args);
-            }
-            else {
-                vscode.commands.executeCommand(value.command);
-            }
+            vscode.commands.executeCommand(value.command);
         }
     }
     catch (err) {
