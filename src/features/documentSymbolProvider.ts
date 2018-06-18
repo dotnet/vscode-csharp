@@ -28,19 +28,12 @@ export default class OmnisharpDocumentSymbolProvider extends AbstractSupport imp
 function createSymbols(elements: Structure.CodeElement[], fileName: string): vscode.SymbolInformation[] {
     let results: vscode.SymbolInformation[] = [];
 
-    function walkCodeElements(elements: Structure.CodeElement[], parentElementName?: string): void {
-        for (let element of elements) {
-            let symbol = createSymbolForElement(element, parentElementName, fileName);
+    Structure.walkCodeElements(elements, (element, parentElement) => {
+        const parentElementName = parentElement ? parentElement.DisplayName : undefined;
+        const symbol = createSymbolForElement(element, parentElementName, fileName);
 
-            results.push(symbol);
-
-            if (element.Children) {
-                walkCodeElements(element.Children, element.DisplayName);
-            }
-        }
-    }
-
-    walkCodeElements(elements);
+        results.push(symbol);
+    });
 
     return results;
 }

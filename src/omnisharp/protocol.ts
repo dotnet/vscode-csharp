@@ -694,6 +694,21 @@ export namespace V2 {
         export interface CodeStructureResponse {
             Elements?: CodeElement[];
         }
+
+        export function walkCodeElements(elements: CodeElement[], action: (element: CodeElement, parentElement?: CodeElement) => void) {
+            function walker(elements: CodeElement[], parentElement?: CodeElement) {
+                for (let element of elements)
+                {
+                    action(element, parentElement);
+
+                    if (element.Children) {
+                        walker(element.Children, element);
+                    }
+                }
+            }
+
+            walker(elements);
+        }
     }
 }
 

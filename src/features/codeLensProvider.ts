@@ -160,19 +160,11 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 function createCodeLenses(elements: Structure.CodeElement[], fileName: string, options: Options): vscode.CodeLens[] {
     let results: vscode.CodeLens[] = [];
 
-    function walkCodeElements(elements: Structure.CodeElement[]): void {
-        for (let element of elements) {
-            let codeLenses = createCodeLensesForElement(element, fileName, options);
+    Structure.walkCodeElements(elements, element => {
+        let codeLenses = createCodeLensesForElement(element, fileName, options);
 
-            results.push(...codeLenses);
-
-            if (element.Children) {
-                walkCodeElements(element.Children);
-            }
-        }
-    }
-
-    walkCodeElements(elements);
+        results.push(...codeLenses);
+    });
 
     return results;
 }
