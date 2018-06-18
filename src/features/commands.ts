@@ -147,7 +147,7 @@ async function getProjectDescriptors(server: OmniSharpServer): Promise<protocol.
     return descriptors;
 }
 
-async function dotnetRestore(cwd: string, eventStream: EventStream, filePath?: string): Promise<void> {
+export async function dotnetRestore(cwd: string, eventStream: EventStream, filePath?: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         let cmd = 'dotnet';
         let args = ['restore'];

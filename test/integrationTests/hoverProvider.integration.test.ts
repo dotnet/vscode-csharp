@@ -9,6 +9,8 @@ import * as path from 'path';
 import { should, expect } from 'chai';
 import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import { dotnetRestore } from '../../src/features/commands';
+import { EventStream } from '../../src/EventStream';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -17,6 +19,7 @@ chai.use(require('chai-fs'));
 suite(`Hover Provider: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
+        await dotnetRestore(vscode.workspace.rootPath, new EventStream());
         await activateCSharpExtension();
     });
 

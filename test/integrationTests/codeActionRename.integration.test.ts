@@ -8,6 +8,8 @@ import * as vscode from 'vscode';
 import { should, expect } from 'chai';
 import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import { dotnetRestore } from '../../src/features/commands';
+import { EventStream } from '../../src/EventStream';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -16,6 +18,7 @@ chai.use(require('chai-fs'));
 suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
+        await dotnetRestore(vscode.workspace.rootPath, new EventStream());
         await activateCSharpExtension();
     });
 
