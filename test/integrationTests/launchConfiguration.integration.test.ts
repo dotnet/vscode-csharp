@@ -8,8 +8,8 @@ import * as vscode from 'vscode';
 
 import poll from './poll';
 import { should } from 'chai';
+import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import CSharpExtensionExports from '../../src/CSharpExtensionExports';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -18,15 +18,7 @@ chai.use(require('chai-fs'));
 suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
-
-        let csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-vscode.csharp");
-        if (!csharpExtension.isActive) {
-            await csharpExtension.activate();
-        }
-
-        await testAssetWorkspace.cleanupWorkspace();
-
-        await csharpExtension.exports.initializationFinished();
+        await activateCSharpExtension();
 
         await vscode.commands.executeCommand("dotnet.generateAssets");
 
