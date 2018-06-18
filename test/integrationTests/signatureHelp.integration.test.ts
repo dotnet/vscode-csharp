@@ -16,6 +16,7 @@ chai.use(require('chai-fs'));
 
 suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
+    
     suiteSetup(async function () {
         should();
         await activateCSharpExtension();
@@ -27,6 +28,9 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
         await vscode.commands.executeCommand("vscode.open", fileUri);
     });
 
+    suiteTeardown(async () => {
+        await testAssetWorkspace.cleanupWorkspace();
+    });    
 
     test("Returns response with documentation as undefined when method does not have documentation", async function () {
         let c = await GetSignatureHelp(fileUri, new vscode.Position(19, 23));
@@ -74,10 +78,6 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
         let c = await GetSignatureHelp(fileUri, new vscode.Position(18, 27));
         expect(c.signatures[0].parameters[c.activeParameter].label).to.equal(`double Double1`);
     });
-});
-
-suiteTeardown(async () => {
-    await testAssetWorkspace.cleanupWorkspace();
 });
 
 async function GetSignatureHelp(fileUri: vscode.Uri, position: vscode.Position) {

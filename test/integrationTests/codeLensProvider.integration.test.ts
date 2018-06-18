@@ -29,6 +29,10 @@ suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
         await vscode.commands.executeCommand("vscode.open", fileUri);
     });
 
+    suiteTeardown(async () => {
+        await testAssetWorkspace.cleanupWorkspace();
+    });
+
     test("Returns all code lenses", async function () {
         let codeLenses = await GetCodeLenses(fileUri);
         expect(codeLenses.length).to.equal(2);
@@ -49,10 +53,6 @@ suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
             expect(codeLens.command.title).to.equal("0 references");
         }
     });
-});
-
-suiteTeardown(async () => {
-    await testAssetWorkspace.cleanupWorkspace();
 });
 
 async function GetCodeLenses(fileUri: vscode.Uri, resolvedItemCount?: number) {

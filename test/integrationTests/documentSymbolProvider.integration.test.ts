@@ -29,14 +29,14 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
         await vscode.commands.executeCommand("vscode.open", fileUri);
     });
 
+    suiteTeardown(async () => {
+        await testAssetWorkspace.cleanupWorkspace();
+    });
+
     test("Returns all elements", async function () {
         let symbols = await GetDocumentSymbols(fileUri);
         expect(symbols.length).to.equal(25);
     });
-});
-
-suiteTeardown(async () => {
-    await testAssetWorkspace.cleanupWorkspace();
 });
 
 async function GetDocumentSymbols(fileUri: vscode.Uri) {

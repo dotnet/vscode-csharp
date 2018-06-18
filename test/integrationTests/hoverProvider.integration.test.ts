@@ -20,6 +20,10 @@ suite(`Hover Provider: ${testAssetWorkspace.description}`, function () {
         await activateCSharpExtension();
     });
 
+    suiteTeardown(async () => {
+        await testAssetWorkspace.cleanupWorkspace();
+    });
+
     test("Hover returns structured documentation with proper newlines", async function () {
         let fileName = 'hover.cs';
         let dir = path.dirname(testAssetWorkspace.projects[0].projectDirectoryPath);
@@ -38,9 +42,5 @@ Parameters:
 
 Returns true if object is tagged with tag.`;
         expect((<{ language: string; value: string }>c[0].contents[0]).value).to.equal(answer);
-    });
-
-    teardown(async () => {
-        await testAssetWorkspace.cleanupWorkspace();
     });
 });
