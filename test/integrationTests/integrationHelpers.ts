@@ -15,6 +15,7 @@ export async function activateCSharpExtension(): Promise<void> {
 
     try {
         await csharpExtension.exports.initializationFinished();
+        console.log("ms-vscode.csharp activated");
     }
     catch (err) {
         console.log(JSON.stringify(err));

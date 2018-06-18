@@ -7,6 +7,8 @@ import * as fs from 'async-file';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import spawnGit from './spawnGit';
+import { dotnetRestore } from '../../../src/features/commands';
+import { EventStream } from '../../../src/EventStream';
 
 export class TestAssetProject {
     constructor(project: ITestAssetProject) {
@@ -33,6 +35,10 @@ export class TestAssetProject {
         await fs.rimraf(this.objDirectoryPath);
     }
 
+    async restore(): Promise<void> {
+        await dotnetRestore(vscode.workspace.rootPath, new EventStream());
+    }
+
     async addFileWithContents(fileName: string, contents: string): Promise<vscode.Uri> {
         let dir = path.dirname(this.projectDirectoryPath);
         let loc = path.join(dir, fileName);
@@ -52,6 +58,10 @@ export class TestAssetWorkspace {
 
     async deleteBuildArtifacts(): Promise<void> {
         this.projects.forEach(async p => await p.deleteBuildArtifacts());
+    }
+
+    async restore(): Promise<void> {
+        this.projects.forEach(async p => await p.restore());
     }
 
     get vsCodeDirectoryPath(): string {

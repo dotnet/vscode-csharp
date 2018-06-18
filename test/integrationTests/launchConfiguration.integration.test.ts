@@ -10,8 +10,6 @@ import poll from './poll';
 import { should, expect } from 'chai';
 import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { dotnetRestore } from '../../src/features/commands';
-import { EventStream } from '../../src/EventStream';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -20,7 +18,7 @@ chai.use(require('chai-fs'));
 suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
-        await dotnetRestore(vscode.workspace.rootPath, new EventStream());
+        await testAssetWorkspace.restore();
         await activateCSharpExtension();
 
         await vscode.commands.executeCommand("dotnet.generateAssets");
@@ -33,8 +31,9 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
     });
 
     test("Starting .NET Core Launch (console) from the workspace root should create an Active Debug Session", async () => {
-        await vscode.debug.startDebugging(vscode.workspace.workspaceFolders[0], ".NET Core Launch (console)");
-
+        let result = await vscode.debug.startDebugging(vscode.workspace.workspaceFolders[0], ".NET Core Launch (console)");
+        expect(result, "Debugger could not be started.");
+        
         let debugSessionTerminated = new Promise(resolve => {
             vscode.debug.onDidTerminateDebugSession((e) => resolve());
         });
