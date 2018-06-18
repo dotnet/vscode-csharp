@@ -91,8 +91,6 @@ export class OmniSharpServer {
     private _launchTarget: LaunchTarget;
     private _requestQueue: RequestQueueCollection;
     private _serverProcess: ChildProcess;
-
-    private _omnisharpManager: OmnisharpManager;
     private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
     private firstUpdateProject: boolean;
 
@@ -316,8 +314,8 @@ export class OmniSharpServer {
             let getLatestVersion: IGetLatestVersion = async () => getLatestOmniSharpVersion(latestVersionUrl, this.eventStream, this.networkSettingsProvider);
             let getPackagesForVersion : IGetVersionPackages = (version: string) => GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
             let getLaunchInfo = (basePath: string) => GetOmniSharpLaunchInfo(this.platformInfo, basePath);
-            this._omnisharpManager = new OmnisharpManager(installRuntimeDependencies, getLatestVersion, getPackagesForVersion, getLaunchInfo);
-            launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, installPath, extensionPath);
+            let omnisharpManager = new OmnisharpManager(installRuntimeDependencies, getLatestVersion, getPackagesForVersion, getLaunchInfo);
+            launchInfo = await omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, installPath, extensionPath);
         }
         catch (error) {
             this.eventStream.post(new ObservableEvents.OmnisharpFailure(`Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));
