@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from "path";
-import { OmnisharpManager, IGetLatestVersion, IGetOmniSharpLaunchInfo } from "../../src/omnisharp/OmnisharpManager";
+import { OmnisharpManager, IGetLatestVersion, IGetOmniSharpLaunchInfo, IGetVersionPackages, IInstallRuntimeDependencies } from "../../src/omnisharp/OmnisharpManager";
 import { Package } from "../../src/packageManager/Package";
 import { TmpAsset, CreateTmpDir, CreateTmpFile } from "../../src/CreateTmpAsset";
 import { expect } from 'chai';
@@ -38,7 +38,7 @@ suite(OmnisharpManager.name, () => {
         return Promise.resolve(latestVersion);
     };
 
-    const getPackagesFromVersion = (version: string) => {
+    const getPackagesFromVersion: IGetVersionPackages = (version: string) => {
         if (version === latestVersion) {
             return latestVersionPackages;
         }
@@ -47,7 +47,7 @@ suite(OmnisharpManager.name, () => {
         }
     };
 
-    const installRuntimeDependencies = async (packages: Package[]) => {
+    const installRuntimeDependencies : IInstallRuntimeDependencies= async (packages: Package[]) => {
         packagesToInstall = packages;
         return Promise.resolve(true);
     };
