@@ -1,4 +1,5 @@
 dist: trusty
+sudo: required
 language: node_js
 
 node_js:
@@ -31,6 +32,9 @@ addons:
       - oracle-java8-set-default
   sonarcloud:
     organization: "vscode-omnisharp"
+
+jdk:
+  - oraclejdk8
 
 install:
 - npm ci
