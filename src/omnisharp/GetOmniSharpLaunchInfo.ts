@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { PlatformInformation } from "../platform";
-import { OmniSharpLaunchInfo } from "./LaunchInfo";
 import * as path from 'path';
+import { OmniSharpLaunchInfo } from "./OmniSharpLaunchInfo";
 
-export function GetOmniSharpLaunchInfo(platformInfo: PlatformInformation, basePath: string): OmniSharpLaunchInfo {
+export function getOmniSharpLaunchInfo(platformInfo: PlatformInformation, basePath: string): OmniSharpLaunchInfo {
     if (platformInfo.isWindows()) {
         return {
             LaunchPath: path.join(basePath, 'OmniSharp.exe')

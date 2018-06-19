@@ -32,8 +32,8 @@ import { installCSharpExtDependencies } from '../InstallCSharpExtDependencies';
 import { Package } from '../packageManager/Package';
 import { getLatestOmniSharpVersion } from './GetLatestOmniSharpVersion';
 import { GetPackagesFromVersion } from './OmnisharpPackageCreator';
-import { OmniSharpLaunchInfo } from './LaunchInfo';
-import { GetOmniSharpLaunchInfo } from './GetOmniSharpLaunchInfo';
+import { OmniSharpLaunchInfo } from './OmniSharpLaunchInfo';
+import { getOmniSharpLaunchInfo } from './GetOmniSharpLaunchInfo';
 
 enum ServerState {
     Starting,
@@ -313,7 +313,7 @@ export class OmniSharpServer {
             let installRuntimeDependencies: IInstallRuntimeDependencies = async (runtimeDependencies: Package[]) => installCSharpExtDependencies(this.eventStream, this.platformInfo, this.networkSettingsProvider, runtimeDependencies);
             let getLatestVersion: IGetLatestVersion = async () => getLatestOmniSharpVersion(latestVersionUrl, this.eventStream, this.networkSettingsProvider);
             let getPackagesForVersion : IGetVersionPackages = (version: string) => GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
-            let getLaunchInfo: IGetOmniSharpLaunchInfo = (basePath: string) => GetOmniSharpLaunchInfo(this.platformInfo, basePath);
+            let getLaunchInfo: IGetOmniSharpLaunchInfo = (basePath: string) => getOmniSharpLaunchInfo(this.platformInfo, basePath);
             let omnisharpManager = new OmnisharpManager(installRuntimeDependencies, getLatestVersion, getPackagesForVersion, getLaunchInfo);
             launchInfo = await omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, installPath, extensionPath);
         }

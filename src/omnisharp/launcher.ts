@@ -9,7 +9,7 @@ import { PlatformInformation } from '../platform';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { Options } from './options';
-import { OmniSharpLaunchInfo } from './LaunchInfo';
+import { OmniSharpLaunchInfo } from './OmniSharpLaunchInfo';
 
 export enum LaunchTargetKind {
     Solution,
