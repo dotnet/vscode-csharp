@@ -3,20 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Package } from "./Package";
 import { PlatformInformation } from "../platform";
 import * as util from '../common';
-import { ResolvePackageTestPath } from "./PackageFilePathResolver";
 import { PackageError } from "./PackageError";
+import { InstallablePackage } from "./Package";
 
 const { filterAsync } = require('node-filter-async');
 
-export async function filterPackages(packages: Package[], platformInfo: PlatformInformation) {
+export async function filterPackages(packages: InstallablePackage[], platformInfo: PlatformInformation): Promise<InstallablePackage[]> {
     let platformPackages = filterPlatformPackages(packages, platformInfo);
     return filterAlreadyInstalledPackages(platformPackages);
 }
 
-function filterPlatformPackages(packages: Package[], platformInfo: PlatformInformation) {
+function filterPlatformPackages(packages: InstallablePackage[], platformInfo: PlatformInformation) {
     if (packages) {
         return packages.filter(pkg => {
             if (pkg.architectures && pkg.architectures.indexOf(platformInfo.architecture) === -1) {
@@ -35,15 +34,14 @@ function filterPlatformPackages(packages: Package[], platformInfo: PlatformInfor
     }
 }
 
-async function filterAlreadyInstalledPackages(packages: Package[]): Promise<Package[]> {
-    return filterAsync(packages, async (pkg: Package) => {
+async function filterAlreadyInstalledPackages(packages: InstallablePackage[]): Promise<InstallablePackage[]> {
+    return filterAsync(packages, async (pkg: InstallablePackage) => {
         //If the file is present at the install test path then filter it
-        let testPath = ResolvePackageTestPath(pkg);
-        if (!testPath) {
+        if (!pkg.absoluteInstallTestPath) {
             //if there is no testPath specified then we will not filter it
             return true;
         }
 
-        return !(await util.fileExists(testPath));
+        return !(await util.fileExists(pkg.absoluteInstallTestPath));
       });
 }

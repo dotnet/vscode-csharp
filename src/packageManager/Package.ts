@@ -3,15 +3,24 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-export interface Package {
+
+export interface IPackage {
     description: string;
     url: string;
     fallbackUrl?: string;
-    installPath?: string;
     platforms: string[];
     architectures: string[];
-    binaries: string[];
     platformId?: string;
-    // Path to use to test if the package has already been installed
+}
+
+export interface InstallablePackage extends IPackage { 
+    absoluteInstallPath?: string;
+    absoluteInstallTestPath?: string;
+    absoluteBinaryPaths: string[];
+}
+
+export interface RuntimeDependency extends IPackage { 
+    installPath?: string;
     installTestPath?: string;
+    binaries: string[];
 }

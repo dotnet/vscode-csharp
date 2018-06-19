@@ -3,24 +3,25 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Package } from "../packageManager/Package";
+import { getInstallablePackage } from "../packageManager/getInstallablePackage";
+import { RuntimeDependency, InstallablePackage } from "../packageManager/Package";
 
-export function GetPackagesFromVersion(version: string, runTimeDependencies: Package[], serverUrl: string, installPath: string): Package[] {
+export function GetPackagesFromVersion(version: string, runTimeDependencies: RuntimeDependency[], serverUrl: string, installPath: string): InstallablePackage[] {
     if (!version) {
         throw new Error('Invalid version');
     }
 
-    let versionPackages = new Array<Package>();
+    let versionPackages = new Array<RuntimeDependency>();
     for (let inputPackage of runTimeDependencies) {
         if (inputPackage.platformId) {
             versionPackages.push(SetBinaryAndGetPackage(inputPackage, serverUrl, version, installPath));
         }
     }
 
-    return versionPackages;
+    return versionPackages.map(pkg => getInstallablePackage(pkg));
 }
 
-export function SetBinaryAndGetPackage(inputPackage: Package, serverUrl: string, version: string, installPath: string): Package {
+export function SetBinaryAndGetPackage(inputPackage: RuntimeDependency, serverUrl: string, version: string, installPath: string): RuntimeDependency {
     let installBinary: string;
     if (inputPackage.platformId === "win-x86" || inputPackage.platformId === "win-x64") {
         installBinary = "OmniSharp.exe";
@@ -32,7 +33,7 @@ export function SetBinaryAndGetPackage(inputPackage: Package, serverUrl: string,
     return GetPackage(inputPackage, serverUrl, version, installPath, installBinary);
 }
 
-function GetPackage(inputPackage: Package, serverUrl: string, version: string, installPath: string, installBinary: string): Package {
+function GetPackage(inputPackage: RuntimeDependency, serverUrl: string, version: string, installPath: string, installBinary: string): RuntimeDependency {
     if (!version) {
         throw new Error('Invalid version');
     }

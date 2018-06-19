@@ -8,23 +8,29 @@ import { PlatformInformation } from './platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
 import { DownloadAndInstallPackages } from './packageManager/PackageManager';
-import { Package } from './packageManager/Package';
+import { InstallablePackage } from './packageManager/Package';
 import { NetworkSettingsProvider } from './NetworkSettings';
+import { filterPackages } from './packageManager/PackageFilterer';
 
 /*
  * Function used to download and install the runtime dependencies of the C# Extension
  */
 
-export async function installCSharpExtDependencies(eventStream: EventStream, platformInfo: PlatformInformation, networkSettingsProvider: NetworkSettingsProvider, runtimeDependencies: Package[]): Promise<boolean> {
+export async function installCSharpExtDependencies(eventStream: EventStream, platformInfo: PlatformInformation, networkSettingsProvider: NetworkSettingsProvider, installablePackages: InstallablePackage[]): Promise<boolean> {
+    /* Filter the installable packages */
+    let packagesToInstall = await filterPackages(installablePackages, platformInfo);
+    if (packagesToInstall.length == 0) {
+        return true;
+    }
+    
     eventStream.post(new PackageInstallation("C# dependencies"));
     let installationStage = 'touchBeginFile';
-
     try {
         await util.touchInstallFile(util.InstallFileType.Begin);
         // Display platform information and RID
         eventStream.post(new LogPlatformInfo(platformInfo));
         installationStage = 'downloadAndInstallPackages';
-        await DownloadAndInstallPackages(runtimeDependencies, networkSettingsProvider, platformInfo, eventStream);
+        await DownloadAndInstallPackages(packagesToInstall, networkSettingsProvider, platformInfo, eventStream);
         installationStage = 'touchLockFile';
         await util.touchInstallFile(util.InstallFileType.Lock);
         eventStream.post(new InstallationSuccess());
