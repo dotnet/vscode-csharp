@@ -7,12 +7,11 @@
 
 #### Project System
 
-* Modified the existing "Restore Packages" option in the Command Palette into two distinct functionalities:
-
+* Separated the existing "Restore Packages" option in the Command Palette into two distinct functions:
   * "Restore Project" - Displays a drop-down that shows all the available projects in the solution or in the workspace. Selecting one of them would trigger a dotnet restore for the particular project.
   * "Restore All Projects" - Triggers a dotnet restore for all projects in the current solution or workspace.
 
-* Modified the "Unresolved dependencies" prompt to restore the all the projects in the currently selected solution or workspace.
+* Modified the "Unresolved dependencies" prompt to restore the all the projects in the currently selected solution or workspace. (PR: [#2323] https://github.com/OmniSharp/omnisharp-vscode/pull/2323)
 
 #### Misc
 
