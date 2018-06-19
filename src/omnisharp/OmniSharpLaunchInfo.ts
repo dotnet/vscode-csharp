@@ -3,8 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { MessageItem } from "../../vscodeAdapter";
-
-export default interface MessageItemWithCommand extends MessageItem {
-    command: string;
+export interface OmniSharpLaunchInfo {
+    LaunchPath: string;
+    MonoLaunchPath?: string;
 }

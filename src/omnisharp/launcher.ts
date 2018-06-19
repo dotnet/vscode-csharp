@@ -9,7 +9,7 @@ import { PlatformInformation } from '../platform';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { Options } from './options';
-import { LaunchInfo } from './OmnisharpManager';
+import { OmniSharpLaunchInfo } from './OmniSharpLaunchInfo';
 
 export enum LaunchTargetKind {
     Solution,
@@ -202,7 +202,7 @@ export interface LaunchResult {
     monoVersion?: string;
 }
 
-export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options): Promise<LaunchResult> {
+export async function launchOmniSharp(cwd: string, args: string[], launchInfo: OmniSharpLaunchInfo, platformInfo: PlatformInformation, options: Options): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
         launch(cwd, args, launchInfo, platformInfo, options)
             .then(result => {
@@ -220,7 +220,7 @@ export async function launchOmniSharp(cwd: string, args: string[], launchInfo: L
     });
 }
 
-async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options): Promise<LaunchResult> {
+async function launch(cwd: string, args: string[], launchInfo: OmniSharpLaunchInfo, platformInfo: PlatformInformation, options: Options): Promise<LaunchResult> {
     if (options.useEditorFormattingSettings) {
         let globalConfig = vscode.workspace.getConfiguration();
         let csharpConfig = vscode.workspace.getConfiguration('[csharp]');

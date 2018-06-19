@@ -15,12 +15,11 @@ import { ReadLine, createInterface } from 'readline';
 import { Request, RequestQueueCollection } from './requestQueue';
 import { DelayTracker } from './delayTracker';
 import { EventEmitter } from 'events';
-import { OmnisharpManager, LaunchInfo } from './OmnisharpManager';
+import { OmnisharpManager, IInstallRuntimeDependencies, IGetLatestVersion, IGetVersionPackages, IGetOmniSharpLaunchInfo } from './OmnisharpManager';
 import { Options } from './options';
 import { PlatformInformation } from '../platform';
 import { launchOmniSharp } from './launcher';
 import { setTimeout } from 'timers';
-import { OmnisharpDownloader } from './OmnisharpDownloader';
 import * as ObservableEvents from './loggingEvents';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
@@ -29,6 +28,12 @@ import 'rxjs/add/operator/debounceTime';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
+import { installCSharpExtDependencies } from '../InstallCSharpExtDependencies';
+import { Package } from '../packageManager/Package';
+import { getLatestOmniSharpVersion } from './GetLatestOmniSharpVersion';
+import { GetPackagesFromVersion } from './OmnisharpPackageCreator';
+import { OmniSharpLaunchInfo } from './OmniSharpLaunchInfo';
+import { getOmniSharpLaunchInfo } from './GetOmniSharpLaunchInfo';
 
 enum ServerState {
     Starting,
@@ -70,7 +75,7 @@ module Events {
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
 const installPath = ".omnisharp";
-const latestVersionFileServerPath = 'releases/versioninfo.txt';
+const latestVersionUrl = `${serverUrl}/releases/versioninfo.txt`;
 
 export class OmniSharpServer {
 
@@ -86,15 +91,11 @@ export class OmniSharpServer {
     private _launchTarget: LaunchTarget;
     private _requestQueue: RequestQueueCollection;
     private _serverProcess: ChildProcess;
-
-    private _omnisharpManager: OmnisharpManager;
     private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
     private firstUpdateProject: boolean;
 
-    constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private packageJSON: any, private platformInfo: PlatformInformation, private eventStream: EventStream, private optionProvider: OptionProvider) {
+    constructor(private vscode: vscode, private networkSettingsProvider: NetworkSettingsProvider, private packageJSON: any, private platformInfo: PlatformInformation, private eventStream: EventStream, private optionProvider: OptionProvider) {
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
-        let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, this.packageJSON, platformInfo);
-        this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
         this.updateProjectDebouncer.debounceTime(1500).subscribe((event) => { this.updateProjectInfo(); });
         this.firstUpdateProject = true;
     }
@@ -306,10 +307,15 @@ export class OmniSharpServer {
             args.push('--debug');
         }
 
-        let launchInfo: LaunchInfo;
+        let launchInfo: OmniSharpLaunchInfo;
         try {
             let extensionPath = utils.getExtensionPath();
-            launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
+            let installRuntimeDependencies: IInstallRuntimeDependencies = async (runtimeDependencies: Package[]) => installCSharpExtDependencies(this.eventStream, this.platformInfo, this.networkSettingsProvider, runtimeDependencies);
+            let getLatestVersion: IGetLatestVersion = async () => getLatestOmniSharpVersion(latestVersionUrl, this.eventStream, this.networkSettingsProvider);
+            let getPackagesForVersion : IGetVersionPackages = (version: string) => GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
+            let getLaunchInfo: IGetOmniSharpLaunchInfo = (basePath: string) => getOmniSharpLaunchInfo(this.platformInfo, basePath);
+            let omnisharpManager = new OmnisharpManager(installRuntimeDependencies, getLatestVersion, getPackagesForVersion, getLaunchInfo);
+            launchInfo = await omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, installPath, extensionPath);
         }
         catch (error) {
             this.eventStream.post(new ObservableEvents.OmnisharpFailure(`Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));

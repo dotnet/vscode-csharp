@@ -10,7 +10,6 @@ import * as vscode from 'vscode';
 
 import { ActivationFailure, ActiveTextEditorChanged } from './omnisharp/loggingEvents';
 import { WarningMessageObserver } from './observers/WarningMessageObserver';
-import { CSharpExtDownloader } from './CSharpExtDownloader';
 import { CsharpChannelObserver } from './observers/CsharpChannelObserver';
 import { CsharpLoggerObserver } from './observers/CsharpLoggerObserver';
 import { DotNetChannelObserver } from './observers/DotnetChannelObserver';
@@ -30,11 +29,13 @@ import { ProjectStatusBarObserver } from './observers/ProjectStatusBarObserver';
 import CSharpExtensionExports from './CSharpExtensionExports';
 import { vscodeNetworkSettingsProvider, NetworkSettingsProvider } from './NetworkSettings';
 import { ErrorMessageObserver } from './observers/ErrorMessageObserver';
-import  OptionProvider from './observers/OptionProvider';
+import OptionProvider from './observers/OptionProvider';
 import DotNetTestChannelObserver from './observers/DotnetTestChannelObserver';
 import DotNetTestLoggerObserver from './observers/DotnetTestLoggerObserver';
 import { ShowOmniSharpConfigChangePrompt } from './observers/OptionChangeObserver';
 import createOptionStream from './observables/CreateOptionStream';
+import { getRuntimeDependenciesPackages } from './omnisharp/GetRuntimeDependenciesPackages';
+import { installCSharpExtDependencies } from './InstallCSharpExtDependencies';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -61,7 +62,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     let dotnetTestLoggerObserver = new DotNetTestLoggerObserver(dotnetTestChannel);
     eventStream.subscribe(dotnetTestChannelObserver.post);
     eventStream.subscribe(dotnetTestLoggerObserver.post);
-    
+
     let csharpChannel = vscode.window.createOutputChannel('C#');
     let csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
     let csharpLogObserver = new CsharpLoggerObserver(csharpChannel);
@@ -139,14 +140,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 }
 
 async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, networkSettingsProvider: NetworkSettingsProvider): Promise<boolean> {
-    return util.installFileExists(util.InstallFileType.Lock)
-        .then(exists => {
-            if (!exists) {
-                const downloader = new CSharpExtDownloader(networkSettingsProvider, eventStream, extension.packageJSON, platformInfo);
-                return downloader.installRuntimeDependencies();
-            } else {
-                return true;
-            }
-        });
+    let runtimeDependencies = getRuntimeDependenciesPackages(extension.packageJSON);
+    return installCSharpExtDependencies(eventStream, platformInfo, networkSettingsProvider, runtimeDependencies);
 }
-
