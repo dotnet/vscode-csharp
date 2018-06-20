@@ -3,24 +3,25 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Package } from "../packageManager/Package";
+import { IPackage } from "../packageManager/IPackage";
+import { InstallablePackage } from "../packageManager/InstallablePackage";
 
-export function GetPackagesFromVersion(version: string, runTimeDependencies: Package[], serverUrl: string, installPath: string): Package[] {
+export function GetPackagesFromVersion(version: string, runTimeDependencies: IPackage[], serverUrl: string, installPath: string): InstallablePackage[] {
     if (!version) {
         throw new Error('Invalid version');
     }
 
-    let versionPackages = new Array<Package>();
+    let versionPackages = new Array<IPackage>();
     for (let inputPackage of runTimeDependencies) {
         if (inputPackage.platformId) {
             versionPackages.push(SetBinaryAndGetPackage(inputPackage, serverUrl, version, installPath));
         }
     }
 
-    return versionPackages;
+    return InstallablePackage.getInstallablePackages(versionPackages);
 }
 
-export function SetBinaryAndGetPackage(inputPackage: Package, serverUrl: string, version: string, installPath: string): Package {
+export function SetBinaryAndGetPackage(inputPackage: IPackage, serverUrl: string, version: string, installPath: string): IPackage {
     let installBinary: string;
     if (inputPackage.platformId === "win-x86" || inputPackage.platformId === "win-x64") {
         installBinary = "OmniSharp.exe";
@@ -32,7 +33,7 @@ export function SetBinaryAndGetPackage(inputPackage: Package, serverUrl: string,
     return GetPackage(inputPackage, serverUrl, version, installPath, installBinary);
 }
 
-function GetPackage(inputPackage: Package, serverUrl: string, version: string, installPath: string, installBinary: string): Package {
+function GetPackage(inputPackage: IPackage, serverUrl: string, version: string, installPath: string, installBinary: string): IPackage {
     if (!version) {
         throw new Error('Invalid version');
     }

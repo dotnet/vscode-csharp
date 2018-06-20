@@ -3,13 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'async-file';
 import * as path from 'path';
 import * as chai from 'chai';
 import * as util from '../../../src/common';
 import { CreateTmpDir, TmpAsset } from '../../../src/CreateTmpAsset';
 import  TestZip  from '../testAssets/TestZip';
-import { Package } from '../../../src/packageManager/Package';
+import { InstallablePackage } from "../../../src/packageManager/InstallablePackage";
 import { DownloadAndInstallPackages } from '../../../src/packageManager/PackageManager';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { PlatformInformation } from '../../../src/platform';
@@ -29,12 +28,11 @@ suite("Package Manager", () => {
     let installationPath: string;
     let eventStream: EventStream;
     let eventBus: TestEventBus;
-    let packages: Package[];
+    let packages: InstallablePackage[];
 
     const packageDescription = "Test Package";
 
     const windowsPlatformInfo = new PlatformInformation("win32", "x86");
-    const linuxPlatformInfo = new PlatformInformation("linux", "x86");
     const networkSettingsProvider = () => new NetworkSettings(undefined, false);
 
     setup(async () => {
@@ -43,15 +41,7 @@ suite("Package Manager", () => {
         eventBus = new TestEventBus(eventStream);
         tmpInstallDir = await CreateTmpDir(true);
         installationPath = tmpInstallDir.name;
-        packages = <Package[]>[
-            {
-                url: `${server.baseUrl}/package`,
-                description: packageDescription,
-                installPath: installationPath,
-                platforms: [windowsPlatformInfo.platform],
-                architectures: [windowsPlatformInfo.architecture]
-            }];
-
+        packages = [new InstallablePackage(packageDescription, `${server.baseUrl}/package`, [windowsPlatformInfo.platform], [windowsPlatformInfo.architecture], [], undefined, undefined, installationPath)];
         testZip = await TestZip.createTestZipAsync(createTestFile("Foo", "foo.txt"));
         await server.start();
         server.addRequestHandler('GET', '/package', 200, {
@@ -79,13 +69,6 @@ suite("Package Manager", () => {
 
         await DownloadAndInstallPackages(packages, networkSettingsProvider, windowsPlatformInfo, eventStream);
         expect(eventBus.getEvents()).to.be.deep.equal(eventsSequence);
-    });
-
-    test("Installs only the platform specific packages", async () => {
-        //since there is no linux package specified no package should be installed
-        await DownloadAndInstallPackages(packages, networkSettingsProvider, linuxPlatformInfo, eventStream);
-        let files = await fs.readdir(tmpInstallDir.name);
-        expect(files.length).to.equal(0);
     });
 
     teardown(async () => {

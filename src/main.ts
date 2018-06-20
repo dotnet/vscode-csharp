@@ -34,7 +34,7 @@ import DotNetTestChannelObserver from './observers/DotnetTestChannelObserver';
 import DotNetTestLoggerObserver from './observers/DotnetTestLoggerObserver';
 import { ShowOmniSharpConfigChangePrompt } from './observers/OptionChangeObserver';
 import createOptionStream from './observables/CreateOptionStream';
-import { getRuntimeDependenciesPackages } from './omnisharp/GetRuntimeDependenciesPackages';
+import { getCSharpExtDependencies } from './omnisharp/getCSharpExtDependencies';
 import { installCSharpExtDependencies } from './InstallCSharpExtDependencies';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
@@ -140,6 +140,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 }
 
 async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, networkSettingsProvider: NetworkSettingsProvider): Promise<boolean> {
-    let runtimeDependencies = getRuntimeDependenciesPackages(extension.packageJSON);
-    return installCSharpExtDependencies(eventStream, platformInfo, networkSettingsProvider, runtimeDependencies);
+    let csharpExtDependencies = getCSharpExtDependencies(extension.packageJSON);
+    return installCSharpExtDependencies(eventStream, platformInfo, networkSettingsProvider, csharpExtDependencies);
 }

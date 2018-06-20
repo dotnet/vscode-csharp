@@ -6,20 +6,19 @@
 import * as path from 'path';
 import * as semver from 'semver';
 import * as util from '../common';
-import { Package } from '../packageManager/Package';
-import { ResolveFilePaths } from '../packageManager/PackageFilePathResolver';
 import { OmniSharpLaunchInfo } from './OmniSharpLaunchInfo';
+import { InstallablePackage } from "../packageManager/InstallablePackage";
 
 export interface IGetLatestVersion {
     (): Promise<string>;
 }
 
 export interface IGetVersionPackages {
-    (version: string): Package[];
+    (version: string): InstallablePackage[];
 }
 
-export interface IInstallRuntimeDependencies {
-    (packages: Package[]): Promise<boolean>;
+export interface IInstallCSharpExtDependencies {
+    (packages: InstallablePackage[]): Promise<boolean>;
 }
 
 export interface IGetOmniSharpLaunchInfo {
@@ -28,7 +27,7 @@ export interface IGetOmniSharpLaunchInfo {
 
 export class OmnisharpManager {
     public constructor(
-        private installRuntimeDependencies: IInstallRuntimeDependencies,
+        private installCSharpExtDependencies: IInstallCSharpExtDependencies,
         private getLatestVersion: IGetLatestVersion,
         private getPackagesForVersion: IGetVersionPackages,
         private getOmniSharpLaunchInfo: IGetOmniSharpLaunchInfo) {
@@ -67,8 +66,7 @@ export class OmnisharpManager {
     private async InstallVersionAndReturnLaunchInfo(version: string, installPath: string, extensionPath: string): Promise<OmniSharpLaunchInfo> {
         if (semver.valid(version)) {
             let packages = this.getPackagesForVersion(version);
-            packages.forEach(pkg => ResolveFilePaths(pkg));
-            await this.installRuntimeDependencies(packages);
+            await this.installCSharpExtDependencies(packages);
             return this.GetLaunchPathForVersion(version, installPath, extensionPath);
         }
         else {

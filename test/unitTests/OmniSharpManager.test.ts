@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from "path";
-import { OmnisharpManager, IGetLatestVersion, IGetOmniSharpLaunchInfo, IGetVersionPackages, IInstallRuntimeDependencies } from "../../src/omnisharp/OmnisharpManager";
-import { Package } from "../../src/packageManager/Package";
+import { OmnisharpManager, IGetLatestVersion, IGetOmniSharpLaunchInfo, IGetVersionPackages, IInstallCSharpExtDependencies } from "../../src/omnisharp/OmnisharpManager";
 import { TmpAsset, CreateTmpDir, CreateTmpFile } from "../../src/CreateTmpAsset";
 import { expect } from 'chai';
 import { setExtensionPath } from "../../src/common";
+import { InstallablePackage } from "../../src/packageManager/InstallablePackage";
 
 const chai = require("chai");
 chai.use(require("chai-as-promised"));
@@ -17,17 +17,17 @@ suite(OmnisharpManager.name, () => {
     let tmpDir: TmpAsset;
     let testBasePath: string;
     let tmpFile: TmpAsset;
-    let packagesToInstall: Package[];
+    let packagesToInstall: InstallablePackage[];
     let latestVersionCalled: boolean;
     const testVersion = "0.1.2";
     const latestVersion = "1.2.3";
-    const testVersionPackages: Package[] = <Package[]>[
+    const testVersionPackages: InstallablePackage[] = <InstallablePackage[]>[
         {
             description: "test version package",
         }
     ];
 
-    const latestVersionPackages: Package[] = <Package[]>[
+    const latestVersionPackages: InstallablePackage[] = <InstallablePackage[]>[
         {
             description: "latest version package",
         }
@@ -47,7 +47,7 @@ suite(OmnisharpManager.name, () => {
         }
     };
 
-    const installRuntimeDependencies : IInstallRuntimeDependencies= async (packages: Package[]) => {
+    const installCSharpExtDependencies : IInstallCSharpExtDependencies= async (packages: InstallablePackage[]) => {
         packagesToInstall = packages;
         return Promise.resolve(true);
     };
@@ -71,7 +71,7 @@ suite(OmnisharpManager.name, () => {
         packagesToInstall = undefined;
         testBasePath = undefined;
         latestVersionCalled = false;
-        omnisharpManager = new OmnisharpManager(installRuntimeDependencies, getLatestVersion, getPackagesFromVersion, getOmnisharpLaunchInfo);
+        omnisharpManager = new OmnisharpManager(installCSharpExtDependencies, getLatestVersion, getPackagesFromVersion, getOmnisharpLaunchInfo);
     });
 
     test("Basepath includes the default version if the omnisharp path is not set", async () => {
