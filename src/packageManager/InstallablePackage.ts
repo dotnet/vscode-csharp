@@ -30,6 +30,7 @@ export class InstallablePackage implements IPackage {
             if (!path.isAbsolute(installPath)) {
                 throw new PackageError(`Cannot create installable package: installPath - ${installPath} must be absolute`);
             }
+
             this.installPath = installPath;
         }
 
@@ -37,6 +38,7 @@ export class InstallablePackage implements IPackage {
             if (!path.isAbsolute(installTestPath)) {
                 throw new PackageError(`Cannot create installable package: installTestPath - ${installTestPath} must be absolute`);
             }
+
             this.installTestPath = installTestPath;
         }
 
@@ -46,6 +48,8 @@ export class InstallablePackage implements IPackage {
                     throw new PackageError(`Cannot create installable package - binary path - ${binary} must be absolute`);
                 }
             }
+
+            this.binaries = binaries;
         }
     }
 
