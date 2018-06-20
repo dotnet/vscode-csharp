@@ -6,7 +6,7 @@
 import { assert, should, expect } from "chai";
 import { SetBinaryAndGetPackage, GetPackagesFromVersion } from "../../src/omnisharp/OmnisharpPackageCreator";
 import { testPackageJSON } from "./testAssets/testAssets";
-import { RuntimeDependency } from "../../src/packageManager/Package";
+import { PackageWithRelativePaths } from "../../src/packageManager/Package";
 import { TmpAsset, CreateTmpDir } from "../../src/CreateTmpAsset";
 import { setExtensionPath } from "../../src/common";
 import * as path from "path";
@@ -16,14 +16,14 @@ suite("GetOmnisharpPackage : Output package depends on the input package and oth
     let serverUrl: string;
     let version: string;
     let installPath: string;
-    let inputPackages: RuntimeDependency[];
+    let inputPackages: PackageWithRelativePaths[];
 
     suiteSetup(() => {
         serverUrl = "http://serverUrl";
         version = "0.0.0";
         installPath = "testPath";
         let packageJSON = testPackageJSON;
-        inputPackages = <RuntimeDependency[]>(packageJSON.runtimeDependencies);
+        inputPackages = <PackageWithRelativePaths[]>(packageJSON.runtimeDependencies);
         should();
     });
 
@@ -108,7 +108,7 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
     let extensionPath: string;
 
     suiteSetup(async () => {
-        inputPackages = <RuntimeDependency[]>(testPackageJSON.runtimeDependencies);
+        inputPackages = <PackageWithRelativePaths[]>(testPackageJSON.runtimeDependencies);
         should();
         tmpDir = await CreateTmpDir(true);
         extensionPath = tmpDir.name;
@@ -128,7 +128,7 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
     });
 
     test('Returns experiment packages with install test path depending on install path and version', () => {
-        let inputPackages = <RuntimeDependency[]>[
+        let inputPackages = <PackageWithRelativePaths[]>[
             {
                 "description": "OmniSharp for Windows (.NET 4.6 / x64)",
                 "url": "https://download.visualstudio.microsoft.com/download/pr/100505821/c570a9e20dbf7172f79850babd058872/omnisharp-win-x64-1.28.0.zip",

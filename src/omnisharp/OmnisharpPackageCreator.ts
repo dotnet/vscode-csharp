@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { getInstallablePackages } from "../packageManager/getInstallablePackage";
-import { RuntimeDependency, InstallablePackage } from "../packageManager/Package";
+import { PackageWithRelativePaths, InstallablePackage } from "../packageManager/Package";
 
-export function GetPackagesFromVersion(version: string, runTimeDependencies: RuntimeDependency[], serverUrl: string, installPath: string): InstallablePackage[] {
+export function GetPackagesFromVersion(version: string, runTimeDependencies: PackageWithRelativePaths[], serverUrl: string, installPath: string): InstallablePackage[] {
     if (!version) {
         throw new Error('Invalid version');
     }
 
-    let versionPackages = new Array<RuntimeDependency>();
+    let versionPackages = new Array<PackageWithRelativePaths>();
     for (let inputPackage of runTimeDependencies) {
         versionPackages.push(SetBinaryAndGetPackage(inputPackage, serverUrl, version, installPath));
     }
@@ -19,7 +19,7 @@ export function GetPackagesFromVersion(version: string, runTimeDependencies: Run
     return getInstallablePackages(versionPackages);
 }
 
-export function SetBinaryAndGetPackage(inputPackage: RuntimeDependency, serverUrl: string, version: string, installPath: string): RuntimeDependency {
+export function SetBinaryAndGetPackage(inputPackage: PackageWithRelativePaths, serverUrl: string, version: string, installPath: string): PackageWithRelativePaths {
     let installBinary: string;
     if (inputPackage.platformId === "win-x86" || inputPackage.platformId === "win-x64") {
         installBinary = "OmniSharp.exe";
@@ -31,7 +31,7 @@ export function SetBinaryAndGetPackage(inputPackage: RuntimeDependency, serverUr
     return GetPackage(inputPackage, serverUrl, version, installPath, installBinary);
 }
 
-function GetPackage(inputPackage: RuntimeDependency, serverUrl: string, version: string, installPath: string, installBinary: string): RuntimeDependency {
+function GetPackage(inputPackage: PackageWithRelativePaths, serverUrl: string, version: string, installPath: string, installBinary: string): PackageWithRelativePaths {
     if (!version) {
         throw new Error('Invalid version');
     }

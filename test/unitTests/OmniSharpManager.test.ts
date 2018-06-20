@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from "path";
-import { OmnisharpManager, IGetLatestVersion, IGetOmniSharpLaunchInfo, IGetVersionPackages, IInstallRuntimeDependencies } from "../../src/omnisharp/OmnisharpManager";
+import { OmnisharpManager, IGetLatestVersion, IGetOmniSharpLaunchInfo, IGetVersionPackages, IInstallCSharpExtDependencies } from "../../src/omnisharp/OmnisharpManager";
 import { TmpAsset, CreateTmpDir, CreateTmpFile } from "../../src/CreateTmpAsset";
 import { expect } from 'chai';
 import { setExtensionPath } from "../../src/common";
@@ -47,7 +47,7 @@ suite(OmnisharpManager.name, () => {
         }
     };
 
-    const installRuntimeDependencies : IInstallRuntimeDependencies= async (packages: InstallablePackage[]) => {
+    const installCSharpExtDependencies : IInstallCSharpExtDependencies= async (packages: InstallablePackage[]) => {
         packagesToInstall = packages;
         return Promise.resolve(true);
     };
@@ -71,7 +71,7 @@ suite(OmnisharpManager.name, () => {
         packagesToInstall = undefined;
         testBasePath = undefined;
         latestVersionCalled = false;
-        omnisharpManager = new OmnisharpManager(installRuntimeDependencies, getLatestVersion, getPackagesFromVersion, getOmnisharpLaunchInfo);
+        omnisharpManager = new OmnisharpManager(installCSharpExtDependencies, getLatestVersion, getPackagesFromVersion, getOmnisharpLaunchInfo);
     });
 
     test("Basepath includes the default version if the omnisharp path is not set", async () => {

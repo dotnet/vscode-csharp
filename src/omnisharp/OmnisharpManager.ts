@@ -17,7 +17,7 @@ export interface IGetVersionPackages {
     (version: string): InstallablePackage[];
 }
 
-export interface IInstallRuntimeDependencies {
+export interface IInstallCSharpExtDependencies {
     (packages: InstallablePackage[]): Promise<boolean>;
 }
 
@@ -27,7 +27,7 @@ export interface IGetOmniSharpLaunchInfo {
 
 export class OmnisharpManager {
     public constructor(
-        private installRuntimeDependencies: IInstallRuntimeDependencies,
+        private installCSharpExtDependencies: IInstallCSharpExtDependencies,
         private getLatestVersion: IGetLatestVersion,
         private getPackagesForVersion: IGetVersionPackages,
         private getOmniSharpLaunchInfo: IGetOmniSharpLaunchInfo) {
@@ -66,7 +66,7 @@ export class OmnisharpManager {
     private async InstallVersionAndReturnLaunchInfo(version: string, installPath: string, extensionPath: string): Promise<OmniSharpLaunchInfo> {
         if (semver.valid(version)) {
             let packages = this.getPackagesForVersion(version);
-            await this.installRuntimeDependencies(packages);
+            await this.installCSharpExtDependencies(packages);
             return this.GetLaunchPathForVersion(version, installPath, extensionPath);
         }
         else {

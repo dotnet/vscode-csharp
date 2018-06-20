@@ -15,7 +15,7 @@ import { ReadLine, createInterface } from 'readline';
 import { Request, RequestQueueCollection } from './requestQueue';
 import { DelayTracker } from './delayTracker';
 import { EventEmitter } from 'events';
-import { OmnisharpManager, IInstallRuntimeDependencies, IGetLatestVersion, IGetVersionPackages, IGetOmniSharpLaunchInfo } from './OmnisharpManager';
+import { OmnisharpManager, IInstallCSharpExtDependencies, IGetLatestVersion, IGetVersionPackages, IGetOmniSharpLaunchInfo } from './OmnisharpManager';
 import { Options } from './options';
 import { PlatformInformation } from '../platform';
 import { launchOmniSharp } from './launcher';
@@ -310,11 +310,11 @@ export class OmniSharpServer {
         let launchInfo: OmniSharpLaunchInfo;
         try {
             let extensionPath = utils.getExtensionPath();
-            let installRuntimeDependencies: IInstallRuntimeDependencies = async (runtimeDependencies: InstallablePackage[]) => installCSharpExtDependencies(this.eventStream, this.platformInfo, this.networkSettingsProvider, runtimeDependencies);
+            let installPackages: IInstallCSharpExtDependencies = async (runtimeDependencies: InstallablePackage[]) => installCSharpExtDependencies(this.eventStream, this.platformInfo, this.networkSettingsProvider, runtimeDependencies);
             let getLatestVersion: IGetLatestVersion = async () => getLatestOmniSharpVersion(latestVersionUrl, this.eventStream, this.networkSettingsProvider);
             let getPackagesForVersion : IGetVersionPackages = (version: string) => GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
             let getLaunchInfo: IGetOmniSharpLaunchInfo = (basePath: string) => getOmniSharpLaunchInfo(this.platformInfo, basePath);
-            let omnisharpManager = new OmnisharpManager(installRuntimeDependencies, getLatestVersion, getPackagesForVersion, getLaunchInfo);
+            let omnisharpManager = new OmnisharpManager(installPackages, getLatestVersion, getPackagesForVersion, getLaunchInfo);
             launchInfo = await omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, installPath, extensionPath);
         }
         catch (error) {

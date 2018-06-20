@@ -6,16 +6,16 @@ import * as chai from 'chai';
 import * as util from '../../../src/common';
 import { CreateTmpFile, TmpAsset } from "../../../src/CreateTmpAsset";
 import { PlatformInformation } from "../../../src/platform";
-import { filterPackages } from "../../../src/packageManager/PackageFilterer";
-import { InstallablePackage, RuntimeDependency } from '../../../src/packageManager/Package';
+import { getPlatformSpecificNotInstalledPackages } from "../../../src/packageManager/PackageFilterer";
+import { InstallablePackage, PackageWithRelativePaths } from '../../../src/packageManager/Package';
 import { getInstallablePackages } from '../../../src/packageManager/getInstallablePackage';
 
 let expect = chai.expect;
 
-suite('PackageFilterer', () => {
+suite(getPlatformSpecificNotInstalledPackages.name, () => {
     let tmpFile: TmpAsset;
     const extensionPath = "ExtensionPath";
-    const packages = <RuntimeDependency[]>[
+    const packages = <PackageWithRelativePaths[]>[
         {   
             "description": "Platform1-Architecture1 uninstalled package",
             "platforms": [ "platform1" ],
@@ -72,7 +72,7 @@ suite('PackageFilterer', () => {
 
     test('Filters the packages based on Platform Information', async () => {
         let platformInfo = new PlatformInformation("platform2", "architecture2");
-        let filteredPackages = await filterPackages(installablePackages, platformInfo);
+        let filteredPackages = await getPlatformSpecificNotInstalledPackages(installablePackages, platformInfo);
         expect(filteredPackages.length).to.be.equal(1);
         expect(filteredPackages[0].description).to.be.equal("Platform2-Architecture2 uninstalled package");
         expect(filteredPackages[0].platforms[0]).to.be.equal("platform2");
@@ -81,7 +81,7 @@ suite('PackageFilterer', () => {
 
     test('Returns only uninstalled packages', async () => {
         let platformInfo = new PlatformInformation("platform1", "architecture1");
-        let filteredPackages = await filterPackages(installablePackages, platformInfo);
+        let filteredPackages = await getPlatformSpecificNotInstalledPackages(installablePackages, platformInfo);
         expect(filteredPackages.length).to.be.equal(1);
         expect(filteredPackages[0].description).to.be.equal("Platform1-Architecture1 uninstalled package");
         expect(filteredPackages[0].platforms[0]).to.be.equal("platform1");
@@ -90,7 +90,7 @@ suite('PackageFilterer', () => {
 
     test('Doesnot filter the package if install test path is not specified', async () => {
         let platformInfo = new PlatformInformation("platform3", "architecture3");
-        let filteredPackages = await filterPackages(installablePackages, platformInfo);
+        let filteredPackages = await getPlatformSpecificNotInstalledPackages(installablePackages, platformInfo);
         expect(filteredPackages.length).to.be.equal(1);
         expect(filteredPackages[0].description).to.be.equal("Platform3-Architecture3 with no installTestPath specified");
         expect(filteredPackages[0].platforms[0]).to.be.equal("platform3");

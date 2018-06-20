@@ -5,13 +5,13 @@
 
 import * as path from 'path';
 import * as util from '../common';
-import { RuntimeDependency, InstallablePackage } from './Package';
+import { PackageWithRelativePaths, InstallablePackage } from './Package';
 
-export function getInstallablePackages(runtimeDependencies: RuntimeDependency[]): InstallablePackage[]{
-    return runtimeDependencies.map(dependency => getInstallablePackage(dependency));
+export function getInstallablePackages(packages: PackageWithRelativePaths[]): InstallablePackage[]{
+    return packages.map(pkg => getInstallablePackage(pkg));
 }
 
-function getInstallablePackage(pkg: RuntimeDependency): InstallablePackage {
+function getInstallablePackage(pkg: PackageWithRelativePaths): InstallablePackage {
     return <InstallablePackage>{
         description: pkg.description,
         url: pkg.url,
@@ -25,7 +25,7 @@ function getInstallablePackage(pkg: RuntimeDependency): InstallablePackage {
     };
 }
 
-function getAbsoluteInstallTestPath(pkg: RuntimeDependency): string {
+function getAbsoluteInstallTestPath(pkg: PackageWithRelativePaths): string {
     if (pkg.installTestPath) {
         return path.resolve(util.getExtensionPath(), pkg.installTestPath);
     }
@@ -33,15 +33,16 @@ function getAbsoluteInstallTestPath(pkg: RuntimeDependency): string {
     return null;
 }
 
-function getBinariesWithAbsolutePaths(pkg: RuntimeDependency) {
+function getBinariesWithAbsolutePaths(pkg: PackageWithRelativePaths) {
+    let absoluteInstallPath = getAbsoluteInstallPath(pkg);
     if (pkg.binaries) {
-        return pkg.binaries.map(value => path.resolve(getAbsoluteInstallPath(pkg), value));
+        return pkg.binaries.map(value => path.resolve(absoluteInstallPath, value));
     }
 
     return null;
 }
 
-function getAbsoluteInstallPath(pkg: RuntimeDependency): string {
+function getAbsoluteInstallPath(pkg: PackageWithRelativePaths): string {
     let basePath = util.getExtensionPath();
     if (pkg.installPath) {
         basePath = path.resolve(basePath, pkg.installPath);

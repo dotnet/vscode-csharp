@@ -10,15 +10,15 @@ import { EventStream } from './EventStream';
 import { DownloadAndInstallPackages } from './packageManager/PackageManager';
 import { InstallablePackage } from './packageManager/Package';
 import { NetworkSettingsProvider } from './NetworkSettings';
-import { filterPackages } from './packageManager/PackageFilterer';
+import { getPlatformSpecificNotInstalledPackages } from './packageManager/PackageFilterer';
 
 /*
  * Function used to download and install the runtime dependencies of the C# Extension
  */
 
-export async function installCSharpExtDependencies(eventStream: EventStream, platformInfo: PlatformInformation, networkSettingsProvider: NetworkSettingsProvider, installablePackages: InstallablePackage[]): Promise<boolean> {
+export async function installCSharpExtDependencies(eventStream: EventStream, platformInfo: PlatformInformation, networkSettingsProvider: NetworkSettingsProvider, csharpExtDependencies: InstallablePackage[]): Promise<boolean> {
     /* Filter the installable packages */
-    let packagesToInstall = await filterPackages(installablePackages, platformInfo);
+    let packagesToInstall = await getPlatformSpecificNotInstalledPackages(csharpExtDependencies, platformInfo);
     if (packagesToInstall.length == 0) {
         return true;
     }

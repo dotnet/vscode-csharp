@@ -19,7 +19,7 @@ export interface InstallablePackage extends IPackage {
     absoluteBinaryPaths: string[];
 }
 
-export interface RuntimeDependency extends IPackage { 
+export interface PackageWithRelativePaths extends IPackage { 
     installPath?: string;
     installTestPath?: string;
     binaries: string[];
