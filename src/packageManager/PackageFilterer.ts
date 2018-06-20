@@ -6,7 +6,7 @@
 import { PlatformInformation } from "../platform";
 import * as util from '../common';
 import { PackageError } from "./PackageError";
-import { InstallablePackage } from "./Package";
+import { InstallablePackage } from "./InstallablePackage";
 
 const { filterAsync } = require('node-filter-async');
 
@@ -37,11 +37,11 @@ function getPlatformSpecificPackages(packages: InstallablePackage[], platformInf
 async function getNotInstalledPackages(packages: InstallablePackage[]): Promise<InstallablePackage[]> {
     return filterAsync(packages, async (pkg: InstallablePackage) => {
         //If the file is present at the install test path then filter it
-        if (!pkg.absoluteInstallTestPath) {
+        if (!pkg.installTestPath) {
             //if there is no testPath specified then we will not filter it
             return true;
         }
 
-        return !(await util.fileExists(pkg.absoluteInstallTestPath));
+        return !(await util.fileExists(pkg.installTestPath));
       });
 }

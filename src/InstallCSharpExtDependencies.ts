@@ -8,7 +8,7 @@ import { PlatformInformation } from './platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
 import { DownloadAndInstallPackages } from './packageManager/PackageManager';
-import { InstallablePackage } from './packageManager/Package';
+import { InstallablePackage } from "./packageManager/InstallablePackage";
 import { NetworkSettingsProvider } from './NetworkSettings';
 import { getPlatformSpecificNotInstalledPackages } from './packageManager/PackageFilterer';
 

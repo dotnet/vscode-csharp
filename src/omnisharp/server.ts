@@ -33,7 +33,7 @@ import { getLatestOmniSharpVersion } from './GetLatestOmniSharpVersion';
 import { GetPackagesFromVersion } from './OmnisharpPackageCreator';
 import { OmniSharpLaunchInfo } from './OmniSharpLaunchInfo';
 import { getOmniSharpLaunchInfo } from './GetOmniSharpLaunchInfo';
-import { InstallablePackage } from '../packageManager/Package';
+import { InstallablePackage } from "../packageManager/InstallablePackage";
 
 enum ServerState {
     Starting,

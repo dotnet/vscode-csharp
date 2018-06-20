@@ -10,14 +10,14 @@ import { DownloadFile } from './FileDownloader';
 import { InstallZip } from './ZipInstaller';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
-import { InstallablePackage } from "./Package";
+import { InstallablePackage } from "./InstallablePackage";
 
 export async function DownloadAndInstallPackages(packages: InstallablePackage[], provider: NetworkSettingsProvider, platformInfo: PlatformInformation, eventStream: EventStream) {
     if (packages) {
         for (let pkg of packages) {
             try {
                 let buffer = await DownloadFile(pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
-                await InstallZip(buffer, pkg.description, pkg.absoluteInstallPath, pkg.absoluteBinaryPaths, eventStream);
+                await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
             }
             catch (error) {
                 if (error instanceof NestedError) {

@@ -8,7 +8,7 @@ import { OmnisharpManager, IGetLatestVersion, IGetOmniSharpLaunchInfo, IGetVersi
 import { TmpAsset, CreateTmpDir, CreateTmpFile } from "../../src/CreateTmpAsset";
 import { expect } from 'chai';
 import { setExtensionPath } from "../../src/common";
-import { InstallablePackage } from "../../src/packageManager/Package";
+import { InstallablePackage } from "../../src/packageManager/InstallablePackage";
 
 const chai = require("chai");
 chai.use(require("chai-as-promised"));

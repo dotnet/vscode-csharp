@@ -3,23 +3,25 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { getInstallablePackages } from "../packageManager/getInstallablePackage";
-import { PackageWithRelativePaths, InstallablePackage } from "../packageManager/Package";
+import { IPackage } from "../packageManager/IPackage";
+import { InstallablePackage } from "../packageManager/InstallablePackage";
 
-export function GetPackagesFromVersion(version: string, runTimeDependencies: PackageWithRelativePaths[], serverUrl: string, installPath: string): InstallablePackage[] {
+export function GetPackagesFromVersion(version: string, runTimeDependencies: IPackage[], serverUrl: string, installPath: string): InstallablePackage[] {
     if (!version) {
         throw new Error('Invalid version');
     }
 
-    let versionPackages = new Array<PackageWithRelativePaths>();
+    let versionPackages = new Array<IPackage>();
     for (let inputPackage of runTimeDependencies) {
-        versionPackages.push(SetBinaryAndGetPackage(inputPackage, serverUrl, version, installPath));
+        if (inputPackage.platformId) {
+            versionPackages.push(SetBinaryAndGetPackage(inputPackage, serverUrl, version, installPath));
+        }
     }
 
-    return getInstallablePackages(versionPackages);
+    return InstallablePackage.getInstallablePackages(versionPackages);
 }
 
-export function SetBinaryAndGetPackage(inputPackage: PackageWithRelativePaths, serverUrl: string, version: string, installPath: string): PackageWithRelativePaths {
+export function SetBinaryAndGetPackage(inputPackage: IPackage, serverUrl: string, version: string, installPath: string): IPackage {
     let installBinary: string;
     if (inputPackage.platformId === "win-x86" || inputPackage.platformId === "win-x64") {
         installBinary = "OmniSharp.exe";
@@ -31,7 +33,7 @@ export function SetBinaryAndGetPackage(inputPackage: PackageWithRelativePaths, s
     return GetPackage(inputPackage, serverUrl, version, installPath, installBinary);
 }
 
-function GetPackage(inputPackage: PackageWithRelativePaths, serverUrl: string, version: string, installPath: string, installBinary: string): PackageWithRelativePaths {
+function GetPackage(inputPackage: IPackage, serverUrl: string, version: string, installPath: string, installBinary: string): IPackage {
     if (!version) {
         throw new Error('Invalid version');
     }

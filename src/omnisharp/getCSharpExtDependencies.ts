@@ -3,14 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PackageWithRelativePaths, InstallablePackage } from "../packageManager/Package";
-import { getInstallablePackages } from "../packageManager/getInstallablePackage";
+import { IPackage } from "../packageManager/IPackage";
+import { InstallablePackage } from "../packageManager/InstallablePackage";
 
- 
 export function getCSharpExtDependencies(packageJSON: any): InstallablePackage[] {
     if (packageJSON.runtimeDependencies) {
-        let runtimeDependencies = <PackageWithRelativePaths[]>packageJSON.runtimeDependencies;
-        return getInstallablePackages(runtimeDependencies);
+        let runtimeDependencies = <IPackage[]>packageJSON.runtimeDependencies;
+        return InstallablePackage.getInstallablePackages(runtimeDependencies);
     }
 
     throw new Error("No runtime dependencies found");

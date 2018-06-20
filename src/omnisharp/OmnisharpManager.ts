@@ -7,7 +7,7 @@ import * as path from 'path';
 import * as semver from 'semver';
 import * as util from '../common';
 import { OmniSharpLaunchInfo } from './OmniSharpLaunchInfo';
-import { InstallablePackage } from '../packageManager/Package';
+import { InstallablePackage } from "../packageManager/InstallablePackage";
 
 export interface IGetLatestVersion {
     (): Promise<string>;

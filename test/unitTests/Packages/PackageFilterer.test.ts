@@ -7,15 +7,15 @@ import * as util from '../../../src/common';
 import { CreateTmpFile, TmpAsset } from "../../../src/CreateTmpAsset";
 import { PlatformInformation } from "../../../src/platform";
 import { getPlatformSpecificNotInstalledPackages } from "../../../src/packageManager/PackageFilterer";
-import { InstallablePackage, PackageWithRelativePaths } from '../../../src/packageManager/Package';
-import { getInstallablePackages } from '../../../src/packageManager/getInstallablePackage';
+import { IPackage } from '../../../src/packageManager/IPackage';
+import { InstallablePackage } from "../../../src/packageManager/InstallablePackage";
 
 let expect = chai.expect;
 
 suite(getPlatformSpecificNotInstalledPackages.name, () => {
     let tmpFile: TmpAsset;
-    const extensionPath = "ExtensionPath";
-    const packages = <PackageWithRelativePaths[]>[
+    let extensionPath = "/ExtensionPath";
+    const packages = <IPackage[]>[
         {   
             "description": "Platform1-Architecture1 uninstalled package",
             "platforms": [ "platform1" ],
@@ -27,31 +27,26 @@ suite(getPlatformSpecificNotInstalledPackages.name, () => {
             "description": "Platform1-Architecture1 installed package",
             "platforms": [ "platform1" ],
             "architectures": [ "architecture1" ],
-            "installTestPath": "path5"
         },
         {
             "description": "Platform2-Architecture2 uninstalled package",
             "platforms": [ "platform2" ],
             "architectures": [ "architecture2" ],
-            "installTestPath": "path2"
         },
         {
             "description": "Platform1-Architecture2 uninstalled package",
             "platforms": [ "platform1" ],
             "architectures": [ "architecture2" ],
-            "installTestPath": "path3"
         },
         {
-            "description": "Platform2-Architecture1 uninstalled package",
+            "description": "Platform2-Architecture1 package",
             "platforms": [ "platform2" ],
             "architectures": [ "architecture1" ],
-            "installTestPath": "path4"
         },
         {
             "description": "Platform1-Architecture2 uninstalled package",
             "platforms": [ "platform1" ],
             "architectures": [ "architecture2" ],
-            "installTestPath": "path3"
         },
         {
             "description": "Platform3-Architecture3 with no installTestPath specified",
@@ -67,7 +62,7 @@ suite(getPlatformSpecificNotInstalledPackages.name, () => {
         util.setExtensionPath(extensionPath);
         packages[1].installTestPath = tmpFile.name;
         // we need to set the extension path because fileresolver uses it
-        installablePackages = getInstallablePackages(packages);
+        installablePackages = InstallablePackage.getInstallablePackages(packages);
     });
 
     test('Filters the packages based on Platform Information', async () => {

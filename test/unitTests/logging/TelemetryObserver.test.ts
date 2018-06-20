@@ -8,7 +8,7 @@ import { PlatformInformation } from '../../../src/platform';
 import { PackageInstallation, InstallationFailure, InstallationSuccess, TestExecutionCountReport, TelemetryEventWithMeasures, OmnisharpDelayTrackerEventMeasures, OmnisharpStart } from '../../../src/omnisharp/loggingEvents';
 import { getNullTelemetryReporter } from '../testAssets/Fakes';
 import { PackageError } from '../../../src/packageManager/PackageError';
-import { IPackage } from '../../../src/packageManager/Package';
+import { IPackage } from '../../../src/packageManager/IPackage';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));

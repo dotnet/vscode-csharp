@@ -8,7 +8,7 @@ import * as chai from 'chai';
 import * as util from '../../../src/common';
 import { CreateTmpDir, TmpAsset } from '../../../src/CreateTmpAsset';
 import  TestZip  from '../testAssets/TestZip';
-import { InstallablePackage } from '../../../src/packageManager/Package';
+import { InstallablePackage } from "../../../src/packageManager/InstallablePackage";
 import { DownloadAndInstallPackages } from '../../../src/packageManager/PackageManager';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { PlatformInformation } from '../../../src/platform';
@@ -41,15 +41,7 @@ suite("Package Manager", () => {
         eventBus = new TestEventBus(eventStream);
         tmpInstallDir = await CreateTmpDir(true);
         installationPath = tmpInstallDir.name;
-        packages = <InstallablePackage[]>[
-            {
-                url: `${server.baseUrl}/package`,
-                description: packageDescription,
-                absoluteInstallPath: installationPath,
-                platforms: [windowsPlatformInfo.platform],
-                architectures: [windowsPlatformInfo.architecture]
-            }];
-
+        packages = [new InstallablePackage(packageDescription, `${server.baseUrl}/package`, [windowsPlatformInfo.platform], [windowsPlatformInfo.architecture], [], undefined, undefined, installationPath)];
         testZip = await TestZip.createTestZipAsync(createTestFile("Foo", "foo.txt"));
         await server.start();
         server.addRequestHandler('GET', '/package', 200, {

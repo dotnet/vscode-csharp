@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { NestedError } from '../NestedError';
-import { IPackage } from './Package';
+import { IPackage } from './IPackage';
 
 export class PackageError extends NestedError {
     // Do not put PII (personally identifiable information) in the 'message' field as it will be logged to telemetry
