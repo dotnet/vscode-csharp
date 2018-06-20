@@ -5,22 +5,25 @@
 
 import { assert, should, expect } from "chai";
 import { SetBinaryAndGetPackage, GetPackagesFromVersion } from "../../src/omnisharp/OmnisharpPackageCreator";
-import { Package } from "../../src/packageManager/Package";
 import { testPackageJSON } from "./testAssets/testAssets";
+import { RuntimeDependency } from "../../src/packageManager/Package";
+import { TmpAsset, CreateTmpDir } from "../../src/CreateTmpAsset";
+import { setExtensionPath } from "../../src/common";
+import * as path from "path";
 
 suite("GetOmnisharpPackage : Output package depends on the input package and other input parameters like serverUrl", () => {
 
     let serverUrl: string;
     let version: string;
     let installPath: string;
-    let inputPackages: Package[];
+    let inputPackages: RuntimeDependency[];
 
     suiteSetup(() => {
         serverUrl = "http://serverUrl";
         version = "0.0.0";
         installPath = "testPath";
         let packageJSON = testPackageJSON;
-        inputPackages = <Package[]> (packageJSON.runtimeDependencies);
+        inputPackages = <RuntimeDependency[]>(packageJSON.runtimeDependencies);
         should();
     });
 
@@ -97,14 +100,19 @@ suite("GetOmnisharpPackage : Output package depends on the input package and oth
 });
 
 suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a set of input packages', () => {
-
+   
     const serverUrl = "http://serverUrl";
     const installPath = "testPath";
-    let inputPackages : any;
+    let inputPackages: any;
+    let tmpDir: TmpAsset;
+    let extensionPath: string;
 
-    suiteSetup(() => {
-        inputPackages = <Package[]>(testPackageJSON.runtimeDependencies);
+    suiteSetup(async () => {
+        inputPackages = <RuntimeDependency[]>(testPackageJSON.runtimeDependencies);
         should();
+        tmpDir = await CreateTmpDir(true);
+        extensionPath = tmpDir.name;
+        setExtensionPath(extensionPath);
     });
 
     test('Throws exception if the version is null', () => {
@@ -120,7 +128,7 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
     });
 
     test('Returns experiment packages with install test path depending on install path and version', () => {
-        let inputPackages = <Package[]>[
+        let inputPackages = <RuntimeDependency[]>[
             {
                 "description": "OmniSharp for Windows (.NET 4.6 / x64)",
                 "url": "https://download.visualstudio.microsoft.com/download/pr/100505821/c570a9e20dbf7172f79850babd058872/omnisharp-win-x64-1.28.0.zip",
@@ -154,45 +162,13 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
 
         let outPackages = GetPackagesFromVersion("1.1.1", inputPackages, serverUrl, "experimentPath");
         outPackages.length.should.equal(2);
-        outPackages[0].installTestPath.should.equal("./experimentPath/1.1.1/OmniSharp.exe");
-        outPackages[1].installTestPath.should.equal("./experimentPath/1.1.1/run");
+        outPackages[0].absoluteInstallTestPath.should.equal(path.join(extensionPath, "experimentPath", "1.1.1", "OmniSharp.exe"));
+        outPackages[1].absoluteInstallTestPath.should.equal(path.join(extensionPath, "experimentPath", "1.1.1", "run"));
     });
 
-    test('Returns only omnisharp packages with experimentalIds', () => {
-        let version = "0.0.0";
-        let inputPackages = <Package[]>[
-            {
-                "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-                "url": "https://download.visualstudio.microsoft.com/download/pr/100505821/c570a9e20dbf7172f79850babd058872/omnisharp-win-x64-1.28.0.zip",
-                "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.28.0.zip",
-                "installPath": ".omnisharp",
-                "platforms": [
-                    "win32"
-                ],
-                "architectures": [
-                    "x86_64"
-                ],
-                "installTestPath": "./.omnisharp/OmniSharp.exe",
-                "platformId": "win-x64"
-            },
-            {
-                "description": "Some other package - no experimental id",
-                "url": "https://download.visualstudio.microsoft.com/download/pr/100505818/6b99c6a86da3221919158ca0f36a3e45/omnisharp-osx-1.28.0.zip",
-                "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.28.0.zip",
-                "installPath": ".omnisharp",
-                "platforms": [
-                    "darwin"
-                ],
-                "binaries": [
-                    "./mono.osx",
-                    "./run"
-                ],
-                "installTestPath": "./.omnisharp/mono.osx",
-            },
-        ];
-
-        let outPackages = GetPackagesFromVersion(version, inputPackages, serverUrl, installPath);
-        outPackages.length.should.equal(1);
-        outPackages[0].platformId.should.equal("win-x64");
+    teardown(() => {
+        if (tmpDir) {
+            tmpDir.dispose();
+       } 
     });
 });

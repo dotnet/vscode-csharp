@@ -7,8 +7,8 @@ import { TelemetryObserver } from '../../../src/observers/TelemetryObserver';
 import { PlatformInformation } from '../../../src/platform';
 import { PackageInstallation, InstallationFailure, InstallationSuccess, TestExecutionCountReport, TelemetryEventWithMeasures, OmnisharpDelayTrackerEventMeasures, OmnisharpStart } from '../../../src/omnisharp/loggingEvents';
 import { getNullTelemetryReporter } from '../testAssets/Fakes';
-import { Package } from '../../../src/packageManager/Package';
 import { PackageError } from '../../../src/packageManager/PackageError';
+import { IPackage } from '../../../src/packageManager/Package';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -71,7 +71,7 @@ suite('TelemetryReporterObserver', () => {
         });
     
         test(`Telemetry Props contains message and packageUrl if error is package error`, () => {
-            let error = new PackageError("someError", <Package>{ "description": "foo", "url": "someurl" });
+            let error = new PackageError("someError", <IPackage>{ "description": "foo", "url": "someurl" });
             let event = new InstallationFailure("someStage", error);
             observer.post(event);
             expect(property).to.have.property("error.message", error.message);

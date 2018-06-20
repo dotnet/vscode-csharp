@@ -7,7 +7,11 @@ import * as path from 'path';
 import * as util from '../common';
 import { RuntimeDependency, InstallablePackage } from './Package';
 
-export function getInstallablePackage(pkg: RuntimeDependency): InstallablePackage {
+export function getInstallablePackages(runtimeDependencies: RuntimeDependency[]): InstallablePackage[]{
+    return runtimeDependencies.map(dependency => getInstallablePackage(dependency));
+}
+
+function getInstallablePackage(pkg: RuntimeDependency): InstallablePackage {
     return <InstallablePackage>{
         description: pkg.description,
         url: pkg.url,
@@ -21,7 +25,7 @@ export function getInstallablePackage(pkg: RuntimeDependency): InstallablePackag
     };
 }
 
-export function getAbsoluteInstallTestPath(pkg: RuntimeDependency): string {
+function getAbsoluteInstallTestPath(pkg: RuntimeDependency): string {
     if (pkg.installTestPath) {
         return path.resolve(util.getExtensionPath(), pkg.installTestPath);
     }

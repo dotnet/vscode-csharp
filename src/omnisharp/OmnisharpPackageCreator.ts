@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { getInstallablePackage } from "../packageManager/getInstallablePackage";
+import { getInstallablePackages } from "../packageManager/getInstallablePackage";
 import { RuntimeDependency, InstallablePackage } from "../packageManager/Package";
 
 export function GetPackagesFromVersion(version: string, runTimeDependencies: RuntimeDependency[], serverUrl: string, installPath: string): InstallablePackage[] {
@@ -13,12 +13,10 @@ export function GetPackagesFromVersion(version: string, runTimeDependencies: Run
 
     let versionPackages = new Array<RuntimeDependency>();
     for (let inputPackage of runTimeDependencies) {
-        if (inputPackage.platformId) {
-            versionPackages.push(SetBinaryAndGetPackage(inputPackage, serverUrl, version, installPath));
-        }
+        versionPackages.push(SetBinaryAndGetPackage(inputPackage, serverUrl, version, installPath));
     }
 
-    return versionPackages.map(pkg => getInstallablePackage(pkg));
+    return getInstallablePackages(versionPackages);
 }
 
 export function SetBinaryAndGetPackage(inputPackage: RuntimeDependency, serverUrl: string, version: string, installPath: string): RuntimeDependency {
