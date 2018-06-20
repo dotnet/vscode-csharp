@@ -9,7 +9,6 @@ import { PlatformInformation } from "../../../src/platform";
 import { filterPackages } from "../../../src/packageManager/PackageFilterer";
 import { InstallablePackage, RuntimeDependency } from '../../../src/packageManager/Package';
 import { getInstallablePackages } from '../../../src/packageManager/getInstallablePackage';
-import { FileSystemError } from 'vscode';
 
 let expect = chai.expect;
 
