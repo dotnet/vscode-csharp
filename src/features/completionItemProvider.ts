@@ -66,6 +66,8 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
                 completion.commitCharacters = response.IsSuggestionMode
                     ? OmniSharpCompletionItemProvider.CommitCharactersWithoutSpace
                     : OmniSharpCompletionItemProvider.AllCommitCharacters;
+                
+                completion.preselect = response.Preselect;
 
                 let array = completions[completion.label];
                 if (!array) {
