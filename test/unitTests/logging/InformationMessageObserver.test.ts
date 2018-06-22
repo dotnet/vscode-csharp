@@ -22,11 +22,14 @@ suite("InformationMessageObserver", () => {
     let commandDone: Promise<void>;
     let vscode = getVsCode();
     let infoMessage: string;
-    let relativePath: string;
     let invokedCommand: string;
     let observer: InformationMessageObserver = new InformationMessageObserver(vscode);
 
     setup(() => {
+        infoMessage = undefined;
+        invokedCommand = undefined;
+        doClickCancel = undefined;
+        doClickOk = undefined;
         commandDone = new Promise<void>(resolve => {
             signalCommandDone = () => { resolve(); };
         });
@@ -35,7 +38,7 @@ suite("InformationMessageObserver", () => {
     [
         {
             event: getUnresolvedDependenices("someFile"),
-            expectedCommand: "dotnet.restore"
+            expectedCommand: "dotnet.restore.all"
         }
     ].forEach((elem) => {
         suite(elem.event.constructor.name, () => {
@@ -53,7 +56,6 @@ suite("InformationMessageObserver", () => {
 
                 test('The information message is shown', async () => {
                     observer.post(elem.event);
-                    expect(relativePath).to.not.be.empty;
                     expect(infoMessage).to.not.be.empty;
                     doClickOk();
                     await commandDone;
@@ -79,11 +81,6 @@ suite("InformationMessageObserver", () => {
     
     teardown(() => {
         commandDone = undefined; 
-        infoMessage = undefined;
-        relativePath = undefined;
-        invokedCommand = undefined;
-        doClickCancel = undefined;
-        doClickOk = undefined;
     });
 
     function getVsCode() {
@@ -105,11 +102,6 @@ suite("InformationMessageObserver", () => {
             invokedCommand = command;
             signalCommandDone();
             return undefined;
-        };
-
-        vscode.workspace.asRelativePath = (pathOrUri?: string, includeWorspaceFolder?: boolean) => {
-            relativePath = pathOrUri;
-            return relativePath;
         };
 
         return vscode;
