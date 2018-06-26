@@ -5,9 +5,25 @@
   
 ## 1.16.0 _(Not Yet Released)_
 
+#### Project System
+
+* Separated the existing "Restore Packages" option in the Command Palette into two distinct functions:
+  * "Restore Project" - Displays a drop-down that shows all the available projects in the solution or in the workspace. Selecting one of them would trigger a dotnet restore for the particular project.
+  * "Restore All Projects" - Triggers a dotnet restore for all projects in the current solution or workspace.
+
+* Modified the "Unresolved dependencies" prompt to restore the all the projects in the currently selected solution or workspace. (PR: [#2323] https://github.com/OmniSharp/omnisharp-vscode/pull/2323)
+
+#### Misc
+
+* Added a prompt to "Restart OmniSharp" when there is a change in omnisharp "path", "useGlobalMono" or "waitForDebugger" settings.(PR: [#2316] https://github.com/OmniSharp/omnisharp-vscode/pull/2316)
+
 #### Editor
 
 * Improved diagnostics by refreshing them when the active editor changes or the current window is focused. (PR: [#2317](https://github.com/OmniSharp/omnisharp-vscode/pull/2317)) _(Contributed by [@SirIntruder](https://github.com/SirIntruder))
+
+#### Testing
+
+* Added test execution output to the output of the Run/Debug Test CodeLens. (PR: [#2337](https://github.com/OmniSharp/omnisharp-vscode/pull/2337), [#2343](https://github.com/OmniSharp/omnisharp-vscode/pull/2343), [omnisharp-roslyn#1203](https://github.com/OmniSharp/omnisharp-roslyn/pull/1203))
 
 ## 1.15.2 (May 15, 1018)
 
@@ -38,7 +54,7 @@
 #### Editor
 
 * Fixed regression where the "Generate Type in New File" code action would create an empty file. ([#2112](https://github.com/OmniSharp/omnisharp-vscode/issues/2112), PR: [omnisharp-roslyn#1143](https://github.com/OmniSharp/omnisharp-roslyn/pull/1143))
-* Made several improvments to the display of tooltips in Signature Help. ([#1940](https://github.com/OmniSharp/omnisharp-vscode/issues/1940), PR: [#1958](https://github.com/OmniSharp/omnisharp-vscode/pull/1958))
+* Made several improvements to the display of tooltips in Signature Help. ([#1940](https://github.com/OmniSharp/omnisharp-vscode/issues/1940), PR: [#1958](https://github.com/OmniSharp/omnisharp-vscode/pull/1958))
 
 #### Options
 

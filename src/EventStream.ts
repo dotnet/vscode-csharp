@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { Subject } from "rxjs/Subject";
 import { BaseEvent } from "./omnisharp/loggingEvents";
+import { Subscription } from "rxjs/Subscription";
 
 export class EventStream {
     private sink: Subject<BaseEvent>;
@@ -16,7 +17,7 @@ export class EventStream {
         this.sink.next(event);
     }
 
-    public subscribe(eventHandler: (event: BaseEvent) => void) {
-        this.sink.subscribe(eventHandler);
+    public subscribe(eventHandler: (event: BaseEvent) => void): Subscription {
+        return this.sink.subscribe(eventHandler);
     }
 }

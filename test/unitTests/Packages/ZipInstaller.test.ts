@@ -14,6 +14,7 @@ import { PlatformInformation } from '../../../src/platform';
 import { BaseEvent, InstallationStart, ZipError } from '../../../src/omnisharp/loggingEvents';
 import { createTestFile } from '../testAssets/TestFile';
 import TestZip from '../testAssets/TestZip';
+import TestEventBus from '../testAssets/TestEventBus';
 
 chai.use(require("chai-as-promised"));
 let expect = chai.expect;
@@ -33,12 +34,12 @@ suite('ZipInstaller', () => {
     let installationPath: string;
     let testZip: TestZip;
     const fileDescription = "somefile";
-    const eventStream = new EventStream();
-    let eventBus: BaseEvent[];
-    eventStream.subscribe((event) => eventBus.push(event));
+    let eventStream: EventStream;
+    let eventBus: TestEventBus;
 
     setup(async () => {
-        eventBus = [];
+        eventStream = new EventStream(); 
+        eventBus = new TestEventBus(eventStream);
         tmpInstallDir = await CreateTmpDir(true);
         installationPath = tmpInstallDir.name;
         testZip = await TestZip.createTestZipAsync(...files, ...binaries);
@@ -58,7 +59,7 @@ suite('ZipInstaller', () => {
         let eventSequence: BaseEvent[] = [
             new InstallationStart(fileDescription)
         ];
-        expect(eventBus).to.be.deep.equal(eventSequence);
+        expect(eventBus.getEvents()).to.be.deep.equal(eventSequence);
     });
 
     test('The folder is unzipped and the binaries have the expected permissions(except on Windows)', async () => {
@@ -86,7 +87,7 @@ suite('ZipInstaller', () => {
                 new InstallationStart("Text File"),
                 new ZipError("C# Extension was unable to download its dependencies. Please check your internet connection. If you use a proxy server, please visit https://aka.ms/VsCodeCsharpNetworking")
             ];
-            expect(eventBus).to.be.deep.equal(eventSequence);
+            expect(eventBus.getEvents()).to.be.deep.equal(eventSequence);
         }
     });
 
@@ -94,5 +95,6 @@ suite('ZipInstaller', () => {
         if (tmpInstallDir) {
             tmpInstallDir.dispose();
         }
+        eventBus.dispose();
     });
 });
