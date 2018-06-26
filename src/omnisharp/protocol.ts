@@ -8,7 +8,6 @@ import * as path from 'path';
 export module Requests {
     export const AddToProject = '/addtoproject';
     export const AutoComplete = '/autocomplete';
-    export const BlockStructure = '/blockstructure';
     export const CodeCheck = '/codecheck';
     export const CodeFormat = '/codeformat';
     export const ChangeBuffer = '/changebuffer';
@@ -466,6 +465,7 @@ export namespace V2 {
         export const DebugTestsInClassGetStartInfo = '/v2/debugtestsinclass/getstartinfo';
         export const DebugTestLaunch = '/v2/debugtest/launch';
         export const DebugTestStop = '/v2/debugtest/stop';
+        export const BlockStructure = '/v2/blockstructure';
     }
 
     export interface Point {
@@ -627,12 +627,12 @@ export namespace V2 {
 
     export interface BlockStructureResponse
     {
-        Spans: BlockSpan[]
+        Spans: CodeFoldingBlock[]
     }
 
-    export interface BlockSpan {
+    export interface CodeFoldingBlock {
         Range: Range;
-        Type: string;
+        Kind: string;
     }
 }
 

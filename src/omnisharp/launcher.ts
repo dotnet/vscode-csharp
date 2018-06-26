@@ -228,7 +228,6 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
         args.push(`formattingOptions:useTabs=${!getConfigurationValue(globalConfig, csharpConfig, 'editor.insertSpaces', true)}`);
         args.push(`formattingOptions:tabSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
         args.push(`formattingOptions:indentationSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
-        args.push('-z')
     }
 
     if (platformInfo.isWindows()) {
