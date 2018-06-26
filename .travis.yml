@@ -40,6 +40,9 @@ install:
 - npm ci
 - npm i -g gulp
 - gulp 'vsix:release:package'
+- wget https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip
+- unzip sonar-scanner-cli-3.2.0.1227-linux.zip
+- export PATH=$PATH:$TRAVIS_BUILD_DIR/sonar-scanner-3.2.0.1227-linux/bin
 
 script:
   - gulp 'vsix:release:unpackage'
