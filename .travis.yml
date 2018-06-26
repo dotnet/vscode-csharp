@@ -51,7 +51,7 @@ script:
   - gulp cov:report --codeExtensionPath ./vsix/extension
   - npm run test:artifacts
   - 'if [[ "$TRAVIS_BRANCH" != "master" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then npm run test:release; fi'
-  - sonar-scanner -X -Dsonar.projectVersion=1.15.2 -Dsonar.branch.name=[ $TRAVIS_BRANCH ]
+  - sonar-scanner -X -Dsonar.projectVersion=1.15.2
 
 after_failure:
   - ./.travis/printLogs.sh
