@@ -625,6 +625,11 @@ export namespace V2 {
         Message: string;
     }
 
+    export interface BlockStructureRequest
+    {
+        FileName: string;
+    }
+
     export interface BlockStructureResponse
     {
         Spans: CodeFoldingBlock[]
