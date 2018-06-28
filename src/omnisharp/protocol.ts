@@ -632,7 +632,7 @@ export namespace V2 {
 
     export interface BlockStructureResponse
     {
-        Spans: CodeFoldingBlock[]
+        Spans: CodeFoldingBlock[];
     }
 
     export interface CodeFoldingBlock {

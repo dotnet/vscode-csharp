@@ -7,12 +7,12 @@ export class StructureProvider extends AbstractSupport implements FoldingRangePr
     async provideFoldingRanges(document: TextDocument, context: FoldingContext, token: CancellationToken): Promise<FoldingRange[]> {
         let request: Request = {
             FileName: document.fileName,
-        }
+        };
 
-        let response = await blockStructure(this._server, request, token)
+        let response = await blockStructure(this._server, request, token);
         let ranges: FoldingRange[] = [];
         for (let member of response.Spans) {
-            ranges.push(new FoldingRange(member.Range.Start.Line - 1, member.Range.End.Line - 1, this.GetType(member.Kind)))
+            ranges.push(new FoldingRange(member.Range.Start.Line - 1, member.Range.End.Line - 1, this.GetType(member.Kind)));
         }
 
         return ranges;
@@ -21,11 +21,11 @@ export class StructureProvider extends AbstractSupport implements FoldingRangePr
     GetType(type: string): FoldingRangeKind {
         switch (type) {
             case "Comment":
-                return FoldingRangeKind.Comment
+                return FoldingRangeKind.Comment;
             case "Imports":
-                return FoldingRangeKind.Imports
+                return FoldingRangeKind.Imports;
             case "Region":
-                return FoldingRangeKind.Region
+                return FoldingRangeKind.Region;
             default:
                 return null;
         }
