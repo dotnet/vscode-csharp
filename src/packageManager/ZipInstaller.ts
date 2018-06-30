@@ -50,10 +50,10 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
                                 return reject(new NestedError('Error creating directory for zip file entry', err));
                             }
 
-                            let binaryPaths = binaries.map(binary => binary.path);
+                            let binaryPaths = binaries && binaries.map(binary => binary.path);
 
                             // Make sure executable files have correct permissions when extracted
-                            let fileMode = binaries && binaryPaths.indexOf(absoluteEntryPath) !== -1
+                            let fileMode = binaryPaths && binaryPaths.indexOf(absoluteEntryPath) !== -1
                                 ? 0o755
                                 : 0o664;
 

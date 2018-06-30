@@ -8,14 +8,14 @@ import { CreateTmpFile, TmpAsset } from "../../../src/CreateTmpAsset";
 import { PlatformInformation } from "../../../src/platform";
 import { filterPackages } from "../../../src/packageManager/PackageFilterer";
 import { ResolveFilePaths } from "../../../src/packageManager/PackageFilePathResolver";
-import { Package } from "../../../src/packageManager/Package";
+import { IPackage } from "../../../src/packageManager/Package";
 
 let expect = chai.expect;
 
 suite('PackageFilterer', () => {
     let tmpFile: TmpAsset;
     const extensionPath = "ExtensionPath";
-    const packages = <Package[]>[
+    const packages = <IPackage[]>[
         {   
             "description": "Platfrom1-Architecture1 uninstalled package",
             "platforms": [ "platform1" ],

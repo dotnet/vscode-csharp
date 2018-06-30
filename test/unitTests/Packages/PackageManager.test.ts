@@ -9,7 +9,7 @@ import * as chai from 'chai';
 import * as util from '../../../src/common';
 import { CreateTmpDir, TmpAsset } from '../../../src/CreateTmpAsset';
 import  TestZip  from '../testAssets/TestZip';
-import { Package } from '../../../src/packageManager/Package';
+import { IPackage } from '../../../src/packageManager/Package';
 import { DownloadAndInstallPackages } from '../../../src/packageManager/PackageManager';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { PlatformInformation } from '../../../src/platform';
@@ -29,7 +29,7 @@ suite("Package Manager", () => {
     let installationPath: string;
     let eventStream: EventStream;
     let eventBus: TestEventBus;
-    let packages: Package[];
+    let packages: IPackage[];
 
     const packageDescription = "Test Package";
 
@@ -43,7 +43,7 @@ suite("Package Manager", () => {
         eventBus = new TestEventBus(eventStream);
         tmpInstallDir = await CreateTmpDir(true);
         installationPath = tmpInstallDir.name;
-        packages = <Package[]>[
+        packages = <IPackage[]>[
             {
                 url: `${server.baseUrl}/package`,
                 description: packageDescription,
