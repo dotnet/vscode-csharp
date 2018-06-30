@@ -20,7 +20,8 @@ export class CSharpExtDownloader {
         private networkSettingsProvider: NetworkSettingsProvider,
         private eventStream: EventStream,
         private packageJSON: any,
-        private platformInfo: PlatformInformation) {
+        private platformInfo: PlatformInformation,
+        private extensionPath: string) {
     }
 
     public async installRuntimeDependencies(): Promise<boolean> {
@@ -33,7 +34,7 @@ export class CSharpExtDownloader {
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
             let runTimeDependencies = GetRunTimeDependenciesPackages(this.packageJSON);
             installationStage = 'downloadAndInstallPackages';
-            await DownloadAndInstallPackages(runTimeDependencies, this.networkSettingsProvider, this.platformInfo, this.eventStream);
+            await DownloadAndInstallPackages(runTimeDependencies, this.networkSettingsProvider, this.platformInfo, this.eventStream, this.extensionPath);
             installationStage = 'touchLockFile';
             await util.touchInstallFile(util.InstallFileType.Lock);
             this.eventStream.post(new InstallationSuccess());

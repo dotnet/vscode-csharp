@@ -17,7 +17,8 @@ export class OmnisharpDownloader {
         private networkSettingsProvider: NetworkSettingsProvider,
         private eventStream: EventStream,
         private packageJSON: any,
-        private platformInfo: PlatformInformation) {
+        private platformInfo: PlatformInformation,
+        private extensionPath: string) {
     }
 
     public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string) {
@@ -29,7 +30,7 @@ export class OmnisharpDownloader {
             installationStage = 'getPackageInfo';
             let packages = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
             installationStage = 'downloadAndInstallPackages';
-            await DownloadAndInstallPackages(packages, this.networkSettingsProvider, this.platformInfo, this.eventStream);
+            await DownloadAndInstallPackages(packages, this.networkSettingsProvider, this.platformInfo, this.eventStream, this.extensionPath);
             this.eventStream.post(new InstallationSuccess());
         }
         catch (error) {

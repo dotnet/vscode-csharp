@@ -112,7 +112,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo, networkSettingsProvider);
 
     // activate language services
-    let omniSharpPromise = OmniSharp.activate(context, extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionProvider);
+    let omniSharpPromise = OmniSharp.activate(context, extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionProvider, extension.extensionPath);
 
     // register JSON completion & hover providers for project.json
     context.subscriptions.push(addJSONProviders());
@@ -142,7 +142,7 @@ async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExten
     return util.installFileExists(util.InstallFileType.Lock)
         .then(exists => {
             if (!exists) {
-                const downloader = new CSharpExtDownloader(networkSettingsProvider, eventStream, extension.packageJSON, platformInfo);
+                const downloader = new CSharpExtDownloader(networkSettingsProvider, eventStream, extension.packageJSON, platformInfo, extension.extensionPath);
                 return downloader.installRuntimeDependencies();
             } else {
                 return true;
