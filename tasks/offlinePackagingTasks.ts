@@ -11,7 +11,6 @@ import * as del from 'del';
 import * as fs from 'fs';
 import * as gulp from 'gulp';
 import * as path from 'path';
-import * as util from '../src/common';
 import spawnNode from '../tasks/spawnNode';
 import { codeExtensionPath, offlineVscodeignorePath, vscodeignorePath, vscePath, packedVsixOutputRoot } from '../tasks/projectPaths';
 import { CsharpLoggerObserver } from '../src/observers/CsharpLoggerObserver';
@@ -46,7 +45,6 @@ async function doPackageOffline() {
         cleanSync(true);
     }
     
-    util.setExtensionPath(codeExtensionPath);
     const packageJSON = getPackageJSON();
     const name = packageJSON.name;
     const version = packageJSON.version;
@@ -75,7 +73,7 @@ function cleanSync(deleteVsix: boolean) {
 
 async function doOfflinePackage(platformInfo: PlatformInformation, packageName: string, packageJSON: any, outputFolder: string) {
     if (process.platform === 'win32') {
-        throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
+        //throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
     }
 
     cleanSync(false);
@@ -93,7 +91,7 @@ async function install(platformInfo: PlatformInformation, packageJSON: any) {
     const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'));
     let runTimeDependencies = GetRunTimeDependenciesPackages(packageJSON);
     let provider = () => new NetworkSettings(undefined, undefined);
-    await DownloadAndInstallPackages(runTimeDependencies, provider, platformInfo, eventStream);
+    await DownloadAndInstallPackages(runTimeDependencies, provider, platformInfo, eventStream, codeExtensionPath);
     await debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());
 }
 

@@ -14,8 +14,8 @@ import { NetworkSettingsProvider } from "../NetworkSettings";
 import { filterPackages } from "./PackageFilterer";
 import { InstallablePackage } from "./InstallablePackage";
 
-export async function DownloadAndInstallPackages(packages: Package[], provider: NetworkSettingsProvider, platformInfo: PlatformInformation, eventStream: EventStream) {
-    let installablePackages = packages.map(pkg => InstallablePackage.getInstallablePackage(pkg));
+export async function DownloadAndInstallPackages(packages: Package[], provider: NetworkSettingsProvider, platformInfo: PlatformInformation, eventStream: EventStream, extensionPath: string) {
+    let installablePackages = packages.map(pkg => InstallablePackage.getInstallablePackage(pkg, extensionPath));
     let filteredPackages = await filterPackages(installablePackages, platformInfo);
     if (filteredPackages) {
         for (let pkg of filteredPackages) {
