@@ -73,7 +73,7 @@ function cleanSync(deleteVsix: boolean) {
 
 async function doOfflinePackage(platformInfo: PlatformInformation, packageName: string, packageJSON: any, outputFolder: string) {
     if (process.platform === 'win32') {
-        //throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
+        throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
     }
 
     cleanSync(false);
