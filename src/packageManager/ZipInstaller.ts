@@ -26,7 +26,7 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
             zipFile.readEntry();
 
             zipFile.on('entry', (entry: yauzl.Entry) => {
-                let absoluteEntryPath = path.resolve(destinationInstallPath.path, entry.fileName);
+                let absoluteEntryPath = path.resolve(destinationInstallPath.value, entry.fileName);
 
                 if (entry.fileName.endsWith('/')) {
                     // Directory - create it
@@ -50,7 +50,7 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
                                 return reject(new NestedError('Error creating directory for zip file entry', err));
                             }
 
-                            let binaryPaths = binaries && binaries.map(binary => binary.path);
+                            let binaryPaths = binaries && binaries.map(binary => binary.value);
 
                             // Make sure executable files have correct permissions when extracted
                             let fileMode = binaryPaths && binaryPaths.indexOf(absoluteEntryPath) !== -1

@@ -42,7 +42,7 @@ function getAbsoluteInstallTestPath(pkg: Package, extensionPath: string): Absolu
 } 
  
 function getAbsoluteBinaries(pkg: Package, extensionPath: string): AbsolutePath[] { 
-    let basePath = getAbsoluteInstallPath(pkg, extensionPath).path;
+    let basePath = getAbsoluteInstallPath(pkg, extensionPath).value;
     if (pkg.binaries) { 
         return pkg.binaries.map(value => AbsolutePath.getAbsolutePath(basePath, value)); 
     } 

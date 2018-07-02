@@ -50,7 +50,7 @@ suite('ZipInstaller', () => {
     test('The folder is unzipped and all the files are present at the expected paths', async () => {
         await InstallZip(testZip.buffer, fileDescription, installationPath, [], eventStream);
         for (let elem of testZip.files) {
-            let filePath = path.join(installationPath.path, elem.path);
+            let filePath = path.join(installationPath.value, elem.path);
             expect(await util.fileExists(filePath)).to.be.true;
         }
     });
@@ -65,11 +65,11 @@ suite('ZipInstaller', () => {
 
     test('The folder is unzipped and the binaries have the expected permissions(except on Windows)', async () => {
         if (!((await PlatformInformation.GetCurrent()).isWindows())) {
-            let absoluteBinaries = binaries.map(binary => AbsolutePath.getAbsolutePath(installationPath.path, binary.path));
+            let absoluteBinaries = binaries.map(binary => AbsolutePath.getAbsolutePath(installationPath.value, binary.path));
             await InstallZip(testZip.buffer, fileDescription, installationPath, absoluteBinaries, eventStream);
             for (let binaryPath of absoluteBinaries) {
-                expect(await util.fileExists(binaryPath.path)).to.be.true;
-                let mode = (await fs.stat(binaryPath.path)).mode;
+                expect(await util.fileExists(binaryPath.value)).to.be.true;
+                let mode = (await fs.stat(binaryPath.value)).mode;
                 expect(mode & 0o7777).to.be.equal(0o755, `Expected mode for path ${binaryPath}`);
             }
         }

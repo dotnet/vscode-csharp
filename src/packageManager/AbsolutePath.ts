@@ -6,8 +6,8 @@
 import { isAbsolute, resolve } from "path";
 
 export class AbsolutePath{
-    constructor(public path: string) {
-        if (!isAbsolute(path)) {
+    constructor(public value: string) {
+        if (!isAbsolute(value)) {
             throw new Error("The path must be absolute");
         }
     }
