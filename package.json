@@ -137,7 +137,7 @@
     "typescript": "2.8.3",
     "unzip2": "0.2.5",
     "vsce": "1.40.0",
-    "vscode": "1.1.17"
+    "vscode": "1.1.18"
   },
   "runtimeDependencies": [
     {
@@ -269,7 +269,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.18.0"
+    "vscode": "^1.23.0"
   },
   "activationEvents": [
     "onDebug",

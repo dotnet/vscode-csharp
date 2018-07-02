@@ -34,6 +34,7 @@ import { NetworkSettingsProvider } from '../NetworkSettings';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
+import { StructureProvider } from '../features/structureProvider';
 
 export let omnisharp: OmniSharpServer;
 
@@ -80,6 +81,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
         localDisposables.add(reportDiagnostics(server, advisor));
         localDisposables.add(forwardChanges(server));
+        localDisposables.add(vscode.languages.registerFoldingRangeProvider(documentSelector, new StructureProvider(server)));
     }));
 
     disposables.add(server.onServerStop(() => {

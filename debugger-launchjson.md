@@ -86,7 +86,7 @@ You can optionally configure a file by file mapping by providing map following t
 ## Just My Code
 You can optionally disable `justMyCode` by setting it to "false". You should disable Just My Code when you are trying to debug into a library that you pulled down which doesn't have symbols or is optimized.
 
-    "justMyCode":false*
+    "justMyCode":false
 
 Just My Code is a set of features that makes it easier to focus on debugging your code by hiding some of the details of optimized libraries that you might be using, like the .NET Framework itself. The most important sub parts of this feature are --
 
