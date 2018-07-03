@@ -245,13 +245,17 @@ export default class TestManager extends AbstractProvider {
             TargetFrameworkVersion: targetFrameworkVersion
         };
 
-        let response = await serverUtils.debugTestGetStartInfo(this._server, request);
-        listener.dispose();
-        return this._createLaunchConfiguration(
-            response.FileName,
-            response.Arguments,
-            response.WorkingDirectory,
-            debugEventListener.pipePath());
+        try {
+            let response = await serverUtils.debugTestGetStartInfo(this._server, request);
+            return this._createLaunchConfiguration(
+                response.FileName,
+                response.Arguments,
+                response.WorkingDirectory,
+                debugEventListener.pipePath());
+        }
+        finally {
+            listener.dispose();
+        }
     }
 
     private async _getLaunchConfigurationForLegacy(fileName: string, testMethod: string, testFrameworkName: string, targetFrameworkVersion: string): Promise<LaunchConfiguration> {
@@ -268,9 +272,13 @@ export default class TestManager extends AbstractProvider {
             TargetFrameworkVersion: targetFrameworkVersion
         };
 
-        let response = await serverUtils.getTestStartInfo(this._server, request);
-        listener.dispose();
-        return this._createLaunchConfiguration(response.Executable, response.Argument, response.WorkingDirectory, null);
+        try {
+            let response = await serverUtils.getTestStartInfo(this._server, request);
+            return this._createLaunchConfiguration(response.Executable, response.Argument, response.WorkingDirectory, null);
+        }
+        finally {
+            listener.dispose();
+        }
     }
 
     private async _getLaunchConfiguration(
@@ -388,9 +396,13 @@ export default class TestManager extends AbstractProvider {
             TargetFrameworkVersion: targetFrameworkVersion
         };
 
-        let response = await serverUtils.debugTestClassGetStartInfo(this._server, request);
-        listener.dispose();
-        return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath());
+        try {
+            let response = await serverUtils.debugTestClassGetStartInfo(this._server, request);
+            return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath());
+        }
+        finally {
+            listener.dispose();
+        }
     }
 }
 
@@ -504,8 +516,12 @@ class DebugEventListener {
             this._eventStream.post(new DotNetTestMessage(e.Message));
         });
 
-        await serverUtils.debugTestLaunch(this._server, request);
-        disposable.dispose();
+        try {
+            await serverUtils.debugTestLaunch(this._server, request);
+        }
+        finally {
+            disposable.dispose();
+        }
     }
 
     private onDebuggingStopped(): void {
