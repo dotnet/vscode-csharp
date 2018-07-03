@@ -12,11 +12,11 @@ import { InstallZip } from './ZipInstaller';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
 import { filterPackages } from "./PackageFilterer";
-import { InstallablePackage } from "./InstallablePackage";
+import { AbsolutePathPackage } from "./AbsolutePathPackage";
 
 export async function DownloadAndInstallPackages(packages: Package[], provider: NetworkSettingsProvider, platformInfo: PlatformInformation, eventStream: EventStream, extensionPath: string) {
-    let installablePackages = packages.map(pkg => InstallablePackage.getInstallablePackage(pkg, extensionPath));
-    let filteredPackages = await filterPackages(installablePackages, platformInfo);
+    let absolutePathPackages = packages.map(pkg => AbsolutePathPackage.getAbsolutePathPackage(pkg, extensionPath));
+    let filteredPackages = await filterPackages(absolutePathPackages, platformInfo);
     if (filteredPackages) {
         for (let pkg of filteredPackages) {
             try {

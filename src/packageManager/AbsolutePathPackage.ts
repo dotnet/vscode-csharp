@@ -3,10 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IPackage, Package } from "./Package";
+import { Package } from "./Package";
+import { IPackage } from "./IPackage";
 import { AbsolutePath } from "./AbsolutePath";
 
-export class InstallablePackage implements IPackage{
+export class AbsolutePathPackage implements IPackage{
     constructor(public description: string,
         public url: string,
         public platforms: string[],
@@ -18,8 +19,8 @@ export class InstallablePackage implements IPackage{
         public platformId?: string) {
     }
 
-    public static getInstallablePackage(pkg: Package, extensionPath: string) {
-        return new InstallablePackage(
+    public static getAbsolutePathPackage(pkg: Package, extensionPath: string) {
+        return new AbsolutePathPackage(
             pkg.description,
             pkg.url,
             pkg.platforms,

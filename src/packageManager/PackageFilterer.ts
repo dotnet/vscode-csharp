@@ -6,16 +6,16 @@
 import { PlatformInformation } from "../platform";
 import * as util from '../common';
 import { PackageError } from "./PackageError";
-import { InstallablePackage } from "./InstallablePackage";
+import { AbsolutePathPackage } from "./AbsolutePathPackage";
 
 const { filterAsync } = require('node-filter-async');
 
-export async function filterPackages(packages: InstallablePackage[], platformInfo: PlatformInformation): Promise<InstallablePackage[]> {
+export async function filterPackages(packages: AbsolutePathPackage[], platformInfo: PlatformInformation): Promise<AbsolutePathPackage[]> {
     let platformPackages = filterPlatformPackages(packages, platformInfo);
     return filterAlreadyInstalledPackages(platformPackages);
 }
 
-function filterPlatformPackages(packages: InstallablePackage[], platformInfo: PlatformInformation) {
+function filterPlatformPackages(packages: AbsolutePathPackage[], platformInfo: PlatformInformation) {
     if (packages) {
         return packages.filter(pkg => {
             if (pkg.architectures && pkg.architectures.indexOf(platformInfo.architecture) === -1) {
@@ -34,8 +34,8 @@ function filterPlatformPackages(packages: InstallablePackage[], platformInfo: Pl
     }
 }
 
-async function filterAlreadyInstalledPackages(packages: InstallablePackage[]): Promise<InstallablePackage[]> {
-    return filterAsync(packages, async (pkg: InstallablePackage) => {
+async function filterAlreadyInstalledPackages(packages: AbsolutePathPackage[]): Promise<AbsolutePathPackage[]> {
+    return filterAsync(packages, async (pkg: AbsolutePathPackage) => {
         //If the file is present at the install test path then filter it
         let testPath = pkg.installTestPath;
         if (!testPath) {

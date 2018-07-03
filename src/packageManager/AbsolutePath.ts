@@ -12,7 +12,7 @@ export class AbsolutePath{
         }
     }
 
-    public static getAbsolutePath(pathToPrepend: string, path: string): AbsolutePath {
-        return new AbsolutePath(resolve(pathToPrepend, path));
+    public static getAbsolutePath(...pathSegments: string[]): AbsolutePath {
+        return new AbsolutePath(resolve(...pathSegments));
     }
 }
