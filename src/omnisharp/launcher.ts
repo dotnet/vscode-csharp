@@ -101,7 +101,6 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
             // Add .sln files if there are .csproj files
             if (hasCsProjFiles && isSolution(resource)) {
                 hasSlnFile = true;
-
                 targets.push({
                     label: path.basename(resource.fsPath),
                     description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),

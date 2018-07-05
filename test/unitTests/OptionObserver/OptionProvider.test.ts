@@ -16,7 +16,7 @@ suite('OptionProvider', () => {
     let vscode: vscode;
     let optionProvider: OptionProvider;
     let optionObservable: Subject<Options>;
-    
+
     setup(() => {
         vscode = getVSCodeWithConfig();
         optionObservable = new Subject<Options>();

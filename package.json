@@ -568,6 +568,11 @@
           "default": 250,
           "description": "The maximum number of projects to be shown in the 'Select Project' dropdown (maximum 250)."
         },
+        "omnisharp.defaultLaunchSolution": {
+          "type": "string",
+          "default": null,
+          "description": "The name of the default solution used at start up if the repo has multiple solutions. e.g.'MyAwesomeSolution.sln'. Default value is `null` which will cause the first in alphabetical order to be chosen."
+        },
         "omnisharp.useEditorFormattingSettings": {
           "type": "boolean",
           "default": true,
@@ -1618,9 +1623,9 @@
               "type": "coreclr",
               "request": "launch",
               "preLaunchTask": "build",
-              "program": "^\"\\${workspaceRoot}/bin/Debug/${1:<target-framework>}/${2:<project-name.dll>}\"",
+              "program": "^\"\\${workspaceFolder}/bin/Debug/${1:<target-framework>}/${2:<project-name.dll>}\"",
               "args": [],
-              "cwd": "^\"\\${workspaceRoot}\"",
+              "cwd": "^\"\\${workspaceFolder}\"",
               "stopAtEntry": false,
               "console": "internalConsole"
             }
@@ -1643,9 +1648,9 @@
               "type": "coreclr",
               "request": "launch",
               "preLaunchTask": "build",
-              "program": "^\"\\${workspaceRoot}/bin/Debug/${1:<target-framework>}/${2:<project-name.dll>}\"",
+              "program": "^\"\\${workspaceFolder}/bin/Debug/${1:<target-framework>}/${2:<project-name.dll>}\"",
               "args": [],
-              "cwd": "^\"\\${workspaceRoot}\"",
+              "cwd": "^\"\\${workspaceFolder}\"",
               "stopAtEntry": false,
               "launchBrowser": {
                 "enabled": true,
@@ -1665,7 +1670,7 @@
                 "ASPNETCORE_ENVIRONMENT": "Development"
               },
               "sourceFileMap": {
-                "/Views": "^\"\\${workspaceRoot}/Views\""
+                "/Views": "^\"\\${workspaceFolder}/Views\""
               }
             }
           },
@@ -1677,13 +1682,13 @@
               "type": "coreclr",
               "request": "launch",
               "preLaunchTask": "build",
-              "program": "^\"\\${workspaceRoot}/bin/Debug/${1:<target-framework>}/${2:<project-name.dll>}\"",
+              "program": "^\"\\${workspaceFolder}/bin/Debug/${1:<target-framework>}/${2:<project-name.dll>}\"",
               "args": [],
-              "cwd": "^\"\\${workspaceRoot}\"",
+              "cwd": "^\"\\${workspaceFolder}\"",
               "stopAtEntry": false,
               "console": "internalConsole",
               "pipeTransport": {
-                "pipeCwd": "^\"\\${workspaceRoot}\"",
+                "pipeCwd": "^\"\\${workspaceFolder}\"",
                 "pipeProgram": "^\"${3:enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'}\"",
                 "pipeArgs": [],
                 "debuggerPath": "^\"${4:enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg}\""
@@ -1699,7 +1704,7 @@
               "request": "attach",
               "processId": "^\"\\${command:pickRemoteProcess}\"",
               "pipeTransport": {
-                "pipeCwd": "^\"\\${workspaceRoot}\"",
+                "pipeCwd": "^\"\\${workspaceFolder}\"",
                 "pipeProgram": "^\"${1:enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'}\"",
                 "pipeArgs": [],
                 "debuggerPath": "^\"${2:enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg}\""
