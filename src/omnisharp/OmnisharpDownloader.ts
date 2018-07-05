@@ -10,7 +10,6 @@ import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import { DownloadAndInstallPackages } from '../packageManager/PackageManager';
 import { DownloadFile } from '../packageManager/FileDownloader';
-import { ResolveFilePaths } from '../packageManager/PackageFilePathResolver';
 
 export class OmnisharpDownloader {
 
@@ -18,7 +17,8 @@ export class OmnisharpDownloader {
         private networkSettingsProvider: NetworkSettingsProvider,
         private eventStream: EventStream,
         private packageJSON: any,
-        private platformInfo: PlatformInformation) {
+        private platformInfo: PlatformInformation,
+        private extensionPath: string) {
     }
 
     public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string) {
@@ -29,9 +29,8 @@ export class OmnisharpDownloader {
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
             installationStage = 'getPackageInfo';
             let packages = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
-            packages.forEach(pkg => ResolveFilePaths(pkg));
             installationStage = 'downloadAndInstallPackages';
-            await DownloadAndInstallPackages(packages, this.networkSettingsProvider, this.platformInfo, this.eventStream);
+            await DownloadAndInstallPackages(packages, this.networkSettingsProvider, this.platformInfo, this.eventStream, this.extensionPath);
             this.eventStream.post(new InstallationSuccess());
         }
         catch (error) {

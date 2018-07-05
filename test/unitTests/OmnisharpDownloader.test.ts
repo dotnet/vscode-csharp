@@ -34,10 +34,9 @@ suite('OmnisharpDownloader', () => {
     setup(async () => {
         eventStream = new EventStream();
         eventBus = new TestEventBus(eventStream);
-        downloader = new OmnisharpDownloader(networkSettingsProvider, eventStream, testPackageJSON, platformInfo);
         tmpDir = await CreateTmpDir(true);
         extensionPath = tmpDir.name;
-        util.setExtensionPath(extensionPath);
+        downloader = new OmnisharpDownloader(networkSettingsProvider, eventStream, testPackageJSON, platformInfo, extensionPath);
         server = await MockHttpsServer.CreateMockHttpsServer();
         testZip = await TestZip.createTestZipAsync(createTestFile("Foo", "foo.txt"));
         await server.start();
