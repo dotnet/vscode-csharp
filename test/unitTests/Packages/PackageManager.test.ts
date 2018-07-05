@@ -9,7 +9,6 @@ import * as chai from 'chai';
 import * as util from '../../../src/common';
 import { CreateTmpDir, TmpAsset } from '../../../src/CreateTmpAsset';
 import  TestZip  from '../testAssets/TestZip';
-import { Package } from '../../../src/packageManager/Package';
 import { DownloadAndInstallPackages } from '../../../src/packageManager/PackageManager';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { PlatformInformation } from '../../../src/platform';
@@ -18,6 +17,7 @@ import { DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess,
 import MockHttpsServer from '../testAssets/MockHttpsServer';
 import { createTestFile } from '../testAssets/TestFile';
 import TestEventBus from '../testAssets/TestEventBus';
+import { Package } from '../../../src/packageManager/Package';
 
 chai.use(require("chai-as-promised"));
 const expect = chai.expect;
@@ -26,7 +26,7 @@ suite("Package Manager", () => {
     let tmpInstallDir: TmpAsset;
     let server: MockHttpsServer;
     let testZip: TestZip;
-    let installationPath: string;
+    let extensionPath: string;
     let eventStream: EventStream;
     let eventBus: TestEventBus;
     let packages: Package[];
@@ -42,12 +42,12 @@ suite("Package Manager", () => {
         server = await MockHttpsServer.CreateMockHttpsServer();
         eventBus = new TestEventBus(eventStream);
         tmpInstallDir = await CreateTmpDir(true);
-        installationPath = tmpInstallDir.name;
+        extensionPath = tmpInstallDir.name;
         packages = <Package[]>[
             {
                 url: `${server.baseUrl}/package`,
                 description: packageDescription,
-                installPath: installationPath,
+                installPath: "installPath",
                 platforms: [windowsPlatformInfo.platform],
                 architectures: [windowsPlatformInfo.architecture]
             }];
@@ -61,9 +61,9 @@ suite("Package Manager", () => {
     });
 
     test("Downloads the package and installs at the specified path", async () => {
-        await DownloadAndInstallPackages(packages, networkSettingsProvider, windowsPlatformInfo, eventStream);
+        await DownloadAndInstallPackages(packages, networkSettingsProvider, windowsPlatformInfo, eventStream, extensionPath);
         for (let elem of testZip.files) {
-            let filePath = path.join(installationPath, elem.path);
+            let filePath = path.join(extensionPath, "installPath", elem.path);
             expect(await util.fileExists(filePath)).to.be.true;
         }
     });
@@ -77,13 +77,13 @@ suite("Package Manager", () => {
             new InstallationStart(packageDescription)
         ];
 
-        await DownloadAndInstallPackages(packages, networkSettingsProvider, windowsPlatformInfo, eventStream);
+        await DownloadAndInstallPackages(packages, networkSettingsProvider, windowsPlatformInfo, eventStream, extensionPath);
         expect(eventBus.getEvents()).to.be.deep.equal(eventsSequence);
     });
 
     test("Installs only the platform specific packages", async () => {
         //since there is no linux package specified no package should be installed
-        await DownloadAndInstallPackages(packages, networkSettingsProvider, linuxPlatformInfo, eventStream);
+        await DownloadAndInstallPackages(packages, networkSettingsProvider, linuxPlatformInfo, eventStream, extensionPath);
         let files = await fs.readdir(tmpInstallDir.name);
         expect(files.length).to.equal(0);
     });

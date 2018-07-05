@@ -15,6 +15,7 @@ import { BaseEvent, InstallationStart, ZipError } from '../../../src/omnisharp/l
 import { createTestFile } from '../testAssets/TestFile';
 import TestZip from '../testAssets/TestZip';
 import TestEventBus from '../testAssets/TestEventBus';
+import { AbsolutePath } from '../../../src/packageManager/AbsolutePath';
 
 chai.use(require("chai-as-promised"));
 let expect = chai.expect;
@@ -31,7 +32,7 @@ suite('ZipInstaller', () => {
     ];
 
     let tmpInstallDir: TmpAsset;
-    let installationPath: string;
+    let installationPath: AbsolutePath;
     let testZip: TestZip;
     const fileDescription = "somefile";
     let eventStream: EventStream;
@@ -41,7 +42,7 @@ suite('ZipInstaller', () => {
         eventStream = new EventStream(); 
         eventBus = new TestEventBus(eventStream);
         tmpInstallDir = await CreateTmpDir(true);
-        installationPath = tmpInstallDir.name;
+        installationPath = new AbsolutePath(tmpInstallDir.name);
         testZip = await TestZip.createTestZipAsync(...files, ...binaries);
         util.setExtensionPath(tmpInstallDir.name);
     });
@@ -49,7 +50,7 @@ suite('ZipInstaller', () => {
     test('The folder is unzipped and all the files are present at the expected paths', async () => {
         await InstallZip(testZip.buffer, fileDescription, installationPath, [], eventStream);
         for (let elem of testZip.files) {
-            let filePath = path.join(installationPath, elem.path);
+            let filePath = path.join(installationPath.value, elem.path);
             expect(await util.fileExists(filePath)).to.be.true;
         }
     });
@@ -64,11 +65,11 @@ suite('ZipInstaller', () => {
 
     test('The folder is unzipped and the binaries have the expected permissions(except on Windows)', async () => {
         if (!((await PlatformInformation.GetCurrent()).isWindows())) {
-            let resolvedBinaryPaths = binaries.map(binary => path.join(installationPath, binary.path));
-            await InstallZip(testZip.buffer, fileDescription, installationPath, resolvedBinaryPaths, eventStream);
-            for (let binaryPath of resolvedBinaryPaths) {
-                expect(await util.fileExists(binaryPath)).to.be.true;
-                let mode = (await fs.stat(binaryPath)).mode;
+            let absoluteBinaries = binaries.map(binary => AbsolutePath.getAbsolutePath(installationPath.value, binary.path));
+            await InstallZip(testZip.buffer, fileDescription, installationPath, absoluteBinaries, eventStream);
+            for (let binaryPath of absoluteBinaries) {
+                expect(await util.fileExists(binaryPath.value)).to.be.true;
+                let mode = (await fs.stat(binaryPath.value)).mode;
                 expect(mode & 0o7777).to.be.equal(0o755, `Expected mode for path ${binaryPath}`);
             }
         }
