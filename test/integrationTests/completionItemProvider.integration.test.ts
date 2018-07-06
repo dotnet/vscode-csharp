@@ -27,12 +27,12 @@ suite(`${OmniSharpCompletionItemProvider.name}: Returns the completion items`, (
     });
 
     test("Returns the completion items", async () => {
-        let completionList = <vscode.CompletionList>(await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", fileUri, new vscode.Position(8, 28), " "));
+        let completionList = <vscode.CompletionList>(await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", fileUri, new vscode.Position(8, 31), " "));
         expect(completionList.items).to.not.be.empty;
     });  
 
     test("Preselect is enabled for atleast one completionItem when there is a new", async () => {
-        let completionList = <vscode.CompletionList>(await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", fileUri, new vscode.Position(8, 28), " "));
+        let completionList = <vscode.CompletionList>(await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", fileUri, new vscode.Position(8, 31), " "));
         let preselectList = completionList.items.filter(item => item.preselect === true);
         expect(preselectList).to.not.be.empty;
     });

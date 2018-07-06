@@ -6,7 +6,7 @@ namespace singleCsproj
     {
         static void shouldHaveCompletions(string[] args)
         {
-            int[] a = new int[5];
+            Completion a = new Completion();
         }
     }
 }
