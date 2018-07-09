@@ -25,8 +25,8 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
     disposable.add(vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server)));
     disposable.add(vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionProvider)));
     disposable.add(vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new ShowOmniSharpChannel())));
-    disposable.add(vscode.commands.registerCommand('dotnet.restore.project', () => pickProjectAndDotnetRestore(server, eventStream)));
-    disposable.add(vscode.commands.registerCommand('dotnet.restore.all', () => dotnetRestoreAllProjects(server, eventStream)));
+    disposable.add(vscode.commands.registerCommand('dotnet.restore.project', async () => pickProjectAndDotnetRestore(server, eventStream)));
+    disposable.add(vscode.commands.registerCommand('dotnet.restore.all', async () => dotnetRestoreAllProjects(server, eventStream)));
 
     // register empty handler for csharp.installDebugger
     // running the command activates the extension, which is all we need for installation to kickoff
@@ -147,7 +147,7 @@ async function getProjectDescriptors(server: OmniSharpServer): Promise<protocol.
     return descriptors;
 }
 
-async function dotnetRestore(cwd: string, eventStream: EventStream, filePath?: string): Promise<void> {
+export async function dotnetRestore(cwd: string, eventStream: EventStream, filePath?: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         let cmd = 'dotnet';
         let args = ['restore'];
