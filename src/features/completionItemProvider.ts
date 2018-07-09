@@ -92,8 +92,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
                 else {
                     // indicate that there is more
                     suggestion.detail = `${suggestion.detail} (+ ${overloadCount} overload(s))`;
-                    //suggestion.preselect = completions[key].preselect;
-                    suggestion.preselect = true;
+                    suggestion.preselect = completions[key].preselect;
                 }
 
                 result.push(suggestion);
