@@ -23,7 +23,7 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
         await activateCSharpExtension();
 
         let fileName = 'sigHelp.cs';
-        let dir = path.dirname(testAssetWorkspace.projects[0].projectDirectoryPath);
+        let dir = testAssetWorkspace.projects[0].projectDirectoryPath;
         let loc = path.join(dir, fileName);
         fileUri = vscode.Uri.file(loc);
         await vscode.commands.executeCommand("vscode.open", fileUri);

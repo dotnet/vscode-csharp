@@ -23,7 +23,7 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
         await activateCSharpExtension();
 
         let fileName = 'documentSymbols.cs';
-        let projectDirectory = path.dirname(testAssetWorkspace.projects[0].projectDirectoryPath);
+        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
         let filePath = path.join(projectDirectory, fileName);
         fileUri = vscode.Uri.file(filePath);
 

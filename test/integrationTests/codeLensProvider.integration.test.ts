@@ -23,9 +23,13 @@ suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
         await activateCSharpExtension();
 
         let fileName = 'Program.cs';
-        let projectDirectory = path.dirname(testAssetWorkspace.projects[0].projectDirectoryPath);
+        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
         let filePath = path.join(projectDirectory, fileName);
         fileUri = vscode.Uri.file(filePath);
+
+        let csharpConfig = vscode.workspace.getConfiguration('csharp');
+        await csharpConfig.update('referencesCodeLens.enabled', true);
+        await csharpConfig.update('testsCodeLens.enabled', true);
 
         await vscode.commands.executeCommand("vscode.open", fileUri);
     });
@@ -53,6 +57,76 @@ suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
             expect(codeLens.command).not.to.be.undefined;
             expect(codeLens.command.title).to.equal("0 references");
         }
+    });
+});
+
+suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function() {
+    let fileUri: vscode.Uri;
+
+    suiteSetup(async function () {
+        should();
+
+        // These tests only run on the slnWithCsproj solution
+        if (vscode.workspace.rootPath.split(path.sep).pop() !== 'slnWithCsproj') {
+            this.skip();
+        }
+        else
+        {
+            await testAssetWorkspace.restore();
+            await activateCSharpExtension();
+
+            let fileName = 'UnitTest1.cs';
+            let projectDirectory = testAssetWorkspace.projects[2].projectDirectoryPath;
+            let filePath = path.join(projectDirectory, fileName);
+            fileUri = vscode.Uri.file(filePath);
+    
+            await vscode.commands.executeCommand("vscode.open", fileUri);    
+        }
+    });
+
+    suiteTeardown(async () => {
+        await testAssetWorkspace.cleanupWorkspace();
+    });
+
+    test("Returns no references code lenses when 'csharp.referencesCodeLens.enabled' option is set to false", async function () {
+        let csharpConfig = vscode.workspace.getConfiguration('csharp');
+        await csharpConfig.update('referencesCodeLens.enabled', false);
+        await csharpConfig.update('testsCodeLens.enabled', true);
+
+        let codeLenses = await GetCodeLenses(fileUri, 100);
+        expect(codeLenses.length).to.equal(4);
+
+        for (let codeLens of codeLenses) {
+            expect(codeLens.isResolved).to.be.true;
+            expect(codeLens.command).not.to.be.undefined;
+            expect(codeLens.command.command).to.be.oneOf(['dotnet.test.run', 'dotnet.classTests.run', 'dotnet.test.debug', 'dotnet.classTests.debug']);
+            expect(codeLens.command.title).to.be.oneOf(['Run Test', 'Run All Tests', 'Debug Test', 'Debug All Tests']);
+        }
+    });
+
+    test("Returns no test code lenses when 'csharp.testsCodeLens.enabled' option is set to false", async function () {
+        let csharpConfig = vscode.workspace.getConfiguration('csharp');
+        await csharpConfig.update('referencesCodeLens.enabled', true);
+        await csharpConfig.update('testsCodeLens.enabled', false);
+
+        let codeLenses = await GetCodeLenses(fileUri, 100);
+        expect(codeLenses.length).to.equal(2);
+
+        for (let codeLens of codeLenses) {
+            expect(codeLens.isResolved).to.be.true;
+            expect(codeLens.command).not.to.be.undefined;
+            expect(codeLens.command.command).to.be.equal('editor.action.showReferences');
+            expect(codeLens.command.title).to.equal('0 references');
+        }
+    });
+
+    test("Returns no code lenses when 'csharp.referencesCodeLens.enabled' and 'csharp.testsCodeLens.enabled' options are set to false", async function () {
+        let csharpConfig = vscode.workspace.getConfiguration('csharp');
+        await csharpConfig.update('referencesCodeLens.enabled', false);
+        await csharpConfig.update('testsCodeLens.enabled', false);
+
+        let codeLenses = await GetCodeLenses(fileUri, 100);
+        expect(codeLenses.length).to.equal(0);
     });
 });
 

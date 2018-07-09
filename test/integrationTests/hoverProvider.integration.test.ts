@@ -27,7 +27,7 @@ suite(`Hover Provider: ${testAssetWorkspace.description}`, function () {
 
     test("Hover returns structured documentation with proper newlines", async function () {
         let fileName = 'hover.cs';
-        let dir = path.dirname(testAssetWorkspace.projects[0].projectDirectoryPath);
+        let dir = testAssetWorkspace.projects[0].projectDirectoryPath;
         let loc = path.join(dir, fileName);
         let fileUri = vscode.Uri.file(loc);
 
