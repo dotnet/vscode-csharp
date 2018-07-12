@@ -5,24 +5,21 @@
 
 import * as vscode from "vscode";
 import CSharpImplementationProvider from "../../src/features/implementationProvider";
-import CSharpExtensionExports from "../../src/CSharpExtensionExports";
 import * as path from "path";
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
 import { expect } from "chai";
+import { activateCSharpExtension } from './integrationHelpers';
 
 suite(`${CSharpImplementationProvider.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;
-    
-    suiteSetup(async () => {
-        let csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-vscode.csharp");
-        if (!csharpExtension.isActive) {
-            await csharpExtension.activate();
-        }
 
-        await csharpExtension.exports.initializationFinished();
+    suiteSetup(async () => {
+        await testAssetWorkspace.restore();
+        await activateCSharpExtension();
+
         let fileName = 'implementation.cs';
-        let dir = path.dirname(testAssetWorkspace.projects[0].projectDirectoryPath);
-        fileUri = vscode.Uri.file(path.join(dir, fileName));
+        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
+        fileUri = vscode.Uri.file(path.join(projectDirectory, fileName));
         await vscode.commands.executeCommand("vscode.open", fileUri);
     });
 
