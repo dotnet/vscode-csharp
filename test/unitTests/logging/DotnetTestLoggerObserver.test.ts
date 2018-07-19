@@ -5,7 +5,7 @@
 
 import * as chai from 'chai';
 import { getNullChannel } from '../testAssets/Fakes';
-import { EventWithMessage, DotNetTestDebugWarning, DotNetTestDebugStart, BaseEvent, DotNetTestRunStart, DotNetTestDebugProcessStart, DotNetTestMessage, DotNetTestDebugComplete, ReportDotNetTestResults } from '../../../src/omnisharp/loggingEvents';
+import { EventWithMessage, DotNetTestDebugWarning, DotNetTestDebugStart, BaseEvent, DotNetTestRunStart, DotNetTestDebugProcessStart, DotNetTestMessage, DotNetTestDebugComplete, ReportDotNetTestResults, DotNetTestsInClassDebugStart, DotNetTestsInClassRunStart } from '../../../src/omnisharp/loggingEvents';
 import DotNetTestLoggerObserver from '../../../src/observers/DotnetTestLoggerObserver';
 import * as protocol from '../../../src/omnisharp/protocol';
 
@@ -42,7 +42,18 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
             observer.post(event);
             expect(appendedMessage).to.contain("foo");
         });
-    });
+        });
+    
+        [
+            new DotNetTestsInClassDebugStart("foo"),
+            new DotNetTestsInClassRunStart("foo")
+        ].forEach((event: BaseEvent) => {
+            test(`${event.constructor.name}: Class name is logged`, () => {
+                expect(appendedMessage).to.be.empty;
+                observer.post(event);
+                expect(appendedMessage).to.contain("foo");
+            });
+        });
 
     test(`${DotNetTestDebugProcessStart.name}: Target process id is logged`, () => {
         let event = new DotNetTestDebugProcessStart(111);
