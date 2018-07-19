@@ -41,7 +41,7 @@ abstract class TestCodeLens extends OmniSharpCodeLens {
     constructor(
         range: protocol.V2.Range,
         fileName: string,
-        public name: string,
+        public displayName: string,
         public isTestContainer: boolean,
         public testFramework: string,
         public testMethodNames: string[]) {
@@ -54,12 +54,12 @@ class RunTestsCodeLens extends TestCodeLens {
     constructor(
         range: protocol.V2.Range,
         fileName: string,
-        name: string,
+        displayName: string,
         isTestContainer: boolean,
         testFramework: string,
         testMethodNames: string[]) {
 
-        super(range, fileName, name, isTestContainer, testFramework, testMethodNames);
+        super(range, fileName, displayName, isTestContainer, testFramework, testMethodNames);
     }
 }
 
@@ -67,12 +67,12 @@ class DebugTestsCodeLens extends TestCodeLens {
     constructor(
         range: protocol.V2.Range,
         fileName: string,
-        name: string,
+        displayName: string,
         isTestContainer: boolean,
         testFramework: string,
         testMethodNames: string[]) {
 
-        super(range, fileName, name, isTestContainer, testFramework, testMethodNames);
+        super(range, fileName, displayName, isTestContainer, testFramework, testMethodNames);
     }
 }
 
@@ -155,7 +155,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             codeLens.command = {
                 title: pluralTitle,
                 command: pluralCommandName,
-                arguments: [codeLens.name, codeLens.testMethodNames, codeLens.fileName, codeLens.testFramework]
+                arguments: [codeLens.displayName, codeLens.testMethodNames, codeLens.fileName, codeLens.testFramework]
             };
         }
 
