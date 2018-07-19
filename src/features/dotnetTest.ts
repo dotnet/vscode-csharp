@@ -43,11 +43,11 @@ export default class TestManager extends AbstractProvider {
 
         let d4 = vscode.commands.registerCommand(
             'dotnet.classTests.run',
-            async (methodsInClass, fileName, testFrameworkName) => this._runDotnetTestsInClass(methodsInClass, fileName, testFrameworkName));
+            async (className, methodsInClass, fileName, testFrameworkName) => this._runDotnetTestsInClass(className, methodsInClass, fileName, testFrameworkName));
 
         let d5 = vscode.commands.registerCommand(
             'dotnet.classTests.debug',
-            async (methodsInClass, fileName, testFrameworkName) => this._debugDotnetTestsInClass(methodsInClass, fileName, testFrameworkName));
+            async (className, methodsInClass, fileName, testFrameworkName) => this._debugDotnetTestsInClass(className, methodsInClass, fileName, testFrameworkName));
 
         this._telemetryIntervalId = setInterval(() =>
             this._reportTelemetry(), TelemetryReportingDelay);
@@ -164,10 +164,10 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    private async _runDotnetTestsInClass(methodsInClass: string[], fileName: string, testFrameworkName: string) {
+    private async _runDotnetTestsInClass(className: string, methodsInClass: string[], fileName: string, testFrameworkName: string) {
 
         //to do: try to get the class name here
-        this._eventStream.post(new DotNetTestsInClassRunStart());
+        this._eventStream.post(new DotNetTestsInClassRunStart(className));
 
         const listener = this._server.onTestMessage(e => {
             this._eventStream.post(new DotNetTestMessage(e.Message));
@@ -346,9 +346,9 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    private async _debugDotnetTestsInClass(methodsToRun: string[], fileName: string, testFrameworkName: string) {
+    private async _debugDotnetTestsInClass(className: string, methodsToRun: string[], fileName: string, testFrameworkName: string) {
 
-        this._eventStream.post(new DotNetTestsInClassDebugStart());
+        this._eventStream.post(new DotNetTestsInClassDebugStart(className));
 
         let { debugType, debugEventListener, targetFrameworkVersion } = await this._recordDebugAndGetDebugValues(fileName, testFrameworkName);
 

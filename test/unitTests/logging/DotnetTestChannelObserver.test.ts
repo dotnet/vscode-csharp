@@ -23,9 +23,9 @@ suite("DotnetTestChannelObserver", () => {
     [
         new DotNetTestRunStart("foo"),
         new DotNetTestRunFailure("some failure"),
-        new DotNetTestsInClassRunStart(),
+        new DotNetTestsInClassRunStart("someclass"),
         new DotNetTestDebugStart("foo"),
-        new DotNetTestsInClassDebugStart()
+        new DotNetTestsInClassDebugStart("someclass")
     ].forEach((event: BaseEvent) => {
         test(`${event.constructor.name}: Channel is shown`, () => {
             expect(hasShown).to.be.false;
