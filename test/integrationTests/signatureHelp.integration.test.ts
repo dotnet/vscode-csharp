@@ -7,8 +7,8 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { should, expect } from 'chai';
+import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import CSharpExtensionExports from '../../src/CSharpExtensionExports';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -16,23 +16,22 @@ chai.use(require('chai-fs'));
 
 suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
+    
     suiteSetup(async function () {
         should();
-
-        let csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-vscode.csharp");
-        if (!csharpExtension.isActive) {
-            await csharpExtension.activate();
-        }
-
-        await csharpExtension.exports.initializationFinished();
+        await testAssetWorkspace.restore();
+        await activateCSharpExtension();
 
         let fileName = 'sigHelp.cs';
-        let dir = path.dirname(testAssetWorkspace.projects[0].projectDirectoryPath);
+        let dir = testAssetWorkspace.projects[0].projectDirectoryPath;
         let loc = path.join(dir, fileName);
         fileUri = vscode.Uri.file(loc);
         await vscode.commands.executeCommand("vscode.open", fileUri);
     });
 
+    suiteTeardown(async () => {
+        await testAssetWorkspace.cleanupWorkspace();
+    });    
 
     test("Returns response with documentation as undefined when method does not have documentation", async function () {
         let c = await GetSignatureHelp(fileUri, new vscode.Position(19, 23));
@@ -80,10 +79,6 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
         let c = await GetSignatureHelp(fileUri, new vscode.Position(18, 27));
         expect(c.signatures[0].parameters[c.activeParameter].label).to.equal(`double Double1`);
     });
-});
-
-suiteTeardown(async () => {
-    await testAssetWorkspace.cleanupWorkspace();
 });
 
 async function GetSignatureHelp(fileUri: vscode.Uri, position: vscode.Position) {

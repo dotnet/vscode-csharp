@@ -445,6 +445,14 @@ export class OmniSharpServer {
                 });
             }
 
+            const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().defaultLaunchSolution;
+
+            // First, try to launch against something that matches the user's preferred target
+            const defaultLaunchSolutionTarget = launchTargets.find((a) => (path.basename(a.target) === defaultLaunchSolutionConfigValue));
+            if (defaultLaunchSolutionTarget) {
+                return this.restart(defaultLaunchSolutionTarget);
+            }
+
             // If there's more than one launch target, we start the server if one of the targets
             // matches the preferred path. Otherwise, we fire the "MultipleLaunchTargets" event,
             // which is handled in status.ts to display the launch target selector.

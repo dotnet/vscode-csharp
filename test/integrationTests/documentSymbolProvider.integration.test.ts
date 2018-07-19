@@ -14,34 +14,32 @@ const chai = require('chai');
 chai.use(require('chai-arrays'));
 chai.use(require('chai-fs'));
 
-suite(`Hover Provider: ${testAssetWorkspace.description}`, function () {
+suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
+    let fileUri: vscode.Uri;
+
     suiteSetup(async function () {
         should();
         await testAssetWorkspace.restore();
         await activateCSharpExtension();
+
+        let fileName = 'documentSymbols.cs';
+        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
+        let filePath = path.join(projectDirectory, fileName);
+        fileUri = vscode.Uri.file(filePath);
+
+        await vscode.commands.executeCommand("vscode.open", fileUri);
     });
 
     suiteTeardown(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test("Hover returns structured documentation with proper newlines", async function () {
-        let fileName = 'hover.cs';
-        let dir = testAssetWorkspace.projects[0].projectDirectoryPath;
-        let loc = path.join(dir, fileName);
-        let fileUri = vscode.Uri.file(loc);
-
-        await vscode.commands.executeCommand("vscode.open", fileUri);
-        let c = <vscode.Hover[]>(await vscode.commands.executeCommand("vscode.executeHoverProvider", fileUri, new vscode.Position(10, 29)));
-        let answer: string =
-            `Checks if object is tagged with the tag.
-
-Parameters:
-
-\t\tgameObject: The game object.
-\t\ttagName: Name of the tag.
-
-Returns true if object is tagged with tag.`;
-        expect((<{ language: string; value: string }>c[0].contents[0]).value).to.equal(answer);
+    test("Returns all elements", async function () {
+        let symbols = await GetDocumentSymbols(fileUri);
+        expect(symbols.length).to.equal(25);
     });
 });
+
+async function GetDocumentSymbols(fileUri: vscode.Uri) {
+    return <vscode.SymbolInformation[]>await vscode.commands.executeCommand("vscode.executeDocumentSymbolProvider", fileUri);
+}

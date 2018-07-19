@@ -42,7 +42,7 @@
 				"owner": "tslint",
 				"fileLocation": [
 					"relative",
-					"${workspaceRoot}"
+					"${workspaceFolder}"
 				],
 				"severity": "warning",
 				"pattern": {

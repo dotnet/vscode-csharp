@@ -27,6 +27,7 @@ suite("Options tests", () => {
         options.showTestsCodeLens.should.equal(true);
         options.disableCodeActions.should.equal(false);
         options.disableCodeActions.should.equal(false);
+        expect(options.defaultLaunchSolution).to.be.undefined;
     });
 
     test('BACK-COMPAT: "omnisharp.loggingLevel": "verbose" == "omnisharp.loggingLevel": "debug"', () =>
@@ -98,5 +99,15 @@ suite("Options tests", () => {
         const options = Options.Read(vscode);
 
         options.path.should.equal("NewPath");
+    });
+
+    test('"omnisharp.defaultLaunchSolution" is used if set', () =>
+    {
+        const vscode = getVSCodeWithConfig();
+        updateConfig(vscode, 'omnisharp', 'defaultLaunchSolution', 'some_valid_solution.sln');
+
+        const options = Options.Read(vscode);
+
+        options.defaultLaunchSolution.should.equal("some_valid_solution.sln");
     });
 });
