@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseEvent, DotNetTestRunStart, DotNetTestMessage, ReportDotNetTestResults, DotNetTestDebugStart, DotNetTestDebugWarning, DotNetTestDebugProcessStart, DotNetTestDebugComplete } from "../omnisharp/loggingEvents";
+import { BaseEvent, DotNetTestRunStart, DotNetTestMessage, ReportDotNetTestResults, DotNetTestDebugStart, DotNetTestDebugWarning, DotNetTestDebugProcessStart, DotNetTestDebugComplete, DotNetTestsInClassDebugStart, DotNetTestsInClassRunStart } from "../omnisharp/loggingEvents";
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import * as protocol from '../omnisharp/protocol';
 
@@ -32,6 +32,12 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
             case DotNetTestDebugComplete.name:
                 this.logger.appendLine("Debugging complete.\n");
                 break;
+            case DotNetTestsInClassDebugStart.name:
+                this.handleDotnetTestsInClassDebugStart(<DotNetTestsInClassDebugStart>event);
+                break;
+            case DotNetTestsInClassRunStart.name:
+                this.handleDotnetTestsInClassRunStart(<DotNetTestsInClassRunStart>event);
+                break;
         }
     }
 
@@ -46,6 +52,16 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
 
     private handleDotnetTestRunStart(event: DotNetTestRunStart): any {
         this.logger.appendLine(`----- Running test method "${event.testMethod}" -----`);
+        this.logger.appendLine('');
+    }
+
+    private handleDotnetTestsInClassDebugStart(event: DotNetTestsInClassDebugStart) {
+        this.logger.appendLine(`----- Debugging tests in class ${event.className} -----`);
+        this.logger.appendLine('');
+    }
+
+    private handleDotnetTestsInClassRunStart(event: DotNetTestsInClassRunStart): any {
+        this.logger.appendLine(`----- Running tests in class "${event.className}" -----`);
         this.logger.appendLine('');
     }
 
