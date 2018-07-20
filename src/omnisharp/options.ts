@@ -37,7 +37,7 @@ export class Options {
 
         const path = Options.readPathOption(csharpConfig, omnisharpConfig);
         const useGlobalMono = Options.readUseGlobalMonoOption(omnisharpConfig, csharpConfig);
-        const monoPath = omnisharpConfig.get<string>('monoPath', undefined);
+        const monoPath = omnisharpConfig.get<string>('monoPath', undefined) || undefined;
 
         const waitForDebugger = omnisharpConfig.get<boolean>('waitForDebugger', false);
 
