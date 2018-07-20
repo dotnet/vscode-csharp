@@ -40,8 +40,7 @@ export let omnisharp: OmniSharpServer;
 
 export async function activate(context: vscode.ExtensionContext, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, eventStream: EventStream, optionProvider: OptionProvider, extensionPath: string) {
     const documentSelector: vscode.DocumentSelector = {
-        language: 'csharp',
-        scheme: 'file' // only files from disk
+        language: 'csharp'
     };
 
     const options = optionProvider.GetLatestOptions();
