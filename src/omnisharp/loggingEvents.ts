@@ -27,7 +27,7 @@ export class OmnisharpInitialisation implements BaseEvent {
 }
 
 export class OmnisharpLaunch implements BaseEvent {
-    constructor(public monoVersion: string, public command: string, public pid: number) { }
+    constructor(public monoVersion: string, public command: string, public pid: number, public monoPath?: string) { }
 }
 
 export class PackageInstallation implements BaseEvent {
