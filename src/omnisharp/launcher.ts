@@ -199,6 +199,7 @@ export interface LaunchResult {
     process: ChildProcess;
     command: string;
     monoVersion?: string;
+    monoPath?: string;
 }
 
 export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options): Promise<LaunchResult> {
@@ -250,12 +251,12 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
 
         const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
 
-        return launchNixMono(launchPath, monoVersion, cwd, args, childEnv);
+        return launchNixMono(launchPath, monoVersion, options.monoPath, cwd, args, childEnv);
     }
 
     // If we can launch on the global Mono, do so; otherwise, launch directly;
     if (options.useGlobalMono === "auto" && isValidMonoAvailable && launchInfo.MonoLaunchPath) {
-        return launchNixMono(launchInfo.MonoLaunchPath, monoVersion, cwd, args, childEnv);
+        return launchNixMono(launchInfo.MonoLaunchPath, monoVersion, options.monoPath, cwd, args, childEnv);
     }
     else {
         return launchNix(launchInfo.LaunchPath, cwd, args);
@@ -312,7 +313,7 @@ function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResul
     };
 }
 
-function launchNixMono(launchPath: string, monoVersion: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv): LaunchResult {
+function launchNixMono(launchPath: string, monoVersion: string, monoPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv): LaunchResult {
     let argsCopy = args.slice(0); // create copy of details args
     argsCopy.unshift(launchPath);
     argsCopy.unshift("--assembly-loader=strict");
@@ -327,6 +328,7 @@ function launchNixMono(launchPath: string, monoVersion: string, cwd: string, arg
         process,
         command: launchPath,
         monoVersion,
+        monoPath,
     };
 }
 

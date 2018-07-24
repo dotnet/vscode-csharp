@@ -135,10 +135,10 @@ suite("OmnisharpLoggerObserver", () => {
 
     suite('OmnisharpLaunch', () => {
         [
-            { 'event': new OmnisharpLaunch("5.12.0",  "someCommand", 4),                 'expected': "OmniSharp server started with Mono 5.12.0." },
-            { 'event': new OmnisharpLaunch(undefined, "someCommand", 4),                 'expected': "OmniSharp server started." },
-            { 'event': new OmnisharpLaunch("5.12.0",  "someCommand", 4, 'path to mono'), 'expected': "OmniSharp server started with Mono 5.12.0 (path to mono)." },
-            { 'event': new OmnisharpLaunch(undefined, "someCommand", 4, 'path to mono'), 'expected': "OmniSharp server started." },
+            { 'event': new OmnisharpLaunch("5.8.0", undefined, "someCommand", 4), 'expected': "OmniSharp server started with Mono 5.8.0." },
+            { 'event': new OmnisharpLaunch(undefined, undefined, "someCommand", 4), 'expected': "OmniSharp server started." },
+            { 'event': new OmnisharpLaunch("5.8.0", "path to mono", "someCommand", 4), 'expected': "OmniSharp server started with Mono 5.8.0 (path to mono)." },
+            { 'event': new OmnisharpLaunch(undefined, "path to mono", "someCommand", 4), 'expected': "OmniSharp server started." },
         ].forEach((data: { event: OmnisharpLaunch, expected: string }) => {
             const event = data.event;
 
