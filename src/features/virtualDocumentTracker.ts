@@ -9,14 +9,16 @@ import * as serverUtils from '../omnisharp/utils';
 import { FileChangeType } from '../omnisharp/protocol';
 import { IDisposable } from '../Disposable';
 import CompositeDisposable from '../CompositeDisposable';
+import { EventStream } from '../EventStream';
+import { DocumentSynchronizationFailure } from '../omnisharp/loggingEvents';
 
-function trackCurrentVirtualDocuments(server: OmniSharpServer) {
-    let registration = server.onProjectAdded(() => {
+function trackCurrentVirtualDocuments(server: OmniSharpServer, eventStream: EventStream) {
+    let registration = server.onProjectAdded(async () => {
         for (let i = 0; i < workspace.textDocuments.length; i++) {
             let document = workspace.textDocuments[i];
     
             if (!shouldIgnoreDocument(document, server)) {
-                openVirtualDocument(document, server);
+                await openVirtualDocument(document, server, eventStream);
             }
         }
 
@@ -24,21 +26,21 @@ function trackCurrentVirtualDocuments(server: OmniSharpServer) {
     });
 }
 
-function trackFutureVirtualDocuments(server: OmniSharpServer): IDisposable {
-    let onTextDocumentOpen = workspace.onDidOpenTextDocument(document => {
+function trackFutureVirtualDocuments(server: OmniSharpServer, eventStream: EventStream): IDisposable {
+    let onTextDocumentOpen = workspace.onDidOpenTextDocument(async document => {
         if (shouldIgnoreDocument(document, server)) {
             return;
         }
 
-        openVirtualDocument(document, server);
+        await openVirtualDocument(document, server, eventStream);
     });
 
-    let onTextDocumentClose = workspace.onDidCloseTextDocument(document => {
+    let onTextDocumentClose = workspace.onDidCloseTextDocument(async document => {
         if (shouldIgnoreDocument(document, server)) {
             return;
         }
 
-        closeVirtualDocument(document, server);
+        await closeVirtualDocument(document, server, eventStream);
     });
     
     // We already track text document changes for virtual documents in our change forwarder.
@@ -60,32 +62,36 @@ function shouldIgnoreDocument(document: TextDocument, server: OmniSharpServer): 
     return false;
 }
 
-function openVirtualDocument(document: TextDocument, server: OmniSharpServer) {
+async function openVirtualDocument(document: TextDocument, server: OmniSharpServer, eventStream: EventStream) {
     let req = { FileName: document.uri.path, changeType: FileChangeType.Create };
-    serverUtils.filesChanged(server, [req])
-        .catch(err => {
-            console.warn(`[o] failed to forward virtual document change event for ${document.uri.path}`, err);
-            return err;
-        });
+    try {
+        await serverUtils.filesChanged(server, [req]);
+    }
+    catch (error) {
+        eventStream.post(new DocumentSynchronizationFailure(document.uri.path, error));
+    }
 
-    serverUtils.updateBuffer(server, { Buffer: document.getText(), FileName: document.fileName })
-        .catch(err => {
-            console.warn(`[o] failed to forward virtual document change event for ${document.uri.path}`, err);
-            return err;
-        });
+    try {
+        await serverUtils.updateBuffer(server, { Buffer: document.getText(), FileName: document.fileName });
+    }
+    catch (error) {
+        eventStream.post(new DocumentSynchronizationFailure(document.uri.path, error));
+    }
 }
 
-function closeVirtualDocument(document: TextDocument, server: OmniSharpServer) {
+async function closeVirtualDocument(document: TextDocument, server: OmniSharpServer, eventStream: EventStream) {
     let req = { FileName: document.uri.path, changeType: FileChangeType.Delete };
-    serverUtils.filesChanged(server, [req]).catch(err => {
-        console.warn(`[o] failed to forward virtual document change event for ${document.uri.path}`, err);
-        return err;
-    });
+    try {
+        await serverUtils.filesChanged(server, [req]);
+    }
+    catch (error) {
+        eventStream.post(new DocumentSynchronizationFailure(document.uri.path, error));
+    }
 }
 
-export default function trackVirtualDocuments(server: OmniSharpServer): IDisposable {
-    trackCurrentVirtualDocuments(server);
-    let disposable = trackFutureVirtualDocuments(server);
+export default function trackVirtualDocuments(server: OmniSharpServer, eventStream: EventStream): IDisposable {
+    trackCurrentVirtualDocuments(server, eventStream);
+    let disposable = trackFutureVirtualDocuments(server, eventStream);
     
     return disposable;
 }
