@@ -20,8 +20,9 @@ export class Options {
         public showTestsCodeLens: boolean,
         public disableCodeActions: boolean,
         public disableMSBuildDiagnosticWarning: boolean,
-        public defaultLaunchSolution?: string) { }
-        
+        public defaultLaunchSolution?: string,
+        public monoPath?: string) { }
+
 
     public static Read(vscode: vscode): Options {
         // Extra effort is taken below to ensure that legacy versions of options
@@ -36,6 +37,7 @@ export class Options {
 
         const path = Options.readPathOption(csharpConfig, omnisharpConfig);
         const useGlobalMono = Options.readUseGlobalMonoOption(omnisharpConfig, csharpConfig);
+        const monoPath = omnisharpConfig.get<string>('monoPath', undefined) || undefined;
 
         const waitForDebugger = omnisharpConfig.get<boolean>('waitForDebugger', false);
 
@@ -75,7 +77,9 @@ export class Options {
             showTestsCodeLens,
             disableCodeActions,
             disableMSBuildDiagnosticWarning,
-            defaultLaunchSolution);
+            defaultLaunchSolution,
+            monoPath,
+        );
     }
 
     private static readPathOption(csharpConfig: WorkspaceConfiguration, omnisharpConfig: WorkspaceConfiguration): string | null {
