@@ -535,14 +535,6 @@
           ],
           "description": "Launch OmniSharp with the globally-installed Mono. If set to \"always\", \"mono\" version 5.8.1 or greater must be available on the PATH. If set to \"auto\", OmniSharp will be launched with \"mono\" if version 5.8.1 or greater is available on the PATH."
         },
-        "omnisharp.monoPath": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "default": null,
-          "description": "Specifies the path to a mono installation to use when \"useGlobalMono\" is set to \"always\" or \"auto\", instead of the default system one."
-        },
         "omnisharp.waitForDebugger": {
           "type": "boolean",
           "default": false,

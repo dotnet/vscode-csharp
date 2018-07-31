@@ -199,7 +199,6 @@ export interface LaunchResult {
     process: ChildProcess;
     command: string;
     monoVersion?: string;
-    monoPath?: string;
 }
 
 export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options): Promise<LaunchResult> {
@@ -234,13 +233,7 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
         return launchWindows(launchInfo.LaunchPath, cwd, args);
     }
 
-    let childEnv = { ...process.env };
-    if (options.useGlobalMono !== "never" && options.monoPath !== undefined) {
-        childEnv['PATH'] = path.join(options.monoPath, 'bin') + path.delimiter + childEnv['PATH'];
-        childEnv['MONO_GAC_PREFIX'] = options.monoPath;
-    }
-
-    let monoVersion = await getMonoVersion(childEnv);
+    let monoVersion = await getMonoVersion();
     let isValidMonoAvailable = await satisfies(monoVersion, '>=5.8.1');
 
     // If the user specifically said that they wanted to launch on Mono, respect their wishes.
@@ -251,12 +244,12 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
 
         const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
 
-        return launchNixMono(launchPath, monoVersion, options.monoPath, cwd, args, childEnv);
+        return launchNixMono(launchPath, monoVersion, cwd, args);
     }
 
     // If we can launch on the global Mono, do so; otherwise, launch directly;
     if (options.useGlobalMono === "auto" && isValidMonoAvailable && launchInfo.MonoLaunchPath) {
-        return launchNixMono(launchInfo.MonoLaunchPath, monoVersion, options.monoPath, cwd, args, childEnv);
+        return launchNixMono(launchInfo.MonoLaunchPath, monoVersion, cwd, args);
     }
     else {
         return launchNix(launchInfo.LaunchPath, cwd, args);
@@ -313,32 +306,30 @@ function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResul
     };
 }
 
-function launchNixMono(launchPath: string, monoVersion: string, monoPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv): LaunchResult {
+function launchNixMono(launchPath: string, monoVersion: string, cwd: string, args: string[]): LaunchResult {
     let argsCopy = args.slice(0); // create copy of details args
     argsCopy.unshift(launchPath);
     argsCopy.unshift("--assembly-loader=strict");
 
     let process = spawn('mono', argsCopy, {
         detached: false,
-        cwd: cwd,
-        env: environment
+        cwd: cwd
     });
 
     return {
         process,
         command: launchPath,
         monoVersion,
-        monoPath,
     };
 }
 
-async function getMonoVersion(environment: NodeJS.ProcessEnv): Promise<string> {
+async function getMonoVersion(): Promise<string> {
     const versionRegexp = /(\d+\.\d+\.\d+)/;
 
     return new Promise<string>((resolve, reject) => {
         let childprocess: ChildProcess;
         try {
-            childprocess = spawn('mono', ['--version'], { env: environment });
+            childprocess = spawn('mono', ['--version']);
         }
         catch (e) {
             return resolve(undefined);
