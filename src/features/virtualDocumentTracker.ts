@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import {workspace, TextDocument} from 'vscode';
+import {workspace, TextDocument, Uri} from 'vscode';
 import {OmniSharpServer} from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
 import { FileChangeType } from '../omnisharp/protocol';
@@ -14,6 +14,8 @@ import { DocumentSynchronizationFailure } from '../omnisharp/loggingEvents';
 
 function trackCurrentVirtualDocuments(server: OmniSharpServer, eventStream: EventStream) {
     let registration = server.onProjectAdded(async () => {
+        registration.dispose();
+
         for (let i = 0; i < workspace.textDocuments.length; i++) {
             let document = workspace.textDocuments[i];
     
@@ -21,8 +23,6 @@ function trackCurrentVirtualDocuments(server: OmniSharpServer, eventStream: Even
                 await openVirtualDocument(document, server, eventStream);
             }
         }
-
-        registration.dispose();
     });
 }
 
@@ -66,16 +66,10 @@ async function openVirtualDocument(document: TextDocument, server: OmniSharpServ
     let req = { FileName: document.uri.path, changeType: FileChangeType.Create };
     try {
         await serverUtils.filesChanged(server, [req]);
-    }
-    catch (error) {
-        eventStream.post(new DocumentSynchronizationFailure(document.uri.path, error));
-    }
-
-    try {
         await serverUtils.updateBuffer(server, { Buffer: document.getText(), FileName: document.fileName });
     }
     catch (error) {
-        eventStream.post(new DocumentSynchronizationFailure(document.uri.path, error));
+        logSynchronizationFailure(document.uri, error, server, eventStream);
     }
 }
 
@@ -85,7 +79,13 @@ async function closeVirtualDocument(document: TextDocument, server: OmniSharpSer
         await serverUtils.filesChanged(server, [req]);
     }
     catch (error) {
-        eventStream.post(new DocumentSynchronizationFailure(document.uri.path, error));
+        logSynchronizationFailure(document.uri, error, server, eventStream);
+    }
+}
+
+function logSynchronizationFailure(uri: Uri, error: any, server: OmniSharpServer, eventStream: EventStream) {
+    if (server.isRunning()) {
+        eventStream.post(new DocumentSynchronizationFailure(uri.path, error));
     }
 }
 
