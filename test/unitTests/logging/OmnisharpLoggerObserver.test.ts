@@ -135,9 +135,12 @@ suite("OmnisharpLoggerObserver", () => {
 
     suite('OmnisharpLaunch', () => {
         [
-            new OmnisharpLaunch("5.8.0", "someCommand", 4),
-            new OmnisharpLaunch(undefined, "someCommand", 4)
-        ].forEach((event: OmnisharpLaunch) => {
+            { 'event': new OmnisharpLaunch("5.8.0", undefined, "someCommand", 4), 'expected': "OmniSharp server started with Mono 5.8.0." },
+            { 'event': new OmnisharpLaunch(undefined, undefined, "someCommand", 4), 'expected': "OmniSharp server started." },
+            { 'event': new OmnisharpLaunch("5.8.0", "path to mono", "someCommand", 4), 'expected': "OmniSharp server started with Mono 5.8.0 (path to mono)." },
+            { 'event': new OmnisharpLaunch(undefined, "path to mono", "someCommand", 4), 'expected': "OmniSharp server started." },
+        ].forEach((data: { event: OmnisharpLaunch, expected: string }) => {
+            const event = data.event;
 
             test(`Command and Pid are displayed`, () => {
                 observer.post(event);
@@ -145,14 +148,9 @@ suite("OmnisharpLoggerObserver", () => {
                 expect(logOutput).to.contain(event.pid);
             });
 
-            test(`Message is displayed depending on usingMono value`, () => {
+            test(`Message is displayed depending on monoVersion and monoPath value`, () => {
                 observer.post(event);
-                if (event.monoVersion) {
-                    expect(logOutput).to.contain("OmniSharp server started with Mono 5.8.0");
-                }
-                else {
-                    expect(logOutput).to.contain("OmniSharp server started");
-                }
+                expect(logOutput).to.contain(data.expected);
             });
         });
     });
