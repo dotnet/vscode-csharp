@@ -38,6 +38,7 @@ import createOptionStream from './observables/CreateOptionStream';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
+    // A change to force a build.
     const extensionId = 'ms-vscode.csharp';
     const extension = vscode.extensions.getExtension<CSharpExtensionExports>(extensionId);
     const extensionVersion = extension.packageJSON.version;
