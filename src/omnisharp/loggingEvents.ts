@@ -147,6 +147,10 @@ export class DotNetTestsInClassDebugStart implements BaseEvent {
     constructor(public className: string) { }
 }
 
+export class DocumentSynchronizationFailure implements BaseEvent {
+    constructor(public documentPath: string, public errorMessage: string) { }
+}
+
 export class DebuggerPrerequisiteFailure extends EventWithMessage { }
 export class DebuggerPrerequisiteWarning extends EventWithMessage { }
 export class CommandDotNetRestoreProgress extends EventWithMessage { }
