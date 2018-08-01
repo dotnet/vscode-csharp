@@ -16,7 +16,6 @@ suite("Options tests", () => {
         const options = Options.Read(vscode);
         expect(options.path).to.be.null;
         options.useGlobalMono.should.equal("auto");
-        expect(options.monoPath).to.be.undefined;
         options.waitForDebugger.should.equal(false);
         options.loggingLevel.should.equal("information");
         options.autoStart.should.equal(true);

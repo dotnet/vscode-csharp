@@ -4,7 +4,7 @@ node_js:
 - "8"
 
 env:
-- CODE_VERSION=1.24.0
+- CODE_VERSION=1.25.1
 
 before_install:
   - if [ $TRAVIS_OS_NAME == "linux" ]; then
@@ -23,7 +23,7 @@ addons:
     packages:
       - g++-4.9
       - libsecret-1-dev
-      - dotnet-sdk-2.0.2
+      - dotnet-sdk-2.1
 
 install:
 - npm ci
