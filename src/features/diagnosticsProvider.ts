@@ -140,7 +140,7 @@ class DiagnosticsProvider extends AbstractSupport {
         // Go ahead and check for diagnostics in the currently visible editors.
         for (let editor of vscode.window.visibleTextEditors) {
             let document = editor.document;
-            if (document.languageId === 'csharp' && document.uri.scheme === 'file') {
+            if (document.languageId === 'csharp') {
                 this._validateDocument(document);
             }
         }
@@ -172,7 +172,7 @@ class DiagnosticsProvider extends AbstractSupport {
     }
 
     private _onDocumentAddOrChange(document: vscode.TextDocument): void {
-        if (document.languageId === 'csharp' && document.uri.scheme === 'file') {
+        if (document.languageId === 'csharp') {
             this._validateDocument(document);
             this._validateProject();
         }
