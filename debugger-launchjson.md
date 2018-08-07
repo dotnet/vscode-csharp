@@ -1,4 +1,4 @@
-# Configurating launch.json for C# debugging
+# Configuring launch.json for C# debugging
 The launch.json file is used to configure the debugger in Visual Studio Code.
 
 Visual Studio Code generates a launch.json with almost all of the required information. 
