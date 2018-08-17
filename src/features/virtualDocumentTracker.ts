@@ -63,7 +63,13 @@ function shouldIgnoreDocument(document: TextDocument, server: OmniSharpServer): 
 }
 
 async function openVirtualDocument(document: TextDocument, server: OmniSharpServer, eventStream: EventStream) {
-    let req = { FileName: document.uri.path, changeType: FileChangeType.Create };
+    let path = document.uri.fsPath;
+
+    if (!path) {
+        path = document.uri.path;
+    }
+    
+    let req = { FileName: path, changeType: FileChangeType.Create };
     try {
         await serverUtils.filesChanged(server, [req]);
         await serverUtils.updateBuffer(server, { Buffer: document.getText(), FileName: document.fileName });
@@ -74,7 +80,13 @@ async function openVirtualDocument(document: TextDocument, server: OmniSharpServ
 }
 
 async function closeVirtualDocument(document: TextDocument, server: OmniSharpServer, eventStream: EventStream) {
-    let req = { FileName: document.uri.path, changeType: FileChangeType.Delete };
+    let path = document.uri.fsPath;
+
+    if (!path) {
+        path = document.uri.path;
+    }
+    
+    let req = { FileName: path, changeType: FileChangeType.Delete };
     try {
         await serverUtils.filesChanged(server, [req]);
     }
