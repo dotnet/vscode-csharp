@@ -7,6 +7,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as serverUtils from './omnisharp/utils';
 import * as vscode from 'vscode';
+import { ParsedEnvironmentFile } from './coreclr-debug/ParsedEnvironmentFile';
 
 import { AssetGenerator, addTasksJsonIfNecessary, createAttachConfiguration, createLaunchConfiguration, createWebLaunchConfiguration } from './assets';
 
@@ -14,6 +15,7 @@ import { OmniSharpServer } from './omnisharp/server';
 import { containsDotNetCoreProjects } from './omnisharp/protocol';
 import { isSubfolderOf } from './common';
 import { parse } from 'jsonc-parser';
+import { MessageItem } from './vscodeAdapter';
 
 export class CSharpConfigurationProvider implements vscode.DebugConfigurationProvider {
     private server: OmniSharpServer;
@@ -101,10 +103,55 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
     }
 
     /**
+     * Parse envFile and add to config.env
+     */
+    private parseEnvFile(envFile: string, config: vscode.DebugConfiguration): vscode.DebugConfiguration {
+        if (envFile) {
+            try {
+                const parsedFile: ParsedEnvironmentFile = ParsedEnvironmentFile.CreateFromFile(envFile, config["env"]);
+                
+                // show error message if single lines cannot get parsed
+                if (parsedFile.Warning) {
+                    CSharpConfigurationProvider.showFileWarningAsync(parsedFile.Warning, envFile);
+                }
+
+                config.env = parsedFile.Env;
+            }
+            catch (e) {
+                throw new Error("Can't parse envFile " + envFile);
+            }
+        }
+
+        // remove envFile from config after parsing
+        if (config.envFile) {
+            delete config.envFile;
+        }
+
+        return config;
+    }
+
+    /**
 	 * Try to add all missing attributes to the debug configuration being launched.
 	 */
     resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, config: vscode.DebugConfiguration, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration> {
-        // vsdbg does the error checking
+
+        // read from envFile and set config.env
+        if (config.envFile) {
+            config = this.parseEnvFile(config.envFile.replace(/\${workspaceFolder}/g, folder.uri.path), config);
+        }
+
+        // vsdbg will error check the debug configuration fields      
         return config;
     }   
+
+    private static async showFileWarningAsync(message: string, fileName: string) {
+        const openItem: MessageItem = { title: 'Open envFile' };
+        let result: MessageItem = await vscode.window.showWarningMessage(message, openItem);
+        if (result && result.title === openItem.title) {
+            let doc: vscode.TextDocument = await vscode.workspace.openTextDocument(fileName);
+            if (doc) {
+                vscode.window.showTextDocument(doc);
+            }
+        }
+    }
 }
