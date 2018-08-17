@@ -1,4 +1,4 @@
 {
     "omnisharp.defaultLaunchSolution": "b_SecondInOrder_SlnFile.sln",
-    "omnisharp.path": "1.32.2-beta.21",
+    "omnisharp.path": "latest",
 }
