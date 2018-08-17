@@ -251,12 +251,12 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
 
         const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
 
-        return launchNixMono(launchPath, monoVersion, options.monoPath, cwd, args, childEnv);
+        return launchNixMono(launchPath, monoVersion, options.monoPath, cwd, args, childEnv, options.waitForDebugger);
     }
 
     // If we can launch on the global Mono, do so; otherwise, launch directly;
     if (options.useGlobalMono === "auto" && isValidMonoAvailable && launchInfo.MonoLaunchPath) {
-        return launchNixMono(launchInfo.MonoLaunchPath, monoVersion, options.monoPath, cwd, args, childEnv);
+        return launchNixMono(launchInfo.MonoLaunchPath, monoVersion, options.monoPath, cwd, args, childEnv, options.waitForDebugger);
     }
     else {
         return launchNix(launchInfo.LaunchPath, cwd, args);
@@ -313,10 +313,17 @@ function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResul
     };
 }
 
-function launchNixMono(launchPath: string, monoVersion: string, monoPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv): LaunchResult {
+function launchNixMono(launchPath: string, monoVersion: string, monoPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv, useDebugger:boolean): LaunchResult {
     let argsCopy = args.slice(0); // create copy of details args
     argsCopy.unshift(launchPath);
     argsCopy.unshift("--assembly-loader=strict");
+
+    if (useDebugger)
+        {
+            argsCopy.unshift("--assembly-loader=strict");
+            argsCopy.unshift("--debug");
+            argsCopy.unshift("--debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55555");
+        }
 
     let process = spawn('mono', argsCopy, {
         detached: false,
