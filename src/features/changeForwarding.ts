@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
-import {Disposable, Uri, workspace} from 'vscode';
+import {Uri, workspace} from 'vscode';
 import {OmniSharpServer} from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
 import { FileChangeType } from '../omnisharp/protocol';
+import { IDisposable } from '../Disposable';
+import CompositeDisposable from '../CompositeDisposable';
 
-function forwardDocumentChanges(server: OmniSharpServer): Disposable {
+function forwardDocumentChanges(server: OmniSharpServer): IDisposable {
 
     return workspace.onDidChangeTextDocument(event => {
 
@@ -30,9 +30,9 @@ function forwardDocumentChanges(server: OmniSharpServer): Disposable {
     });
 }
 
-function forwardFileChanges(server: OmniSharpServer): Disposable {
+function forwardFileChanges(server: OmniSharpServer): IDisposable {
 
-    function onFileSystemEvent(changeType: FileChangeType): (Uri) => void {
+    function onFileSystemEvent(changeType: FileChangeType): (uri: Uri) => void {
         return function(uri: Uri) 
         {
             if (!server.isRunning()) {
@@ -53,13 +53,13 @@ function forwardFileChanges(server: OmniSharpServer): Disposable {
     let d2 = watcher.onDidDelete(onFileSystemEvent(FileChangeType.Delete));
     let d3 = watcher.onDidChange(onFileSystemEvent(FileChangeType.Change));
 
-    return Disposable.from(watcher, d1, d2, d3);
+    return new CompositeDisposable(watcher, d1, d2, d3);
 }
 
-export default function forwardChanges(server: OmniSharpServer): Disposable {
+export default function forwardChanges(server: OmniSharpServer): IDisposable {
 
     // combine file watching and text document watching
-    return Disposable.from(
+    return new CompositeDisposable(
         forwardDocumentChanges(server),
         forwardFileChanges(server));
 }

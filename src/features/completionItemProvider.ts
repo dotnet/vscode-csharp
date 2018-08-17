@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import {extractSummaryText} from './documentation';
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
@@ -25,7 +23,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
         ';', '+', '-', '*', '/', '%', '&', '|', '^', '!',
         '~', '=', '<', '>', '?', '@', '#', '\'', '\"', '\\'];
 
-    public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionList> {
+    public async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionList> {
 
         let wordToComplete = '';
         let range = document.getWordRangeAtPosition(position);

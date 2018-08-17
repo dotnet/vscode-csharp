@@ -3,31 +3,24 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import { OmniSharpServer } from '../omnisharp/server';
-import { Disposable } from 'vscode';
-import TelemetryReporter from 'vscode-extension-telemetry';
+import CompositeDisposable from '../CompositeDisposable';
 
 export default abstract class AbstractProvider {
 
     protected _server: OmniSharpServer;
-    protected _reporter: TelemetryReporter;
-    private _disposables: Disposable[];
+    private _disposables: CompositeDisposable;
 
-    constructor(server: OmniSharpServer, reporter: TelemetryReporter) {
+    constructor(server: OmniSharpServer) {
         this._server = server;
-        this._reporter = reporter;
-        this._disposables = [];
+        this._disposables = new CompositeDisposable();
     }
 
-    protected addDisposables(...disposables: Disposable[]) {
-        this._disposables.push(...disposables);
+    protected addDisposables(disposables: CompositeDisposable) {
+        this._disposables.add(disposables);
     }
 
-    dispose() {
-        while (this._disposables.length) {
-            this._disposables.pop().dispose();
-        }
+    dispose = () => {
+        this._disposables.dispose();
     }
 }

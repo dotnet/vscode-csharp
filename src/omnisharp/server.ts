@@ -3,22 +3,32 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { EventEmitter } from 'events';
-import { ChildProcess, exec } from 'child_process';
-import { ReadLine, createInterface } from 'readline';
-import { launchOmniSharp } from './launcher';
-import { Options } from './options';
-import { Logger } from '../logger';
-import { DelayTracker } from './delayTracker';
-import { LaunchTarget, findLaunchTargets } from './launcher';
-import { Request, RequestQueueCollection } from './requestQueue';
-import TelemetryReporter from 'vscode-extension-telemetry';
-import * as os from 'os';
 import * as path from 'path';
 import * as protocol from './protocol';
 import * as utils from '../common';
-import * as vscode from 'vscode';
+import * as serverUtils from '../omnisharp/utils';
+import { vscode, CancellationToken } from '../vscodeAdapter';
+
+import { ChildProcess, exec } from 'child_process';
+import { LaunchTarget, findLaunchTargets } from './launcher';
+import { ReadLine, createInterface } from 'readline';
+import { Request, RequestQueueCollection } from './requestQueue';
+import { DelayTracker } from './delayTracker';
+import { EventEmitter } from 'events';
+import { OmnisharpManager, LaunchInfo } from './OmnisharpManager';
+import { Options } from './options';
+import { PlatformInformation } from '../platform';
+import { launchOmniSharp } from './launcher';
 import { setTimeout } from 'timers';
+import { OmnisharpDownloader } from './OmnisharpDownloader';
+import * as ObservableEvents from './loggingEvents';
+import { EventStream } from '../EventStream';
+import { NetworkSettingsProvider } from '../NetworkSettings';
+import { Subject } from 'rxjs/Subject';
+import 'rxjs/add/operator/debounceTime';
+import CompositeDisposable from '../CompositeDisposable';
+import Disposable from '../Disposable';
+import OptionProvider from '../observers/OptionProvider';
 
 enum ServerState {
     Starting,
@@ -58,17 +68,16 @@ module Events {
 }
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
+const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
+const installPath = ".omnisharp";
+const latestVersionFileServerPath = 'releases/versioninfo.txt';
 
 export class OmniSharpServer {
 
     private static _nextId = 1;
-
-    private _debugMode: boolean = false;
-
     private _readLine: ReadLine;
-    private _disposables: vscode.Disposable[] = [];
+    private _disposables: CompositeDisposable;
 
-    private _reporter: TelemetryReporter;
     private _delayTrackers: { [requestName: string]: DelayTracker };
     private _telemetryIntervalId: NodeJS.Timer = undefined;
 
@@ -76,34 +85,29 @@ export class OmniSharpServer {
     private _state: ServerState = ServerState.Stopped;
     private _launchTarget: LaunchTarget;
     private _requestQueue: RequestQueueCollection;
-    private _channel: vscode.OutputChannel;
-    private _logger: Logger;
-
     private _serverProcess: ChildProcess;
-    private _options: Options;
 
-    constructor(reporter: TelemetryReporter) {
-        this._reporter = reporter;
+    private _omnisharpManager: OmnisharpManager;
+    private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
+    private firstUpdateProject: boolean;
 
-        this._channel = vscode.window.createOutputChannel('OmniSharp Log');
-        this._logger = new Logger(message => this._channel.append(message));
-
-        const logger = this._debugMode
-            ? this._logger
-            : new Logger(message => { });
-
-        this._requestQueue = new RequestQueueCollection(logger, 8, request => this._makeRequest(request));
+    constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private packageJSON: any, private platformInfo: PlatformInformation, private eventStream: EventStream, private optionProvider: OptionProvider, extensionPath: string) {
+        this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
+        let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, this.packageJSON, platformInfo, extensionPath);
+        this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
+        this.updateProjectDebouncer.debounceTime(1500).subscribe((event) => { this.updateProjectInfo(); });
+        this.firstUpdateProject = true;
     }
 
     public isRunning(): boolean {
         return this._state === ServerState.Started;
     }
 
-    public async waitForEmptyEventQueue() : Promise<void> {
+    public async waitForEmptyEventQueue(): Promise<void> {
         while (!this._requestQueue.isEmpty()) {
             let p = new Promise((resolve) => setTimeout(resolve, 100));
             await p;
-        }     
+        }
     }
 
     private _getState(): ServerState {
@@ -137,7 +141,7 @@ export class OmniSharpServer {
                 const measures = tracker.getMeasures();
                 tracker.clearMeasures();
 
-                this._reporter.sendTelemetryEvent(eventName, null, measures);
+                this.eventStream.post(new ObservableEvents.OmnisharpDelayTrackerEventMeasures(eventName, measures));
             }
         }
     }
@@ -148,12 +152,7 @@ export class OmniSharpServer {
             : undefined;
     }
 
-    public getChannel(): vscode.OutputChannel {
-        return this._channel;
-    }
-
     // --- eventing
-
     public onStdout(listener: (e: string) => any, thisArg?: any) {
         return this._addListener(Events.StdOut, listener, thisArg);
     }
@@ -226,10 +225,10 @@ export class OmniSharpServer {
         return this._addListener(Events.Started, listener);
     }
 
-    private _addListener(event: string, listener: (e: any) => any, thisArg?: any): vscode.Disposable {
+    private _addListener(event: string, listener: (e: any) => any, thisArg?: any): Disposable {
         listener = thisArg ? listener.bind(thisArg) : listener;
         this._eventBus.addListener(event, listener);
-        return new vscode.Disposable(() => this._eventBus.removeListener(event, listener));
+        return new Disposable(() => this._eventBus.removeListener(event, listener));
     }
 
     protected _fireEvent(event: string, args: any): void {
@@ -238,71 +237,128 @@ export class OmniSharpServer {
 
     // --- start, stop, and connect
 
-    private _start(launchTarget: LaunchTarget): Promise<void> {
+    private async _start(launchTarget: LaunchTarget, options: Options): Promise<void> {
+
+        let disposables = new CompositeDisposable();
+
+        disposables.add(this.onServerError(err =>
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError(err))
+        ));
+
+        disposables.add(this.onError((message: protocol.ErrorMessage) =>
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnError(message))
+        ));
+
+        disposables.add(this.onMsBuildProjectDiagnostics((message: protocol.MSBuildProjectDiagnostics) =>
+            this.eventStream.post(new ObservableEvents.OmnisharpServerMsBuildProjectDiagnostics(message))
+        ));
+
+        disposables.add(this.onUnresolvedDependencies((message: protocol.UnresolvedDependenciesMessage) =>
+            this.eventStream.post(new ObservableEvents.OmnisharpServerUnresolvedDependencies(message))
+        ));
+
+        disposables.add(this.onStderr((message: string) =>
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnStdErr(message))
+        ));
+
+        disposables.add(this.onMultipleLaunchTargets((targets: LaunchTarget[]) =>
+            this.eventStream.post(new ObservableEvents.OmnisharpOnMultipleLaunchTargets(targets))
+        ));
+
+        disposables.add(this.onBeforeServerInstall(() =>
+            this.eventStream.post(new ObservableEvents.OmnisharpOnBeforeServerInstall())
+        ));
+
+        disposables.add(this.onBeforeServerStart(() => {
+            this.eventStream.post(new ObservableEvents.OmnisharpOnBeforeServerStart());
+        }));
+
+        disposables.add(this.onServerStop(() =>
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnStop())
+        ));
+
+        disposables.add(this.onServerStart(() => {
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnStart());
+        }));
+
+        disposables.add(this.onProjectAdded(this.debounceUpdateProjectWithLeadingTrue));
+        disposables.add(this.onProjectChange(this.debounceUpdateProjectWithLeadingTrue));
+        disposables.add(this.onProjectRemoved(this.debounceUpdateProjectWithLeadingTrue));
+
+        this._disposables = disposables;
+
         this._setState(ServerState.Starting);
         this._launchTarget = launchTarget;
 
         const solutionPath = launchTarget.target;
         const cwd = path.dirname(solutionPath);
-        this._options = Options.Read();
-        
+
         let args = [
             '-s', solutionPath,
             '--hostPID', process.pid.toString(),
             '--stdio',
             'DotNet:enablePackageRestore=false',
             '--encoding', 'utf-8',
-            '--loglevel', this._options.loggingLevel
+            '--loglevel', options.loggingLevel
         ];
 
-        if (this._options.waitForDebugger === true) {
+        if (options.waitForDebugger === true) {
             args.push('--debug');
         }
 
-        this._logger.appendLine(`Starting OmniSharp server at ${new Date().toLocaleString()}`);
-        this._logger.increaseIndent();
-        this._logger.appendLine(`Target: ${solutionPath}`);
-        this._logger.decreaseIndent();
-        this._logger.appendLine();
+        let launchInfo: LaunchInfo;
+        try {
+            let extensionPath = utils.getExtensionPath();
+            launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
+        }
+        catch (error) {
+            this.eventStream.post(new ObservableEvents.OmnisharpFailure(`Error occured in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));
+            return;
+        }
 
+        this.eventStream.post(new ObservableEvents.OmnisharpInitialisation(new Date(), solutionPath));
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
-        return launchOmniSharp(cwd, args).then(value => {
-            if (value.usingMono) {
-                this._logger.appendLine(`OmniSharp server started wth Mono`);
-            }
-            else {
-                this._logger.appendLine(`OmniSharp server started`);
-            }
+        try {
+            let launchResult = await launchOmniSharp(cwd, args, launchInfo, this.platformInfo, options);
+            this.eventStream.post(new ObservableEvents.OmnisharpLaunch(launchResult.monoVersion, launchResult.monoPath, launchResult.command, launchResult.process.pid));
 
-            this._logger.increaseIndent();
-            this._logger.appendLine(`Path: ${value.command}`);
-            this._logger.appendLine(`PID: ${value.process.pid}`);
-            this._logger.decreaseIndent();
-            this._logger.appendLine();
-
-            this._serverProcess = value.process;
+            this._serverProcess = launchResult.process;
             this._delayTrackers = {};
             this._setState(ServerState.Started);
             this._fireEvent(Events.ServerStart, solutionPath);
 
-            return this._doConnect();
-        }).then(() => {
-            // Start telemetry reporting
+            await this._doConnect(options);
+
             this._telemetryIntervalId = setInterval(() => this._reportTelemetry(), TelemetryReportingDelay);
-        }).then(() => {
             this._requestQueue.drain();
-        }).catch(err => {
+        }
+        catch (err) {
             this._fireEvent(Events.ServerError, err);
             return this.stop();
-        });
+        }
     }
 
-    public stop(): Promise<void> {
+    private debounceUpdateProjectWithLeadingTrue = () => {
+        // Call the updateProjectInfo directly if it is the first time, otherwise debounce the request
+        // This needs to be done so that we have a project information for the first incoming request
 
-        while (this._disposables.length) {
-            this._disposables.pop().dispose();
+        if (this.firstUpdateProject) {
+            this.updateProjectInfo();
         }
+        else {
+            this.updateProjectDebouncer.next(new ObservableEvents.ProjectModified());
+        }
+    }
+
+    private updateProjectInfo = async () => {
+        this.firstUpdateProject = false;
+        let info = await serverUtils.requestWorkspaceInformation(this);
+        //once we get the info, push the event into the event stream
+        this.eventStream.post(new ObservableEvents.WorkspaceInformationUpdated(info));
+    }
+
+    public async stop(): Promise<void> {
 
         let cleanupPromise: Promise<void>;
 
@@ -344,28 +400,37 @@ export class OmniSharpServer {
                 });
         }
 
+        let disposables = this._disposables;
+        this._disposables = null;
+
         return cleanupPromise.then(() => {
             this._serverProcess = null;
             this._setState(ServerState.Stopped);
             this._fireEvent(Events.ServerStop, this);
+            if (disposables) {
+                disposables.dispose();
+            }
         });
     }
 
     public async restart(launchTarget: LaunchTarget = this._launchTarget): Promise<void> {
         if (launchTarget) {
             await this.stop();
-            await this._start(launchTarget);
+            this.eventStream.post(new ObservableEvents.OmnisharpRestart());
+            const options = this.optionProvider.GetLatestOptions();
+            await this._start(launchTarget, options);
         }
     }
 
     public autoStart(preferredPath: string): Thenable<void> {
-        return findLaunchTargets().then(launchTargets => {
+        const options = this.optionProvider.GetLatestOptions();
+        return findLaunchTargets(options).then(async launchTargets => {
             // If there aren't any potential launch targets, we create file watcher and try to
             // start the server again once a *.sln, *.csproj, project.json, CSX or Cake file is created.
             if (launchTargets.length === 0) {
                 return new Promise<void>((resolve, reject) => {
                     // 1st watch for files
-                    let watcher = vscode.workspace.createFileSystemWatcher('{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
+                    let watcher = this.vscode.workspace.createFileSystemWatcher('{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
                         /*ignoreCreateEvents*/ false,
                         /*ignoreChangeEvents*/ true,
                         /*ignoreDeleteEvents*/ true);
@@ -378,6 +443,14 @@ export class OmniSharpServer {
                     // 2nd try again
                     return this.autoStart(preferredPath);
                 });
+            }
+
+            const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().defaultLaunchSolution;
+
+            // First, try to launch against something that matches the user's preferred target
+            const defaultLaunchSolutionTarget = launchTargets.find((a) => (path.basename(a.target) === defaultLaunchSolutionConfigValue));
+            if (defaultLaunchSolutionTarget) {
+                return this.restart(defaultLaunchSolutionTarget);
             }
 
             // If there's more than one launch target, we start the server if one of the targets
@@ -403,7 +476,7 @@ export class OmniSharpServer {
 
     // --- requests et al
 
-    public makeRequest<TResponse>(command: string, data?: any, token?: vscode.CancellationToken): Promise<TResponse> {
+    public async makeRequest<TResponse>(command: string, data?: any, token?: CancellationToken): Promise<TResponse> {
 
         if (this._getState() !== ServerState.Started) {
             return Promise.reject<TResponse>('server has been stopped or not started');
@@ -440,7 +513,7 @@ export class OmniSharpServer {
         });
     }
 
-    private _doConnect(): Promise<void> {
+    private async _doConnect(options: Options): Promise<void> {
 
         this._serverProcess.stderr.on('data', (data: any) => {
             this._fireEvent('stderr', String(data));
@@ -453,10 +526,10 @@ export class OmniSharpServer {
         });
 
         const promise = new Promise<void>((resolve, reject) => {
-            let listener: vscode.Disposable;
+            let listener: Disposable;
 
             // Convert the timeout from the seconds to milliseconds, which is required by setTimeout().
-            const timeoutDuration = this._options.projectLoadTimeout * 1000;
+            const timeoutDuration = options.projectLoadTimeout * 1000;
 
             // timeout logic
             const handle = setTimeout(() => {
@@ -482,7 +555,7 @@ export class OmniSharpServer {
 
         this._readLine.addListener('line', lineReceived);
 
-        this._disposables.push(new vscode.Disposable(() => {
+        this._disposables.add(new Disposable(() => {
             this._readLine.removeListener('line', lineReceived);
         }));
 
@@ -493,7 +566,7 @@ export class OmniSharpServer {
         line = line.trim();
 
         if (line[0] !== '{') {
-            this._logger.appendLine(line);
+            this.eventStream.post(new ObservableEvents.OmnisharpServerMessage(line));
             return;
         }
 
@@ -519,7 +592,7 @@ export class OmniSharpServer {
                 this._handleEventPacket(<protocol.WireProtocol.EventPacket>packet);
                 break;
             default:
-                console.warn(`Unknown packet type: ${packet.Type}`);
+                this.eventStream.post(new ObservableEvents.OmnisharpServerMessage(`Unknown packet type: ${packet.Type}`));
                 break;
         }
     }
@@ -528,13 +601,11 @@ export class OmniSharpServer {
         const request = this._requestQueue.dequeue(packet.Command, packet.Request_seq);
 
         if (!request) {
-            this._logger.appendLine(`Received response for ${packet.Command} but could not find request.`);
+            this.eventStream.post(new ObservableEvents.OmnisharpServerMessage(`Received response for ${packet.Command} but could not find request.`));
             return;
         }
 
-        if (this._debugMode) {
-            this._logger.appendLine(`handleResponse: ${packet.Command} (${packet.Request_seq})`);
-        }
+        this.eventStream.post(new ObservableEvents.OmnisharpServerVerboseMessage(`handleResponse: ${packet.Command} (${packet.Request_seq})`));
 
         if (packet.Success) {
             request.onSuccess(packet.Body);
@@ -549,7 +620,7 @@ export class OmniSharpServer {
     private _handleEventPacket(packet: protocol.WireProtocol.EventPacket): void {
         if (packet.Event === 'log') {
             const entry = <{ LogLevel: string; Name: string; Message: string; }>packet.Body;
-            this._logOutput(entry.LogLevel, entry.Name, entry.Message);
+            this.eventStream.post(new ObservableEvents.OmnisharpEventPacketReceived(entry.LogLevel, entry.Name, entry.Message));
         }
         else {
             // fwd all other events
@@ -567,48 +638,8 @@ export class OmniSharpServer {
             Arguments: request.data
         };
 
-        if (this._debugMode) {
-            this._logger.append(`makeRequest: ${request.command} (${id})`);
-            if (request.data) {
-                this._logger.append(`, data=${JSON.stringify(request.data)}`);
-            }
-            this._logger.appendLine();
-        }
-
+        this.eventStream.post(new ObservableEvents.OmnisharpRequestMessage(request, id));
         this._serverProcess.stdin.write(JSON.stringify(requestPacket) + '\n');
-
         return id;
-    }
-
-    private static getLogLevelPrefix(logLevel: string) {
-        switch (logLevel) {
-            case "TRACE": return "trce";
-            case "DEBUG": return "dbug";
-            case "INFORMATION": return "info";
-            case "WARNING": return "warn";
-            case "ERROR": return "fail";
-            case "CRITICAL": return "crit";
-            default: throw new Error(`Unknown log level value: ${logLevel}`);
-        }
-    }
-
-    private _isFilterableOutput(logLevel: string, name: string, message: string) {
-        // filter messages like: /codecheck: 200 339ms
-        const timing200Pattern = /^\/[\/\w]+: 200 \d+ms/;
-
-        return logLevel === "INFORMATION"
-            && name === "OmniSharp.Middleware.LoggingMiddleware"
-            && timing200Pattern.test(message);
-    }
-
-    private _logOutput(logLevel: string, name: string, message: string) {
-        if (this._debugMode || !this._isFilterableOutput(logLevel, name, message)) {
-            let output = `[${OmniSharpServer.getLogLevelPrefix(logLevel)}]: ${name}${os.EOL}${message}`;
-
-            const newLinePlusPadding = os.EOL + "        ";
-            output = output.replace(os.EOL, newLinePlusPadding);
-
-            this._logger.appendLine(output);
-        }
     }
 }

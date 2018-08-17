@@ -9,11 +9,12 @@ import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { toRange } from '../omnisharp/typeConvertion';
 import * as vscode from 'vscode';
-import TelemetryReporter from 'vscode-extension-telemetry';
+import CompositeDisposable from '../CompositeDisposable';
+import { IDisposable } from '../Disposable';
 
 export class Advisor {
 
-    private _disposable: vscode.Disposable;
+    private _disposable: CompositeDisposable;
     private _server: OmniSharpServer;
     private _packageRestoreCounter: number = 0;
     private _projectSourceFileCounts: { [path: string]: number } = Object.create(null);
@@ -26,7 +27,7 @@ export class Advisor {
         let d3 = server.onProjectRemoved(this._onProjectRemoved, this);
         let d4 = server.onBeforePackageRestore(this._onBeforePackageRestore, this);
         let d5 = server.onPackageRestore(this._onPackageRestore, this);
-        this._disposable = vscode.Disposable.from(d1, d2, d3, d4, d5);
+        this._disposable = new CompositeDisposable(d1, d2, d3, d4, d5);
     }
 
     public dispose() {
@@ -60,11 +61,11 @@ export class Advisor {
 
     private _removeProjectFileCount(info: protocol.ProjectInformationResponse): void {
         if (info.DotNetProject && info.DotNetProject.SourceFiles) {
-            delete this._updateProjectFileCount[info.DotNetProject.Path];
+            delete this._projectSourceFileCounts[info.DotNetProject.Path];
         }
 
         if (info.MsBuildProject && info.MsBuildProject.SourceFiles) {
-            delete this._updateProjectFileCount[info.MsBuildProject.Path];
+            delete this._projectSourceFileCounts[info.MsBuildProject.Path];
         }
     }
 
@@ -109,20 +110,20 @@ export class Advisor {
     }
 }
 
-export default function reportDiagnostics(server: OmniSharpServer, reporter: TelemetryReporter, advisor: Advisor): vscode.Disposable {
-    return new DiagnosticsProvider(server, reporter, advisor);
+export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor): IDisposable {
+    return new DiagnosticsProvider(server, advisor);
 }
 
 class DiagnosticsProvider extends AbstractSupport {
 
     private _validationAdvisor: Advisor;
-    private _disposable: vscode.Disposable;
+    private _disposable: CompositeDisposable;
     private _documentValidations: { [uri: string]: vscode.CancellationTokenSource } = Object.create(null);
     private _projectValidation: vscode.CancellationTokenSource;
     private _diagnostics: vscode.DiagnosticCollection;
 
-    constructor(server: OmniSharpServer, reporter: TelemetryReporter, validationAdvisor: Advisor) {
-        super(server, reporter);
+    constructor(server: OmniSharpServer, validationAdvisor: Advisor) {
+        super(server);
 
         this._validationAdvisor = validationAdvisor;
         this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
@@ -132,18 +133,20 @@ class DiagnosticsProvider extends AbstractSupport {
         let d4 = vscode.workspace.onDidOpenTextDocument(event => this._onDocumentAddOrChange(event), this);
         let d3 = vscode.workspace.onDidChangeTextDocument(event => this._onDocumentAddOrChange(event.document), this);
         let d5 = vscode.workspace.onDidCloseTextDocument(this._onDocumentRemove, this);
-        this._disposable = vscode.Disposable.from(this._diagnostics, d1, d2, d3, d4, d5);
+        let d6 = vscode.window.onDidChangeActiveTextEditor(event => this._onDidChangeActiveTextEditor(event), this);
+        let d7 = vscode.window.onDidChangeWindowState(event => this._OnDidChangeWindowState(event), this);
+        this._disposable = new CompositeDisposable(this._diagnostics, d1, d2, d3, d4, d5, d6, d7);
 
         // Go ahead and check for diagnostics in the currently visible editors.
         for (let editor of vscode.window.visibleTextEditors) {
             let document = editor.document;
-            if (document.languageId === 'csharp' && document.uri.scheme === 'file') {
+            if (document.languageId === 'csharp') {
                 this._validateDocument(document);
             }
         }
     }
 
-    public dispose(): void {
+    public dispose = () => {
         if (this._projectValidation) {
             this._projectValidation.dispose();
         }
@@ -155,25 +158,40 @@ class DiagnosticsProvider extends AbstractSupport {
         this._disposable.dispose();
     }
 
+    private _OnDidChangeWindowState(windowState: vscode.WindowState): void {
+        if (windowState.focused === true) {
+            this._onDidChangeActiveTextEditor(vscode.window.activeTextEditor);
+        }
+    }
+
+    private _onDidChangeActiveTextEditor(textEditor: vscode.TextEditor): void {
+        // active text editor can be undefined.
+        if (textEditor != undefined && textEditor.document != null) { 
+            this._onDocumentAddOrChange(textEditor.document);
+        }
+    }
+
     private _onDocumentAddOrChange(document: vscode.TextDocument): void {
-        if (document.languageId === 'csharp' && document.uri.scheme === 'file') {
+        if (document.languageId === 'csharp') {
             this._validateDocument(document);
             this._validateProject();
         }
     }
 
-    private _onDocumentRemove(document: vscode.TextDocument) {
-        let key = document.uri.toString();
+    private _onDocumentRemove(document: vscode.TextDocument): void {
+        let key = document.uri;
         let didChange = false;
-        if (this._diagnostics[key]) {
+        if (this._diagnostics.get(key)) {
             didChange = true;
-            this._diagnostics[key].dispose();
-            delete this._diagnostics[key];
+            this._diagnostics.delete(key);
         }
-        if (this._documentValidations[key]) {
+
+        let keyString = key.toString();
+
+        if (this._documentValidations[keyString]) {
             didChange = true;
-            this._documentValidations[key].cancel();
-            delete this._documentValidations[key];
+            this._documentValidations[keyString].cancel();
+            delete this._documentValidations[keyString];
         }
         if (didChange) {
             this._validateProject();

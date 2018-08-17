@@ -4,8 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from "fs";
+import * as path from "path";
 
 import { SubscribeToAllLoggers } from "../../src/logger";
+import coverageWritingTestRunner from "../coverageWritingTestRunner";
 
 //
 // PLEASE DO NOT MODIFY / DELETE UNLESS YOU KNOW WHAT YOU ARE DOING
@@ -19,7 +21,8 @@ import { SubscribeToAllLoggers } from "../../src/logger";
 // to report the results back to the caller. When the tests are finished, return
 // a possible error to the callback or null if none.
 
-let testRunner = require('vscode/lib/testrunner');
+let testRunner = new coverageWritingTestRunner(require('vscode/lib/testrunner'));
+
 
 // You can directly control Mocha options by uncommenting the following lines
 // See https://github.com/mochajs/mocha/wiki/Using-mocha-programmatically#set-options for more info
@@ -30,12 +33,14 @@ testRunner.configure({
     useColors: true // colored output from test results
 });
 
-if (process.env.OSVC_SUITE) {
-    if (!fs.existsSync("./.logs")) {
-        fs.mkdirSync("./.logs");
-    }
+if (process.env.CODE_EXTENSIONS_PATH && process.env.OSVC_SUITE) {
+    let logDirPath = path.join(process.env.CODE_EXTENSIONS_PATH, "./.logs");
     
-    let logFilePath = `./.logs/${process.env.OSVC_SUITE}.log`;
+    if (!fs.existsSync(logDirPath)) {
+        fs.mkdirSync(logDirPath);
+    }
+
+    let logFilePath =  path.join(logDirPath, `${process.env.OSVC_SUITE}.log`);
 
     SubscribeToAllLoggers(message => fs.appendFileSync(logFilePath, message));
 }

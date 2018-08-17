@@ -4,7 +4,7 @@ node_js:
 - "8"
 
 env:
-- CODE_VERSION=1.18.0
+- CODE_VERSION=1.24.0
 
 before_install:
   - if [ $TRAVIS_OS_NAME == "linux" ]; then
@@ -12,6 +12,7 @@ before_install:
       sh -e /etc/init.d/xvfb start;
       sleep 3;
     fi
+  - dpkg --compare-versions `npm -v` ge 5.8 || npm i -g npm@^5.8
 
 addons:
   apt:
@@ -25,13 +26,17 @@ addons:
       - dotnet-sdk-2.0.2
 
 install:
-- npm install
-- npm run compile
-- npm install -g vsce
-- vsce package
+- npm ci
+- npm i -g gulp
+- gulp 'vsix:release:package'
 
 script:
-  - npm test --silent
+  - gulp 'vsix:release:unpackage'
+  - gulp cov:instrument --codeExtensionPath ./vsix/extension
+  - gulp test --codeExtensionPath ./vsix/extension
+  - gulp cov:report --codeExtensionPath ./vsix/extension
+  - npm run test:artifacts
+  - 'if [[ "$TRAVIS_BRANCH" != "master" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then npm run test:release; fi'
 
 after_failure:
   - ./.travis/printLogs.sh
@@ -49,3 +54,6 @@ deploy:
   on:
     repo: OmniSharp/omnisharp-vscode
     tags: true
+  overwrite: true
+
+after_deploy: "find . -type f -name '*.vsix'"

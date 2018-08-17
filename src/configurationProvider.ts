@@ -7,6 +7,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as serverUtils from './omnisharp/utils';
 import * as vscode from 'vscode';
+import { ParsedEnvironmentFile } from './coreclr-debug/ParsedEnvironmentFile';
 
 import { AssetGenerator, addTasksJsonIfNecessary, createAttachConfiguration, createLaunchConfiguration, createWebLaunchConfiguration } from './assets';
 
@@ -14,6 +15,7 @@ import { OmniSharpServer } from './omnisharp/server';
 import { containsDotNetCoreProjects } from './omnisharp/protocol';
 import { isSubfolderOf } from './common';
 import { parse } from 'jsonc-parser';
+import { MessageItem } from './vscodeAdapter';
 
 export class CSharpConfigurationProvider implements vscode.DebugConfigurationProvider {
     private server: OmniSharpServer;
@@ -28,7 +30,7 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
      * Note: serverUtils.requestWorkspaceInformation only retrieves one folder for multi-root workspaces. Therefore, generator will be incorrect for all folders
      * except the first in a workspace. Currently, this only works if the requested folder is the same as the server's solution path or folder.
      */
-    private checkWorkspaceInformationMatchesWorkspaceFolder(folder: vscode.WorkspaceFolder | undefined): Promise<boolean> {
+    private async checkWorkspaceInformationMatchesWorkspaceFolder(folder: vscode.WorkspaceFolder | undefined): Promise<boolean> {
         const solutionPathOrFolder: string = this.server.getSolutionPathOrFolder();
 
         // Make sure folder, folder.uri, and solutionPathOrFolder are defined.
@@ -59,18 +61,18 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
 	 * Returns a list of initial debug configurations based on contextual information, e.g. package.json or folder.
 	 */
     provideDebugConfigurations(folder: vscode.WorkspaceFolder | undefined, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration[]> {
-        return serverUtils.requestWorkspaceInformation(this.server).then(info => {
-            return this.checkWorkspaceInformationMatchesWorkspaceFolder(folder).then(workspaceMatches => { 
+        return serverUtils.requestWorkspaceInformation(this.server).then(async info => {
+            return this.checkWorkspaceInformationMatchesWorkspaceFolder(folder).then(async workspaceMatches => { 
                 const generator = new AssetGenerator(info);
                 if (workspaceMatches && containsDotNetCoreProjects(info)) {
                     const dotVscodeFolder: string = path.join(folder.uri.fsPath, '.vscode');
                     const tasksJsonPath: string = path.join(dotVscodeFolder, 'tasks.json');
                     
                     // Make sure .vscode folder exists, addTasksJsonIfNecessary will fail to create tasks.json if the folder does not exist. 
-                    return fs.ensureDir(dotVscodeFolder).then(() => {
+                    return fs.ensureDir(dotVscodeFolder).then(async () => {
                         // Check to see if tasks.json exists.
                         return fs.pathExists(tasksJsonPath);
-                    }).then(tasksJsonExists => {
+                    }).then(async tasksJsonExists => {
                         // Enable addTasksJson if it does not exist.
                         return addTasksJsonIfNecessary(generator, {addTasksJson: !tasksJsonExists});
                     }).then(() => {
@@ -101,10 +103,55 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
     }
 
     /**
+     * Parse envFile and add to config.env
+     */
+    private parseEnvFile(envFile: string, config: vscode.DebugConfiguration): vscode.DebugConfiguration {
+        if (envFile) {
+            try {
+                const parsedFile: ParsedEnvironmentFile = ParsedEnvironmentFile.CreateFromFile(envFile, config["env"]);
+                
+                // show error message if single lines cannot get parsed
+                if (parsedFile.Warning) {
+                    CSharpConfigurationProvider.showFileWarningAsync(parsedFile.Warning, envFile);
+                }
+
+                config.env = parsedFile.Env;
+            }
+            catch (e) {
+                throw new Error("Can't parse envFile " + envFile);
+            }
+        }
+
+        // remove envFile from config after parsing
+        if (config.envFile) {
+            delete config.envFile;
+        }
+
+        return config;
+    }
+
+    /**
 	 * Try to add all missing attributes to the debug configuration being launched.
 	 */
     resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, config: vscode.DebugConfiguration, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration> {
-        // vsdbg does the error checking
+
+        // read from envFile and set config.env
+        if (config.envFile) {
+            config = this.parseEnvFile(config.envFile.replace(/\${workspaceFolder}/g, folder.uri.path), config);
+        }
+
+        // vsdbg will error check the debug configuration fields      
         return config;
     }   
+
+    private static async showFileWarningAsync(message: string, fileName: string) {
+        const openItem: MessageItem = { title: 'Open envFile' };
+        let result: MessageItem = await vscode.window.showWarningMessage(message, openItem);
+        if (result && result.title === openItem.title) {
+            let doc: vscode.TextDocument = await vscode.workspace.openTextDocument(fileName);
+            if (doc) {
+                vscode.window.showTextDocument(doc);
+            }
+        }
+    }
 }

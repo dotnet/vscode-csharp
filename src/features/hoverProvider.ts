@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
@@ -14,7 +12,7 @@ import { GetDocumentationString } from './documentation';
 
 export default class OmniSharpHoverProvider extends AbstractSupport implements HoverProvider {
 
-    public provideHover(document: TextDocument, position: Position, token: CancellationToken): Promise<Hover> {
+    public async provideHover(document: TextDocument, position: Position, token: CancellationToken): Promise<Hover> {
 
         let req = createRequest<protocol.TypeLookupRequest>(document, position);
         req.IncludeDocumentation = true;
