@@ -16,7 +16,8 @@ export enum LaunchTargetKind {
     ProjectJson,
     Folder,
     Csx,
-    Cake
+    Cake,
+    MiscellaneousCS
 }
 
 /**
@@ -42,7 +43,7 @@ export function findLaunchTargets(options: Options): Thenable<LaunchTarget[]> {
     }
 
     return vscode.workspace.findFiles(
-            /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
+            /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake,**/*.cs}',
             /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
             /*maxResults*/ options.maxProjectResults)
         .then(resourcesToLaunchTargets);
@@ -90,7 +91,8 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
             hasProjectJson = false,
             hasProjectJsonAtRoot = false,
             hasCSX = false,
-            hasCake = false;
+            hasCake = false,
+            hasCs = false;
 
         hasCsProjFiles = resources.some(isCSharpProject);
 
@@ -134,6 +136,11 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
             if (!hasCake && isCake(resource)) {
                 hasCake = true;
             }
+
+            //Discover if there is any cs file
+            if (!hasCs && isCs(resource)) {
+                hasCs = true;
+            }
         });
 
         // Add the root folder under the following circumstances:
@@ -170,6 +177,16 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                 kind: LaunchTargetKind.Cake
             });
         }
+
+        if (hasCs && !hasSlnFile && !hasCsProjFiles && !hasProjectJson && !hasProjectJsonAtRoot) {
+            targets.push({
+                label: "Miscellaneous",
+                description: path.basename(folderPath),
+                target: folderPath,
+                directory: folderPath,
+                kind: LaunchTargetKind.MiscellaneousCS
+            });
+        }
     });
 
     return targets.sort((a, b) => a.directory.localeCompare(b.directory));
@@ -193,6 +210,10 @@ function isCsx(resource: vscode.Uri): boolean {
 
 function isCake(resource: vscode.Uri): boolean {
     return /\.cake$/i.test(resource.fsPath);
+}
+
+function isCs(resource: vscode.Uri): boolean {
+    return /\.cs$/i.test(resource.fsPath);
 }
 
 export interface LaunchResult {
