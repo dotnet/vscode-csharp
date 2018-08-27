@@ -16,8 +16,7 @@ export enum LaunchTargetKind {
     ProjectJson,
     Folder,
     Csx,
-    Cake,
-    MiscellaneousCS
+    Cake
 }
 
 /**
@@ -180,11 +179,11 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
 
         if (hasCs && !hasSlnFile && !hasCsProjFiles && !hasProjectJson && !hasProjectJsonAtRoot) {
             targets.push({
-                label: "Miscellaneous",
-                description: path.basename(folderPath),
+                label: path.basename(folderPath),
+                description: '',
                 target: folderPath,
                 directory: folderPath,
-                kind: LaunchTargetKind.MiscellaneousCS
+                kind: LaunchTargetKind.Folder
             });
         }
     });
