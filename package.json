@@ -25,7 +25,7 @@
     "multi-root ready"
   ],
   "defaults": {
-    "omniSharp": "1.32.2"
+    "omniSharp": "1.32.3"
   },
   "main": "./out/src/main",
   "scripts": {
@@ -142,37 +142,37 @@
   "runtimeDependencies": [
     {
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12960206/4079681c0ef6feb74019ccc436baf843/omnisharp-win-x86-1.32.2.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.32.2.zip",
-      "installPath": ".omnisharp/1.32.2",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/13064560/c7b1efbad1407f803ff959977ef72427/omnisharp-win-x86-1.32.3.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.32.3.zip",
+      "installPath": ".omnisharp/1.32.3",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.omnisharp/1.32.2/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.32.3/OmniSharp.exe",
       "platformId": "win-x86"
     },
     {
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12960204/315196c12997fb1a4242edcf9e54fd90/omnisharp-win-x64-1.32.2.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.32.2.zip",
-      "installPath": ".omnisharp/1.32.2",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/13064559/23116463e380497dd1c93098956a0a97/omnisharp-win-x64-1.32.3.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.32.3.zip",
+      "installPath": ".omnisharp/1.32.3",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/1.32.2/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.32.3/OmniSharp.exe",
       "platformId": "win-x64"
     },
     {
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12960201/ac222323e5ebab30400f76891d2dfec2/omnisharp-osx-1.32.2.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.32.2.zip",
-      "installPath": ".omnisharp/1.32.2",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/13064558/a35c6d4c06991c05eaca4fcc8d63ecf2/omnisharp-osx-1.32.3.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.32.3.zip",
+      "installPath": ".omnisharp/1.32.3",
       "platforms": [
         "darwin"
       ],
@@ -180,14 +180,14 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.32.2/run",
+      "installTestPath": "./.omnisharp/1.32.3/run",
       "platformId": "osx"
     },
     {
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12960203/c22b809daf4f93bf235d53e0d90bb79d/omnisharp-linux-x86-1.32.2.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.32.2.zip",
-      "installPath": ".omnisharp/1.32.2",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/13064557/aad75aab70b885a600d72a1e9d9083c6/omnisharp-linux-x86-1.32.3.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.32.3.zip",
+      "installPath": ".omnisharp/1.32.3",
       "platforms": [
         "linux"
       ],
@@ -199,14 +199,14 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.32.2/run",
+      "installTestPath": "./.omnisharp/1.32.3/run",
       "platformId": "linux-x86"
     },
     {
       "description": "OmniSharp for Linux (x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12960205/85fc60c21312cce6206fbb6d760c0d12/omnisharp-linux-x64-1.32.2.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.32.2.zip",
-      "installPath": ".omnisharp/1.32.2",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/13064556/66fb8963367f38a0b4b6c4986db86748/omnisharp-linux-x64-1.32.3.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.32.3.zip",
+      "installPath": ".omnisharp/1.32.3",
       "platforms": [
         "linux"
       ],
@@ -217,7 +217,7 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.32.2/run",
+      "installTestPath": "./.omnisharp/1.32.3/run",
       "platformId": "linux-x64"
     },
     {
