@@ -5,23 +5,20 @@
 
 import OmniSharpCompletionItemProvider from "../../src/features/completionItemProvider";
 import * as vscode from 'vscode';
-import CSharpExtensionExports from "../../src/CSharpExtensionExports";
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
 import * as path from "path";
 import { expect } from "chai";
+import { activateCSharpExtension } from "./integrationHelpers";
 
 suite(`${OmniSharpCompletionItemProvider.name}: Returns the completion items`, () => {
     let fileUri: vscode.Uri;
     
     suiteSetup(async () => {
-        let csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-vscode.csharp");
-        if (!csharpExtension.isActive) {
-            await csharpExtension.activate();
-        }
+        await testAssetWorkspace.restore();
+        await activateCSharpExtension();
 
-        await csharpExtension.exports.initializationFinished();
         let fileName = 'completion.cs';
-        let dir = path.dirname(testAssetWorkspace.projects[0].projectDirectoryPath);
+        let dir = testAssetWorkspace.projects[0].projectDirectoryPath;
         fileUri = vscode.Uri.file(path.join(dir, fileName));
         await vscode.commands.executeCommand("vscode.open", fileUri);
     });
