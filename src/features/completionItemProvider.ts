@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import {extractSummaryText} from './documentation';
+import { extractSummaryText } from './documentation';
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import {createRequest} from '../omnisharp/typeConvertion';
-import {CompletionItemProvider, CompletionItem, CompletionItemKind, CompletionContext, CompletionTriggerKind, CancellationToken, TextDocument, Range, Position, CompletionList} from 'vscode';
+import { createRequest } from '../omnisharp/typeConvertion';
+import { CompletionItemProvider, CompletionItem, CompletionItemKind, CompletionContext, CompletionTriggerKind, CancellationToken, TextDocument, Range, Position, CompletionList } from 'vscode';
 
 export default class OmniSharpCompletionItemProvider extends AbstractSupport implements CompletionItemProvider {
 
@@ -17,7 +17,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
         ' ', '{', '}', '[', ']', '(', ')', '.', ',', ':',
         ';', '+', '-', '*', '/', '%', '&', '|', '^', '!',
         '~', '=', '<', '>', '?', '@', '#', '\'', '\"', '\\'];
-    
+
     private static CommitCharactersWithoutSpace = [
         '{', '}', '[', ']', '(', ')', '.', ',', ':',
         ';', '+', '-', '*', '/', '%', '&', '|', '^', '!',
@@ -36,8 +36,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
         req.WantDocumentationForEveryCompletionResult = true;
         req.WantKind = true;
         req.WantReturnType = true;
-        if (context.triggerKind == CompletionTriggerKind.TriggerCharacter)
-        {
+        if (context.triggerKind == CompletionTriggerKind.TriggerCharacter) {
             req.TriggerCharacter = context.triggerCharacter;
         }
 
@@ -48,7 +47,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
             }
 
             let result: CompletionItem[] = [];
-            let completions: { [c: string]: CompletionItem[] } = Object.create(null);
+            let completions: { [c: string]: { items: CompletionItem[], preselect : boolean } } = Object.create(null);
 
             // transform AutoCompleteResponse to CompletionItem and
             // group by code snippet
@@ -67,20 +66,23 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
                     ? OmniSharpCompletionItemProvider.CommitCharactersWithoutSpace
                     : OmniSharpCompletionItemProvider.AllCommitCharacters;
 
-                let array = completions[completion.label];
-                if (!array) {
-                    completions[completion.label] = [completion];
+                completion.preselect = response.Preselect;
+
+                let completionSet = completions[completion.label];
+                if (!completionSet) {
+                    completions[completion.label] = { items: [completion], preselect: completion.preselect };
                 }
                 else {
-                    array.push(completion);
+                    completionSet.preselect = completionSet.preselect  || completion.preselect;
+                    completionSet.items.push(completion);
                 }
             }
 
             // per suggestion group, select on and indicate overloads
             for (let key in completions) {
 
-                let suggestion = completions[key][0],
-                    overloadCount = completions[key].length - 1;
+                let suggestion = completions[key].items[0],
+                    overloadCount = completions[key].items.length - 1;
 
                 if (overloadCount === 0) {
                     // remove non overloaded items
@@ -90,8 +92,9 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
                 else {
                     // indicate that there is more
                     suggestion.detail = `${suggestion.detail} (+ ${overloadCount} overload(s))`;
+                    suggestion.preselect = completions[key].preselect;
                 }
-                
+
                 result.push(suggestion);
             }
 

@@ -15,6 +15,9 @@
 
 * Added support to configure the default *.sln file loaded when opening a project with multiple *.sln files in the root. _(Contributed by [@janaka](https://github.com/janaka))_ (PR: [#2053](https://github.com/OmniSharp/omnisharp-vscode/pull/2053)) 
 
+* Added support for tracking opening, closing and changing of virtual documents that don't exist on disk. (PR: [#2436](https://github.com/OmniSharp/omnisharp-vscode/pull/2436)) _(Contributed by [@NTaylorMullen](https://github.com/NTaylorMullen))_
+
+* Enabled IDE features for .cs files that are not part of a project. (PR: [#2471](https://github.com/OmniSharp/omnisharp-vscode/pull/2471), [omnisharp-roslyn#1252](https://github.com/OmniSharp/omnisharp-roslyn/pull/1252))
 
 #### Misc
 
@@ -22,12 +25,18 @@
 
 #### Editor
 
-* Improved diagnostics by refreshing them when the active editor changes or the current window is focused. (PR: [#2317](https://github.com/OmniSharp/omnisharp-vscode/pull/2317)) _(Contributed by [@SirIntruder](https://github.com/SirIntruder))
+* Improved diagnostics by refreshing them when the active editor changes or the current window is focused. (PR: [#2317](https://github.com/OmniSharp/omnisharp-vscode/pull/2317)) _(Contributed by [@SirIntruder](https://github.com/SirIntruder))_
+
+* Improved completions by adding the preselect property so the best match is preselected. (PR: [#2388](https://github.com/OmniSharp/omnisharp-vscode/pull/2388))
 
 #### Testing
 
 * Added test execution output to the output of the Run/Debug Test CodeLens. (PR: [#2337](https://github.com/OmniSharp/omnisharp-vscode/pull/2337), [#2343](https://github.com/OmniSharp/omnisharp-vscode/pull/2343), [omnisharp-roslyn#1203](https://github.com/OmniSharp/omnisharp-roslyn/pull/1203))
 * Fixed a bug where a debug session could not be started and duplicate logs were displayed after a previous one failed due to build failure. (PR: [#2405](https://github.com/OmniSharp/omnisharp-vscode/pull/2405), [omnisharp-roslyn#1239](https://github.com/OmniSharp/omnisharp-roslyn/pull/1239)) 
+
+#### Options
+
+* Added `monoPath` option to use the mono installation at the specified path when the `useGlobalMono` is set to "always" or "auto". (PR: [#2425](https://github.com/OmniSharp/omnisharp-vscode/pull/2425)) _(Contributed by [@shana](https://github.com/shana))_
 
 ## 1.15.2 (May 15, 1018)
 
