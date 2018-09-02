@@ -49,7 +49,9 @@ suite('OptionStream', () => {
             options.showReferencesCodeLens.should.equal(true);
             options.showTestsCodeLens.should.equal(true);
             options.disableCodeActions.should.equal(false);
-            expect(options.defaultLaunchSolution).to.be.undefined;
+            options.minFindSymbolsFilterLength.should.equal(0);
+            options.maxFindSymbolsItems.should.equal(-1);
+                expect(options.defaultLaunchSolution).to.be.undefined;
         });
 
         test('Gives the changed option when the omnisharp config changes', () => {

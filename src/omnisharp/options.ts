@@ -20,6 +20,8 @@ export class Options {
         public showTestsCodeLens: boolean,
         public disableCodeActions: boolean,
         public disableMSBuildDiagnosticWarning: boolean,
+        public minFindSymbolsFilterLength: number,
+        public maxFindSymbolsItems: number,
         public defaultLaunchSolution?: string,
         public monoPath?: string) { }
 
@@ -63,6 +65,9 @@ export class Options {
 
         const disableMSBuildDiagnosticWarning = omnisharpConfig.get<boolean>('disableMSBuildDiagnosticWarning', false);
 
+        const minFindSymbolsFilterLength = omnisharpConfig.get<number>('minFindSymbolsFilterLength', 0);
+        const maxFindSymbolsItems = omnisharpConfig.get<number>('maxFindSymbolsItems', 0); // <=0 means 'Unlimited'
+
         return new Options(
             path, 
             useGlobalMono, 
@@ -77,6 +82,8 @@ export class Options {
             showTestsCodeLens,
             disableCodeActions,
             disableMSBuildDiagnosticWarning,
+            minFindSymbolsFilterLength,
+            maxFindSymbolsItems,
             defaultLaunchSolution,
             monoPath,
         );
