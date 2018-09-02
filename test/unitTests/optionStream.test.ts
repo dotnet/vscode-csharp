@@ -50,7 +50,7 @@ suite('OptionStream', () => {
             options.showTestsCodeLens.should.equal(true);
             options.disableCodeActions.should.equal(false);
             options.minFindSymbolsFilterLength.should.equal(0);
-            options.maxFindSymbolsItems.should.equal(-1);
+            options.maxFindSymbolsItems.should.equal(0);
                 expect(options.defaultLaunchSolution).to.be.undefined;
         });
 
