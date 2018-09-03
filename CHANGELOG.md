@@ -17,6 +17,8 @@
 
 * Added support for tracking opening, closing and changing of virtual documents that don't exist on disk. (PR: [#2436](https://github.com/OmniSharp/omnisharp-vscode/pull/2436)) _(Contributed by [@NTaylorMullen](https://github.com/NTaylorMullen))_
 
+* Enabled IDE features for .cs files that are not part of a project. (PR: [#2471](https://github.com/OmniSharp/omnisharp-vscode/pull/2471), [omnisharp-roslyn#1252](https://github.com/OmniSharp/omnisharp-roslyn/pull/1252))
+
 #### Misc
 
 * Added a prompt to "Restart OmniSharp" when there is a change in omnisharp "path", "useGlobalMono" or "waitForDebugger" settings.(PR: [#2316](https://github.com/OmniSharp/omnisharp-vscode/pull/2316))
@@ -24,6 +26,8 @@
 #### Editor
 
 * Improved diagnostics by refreshing them when the active editor changes or the current window is focused. (PR: [#2317](https://github.com/OmniSharp/omnisharp-vscode/pull/2317)) _(Contributed by [@SirIntruder](https://github.com/SirIntruder))_
+
+* Improved completions by adding the preselect property so the best match is preselected. (PR: [#2388](https://github.com/OmniSharp/omnisharp-vscode/pull/2388))
 
 #### Testing
 
@@ -33,6 +37,14 @@
 #### Options
 
 * Added `monoPath` option to use the mono installation at the specified path when the `useGlobalMono` is set to "always" or "auto". (PR: [#2425](https://github.com/OmniSharp/omnisharp-vscode/pull/2425)) _(Contributed by [@shana](https://github.com/shana))_
+
+#### Debugger
+
+* Added support for launching with environment variables stored in a seperate file from launch.json via a new `envFile` option. (PR: [#2462](https://github.com/OmniSharp/omnisharp-vscode/pull/2462), [#1944](https://github.com/OmniSharp/omnisharp-vscode/issues/1944)) _(Contributed by [@SebastianPfliegel](https://github.com/SebastianPfliegel))_
+* Fixed editting breakpoint conditions while debugging with recent versions of VS Code. ([#2428](https://github.com/OmniSharp/omnisharp-vscode/issues/2428))
+* Added support for hit count breakpoint conditions. ([#895](https://github.com/OmniSharp/omnisharp-vscode/issues/895))
+* Support the `applicationUrl` property in launchSettings.json. ([#2296](https://github.com/OmniSharp/omnisharp-vscode/issues/2296))
+* Improve the error message when attaching to privileged processes on Linux and macOS. ([#477](https://github.com/OmniSharp/omnisharp-vscode/issues/477))
 
 ## 1.15.2 (May 15, 1018)
 
