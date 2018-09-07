@@ -19,6 +19,7 @@ import { EventStream } from '../EventStream';
 import { PlatformInformation } from '../platform';
 import CompositeDisposable from '../CompositeDisposable';
 import OptionProvider from '../observers/OptionProvider';
+import generateBugReport from './generateBugReport';
 
 export default function registerCommands(server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionProvider: OptionProvider): CompositeDisposable {
     let disposable = new CompositeDisposable();
@@ -46,6 +47,7 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
     // Register command for adapter executable command.
     disposable.add(vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream)));
     disposable.add(vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream)));
+    disposable.add(vscode.commands.registerCommand('csharp.fileBugReport', async () => generateBugReport()));
 
     return new CompositeDisposable(disposable);
 }
