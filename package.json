@@ -69,6 +69,7 @@
   },
   "dependencies": {
     "async-file": "2.0.2",
+    "child-process-promise": "^2.2.1",
     "fs-extra": "5.0.0",
     "http-proxy-agent": "2.1.0",
     "https-proxy-agent": "2.2.1",

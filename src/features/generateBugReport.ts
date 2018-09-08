@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
-import cp = require("child_process");
+import { getDotnetInfo } from "./getdotnetInfo";
 
 const extensionId = 'ms-vscode.csharp';
 const extension = vscode.extensions.getExtension(extensionId);
@@ -18,7 +18,7 @@ let extensions = vscode.extensions.all
 extensions.sort(sortExtensions);
 
 export default async function generateBugReport() {
-    const dotnetInfo = cp.execSync("dotnet --info");
+    const dotnetInfo = await getDotnetInfo();
     
     const body = encodeURIComponent(`## Issue Description ##
 ## Steps to Reproduce ##
