@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
-import { getDotnetInfo } from "./getdotnetInfo";
+import { getDotnetInfo, getMonoVersion } from "./getdotnetInfo";
 
 const extensionId = 'ms-vscode.csharp';
 const extension = vscode.extensions.getExtension(extensionId);
@@ -17,7 +17,7 @@ let extensions = vscode.extensions.all
 
 extensions.sort(sortExtensions);
 
-export default async function generateBugReport() {
+export default async function generateBugReport(isValidPlatformForMono: boolean) {
     const dotnetInfo = await getDotnetInfo();
     
     const body = encodeURIComponent(`## Issue Description ##
@@ -31,6 +31,7 @@ export default async function generateBugReport() {
 
 VSCode version: ${vscode.version}
 C# Extension: ${extensionVersion}
+${getMonoIfPlatformValid(isValidPlatformForMono)}
 
 <details><summary>Dotnet Info</summary>
 ${dotnetInfo}</details>
@@ -80,5 +81,13 @@ ${tableHeader}\n${table};
 `;
 
     return extensionTable;
+}
+
+function getMonoIfPlatformValid(isValidPlatformForMono: boolean): string{
+    if (isValidPlatformForMono) {
+        return `Mono: ${getMonoVersion()}`;
+    }
+    
+    return "";
 }
 

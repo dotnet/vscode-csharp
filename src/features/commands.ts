@@ -47,7 +47,7 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
     // Register command for adapter executable command.
     disposable.add(vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream)));
     disposable.add(vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream)));
-    disposable.add(vscode.commands.registerCommand('csharp.fileBugReport', async () => generateBugReport()));
+    disposable.add(vscode.commands.registerCommand('csharp.fileBugReport', async () => generateBugReport(platformInfo.isValidPlatformForMono())));
 
     return new CompositeDisposable(disposable);
 }
