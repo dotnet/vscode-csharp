@@ -74,7 +74,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
             localDisposables.add(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new FormatProvider(server), '}', ';'));
         }
         localDisposables.add(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionItemProvider(server), '.', ' '));
-        localDisposables.add(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server)));
+        localDisposables.add(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server, optionProvider)));
         localDisposables.add(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server), '(', ','));
         const codeActionProvider = new CodeActionProvider(server, optionProvider);
         localDisposables.add(codeActionProvider);

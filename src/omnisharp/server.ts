@@ -306,14 +306,6 @@ export class OmniSharpServer {
             args.push('--debug');
         }
 
-        // Only add arguments for values that are different from defaults and are meaningful
-        if (options.minFindSymbolsFilterLength > 0) {
-            args.push(`FindSymbols:MinFilterLength=${options.minFindSymbolsFilterLength.toString()}`);
-        }
-        if (options.maxFindSymbolsItems > 0) {
-            args.push(`FindSymbols:MaxItemsToReturn=${options.maxFindSymbolsItems.toString()}`);
-        }
-
         let launchInfo: LaunchInfo;
         try {
             let extensionPath = utils.getExtensionPath();

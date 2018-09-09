@@ -4,6 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import AbstractSupport from './abstractProvider';
+import { OmniSharpServer } from '../omnisharp/server';
+import OptionProvider from '../observers/OptionProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import {toRange} from '../omnisharp/typeConvertion';
@@ -12,9 +14,14 @@ import {CancellationToken, Uri, WorkspaceSymbolProvider, SymbolInformation, Symb
 
 export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport implements WorkspaceSymbolProvider {
 
+    constructor(server: OmniSharpServer, private optionProvider: OptionProvider) {
+        super(server);
+    }
+
     public async provideWorkspaceSymbols(search: string, token: CancellationToken): Promise<SymbolInformation[]> {
 
-        return serverUtils.findSymbols(this._server, { Filter: search, FileName: '' }, token).then(res => {
+        let options = this.optionProvider.GetLatestOptions();
+        return serverUtils.findSymbols(this._server, { Filter: search, MinFilterLength: options.minFindSymbolsFilterLength, MaxItemsToReturn: options.maxFindSymbolsItems, FileName: '' }, token).then(res => {
             if (res && Array.isArray(res.QuickFixes)) {
                 return res.QuickFixes.map(OmnisharpWorkspaceSymbolProvider._asSymbolInformation);
             }
