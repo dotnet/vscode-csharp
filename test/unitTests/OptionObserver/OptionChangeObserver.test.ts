@@ -41,7 +41,7 @@ suite("OmniSharpConfigChangeObserver", () => {
     [
         { config: "omnisharp", section: "path", value: "somePath" },
         { config: "omnisharp", section: "waitForDebugger", value: true },
-        { config: "omnisharp", section: "minFindSymbolsFilterLength", value: 1 },
+        { config: "omnisharp", section: "minFindSymbolsFilterLength", value: 2 },
         { config: "omnisharp", section: "maxFindSymbolsItems", value: 10 },
         { config: "omnisharp", section: "useGlobalMono", value: "always" }
 

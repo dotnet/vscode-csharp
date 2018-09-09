@@ -588,12 +588,12 @@
         },
         "omnisharp.minFindSymbolsFilterLength": {
           "type": "number",
-          "default": 0,
+          "default": 1,
           "description": "The minimum number of characters to enter before 'Go to Symbol in Workspace' operation shows any results."
         },
         "omnisharp.maxFindSymbolsItems": {
           "type": "number",
-          "default": 0,
+          "default": 1000,
           "description": "The maximum number of items that 'Go to Symbol in Workspace' operation can show. The value of zero or less indicates that no limit is applied."
         },
         "omnisharp.disableMSBuildDiagnosticWarning": {

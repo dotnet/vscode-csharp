@@ -49,8 +49,8 @@ suite('OptionStream', () => {
             options.showReferencesCodeLens.should.equal(true);
             options.showTestsCodeLens.should.equal(true);
             options.disableCodeActions.should.equal(false);
-            options.minFindSymbolsFilterLength.should.equal(0);
-            options.maxFindSymbolsItems.should.equal(0);
+            options.minFindSymbolsFilterLength.should.equal(1);
+            options.maxFindSymbolsItems.should.equal(1000);
                 expect(options.defaultLaunchSolution).to.be.undefined;
         });
 
