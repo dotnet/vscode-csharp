@@ -41,8 +41,8 @@ suite("OmniSharpConfigChangeObserver", () => {
     [
         { config: "omnisharp", section: "path", value: "somePath" },
         { config: "omnisharp", section: "waitForDebugger", value: true },
-        { config: "omnisharp", section: "minFindSymbolsFilterLength", value: 2 },
-        { config: "omnisharp", section: "maxFindSymbolsItems", value: 10 },
+        { config: "omnisharp", section: "minFindSymbolsFilterLength", value: 5 },
+        { config: "omnisharp", section: "maxFindSymbolsItems", value: 100 },
         { config: "omnisharp", section: "useGlobalMono", value: "always" }
 
     ].forEach(elem => {

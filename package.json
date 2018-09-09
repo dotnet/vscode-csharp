@@ -588,7 +588,7 @@
         },
         "omnisharp.minFindSymbolsFilterLength": {
           "type": "number",
-          "default": 1,
+          "default": 0,
           "description": "The minimum number of characters to enter before 'Go to Symbol in Workspace' operation shows any results."
         },
         "omnisharp.maxFindSymbolsItems": {
