@@ -3,24 +3,21 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from "vscode";
-import { execChildProcess } from "../common";
+import { vscode } from "../vscodeAdapter";
+import { Extension } from "../vscodeAdapter";
+import { CSharpExtensionId } from "../constants/CSharpExtensionId";
+import { EventStream } from "../EventStream";
+import { ReportIssue } from "../omnisharp/loggingEvents";
 
-const extensionId = 'ms-vscode.csharp';
-const extension = vscode.extensions.getExtension(extensionId);
-const extensionVersion = extension.packageJSON.version;
 const issuesUrl = "https://github.com/OmniSharp/omnisharp-vscode/issues/new";
-const queryStringPrefix: string = "?";
 
-let extensions = vscode.extensions.all
-    .filter(extension => extension.packageJSON.isBuiltin === false);
+export default async function generateBugReport(vscode: vscode, eventStream: EventStream, execChildProcess:(command: string, workingDirectory?: string) => Promise<string>, isValidPlatformForMono: boolean) {
+    const dotnetInfo = await getDotnetInfo(execChildProcess);
+    const monoInfo = await getMonoIfPlatformValid(execChildProcess, isValidPlatformForMono);
+    let extensions = getInstalledExtensions(vscode);
+    let csharpExtVersion = getCsharpExtensionVersion(vscode);
 
-extensions.sort(sortExtensions);
-
-export default async function generateBugReport(isValidPlatformForMono: boolean) {
-    const dotnetInfo = await getDotnetInfo();
-    
-    const body = encodeURIComponent(`## Issue Description ##
+    const body = `## Issue Description ##
 ## Steps to Reproduce ##
 
 ## Expected Behavior ##
@@ -30,8 +27,8 @@ export default async function generateBugReport(isValidPlatformForMono: boolean)
 ## Environment Information ##
 
 VSCode version: ${vscode.version}
-C# Extension: ${extensionVersion}
-${getMonoIfPlatformValid(isValidPlatformForMono)}
+C# Extension: ${csharpExtVersion}
+${monoInfo}
 
 <details><summary>Dotnet Info</summary>
 ${dotnetInfo}</details>
@@ -46,14 +43,12 @@ Post the output from Output-->C# here
 <details><summary>Visual Studio Code Extensions</summary>
 ${generateExtensionTable(extensions)}
 </details>
-`);
+`;
 
-    const encodedBody = encodeURIComponent(body);
-    const fullUrl = `${issuesUrl}${queryStringPrefix}body=${encodedBody}`;
-    vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(fullUrl));
+    eventStream.post(new ReportIssue(issuesUrl, body));
 }
 
-function sortExtensions(a: vscode.Extension<any>, b: vscode.Extension<any>): number {
+function sortExtensions(a: Extension<any>, b: Extension<any>): number {
 
     if (a.packageJSON.name.toLowerCase() < b.packageJSON.name.toLowerCase()) {
         return -1;
@@ -64,7 +59,7 @@ function sortExtensions(a: vscode.Extension<any>, b: vscode.Extension<any>): num
     return 0;
 }
 
-function generateExtensionTable(extensions: vscode.Extension<any>[]) {
+function generateExtensionTable(extensions: Extension<any>[]) {
     if (extensions.length <= 0) {
         return "none";
     }
@@ -83,18 +78,30 @@ ${tableHeader}\n${table};
     return extensionTable;
 }
 
-function getMonoIfPlatformValid(isValidPlatformForMono: boolean): string{
+async function getMonoIfPlatformValid(execChildProcess:(command: string, workingDirectory?: string) =>Promise<string>, isValidPlatformForMono: boolean): Promise<string>{
     if (isValidPlatformForMono) {
-        return `Mono: ${getMonoVersion()}`;
+        return `Mono: ${await getMonoVersion(execChildProcess)}`;
     }
     
     return "";
 }
 
-async function getDotnetInfo(): Promise<string> {
+async function getDotnetInfo(execChildProcess:(command: string, workingDirectory?: string) =>Promise<string>): Promise<string> {
     return execChildProcess("dotnet --info", process.cwd());
 }
 
-async function getMonoVersion(): Promise<string>{
-    return execChildProcess("dotnet --info", process.cwd());
+async function getMonoVersion(execChildProcess:(command: string, workingDirectory?: string) =>Promise<string>): Promise<string>{
+    return execChildProcess("mono --version", process.cwd());
 }
+
+function getInstalledExtensions(vscode: vscode) {
+    let extensions = vscode.extensions.all
+    .filter(extension => extension.packageJSON.isBuiltin === false);
+
+    return extensions.sort(sortExtensions);
+}
+
+function getCsharpExtensionVersion(vscode: vscode): string{
+    const extension = vscode.extensions.getExtension(CSharpExtensionId);
+    return extension.packageJSON.version;
+} 

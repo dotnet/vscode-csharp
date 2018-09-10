@@ -645,7 +645,7 @@
         "category": "CSharp"
       },
       {
-        "command": "csharp.fileBugReport",
+        "command": "csharp.reportIssue",
         "title": "Upload bug report to github",
         "category": "CSharp"
       }

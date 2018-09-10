@@ -35,10 +35,12 @@ import DotNetTestChannelObserver from './observers/DotnetTestChannelObserver';
 import DotNetTestLoggerObserver from './observers/DotnetTestLoggerObserver';
 import { ShowOmniSharpConfigChangePrompt } from './observers/OptionChangeObserver';
 import createOptionStream from './observables/CreateOptionStream';
+import { CSharpExtensionId } from './constants/CSharpExtensionId';
+import { ReportIssueObserver } from './observers/ReportIssueObserver';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
-    const extensionId = 'ms-vscode.csharp';
+    const extensionId = CSharpExtensionId;
     const extension = vscode.extensions.getExtension<CSharpExtensionExports>(extensionId);
     const extensionVersion = extension.packageJSON.version;
     const aiKey = extension.packageJSON.contributes.debuggers[0].aiKey;
@@ -90,6 +92,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     let projectStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left));
     let projectStatusBarObserver = new ProjectStatusBarObserver(projectStatusBar);
     eventStream.subscribe(projectStatusBarObserver.post);
+
+    let reportIssueObserver = new ReportIssueObserver(vscode);
+    eventStream.subscribe(reportIssueObserver.post);
 
     const debugMode = false;
     if (debugMode) {
