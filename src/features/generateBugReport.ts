@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
-import { getDotnetInfo, getMonoVersion } from "./getdotnetInfo";
+import { execChildProcess } from "../common";
 
 const extensionId = 'ms-vscode.csharp';
 const extension = vscode.extensions.getExtension(extensionId);
@@ -91,3 +91,10 @@ function getMonoIfPlatformValid(isValidPlatformForMono: boolean): string{
     return "";
 }
 
+async function getDotnetInfo(): Promise<string> {
+    return execChildProcess("dotnet --info", process.cwd());
+}
+
+async function getMonoVersion(): Promise<string>{
+    return execChildProcess("dotnet --info", process.cwd());
+}
