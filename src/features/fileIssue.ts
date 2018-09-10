@@ -11,7 +11,7 @@ import { ReportIssue } from "../omnisharp/loggingEvents";
 
 const issuesUrl = "https://github.com/OmniSharp/omnisharp-vscode/issues/new";
 
-export default async function generateBugReport(vscode: vscode, eventStream: EventStream, execChildProcess:(command: string, workingDirectory?: string) => Promise<string>, isValidPlatformForMono: boolean) {
+export default async function fileIssue(vscode: vscode, eventStream: EventStream, execChildProcess:(command: string, workingDirectory?: string) => Promise<string>, isValidPlatformForMono: boolean) {
     const dotnetInfo = await getDotnetInfo(execChildProcess);
     const monoInfo = await getMonoIfPlatformValid(execChildProcess, isValidPlatformForMono);
     let extensions = getInstalledExtensions(vscode);
