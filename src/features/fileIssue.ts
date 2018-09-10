@@ -65,11 +65,7 @@ function generateExtensionTable(extensions: Extension<any>[]) {
     }
 
     const tableHeader = `|Extension|Author|Version|\n|---|---|---|`;
-    const table = extensions.map((e) => {
-        if (e.packageJSON.isBuiltin === false) {
-            return `|${e.packageJSON.name}|${e.packageJSON.publisher}|${e.packageJSON.version}|`;
-        }
-    }).join("\n");
+    const table = extensions.map((e) => `|${e.packageJSON.name}|${e.packageJSON.publisher}|${e.packageJSON.version}|`).join("\n");
 
     const extensionTable = `
 ${tableHeader}\n${table};
