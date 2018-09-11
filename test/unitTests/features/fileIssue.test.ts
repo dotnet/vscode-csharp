@@ -111,7 +111,7 @@ suite("File Issue", () => {
         expect(event.body).to.contain(monoInfo);
     });
 
-    test("mono information is obtained when it is not a valid mono platform", async () => {
+    test("mono information is not obtained when it is not a valid mono platform", async () => {
         await fileIssue(vscode, eventStream, execChildProcess, false);
         expect(execCommands).to.not.contain("mono --version");
         let event = <ReportIssue>eventBus.getEvents()[0];
@@ -127,5 +127,11 @@ suite("File Issue", () => {
         expect(event.body).to.not.contain(extension1.packageJSON.name);
         expect(event.body).to.not.contain(extension1.packageJSON.publisher);
         expect(event.body).to.not.contain(extension1.packageJSON.version);
+    });
+
+    test("issuesUrl is put into the event url", async() => {
+        await fileIssue(vscode, eventStream, execChildProcess, isValidForMono);
+        let event = <ReportIssue>eventBus.getEvents()[0];
+        expect(event.url).to.be.equal("https://github.com/OmniSharp/omnisharp-vscode/issues/new");
     });
 });
