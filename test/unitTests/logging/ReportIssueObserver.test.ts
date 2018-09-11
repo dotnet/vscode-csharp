@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ReportIssueObserver } from "../../../src/observers/ReportIssueObserver";
-import { vscode, Uri } from "../../../src/vscodeAdapter";
+import { vscode } from "../../../src/vscodeAdapter";
 import { getFakeVsCode } from "../testAssets/Fakes";
 import { ReportIssue } from "../../../src/omnisharp/loggingEvents";
 import { expect } from "chai";
@@ -38,7 +38,7 @@ suite("ReportIssueObserver", () => {
         expect(commands).to.be.deep.equal(["vscode.open"]);
     });
 
-    test("Url appended with the query string prefix and the encoded body is passed to the rest parameter in executeCommand via vscode.uri.parse ", () => {
+    test("Url appended with the query string prefix and the body is passed to the rest parameter in executeCommand via vscode.uri.parse ", () => {
         let event = new ReportIssue(url, body);
         observer.post(event);
         expect(valueToBeParsed).to.be.equal(`${url}?body=${body}`);

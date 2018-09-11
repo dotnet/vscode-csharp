@@ -17,14 +17,22 @@ export default async function fileIssue(vscode: vscode, eventStream: EventStream
     let extensions = getInstalledExtensions(vscode);
     let csharpExtVersion = getCsharpExtensionVersion(vscode);
 
-    const body = `## Issue Description ##
+    const body = encodeURIComponent(`## Issue Description ##
 ## Steps to Reproduce ##
 
 ## Expected Behavior ##
 
 ## Actual Behavior ##
 
-## Environment Information ##
+## Logs ##
+
+### OmniSharp log ###
+<details>Post the output from Output-->OmniSharp log here</details>
+
+### C# log ###
+<details>Post the output from Output-->C# here</details>
+
+## Environment information ##
 
 VSCode version: ${vscode.version}
 C# Extension: ${csharpExtVersion}
@@ -32,18 +40,10 @@ ${monoInfo}
 
 <details><summary>Dotnet Info</summary>
 ${dotnetInfo}</details>
-
-## Other relevant information ##
-<details><summary>Omnisharp log</summary>
-Post the output from Output-->OmniSharp log here
-</details>
-<details><summary>C# log</summary>
-Post the output from Output-->C# here
-</details>
 <details><summary>Visual Studio Code Extensions</summary>
 ${generateExtensionTable(extensions)}
 </details>
-`;
+`);
 
     eventStream.post(new ReportIssue(issuesUrl, body));
 }

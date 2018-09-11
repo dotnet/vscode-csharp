@@ -88,13 +88,13 @@ suite("File Issue", () => {
     test("The body contains the vscode version", async () => {
         await fileIssue(vscode, eventStream, execChildProcess, isValidForMono);
         let event = <ReportIssue>eventBus.getEvents()[0];
-        expect(event.body).to.contain(`VSCode version: ${vscodeVersion}`);
+        expect(event.body).to.contain(encodeURIComponent(`VSCode version: ${vscodeVersion}`));
     });
 
     test("The body contains the csharp extension version", async () => {
         await fileIssue(vscode, eventStream, execChildProcess, isValidForMono);
         let event = <ReportIssue>eventBus.getEvents()[0];
-        expect(event.body).to.contain(`C# Extension: ${csharpExtVersion}`);
+        expect(event.body).to.contain(encodeURIComponent(`C# Extension: ${csharpExtVersion}`));
     });
 
     test("dotnet info is obtained and put into the body", async() => {
