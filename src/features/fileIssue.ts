@@ -34,8 +34,8 @@ export default async function fileIssue(vscode: vscode, eventStream: EventStream
 
 ## Environment information ##
 
-VSCode version: ${vscode.version}
-C# Extension: ${csharpExtVersion}
+**VSCode version**: ${vscode.version}
+**C# Extension**: ${csharpExtVersion}
 ${monoInfo}
 
 <details><summary>Dotnet Info</summary>
@@ -76,7 +76,7 @@ ${tableHeader}\n${table};
 
 async function getMonoIfPlatformValid(execChildProcess:(command: string, workingDirectory?: string) =>Promise<string>, isValidPlatformForMono: boolean): Promise<string>{
     if (isValidPlatformForMono) {
-        return `Mono: ${await getMonoVersion(execChildProcess)}`;
+        return `**Mono Info**: ${await getMonoVersion(execChildProcess)}`;
     }
     
     return "";
