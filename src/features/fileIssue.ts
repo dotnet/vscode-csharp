@@ -11,39 +11,39 @@ import { ReportIssue } from "../omnisharp/loggingEvents";
 
 const issuesUrl = "https://github.com/OmniSharp/omnisharp-vscode/issues/new";
 
-export default async function fileIssue(vscode: vscode, eventStream: EventStream, execChildProcess:(command: string, workingDirectory?: string) => Promise<string>, isValidPlatformForMono: boolean) {
+export default async function fileIssue(vscode: vscode, eventStream: EventStream, execChildProcess: (command: string, workingDirectory?: string) => Promise<string>, isValidPlatformForMono: boolean) {
     const dotnetInfo = await getDotnetInfo(execChildProcess);
     const monoInfo = await getMonoIfPlatformValid(execChildProcess, isValidPlatformForMono);
     let extensions = getInstalledExtensions(vscode);
     let csharpExtVersion = getCsharpExtensionVersion(vscode);
 
-    const body = `## Issue Description ##
+    const body = encodeURIComponent(`## Issue Description ##
 ## Steps to Reproduce ##
 
-## Expected Behavior ##
+## Expected Behaviour ##
 
-## Actual Behavior ##
+## Actual Behaviour ##
 
-## Environment Information ##
+## Logs ##
 
-VSCode version: ${vscode.version}
-C# Extension: ${csharpExtVersion}
+### OmniSharp log ###
+<details>Post the output from Output-->OmniSharp log here</details>
+
+### C# log ###
+<details>Post the output from Output-->C# here</details>
+
+## Environment information ##
+
+**VSCode version**: ${vscode.version}
+**C# Extension**: ${csharpExtVersion}
+
 ${monoInfo}
-
-<details><summary>Dotnet Info</summary>
+<details><summary>Dotnet Information</summary>
 ${dotnetInfo}</details>
-
-## Other relevant information ##
-<details><summary>Omnisharp log</summary>
-Post the output from Output-->OmniSharp log here
-</details>
-<details><summary>C# log</summary>
-Post the output from Output-->C# here
-</details>
 <details><summary>Visual Studio Code Extensions</summary>
 ${generateExtensionTable(extensions)}
 </details>
-`;
+`);
 
     eventStream.post(new ReportIssue(issuesUrl, body));
 }
@@ -74,30 +74,39 @@ ${tableHeader}\n${table};
     return extensionTable;
 }
 
-async function getMonoIfPlatformValid(execChildProcess:(command: string, workingDirectory?: string) =>Promise<string>, isValidPlatformForMono: boolean): Promise<string>{
+async function getMonoIfPlatformValid(execChildProcess: (command: string, workingDirectory?: string) => Promise<string>, isValidPlatformForMono: boolean): Promise<string> {
     if (isValidPlatformForMono) {
-        return `Mono: ${await getMonoVersion(execChildProcess)}`;
+        let monoInfo: string;
+        try {
+            monoInfo = await getMonoVersion(execChildProcess);
+        }
+        catch (error) {
+            monoInfo = "A valid mono installation could not be found. Using the built-in mono"
+        }
+
+        return `<details><summary>Mono Information</summary>
+        ${monoInfo}</details>`;
     }
-    
+
     return "";
 }
 
-async function getDotnetInfo(execChildProcess:(command: string, workingDirectory?: string) =>Promise<string>): Promise<string> {
+async function getDotnetInfo(execChildProcess: (command: string, workingDirectory?: string) => Promise<string>): Promise<string> {
     return execChildProcess("dotnet --info", process.cwd());
 }
 
-async function getMonoVersion(execChildProcess:(command: string, workingDirectory?: string) =>Promise<string>): Promise<string>{
-    return execChildProcess("mono --version", process.cwd());
+async function getMonoVersion(execChildProcess: (command: string, workingDirectory?: string) => Promise<string>): Promise<string> {
+        return execChildProcess("mono --version", process.cwd());
 }
 
 function getInstalledExtensions(vscode: vscode) {
     let extensions = vscode.extensions.all
-    .filter(extension => extension.packageJSON.isBuiltin === false);
+        .filter(extension => extension.packageJSON.isBuiltin === false);
 
     return extensions.sort(sortExtensions);
 }
 
-function getCsharpExtensionVersion(vscode: vscode): string{
+function getCsharpExtensionVersion(vscode: vscode): string {
     const extension = vscode.extensions.getExtension(CSharpExtensionId);
     return extension.packageJSON.version;
 } 
