@@ -118,7 +118,7 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
                 config.env = parsedFile.Env;
             }
             catch (e) {
-                throw new Error("Can't parse envFile " + envFile);
+                throw new Error(`Can't parse envFile ${envFile} because of ${e}`);
             }
         }
 
