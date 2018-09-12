@@ -33,7 +33,5 @@ export function ShowOmniSharpConfigChangePrompt(optionObservable: Observable<Opt
 function hasChanged(oldOptions: Options, newOptions: Options): boolean {
     return (oldOptions.path != newOptions.path ||
         oldOptions.useGlobalMono != newOptions.useGlobalMono ||
-        oldOptions.minFindSymbolsFilterLength != newOptions.minFindSymbolsFilterLength ||
-        oldOptions.maxFindSymbolsItems != newOptions.maxFindSymbolsItems ||
         oldOptions.waitForDebugger != newOptions.waitForDebugger);
 }

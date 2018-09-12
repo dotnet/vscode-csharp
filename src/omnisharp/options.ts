@@ -66,7 +66,7 @@ export class Options {
         const disableMSBuildDiagnosticWarning = omnisharpConfig.get<boolean>('disableMSBuildDiagnosticWarning', false);
 
         const minFindSymbolsFilterLength = omnisharpConfig.get<number>('minFindSymbolsFilterLength', 0);
-        const maxFindSymbolsItems = omnisharpConfig.get<number>('maxFindSymbolsItems', 1000); // <=0 means 'Unlimited'
+        const maxFindSymbolsItems = omnisharpConfig.get<number>('maxFindSymbolsItems', 1000);   // The limit is applied only when this setting is set to a number greater than zero
 
         return new Options(
             path, 
