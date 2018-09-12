@@ -594,7 +594,7 @@
         "omnisharp.maxFindSymbolsItems": {
           "type": "number",
           "default": 1000,
-          "description": "The maximum number of items that 'Go to Symbol in Workspace' operation can show. The value of zero or less indicates that no limit is applied."
+          "description": "The maximum number of items that 'Go to Symbol in Workspace' operation can show. The limit is applied only when a positive number is specified here."
         },
         "omnisharp.disableMSBuildDiagnosticWarning": {
           "type": "boolean",
