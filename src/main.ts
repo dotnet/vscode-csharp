@@ -36,7 +36,7 @@ import DotNetTestLoggerObserver from './observers/DotnetTestLoggerObserver';
 import { ShowOmniSharpConfigChangePrompt } from './observers/OptionChangeObserver';
 import createOptionStream from './observables/CreateOptionStream';
 import { CSharpExtensionId } from './constants/CSharpExtensionId';
-import { ReportIssueObserver } from './observers/ReportIssueObserver';
+import { OpenURLObserver } from './observers/ReportIssueObserver';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -93,8 +93,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     let projectStatusBarObserver = new ProjectStatusBarObserver(projectStatusBar);
     eventStream.subscribe(projectStatusBarObserver.post);
 
-    let reportIssueObserver = new ReportIssueObserver(vscode);
-    eventStream.subscribe(reportIssueObserver.post);
+    let openURLObserver = new OpenURLObserver(vscode);
+    eventStream.subscribe(openURLObserver.post);
 
     const debugMode = false;
     if (debugMode) {

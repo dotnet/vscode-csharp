@@ -150,8 +150,8 @@ export class DocumentSynchronizationFailure implements BaseEvent {
     constructor(public documentPath: string, public errorMessage: string) { }
 }
 
-export class ReportIssue {
-    constructor(public url: string, public body: string) { }
+export class OpenURL {
+    constructor(public url: string) { }
 }
 
 export class DebuggerPrerequisiteFailure extends EventWithMessage { }

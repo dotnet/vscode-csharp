@@ -7,7 +7,7 @@ import { vscode } from "../vscodeAdapter";
 import { Extension } from "../vscodeAdapter";
 import { CSharpExtensionId } from "../constants/CSharpExtensionId";
 import { EventStream } from "../EventStream";
-import { ReportIssue } from "../omnisharp/loggingEvents";
+import { OpenURL } from "../omnisharp/loggingEvents";
 
 const issuesUrl = "https://github.com/OmniSharp/omnisharp-vscode/issues/new";
 
@@ -45,7 +45,10 @@ ${generateExtensionTable(extensions)}
 </details>
 `);
 
-    eventStream.post(new ReportIssue(issuesUrl, body));
+    const encodedBody = encodeURIComponent(body);
+    const queryStringPrefix: string = "?";
+    const fullUrl = `${issuesUrl}${queryStringPrefix}body=${encodedBody}`;
+    eventStream.post(new OpenURL(fullUrl));
 }
 
 function sortExtensions(a: Extension<any>, b: Extension<any>): number {
@@ -96,7 +99,7 @@ async function getDotnetInfo(execChildProcess: (command: string, workingDirector
 }
 
 async function getMonoVersion(execChildProcess: (command: string, workingDirectory?: string) => Promise<string>): Promise<string> {
-        return execChildProcess("mono --version", process.cwd());
+    return execChildProcess("mono --version", process.cwd());
 }
 
 function getInstalledExtensions(vscode: vscode) {

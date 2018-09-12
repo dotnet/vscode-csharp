@@ -8,7 +8,7 @@ import fileIssue from "../../../src/features/fileIssue";
 import { EventStream } from "../../../src/EventStream";
 import TestEventBus from "../testAssets/TestEventBus";
 import { expect } from "chai";
-import { ReportIssue } from "../../../src/omnisharp/loggingEvents";
+import { OpenURL } from "../../../src/omnisharp/loggingEvents";
 import { vscode } from "../../../src/vscodeAdapter";
 
 suite("File Issue", () => {
@@ -71,56 +71,56 @@ suite("File Issue", () => {
         execCommands = [];
     });
 
-    test(`${ReportIssue.name} event is created`, async () => {
+    test(`${OpenURL.name} event is created`, async () => {
         await fileIssue(vscode, eventStream, execChildProcess, isValidForMono);
         let events = eventBus.getEvents();
         expect(events).to.have.length(1);
-        expect(events[0].constructor.name).to.be.equal(`${ReportIssue.name}`);
+        expect(events[0].constructor.name).to.be.equal(`${OpenURL.name}`);
     });
 
     test("${ReportIssue.name} event is created with the omnisharp-vscode github repo issues url", async () => {
         await fileIssue(vscode, eventStream, execChildProcess, false);
         expect(execCommands).to.not.contain("mono --version");
-        let event = <ReportIssue>eventBus.getEvents()[0];
+        let event = <OpenURL>eventBus.getEvents()[0];
         expect(event.url).to.be.equal("https://github.com/OmniSharp/omnisharp-vscode/issues/new");
     });
 
     test("The body contains the vscode version", async () => {
         await fileIssue(vscode, eventStream, execChildProcess, isValidForMono);
-        let event = <ReportIssue>eventBus.getEvents()[0];
+        let event = <OpenURL>eventBus.getEvents()[0];
         expect(event.body).to.contain(encodeURIComponent(`**VSCode version**: ${vscodeVersion}`));
     });
 
     test("The body contains the csharp extension version", async () => {
         await fileIssue(vscode, eventStream, execChildProcess, isValidForMono);
-        let event = <ReportIssue>eventBus.getEvents()[0];
+        let event = <OpenURL>eventBus.getEvents()[0];
         expect(event.body).to.contain(encodeURIComponent(`**C# Extension**: ${csharpExtVersion}`));
     });
 
     test("dotnet info is obtained and put into the body", async() => {
         await fileIssue(vscode, eventStream, execChildProcess, isValidForMono);
         expect(execCommands).to.contain("dotnet --info");
-        let event = <ReportIssue>eventBus.getEvents()[0];
+        let event = <OpenURL>eventBus.getEvents()[0];
         expect(event.body).to.contain(dotnetInfo);
     });
 
     test("mono information is obtained when it is a valid mono platform", async () => {
         await fileIssue(vscode, eventStream, execChildProcess, isValidForMono);
         expect(execCommands).to.contain("mono --version");
-        let event = <ReportIssue>eventBus.getEvents()[0];
+        let event = <OpenURL>eventBus.getEvents()[0];
         expect(event.body).to.contain(monoInfo);
     });
 
     test("mono information is not obtained when it is not a valid mono platform", async () => {
         await fileIssue(vscode, eventStream, execChildProcess, false);
         expect(execCommands).to.not.contain("mono --version");
-        let event = <ReportIssue>eventBus.getEvents()[0];
+        let event = <OpenURL>eventBus.getEvents()[0];
         expect(event.body).to.not.contain(monoInfo);
     });
 
     test("The body contains all the name, publisher and version for the extensions that are not builtin", async () => {
         await fileIssue(vscode, eventStream, execChildProcess, isValidForMono);
-        let event = <ReportIssue>eventBus.getEvents()[0];
+        let event = <OpenURL>eventBus.getEvents()[0];
         expect(event.body).to.contain(extension2.packageJSON.name);
         expect(event.body).to.contain(extension2.packageJSON.publisher);
         expect(event.body).to.contain(extension2.packageJSON.version);
@@ -131,7 +131,7 @@ suite("File Issue", () => {
 
     test("issuesUrl is put into the event url", async() => {
         await fileIssue(vscode, eventStream, execChildProcess, isValidForMono);
-        let event = <ReportIssue>eventBus.getEvents()[0];
+        let event = <OpenURL>eventBus.getEvents()[0];
         expect(event.url).to.be.equal("https://github.com/OmniSharp/omnisharp-vscode/issues/new");
     });
 });
