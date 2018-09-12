@@ -76,17 +76,9 @@ ${tableHeader}\n${table};
 
     return extensionTable;
 }
-
 async function getMonoIfPlatformValid(execChildProcess: (command: string, workingDirectory?: string) => Promise<string>, isValidPlatformForMono: boolean): Promise<string> {
     if (isValidPlatformForMono) {
-        let monoInfo: string;
-        try {
-            monoInfo = await getMonoVersion(execChildProcess);
-        }
-        catch (error) {
-            monoInfo = "A valid mono installation could not be found. Using the built-in mono"
-        }
-
+        let monoInfo = await getMonoVersion(execChildProcess);
         return `<details><summary>Mono Information</summary>
         ${monoInfo}</details>`;
     }
@@ -95,11 +87,27 @@ async function getMonoIfPlatformValid(execChildProcess: (command: string, workin
 }
 
 async function getDotnetInfo(execChildProcess: (command: string, workingDirectory?: string) => Promise<string>): Promise<string> {
-    return execChildProcess("dotnet --info", process.cwd());
+    let dotnetInfo: string;
+    try {
+        dotnetInfo = await execChildProcess("dotnet --info", process.cwd());
+    }
+    catch (error) {
+        dotnetInfo = "A valid dotnet installation could not be found.";
+    }
+
+    return dotnetInfo;
 }
 
 async function getMonoVersion(execChildProcess: (command: string, workingDirectory?: string) => Promise<string>): Promise<string> {
-    return execChildProcess("mono --version", process.cwd());
+    let monoInfo: string;
+    try {
+        monoInfo = await execChildProcess("mono --version", process.cwd());
+    }
+    catch (error) {
+        monoInfo = "A valid mono installation could not be found. Using the built-in mono";
+    }
+
+    return monoInfo;
 }
 
 function getInstalledExtensions(vscode: vscode) {
