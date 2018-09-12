@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { getFakeVsCode } from "../testAssets/Fakes";
-import fileIssue from "../../../src/features/fileIssue";
+import reportIssue from "../../../src/features/reportIssue";
 import { EventStream } from "../../../src/EventStream";
 import TestEventBus from "../testAssets/TestEventBus";
 import { expect } from "chai";
 import { OpenURL } from "../../../src/omnisharp/loggingEvents";
 import { vscode } from "../../../src/vscodeAdapter";
 
-suite("File Issue", () => {
+suite(`${reportIssue.name}`, () => {
     const vscodeVersion = "myVersion";
     const csharpExtVersion = "csharpExtVersion";
     const monoInfo = "myMonoInfo";
@@ -72,54 +72,54 @@ suite("File Issue", () => {
     });
 
     test(`${OpenURL.name} event is created`, async () => {
-        await fileIssue(vscode, eventStream, execChildProcess, isValidForMono);
+        await reportIssue(vscode, eventStream, execChildProcess, isValidForMono);
         let events = eventBus.getEvents();
         expect(events).to.have.length(1);
         expect(events[0].constructor.name).to.be.equal(`${OpenURL.name}`);
     });
 
     test(`${OpenURL.name} event is created with the omnisharp-vscode github repo issues url`, async () => {
-        await fileIssue(vscode, eventStream, execChildProcess, false);
+        await reportIssue(vscode, eventStream, execChildProcess, false);
         expect(execCommands).to.not.contain("mono --version");
         let url = (<OpenURL>eventBus.getEvents()[0]).url;
         expect(url).to.include("https://github.com/OmniSharp/omnisharp-vscode/issues/new");
     });
 
     test("The url contains the vscode version", async () => {
-        await fileIssue(vscode, eventStream, execChildProcess, isValidForMono);
+        await reportIssue(vscode, eventStream, execChildProcess, isValidForMono);
         let url = (<OpenURL>eventBus.getEvents()[0]).url;
         expect(url).to.include(encodeURIComponent(encodeURIComponent(`**VSCode version**: ${vscodeVersion}`)));
     });
 
     test("The body contains the csharp extension version", async () => {
-        await fileIssue(vscode, eventStream, execChildProcess, isValidForMono);
+        await reportIssue(vscode, eventStream, execChildProcess, isValidForMono);
         let url = (<OpenURL>eventBus.getEvents()[0]).url;
         expect(url).to.include(encodeURIComponent(encodeURIComponent(`**C# Extension**: ${csharpExtVersion}`)));
     });
 
     test("dotnet info is obtained and put into the url", async() => {
-        await fileIssue(vscode, eventStream, execChildProcess, isValidForMono);
+        await reportIssue(vscode, eventStream, execChildProcess, isValidForMono);
         expect(execCommands).to.contain("dotnet --info");
         let url = (<OpenURL>eventBus.getEvents()[0]).url;
         expect(url).to.contain(dotnetInfo);
     });
 
     test("mono information is obtained when it is a valid mono platform", async () => {
-        await fileIssue(vscode, eventStream, execChildProcess, isValidForMono);
+        await reportIssue(vscode, eventStream, execChildProcess, isValidForMono);
         expect(execCommands).to.contain("mono --version");
         let url = (<OpenURL>eventBus.getEvents()[0]).url;
         expect(url).to.contain(monoInfo);
     });
 
     test("mono information is not obtained when it is not a valid mono platform", async () => {
-        await fileIssue(vscode, eventStream, execChildProcess, false);
+        await reportIssue(vscode, eventStream, execChildProcess, false);
         expect(execCommands).to.not.contain("mono --version");
         let url = (<OpenURL>eventBus.getEvents()[0]).url;
         expect(url).to.not.contain(monoInfo);
     });
 
     test("The url contains the name, publisher and version for all the extensions that are not builtin", async () => {
-        await fileIssue(vscode, eventStream, execChildProcess, isValidForMono);
+        await reportIssue(vscode, eventStream, execChildProcess, isValidForMono);
         let url = (<OpenURL>eventBus.getEvents()[0]).url;
         expect(url).to.contain(extension2.packageJSON.name);
         expect(url).to.contain(extension2.packageJSON.publisher);

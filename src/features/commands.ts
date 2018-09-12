@@ -19,7 +19,7 @@ import { EventStream } from '../EventStream';
 import { PlatformInformation } from '../platform';
 import CompositeDisposable from '../CompositeDisposable';
 import OptionProvider from '../observers/OptionProvider';
-import fileIssue from './fileIssue';
+import reportIssue from './reportIssue';
 import { execChildProcess } from '../common';
 
 export default function registerCommands(server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionProvider: OptionProvider): CompositeDisposable {
@@ -48,7 +48,7 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
     // Register command for adapter executable command.
     disposable.add(vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream)));
     disposable.add(vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream)));
-    disposable.add(vscode.commands.registerCommand('csharp.reportIssue', async () => fileIssue(vscode, eventStream, execChildProcess, platformInfo.isValidPlatformForMono())));
+    disposable.add(vscode.commands.registerCommand('csharp.reportIssue', async () => reportIssue(vscode, eventStream, execChildProcess, platformInfo.isValidPlatformForMono())));
 
     return new CompositeDisposable(disposable);
 }
