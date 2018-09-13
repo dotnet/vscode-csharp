@@ -10,7 +10,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { Options } from './options';
 import { LaunchInfo } from './OmnisharpManager';
-import { getValidMonoInfo, MonoInformation } from './monoInformation';
+import { getGlobalMonoInfo, MonoInformation, shouldUseGlobalMono } from './monoInformation';
 
 export enum LaunchTargetKind {
     Solution,
@@ -254,18 +254,14 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
         return launchWindows(launchInfo.LaunchPath, cwd, args);
     }
 
-    return launchOnMacOrLinux(launchInfo, options, cwd, args);
-}
-
-async function launchOnMacOrLinux(launchInfo: LaunchInfo, options: Options, cwd: string, args: string[]): Promise<LaunchResult> {
     let childEnv = { ...process.env };
-    let validMonoInfo = await getValidMonoInfo(childEnv, options.useGlobalMono, options.monoPath);
+    let globalMonoInfo = await getGlobalMonoInfo(childEnv, options);
     
-    if (validMonoInfo.useGlobalMono(options)) {
+    if (shouldUseGlobalMono(options, globalMonoInfo)) {
         const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
         return {
             ...launchNixMono(launchPath, cwd, args, childEnv, options.waitForDebugger),
-            monoInfo: validMonoInfo
+            monoInfo: globalMonoInfo
         };
     }
     else {
