@@ -4,12 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { spawn, ChildProcess } from 'child_process';
-import { satisfies } from 'semver';
+
 import { PlatformInformation } from '../platform';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { Options } from './options';
 import { LaunchInfo } from './OmnisharpManager';
+import { getValidMonoInfo, MonoInformation } from './monoInformation';
 
 export enum LaunchTargetKind {
     Solution,
@@ -218,8 +219,7 @@ function isCs(resource: vscode.Uri): boolean {
 export interface LaunchResult {
     process: ChildProcess;
     command: string;
-    monoVersion?: string;
-    monoPath?: string;
+    monoInfo?: MonoInformation;
 }
 
 export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options): Promise<LaunchResult> {
@@ -254,29 +254,32 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
         return launchWindows(launchInfo.LaunchPath, cwd, args);
     }
 
+    return launchOnMacOrLinux(launchInfo, options, cwd, args);
+}
+
+async function launchOnMacOrLinux(launchInfo: LaunchInfo, options: Options, cwd: string, args: string[]): Promise<LaunchResult> {
     let childEnv = { ...process.env };
-    if (options.useGlobalMono !== "never" && options.monoPath !== undefined) {
-        childEnv['PATH'] = path.join(options.monoPath, 'bin') + path.delimiter + childEnv['PATH'];
-        childEnv['MONO_GAC_PREFIX'] = options.monoPath;
-    }
-
-    let monoVersion = await getMonoVersion(childEnv);
-    let isValidMonoAvailable = await satisfies(monoVersion, '>=5.8.1');
-
+    let validMonoInfo = await getValidMonoInfo(childEnv, options.useGlobalMono, options.monoPath);
+    
     // If the user specifically said that they wanted to launch on Mono, respect their wishes.
     if (options.useGlobalMono === "always") {
-        if (!isValidMonoAvailable) {
+        if (!validMonoInfo) {
             throw new Error('Cannot start OmniSharp because Mono version >=5.8.1 is required.');
         }
 
         const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
-
-        return launchNixMono(launchPath, monoVersion, options.monoPath, cwd, args, childEnv, options.waitForDebugger);
+        return {
+            ...launchNixMono(launchPath, cwd, args, childEnv, options.waitForDebugger),
+            monoInfo: validMonoInfo
+        };
     }
 
     // If we can launch on the global Mono, do so; otherwise, launch directly;
-    if (options.useGlobalMono === "auto" && isValidMonoAvailable && launchInfo.MonoLaunchPath) {
-        return launchNixMono(launchInfo.MonoLaunchPath, monoVersion, options.monoPath, cwd, args, childEnv, options.waitForDebugger);
+    if (options.useGlobalMono === "auto" && validMonoInfo && launchInfo.MonoLaunchPath) {
+        return {
+            ...launchNixMono(launchInfo.MonoLaunchPath, cwd, args, childEnv, options.waitForDebugger),
+            monoInfo: validMonoInfo
+        };
     }
     else {
         return launchNix(launchInfo.LaunchPath, cwd, args);
@@ -333,14 +336,13 @@ function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResul
     };
 }
 
-function launchNixMono(launchPath: string, monoVersion: string, monoPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv, useDebugger:boolean): LaunchResult {
+function launchNixMono(launchPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv, useDebugger:boolean): LaunchResult {
     let argsCopy = args.slice(0); // create copy of details args
     argsCopy.unshift(launchPath);
     argsCopy.unshift("--assembly-loader=strict");
 
     if (useDebugger)
         {
-            argsCopy.unshift("--assembly-loader=strict");
             argsCopy.unshift("--debug");
             argsCopy.unshift("--debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55555");
         }
@@ -353,42 +355,7 @@ function launchNixMono(launchPath: string, monoVersion: string, monoPath: string
 
     return {
         process,
-        command: launchPath,
-        monoVersion,
-        monoPath,
+        command: launchPath
     };
 }
 
-async function getMonoVersion(environment: NodeJS.ProcessEnv): Promise<string> {
-    const versionRegexp = /(\d+\.\d+\.\d+)/;
-
-    return new Promise<string>((resolve, reject) => {
-        let childprocess: ChildProcess;
-        try {
-            childprocess = spawn('mono', ['--version'], { env: environment });
-        }
-        catch (e) {
-            return resolve(undefined);
-        }
-
-        childprocess.on('error', function (err: any) {
-            resolve(undefined);
-        });
-
-        let stdout = '';
-        childprocess.stdout.on('data', (data: NodeBuffer) => {
-            stdout += data.toString();
-        });
-
-        childprocess.stdout.on('close', () => {
-            let match = versionRegexp.exec(stdout);
-
-            if (match && match.length > 1) {
-                resolve(match[1]);
-            }
-            else {
-                resolve(undefined);
-            }
-        });
-    });
-}
