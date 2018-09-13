@@ -261,23 +261,10 @@ async function launchOnMacOrLinux(launchInfo: LaunchInfo, options: Options, cwd:
     let childEnv = { ...process.env };
     let validMonoInfo = await getValidMonoInfo(childEnv, options.useGlobalMono, options.monoPath);
     
-    // If the user specifically said that they wanted to launch on Mono, respect their wishes.
-    if (options.useGlobalMono === "always") {
-        if (!validMonoInfo) {
-            throw new Error('Cannot start OmniSharp because Mono version >=5.8.1 is required.');
-        }
-
+    if (validMonoInfo.useGlobalMono(options)) {
         const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
         return {
             ...launchNixMono(launchPath, cwd, args, childEnv, options.waitForDebugger),
-            monoInfo: validMonoInfo
-        };
-    }
-
-    // If we can launch on the global Mono, do so; otherwise, launch directly;
-    if (options.useGlobalMono === "auto" && validMonoInfo && launchInfo.MonoLaunchPath) {
-        return {
-            ...launchNixMono(launchInfo.MonoLaunchPath, cwd, args, childEnv, options.waitForDebugger),
             monoInfo: validMonoInfo
         };
     }

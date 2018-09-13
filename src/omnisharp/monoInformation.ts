@@ -6,24 +6,39 @@
 import { satisfies } from 'semver';
 import { spawn, ChildProcess } from 'child_process';
 import * as path from 'path';
+import { Options } from './options';
 
 //This interface defines the mono being used by the omnisharp process
-export interface MonoInformation {
-    version: string;
-    path?: string;
+export class MonoInformation {
+    
+    constructor(public version: string, public isValid: boolean, public path: string) {
+    }
+
+    public useGlobalMono(options: Options) {
+        if (options.useGlobalMono === "always") {
+            if (!this.isValid) {
+                throw new Error('Cannot start OmniSharp because Mono version >=5.8.1 is required.');
+            }
+
+            return true;
+        }
+        else if (options.useGlobalMono === "auto" && this.isValid) {
+            return true;
+        }
+
+        return false;
+    }
 }
 
 export async function getValidMonoInfo(environment: NodeJS.ProcessEnv, useGlobalMono: string, monoPath: string): Promise<MonoInformation> {
     configureAlternativeMono(environment, useGlobalMono, monoPath);
     let version = await getMonoVersion(environment);
-    if (satisfies(version, '>=5.8.1')) {
-        return {
-            version,
-            path: monoPath
-        };
-    }
     
-    return undefined;
+    return new MonoInformation(
+        version,
+        satisfies(version, '>=5.8.1'),
+        monoPath,
+    );
 }
 
 function configureAlternativeMono(childEnv: NodeJS.ProcessEnv, useGlobalMono: string, monoPath: string) {
