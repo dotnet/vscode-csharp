@@ -8,12 +8,9 @@ import { spawn, ChildProcess } from 'child_process';
 import * as path from 'path';
 import { Options } from './options';
 import { IMonoResolver } from './constants/IMonoResolver';
+import { MonoInformation } from './constants/MonoInformation';
 
 //This interface defines the mono being used by the omnisharp process
-export interface MonoInformation {
-    version: string;
-    path: string;
-}
 
 export class OmniSharpMonoResolver implements IMonoResolver{
     private minimumMonoVersion = "5.8.1";

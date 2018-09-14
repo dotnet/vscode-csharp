@@ -36,7 +36,7 @@ import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
 import trackVirtualDocuments from '../features/virtualDocumentTracker';
 import { StructureProvider } from '../features/structureProvider';
-import { OmniSharpMonoResolver } from './monoInformation';
+import { OmniSharpMonoResolver } from './OmniSharpMonoResolver';
 
 export let omnisharp: OmniSharpServer;
 
