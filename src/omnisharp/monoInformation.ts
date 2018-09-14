@@ -36,7 +36,7 @@ export class OmniSharpMonoResolver{
         let isValid = this.globalMonoInfo.version && satisfies(this.globalMonoInfo.version, `>=${this.minimumMonoVersion}`);
         
         if (this.options.useGlobalMono === "always") {
-            if (isValid) {
+            if (!isValid) {
                 throw new Error(`Cannot start OmniSharp because Mono version >=${this.minimumMonoVersion} is required.`);
             }
     
