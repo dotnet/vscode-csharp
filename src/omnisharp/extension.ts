@@ -36,6 +36,7 @@ import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
 import trackVirtualDocuments from '../features/virtualDocumentTracker';
 import { StructureProvider } from '../features/structureProvider';
+import { OmniSharpMonoResolver } from './monoInformation';
 
 export let omnisharp: OmniSharpServer;
 
@@ -45,7 +46,8 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     };
 
     const options = optionProvider.GetLatestOptions();
-    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath);
+    let omnisharpMonoResolver = new OmniSharpMonoResolver();
+    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver);
     omnisharp = server;
     const advisor = new Advisor(server); // create before server is started
     const disposables = new CompositeDisposable();
@@ -93,7 +95,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables = null;
     }));
 
-    disposables.add(registerCommands(server, platformInfo, eventStream, optionProvider));
+    disposables.add(registerCommands(server, platformInfo, eventStream, optionProvider, omnisharpMonoResolver));
 
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
         disposables.add(server.onServerStart(() => {

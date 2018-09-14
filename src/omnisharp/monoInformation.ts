@@ -7,6 +7,7 @@ import { satisfies } from 'semver';
 import { spawn, ChildProcess } from 'child_process';
 import * as path from 'path';
 import { Options } from './options';
+import { IMonoResolver } from './constants/IMonoResolver';
 
 //This interface defines the mono being used by the omnisharp process
 export interface MonoInformation {
@@ -14,35 +15,36 @@ export interface MonoInformation {
     path: string;
 }
 
-export class OmniSharpMonoResolver {
-    public monoVersion: string;
-    public customMonoPath: string;
-    public minimumMonoVersion = "5.8.1";
+export class OmniSharpMonoResolver implements IMonoResolver{
+    private minimumMonoVersion = "5.8.1";
 
-    constructor(private options: Options, public environment: NodeJS.ProcessEnv) {
+    private async getGlobalMono(options: Options): Promise<MonoInformation> {
+        let childEnv = { ...process.env };
+        let path = configureCustomMono(childEnv, options);
+        let version = await getMonoVersion(childEnv);
+
+        return {
+            version,
+            path
+        };
     }
 
-    private async getGlobalMono() {
-        this.customMonoPath = configureCustomMono(this.environment, this.options);
-        this.monoVersion = await getMonoVersion(this.environment);
-    }
+    public async shouldUseGlobalMono(options: Options): Promise<MonoInformation> {
+        let monoInfo = await this.getGlobalMono(options);
+        let isValid = monoInfo.version && satisfies(monoInfo.version, `>=${this.minimumMonoVersion}`);
 
-    public async shouldUseGlobalMono(): Promise<boolean> {
-        await this.getGlobalMono();
-        let isValid = this.monoVersion && satisfies(this.monoVersion, `>=${this.minimumMonoVersion}`);
-
-        if (this.options.useGlobalMono === "always") {
+        if (options.useGlobalMono === "always") {
             if (!isValid) {
                 throw new Error(`Cannot start OmniSharp because Mono version >=${this.minimumMonoVersion} is required.`);
             }
 
-            return true;
+            return monoInfo;
         }
-        else if (this.options.useGlobalMono === "auto" && isValid) {
-            return true;
+        else if (options.useGlobalMono === "auto" && isValid) {
+            return monoInfo;
         }
 
-        return false;
+        return undefined;
     }
 }
 

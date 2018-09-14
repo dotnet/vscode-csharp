@@ -8,14 +8,14 @@ import { Extension } from "../vscodeAdapter";
 import { CSharpExtensionId } from "../constants/CSharpExtensionId";
 import { EventStream } from "../EventStream";
 import { OpenURL } from "../omnisharp/loggingEvents";
-import { OmniSharpMonoResolver } from "../omnisharp/monoInformation";
 import { Options } from "../omnisharp/options";
+import { IMonoResolver } from "../omnisharp/constants/IMonoResolver";
 
 const issuesUrl = "https://github.com/OmniSharp/omnisharp-vscode/issues/new";
 
-export default async function reportIssue(vscode: vscode, eventStream: EventStream, execChildProcess: (command: string, workingDirectory?: string) => Promise<string>, isValidPlatformForMono: boolean, options: Options) {
+export default async function reportIssue(vscode: vscode, eventStream: EventStream, execChildProcess: (command: string, workingDirectory?: string) => Promise<string>, isValidPlatformForMono: boolean, options: Options, monoResolver: IMonoResolver) {
     const dotnetInfo = await getDotnetInfo(execChildProcess);
-    const monoInfo = await getMonoIfPlatformValid(isValidPlatformForMono, options);
+    const monoInfo = await getMonoIfPlatformValid(isValidPlatformForMono, options, monoResolver);
     let extensions = getInstalledExtensions(vscode);
     let csharpExtVersion = getCsharpExtensionVersion(vscode);
 
@@ -79,15 +79,13 @@ ${tableHeader}\n${table};
     return extensionTable;
 }
 
-async function getMonoIfPlatformValid(isValidPlatformForMono: boolean, options: Options): Promise<string> {
+async function getMonoIfPlatformValid(isValidPlatformForMono: boolean, options: Options, monoResolver: IMonoResolver): Promise<string> {
     if (isValidPlatformForMono) {
         let monoVersion: string;
         try {
-            let childEnv = { ...process.env };
-            let monoResolver = new OmniSharpMonoResolver(options, childEnv);
-            let shouldUseGlobalMono = await monoResolver.shouldUseGlobalMono();
-            if (shouldUseGlobalMono) {
-                monoVersion = `OmniSharp using global mono :${monoResolver.monoVersion}`;
+            let globalMonoInfo = await monoResolver.shouldUseGlobalMono(options);
+            if (globalMonoInfo) {
+                monoVersion = `OmniSharp using global mono :${globalMonoInfo.version}`;
             }
             else {
                 monoVersion = `OmniSharp using built-in mono`;

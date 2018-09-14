@@ -10,7 +10,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { Options } from './options';
 import { LaunchInfo } from './OmnisharpManager';
-import { OmniSharpMonoResolver } from './monoInformation';
+import { IMonoResolver } from './constants/IMonoResolver';
 
 export enum LaunchTargetKind {
     Solution,
@@ -223,9 +223,9 @@ export interface LaunchResult {
     monoPath?: string;
 }
 
-export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options): Promise<LaunchResult> {
+export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IMonoResolver): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        launch(cwd, args, launchInfo, platformInfo, options)
+        launch(cwd, args, launchInfo, platformInfo, options, monoResolver)
             .then(result => {
                 // async error - when target not not ENEOT
                 result.process.on('error', err => {
@@ -241,7 +241,7 @@ export async function launchOmniSharp(cwd: string, args: string[], launchInfo: L
     });
 }
 
-async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options): Promise<LaunchResult> {
+async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IMonoResolver): Promise<LaunchResult> {
     if (options.useEditorFormattingSettings) {
         let globalConfig = vscode.workspace.getConfiguration();
         let csharpConfig = vscode.workspace.getConfiguration('[csharp]');
@@ -255,15 +255,15 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
         return launchWindows(launchInfo.LaunchPath, cwd, args);
     }
 
-    let childEnv = { ...process.env };
-    let omnisharpMonoResolver = new OmniSharpMonoResolver(options, childEnv);
+    let monoInfo = await monoResolver.shouldUseGlobalMono(options);
     
-    if ((await omnisharpMonoResolver.shouldUseGlobalMono())) {
+    if (monoInfo) {
         const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
+        let childEnv = { ...process.env }; //to do: check if it passed by value or reference
         return {
             ...launchNixMono(launchPath, cwd, args, childEnv, options.waitForDebugger),
-            monoVersion: omnisharpMonoResolver.monoVersion,
-            monoPath: omnisharpMonoResolver.customMonoPath
+            monoVersion: monoInfo.version,
+            monoPath: monoInfo.path
         };
     }
     else {
