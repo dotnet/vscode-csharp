@@ -14,38 +14,34 @@ export interface MonoInformation {
     path: string;
 }
 
-export class OmniSharpMonoResolver{
-    public globalMonoInfo: MonoInformation;
+export class OmniSharpMonoResolver {
+    public monoVersion: string;
+    public customMonoPath: string;
     public minimumMonoVersion = "5.8.1";
-    
+
     constructor(private options: Options, public environment: NodeJS.ProcessEnv) {
     }
 
-    private async getGlobalMono(){
-        let path = configureCustomMono(this.environment, this.options);
-        let version = await getMonoVersion(this.environment);
-        
-        this.globalMonoInfo = {
-            version,
-            path
-        };
+    private async getGlobalMono() {
+        this.customMonoPath = configureCustomMono(this.environment, this.options);
+        this.monoVersion = await getMonoVersion(this.environment);
     }
 
-    public async shouldUseGlobalMono(): Promise<boolean>{
+    public async shouldUseGlobalMono(): Promise<boolean> {
         await this.getGlobalMono();
-        let isValid = this.globalMonoInfo.version && satisfies(this.globalMonoInfo.version, `>=${this.minimumMonoVersion}`);
-        
+        let isValid = this.monoVersion && satisfies(this.monoVersion, `>=${this.minimumMonoVersion}`);
+
         if (this.options.useGlobalMono === "always") {
             if (!isValid) {
                 throw new Error(`Cannot start OmniSharp because Mono version >=${this.minimumMonoVersion} is required.`);
             }
-    
+
             return true;
         }
         else if (this.options.useGlobalMono === "auto" && isValid) {
             return true;
         }
-    
+
         return false;
     }
 }

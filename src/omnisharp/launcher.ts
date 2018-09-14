@@ -10,7 +10,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { Options } from './options';
 import { LaunchInfo } from './OmnisharpManager';
-import { MonoInformation, OmniSharpMonoResolver } from './monoInformation';
+import { OmniSharpMonoResolver } from './monoInformation';
 
 export enum LaunchTargetKind {
     Solution,
@@ -219,7 +219,8 @@ function isCs(resource: vscode.Uri): boolean {
 export interface LaunchResult {
     process: ChildProcess;
     command: string;
-    monoInfo?: MonoInformation;
+    monoVersion?: string;
+    monoPath?: string;
 }
 
 export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options): Promise<LaunchResult> {
@@ -261,7 +262,8 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
         const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
         return {
             ...launchNixMono(launchPath, cwd, args, childEnv, options.waitForDebugger),
-            monoInfo: omnisharpMonoResolver.globalMonoInfo
+            monoVersion: omnisharpMonoResolver.monoVersion,
+            monoPath: omnisharpMonoResolver.customMonoPath
         };
     }
     else {

@@ -7,7 +7,6 @@ import { PlatformInformation } from "../platform";
 import { Request } from "./requestQueue";
 import * as protocol from './protocol';
 import { LaunchTarget } from "./launcher";
-import { MonoInformation } from "./monoInformation";
 
 export interface BaseEvent {
 }
@@ -28,7 +27,7 @@ export class OmnisharpInitialisation implements BaseEvent {
 }
 
 export class OmnisharpLaunch implements BaseEvent {
-    constructor(public monoInfo: MonoInformation, public command: string, public pid: number) { }
+    constructor(public monoVersion: string, public monoPath: string, public command: string, public pid: number) { }
 }
 
 export class PackageInstallation implements BaseEvent {
