@@ -8,12 +8,14 @@ import { Extension } from "../vscodeAdapter";
 import { CSharpExtensionId } from "../constants/CSharpExtensionId";
 import { EventStream } from "../EventStream";
 import { OpenURL } from "../omnisharp/loggingEvents";
+import { OmniSharpMonoResolver } from "../omnisharp/monoInformation";
+import { Options } from "../omnisharp/options";
 
 const issuesUrl = "https://github.com/OmniSharp/omnisharp-vscode/issues/new";
 
-export default async function reportIssue(vscode: vscode, eventStream: EventStream, execChildProcess: (command: string, workingDirectory?: string) => Promise<string>, isValidPlatformForMono: boolean) {
+export default async function reportIssue(vscode: vscode, eventStream: EventStream, execChildProcess: (command: string, workingDirectory?: string) => Promise<string>, isValidPlatformForMono: boolean, options: Options) {
     const dotnetInfo = await getDotnetInfo(execChildProcess);
-    const monoInfo = await getMonoIfPlatformValid(execChildProcess, isValidPlatformForMono);
+    const monoInfo = await getMonoIfPlatformValid(isValidPlatformForMono, options);
     let extensions = getInstalledExtensions(vscode);
     let csharpExtVersion = getCsharpExtensionVersion(vscode);
 
@@ -76,11 +78,27 @@ ${tableHeader}\n${table};
 
     return extensionTable;
 }
-async function getMonoIfPlatformValid(execChildProcess: (command: string, workingDirectory?: string) => Promise<string>, isValidPlatformForMono: boolean): Promise<string> {
+
+async function getMonoIfPlatformValid(isValidPlatformForMono: boolean, options: Options): Promise<string> {
     if (isValidPlatformForMono) {
-        let monoInfo = await getMonoVersion(execChildProcess);
+        let monoVersion: string;
+        try {
+            let childEnv = { ...process.env };
+            let monoResolver = new OmniSharpMonoResolver(options, childEnv);
+            let shouldUseGlobalMono = await monoResolver.shouldUseGlobalMono();
+            if (shouldUseGlobalMono) {
+                monoVersion = `OmniSharp using global mono :${monoResolver.globalMonoInfo.version}`;
+            }
+            else {
+                monoVersion = `OmniSharp using built-in mono`;
+            }
+        }
+        catch (error) {
+            monoVersion = `There is a problem with running OmniSharp on mono: ${error}`;
+        }
+
         return `<details><summary>Mono Information</summary>
-        ${monoInfo}</details>`;
+        ${monoVersion}</details>`;
     }
 
     return "";
@@ -96,18 +114,6 @@ async function getDotnetInfo(execChildProcess: (command: string, workingDirector
     }
 
     return dotnetInfo;
-}
-
-async function getMonoVersion(execChildProcess: (command: string, workingDirectory?: string) => Promise<string>): Promise<string> {
-    let monoInfo: string;
-    try {
-        monoInfo = await execChildProcess("mono --version", process.cwd());
-    }
-    catch (error) {
-        monoInfo = "A valid mono installation could not be found. Using the built-in mono";
-    }
-
-    return monoInfo;
 }
 
 function getInstalledExtensions(vscode: vscode) {

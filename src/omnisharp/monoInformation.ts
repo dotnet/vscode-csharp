@@ -14,31 +14,40 @@ export interface MonoInformation {
     path: string;
 }
 
-export function shouldUseGlobalMono(options: Options, monoInfo: MonoInformation): boolean{
-    let isValid = satisfies(monoInfo.version, ">=5.8.1");
+export class OmniSharpMonoResolver{
+    public globalMonoInfo: MonoInformation;
+    public minimumMonoVersion = "5.8.1";
     
-    if (options.useGlobalMono === "always") {
-        if (isValid) {
-            throw new Error('Cannot start OmniSharp because Mono version >=5.8.1 is required.');
+    constructor(private options: Options, public environment: NodeJS.ProcessEnv) {
+    }
+
+    public async setGlobalMonoInfo(){
+        let path = configureCustomMono(this.environment, this.options);
+        let version = await getMonoVersion(this.environment);
+        
+        this.globalMonoInfo = {
+            version,
+            path
+        };
+    }
+
+    public async shouldUseGlobalMono(): Promise<boolean>{
+        await this.setGlobalMonoInfo();
+        let isValid = satisfies(this.globalMonoInfo.version, `>=${this.minimumMonoVersion}`);
+        
+        if (this.options.useGlobalMono === "always") {
+            if (isValid) {
+                throw new Error(`Cannot start OmniSharp because Mono version >=${this.minimumMonoVersion} is required.`);
+            }
+    
+            return true;
         }
-
-        return true;
-    }
-    else if (options.useGlobalMono === "auto" && isValid) {
-        return true;
-    }
-
-    return false;
-}
-
-export async function getGlobalMonoInfo(environment: NodeJS.ProcessEnv, options: Options): Promise<MonoInformation> {
-    let path = configureCustomMono(environment, options);
-    let version = await getMonoVersion(environment);
+        else if (this.options.useGlobalMono === "auto" && isValid) {
+            return true;
+        }
     
-    return {
-        version,
-        path
-    };
+        return false;
+    }
 }
 
 function configureCustomMono(childEnv: NodeJS.ProcessEnv, options: Options): string {

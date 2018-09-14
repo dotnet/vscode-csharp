@@ -10,7 +10,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { Options } from './options';
 import { LaunchInfo } from './OmnisharpManager';
-import { getGlobalMonoInfo, MonoInformation, shouldUseGlobalMono } from './monoInformation';
+import { MonoInformation, OmniSharpMonoResolver } from './monoInformation';
 
 export enum LaunchTargetKind {
     Solution,
@@ -255,13 +255,13 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
     }
 
     let childEnv = { ...process.env };
-    let globalMonoInfo = await getGlobalMonoInfo(childEnv, options);
+    let omnisharpMonoResolver = new OmniSharpMonoResolver(options, childEnv);
     
-    if (shouldUseGlobalMono(options, globalMonoInfo)) {
+    if ((await omnisharpMonoResolver.shouldUseGlobalMono())) {
         const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
         return {
             ...launchNixMono(launchPath, cwd, args, childEnv, options.waitForDebugger),
-            monoInfo: globalMonoInfo
+            monoInfo: omnisharpMonoResolver.globalMonoInfo
         };
     }
     else {
