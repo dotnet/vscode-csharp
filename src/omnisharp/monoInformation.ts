@@ -21,7 +21,7 @@ export class OmniSharpMonoResolver{
     constructor(private options: Options, public environment: NodeJS.ProcessEnv) {
     }
 
-    public async setGlobalMonoInfo(){
+    private async getGlobalMono(){
         let path = configureCustomMono(this.environment, this.options);
         let version = await getMonoVersion(this.environment);
         
@@ -32,8 +32,8 @@ export class OmniSharpMonoResolver{
     }
 
     public async shouldUseGlobalMono(): Promise<boolean>{
-        await this.setGlobalMonoInfo();
-        let isValid = satisfies(this.globalMonoInfo.version, `>=${this.minimumMonoVersion}`);
+        await this.getGlobalMono();
+        let isValid = this.globalMonoInfo.version && satisfies(this.globalMonoInfo.version, `>=${this.minimumMonoVersion}`);
         
         if (this.options.useGlobalMono === "always") {
             if (isValid) {
