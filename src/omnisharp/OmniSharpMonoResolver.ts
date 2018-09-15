@@ -18,13 +18,14 @@ export class OmniSharpMonoResolver implements IMonoResolver{
     }
 
     private async getGlobalMono(options: Options): Promise<MonoInformation> {
-        let childEnv = { ...process.env };
-        let path = configureCustomMono(childEnv, options);
-        let version = await this.getMonoVersion(childEnv);
+        let env = { ...process.env };
+        let path = configureCustomMono(env, options);
+        let version = await this.getMonoVersion(env);
 
         return {
             version,
-            path
+            path,
+            env
         };
     }
 

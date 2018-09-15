@@ -259,7 +259,7 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
     
     if (monoInfo) {
         const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
-        let childEnv = { ...process.env }; //to do: check if it passed by value or reference
+        let childEnv = monoInfo.env;
         return {
             ...launchNixMono(launchPath, cwd, args, childEnv, options.waitForDebugger),
             monoVersion: monoInfo.version,

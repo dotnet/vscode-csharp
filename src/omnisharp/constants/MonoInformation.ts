@@ -6,4 +6,5 @@
 export interface MonoInformation {
     version: string;
     path: string;
+    env: NodeJS.ProcessEnv;
 }
