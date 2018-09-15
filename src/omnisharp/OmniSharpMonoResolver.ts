@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { satisfies } from 'semver';
-import { spawn, ChildProcess } from 'child_process';
+import { ChildProcess, spawn } from 'child_process';
 import * as path from 'path';
 import { Options } from './options';
 import { IMonoResolver } from './constants/IMonoResolver';
@@ -12,13 +12,15 @@ import { MonoInformation } from './constants/MonoInformation';
 
 //This interface defines the mono being used by the omnisharp process
 
-export class OmniSharpMonoResolver implements IMonoResolver{
+export class OmniSharpMonoResolver implements IMonoResolver{ 
     private minimumMonoVersion = "5.8.1";
+    constructor(private getMonoVersion: (env: NodeJS.ProcessEnv) => Promise<string>) {
+    }
 
     private async getGlobalMono(options: Options): Promise<MonoInformation> {
         let childEnv = { ...process.env };
         let path = configureCustomMono(childEnv, options);
-        let version = await getMonoVersion(childEnv);
+        let version = await this.getMonoVersion(childEnv);
 
         return {
             version,
@@ -55,7 +57,7 @@ function configureCustomMono(childEnv: NodeJS.ProcessEnv, options: Options): str
     return undefined;
 }
 
-async function getMonoVersion(environment: NodeJS.ProcessEnv): Promise<string> {
+export async function getMonoVersion( environment: NodeJS.ProcessEnv): Promise<string> {
     const versionRegexp = /(\d+\.\d+\.\d+)/;
 
     return new Promise<string>((resolve, reject) => {

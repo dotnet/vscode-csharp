@@ -36,7 +36,7 @@ import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
 import trackVirtualDocuments from '../features/virtualDocumentTracker';
 import { StructureProvider } from '../features/structureProvider';
-import { OmniSharpMonoResolver } from './OmniSharpMonoResolver';
+import { OmniSharpMonoResolver, getMonoVersion } from './OmniSharpMonoResolver';
 
 export let omnisharp: OmniSharpServer;
 
@@ -46,7 +46,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     };
 
     const options = optionProvider.GetLatestOptions();
-    let omnisharpMonoResolver = new OmniSharpMonoResolver();
+    let omnisharpMonoResolver = new OmniSharpMonoResolver(getMonoVersion);
     const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver);
     omnisharp = server;
     const advisor = new Advisor(server); // create before server is started
