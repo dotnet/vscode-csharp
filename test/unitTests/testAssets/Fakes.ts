@@ -9,6 +9,7 @@ import { DocumentSelector, MessageItem, TextDocument, Uri, GlobPattern, Configur
 import { ITelemetryReporter } from '../../../src/observers/TelemetryObserver';
 import { MSBuildDiagnosticsMessage } from '../../../src/omnisharp/protocol';
 import { OmnisharpServerMsBuildProjectDiagnostics, OmnisharpServerOnError, OmnisharpServerUnresolvedDependencies, WorkspaceInformationUpdated } from '../../../src/omnisharp/loggingEvents';
+import { Options } from '../../../src/omnisharp/options';
 
 export const getNullChannel = (): vscode.OutputChannel => {
     let returnChannel: vscode.OutputChannel = {
@@ -191,4 +192,8 @@ export function getVSCodeWithConfig() {
 export function updateConfig(vscode: vscode.vscode, section: string, config: string, value: any) {
     let workspaceConfig = vscode.workspace.getConfiguration(section);
     workspaceConfig.update(config, value);
+}
+
+export function getEmptyOptions(): Options {
+    return new Options("", "", false, "", false, 0, 0, false, false, false, false, false, false, "", "");
 }

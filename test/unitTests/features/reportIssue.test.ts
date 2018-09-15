@@ -12,13 +12,15 @@ import { OpenURL } from "../../../src/omnisharp/loggingEvents";
 import { vscode } from "../../../src/vscodeAdapter";
 import { IMonoResolver } from "../../../src/omnisharp/constants/IMonoResolver";
 import { Options } from "../../../src/omnisharp/options";
+import { MonoInformation } from "../../../src/omnisharp/constants/MonoInformation";
 
 suite(`${reportIssue.name}`, () => {
     const vscodeVersion = "myVersion";
     const csharpExtVersion = "csharpExtVersion";
-    const monoInfo = {
+    const monoInfo: MonoInformation = {
         version: "someMonoVersion",
-        path: "somePath"
+        path: "somePath",
+        env: undefined
     };
     const dotnetInfo = "myDotnetInfo";
     const isValidForMono = true;
