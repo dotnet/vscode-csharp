@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { PlatformInformation } from "../platform";
-import { BaseEvent, PackageInstallation, InstallationFailure, InstallationSuccess, OmnisharpDelayTrackerEventMeasures, OmnisharpStart, TestExecutionCountReport, TelemetryEventWithMeasures } from "../omnisharp/loggingEvents";
+import { BaseEvent, PackageInstallation, InstallationFailure, InstallationSuccess, OmnisharpDelayTrackerEventMeasures, OmnisharpStart, TestExecutionCountReport, TelemetryEventWithMeasures, TelemetryEvent } from "../omnisharp/loggingEvents";
 import { PackageError } from "../packageManager/PackageError";
 
 export interface ITelemetryReporter {
@@ -38,6 +38,10 @@ export class TelemetryObserver {
                 break;
             case TestExecutionCountReport.name:
                 this.handleTestExecutionCountReport(<TestExecutionCountReport>event);
+                break;
+            case TelemetryEvent.name:
+                let telemetryEvent = <TelemetryEvent>event;
+                this.reporter.sendTelemetryEvent(telemetryEvent.eventName, telemetryEvent.properties, telemetryEvent.measures);
                 break;
         }
     }
