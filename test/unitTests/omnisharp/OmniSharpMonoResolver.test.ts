@@ -29,7 +29,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
 
     test("it returns undefined if the version is less than 5.8.1 and useGlobalMono is auto", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono("5.0.0"));
-        let monoInfo = await monoResolver.shouldUseGlobalMono({
+        let monoInfo = await monoResolver.getGlobalMonoInfo({
             ...options,
             useGlobalMono: "auto",
             monoPath: monoPath
@@ -39,7 +39,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
 
     test("it returns undefined if useGlobalMono is never", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono("5.8.2"));
-        let monoInfo = await monoResolver.shouldUseGlobalMono({
+        let monoInfo = await monoResolver.getGlobalMonoInfo({
             ...options,
             useGlobalMono: "never",
             monoPath: monoPath
@@ -49,7 +49,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
 
     test("it returns the path and version if the version is greater than or equal to 5.8.1 and shouldUseGlobalMono is always", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono("5.8.1"));
-        let monoInfo = await monoResolver.shouldUseGlobalMono({
+        let monoInfo = await monoResolver.getGlobalMonoInfo({
             ...options,
             useGlobalMono: "always",
             monoPath: monoPath
@@ -61,7 +61,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
 
     test("it returns the path and version if the version is greater than or equal to 5.8.1 and shouldUseGlobalMono is auto", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono("5.8.2"));
-        let monoInfo = await monoResolver.shouldUseGlobalMono({
+        let monoInfo = await monoResolver.getGlobalMonoInfo({
             ...options,
             useGlobalMono: "auto",
             monoPath: monoPath
@@ -74,7 +74,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
     test("it throws exception if shouldUseGlobalMono is always and version<5.8.1", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono("5.8.0"));
 
-        await expect(monoResolver.shouldUseGlobalMono({
+        await expect(monoResolver.getGlobalMonoInfo({
             ...options,
             useGlobalMono: "always",
             monoPath: monoPath
@@ -83,7 +83,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
 
     test("sets the environment with the monoPath id useGlobalMono is auto", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono("5.8.1"));
-        let monoInfo = await monoResolver.shouldUseGlobalMono({
+        let monoInfo = await monoResolver.getGlobalMonoInfo({
             ...options,
             useGlobalMono: "auto",
             monoPath: monoPath
@@ -95,7 +95,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
 
     test("sets the environment with the monoPath id useGlobalMono is always", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono("5.8.1"));
-        let monoInfo = await monoResolver.shouldUseGlobalMono({
+        let monoInfo = await monoResolver.getGlobalMonoInfo({
             ...options,
             useGlobalMono: "auto",
             monoPath: monoPath
@@ -107,7 +107,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
 
     test("doesn't set the environment with the monoPath id if useGlobalMono is never", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono("5.8.1"));
-        await monoResolver.shouldUseGlobalMono({
+        await monoResolver.getGlobalMonoInfo({
             ...options,
             useGlobalMono: "never",
             monoPath: monoPath
@@ -120,7 +120,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
 
     test("getMono is called with the environment that includes the monoPath if the useGlobalMono is auto or always", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono("5.8.1"));
-        await monoResolver.shouldUseGlobalMono({
+        await monoResolver.getGlobalMonoInfo({
             ...options,
             useGlobalMono: "auto",
             monoPath: monoPath

@@ -4,32 +4,37 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { satisfies } from 'semver';
-import { ChildProcess, spawn } from 'child_process';
+
 import * as path from 'path';
 import { Options } from './options';
 import { IMonoResolver } from './constants/IMonoResolver';
 import { MonoInformation } from './constants/MonoInformation';
+import { IGetMonoVersion } from './constants/IGetMonoVersion';
 
-//This interface defines the mono being used by the omnisharp process
-
-export class OmniSharpMonoResolver implements IMonoResolver{ 
+export class OmniSharpMonoResolver implements IMonoResolver { 
     private minimumMonoVersion = "5.8.1";
-    constructor(private getMonoVersion: (env: NodeJS.ProcessEnv) => Promise<string>) {
+    constructor(private getMonoVersion: IGetMonoVersion) {
     }
 
     private async getGlobalMono(options: Options): Promise<MonoInformation> {
         let env = { ...process.env };
-        let path = configureCustomMono(env, options);
+        let monoPath: string;
+        if (options.useGlobalMono !== "never" && options.monoPath !== undefined) {
+            env['PATH'] = path.join(options.monoPath, 'bin') + path.delimiter + env['PATH'];
+            env['MONO_GAC_PREFIX'] = options.monoPath;
+            monoPath = options.monoPath;
+        }
+    
         let version = await this.getMonoVersion(env);
 
         return {
             version,
-            path,
+            path: monoPath,
             env
         };
     }
 
-    public async shouldUseGlobalMono(options: Options): Promise<MonoInformation> {
+    public async getGlobalMonoInfo(options: Options): Promise<MonoInformation> {
         let monoInfo = await this.getGlobalMono(options);
         let isValid = monoInfo.version && satisfies(monoInfo.version, `>=${this.minimumMonoVersion}`);
 
@@ -48,46 +53,3 @@ export class OmniSharpMonoResolver implements IMonoResolver{
     }
 }
 
-function configureCustomMono(childEnv: NodeJS.ProcessEnv, options: Options): string {
-    if (options.useGlobalMono !== "never" && options.monoPath !== undefined) {
-        childEnv['PATH'] = path.join(options.monoPath, 'bin') + path.delimiter + childEnv['PATH'];
-        childEnv['MONO_GAC_PREFIX'] = options.monoPath;
-        return options.monoPath;
-    }
-
-    return undefined;
-}
-
-export async function getMonoVersion( environment: NodeJS.ProcessEnv): Promise<string> {
-    const versionRegexp = /(\d+\.\d+\.\d+)/;
-
-    return new Promise<string>((resolve, reject) => {
-        let childprocess: ChildProcess;
-        try {
-            childprocess = spawn('mono', ['--version'], { env: environment });
-        }
-        catch (e) {
-            return resolve(undefined);
-        }
-
-        childprocess.on('error', function (err: any) {
-            resolve(undefined);
-        });
-
-        let stdout = '';
-        childprocess.stdout.on('data', (data: NodeBuffer) => {
-            stdout += data.toString();
-        });
-
-        childprocess.stdout.on('close', () => {
-            let match = versionRegexp.exec(stdout);
-
-            if (match && match.length > 1) {
-                resolve(match[1]);
-            }
-            else {
-                resolve(undefined);
-            }
-        });
-    });
-}

@@ -79,7 +79,7 @@ suite(`${reportIssue.name}`, () => {
         execCommands = [];
         shouldUseGlobalMonoCalled = false;
         monoResolver = {
-            shouldUseGlobalMono: () => {
+            getGlobalMonoInfo: () => {
                 shouldUseGlobalMonoCalled = true;
                 return Promise.resolve(monoInfo);
             }
@@ -133,7 +133,7 @@ suite(`${reportIssue.name}`, () => {
 
     test("built-in mono usage message is put in the body when shouldUseGlobalMono returns a null", async () => {
         monoResolver = {
-            shouldUseGlobalMono: () => {
+            getGlobalMonoInfo: () => {
                 shouldUseGlobalMonoCalled = true;
                 return Promise.resolve(undefined);
             }

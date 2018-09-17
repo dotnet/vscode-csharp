@@ -255,7 +255,7 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
         return launchWindows(launchInfo.LaunchPath, cwd, args);
     }
 
-    let monoInfo = await monoResolver.shouldUseGlobalMono(options);
+    let monoInfo = await monoResolver.getGlobalMonoInfo(options);
     
     if (monoInfo) {
         const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;

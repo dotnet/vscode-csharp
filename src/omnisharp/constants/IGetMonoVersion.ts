@@ -3,9 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Options } from "../options";
-import { MonoInformation } from "./MonoInformation";
-
-export interface IMonoResolver {
-    getGlobalMonoInfo(options: Options): Promise<MonoInformation>;
+export interface IGetMonoVersion {
+    (environment: NodeJS.ProcessEnv): Promise<string>;
 }
