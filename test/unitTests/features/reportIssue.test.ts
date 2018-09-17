@@ -51,17 +51,7 @@ suite(`${reportIssue.name}`, () => {
     
     let eventStream: EventStream;
     let eventBus: TestEventBus;
-    let execCommands: Array<string>;
     let getDotnetInfo: IGetDotnetInfo = () => Promise.resolve(dotnetInfo);
-    let execChildProcess = (command: string, workingDir?: string) => {
-        execCommands.push(command);
-        if (command == "dotnet --info") {
-            return Promise.resolve(dotnetInfo);
-        }
-        else {
-            return Promise.resolve("randomValue");
-        }
-    };
     let options: Options;
 
     setup(() => {
@@ -78,7 +68,6 @@ suite(`${reportIssue.name}`, () => {
         vscode.extensions.all = [extension1, extension2];
         eventStream = new EventStream();
         eventBus = new TestEventBus(eventStream);
-        execCommands = [];
         shouldUseGlobalMonoCalled = false;
         monoResolver = {
             getGlobalMonoInfo: () => {
@@ -97,7 +86,6 @@ suite(`${reportIssue.name}`, () => {
 
     test(`${OpenURL.name} event is created with the omnisharp-vscode github repo issues url`, async () => {
         await reportIssue(vscode, eventStream, getDotnetInfo, false, options, monoResolver);
-        expect(execCommands).to.not.contain("mono --version");
         let url = (<OpenURL>eventBus.getEvents()[0]).url;
         expect(url).to.include("https://github.com/OmniSharp/omnisharp-vscode/issues/new");
     });
@@ -116,7 +104,6 @@ suite(`${reportIssue.name}`, () => {
 
     test("dotnet info is obtained and put into the url", async () => {
         await reportIssue(vscode, eventStream, getDotnetInfo, isValidForMono, options, monoResolver);
-        expect(execCommands).to.contain("dotnet --info");
         let url = (<OpenURL>eventBus.getEvents()[0]).url;
         expect(url).to.contain(dotnetInfo);
     });
