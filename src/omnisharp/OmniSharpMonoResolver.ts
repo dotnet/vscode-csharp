@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { satisfies } from 'semver';
-
 import * as path from 'path';
 import { Options } from './options';
 import { IMonoResolver } from '../constants/IMonoResolver';
@@ -16,7 +15,7 @@ export class OmniSharpMonoResolver implements IMonoResolver {
     constructor(private getMonoVersion: IGetMonoVersion) {
     }
 
-    private async getGlobalMono(options: Options): Promise<MonoInformation> {
+    private async configureEnvironmentAndGetInfo(options: Options): Promise<MonoInformation> {
         let env = { ...process.env };
         let monoPath: string;
         if (options.useGlobalMono !== "never" && options.monoPath !== undefined) {
@@ -35,7 +34,7 @@ export class OmniSharpMonoResolver implements IMonoResolver {
     }
 
     public async getGlobalMonoInfo(options: Options): Promise<MonoInformation> {
-        let monoInfo = await this.getGlobalMono(options);
+        let monoInfo = await this.configureEnvironmentAndGetInfo(options);
         let isValid = monoInfo.version && satisfies(monoInfo.version, `>=${this.minimumMonoVersion}`);
 
         if (options.useGlobalMono === "always") {

@@ -4,10 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { OmniSharpMonoResolver } from "../../../src/omnisharp/OmniSharpMonoResolver";
-import { getEmptyOptions } from "../testAssets/Fakes";
+
 import { Options } from "../../../src/omnisharp/options";
 import { use as chaiUse, expect } from "chai";
 import { join } from "path";
+import { getEmptyOptions } from "../Fakes/FakeOptions";
 
 chaiUse(require('chai-as-promised'));
 
@@ -47,7 +48,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
         expect(monoInfo).to.be.undefined;
     });
 
-    test("it returns the path and version if the version is greater than or equal to 5.8.1 and shouldUseGlobalMono is always", async () => {
+    test("it returns the path and version if the version is greater than or equal to 5.8.1 and getGlobalMonoInfo is always", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono("5.8.1"));
         let monoInfo = await monoResolver.getGlobalMonoInfo({
             ...options,
@@ -59,7 +60,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
         expect(monoInfo.path).to.be.equal(monoPath);
     });
 
-    test("it returns the path and version if the version is greater than or equal to 5.8.1 and shouldUseGlobalMono is auto", async () => {
+    test("it returns the path and version if the version is greater than or equal to 5.8.1 and getGlobalMonoInfo is auto", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono("5.8.2"));
         let monoInfo = await monoResolver.getGlobalMonoInfo({
             ...options,
@@ -71,7 +72,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
         expect(monoInfo.path).to.be.equal(monoPath);
     });
 
-    test("it throws exception if shouldUseGlobalMono is always and version<5.8.1", async () => {
+    test("it throws exception if getGlobalMonoInfo is always and version<5.8.1", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono("5.8.0"));
 
         await expect(monoResolver.getGlobalMonoInfo({
