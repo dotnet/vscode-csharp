@@ -7,9 +7,9 @@ import { satisfies } from 'semver';
 
 import * as path from 'path';
 import { Options } from './options';
-import { IMonoResolver } from './constants/IMonoResolver';
-import { MonoInformation } from './constants/MonoInformation';
-import { IGetMonoVersion } from './constants/IGetMonoVersion';
+import { IMonoResolver } from '../constants/IMonoResolver';
+import { MonoInformation } from '../constants/MonoInformation';
+import { IGetMonoVersion } from '../constants/IGetMonoVersion';
 
 export class OmniSharpMonoResolver implements IMonoResolver { 
     private minimumMonoVersion = "5.8.1";

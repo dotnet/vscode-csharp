@@ -29,7 +29,7 @@ import 'rxjs/add/operator/debounceTime';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
-import { IMonoResolver } from './constants/IMonoResolver';
+import { IMonoResolver } from '../constants/IMonoResolver';
 
 enum ServerState {
     Starting,

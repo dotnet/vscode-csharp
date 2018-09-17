@@ -20,8 +20,8 @@ import { PlatformInformation } from '../platform';
 import CompositeDisposable from '../CompositeDisposable';
 import OptionProvider from '../observers/OptionProvider';
 import reportIssue from './reportIssue';
-import { execChildProcess } from '../common';
-import { IMonoResolver } from '../omnisharp/constants/IMonoResolver';
+import { IMonoResolver } from '../constants/IMonoResolver';
+import { getDotnetInfo } from '../utils/getDotnetInfo';
 
 export default function registerCommands(server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionProvider: OptionProvider, monoResolver: IMonoResolver): CompositeDisposable {
     let disposable = new CompositeDisposable();
@@ -49,7 +49,7 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
     // Register command for adapter executable command.
     disposable.add(vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream)));
     disposable.add(vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream)));
-    disposable.add(vscode.commands.registerCommand('csharp.reportIssue', async () => reportIssue(vscode, eventStream, execChildProcess, platformInfo.isValidPlatformForMono(), optionProvider.GetLatestOptions(), monoResolver)));
+    disposable.add(vscode.commands.registerCommand('csharp.reportIssue', async () => reportIssue(vscode, eventStream, getDotnetInfo, platformInfo.isValidPlatformForMono(), optionProvider.GetLatestOptions(), monoResolver)));
 
     return new CompositeDisposable(disposable);
 }

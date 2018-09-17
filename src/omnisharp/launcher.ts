@@ -10,7 +10,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { Options } from './options';
 import { LaunchInfo } from './OmnisharpManager';
-import { IMonoResolver } from './constants/IMonoResolver';
+import { IMonoResolver } from '../constants/IMonoResolver';
 
 export enum LaunchTargetKind {
     Solution,

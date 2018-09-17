@@ -38,4 +38,4 @@ export const getMonoVersion: IGetMonoVersion = async (environment: NodeJS.Proces
             }
         });
     });
-}
+};

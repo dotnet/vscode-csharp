@@ -105,7 +105,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
         expect(monoInfo.env["MONO_GAC_PREFIX"]).to.be.equal(monoPath);
     });
 
-    test("doesn't set the environment with the monoPath id if useGlobalMono is never", async () => {
+    test("doesn't set the environment with the monoPath if useGlobalMono is never", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono("5.8.1"));
         await monoResolver.getGlobalMonoInfo({
             ...options,

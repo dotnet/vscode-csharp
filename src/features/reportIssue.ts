@@ -9,12 +9,13 @@ import { CSharpExtensionId } from "../constants/CSharpExtensionId";
 import { EventStream } from "../EventStream";
 import { OpenURL } from "../omnisharp/loggingEvents";
 import { Options } from "../omnisharp/options";
-import { IMonoResolver } from "../omnisharp/constants/IMonoResolver";
+import { IMonoResolver } from "../constants/IMonoResolver";
+import { IGetDotnetInfo } from "../constants/IGetDotnetInfo";
 
 const issuesUrl = "https://github.com/OmniSharp/omnisharp-vscode/issues/new";
 
-export default async function reportIssue(vscode: vscode, eventStream: EventStream, execChildProcess: (command: string, workingDirectory?: string) => Promise<string>, isValidPlatformForMono: boolean, options: Options, monoResolver: IMonoResolver) {
-    const dotnetInfo = await getDotnetInfo(execChildProcess);
+export default async function reportIssue(vscode: vscode, eventStream: EventStream, getDotnetInfo: IGetDotnetInfo, isValidPlatformForMono: boolean, options: Options, monoResolver: IMonoResolver) {
+    const dotnetInfo = await getDotnetInfo();
     const monoInfo = await getMonoIfPlatformValid(isValidPlatformForMono, options, monoResolver);
     let extensions = getInstalledExtensions(vscode);
     let csharpExtVersion = getCsharpExtensionVersion(vscode);
@@ -102,17 +103,7 @@ async function getMonoIfPlatformValid(isValidPlatformForMono: boolean, options: 
     return "";
 }
 
-async function getDotnetInfo(execChildProcess: (command: string, workingDirectory?: string) => Promise<string>): Promise<string> {
-    let dotnetInfo: string;
-    try {
-        dotnetInfo = await execChildProcess("dotnet --info", process.cwd());
-    }
-    catch (error) {
-        dotnetInfo = "A valid dotnet installation could not be found.";
-    }
 
-    return dotnetInfo;
-}
 
 function getInstalledExtensions(vscode: vscode) {
     let extensions = vscode.extensions.all
