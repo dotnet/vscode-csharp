@@ -8,7 +8,6 @@ import * as protocol from './protocol';
 import * as utils from '../common';
 import * as serverUtils from '../omnisharp/utils';
 import { vscode, CancellationToken } from '../vscodeAdapter';
-
 import { ChildProcess, exec } from 'child_process';
 import { LaunchTarget, findLaunchTargets } from './launcher';
 import { ReadLine, createInterface } from 'readline';
@@ -30,6 +29,7 @@ import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
 import { IMonoResolver } from '../constants/IMonoResolver';
+import * as removeBom from "remove-bom-buffer";
 
 enum ServerState {
     Starting,
@@ -516,8 +516,11 @@ export class OmniSharpServer {
 
     private async _doConnect(options: Options): Promise<void> {
 
-        this._serverProcess.stderr.on('data', (data: any) => {
-            this._fireEvent('stderr', String(data));
+        this._serverProcess.stderr.on('data', (data: Buffer) => {
+            let trimData = removeBom.remove(data);
+            if (trimData.length > 0) {
+                this._fireEvent(Events.StdErr, trimData.toString());
+            }
         });
 
         this._readLine = createInterface({
