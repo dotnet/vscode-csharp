@@ -21,7 +21,9 @@ export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport im
     public async provideWorkspaceSymbols(search: string, token: CancellationToken): Promise<SymbolInformation[]> {
 
         let options = this.optionProvider.GetLatestOptions();
-        return serverUtils.findSymbols(this._server, { Filter: search, MinFilterLength: options.minFindSymbolsFilterLength, MaxItemsToReturn: options.maxFindSymbolsItems, FileName: '' }, token).then(res => {
+        let minFilterLength = options.minFindSymbolsFilterLength > 0 ? options.minFindSymbolsFilterLength : undefined;
+        let maxItemsToReturn = options.maxFindSymbolsItems > 0 ? options.maxFindSymbolsItems : undefined;
+        return serverUtils.findSymbols(this._server, { Filter: search, MinFilterLength: minFilterLength, MaxItemsToReturn: maxItemsToReturn, FileName: '' }, token).then(res => {
             if (res && Array.isArray(res.QuickFixes)) {
                 return res.QuickFixes.map(OmnisharpWorkspaceSymbolProvider._asSymbolInformation);
             }

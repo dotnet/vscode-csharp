@@ -128,8 +128,8 @@ export interface FindUsagesRequest extends Request {
 
 export interface FindSymbolsRequest extends Request {
     Filter: string;
-    MinFilterLength: number;
-    MaxItemsToReturn: number;
+    MinFilterLength?: number;
+    MaxItemsToReturn?: number;
 }
 
 export interface FormatRequest extends Request {
