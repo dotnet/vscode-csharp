@@ -29,8 +29,8 @@ import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
 import { IMonoResolver } from '../constants/IMonoResolver';
-const removeBomBuffer = require("remove-bom-buffer");
-const removeBomString = require("strip-bom");
+import { removeBOMFromBuffer, removeBOMFromString } from '../utils/removeBOM';
+
 
 enum ServerState {
     Starting,
@@ -518,7 +518,7 @@ export class OmniSharpServer {
     private async _doConnect(options: Options): Promise<void> {
 
         this._serverProcess.stderr.on('data', (data: Buffer) => {
-            let trimData = <Buffer>removeBomBuffer(data);
+            let trimData = removeBOMFromBuffer(data);
             if (trimData.length > 0) {
                 this._fireEvent(Events.StdErr, trimData.toString());
             }
@@ -568,8 +568,7 @@ export class OmniSharpServer {
     }
 
     private _onLineReceived(line: string) {
-        line = removeBomString(line);
-        line = line.trim();
+        line = removeBOMFromString(line);
 
         if (line[0] !== '{') {
             this.eventStream.post(new ObservableEvents.OmnisharpServerMessage(line));
