@@ -207,4 +207,8 @@ export class PlatformInformation {
                 return null;
             });
     }
+
+    public isValidPlatformForMono(): boolean {
+        return this.isLinux() || this.isMacOS();
+    }
 }

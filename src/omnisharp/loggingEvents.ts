@@ -138,7 +138,6 @@ export class DotNetTestDebugProcessStart implements BaseEvent {
     constructor(public targetProcessId: number) { }
 }
 
-
 export class DotNetTestsInClassRunStart implements BaseEvent {
     constructor(public className: string) { }
 }
@@ -149,6 +148,10 @@ export class DotNetTestsInClassDebugStart implements BaseEvent {
 
 export class DocumentSynchronizationFailure implements BaseEvent {
     constructor(public documentPath: string, public errorMessage: string) { }
+}
+
+export class OpenURL {
+    constructor(public url: string) { }
 }
 
 export class DebuggerPrerequisiteFailure extends EventWithMessage { }

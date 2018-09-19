@@ -643,6 +643,11 @@
         "command": "csharp.listRemoteProcess",
         "title": "List processes on remote connection for attach",
         "category": "CSharp"
+      },
+      {
+        "command": "csharp.reportIssue",
+        "title": "Start authoring a new issue on GitHub",
+        "category": "CSharp"
       }
     ],
     "keybindings": [
