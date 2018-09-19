@@ -902,6 +902,11 @@ interface Thenable<T> {
     then<TResult>(onfulfilled?: (value: T) => TResult | Thenable<TResult>, onrejected?: (reason: any) => void): Thenable<TResult>;
 }
 
+export interface Extension<T>{
+    readonly id: string;
+    readonly packageJSON: any;
+}
+
 export interface vscode {
     commands: {
         executeCommand: <T>(command: string, ...rest: any[]) => Thenable<T | undefined>;
@@ -921,4 +926,13 @@ export interface vscode {
         createFileSystemWatcher(globPattern: GlobPattern, ignoreCreateEvents?: boolean, ignoreChangeEvents?: boolean, ignoreDeleteEvents?: boolean): FileSystemWatcher;
         onDidChangeConfiguration: Event<ConfigurationChangeEvent>;
     };
+    extensions: {
+        getExtension(extensionId: string): Extension<any> | undefined;
+        all: Extension<any>[];
+    };
+    Uri: {
+        parse(value: string): Uri;
+    };
+
+    version: string;
 }
