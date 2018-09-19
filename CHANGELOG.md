@@ -2,7 +2,11 @@
 
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
-  
+
+## 1.17.0 (Not yet released)
+
+* Added a command - "CSharp: Start authoring a new issue on GitHub" to enable the users to file issues on github from with helpful config information from their system.
+
 ## 1.16.0 (September 10, 2018)
 
 #### Project System
