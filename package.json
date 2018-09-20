@@ -76,6 +76,7 @@
     "mkdirp": "0.5.1",
     "node-filter-async": "0.0.4",
     "open": "*",
+    "remove-bom-buffer": "^3.0.0",
     "request-light": "0.2.2",
     "rxjs": "5.5.6",
     "semver": "*",
