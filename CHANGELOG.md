@@ -5,7 +5,9 @@
 
 ## 1.17.0 (Not yet released)
 
-* Added a command - "CSharp: Start authoring a new issue on GitHub" to enable the users to file issues on github from with helpful config information from their system.
+* Added a command - "CSharp: Start authoring a new issue on GitHub" to enable the users to file issues on github from within the extension with helpful config information from their system.(PR: [#2503](https://github.com/OmniSharp/omnisharp-vscode/pull/2503))
+
+* Fixed a bug where OmniSharp flame was red inspite of OmniSharp loading the projects without any errors.(PR: [#2450](https://github.com/OmniSharp/omnisharp-vscode/pull/2540))
 
 ## 1.16.0 (September 10, 2018)
 
