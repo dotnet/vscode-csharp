@@ -15,7 +15,7 @@ chai.use(require('chai-arrays'));
 chai.use(require('chai-fs'));
 
 suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function () {
-    let virtualScheme: string = "virtual";
+    let virtualScheme: string = "virtualCSharp";
     let virtualDocumentRegistration: IDisposable;
 
     suiteSetup(async function () {
