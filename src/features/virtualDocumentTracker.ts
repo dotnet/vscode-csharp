@@ -50,7 +50,7 @@ function trackFutureVirtualDocuments(server: OmniSharpServer, eventStream: Event
 }
 
 function shouldIgnoreDocument(document: TextDocument, server: OmniSharpServer): boolean {
-    if (document.uri.scheme === 'file' || document.languageId !== 'csharp' || document.uri.scheme !== "virtualCSharp") {
+    if (document.uri.scheme !== "virtualCSharp" || document.languageId !== 'csharp') {
         // We're only interested in non-physical CSharp documents.
         return true;
     }
