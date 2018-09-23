@@ -5,7 +5,7 @@
 import { should, expect } from 'chai';
 import { TelemetryObserver } from '../../../src/observers/TelemetryObserver';
 import { PlatformInformation } from '../../../src/platform';
-import { PackageInstallation, InstallationFailure, InstallationSuccess, TestExecutionCountReport, TelemetryEventWithMeasures, OmnisharpDelayTrackerEventMeasures, OmnisharpStart } from '../../../src/omnisharp/loggingEvents';
+import { PackageInstallation, InstallationFailure, InstallationSuccess, TestExecutionCountReport, TelemetryEventWithMeasures, OmnisharpDelayTrackerEventMeasures, OmnisharpStart, TelemetryEvent } from '../../../src/omnisharp/loggingEvents';
 import { getNullTelemetryReporter } from '../testAssets/Fakes';
 import { Package } from '../../../src/packageManager/Package';
 import { PackageError } from '../../../src/packageManager/PackageError';
@@ -60,6 +60,14 @@ suite('TelemetryReporterObserver', () => {
         });
     });
 
+    test(`${TelemetryEvent.name}: SendTelemetry event is called with the name, properties and measures`, () => {
+        let event = new TelemetryEvent("someName", { "key": "value" }, { someKey: 1 });
+        observer.post(event);
+        expect(name).to.contain(event.eventName);
+        expect(measure).to.be.containingAllOf([event.measures]);
+        expect(property).to.be.equal(event.properties);
+    });
+
     suite('InstallationFailure', () => {
         test("Telemetry Props contains platform information, install stage and an event name", () => {
             let event = new InstallationFailure("someStage", "someError");
@@ -69,7 +77,7 @@ suite('TelemetryReporterObserver', () => {
             expect(property).to.have.property("installStage");
             expect(name).to.not.be.empty;
         });
-    
+
         test(`Telemetry Props contains message and packageUrl if error is package error`, () => {
             let error = new PackageError("someError", <Package>{ "description": "foo", "url": "someurl" });
             let event = new InstallationFailure("someStage", error);
