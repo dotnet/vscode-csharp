@@ -73,6 +73,7 @@
     "http-proxy-agent": "2.1.0",
     "https-proxy-agent": "2.2.1",
     "jsonc-parser": "1.0.0",
+    "microsoft.aspnetcore.razor.vscode": "https://razorvscodetest.blob.core.windows.net/npm/microsoft.aspnetcore.razor.vscode-1.0.0-alpha1-20180924.3.tgz",
     "mkdirp": "0.5.1",
     "node-filter-async": "0.0.4",
     "open": "*",
@@ -84,7 +85,7 @@
     "tmp": "0.0.33",
     "vscode-debugprotocol": "1.6.1",
     "vscode-extension-telemetry": "0.0.15",
-    "yauzl": "2.9.1"
+    "yauzl": "2.10.0"
   },
   "devDependencies": {
     "@types/archiver": "2.1.1",
@@ -268,6 +269,56 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui"
+    },
+    {
+      "description": "Razor Language Server (Windows / x64)",
+      "url": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x64-1.0.0-alpha1-20180924.3.zip",
+      "installPath": ".razor",
+      "platforms": [
+        "win32"
+      ],
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    {
+      "description": "Razor Language Server (Windows / x86)",
+      "url": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x86-1.0.0-alpha1-20180924.3.zip",
+      "installPath": ".razor",
+      "platforms": [
+        "win32"
+      ],
+      "architectures": [
+        "x86"
+      ]
+    },
+    {
+      "description": "Razor Language Server (Linux / x64)",
+      "url": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-linux-x64-1.0.0-alpha1-20180924.3.zip",
+      "installPath": ".razor",
+      "platforms": [
+        "linux"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "binaries": [
+        "./Microsoft.AspNetCore.Razor.LanguageServer"
+      ]
+    },
+    {
+      "description": "Razor Language Server (macOS / x64)",
+      "url": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-osx-x64-1.0.0-alpha1-20180924.3.zip",
+      "installPath": ".razor",
+      "platforms": [
+        "darwin"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "binaries": [
+        "./Microsoft.AspNetCore.Razor.LanguageServer"
+      ]
     }
   ],
   "engines": {
@@ -602,6 +653,29 @@
           "type": "boolean",
           "default": false,
           "description": "Specifies whether notifications should be shown if OmniSharp encounters warnings or errors loading a project. Note that these warnings/errors are always emitted to the OmniSharp log"
+        },
+        "omnisharp.preview": {
+          "type": "boolean",
+          "default": false,
+          "description": "Specifies whether to enable OmniSharp preview features."
+        },
+        "razor.languageServer.path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Overrides the path to the Razor LanguageServer. If specified, this should be the absolute path to the language server directory."
+        },
+        "razor.languageServer.debug": {
+          "type": "boolean",
+          "default": false,
+          "description": "Specifies whether to wait for debug attach when launching the language server."
+        },
+        "razor.languageServer.trace": {
+          "type": "string",
+          "default": "Messages",
+          "description": "Specifies whether to output all messages [Verbose], some messages [Messages] or not at all [Off]."
         }
       }
     },
@@ -660,6 +734,16 @@
         "command": "csharp.reportIssue",
         "title": "Start authoring a new issue on GitHub",
         "category": "CSharp"
+      },
+      {
+        "command": "extension.showRazorCSharpWindow",
+        "title": "Show Razor CSharp",
+        "category": "Razor"
+      },
+      {
+        "command": "extension.showRazorHtmlWindow",
+        "title": "Show Razor Html",
+        "category": "Razor"
       }
     ],
     "keybindings": [
@@ -2712,6 +2796,37 @@
           }
         }
       }
-    ]
+    ],
+    "languages": [
+      {
+        "id": "aspnetcorerazor",
+        "extensions": [
+          ".cshtml"
+        ],
+        "mimetypes": [
+          "text/x-cshtml"
+        ],
+        "configuration": "./src/razor/language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "aspnetcorerazor",
+        "scopeName": "text.aspnetcorerazor",
+        "path": "./src/razor/syntaxes/aspnetcorerazor.tmLanguage.json"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "extension.showRazorCSharpWindow",
+          "when": "resourceLangId == razor"
+        },
+        {
+          "command": "extension.showRazorHtmlWindow",
+          "when": "resourceLangId == razor"
+        }
+      ]
+    }
   }
 }
