@@ -659,13 +659,13 @@
           "default": false,
           "description": "Specifies whether to enable OmniSharp preview features."
         },
-        "razor.languageServer.path": {
+        "razor.languageServer.directory": {
           "type": [
             "string",
             "null"
           ],
           "default": null,
-          "description": "Overrides the path to the Razor LanguageServer. If specified, this should be the absolute path to the language server directory."
+          "description": "Overrides the path to the Razor Language Server directory."
         },
         "razor.languageServer.debug": {
           "type": "boolean",

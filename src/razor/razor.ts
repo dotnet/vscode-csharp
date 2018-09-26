@@ -10,15 +10,15 @@ import * as Razor from 'microsoft.aspnetcore.razor.vscode';
 
 export async function activateRazorExtension(context: vscode.ExtensionContext) {
     const razorConfig = vscode.workspace.getConfiguration('razor');
-    const configuredLanguageServerPath = razorConfig.get<string>('languageServer.path', null);
-    const languageServerPath = configuredLanguageServerPath || path.join(context.extensionPath, '.razor');
+    const configuredLanguageServerDir = razorConfig.get<string>('languageServer.directory', null);
+    const languageServerDir = configuredLanguageServerDir || path.join(context.extensionPath, '.razor');
 
-    if (fs.existsSync(languageServerPath)) {
-        await Razor.activate(context, languageServerPath);
-    } else if (configuredLanguageServerPath) {
-        // It's only an error if the nonexistent path was explicitly configured
-        // If it's the default path, this is expected for unsupported platforms
+    if (fs.existsSync(languageServerDir)) {
+        await Razor.activate(context, languageServerDir);
+    } else if (configuredLanguageServerDir) {
+        // It's only an error if the nonexistent dir was explicitly configured
+        // If it's the default dir, this is expected for unsupported platforms
         vscode.window.showErrorMessage(
-            `Cannot load Razor language server because the configured path was not found: '${languageServerPath}'`);
+            `Cannot load Razor language server because the configured directory was not found: '${languageServerDir}'`);
     }
 }
