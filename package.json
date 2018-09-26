@@ -327,6 +327,7 @@
   "activationEvents": [
     "onDebug",
     "onLanguage:csharp",
+    "onLanguage:aspnetcorerazor",
     "onCommand:o.restart",
     "onCommand:o.pickProjectAndStart",
     "onCommand:o.showOutput",
