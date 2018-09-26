@@ -136,7 +136,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     }
 
     if (optionProvider.GetLatestOptions().preview) {
-        activateRazorExtension(context);
+        await activateRazorExtension(context);
     }
 
     return {
