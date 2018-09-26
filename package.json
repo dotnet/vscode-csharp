@@ -674,7 +674,17 @@
         },
         "razor.languageServer.trace": {
           "type": "string",
-          "default": "Messages",
+          "default": "Off",
+          "enum": [
+            "Off",
+            "Messages",
+            "Verbose"
+          ],
+          "enumDescriptions": [
+            "Does not log messages from Razor Language Server",
+            "Logs only some messages from Razor Language Server",
+            "Logs all messages from Razor Language Server"
+          ],
           "description": "Specifies whether to output all messages [Verbose], some messages [Messages] or not at all [Off]."
         }
       }
