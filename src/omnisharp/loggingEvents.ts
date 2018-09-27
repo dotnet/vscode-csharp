@@ -11,6 +11,10 @@ import { LaunchTarget } from "./launcher";
 export interface BaseEvent {
 }
 
+export class TelemetryEvent implements BaseEvent {
+    constructor(public eventName: string, public properties?: { [key: string]: string }, public measures?: { [key: string]: number }){ }
+}
+
 export class TelemetryEventWithMeasures implements BaseEvent {
     constructor(public eventName: string, public measures: { [key: string]: number }) {
     }
