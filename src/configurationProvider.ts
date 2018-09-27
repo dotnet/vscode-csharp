@@ -140,9 +140,9 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
             config = this.parseEnvFile(config.envFile.replace(/\${workspaceFolder}/g, folder.uri.fsPath), config);
         }
 
-        // vsdbg will error check the debug configuration fields      
-        return config;
-    }   
+        // If the config looks functional return it, otherwise force VSCode to open a configuration file https://github.com/Microsoft/vscode/issues/54213
+        return config && config.type ? config : null;
+    }
 
     private static async showFileWarningAsync(message: string, fileName: string) {
         const openItem: MessageItem = { title: 'Open envFile' };
