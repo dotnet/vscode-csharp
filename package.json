@@ -777,7 +777,8 @@
         "enableBreakpointsFor": {
           "languageIds": [
             "csharp",
-            "razor"
+            "razor",
+            "aspnetcorerazor"
           ]
         },
         "variables": {
@@ -1844,7 +1845,8 @@
         "enableBreakpointsFor": {
           "languageIds": [
             "csharp",
-            "razor"
+            "razor",
+            "aspnetcorerazor"
           ]
         },
         "variables": {
