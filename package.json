@@ -566,6 +566,11 @@
           "default": true,
           "description": "Specifies whether the run and debug test CodeLens should be show be shown."
         },
+        "csharp.maxProjectFileCountForDiagnosticAnalysis": {
+          "type": "number",
+          "default": 1000,
+          "description": "Specifies the maximum number of files for which diagnostics are reported for the whole workspace. If this limit is exceeded, diagnostics will be shown for currently opened files only. Specify 0 or less to disable the limit completely."
+        },
         "omnisharp.path": {
           "type": [
             "string",

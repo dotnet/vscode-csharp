@@ -50,7 +50,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     let omnisharpMonoResolver = new OmniSharpMonoResolver(getMonoVersion);
     const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver);
     omnisharp = server;
-    const advisor = new Advisor(server); // create before server is started
+    const advisor = new Advisor(server, optionProvider); // create before server is started
     const disposables = new CompositeDisposable();
     let localDisposables: CompositeDisposable;
 
