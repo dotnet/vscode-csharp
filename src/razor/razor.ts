@@ -10,7 +10,13 @@ import * as Razor from 'microsoft.aspnetcore.razor.vscode';
 import { EventStream } from '../EventStream';
 
 export async function activateRazorExtension(context: vscode.ExtensionContext, eventStream: EventStream) {
+    // Bail out as early as possible if Razor language features are disabled
     const razorConfig = vscode.workspace.getConfiguration('razor');
+    const razorDisabled = razorConfig.get<boolean>('disabled', false);
+    if (razorDisabled) {
+        return;
+    }
+
     const configuredLanguageServerDir = razorConfig.get<string>('languageServer.directory', null);
     const languageServerDir = configuredLanguageServerDir || path.join(context.extensionPath, '.razor');
 

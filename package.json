@@ -655,10 +655,10 @@
           "default": false,
           "description": "Specifies whether notifications should be shown if OmniSharp encounters warnings or errors loading a project. Note that these warnings/errors are always emitted to the OmniSharp log"
         },
-        "omnisharp.preview": {
+        "razor.disabled": {
           "type": "boolean",
           "default": false,
-          "description": "Specifies whether to enable OmniSharp preview features."
+          "description": "Specifies whether to disable Razor language features."
         },
         "razor.languageServer.directory": {
           "type": [

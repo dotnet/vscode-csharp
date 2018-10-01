@@ -23,8 +23,7 @@ export class Options {
         public minFindSymbolsFilterLength: number,
         public maxFindSymbolsItems: number,
         public defaultLaunchSolution?: string,
-        public monoPath?: string,
-        public preview?: boolean) { }
+        public monoPath?: string) { }
 
 
     public static Read(vscode: vscode): Options {
@@ -69,8 +68,6 @@ export class Options {
         const minFindSymbolsFilterLength = omnisharpConfig.get<number>('minFindSymbolsFilterLength', 0);
         const maxFindSymbolsItems = omnisharpConfig.get<number>('maxFindSymbolsItems', 1000);   // The limit is applied only when this setting is set to a number greater than zero
 
-        const preview = omnisharpConfig.get<boolean>('preview', false);
-
         return new Options(
             path, 
             useGlobalMono, 
@@ -89,7 +86,6 @@ export class Options {
             maxFindSymbolsItems,
             defaultLaunchSolution,
             monoPath,
-            preview,
         );
     }
 

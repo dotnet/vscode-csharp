@@ -135,9 +135,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         coreClrDebugPromise = coreclrdebug.activate(extension, context, platformInfo, eventStream);
     }
 
-    if (optionProvider.GetLatestOptions().preview) {
-        await activateRazorExtension(context, eventStream);
-    }
+    await activateRazorExtension(context, eventStream);
 
     return {
         initializationFinished: async () => {
