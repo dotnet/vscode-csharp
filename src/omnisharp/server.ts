@@ -304,6 +304,15 @@ export class OmniSharpServer {
             '--loglevel', options.loggingLevel
         ];
 
+        if (!options.razorDisabled) {
+            const razorPluginPath = path.join(
+                utils.getExtensionPath(),
+                '.razor',
+                'OmniSharpPlugin',
+                'Microsoft.AspNetCore.Razor.OmniSharpPlugin.dll');
+            args.push('--plugin', razorPluginPath);
+        }
+
         if (options.waitForDebugger === true) {
             args.push('--debug');
         }

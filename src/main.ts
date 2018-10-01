@@ -135,7 +135,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         coreClrDebugPromise = coreclrdebug.activate(extension, context, platformInfo, eventStream);
     }
 
-    await activateRazorExtension(context, eventStream);
+    if (!optionProvider.GetLatestOptions().razorDisabled) {
+        await activateRazorExtension(context, eventStream);
+    }
 
     return {
         initializationFinished: async () => {
