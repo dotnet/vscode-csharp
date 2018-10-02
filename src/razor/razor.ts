@@ -9,10 +9,10 @@ import * as vscode from 'vscode';
 import * as Razor from 'microsoft.aspnetcore.razor.vscode';
 import { EventStream } from '../EventStream';
 
-export async function activateRazorExtension(context: vscode.ExtensionContext, eventStream: EventStream) {
+export async function activateRazorExtension(context: vscode.ExtensionContext, extensionPath: string, eventStream: EventStream) {
     const razorConfig = vscode.workspace.getConfiguration('razor');
     const configuredLanguageServerDir = razorConfig.get<string>('languageServer.directory', null);
-    const languageServerDir = configuredLanguageServerDir || path.join(context.extensionPath, '.razor');
+    const languageServerDir = configuredLanguageServerDir || path.join(extensionPath, '.razor');
 
     if (fs.existsSync(languageServerDir)) {
         await Razor.activate(context, languageServerDir, eventStream);

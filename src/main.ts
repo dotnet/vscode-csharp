@@ -136,7 +136,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     }
 
     if (!optionProvider.GetLatestOptions().razorDisabled) {
-        await activateRazorExtension(context, eventStream);
+        await activateRazorExtension(context, extension.extensionPath, eventStream);
     }
 
     return {
