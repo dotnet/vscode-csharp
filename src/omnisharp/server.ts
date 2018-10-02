@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as fs from 'fs';
 import * as path from 'path';
 import * as protocol from './protocol';
 import * as utils from '../common';
@@ -305,12 +306,15 @@ export class OmniSharpServer {
         ];
 
         if (!options.razorDisabled) {
+            // Razor support only exists for certain platforms, so only load the plugin if present
             const razorPluginPath = path.join(
                 this.extensionPath,
                 '.razor',
                 'OmniSharpPlugin',
                 'Microsoft.AspNetCore.Razor.OmniSharpPlugin.dll');
-            args.push('--plugin', razorPluginPath);
+            if (fs.existsSync(razorPluginPath)) {
+                args.push('--plugin', razorPluginPath);
+            }
         }
 
         if (options.waitForDebugger === true) {
