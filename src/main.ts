@@ -37,7 +37,6 @@ import { ShowOmniSharpConfigChangePrompt } from './observers/OptionChangeObserve
 import createOptionStream from './observables/CreateOptionStream';
 import { CSharpExtensionId } from './constants/CSharpExtensionId';
 import { OpenURLObserver } from './observers/OpenURLObserver';
-import { activateRazorExtension } from './razor/razor';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -133,10 +132,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     if (runtimeDependenciesExist) {
         // activate coreclr-debug
         coreClrDebugPromise = coreclrdebug.activate(extension, context, platformInfo, eventStream);
-    }
-
-    if (!optionProvider.GetLatestOptions().razorDisabled) {
-        await activateRazorExtension(context, extension.extensionPath, eventStream);
     }
 
     return {
