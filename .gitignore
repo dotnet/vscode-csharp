@@ -5,6 +5,7 @@ out
 .omnisharp-*/
 .debugger
 .vscode-test
+.razor
 
 install.*
 
