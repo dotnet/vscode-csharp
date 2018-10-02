@@ -15,7 +15,7 @@ function forwardDocumentChanges(server: OmniSharpServer): IDisposable {
     return workspace.onDidChangeTextDocument(event => {
 
         let {document} = event;
-        if (document.isUntitled || document.languageId !== 'csharp') {
+        if (document.isUntitled || document.languageId !== 'csharp' || document.uri.scheme !== 'file') {
             return;
         }
 
