@@ -2,7 +2,15 @@
 
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
-  
+
+## 1.17.0 (Not yet released)
+
+* Added omnisharp.minFindSymbolsFilterLength setting to configure the number of characters a user must type in for "Go to Symbol in Workspace" command to return any results (default is 0 to preserve existing behavior). Additionally added omnisharp.maxFindSymbolsItems for configuring maximum number of items returned by "Go to Symbol in Workspace" command. The default is 1000. (PR: [#2487](https://github.com/OmniSharp/omnisharp-vscode/pull/2487))
+
+* Added a command - "CSharp: Start authoring a new issue on GitHub" to enable the users to file issues on github from within the extension with helpful config information from their system.(PR: [#2503](https://github.com/OmniSharp/omnisharp-vscode/pull/2503))
+
+* Fixed a bug where OmniSharp flame was red inspite of OmniSharp loading the projects without any errors.(PR: [#2450](https://github.com/OmniSharp/omnisharp-vscode/pull/2540))
+
 ## 1.16.0 (September 10, 2018)
 
 #### Project System

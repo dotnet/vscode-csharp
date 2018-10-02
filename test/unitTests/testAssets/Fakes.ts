@@ -133,7 +133,19 @@ export function getFakeVsCode(): vscode.vscode {
             onDidChangeConfiguration: (listener: (e: ConfigurationChangeEvent) => any, thisArgs?: any, disposables?: Disposable[]): Disposable => {
                 throw new Error("Not Implemented");
             }
-        }
+        },
+        extensions: {
+            getExtension: () => {
+                throw new Error("Not Implemented");
+            },
+            all: []
+        },
+        Uri: {
+            parse: () => {
+                throw new Error("Not Implemented");
+            }
+        },
+        version: ""
     };
 }
 

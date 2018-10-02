@@ -8,7 +8,6 @@ import * as protocol from './protocol';
 import * as utils from '../common';
 import * as serverUtils from '../omnisharp/utils';
 import { vscode, CancellationToken } from '../vscodeAdapter';
-
 import { ChildProcess, exec } from 'child_process';
 import { LaunchTarget, findLaunchTargets } from './launcher';
 import { ReadLine, createInterface } from 'readline';
@@ -29,6 +28,9 @@ import 'rxjs/add/operator/debounceTime';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
+import { IMonoResolver } from '../constants/IMonoResolver';
+import { removeBOMFromBuffer, removeBOMFromString } from '../utils/removeBOM';
+
 
 enum ServerState {
     Starting,
@@ -91,7 +93,7 @@ export class OmniSharpServer {
     private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
     private firstUpdateProject: boolean;
 
-    constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private packageJSON: any, private platformInfo: PlatformInformation, private eventStream: EventStream, private optionProvider: OptionProvider, extensionPath: string) {
+    constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private packageJSON: any, private platformInfo: PlatformInformation, private eventStream: EventStream, private optionProvider: OptionProvider, extensionPath: string, private monoResolver: IMonoResolver) {
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
         let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, this.packageJSON, platformInfo, extensionPath);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
@@ -320,7 +322,7 @@ export class OmniSharpServer {
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
         try {
-            let launchResult = await launchOmniSharp(cwd, args, launchInfo, this.platformInfo, options);
+            let launchResult = await launchOmniSharp(cwd, args, launchInfo, this.platformInfo, options, this.monoResolver);
             this.eventStream.post(new ObservableEvents.OmnisharpLaunch(launchResult.monoVersion, launchResult.monoPath, launchResult.command, launchResult.process.pid));
 
             this._serverProcess = launchResult.process;
@@ -515,8 +517,11 @@ export class OmniSharpServer {
 
     private async _doConnect(options: Options): Promise<void> {
 
-        this._serverProcess.stderr.on('data', (data: any) => {
-            this._fireEvent('stderr', String(data));
+        this._serverProcess.stderr.on('data', (data: Buffer) => {
+            let trimData = removeBOMFromBuffer(data);
+            if (trimData.length > 0) {
+                this._fireEvent(Events.StdErr, trimData.toString());
+            }
         });
 
         this._readLine = createInterface({
@@ -563,7 +568,7 @@ export class OmniSharpServer {
     }
 
     private _onLineReceived(line: string) {
-        line = line.trim();
+        line = removeBOMFromString(line);
 
         if (line[0] !== '{') {
             this.eventStream.post(new ObservableEvents.OmnisharpServerMessage(line));
