@@ -84,7 +84,7 @@
     "strip-bom": "3.0.0",
     "tmp": "0.0.33",
     "vscode-debugprotocol": "1.6.1",
-    "vscode-extension-telemetry": "0.0.15",
+    "vscode-extension-telemetry": "0.0.22",
     "yauzl": "2.10.0"
   },
   "devDependencies": {
