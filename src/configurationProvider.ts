@@ -137,7 +137,7 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
 
         // read from envFile and set config.env
         if (config.envFile) {
-            config = this.parseEnvFile(config.envFile.replace(/\${workspaceFolder}/g, folder.uri.path), config);
+            config = this.parseEnvFile(config.envFile.replace(/\${workspaceFolder}/g, folder.uri.fsPath), config);
         }
 
         // If the config looks functional return it, otherwise force VSCode to open a configuration file https://github.com/Microsoft/vscode/issues/54213
