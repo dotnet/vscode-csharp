@@ -70,7 +70,7 @@ export class Options {
         const minFindSymbolsFilterLength = omnisharpConfig.get<number>('minFindSymbolsFilterLength', 0);
         const maxFindSymbolsItems = omnisharpConfig.get<number>('maxFindSymbolsItems', 1000);   // The limit is applied only when this setting is set to a number greater than zero
 
-        const razorDisabled = razorConfig.get<boolean>('disabled', false);
+        const razorDisabled = !!razorConfig && razorConfig.get<boolean>('disabled', false);
 
         return new Options(
             path, 
