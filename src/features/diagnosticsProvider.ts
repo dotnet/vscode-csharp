@@ -11,6 +11,8 @@ import { toRange } from '../omnisharp/typeConvertion';
 import * as vscode from 'vscode';
 import CompositeDisposable from '../CompositeDisposable';
 import { IDisposable } from '../Disposable';
+import { isVirtualCSharpDocument } from './virtualDocumentTracker';
+import { TextDocument } from '../vscodeAdapter';
 
 export class Advisor {
 
@@ -140,9 +142,11 @@ class DiagnosticsProvider extends AbstractSupport {
         // Go ahead and check for diagnostics in the currently visible editors.
         for (let editor of vscode.window.visibleTextEditors) {
             let document = editor.document;
-            if (document.languageId === 'csharp') {
-                this._validateDocument(document);
+            if (this.shouldIgnoreDocument(document)) {
+                continue;
             }
+
+            this._validateDocument(document);
         }
     }
 
@@ -158,6 +162,19 @@ class DiagnosticsProvider extends AbstractSupport {
         this._disposable.dispose();
     }
 
+    private shouldIgnoreDocument(document: TextDocument) {
+        if (document.languageId !== 'csharp') {
+            return true;
+        }
+
+        if (document.uri.scheme !== 'file' &&
+            !isVirtualCSharpDocument(document)) {
+            return true;
+        }
+
+        return false;
+    }
+
     private _OnDidChangeWindowState(windowState: vscode.WindowState): void {
         if (windowState.focused === true) {
             this._onDidChangeActiveTextEditor(vscode.window.activeTextEditor);
@@ -166,16 +183,18 @@ class DiagnosticsProvider extends AbstractSupport {
 
     private _onDidChangeActiveTextEditor(textEditor: vscode.TextEditor): void {
         // active text editor can be undefined.
-        if (textEditor != undefined && textEditor.document != null) { 
+        if (textEditor != undefined && textEditor.document != null) {
             this._onDocumentAddOrChange(textEditor.document);
         }
     }
 
     private _onDocumentAddOrChange(document: vscode.TextDocument): void {
-        if (document.languageId === 'csharp') {
-            this._validateDocument(document);
-            this._validateProject();
+        if (this.shouldIgnoreDocument(document)) {
+            return;
         }
+
+        this._validateDocument(document);
+        this._validateProject();
     }
 
     private _onDocumentRemove(document: vscode.TextDocument): void {
