@@ -8,7 +8,6 @@ import * as protocol from './protocol';
 import * as utils from '../common';
 import * as serverUtils from '../omnisharp/utils';
 import { vscode, CancellationToken } from '../vscodeAdapter';
-
 import { ChildProcess, exec } from 'child_process';
 import { LaunchTarget, findLaunchTargets } from './launcher';
 import { ReadLine, createInterface } from 'readline';
@@ -29,6 +28,8 @@ import 'rxjs/add/operator/debounceTime';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
+import { removeBOMFromBuffer, removeBOMFromString } from '../utils/removeBOM';
+
 
 enum ServerState {
     Starting,
@@ -515,8 +516,11 @@ export class OmniSharpServer {
 
     private async _doConnect(options: Options): Promise<void> {
 
-        this._serverProcess.stderr.on('data', (data: any) => {
-            this._fireEvent('stderr', String(data));
+        this._serverProcess.stderr.on('data', (data: Buffer) => {
+            let trimData = removeBOMFromBuffer(data);
+            if (trimData.length > 0) {
+                this._fireEvent(Events.StdErr, trimData.toString());
+            }
         });
 
         this._readLine = createInterface({
@@ -563,7 +567,7 @@ export class OmniSharpServer {
     }
 
     private _onLineReceived(line: string) {
-        line = line.trim();
+        line = removeBOMFromString(line);
 
         if (line[0] !== '{') {
             this.eventStream.post(new ObservableEvents.OmnisharpServerMessage(line));

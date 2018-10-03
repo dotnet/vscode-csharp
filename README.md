@@ -20,6 +20,12 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
+### What's New in 1.16.2
+* Update extension to handle upcoming breaking change to launch.json configurations in VS Code 1.28.
+* Fixed launch.json `envFile` option on Windows
+* Fixed a bug where OmniSharp flame was red inspite of OmniSharp loading the projects without any errors.
+* Fixed a problem with tracking virtual documents from other providers
+
 ### What's New in 1.16.0
 
 * Debugger support for launching with environment variables stored in a separate file from launch.json via a new `envFile` option.
