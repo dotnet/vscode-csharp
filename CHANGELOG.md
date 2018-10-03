@@ -2,7 +2,13 @@
 
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
-  
+
+## 1.16.2 (October 3, 2018)
+* Update extension to handle upcoming breaking change to launch.json configurations in VS Code 1.28. (PR: [#2558](https://github.com/OmniSharp/omnisharp-vscode/pull/2558))
+* Fixed a bug where OmniSharp flame was red in spite of OmniSharp loading the projects without any errors. (PR: [#2450](https://github.com/OmniSharp/omnisharp-vscode/pull/2540))
+* Fixed launch.json `envFile` option on Windows. (PR: [#2560](https://github.com/OmniSharp/omnisharp-vscode/pull/2560))
+* Fixed a problem with tracking virtual documents from other providers. (PR: [#2562](https://github.com/OmniSharp/omnisharp-vscode/pull/2562))
+
 ## 1.16.0 (September 10, 2018)
 
 #### Project System
