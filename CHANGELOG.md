@@ -1,7 +1,50 @@
-## Known Issues in 1.15.0
+## Known Issues in 1.16.0
 
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
+  
+## 1.16.0 (September 10, 2018)
+
+#### Project System
+
+* Separated the existing "Restore Packages" option in the Command Palette into two distinct functions:
+  * "Restore Project" - Displays a drop-down that shows all the available projects in the solution or in the workspace. Selecting one of them would trigger a dotnet restore for the particular project.
+  * "Restore All Projects" - Triggers a dotnet restore for all projects in the current solution or workspace.
+
+* Modified the "Unresolved dependencies" prompt to restore the all the projects in the currently selected solution or workspace. (PR: [#2323](https://github.com/OmniSharp/omnisharp-vscode/pull/2323))
+
+* Added support to configure the default *.sln file loaded when opening a project with multiple *.sln files in the root. _(Contributed by [@janaka](https://github.com/janaka))_ (PR: [#2053](https://github.com/OmniSharp/omnisharp-vscode/pull/2053)) 
+
+* Added support for tracking opening, closing and changing of virtual documents that don't exist on disk. (PR: [#2436](https://github.com/OmniSharp/omnisharp-vscode/pull/2436)) _(Contributed by [@NTaylorMullen](https://github.com/NTaylorMullen))_
+
+* Enabled IDE features for .cs files that are not part of a project. (PR: [#2471](https://github.com/OmniSharp/omnisharp-vscode/pull/2471), [omnisharp-roslyn#1252](https://github.com/OmniSharp/omnisharp-roslyn/pull/1252))
+
+#### Misc
+
+* Added a prompt to "Restart OmniSharp" when there is a change in omnisharp "path", "useGlobalMono" or "waitForDebugger" settings.(PR: [#2316](https://github.com/OmniSharp/omnisharp-vscode/pull/2316))
+
+#### Editor
+
+* Improved diagnostics by refreshing them when the active editor changes or the current window is focused. (PR: [#2317](https://github.com/OmniSharp/omnisharp-vscode/pull/2317)) _(Contributed by [@SirIntruder](https://github.com/SirIntruder))_
+
+* Improved completions by adding the preselect property so the best match is preselected. (PR: [#2388](https://github.com/OmniSharp/omnisharp-vscode/pull/2388))
+
+#### Testing
+
+* Added test execution output to the output of the Run/Debug Test CodeLens. (PR: [#2337](https://github.com/OmniSharp/omnisharp-vscode/pull/2337), [#2343](https://github.com/OmniSharp/omnisharp-vscode/pull/2343), [omnisharp-roslyn#1203](https://github.com/OmniSharp/omnisharp-roslyn/pull/1203))
+* Fixed a bug where a debug session could not be started and duplicate logs were displayed after a previous one failed due to build failure. (PR: [#2405](https://github.com/OmniSharp/omnisharp-vscode/pull/2405), [omnisharp-roslyn#1239](https://github.com/OmniSharp/omnisharp-roslyn/pull/1239)) 
+
+#### Options
+
+* Added `monoPath` option to use the mono installation at the specified path when the `useGlobalMono` is set to "always" or "auto". (PR: [#2425](https://github.com/OmniSharp/omnisharp-vscode/pull/2425)) _(Contributed by [@shana](https://github.com/shana))_
+
+#### Debugger
+
+* Added support for launching with environment variables stored in a seperate file from launch.json via a new `envFile` option. (PR: [#2462](https://github.com/OmniSharp/omnisharp-vscode/pull/2462), [#1944](https://github.com/OmniSharp/omnisharp-vscode/issues/1944)) _(Contributed by [@SebastianPfliegel](https://github.com/SebastianPfliegel))_
+* Fixed editting breakpoint conditions while debugging with recent versions of VS Code. ([#2428](https://github.com/OmniSharp/omnisharp-vscode/issues/2428))
+* Added support for hit count breakpoint conditions. ([#895](https://github.com/OmniSharp/omnisharp-vscode/issues/895))
+* Support the `applicationUrl` property in launchSettings.json. ([#2296](https://github.com/OmniSharp/omnisharp-vscode/issues/2296))
+* Improve the error message when attaching to privileged processes on Linux and macOS. ([#477](https://github.com/OmniSharp/omnisharp-vscode/issues/477))
 
 ## 1.15.2 (May 15, 1018)
 
@@ -32,7 +75,7 @@
 #### Editor
 
 * Fixed regression where the "Generate Type in New File" code action would create an empty file. ([#2112](https://github.com/OmniSharp/omnisharp-vscode/issues/2112), PR: [omnisharp-roslyn#1143](https://github.com/OmniSharp/omnisharp-roslyn/pull/1143))
-* Made several improvments to the display of tooltips in Signature Help. ([#1940](https://github.com/OmniSharp/omnisharp-vscode/issues/1940), PR: [#1958](https://github.com/OmniSharp/omnisharp-vscode/pull/1958))
+* Made several improvements to the display of tooltips in Signature Help. ([#1940](https://github.com/OmniSharp/omnisharp-vscode/issues/1940), PR: [#1958](https://github.com/OmniSharp/omnisharp-vscode/pull/1958))
 
 #### Options
 

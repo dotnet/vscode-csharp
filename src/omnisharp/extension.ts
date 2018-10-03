@@ -34,17 +34,18 @@ import { NetworkSettingsProvider } from '../NetworkSettings';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
+import trackVirtualDocuments from '../features/virtualDocumentTracker';
+import { StructureProvider } from '../features/structureProvider';
 
 export let omnisharp: OmniSharpServer;
 
-export async function activate(context: vscode.ExtensionContext, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, eventStream: EventStream, optionProvider: OptionProvider) {
+export async function activate(context: vscode.ExtensionContext, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, eventStream: EventStream, optionProvider: OptionProvider, extensionPath: string) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
-        scheme: 'file' // only files from disk
     };
 
     const options = optionProvider.GetLatestOptions();
-    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider);
+    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath);
     omnisharp = server;
     const advisor = new Advisor(server); // create before server is started
     const disposables = new CompositeDisposable();
@@ -80,6 +81,8 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
         localDisposables.add(reportDiagnostics(server, advisor));
         localDisposables.add(forwardChanges(server));
+        localDisposables.add(trackVirtualDocuments(server, eventStream));
+        localDisposables.add(vscode.languages.registerFoldingRangeProvider(documentSelector, new StructureProvider(server)));
     }));
 
     disposables.add(server.onServerStop(() => {

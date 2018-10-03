@@ -14,45 +14,40 @@ import * as vscode from 'vscode';
 import { DotNetAttachItemsProviderFactory, AttachPicker, RemoteAttachPicker } from './processPicker';
 import { generateAssets } from '../assets';
 import { getAdapterExecutionCommand } from '../coreclr-debug/activate';
-import { CommandShowOutput, CommandDotNetRestoreStart, CommandDotNetRestoreProgress, CommandDotNetRestoreSucceeded, CommandDotNetRestoreFailed } from '../omnisharp/loggingEvents';
+import { ShowOmniSharpChannel, CommandDotNetRestoreStart, CommandDotNetRestoreProgress, CommandDotNetRestoreSucceeded, CommandDotNetRestoreFailed } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 import { PlatformInformation } from '../platform';
 import CompositeDisposable from '../CompositeDisposable';
 import OptionProvider from '../observers/OptionProvider';
 
 export default function registerCommands(server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionProvider: OptionProvider): CompositeDisposable {
-    let d1 = vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server));
-    let d2 = vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionProvider));
-    let d3 = vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new CommandShowOutput()));
-    let d4 = vscode.commands.registerCommand('dotnet.restore', fileName => {
-        if (fileName) {
-            dotnetRestoreForProject(server, fileName, eventStream);
-        }
-        else {
-            dotnetRestoreAllProjects(server, eventStream);
-        }
-    }); 
+    let disposable = new CompositeDisposable();
+    disposable.add(vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server)));
+    disposable.add(vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionProvider)));
+    disposable.add(vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new ShowOmniSharpChannel())));
+    disposable.add(vscode.commands.registerCommand('dotnet.restore.project', async () => pickProjectAndDotnetRestore(server, eventStream)));
+    disposable.add(vscode.commands.registerCommand('dotnet.restore.all', async () => dotnetRestoreAllProjects(server, eventStream)));
 
     // register empty handler for csharp.installDebugger
     // running the command activates the extension, which is all we need for installation to kickoff
-    let d5 = vscode.commands.registerCommand('csharp.downloadDebugger', () => { });
+    disposable.add(vscode.commands.registerCommand('csharp.downloadDebugger', () => { }));
 
     // register process picker for attach
     let attachItemsProvider = DotNetAttachItemsProviderFactory.Get();
     let attacher = new AttachPicker(attachItemsProvider);
-    let d6 = vscode.commands.registerCommand('csharp.listProcess', async () => attacher.ShowAttachEntries());
+    disposable.add(vscode.commands.registerCommand('csharp.listProcess', async () => attacher.ShowAttachEntries()));
 
     // Register command for generating tasks.json and launch.json assets.
-    let d7 = vscode.commands.registerCommand('dotnet.generateAssets', async () => generateAssets(server));
+    disposable.add(vscode.commands.registerCommand('dotnet.generateAssets', async () => generateAssets(server)));
 
     // Register command for remote process picker for attach
-    let d8 = vscode.commands.registerCommand('csharp.listRemoteProcess', async (args) => RemoteAttachPicker.ShowAttachEntries(args, platformInfo));
+    disposable.add(vscode.commands.registerCommand('csharp.listRemoteProcess', async (args) => RemoteAttachPicker.ShowAttachEntries(args, platformInfo)));
 
     // Register command for adapter executable command.
-    let d9 = vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream));
-    let d10 = vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream));
+    disposable.add(vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream)));
+    disposable.add(vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream)));
 
-    return new CompositeDisposable(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10);
+    return new CompositeDisposable(disposable);
 }
 
 function restartOmniSharp(server: OmniSharpServer) {
@@ -64,7 +59,7 @@ function restartOmniSharp(server: OmniSharpServer) {
     }
 }
 
-async function pickProjectAndStart(server: OmniSharpServer, optionProvider: OptionProvider) {
+async function pickProjectAndStart(server: OmniSharpServer, optionProvider: OptionProvider): Promise<void> {
     let options = optionProvider.GetLatestOptions();
     return findLaunchTargets(options).then(targets => {
 
@@ -120,58 +115,40 @@ function projectsToCommands(projects: protocol.ProjectDescriptor[], eventStream:
     });
 }
 
-export async function dotnetRestoreAllProjects(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
+async function pickProjectAndDotnetRestore(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
+    let descriptors = await getProjectDescriptors(server);
+    eventStream.post(new CommandDotNetRestoreStart());
+    let commands = await Promise.all(projectsToCommands(descriptors, eventStream));
+    let command = await vscode.window.showQuickPick(commands);
+    if (command) {
+        return command.execute();
+    }
+}
 
+async function dotnetRestoreAllProjects(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
+    let descriptors = await getProjectDescriptors(server);
+    eventStream.post(new CommandDotNetRestoreStart());
+    for (let descriptor of descriptors) {
+        await dotnetRestore(descriptor.Directory, eventStream);
+    }
+}
+
+async function getProjectDescriptors(server: OmniSharpServer): Promise<protocol.ProjectDescriptor[]> {
     if (!server.isRunning()) {
         return Promise.reject('OmniSharp server is not running.');
     }
 
-    return serverUtils.requestWorkspaceInformation(server).then(async info => {
-
-        let descriptors = protocol.getDotNetCoreProjectDescriptors(info);
-
-        if (descriptors.length === 0) {
-            return Promise.reject("No .NET Core projects found");
-        }
-
-        let commandPromises = projectsToCommands(descriptors, eventStream);
-
-        return Promise.all(commandPromises).then(commands => {
-            return vscode.window.showQuickPick(commands);
-        }).then(command => {
-            if (command) {
-                return command.execute();
-            }
-        });
-    });
-}
-
-export async function dotnetRestoreForProject(server: OmniSharpServer, filePath: string, eventStream: EventStream) {
-
-    if (!server.isRunning()) {
-        return Promise.reject('OmniSharp server is not running.');
+    let info = await serverUtils.requestWorkspaceInformation(server);
+    let descriptors = protocol.getDotNetCoreProjectDescriptors(info);
+    if (descriptors.length === 0) {
+        return Promise.reject("No .NET Core projects found");
     }
 
-    return serverUtils.requestWorkspaceInformation(server).then(async info => {
-
-        let descriptors = protocol.getDotNetCoreProjectDescriptors(info);
-
-        if (descriptors.length === 0) {
-            return Promise.reject("No .NET Core projects found");
-        }
-
-        for (let descriptor of descriptors) {
-            if (descriptor.FilePath === filePath) {
-                return dotnetRestore(descriptor.Directory, eventStream, filePath);
-            }
-        }
-    });
+    return descriptors;
 }
 
-async function dotnetRestore(cwd: string, eventStream: EventStream, filePath?: string) {
+export async function dotnetRestore(cwd: string, eventStream: EventStream, filePath?: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-        eventStream.post(new CommandDotNetRestoreStart());
-
         let cmd = 'dotnet';
         let args = ['restore'];
 

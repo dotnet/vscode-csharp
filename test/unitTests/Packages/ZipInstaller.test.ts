@@ -12,54 +12,64 @@ import { InstallZip } from '../../../src/packageManager/ZipInstaller';
 import { EventStream } from '../../../src/EventStream';
 import { PlatformInformation } from '../../../src/platform';
 import { BaseEvent, InstallationStart, ZipError } from '../../../src/omnisharp/loggingEvents';
-import { Files, Binaries, createTestZipAsync } from '../testAssets/CreateTestZip';
+import { createTestFile } from '../testAssets/TestFile';
+import TestZip from '../testAssets/TestZip';
+import TestEventBus from '../testAssets/TestEventBus';
+import { AbsolutePath } from '../../../src/packageManager/AbsolutePath';
 
 chai.use(require("chai-as-promised"));
 let expect = chai.expect;
 
 suite('ZipInstaller', () => {
-    let tmpInstallDir: TmpAsset;
-    let installationPath: string;
-    let testBuffer: Buffer;
+    const binaries = [
+        createTestFile("binary1", "binary1.txt"),
+        createTestFile("binary2", "binary2.txt")
+    ];
 
+    const files = [
+        createTestFile("file1", "file1.txt"),
+        createTestFile("file2", "folder/file2.txt")
+    ];
+
+    let tmpInstallDir: TmpAsset;
+    let installationPath: AbsolutePath;
+    let testZip: TestZip;
     const fileDescription = "somefile";
-    const eventStream = new EventStream();
-    let eventBus: BaseEvent[];
-    eventStream.subscribe((event) => eventBus.push(event));
-    let allFiles: Array<{ content: string, path: string }>;
+    let eventStream: EventStream;
+    let eventBus: TestEventBus;
 
     setup(async () => {
-        eventBus = [];
+        eventStream = new EventStream(); 
+        eventBus = new TestEventBus(eventStream);
         tmpInstallDir = await CreateTmpDir(true);
-        installationPath = tmpInstallDir.name;
-        allFiles = [...Files, ...Binaries];
-        testBuffer = await createTestZipAsync(allFiles);
+        installationPath = new AbsolutePath(tmpInstallDir.name);
+        testZip = await TestZip.createTestZipAsync(...files, ...binaries);
         util.setExtensionPath(tmpInstallDir.name);
     });
 
     test('The folder is unzipped and all the files are present at the expected paths', async () => {
-        await InstallZip(testBuffer, fileDescription, installationPath, [], eventStream);
-        for (let elem of allFiles) {
-            let filePath = path.join(installationPath, elem.path);
+        await InstallZip(testZip.buffer, fileDescription, installationPath, [], eventStream);
+        for (let elem of testZip.files) {
+            let filePath = path.join(installationPath.value, elem.path);
             expect(await util.fileExists(filePath)).to.be.true;
         }
     });
 
     test('The folder is unzipped and all the expected events are created', async () => {
-        await InstallZip(testBuffer, fileDescription, installationPath, [], eventStream);
+        await InstallZip(testZip.buffer, fileDescription, installationPath, [], eventStream);
         let eventSequence: BaseEvent[] = [
             new InstallationStart(fileDescription)
         ];
-        expect(eventBus).to.be.deep.equal(eventSequence);
+        expect(eventBus.getEvents()).to.be.deep.equal(eventSequence);
     });
 
     test('The folder is unzipped and the binaries have the expected permissions(except on Windows)', async () => {
         if (!((await PlatformInformation.GetCurrent()).isWindows())) {
-            let resolvedBinaryPaths = Binaries.map(binary => path.join(installationPath, binary.path));
-            await InstallZip(testBuffer, fileDescription, installationPath, resolvedBinaryPaths, eventStream);
-            for (let binaryPath of resolvedBinaryPaths) {
-                expect(await util.fileExists(binaryPath)).to.be.true;
-                let mode = (await fs.stat(binaryPath)).mode;
+            let absoluteBinaries = binaries.map(binary => AbsolutePath.getAbsolutePath(installationPath.value, binary.path));
+            await InstallZip(testZip.buffer, fileDescription, installationPath, absoluteBinaries, eventStream);
+            for (let binaryPath of absoluteBinaries) {
+                expect(await util.fileExists(binaryPath.value)).to.be.true;
+                let mode = (await fs.stat(binaryPath.value)).mode;
                 expect(mode & 0o7777).to.be.equal(0o755, `Expected mode for path ${binaryPath}`);
             }
         }
@@ -78,7 +88,7 @@ suite('ZipInstaller', () => {
                 new InstallationStart("Text File"),
                 new ZipError("C# Extension was unable to download its dependencies. Please check your internet connection. If you use a proxy server, please visit https://aka.ms/VsCodeCsharpNetworking")
             ];
-            expect(eventBus).to.be.deep.equal(eventSequence);
+            expect(eventBus.getEvents()).to.be.deep.equal(eventSequence);
         }
     });
 
@@ -86,5 +96,6 @@ suite('ZipInstaller', () => {
         if (tmpInstallDir) {
             tmpInstallDir.dispose();
         }
+        eventBus.dispose();
     });
 });

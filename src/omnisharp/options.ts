@@ -19,7 +19,10 @@ export class Options {
         public showReferencesCodeLens: boolean,
         public showTestsCodeLens: boolean,
         public disableCodeActions: boolean,
-        public disableMSBuildDiagnosticWarning: boolean) { }
+        public disableMSBuildDiagnosticWarning: boolean,
+        public defaultLaunchSolution?: string,
+        public monoPath?: string) { }
+
 
     public static Read(vscode: vscode): Options {
         // Extra effort is taken below to ensure that legacy versions of options
@@ -34,6 +37,7 @@ export class Options {
 
         const path = Options.readPathOption(csharpConfig, omnisharpConfig);
         const useGlobalMono = Options.readUseGlobalMonoOption(omnisharpConfig, csharpConfig);
+        const monoPath = omnisharpConfig.get<string>('monoPath', undefined) || undefined;
 
         const waitForDebugger = omnisharpConfig.get<boolean>('waitForDebugger', false);
 
@@ -47,6 +51,7 @@ export class Options {
 
         const projectLoadTimeout = omnisharpConfig.get<number>('projectLoadTimeout', 60);
         const maxProjectResults = omnisharpConfig.get<number>('maxProjectResults', 250);
+        const defaultLaunchSolution = omnisharpConfig.get<string>('defaultLaunchSolution', undefined);
         const useEditorFormattingSettings = omnisharpConfig.get<boolean>('useEditorFormattingSettings', true);
 
         const useFormatting = csharpConfig.get<boolean>('format.enable', true);
@@ -62,16 +67,19 @@ export class Options {
             path, 
             useGlobalMono, 
             waitForDebugger,
-            loggingLevel, 
-            autoStart, 
-            projectLoadTimeout, 
-            maxProjectResults, 
-            useEditorFormattingSettings, 
+            loggingLevel,
+            autoStart,
+            projectLoadTimeout,
+            maxProjectResults,
+            useEditorFormattingSettings,
             useFormatting,
             showReferencesCodeLens,
             showTestsCodeLens,
             disableCodeActions,
-            disableMSBuildDiagnosticWarning);
+            disableMSBuildDiagnosticWarning,
+            defaultLaunchSolution,
+            monoPath,
+        );
     }
 
     private static readPathOption(csharpConfig: WorkspaceConfiguration, omnisharpConfig: WorkspaceConfiguration): string | null {

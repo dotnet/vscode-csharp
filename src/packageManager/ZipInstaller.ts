@@ -10,8 +10,9 @@ import * as yauzl from 'yauzl';
 import { EventStream } from "../EventStream";
 import { InstallationStart, ZipError } from "../omnisharp/loggingEvents";
 import { NestedError } from '../NestedError';
+import { AbsolutePath } from './AbsolutePath';
 
-export async function InstallZip(buffer: Buffer, description: string, destinationInstallPath: string, binaries: string[], eventStream: EventStream): Promise<void> {
+export async function InstallZip(buffer: Buffer, description: string, destinationInstallPath: AbsolutePath, binaries: AbsolutePath[], eventStream: EventStream): Promise<void> {
     eventStream.post(new InstallationStart(description));
 
     return new Promise<void>((resolve, reject) => {
@@ -25,7 +26,7 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
             zipFile.readEntry();
 
             zipFile.on('entry', (entry: yauzl.Entry) => {
-                let absoluteEntryPath = path.resolve(destinationInstallPath, entry.fileName);
+                let absoluteEntryPath = path.resolve(destinationInstallPath.value, entry.fileName);
 
                 if (entry.fileName.endsWith('/')) {
                     // Directory - create it
@@ -49,8 +50,10 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
                                 return reject(new NestedError('Error creating directory for zip file entry', err));
                             }
 
+                            let binaryPaths = binaries && binaries.map(binary => binary.value);
+
                             // Make sure executable files have correct permissions when extracted
-                            let fileMode = binaries && binaries.indexOf(absoluteEntryPath) !== -1
+                            let fileMode = binaryPaths && binaryPaths.indexOf(absoluteEntryPath) !== -1
                                 ? 0o755
                                 : 0o664;
 

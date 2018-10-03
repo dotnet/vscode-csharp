@@ -19,19 +19,17 @@ suite("InformationMessageObserver", () => {
     let doClickOk: () => void;
     let doClickCancel: () => void;
     let signalCommandDone: () => void;
-    let commandDone = new Promise<void>(resolve => {
-        signalCommandDone = () => { resolve(); };
-    });
+    let commandDone: Promise<void>;
     let vscode = getVsCode();
     let infoMessage: string;
-    let relativePath: string;
     let invokedCommand: string;
     let observer: InformationMessageObserver = new InformationMessageObserver(vscode);
 
     setup(() => {
         infoMessage = undefined;
-        relativePath = undefined;
         invokedCommand = undefined;
+        doClickCancel = undefined;
+        doClickOk = undefined;
         commandDone = new Promise<void>(resolve => {
             signalCommandDone = () => { resolve(); };
         });
@@ -40,7 +38,7 @@ suite("InformationMessageObserver", () => {
     [
         {
             event: getUnresolvedDependenices("someFile"),
-            expectedCommand: "dotnet.restore"
+            expectedCommand: "dotnet.restore.all"
         }
     ].forEach((elem) => {
         suite(elem.event.constructor.name, () => {
@@ -58,7 +56,6 @@ suite("InformationMessageObserver", () => {
 
                 test('The information message is shown', async () => {
                     observer.post(elem.event);
-                    expect(relativePath).to.not.be.empty;
                     expect(infoMessage).to.not.be.empty;
                     doClickOk();
                     await commandDone;
@@ -80,19 +77,23 @@ suite("InformationMessageObserver", () => {
                 });
             });
         });
+        });
+    
+    teardown(() => {
+        commandDone = undefined; 
     });
 
     function getVsCode() {
         let vscode = getVSCodeWithConfig();
-        vscode.window.showInformationMessage = async (message: string, ...items: string[]) => {
+        vscode.window.showInformationMessage = async <T>(message: string, ...items: T[]) => {
             infoMessage = message;
-            return new Promise<string>(resolve => {
+            return new Promise<T>(resolve => {
                 doClickCancel = () => {
                     resolve(undefined);
                 };
 
                 doClickOk = () => {
-                    resolve(message);
+                    resolve(...items);
                 };
             });
         };
@@ -101,11 +102,6 @@ suite("InformationMessageObserver", () => {
             invokedCommand = command;
             signalCommandDone();
             return undefined;
-        };
-
-        vscode.workspace.asRelativePath = (pathOrUri?: string, includeWorspaceFolder?: boolean) => {
-            relativePath = pathOrUri;
-            return relativePath;
         };
 
         return vscode;

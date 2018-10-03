@@ -9,7 +9,7 @@ import { getFakeVsCode } from '../testAssets/Fakes';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/timeout';
 import { ErrorMessageObserver } from '../../../src/observers/ErrorMessageObserver';
-import { ZipError } from '../../../src/omnisharp/loggingEvents';
+import { ZipError, DotNetTestRunFailure, DotNetTestDebugStartFailure, EventWithMessage } from '../../../src/omnisharp/loggingEvents';
 
 chaiUse(require('chai-as-promised'));
 chaiUse(require('chai-string'));
@@ -30,9 +30,14 @@ suite("ErrorMessageObserver", () => {
         errorMessage = undefined;
     });
 
-    test('ZipError: Error message is shown', () => {
-        let event = new ZipError("This is an error");
+    [
+        new ZipError("This is an error"),
+        new DotNetTestRunFailure("This is a failure message"),
+        new DotNetTestDebugStartFailure("Start failure")
+    ].forEach((event: EventWithMessage) => {
+        test(`${event.constructor.name}: Error message is shown`, () => {
             observer.post(event);
-            expect(errorMessage).to.be.equal("This is an error");
-    });   
+            expect(errorMessage).to.be.contain(event.message);
+        });
+    });
 });

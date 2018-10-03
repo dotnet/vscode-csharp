@@ -1,7 +1,7 @@
 # Validating C# Extension for VS Code
 
 #### Opening projects
-When you open a directory in VS Code, the C# extension should look for a .csproj or .sln file in that directory and use "OmniSharp" to load it. 
+When you open a directory in VS Code, the C# extension should look for a .csproj or .sln file in that directory and use "OmniSharp" to load it. If a .cs file is present and no .csproj or .sln file are present, Omnisharp should start but the intellisense should only appear when a change is made to the file.
 If you look in "Output > Omnisharp Log" a bunch of information should be printed about what copy of MSBuild was used and what projects were load
 
 Project types to test:
@@ -10,6 +10,7 @@ Project types to test:
 * .NET Core/.NET Standard csproj
 * (Windows) Desktop .NET projects
 * Unity projects
+* A directory containing a .cs file without a csproj/sln. As stated above, intellisense should appear only when a change is made to the file. 
 
 The easist way to verify that a project was successfully loaded is to open a .cs file within it and verify that the references codelens indicator appears.
 

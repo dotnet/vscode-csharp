@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.15.2",
+  "version": "1.16.1",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -25,7 +25,7 @@
     "multi-root ready"
   ],
   "defaults": {
-    "omniSharp": "1.30.1"
+    "omniSharp": "1.32.5"
   },
   "main": "./out/src/main",
   "scripts": {
@@ -68,113 +68,111 @@
     "instrument": true
   },
   "dependencies": {
-    "async-file": "^2.0.2",
-    "fs-extra": "^5.0.0",
-    "http-proxy-agent": "^2.0.0",
-    "https-proxy-agent": "^2.1.1",
-    "jsonc-parser": "^1.0.0",
-    "mkdirp": "^0.5.1",
+    "async-file": "2.0.2",
+    "fs-extra": "5.0.0",
+    "http-proxy-agent": "2.1.0",
+    "https-proxy-agent": "2.2.1",
+    "jsonc-parser": "1.0.0",
+    "mkdirp": "0.5.1",
     "node-filter-async": "0.0.4",
     "open": "*",
-    "request-light": "^0.2.0",
-    "rxjs": "^5.5.6",
+    "request-light": "0.2.2",
+    "rxjs": "5.5.6",
     "semver": "*",
     "tmp": "0.0.33",
-    "vscode-debugprotocol": "^1.6.1",
+    "vscode-debugprotocol": "1.6.1",
     "vscode-extension-telemetry": "0.0.15",
-    "yauzl": "^2.9.1"
+    "yauzl": "2.9.1"
   },
   "devDependencies": {
-    "@types/archiver": "^2.1.1",
-    "@types/chai": "^4.1.2",
+    "@types/archiver": "2.1.1",
+    "@types/chai": "4.1.2",
     "@types/chai-arrays": "1.0.2",
-    "@types/chai-as-promised": "^7.1.0",
-    "@types/chai-string": "^1.4.0",
-    "@types/del": "^3.0.1",
-    "@types/fs-extra": "^5.0.1",
-    "@types/gulp": "^3.8.36",
+    "@types/chai-as-promised": "7.1.0",
+    "@types/chai-string": "1.4.0",
+    "@types/del": "3.0.1",
+    "@types/fs-extra": "5.0.1",
+    "@types/gulp": "4.0.5",
     "@types/gulp-mocha": "0.0.32",
-    "@types/istanbul": "^0.4.30",
-    "@types/minimist": "^1.2.0",
-    "@types/mkdirp": "^0.5.2",
-    "@types/mocha": "^2.2.48",
-    "@types/node": "^9.4.7",
-    "@types/semver": "^5.5.0",
+    "@types/istanbul": "0.4.30",
+    "@types/minimist": "1.2.0",
+    "@types/mkdirp": "0.5.2",
+    "@types/mocha": "2.2.48",
+    "@types/node": "9.4.7",
+    "@types/semver": "5.5.0",
     "@types/tmp": "0.0.33",
-    "@types/yauzl": "^2.9.0",
-    "archiver": "^2.1.1",
-    "async-child-process": "^1.1.1",
-    "async-shelljs": "^0.1.2",
+    "@types/yauzl": "2.9.0",
+    "archiver": "2.1.1",
+    "async-child-process": "1.1.1",
+    "async-shelljs": "0.1.2",
     "chai": "4.1.2",
     "chai-arrays": "2.0.0",
     "chai-as-promised": "7.1.1",
     "chai-fs": "2.0.0",
-    "chai-string": "^1.4.0",
-    "codecov": "^3.0.0",
-    "copyfiles": "^2.0.0",
-    "cross-env": "^5.1.4",
+    "chai-string": "1.4.0",
+    "codecov": "3.0.2",
+    "copyfiles": "2.0.0",
+    "cross-env": "5.1.4",
     "del": "3.0.0",
-    "get-port": "^3.2.0",
-    "glob-promise": "^3.4.0",
-    "gulp": "3.9.1",
-    "gulp-mocha": "^5.0.0",
-    "gulp-sequence": "^1.0.0",
-    "gulp-tslint": "^8.1.3",
-    "istanbul": "^0.4.5",
-    "istanbul-combine": "^0.3.0",
-    "ltcdr": "^2.2.1",
-    "minimist": "^1.2.0",
-    "mocha": "^5.0.4",
-    "mocha-typescript": "^1.1.12",
-    "mock-http-server": "^0.2.0",
-    "npm-run-all": "^4.1.2",
-    "nyc": "^11.6.0",
-    "plist": "^3.0.1",
-    "remap-istanbul": "^0.11.0",
-    "source-map-support": "^0.5.4",
-    "ts-node": "^5.0.1",
-    "tslint": "^5.9.1",
-    "tslint-microsoft-contrib": "^5.0.3",
-    "tslint-no-unused-expression-chai": "^0.1.3",
-    "typescript": "^2.7.2",
-    "unzip2": "^0.2.5",
-    "vsce": "^1.39.0",
-    "vscode": "^1.1.14"
+    "get-port": "3.2.0",
+    "glob-promise": "3.4.0",
+    "gulp": "4.0.0",
+    "gulp-mocha": "5.0.0",
+    "gulp-tslint": "8.1.3",
+    "istanbul": "0.4.5",
+    "ltcdr": "2.2.1",
+    "minimist": "1.2.0",
+    "mocha": "5.0.4",
+    "mocha-typescript": "1.1.12",
+    "mock-http-server": "0.2.0",
+    "npm-run-all": "4.1.2",
+    "nyc": "11.8.0",
+    "plist": "3.0.1",
+    "remap-istanbul": "0.11.0",
+    "source-map-support": "0.5.4",
+    "ts-node": "6.0.3",
+    "tslint": "5.10.0",
+    "tslint-microsoft-contrib": "5.0.3",
+    "tslint-no-unused-expression-chai": "0.1.3",
+    "typescript": "2.8.3",
+    "unzip2": "0.2.5",
+    "vsce": "1.40.0",
+    "vscode": "1.1.18"
   },
   "runtimeDependencies": [
     {
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12245767/0c5c04bed389ea023a731f6da6d31ab8/omnisharp-win-x86-1.30.1.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.30.1.zip",
-      "installPath": ".omnisharp/1.30.1",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/2d0621db-a58d-420b-8bb3-64f0d4ce2d0f/16ed60ed76dc96d41215120448bd7ffd/omnisharp-win-x86-1.32.5.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.32.5.zip",
+      "installPath": ".omnisharp/1.32.5",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.omnisharp/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.32.5/OmniSharp.exe",
       "platformId": "win-x86"
     },
     {
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12245763/b72bb97e2890bc67301aa8aca3cd382e/omnisharp-win-x64-1.30.1.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.30.1.zip",
-      "installPath": ".omnisharp/1.30.1",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/2d0621db-a58d-420b-8bb3-64f0d4ce2d0f/85523e235f069fb66a74248277c20d6f/omnisharp-win-x64-1.32.5.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.32.5.zip",
+      "installPath": ".omnisharp/1.32.5",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.32.5/OmniSharp.exe",
       "platformId": "win-x64"
     },
     {
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12245766/987fff9362fc85ba8f00d9a31889623c/omnisharp-osx-1.30.1.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.30.1.zip",
-      "installPath": ".omnisharp/1.30.1",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/2d0621db-a58d-420b-8bb3-64f0d4ce2d0f/fe463938be2ba0db657ec61e6ac85594/omnisharp-osx-1.32.5.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.32.5.zip",
+      "installPath": ".omnisharp/1.32.5",
       "platforms": [
         "darwin"
       ],
@@ -182,14 +180,14 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/run",
+      "installTestPath": "./.omnisharp/1.32.5/run",
       "platformId": "osx"
     },
     {
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12245764/3026884a5425856a0de04f1e468d25a8/omnisharp-linux-x86-1.30.1.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.30.1.zip",
-      "installPath": ".omnisharp/1.30.1",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/2d0621db-a58d-420b-8bb3-64f0d4ce2d0f/2623da5b8261bcc4987fb033cbe75431/omnisharp-linux-x86-1.32.5.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.32.5.zip",
+      "installPath": ".omnisharp/1.32.5",
       "platforms": [
         "linux"
       ],
@@ -201,14 +199,14 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/run",
+      "installTestPath": "./.omnisharp/1.32.5/run",
       "platformId": "linux-x86"
     },
     {
       "description": "OmniSharp for Linux (x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12245765/02c6e1855587e0f6b0be479d5ce88d62/omnisharp-linux-x64-1.30.1.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.30.1.zip",
-      "installPath": ".omnisharp/1.30.1",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/2d0621db-a58d-420b-8bb3-64f0d4ce2d0f/e08e78a5a7427b87a3a5de8a361736e0/omnisharp-linux-x64-1.32.5.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.32.5.zip",
+      "installPath": ".omnisharp/1.32.5",
       "platforms": [
         "linux"
       ],
@@ -219,13 +217,13 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/run",
+      "installTestPath": "./.omnisharp/1.32.5/run",
       "platformId": "linux-x64"
     },
     {
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12267706/d27a74d91a12c0e78222081afdf8e0bb/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-15-2/coreclr-debug-win7-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/b04322ea-547b-42b1-86d9-8489befa85cb/78cc7fe92df55ec751fa04231fe4a76f/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-16-0/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -237,8 +235,8 @@
     },
     {
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12149320/af1529a62f43fb8a922eccf750bdf9f7/coreclr-debug-osx-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-15-1/coreclr-debug-osx-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/b04322ea-547b-42b1-86d9-8489befa85cb/2aa44d6a3b45199178833506704024c8/coreclr-debug-osx-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-16-0/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "darwin"
@@ -254,8 +252,8 @@
     },
     {
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/12149320/af1529a62f43fb8a922eccf750bdf9f7/coreclr-debug-linux-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-15-1/coreclr-debug-linux-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/b04322ea-547b-42b1-86d9-8489befa85cb/8a007d22a9733f620f86c87d5b2d66d4/coreclr-debug-linux-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-16-0/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -271,7 +269,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.18.0"
+    "vscode": "^1.26.0"
   },
   "activationEvents": [
     "onDebug",
@@ -279,7 +277,8 @@
     "onCommand:o.restart",
     "onCommand:o.pickProjectAndStart",
     "onCommand:o.showOutput",
-    "onCommand:dotnet.restore",
+    "onCommand:dotnet.restore.project",
+    "onCommand:dotnet.restore.all",
     "onCommand:dotnet.generateAssets",
     "onCommand:csharp.downloadDebugger",
     "onCommand:csharp.listProcess",
@@ -389,12 +388,12 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                  "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                   "default": []
                 },
                 "searchMicrosoftSymbolServer": {
                   "type": "boolean",
-                  "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                  "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                   "default": false
                 },
                 "cachePath": {
@@ -536,6 +535,14 @@
           ],
           "description": "Launch OmniSharp with the globally-installed Mono. If set to \"always\", \"mono\" version 5.8.1 or greater must be available on the PATH. If set to \"auto\", OmniSharp will be launched with \"mono\" if version 5.8.1 or greater is available on the PATH."
         },
+        "omnisharp.monoPath": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Specifies the path to a mono installation to use when \"useGlobalMono\" is set to \"always\" or \"auto\", instead of the default system one."
+        },
         "omnisharp.waitForDebugger": {
           "type": "boolean",
           "default": false,
@@ -568,6 +575,11 @@
           "type": "number",
           "default": 250,
           "description": "The maximum number of projects to be shown in the 'Select Project' dropdown (maximum 250)."
+        },
+        "omnisharp.defaultLaunchSolution": {
+          "type": "string",
+          "default": null,
+          "description": "The name of the default solution used at start up if the repo has multiple solutions. e.g.'MyAwesomeSolution.sln'. Default value is `null` which will cause the first in alphabetical order to be chosen."
         },
         "omnisharp.useEditorFormattingSettings": {
           "type": "boolean",
@@ -608,8 +620,13 @@
         "category": ".NET"
       },
       {
-        "command": "dotnet.restore",
-        "title": "Restore Packages",
+        "command": "dotnet.restore.project",
+        "title": "Restore Project",
+        "category": ".NET"
+      },
+      {
+        "command": "dotnet.restore.all",
+        "title": "Restore All Projects",
         "category": ".NET"
       },
       {
@@ -805,6 +822,11 @@
                 "description": "Environment variables passed to the program.",
                 "default": {}
               },
+              "envFile": {
+                "type": "string",
+                "description": "Environment variables passed to the program by a file.",
+                "default": "${workspaceFolder}/.env"
+              },
               "console": {
                 "type": "string",
                 "enum": [
@@ -1118,12 +1140,12 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -1519,12 +1541,12 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -1614,9 +1636,9 @@
               "type": "coreclr",
               "request": "launch",
               "preLaunchTask": "build",
-              "program": "^\"\\${workspaceRoot}/bin/Debug/${1:<target-framework>}/${2:<project-name.dll>}\"",
+              "program": "^\"\\${workspaceFolder}/bin/Debug/${1:<target-framework>}/${2:<project-name.dll>}\"",
               "args": [],
-              "cwd": "^\"\\${workspaceRoot}\"",
+              "cwd": "^\"\\${workspaceFolder}\"",
               "stopAtEntry": false,
               "console": "internalConsole"
             }
@@ -1639,9 +1661,9 @@
               "type": "coreclr",
               "request": "launch",
               "preLaunchTask": "build",
-              "program": "^\"\\${workspaceRoot}/bin/Debug/${1:<target-framework>}/${2:<project-name.dll>}\"",
+              "program": "^\"\\${workspaceFolder}/bin/Debug/${1:<target-framework>}/${2:<project-name.dll>}\"",
               "args": [],
-              "cwd": "^\"\\${workspaceRoot}\"",
+              "cwd": "^\"\\${workspaceFolder}\"",
               "stopAtEntry": false,
               "launchBrowser": {
                 "enabled": true,
@@ -1661,7 +1683,7 @@
                 "ASPNETCORE_ENVIRONMENT": "Development"
               },
               "sourceFileMap": {
-                "/Views": "^\"\\${workspaceRoot}/Views\""
+                "/Views": "^\"\\${workspaceFolder}/Views\""
               }
             }
           },
@@ -1673,13 +1695,13 @@
               "type": "coreclr",
               "request": "launch",
               "preLaunchTask": "build",
-              "program": "^\"\\${workspaceRoot}/bin/Debug/${1:<target-framework>}/${2:<project-name.dll>}\"",
+              "program": "^\"\\${workspaceFolder}/bin/Debug/${1:<target-framework>}/${2:<project-name.dll>}\"",
               "args": [],
-              "cwd": "^\"\\${workspaceRoot}\"",
+              "cwd": "^\"\\${workspaceFolder}\"",
               "stopAtEntry": false,
               "console": "internalConsole",
               "pipeTransport": {
-                "pipeCwd": "^\"\\${workspaceRoot}\"",
+                "pipeCwd": "^\"\\${workspaceFolder}\"",
                 "pipeProgram": "^\"${3:enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'}\"",
                 "pipeArgs": [],
                 "debuggerPath": "^\"${4:enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg}\""
@@ -1695,7 +1717,7 @@
               "request": "attach",
               "processId": "^\"\\${command:pickRemoteProcess}\"",
               "pipeTransport": {
-                "pipeCwd": "^\"\\${workspaceRoot}\"",
+                "pipeCwd": "^\"\\${workspaceFolder}\"",
                 "pipeProgram": "^\"${1:enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'}\"",
                 "pipeArgs": [],
                 "debuggerPath": "^\"${2:enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg}\""
@@ -1867,6 +1889,11 @@
                 "description": "Environment variables passed to the program.",
                 "default": {}
               },
+              "envFile": {
+                "type": "string",
+                "description": "Environment variables passed to the program by a file.",
+                "default": "${workspaceFolder}/.env"
+              },
               "console": {
                 "type": "string",
                 "enum": [
@@ -2180,12 +2207,12 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -2581,12 +2608,12 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {

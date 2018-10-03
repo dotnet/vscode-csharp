@@ -20,17 +20,18 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
-### What's New in 1.15.0
+### What's New in 1.16.0
 
-* Debugger support for Source Link and Symbol Servers
-* Added support for downloading and launching prerelease versions of the OmniSharp server
-* Improved the status bar display for OmniSharp Server and selected project information
-* Added CodeLens for running and debugging all tests in a test class
-* Performance improvements when OmniSharp scans for projects
-* Improvements for projects containing XAML files
+* Debugger support for launching with environment variables stored in a separate file from launch.json via a new `envFile` option.
+* Debugger support for hit count breakpoint conditions.
+* Enabled IDE features for .cs files that are not part of a project.
+* Modified the "Unresolved dependencies" prompt to restore the all the projects in the currently selected solution or workspace.
+* Added support to configure the default *.sln file loaded when opening a project with multiple *.sln files in the root.
+* Added verbosity to the test execution output when running test using codelens.
+* Added `monoPath` option to use the mono installation at the specified path when the `useGlobalMono` is set to "always" or "auto".
 * Many other bug fixes!
 
-See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.15.0/CHANGELOG.md) for more detail.
+See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.16.0/CHANGELOG.md) for more detail.
 
 ### Supported Operating Systems for Debugging
 

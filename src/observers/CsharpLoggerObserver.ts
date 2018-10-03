@@ -52,6 +52,9 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
             case Event.DownloadSizeObtained.name:
                 this.handleDownloadSizeObtained(<Event.DownloadSizeObtained>event);
                 break;
+            case Event.DocumentSynchronizationFailure.name:
+                this.handleDocumentSynchronizationFailure(<Event.DocumentSynchronizationFailure>event);
+                break;
             case Event.LatestBuildDownloadStart.name:
                 this.logger.appendLine("Getting latest OmniSharp version information");
                 break;
@@ -111,5 +114,9 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
     private handleInstallationStart(event: Event.InstallationStart) {
         this.logger.appendLine(`Installing package '${event.packageDescription}'`);
         this.logger.appendLine();
+    }
+    
+    private handleDocumentSynchronizationFailure(event: Event.DocumentSynchronizationFailure) {
+        this.logger.appendLine(`Failed to synchronize document '${event.documentPath}': ${event.errorMessage}`);
     }
 }

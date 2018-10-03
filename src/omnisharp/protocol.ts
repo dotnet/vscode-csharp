@@ -11,7 +11,6 @@ export module Requests {
     export const CodeCheck = '/codecheck';
     export const CodeFormat = '/codeformat';
     export const ChangeBuffer = '/changebuffer';
-    export const CurrentFileMembersAsTree = '/currentfilemembersastree';
     export const FilesChanged = '/filesChanged';
     export const FindSymbols = '/findsymbols';
     export const FindUsages = '/findusages';
@@ -57,8 +56,11 @@ export namespace WireProtocol {
     }
 }
 
-export interface Request {
+export interface FileBasedRequest {
     FileName: string;
+}
+
+export interface Request extends FileBasedRequest {
     Line?: number;
     Column?: number;
     Buffer?: string;
@@ -252,17 +254,6 @@ export interface SyntaxFeature {
     Data: string;
 }
 
-export interface Node {
-    ChildNodes: Node[];
-    Location: QuickFix;
-    Kind: string;
-    Features: SyntaxFeature[];
-}
-
-export interface CurrentFileMembersAsTreeResponse {
-    TopLevelTypeDefinitions: Node[];
-}
-
 export interface AutoCompleteRequest extends Request {
     WordToComplete: string;
     WantDocumentationForEveryCompletionResult?: boolean;
@@ -284,6 +275,7 @@ export interface AutoCompleteResponse {
     Snippet: string;
     Kind: string;
     IsSuggestionMode: boolean;
+    Preselect: boolean;
 }
 
 export interface ProjectInformationResponse {
@@ -374,8 +366,7 @@ export interface ModifiedFileResponse {
     ModificationType: FileModificationType;
 }
 
-export enum FileModificationType
-{
+export enum FileModificationType {
     Modified,
     Opened,
     Renamed,
@@ -465,6 +456,8 @@ export namespace V2 {
         export const DebugTestsInClassGetStartInfo = '/v2/debugtestsinclass/getstartinfo';
         export const DebugTestLaunch = '/v2/debugtest/launch';
         export const DebugTestStop = '/v2/debugtest/stop';
+        export const BlockStructure = '/v2/blockstructure';
+        export const CodeStructure = '/v2/codestructure';
     }
 
     export interface Point {
@@ -609,6 +602,8 @@ export namespace V2 {
         Outcome: string;
         ErrorMessage: string;
         ErrorStackTrace: string;
+        StandardOutput: string[];
+        StandardError: string[];
     }
 
     export interface RunTestResponse {
@@ -620,6 +615,101 @@ export namespace V2 {
     export interface TestMessageEvent {
         MessageLevel: string;
         Message: string;
+    }
+
+    export interface BlockStructureRequest
+    {
+        FileName: string;
+    }
+
+    export interface BlockStructureResponse
+    {
+        Spans: CodeFoldingBlock[];
+    }
+
+    export interface CodeFoldingBlock {
+        Range: Range;
+        Kind: string;
+    }
+
+    export module SymbolKinds {
+        // types
+        export const Class = 'class';
+        export const Delegate = 'delegate';
+        export const Enum = 'enum';
+        export const Interface = 'interface';
+        export const Struct = 'struct';
+
+        // members
+        export const Constant = 'constant';
+        export const Constructor = 'constructor';
+        export const Destructor = 'destructor';
+        export const EnumMember = 'enummember';
+        export const Event = 'event';
+        export const Field = 'field';
+        export const Indexer = 'indexer';
+        export const Method = 'method';
+        export const Operator = 'operator';
+        export const Property = 'property';
+
+        // other
+        export const Namespace = 'namespace';
+        export const Unknown = 'unknown';
+    }
+
+    export module SymbolAccessibilities {
+        export const Internal = 'internal';
+        export const Private = 'private';
+        export const PrivateProtected = 'private protected';
+        export const Protected = 'protected';
+        export const ProtectedInternal = 'protected internal';
+        export const Public = 'public';
+    }
+
+    export module SymbolPropertyNames {
+        export const Accessibility = 'accessibility';
+        export const Static = 'static';
+        export const TestFramework = 'testFramework';
+        export const TestMethodName = 'testMethodName';
+    }
+
+    export module SymbolRangeNames {
+        export const Attributes = 'attributes';
+        export const Full = 'full';
+        export const Name = 'name';
+    }
+
+    export namespace Structure {
+        export interface CodeElement {
+            Kind: string;
+            Name: string;
+            DisplayName: string;
+            Children?: CodeElement[];
+            Ranges: { [name: string]: Range };
+            Properties?: { [name: string]: any };
+        }
+
+        export interface CodeStructureRequest extends FileBasedRequest {
+        }
+
+        export interface CodeStructureResponse {
+            Elements?: CodeElement[];
+        }
+
+        export function walkCodeElements(elements: CodeElement[], action: (element: CodeElement, parentElement?: CodeElement) => void) {
+            function walker(elements: CodeElement[], parentElement?: CodeElement) {
+                for (let element of elements)
+                {
+                    action(element, parentElement);
+
+                    if (element.Children) {
+                        walker(element.Children, element);
+                    }
+                }
+            }
+
+            walker(elements);
+        }
     }
 }
 

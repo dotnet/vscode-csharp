@@ -42,7 +42,7 @@ export function findLaunchTargets(options: Options): Thenable<LaunchTarget[]> {
     }
 
     return vscode.workspace.findFiles(
-            /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
+            /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake,**/*.cs}',
             /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
             /*maxResults*/ options.maxProjectResults)
         .then(resourcesToLaunchTargets);
@@ -90,7 +90,8 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
             hasProjectJson = false,
             hasProjectJsonAtRoot = false,
             hasCSX = false,
-            hasCake = false;
+            hasCake = false,
+            hasCs = false;
 
         hasCsProjFiles = resources.some(isCSharpProject);
 
@@ -101,7 +102,6 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
             // Add .sln files if there are .csproj files
             if (hasCsProjFiles && isSolution(resource)) {
                 hasSlnFile = true;
-
                 targets.push({
                     label: path.basename(resource.fsPath),
                     description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
@@ -134,6 +134,11 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
             // Discover if there is any Cake file
             if (!hasCake && isCake(resource)) {
                 hasCake = true;
+            }
+
+            //Discover if there is any cs file
+            if (!hasCs && isCs(resource)) {
+                hasCs = true;
             }
         });
 
@@ -171,6 +176,16 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
                 kind: LaunchTargetKind.Cake
             });
         }
+
+        if (hasCs && !hasSlnFile && !hasCsProjFiles && !hasProjectJson && !hasProjectJsonAtRoot) {
+            targets.push({
+                label: path.basename(folderPath),
+                description: '',
+                target: folderPath,
+                directory: folderPath,
+                kind: LaunchTargetKind.Folder
+            });
+        }
     });
 
     return targets.sort((a, b) => a.directory.localeCompare(b.directory));
@@ -196,10 +211,15 @@ function isCake(resource: vscode.Uri): boolean {
     return /\.cake$/i.test(resource.fsPath);
 }
 
+function isCs(resource: vscode.Uri): boolean {
+    return /\.cs$/i.test(resource.fsPath);
+}
+
 export interface LaunchResult {
     process: ChildProcess;
     command: string;
     monoVersion?: string;
+    monoPath?: string;
 }
 
 export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options): Promise<LaunchResult> {
@@ -234,7 +254,13 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
         return launchWindows(launchInfo.LaunchPath, cwd, args);
     }
 
-    let monoVersion = await getMonoVersion();
+    let childEnv = { ...process.env };
+    if (options.useGlobalMono !== "never" && options.monoPath !== undefined) {
+        childEnv['PATH'] = path.join(options.monoPath, 'bin') + path.delimiter + childEnv['PATH'];
+        childEnv['MONO_GAC_PREFIX'] = options.monoPath;
+    }
+
+    let monoVersion = await getMonoVersion(childEnv);
     let isValidMonoAvailable = await satisfies(monoVersion, '>=5.8.1');
 
     // If the user specifically said that they wanted to launch on Mono, respect their wishes.
@@ -245,12 +271,12 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
 
         const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
 
-        return launchNixMono(launchPath, monoVersion, cwd, args);
+        return launchNixMono(launchPath, monoVersion, options.monoPath, cwd, args, childEnv, options.waitForDebugger);
     }
 
     // If we can launch on the global Mono, do so; otherwise, launch directly;
     if (options.useGlobalMono === "auto" && isValidMonoAvailable && launchInfo.MonoLaunchPath) {
-        return launchNixMono(launchInfo.MonoLaunchPath, monoVersion, cwd, args);
+        return launchNixMono(launchInfo.MonoLaunchPath, monoVersion, options.monoPath, cwd, args, childEnv, options.waitForDebugger);
     }
     else {
         return launchNix(launchInfo.LaunchPath, cwd, args);
@@ -307,30 +333,39 @@ function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResul
     };
 }
 
-function launchNixMono(launchPath: string, monoVersion: string, cwd: string, args: string[]): LaunchResult {
+function launchNixMono(launchPath: string, monoVersion: string, monoPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv, useDebugger:boolean): LaunchResult {
     let argsCopy = args.slice(0); // create copy of details args
     argsCopy.unshift(launchPath);
     argsCopy.unshift("--assembly-loader=strict");
 
+    if (useDebugger)
+        {
+            argsCopy.unshift("--assembly-loader=strict");
+            argsCopy.unshift("--debug");
+            argsCopy.unshift("--debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55555");
+        }
+
     let process = spawn('mono', argsCopy, {
         detached: false,
-        cwd: cwd
+        cwd: cwd,
+        env: environment
     });
 
     return {
         process,
         command: launchPath,
         monoVersion,
+        monoPath,
     };
 }
 
-async function getMonoVersion(): Promise<string> {
+async function getMonoVersion(environment: NodeJS.ProcessEnv): Promise<string> {
     const versionRegexp = /(\d+\.\d+\.\d+)/;
 
     return new Promise<string>((resolve, reject) => {
         let childprocess: ChildProcess;
         try {
-            childprocess = spawn('mono', ['--version']);
+            childprocess = spawn('mono', ['--version'], { env: environment });
         }
         catch (e) {
             return resolve(undefined);
