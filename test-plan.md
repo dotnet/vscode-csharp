@@ -93,6 +93,34 @@ The easist way to verify that a project was successfully loaded is to open a .cs
 * In a project that uses globbing (.NET Core), use the VS Code file explorer to add a new file next to the csproj. Intellisense/sighelp/etc should be available in the new file
 * Add a new file and reference a type in it from a different file. Deleting from disk the file containing the referenced type  should produce error messages
 
+#### Razor
+The Razor experience is available when you open a .cshtml file in a valid OmniSharp project. To setup a test project to verify on you can do:  
+1. `dotnet new razor`
+2. Open `Pages/Index.cshtml`
+
+##### C# Completion
+* Typing `@DateTime.Now` and `@(DateTime.Now)` provides completions throughout typing.
+* Completion is available for types that exist in the project (i.e. `Program`)
+* Typing `@model DateTime` prompts for completion for the `model` symbol and the `DateTime` symbol.
+
+#### C# Signature Help
+* Typing `@Html.Raw()` prompts for signature help inside of the `()`.
+
+#### C# Diagnostics
+* Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file. NOTE: This error squiggly will be misaligned due to known issues.
+
+#### Razor Options
+
+##### razor.disabled
+This option can be set to `true` to disable the above described C# experience.
+
+##### razor.languageServer.trace
+This option should always be displayed in the View --> Output --> Razor Log window
+This option can be set to any of the following values:
+  * "Off" - Will launch Razor Language server with its log output set to 'Off'. The header in the Razor Log output window will be shown but no other content will be shown.
+  * "Messages" - Will launch Razor Language server with its log output set to 'Messages'. Limited messages will be shown such as "Opening document xyz in project abc".
+  * "Verbose" - Will launch Razor Language server with its log output set to 'Verbose'. All logging messages will be shown such as "123 - Synchronizing documentxyz currently ...."
+
 #### OmniSharp Options
 
   #### omnisharp.useGlobalMono (for Linux/Mac)
