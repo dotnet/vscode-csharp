@@ -72,7 +72,9 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
     private handleReportDotnetTestResults(event: ReportDotNetTestResults) {
         this.logger.appendLine("----- Test Execution Summary -----");
         this.logger.appendLine('');
-        const results = event.results;
+        
+        // Omnisharp returns null results if there are build failures
+        const results = event.results || [];
         const totalTests = results.length;
 
         let totalPassed = 0, totalFailed = 0, totalSkipped = 0;
