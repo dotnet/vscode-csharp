@@ -107,6 +107,12 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
                 result.StandardError.forEach(message => expect(appendedMessage).to.contain(message));
             });
         });
+
+        
+        test(`Can handle malformed results`, () => {
+            observer.post(new ReportDotNetTestResults([]));
+            expect(appendedMessage).to.contain("----- Test Execution Summary -----\n\nTotal tests: 0. Passed: 0. Failed: 0. Skipped: 0");
+        });
     });
 });
 
