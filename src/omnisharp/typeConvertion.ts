@@ -35,6 +35,12 @@ export function toRange2(rangeLike: { StartLine: number; StartColumn: number; En
     return new vscode.Range(StartLine - 1, StartColumn - 1, EndLine - 1, EndColumn - 1);
 }
 
+export function toVSCodeRange(range: protocol.V2.Range): vscode.Range {
+    return new vscode.Range(
+        range.Start.Line - 1, range.Start.Column - 1, range.End.Line - 1, range.End.Column - 1
+    );
+}
+
 export function createRequest<T extends protocol.Request>(document: vscode.TextDocument, where: vscode.Position | vscode.Range, includeBuffer: boolean = false): T {
 
     let Line: number, Column: number;

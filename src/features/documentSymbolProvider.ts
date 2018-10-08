@@ -11,10 +11,11 @@ import * as vscode from 'vscode';
 import Structure = protocol.V2.Structure;
 import SymbolKinds = protocol.V2.SymbolKinds;
 import SymbolRangeNames = protocol.V2.SymbolRangeNames;
+import { toVSCodeRange } from '../omnisharp/typeConvertion';
 
 export default class OmnisharpDocumentSymbolProvider extends AbstractSupport implements vscode.DocumentSymbolProvider {
 
-    async provideDocumentSymbols(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.SymbolInformation[]> {
+    async provideDocumentSymbols(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.DocumentSymbol[]> {
         const response = await serverUtils.codeStructure(this._server, { FileName: document.fileName }, token);
         
         if (response && response.Elements) {
@@ -25,12 +26,14 @@ export default class OmnisharpDocumentSymbolProvider extends AbstractSupport imp
     }
 }
 
-function createSymbols(elements: Structure.CodeElement[], fileName: string): vscode.SymbolInformation[] {
-    let results: vscode.SymbolInformation[] = [];
+function createSymbols(elements: Structure.CodeElement[], fileName: string): vscode.DocumentSymbol[] {
+    let results: vscode.DocumentSymbol[] = [];
 
-    Structure.walkCodeElements(elements, (element, parentElement) => {
-        const parentElementName = parentElement ? parentElement.DisplayName : undefined;
-        const symbol = createSymbolForElement(element, parentElementName, fileName);
+    elements.forEach(element => {
+        let symbol = createSymbolForElement(element, fileName);
+        if (element.Children) {
+            symbol.children = createSymbols(element.Children, fileName);
+        }
 
         results.push(symbol);
     });
@@ -38,19 +41,11 @@ function createSymbols(elements: Structure.CodeElement[], fileName: string): vsc
     return results;
 }
 
-function createSymbolForElement(element: Structure.CodeElement, parentElementName: string, fileName: string): vscode.SymbolInformation {
-    const range = element.Ranges[SymbolRangeNames.Full];
+function createSymbolForElement(element: Structure.CodeElement, fileName: string): vscode.DocumentSymbol {
+    const fullRange = element.Ranges[SymbolRangeNames.Full];
+    const nameRange = element.Ranges[SymbolRangeNames.Name];
 
-    const vscodeRange = new vscode.Range(
-        range.Start.Line - 1, range.Start.Column - 1, range.End.Line - 1, range.End.Column - 1
-    );
-
-    return new vscode.SymbolInformation(
-        element.DisplayName,
-        toSymbolKind(element.Kind),
-        parentElementName,
-        new vscode.Location(vscode.Uri.file(fileName), vscodeRange)
-    );
+    return new vscode.DocumentSymbol(element.Name, fileName, toSymbolKind(element.Kind), toVSCodeRange(fullRange), toVSCodeRange(nameRange));
 }
 
 const kinds: { [kind: string]: vscode.SymbolKind; } = { };
