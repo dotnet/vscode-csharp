@@ -7,7 +7,7 @@ import { extractSummaryText } from './documentation';
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import { createRequest } from '../omnisharp/typeConvertion';
+import { createRequest } from '../omnisharp/typeConversion';
 import { CompletionItemProvider, CompletionItem, CompletionItemKind, CompletionContext, CompletionTriggerKind, CancellationToken, TextDocument, Range, Position, CompletionList } from 'vscode';
 
 export default class OmniSharpCompletionItemProvider extends AbstractSupport implements CompletionItemProvider {

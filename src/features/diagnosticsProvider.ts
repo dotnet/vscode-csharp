@@ -7,7 +7,7 @@ import { OmniSharpServer } from '../omnisharp/server';
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import { toRange } from '../omnisharp/typeConvertion';
+import { toRange } from '../omnisharp/typeConversion';
 import * as vscode from 'vscode';
 import CompositeDisposable from '../CompositeDisposable';
 import { IDisposable } from '../Disposable';

@@ -34,7 +34,7 @@ suite("FileDownloader", () => {
     const getFallBackURLEvents = () => {
         return [
             new DownloadStart(fileDescription),
-            new DownloadFailure("failed (error code '404')"),
+            new DownloadFailure(`Failed to download from ${server.baseUrl}${errorUrlPath}. Error code '404')`),
             new DownloadFallBack(`${server.baseUrl}${correctUrlPath}`),
             new DownloadSizeObtained(12),
             new DownloadProgress(100, fileDescription),
@@ -99,7 +99,7 @@ suite("FileDownloader", () => {
         test('Download Start and Download Failure events are created', async () => {
             let eventsSequence = [
                 new DownloadStart(fileDescription),
-                new DownloadFailure("failed (error code '404')")
+                new DownloadFailure(`Failed to download from ${server.baseUrl}${errorUrlPath}. Error code '404')`)
             ];
             try {
                 await DownloadFile(fileDescription, eventStream, networkSettingsProvider, getURL(errorUrlPath));
