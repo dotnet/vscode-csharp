@@ -11,7 +11,7 @@ import * as vscode from 'vscode';
 import Structure = protocol.V2.Structure;
 import SymbolKinds = protocol.V2.SymbolKinds;
 import SymbolRangeNames = protocol.V2.SymbolRangeNames;
-import { toVSCodeRange } from '../omnisharp/typeConvertion';
+import { toRange3 } from '../omnisharp/typeConvertion';
 
 export default class OmnisharpDocumentSymbolProvider extends AbstractSupport implements vscode.DocumentSymbolProvider {
 
@@ -45,7 +45,7 @@ function createSymbolForElement(element: Structure.CodeElement, fileName: string
     const fullRange = element.Ranges[SymbolRangeNames.Full];
     const nameRange = element.Ranges[SymbolRangeNames.Name];
 
-    return new vscode.DocumentSymbol(element.Name, fileName, toSymbolKind(element.Kind), toVSCodeRange(fullRange), toVSCodeRange(nameRange));
+    return new vscode.DocumentSymbol(element.Name, fileName, toSymbolKind(element.Kind), toRange3(fullRange), toRange3(nameRange));
 }
 
 const kinds: { [kind: string]: vscode.SymbolKind; } = { };
