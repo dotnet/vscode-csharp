@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import { OmniSharpServer } from '../omnisharp/server';
 import AbstractProvider from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
-import { toRange2 } from '../omnisharp/typeConvertion';
+import { toRange2 } from '../omnisharp/typeConversion';
 import * as serverUtils from '../omnisharp/utils';
 import { FileModificationType } from '../omnisharp/protocol';
 import { Uri } from 'vscode';

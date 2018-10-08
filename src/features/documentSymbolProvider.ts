@@ -11,7 +11,7 @@ import * as vscode from 'vscode';
 import Structure = protocol.V2.Structure;
 import SymbolKinds = protocol.V2.SymbolKinds;
 import SymbolRangeNames = protocol.V2.SymbolRangeNames;
-import { toRange3 } from '../omnisharp/typeConvertion';
+import { toRange3 } from '../omnisharp/typeConversion';
 
 export default class OmnisharpDocumentSymbolProvider extends AbstractSupport implements vscode.DocumentSymbolProvider {
 
