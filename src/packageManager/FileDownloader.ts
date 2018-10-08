@@ -12,7 +12,7 @@ import { parse as parseUrl } from 'url';
 import { getProxyAgent } from './proxy';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 
-export async function DownloadFile(description: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider, url: string, fallbackUrl?: string) {
+export async function DownloadFile(description: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider, url: string, fallbackUrl?: string): Promise<Buffer> {
     eventStream.post(new DownloadStart(description));
 
     try {
@@ -65,7 +65,7 @@ async function downloadFile(description: string, urlString: string, eventStream:
 
             else if (response.statusCode != 200) {
                 // Download failed - print error message
-                eventStream.post(new DownloadFailure(`failed (error code '${response.statusCode}')`));
+                eventStream.post(new DownloadFailure(`Failed to download from ${urlString}. Error code '${response.statusCode}')`));
                 return reject(new NestedError(response.statusCode.toString()));
             }
 
@@ -93,7 +93,7 @@ async function downloadFile(description: string, urlString: string, eventStream:
             });
 
             response.on('error', err => {
-                reject(new NestedError(`Failed to download from ${urlString}. Error Message: ${err.message} || 'NONE'}`, err)); 
+                reject(new NestedError(`Failed to download from ${urlString}. Error Message: ${err.message} || 'NONE'}`, err));
             });
         });
 
