@@ -19,20 +19,20 @@ export default class OmnisharpDocumentSymbolProvider extends AbstractSupport imp
         const response = await serverUtils.codeStructure(this._server, { FileName: document.fileName }, token);
         
         if (response && response.Elements) {
-            return createSymbols(response.Elements, document.fileName);
+            return createSymbols(response.Elements);
         }
 
         return [];
     }
 }
 
-function createSymbols(elements: Structure.CodeElement[], fileName: string): vscode.DocumentSymbol[] {
+function createSymbols(elements: Structure.CodeElement[]): vscode.DocumentSymbol[] {
     let results: vscode.DocumentSymbol[] = [];
 
     elements.forEach(element => {
-        let symbol = createSymbolForElement(element, fileName);
+        let symbol = createSymbolForElement(element);
         if (element.Children) {
-            symbol.children = createSymbols(element.Children, fileName);
+            symbol.children = createSymbols(element.Children);
         }
 
         results.push(symbol);
@@ -41,11 +41,11 @@ function createSymbols(elements: Structure.CodeElement[], fileName: string): vsc
     return results;
 }
 
-function createSymbolForElement(element: Structure.CodeElement, fileName: string): vscode.DocumentSymbol {
+function createSymbolForElement(element: Structure.CodeElement): vscode.DocumentSymbol {
     const fullRange = element.Ranges[SymbolRangeNames.Full];
     const nameRange = element.Ranges[SymbolRangeNames.Name];
 
-    return new vscode.DocumentSymbol(element.Name, fileName, toSymbolKind(element.Kind), toRange3(fullRange), toRange3(nameRange));
+    return new vscode.DocumentSymbol(element.Name, /*detail*/ "", toSymbolKind(element.Kind), toRange3(fullRange), toRange3(nameRange));
 }
 
 const kinds: { [kind: string]: vscode.SymbolKind; } = { };
