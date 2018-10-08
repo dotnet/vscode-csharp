@@ -6,7 +6,7 @@
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import { createRequest } from '../omnisharp/typeConvertion';
+import { createRequest } from '../omnisharp/typeConversion';
 import { HoverProvider, Hover, TextDocument, CancellationToken, Position } from 'vscode';
 import { GetDocumentationString } from './documentation';
 

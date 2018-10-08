@@ -8,7 +8,7 @@ import { OmniSharpServer } from '../omnisharp/server';
 import OptionProvider from '../observers/OptionProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import {toRange} from '../omnisharp/typeConvertion';
+import {toRange} from '../omnisharp/typeConversion';
 import {CancellationToken, Uri, WorkspaceSymbolProvider, SymbolInformation, SymbolKind} from 'vscode';
 
 

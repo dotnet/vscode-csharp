@@ -6,7 +6,7 @@
 import * as serverUtils from '../omnisharp/utils';
 import {CancellationToken, DefinitionProvider, Location, Position, TextDocument, Uri} from 'vscode';
 import {GoToDefinitionRequest, MetadataRequest, MetadataSource} from '../omnisharp/protocol';
-import {createRequest, toLocation, toLocationFromUri} from '../omnisharp/typeConvertion';
+import {createRequest, toLocation, toLocationFromUri} from '../omnisharp/typeConversion';
 import AbstractSupport from './abstractProvider';
 import DefinitionMetadataDocumentProvider from './definitionMetadataDocumentProvider';
 import { OmniSharpServer } from '../omnisharp/server';
