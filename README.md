@@ -46,7 +46,8 @@ See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.16.0/
 
 ### Found a Bug?
 
-To file a new issue to include all the related config information from within vscode,use Ctrl+Shift+P --> `CSharp: Start authoring a new issue on GitHub`. This will open a browser window with all the necessary information related to the installed extensions, dotnet version, mono version, etc. Enter all the remaining information and hit submit. More information can be found on the [wiki](https://github.com/OmniSharp/omnisharp-vscode/wiki/Reporting-Issues).
+To file a new issue to include all the related config information directly from vscode by entering the command pallette with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>
+(<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> on macOS) and running `CSharp: Start authoring a new issue on GitHub` command. This will open a browser window with all the necessary information related to the installed extensions, dotnet version, mono version, etc. Enter all the remaining information and hit submit. More information can be found on the [wiki](https://github.com/OmniSharp/omnisharp-vscode/wiki/Reporting-Issues).
 
 Alternatively you could visit https://github.com/OmniSharp/omnisharp-vscode/issues and file a new one.
 
