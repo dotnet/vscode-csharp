@@ -73,7 +73,7 @@
     "http-proxy-agent": "2.1.0",
     "https-proxy-agent": "2.2.1",
     "jsonc-parser": "1.0.0",
-    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/273c49f3-fc9b-4140-bc65-b47b9ac61267/84c3319bc81e794e873cb931084cb6c8/microsoft.aspnetcore.razor.vscode-1.0.0-alpha1-20181003.5.tgz",
+    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/eee89386-9a82-4b4c-b30a-5857138f2eff/b0583648506c8fffe1ed9ff202702387/microsoft.aspnetcore.razor.vscode-1.0.0-alpha1-20181006.7.tgz",
     "mkdirp": "0.5.1",
     "node-filter-async": "0.0.4",
     "open": "*",
@@ -272,7 +272,7 @@
     },
     {
       "description": "Razor Language Server (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/273c49f3-fc9b-4140-bc65-b47b9ac61267/f14ac3d133fbd3ec940741c7e5ea270a/razorlanguageserver-win-x64-1.0.0-alpha1-20181003.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/eee89386-9a82-4b4c-b30a-5857138f2eff/3b812e4b415e128f291db79779a22fa6/razorlanguageserver-win-x64-1.0.0-alpha1-20181006.7.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -283,7 +283,7 @@
     },
     {
       "description": "Razor Language Server (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/273c49f3-fc9b-4140-bc65-b47b9ac61267/2650922e18baf2470fa1e7eb3b7fcd6a/razorlanguageserver-win-x86-1.0.0-alpha1-20181003.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/eee89386-9a82-4b4c-b30a-5857138f2eff/f21dc63eb40ce1c0a4c4a374f9ba2552/razorlanguageserver-win-x86-1.0.0-alpha1-20181006.7.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -294,7 +294,7 @@
     },
     {
       "description": "Razor Language Server (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/273c49f3-fc9b-4140-bc65-b47b9ac61267/90ec9047fa008298d85e3abc15866818/razorlanguageserver-linux-x64-1.0.0-alpha1-20181003.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/eee89386-9a82-4b4c-b30a-5857138f2eff/e207d758ad5afc02c7866eba018a772e/razorlanguageserver-linux-x64-1.0.0-alpha1-20181006.7.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -308,7 +308,7 @@
     },
     {
       "description": "Razor Language Server (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/273c49f3-fc9b-4140-bc65-b47b9ac61267/ef4d3d9d01cd5cffd41095de48e466a8/razorlanguageserver-osx-x64-1.0.0-alpha1-20181003.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/eee89386-9a82-4b4c-b30a-5857138f2eff/797f57ed228c8a2fa48b0bbafd69b120/razorlanguageserver-osx-x64-1.0.0-alpha1-20181006.7.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
