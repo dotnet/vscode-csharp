@@ -4,6 +4,7 @@ out
 .omnisharp/
 .omnisharp-*/
 .debugger
+.razor
 .vscode-test
 .razor
 
