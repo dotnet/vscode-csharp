@@ -22,9 +22,11 @@ export class Options {
         public disableMSBuildDiagnosticWarning: boolean,
         public minFindSymbolsFilterLength: number,
         public maxFindSymbolsItems: number,
+        public razorDisabled: boolean,
+        public razorDevMode: boolean,
+        public razorPluginPath?: string,
         public defaultLaunchSolution?: string,
-        public monoPath?: string,
-        public razorDisabled?: boolean) { }
+        public monoPath?: string) { }
 
 
     public static Read(vscode: vscode): Options {
@@ -71,6 +73,8 @@ export class Options {
         const maxFindSymbolsItems = omnisharpConfig.get<number>('maxFindSymbolsItems', 1000);   // The limit is applied only when this setting is set to a number greater than zero
 
         const razorDisabled = !!razorConfig && razorConfig.get<boolean>('disabled', false);
+        const razorDevMode = !!razorConfig && razorConfig.get<boolean>('devmode', false);
+        const razorPluginPath = razorConfig ? razorConfig.get<string>('plugin.path', undefined) : undefined;
 
         return new Options(
             path, 
@@ -88,9 +92,11 @@ export class Options {
             disableMSBuildDiagnosticWarning,
             minFindSymbolsFilterLength,
             maxFindSymbolsItems,
+            razorDisabled,
+            razorDevMode,
+            razorPluginPath,
             defaultLaunchSolution,
             monoPath,
-            razorDisabled
         );
     }
 

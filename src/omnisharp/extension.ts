@@ -28,7 +28,7 @@ import WorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
 import forwardChanges from '../features/changeForwarding';
 import registerCommands from '../features/commands';
 import { PlatformInformation } from '../platform';
-import { ProjectJsonDeprecatedWarning, OmnisharpStart } from './loggingEvents';
+import { ProjectJsonDeprecatedWarning, OmnisharpStart, RazorDevModeActive } from './loggingEvents';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import CompositeDisposable from '../CompositeDisposable';
@@ -152,8 +152,14 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
             });
     }));
 
-    // read and store last solution or folder path
-    disposables.add(server.onBeforeServerStart(path => context.workspaceState.update('lastSolutionPathOrFolder', path)));
+    disposables.add(server.onBeforeServerStart(path => {
+        if (options.razorDevMode) {
+            eventStream.post(new RazorDevModeActive());
+        }
+
+        // read and store last solution or folder path
+        context.workspaceState.update('lastSolutionPathOrFolder', path);
+    }));
 
     if (options.autoStart) {
         server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder'));
