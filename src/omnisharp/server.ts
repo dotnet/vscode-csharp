@@ -32,7 +32,6 @@ import OptionProvider from '../observers/OptionProvider';
 import { IMonoResolver } from '../constants/IMonoResolver';
 import { removeBOMFromBuffer, removeBOMFromString } from '../utils/removeBOM';
 
-
 enum ServerState {
     Starting,
     Started,
@@ -305,9 +304,10 @@ export class OmniSharpServer {
             '--loglevel', options.loggingLevel
         ];
 
+        let razorPluginPath: string;
         if (!options.razorDisabled) {
             // Razor support only exists for certain platforms, so only load the plugin if present
-            const razorPluginPath = path.join(
+            razorPluginPath = options.razorPluginPath || path.join(
                 this.extensionPath,
                 '.razor',
                 'OmniSharpPlugin',
@@ -336,6 +336,14 @@ export class OmniSharpServer {
         try {
             let launchResult = await launchOmniSharp(cwd, args, launchInfo, this.platformInfo, options, this.monoResolver);
             this.eventStream.post(new ObservableEvents.OmnisharpLaunch(launchResult.monoVersion, launchResult.monoPath, launchResult.command, launchResult.process.pid));
+
+            if (razorPluginPath && options.razorPluginPath) {
+                if (fs.existsSync(razorPluginPath)) {
+                    this.eventStream.post(new ObservableEvents.RazorPluginPathSpecified(razorPluginPath));
+                } else {
+                    this.eventStream.post(new ObservableEvents.RazorPluginPathDoesNotExist(razorPluginPath));
+                }
+            }
 
             this._serverProcess = launchResult.process;
             this._delayTrackers = {};
