@@ -77,7 +77,7 @@ export class Options {
         const razorDevMode = !!razorConfig && razorConfig.get<boolean>('devmode', false);
         const razorPluginPath = razorConfig ? razorConfig.get<string>('plugin.path', undefined) : undefined;
 
-        const maxProjectFileCountForDiagnosticAnalysis = csharpConfig.get<number>('maxProjectFileCountForDiagnosticAnalysis', 1000);
+        const maxProjectFileCountForDiagnosticAnalysis = csharpConfig.get<number | null>('maxProjectFileCountForDiagnosticAnalysis', 1000);
 
         return new Options(
             path,
