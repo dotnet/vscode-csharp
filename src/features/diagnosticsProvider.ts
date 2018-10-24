@@ -45,7 +45,7 @@ export class Advisor {
     public shouldValidateProject(): boolean {
         return this._isServerStarted()
             && !this._isRestoringPackages()
-            && !this._isHugeProject();
+            && !this._isOverFileLimit();
     }
 
     private _updateProjectFileCount(path: string, fileCount: number): void {
@@ -100,7 +100,7 @@ export class Advisor {
         return this._server.isRunning();
     }
 
-    private _isHugeProject(): boolean {
+    private _isOverFileLimit(): boolean {
         let opts = this.optionProvider.GetLatestOptions();
         let fileLimit = opts.maxProjectFileCountForDiagnosticAnalysis;
         if (fileLimit > 0) {
@@ -112,8 +112,8 @@ export class Advisor {
                 }
             }
         }
-          return false;
-     }
+        return false;
+    }
 }
 
 export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor): IDisposable {
