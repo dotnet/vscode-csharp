@@ -3,7 +3,6 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information. 
 *--------------------------------------------------------------------------------------------*/
 
-import * as path from 'path';
 import * as vscode from 'vscode';
 import { should, expect } from 'chai';
 import { activateCSharpExtension } from './integrationHelpers';
@@ -20,11 +19,8 @@ suite(`WorkspaceSymbolProvider: ${testAssetWorkspace.description}`, function () 
         await testAssetWorkspace.restore();
         await activateCSharpExtension();
 
-        let fileName = 'documentSymbols.cs';
-        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
-        let filePath = path.join(projectDirectory, fileName);
-        let fileUri = vscode.Uri.file(filePath);
-        await vscode.commands.executeCommand("vscode.open", fileUri);
+        let projectDirectory = vscode.Uri.file(testAssetWorkspace.projects[0].projectDirectoryPath);
+        await vscode.commands.executeCommand("vscode.openFolder", projectDirectory);
     });
 
     suiteTeardown(async () => {
