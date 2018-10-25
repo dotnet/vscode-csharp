@@ -13,7 +13,7 @@ const chai = require('chai');
 chai.use(require('chai-arrays'));
 chai.use(require('chai-fs'));
 
-suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
+suite(`WorkspaceSymbolProvider: ${testAssetWorkspace.description}`, function () {
 
     suiteSetup(async function () {
         should();
@@ -32,11 +32,27 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
     });
 
     test("Returns elements", async function () {
-        let symbols = await GetWorkspaceSymbols();
+        let symbols = await GetWorkspaceSymbols("P");
+        expect(symbols.length).to.be.greaterThan(0);
+    });
+
+    test("Returns no elements when minimum filter length is configured and search term is shorter", async function () {
+        let omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
+        await omnisharpConfig.update('minFindSymbolsFilterLength', 2);
+
+        let symbols = await GetWorkspaceSymbols("P");
+        expect(symbols.length).to.be.equal(0);
+    });
+
+    test("Returns elements when minimum filter length is configured and search term is longer or equal", async function () {
+        let omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
+        await omnisharpConfig.update('minFindSymbolsFilterLength', 2);
+
+        let symbols = await GetWorkspaceSymbols("P1");
         expect(symbols.length).to.be.greaterThan(0);
     });
 });
 
-async function GetWorkspaceSymbols() {
-    return <vscode.SymbolInformation[]>await vscode.commands.executeCommand("vscode.executeWorkspaceSymbolProvider");
+async function GetWorkspaceSymbols(filter: string) {
+    return <vscode.SymbolInformation[]>await vscode.commands.executeCommand("vscode.executeWorkspaceSymbolProvider", filter);
 }
