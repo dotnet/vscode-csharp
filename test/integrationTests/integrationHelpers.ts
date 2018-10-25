@@ -5,8 +5,13 @@
 
 import * as vscode from 'vscode';
 import CSharpExtensionExports from '../../src/CSharpExtensionExports';
+import { Advisor } from '../../src/features/diagnosticsProvider';
 
-export async function activateCSharpExtension(): Promise<void> {
+export interface ActivationResult {
+    readonly advisor: Advisor;
+}
+
+export async function activateCSharpExtension(): Promise<ActivationResult | undefined> {
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-vscode.csharp");
 
     if (!csharpExtension.isActive) {
@@ -16,8 +21,10 @@ export async function activateCSharpExtension(): Promise<void> {
     try {
         await csharpExtension.exports.initializationFinished();
         console.log("ms-vscode.csharp activated");
+        return { advisor: await csharpExtension.exports.getAdvisor() };
     }
     catch (err) {
         console.log(JSON.stringify(err));
+        return undefined;
     }
 }

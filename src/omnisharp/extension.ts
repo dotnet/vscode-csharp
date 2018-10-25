@@ -39,8 +39,10 @@ import { StructureProvider } from '../features/structureProvider';
 import { OmniSharpMonoResolver } from './OmniSharpMonoResolver';
 import { getMonoVersion } from '../utils/getMonoVersion';
 
-export let omnisharp: OmniSharpServer;
-export let advisor: Advisor;
+export interface ActivationResult {
+    readonly server: OmniSharpServer;
+    readonly advisor: Advisor;
+}
 
 export async function activate(context: vscode.ExtensionContext, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, eventStream: EventStream, optionProvider: OptionProvider, extensionPath: string) {
     const documentSelector: vscode.DocumentSelector = {
@@ -50,8 +52,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     const options = optionProvider.GetLatestOptions();
     let omnisharpMonoResolver = new OmniSharpMonoResolver(getMonoVersion);
     const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver);
-    omnisharp = server;
-    advisor = new Advisor(server, optionProvider); // create before server is started
+    const advisor = new Advisor(server, optionProvider); // create before server is started
     const disposables = new CompositeDisposable();
     let localDisposables: CompositeDisposable;
 
@@ -177,7 +178,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
 
     context.subscriptions.push(disposables);
 
-    return new Promise<OmniSharpServer>(resolve =>
+    return new Promise<ActivationResult>(resolve =>
         server.onServerStart(e =>
-            resolve(server)));
+            resolve({ server, advisor })));
 }

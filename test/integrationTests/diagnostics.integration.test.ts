@@ -10,7 +10,7 @@ import * as path from 'path';
 import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
-import * as OmniSharp from "../../src/omnisharp/extension";
+import { Advisor } from '../../src/features/diagnosticsProvider';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -22,9 +22,16 @@ function setLimit(to: number | null) {
 }
 
 suite(`Diagnostics Provider ${testAssetWorkspace.description}`, function () {
+    let advisor: Advisor;
+
     suiteSetup(async function () {
         await testAssetWorkspace.restore();
-        await activateCSharpExtension();
+        let activationResult = await activateCSharpExtension();
+        if (!activationResult) {
+            throw new Error('Cannot activate extension.');
+        } else {
+            advisor = activationResult.advisor;
+        }
 
         let fileName = 'completion.cs';
         let dir = testAssetWorkspace.projects[0].projectDirectoryPath;
@@ -39,36 +46,36 @@ suite(`Diagnostics Provider ${testAssetWorkspace.description}`, function () {
     test('Reports errors from whole project when maxProjectFileCountForDiagnosticAnalysis is higher than the file count', async () => {
         await setLimit(1000);
 
-        expect(OmniSharp.advisor.shouldValidateProject()).to.be.true;
+        expect(advisor.shouldValidateProject()).to.be.true;
     });
 
     test('Reports errors from individual files when maxProjectFileCountForDiagnosticAnalysis is higher than the file count', async () => {
         await setLimit(1000);
 
-        expect(OmniSharp.advisor.shouldValidateFiles()).to.be.true;
+        expect(advisor.shouldValidateFiles()).to.be.true;
     });
 
     test('Does not report errors from whole project when maxProjectFileCountForDiagnosticAnalysis is lower than the file count', async () => {
         await setLimit(1);
 
-        expect(OmniSharp.advisor.shouldValidateProject()).to.be.false;
+        expect(advisor.shouldValidateProject()).to.be.false;
     });
 
     test('Reports errors from individual files when maxProjectFileCountForDiagnosticAnalysis is lower than the file count', async () => {
         await setLimit(1);
 
-        expect(OmniSharp.advisor.shouldValidateFiles()).to.be.true;
+        expect(advisor.shouldValidateFiles()).to.be.true;
     });
 
     test('Reports errors from whole project when maxProjectFileCountForDiagnosticAnalysis is null', async () => {
         await setLimit(null);
 
-        expect(OmniSharp.advisor.shouldValidateProject()).to.be.true;
+        expect(advisor.shouldValidateProject()).to.be.true;
     });
 
     test('Reports errors from individual files when maxProjectFileCountForDiagnosticAnalysis is null', async () => {
         await setLimit(null);
 
-        expect(OmniSharp.advisor.shouldValidateFiles()).to.be.true;
+        expect(advisor.shouldValidateFiles()).to.be.true;
     });
 });
