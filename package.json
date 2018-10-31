@@ -73,12 +73,12 @@
     "http-proxy-agent": "2.1.0",
     "https-proxy-agent": "2.2.1",
     "jsonc-parser": "1.0.0",
-    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/eee89386-9a82-4b4c-b30a-5857138f2eff/b0583648506c8fffe1ed9ff202702387/microsoft.aspnetcore.razor.vscode-1.0.0-alpha1-20181006.7.tgz",
+    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/da8ed554-fba5-4a26-858d-3d73425c2c9e/2775a951ae6431047ab6e3c51192585c/microsoft.aspnetcore.razor.vscode-1.0.0-alpha1-20181019.5.tgz",
     "mkdirp": "0.5.1",
     "node-filter-async": "0.0.4",
     "open": "*",
     "remove-bom-buffer": "3.0.0",
-    "request-light": "0.2.2",
+    "request-light": "0.2.4",
     "rxjs": "5.5.6",
     "semver": "*",
     "strip-bom": "3.0.0",
@@ -225,8 +225,8 @@
     },
     {
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/b04322ea-547b-42b1-86d9-8489befa85cb/78cc7fe92df55ec751fa04231fe4a76f/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-16-0/coreclr-debug-win7-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/90e2038c-960d-4018-924e-30f520f887ab/117523c7024fbf6ffef530b707d7253a/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-17-1/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -238,8 +238,8 @@
     },
     {
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/b04322ea-547b-42b1-86d9-8489befa85cb/2aa44d6a3b45199178833506704024c8/coreclr-debug-osx-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-16-0/coreclr-debug-osx-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/90e2038c-960d-4018-924e-30f520f887ab/2d53db027d1e67b899a7f083800b2bd4/coreclr-debug-osx-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-17-1/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "darwin"
@@ -255,8 +255,8 @@
     },
     {
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/b04322ea-547b-42b1-86d9-8489befa85cb/8a007d22a9733f620f86c87d5b2d66d4/coreclr-debug-linux-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-16-0/coreclr-debug-linux-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/90e2038c-960d-4018-924e-30f520f887ab/090d7ebd63a3d44b31cb23568b53833d/coreclr-debug-linux-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-17-1/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -272,7 +272,7 @@
     },
     {
       "description": "Razor Language Server (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/eee89386-9a82-4b4c-b30a-5857138f2eff/3b812e4b415e128f291db79779a22fa6/razorlanguageserver-win-x64-1.0.0-alpha1-20181006.7.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/da8ed554-fba5-4a26-858d-3d73425c2c9e/d7df9363c14be268a9f7011f3116ed9f/razorlanguageserver-win-x64-1.0.0-alpha1-20181019.5.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -283,7 +283,7 @@
     },
     {
       "description": "Razor Language Server (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/eee89386-9a82-4b4c-b30a-5857138f2eff/f21dc63eb40ce1c0a4c4a374f9ba2552/razorlanguageserver-win-x86-1.0.0-alpha1-20181006.7.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/da8ed554-fba5-4a26-858d-3d73425c2c9e/2a8db9c750e55928277a381b73755e60/razorlanguageserver-win-x86-1.0.0-alpha1-20181019.5.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -294,7 +294,7 @@
     },
     {
       "description": "Razor Language Server (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/eee89386-9a82-4b4c-b30a-5857138f2eff/e207d758ad5afc02c7866eba018a772e/razorlanguageserver-linux-x64-1.0.0-alpha1-20181006.7.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/da8ed554-fba5-4a26-858d-3d73425c2c9e/ee35c63e530362e1f86d1f2c834d1921/razorlanguageserver-linux-x64-1.0.0-alpha1-20181019.5.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -308,7 +308,7 @@
     },
     {
       "description": "Razor Language Server (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/eee89386-9a82-4b4c-b30a-5857138f2eff/797f57ed228c8a2fa48b0bbafd69b120/razorlanguageserver-osx-x64-1.0.0-alpha1-20181006.7.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/da8ed554-fba5-4a26-858d-3d73425c2c9e/8efc7d28ce70069ddcad88c95dcb075f/razorlanguageserver-osx-x64-1.0.0-alpha1-20181019.5.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -655,6 +655,19 @@
           "default": false,
           "description": "Specifies whether notifications should be shown if OmniSharp encounters warnings or errors loading a project. Note that these warnings/errors are always emitted to the OmniSharp log"
         },
+        "razor.plugin.path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Overrides the path to the Razor plugin dll."
+        },
+        "razor.devmode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Forces the omnisharp-vscode extension to run in a mode that enables local Razor.VSCode deving."
+        },
         "razor.disabled": {
           "type": "boolean",
           "default": false,
@@ -673,7 +686,7 @@
           "default": false,
           "description": "Specifies whether to wait for debug attach when launching the language server."
         },
-        "razor.languageServer.trace": {
+        "razor.trace": {
           "type": "string",
           "default": "Off",
           "enum": [
@@ -682,9 +695,9 @@
             "Verbose"
           ],
           "enumDescriptions": [
-            "Does not log messages from Razor Language Server",
-            "Logs only some messages from Razor Language Server",
-            "Logs all messages from Razor Language Server"
+            "Does not log messages from the Razor extension",
+            "Logs only some messages from the Razor extension",
+            "Logs all messages from the Razor extension"
           ],
           "description": "Specifies whether to output all messages [Verbose], some messages [Messages] or not at all [Off]."
         }

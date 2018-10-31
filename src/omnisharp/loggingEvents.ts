@@ -158,6 +158,14 @@ export class OpenURL {
     constructor(public url: string) { }
 }
 
+export class RazorPluginPathSpecified implements BaseEvent {
+    constructor(public path: string) {}
+}
+
+export class RazorPluginPathDoesNotExist implements BaseEvent {
+    constructor(public path: string) {}
+}
+
 export class DebuggerPrerequisiteFailure extends EventWithMessage { }
 export class DebuggerPrerequisiteWarning extends EventWithMessage { }
 export class CommandDotNetRestoreProgress extends EventWithMessage { }
@@ -173,6 +181,7 @@ export class DotNetTestRunFailure extends EventWithMessage { }
 export class DotNetTestDebugWarning extends EventWithMessage { }
 export class DotNetTestDebugStartFailure extends EventWithMessage { }
 
+export class RazorDevModeActive implements BaseEvent { }
 export class ProjectModified implements BaseEvent { }
 export class ActivationFailure implements BaseEvent { }
 export class ShowOmniSharpChannel implements BaseEvent { }

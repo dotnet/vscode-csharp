@@ -38,6 +38,7 @@ import createOptionStream from './observables/CreateOptionStream';
 import { CSharpExtensionId } from './constants/CSharpExtensionId';
 import { OpenURLObserver } from './observers/OpenURLObserver';
 import { activateRazorExtension } from './razor/razor';
+import { RazorLoggerObserver } from './observers/RazorLoggerObserver';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -136,7 +137,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     }
 
     if (!optionProvider.GetLatestOptions().razorDisabled) {
-        await activateRazorExtension(context, extension.extensionPath, eventStream);
+        const razorObserver = new RazorLoggerObserver(omnisharpChannel);
+        eventStream.subscribe(razorObserver.post);
+
+        if (!optionProvider.GetLatestOptions().razorDevMode) {
+            await activateRazorExtension(context, extension.extensionPath, eventStream);
+        }
     }
 
     return {
