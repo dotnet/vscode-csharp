@@ -21,7 +21,7 @@ function setLimit(to: number | null) {
     return csharpConfig.update('maxProjectFileCountForDiagnosticAnalysis', to);
 }
 
-suite(`Diagnostics Provider ${testAssetWorkspace.description}`, function () {
+suite(`Advisor ${testAssetWorkspace.description}`, function () {
     let advisor: Advisor;
 
     suiteSetup(async function () {
@@ -43,37 +43,37 @@ suite(`Diagnostics Provider ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test('Reports errors from whole project when maxProjectFileCountForDiagnosticAnalysis is higher than the file count', async () => {
+    test('Allows to report errors from whole project when maxProjectFileCountForDiagnosticAnalysis is higher than the file count', async () => {
         await setLimit(1000);
 
         expect(advisor.shouldValidateProject()).to.be.true;
     });
 
-    test('Reports errors from individual files when maxProjectFileCountForDiagnosticAnalysis is higher than the file count', async () => {
+    test('Allows to report errors from individual files when maxProjectFileCountForDiagnosticAnalysis is higher than the file count', async () => {
         await setLimit(1000);
 
         expect(advisor.shouldValidateFiles()).to.be.true;
     });
 
-    test('Does not report errors from whole project when maxProjectFileCountForDiagnosticAnalysis is lower than the file count', async () => {
+    test('Does not allow to report errors from whole project when maxProjectFileCountForDiagnosticAnalysis is lower than the file count', async () => {
         await setLimit(1);
 
         expect(advisor.shouldValidateProject()).to.be.false;
     });
 
-    test('Reports errors from individual files when maxProjectFileCountForDiagnosticAnalysis is lower than the file count', async () => {
+    test('Allows to errors from individual files when maxProjectFileCountForDiagnosticAnalysis is lower than the file count', async () => {
         await setLimit(1);
 
         expect(advisor.shouldValidateFiles()).to.be.true;
     });
 
-    test('Reports errors from whole project when maxProjectFileCountForDiagnosticAnalysis is null', async () => {
+    test('Allows to errors from whole project when maxProjectFileCountForDiagnosticAnalysis is null', async () => {
         await setLimit(null);
 
         expect(advisor.shouldValidateProject()).to.be.true;
     });
 
-    test('Reports errors from individual files when maxProjectFileCountForDiagnosticAnalysis is null', async () => {
+    test('Allows to errors from individual files when maxProjectFileCountForDiagnosticAnalysis is null', async () => {
         await setLimit(null);
 
         expect(advisor.shouldValidateFiles()).to.be.true;
