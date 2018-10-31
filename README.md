@@ -20,6 +20,11 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
+### What's new in 1.17.0
+* Added preview Razor (cshtml) language service with support for C# completions and diagnostics.
+* Added omnisharp.minFindSymbolsFilterLength setting to configure the number of characters a user must type in for "Go to Symbol in Workspace" command to return any results
+* Added a command - "CSharp: Start authoring a new issue on GitHub" to enable the users to file issues on github from within the extension with helpful config information from their system
+
 ### What's New in 1.16.2
 * Update extension to handle upcoming breaking change to launch.json configurations in VS Code 1.28.
 * Fixed launch.json `envFile` option on Windows
@@ -37,7 +42,7 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * Added `monoPath` option to use the mono installation at the specified path when the `useGlobalMono` is set to "always" or "auto".
 * Many other bug fixes!
 
-See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.16.0/CHANGELOG.md) for more detail.
+See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.17.0/CHANGELOG.md) for more detail.
 
 ### Supported Operating Systems for Debugging
 
