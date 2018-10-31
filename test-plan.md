@@ -93,7 +93,7 @@ The easist way to verify that a project was successfully loaded is to open a .cs
 * In a project that uses globbing (.NET Core), use the VS Code file explorer to add a new file next to the csproj. Intellisense/sighelp/etc should be available in the new file
 * Add a new file and reference a type in it from a different file. Deleting from disk the file containing the referenced type  should produce error messages
 
-#### Razor
+#### ASP.NET Core Razor
 The Razor experience is available when you open a .cshtml file in a valid OmniSharp project. To setup a test project to verify on you can do:  
 1. `dotnet new razor`
 2. Open `Pages/Index.cshtml`
@@ -103,18 +103,136 @@ The Razor experience is available when you open a .cshtml file in a valid OmniSh
 * Completion is available for types that exist in the project (i.e. `Program`)
 * Typing `@model DateTime` prompts for completion for the `model` symbol and the `DateTime` symbol.
 
-#### C# Signature Help
+##### C# Signature Help
 * Typing `@Html.Raw()` prompts for signature help inside of the `()`.
 
-#### C# Diagnostics
+##### C# Diagnostics
 * Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file. NOTE: This error squiggly will be misaligned due to known issues.
+
+##### Known issues:
+- Error squiggles may be misaligned due to known issues.  
+
+#### Blazor
+The Blazor experience is available when you open a .cshtml file in a valid OmniSharp/Blazor project. To setup a test project to verify on you can do:  
+1. `dotnet new -i Microsoft.AspNetCore.Blazor.Templates`
+2. `dotnet new blazor`
+3. Open `Pages/Index.cshtml`
+
+##### C# Completion
+* Typing `@DateTime.Now` and `@(DateTime.Now)` provides completions throughout typing.
+* Completion is available for types that exist in the project (i.e. `Program`)
+* Typing `@layout MainLayout` prompts for completion for the `layout` symbol and the `MainLayout` symbol.
+
+##### C# Signature Help
+* Typing `@SetParameters()` prompts for signature help inside of the `()`.
+
+##### C# Diagnostics
+* When no changes have been performed on `Pages/Index.cshtml`, there are 0 errors.
+* Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file. 
+
+##### Known issues:
+- Error squiggles may be misaligned due to known issues.  
+- There are some errors in the default Blazor project that are known. All errors that read like `Cannot convert method group 'SomeMethodName' to non-delegate type 'object'. Did you intend to invoke the method? [ProjectName]` are expected.
+
+#### Legacy Razor
+The Razor experience is degraded (but no errors) when you open a .cshtml file in a valid OmniSharp/Legacy Razor project. To setup a test project to verify on you can do:  
+1. Open Visual Studio
+2. New Project
+3. ASP.NET Web Application (.NET Framework)
+4. Select MVC
+5. OK
+6. Open `Views/Home/Index.cshtml`
+
+##### C# Completion / IntelliSense
+* Typing `@DateTime.Now` does not result in any C# completion.
+* Typing `@{ var x = DateTime.Now; }` does not result in any C# completion.
+* Typing `@model` does not result in any Razor directive completion.
+
+##### C# Diagnostics
+* There are 0 .cshtml related errors on open.
+* Typing `@ThisDoesNotExist` does not result in an error being created. 
+
+##### Html Completion
+Verifying Html is needed to ensure the Razor experience is still partially enabled.
+* Typing `<stron` results in Html completion with an entry for `strong`.
+* Typing `<strong>` results in a corresponding `</strong>` being appended
+* Hitting enter Typing `@{}` and then hitting enter inbetween the curly braces results in:
+```
+@{
+
+}
+```
+
+#### Razor Project level Information
+To verify the project level information for Razor do the following:
+1. Verify the `obj/Debug/TheTFMOfTheProject` folder contains a `project.razor.json` file (once the project is restored)
+2. Verify the `project.razor.json`'s `Configuration` section is not set to `null`.
+
+Verify each of the test projects above's `project.razor.json` file (ASP.NET Core Razor, Blazor and Legacy Razor) looks something like the following:
+
+##### ASP.NET Core Razor
+```JSON
+{
+  "ProjectFilePath": "c:\\Users\\JohnDoe\\Projects\\RazorCoreTestApp\\RazorCoreTestApp.csproj",
+  "TargetFramework": "netcoreapp2.1",
+  "TagHelpers": [],
+  "Configuration": {
+    "ConfigurationName": "MVC-2.1",
+    "LanguageVersion": "2.1",
+    "Extensions": [
+      {
+        "ExtensionName": "MVC-2.1"
+      }
+    ]
+  }
+}
+```
+
+##### Blazor
+```JSON
+{
+  "ProjectFilePath": "c:\\Users\\JohnDoe\\Projects\\BlazorTestApp\\BlazorTestApp.csproj",
+  "TargetFramework": "netstandard2.0",
+  "TagHelpers": [],
+  "Configuration": {
+    "ConfigurationName": "Blazor-0.1",
+    "LanguageVersion": "1337.1337",
+    "Extensions": [
+      {
+        "ExtensionName": "Blazor.AngleSharp-0.1"
+      },
+      {
+        "ExtensionName": "Blazor-0.1"
+      }
+    ]
+  }
+}
+```
+
+##### Legacy Razor
+```JSON
+{
+  "ProjectFilePath": "c:\\Users\\JohnDoe\\Projects\\LegacyRazorTestApp\\LegacyRazorTestApp.csproj",
+  "TargetFramework": "v4.6.1",
+  "TagHelpers": [],
+  "Configuration": {
+    "ConfigurationName": "UnsupportedRazor",
+    "LanguageVersion": "1.0",
+    "Extensions": [
+      {
+        "ExtensionName": "UnsupportedRazorExtension"
+      }
+    ]
+  }
+}
+```
 
 #### Razor Options
 
 ##### razor.disabled
-This option can be set to `true` to disable the above described C# experience.
+This option can be set to `true` to disable the above described C# experiences.
 
-##### razor.languageServer.trace
+##### razor.trace
 This option should always be displayed in the View --> Output --> Razor Log window
 This option can be set to any of the following values:
   * "Off" - Will launch Razor Language server with its log output set to 'Off'. The header in the Razor Log output window will be shown but no other content will be shown.
