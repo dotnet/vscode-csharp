@@ -243,8 +243,8 @@ export async function launchOmniSharp(cwd: string, args: string[], launchInfo: L
 
 async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IMonoResolver): Promise<LaunchResult> {
     if (options.useEditorFormattingSettings) {
-        let globalConfig = vscode.workspace.getConfiguration();
-        let csharpConfig = vscode.workspace.getConfiguration('[csharp]');
+        let globalConfig = vscode.workspace.getConfiguration('', null);
+        let csharpConfig = vscode.workspace.getConfiguration('[csharp]', null);
 
         args.push(`formattingOptions:useTabs=${!getConfigurationValue(globalConfig, csharpConfig, 'editor.insertSpaces', true)}`);
         args.push(`formattingOptions:tabSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
