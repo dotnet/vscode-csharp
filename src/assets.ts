@@ -450,7 +450,7 @@ async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: O
         }
 
         // Read existing launch configuration
-        const launchConfigs = vscode.workspace.getConfiguration('launch');
+        const launchConfigs = vscode.workspace.getConfiguration('launch', null);
         let existingLaunchConfigs = launchConfigs.get<{}[]>('configurations');
 
         const isWebProject = generator.hasWebServerDependency();
