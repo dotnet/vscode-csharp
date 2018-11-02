@@ -325,7 +325,14 @@ class DiagnosticsProvider extends AbstractSupport {
     private static _asDiagnostic(quickFix: protocol.QuickFix): vscode.Diagnostic {
         let severity = DiagnosticsProvider._asDiagnosticSeverity(quickFix.LogLevel);
         let message = `${quickFix.Text} [${quickFix.Projects.map(n => DiagnosticsProvider._asProjectLabel(n)).join(', ')}]`;
-        return new vscode.Diagnostic(toRange(quickFix), message, severity);
+        let diagnostic =  new vscode.Diagnostic(toRange(quickFix), message, severity);
+        if(diagnostic.message.includes("Unnecessary using directive"))
+        {
+            //fade out the unnecessary usings
+            diagnostic.tags = [vscode.DiagnosticTag.Unnecessary];
+        }
+
+        return diagnostic;
     }
 
     private static _asDiagnosticSeverity(logLevel: string): vscode.DiagnosticSeverity {
