@@ -23,10 +23,15 @@ export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport im
         let options = this.optionProvider.GetLatestOptions();
         let minFilterLength = options.minFindSymbolsFilterLength > 0 ? options.minFindSymbolsFilterLength : undefined;
         let maxItemsToReturn = options.maxFindSymbolsItems > 0 ? options.maxFindSymbolsItems : undefined;
-        return serverUtils.findSymbols(this._server, { Filter: search, MinFilterLength: minFilterLength, MaxItemsToReturn: maxItemsToReturn, FileName: '' }, token).then(res => {
+
+        if (minFilterLength != undefined && search.length < minFilterLength) {
+            return [];
+        }
+
+        return serverUtils.findSymbols(this._server, { Filter: search, MaxItemsToReturn: maxItemsToReturn, FileName: '' }, token).then(res => {
             if (res && Array.isArray(res.QuickFixes)) {
                 return res.QuickFixes.map(OmnisharpWorkspaceSymbolProvider._asSymbolInformation);
-            }
+            } 
         });
     }
 
