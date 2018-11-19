@@ -23,7 +23,7 @@ export class InformationMessageObserver {
         //to do: determine if we need the unresolved dependencies message
         let csharpConfig = this.vscode.workspace.getConfiguration('csharp');
         if (!csharpConfig.get<boolean>('suppressDotnetRestoreNotification')) {
-            let message = `There are unresolved dependencies'. Please execute the restore command to continue.`;
+            let message = `There are unresolved dependencies. Please execute the restore command to continue.`;
             return showInformationMessage(this.vscode, message, { title: "Restore", command: "dotnet.restore.all" });
         }
     }

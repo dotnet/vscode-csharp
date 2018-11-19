@@ -20,6 +20,10 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
+### What's new in 1.17.1
+
+* Updated Razor language service to fix various Razor editing reliability issues. For details see https://github.com/aspnet/Razor.VSCode/releases/tag/1.0.0-alpha2.
+
 ### What's new in 1.17.0
 * Added preview Razor (cshtml) language service with support for C# completions and diagnostics.
 * Added omnisharp.minFindSymbolsFilterLength setting to configure the number of characters a user must type in for "Go to Symbol in Workspace" command to return any results

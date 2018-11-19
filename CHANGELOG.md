@@ -1,4 +1,4 @@
-## Known Issues in 1.17.0
+## Known Issues in 1.17.1
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
@@ -6,12 +6,16 @@
   * Limited support for colorization
   * Loss of HTML completions following C# less than (`<`) operator
   * Error squiggles misaligned for expressions near the start of a new line
-  * Leaving Razor files open for a significant period of time results in loss of Razor C# tooling on macOS
   * Incorrect errors in Blazor projects for event bindings
+  * Emmet based abbreviation expansion is not yet supported
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.17.0 (Not yet released)
+## 1.17.1 (November 11, 2018)
+
+* Updated Razor language service to fix various Razor editing reliability issues. For details see https://github.com/aspnet/Razor.VSCode/releases/tag/1.0.0-alpha2.
+
+## 1.17.0 (October 31, 2018)
 
 * Added preview Razor (cshtml) language service with support for C# completions and diagnostics in ASP.NET Core projects. Please report issues with the preview Razor tooling on the [aspnet/Razor.VSCode](https://github.com/aspnet/Razor.VSCode/issues) repo. To disable the preview Razor tooling set the "razor.disabled" setting to `true`. (PR: [2554](https://github.com/OmniSharp/omnisharp-vscode/pull/2554))
 * Added omnisharp.minFindSymbolsFilterLength setting to configure the number of characters a user must type in for "Go to Symbol in Workspace" command to return any results (default is 0 to preserve existing behavior). Additionally added omnisharp.maxFindSymbolsItems for configuring maximum number of items returned by "Go to Symbol in Workspace" command. The default is 1000. (PR: [#2487](https://github.com/OmniSharp/omnisharp-vscode/pull/2487))

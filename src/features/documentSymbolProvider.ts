@@ -45,7 +45,7 @@ function createSymbolForElement(element: Structure.CodeElement): vscode.Document
     const fullRange = element.Ranges[SymbolRangeNames.Full];
     const nameRange = element.Ranges[SymbolRangeNames.Name];
 
-    return new vscode.DocumentSymbol(element.Name, /*detail*/ "", toSymbolKind(element.Kind), toRange3(fullRange), toRange3(nameRange));
+    return new vscode.DocumentSymbol(element.DisplayName, /*detail*/ "", toSymbolKind(element.Kind), toRange3(fullRange), toRange3(nameRange));
 }
 
 const kinds: { [kind: string]: vscode.SymbolKind; } = { };
