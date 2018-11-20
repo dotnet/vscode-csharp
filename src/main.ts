@@ -30,7 +30,7 @@ import { ProjectStatusBarObserver } from './observers/ProjectStatusBarObserver';
 import CSharpExtensionExports from './CSharpExtensionExports';
 import { vscodeNetworkSettingsProvider, NetworkSettingsProvider } from './NetworkSettings';
 import { ErrorMessageObserver } from './observers/ErrorMessageObserver';
-import  OptionProvider from './observers/OptionProvider';
+import OptionProvider from './observers/OptionProvider';
 import DotNetTestChannelObserver from './observers/DotnetTestChannelObserver';
 import DotNetTestLoggerObserver from './observers/DotnetTestLoggerObserver';
 import { ShowOmniSharpConfigChangePrompt } from './observers/OptionChangeObserver';
@@ -65,7 +65,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     let dotnetTestLoggerObserver = new DotNetTestLoggerObserver(dotnetTestChannel);
     eventStream.subscribe(dotnetTestChannelObserver.post);
     eventStream.subscribe(dotnetTestLoggerObserver.post);
-    
+
     let csharpChannel = vscode.window.createOutputChannel('C#');
     let csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
     let csharpLogObserver = new CsharpLoggerObserver(csharpChannel);
@@ -119,7 +119,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo, networkSettingsProvider);
 
     // activate language services
-    let omniSharpPromise = OmniSharp.activate(context, extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionProvider, extension.extensionPath);
+    let langServicePromise = OmniSharp.activate(context, extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionProvider, extension.extensionPath);
 
     // register JSON completion & hover providers for project.json
     context.subscriptions.push(addJSONProviders());
@@ -147,9 +147,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
     return {
         initializationFinished: async () => {
-            let omniSharp = await omniSharpPromise;
-            await omniSharp.waitForEmptyEventQueue();
+            let langService = await langServicePromise;
+            await langService.server.waitForEmptyEventQueue();
             await coreClrDebugPromise;
+        },
+        getAdvisor: async () => {
+            let langService = await langServicePromise;
+            return langService.advisor;
         }
     };
 }

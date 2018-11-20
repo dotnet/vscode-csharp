@@ -20,6 +20,7 @@
 * Added preview Razor (cshtml) language service with support for C# completions and diagnostics in ASP.NET Core projects. Please report issues with the preview Razor tooling on the [aspnet/Razor.VSCode](https://github.com/aspnet/Razor.VSCode/issues) repo. To disable the preview Razor tooling set the "razor.disabled" setting to `true`. (PR: [2554](https://github.com/OmniSharp/omnisharp-vscode/pull/2554))
 * Added omnisharp.minFindSymbolsFilterLength setting to configure the number of characters a user must type in for "Go to Symbol in Workspace" command to return any results (default is 0 to preserve existing behavior). Additionally added omnisharp.maxFindSymbolsItems for configuring maximum number of items returned by "Go to Symbol in Workspace" command. The default is 1000. (PR: [#2487](https://github.com/OmniSharp/omnisharp-vscode/pull/2487))
 * Added a command - "CSharp: Start authoring a new issue on GitHub" to enable the users to file issues on github from within the extension with helpful config information from their system.(PR: [#2503](https://github.com/OmniSharp/omnisharp-vscode/pull/2503))
+* Added a `csharp.maxProjectFileCountForDiagnosticAnalysis` setting to configure the file limit when the extension stops reporting errors for whole workspace. When this threshold is reached, the diagnostics are reported for currently opened files only. This mechanism was available in previous versions, but now can be configured. The default is 1000. (PR: [#1877](https://github.com/OmniSharp/omnisharp-vscode/pull/1877))
 
 #### Debugger
 * Fixed crash at the end of debug sessions on Linux ([#2439](https://github.com/OmniSharp/omnisharp-vscode/issues/2439))
@@ -42,7 +43,7 @@
 
 * Modified the "Unresolved dependencies" prompt to restore the all the projects in the currently selected solution or workspace. (PR: [#2323](https://github.com/OmniSharp/omnisharp-vscode/pull/2323))
 
-* Added support to configure the default *.sln file loaded when opening a project with multiple *.sln files in the root. _(Contributed by [@janaka](https://github.com/janaka))_ (PR: [#2053](https://github.com/OmniSharp/omnisharp-vscode/pull/2053)) 
+* Added support to configure the default *.sln file loaded when opening a project with multiple *.sln files in the root. _(Contributed by [@janaka](https://github.com/janaka))_ (PR: [#2053](https://github.com/OmniSharp/omnisharp-vscode/pull/2053))
 
 * Added support for tracking opening, closing and changing of virtual documents that don't exist on disk. (PR: [#2436](https://github.com/OmniSharp/omnisharp-vscode/pull/2436)) _(Contributed by [@NTaylorMullen](https://github.com/NTaylorMullen))_
 
@@ -61,7 +62,7 @@
 #### Testing
 
 * Added test execution output to the output of the Run/Debug Test CodeLens. (PR: [#2337](https://github.com/OmniSharp/omnisharp-vscode/pull/2337), [#2343](https://github.com/OmniSharp/omnisharp-vscode/pull/2343), [omnisharp-roslyn#1203](https://github.com/OmniSharp/omnisharp-roslyn/pull/1203))
-* Fixed a bug where a debug session could not be started and duplicate logs were displayed after a previous one failed due to build failure. (PR: [#2405](https://github.com/OmniSharp/omnisharp-vscode/pull/2405), [omnisharp-roslyn#1239](https://github.com/OmniSharp/omnisharp-roslyn/pull/1239)) 
+* Fixed a bug where a debug session could not be started and duplicate logs were displayed after a previous one failed due to build failure. (PR: [#2405](https://github.com/OmniSharp/omnisharp-vscode/pull/2405), [omnisharp-roslyn#1239](https://github.com/OmniSharp/omnisharp-roslyn/pull/1239))
 
 #### Options
 

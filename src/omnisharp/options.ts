@@ -26,7 +26,8 @@ export class Options {
         public razorDevMode: boolean,
         public razorPluginPath?: string,
         public defaultLaunchSolution?: string,
-        public monoPath?: string) { }
+        public monoPath?: string,
+        public maxProjectFileCountForDiagnosticAnalysis?: number | null) { }
 
 
     public static Read(vscode: vscode): Options {
@@ -76,9 +77,11 @@ export class Options {
         const razorDevMode = !!razorConfig && razorConfig.get<boolean>('devmode', false);
         const razorPluginPath = razorConfig ? razorConfig.get<string>('plugin.path', undefined) : undefined;
 
+        const maxProjectFileCountForDiagnosticAnalysis = csharpConfig.get<number | null>('maxProjectFileCountForDiagnosticAnalysis', 1000);
+
         return new Options(
-            path, 
-            useGlobalMono, 
+            path,
+            useGlobalMono,
             waitForDebugger,
             loggingLevel,
             autoStart,
@@ -97,6 +100,7 @@ export class Options {
             razorPluginPath,
             defaultLaunchSolution,
             monoPath,
+            maxProjectFileCountForDiagnosticAnalysis,
         );
     }
 
@@ -130,7 +134,7 @@ export class Options {
             return toUseGlobalMonoValue(omnisharpConfig.get<boolean>('useMono'));
         }
         else if (csharpConfig.has('omnisharpUsesMono')) {
-            // BACKCOMPAT: If 'csharp.omnisharpUsesMono' setting was found, true maps to "always" and false maps to "auto" 
+            // BACKCOMPAT: If 'csharp.omnisharpUsesMono' setting was found, true maps to "always" and false maps to "auto"
             return toUseGlobalMonoValue(csharpConfig.get<boolean>('omnisharpUsesMono'));
         }
         else {

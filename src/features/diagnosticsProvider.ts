@@ -13,6 +13,7 @@ import CompositeDisposable from '../CompositeDisposable';
 import { IDisposable } from '../Disposable';
 import { isVirtualCSharpDocument } from './virtualDocumentTracker';
 import { TextDocument } from '../vscodeAdapter';
+import OptionProvider from '../observers/OptionProvider';
 
 export class Advisor {
 
@@ -21,7 +22,7 @@ export class Advisor {
     private _packageRestoreCounter: number = 0;
     private _projectSourceFileCounts: { [path: string]: number } = Object.create(null);
 
-    constructor(server: OmniSharpServer) {
+    constructor(server: OmniSharpServer, private optionProvider: OptionProvider) {
         this._server = server;
 
         let d1 = server.onProjectChange(this._onProjectChange, this);
@@ -44,7 +45,7 @@ export class Advisor {
     public shouldValidateProject(): boolean {
         return this._isServerStarted()
             && !this._isRestoringPackages()
-            && !this._isHugeProject();
+            && !this._isOverFileLimit();
     }
 
     private _updateProjectFileCount(path: string, fileCount: number): void {
@@ -99,15 +100,18 @@ export class Advisor {
         return this._server.isRunning();
     }
 
-    private _isHugeProject(): boolean {
-        let sourceFileCount = 0;
-        for (let key in this._projectSourceFileCounts) {
-            sourceFileCount += this._projectSourceFileCounts[key];
-            if (sourceFileCount > 1000) {
-                return true;
+    private _isOverFileLimit(): boolean {
+        let opts = this.optionProvider.GetLatestOptions();
+        let fileLimit = opts.maxProjectFileCountForDiagnosticAnalysis;
+        if (fileLimit > 0) {
+            let sourceFileCount = 0;
+            for (let key in this._projectSourceFileCounts) {
+                sourceFileCount += this._projectSourceFileCounts[key];
+                if (sourceFileCount > fileLimit) {
+                    return true;
+                }
             }
         }
-
         return false;
     }
 }
