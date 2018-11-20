@@ -88,7 +88,8 @@ suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function() 
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test("Returns no references code lenses when 'csharp.referencesCodeLens.enabled' option is set to false", async function () {
+    /* Skip this test until we are able to understand the cause of flakiness */
+    test.skip("Returns no references code lenses when 'csharp.referencesCodeLens.enabled' option is set to false", async function () {
         let csharpConfig = vscode.workspace.getConfiguration('csharp');
         await csharpConfig.update('referencesCodeLens.enabled', false);
         await csharpConfig.update('testsCodeLens.enabled', true);
