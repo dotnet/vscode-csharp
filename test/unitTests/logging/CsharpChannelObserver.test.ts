@@ -6,13 +6,13 @@
 import { should, expect } from 'chai';
 import { getNullChannel } from '../testAssets/Fakes';
 import { CsharpChannelObserver } from '../../../src/observers/CsharpChannelObserver';
-import { InstallationFailure, DebuggerNotInstalledFailure, DebuggerPrerequisiteFailure, ProjectJsonDeprecatedWarning, BaseEvent, DownloadStart } from '../../../src/omnisharp/loggingEvents';
+import { InstallationFailure, DebuggerNotInstalledFailure, DebuggerPrerequisiteFailure, ProjectJsonDeprecatedWarning, BaseEvent, PackageInstallStart } from '../../../src/omnisharp/loggingEvents';
 
 suite("CsharpChannelObserver", () => {
     suiteSetup(() => should());
     [
         new InstallationFailure("someStage", "someError"),
-        new DownloadStart("somePackage"),
+        new PackageInstallStart(),
         new DebuggerNotInstalledFailure(),
         new DebuggerPrerequisiteFailure("some failure"),
         new ProjectJsonDeprecatedWarning()

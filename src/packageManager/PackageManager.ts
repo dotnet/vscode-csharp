@@ -13,6 +13,7 @@ import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
 import { filterPackages } from "./PackageFilterer";
 import { AbsolutePathPackage } from "./AbsolutePathPackage";
+import { PackageInstallStart } from "../omnisharp/loggingEvents";
 
 export async function DownloadAndInstallPackages(packages: Package[], provider: NetworkSettingsProvider, platformInfo: PlatformInformation, eventStream: EventStream, extensionPath: string) {
     let absolutePathPackages = packages.map(pkg => AbsolutePathPackage.getAbsolutePathPackage(pkg, extensionPath));
@@ -20,6 +21,7 @@ export async function DownloadAndInstallPackages(packages: Package[], provider: 
     if (filteredPackages) {
         for (let pkg of filteredPackages) {
             try {
+                eventStream.post(new PackageInstallStart());
                 let buffer = await DownloadFile(pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
                 await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
             }
