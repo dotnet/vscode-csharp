@@ -13,7 +13,7 @@ import { DownloadAndInstallPackages } from '../../../src/packageManager/PackageM
 import NetworkSettings from '../../../src/NetworkSettings';
 import { PlatformInformation } from '../../../src/platform';
 import { EventStream } from '../../../src/EventStream';
-import { DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart } from '../../../src/omnisharp/loggingEvents';
+import { DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart, PackageInstallStart } from '../../../src/omnisharp/loggingEvents';
 import MockHttpsServer from '../testAssets/MockHttpsServer';
 import { createTestFile } from '../testAssets/TestFile';
 import TestEventBus from '../testAssets/TestEventBus';
@@ -70,6 +70,7 @@ suite("Package Manager", () => {
 
     test("Events are created in the correct order", async () => {
         let eventsSequence = [
+            new PackageInstallStart(),
             new DownloadStart(packageDescription),
             new DownloadSizeObtained(testZip.size),
             new DownloadProgress(100, packageDescription),
