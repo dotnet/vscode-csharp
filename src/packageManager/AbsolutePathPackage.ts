@@ -8,7 +8,6 @@ import { IPackage } from "./IPackage";
 import { AbsolutePath } from "./AbsolutePath";
 
 export class AbsolutePathPackage implements IPackage{
-    
     constructor(public Id: string,
         public description: string,
         public url: string,
