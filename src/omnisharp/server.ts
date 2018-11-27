@@ -346,11 +346,11 @@ export class OmniSharpServer {
             }
 
             this._serverProcess = launchResult.process;
-            this._delayTrackers = {};
-            this._setState(ServerState.Started);
-            this._fireEvent(Events.ServerStart, solutionPath);
+            this._delayTrackers = {};       
 
             await this._doConnect(options);
+            this._setState(ServerState.Started);
+            this._fireEvent(Events.ServerStart, solutionPath);
 
             this._telemetryIntervalId = setInterval(() => this._reportTelemetry(), TelemetryReportingDelay);
             this._requestQueue.drain();
