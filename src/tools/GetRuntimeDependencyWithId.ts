@@ -12,5 +12,5 @@ export function getRuntimeDependencyPackageWithId(packageId: string, packageJSON
     let runtimeDependencies = GetRunTimeDependenciesPackages(packageJSON);
     let absolutePathPackages = runtimeDependencies.map(pkg => AbsolutePathPackage.getAbsolutePathPackage(pkg, extensionPath));
     let platformSpecificPackage = filterPlatformPackages(absolutePathPackages, platformInfo);
-    return platformSpecificPackage.find(pkg => pkg.Id == packageId);
+    return platformSpecificPackage.find(pkg => pkg.id == packageId);
 }

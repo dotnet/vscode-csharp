@@ -13,7 +13,7 @@ import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
 import { filterPackages } from "./PackageFilterer";
 import { AbsolutePathPackage } from "./AbsolutePathPackage";
-import { touchInstallFile, InstallFileType, deleteInstallFile } from "../common";
+import { touchInstallFile, InstallFileType, deleteInstallFile, installFileExists } from "../common";
 import { InstallationFailure } from "../omnisharp/loggingEvents";
 import { mkdirpSync } from "fs-extra";
 
@@ -46,7 +46,12 @@ export async function DownloadAndInstallPackages(packages: Package[], provider: 
                 }
             }
             finally {
-                await deleteInstallFile(pkg.installPath, InstallFileType.Begin);
+                try {
+                    if (installFileExists(pkg.installPath, InstallFileType.Begin)) {
+                        await deleteInstallFile(pkg.installPath, InstallFileType.Begin);
+                    }
+                }
+                catch (error) { }
             }
         }
     }

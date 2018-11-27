@@ -133,7 +133,6 @@ export async function getAdapterExecutionCommand(platformInfo: PlatformInformati
             installLock = await common.installFileExists(debuggerPackage.installPath, common.InstallFileType.Lock);
         }
         
-        //todo: check if the debugger install.lock is present
         if (!installLock) {
             eventStream.post(new DebuggerNotInstalledFailure());
             throw new Error('The C# extension is still downloading packages. Please see progress in the output window below.');

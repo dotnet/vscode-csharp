@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 export interface IPackage {
-    Id: string;
+    id: string;
     description: string;
     url: string;
     fallbackUrl?: string;
