@@ -6,22 +6,20 @@
 import { PlatformInformation } from './platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
-import { downloadAndInstallPackages1 } from './packageManager/PackageManager';
+import { downloadAndInstallPackages } from './packageManager/downloadAndInstallPackages';
 import { NetworkSettingsProvider } from './NetworkSettings';
 import { getRuntimeDependenciesPackages } from './tools/RuntimeDependencyPackageUtils';
-import { AbsolutePathPackage } from './packageManager/AbsolutePathPackage';
-import { filterPackages } from './packageManager/PackageFilterer';
+import { getAbsolutePathPackagesToInstall } from './packageManager/getAbsolutePathPackagesToInstall';
 
 export async function installRuntimeDependencies(packageJSON: any, extensionPath: string, networkSettingsProvider: NetworkSettingsProvider, eventStream: EventStream, platformInfo: PlatformInformation): Promise<boolean>{
     let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON);
-    let absolutePathPackages = runTimeDependencies.map(pkg => AbsolutePathPackage.getAbsolutePathPackage(pkg, extensionPath));
-    let packagesToInstall = await filterPackages(absolutePathPackages, platformInfo);
+    let packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, extensionPath);
     if (packagesToInstall && packagesToInstall.length > 0) {
         eventStream.post(new PackageInstallation("C# dependencies"));
         try {
             // Display platform information and RID
             eventStream.post(new LogPlatformInfo(platformInfo));
-            await downloadAndInstallPackages1(packagesToInstall, networkSettingsProvider, eventStream);
+            await downloadAndInstallPackages(packagesToInstall, networkSettingsProvider, eventStream);
             eventStream.post(new InstallationSuccess());
             return true;
         }

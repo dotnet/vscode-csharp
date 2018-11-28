@@ -38,7 +38,7 @@ import { CSharpExtensionId } from './constants/CSharpExtensionId';
 import { OpenURLObserver } from './observers/OpenURLObserver';
 import { activateRazorExtension } from './razor/razor';
 import { RazorLoggerObserver } from './observers/RazorLoggerObserver';
-import { installRuntimeDependencies } from './CSharpExtDownloader';
+import { installRuntimeDependencies } from './InstallRuntimeDependencies';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 

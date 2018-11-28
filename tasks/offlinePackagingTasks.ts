@@ -18,10 +18,11 @@ import { EventStream } from '../src/EventStream';
 import { getPackageJSON } from '../tasks/packageJson';
 import { Logger } from '../src/logger';
 import { PlatformInformation } from '../src/platform';
-import { DownloadAndInstallPackages } from '../src/packageManager/PackageManager';
+import { downloadAndInstallPackages } from '../src/packageManager/downloadAndInstallPackages';
 import NetworkSettings from '../src/NetworkSettings';
 import { commandLineOptions } from '../tasks/commandLineArguments';
 import { getRuntimeDependenciesPackages } from '../src/tools/RuntimeDependencyPackageUtils';
+import { getAbsolutePathPackagesToInstall } from '../src/packageManager/getAbsolutePathPackagesToInstall';
 
 gulp.task('vsix:offline:package', async () => {
     del.sync(vscodeignorePath);
@@ -90,8 +91,9 @@ async function install(platformInfo: PlatformInformation, packageJSON: any) {
     eventStream.subscribe(stdoutObserver.post);
     const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'));
     let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON);
+    let packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, codeExtensionPath);
     let provider = () => new NetworkSettings(undefined, undefined);
-    await DownloadAndInstallPackages(runTimeDependencies, provider, platformInfo, eventStream, codeExtensionPath);
+    await downloadAndInstallPackages(packagesToInstall, provider, eventStream);
     await debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());
 }
 
