@@ -15,7 +15,7 @@ export async function filterPackages(packages: AbsolutePathPackage[], platformIn
     return filterAlreadyInstalledPackages(platformPackages);
 }
 
-function filterPlatformPackages(packages: AbsolutePathPackage[], platformInfo: PlatformInformation) {
+export function filterPlatformPackages(packages: AbsolutePathPackage[], platformInfo: PlatformInformation) {
     if (packages) {
         return packages.filter(pkg => {
             if (pkg.architectures && pkg.architectures.indexOf(platformInfo.architecture) === -1) {
@@ -36,13 +36,13 @@ function filterPlatformPackages(packages: AbsolutePathPackage[], platformInfo: P
 
 async function filterAlreadyInstalledPackages(packages: AbsolutePathPackage[]): Promise<AbsolutePathPackage[]> {
     return filterAsync(packages, async (pkg: AbsolutePathPackage) => {
-        //If the file is present at the install test path then filter it
-        let testPath = pkg.installTestPath;
+        //If the install.Lock file is present for this package then do not install it again
+        let testPath = util.getInstallFilePath(pkg.installPath, util.InstallFileType.Lock);
         if (!testPath) {
-            //if there is no testPath specified then we will not filter it
+            //if there is no testPath then we will not filter it
             return true;
         }
 
-        return !(await util.fileExists(testPath.value));
+        return !(await util.fileExists(testPath));
       });
 }

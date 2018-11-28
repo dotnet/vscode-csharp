@@ -7,6 +7,7 @@ import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import { AbsolutePath } from './packageManager/AbsolutePath';
 
 let extensionPath: string;
 
@@ -129,18 +130,18 @@ export enum InstallFileType {
     Lock
 }
 
-function getInstallFilePath(type: InstallFileType): string {
+export  function getInstallFilePath(folderPath: AbsolutePath, type: InstallFileType): string {
     let installFile = 'install.' + InstallFileType[type];
-    return path.resolve(getExtensionPath(), installFile);
+    return path.resolve(folderPath.value, installFile);
 }
 
-export async function installFileExists(type: InstallFileType): Promise<boolean> {
-    return fileExists(getInstallFilePath(type));
+export async function installFileExists(folderPath: AbsolutePath, type: InstallFileType): Promise<boolean> {
+    return fileExists(getInstallFilePath(folderPath, type));
 }
 
-export async function touchInstallFile(type: InstallFileType): Promise<void> {
+export async function touchInstallFile(folderPath: AbsolutePath, type: InstallFileType): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-        fs.writeFile(getInstallFilePath(type), '', err => {
+        fs.writeFile(getInstallFilePath(folderPath, type), '', err => {
             if (err) {
                 reject(err);
                 return;
@@ -151,9 +152,9 @@ export async function touchInstallFile(type: InstallFileType): Promise<void> {
     });
 }
 
-export async function deleteInstallFile(type: InstallFileType): Promise<void> {
+export async function deleteInstallFile(folderPath: AbsolutePath, type: InstallFileType): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-        fs.unlink(getInstallFilePath(type), err => {
+        fs.unlink(getInstallFilePath(folderPath, type), err => {
             if (err) {
                 reject(err);
                 return;

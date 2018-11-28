@@ -13,25 +13,47 @@ import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
 import { filterPackages } from "./PackageFilterer";
 import { AbsolutePathPackage } from "./AbsolutePathPackage";
+import { touchInstallFile, InstallFileType, deleteInstallFile, installFileExists } from "../common";
+import { InstallationFailure } from "../omnisharp/loggingEvents";
+import { mkdirpSync } from "fs-extra";
 import { PackageInstallStart } from "../omnisharp/loggingEvents";
 
-export async function DownloadAndInstallPackages(packages: Package[], provider: NetworkSettingsProvider, platformInfo: PlatformInformation, eventStream: EventStream, extensionPath: string) {
+export async function DownloadAndInstallPackages(packages: Package[], provider: NetworkSettingsProvider, platformInfo: PlatformInformation, eventStream: EventStream, extensionPath: string): Promise<void> {
     let absolutePathPackages = packages.map(pkg => AbsolutePathPackage.getAbsolutePathPackage(pkg, extensionPath));
     let filteredPackages = await filterPackages(absolutePathPackages, platformInfo);
+
     if (filteredPackages) {
+        eventStream.post(new PackageInstallStart());
         for (let pkg of filteredPackages) {
+            let installationStage = "touchBeginFile";
             try {
-                eventStream.post(new PackageInstallStart());
+                mkdirpSync(pkg.installPath.value);
+                await touchInstallFile(pkg.installPath, InstallFileType.Begin);
+                installationStage = 'downloadAndInstallPackages';
                 let buffer = await DownloadFile(pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
                 await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
+                installationStage = 'touchLockFile';
+                await touchInstallFile(pkg.installPath, InstallFileType.Lock);
             }
             catch (error) {
+                eventStream.post(new InstallationFailure(installationStage, error));
                 if (error instanceof NestedError) {
-                    throw new PackageError(error.message, pkg, error.err);
+                    let packageError = new PackageError(error.message, pkg, error.err);
+                    eventStream.post(new InstallationFailure(installationStage, packageError));
+                    throw packageError;
                 }
                 else {
+                    eventStream.post(new InstallationFailure(installationStage, error));
                     throw error;
                 }
+            }
+            finally {
+                try {
+                    if (installFileExists(pkg.installPath, InstallFileType.Begin)) {
+                        await deleteInstallFile(pkg.installPath, InstallFileType.Begin);
+                    }
+                }
+                catch (error) { }
             }
         }
     }

@@ -98,7 +98,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables = null;
     }));
 
-    disposables.add(registerCommands(server, platformInfo, eventStream, optionProvider, omnisharpMonoResolver));
+    disposables.add(registerCommands(server, platformInfo, eventStream, optionProvider, omnisharpMonoResolver, packageJSON, extensionPath));
 
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
         disposables.add(server.onServerStart(() => {

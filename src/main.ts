@@ -159,14 +159,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 }
 
 async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, networkSettingsProvider: NetworkSettingsProvider): Promise<boolean> {
-    return util.installFileExists(util.InstallFileType.Lock)
-        .then(exists => {
-            if (!exists) {
-                const downloader = new CSharpExtDownloader(networkSettingsProvider, eventStream, extension.packageJSON, platformInfo, extension.extensionPath);
-                return downloader.installRuntimeDependencies();
-            } else {
-                return true;
-            }
-        });
+    const downloader = new CSharpExtDownloader(networkSettingsProvider, eventStream, extension.packageJSON, platformInfo, extension.extensionPath);
+    return downloader.installRuntimeDependencies();
 }
 
