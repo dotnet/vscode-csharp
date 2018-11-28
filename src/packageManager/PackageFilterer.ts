@@ -10,7 +10,7 @@ import { AbsolutePathPackage } from "./AbsolutePathPackage";
 
 const { filterAsync } = require('node-filter-async');
 
-export async function filterPackages(packages: AbsolutePathPackage[], platformInfo: PlatformInformation): Promise<AbsolutePathPackage[]> {
+export async function getNotInstalledPackagesForPlatform(packages: AbsolutePathPackage[], platformInfo: PlatformInformation): Promise<AbsolutePathPackage[]> {
     let platformPackages = filterPlatformPackages(packages, platformInfo);
     return filterAlreadyInstalledPackages(platformPackages);
 }

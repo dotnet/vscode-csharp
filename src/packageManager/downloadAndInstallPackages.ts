@@ -3,28 +3,22 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PlatformInformation } from "../platform";
-import { Package } from './Package';
 import { PackageError } from './PackageError';
 import { NestedError } from "../NestedError";
 import { DownloadFile } from './FileDownloader';
 import { InstallZip } from './ZipInstaller';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
-import { filterPackages } from "./PackageFilterer";
 import { AbsolutePathPackage } from "./AbsolutePathPackage";
 import { touchInstallFile, InstallFileType, deleteInstallFile, installFileExists } from "../common";
 import { InstallationFailure } from "../omnisharp/loggingEvents";
 import { mkdirpSync } from "fs-extra";
 import { PackageInstallStart } from "../omnisharp/loggingEvents";
 
-export async function DownloadAndInstallPackages(packages: Package[], provider: NetworkSettingsProvider, platformInfo: PlatformInformation, eventStream: EventStream, extensionPath: string): Promise<void> {
-    let absolutePathPackages = packages.map(pkg => AbsolutePathPackage.getAbsolutePathPackage(pkg, extensionPath));
-    let filteredPackages = await filterPackages(absolutePathPackages, platformInfo);
-
-    if (filteredPackages) {
+export async function downloadAndInstallPackages(packages: AbsolutePathPackage[], provider: NetworkSettingsProvider, eventStream: EventStream) {
+    if (packages) {
         eventStream.post(new PackageInstallStart());
-        for (let pkg of filteredPackages) {
+        for (let pkg of packages) {
             let installationStage = "touchBeginFile";
             try {
                 mkdirpSync(pkg.installPath.value);
@@ -49,7 +43,7 @@ export async function DownloadAndInstallPackages(packages: Package[], provider: 
             }
             finally {
                 try {
-                    if (installFileExists(pkg.installPath, InstallFileType.Begin)) {
+                    if (await installFileExists(pkg.installPath, InstallFileType.Begin)) {
                         await deleteInstallFile(pkg.installPath, InstallFileType.Begin);
                     }
                 }
@@ -58,4 +52,3 @@ export async function DownloadAndInstallPackages(packages: Package[], provider: 
         }
     }
 }
-

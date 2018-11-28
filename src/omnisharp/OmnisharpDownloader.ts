@@ -8,8 +8,10 @@ import { PlatformInformation } from '../platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure, LatestBuildDownloadStart } from './loggingEvents';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
-import { DownloadAndInstallPackages } from '../packageManager/PackageManager';
+import { downloadAndInstallPackages } from '../packageManager/downloadAndInstallPackages';
 import { DownloadFile } from '../packageManager/FileDownloader';
+import { getRuntimeDependenciesPackages } from '../tools/RuntimeDependencyPackageUtils';
+import { getAbsolutePathPackagesToInstall } from '../packageManager/getAbsolutePathPackagesToInstall';
 
 export class OmnisharpDownloader {
 
@@ -22,20 +24,14 @@ export class OmnisharpDownloader {
     }
 
     public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string) {
-        this.eventStream.post(new PackageInstallation(`OmniSharp Version = ${version}`));
-        let installationStage = '';
-
-        try {
+        let runtimeDependencies = getRuntimeDependenciesPackages(this.packageJSON);
+        let omniSharpPackages = GetPackagesFromVersion(version, runtimeDependencies, serverUrl, installPath);
+        let packagesToInstall = await getAbsolutePathPackagesToInstall(omniSharpPackages, this.platformInfo, this.extensionPath);
+        if (packagesToInstall && packagesToInstall.length > 0) {
+            this.eventStream.post(new PackageInstallation(`OmniSharp Version = ${version}`));
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
-            installationStage = 'getPackageInfo';
-            let packages = GetPackagesFromVersion(version, this.packageJSON.runtimeDependencies, serverUrl, installPath);
-            installationStage = 'downloadAndInstallPackages';
-            await DownloadAndInstallPackages(packages, this.networkSettingsProvider, this.platformInfo, this.eventStream, this.extensionPath);
+            await downloadAndInstallPackages(packagesToInstall, this.networkSettingsProvider, this.eventStream);
             this.eventStream.post(new InstallationSuccess());
-        }
-        catch (error) {
-            this.eventStream.post(new InstallationFailure(installationStage, error));
-            throw error;// throw the error up to the server
         }
     }
 
