@@ -11,7 +11,7 @@ import { PlatformInformation } from './../platform';
 import { DebuggerPrerequisiteWarning, DebuggerPrerequisiteFailure, DebuggerNotInstalledFailure } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 import CSharpExtensionExports from '../CSharpExtensionExports';
-import { getRuntimeDependencyPackageWithId } from '../tools/GetRuntimeDependencyWithId';
+import { getRuntimeDependencyPackageWithId } from '../tools/RuntimeDependencyPackageUtils';
 
 let _debugUtil: CoreClrDebugUtil = null;
 

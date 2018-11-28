@@ -10,7 +10,6 @@ import * as vscode from 'vscode';
 
 import { ActivationFailure, ActiveTextEditorChanged } from './omnisharp/loggingEvents';
 import { WarningMessageObserver } from './observers/WarningMessageObserver';
-import { CSharpExtDownloader } from './CSharpExtDownloader';
 import { CsharpChannelObserver } from './observers/CsharpChannelObserver';
 import { CsharpLoggerObserver } from './observers/CsharpLoggerObserver';
 import { DotNetChannelObserver } from './observers/DotnetChannelObserver';
@@ -39,6 +38,7 @@ import { CSharpExtensionId } from './constants/CSharpExtensionId';
 import { OpenURLObserver } from './observers/OpenURLObserver';
 import { activateRazorExtension } from './razor/razor';
 import { RazorLoggerObserver } from './observers/RazorLoggerObserver';
+import { installRuntimeDependencies } from './CSharpExtDownloader';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -159,7 +159,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 }
 
 async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, networkSettingsProvider: NetworkSettingsProvider): Promise<boolean> {
-    const downloader = new CSharpExtDownloader(networkSettingsProvider, eventStream, extension.packageJSON, platformInfo, extension.extensionPath);
-    return downloader.installRuntimeDependencies();
+    return installRuntimeDependencies(extension.packageJSON, extension.extensionPath, networkSettingsProvider, eventStream, platformInfo);
 }
 

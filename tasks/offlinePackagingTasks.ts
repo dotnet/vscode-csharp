@@ -20,8 +20,8 @@ import { Logger } from '../src/logger';
 import { PlatformInformation } from '../src/platform';
 import { DownloadAndInstallPackages } from '../src/packageManager/PackageManager';
 import NetworkSettings from '../src/NetworkSettings';
-import { GetRunTimeDependenciesPackages } from '../src/CSharpExtDownloader';
 import { commandLineOptions } from '../tasks/commandLineArguments';
+import { getRuntimeDependenciesPackages } from '../src/tools/RuntimeDependencyPackageUtils';
 
 gulp.task('vsix:offline:package', async () => {
     del.sync(vscodeignorePath);
@@ -89,7 +89,7 @@ async function install(platformInfo: PlatformInformation, packageJSON: any) {
     let stdoutObserver = new CsharpLoggerObserver(logger);
     eventStream.subscribe(stdoutObserver.post);
     const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'));
-    let runTimeDependencies = GetRunTimeDependenciesPackages(packageJSON);
+    let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON);
     let provider = () => new NetworkSettings(undefined, undefined);
     await DownloadAndInstallPackages(runTimeDependencies, provider, platformInfo, eventStream, codeExtensionPath);
     await debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());

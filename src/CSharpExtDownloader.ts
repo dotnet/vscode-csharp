@@ -6,44 +6,31 @@
 import { PlatformInformation } from './platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
-import { DownloadAndInstallPackages } from './packageManager/PackageManager';
-import { Package } from './packageManager/Package';
+import { downloadAndInstallPackages1 } from './packageManager/PackageManager';
 import { NetworkSettingsProvider } from './NetworkSettings';
+import { getRuntimeDependenciesPackages } from './tools/RuntimeDependencyPackageUtils';
+import { AbsolutePathPackage } from './packageManager/AbsolutePathPackage';
+import { filterPackages } from './packageManager/PackageFilterer';
 
-/*
- * Class used to download the runtime dependencies of the C# Extension
- */
-export class CSharpExtDownloader {
-
-    public constructor(
-        private networkSettingsProvider: NetworkSettingsProvider,
-        private eventStream: EventStream,
-        private packageJSON: any,
-        private platformInfo: PlatformInformation,
-        private extensionPath: string) {
-    }
-
-    public async installRuntimeDependencies(): Promise<boolean> {
-        this.eventStream.post(new PackageInstallation("C# dependencies"));
-
+export async function installRuntimeDependencies(packageJSON: any, extensionPath: string, networkSettingsProvider: NetworkSettingsProvider, eventStream: EventStream, platformInfo: PlatformInformation): Promise<boolean>{
+    let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON);
+    let absolutePathPackages = runTimeDependencies.map(pkg => AbsolutePathPackage.getAbsolutePathPackage(pkg, extensionPath));
+    let packagesToInstall = await filterPackages(absolutePathPackages, platformInfo);
+    if (packagesToInstall && packagesToInstall.length > 0) {
+        eventStream.post(new PackageInstallation("C# dependencies"));
         try {
             // Display platform information and RID
-            this.eventStream.post(new LogPlatformInfo(this.platformInfo));
-            let runTimeDependencies = GetRunTimeDependenciesPackages(this.packageJSON);
-            await DownloadAndInstallPackages(runTimeDependencies, this.networkSettingsProvider, this.platformInfo, this.eventStream, this.extensionPath);
-            this.eventStream.post(new InstallationSuccess());
+            eventStream.post(new LogPlatformInfo(platformInfo));
+            await downloadAndInstallPackages1(packagesToInstall, networkSettingsProvider, eventStream);
+            eventStream.post(new InstallationSuccess());
             return true;
         }
         catch (error) {
             return false;
         }
     }
+
+    //All the required packages are already downloaded and installed
+    return true;
 }
 
-export function GetRunTimeDependenciesPackages(packageJSON: any): Package[] {
-    if (packageJSON.runtimeDependencies) {
-        return JSON.parse(JSON.stringify(<Package[]>packageJSON.runtimeDependencies));
-    }
-
-    throw new Error("No runtime dependencies found");
-}
