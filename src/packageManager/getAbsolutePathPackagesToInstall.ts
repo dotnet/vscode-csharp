@@ -5,10 +5,10 @@
 
 import { PlatformInformation } from "../platform";
 import { AbsolutePathPackage } from "./AbsolutePathPackage";
-import { filterPackages } from "./PackageFilterer";
+import { getNotInstalledPackagesForPlatform } from "./PackageFilterer";
 import { Package } from "./Package";
 
 export async function getAbsolutePathPackagesToInstall(packages: Package[], platformInfo: PlatformInformation, extensionPath: string): Promise<AbsolutePathPackage[]> {
     let absolutePathPackages = packages.map(pkg => AbsolutePathPackage.getAbsolutePathPackage(pkg, extensionPath));
-    return filterPackages(absolutePathPackages, platformInfo);
+    return getNotInstalledPackagesForPlatform(absolutePathPackages, platformInfo);
 }
