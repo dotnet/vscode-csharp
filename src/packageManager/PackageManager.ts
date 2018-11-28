@@ -16,12 +16,14 @@ import { AbsolutePathPackage } from "./AbsolutePathPackage";
 import { touchInstallFile, InstallFileType, deleteInstallFile, installFileExists } from "../common";
 import { InstallationFailure } from "../omnisharp/loggingEvents";
 import { mkdirpSync } from "fs-extra";
+import { PackageInstallStart } from "../omnisharp/loggingEvents";
 
 export async function DownloadAndInstallPackages(packages: Package[], provider: NetworkSettingsProvider, platformInfo: PlatformInformation, eventStream: EventStream, extensionPath: string): Promise<void> {
     let absolutePathPackages = packages.map(pkg => AbsolutePathPackage.getAbsolutePathPackage(pkg, extensionPath));
     let filteredPackages = await filterPackages(absolutePathPackages, platformInfo);
 
     if (filteredPackages) {
+        eventStream.post(new PackageInstallStart());
         for (let pkg of filteredPackages) {
             let installationStage = "touchBeginFile";
             try {
