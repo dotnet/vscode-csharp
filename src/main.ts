@@ -27,7 +27,7 @@ import TelemetryReporter from 'vscode-extension-telemetry';
 import { addJSONProviders } from './features/json/jsonContributions';
 import { ProjectStatusBarObserver } from './observers/ProjectStatusBarObserver';
 import CSharpExtensionExports from './CSharpExtensionExports';
-import { vscodeNetworkSettingsProvider, NetworkSettingsProvider } from './NetworkSettings';
+import { vscodeNetworkSettingsProvider } from './NetworkSettings';
 import { ErrorMessageObserver } from './observers/ErrorMessageObserver';
 import OptionProvider from './observers/OptionProvider';
 import DotNetTestChannelObserver from './observers/DotnetTestChannelObserver';
@@ -38,6 +38,9 @@ import { CSharpExtensionId } from './constants/CSharpExtensionId';
 import { OpenURLObserver } from './observers/OpenURLObserver';
 import { activateRazorExtension } from './razor/razor';
 import { RazorLoggerObserver } from './observers/RazorLoggerObserver';
+import { AbsolutePathPackage } from './packageManager/AbsolutePathPackage';
+import { downloadAndInstallPackages } from './packageManager/downloadAndInstallPackages';
+import IInstallDependencies from './packageManager/IInstallDependencies';
 import { installRuntimeDependencies } from './InstallRuntimeDependencies';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
@@ -116,7 +119,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     eventStream.subscribe(telemetryObserver.post);
 
     let networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
-    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo, networkSettingsProvider);
+    let installDependencies: IInstallDependencies = (dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream);
+    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo, installDependencies);
 
     // activate language services
     let langServicePromise = OmniSharp.activate(context, extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionProvider, extension.extensionPath);
@@ -158,7 +162,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     };
 }
 
-async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, networkSettingsProvider: NetworkSettingsProvider): Promise<boolean> {
-    return installRuntimeDependencies(extension.packageJSON, extension.extensionPath, networkSettingsProvider, eventStream, platformInfo);
+async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, installDependencies: IInstallDependencies): Promise<boolean> {
+    return installRuntimeDependencies(extension.packageJSON, extension.extensionPath, installDependencies, eventStream, platformInfo);
 }
 

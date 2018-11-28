@@ -6,12 +6,11 @@
 import { PlatformInformation } from './platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
-import { downloadAndInstallPackages } from './packageManager/downloadAndInstallPackages';
-import { NetworkSettingsProvider } from './NetworkSettings';
 import { getRuntimeDependenciesPackages } from './tools/RuntimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from './packageManager/getAbsolutePathPackagesToInstall';
+import IInstallDependencies from './packageManager/IInstallDependencies';
 
-export async function installRuntimeDependencies(packageJSON: any, extensionPath: string, networkSettingsProvider: NetworkSettingsProvider, eventStream: EventStream, platformInfo: PlatformInformation): Promise<boolean>{
+export async function installRuntimeDependencies(packageJSON: any, extensionPath: string, installDependencies: IInstallDependencies, eventStream: EventStream, platformInfo: PlatformInformation): Promise<boolean>{
     let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON);
     let packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, extensionPath);
     if (packagesToInstall && packagesToInstall.length > 0) {
@@ -19,7 +18,7 @@ export async function installRuntimeDependencies(packageJSON: any, extensionPath
         try {
             // Display platform information and RID
             eventStream.post(new LogPlatformInfo(platformInfo));
-            await downloadAndInstallPackages(packagesToInstall, networkSettingsProvider, eventStream);
+            await installDependencies(packagesToInstall);
             eventStream.post(new InstallationSuccess());
             return true;
         }
