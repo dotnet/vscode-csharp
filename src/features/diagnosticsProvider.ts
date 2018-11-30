@@ -234,26 +234,24 @@ class DiagnosticsProvider extends AbstractSupport {
 
         let source = new vscode.CancellationTokenSource();
         let handle = setTimeout(() => {
-            if (this._server.isRunning()) {
-                serverUtils.codeCheck(this._server, { FileName: document.fileName }, source.token).then(value => {
+            serverUtils.codeCheck(this._server, { FileName: document.fileName }, source.token).then(value => {
 
-                    let quickFixes = value.QuickFixes.filter(DiagnosticsProvider._shouldInclude);
+                let quickFixes = value.QuickFixes.filter(DiagnosticsProvider._shouldInclude);
 
-                    // Easy case: If there are no diagnostics in the file, we can clear it quickly.
-                    if (quickFixes.length === 0) {
-                        if (this._diagnostics.has(document.uri)) {
-                            this._diagnostics.delete(document.uri);
-                        }
-
-                        return;
+                // Easy case: If there are no diagnostics in the file, we can clear it quickly.
+                if (quickFixes.length === 0) {
+                    if (this._diagnostics.has(document.uri)) {
+                        this._diagnostics.delete(document.uri);
                     }
 
-                    // (re)set new diagnostics for this document
-                    let diagnostics = quickFixes.map(DiagnosticsProvider._asDiagnostic);
+                    return;
+                }
 
-                    this._diagnostics.set(document.uri, diagnostics);
-                });
-            }
+                // (re)set new diagnostics for this document
+                let diagnostics = quickFixes.map(DiagnosticsProvider._asDiagnostic);
+
+                this._diagnostics.set(document.uri, diagnostics);
+            });
         }, 750);
 
         source.token.onCancellationRequested(() => clearTimeout(handle));
@@ -272,44 +270,42 @@ class DiagnosticsProvider extends AbstractSupport {
 
         this._projectValidation = new vscode.CancellationTokenSource();
         let handle = setTimeout(() => {
-            if (this._server.isRunning()) {
-                serverUtils.codeCheck(this._server, { FileName: null }, this._projectValidation.token).then(value => {
+            serverUtils.codeCheck(this._server, { FileName: null }, this._projectValidation.token).then(value => {
 
-                    let quickFixes = value.QuickFixes
-                        .filter(DiagnosticsProvider._shouldInclude)
-                        .sort((a, b) => a.FileName.localeCompare(b.FileName));
+                let quickFixes = value.QuickFixes
+                    .filter(DiagnosticsProvider._shouldInclude)
+                    .sort((a, b) => a.FileName.localeCompare(b.FileName));
 
-                    let entries: [vscode.Uri, vscode.Diagnostic[]][] = [];
-                    let lastEntry: [vscode.Uri, vscode.Diagnostic[]];
+                let entries: [vscode.Uri, vscode.Diagnostic[]][] = [];
+                let lastEntry: [vscode.Uri, vscode.Diagnostic[]];
 
-                    for (let quickFix of quickFixes) {
+                for (let quickFix of quickFixes) {
 
-                        let diag = DiagnosticsProvider._asDiagnostic(quickFix);
-                        let uri = vscode.Uri.file(quickFix.FileName);
+                    let diag = DiagnosticsProvider._asDiagnostic(quickFix);
+                    let uri = vscode.Uri.file(quickFix.FileName);
 
-                        if (lastEntry && lastEntry[0].toString() === uri.toString()) {
-                            lastEntry[1].push(diag);
-                        } else {
-                            // We're replacing all diagnostics in this file. Pushing an entry with undefined for
-                            // the diagnostics first ensures that the previous diagnostics for this file are
-                            // cleared. Otherwise, new entries will be merged with the old ones.
-                            entries.push([uri, undefined]);
-                            lastEntry = [uri, [diag]];
-                            entries.push(lastEntry);
-                        }
+                    if (lastEntry && lastEntry[0].toString() === uri.toString()) {
+                        lastEntry[1].push(diag);
+                    } else {
+                        // We're replacing all diagnostics in this file. Pushing an entry with undefined for
+                        // the diagnostics first ensures that the previous diagnostics for this file are
+                        // cleared. Otherwise, new entries will be merged with the old ones.
+                        entries.push([uri, undefined]);
+                        lastEntry = [uri, [diag]];
+                        entries.push(lastEntry);
                     }
+                }
 
-                    // Clear diagnostics for files that no longer have any diagnostics.
-                    this._diagnostics.forEach((uri, diagnostics) => {
-                        if (!entries.find(tuple => tuple[0].toString() === uri.toString())) {
-                            this._diagnostics.delete(uri);
-                        }
-                    });
-
-                    // replace all entries
-                    this._diagnostics.set(entries);
+                // Clear diagnostics for files that no longer have any diagnostics.
+                this._diagnostics.forEach((uri, diagnostics) => {
+                    if (!entries.find(tuple => tuple[0].toString() === uri.toString())) {
+                        this._diagnostics.delete(uri);
+                    }
                 });
-            }
+
+                // replace all entries
+                this._diagnostics.set(entries);
+            });
         }, 3000);
 
         // clear timeout on cancellation
