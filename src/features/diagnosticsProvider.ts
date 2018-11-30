@@ -250,7 +250,9 @@ class DiagnosticsProvider extends AbstractSupport {
                 let diagnostics = quickFixes.map(DiagnosticsProvider._asDiagnostic);
                 this._diagnostics.set(document.uri, diagnostics);
             }
-            catch (error) { }
+            catch (error) {
+                return;
+            }
         }, 750);
 
         source.token.onCancellationRequested(() => clearTimeout(handle));
@@ -306,7 +308,9 @@ class DiagnosticsProvider extends AbstractSupport {
                 // replace all entries
                 this._diagnostics.set(entries);
             }
-            catch(error){ }
+            catch (error) {
+                return;
+            }
         }, 3000);
 
         // clear timeout on cancellation

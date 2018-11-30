@@ -22,10 +22,12 @@ export default class OmnisharpDocumentSymbolProvider extends AbstractSupport imp
             if (response && response.Elements) {
                 return createSymbols(response.Elements);
             }
-        }
-        catch (error) { }
 
-        return [];
+            return [];
+        }
+        catch (error) {
+            return [];
+        }
     }
 }
 
