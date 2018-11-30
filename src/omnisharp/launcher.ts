@@ -37,16 +37,22 @@ export interface LaunchTarget {
  * (if it doesn't contain a `project.json` file, but `project.json` files exist). In addition, the root folder
  * is included if there are any `*.csproj` files present, but a `*.sln* file is not found.
  */
-export function findLaunchTargets(options: Options): Thenable<LaunchTarget[]> {
+export async function findLaunchTargets(options: Options): Promise<LaunchTarget[]> {
     if (!vscode.workspace.workspaceFolders) {
         return Promise.resolve([]);
     }
 
-    return vscode.workspace.findFiles(
-            /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake,**/*.cs}',
-            /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
-            /*maxResults*/ options.maxProjectResults)
-        .then(resourcesToLaunchTargets);
+    const projectFiles = await vscode.workspace.findFiles(
+        /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
+        /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
+        /*maxResults*/ options.maxProjectResults);
+
+    const csFiles = await vscode.workspace.findFiles(
+        /*include*/ '{**/*.cs}',
+        /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
+        /*maxResults*/ options.maxProjectResults);
+
+    return resourcesToLaunchTargets(projectFiles.concat(csFiles));
 }
 
 function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
