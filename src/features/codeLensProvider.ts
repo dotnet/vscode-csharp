@@ -88,11 +88,13 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             return [];
         }
 
-        const response = await serverUtils.codeStructure(this._server, { FileName: document.fileName }, token);
-
-        if (response && response.Elements) {
-            return createCodeLenses(response.Elements, document.fileName, options);
+        try {
+            const response = await serverUtils.codeStructure(this._server, { FileName: document.fileName }, token);
+            if (response && response.Elements) {
+                return createCodeLenses(response.Elements, document.fileName, options);
+            }
         }
+        catch (error) { }
 
         return [];
     }
@@ -117,7 +119,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             OnlyThisFile: false,
             ExcludeDefinition: true
         };
-
+        
         const result = await serverUtils.findUsages(this._server, request, token);
 
         if (!result || !result.QuickFixes) {
@@ -147,7 +149,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 
             return codeLens;
         }
-        
+
         const projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: codeLens.fileName });
 
         // We do not support running all tests on legacy projects.

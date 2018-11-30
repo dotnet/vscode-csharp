@@ -233,11 +233,10 @@ class DiagnosticsProvider extends AbstractSupport {
         }
 
         let source = new vscode.CancellationTokenSource();
-        let handle = setTimeout(() => {
-            serverUtils.codeCheck(this._server, { FileName: document.fileName }, source.token).then(value => {
-
+        let handle = setTimeout(async () => {
+            try {
+                let value = await serverUtils.codeCheck(this._server, { FileName: document.fileName }, source.token);
                 let quickFixes = value.QuickFixes.filter(DiagnosticsProvider._shouldInclude);
-
                 // Easy case: If there are no diagnostics in the file, we can clear it quickly.
                 if (quickFixes.length === 0) {
                     if (this._diagnostics.has(document.uri)) {
@@ -249,9 +248,9 @@ class DiagnosticsProvider extends AbstractSupport {
 
                 // (re)set new diagnostics for this document
                 let diagnostics = quickFixes.map(DiagnosticsProvider._asDiagnostic);
-
                 this._diagnostics.set(document.uri, diagnostics);
-            });
+            }
+            catch (error) { }
         }, 750);
 
         source.token.onCancellationRequested(() => clearTimeout(handle));
@@ -269,8 +268,9 @@ class DiagnosticsProvider extends AbstractSupport {
         }
 
         this._projectValidation = new vscode.CancellationTokenSource();
-        let handle = setTimeout(() => {
-            serverUtils.codeCheck(this._server, { FileName: null }, this._projectValidation.token).then(value => {
+        let handle = setTimeout(async () => {
+            try {
+                let value = await serverUtils.codeCheck(this._server, { FileName: null }, this._projectValidation.token);
 
                 let quickFixes = value.QuickFixes
                     .filter(DiagnosticsProvider._shouldInclude)
@@ -305,7 +305,8 @@ class DiagnosticsProvider extends AbstractSupport {
 
                 // replace all entries
                 this._diagnostics.set(entries);
-            });
+            }
+            catch(error){ }
         }, 3000);
 
         // clear timeout on cancellation
