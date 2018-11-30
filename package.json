@@ -84,7 +84,7 @@
     "stream": "0.0.2",
     "strip-bom": "3.0.0",
     "tmp": "0.0.33",
-    "vscode-debugprotocol": "1.6.1",
+    "vscode-debugprotocol": "1.32.0",
     "vscode-extension-telemetry": "0.1.0",
     "yauzl": "2.10.0"
   },
@@ -785,6 +785,11 @@
         "category": "CSharp"
       },
       {
+        "command": "csharp.setNextStatement",
+        "title": "Set Next Statement (.NET)",
+        "category": "Debug"
+      },
+      {
         "command": "csharp.reportIssue",
         "title": "Start authoring a new issue on GitHub",
         "category": "CSharp"
@@ -805,6 +810,16 @@
         "command": "o.showOutput",
         "key": "Ctrl+L L",
         "mac": "Cmd+L L"
+      },
+      {
+        "command": "csharp.setNextStatement",
+        "key": "Ctrl+Shift+F10",
+        "when": "inDebugMode && debugType == 'coreclr'"
+      },
+      {
+        "command": "csharp.setNextStatement",
+        "key": "Ctrl+Shift+F10",
+        "when": "inDebugMode && debugType == 'clr'"
       }
     ],
     "snippets": [
@@ -2881,6 +2896,16 @@
         {
           "command": "extension.showRazorHtmlWindow",
           "when": "resourceLangId == aspnetcorerazor"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "csharp.setNextStatement",
+          "when": "inDebugMode && debugType == 'coreclr'"
+        },
+        {
+          "command": "csharp.setNextStatement",
+          "when": "inDebugMode && debugType == 'clr'"
         }
       ]
     }
