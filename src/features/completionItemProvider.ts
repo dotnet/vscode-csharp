@@ -40,14 +40,15 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
             req.TriggerCharacter = context.triggerCharacter;
         }
 
-        return serverUtils.autoComplete(this._server, req).then(responses => {
+        try {
+            let responses = await serverUtils.autoComplete(this._server, req);
 
             if (!responses) {
                 return;
             }
 
             let result: CompletionItem[] = [];
-            let completions: { [c: string]: { items: CompletionItem[], preselect : boolean } } = Object.create(null);
+            let completions: { [c: string]: { items: CompletionItem[], preselect: boolean } } = Object.create(null);
 
             // transform AutoCompleteResponse to CompletionItem and
             // group by code snippet
@@ -73,7 +74,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
                     completions[completion.label] = { items: [completion], preselect: completion.preselect };
                 }
                 else {
-                    completionSet.preselect = completionSet.preselect  || completion.preselect;
+                    completionSet.preselect = completionSet.preselect || completion.preselect;
                     completionSet.items.push(completion);
                 }
             }
@@ -101,7 +102,10 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
             // for short completions (up to 1 character), treat the list as incomplete
             // because the server has likely witheld some matches due to performance constraints
             return new CompletionList(result, wordToComplete.length > 1 ? false : true);
-        });
+        }
+        catch (error) {
+            return;
+        }
     }
 }
 

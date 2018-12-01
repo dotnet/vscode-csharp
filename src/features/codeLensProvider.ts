@@ -119,23 +119,27 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             OnlyThisFile: false,
             ExcludeDefinition: true
         };
-        
-        const result = await serverUtils.findUsages(this._server, request, token);
 
-        if (!result || !result.QuickFixes) {
+        try {
+            let result = await serverUtils.findUsages(this._server, request, token);
+            if (!result || !result.QuickFixes) {
+                return;
+            }
+
+            const quickFixes = result.QuickFixes;
+            const count = quickFixes.length;
+
+            codeLens.command = {
+                title: count === 1 ? '1 reference' : `${count} references`,
+                command: 'editor.action.showReferences',
+                arguments: [vscode.Uri.file(request.FileName), codeLens.range.start, quickFixes.map(toLocation)]
+            };
+
+            return codeLens;
+        }
+        catch (error) {
             return;
         }
-
-        const quickFixes = result.QuickFixes;
-        const count = quickFixes.length;
-
-        codeLens.command = {
-            title: count === 1 ? '1 reference' : `${count} references`,
-            command: 'editor.action.showReferences',
-            arguments: [vscode.Uri.file(request.FileName), codeLens.range.start, quickFixes.map(toLocation)]
-        };
-
-        return codeLens;
     }
 
     private async resolveTestCodeLens(codeLens: TestCodeLens, singularTitle: string, singularCommandName: string, pluralTitle: string, pluralCommandName: string): Promise<vscode.CodeLens> {
@@ -150,8 +154,14 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             return codeLens;
         }
 
-        const projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: codeLens.fileName });
-
+        let projectInfo: protocol.ProjectInformationResponse;
+        try {
+            projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: codeLens.fileName });
+        }
+        catch (error) {
+            return;
+        }
+            
         // We do not support running all tests on legacy projects.
         if (projectInfo.MsBuildProject && !projectInfo.DotNetProject) {
             codeLens.command = {

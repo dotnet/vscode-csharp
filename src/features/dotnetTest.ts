@@ -117,15 +117,26 @@ export default class TestManager extends AbstractProvider {
             TargetFrameworkVersion: targetFrameworkVersion
         };
 
-        let response = await serverUtils.runTest(this._server, request);
-        return response.Results;
+        try {
+            let response = await serverUtils.runTest(this._server, request);
+            return response.Results;
+        }
+        catch (error) {
+            return;
+        }
     }
 
     private async _recordRunAndGetFrameworkVersion(fileName: string, testFrameworkName: string) {
 
         await this._saveDirtyFiles();
         this._recordRunRequest(testFrameworkName);
-        let projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
+        let projectInfo: protocol.ProjectInformationResponse;
+        try {
+            projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
+        }
+        catch (error) {
+            return;
+        }
 
         let targetFrameworkVersion: string;
 
@@ -302,7 +313,13 @@ export default class TestManager extends AbstractProvider {
     private async _recordDebugAndGetDebugValues(fileName: string, testFrameworkName: string) {
         await this._saveDirtyFiles();
         this._recordDebugRequest(testFrameworkName);
-        let projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
+        let projectInfo: protocol.ProjectInformationResponse;
+        try {
+            projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
+        }
+        catch (error) {
+            return;
+        }
 
         let debugType: string;
         let debugEventListener: DebugEventListener = null;
@@ -532,10 +549,13 @@ class DebugEventListener {
         let request: protocol.V2.DebugTestStopRequest = {
             FileName: this._fileName
         };
-
-        serverUtils.debugTestStop(this._server, request);
-
-        this.close();
+        try {
+            serverUtils.debugTestStop(this._server, request);
+            this.close();
+        }
+        catch (error) {
+            return;
+        }
     }
 
     private async removeSocketFileIfExists(): Promise<void> {

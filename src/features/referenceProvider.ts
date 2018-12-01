@@ -17,10 +17,14 @@ export default class OmnisharpReferenceProvider extends AbstractSupport implemen
         req.OnlyThisFile = false;
         req.ExcludeDefinition = false;
 
-        return serverUtils.findUsages(this._server, req, token).then(res => {
+        try {
+            let res = await serverUtils.findUsages(this._server, req, token);
             if (res && Array.isArray(res.QuickFixes)) {
                 return res.QuickFixes.map(toLocation);
             }
-        });
+        }
+        catch (error) {
+            return [];
+        }
     }
 }
