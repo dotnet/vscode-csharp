@@ -10,6 +10,8 @@ export class CsharpChannelObserver extends BaseChannelObserver {
     public post = (event: BaseEvent) => {
         switch (event.constructor.name) {
             case PackageInstallStart.name:
+                this.showChannel(true);
+                break;
             case InstallationFailure.name:
             case DebuggerNotInstalledFailure.name:
             case DebuggerPrerequisiteFailure.name:
