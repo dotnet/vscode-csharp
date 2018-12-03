@@ -23,9 +23,9 @@ export class StructureProvider extends AbstractSupport implements FoldingRangePr
 
             return ranges;
         }
-        catch (error) { }
-
-        return [];
+        catch (error) {
+            return [];
+        }
     }
 
     GetType(type: string): FoldingRangeKind {

@@ -21,7 +21,7 @@ export default class OmnisharpRenameProvider extends AbstractSupport implements 
             let response = await serverUtils.rename(this._server, req, token);
 
             if (!response) {
-                return;
+                return undefined;
             }
 
             const edit = new WorkspaceEdit();
@@ -37,7 +37,7 @@ export default class OmnisharpRenameProvider extends AbstractSupport implements 
             return edit;
         }
         catch (error) {
-            return;
+            return undefined;
         }
     }
 }

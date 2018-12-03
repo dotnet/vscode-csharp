@@ -70,31 +70,33 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
     }
 
     private handleReportDotnetTestResults(event: ReportDotNetTestResults) {
-        this.logger.appendLine("----- Test Execution Summary -----");
-        this.logger.appendLine('');
-        
-        // Omnisharp returns null results if there are build failures
-        const results = event.results || [];
-        const totalTests = results.length;
+        if (event.results) {
+            this.logger.appendLine("----- Test Execution Summary -----");
+            this.logger.appendLine('');
 
-        let totalPassed = 0, totalFailed = 0, totalSkipped = 0;
-        for (let result of results) {
-            this.logTestResult(result);
-            switch (result.Outcome) {
-                case protocol.V2.TestOutcomes.Failed:
-                    totalFailed += 1;
-                    break;
-                case protocol.V2.TestOutcomes.Passed:
-                    totalPassed += 1;
-                    break;
-                case protocol.V2.TestOutcomes.Skipped:
-                    totalSkipped += 1;
-                    break;
+            // Omnisharp returns null results if there are build failures
+            const results = event.results;
+            const totalTests = results.length;
+
+            let totalPassed = 0, totalFailed = 0, totalSkipped = 0;
+            for (let result of results) {
+                this.logTestResult(result);
+                switch (result.Outcome) {
+                    case protocol.V2.TestOutcomes.Failed:
+                        totalFailed += 1;
+                        break;
+                    case protocol.V2.TestOutcomes.Passed:
+                        totalPassed += 1;
+                        break;
+                    case protocol.V2.TestOutcomes.Skipped:
+                        totalSkipped += 1;
+                        break;
+                }
             }
-        }
 
-        this.logger.appendLine(`Total tests: ${totalTests}. Passed: ${totalPassed}. Failed: ${totalFailed}. Skipped: ${totalSkipped}`);
-        this.logger.appendLine('');
+            this.logger.appendLine(`Total tests: ${totalTests}. Passed: ${totalPassed}. Failed: ${totalFailed}. Skipped: ${totalSkipped}`);
+            this.logger.appendLine('');
+        }
     }
 
     private logTestResult(result: protocol.V2.DotNetTestResult) {

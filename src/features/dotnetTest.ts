@@ -122,11 +122,11 @@ export default class TestManager extends AbstractProvider {
             return response.Results;
         }
         catch (error) {
-            return;
+            return undefined;
         }
     }
 
-    private async _recordRunAndGetFrameworkVersion(fileName: string, testFrameworkName: string) {
+    private async _recordRunAndGetFrameworkVersion(fileName: string, testFrameworkName: string): Promise<string>{
 
         await this._saveDirtyFiles();
         this._recordRunRequest(testFrameworkName);
@@ -135,7 +135,7 @@ export default class TestManager extends AbstractProvider {
             projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
         }
         catch (error) {
-            return;
+            return undefined;
         }
 
         let targetFrameworkVersion: string;
@@ -318,7 +318,7 @@ export default class TestManager extends AbstractProvider {
             projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
         }
         catch (error) {
-            return;
+            return undefined;
         }
 
         let debugType: string;

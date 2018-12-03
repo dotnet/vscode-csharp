@@ -123,7 +123,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         try {
             let result = await serverUtils.findUsages(this._server, request, token);
             if (!result || !result.QuickFixes) {
-                return;
+                return undefined;
             }
 
             const quickFixes = result.QuickFixes;
@@ -138,7 +138,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             return codeLens;
         }
         catch (error) {
-            return;
+            return undefined;
         }
     }
 
@@ -159,7 +159,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: codeLens.fileName });
         }
         catch (error) {
-            return;
+            return undefined;
         }
             
         // We do not support running all tests on legacy projects.
