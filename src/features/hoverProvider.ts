@@ -17,12 +17,16 @@ export default class OmniSharpHoverProvider extends AbstractSupport implements H
         let req = createRequest<protocol.TypeLookupRequest>(document, position);
         req.IncludeDocumentation = true;
 
-        return serverUtils.typeLookup(this._server, req, token).then(value => {
+        try {
+            let value = await serverUtils.typeLookup(this._server, req, token);
             if (value && value.Type) {
                 let documentation = GetDocumentationString(value.StructuredDocumentation);
                 let contents = [documentation, { language: 'csharp', value: value.Type }];
                 return new Hover(contents);
             }
-        });
+        }
+        catch (error) {
+            return undefined; //No hover result could be obtained
+        }
     }
 }

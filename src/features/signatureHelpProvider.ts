@@ -16,7 +16,8 @@ export default class OmniSharpSignatureHelpProvider extends AbstractSupport impl
 
         let req = createRequest(document, position);
 
-        return serverUtils.signatureHelp(this._server, req, token).then(res => {
+        try {
+            let res = await serverUtils.signatureHelp(this._server, req, token);
 
             if (!res) {
                 return undefined;
@@ -41,7 +42,10 @@ export default class OmniSharpSignatureHelpProvider extends AbstractSupport impl
             }
 
             return ret;
-        });
+        }
+        catch (error) {
+            return undefined;
+        }
     }
 
     private GetParameterDocumentation(parameter: SignatureHelpParameter) {

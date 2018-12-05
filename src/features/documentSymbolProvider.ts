@@ -16,13 +16,18 @@ import { toRange3 } from '../omnisharp/typeConversion';
 export default class OmnisharpDocumentSymbolProvider extends AbstractSupport implements vscode.DocumentSymbolProvider {
 
     async provideDocumentSymbols(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.DocumentSymbol[]> {
-        const response = await serverUtils.codeStructure(this._server, { FileName: document.fileName }, token);
-        
-        if (response && response.Elements) {
-            return createSymbols(response.Elements);
-        }
+        try {
+            const response = await serverUtils.codeStructure(this._server, { FileName: document.fileName }, token);
 
-        return [];
+            if (response && response.Elements) {
+                return createSymbols(response.Elements);
+            }
+
+            return [];
+        }
+        catch (error) {
+            return [];
+        }
     }
 }
 
@@ -48,7 +53,7 @@ function createSymbolForElement(element: Structure.CodeElement): vscode.Document
     return new vscode.DocumentSymbol(element.DisplayName, /*detail*/ "", toSymbolKind(element.Kind), toRange3(fullRange), toRange3(nameRange));
 }
 
-const kinds: { [kind: string]: vscode.SymbolKind; } = { };
+const kinds: { [kind: string]: vscode.SymbolKind; } = {};
 
 kinds[SymbolKinds.Class] = vscode.SymbolKind.Class;
 kinds[SymbolKinds.Delegate] = vscode.SymbolKind.Class;

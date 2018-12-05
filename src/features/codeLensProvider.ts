@@ -88,11 +88,13 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             return [];
         }
 
-        const response = await serverUtils.codeStructure(this._server, { FileName: document.fileName }, token);
-
-        if (response && response.Elements) {
-            return createCodeLenses(response.Elements, document.fileName, options);
+        try {
+            const response = await serverUtils.codeStructure(this._server, { FileName: document.fileName }, token);
+            if (response && response.Elements) {
+                return createCodeLenses(response.Elements, document.fileName, options);
+            }
         }
+        catch (error) { }
 
         return [];
     }
@@ -118,22 +120,26 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             ExcludeDefinition: true
         };
 
-        const result = await serverUtils.findUsages(this._server, request, token);
+        try {
+            let result = await serverUtils.findUsages(this._server, request, token);
+            if (!result || !result.QuickFixes) {
+                return undefined;
+            }
 
-        if (!result || !result.QuickFixes) {
-            return;
+            const quickFixes = result.QuickFixes;
+            const count = quickFixes.length;
+
+            codeLens.command = {
+                title: count === 1 ? '1 reference' : `${count} references`,
+                command: 'editor.action.showReferences',
+                arguments: [vscode.Uri.file(request.FileName), codeLens.range.start, quickFixes.map(toLocation)]
+            };
+
+            return codeLens;
         }
-
-        const quickFixes = result.QuickFixes;
-        const count = quickFixes.length;
-
-        codeLens.command = {
-            title: count === 1 ? '1 reference' : `${count} references`,
-            command: 'editor.action.showReferences',
-            arguments: [vscode.Uri.file(request.FileName), codeLens.range.start, quickFixes.map(toLocation)]
-        };
-
-        return codeLens;
+        catch (error) {
+            return undefined;
+        }
     }
 
     private async resolveTestCodeLens(codeLens: TestCodeLens, singularTitle: string, singularCommandName: string, pluralTitle: string, pluralCommandName: string): Promise<vscode.CodeLens> {
@@ -147,9 +153,15 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 
             return codeLens;
         }
-        
-        const projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: codeLens.fileName });
 
+        let projectInfo: protocol.ProjectInformationResponse;
+        try {
+            projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: codeLens.fileName });
+        }
+        catch (error) {
+            return undefined;
+        }
+            
         // We do not support running all tests on legacy projects.
         if (projectInfo.MsBuildProject && !projectInfo.DotNetProject) {
             codeLens.command = {

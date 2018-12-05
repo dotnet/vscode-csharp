@@ -112,10 +112,6 @@ export class OmniSharpServer {
         }
     }
 
-    private _getState(): ServerState {
-        return this._state;
-    }
-
     private _setState(value: ServerState): void {
         if (typeof value !== 'undefined' && value !== this._state) {
             this._state = value;
@@ -346,11 +342,11 @@ export class OmniSharpServer {
             }
 
             this._serverProcess = launchResult.process;
-            this._delayTrackers = {};
-            this._setState(ServerState.Started);
-            this._fireEvent(Events.ServerStart, solutionPath);
+            this._delayTrackers = {};       
 
             await this._doConnect(options);
+            this._setState(ServerState.Started);
+            this._fireEvent(Events.ServerStart, solutionPath);
 
             this._telemetryIntervalId = setInterval(() => this._reportTelemetry(), TelemetryReportingDelay);
             this._requestQueue.drain();
@@ -500,7 +496,7 @@ export class OmniSharpServer {
 
     public async makeRequest<TResponse>(command: string, data?: any, token?: CancellationToken): Promise<TResponse> {
 
-        if (this._getState() !== ServerState.Started) {
+        if (!this.isRunning()) {
             return Promise.reject<TResponse>('server has been stopped or not started');
         }
 
