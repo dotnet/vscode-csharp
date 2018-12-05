@@ -6,8 +6,8 @@
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import {createRequest, toRange} from '../omnisharp/typeConversion';
-import {DocumentHighlightProvider, DocumentHighlight, DocumentHighlightKind, CancellationToken, TextDocument, Position} from 'vscode';
+import { createRequest, toRange } from '../omnisharp/typeConversion';
+import { DocumentHighlightProvider, DocumentHighlight, DocumentHighlightKind, CancellationToken, TextDocument, Position } from 'vscode';
 
 export default class OmnisharpDocumentHighlightProvider extends AbstractSupport implements DocumentHighlightProvider {
 
@@ -17,11 +17,16 @@ export default class OmnisharpDocumentHighlightProvider extends AbstractSupport 
         req.OnlyThisFile = true;
         req.ExcludeDefinition = false;
 
-        return serverUtils.findUsages(this._server, req, token).then(res => {
+        try {
+            let res = await serverUtils.findUsages(this._server, req, token);
+
             if (res && Array.isArray(res.QuickFixes)) {
                 return res.QuickFixes.map(OmnisharpDocumentHighlightProvider._asDocumentHighlight);
             }
-        });
+        }
+        catch (error) {
+            return [];
+        }
     }
 
     private static _asDocumentHighlight(quickFix: protocol.QuickFix): DocumentHighlight {

@@ -19,6 +19,6 @@ export default class CSharpImplementationProvider extends AbstractSupport implem
             }
 
             return response.QuickFixes.map(fix => toLocation(fix));
-        });
+        }).catch();
     }
 }

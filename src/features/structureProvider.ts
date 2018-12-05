@@ -14,13 +14,18 @@ export class StructureProvider extends AbstractSupport implements FoldingRangePr
             FileName: document.fileName,
         };
 
-        let response = await blockStructure(this._server, request, token);
-        let ranges: FoldingRange[] = [];
-        for (let member of response.Spans) {
-            ranges.push(new FoldingRange(member.Range.Start.Line - 1, member.Range.End.Line - 1, this.GetType(member.Kind)));
-        }
+        try {
+            let response = await blockStructure(this._server, request, token);
+            let ranges: FoldingRange[] = [];
+            for (let member of response.Spans) {
+                ranges.push(new FoldingRange(member.Range.Start.Line - 1, member.Range.End.Line - 1, this.GetType(member.Kind)));
+            }
 
-        return ranges;
+            return ranges;
+        }
+        catch (error) {
+            return [];
+        }
     }
 
     GetType(type: string): FoldingRangeKind {
