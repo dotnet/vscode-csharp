@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as serverUtils from '../omnisharp/utils';
-import {CancellationToken, DefinitionProvider, Location, Position, TextDocument, Uri} from 'vscode';
-import {GoToDefinitionRequest, MetadataRequest, MetadataSource} from '../omnisharp/protocol';
-import {createRequest, toLocation, toLocationFromUri} from '../omnisharp/typeConversion';
+import { CancellationToken, DefinitionProvider, Location, Position, TextDocument, Uri } from 'vscode';
+import { GoToDefinitionRequest, MetadataRequest, MetadataSource } from '../omnisharp/protocol';
+import { createRequest, toLocation, toLocationFromUri } from '../omnisharp/typeConversion';
 import AbstractSupport from './abstractProvider';
 import DefinitionMetadataDocumentProvider from './definitionMetadataDocumentProvider';
 import { OmniSharpServer } from '../omnisharp/server';
@@ -25,8 +25,8 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
         let req = <GoToDefinitionRequest>createRequest(document, position);
         req.WantMetadata = true;
 
-        return serverUtils.goToDefinition(this._server, req, token).then(gotoDefinitionResponse => {
-
+        try {
+            let gotoDefinitionResponse = await serverUtils.goToDefinition(this._server, req, token);
             // the defintion is in source
             if (gotoDefinitionResponse && gotoDefinitionResponse.FileName) {
 
@@ -38,13 +38,13 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
 
                 // if it is a normal source definition, convert the response to a location
                 return toLocation(gotoDefinitionResponse);
-               
-            // the definition is in metadata
+
+                // the definition is in metadata
             } else if (gotoDefinitionResponse.MetadataSource) {
                 const metadataSource: MetadataSource = gotoDefinitionResponse.MetadataSource;
 
                 // go to metadata endpoint for more information
-                return serverUtils.getMetadata(this._server, <MetadataRequest> {
+                return serverUtils.getMetadata(this._server, <MetadataRequest>{
                     Timeout: 5000,
                     AssemblyName: metadataSource.AssemblyName,
                     VersionNumber: metadataSource.VersionNumber,
@@ -60,6 +60,9 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
                     return new Location(uri, new Position(gotoDefinitionResponse.Line - 1, gotoDefinitionResponse.Column - 1));
                 });
             }
-        });
+        }
+        catch (error) {
+            return;
+        }
     }
 }

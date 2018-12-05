@@ -73,7 +73,8 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
             Selection: selection
         };
 
-        return serverUtils.getCodeActions(this._server, request, token).then(response => {
+        try {
+            let response = await serverUtils.getCodeActions(this._server, request, token);
             return response.CodeActions.map(codeAction => {
                 let runRequest: protocol.V2.RunCodeActionRequest = {
                     FileName: document.fileName,
@@ -91,9 +92,10 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
                     arguments: [runRequest]
                 };
             });
-        }, async (error) => {
+        }
+        catch (error) {
             return Promise.reject(`Problem invoking 'GetCodeActions' on OmniSharp server: ${error}`);
-        });
+        }
     }
 
     private async _runCodeAction(req: protocol.V2.RunCodeActionRequest): Promise<boolean | string | {}> {

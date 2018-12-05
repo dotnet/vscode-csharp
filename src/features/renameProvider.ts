@@ -6,8 +6,8 @@
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import {createRequest} from '../omnisharp/typeConversion';
-import {RenameProvider, WorkspaceEdit, TextDocument, Uri, CancellationToken, Position, Range} from 'vscode';
+import { createRequest } from '../omnisharp/typeConversion';
+import { RenameProvider, WorkspaceEdit, TextDocument, Uri, CancellationToken, Position, Range } from 'vscode';
 
 export default class OmnisharpRenameProvider extends AbstractSupport implements RenameProvider {
 
@@ -17,10 +17,11 @@ export default class OmnisharpRenameProvider extends AbstractSupport implements 
         req.WantsTextChanges = true;
         req.RenameTo = newName;
 
-        return serverUtils.rename(this._server, req, token).then(response => {
+        try {
+            let response = await serverUtils.rename(this._server, req, token);
 
             if (!response) {
-                return;
+                return undefined;
             }
 
             const edit = new WorkspaceEdit();
@@ -34,6 +35,9 @@ export default class OmnisharpRenameProvider extends AbstractSupport implements 
             });
 
             return edit;
-        });
+        }
+        catch (error) {
+            return undefined;
+        }
     }
 }

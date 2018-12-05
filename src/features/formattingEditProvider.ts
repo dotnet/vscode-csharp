@@ -6,7 +6,7 @@
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import {DocumentRangeFormattingEditProvider, FormattingOptions, CancellationToken, TextEdit, TextDocument, Range, Position} from 'vscode';
+import { DocumentRangeFormattingEditProvider, FormattingOptions, CancellationToken, TextEdit, TextDocument, Range, Position } from 'vscode';
 
 export default class FormattingSupport extends AbstractSupport implements DocumentRangeFormattingEditProvider {
 
@@ -20,27 +20,35 @@ export default class FormattingSupport extends AbstractSupport implements Docume
             EndColumn: range.end.character + 1
         };
 
-        return serverUtils.formatRange(this._server, request, token).then(res => {
+        try {
+            let res = await serverUtils.formatRange(this._server, request, token);
             if (res && Array.isArray(res.Changes)) {
                 return res.Changes.map(FormattingSupport._asEditOptionation);
             }
-        });
+        }
+        catch (error) {
+            return [];
+        }
     }
 
     public async provideOnTypeFormattingEdits(document: TextDocument, position: Position, ch: string, options: FormattingOptions, token: CancellationToken): Promise<TextEdit[]> {
 
-        let request = <protocol.FormatAfterKeystrokeRequest> {
+        let request = <protocol.FormatAfterKeystrokeRequest>{
             FileName: document.fileName,
             Line: position.line + 1,
             Column: position.character + 1,
             Character: ch
         };
 
-        return serverUtils.formatAfterKeystroke(this._server, request, token).then(res => {
+        try {
+            let res = await serverUtils.formatAfterKeystroke(this._server, request, token);
             if (res && Array.isArray(res.Changes)) {
                 return res.Changes.map(FormattingSupport._asEditOptionation);
             }
-        });
+        }
+        catch (error) {
+            return [];
+        }
     }
 
     private static _asEditOptionation(change: protocol.TextChange): TextEdit {
