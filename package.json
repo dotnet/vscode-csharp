@@ -141,7 +141,7 @@
     "typescript": "2.8.3",
     "unzip2": "0.2.5",
     "vsce": "1.40.0",
-    "vscode": "^1.1.21"
+    "vscode": "1.1.22"
   },
   "runtimeDependencies": [
     {
