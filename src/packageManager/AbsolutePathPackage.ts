@@ -18,7 +18,7 @@ export class AbsolutePathPackage implements IPackage{
         public installTestPath?: AbsolutePath, 
         public fallbackUrl?: string,
         public platformId?: string,
-        public sha?: string) {
+        public integrity?: string) {
     }
 
     public static getAbsolutePathPackage(pkg: Package, extensionPath: string) {

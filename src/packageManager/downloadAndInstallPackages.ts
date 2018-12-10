@@ -28,7 +28,7 @@ export async function downloadAndInstallPackages(packages: AbsolutePathPackage[]
                 let buffer = await DownloadFile(pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
                 await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
                 installationStage = 'touchLockFile';
-                if (isValidInstallation(pkg.installPath, pkg.sha)) {
+                if (await isValidInstallation(pkg.installPath, pkg.integrity)) {
                     await touchInstallFile(pkg.installPath, InstallFileType.Lock);
                 }
             }
