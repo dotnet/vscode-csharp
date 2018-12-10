@@ -14,6 +14,7 @@ import { touchInstallFile, InstallFileType, deleteInstallFile, installFileExists
 import { InstallationFailure } from "../omnisharp/loggingEvents";
 import { mkdirpSync } from "fs-extra";
 import { PackageInstallStart } from "../omnisharp/loggingEvents";
+import { isValidInstallation } from './isValidInstallation';
 
 export async function downloadAndInstallPackages(packages: AbsolutePathPackage[], provider: NetworkSettingsProvider, eventStream: EventStream) {
     if (packages) {
@@ -27,7 +28,9 @@ export async function downloadAndInstallPackages(packages: AbsolutePathPackage[]
                 let buffer = await DownloadFile(pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
                 await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
                 installationStage = 'touchLockFile';
-                await touchInstallFile(pkg.installPath, InstallFileType.Lock);
+                if (isValidInstallation(pkg.installPath, pkg.sha)) {
+                    await touchInstallFile(pkg.installPath, InstallFileType.Lock);
+                }
             }
             catch (error) {
                 eventStream.post(new InstallationFailure(installationStage, error));
