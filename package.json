@@ -176,7 +176,7 @@
       ],
       "installTestPath": "./.omnisharp/1.32.8/OmniSharp.exe",
       "platformId": "win-x64",
-      "integrity": "0703d6ad8cafe29da2be9772e23a1da0ef2334c9"
+      "integrity": "74accabc25766f02c4cb0f8ea49abb447428ed86fc103fd549a5b778a39de82c"
     },
     {
       "id": "OmniSharp",

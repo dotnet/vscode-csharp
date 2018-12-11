@@ -10,8 +10,7 @@ const hash = crypto.createHash('sha256');
 
 export async function isValidDownload(buffer: Buffer, sha: string): Promise<boolean> {
     if (sha && sha.length > 0) {
-
-        return new Promise<boolean>((resolve, reject) => {
+        return new Promise<boolean>((resolve) => {
             let value: string;
             var bufferStream = new stream.PassThrough();
             bufferStream.end(buffer);
@@ -32,6 +31,11 @@ export async function isValidDownload(buffer: Buffer, sha: string): Promise<bool
                 else {
                     resolve(false);
                 }
+            });
+
+            bufferStream.on("error", () => {
+                //if the bufferstream errored
+                resolve(false);
             });
         });
     }
