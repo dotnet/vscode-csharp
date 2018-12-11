@@ -8,8 +8,8 @@ import * as crypto from "crypto";
 
 const hash = crypto.createHash('sha256');
 
-export async function isValidDownload(buffer: Buffer, sha: string): Promise<boolean> {
-    if (sha && sha.length > 0) {
+export async function isValidDownload(buffer: Buffer, integrity: string): Promise<boolean> {
+    if (integrity && integrity.length > 0) {
         return new Promise<boolean>((resolve) => {
             let value: string;
             var bufferStream = new stream.PassThrough();
@@ -19,13 +19,10 @@ export async function isValidDownload(buffer: Buffer, sha: string): Promise<bool
                 if (data) {
                     hash.update(data);
                 }
-                else {
-                    value = hash.digest('hex');
-                }
             });
             bufferStream.on('end', () => {
                 value = hash.digest('hex');
-                if (value == sha) {
+                if (value == integrity) {
                     resolve(true);
                 }
                 else {
