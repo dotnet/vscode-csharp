@@ -37,6 +37,6 @@ export async function isValidDownload(buffer: Buffer, integrity: string): Promis
         });
     }
 
-    // no sha has been specified
+    // no integrity has been specified
     return true;
 }

@@ -37,13 +37,16 @@ function GetPackage(inputPackage: Package, serverUrl: string, version: string, i
         throw new Error('Invalid version');
     }
 
-    let versionPackage = {...inputPackage,
-        "description": `${inputPackage.description}, Version = ${version}`,
-        "url": `${serverUrl}/releases/${version}/omnisharp-${inputPackage.platformId}.zip`,
-        "installPath": `${installPath}/${version}`,
-        "installTestPath": `./${installPath}/${version}/${installBinary}`,
-        "fallbackUrl": "", //setting to empty so that we dont use the fallback url of the default packages
-        "integrity": "" // do not copy the sha for the default packages
+    let versionPackage: Package = {
+        id: inputPackage.id,
+        description: `${inputPackage.description}, Version = ${version}`,
+        url: `${serverUrl}/releases/${version}/omnisharp-${inputPackage.platformId}.zip`,
+        installPath: `${installPath}/${version}`,
+        installTestPath: `./${installPath}/${version}/${installBinary}`,
+        platforms: inputPackage.platforms,
+        architectures: inputPackage.architectures,
+        binaries: inputPackage.binaries,
+        platformId: inputPackage.platformId
     };
 
     return versionPackage;
