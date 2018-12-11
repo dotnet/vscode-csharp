@@ -3,25 +3,39 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AbsolutePath } from "./AbsolutePath";
-import * as fs from "fs";
-import * as util from "util";
-import objectHash = require("object-hash");
+import * as stream from "stream";
+import * as crypto from "crypto";
 
-const readDirAsync = util.promisify(fs.readdir);
+const hash = crypto.createHash('sha256');
 
-export async function isValidInstallation(installPath: AbsolutePath, sha: string): Promise<boolean> {
-    //if (sha && sha.length > 0){
-        let files = await readDirAsync(installPath.value);
-        let uniqueSha = objectHash(files);
-        if (uniqueSha == sha) {
-            return true;
-        }
-        
-        return false;
-    //}
+export async function isValidDownload(buffer: Buffer, sha: string): Promise<boolean> {
+    if (sha && sha.length > 0) {
 
+        return new Promise<boolean>((resolve, reject) => {
+            let value: string;
+            var bufferStream = new stream.PassThrough();
+            bufferStream.end(buffer);
+            bufferStream.on("readable", () => {
+                const data = bufferStream.read();
+                if (data) {
+                    hash.update(data);
+                }
+                else {
+                    value = hash.digest('hex');
+                }
+            });
+            bufferStream.on('end', () => {
+                value = hash.digest('hex');
+                if (value == sha) {
+                    resolve(true);
+                }
+                else {
+                    resolve(false);
+                }
+            });
+        });
+    }
 
-    //If there is no sha for the package, return true
-    //return true;
+    // no sha has been specified
+    return true;
 }
