@@ -317,8 +317,8 @@ export class OmniSharpServer {
             args.push('--debug');
         }
 
-        for (let i = 0; i < options.excludeFilesArray.length; i++)
-            args.push(`fileOptions:excludeSearchPatterns:${i}=${options.excludeFilesArray[i]}`)
+        for (let i = 0; i < options.excludePaths.length; i++)
+            args.push(`FileOptions:SystemExcludeSearchPatterns:${i}=${options.excludePaths[i]}`)
 
         let launchInfo: LaunchInfo;
         try {

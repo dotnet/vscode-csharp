@@ -27,7 +27,7 @@ export class Options {
         public razorPluginPath?: string,
         public defaultLaunchSolution?: string,
         public monoPath?: string,
-        public excludeFilesArray?: string[],
+        public excludePaths?: string[],
         public maxProjectFileCountForDiagnosticAnalysis?: number | null) { }
     ;
 
@@ -82,10 +82,10 @@ export class Options {
         const maxProjectFileCountForDiagnosticAnalysis = csharpConfig.get<number | null>('maxProjectFileCountForDiagnosticAnalysis', 1000);
 
         let excludeFilesOption = vscode.workspace.getConfiguration().get<{ [i: string]: boolean }>('files.exclude');
-        let excludeFilesArray = [];
+        let excludePaths = [];
         for (let field in excludeFilesOption) {
             if (excludeFilesOption[field]) {
-                excludeFilesArray.push(field);
+                excludePaths.push(field);
             }
         }
 
@@ -110,7 +110,7 @@ export class Options {
             razorPluginPath,
             defaultLaunchSolution,
             monoPath,
-            excludeFilesArray,
+            excludePaths,
             maxProjectFileCountForDiagnosticAnalysis
         );
     }
