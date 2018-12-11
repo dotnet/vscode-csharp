@@ -5,6 +5,7 @@
 
 import * as ObservableEvent from "../omnisharp/loggingEvents";
 import { vscode } from '../vscodeAdapter';
+import  showInformationMessage from "./utils/ShowInformationMessage";
 
 export class InformationMessageObserver {
     constructor(private vscode: vscode) {
@@ -19,13 +20,11 @@ export class InformationMessageObserver {
     }
 
     private async handleOmnisharpServerUnresolvedDependencies(event: ObservableEvent.OmnisharpServerUnresolvedDependencies) {
+        //to do: determine if we need the unresolved dependencies message
         let csharpConfig = this.vscode.workspace.getConfiguration('csharp');
         if (!csharpConfig.get<boolean>('suppressDotnetRestoreNotification')) {
-            let info = `There are unresolved dependencies from '${this.vscode.workspace.asRelativePath(event.unresolvedDependencies.FileName)}'. Please execute the restore command to continue.`;
-            let value = await this.vscode.window.showInformationMessage(info, 'Restore');
-            if (value) {
-                this.vscode.commands.executeCommand('dotnet.restore', event.unresolvedDependencies.FileName);
-            }
+            let message = `There are unresolved dependencies. Please execute the restore command to continue.`;
+            return showInformationMessage(this.vscode, message, { title: "Restore", command: "dotnet.restore.all" });
         }
     }
 }

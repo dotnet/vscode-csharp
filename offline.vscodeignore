@@ -32,6 +32,8 @@ tsconfig.json
 tslint.json
 wallaby.js
 
+!src/razor/language-configuration.json
+!src/razor/syntaxes/*
 
 +RuntimeLicenses/dependencies/*
 coreclr-debug/install.log

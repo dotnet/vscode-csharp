@@ -4,21 +4,39 @@
  *--------------------------------------------------------------------------------------------*/
 
 import AbstractSupport from './abstractProvider';
+import { OmniSharpServer } from '../omnisharp/server';
+import OptionProvider from '../observers/OptionProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import {toRange} from '../omnisharp/typeConvertion';
-import {CancellationToken, Uri, WorkspaceSymbolProvider, SymbolInformation, SymbolKind} from 'vscode';
+import { toRange } from '../omnisharp/typeConversion';
+import { CancellationToken, Uri, WorkspaceSymbolProvider, SymbolInformation, SymbolKind } from 'vscode';
 
 
 export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport implements WorkspaceSymbolProvider {
 
+    constructor(server: OmniSharpServer, private optionProvider: OptionProvider) {
+        super(server);
+    }
+
     public async provideWorkspaceSymbols(search: string, token: CancellationToken): Promise<SymbolInformation[]> {
 
-        return serverUtils.findSymbols(this._server, { Filter: search, FileName: '' }, token).then(res => {
+        let options = this.optionProvider.GetLatestOptions();
+        let minFilterLength = options.minFindSymbolsFilterLength > 0 ? options.minFindSymbolsFilterLength : undefined;
+        let maxItemsToReturn = options.maxFindSymbolsItems > 0 ? options.maxFindSymbolsItems : undefined;
+
+        if (minFilterLength != undefined && search.length < minFilterLength) {
+            return [];
+        }
+
+        try {
+            let res = await serverUtils.findSymbols(this._server, { Filter: search, MaxItemsToReturn: maxItemsToReturn, FileName: '' }, token)
             if (res && Array.isArray(res.QuickFixes)) {
                 return res.QuickFixes.map(OmnisharpWorkspaceSymbolProvider._asSymbolInformation);
             }
-        });
+        }
+        catch (error) {
+            return [];
+        }
     }
 
     private static _asSymbolInformation(symbolInfo: protocol.SymbolLocation): SymbolInformation {
@@ -50,7 +68,7 @@ export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport im
                 return SymbolKind.Class;
             default:
                 return SymbolKind.Class;
-            
+
         }
     }
 }

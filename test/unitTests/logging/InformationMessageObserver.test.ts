@@ -5,8 +5,7 @@
 
 import { InformationMessageObserver } from '../../../src/observers/InformationMessageObserver';
 import { use as chaiUse, expect, should } from 'chai';
-import { vscode, Uri } from '../../../src/vscodeAdapter';
-import { getFakeVsCode, getNullWorkspaceConfiguration, getUnresolvedDependenices } from '../testAssets/Fakes';
+import { getUnresolvedDependenices, updateConfig, getVSCodeWithConfig } from '../testAssets/Fakes';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/timeout';
@@ -20,103 +19,91 @@ suite("InformationMessageObserver", () => {
     let doClickOk: () => void;
     let doClickCancel: () => void;
     let signalCommandDone: () => void;
-    let commandDone = new Promise<void>(resolve => {
-        signalCommandDone = () => { resolve(); };
-    });
-    let vscode: vscode = getFakeVsCode();
+    let commandDone: Promise<void>;
+    let vscode = getVsCode();
     let infoMessage: string;
-    let relativePath: string;
     let invokedCommand: string;
     let observer: InformationMessageObserver = new InformationMessageObserver(vscode);
 
-    vscode.window.showInformationMessage = async (message: string, ...items: string[]) => {
-        infoMessage = message;
-        return new Promise<string>(resolve => {
-            doClickCancel = () => {
-                resolve(undefined);
-            };
-
-            doClickOk = () => {
-                resolve(message);
-            };
-        });
-    };
-
-    vscode.commands.executeCommand = (command: string, ...rest: any[]) => {
-        invokedCommand = command;
-        signalCommandDone();
-        return undefined;
-    };
-
-    vscode.workspace.asRelativePath = (pathOrUri?: string, includeWorspaceFolder?: boolean) => {
-        relativePath = pathOrUri;
-        return relativePath;
-    };
-
     setup(() => {
         infoMessage = undefined;
-        relativePath = undefined;
         invokedCommand = undefined;
+        doClickCancel = undefined;
+        doClickOk = undefined;
         commandDone = new Promise<void>(resolve => {
             signalCommandDone = () => { resolve(); };
         });
     });
 
-    suite('OmnisharpServerUnresolvedDependencies', () => {
-        let event = getUnresolvedDependenices("someFile");
+    [
+        {
+            event: getUnresolvedDependenices("someFile"),
+            expectedCommand: "dotnet.restore.all"
+        }
+    ].forEach((elem) => {
+        suite(elem.event.constructor.name, () => {
+            suite('Suppress Dotnet Restore Notification is true', () => {
+                setup(() => updateConfig(vscode, 'csharp', 'suppressDotnetRestoreNotification', true));
 
-        suite('Suppress Dotnet Restore Notification is true', () => {
-            setup(() => {
-                vscode.workspace.getConfiguration = (section?: string, resource?: Uri) => {
-                    return {
-                        ...getNullWorkspaceConfiguration(),
-                        get: <T>(section: string) => {
-                            return true;// suppress the restore information
-                        }
-                    };
-                };
+                test('The information message is not shown', () => {
+                    observer.post(elem.event);
+                    expect(infoMessage).to.be.undefined;
+                });
             });
 
-            test('The information message is not shown', () => {    
-                observer.post(event);
-                expect(infoMessage).to.be.undefined;
+            suite('Suppress Dotnet Restore Notification is false', () => {
+                setup(() => updateConfig(vscode, 'csharp', 'suppressDotnetRestoreNotification', false));
+
+                test('The information message is shown', async () => {
+                    observer.post(elem.event);
+                    expect(infoMessage).to.not.be.empty;
+                    doClickOk();
+                    await commandDone;
+                    expect(invokedCommand).to.be.equal(elem.expectedCommand);
+                });
+
+                test('Given an information message if the user clicks Restore, the command is executed', async () => {
+                    observer.post(elem.event);
+                    doClickOk();
+                    await commandDone;
+                    expect(invokedCommand).to.be.equal(elem.expectedCommand);
+                });
+
+                test('Given an information message if the user clicks cancel, the command is not executed', async () => {
+                    observer.post(elem.event);
+                    doClickCancel();
+                    await expect(Observable.fromPromise(commandDone).timeout(1).toPromise()).to.be.rejected;
+                    expect(invokedCommand).to.be.undefined;
+                });
             });
         });
-        
-        suite('Suppress Dotnet Restore Notification is false', () => {
-            setup(() => {
-                vscode.workspace.getConfiguration = (section?: string, resource?: Uri) => {
-                    return {
-                        ...getNullWorkspaceConfiguration(),
-                        get: <T>(section: string) => {
-                            return false; // do not suppress the restore info
-                        }
-                    };
+        });
+    
+    teardown(() => {
+        commandDone = undefined; 
+    });
+
+    function getVsCode() {
+        let vscode = getVSCodeWithConfig();
+        vscode.window.showInformationMessage = async <T>(message: string, ...items: T[]) => {
+            infoMessage = message;
+            return new Promise<T>(resolve => {
+                doClickCancel = () => {
+                    resolve(undefined);
+                };
+
+                doClickOk = () => {
+                    resolve(...items);
                 };
             });
+        };
 
-            test('The information message is shown', async () => {
-                observer.post(event);
-                expect(relativePath).to.not.be.empty;
-                expect(infoMessage).to.not.be.empty;
-                doClickOk();
-                await commandDone;
-                expect(invokedCommand).to.be.equal('dotnet.restore');
-            });
-        
-            test('Given an information message if the user clicks Restore, the command is executed', async () => {
-                observer.post(event);
-                doClickOk();
-                await commandDone;
-                expect(invokedCommand).to.be.equal('dotnet.restore');
-            });
-        
-            test('Given an information message if the user clicks cancel, the command is not executed', async () => {
-                observer.post(event);
-                doClickCancel();
-                await expect(Observable.fromPromise(commandDone).timeout(1).toPromise()).to.be.rejected;
-                expect(invokedCommand).to.be.undefined;
-            });
-        });   
-    });
+        vscode.commands.executeCommand = (command: string, ...rest: any[]) => {
+            invokedCommand = command;
+            signalCommandDone();
+            return undefined;
+        };
+
+        return vscode;
+    }
 });

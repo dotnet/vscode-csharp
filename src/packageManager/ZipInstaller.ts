@@ -8,26 +8,25 @@ import * as mkdirp from 'mkdirp';
 import * as path from 'path';
 import * as yauzl from 'yauzl';
 import { EventStream } from "../EventStream";
-import { InstallationStart } from "../omnisharp/loggingEvents";
+import { InstallationStart, ZipError } from "../omnisharp/loggingEvents";
 import { NestedError } from '../NestedError';
+import { AbsolutePath } from './AbsolutePath';
 
-export async function InstallZip(sourceFileDescriptor: number, description: string, destinationInstallPath: string, binaries: string[], eventStream: EventStream): Promise<void> {
+export async function InstallZip(buffer: Buffer, description: string, destinationInstallPath: AbsolutePath, binaries: AbsolutePath[], eventStream: EventStream): Promise<void> {
     eventStream.post(new InstallationStart(description));
 
     return new Promise<void>((resolve, reject) => {
-        if (sourceFileDescriptor == 0) {
-            return reject(new NestedError('Downloaded file unavailable'));
-        }
-
-        yauzl.fromFd(sourceFileDescriptor, { lazyEntries: true }, (err, zipFile) => {
+        yauzl.fromBuffer(buffer, { lazyEntries: true }, (err, zipFile) => {
             if (err) {
-                return reject(new NestedError('Immediate zip file error', err));
+                let message = "C# Extension was unable to download its dependencies. Please check your internet connection. If you use a proxy server, please visit https://aka.ms/VsCodeCsharpNetworking";
+                eventStream.post(new ZipError(message));
+                return reject(new NestedError(message));
             }
 
             zipFile.readEntry();
 
             zipFile.on('entry', (entry: yauzl.Entry) => {
-                let absoluteEntryPath = path.resolve(destinationInstallPath, entry.fileName);
+                let absoluteEntryPath = path.resolve(destinationInstallPath.value, entry.fileName);
 
                 if (entry.fileName.endsWith('/')) {
                     // Directory - create it
@@ -51,8 +50,10 @@ export async function InstallZip(sourceFileDescriptor: number, description: stri
                                 return reject(new NestedError('Error creating directory for zip file entry', err));
                             }
 
+                            let binaryPaths = binaries && binaries.map(binary => binary.value);
+
                             // Make sure executable files have correct permissions when extracted
-                            let fileMode = binaries && binaries.indexOf(absoluteEntryPath) !== -1
+                            let fileMode = binaryPaths && binaryPaths.indexOf(absoluteEntryPath) !== -1
                                 ? 0o755
                                 : 0o664;
 

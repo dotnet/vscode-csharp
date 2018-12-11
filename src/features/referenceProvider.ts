@@ -6,7 +6,7 @@
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import {createRequest, toLocation} from '../omnisharp/typeConvertion';
+import {createRequest, toLocation} from '../omnisharp/typeConversion';
 import {ReferenceProvider, Location, TextDocument, CancellationToken, Position} from 'vscode';
 
 export default class OmnisharpReferenceProvider extends AbstractSupport implements ReferenceProvider {
@@ -17,10 +17,14 @@ export default class OmnisharpReferenceProvider extends AbstractSupport implemen
         req.OnlyThisFile = false;
         req.ExcludeDefinition = false;
 
-        return serverUtils.findUsages(this._server, req, token).then(res => {
+        try {
+            let res = await serverUtils.findUsages(this._server, req, token);
             if (res && Array.isArray(res.QuickFixes)) {
                 return res.QuickFixes.map(toLocation);
             }
-        });
+        }
+        catch (error) {
+            return [];
+        }
     }
 }

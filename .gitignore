@@ -4,15 +4,18 @@ out
 .omnisharp/
 .omnisharp-*/
 .debugger
+.razor
 .vscode-test
+.razor
 
 install.*
 
 *.vsix
 
-obj/
-bin/
-test/**/.vscode
+
+test/**/.vscode/launch.json
+test/**/.vscode/tasks.json
+
 .logs/
 .nyc_output/
 coverage/

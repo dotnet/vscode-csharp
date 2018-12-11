@@ -3,26 +3,24 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Disposable } from 'vscode';
 import { OmniSharpServer } from '../omnisharp/server';
+import CompositeDisposable from '../CompositeDisposable';
 
 export default abstract class AbstractProvider {
 
     protected _server: OmniSharpServer;
-    private _disposables: Disposable[];
+    private _disposables: CompositeDisposable;
 
     constructor(server: OmniSharpServer) {
         this._server = server;
-        this._disposables = [];
+        this._disposables = new CompositeDisposable();
     }
 
-    protected addDisposables(...disposables: Disposable[]) {
-        this._disposables.push(...disposables);
+    protected addDisposables(disposables: CompositeDisposable) {
+        this._disposables.add(disposables);
     }
 
-    dispose() {
-        while (this._disposables.length) {
-            this._disposables.pop().dispose();
-        }
+    dispose = () => {
+        this._disposables.dispose();
     }
 }

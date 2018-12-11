@@ -9,7 +9,7 @@ import * as gulp from 'gulp';
 import * as path from 'path';
 import * as del from 'del';
 import spawnNode from './spawnNode';
-import { coverageRootPath, nycOutputPath, nycPath, codeExtensionSourcesPath, integrationTestCoverageRootPath, integrationTestNycOutputPath, istanbulCombinePath, codecovPath, unitTestCoverageRootPath } from './projectPaths';
+import { coverageRootPath, nycOutputPath, nycPath, codeExtensionSourcesPath, integrationTestCoverageRootPath, integrationTestNycOutputPath, istanbulPath, codecovPath, unitTestCoverageRootPath } from './projectPaths';
 
 gulp.task("cov:instrument", async () => {
     del(coverageRootPath);
@@ -29,12 +29,13 @@ gulp.task("cov:instrument", async () => {
 
 gulp.task("cov:merge", async () => {
     return spawnNode([
-        istanbulCombinePath,
-        '-d',
+        istanbulPath,
+        'report',
+        '--dir',
         integrationTestCoverageRootPath,
-        '-r',
-        'lcovonly',
-        `${integrationTestNycOutputPath}/*.json`
+        '--include', 
+        `${integrationTestNycOutputPath}/*.json`,
+        'lcovonly'
     ], {
         cwd: codeExtensionSourcesPath
     });
@@ -42,20 +43,20 @@ gulp.task("cov:merge", async () => {
 
 gulp.task("cov:merge-html", async () => {
     return spawnNode([
-        istanbulCombinePath,
-        '-d',
+        istanbulPath,
+        'report',
+        '--dir',
         integrationTestCoverageRootPath,
-        '-r',
-        'html',
-        `${integrationTestNycOutputPath}/*.json`
+        '--include', 
+        `${integrationTestNycOutputPath}/*.json`,
+        'html'
     ], {
         cwd: codeExtensionSourcesPath
     });
 });
 
-gulp.task("cov:report", ["cov:report:integration", "cov:report:unit"]);
 
-gulp.task("cov:report:integration", ["cov:merge"], async () => {
+gulp.task("cov:report:integration", gulp.series("cov:merge", async () => {
     return spawnNode([
         codecovPath,
         '-f',
@@ -65,7 +66,7 @@ gulp.task("cov:report:integration", ["cov:merge"], async () => {
     ], {
         cwd: codeExtensionSourcesPath
     });
-});
+}));
 
 gulp.task("cov:report:unit", async () => {
     return spawnNode([
@@ -78,3 +79,5 @@ gulp.task("cov:report:unit", async () => {
         cwd: codeExtensionSourcesPath
     });
 });
+
+gulp.task("cov:report", gulp.parallel("cov:report:integration", "cov:report:unit"));

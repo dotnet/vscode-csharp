@@ -6,7 +6,7 @@
 
 [![Wallaby.js](https://img.shields.io/badge/wallaby.js-configured-green.svg)](https://wallabyjs.com)
 
-Welcome to the C# extension for Visual Studio Code! This preview provides the following features inside VS Code:
+Welcome to the C# extension for Visual Studio Code! This extension provides the following features inside VS Code:
 
 * Lightweight development tools for [.NET Core](https://dotnet.github.io).
 * Great C# editing support, including Syntax Highlighting, IntelliSense, Go to Definition, Find All References, etc.
@@ -20,43 +20,44 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
-### What's New in 1.14.0
+### What's new in 1.17.1
 
-* Support for C# 7.2
-* Debugger support for extracting source files embedded in PDBs
-* Preliminary support for Linux ARM debugging
-* Improved Symbol/Documentation text display
-* Addressed problems with projects not being refreshed by OmniSharp after a package restore
-* Added option to disable warning about project.json deprecation
-* Many other bug fixes!
+* Updated Razor language service to fix various Razor editing reliability issues. For details see https://github.com/aspnet/Razor.VSCode/releases/tag/1.0.0-alpha2.
 
-See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.14.0/CHANGELOG.md) for all of the updates.
+### What's new in 1.17.0
+* Added preview Razor (cshtml) language service with support for C# completions and diagnostics.
+* Added omnisharp.minFindSymbolsFilterLength setting to configure the number of characters a user must type in for "Go to Symbol in Workspace" command to return any results
+* Added a command - "CSharp: Start authoring a new issue on GitHub" to enable the users to file issues on github from within the extension with helpful config information from their system
+
+See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.17.0/CHANGELOG.md) for more detail.
 
 ### Supported Operating Systems for Debugging
 
 * Currently, the C# debugger officially supports the following operating systems:
 
-  * Windows (64-bit only)
-  * macOS 10.12 (Sierra) and newer
-  * Ubuntu 14.04+ (and distros based on it)
-  * Debian 8.7+
-  * Red Hat Enterprise Linux (RHEL) / CentOS / Oracle Linux 7.3+
-  * Fedora 23 / 24 / 25
-  * OpenSUSE 42.2+
-
-This list is currently the same as the x64 .NET Core 2.0 operating systems (see [.NET Core list](https://github.com/dotnet/core/blob/master/roadmap.md#net-core-20---supported-os-versions)). Note that other Linux distributions will likely work as well as long as they include glibc, OpenSSL 1.0, and libunwind.
+  * X64 operating systems:
+    * Windows 7 SP1 and newer
+    * macOS 10.12 (Sierra) and newer
+    * Linux: see [.NET Core documentation](https://github.com/dotnet/core/blob/master/release-notes/2.0/2.0-supported-os.md#linux) for the list of supported distributions. Note that other Linux distributions will likely work as well as long as they include glibc and OpenSSL.
+  * ARM operating systems:
+    * Linux is supported as a remote debugging target
 
 ### Found a Bug?
-Please file any issues at https://github.com/OmniSharp/omnisharp-vscode/issues.
+
+To file a new issue to include all the related config information directly from vscode by entering the command pallette with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>
+(<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> on macOS) and running `CSharp: Start authoring a new issue on GitHub` command. This will open a browser window with all the necessary information related to the installed extensions, dotnet version, mono version, etc. Enter all the remaining information and hit submit. More information can be found on the [wiki](https://github.com/OmniSharp/omnisharp-vscode/wiki/Reporting-Issues).
+
+Alternatively you could visit https://github.com/OmniSharp/omnisharp-vscode/issues and file a new one.
 
 ### Debugging
+
 The C# extension now supports basic debugging capabilities! See http://aka.ms/vscclrdebugger for details.
 
 ### Development
 
 First install:
-* Node.js (newer than 4.3.1)
-* Npm (newer 2.14.12)
+* Node.js (8.11.1 or later)
+* Npm (5.6.0 or later)
 
 To **run and develop** do the following:
 

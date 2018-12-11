@@ -11,6 +11,7 @@ import { PlatformInformation } from './../platform';
 import { DebuggerPrerequisiteWarning, DebuggerPrerequisiteFailure, DebuggerNotInstalledFailure } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 import CSharpExtensionExports from '../CSharpExtensionExports';
+import { getRuntimeDependencyPackageWithId } from '../tools/RuntimeDependencyPackageUtils';
 
 let _debugUtil: CoreClrDebugUtil = null;
 
@@ -112,7 +113,7 @@ interface AdapterExecutableCommand {
 // The default extension manifest calls this command as the adapterExecutableCommand
 // If the debugger components have not finished downloading, the proxy displays an error message to the user
 // Else it will launch the debug adapter
-export async function getAdapterExecutionCommand(platformInfo: PlatformInformation, eventStream: EventStream): Promise<AdapterExecutableCommand> {
+export async function getAdapterExecutionCommand(platformInfo: PlatformInformation, eventStream: EventStream, packageJSON: any, extensionPath: string): Promise<AdapterExecutableCommand> {
     let util = new CoreClrDebugUtil(common.getExtensionPath());
 
     // Check for .debugger folder. Handle if it does not exist.
@@ -125,7 +126,13 @@ export async function getAdapterExecutionCommand(platformInfo: PlatformInformati
         // 4. install.complete is created
 
         // install.Lock does not exist, need to wait for packages to finish downloading.
-        let installLock: boolean = await common.installFileExists(common.InstallFileType.Lock);
+        let installLock = false;
+        let debuggerPackage = getRuntimeDependencyPackageWithId("Debugger", packageJSON, platformInfo, extensionPath);
+        if (debuggerPackage && debuggerPackage.installPath)
+        {
+            installLock = await common.installFileExists(debuggerPackage.installPath, common.InstallFileType.Lock);
+        }
+        
         if (!installLock) {
             eventStream.post(new DebuggerNotInstalledFailure());
             throw new Error('The C# extension is still downloading packages. Please see progress in the output window below.');

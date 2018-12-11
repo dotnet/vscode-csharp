@@ -11,6 +11,10 @@ import { LaunchTarget } from "./launcher";
 export interface BaseEvent {
 }
 
+export class TelemetryEvent implements BaseEvent {
+    constructor(public eventName: string, public properties?: { [key: string]: string }, public measures?: { [key: string]: number }){ }
+}
+
 export class TelemetryEventWithMeasures implements BaseEvent {
     constructor(public eventName: string, public measures: { [key: string]: number }) {
     }
@@ -27,7 +31,11 @@ export class OmnisharpInitialisation implements BaseEvent {
 }
 
 export class OmnisharpLaunch implements BaseEvent {
-    constructor(public usingMono: boolean, public command: string, public pid: number) { }
+    constructor(public monoVersion: string, public monoPath: string, public command: string, public pid: number) { }
+}
+
+export class PackageInstallStart implements BaseEvent {
+    constructor() { }
 }
 
 export class PackageInstallation implements BaseEvent {
@@ -118,6 +126,50 @@ export class DownloadSizeObtained implements BaseEvent {
     constructor(public packageSize: number) { }
 }
 
+export class ZipError implements BaseEvent {
+    constructor(public message: string) { }
+}
+
+export class ReportDotNetTestResults implements BaseEvent {
+    constructor(public results: protocol.V2.DotNetTestResult[]) { }
+}
+
+export class DotNetTestRunStart implements BaseEvent {
+    constructor(public testMethod: string) { }
+}
+
+export class DotNetTestDebugStart implements BaseEvent {
+    constructor(public testMethod: string) { }
+}
+
+export class DotNetTestDebugProcessStart implements BaseEvent {
+    constructor(public targetProcessId: number) { }
+}
+
+export class DotNetTestsInClassRunStart implements BaseEvent {
+    constructor(public className: string) { }
+}
+
+export class DotNetTestsInClassDebugStart implements BaseEvent {
+    constructor(public className: string) { }
+}
+
+export class DocumentSynchronizationFailure implements BaseEvent {
+    constructor(public documentPath: string, public errorMessage: string) { }
+}
+
+export class OpenURL {
+    constructor(public url: string) { }
+}
+
+export class RazorPluginPathSpecified implements BaseEvent {
+    constructor(public path: string) {}
+}
+
+export class RazorPluginPathDoesNotExist implements BaseEvent {
+    constructor(public path: string) {}
+}
+
 export class DebuggerPrerequisiteFailure extends EventWithMessage { }
 export class DebuggerPrerequisiteWarning extends EventWithMessage { }
 export class CommandDotNetRestoreProgress extends EventWithMessage { }
@@ -128,10 +180,15 @@ export class DownloadFailure extends EventWithMessage { }
 export class OmnisharpServerOnStdErr extends EventWithMessage { }
 export class OmnisharpServerMessage extends EventWithMessage { }
 export class OmnisharpServerVerboseMessage extends EventWithMessage { }
+export class DotNetTestMessage extends EventWithMessage { }
+export class DotNetTestRunFailure extends EventWithMessage { }
+export class DotNetTestDebugWarning extends EventWithMessage { }
+export class DotNetTestDebugStartFailure extends EventWithMessage { }
 
+export class RazorDevModeActive implements BaseEvent { }
 export class ProjectModified implements BaseEvent { }
 export class ActivationFailure implements BaseEvent { }
-export class CommandShowOutput implements BaseEvent { }
+export class ShowOmniSharpChannel implements BaseEvent { }
 export class DebuggerNotInstalledFailure implements BaseEvent { }
 export class CommandDotNetRestoreStart implements BaseEvent { }
 export class InstallationSuccess implements BaseEvent { }
@@ -143,3 +200,5 @@ export class ActiveTextEditorChanged implements BaseEvent { }
 export class OmnisharpServerOnStop implements BaseEvent { }
 export class OmnisharpServerOnStart implements BaseEvent { }
 export class LatestBuildDownloadStart implements BaseEvent { }
+export class OmnisharpRestart implements BaseEvent { }
+export class DotNetTestDebugComplete implements BaseEvent { }

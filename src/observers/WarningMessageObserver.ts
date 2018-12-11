@@ -3,38 +3,21 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { MessageItem, vscode } from '../vscodeAdapter';
+import { vscode } from '../vscodeAdapter';
 import { BaseEvent, OmnisharpServerOnError, OmnisharpServerMsBuildProjectDiagnostics } from "../omnisharp/loggingEvents";
 import { Scheduler } from 'rxjs/Scheduler';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/debounceTime';
-
-export interface MessageItemWithCommand extends MessageItem {
-    command: string;
-}
+import showWarningMessage from './utils/ShowWarningMessage';
 
 export class WarningMessageObserver {
     private warningMessageDebouncer: Subject<BaseEvent>;
 
-    constructor(private vscode: vscode, scheduler?: Scheduler) {
+    constructor(private vscode: vscode, private disableMsBuildDiagnosticWarning: () => boolean, scheduler?: Scheduler) {
         this.warningMessageDebouncer = new Subject<BaseEvent>();
         this.warningMessageDebouncer.debounceTime(1500, scheduler).subscribe(async event => {
             let message = "Some projects have trouble loading. Please review the output for more details.";
-            let value: MessageItemWithCommand;
-            try {
-                value = await this.vscode.window.showWarningMessage<MessageItemWithCommand>(message, { title: "Show Output", command: 'o.showOutput' });
-            }
-            catch (err){
-                console.log(err);
-            }
-            if (value) {
-                try {
-                    await this.vscode.commands.executeCommand<string>(value.command);
-                }
-                catch (err) {
-                    console.log(err);
-                }
-            }
+            await showWarningMessage(this.vscode, message, { title: "Show Output", command: 'o.showOutput' });
         });
     }
 
@@ -50,7 +33,7 @@ export class WarningMessageObserver {
     }
 
     private handleOmnisharpServerMsBuildProjectDiagnostics(event: OmnisharpServerMsBuildProjectDiagnostics) {
-        if (event.diagnostics.Errors.length > 0) {
+        if (!this.disableMsBuildDiagnosticWarning() && event.diagnostics.Errors.length > 0) {
             this.warningMessageDebouncer.next(event);
         }
     }

@@ -1,3 +1,5 @@
 {
-    "omnisharp.path": "latest"
+    "omnisharp.defaultLaunchSolution": "b_SecondInOrder_SlnFile.sln",
+    "omnisharp.path": "latest",
+    "csharp.maxProjectFileCountForDiagnosticAnalysis": 1000,
 }

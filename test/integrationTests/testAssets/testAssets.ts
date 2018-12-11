@@ -7,17 +7,19 @@ import * as fs from 'async-file';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import spawnGit from './spawnGit';
+import { dotnetRestore } from '../../../src/features/commands';
+import { EventStream } from '../../../src/EventStream';
 
 export class TestAssetProject {
     constructor(project: ITestAssetProject) {
-        this.relativePath = project.relativePath;
+        this.relativeFilePath = project.relativeFilePath;
     }
 
-    relativePath: string;
+    relativeFilePath: string;
 
     get projectDirectoryPath(): string {
         return path.join(vscode.workspace.workspaceFolders[0].uri.fsPath,
-            this.relativePath);
+            path.dirname(this.relativeFilePath));
     }
 
     get binDirectoryPath(): string {
@@ -33,8 +35,12 @@ export class TestAssetProject {
         await fs.rimraf(this.objDirectoryPath);
     }
 
+    async restore(): Promise<void> {
+        await dotnetRestore(this.projectDirectoryPath, new EventStream());
+    }
+
     async addFileWithContents(fileName: string, contents: string): Promise<vscode.Uri> {
-        let dir = path.dirname(this.projectDirectoryPath);
+        let dir = this.projectDirectoryPath;
         let loc = path.join(dir, fileName);
         await fs.writeTextFile(loc, contents);
         return vscode.Uri.file(loc);
@@ -54,6 +60,10 @@ export class TestAssetWorkspace {
         this.projects.forEach(async p => await p.deleteBuildArtifacts());
     }
 
+    async restore(): Promise<void> {
+        this.projects.forEach(async p => await p.restore());
+    }
+
     get vsCodeDirectoryPath(): string {
         return path.join(vscode.workspace.rootPath, ".vscode");
     }
@@ -68,7 +78,7 @@ export class TestAssetWorkspace {
 
     async cleanupWorkspace(): Promise<void> {
         for (let project of this.projects) {
-            let wd = path.dirname(project.projectDirectoryPath);
+            let wd = project.projectDirectoryPath;
             await spawnGit(["clean", "-xdf", "."], { cwd: wd });
             await spawnGit(["checkout", "--", "."], { cwd: wd });
         }
@@ -80,7 +90,7 @@ export class TestAssetWorkspace {
 }
 
 export interface ITestAssetProject {
-    relativePath: string;
+    relativeFilePath: string;
 }
 
 export interface ITestAssetWorkspace {

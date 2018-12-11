@@ -5,7 +5,10 @@
 			"taskName": "build",
 			"command": "npm",
 			"isShellCommand": true,
-			"args": ["run", "compile"],
+			"args": [
+				"run",
+				"compile"
+			],
 			"showOutput": "always",
 			"isBuildCommand": true
 		},
@@ -14,19 +17,23 @@
 			"command": "echo",
 			"showOutput": "always",
 			"isShellCommand": true,
-			"args": ["Run tests in VS Code by launching the debugger with the 'Launch Tests' configuration."],
+			"args": [
+				"Run tests in VS Code by launching the debugger with the 'Launch Tests' configuration."
+			],
 			"isTestCommand": true
 		},
 		{
 			"taskName": "tslint",
 			"command": "gulp",
 			"isShellCommand": true,
-			"args": ["tslint"],
+			"args": [
+				"tslint"
+			],
 			"problemMatcher": {
 				"owner": "tslint",
 				"fileLocation": [
 					"relative",
-					"${workspaceRoot}"
+					"${workspaceFolder}"
 				],
 				"severity": "warning",
 				"pattern": {

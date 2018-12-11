@@ -11,18 +11,18 @@ import * as del from 'del';
 import * as fs from 'fs';
 import * as gulp from 'gulp';
 import * as path from 'path';
-import * as util from '../src/common';
 import spawnNode from '../tasks/spawnNode';
 import { codeExtensionPath, offlineVscodeignorePath, vscodeignorePath, vscePath, packedVsixOutputRoot } from '../tasks/projectPaths';
-import { commandLineOptions } from '../tasks/commandLineArguments';
 import { CsharpLoggerObserver } from '../src/observers/CsharpLoggerObserver';
 import { EventStream } from '../src/EventStream';
 import { getPackageJSON } from '../tasks/packageJson';
 import { Logger } from '../src/logger';
 import { PlatformInformation } from '../src/platform';
-import { DownloadAndInstallPackages } from '../src/packageManager/PackageManager';
+import { downloadAndInstallPackages } from '../src/packageManager/downloadAndInstallPackages';
 import NetworkSettings from '../src/NetworkSettings';
-import { GetRunTimeDependenciesPackages } from '../src/CSharpExtDownloader';
+import { commandLineOptions } from '../tasks/commandLineArguments';
+import { getRuntimeDependenciesPackages } from '../src/tools/RuntimeDependencyPackageUtils';
+import { getAbsolutePathPackagesToInstall } from '../src/packageManager/getAbsolutePathPackagesToInstall';
 
 gulp.task('vsix:offline:package', async () => {
     del.sync(vscodeignorePath);
@@ -38,16 +38,14 @@ gulp.task('vsix:offline:package', async () => {
 });
 
 async function doPackageOffline() {
-    util.setExtensionPath(codeExtensionPath);
-
     if (commandLineOptions.retainVsix) {
-        //if user doesnot want to clean up the existing vsix packages
+        //if user doesnot want to clean up the existing vsix packages	
         cleanSync(false);
     }
     else {
         cleanSync(true);
     }
-
+    
     const packageJSON = getPackageJSON();
     const name = packageJSON.name;
     const version = packageJSON.version;
@@ -80,9 +78,7 @@ async function doOfflinePackage(platformInfo: PlatformInformation, packageName: 
     }
 
     cleanSync(false);
-
     const packageFileName = `${packageName}-${platformInfo.platform}-${platformInfo.architecture}.vsix`;
-
     await install(platformInfo, packageJSON);
     await doPackageSync(packageFileName, outputFolder);
 }
@@ -94,9 +90,10 @@ async function install(platformInfo: PlatformInformation, packageJSON: any) {
     let stdoutObserver = new CsharpLoggerObserver(logger);
     eventStream.subscribe(stdoutObserver.post);
     const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'));
-    let runTimeDependencies = GetRunTimeDependenciesPackages(packageJSON);
+    let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON);
+    let packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, codeExtensionPath);
     let provider = () => new NetworkSettings(undefined, undefined);
-    await DownloadAndInstallPackages(runTimeDependencies, provider, platformInfo, eventStream);
+    await downloadAndInstallPackages(packagesToInstall, provider, eventStream);
     await debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());
 }
 

@@ -1,32 +1,185 @@
-## Known Issues in 1.14.0
+## Known Issues in 1.17.1
 
+* Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
+  * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
+  * Support for tag helpers and formatting not yet implemented
+  * Limited support for colorization
+  * Loss of HTML completions following C# less than (`<`) operator
+  * Error squiggles misaligned for expressions near the start of a new line
+  * Incorrect errors in Blazor projects for event bindings
+  * Emmet based abbreviation expansion is not yet supported
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.15.0 _(Not Yet Released)_
+## 1.18.0 (Not yet released)
+
+* Added a `csharp.maxProjectFileCountForDiagnosticAnalysis` setting to configure the file limit when the extension stops reporting errors for whole workspace. When this threshold is reached, the diagnostics are reported for currently opened files only. This mechanism was available in previous versions, but now can be configured. The default is 1000. (PR: [#1877](https://github.com/OmniSharp/omnisharp-vscode/pull/1877))
+
+## 1.17.1 (November 11, 2018)
+
+* Updated Razor language service to fix various Razor editing reliability issues. For details see https://github.com/aspnet/Razor.VSCode/releases/tag/1.0.0-alpha2.
+
+## 1.17.0 (October 31, 2018)
+
+* Added preview Razor (cshtml) language service with support for C# completions and diagnostics in ASP.NET Core projects. Please report issues with the preview Razor tooling on the [aspnet/Razor.VSCode](https://github.com/aspnet/Razor.VSCode/issues) repo. To disable the preview Razor tooling set the "razor.disabled" setting to `true`. (PR: [2554](https://github.com/OmniSharp/omnisharp-vscode/pull/2554))
+* Added omnisharp.minFindSymbolsFilterLength setting to configure the number of characters a user must type in for "Go to Symbol in Workspace" command to return any results (default is 0 to preserve existing behavior). Additionally added omnisharp.maxFindSymbolsItems for configuring maximum number of items returned by "Go to Symbol in Workspace" command. The default is 1000. (PR: [#2487](https://github.com/OmniSharp/omnisharp-vscode/pull/2487))
+* Added a command - "CSharp: Start authoring a new issue on GitHub" to enable the users to file issues on github from within the extension with helpful config information from their system.(PR: [#2503](https://github.com/OmniSharp/omnisharp-vscode/pull/2503))
 
 #### Debugger
+* Fixed crash at the end of debug sessions on Linux ([#2439](https://github.com/OmniSharp/omnisharp-vscode/issues/2439))
+* Fixed searching for PDBs in original built location ([#2483](https://github.com/OmniSharp/omnisharp-vscode/issues/2483))
+* Fixed launching the web browser against an ASP.NET project that uses wildcard ('*') bindings ([#2528](https://github.com/OmniSharp/omnisharp-vscode/issues/2528))
 
-* Adds support for [Source Link](https://aka.ms/SourceLinkSpec), Symbol Servers and other more advanced symbol options ([#373](https://github.com/OmniSharp/omnisharp-vscode/issues/373))
-* Adds launch.json option to suppress Just-In-Time compiler optimizations.
-* Due to the previous two items and work from the .NET Team, it is now possible to easily debug into ASP.NET itself in projects running against .NET Core 2.1 preview 1. Support for debugging into all the managed code in .NET Core will come in future .NET Core 2.1 builds. Instructions are in the [wiki](https://github.com/OmniSharp/omnisharp-vscode/wiki/Debugging-into-the-.NET-Framework-itself).
-* Adds a Code Lens indicator for runnning and debugging all tests in a class. ([#420](https://github.com/OmniSharp/omnisharp-vscode/issues/420), PR: [#1961](https://github.com/OmniSharp/omnisharp-vscode/pull/1961); PR: [omnisharp-roslyn#1089](https://github.com/OmniSharp/omnisharp-roslyn/pull/1089))
+## 1.16.2 (October 3, 2018)
+* Update extension to handle upcoming breaking change to launch.json configurations in VS Code 1.28. (PR: [#2558](https://github.com/OmniSharp/omnisharp-vscode/pull/2558))
+* Fixed a bug where OmniSharp flame was red in spite of OmniSharp loading the projects without any errors. (PR: [#2450](https://github.com/OmniSharp/omnisharp-vscode/pull/2540))
+* Fixed launch.json `envFile` option on Windows. (PR: [#2560](https://github.com/OmniSharp/omnisharp-vscode/pull/2560))
+* Fixed a problem with tracking virtual documents from other providers. (PR: [#2562](https://github.com/OmniSharp/omnisharp-vscode/pull/2562))
 
-#### Specify OmniSharp Version
-Enables the use of pre-release builds of Omnisharp. Downloading a pre-release build of Omnisharp allows the C# extension for VS Code to use features that have been merged into the "master" branch of omnisharp-roslyn(https://github.com/OmniSharp/omnisharp-roslyn) but that have not been officially released
-* Adds support to use the "omnisharp.path" option to download a specific copy of OmniSharp. The possible values for this option are:
-  * `<Path to the omnisharp executable>` - Use a local copy of OmniSharp. The value must point to a directory which contains OmniSharp, typically a user's build output directory for the OmniSharp-Roslyn project. Example: C:\omnisharp-roslyn\artifacts\publish\OmniSharp.Stdio\win7-x64\OmniSharp.exe.
-  * `latest` - Use the latest CI build
-  * `<version>` - Use a specific version of OmniSharp. Example: `1.29.2-beta.60`
+## 1.16.0 (September 10, 2018)
+
+#### Project System
+
+* Separated the existing "Restore Packages" option in the Command Palette into two distinct functions:
+  * "Restore Project" - Displays a drop-down that shows all the available projects in the solution or in the workspace. Selecting one of them would trigger a dotnet restore for the particular project.
+  * "Restore All Projects" - Triggers a dotnet restore for all projects in the current solution or workspace.
+
+* Modified the "Unresolved dependencies" prompt to restore the all the projects in the currently selected solution or workspace. (PR: [#2323](https://github.com/OmniSharp/omnisharp-vscode/pull/2323))
+
+* Added support to configure the default *.sln file loaded when opening a project with multiple *.sln files in the root. _(Contributed by [@janaka](https://github.com/janaka))_ (PR: [#2053](https://github.com/OmniSharp/omnisharp-vscode/pull/2053))
+
+* Added support for tracking opening, closing and changing of virtual documents that don't exist on disk. (PR: [#2436](https://github.com/OmniSharp/omnisharp-vscode/pull/2436)) _(Contributed by [@NTaylorMullen](https://github.com/NTaylorMullen))_
+
+* Enabled IDE features for .cs files that are not part of a project. (PR: [#2471](https://github.com/OmniSharp/omnisharp-vscode/pull/2471), [omnisharp-roslyn#1252](https://github.com/OmniSharp/omnisharp-roslyn/pull/1252))
+
+#### Misc
+
+* Added a prompt to "Restart OmniSharp" when there is a change in omnisharp "path", "useGlobalMono" or "waitForDebugger" settings.(PR: [#2316](https://github.com/OmniSharp/omnisharp-vscode/pull/2316))
 
 #### Editor
 
-* Splits the OmniSharp status bar item into two parts, both of which appear on the left and have specific responsibilities. ([#2146](https://github.com/OmniSharp/omnisharp-vscode/issues/2146), PR: [@2133](https://github.com/OmniSharp/omnisharp-vscode/pull/2133))
-  * OmniSharp server status bar item - Shows the various stages that the OmniSharp server initialization might be in (eg: Downloading, Installing, etc). The flame icon is green when the server is initialized and running properly, or red if there is an error.
-  * Project Information status bar item - 
-    * Displays the name of the selected project regardless of the currently active document.  
-    * If a project is already selected, it displays the name of the selected project. Clicking on it displays a menu to switch to other projects in the workspace. 
+* Improved diagnostics by refreshing them when the active editor changes or the current window is focused. (PR: [#2317](https://github.com/OmniSharp/omnisharp-vscode/pull/2317)) _(Contributed by [@SirIntruder](https://github.com/SirIntruder))_
+
+* Improved completions by adding the preselect property so the best match is preselected. (PR: [#2388](https://github.com/OmniSharp/omnisharp-vscode/pull/2388))
+
+#### Testing
+
+* Added test execution output to the output of the Run/Debug Test CodeLens. (PR: [#2337](https://github.com/OmniSharp/omnisharp-vscode/pull/2337), [#2343](https://github.com/OmniSharp/omnisharp-vscode/pull/2343), [omnisharp-roslyn#1203](https://github.com/OmniSharp/omnisharp-roslyn/pull/1203))
+* Fixed a bug where a debug session could not be started and duplicate logs were displayed after a previous one failed due to build failure. (PR: [#2405](https://github.com/OmniSharp/omnisharp-vscode/pull/2405), [omnisharp-roslyn#1239](https://github.com/OmniSharp/omnisharp-roslyn/pull/1239))
+
+#### Options
+
+* Added `monoPath` option to use the mono installation at the specified path when the `useGlobalMono` is set to "always" or "auto". (PR: [#2425](https://github.com/OmniSharp/omnisharp-vscode/pull/2425)) _(Contributed by [@shana](https://github.com/shana))_
+
+#### Debugger
+
+* Added support for launching with environment variables stored in a seperate file from launch.json via a new `envFile` option. (PR: [#2462](https://github.com/OmniSharp/omnisharp-vscode/pull/2462), [#1944](https://github.com/OmniSharp/omnisharp-vscode/issues/1944)) _(Contributed by [@SebastianPfliegel](https://github.com/SebastianPfliegel))_
+* Fixed editting breakpoint conditions while debugging with recent versions of VS Code. ([#2428](https://github.com/OmniSharp/omnisharp-vscode/issues/2428))
+* Added support for hit count breakpoint conditions. ([#895](https://github.com/OmniSharp/omnisharp-vscode/issues/895))
+* Support the `applicationUrl` property in launchSettings.json. ([#2296](https://github.com/OmniSharp/omnisharp-vscode/issues/2296))
+* Improve the error message when attaching to privileged processes on Linux and macOS. ([#477](https://github.com/OmniSharp/omnisharp-vscode/issues/477))
+
+## 1.15.2 (May 15, 1018)
+
+* Fixed a 1.30.0 regression that prevented the script project system from working on Unix-based systems ([omnisharp-roslyn#1184](https://github.com/OmniSharp/omnisharp-roslyn/pull/1184), PR: [omnisharp-roslyn#1185](https://github.com/OmniSharp/omnisharp-roslyn/pull/1185)) _(Contributed by [@filipw](https://github.com/filipw))_
+* Fixed a regression that could cause the debugger to crash on Windows ([#2297](https://github.com/OmniSharp/omnisharp-vscode/issues/2297)).
+
+## 1.15.1 (May 11, 1018)
+
+* The minimum Mono version required to run OmniSharp on has been increased to 5.8.1.
+
+## 1.15.0 (May 10, 2018)
+
+#### Debugger
+
+* New features:
+
+  * Adds support for [Source Link](https://aka.ms/SourceLinkSpec), Symbol Servers and other more advanced symbol options ([#373](https://github.com/OmniSharp/omnisharp-vscode/issues/373))
+  * Adds launch.json option to suppress Just-In-Time compiler optimizations.
+  * Due to the previous two items and work from the .NET Team, it is now possible to easily debug into ASP.NET itself in projects running against .NET Core 2.1. Instructions are in the [wiki](https://github.com/OmniSharp/omnisharp-vscode/wiki/Debugging-into-the-.NET-Framework-itself).
+  * Adds support for pulling in environment variables from `${cwd}/Properties/launchSettings.json`. This means that if you add environment variable configuration to your launchSettings.json file, they will now be used when you start your app from Visual Studio Code like they previously would be used from the command line (`dotnet run`), and from Visual Studio. ([#2017](https://github.com/OmniSharp/omnisharp-vscode/issues/2017))
+
+* Bug fixes:
+
+  * On Linux, this reduces the native dependencies of the debugger to match the .NET Core 2.1 runtime. The Linux .NET Core 2.1 runtime reduced its native dependencies over all the previous versions, but the debugger still had the same dependencies as .NET Core 2.0. With this fix, the debugger will now continue to work on Linux after installing the .NET Core runtime and nothing else. ([#2199](https://github.com/OmniSharp/omnisharp-vscode/issues/2199))
+  * Fixes async call stacks with the .NET Core 2.1 runtime. ([#1892](https://github.com/OmniSharp/omnisharp-vscode/issues/1892))
+  * Fixes the debugger's browser launch code when launching projects configured to use Application Insights. ([2177](https://github.com/OmniSharp/omnisharp-vscode/issues/2177))
+
+#### Editor
+
+* Fixed regression where the "Generate Type in New File" code action would create an empty file. ([#2112](https://github.com/OmniSharp/omnisharp-vscode/issues/2112), PR: [omnisharp-roslyn#1143](https://github.com/OmniSharp/omnisharp-roslyn/pull/1143))
+* Made several improvements to the display of tooltips in Signature Help. ([#1940](https://github.com/OmniSharp/omnisharp-vscode/issues/1940), PR: [#1958](https://github.com/OmniSharp/omnisharp-vscode/pull/1958))
+
+#### Options
+
+* "omnisharp.path": This option has been updated to enable the user to specify different versions of OmniSharp, including prerelease versions. ([#1909](https://github.com/OmniSharp/omnisharp-vscode/issues/1909), PR: [#2039](https://github.com/OmniSharp/omnisharp-vscode/pull/2039))
+
+  Possible values for this option are:
+  * `<Path to the omnisharp executable>`: Use a local copy of OmniSharp. The value must point directly to the OmniSharp executable. This is typically the build output directory of the [omnisharp-roslyn](https://github.com/OmniSharp/omnisharp-roslyn) project on the current machine, for example, `C:/omnisharp-roslyn/artifacts/publish/OmniSharp.Stdio/win7-x64/OmniSharp.exe`.
+  * `latest`: Use the latest CI build from [omnisharp-roslyn](https://github.com/OmniSharp/omnisharp-roslyn).
+  * `<version>`: Use a specific version of OmniSharp. Example: `1.29.2-beta.60`
+  If "omnisharp.path" is not set, the defalut version of OmniSharp for the current release of C# for VS Code is used.
+
+* "omnisharp.useGlobalMono": This option replaces the old "omnisharp.useMono" option and controls whether or not OmniSharp will be launched with a globally-installed version of Mono. (PR: [#2244](https://github.com/OmniSharp/omnisharp-vscode/pull/2244))
+
+  There are three possible values:
+  * "auto": Automatically launch OmniSharp with `mono` if version 5.2.0 or greater is available on the PATH.
+  * "always": Always launch OmniSharp with `mono`. If version 5.2.0 or greater is not available on the PATH, an error will be printed.
+  * "never": Never launch OmniSharp on a globally-installed Mono.
+
+* It is now possible to suppress the "Some projects have trouble loading" popup using the `omnisharp.disableMSBuildDiagnosticWarning` option. ([#2110](https://github.com/OmniSharp/omnisharp-vscode/issues/2110)
+
+#### Project System
+
+* Several common globbing patterns are now excluded by default when OmniSharp scans for `*.csproj`, `*.cake`, or `*.csx` files to load. The deafault patterns are `**/node_modules/**/*`, `**/bin/**/*`, `**/obj/**/*`, `**/.git/**/*`. ([omnisharp-roslyn#896](https://github.com/OmniSharp/omnisharp-roslyn/issues/896), PR: [omnisharp-roslyn#1161](https://github.com/OmniSharp/omnisharp-roslyn/pull/1161)) _(Contributed by [@filipw](https://github.com/filipw))_
+* The list of globbing patterns that are excluded by OmniSharp can be customized in an `omnisharp.json` file list so.
+  ```JSON
+  {
+    "systemExcludeSearchPatterns": [
+      "**/test/**/*"
+    ],
+    "excludeSearchPatterns": [
+      "**/local/**/*"
+    ]
+  }
+  ```
+
+  For more details on configuring OmniSharp see [Configuration Options](https://github.com/OmniSharp/omnisharp-roslyn/wiki/Configuration-Options) at the [omnisharp-roslyn](https://github.com/OmniSharp/omnisharp-roslyn) repo. ([omnisharp-roslyn#896](https://github.com/OmniSharp/omnisharp-roslyn/issues/896), PR: [omnisharp-roslyn#1161](https://github.com/OmniSharp/omnisharp-roslyn/pull/1161)) _(Contributed by [@filipw](https://github.com/filipw))_
+* Improved handling of projects with XAML files. ([#2173](https://github.com/OmniSharp/omnisharp-vscode/issues/2173), PR: [omnisharp-roslyn#1157](https://github.com/OmniSharp/omnisharp-roslyn/pull/1157))
+* MSBuild is now properly located on Windows for Visual Studio 2017 previews. ([omnisharp-roslyn#1166](https://github.com/OmniSharp/omnisharp-roslyn/pull/1166)) _(Contributed by [@rainersigwald](https://github.com/rainersigwald))_
+
+#### Scripting
+
+* It is now possible to define the default target framework for C# scripts in an `omnisharp.json` file.
+
+  ```JSON
+  {
+    "script": {
+      "defaultTargetFramework": "netcoreapp2.0"
+    }
+  }
+  ```
+
+  (PR: [omnisharp-roslyn#1154](https://github.com/OmniSharp/omnisharp-roslyn/pull/1154)) _(Contributed by [@filipw](https://github.com/filipw))_
+
+#### Status Bar
+
+* Splits the OmniSharp status bar item into two parts, both of which appear on the left side of VS Code's status bar and have specific responsibilities. ([#2146](https://github.com/OmniSharp/omnisharp-vscode/issues/2146), PR: [#2133](https://github.com/OmniSharp/omnisharp-vscode/pull/2133))
+
+  * OmniSharp Server info:
+    * Displays the current state of the  OmniSharp server, such as Downloading, Installing, etc. The flame icon is green when the server is initialized and running properly, or red if there is an error.
+  * Selected Project info:
+    * Displays the name of the selected project regardless of the currently active document.
+    * If a project is already selected, it displays the name of the selected project. Clicking on it displays a menu to switch to other projects in the workspace.
     * If there are multiple possible launch targets, it displays 'Select Project'. Clicking on it displays a menu to select one.
+
+#### Testing
+
+* Added "debug all tests" and "run all tests" to the CodeLens that appears above test classes to allow running or debugging all tests in a class. ([#420](https://github.com/OmniSharp/omnisharp-vscode/issues/420), PRs: [#1961](https://github.com/OmniSharp/omnisharp-vscode/pull/1961), [omnisharp-roslyn#1089](https://github.com/OmniSharp/omnisharp-roslyn/pull/1089)
+
+#### Misc
+
+* Fixed script for creating offline VSIXs. ([#2137](https://github.com/OmniSharp/omnisharp-vscode/issues/2137), PR: [#2138](https://github.com/OmniSharp/omnisharp-vscode/pull/2138))
 
 ## 1.14.0 (February 14, 2018)
 

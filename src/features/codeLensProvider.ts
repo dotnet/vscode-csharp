@@ -6,181 +6,286 @@
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import * as vscode from 'vscode';
-
-import { toLocation, toRange } from '../omnisharp/typeConvertion';
-
+import { toLocation } from '../omnisharp/typeConversion';
 import AbstractProvider from './abstractProvider';
 import { OmniSharpServer } from '../omnisharp/server';
 import { Options } from '../omnisharp/options';
 import TestManager from './dotnetTest';
+import OptionProvider from '../observers/OptionProvider';
 
-class OmniSharpCodeLens extends vscode.CodeLens {
+import Structure = protocol.V2.Structure;
+import SymbolKinds = protocol.V2.SymbolKinds;
+import SymbolPropertyNames = protocol.V2.SymbolPropertyNames;
+import SymbolRangeNames = protocol.V2.SymbolRangeNames;
 
-    fileName: string;
+abstract class OmniSharpCodeLens extends vscode.CodeLens {
+    constructor(
+        range: protocol.V2.Range,
+        public fileName: string) {
 
-    constructor(fileName: string, range: vscode.Range) {
-        super(range);
-        this.fileName = fileName;
+        super(new vscode.Range(
+            range.Start.Line - 1, range.Start.Column - 1, range.End.Line - 1, range.End.Column - 1
+        ));
+    }
+}
+
+class ReferencesCodeLens extends OmniSharpCodeLens {
+    constructor(
+        range: protocol.V2.Range,
+        fileName: string) {
+        super(range, fileName);
+    }
+}
+
+abstract class TestCodeLens extends OmniSharpCodeLens {
+    constructor(
+        range: protocol.V2.Range,
+        fileName: string,
+        public displayName: string,
+        public isTestContainer: boolean,
+        public testFramework: string,
+        public testMethodNames: string[]) {
+
+        super(range, fileName);
+    }
+}
+
+class RunTestsCodeLens extends TestCodeLens {
+    constructor(
+        range: protocol.V2.Range,
+        fileName: string,
+        displayName: string,
+        isTestContainer: boolean,
+        testFramework: string,
+        testMethodNames: string[]) {
+
+        super(range, fileName, displayName, isTestContainer, testFramework, testMethodNames);
+    }
+}
+
+class DebugTestsCodeLens extends TestCodeLens {
+    constructor(
+        range: protocol.V2.Range,
+        fileName: string,
+        displayName: string,
+        isTestContainer: boolean,
+        testFramework: string,
+        testMethodNames: string[]) {
+
+        super(range, fileName, displayName, isTestContainer, testFramework, testMethodNames);
     }
 }
 
 export default class OmniSharpCodeLensProvider extends AbstractProvider implements vscode.CodeLensProvider {
 
-    private _options: Options;
-
-    constructor(server: OmniSharpServer, testManager: TestManager) {
+    constructor(server: OmniSharpServer, testManager: TestManager, private optionProvider: OptionProvider) {
         super(server);
-
-        this._resetCachedOptions();
-
-        let configChangedDisposable = vscode.workspace.onDidChangeConfiguration(this._resetCachedOptions, this);
-        this.addDisposables(configChangedDisposable);
     }
 
-    private _resetCachedOptions(): void {
-        this._options = Options.Read();
-    }
-
-    private static filteredSymbolNames: { [name: string]: boolean } = {
-        'Equals': true,
-        'Finalize': true,
-        'GetHashCode': true,
-        'ToString': true
-    };
-
-    async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken) {
-        if (!this._options.showReferencesCodeLens && !this._options.showTestsCodeLens) {
+    async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.CodeLens[]> {
+        const options = this.optionProvider.GetLatestOptions();
+        if (!options.showReferencesCodeLens && !options.showTestsCodeLens) {
             return [];
         }
 
-        let tree = await serverUtils.currentFileMembersAsTree(this._server, { FileName: document.fileName }, token);
-        let ret: vscode.CodeLens[] = [];
-
-        for (let node of tree.TopLevelTypeDefinitions) {
-            await this._convertQuickFix(ret, document.fileName, node);
+        try {
+            const response = await serverUtils.codeStructure(this._server, { FileName: document.fileName }, token);
+            if (response && response.Elements) {
+                return createCodeLenses(response.Elements, document.fileName, options);
+            }
         }
+        catch (error) { }
 
-        return ret;
+        return [];
     }
 
-
-    private async _convertQuickFix(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node): Promise<void> {
-
-        if (node.Kind === 'MethodDeclaration' && OmniSharpCodeLensProvider.filteredSymbolNames[node.Location.Text]) {
-            return;
+    async resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken): Promise<vscode.CodeLens> {
+        if (codeLens instanceof ReferencesCodeLens) {
+            return this.resolveReferencesCodeLens(codeLens, token);
         }
-
-        let lens = new OmniSharpCodeLens(fileName, toRange(node.Location));
-        if (this._options.showReferencesCodeLens) {
-            bucket.push(lens);
+        else if (codeLens instanceof RunTestsCodeLens) {
+            return this.resolveTestCodeLens(codeLens, 'Run Test', 'dotnet.test.run', 'Run All Tests', 'dotnet.classTests.run');
         }
-
-        for (let child of node.ChildNodes) {
-            this._convertQuickFix(bucket, fileName, child);
-        }
-
-        if (this._options.showTestsCodeLens) {
-            await this._updateCodeLensForTest(bucket, fileName, node);
+        else if (codeLens instanceof DebugTestsCodeLens) {
+            return this.resolveTestCodeLens(codeLens, 'Debug Test', 'dotnet.test.debug', 'Debug All Tests', 'dotnet.classTests.debug');
         }
     }
 
-    resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken): Thenable<vscode.CodeLens> {
-        if (codeLens instanceof OmniSharpCodeLens) {
+    private async resolveReferencesCodeLens(codeLens: ReferencesCodeLens, token: vscode.CancellationToken): Promise<vscode.CodeLens> {
+        const request: protocol.FindUsagesRequest = {
+            FileName: codeLens.fileName,
+            Line: codeLens.range.start.line + 1, // OmniSharp is 1-based
+            Column: codeLens.range.start.character + 1, // OmniSharp is 1-based
+            OnlyThisFile: false,
+            ExcludeDefinition: true
+        };
 
-            let req = <protocol.FindUsagesRequest>{
-                FileName: codeLens.fileName,
-                Line: codeLens.range.start.line + 1,
-                Column: codeLens.range.start.character + 1,
-                OnlyThisFile: false,
-                ExcludeDefinition: true
+        try {
+            let result = await serverUtils.findUsages(this._server, request, token);
+            if (!result || !result.QuickFixes) {
+                return undefined;
+            }
+
+            const quickFixes = result.QuickFixes;
+            const count = quickFixes.length;
+
+            codeLens.command = {
+                title: count === 1 ? '1 reference' : `${count} references`,
+                command: 'editor.action.showReferences',
+                arguments: [vscode.Uri.file(request.FileName), codeLens.range.start, quickFixes.map(toLocation)]
             };
 
-            return serverUtils.findUsages(this._server, req, token).then(res => {
-                if (!res || !Array.isArray(res.QuickFixes)) {
-                    return;
+            return codeLens;
+        }
+        catch (error) {
+            return undefined;
+        }
+    }
+
+    private async resolveTestCodeLens(codeLens: TestCodeLens, singularTitle: string, singularCommandName: string, pluralTitle: string, pluralCommandName: string): Promise<vscode.CodeLens> {
+        if (!codeLens.isTestContainer) {
+            // This is just a single test method, not a container.
+            codeLens.command = {
+                title: singularTitle,
+                command: singularCommandName,
+                arguments: [codeLens.testMethodNames[0], codeLens.fileName, codeLens.testFramework]
+            };
+
+            return codeLens;
+        }
+
+        let projectInfo: protocol.ProjectInformationResponse;
+        try {
+            projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: codeLens.fileName });
+        }
+        catch (error) {
+            return undefined;
+        }
+            
+        // We do not support running all tests on legacy projects.
+        if (projectInfo.MsBuildProject && !projectInfo.DotNetProject) {
+            codeLens.command = {
+                title: pluralTitle,
+                command: pluralCommandName,
+                arguments: [codeLens.displayName, codeLens.testMethodNames, codeLens.fileName, codeLens.testFramework]
+            };
+        }
+
+        return codeLens;
+    }
+}
+
+function createCodeLenses(elements: Structure.CodeElement[], fileName: string, options: Options): vscode.CodeLens[] {
+    let results: vscode.CodeLens[] = [];
+
+    Structure.walkCodeElements(elements, element => {
+        let codeLenses = createCodeLensesForElement(element, fileName, options);
+
+        results.push(...codeLenses);
+    });
+
+    return results;
+}
+
+function createCodeLensesForElement(element: Structure.CodeElement, fileName: string, options: Options): vscode.CodeLens[] {
+    let results: vscode.CodeLens[] = [];
+
+    if (options.showReferencesCodeLens && isValidElementForReferencesCodeLens(element)) {
+        let range = element.Ranges[SymbolRangeNames.Name];
+        if (range) {
+            results.push(new ReferencesCodeLens(range, fileName));
+        }
+    }
+
+    if (options.showTestsCodeLens) {
+        if (isValidMethodForTestCodeLens(element)) {
+            let [testFramework, testMethodName] = getTestFrameworkAndMethodName(element);
+            let range = element.Ranges[SymbolRangeNames.Name];
+
+            if (range && testFramework && testMethodName) {
+                results.push(new RunTestsCodeLens(range, fileName, element.DisplayName,/*isTestContainer*/ false, testFramework, [testMethodName]));
+                results.push(new DebugTestsCodeLens(range, fileName, element.DisplayName,/*isTestContainer*/ false, testFramework, [testMethodName]));
+            }
+        }
+        else if (isValidClassForTestCodeLens(element)) {
+            // Note: We don't handle multiple test frameworks in the same class. The first test framework wins.
+            let testFramework: string = null;
+            let testMethodNames: string[] = [];
+            let range = element.Ranges[SymbolRangeNames.Name];
+
+            for (let childElement of element.Children) {
+                let [childTestFramework, childTestMethodName] = getTestFrameworkAndMethodName(childElement);
+
+                if (!testFramework && childTestFramework) {
+                    testFramework = childTestFramework;
+                    testMethodNames.push(childTestMethodName);
                 }
-
-                let len = res.QuickFixes.length;
-                codeLens.command = {
-                    title: len === 1 ? '1 reference' : `${len} references`,
-                    command: 'editor.action.showReferences',
-                    arguments: [vscode.Uri.file(req.FileName), codeLens.range.start, res.QuickFixes.map(toLocation)]
-                };
-
-                return codeLens;
-            });
-        }
-    }
-
-    private async  _updateCodeLensForTest(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node): Promise<void> {
-        // backward compatible check: Features property doesn't present on older version OmniSharp
-        if (node.Features === undefined) {
-            return;
-        }
-
-        if (node.Kind === "ClassDeclaration" && node.ChildNodes.length > 0) {
-            let projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
-            if (!projectInfo.DotNetProject && projectInfo.MsBuildProject) {
-                this._updateCodeLensForTestClass(bucket, fileName, node);
-            }
-        }
-
-        let [testFeature, testFrameworkName] = this._getTestFeatureAndFramework(node);
-        if (testFeature) {
-            bucket.push(new vscode.CodeLens(
-                toRange(node.Location),
-                { title: "Run Test", command: 'dotnet.test.run', arguments: [testFeature.Data, fileName, testFrameworkName] }));
-
-            bucket.push(new vscode.CodeLens(
-                toRange(node.Location),
-                { title: "Debug Test", command: 'dotnet.test.debug', arguments: [testFeature.Data, fileName, testFrameworkName] }));
-        }
-    }
-
-    private _updateCodeLensForTestClass(bucket: vscode.CodeLens[], fileName: string, node: protocol.Node) {
-        // if the class doesnot contain any method then return
-        if (!node.ChildNodes.find(value => (value.Kind === "MethodDeclaration"))) {
-            return;
-        }
-
-        let testMethods = new Array<string>();
-        let testFrameworkName: string = null;
-        for (let child of node.ChildNodes) {
-            let [testFeature, frameworkName] = this._getTestFeatureAndFramework(child);
-            if (testFeature) {
-                // this test method has a test feature
-                if (!testFrameworkName) {
-                    testFrameworkName = frameworkName;
+                else if (testFramework && childTestFramework === testFramework) {
+                    testMethodNames.push(childTestMethodName);
                 }
-
-                testMethods.push(testFeature.Data);
             }
-        }
 
-        if (testMethods.length > 0) {
-            bucket.push(new vscode.CodeLens(
-                toRange(node.Location),
-                { title: "Run All Tests", command: 'dotnet.classTests.run', arguments: [testMethods, fileName, testFrameworkName] }));
-            bucket.push(new vscode.CodeLens(
-                toRange(node.Location),
-                { title: "Debug All Tests", command: 'dotnet.classTests.debug', arguments: [testMethods, fileName, testFrameworkName] }));
+            results.push(new RunTestsCodeLens(range, fileName, element.DisplayName,/*isTestContainer*/ true, testFramework, testMethodNames));
+            results.push(new DebugTestsCodeLens(range, fileName, element.DisplayName,/*isTestContainer*/ true, testFramework, testMethodNames));
         }
     }
 
-    private _getTestFeatureAndFramework(node: protocol.Node): [protocol.SyntaxFeature, string] {
-        let testFeature = node.Features.find(value => (value.Name == 'XunitTestMethod' || value.Name == 'NUnitTestMethod' || value.Name == 'MSTestMethod'));
-        if (testFeature) {
-            let testFrameworkName = 'xunit';
-            if (testFeature.Name == 'NUnitTestMethod') {
-                testFrameworkName = 'nunit';
-            }
-            else if (testFeature.Name == 'MSTestMethod') {
-                testFrameworkName = 'mstest';
-            }
+    return results;
+}
 
-            return [testFeature, testFrameworkName];
-        }
+const filteredSymbolNames: { [name: string]: boolean } = {
+    'Equals': true,
+    'Finalize': true,
+    'GetHashCode': true,
+    'ToString': true
+};
 
+function isValidElementForReferencesCodeLens(element: Structure.CodeElement): boolean {
+    if (element.Kind === SymbolKinds.Namespace) {
+        return false;
+    }
+
+    if (element.Kind === SymbolKinds.Method && filteredSymbolNames[element.Name]) {
+        return false;
+    }
+
+    return true;
+}
+
+
+function isValidClassForTestCodeLens(element: Structure.CodeElement): boolean {
+    if (element.Kind != SymbolKinds.Class) {
+        return false;
+    }
+
+    if (!element.Children) {
+        return false;
+    }
+
+    return element.Children.find(isValidMethodForTestCodeLens) !== undefined;
+}
+
+function isValidMethodForTestCodeLens(element: Structure.CodeElement): boolean {
+    if (element.Kind != SymbolKinds.Method) {
+        return false;
+    }
+
+    if (!element.Properties ||
+        !element.Properties[SymbolPropertyNames.TestFramework] ||
+        !element.Properties[SymbolPropertyNames.TestMethodName]) {
+        return false;
+    }
+
+    return true;
+}
+
+function getTestFrameworkAndMethodName(element: Structure.CodeElement): [string, string] {
+    if (!element.Properties) {
         return [null, null];
     }
+
+    const testFramework = element.Properties[SymbolPropertyNames.TestFramework];
+    const testMethodName = element.Properties[SymbolPropertyNames.TestMethodName];
+
+    return [testFramework, testMethodName];
 }
