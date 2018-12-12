@@ -3,12 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseEvent, ZipError, DotNetTestRunFailure, DotNetTestDebugStartFailure } from "../omnisharp/loggingEvents";
+import { BaseEvent, ZipError, DotNetTestRunFailure, DotNetTestDebugStartFailure, CorruptedDownloadError } from "../omnisharp/loggingEvents";
 import { vscode } from "../vscodeAdapter";
 import showErrorMessage from "./utils/ShowErrorMessage";
 
 export class ErrorMessageObserver {
-
     constructor(private vscode: vscode) {
     }
 
@@ -23,7 +22,13 @@ export class ErrorMessageObserver {
             case DotNetTestDebugStartFailure.name:
                 this.handleDotNetTestDebugStartFailure(<DotNetTestDebugStartFailure>event);
                 break;
+            case CorruptedDownloadError.name:
+                this.handleCorruptedDownloadError(<CorruptedDownloadError> event);
         }
+    }
+
+    handleCorruptedDownloadError(event: CorruptedDownloadError): any {
+        showErrorMessage(this.vscode, `There was a problem downloading ${event.packageDescription}. Some functionalities may not work as expected. Please restart vscode to retrigger the download or download the package manually from ${event.url}`);
     }
 
     private handleZipError(event: ZipError) {

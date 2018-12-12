@@ -11,7 +11,7 @@ import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
 import { AbsolutePathPackage } from "./AbsolutePathPackage";
 import { touchInstallFile, InstallFileType, deleteInstallFile, installFileExists } from "../common";
-import { InstallationFailure } from "../omnisharp/loggingEvents";
+import { InstallationFailure, DownloadRetry, CorruptedDownloadError } from "../omnisharp/loggingEvents";
 import { mkdirpSync } from "fs-extra";
 import { PackageInstallStart } from "../omnisharp/loggingEvents";
 import { isValidDownload } from './isValidInstallation';
@@ -24,12 +24,25 @@ export async function downloadAndInstallPackages(packages: AbsolutePathPackage[]
             try {
                 mkdirpSync(pkg.installPath.value);
                 await touchInstallFile(pkg.installPath, InstallFileType.Begin);
-                installationStage = 'downloadAndInstallPackages';
-                let buffer = await DownloadFile(pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
-                if (await isValidDownload(buffer, pkg.integrity)) {
-                    await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
-                    installationStage = 'touchLockFile';
-                    await touchInstallFile(pkg.installPath, InstallFileType.Lock);
+                let count = 0;
+                while (count < 2) {
+                    count++;
+                    let buffer = await DownloadFile(pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
+                    if (await isValidDownload(buffer, pkg.integrity)) {
+                        await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
+                        installationStage = 'touchLockFile';
+                        await touchInstallFile(pkg.installPath, InstallFileType.Lock);
+                        break;
+                    }
+                    else {
+                        if (count == 1) {
+                            eventStream.post(new DownloadRetry(pkg.description));
+                        }
+                        else {
+                            eventStream.post(new CorruptedDownloadError(pkg.description, pkg.url));
+                            break;
+                        }
+                    }
                 }
             }
             catch (error) {

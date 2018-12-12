@@ -58,7 +58,21 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
             case Event.LatestBuildDownloadStart.name:
                 this.logger.appendLine("Getting latest OmniSharp version information");
                 break;
+            case Event.DownloadRetry.name:
+                this.handleDownloadRetry(<Event.DownloadRetry>event);
+                break;
+            case Event.CorruptedDownloadError.name:
+                this.handleCorruptedDownloadError(<Event.CorruptedDownloadError>event);
+                break;
         }
+    }
+
+    private handleCorruptedDownloadError(event: Event.CorruptedDownloadError){
+        this.logger.appendLine(`There was a problem downloading ${event.packageDescription}. Some functionalities may not work as expected. Please restart vscode to retrigger the download or download the package manually from ${event.url}`); 
+    }
+
+    private handleDownloadRetry(event: Event.DownloadRetry) {
+        this.logger.appendLine(`Corrupt download obtained for package ${event.packageDescription}. Retrying..`);
     }
 
     private handleDownloadSizeObtained(event: Event.DownloadSizeObtained) {
