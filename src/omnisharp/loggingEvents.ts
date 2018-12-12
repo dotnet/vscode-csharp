@@ -166,6 +166,14 @@ export class IntegrityCheckFailure {
     constructor(public packageDescription: string, public url: string, public retry: boolean){ }
 }
 
+export class IntegrityCheckSuccess {
+    constructor() { }
+}
+
+export class DownloadValidation {
+    constructor(public packageDescription: string){ }
+}
+
 export class RazorPluginPathSpecified implements BaseEvent {
     constructor(public path: string) {}
 }

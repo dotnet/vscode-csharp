@@ -61,7 +61,21 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
             case Event.IntegrityCheckFailure.name:
                 this.handleIntegrityCheckFailure(<Event.IntegrityCheckFailure>event);
                 break;
+            case Event.DownloadValidation.name:
+                this.handleDownloadValidation(<Event.DownloadValidation>event);
+                break;
+            case Event.IntegrityCheckSuccess.name:
+                this.handleIntegrityCheckSuccess(<Event.IntegrityCheckSuccess>event);
+                break;
         }
+    }
+
+    private handleDownloadValidation(event: Event.DownloadValidation) {
+        this.logger.appendLine("Validating download...");
+    }
+
+    private handleIntegrityCheckSuccess(event: Event.IntegrityCheckSuccess) {
+        this.logger.appendLine("Integrity Check succeeded.")
     }
 
     private handleIntegrityCheckFailure(event: Event.IntegrityCheckFailure) {

@@ -174,4 +174,6 @@ suite("CsharpLoggerObserver", () => {
         observer.post(event);
         expect(logOutput).to.contain(description);
     });
+
+    test(`${Event}`)
 });
