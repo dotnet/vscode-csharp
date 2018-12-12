@@ -11,7 +11,7 @@ import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
 import { AbsolutePathPackage } from "./AbsolutePathPackage";
 import { touchInstallFile, InstallFileType, deleteInstallFile, installFileExists } from "../common";
-import { InstallationFailure, DownloadRetry, CorruptedDownloadError } from "../omnisharp/loggingEvents";
+import { InstallationFailure, IntegrityCheckFailure } from "../omnisharp/loggingEvents";
 import { mkdirpSync } from "fs-extra";
 import { PackageInstallStart } from "../omnisharp/loggingEvents";
 import { isValidDownload } from './isValidInstallation';
@@ -36,10 +36,10 @@ export async function downloadAndInstallPackages(packages: AbsolutePathPackage[]
                     }
                     else {
                         if (count == 1) {
-                            eventStream.post(new DownloadRetry(pkg.description));
+                            eventStream.post(new IntegrityCheckFailure(pkg.description, pkg.url, true));
                         }
                         else {
-                            eventStream.post(new CorruptedDownloadError(pkg.description, pkg.url));
+                            eventStream.post(new IntegrityCheckFailure(pkg.description, pkg.url, false));
                             break;
                         }
                     }

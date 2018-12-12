@@ -162,12 +162,8 @@ export class OpenURL {
     constructor(public url: string) { }
 }
 
-export class DownloadRetry {
-    constructor(public packageDescription: string){ }
-}
-
-export class CorruptedDownloadError {
-    constructor(public packageDescription: string, public url: string){ }
+export class IntegrityCheckFailure {
+    constructor(public packageDescription: string, public url: string, public retry: boolean){ }
 }
 
 export class RazorPluginPathSpecified implements BaseEvent {

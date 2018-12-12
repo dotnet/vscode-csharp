@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseEvent, ZipError, DotNetTestRunFailure, DotNetTestDebugStartFailure, CorruptedDownloadError } from "../omnisharp/loggingEvents";
+import { BaseEvent, ZipError, DotNetTestRunFailure, DotNetTestDebugStartFailure, IntegrityCheckFailure } from "../omnisharp/loggingEvents";
 import { vscode } from "../vscodeAdapter";
 import showErrorMessage from "./utils/ShowErrorMessage";
 
@@ -22,13 +22,15 @@ export class ErrorMessageObserver {
             case DotNetTestDebugStartFailure.name:
                 this.handleDotNetTestDebugStartFailure(<DotNetTestDebugStartFailure>event);
                 break;
-            case CorruptedDownloadError.name:
-                this.handleCorruptedDownloadError(<CorruptedDownloadError> event);
+            case IntegrityCheckFailure.name:
+                this.handleIntegrityCheckFailure(<IntegrityCheckFailure> event);
         }
     }
 
-    handleCorruptedDownloadError(event: CorruptedDownloadError): any {
-        showErrorMessage(this.vscode, `There was a problem downloading ${event.packageDescription}. Some functionalities may not work as expected. Please restart vscode to retrigger the download or download the package manually from ${event.url}`);
+    handleIntegrityCheckFailure(event: IntegrityCheckFailure) {
+        if (!event.retry) {
+            showErrorMessage(this.vscode, `Package ${event.packageDescription} failed integrity check. Some features may not work as expected. Please restart Visual Studio Code to retrigger the download or download the package manually from ${event.url}`);
+        }
     }
 
     private handleZipError(event: ZipError) {
