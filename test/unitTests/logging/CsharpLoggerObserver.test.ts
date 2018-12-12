@@ -158,4 +158,20 @@ suite("CsharpLoggerObserver", () => {
         observer.post(event);
         expect(logOutput).to.contain(event.fallbackUrl);
     });
+
+    test(`${Event.IntegrityCheckFailure.name}: Package Description is logged when we are retrying`, () => {
+        let description = 'someDescription';
+        let url = 'someUrl';
+        let event = new Event.IntegrityCheckFailure(description, url, true);
+        observer.post(event);
+        expect(logOutput).to.contain(description);
+    });
+
+    test(`${Event.IntegrityCheckFailure.name}: Package Description and url are logged when we are not retrying`, () => {
+        let description = 'someDescription';
+        let url = 'someUrl';
+        let event = new Event.IntegrityCheckFailure(description, url, true);
+        observer.post(event);
+        expect(logOutput).to.contain(description);
+    });
 });
