@@ -4,32 +4,22 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { isValidDownload } from "../../../src/packageManager/isValidDownload";
-import { createTestFile } from "../testAssets/TestFile";
-import TestZip from "../testAssets/TestZip";
 import * as chai from "chai";
 
 chai.should();
 const expect = chai.expect;
 
 suite(`${isValidDownload.name}`, () => {
-    const files = [
-        createTestFile("file1", "file1.txt"),
-        createTestFile("file2", "file2.txt")
-    ];
-
-    let testZip: TestZip; 
-
-    setup(async() => {
-        testZip = await TestZip.createTestZipAsync(...files);
-    });
+    const sampleBuffer = Buffer.from("sampleBuffer");
+    const validIntegrity = "eb7201b5d986919e0ac67c820886358869d8f7059193d33c902ad7fe1688e1e9";
     
     test('Returns false for non-matching integrity', async () => {
-        let result = await isValidDownload(testZip.buffer, "inValidIntegrity");
+        let result = await isValidDownload(sampleBuffer, "inValidIntegrity");
         expect(result).to.be.false;
     });
 
     test('Returns true for matching integrity', async () => {
-        let result = await isValidDownload(testZip.buffer, "212785b9cf15888785ed55a9357b4c4e29d0acca6a978ccb1df7cc8ee7423071");
+        let result = await isValidDownload(sampleBuffer, validIntegrity);
         expect(result).to.be.true;
     });
 });
