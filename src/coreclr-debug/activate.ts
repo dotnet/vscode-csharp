@@ -48,7 +48,7 @@ async function checkForInvalidArchitecture(platformInformation: PlatformInformat
     return false;
 }
 
-async function completeDebuggerInstall(platformInformation: PlatformInformation, eventStream: EventStream): Promise<boolean> {
+export async function completeDebuggerInstall(platformInformation: PlatformInformation, eventStream: EventStream): Promise<boolean> {
     return _debugUtil.checkDotNetCli()
         .then(async (dotnetInfo: DotnetInfo) => {
 
@@ -106,50 +106,63 @@ function showDotnetToolsWarning(message: string): void {
     }
 }
 
-interface AdapterExecutableCommand {
-    command: string;
-}
+export class DebugAdapterDecriptor implements vscode.DebugAdapterDescriptorFactory {
+    public static CORECLR_DEBUG_TYPE : string = "coreclr";
+    public static CLR_DEBUG_TYPE : string = "clr";
 
-// The default extension manifest calls this command as the adapterExecutableCommand
-// If the debugger components have not finished downloading, the proxy displays an error message to the user
-// Else it will launch the debug adapter
-export async function getAdapterExecutionCommand(platformInfo: PlatformInformation, eventStream: EventStream, packageJSON: any, extensionPath: string): Promise<AdapterExecutableCommand> {
-    let util = new CoreClrDebugUtil(common.getExtensionPath());
+    private platformInfo: PlatformInformation;
+    private eventStream: EventStream;
+    private packageJSON: any;
+    private extensionPath: string;
 
-    // Check for .debugger folder. Handle if it does not exist.
-    if (!CoreClrDebugUtil.existsSync(util.debugAdapterDir())) {
-        // our install.complete file does not exist yet, meaning we have not completed the installation. Try to figure out what if anything the package manager is doing
-        // the order in which files are dealt with is this:
-        // 1. install.Begin is created
-        // 2. install.Lock is created
-        // 3. install.Begin is deleted
-        // 4. install.complete is created
-
-        // install.Lock does not exist, need to wait for packages to finish downloading.
-        let installLock = false;
-        let debuggerPackage = getRuntimeDependencyPackageWithId("Debugger", packageJSON, platformInfo, extensionPath);
-        if (debuggerPackage && debuggerPackage.installPath)
-        {
-            installLock = await common.installFileExists(debuggerPackage.installPath, common.InstallFileType.Lock);
-        }
-        
-        if (!installLock) {
-            eventStream.post(new DebuggerNotInstalledFailure());
-            throw new Error('The C# extension is still downloading packages. Please see progress in the output window below.');
-        }
-        // install.complete does not exist, check dotnetCLI to see if we can complete.
-        else if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {
-            let success: boolean = await completeDebuggerInstall(platformInfo, eventStream);
-
-            if (!success) {
-                eventStream.post(new DebuggerNotInstalledFailure());
-                throw new Error('Failed to complete the installation of the C# extension. Please see the error in the output window below.');
-            }
-        }
+    constructor(platformInfo: PlatformInformation, eventStream: EventStream, packageJSON: any, extensionPath: string) {
+        this.platformInfo = platformInfo;
+        this.eventStream = eventStream;
+        this.packageJSON = packageJSON;
+        this.extensionPath = extensionPath;
     }
 
-    // debugger has finished installation, kick off our debugger process
-    return {
-        command: path.join(common.getExtensionPath(), ".debugger", "vsdbg-ui" + CoreClrDebugUtil.getPlatformExeExtension())
-    };
+    createDebugAdapterDescriptor(session: vscode.DebugSession, executable: vscode.DebugAdapterExecutable | undefined): vscode.ProviderResult<vscode.DebugAdapterDescriptor> {
+        
+        let util = new CoreClrDebugUtil(common.getExtensionPath());
+
+        // Check for .debugger folder. Handle if it does not exist.
+        if (!CoreClrDebugUtil.existsSync(util.debugAdapterDir())) {
+            // our install.complete file does not exist yet, meaning we have not completed the installation. Try to figure out what if anything the package manager is doing
+            // the order in which files are dealt with is this:
+            // 1. install.Begin is created
+            // 2. install.Lock is created
+            // 3. install.Begin is deleted
+            // 4. install.complete is created
+
+            // install.Lock does not exist, need to wait for packages to finish downloading.
+            let installLock = new Promise<boolean>((resolve, reject) => { resolve(false); });
+
+            let debuggerPackage = getRuntimeDependencyPackageWithId("Debugger", this.packageJSON, this.platformInfo, this.extensionPath);
+            if (debuggerPackage && debuggerPackage.installPath)
+            {
+                installLock = common.installFileExists(debuggerPackage.installPath, common.InstallFileType.Lock);
+            }
+
+            installLock.then(installLock =>{
+                if (!installLock) {
+                    this.eventStream.post(new DebuggerNotInstalledFailure());
+                    throw new Error('The C# extension is still downloading packages. Please see progress in the output window below.');
+                }
+                // install.complete does not exist, check dotnetCLI to see if we can complete.
+                else if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {
+                    completeDebuggerInstall(this.platformInfo, this.eventStream).then(success => {
+                        if (!success) {
+                            this.eventStream.post(new DebuggerNotInstalledFailure());
+                            throw new Error('Failed to complete the installation of the C# extension. Please see the error in the output window below.');
+                        }
+                    });
+                }
+            });
+        
+        }
+
+        // debugger has finished installation, kick off our debugger process
+        return new vscode.DebugAdapterExecutable(path.join(common.getExtensionPath(), ".debugger", "vsdbg-ui" + CoreClrDebugUtil.getPlatformExeExtension()));
+    }
 }
