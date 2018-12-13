@@ -29,7 +29,7 @@ export async function downloadAndInstallPackages(packages: AbsolutePathPackage[]
                     count++;
                     let buffer = await DownloadFile(pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
                     eventStream.post(new DownloadValidation(pkg.description));
-                    if (await isValidDownload(buffer, pkg.integrity)) {
+                    if (isValidDownload(buffer, pkg.integrity)) {
                         eventStream.post(new IntegrityCheckSuccess());
                         await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
                         installationStage = 'touchLockFile';

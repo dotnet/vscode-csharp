@@ -175,5 +175,9 @@ suite("CsharpLoggerObserver", () => {
         expect(logOutput).to.contain(description);
     });
 
-    test(`${Event}`)
+    test(`${Event.IntegrityCheckSuccess.name}: Some message is logged`, () => {
+        let event = new Event.IntegrityCheckSuccess();
+        observer.post(event);
+        expect(logOutput).to.not.be.empty;
+    });
 });

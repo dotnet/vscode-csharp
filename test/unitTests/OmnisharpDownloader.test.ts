@@ -14,7 +14,7 @@ import MockHttpsServer from "./testAssets/MockHttpsServer";
 import {expect} from 'chai';
 import TestZip from "./testAssets/TestZip";
 import { createTestFile } from "./testAssets/TestFile";
-import { PackageInstallation, LogPlatformInfo, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart, InstallationSuccess, PackageInstallStart } from "../../src/omnisharp/loggingEvents";
+import { PackageInstallation, LogPlatformInfo, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart, InstallationSuccess, PackageInstallStart, DownloadValidation, IntegrityCheckSuccess } from "../../src/omnisharp/loggingEvents";
 import TestEventBus from "./testAssets/TestEventBus";
 import { testPackageJSON } from "./testAssets/testAssets";
 
@@ -59,14 +59,16 @@ suite('OmnisharpDownloader', () => {
     });
 
     test('Events are created', async () => { 
-        let expectedSequence = [ 
-            new PackageInstallation('OmniSharp Version = 1.2.3'), 
-            new LogPlatformInfo(new PlatformInformation("win32", "x86")), 
+        let expectedSequence = [
+            new PackageInstallation('OmniSharp Version = 1.2.3'),
+            new LogPlatformInfo(new PlatformInformation("win32", "x86")),
             new PackageInstallStart(),
-            new DownloadStart('OmniSharp for Windows (.NET 4.6 / x86), Version = 1.2.3'), 
-            new DownloadSizeObtained(testZip.size), 
-            new DownloadProgress(100, 'OmniSharp for Windows (.NET 4.6 / x86), Version = 1.2.3'), 
-            new DownloadSuccess(' Done!'), 
+            new DownloadStart('OmniSharp for Windows (.NET 4.6 / x86), Version = 1.2.3'),
+            new DownloadSizeObtained(testZip.size),
+            new DownloadProgress(100, 'OmniSharp for Windows (.NET 4.6 / x86), Version = 1.2.3'),
+            new DownloadSuccess(' Done!'),
+            new DownloadValidation('OmniSharp for Windows (.NET 4.6 / x86), Version = 1.2.3'),
+            new IntegrityCheckSuccess(),
             new InstallationStart('OmniSharp for Windows (.NET 4.6 / x86), Version = 1.2.3'), 
             new InstallationSuccess() 
         ]; 

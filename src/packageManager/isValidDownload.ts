@@ -3,38 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as stream from "stream";
 import * as crypto from "crypto";
 
-const hash = crypto.createHash('sha256');
-
-export async function isValidDownload(buffer: Buffer, integrity: string): Promise<boolean> {
+export function isValidDownload(buffer: Buffer, integrity: string): boolean {
+    let hash = crypto.createHash('sha256');
     if (integrity && integrity.length > 0) {
-        return new Promise<boolean>((resolve) => {
-            let value: string;
-            var bufferStream = new stream.PassThrough();
-            bufferStream.end(buffer);
-            bufferStream.on("readable", () => {
-                const data = bufferStream.read();
-                if (data) {
-                    hash.update(data);
-                }
-            });
-            bufferStream.on('end', () => {
-                value = hash.digest('hex');
-                if (value == integrity) {
-                    resolve(true);
-                }
-                else {
-                    resolve(false);
-                }
-            });
-
-            bufferStream.on("error", () => {
-                //if the bufferstream errored
-                resolve(false);
-            });
-        });
+        hash.update(buffer);
+        let value = hash.digest('hex');
+        if (value.toUpperCase() == integrity.toUpperCase()) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     // no integrity has been specified
