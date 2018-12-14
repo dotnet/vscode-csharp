@@ -37,13 +37,9 @@ export async function downloadAndInstallPackages(packages: AbsolutePathPackage[]
                         break;
                     }
                     else {
-                        if (count == 1) {
-                            eventStream.post(new IntegrityCheckFailure(pkg.description, pkg.url, true));
-                        }
-                        else {
-                            eventStream.post(new IntegrityCheckFailure(pkg.description, pkg.url, false));
-                            break;
-                        }
+                        let shouldRetry = count == 1;
+                        eventStream.post(new IntegrityCheckFailure(pkg.description, pkg.url, shouldRetry));
+                        break;
                     }
                 }
             }
