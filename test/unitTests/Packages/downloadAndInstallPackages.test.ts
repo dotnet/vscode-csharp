@@ -12,7 +12,7 @@ import TestZip from '../testAssets/TestZip';
 import { downloadAndInstallPackages } from '../../../src/packageManager/downloadAndInstallPackages';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { EventStream } from '../../../src/EventStream';
-import { DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart, PackageInstallStart, DownloadValidation, IntegrityCheckSuccess } from '../../../src/omnisharp/loggingEvents';
+import { DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart, PackageInstallStart } from '../../../src/omnisharp/loggingEvents';
 import MockHttpsServer from '../testAssets/MockHttpsServer';
 import { createTestFile } from '../testAssets/TestFile';
 import TestEventBus from '../testAssets/TestEventBus';
@@ -91,8 +91,6 @@ suite(`${downloadAndInstallPackages.name}`, () => {
                 new DownloadSizeObtained(testZip.size),
                 new DownloadProgress(100, packageDescription),
                 new DownloadSuccess(' Done!'),
-                new DownloadValidation(packageDescription),
-                new IntegrityCheckSuccess(),
                 new InstallationStart(packageDescription)
             ];
 

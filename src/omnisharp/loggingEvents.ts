@@ -170,10 +170,6 @@ export class IntegrityCheckSuccess {
     constructor() { }
 }
 
-export class DownloadValidation {
-    constructor(public packageDescription: string){ }
-}
-
 export class RazorPluginPathSpecified implements BaseEvent {
     constructor(public path: string) {}
 }
@@ -214,3 +210,4 @@ export class OmnisharpServerOnStart implements BaseEvent { }
 export class LatestBuildDownloadStart implements BaseEvent { }
 export class OmnisharpRestart implements BaseEvent { }
 export class DotNetTestDebugComplete implements BaseEvent { }
+export class DownloadValidation implements BaseEvent { }

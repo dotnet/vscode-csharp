@@ -11,7 +11,7 @@ import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
 import { AbsolutePathPackage } from "./AbsolutePathPackage";
 import { touchInstallFile, InstallFileType, deleteInstallFile, installFileExists } from "../common";
-import { InstallationFailure, IntegrityCheckFailure, DownloadValidation, IntegrityCheckSuccess } from "../omnisharp/loggingEvents";
+import { InstallationFailure, IntegrityCheckFailure } from "../omnisharp/loggingEvents";
 import { mkdirpSync } from "fs-extra";
 import { PackageInstallStart } from "../omnisharp/loggingEvents";
 import { isValidDownload } from './isValidDownload';
@@ -28,9 +28,7 @@ export async function downloadAndInstallPackages(packages: AbsolutePathPackage[]
                 while (count < 2) {
                     count++;
                     let buffer = await DownloadFile(pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
-                    eventStream.post(new DownloadValidation(pkg.description));
-                    if (isValidDownload(buffer, pkg.integrity)) {
-                        eventStream.post(new IntegrityCheckSuccess());
+                    if (isValidDownload(buffer, pkg.integrity, eventStream)) {
                         await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
                         installationStage = 'touchLockFile';
                         await touchInstallFile(pkg.installPath, InstallFileType.Lock);

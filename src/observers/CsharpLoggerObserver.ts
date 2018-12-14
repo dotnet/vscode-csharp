@@ -75,7 +75,7 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
     }
 
     private handleIntegrityCheckSuccess(event: Event.IntegrityCheckSuccess) {
-        this.logger.appendLine("Integrity Check succeeded.")
+        this.logger.appendLine("Integrity Check succeeded.");
     }
 
     private handleIntegrityCheckFailure(event: Event.IntegrityCheckFailure) {
