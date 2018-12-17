@@ -675,6 +675,11 @@
           "default": false,
           "description": "Specifies whether notifications should be shown if OmniSharp encounters warnings or errors loading a project. Note that these warnings/errors are always emitted to the OmniSharp log"
         },
+        "omnisharp.enableMsBuildLoadProjectsOnDemand": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, MSBuild project system will only be loading projects for files that were opened in the editor. This setting is useful for big C# codebases and allows for faster initialization of code navigation features only for projects that are relevant to code that is being edited. The downside of enabling this setting is that potentially a limited semantic information is available to OmniSharp extension which for example can manifest itself in incomplete number of references shown for a symbol."
+        },
         "razor.plugin.path": {
           "type": [
             "string",
