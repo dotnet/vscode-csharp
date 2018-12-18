@@ -678,7 +678,7 @@
         "omnisharp.enableMsBuildLoadProjectsOnDemand": {
           "type": "boolean",
           "default": false,
-          "description": "If true, MSBuild project system will only be loading projects for files that were opened in the editor. This setting is useful for big C# codebases and allows for faster initialization of code navigation features only for projects that are relevant to code that is being edited. The downside of enabling this setting is that potentially a limited semantic information is available to OmniSharp extension which for example can manifest itself in incomplete number of references shown for a symbol."
+          "description": "If true, MSBuild project system will only load projects for files that were opened in the editor. This setting is useful for big C# codebases and allows for faster initialization of code navigation features only for projects that are relevant to code that is being edited. With this setting enabled OmniSharp may load fewer projects and may thus display incomplete reference lists for symbols."
         },
         "razor.plugin.path": {
           "type": [
