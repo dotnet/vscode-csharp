@@ -317,6 +317,10 @@ export class OmniSharpServer {
             args.push('--debug');
         }
 
+        if (options.enableMsBuildLoadProjectsOnDemand === true) {
+            args.push('MsBuild:LoadProjectsOnDemand=true');
+        }
+
         let launchInfo: LaunchInfo;
         try {
             launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, serverUrl, latestVersionFileServerPath, installPath, this.extensionPath);
