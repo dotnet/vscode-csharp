@@ -58,6 +58,32 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
             case Event.LatestBuildDownloadStart.name:
                 this.logger.appendLine("Getting latest OmniSharp version information");
                 break;
+            case Event.IntegrityCheckFailure.name:
+                this.handleIntegrityCheckFailure(<Event.IntegrityCheckFailure>event);
+                break;
+            case Event.DownloadValidation.name:
+                this.handleDownloadValidation(<Event.DownloadValidation>event);
+                break;
+            case Event.IntegrityCheckSuccess.name:
+                this.handleIntegrityCheckSuccess(<Event.IntegrityCheckSuccess>event);
+                break;
+        }
+    }
+
+    private handleDownloadValidation(event: Event.DownloadValidation) {
+        this.logger.appendLine("Validating download...");
+    }
+
+    private handleIntegrityCheckSuccess(event: Event.IntegrityCheckSuccess) {
+        this.logger.appendLine("Integrity Check succeeded.");
+    }
+
+    private handleIntegrityCheckFailure(event: Event.IntegrityCheckFailure) {
+        if (event.retry) {
+            this.logger.appendLine(`Package ${event.packageDescription} failed integrity check. Retrying..`);
+        }
+        else {
+            this.logger.appendLine(`Package ${event.packageDescription} download from ${event.url} failed integrity check. Some features may not work as expected. Please restart Visual Studio Code to retrigger the download.`); 
         }
     }
 

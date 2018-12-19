@@ -162,6 +162,14 @@ export class OpenURL {
     constructor(public url: string) { }
 }
 
+export class IntegrityCheckFailure {
+    constructor(public packageDescription: string, public url: string, public retry: boolean){ }
+}
+
+export class IntegrityCheckSuccess {
+    constructor() { }
+}
+
 export class RazorPluginPathSpecified implements BaseEvent {
     constructor(public path: string) {}
 }
@@ -202,3 +210,4 @@ export class OmnisharpServerOnStart implements BaseEvent { }
 export class LatestBuildDownloadStart implements BaseEvent { }
 export class OmnisharpRestart implements BaseEvent { }
 export class DotNetTestDebugComplete implements BaseEvent { }
+export class DownloadValidation implements BaseEvent { }

@@ -81,6 +81,7 @@
     "request-light": "0.2.4",
     "rxjs": "5.5.6",
     "semver": "*",
+    "stream": "0.0.2",
     "strip-bom": "3.0.0",
     "tmp": "0.0.33",
     "vscode-debugprotocol": "1.6.1",
@@ -172,7 +173,8 @@
         "x86_64"
       ],
       "installTestPath": "./.omnisharp/1.32.8/OmniSharp.exe",
-      "platformId": "win-x64"
+      "platformId": "win-x64",
+      "integrity": "74accabc25766f02c4cb0f8ea49abb447428ed86fc103fd549a5b778a39de82c"
     },
     {
       "id": "OmniSharp",

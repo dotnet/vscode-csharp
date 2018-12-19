@@ -6,7 +6,7 @@
 import { should, expect } from 'chai';
 import { getNullChannel } from '../testAssets/Fakes';
 import { CsharpChannelObserver } from '../../../src/observers/CsharpChannelObserver';
-import { InstallationFailure, DebuggerNotInstalledFailure, DebuggerPrerequisiteFailure, ProjectJsonDeprecatedWarning, BaseEvent, PackageInstallStart } from '../../../src/omnisharp/loggingEvents';
+import { InstallationFailure, DebuggerNotInstalledFailure, DebuggerPrerequisiteFailure, ProjectJsonDeprecatedWarning, BaseEvent, PackageInstallStart, IntegrityCheckFailure } from '../../../src/omnisharp/loggingEvents';
 
 suite("CsharpChannelObserver", () => {
     suiteSetup(() => should());
@@ -29,20 +29,24 @@ suite("CsharpChannelObserver", () => {
         });
     });
 
-    test(`${PackageInstallStart.name}: Channel is shown and preserveFocus is set to true`, () => {
-        let hasShown = false;
-        let preserveFocus = false;
-        let event = new PackageInstallStart();
-        let observer = new CsharpChannelObserver({
-            ...getNullChannel(),
-            show: (preserve) => {
-                hasShown = true;
-                preserveFocus = preserve;
-            }
-        });
+    [
+        new IntegrityCheckFailure("", "", true),
+        new PackageInstallStart()
+    ].forEach((event: BaseEvent) => {
+        test(`${event.constructor.name}: Channel is shown and preserveFocus is set to true`, () => {
+            let hasShown = false;
+            let preserveFocus = false;
+            let observer = new CsharpChannelObserver({
+                ...getNullChannel(),
+                show: (preserve) => {
+                    hasShown = true;
+                    preserveFocus = preserve;
+                }
+            });
 
-        observer.post(event);
-        expect(hasShown).to.be.true;
-        expect(preserveFocus).to.be.true;
-    })
+            observer.post(event);
+            expect(hasShown).to.be.true;
+            expect(preserveFocus).to.be.true;
+        });
+    });
 });
