@@ -29,7 +29,7 @@ export class ErrorMessageObserver {
 
     handleIntegrityCheckFailure(event: IntegrityCheckFailure) {
         if (!event.retry) {
-            showErrorMessage(this.vscode, `Package ${event.packageDescription} failed integrity check. Some features may not work as expected. Please restart Visual Studio Code to retrigger the download or download the package manually from ${event.url}`);
+            showErrorMessage(this.vscode, `Package ${event.packageDescription} download from ${event.url} failed integrity check. Some features may not work as expected. Please restart Visual Studio Code to retrigger the download`);
         }
     }
 

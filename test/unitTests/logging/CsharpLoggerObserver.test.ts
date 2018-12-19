@@ -170,11 +170,12 @@ suite("CsharpLoggerObserver", () => {
     test(`${Event.IntegrityCheckFailure.name}: Package Description and url are logged when we are not retrying`, () => {
         let description = 'someDescription';
         let url = 'someUrl';
-        let event = new Event.IntegrityCheckFailure(description, url, true);
+        let event = new Event.IntegrityCheckFailure(description, url, false);
         observer.post(event);
         expect(logOutput).to.contain(description);
+        expect(logOutput).to.contain(url);
     });
-
+    
     test(`${Event.IntegrityCheckSuccess.name}: Some message is logged`, () => {
         let event = new Event.IntegrityCheckSuccess();
         observer.post(event);

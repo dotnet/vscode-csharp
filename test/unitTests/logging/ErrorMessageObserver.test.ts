@@ -9,7 +9,7 @@ import { getFakeVsCode } from '../testAssets/Fakes';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/timeout';
 import { ErrorMessageObserver } from '../../../src/observers/ErrorMessageObserver';
-import { ZipError, DotNetTestRunFailure, DotNetTestDebugStartFailure, EventWithMessage } from '../../../src/omnisharp/loggingEvents';
+import { ZipError, DotNetTestRunFailure, DotNetTestDebugStartFailure, EventWithMessage, IntegrityCheckFailure } from '../../../src/omnisharp/loggingEvents';
 
 chaiUse(require('chai-as-promised'));
 chaiUse(require('chai-string'));
@@ -38,6 +38,25 @@ suite("ErrorMessageObserver", () => {
         test(`${event.constructor.name}: Error message is shown`, () => {
             observer.post(event);
             expect(errorMessage).to.be.contain(event.message);
+        });
+    });
+
+    suite(`${IntegrityCheckFailure.name}`, () => {
+        test("Package Description and url are logged when we are not retrying", () => {
+            let description = 'someDescription';
+            let url = 'someUrl';
+            let event = new IntegrityCheckFailure(description, url, false);
+            observer.post(event);
+            expect(errorMessage).to.contain(description);
+            expect(errorMessage).to.contain(url);
+        });
+    
+        test("Nothing is shown if we are retrying", () => {
+            let description = 'someDescription';
+            let url = 'someUrl';
+            let event = new IntegrityCheckFailure(description, url, true);
+            observer.post(event);
+            expect(errorMessage).to.be.undefined;
         });
     });
 });

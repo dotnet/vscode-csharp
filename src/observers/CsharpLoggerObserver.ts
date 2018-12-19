@@ -83,7 +83,7 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
             this.logger.appendLine(`Package ${event.packageDescription} failed integrity check. Retrying..`);
         }
         else {
-            this.logger.appendLine(`Package ${event.packageDescription} failed integrity check. Some features may not work as expected. Please restart Visual Studio Code to retrigger the download or download the package manually from ${event.url}`); 
+            this.logger.appendLine(`Package ${event.packageDescription} download from ${event.url} failed integrity check. Some features may not work as expected. Please restart Visual Studio Code to retrigger the download.`); 
         }
     }
 
