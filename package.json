@@ -158,8 +158,7 @@
         "x86"
       ],
       "installTestPath": "./.omnisharp/1.32.8/OmniSharp.exe",
-      "platformId": "win-x86",
-      "integrity": "0703d6ad8cafe29da2be9772e23a1da0ef2334c9"
+      "platformId": "win-x86"
     },
     {
       "id": "OmniSharp",
