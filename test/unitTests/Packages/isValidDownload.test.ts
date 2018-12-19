@@ -23,4 +23,9 @@ suite(`${isValidDownload.name}`, () => {
         let result = await isValidDownload(sampleBuffer, validIntegrity, new EventStream());
         expect(result).to.be.true;
     });
+
+    test('Returns true if no integrity has been specified', async () => {
+        let result = await isValidDownload(sampleBuffer, undefined, new EventStream());
+        expect(result).to.be.true;
+    });
 });
