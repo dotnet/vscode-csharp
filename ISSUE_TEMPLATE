@@ -1,3 +1,5 @@
+Please prefer filing issues through the in-built extension command `CSharp: Start authoring a new issue on GitHub`. Know more - https://github.com/OmniSharp/omnisharp-vscode/wiki/Reporting-Issues.
+
 ## Environment data
 `dotnet --info` output:
 VS Code version:
