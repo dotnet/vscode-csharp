@@ -12,6 +12,7 @@ import { downloadAndInstallPackages } from '../packageManager/downloadAndInstall
 import { DownloadFile } from '../packageManager/FileDownloader';
 import { getRuntimeDependenciesPackages } from '../tools/RuntimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from '../packageManager/getAbsolutePathPackagesToInstall';
+import { isValidDownload } from '../packageManager/isValidDownload';
 
 export class OmnisharpDownloader {
 
@@ -30,7 +31,7 @@ export class OmnisharpDownloader {
         if (packagesToInstall && packagesToInstall.length > 0) {
             this.eventStream.post(new PackageInstallation(`OmniSharp Version = ${version}`));
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
-            await downloadAndInstallPackages(packagesToInstall, this.networkSettingsProvider, this.eventStream);
+            await downloadAndInstallPackages(packagesToInstall, this.networkSettingsProvider, this.eventStream, isValidDownload);
             this.eventStream.post(new InstallationSuccess());
         }
     }
