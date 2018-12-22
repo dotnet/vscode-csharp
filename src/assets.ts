@@ -20,12 +20,9 @@ export class AssetGenerator {
     public tasksJsonPath: string;
     public launchJsonPath: string;
 
-    private hasProject: boolean;
-    private projectPath: string;
-    private projectFilePath: string;
-    private targetFramework: string;
-    private executableName: string;
-    private configurationName: string;
+    private executeableProjects: protocol.MSBuildProject[];
+    private startupProject: protocol.MSBuildProject | undefined;
+    private fallbackBuildProject: protocol.MSBuildProject;
 
     public constructor(workspaceInfo: protocol.WorkspaceInformationResponse, workspaceFolder: vscode.WorkspaceFolder = undefined) {
         if (workspaceFolder) {
@@ -57,87 +54,77 @@ export class AssetGenerator {
         this.tasksJsonPath = path.join(this.vscodeFolder, 'tasks.json');
         this.launchJsonPath = path.join(this.vscodeFolder, 'launch.json');
 
-        this.initializeProjectData(workspaceInfo);
+        this.startupProject = undefined;
+        this.fallbackBuildProject = undefined;
+
+        if (workspaceInfo.MsBuild && workspaceInfo.MsBuild.Projects.length > 0) {
+            this.executeableProjects = protocol.findExecutableMSBuildProjects(workspaceInfo.MsBuild.Projects);
+            if (this.executeableProjects.length === 0) {
+                this.fallbackBuildProject = workspaceInfo.MsBuild.Projects[0];
+            }
+        } else {
+            this.executeableProjects = [];
+        }
+    }
+    
+    public hasExecutableProjects() : boolean {
+        return this.executeableProjects.length > 0;
     }
 
-    private initializeProjectData(workspaceInfo: protocol.WorkspaceInformationResponse): void {
-        // TODO: For now, assume the Debug configuration. Eventually, we'll need to revisit
-        // this when we allow selecting configurations.
-        const configurationName = 'Debug';
-
-        // First, we'll check for .NET Core .csproj projects.
-        if (workspaceInfo.MsBuild && workspaceInfo.MsBuild.Projects) {
-            const executableMSBuildProjects = protocol.findExecutableMSBuildProjects(workspaceInfo.MsBuild.Projects);
-
-            const targetMSBuildProject = executableMSBuildProjects.length > 0
-                ? executableMSBuildProjects[0]
-                : undefined;
-
-            if (targetMSBuildProject) {
-                this.hasProject = true;
-                this.projectPath = path.dirname(targetMSBuildProject.Path);
-                this.projectFilePath = targetMSBuildProject.Path;
-                this.targetFramework = protocol.findNetCoreAppTargetFramework(targetMSBuildProject).ShortName;
-                this.executableName = targetMSBuildProject.AssemblyName + ".dll";
-                this.configurationName = configurationName;
-                return;
-            }
-        }
-
-        // Next, we'll try looking for project.json projects.
-        const executableProjects = protocol.findExecutableProjectJsonProjects(workspaceInfo.DotNet.Projects, configurationName);
-
-        // TODO: We arbitrarily pick the first executable project that we find. This will need
-        // revisiting when we project a "start up project" selector.
-        const targetProject = executableProjects.length > 0
-            ? executableProjects[0]
-            : undefined;
-
-        if (targetProject && targetProject.Frameworks.length > 0) {
-            const config = targetProject.Configurations.find(c => c.Name === configurationName);
-            if (config) {
-                this.hasProject = true;
-                this.projectPath = targetProject.Path;
-                this.projectFilePath = path.join(targetProject.Path, 'project.json');
-                this.targetFramework = targetProject.Frameworks[0].ShortName;
-                this.executableName = path.basename(config.CompilationOutputAssemblyFile);
-                this.configurationName = configurationName;
-            }
-        }
-
-        return;
-    }
-
-    public hasWebServerDependency(): boolean {
-        // TODO: Update to handle .NET Core projects.
-
-        if (!this.projectFilePath) {
+    public isStartupProjectSelected() : boolean {
+        if (this.startupProject) {
+            return true;
+        } else {
             return false;
         }
+    }
 
-        let projectFileText = fs.readFileSync(this.projectFilePath, 'utf8');
+    public async selectStartupProject(): Promise<boolean> {
+        if (!this.hasExecutableProjects()) {
+            throw new Error("No executable projects");
+        }
+        
+        if (this.executeableProjects.length === 1) {
+            this.startupProject = this.executeableProjects[0];
+            return true;
+        } else {
+            const mapItemNameToProject: { [key: string]: protocol.MSBuildProject } = {};
+            const itemNames: string[] = [];
 
-        if (path.basename(this.projectFilePath).toLowerCase() === 'project.json') {
-            let projectJsonObject: any;
-
-            try {
-                projectJsonObject = tolerantParse(projectFileText);
-            }
-            catch (error) {
-                vscode.window.showErrorMessage('Failed to parse project.json file');
-                projectJsonObject = null;
-            }
-
-            if (projectJsonObject == null) {
+            this.executeableProjects.forEach(project => {
+                const itemName = `${path.basename(project.Path, ".csproj")} (${project.Path})`;
+                itemNames.push(itemName);
+                mapItemNameToProject[itemName] = project;
+            });
+            
+            const selectedItem : string = await vscode.window.showQuickPick(itemNames, {
+                matchOnDescription: true,
+                placeHolder: "Select the project to launch"
+            });
+            if (!selectedItem || !mapItemNameToProject[selectedItem]) {
                 return false;
             }
 
-            for (let key in projectJsonObject.dependencies) {
-                if (key.toLowerCase().startsWith("microsoft.aspnetcore.server")) {
-                    return true;
-                }
-            }
+            this.startupProject = mapItemNameToProject[selectedItem];
+            return true;
         }
+    }
+
+    // This method is used by the unit tests instead of selectStartupProject
+    public setStartupProject(index : number) : void {
+        if (index >= this.executeableProjects.length) {
+            throw new Error("Invalid project index");
+        }
+
+        this.startupProject = this.executeableProjects[index];
+    }
+
+    public hasWebServerDependency(): boolean {
+        if (!this.startupProject) {
+            throw new Error("Startup project not set");
+        }
+
+        let projectFileText = fs.readFileSync(this.startupProject.Path, 'utf8');
 
         // Assume that this is an MSBuild project. In that case, look for the 'Sdk="Microsoft.NET.Sdk.Web"' attribute.
         // TODO: Have OmniSharp provide the list of SDKs used by a project and check that list instead.
@@ -145,35 +132,26 @@ export class AssetGenerator {
     }
 
     private computeProgramPath() {
-        if (!this.hasProject) {
-            // If there's no target project data, use a placeholder for the path.
-            return '${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll';
+        if (!this.startupProject) {
+            throw new Error("Startup project not set");
         }
 
-        let result = '${workspaceFolder}';
-
-        if (this.projectPath) {
-            result = path.join(result, path.relative(this.workspaceFolder.uri.fsPath, this.projectPath));
-        }
-
-        result = path.join(result, `bin/${this.configurationName}/${this.targetFramework}/${this.executableName}`);
-
+        const startupProjectDir = path.dirname(this.startupProject.Path);
+        const relativeProjectDir = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, startupProjectDir));
+        const configurationName = 'Debug';
+        const targetFramework = protocol.findNetCoreAppTargetFramework(this.startupProject).ShortName;
+        const result = path.join(relativeProjectDir, `bin/${configurationName}/${targetFramework}/${this.startupProject.AssemblyName}.dll`);
         return result;
     }
 
     private computeWorkingDirectory(): string {
-        if (!this.hasProject) {
-            // If there's no target project data, use a placeholder for the path.
-            return '${workspaceFolder}';
+        if (!this.startupProject) {
+            throw new Error("Startup project not set");
         }
 
-        let result = '${workspaceFolder}';
+        const startupProjectDir = path.dirname(this.startupProject.Path);
 
-        if (this.projectPath) {
-            result = path.join(result, path.relative(this.workspaceFolder.uri.fsPath, this.projectPath));
-        }
-
-        return result;
+        return path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, startupProjectDir));
     }
 
     public createLaunchJson(isWebProject: boolean): string {
@@ -198,17 +176,25 @@ export class AssetGenerator {
     }
 
     private createBuildTaskDescription(): tasks.TaskDescription {
-        let buildPath = '';
-        if (this.hasProject) {
-            buildPath = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, this.projectFilePath));
+        let commandArgs = [ 'build' ];
+
+        let buildProject = this.startupProject;
+        if (!buildProject) {
+            buildProject = this.fallbackBuildProject;
+        }
+        if (buildProject) {
+            const buildPath = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, buildProject.Path));
+            commandArgs.push(util.convertNativePathToPosix(buildPath));
         }
 
         return {
             label: 'build',
             command: 'dotnet',
             type: 'process',
-            args: ['build', util.convertNativePathToPosix(buildPath)],
-            problemMatcher: '$msCompile'
+            args: commandArgs,
+            // NOTE: The "$msCompile" matcher isn't the correct matcher for 'dotnet build' as it expects all
+            // file paths to be fully qualified. The tsc matcher seems to work as we would like.
+            problemMatcher: '$tsc'
         };
     }
 
@@ -232,20 +218,8 @@ export function createWebLaunchConfiguration(programPath: string, workingDirecto
     "args": [],
     "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
     "stopAtEntry": false,
-    "internalConsoleOptions": "openOnSessionStart",
     "launchBrowser": {
-        "enabled": true,
-        "args": "\${auto-detect-url}",
-        "windows": {
-            "command": "cmd.exe",
-            "args": "/C start \${auto-detect-url}"
-        },
-        "osx": {
-            "command": "open"
-        },
-        "linux": {
-            "command": "xdg-open"
-        }
+        "enabled": true
     },
     "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -269,9 +243,40 @@ export function createLaunchConfiguration(programPath: string, workingDirectory:
     "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
     // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
     "console": "internalConsole",
-    "stopAtEntry": false,
-    "internalConsoleOptions": "openOnSessionStart"
+    "stopAtEntry": false
 }`;
+}
+
+// DebugConfiguration written to launch.json when the extension fails to generate a good configuration
+export function createFallbackLaunchConfiguration() : vscode.DebugConfiguration {
+    return {
+        "name": ".NET Core Launch (console)",
+        "type": "coreclr",
+        "request": "launch",
+        "WARNING01": "*********************************************************************************",
+        "WARNING02": "The C# extension was unable to automatically to decode projects in the current",
+        "WARNING03": "workspace to create a runnable lanch.json file. A template launch.json file has",
+        "WARNING04": "been created as a placeholder.",
+        "WARNING05": "",
+        "WARNING06": "If OmniSharp is currently unable to load your project, you can attempt to resolve",
+        "WARNING07": "this by restoring any missing project dependencies (example: run 'dotnet restore')",
+        "WARNING08": "and by fixing any reported errors from building the projects in your workspace.",
+        "WARNING09": "If this allows OmniSharp to now load your project then --",
+        "WARNING10": "  * Delete this file",
+        "WARNING11": "  * Open the Visual Studio Code command palette (View->Command Palette)",
+        "WARNING12": "  * run the command: '.NET: Generate Assets for Build and Debug'.",
+        "WARNING13": "",
+        "WARNING14": "If your project requires a more complex launch configuration, you may wish to delete",
+        "WARNING15": "this configuration and pick a different template using the 'Add Configuration...'",
+        "WARNING16": "button at the bottom of this file.",
+        "WARNING17": "*********************************************************************************",
+        "preLaunchTask": "build",
+        "program": "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll",
+        "args": [],
+        "cwd": "${workspaceFolder}",
+        "console": "internalConsole",
+        "stopAtEntry": false
+    };
 }
 
 // AttachConfiguration
@@ -285,39 +290,30 @@ export function createAttachConfiguration(): string {
 }`;
 }
 
-interface Operations {
+export interface AssetOperations {
     addTasksJson?: boolean;
     updateTasksJson?: boolean;
     addLaunchJson?: boolean;
 }
 
-function hasAddOperations(operations: Operations) {
-    return operations.addLaunchJson || operations.addLaunchJson;
+function hasAddOperations(operations: AssetOperations) {
+    return operations.addTasksJson || operations.addLaunchJson;
 }
 
-async function getOperations(generator: AssetGenerator) {
-    return getBuildOperations(generator.tasksJsonPath).then(async operations =>
-        getLaunchOperations(generator.launchJsonPath, operations));
+async function getOperations(generator: AssetGenerator) : Promise<AssetOperations> {
+    return getBuildOperations(generator).then(async operations =>
+        getLaunchOperations(generator, operations));
 }
 
 /**
- * Will return old (version=0.1.0) or new (version=2.0.0) tasks. If there are any of them, do not 
- * write over the tasks.json.
+ * Finds a build task if there is one. Only handles new format.
  */
 function getBuildTasks(tasksConfiguration: tasks.TaskConfiguration): tasks.TaskDescription[] {
     let result: tasks.TaskDescription[] = [];
 
-    const tasksV1: string = "0.1.0";
-    const tasksV2: string = "2.0.0";
-
     function findBuildTask(version: string, tasksDescriptions: tasks.TaskDescription[]) {
         let buildTask = undefined;
-        // Find the old tasks
-        if (version === tasksV1 && tasksDescriptions) {
-            buildTask = tasksDescriptions.find(td => td.isBuildCommand);
-        }
-        // Find the new tasks
-        else if (version === tasksV2 && tasksDescriptions) {
+        if (tasksDescriptions) {
             buildTask = tasksDescriptions.find(td => td.group === 'build');
         }
 
@@ -343,11 +339,11 @@ function getBuildTasks(tasksConfiguration: tasks.TaskConfiguration): tasks.TaskD
     return result;
 }
 
-async function getBuildOperations(tasksJsonPath: string) {
-    return new Promise<Operations>((resolve, reject) => {
-        fs.exists(tasksJsonPath, exists => {
+export async function getBuildOperations(generator: AssetGenerator) : Promise<AssetOperations> {
+    return new Promise<AssetOperations>((resolve, reject) => {
+        fs.exists(generator.tasksJsonPath, exists => {
             if (exists) {
-                fs.readFile(tasksJsonPath, (err, buffer) => {
+                fs.readFile(generator.tasksJsonPath, (err, buffer) => {
                     if (err) {
                         return reject(err);
                     }
@@ -363,6 +359,11 @@ async function getBuildOperations(tasksJsonPath: string) {
                         return resolve({ updateTasksJson: false });
                     }
 
+                    if (!tasksConfiguration.version || !tasksConfiguration.version.startsWith("2.0.")) {
+                        // We don't have code to update the older tasks format, so don't try to update it
+                        return resolve({ updateTasksJson: false });
+                    }
+
                     let buildTasks = getBuildTasks(tasksConfiguration);
 
                     resolve({ updateTasksJson: buildTasks.length === 0 });
@@ -375,9 +376,14 @@ async function getBuildOperations(tasksJsonPath: string) {
     });
 }
 
-async function getLaunchOperations(launchJsonPath: string, operations: Operations) {
-    return new Promise<Operations>((resolve, reject) => {
-        return fs.exists(launchJsonPath, exists => {
+async function getLaunchOperations(generator: AssetGenerator, operations: AssetOperations) : Promise<AssetOperations> {
+
+    if (!generator.hasExecutableProjects()) {
+        return Promise.resolve(operations);
+    }
+
+    return new Promise<AssetOperations>((resolve, reject) => {
+        return fs.exists(generator.launchJsonPath, exists => {
             if (exists) {
                 resolve(operations);
             }
@@ -413,19 +419,24 @@ async function promptToAddAssets(workspaceFolder: vscode.WorkspaceFolder) {
     });
 }
 
-export async function addTasksJsonIfNecessary(generator: AssetGenerator, operations: Operations) {
+export async function addTasksJsonIfNecessary(generator: AssetGenerator, operations: AssetOperations) {
     return new Promise<void>((resolve, reject) => {
-        if (!operations.addTasksJson) {
+        if (!operations.addTasksJson && !operations.updateTasksJson) {
             return resolve();
         }
 
-        // Read existing Tasks configuration
-        const tasksConfigs = vscode.workspace.getConfiguration('tasks');
-        let existingTaskConfigs = tasksConfigs.get<Array<tasks.TaskDescription>>('tasks');
         const tasksJson = generator.createTasksConfiguration();
 
-        if (existingTaskConfigs) {
-            tasksJson['tasks'] = tasksJson['tasks'].concat(existingTaskConfigs);
+        // NOTE: We only want to do this when we are supposed to update the task configuration. Otherwise, 
+        // in the case of the 'generateAssets' command, even though we already deleted the tasks.json file
+        // this will still return the old tasks.json content
+        if (operations.updateTasksJson) {
+            const tasksConfigs = vscode.workspace.getConfiguration('tasks');
+            let existingTaskConfigs = tasksConfigs.get<Array<tasks.TaskDescription>>('tasks');
+
+            if (existingTaskConfigs) {
+                tasksJson['tasks'] = tasksJson['tasks'].concat(existingTaskConfigs);
+            }
         }
 
         const tasksJsonText = JSON.stringify(tasksJson, null, '    ');
@@ -443,31 +454,19 @@ function indentJsonString(json: string, numSpaces: number = 4): string {
     return json.split('\n').map(line => ' '.repeat(numSpaces) + line).join('\n').trim();
 }
 
-async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: Operations) {
+async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: AssetOperations) {
     return new Promise<void>((resolve, reject) => {
         if (!operations.addLaunchJson) {
             return resolve();
         }
 
-        // Read existing launch configuration
-        const launchConfigs = vscode.workspace.getConfiguration('launch', null);
-        let existingLaunchConfigs = launchConfigs.get<{}[]>('configurations');
+        // NOTE: We will NOT attempt to merge in the existing launch.json configurations
+        // because in the startup prompt case, we will not attempt to create a launch.json if it
+        // already exists, and in the command case, we delete the launch.json file, but the VS
+        // Code API will return old configurations anyway, which we do NOT want.
 
         const isWebProject = generator.hasWebServerDependency();
         let launchJson: string = generator.createLaunchJson(isWebProject);
-
-        if (existingLaunchConfigs) {
-            let existingLaunchConfigsString = JSON.stringify(existingLaunchConfigs, null, '    ');
-            const lastBracket = launchJson.lastIndexOf(']');
-            const lastBracketInExistingConfig = existingLaunchConfigsString.lastIndexOf(']');
-            const firstBracketInExistingConfig = existingLaunchConfigsString.indexOf('[');
-
-            if (lastBracket !== -1 && lastBracketInExistingConfig !== -1 && firstBracketInExistingConfig !== -1) {
-                launchJson = launchJson.substring(0, lastBracket);
-                existingLaunchConfigsString = existingLaunchConfigsString.substring(firstBracketInExistingConfig + 1, lastBracketInExistingConfig);
-                launchJson = `${launchJson},${existingLaunchConfigsString}]`;
-            }
-        }
 
         const configurationsMassaged: string = indentJsonString(launchJson);
         const launchJsonText = `
@@ -489,7 +488,14 @@ async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: O
     });
 }
 
-async function addAssets(generator: AssetGenerator, operations: Operations) {
+async function addAssets(generator: AssetGenerator, operations: AssetOperations) {
+
+    if (generator.hasExecutableProjects() && !generator.isStartupProjectSelected()) {
+        if (!await generator.selectStartupProject()) {
+            return;
+        }
+    }
+
     const promises = [
         addTasksJsonIfNecessary(generator, operations),
         addLaunchJsonIfNecessary(generator, operations)
@@ -512,9 +518,9 @@ export async function addAssetsIfNecessary(server: OmniSharpServer): Promise<Add
         }
 
         serverUtils.requestWorkspaceInformation(server).then(async info => {
-            // If there are no .NET Core projects, we won't bother offering to add assets.
-            if (protocol.containsDotNetCoreProjects(info)) {
-                const generator = new AssetGenerator(info);
+            const generator = new AssetGenerator(info);
+            // If there aren't executable projects, we will not prompt
+            if (generator.hasExecutableProjects()) {
                 return getOperations(generator).then(operations => {
                     if (!hasAddOperations(operations)) {
                         return resolve(AddAssetResult.NotApplicable);
@@ -563,7 +569,7 @@ async function deleteAssets(generator: AssetGenerator) {
     ]);
 }
 
-async function shouldGenerateAssets(generator: AssetGenerator) {
+async function shouldGenerateAssets(generator: AssetGenerator) : Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
         doesAnyAssetExist(generator).then(res => {
             if (res) {
@@ -573,7 +579,7 @@ async function shouldGenerateAssets(generator: AssetGenerator) {
                 vscode.window.showWarningMessage('Replace existing build and debug assets?', cancelItem, yesItem)
                     .then(selection => {
                         if (selection === yesItem) {
-                            deleteAssets(generator).then(_ => resolve(true));
+                            resolve(true);
                         }
                         else {
                             // The user clicked cancel
@@ -590,20 +596,36 @@ async function shouldGenerateAssets(generator: AssetGenerator) {
     });
 }
 
-export async function generateAssets(server: OmniSharpServer) {
-    let workspaceInformation = await serverUtils.requestWorkspaceInformation(server);
-    if (protocol.containsDotNetCoreProjects(workspaceInformation)) {
-        const generator = new AssetGenerator(workspaceInformation);
-        let operations = await getOperations(generator);
-        if (hasAddOperations(operations)) {
+export async function generateAssets(server: OmniSharpServer) : Promise<void> {
+    try
+    {
+        let workspaceInformation = await serverUtils.requestWorkspaceInformation(server);
+        if (workspaceInformation.MsBuild && workspaceInformation.MsBuild.Projects.length > 0) {
+            const generator = new AssetGenerator(workspaceInformation);
             let doGenerateAssets = await shouldGenerateAssets(generator);
-            if (doGenerateAssets) {
-                await fs.ensureDir(generator.vscodeFolder);
-                await addAssets(generator, operations);
+            if (!doGenerateAssets) {
+                return; // user cancelled
             }
+
+            const operations : AssetOperations = { 
+                addLaunchJson: generator.hasExecutableProjects(), 
+                addTasksJson: true 
+            };
+            if (operations.addLaunchJson) {
+                if (!await generator.selectStartupProject()) {
+                    return; // user cancelled
+                }
+            }
+
+            await deleteAssets(generator);
+            await fs.ensureDir(generator.vscodeFolder);
+            await addAssets(generator, operations);
+        }
+        else {
+            await vscode.window.showErrorMessage("Could not locate .NET Core project. Assets were not generated.");
         }
     }
-    else {
-        await vscode.window.showErrorMessage("Could not locate .NET Core project. Assets were not generated.");
+    catch (err) {
+        await vscode.window.showErrorMessage(`Unable to generate assets to build and debug. ${err}`);
     }
 }

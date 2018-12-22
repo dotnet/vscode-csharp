@@ -176,35 +176,26 @@
     },
     "LaunchBrowserPlatformOptions": {
       "type": "object",
+      "required": [ "command" ],
       "properties": {
         "command": {
           "type": "string",
-          "description": "The command to execute for launching the web browser",
+          "description": "The executable which will start the web browser",
           "default": "open"
         },
         "args": {
           "type": "string",
-          "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
+          "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to.",
           "default": "${auto-detect-url}"
         }
       }
     },
     "LaunchBrowser": {
       "type": "object",
-      "description": "Describes options to launch a web browser as part of launch",
+      "required": [ "enabled" ],
+      "description": "Configures starting a web browser as part of the launch -- should a web browser be started, and if so, what command should be run to start it. This option can be modified to launch a specific browser.",
       "default": {
-        "enabled": true,
-        "args": "${auto-detect-url}",
-        "windows": {
-          "command": "cmd.exe",
-          "args": "/C start ${auto-detect-url}"
-        },
-        "osx": {
-          "command": "open"
-        },
-        "linux": {
-          "command": "xdg-open"
-        }
+        "enabled": true
       },
       "properties": {
         "enabled": {
@@ -213,39 +204,29 @@
           "default": true
         },
         "args": {
-          "anyOf": [
-            {
-              "type": "array",
-              "description": "Command line arguments passed to the program.",
-              "items": {
-                "type": "string"
-              },
-              "default": []
-            },
-            {
-              "type": "string",
-              "description": "Stringified version of command line arguments passed to the program.",
-              "default": ""
-            }
-          ]
+          "type": "string",
+          "description": "The arguments to pass to the command to open the browser. This is used only if the platform-specific element (`osx`, `linux` or `windows`) doesn't specify a value for `args`. Use ${auto-detect-url} to automatically use the address the server is listening to.",
+          "default": "${auto-detect-url}"
         },
         "osx": {
           "$ref": "#/definitions/LaunchBrowserPlatformOptions",
-          "description": "OSX-specific web launch configuration options",
+          "description": "OSX-specific web launch configuration options. By default, this will start the browser using `open`.",
           "default": {
-            "command": "open"
+            "command": "open",
+            "args": "${auto-detect-url}"
           }
         },
         "linux": {
           "$ref": "#/definitions/LaunchBrowserPlatformOptions",
-          "description": "Linux-specific web launch configuration options",
+          "description": "Linux-specific web launch configuration options. By default, this will start the browser using `xdg-open`.",
           "default": {
-            "command": "xdg-open"
+            "command": "xdg-open",
+            "args": "${auto-detect-url}"
           }
         },
         "windows": {
           "$ref": "#/definitions/LaunchBrowserPlatformOptions",
-          "description": "Windows-specific web launch configuration options",
+          "description": "Windows-specific web launch configuration options. By default, this will start the browser using `cmd /c start`.",
           "default": {
             "command": "cmd.exe",
             "args": "/C start ${auto-detect-url}"
@@ -295,18 +276,7 @@
           "$ref": "#/definitions/LaunchBrowser",
           "description": "Describes options to launch a web browser as part of launch",
           "default": {
-            "enabled": true,
-            "args": "${auto-detect-url}",
-            "windows": {
-              "command": "cmd.exe",
-              "args": "/C start ${auto-detect-url}"
-            },
-            "osx": {
-              "command": "open"
-            },
-            "linux": {
-              "command": "xdg-open"
-            }
+            "enabled": true
           }
         },
         "env": {

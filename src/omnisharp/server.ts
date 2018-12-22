@@ -501,7 +501,7 @@ export class OmniSharpServer {
     public async makeRequest<TResponse>(command: string, data?: any, token?: CancellationToken): Promise<TResponse> {
 
         if (!this.isRunning()) {
-            return Promise.reject<TResponse>('server has been stopped or not started');
+            return Promise.reject<TResponse>('OmniSharp server is not running.');
         }
 
         let startTime: number;
