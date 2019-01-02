@@ -1,6 +1,6 @@
 {
     "version": "0.2.0",
-    "configurations": [
+    "configurations": [    
         {
             "name": "Launch Extension",
             "type": "extensionHost",
@@ -100,6 +100,21 @@
             "outFiles": [
                 "${workspaceRoot}/out/test/**/*.js"
             ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch gulp task",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+            "args": [
+                "updatePackageDependencies"
+            ],
+            "env": {
+                "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/9c36608c-cb04-451f-8df7-547eeb9b5d55/8626f25cb9fb40cd6fa2508009fccd1d/coreclr-debug-linux-x64.zip,https://download.visualstudio.microsoft.com/download/pr/9c36608c-cb04-451f-8df7-547eeb9b5d55/b5b307980f5da0bc161018acfad043c9/coreclr-debug-osx-x64.zip,https://download.visualstudio.microsoft.com/download/pr/9c36608c-cb04-451f-8df7-547eeb9b5d55/4b9c72a90d4558d8e72e653c1ea79936/coreclr-debug-win7-x64.zip",
+                "NEW_DEPS_VERSION": "1.18.0"
+            },
+            "cwd": "${workspaceFolder}"
         }
     ]
 }
