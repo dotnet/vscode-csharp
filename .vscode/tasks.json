@@ -10,7 +10,8 @@
 				"compile"
 			],
 			"showOutput": "always",
-			"isBuildCommand": true
+			"isBuildCommand": true,
+			"problemMatcher":"$tsc"
 		},
 		{
 			"taskName": "test",
