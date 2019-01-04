@@ -95,7 +95,7 @@ export async function updatePackageDependencies(): Promise<void> {
     const networkSettingsProvider: NetworkSettingsProvider = () => new NetworkSettings(/*proxy:*/ null, /*stringSSL:*/ true);
 
     const downloadAndGetHash = async (url: string): Promise<string> => {
-        console.log(`Downlodaing from '${url}'`);
+        console.log(`Downloading from '${url}'`);
         const buffer: Buffer = await DownloadFile(url, eventStream, networkSettingsProvider, url, null);
         return getBufferIntegrityHash(buffer);
     };
@@ -143,7 +143,7 @@ function replaceVersion(value: string, newVersion: string): string {
     dottedVersionRegExp.lastIndex = 0;
 
     if (!regex.test(value)) {
-        return value; //If the string doesnt contain any version return the same string
+        return value; //If the string doesn't contain any version return the same string
     }
 
     return value.replace(regex, newValue);
@@ -169,10 +169,10 @@ function verifyMatchCount(value: string, shouldContainVersion = false): void {
     const matchCount: number = dottedMatches + dashedMatches;
 
     if (shouldContainVersion && matchCount == 0) {
-        throw new Error(`Version number not found in fallback URL '${value}'.`);
+        throw new Error(`Version number not found in '${value}'.`);
     }
     if (matchCount > 1) {
-        throw new Error(`Ambiguous version pattern found in fallback URL '${value}'. Multiple version strings found.`);
+        throw new Error(`Ambiguous version pattern found in '${value}'. Multiple version strings found.`);
     }
 }
 
@@ -192,7 +192,7 @@ function getLowercaseFileNameFromUrl(url: string): string {
     if (!versions || versions.length == 0) {
         return fileName;
     }
-    
+
     if (versions.length > 1) {
         //we expect only one version string to be present in the last part of the url
         throw new Error(`Ambiguous version pattern found in fallback URL '${url}'. Multiple version strings found.`);
