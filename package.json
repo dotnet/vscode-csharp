@@ -118,7 +118,7 @@
     "copyfiles": "2.0.0",
     "cross-env": "5.1.4",
     "del": "3.0.0",
-    "find-versions": "3.0.0",
+    "find-versions": "^3.0.0",
     "get-port": "3.2.0",
     "glob-promise": "3.4.0",
     "gulp": "4.0.0",
@@ -149,18 +149,17 @@
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/ed7cfe88-470c-421d-8078-062aea0f0ead/e9e2a6b82a6084fa4de82cb1515098fc/omnisharp-win-x86-1.32.7.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.32.7.zip",
-      "installPath": ".omnisharp/1.32.7",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/515dbb33-d644-4ba6-9ee4-8ca7227ab580/02621f196a581cb3062dbeab2ec28429/omnisharp-win-x86-1.32.8.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.32.8.zip",
+      "installPath": ".omnisharp/1.32.8",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.omnisharp/1.32.7/OmniSharp.exe",
-      "platformId": "win-x86",
-      "integrity": "30AE34B885D448D5677A85FB0D3ECA568F79EF135C3F34B5698F17AD90E2D3D2"
+      "installTestPath": "./.omnisharp/1.32.8/OmniSharp.exe",
+      "platformId": "win-x86"
     },
     {
       "id": "OmniSharp",

@@ -15,6 +15,9 @@ const findVersions = require('find-versions');
 
 interface PackageJSONFile {
     runtimeDependencies: Package[];
+    defaults: {
+        [key: string]: string;
+    };
 }
 
 const dottedVersionRegExp = /[0-9]+\.[0-9]+\.[0-9]+/g;
@@ -107,6 +110,12 @@ export async function updatePackageDependencies(): Promise<void> {
         dependency.fallbackUrl = replaceVersion(dependency.fallbackUrl, newVersion);
         dependency.installPath = replaceVersion(dependency.installPath, newVersion);
         dependency.installTestPath = replaceVersion(dependency.installTestPath, newVersion);
+        Object.keys(packageJSON.defaults).forEach(key => {
+            //Update the version present in the defaults
+            if (key.toLowerCase() == dependency.id.toLowerCase()) {
+                packageJSON.defaults[key] = newVersion;
+            }
+        });
 
         if (dependency.fallbackUrl) {
             const fallbackUrlIntegrity = await downloadAndGetHash(dependency.fallbackUrl);
@@ -195,7 +204,7 @@ function getLowercaseFileNameFromUrl(url: string): string {
 
     if (versions.length > 1) {
         //we expect only one version string to be present in the last part of the url
-        throw new Error(`Ambiguous version pattern found in fallback URL '${url}'. Multiple version strings found.`);
+        throw new Error(`Ambiguous version pattern found URL '${url}'. Multiple version strings found.`);
     }
 
     let versionIndex = fileName.indexOf(versions[0]);
