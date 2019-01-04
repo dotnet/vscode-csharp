@@ -12,6 +12,7 @@ import * as Event from "../omnisharp/loggingEvents";
 import NetworkSettings, { NetworkSettingsProvider } from '../NetworkSettings';
 import { getBufferIntegrityHash } from '../packageManager/isValidDownload';
 const findVersions = require('find-versions');
+
 interface PackageJSONFile {
     runtimeDependencies: Package[];
 }
@@ -141,7 +142,7 @@ function replaceVersion(value: string, newVersion: string): string {
     }
     dottedVersionRegExp.lastIndex = 0;
 
-    if (!dashedVersionRegExp.test(value)) {
+    if (!regex.test(value)) {
         return value; //If the string doesnt contain any version return the same string
     }
 
@@ -191,6 +192,7 @@ function getLowercaseFileNameFromUrl(url: string): string {
     if (!versions || versions.length == 0) {
         return fileName;
     }
+    
     if (versions.length > 1) {
         //we expect only one version string to be present in the last part of the url
         throw new Error(`Ambiguous version pattern found in fallback URL '${url}'. Multiple version strings found.`);
