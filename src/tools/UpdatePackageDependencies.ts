@@ -81,9 +81,9 @@ export async function updatePackageDependencies(): Promise<void> {
     for (let urlToUpdate of newPrimaryUrlArray) {
         const dependency = findDependencyToUpdate(urlToUpdate);
         //Fallback url should contain a version
-        verifyMatchCount(dependency.fallbackUrl, true);
-        verifyMatchCount(dependency.installPath);
-        verifyMatchCount(dependency.installTestPath);
+        verifyVersionSubstringCount(dependency.fallbackUrl, true);
+        verifyVersionSubstringCount(dependency.installPath);
+        verifyVersionSubstringCount(dependency.installTestPath);
     }
 
     // Next take another pass to try and update to the URL  
@@ -138,27 +138,27 @@ export async function updatePackageDependencies(): Promise<void> {
 }
 
 
-function replaceVersion(value: string, newVersion: string): string {
-    if (!value) {
-        return value; //if the value is null or undefined return the same one
+function replaceVersion(fileName: string, newVersion: string): string {
+    if (!fileName) {
+        return fileName; //if the value is null or undefined return the same one
     }
 
     let regex: RegExp = dottedVersionRegExp;
     let newValue: string = newVersion;
-    if (!dottedVersionRegExp.test(value)) {
+    if (!dottedVersionRegExp.test(fileName)) {
         regex = dashedVersionRegExp;
         newValue = newVersion.replace(/\./g, "-");
     }
     dottedVersionRegExp.lastIndex = 0;
 
-    if (!regex.test(value)) {
-        return value; //If the string doesn't contain any version return the same string
+    if (!regex.test(fileName)) {
+        return fileName; //If the string doesn't contain any version return the same string
     }
 
-    return value.replace(regex, newValue);
+    return fileName.replace(regex, newValue);
 }
 
-function verifyMatchCount(value: string, shouldContainVersion = false): void {
+function verifyVersionSubstringCount(value: string, shouldContainVersion = false): void {
     const getMatchCount = (regexp: RegExp, searchString: string): number => {
         regexp.lastIndex = 0;
         let retVal = 0;
