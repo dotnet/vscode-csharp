@@ -18,7 +18,7 @@
 #### Debugger
 * Added support for set next statement. Set next statement is a feature that have been available for a long time in full Visual Studio, and this brings the feature to Visual Studio Code. This feature allows developers to change what code is executed in your program. For example, you can move the instruction pointer back to re-execute a function that you just ran so you can debug into it, or you can skip over some code that you don't want to execute. To use this feature, move your cursor to the next statement you would like to execute next, and either open the editor context menu and invoke 'Set Next Statement (.NET)', or use the keyboard shortcut of <kbd>Ctrl+Shift+F10</kbd> ([#1753](https://github.com/OmniSharp/omnisharp-vscode/issues/1753))
 * Fixed evaluating string functions with interpretation in .NET Core 2.1+. Evaluation uses interpretation for conditional breakpoints, evaluating methods that take a lambda, etc ([#2683](https://github.com/OmniSharp/omnisharp-vscode/issues/2683))
-
+* Many small improvements to launch.json/tasks.json generation. Highlights include a selection dialog if the workspace contains multiple launchable projects, a few simplifications to reduce the number of fields in the default launch.json, and switching the 'problem matcher' for build tasks. (PR: [#2780](https://github.com/OmniSharp/omnisharp-vscode/pull/2780))
 
 ## 1.17.1 (November 11, 2018)
 
