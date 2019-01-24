@@ -584,7 +584,7 @@
         "csharp.referencesCodeLens.enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Specifies whether the references CodeLens should be show be shown."
+          "description": "Specifies whether the references CodeLens should be shown."
         },
         "csharp.testsCodeLens.enabled": {
           "type": "boolean",
