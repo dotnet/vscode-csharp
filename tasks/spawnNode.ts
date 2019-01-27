@@ -18,7 +18,6 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
     
     let optionsWithFullEnvironment = {
         cwd: rootPath,
-        stdio: 'inherit', 
         ...options,
         env: {
             ...process.env,
