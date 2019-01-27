@@ -294,7 +294,6 @@ export class OmniSharpServer {
         let args = [
             '-s', solutionPath,
             '--hostPID', process.pid.toString(),
-            '--stdio',
             'DotNet:enablePackageRestore=false',
             '--encoding', 'utf-8',
             '--loglevel', options.loggingLevel
