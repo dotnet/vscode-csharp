@@ -11,13 +11,11 @@ export class CsharpChannelObserver extends BaseChannelObserver {
         switch (event.constructor.name) {
             case PackageInstallStart.name:
             case IntegrityCheckFailure.name:
-                this.showChannel(true);
-                break;
             case InstallationFailure.name:
             case DebuggerNotInstalledFailure.name:
             case DebuggerPrerequisiteFailure.name:
             case ProjectJsonDeprecatedWarning.name:
-                this.showChannel();
+                this.showChannel(true);
                 break;
         }
     }

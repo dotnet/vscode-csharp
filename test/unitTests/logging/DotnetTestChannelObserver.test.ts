@@ -10,10 +10,14 @@ import DotnetTestChannelObserver from '../../../src/observers/DotnetTestChannelO
 
 suite("DotnetTestChannelObserver", () => {
     let hasShown: boolean;
+    let preserveFocus: boolean;
 
     let observer = new DotnetTestChannelObserver({
         ...getNullChannel(),
-        show: () => { hasShown = true; }
+        show: (preserve) => {
+            hasShown = true;
+            preserveFocus = preserve;
+        }
     });
 
     setup(() => {
@@ -27,10 +31,11 @@ suite("DotnetTestChannelObserver", () => {
         new DotNetTestDebugStart("foo"),
         new DotNetTestsInClassDebugStart("someclass")
     ].forEach((event: BaseEvent) => {
-        test(`${event.constructor.name}: Channel is shown`, () => {
+        test(`${event.constructor.name}: Channel is shown and preserve focus is set to true`, () => {
             expect(hasShown).to.be.false;
             observer.post(event);
             expect(hasShown).to.be.true;
+            expect(preserveFocus).to.be.true;
         });
     });
 });
