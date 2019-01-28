@@ -13,7 +13,7 @@ export class OmnisharpChannelObserver extends BaseChannelObserver {
             case ShowOmniSharpChannel.name:
             case OmnisharpFailure.name:
             case OmnisharpServerOnStdErr.name:
-                this.showChannel();
+                this.showChannel(true);
                 break;
             case OmnisharpRestart.name:
                 this.clearChannel();

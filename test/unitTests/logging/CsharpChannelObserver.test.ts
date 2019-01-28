@@ -14,26 +14,11 @@ suite("CsharpChannelObserver", () => {
         new InstallationFailure("someStage", "someError"),
         new DebuggerNotInstalledFailure(),
         new DebuggerPrerequisiteFailure("some failure"),
-        new ProjectJsonDeprecatedWarning()
-    ].forEach((event: BaseEvent) => {
-        test(`${event.constructor.name}: Channel is shown`, () => {
-            let hasShown = false;
-
-            let observer = new CsharpChannelObserver({
-                ...getNullChannel(),
-                show: () => { hasShown = true; }
-            });
-
-            observer.post(event);
-            expect(hasShown).to.be.true;
-        });
-    });
-
-    [
+        new ProjectJsonDeprecatedWarning(),
         new IntegrityCheckFailure("", "", true),
         new PackageInstallStart()
     ].forEach((event: BaseEvent) => {
-        test(`${event.constructor.name}: Channel is shown and preserveFocus is set to true`, () => {
+        test(`${event.constructor.name}: Channel is shown and preserve focus is set to true`, () => {
             let hasShown = false;
             let preserveFocus = false;
             let observer = new CsharpChannelObserver({

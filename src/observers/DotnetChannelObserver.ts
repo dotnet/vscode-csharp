@@ -11,7 +11,7 @@ export class DotNetChannelObserver extends BaseChannelObserver {
         switch (event.constructor.name) {
             case CommandDotNetRestoreStart.name:
                 this.clearChannel();
-                this.showChannel();
+                this.showChannel(true);
                 break;
         }
     }
