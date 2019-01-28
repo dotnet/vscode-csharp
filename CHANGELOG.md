@@ -14,6 +14,10 @@
 ## 1.18.0 (Not yet released)
 
 * Added a `csharp.maxProjectFileCountForDiagnosticAnalysis` setting to configure the file limit when the extension stops reporting errors for whole workspace. When this threshold is reached, the diagnostics are reported for currently opened files only. This mechanism was available in previous versions, but now can be configured. The default is 1000. (PR: [#1877](https://github.com/OmniSharp/omnisharp-vscode/pull/1877))
+* Added initial support for C# 8. (PR: [omnisharp-roslyn#1365](https://github.com/OmniSharp/omnisharp-roslyn/pull/1365))
+* Fixed finding references to operator overloads _(Contributed by [@SirIntruder](https://github.com/SirIntruder))_ (PR: [omnisharp-roslyn#1371](https://github.com/OmniSharp/omnisharp-roslyn/pull/1371))
+* Improved handling of files moving on disk (PR: [omnisharp-roslyn#1368](https://github.com/OmniSharp/omnisharp-roslyn/pull/1368))
+* Improved detection of MSBuild when multiple instances are available _(Contributed by [@johnnyasantoss ](https://github.com/johnnyasantoss))_ (PR: [omnisharp-roslyn#1349](https://github.com/OmniSharp/omnisharp-roslyn/pull/1349))
 
 #### Debugger
 * Added support for set next statement. Set next statement is a feature that have been available for a long time in full Visual Studio, and this brings the feature to Visual Studio Code. This feature allows developers to change what code is executed in your program. For example, you can move the instruction pointer back to re-execute a function that you just ran so you can debug into it, or you can skip over some code that you don't want to execute. To use this feature, move your cursor to the next statement you would like to execute next, and either open the editor context menu and invoke 'Set Next Statement (.NET)', or use the keyboard shortcut of <kbd>Ctrl+Shift+F10</kbd> ([#1753](https://github.com/OmniSharp/omnisharp-vscode/issues/1753))
