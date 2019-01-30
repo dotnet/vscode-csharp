@@ -75,7 +75,6 @@
     "jsonc-parser": "1.0.0",
     "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/3b0ae709-c067-48b4-a658-549ca972e437/386a5dff35391e14f14e5945e7903f63/microsoft.aspnetcore.razor.vscode-1.0.0-alpha2-20181112.3.tgz",
     "mkdirp": "0.5.1",
-    "natives": "1.1.6",
     "node-filter-async": "0.0.4",
     "open": "*",
     "remove-bom-buffer": "3.0.0",
@@ -130,8 +129,9 @@
     "minimist": "1.2.0",
     "mocha": "5.0.4",
     "mocha-typescript": "1.1.12",
-    "mock-fs": "^4.7.0",
+    "mock-fs": "4.7.0",
     "mock-http-server": "0.2.0",
+    "natives": "1.1.6",
     "npm-run-all": "4.1.2",
     "nyc": "11.8.0",
     "plist": "3.0.1",
@@ -143,7 +143,7 @@
     "tslint-no-unused-expression-chai": "0.1.3",
     "typescript": "2.8.3",
     "unzip2": "0.2.5",
-    "vsce": "1.40.0",
+    "vsce": "1.55.0",
     "vscode": "1.1.22"
   },
   "runtimeDependencies": [
