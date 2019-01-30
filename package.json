@@ -75,7 +75,7 @@
     "jsonc-parser": "1.0.0",
     "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/3b0ae709-c067-48b4-a658-549ca972e437/386a5dff35391e14f14e5945e7903f63/microsoft.aspnetcore.razor.vscode-1.0.0-alpha2-20181112.3.tgz",
     "mkdirp": "0.5.1",
-    "natives": "^1.1.6",
+    "natives": "1.1.6",
     "node-filter-async": "0.0.4",
     "open": "*",
     "remove-bom-buffer": "3.0.0",
