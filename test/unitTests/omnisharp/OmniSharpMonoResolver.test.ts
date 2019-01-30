@@ -17,7 +17,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
     let environment: NodeJS.ProcessEnv;
     let options: Options;
     const monoPath = "monoPath";
-    const getMono = (version: string) => (env: NodeJS.ProcessEnv) => {
+    const getMono = (version: string) => async(env: NodeJS.ProcessEnv) => {
         getMonoCalled = true;
         environment = env;
         return Promise.resolve(version);

@@ -29,8 +29,8 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
 
     let spawned = spawn(nodePath, args, optionsWithFullEnvironment);
     
-    // spawned.stderr.pipe(process.stdout);
-    // spawned.stdout.pipe(process.stdout);
+    spawned.stderr.pipe(process.stdout);
+    spawned.stdout.pipe(process.stdout);
 
     return join(spawned);
 }

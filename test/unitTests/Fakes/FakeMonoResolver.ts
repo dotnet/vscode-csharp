@@ -19,7 +19,7 @@ export class FakeMonoResolver implements IMonoResolver {
         this.getGlobalMonoCalled = false;
     }
 
-    getGlobalMonoInfo(): Promise<MonoInformation> {
+    async getGlobalMonoInfo(): Promise<MonoInformation> {
         this.getGlobalMonoCalled = true;
         if (this.willReturnMonoInfo) {
             return Promise.resolve(fakeMonoInfo);
