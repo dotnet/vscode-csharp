@@ -6,8 +6,8 @@
 import { use as chaiUse, expect, should } from 'chai';
 import { vscode } from '../../../src/vscodeAdapter';
 import { getFakeVsCode } from '../testAssets/Fakes';
-import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/operator/timeout';
+
+
 import { ErrorMessageObserver } from '../../../src/observers/ErrorMessageObserver';
 import { ZipError, DotNetTestRunFailure, DotNetTestDebugStartFailure, EventWithMessage, IntegrityCheckFailure } from '../../../src/omnisharp/loggingEvents';
 

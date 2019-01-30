@@ -1,13 +1,13 @@
 /*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+*  Copyright (c) Microsoft Corporation. All rights reserved.
+*  Licensed under the MIT License. See License.txt in the project root for license information.
+*--------------------------------------------------------------------------------------------*/
 
+import {debounceTime} from 'rxjs/operators';
 import { vscode } from '../vscodeAdapter';
 import { BaseEvent, OmnisharpServerOnError, OmnisharpServerMsBuildProjectDiagnostics } from "../omnisharp/loggingEvents";
-import { Scheduler } from 'rxjs/Scheduler';
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/debounceTime';
+import { Scheduler ,  Subject } from 'rxjs';
+
 import showWarningMessage from './utils/ShowWarningMessage';
 
 export class WarningMessageObserver {
@@ -15,7 +15,7 @@ export class WarningMessageObserver {
 
     constructor(private vscode: vscode, private disableMsBuildDiagnosticWarning: () => boolean, scheduler?: Scheduler) {
         this.warningMessageDebouncer = new Subject<BaseEvent>();
-        this.warningMessageDebouncer.debounceTime(1500, scheduler).subscribe(async event => {
+        this.warningMessageDebouncer.pipe(debounceTime(1500, scheduler)).subscribe(async event => {
             let message = "Some projects have trouble loading. Please review the output for more details.";
             await showWarningMessage(this.vscode, message, { title: "Show Output", command: 'o.showOutput' });
         });
