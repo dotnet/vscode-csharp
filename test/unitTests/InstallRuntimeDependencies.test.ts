@@ -29,7 +29,7 @@ suite(`${installRuntimeDependencies.name}`, () => {
     setup(() => {
         eventStream = new EventStream(); 
         eventBus = new TestEventBus(eventStream);
-        installDependencies = () => Promise.resolve();
+        installDependencies = async() => Promise.resolve();
     });
     
     suite("When all the dependencies already exist", () => {
@@ -73,7 +73,7 @@ suite(`${installRuntimeDependencies.name}`, () => {
 
         test("Calls installDependencies with the absolute path package and returns true after successful installation", async () => {
             let inputPackage: AbsolutePathPackage[];
-            installDependencies = (packages) => {
+            installDependencies = async(packages) => {
                 inputPackage = packages;
                 return Promise.resolve();
             };
@@ -85,7 +85,7 @@ suite(`${installRuntimeDependencies.name}`, () => {
         });
 
         test("Returns false when installDependencies throws exception", async () => {
-            installDependencies = () => Promise.reject("some reason");
+            installDependencies = async() => Promise.reject("some reason");
             let installed = await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo);
             expect(installed).to.be.false;
         });
