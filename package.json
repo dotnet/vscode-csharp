@@ -69,24 +69,23 @@
   },
   "dependencies": {
     "async-file": "2.0.2",
-    "fs-extra": "5.0.0",
+    "fs-extra": "7.0.1",
     "http-proxy-agent": "2.1.0",
     "https-proxy-agent": "2.2.1",
-    "jsonc-parser": "1.0.0",
+    "jsonc-parser": "2.0.2",
     "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/3b0ae709-c067-48b4-a658-549ca972e437/386a5dff35391e14f14e5945e7903f63/microsoft.aspnetcore.razor.vscode-1.0.0-alpha2-20181112.3.tgz",
     "mkdirp": "0.5.1",
-    "node-filter-async": "0.0.4",
+    "node-filter-async": "1.1.1",
     "open": "*",
     "remove-bom-buffer": "3.0.0",
     "request-light": "0.2.4",
     "rxjs": "6.4.0",
-    "rxjs-compat": "6.4.0",
-    "semver": "*",
+    "semver": "5.6.0",
     "stream": "0.0.2",
     "strip-bom": "3.0.0",
     "tmp": "0.0.33",
-    "vscode-debugprotocol": "1.32.0",
-    "vscode-extension-telemetry": "0.1.0",
+    "vscode-debugprotocol": "1.33.0",
+    "vscode-extension-telemetry": "0.1.1",
     "yauzl": "2.10.0"
   },
   "devDependencies": {
@@ -137,6 +136,7 @@
     "nyc": "11.8.0",
     "plist": "3.0.1",
     "remap-istanbul": "0.11.0",
+    "rxjs-tslint-rules": "^4.16.2",
     "source-map-support": "0.5.4",
     "ts-node": "6.0.3",
     "tslint": "5.10.0",
@@ -145,7 +145,7 @@
     "typescript": "2.8.3",
     "unzip2": "0.2.5",
     "vsce": "1.55.0",
-    "vscode": "1.1.22"
+    "vscode": "1.1.28"
   },
   "runtimeDependencies": [
     {
