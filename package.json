@@ -136,7 +136,6 @@
     "nyc": "11.8.0",
     "plist": "3.0.1",
     "remap-istanbul": "0.11.0",
-    "rxjs-tslint-rules": "^4.16.2",
     "source-map-support": "0.5.4",
     "ts-node": "6.0.3",
     "tslint": "5.10.0",

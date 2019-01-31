@@ -10,11 +10,7 @@
         "semicolon": true,
         "indent": [true, "spaces", 4],
         "file-header": [true, ".*"],
-        "rxjs-no-compat": true
     },
-    "extends": [
-        "rxjs-tslint-rules"
-      ],
     "rulesDirectory": [
       "tslint-microsoft-contrib",
       "tslint-no-unused-expression-chai"]
