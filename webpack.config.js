@@ -8,6 +8,7 @@
 'use strict';
 
 const path = require('path');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 /**@type {import('webpack').Configuration}*/
 const config = {
@@ -19,13 +20,16 @@ const config = {
         libraryTarget: "commonjs2",
         devtoolModuleFilenameTemplate: "../[resource-path]",
     },
-    devtool: 'source-map',
+    //devtool: 'source-map',
     externals: {
         vscode: "commonjs vscode" // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
     },
     resolve: { // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
         extensions: ['.ts', '.js']
     },
+    // plugins: [
+    //     new BundleAnalyzerPlugin()
+    // ],
     module: {
         rules: [{
             test: /\.ts$/,

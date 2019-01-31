@@ -29,7 +29,7 @@
   },
   "main": "./out/extension",
   "scripts": {
-    "vscode:prepublish": "webpack --mode production",
+    "vscode:prepublish": "webpack --mode development",
     "webpack": "webpack --mode development",
     "compile": "tsc -p ./ && gulp tslint",
     "watch": "tsc -watch -p ./",
@@ -148,6 +148,7 @@
     "vsce": "1.55.0",
     "vscode": "1.1.28",
     "webpack": "4.29.0",
+    "webpack-bundle-analyzer": "^3.0.3",
     "webpack-cli": "3.2.1"
   },
   "runtimeDependencies": [
