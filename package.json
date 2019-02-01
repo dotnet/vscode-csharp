@@ -27,9 +27,9 @@
   "defaults": {
     "omniSharp": "1.32.10"
   },
-  "main": "./out/extension",
+  "main": "./dist/extension",
   "scripts": {
-    "vscode:prepublish": "tsc -p ./ && webpack --mode production",
+    "vscode:prepublish": "tsc -p ./ && webpack --mode development",
     "webpack": "webpack --mode development",
     "compile": "tsc -p ./ && gulp tslint",
     "watch": "tsc -watch -p ./",

@@ -7,7 +7,7 @@
 .vscode/**
 .vscode-test/**
 coverage/**
-out/test/**
+out/*
 src/**
 tasks/**
 test/**
@@ -31,6 +31,7 @@ test-plan.md
 tsconfig.json
 tslint.json
 wallaby.js
+webpack.config.js
 
 !src/razor/language-configuration.json
 !src/razor/syntaxes/*
