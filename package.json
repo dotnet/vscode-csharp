@@ -29,7 +29,7 @@
   },
   "main": "./out/extension",
   "scripts": {
-    "vscode:prepublish": "webpack --mode development",
+    "vscode:prepublish": "webpack --mode production",
     "webpack": "webpack --mode development",
     "compile": "tsc -p ./ && gulp tslint",
     "watch": "tsc -watch -p ./",
