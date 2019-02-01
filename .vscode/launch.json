@@ -69,7 +69,7 @@
                 "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
                 "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
                 "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
-                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}/vsix/extension",
                 "OSVC_SUITE": "singleCsproj"
             },
             "stopOnEntry": false,
