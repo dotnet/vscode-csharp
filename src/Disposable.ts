@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved. 
  *  Licensed under the MIT License. See License.txt in the project root for license information. 
  *--------------------------------------------------------------------------------------------*/
-import { Subscription } from "rxjs/Subscription"; 
+import { Subscription } from "rxjs"; 
 
 export default class Disposable implements IDisposable {
     private onDispose: { (): void };

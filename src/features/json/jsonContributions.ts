@@ -130,7 +130,7 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
         let collectPromise: Thenable<void> = null;
 
         if (location.isAtPropertyKey) {
-            let addValue = !location.previousNode || !location.previousNode.columnOffset && (offset == (location.previousNode.offset + location.previousNode.length));
+            let addValue = !location.previousNode || !location.previousNode.colonOffset && (offset == (location.previousNode.offset + location.previousNode.length));
             let scanner = createScanner(document.getText(), true);
             scanner.setPosition(offset);
             scanner.scan();

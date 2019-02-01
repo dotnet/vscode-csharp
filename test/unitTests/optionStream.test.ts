@@ -7,10 +7,9 @@ import { should, expect } from 'chai';
 import { ConfigurationChangeEvent, vscode } from "../../src/vscodeAdapter";
 import { getVSCodeWithConfig, updateConfig } from "./testAssets/Fakes";
 import Disposable from "../../src/Disposable";
-import { Observable } from "rxjs/Observable";
+import { Observable, Subscription } from "rxjs";
 import { Options } from "../../src/omnisharp/options";
 import { GetConfigChangeEvent } from './testAssets/GetConfigChangeEvent';
-import { Subscription } from 'rxjs/Subscription';
 import createOptionStream from '../../src/observables/CreateOptionStream';
 
 suite('OptionStream', () => {

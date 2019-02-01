@@ -7,7 +7,7 @@ import { should, expect } from 'chai';
 import { getVSCodeWithConfig, updateConfig } from "../testAssets/Fakes";
 import { vscode } from "../../../src/vscodeAdapter";
 import OptionProvider from '../../../src/observers/OptionProvider';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { Options } from '../../../src/omnisharp/options';
 
 suite('OptionProvider', () => {
