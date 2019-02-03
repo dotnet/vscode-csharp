@@ -62,7 +62,7 @@ export class Options {
         const defaultLaunchSolution = omnisharpConfig.get<string>('defaultLaunchSolution', undefined);
         const useEditorFormattingSettings = omnisharpConfig.get<boolean>('useEditorFormattingSettings', true);
 
-        const enableRoslynAnalyzers = omnisharpConfig.get<boolean>('enableRoslynAnalyzers', true);
+        const enableRoslynAnalyzers = omnisharpConfig.get<boolean>('enableRoslynAnalyzers', false);
 
         const useFormatting = csharpConfig.get<boolean>('format.enable', true);
 
