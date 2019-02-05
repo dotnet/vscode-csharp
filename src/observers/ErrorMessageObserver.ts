@@ -6,23 +6,24 @@
 import { BaseEvent, ZipError, DotNetTestRunFailure, DotNetTestDebugStartFailure, IntegrityCheckFailure } from "../omnisharp/loggingEvents";
 import { vscode } from "../vscodeAdapter";
 import showErrorMessage from "./utils/ShowErrorMessage";
+import { EventType } from "../omnisharp/EventType";
 
 export class ErrorMessageObserver {
     constructor(private vscode: vscode) {
     }
 
     public post = (event: BaseEvent) => {
-        switch (event.constructor.name) {
-            case ZipError.name:
+        switch (event.type) {
+            case EventType.ZipError:
                 this.handleZipError(<ZipError>event);
                 break;
-            case DotNetTestRunFailure.name:
+            case EventType.DotNetTestRunFailure:
                 this.handleDotnetTestRunFailure(<DotNetTestRunFailure>event);
                 break;
-            case DotNetTestDebugStartFailure.name:
+            case EventType.DotNetTestDebugStartFailure:
                 this.handleDotNetTestDebugStartFailure(<DotNetTestDebugStartFailure>event);
                 break;
-            case IntegrityCheckFailure.name:
+            case EventType.IntegrityCheckFailure:
                 this.handleIntegrityCheckFailure(<IntegrityCheckFailure> event);
         }
     }

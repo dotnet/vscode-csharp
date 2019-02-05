@@ -103,7 +103,7 @@
     "@types/minimist": "1.2.0",
     "@types/mkdirp": "0.5.2",
     "@types/mocha": "2.2.48",
-    "@types/node": "9.4.7",
+    "@types/node": "8.9.3",
     "@types/semver": "5.5.0",
     "@types/tmp": "0.0.33",
     "@types/yauzl": "2.9.0",

@@ -6,65 +6,66 @@
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import * as Event from "../omnisharp/loggingEvents";
 import { PackageError } from "../packageManager/PackageError";
+import { EventType } from "../omnisharp/EventType";
 
 export class CsharpLoggerObserver extends BaseLoggerObserver {
     private dots: number;
 
     public post = (event: Event.BaseEvent) => {
-        switch (event.constructor.name) {
-            case Event.ActivationFailure.name:
+        switch (event.type) {
+            case EventType.ActivationFailure:
                 this.logger.appendLine("[ERROR]: C# Extension failed to get platform information.");
                 break;
-            case Event.PackageInstallation.name:
+            case EventType.PackageInstallation:
                 this.handlePackageInstallation(<Event.PackageInstallation>event);
                 break;
-            case Event.LogPlatformInfo.name:
+            case EventType.LogPlatformInfo:
                 this.handlePlatformInfo(<Event.LogPlatformInfo>event);
                 break;
-            case Event.InstallationFailure.name:
+            case EventType.InstallationFailure:
                 this.handleInstallationFailure(<Event.InstallationFailure>event);
                 break;
-            case Event.InstallationSuccess.name:
+            case EventType.InstallationSuccess:
                 this.logger.appendLine('Finished');
                 this.logger.appendLine();
                 break;
-            case Event.InstallationStart.name:
+            case EventType.InstallationStart:
                 this.handleInstallationStart(<Event.InstallationStart>event);
                 break;
-            case Event.DownloadStart.name:
+            case EventType.DownloadStart:
                 this.handleDownloadStart(<Event.DownloadStart>event);
                 break;
-            case Event.DownloadProgress.name:
+            case EventType.DownloadProgress:
                 this.handleDownloadProgress(<Event.DownloadProgress>event);
                 break;
-            case Event.DownloadSuccess.name:
-            case Event.DownloadFailure.name:
-            case Event.DebuggerPrerequisiteFailure.name:
-            case Event.DebuggerPrerequisiteWarning.name:
+            case EventType.DownloadSuccess:
+            case EventType.DownloadFailure:
+            case EventType.DebuggerPrerequisiteFailure:
+            case EventType.DebuggerPrerequisiteWarning:
                 this.handleEventWithMessage(<Event.EventWithMessage>event);
                 break;
-            case Event.ProjectJsonDeprecatedWarning.name:
+            case EventType.ProjectJsonDeprecatedWarning:
                 this.logger.appendLine("Warning: project.json is no longer a supported project format for .NET Core applications. Update to the latest version of .NET Core (https://aka.ms/netcoredownload) and use 'dotnet migrate' to upgrade your project (see https://aka.ms/netcoremigrate for details).");
                 break;
-            case Event.DownloadFallBack.name:
+            case EventType.DownloadFallBack:
                 this.handleDownloadFallback(<Event.DownloadFallBack>event);
                 break;
-            case Event.DownloadSizeObtained.name:
+            case EventType.DownloadSizeObtained:
                 this.handleDownloadSizeObtained(<Event.DownloadSizeObtained>event);
                 break;
-            case Event.DocumentSynchronizationFailure.name:
+            case EventType.DocumentSynchronizationFailure:
                 this.handleDocumentSynchronizationFailure(<Event.DocumentSynchronizationFailure>event);
                 break;
-            case Event.LatestBuildDownloadStart.name:
+            case EventType.LatestBuildDownloadStart:
                 this.logger.appendLine("Getting latest OmniSharp version information");
                 break;
-            case Event.IntegrityCheckFailure.name:
+            case EventType.IntegrityCheckFailure:
                 this.handleIntegrityCheckFailure(<Event.IntegrityCheckFailure>event);
                 break;
-            case Event.DownloadValidation.name:
+            case EventType.DownloadValidation:
                 this.handleDownloadValidation(<Event.DownloadValidation>event);
                 break;
-            case Event.IntegrityCheckSuccess.name:
+            case EventType.IntegrityCheckSuccess:
                 this.handleIntegrityCheckSuccess(<Event.IntegrityCheckSuccess>event);
                 break;
         }
@@ -83,7 +84,7 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
             this.logger.appendLine(`Package ${event.packageDescription} failed integrity check. Retrying..`);
         }
         else {
-            this.logger.appendLine(`Package ${event.packageDescription} download from ${event.url} failed integrity check. Some features may not work as expected. Please restart Visual Studio Code to retrigger the download.`); 
+            this.logger.appendLine(`Package ${event.packageDescription} download from ${event.url} failed integrity check. Some features may not work as expected. Please restart Visual Studio Code to retrigger the download.`);
         }
     }
 
@@ -141,7 +142,7 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
         this.logger.appendLine(`Installing package '${event.packageDescription}'`);
         this.logger.appendLine();
     }
-    
+
     private handleDocumentSynchronizationFailure(event: Event.DocumentSynchronizationFailure) {
         this.logger.appendLine(`Failed to synchronize document '${event.documentPath}': ${event.errorMessage}`);
     }
