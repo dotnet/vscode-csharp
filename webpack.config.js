@@ -8,8 +8,6 @@
 'use strict';
 
 const path = require('path');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-
 /**@type {import('webpack').Configuration}*/
 const config = {
     target: 'node', // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
@@ -27,9 +25,6 @@ const config = {
     resolve: { // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
         extensions: ['.ts', '.js']
     },
-    // plugins: [
-    //     new BundleAnalyzerPlugin()
-    // ],
     module: {
         rules: [{
             test: /\.ts$/,
