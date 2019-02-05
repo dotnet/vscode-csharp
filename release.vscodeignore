@@ -1,4 +1,5 @@
 .debugger/**
+.razor/**
 .logs/**
 .nyc_output/**
 .omnisharp/**
@@ -7,12 +8,13 @@
 .vscode/**
 .vscode-test/**
 coverage/**
-out/*
+out/**
 src/**
 tasks/**
 test/**
 typings/**
 vsix/**
+node_modules/**
 
 **/*.map
 *.vsix
