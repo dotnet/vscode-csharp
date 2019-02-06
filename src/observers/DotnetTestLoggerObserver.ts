@@ -3,39 +3,40 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseEvent, DotNetTestRunStart, DotNetTestMessage, ReportDotNetTestResults, DotNetTestDebugStart, DotNetTestDebugWarning, DotNetTestDebugProcessStart, DotNetTestDebugComplete, DotNetTestsInClassDebugStart, DotNetTestsInClassRunStart } from "../omnisharp/loggingEvents";
+import { BaseEvent, DotNetTestRunStart, DotNetTestMessage, ReportDotNetTestResults, DotNetTestDebugStart, DotNetTestDebugWarning, DotNetTestDebugProcessStart, DotNetTestsInClassDebugStart, DotNetTestsInClassRunStart } from "../omnisharp/loggingEvents";
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import * as protocol from '../omnisharp/protocol';
+import { EventType } from "../omnisharp/EventType";
 
 export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
 
     public post = (event: BaseEvent) => {
-        switch (event.constructor.name) {
-            case DotNetTestRunStart.name:
+        switch (event.type) {
+            case EventType.DotNetTestRunStart:
                 this.handleDotnetTestRunStart(<DotNetTestRunStart>event);
                 break;
-            case DotNetTestMessage.name:
+            case EventType.DotNetTestMessage:
                 this.logger.appendLine((<DotNetTestMessage>event).message);
                 break;
-            case ReportDotNetTestResults.name:
+            case EventType.ReportDotNetTestResults:
                 this.handleReportDotnetTestResults(<ReportDotNetTestResults>event);
                 break;
-            case DotNetTestDebugStart.name:
+            case EventType.DotNetTestDebugStart:
                 this.handleDotnetTestDebugStart(<DotNetTestDebugStart>event);
                 break;
-            case DotNetTestDebugWarning.name:
+            case EventType.DotNetTestDebugWarning:
                 this.handleDotNetTestDebugWarning(<DotNetTestDebugWarning>event);
                 break;
-            case DotNetTestDebugProcessStart.name:
+            case EventType.DotNetTestDebugProcessStart:
                 this.handleDotNetTestDebugProcessStart(<DotNetTestDebugProcessStart>event);
                 break;
-            case DotNetTestDebugComplete.name:
+            case EventType.DotNetTestDebugComplete:
                 this.logger.appendLine("Debugging complete.\n");
                 break;
-            case DotNetTestsInClassDebugStart.name:
+            case EventType.DotNetTestsInClassDebugStart:
                 this.handleDotnetTestsInClassDebugStart(<DotNetTestsInClassDebugStart>event);
                 break;
-            case DotNetTestsInClassRunStart.name:
+            case EventType.DotNetTestsInClassRunStart:
                 this.handleDotnetTestsInClassRunStart(<DotNetTestsInClassRunStart>event);
                 break;
         }

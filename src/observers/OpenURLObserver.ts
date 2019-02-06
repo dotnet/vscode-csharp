@@ -5,6 +5,7 @@
 
 import { vscode } from "../vscodeAdapter";
 import { BaseEvent, OpenURL } from "../omnisharp/loggingEvents";
+import { EventType } from "../omnisharp/EventType";
 
 export class OpenURLObserver {
 
@@ -12,8 +13,8 @@ export class OpenURLObserver {
     }
 
     public post = (event: BaseEvent) => {
-        switch (event.constructor.name) {
-            case OpenURL.name:
+        switch (event.type) {
+            case EventType.OpenURL:
                 let url = (<OpenURL>event).url;
                 this.vscode.commands.executeCommand("vscode.open", this.vscode.Uri.parse(url));
                 break;

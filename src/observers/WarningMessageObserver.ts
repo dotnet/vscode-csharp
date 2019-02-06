@@ -5,10 +5,11 @@
 
 import {debounceTime} from 'rxjs/operators';
 import { vscode } from '../vscodeAdapter';
-import { BaseEvent, OmnisharpServerOnError, OmnisharpServerMsBuildProjectDiagnostics } from "../omnisharp/loggingEvents";
+import { BaseEvent, OmnisharpServerMsBuildProjectDiagnostics } from "../omnisharp/loggingEvents";
 import { Scheduler ,  Subject } from 'rxjs';
 
 import showWarningMessage from './utils/ShowWarningMessage';
+import { EventType } from '../omnisharp/EventType';
 
 export class WarningMessageObserver {
     private warningMessageDebouncer: Subject<BaseEvent>;
@@ -22,11 +23,11 @@ export class WarningMessageObserver {
     }
 
     public post = (event: BaseEvent) => {
-        switch (event.constructor.name) {
-            case OmnisharpServerOnError.name:
+        switch (event.type) {
+            case EventType.OmnisharpServerOnError:
                 this.warningMessageDebouncer.next(event);
                 break;
-            case OmnisharpServerMsBuildProjectDiagnostics.name:
+            case EventType.OmnisharpServerMsBuildProjectDiagnostics:
                 this.handleOmnisharpServerMsBuildProjectDiagnostics(<OmnisharpServerMsBuildProjectDiagnostics>event);
                 break;
         }

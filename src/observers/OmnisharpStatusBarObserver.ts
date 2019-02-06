@@ -3,8 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { OmnisharpServerOnServerError, BaseEvent, OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpServerOnStop, OmnisharpServerOnStart, DownloadStart, InstallationStart, DownloadProgress, OmnisharpServerOnStdErr } from "../omnisharp/loggingEvents";
+import { BaseEvent, DownloadStart, InstallationStart, DownloadProgress, OmnisharpServerOnStdErr } from "../omnisharp/loggingEvents";
 import { BaseStatusBarItemObserver } from './BaseStatusBarItemObserver';
+import { EventType } from "../omnisharp/EventType";
 
 export enum StatusBarColors{
     Red = 'rgb(218,0,0)',
@@ -14,33 +15,33 @@ export enum StatusBarColors{
 
 export class OmnisharpStatusBarObserver extends BaseStatusBarItemObserver {
     public post = (event: BaseEvent) => {
-        switch (event.constructor.name) {
-            case OmnisharpServerOnServerError.name:
+        switch (event.type) {
+            case EventType.OmnisharpServerOnServerError:
                 this.SetAndShowStatusBar('$(flame)', 'o.showOutput', StatusBarColors.Red, 'Error starting OmniSharp');
                 break;
-            case OmnisharpServerOnStdErr.name:
+            case EventType.OmnisharpServerOnStdErr:
                 let msg = (<OmnisharpServerOnStdErr>event).message;
                 this.SetAndShowStatusBar('$(flame)', 'o.showOutput', StatusBarColors.Red, `OmniSharp process errored:${msg}`);
                 break;
-            case OmnisharpOnBeforeServerInstall.name:
+            case EventType.OmnisharpOnBeforeServerInstall:
                 this.SetAndShowStatusBar('$(flame) Installing OmniSharp...', 'o.showOutput');
                 break;
-            case OmnisharpOnBeforeServerStart.name:
+            case EventType.OmnisharpOnBeforeServerStart:
                 this.SetAndShowStatusBar('$(flame)', 'o.showOutput', StatusBarColors.Yellow, 'Starting OmniSharp server');
                 break;
-            case OmnisharpServerOnStop.name:
+            case EventType.OmnisharpServerOnStop:
                 this.ResetAndHideStatusBar();
                 break;
-            case OmnisharpServerOnStart.name:
+            case EventType.OmnisharpServerOnStart:
                 this.SetAndShowStatusBar('$(flame)', 'o.showOutput', StatusBarColors.Green, 'OmniSharp server is running');
                 break;
-            case DownloadStart.name:
+            case EventType.DownloadStart:
                 this.SetAndShowStatusBar("$(cloud-download) Downloading packages", '', '', `Downloading package '${(<DownloadStart>event).packageDescription}...' `);
                 break;
-            case InstallationStart.name:
+            case EventType.InstallationStart:
                 this.SetAndShowStatusBar("$(desktop-download) Installing packages...", '', '', `Installing package '${(<InstallationStart>event).packageDescription}'`);
                 break;
-            case DownloadProgress.name:
+            case EventType.DownloadProgress:
                 let progressEvent = <DownloadProgress>event;
                 this.SetAndShowStatusBar("$(cloud-download) Downloading packages", '', '', `Downloading package '${progressEvent.packageDescription}'... ${progressEvent.downloadPercentage}%`);
                 break;

@@ -4,20 +4,21 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { basename } from 'path';
-import { BaseEvent, OmnisharpOnMultipleLaunchTargets, WorkspaceInformationUpdated, OmnisharpServerOnStop } from "../omnisharp/loggingEvents";
+import { BaseEvent, WorkspaceInformationUpdated } from "../omnisharp/loggingEvents";
 import { BaseStatusBarItemObserver } from './BaseStatusBarItemObserver';
+import { EventType } from '../omnisharp/EventType';
 
 export class ProjectStatusBarObserver extends BaseStatusBarItemObserver {
 
     public post = (event: BaseEvent) => {
-        switch (event.constructor.name) {
-            case OmnisharpOnMultipleLaunchTargets.name:
+        switch (event.type) {
+            case EventType.OmnisharpOnMultipleLaunchTargets:
                 this.SetAndShowStatusBar('$(file-submodule) Select project', 'o.pickProjectAndStart', 'rgb(90, 218, 90)');
                 break;
-            case OmnisharpServerOnStop.name:
+            case EventType.OmnisharpServerOnStop:
                 this.ResetAndHideStatusBar();
                 break;
-            case WorkspaceInformationUpdated.name:
+            case EventType.WorkspaceInformationUpdated:
                 this.handleWorkspaceInformationUpdated(<WorkspaceInformationUpdated>event);
         }
     }

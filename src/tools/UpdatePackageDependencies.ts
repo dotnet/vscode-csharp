@@ -11,6 +11,7 @@ import { EventStream } from '../EventStream';
 import * as Event from "../omnisharp/loggingEvents";
 import NetworkSettings, { NetworkSettingsProvider } from '../NetworkSettings';
 import { getBufferIntegrityHash } from '../packageManager/isValidDownload';
+import { EventType } from '../omnisharp/EventType';
 const findVersions = require('find-versions');
 
 interface PackageJSONFile {
@@ -89,8 +90,8 @@ export async function updatePackageDependencies(): Promise<void> {
     // Next take another pass to try and update to the URL  
     const eventStream = new EventStream();
     eventStream.subscribe((event: Event.BaseEvent) => {
-        switch (event.constructor.name) {
-            case Event.DownloadFailure.name:
+        switch (event.type) {
+            case EventType.DownloadFailure:
                 console.log("Failed to download: " + (<Event.DownloadFailure>event).message);
                 break;
         }

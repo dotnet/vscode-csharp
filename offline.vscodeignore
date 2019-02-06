@@ -2,17 +2,19 @@
 .logs/**
 .nyc_output/**
 !.omnisharp/**
+!.razor/**
 .rpt2_cache/**
 .travis/**
 .vscode/**
 .vscode-test/**
 coverage/**
-out/test/**
+out/**
 src/**
 tasks/**
 test/**
 typings/**
 vsix/**
+node_modules
 
 **/*.map
 *.vsix

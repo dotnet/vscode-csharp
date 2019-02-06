@@ -29,7 +29,7 @@ export const unpackedVsixPath = path.join(rootPath, "vsix");
 export const unpackedExtensionPath = path.join(unpackedVsixPath, "extension");
 
 export const codeExtensionPath = commandLineOptions.codeExtensionPath || rootPath;
-export const codeExtensionSourcesPath = path.join(codeExtensionPath, "out");
+export const codeExtensionSourcesPath = path.join(codeExtensionPath, "dist");
 
 export const testRootPath = path.join(rootPath, "out", "test");
 export const testAssetsRootPath = path.join(rootPath, "test", "integrationTests", "testAssets");
