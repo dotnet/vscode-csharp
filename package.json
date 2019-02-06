@@ -30,7 +30,8 @@
   "main": "./dist/extension",
   "scripts": {
     "vscode:prepublish": "tsc -p ./ && webpack --mode production",
-    "compile": "tsc -p ./ && gulp tslint && webpack --mode development",
+    "compile": "tsc -p ./ && gulp tslint",
+    "compileDev": "tsc -p ./ && gulp tslint && webpack --mode development",
     "watch": "tsc -watch -p ./",
     "tdd": "mocha --opts ./mocha.opts --watch --watch-extensions ts test/unitTests/**/*.test.ts*",
     "test": "gulp test",

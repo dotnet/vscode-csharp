@@ -14,7 +14,7 @@
             "outFiles": [
                 "${workspaceRoot}/dist/*.js"
             ],
-            "preLaunchTask": "build"
+            "preLaunchTask": "buildDev"
         },
         {
             "type": "node",
@@ -80,9 +80,9 @@
             "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceRoot}/out/test/**/*.js"
+                "${workspaceRoot}/dist/*.js"
             ],
-            "preLaunchTask": "build"
+            "preLaunchTask": "buildDev"
         },
         {
             "name": "Launch slnWithCsproj Workspace Tests",
@@ -105,9 +105,9 @@
             "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceRoot}/out/test/**/*.js"
+                "${workspaceRoot}/dist/*.js"
             ],
-            "preLaunchTask": "build"
+            "preLaunchTask": "buildDev"
         },
         {
             "type": "node",

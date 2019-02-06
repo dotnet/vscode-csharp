@@ -21,6 +21,19 @@
 			}
 		},
 		{
+			"label": "buildDev",
+			"command": "npm",
+			"type": "shell",
+			"args": [
+				"run",
+				"compileDev"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
 			"label": "test",
 			"command": "echo",
 			"group": {
