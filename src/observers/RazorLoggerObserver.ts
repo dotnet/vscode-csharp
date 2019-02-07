@@ -4,18 +4,19 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
-import { RazorPluginPathSpecified, BaseEvent, RazorPluginPathDoesNotExist, RazorDevModeActive } from "../omnisharp/loggingEvents";
+import { RazorPluginPathSpecified, BaseEvent, RazorPluginPathDoesNotExist } from "../omnisharp/loggingEvents";
+import { EventType } from "../omnisharp/EventType";
 
 export class RazorLoggerObserver extends BaseLoggerObserver {
     public post = (event: BaseEvent) => {
-        switch (event.constructor.name) {
-            case RazorPluginPathSpecified.name:
+        switch (event.type) {
+            case EventType.RazorPluginPathSpecified:
                 this.handleRazorPluginPathSpecifiedMessage(<RazorPluginPathSpecified>event);
                 break;
-            case RazorPluginPathDoesNotExist.name:
+            case EventType.RazorPluginPathDoesNotExist:
                 this.handleRazorPluginPathDoesNotExistMessage(<RazorPluginPathDoesNotExist>event);
                 break;
-            case RazorDevModeActive.name:
+            case EventType.RazorDevModeActive:
                 this.handleRazorDevMode();
                 break;
         }

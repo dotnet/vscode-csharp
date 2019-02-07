@@ -12,8 +12,9 @@
             "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceRoot}/out/src/**/*.js"
-            ]
+                "${workspaceRoot}/dist/*.js"
+            ],
+            "preLaunchTask": "buildDev"
         },
         {
             "type": "node",
@@ -32,7 +33,8 @@
             "internalConsoleOptions": "openOnSessionStart",
             "outFiles": [
                 "${workspaceRoot}/out/test/**/*.js"
-            ]
+            ],
+            "preLaunchTask": "build"
         },
         {
             "name": "Launch Feature Tests",
@@ -40,6 +42,7 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
+                "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/featureTests"
             ],
@@ -53,7 +56,8 @@
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceRoot}/out/test/**/*.js"
-            ]
+            ],
+            "preLaunchTask": "build"
         },
         {
             "name": "Launch singleCsproj Workspace Tests",
@@ -61,6 +65,7 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
+                "--disable-extensions",
                 "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
@@ -75,8 +80,9 @@
             "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceRoot}/out/test/**/*.js"
-            ]
+                "${workspaceRoot}/dist/*.js"
+            ],
+            "preLaunchTask": "buildDev"
         },
         {
             "name": "Launch slnWithCsproj Workspace Tests",
@@ -84,6 +90,7 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
+                "--disable-extensions",
                 "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
@@ -98,8 +105,9 @@
             "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceRoot}/out/test/**/*.js"
-            ]
+                "${workspaceRoot}/dist/*.js"
+            ],
+            "preLaunchTask": "buildDev"
         },
         {
             "type": "node",

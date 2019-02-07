@@ -1,7 +1,7 @@
 language: node_js
 
 node_js:
-- "10"
+- "8"
 
 env:
 - CODE_VERSION=1.28.0
@@ -32,9 +32,9 @@ install:
 
 script:
   - gulp 'vsix:release:unpackage'
-  - gulp cov:instrument --codeExtensionPath ./vsix/extension
-  - gulp test --codeExtensionPath ./vsix/extension
-  - gulp cov:report --codeExtensionPath ./vsix/extension
+  - gulp cov:instrument
+  - gulp test
+  - gulp cov:report
   - npm run test:artifacts
   - 'if [[ "$TRAVIS_BRANCH" != "master" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then npm run test:release; fi'
 
