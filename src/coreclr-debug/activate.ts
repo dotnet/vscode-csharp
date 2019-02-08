@@ -90,7 +90,6 @@ function showDotnetToolsWarning(message: string): void {
         vscode.window.showErrorMessage(message,
             goToSettingsMessage, getDotNetMessage).then(value => {
                 if (value === getDotNetMessage) {
-                    let open = require('open');
                     let dotnetcoreURL = 'https://www.microsoft.com/net/core';
 
                     // Windows redirects https://www.microsoft.com/net/core to https://www.microsoft.com/net/core#windowsvs2015
@@ -98,7 +97,7 @@ function showDotnetToolsWarning(message: string): void {
                         dotnetcoreURL = dotnetcoreURL + '#windowscmd';
                     }
 
-                    open(dotnetcoreURL);
+                    vscode.env.openExternal(vscode.Uri.parse(dotnetcoreURL));
                 } else if (value === goToSettingsMessage) {
                     vscode.commands.executeCommand('workbench.action.openGlobalSettings');
                 }
