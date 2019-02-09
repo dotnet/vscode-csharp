@@ -67,6 +67,7 @@ function cleanSync(deleteVsix: boolean) {
     del.sync('install.*');
     del.sync('.omnisharp*');
     del.sync('.debugger');
+    del.sync('.razor');
 
     if (deleteVsix) {
         del.sync('*.vsix');
