@@ -801,7 +801,7 @@
       },
       {
         "command": "csharp.reportIssue",
-        "title": "Start authoring a new issue on GitHub",
+        "title": "Report an issue",
         "category": "CSharp"
       },
       {

@@ -418,6 +418,21 @@ export interface Uri {
     toJSON(): any;
 }
 
+export interface Clipboard {
+
+    /**
+     * Read the current clipboard contents as text.
+     * @returns A thenable that resolves to a string.
+     */
+    readText(): Thenable<string>;
+
+    /**
+     * Writes text into the clipboard.
+     * @returns A thenable that resolves when writing happened.
+     */
+    writeText(value: string): Thenable<void>;
+}
+
 export interface MessageItem {
 
     /**
@@ -902,7 +917,7 @@ interface Thenable<T> {
     then<TResult>(onfulfilled?: (value: T) => TResult | Thenable<TResult>, onrejected?: (reason: any) => void): Thenable<TResult>;
 }
 
-export interface Extension<T>{
+export interface Extension<T> {
     readonly id: string;
     readonly packageJSON: any;
 }
@@ -935,4 +950,14 @@ export interface vscode {
     };
 
     version: string;
+
+    env: {
+        appName: string;
+        appRoot: string;
+        language: string;
+        clipboard: Clipboard;
+        machineId: string;
+        sessionId: string;
+        openExternal(target: Uri): Thenable<boolean>;
+    };
 }
