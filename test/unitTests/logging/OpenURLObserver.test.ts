@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { OpenURLObserver } from "../../../src/observers/OpenURLObserver";
-import { vscode } from "../../../src/vscodeAdapter";
+import { vscode, Uri } from "../../../src/vscodeAdapter";
 import { getFakeVsCode } from "../testAssets/Fakes";
 import { OpenURL } from "../../../src/omnisharp/loggingEvents";
 import { expect } from "chai";
@@ -12,34 +12,31 @@ import { expect } from "chai";
 suite(`${OpenURLObserver.name}`, () => {
     let observer: OpenURLObserver;
     let vscode: vscode;
-    let commands: Array<string>;
     let valueToBeParsed: string;
     const url = "someUrl";
+    let openExternalCalled: boolean;
 
     setup(() => {
         vscode = getFakeVsCode();
-        commands = [];
+        openExternalCalled = false;
         valueToBeParsed = undefined;
-        vscode.commands.executeCommand = (command: string, ...rest: any[]) => {
-            commands.push(command);
+        vscode.env.openExternal = (target: Uri) => {
+            openExternalCalled = true;
             return undefined;
         };
+
         vscode.Uri.parse = (value: string) => {
             valueToBeParsed = value;
             return undefined;
         };
+
         observer = new OpenURLObserver(vscode);
     });
 
-    test("Execute command is called with the vscode.open command", () => {
-        let event = new OpenURL(url);
-        observer.post(event);
-        expect(commands).to.be.deep.equal(["vscode.open"]);
-    });
-
-    test("url is passed to the rest parameter in executeCommand via vscode.uri.parse ", () => {
+    test("openExternal function is called and the url is passed through the vscode.Uri.parse function", () => {
         let event = new OpenURL(url);
         observer.post(event);
         expect(valueToBeParsed).to.be.equal(url);
+        expect(openExternalCalled).to.be.true;
     });
 });

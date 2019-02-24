@@ -5,30 +5,31 @@
 
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import * as os from 'os';
-import { BaseEvent, OmnisharpRequestMessage, OmnisharpServerEnqueueRequest, OmnisharpServerDequeueRequest, OmnisharpServerProcessRequestComplete, OmnisharpServerVerboseMessage, OmnisharpServerProcessRequestStart, OmnisharpEventPacketReceived } from "../omnisharp/loggingEvents";
+import { BaseEvent, OmnisharpRequestMessage, OmnisharpServerEnqueueRequest, OmnisharpServerDequeueRequest, OmnisharpServerVerboseMessage, OmnisharpServerProcessRequestStart, OmnisharpEventPacketReceived } from "../omnisharp/loggingEvents";
+import { EventType } from "../omnisharp/EventType";
 
 export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
     public post = (event: BaseEvent) => {
-        switch (event.constructor.name) {
-            case OmnisharpRequestMessage.name:
+        switch (event.type) {
+            case EventType.OmnisharpRequestMessage:
                 this.handleOmnisharpRequestMessage(<OmnisharpRequestMessage>event);
                 break;
-            case OmnisharpServerEnqueueRequest.name:
+            case EventType.OmnisharpServerEnqueueRequest:
                 this.handleOmnisharpServerEnqueueRequest(<OmnisharpServerEnqueueRequest>event);
                 break;
-            case OmnisharpServerDequeueRequest.name:
+            case EventType.OmnisharpServerDequeueRequest:
                 this.handleOmnisharpServerDequeueRequest(<OmnisharpServerDequeueRequest>event);
                 break;
-            case OmnisharpServerProcessRequestStart.name:
+            case EventType.OmnisharpServerProcessRequestStart:
                 this.handleOmnisharpProcessRequestStart(<OmnisharpServerProcessRequestStart>event);
                 break;
-            case OmnisharpServerProcessRequestComplete.name:
+            case EventType.OmnisharpServerProcessRequestComplete:
                 this.logger.decreaseIndent();
                 break;
-            case OmnisharpServerVerboseMessage.name:
+            case EventType.OmnisharpServerVerboseMessage:
                 this.handleOmnisharpServerVerboseMessage(<OmnisharpServerVerboseMessage>event);
                 break;
-            case OmnisharpEventPacketReceived.name:
+            case EventType.OmnisharpEventPacketReceived:
                 this.handleOmnisharpEventPacketReceived(<OmnisharpEventPacketReceived>event);
                 break;
         }

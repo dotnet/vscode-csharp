@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-import { should, expect } from 'chai';
+import { expect } from 'chai';
 import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
@@ -18,7 +18,6 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
     
     suiteSetup(async function () {
-        should();
         await testAssetWorkspace.restore();
         await activateCSharpExtension();
 
