@@ -14,7 +14,6 @@ import { IDisposable } from '../Disposable';
 import { isVirtualCSharpDocument } from './virtualDocumentTracker';
 import { TextDocument } from '../vscodeAdapter';
 import OptionProvider from '../observers/OptionProvider';
-import { DiagnosticSeverity } from '../../.vscode-test/stable/resources/app/out/vs/vscode';
 
 export class Advisor {
 
@@ -322,12 +321,12 @@ class DiagnosticsProvider extends AbstractSupport {
     // --- data converter
 
     private static _asDiagnostic(quickFix: protocol.QuickFix): vscode.Diagnostic {
-        let severity = DiagnosticsProvider._asDiagnosticSeverity(quickFix.LogLevel);
-        let message = `${quickFix.Text} [${quickFix.Projects.map(n => DiagnosticsProvider._asProjectLabel(n)).join(', ')}]`;
-
         let isFadeout = (quickFix.Tags && !!quickFix.Tags.find(x => x.toLowerCase() == 'unnecessary')) || quickFix.Id == "CS0162" || quickFix.Id == "CS8019";
 
-        let diagnostic = new vscode.Diagnostic(toRange(quickFix), message, isFadeout ? DiagnosticSeverity.Hint : severity);
+        let severity = DiagnosticsProvider._asDiagnosticSeverity(quickFix, isFadeout);
+        let message = `${quickFix.Text} [${quickFix.Projects.map(n => DiagnosticsProvider._asProjectLabel(n)).join(', ')}]`;
+
+        let diagnostic = new vscode.Diagnostic(toRange(quickFix), message, severity);
 
         if(isFadeout)
         {
@@ -337,8 +336,16 @@ class DiagnosticsProvider extends AbstractSupport {
         return diagnostic;
     }
 
-    private static _asDiagnosticSeverity(logLevel: string): vscode.DiagnosticSeverity {
-        switch (logLevel.toLowerCase()) {
+    private static _asDiagnosticSeverity(quickFix: protocol.QuickFix, fadeOut: boolean): vscode.DiagnosticSeverity {
+        if(fadeOut && quickFix.LogLevel.toLowerCase() != 'error')
+        {
+            // This is based on user experience, we don't like to see
+            // both squigles and fadeout same time. Except on errors:
+            // because they fail to compile.
+            return vscode.DiagnosticSeverity.Hint;
+        }
+
+        switch (quickFix.LogLevel.toLowerCase()) {
             case 'error':
                 return vscode.DiagnosticSeverity.Error;
             case 'warning':
