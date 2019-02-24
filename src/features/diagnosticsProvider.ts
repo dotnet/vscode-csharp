@@ -249,7 +249,7 @@ class DiagnosticsProvider extends AbstractSupport {
                 // (re)set new diagnostics for this document
                 let diagnostics = quickFixes
                     .map(DiagnosticsProvider._asDiagnostic)
-                    .filter(diag => diag != undefined);
+                   .filter(diag => diag !== undefined);
 
                 this._diagnostics.set(document.uri, diagnostics);
             }
@@ -287,7 +287,7 @@ class DiagnosticsProvider extends AbstractSupport {
 
                     let diag = DiagnosticsProvider._asDiagnostic(quickFix);
 
-                    if(!diag)
+                    if(diag === undefined)
                     {
                         continue;
                     }
@@ -334,7 +334,7 @@ class DiagnosticsProvider extends AbstractSupport {
 
         let severity = DiagnosticsProvider._asDiagnosticSeverity(quickFix, isFadeout);
 
-        if(!severity)
+        if(severity === undefined)
         {
             return undefined;
         }
@@ -352,7 +352,7 @@ class DiagnosticsProvider extends AbstractSupport {
     }
 
     private static _asDiagnosticSeverity(quickFix: protocol.QuickFix, fadeOut: boolean): vscode.DiagnosticSeverity | undefined {
-        if(fadeOut && quickFix.LogLevel.toLowerCase() == 'hidden')
+        if(fadeOut && quickFix.LogLevel.toLowerCase() === 'hidden')
         {
             // Theres no such thing as hidden severity in VSCode,
             // however roslyn uses commonly analyzer with hidden to fade out things.
