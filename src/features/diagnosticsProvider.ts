@@ -352,13 +352,11 @@ class DiagnosticsProvider extends AbstractSupport {
     }
 
     private static _asDiagnosticSeverity(quickFix: protocol.QuickFix, fadeOut: boolean): vscode.DiagnosticSeverity | undefined {
-        if(fadeOut && quickFix.LogLevel.toLowerCase() != 'error')
+        if(fadeOut && quickFix.LogLevel.toLowerCase() == 'hidden')
         {
-            // This is based on user experience, we don't like to see
-            // both squigles and fadeout same time. Except on errors:
-            // because they fail to compile.
-            // And theres no such option as 'hidden' with fadeout on vscode,
-            // for this reason for fadeout hint is required.
+            // Theres no such thing as hidden severity in VSCode,
+            // however roslyn uses commonly analyzer with hidden to fade out things.
+            // Without this any of those doesn't fade anything in vscode.
             return vscode.DiagnosticSeverity.Hint;
         }
 
