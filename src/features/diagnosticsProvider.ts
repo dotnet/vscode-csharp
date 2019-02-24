@@ -14,6 +14,7 @@ import { IDisposable } from '../Disposable';
 import { isVirtualCSharpDocument } from './virtualDocumentTracker';
 import { TextDocument } from '../vscodeAdapter';
 import OptionProvider from '../observers/OptionProvider';
+import { DiagnosticSeverity } from '../../.vscode-test/stable/resources/app/out/vs/vscode';
 
 export class Advisor {
 
@@ -236,7 +237,7 @@ class DiagnosticsProvider extends AbstractSupport {
         let handle = setTimeout(async () => {
             try {
                 let value = await serverUtils.codeCheck(this._server, { FileName: document.fileName }, source.token);
-                let quickFixes = value.QuickFixes.filter(DiagnosticsProvider._shouldInclude);
+                let quickFixes = value.QuickFixes;
                 // Easy case: If there are no diagnostics in the file, we can clear it quickly.
                 if (quickFixes.length === 0) {
                     if (this._diagnostics.has(document.uri)) {
@@ -275,7 +276,6 @@ class DiagnosticsProvider extends AbstractSupport {
                 let value = await serverUtils.codeCheck(this._server, { FileName: null }, this._projectValidation.token);
 
                 let quickFixes = value.QuickFixes
-                    .filter(DiagnosticsProvider._shouldInclude)
                     .sort((a, b) => a.FileName.localeCompare(b.FileName));
 
                 let entries: [vscode.Uri, vscode.Diagnostic[]][] = [];
@@ -319,21 +319,22 @@ class DiagnosticsProvider extends AbstractSupport {
         });
     }
 
-    private static _shouldInclude(quickFix: protocol.QuickFix): boolean {
-        const config = vscode.workspace.getConfiguration('csharp');
-        if (config.get('suppressHiddenDiagnostics', true)) {
-            return quickFix.LogLevel.toLowerCase() !== 'hidden';
-        } else {
-            return true;
-        }
-    }
-
     // --- data converter
 
     private static _asDiagnostic(quickFix: protocol.QuickFix): vscode.Diagnostic {
         let severity = DiagnosticsProvider._asDiagnosticSeverity(quickFix.LogLevel);
         let message = `${quickFix.Text} [${quickFix.Projects.map(n => DiagnosticsProvider._asProjectLabel(n)).join(', ')}]`;
-        return new vscode.Diagnostic(toRange(quickFix), message, severity);
+
+        let isFadeout = (quickFix.Tags && !!quickFix.Tags.find(x => x.toLowerCase() == 'unnecessary')) || quickFix.Id == "CS0162" || quickFix.Id == "CS8019";
+
+        let diagnostic = new vscode.Diagnostic(toRange(quickFix), message, isFadeout ? DiagnosticSeverity.Hint : severity);
+
+        if(isFadeout)
+        {
+            diagnostic.tags = [vscode.DiagnosticTag.Unnecessary];
+        }
+
+        return diagnostic;
     }
 
     private static _asDiagnosticSeverity(logLevel: string): vscode.DiagnosticSeverity {
@@ -342,9 +343,10 @@ class DiagnosticsProvider extends AbstractSupport {
                 return vscode.DiagnosticSeverity.Error;
             case 'warning':
                 return vscode.DiagnosticSeverity.Warning;
-            // info and hidden
-            default:
+            case 'info':
                 return vscode.DiagnosticSeverity.Information;
+            default:
+                return vscode.DiagnosticSeverity.Hint;
         }
     }
 

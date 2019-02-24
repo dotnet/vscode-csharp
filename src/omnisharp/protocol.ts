@@ -201,6 +201,8 @@ export interface QuickFix {
     EndColumn: number;
     Text: string;
     Projects: string[];
+    Tags: string[];
+    Id: string;
 }
 
 export interface SymbolLocation extends QuickFix {
