@@ -247,7 +247,10 @@ class DiagnosticsProvider extends AbstractSupport {
                 }
 
                 // (re)set new diagnostics for this document
-                let diagnostics = quickFixes.map(DiagnosticsProvider._asDiagnostic);
+                let diagnostics = quickFixes
+                    .map(DiagnosticsProvider._asDiagnostic)
+                    .filter(diag => diag != undefined);
+
                 this._diagnostics.set(document.uri, diagnostics);
             }
             catch (error) {
@@ -283,6 +286,12 @@ class DiagnosticsProvider extends AbstractSupport {
                 for (let quickFix of quickFixes) {
 
                     let diag = DiagnosticsProvider._asDiagnostic(quickFix);
+
+                    if(!diag)
+                    {
+                        continue;
+                    }
+
                     let uri = vscode.Uri.file(quickFix.FileName);
 
                     if (lastEntry && lastEntry[0].toString() === uri.toString()) {
@@ -320,10 +329,16 @@ class DiagnosticsProvider extends AbstractSupport {
 
     // --- data converter
 
-    private static _asDiagnostic(quickFix: protocol.QuickFix): vscode.Diagnostic {
+    private static _asDiagnostic(quickFix: protocol.QuickFix): vscode.Diagnostic | undefined {
         let isFadeout = (quickFix.Tags && !!quickFix.Tags.find(x => x.toLowerCase() == 'unnecessary')) || quickFix.Id == "CS0162" || quickFix.Id == "CS8019";
 
         let severity = DiagnosticsProvider._asDiagnosticSeverity(quickFix, isFadeout);
+
+        if(!severity)
+        {
+            return undefined;
+        }
+
         let message = `${quickFix.Text} [${quickFix.Projects.map(n => DiagnosticsProvider._asProjectLabel(n)).join(', ')}]`;
 
         let diagnostic = new vscode.Diagnostic(toRange(quickFix), message, severity);
@@ -336,12 +351,14 @@ class DiagnosticsProvider extends AbstractSupport {
         return diagnostic;
     }
 
-    private static _asDiagnosticSeverity(quickFix: protocol.QuickFix, fadeOut: boolean): vscode.DiagnosticSeverity {
+    private static _asDiagnosticSeverity(quickFix: protocol.QuickFix, fadeOut: boolean): vscode.DiagnosticSeverity | undefined {
         if(fadeOut && quickFix.LogLevel.toLowerCase() != 'error')
         {
             // This is based on user experience, we don't like to see
             // both squigles and fadeout same time. Except on errors:
             // because they fail to compile.
+            // And theres no such option as 'hidden' with fadeout on vscode,
+            // for this reason for fadeout hint is required.
             return vscode.DiagnosticSeverity.Hint;
         }
 
@@ -353,7 +370,7 @@ class DiagnosticsProvider extends AbstractSupport {
             case 'info':
                 return vscode.DiagnosticSeverity.Information;
             default:
-                return vscode.DiagnosticSeverity.Hint;
+                return undefined;
         }
     }
 
