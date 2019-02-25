@@ -247,11 +247,9 @@ class DiagnosticsProvider extends AbstractSupport {
                 }
 
                 // (re)set new diagnostics for this document
-                let diagnostics = quickFixes
-                    .map(DiagnosticsProvider._asDiagnostic)
-                   .filter(diag => diag !== undefined);
+                let diagnostics = this._mapQuickFixesAsDiagnostics(quickFixes);
 
-                this._diagnostics.set(document.uri, diagnostics);
+                this._diagnostics.set(document.uri, diagnostics.map(x => x.diag));
             }
             catch (error) {
                 return;
@@ -260,6 +258,13 @@ class DiagnosticsProvider extends AbstractSupport {
 
         source.token.onCancellationRequested(() => clearTimeout(handle));
         this._documentValidations[key] = source;
+    }
+
+    private _mapQuickFixesAsDiagnostics(quickFixes: protocol.QuickFix[]): { diag: vscode.Diagnostic, fileName: string }[]
+    {
+        return quickFixes
+            .map(qf => ({ diag: this._asDiagnostic(qf), fileName: qf.FileName }))
+            .filter(item => item.diag !== undefined);
     }
 
     private _validateProject(): void {
@@ -283,25 +288,17 @@ class DiagnosticsProvider extends AbstractSupport {
                 let entries: [vscode.Uri, vscode.Diagnostic[]][] = [];
                 let lastEntry: [vscode.Uri, vscode.Diagnostic[]];
 
-                for (let quickFix of quickFixes) {
-
-                    let diag = DiagnosticsProvider._asDiagnostic(quickFix);
-
-                    if(diag === undefined)
-                    {
-                        continue;
-                    }
-
-                    let uri = vscode.Uri.file(quickFix.FileName);
+                for (let quickFix of this._mapQuickFixesAsDiagnostics(quickFixes)) {
+                    let uri = vscode.Uri.file(quickFix.fileName);
 
                     if (lastEntry && lastEntry[0].toString() === uri.toString()) {
-                        lastEntry[1].push(diag);
+                        lastEntry[1].push(quickFix.diag);
                     } else {
                         // We're replacing all diagnostics in this file. Pushing an entry with undefined for
                         // the diagnostics first ensures that the previous diagnostics for this file are
                         // cleared. Otherwise, new entries will be merged with the old ones.
                         entries.push([uri, undefined]);
-                        lastEntry = [uri, [diag]];
+                        lastEntry = [uri, [quickFix.diag]];
                         entries.push(lastEntry);
                     }
                 }
@@ -327,19 +324,17 @@ class DiagnosticsProvider extends AbstractSupport {
         });
     }
 
-    // --- data converter
-
-    private static _asDiagnostic(quickFix: protocol.QuickFix): vscode.Diagnostic | undefined {
+    private _asDiagnostic(quickFix: protocol.QuickFix): vscode.Diagnostic | undefined {
         let isFadeout = (quickFix.Tags && !!quickFix.Tags.find(x => x.toLowerCase() == 'unnecessary')) || quickFix.Id == "CS0162" || quickFix.Id == "CS8019";
 
-        let severity = DiagnosticsProvider._asDiagnosticSeverity(quickFix, isFadeout);
+        let severity = this._asDiagnosticSeverity(quickFix, isFadeout);
 
         if(severity === undefined)
         {
             return undefined;
         }
 
-        let message = `${quickFix.Text} [${quickFix.Projects.map(n => DiagnosticsProvider._asProjectLabel(n)).join(', ')}]`;
+        let message = `${quickFix.Text} [${quickFix.Projects.map(n => this._asProjectLabel(n)).join(', ')}]`;
 
         let diagnostic = new vscode.Diagnostic(toRange(quickFix), message, severity);
 
@@ -351,8 +346,8 @@ class DiagnosticsProvider extends AbstractSupport {
         return diagnostic;
     }
 
-    private static _asDiagnosticSeverity(quickFix: protocol.QuickFix, fadeOut: boolean): vscode.DiagnosticSeverity | undefined {
-        if(fadeOut && quickFix.LogLevel.toLowerCase() === 'hidden')
+    private _asDiagnosticSeverity(quickFix: protocol.QuickFix, fadeOut: boolean): vscode.DiagnosticSeverity | undefined {
+        if(fadeOut && quickFix.LogLevel.toLowerCase() === 'hidden' || quickFix.LogLevel.toLowerCase() === 'none')
         {
             // Theres no such thing as hidden severity in VSCode,
             // however roslyn uses commonly analyzer with hidden to fade out things.
@@ -372,7 +367,7 @@ class DiagnosticsProvider extends AbstractSupport {
         }
     }
 
-    private static _asProjectLabel(projectName: string): string {
+    private _asProjectLabel(projectName: string): string {
         const idx = projectName.indexOf('+');
         return projectName.substr(idx + 1);
     }
