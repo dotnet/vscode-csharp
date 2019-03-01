@@ -98,8 +98,8 @@ export class AssetGenerator {
             });
 
             let selectedItem: string;
-            if (selectedIndex) {
-                console.log("chose first item");
+            if (selectedIndex != null) {
+                console.log("chose specified item");
                 selectedItem = itemNames[selectedIndex];
             }
             else {
