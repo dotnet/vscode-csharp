@@ -99,11 +99,9 @@ export class AssetGenerator {
 
             let selectedItem: string;
             if (selectedIndex != null) {
-                console.log("chose specified item");
                 selectedItem = itemNames[selectedIndex];
             }
             else {
-                console.log("starting quick pick");
                 selectedItem = await vscode.window.showQuickPick(itemNames, {
                     matchOnDescription: true,
                     placeHolder: "Select the project to launch"
@@ -583,7 +581,6 @@ async function shouldGenerateAssets(generator: AssetGenerator): Promise<boolean>
             if (res) {
                 const yesItem = { title: 'Yes' };
                 const cancelItem = { title: 'Cancel', isCloseAffordance: true };
-                console.log("prompting about assets replacement");
                 vscode.window.showWarningMessage('Replace existing build and debug assets?', cancelItem, yesItem)
                     .then(selection => {
                         if (selection === yesItem) {
@@ -605,7 +602,6 @@ async function shouldGenerateAssets(generator: AssetGenerator): Promise<boolean>
 }
 
 export async function generateAssets(server: OmniSharpServer, selectedIndex?: number): Promise<void> {
-    console.log(`Selected INdex: ${selectedIndex}`);
     try {
         let workspaceInformation = await serverUtils.requestWorkspaceInformation(server);
         if (workspaceInformation.MsBuild && workspaceInformation.MsBuild.Projects.length > 0) {
