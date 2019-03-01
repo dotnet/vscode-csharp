@@ -99,9 +99,11 @@ export class AssetGenerator {
 
             let selectedItem: string;
             if (selectedIndex) {
+                console.log("chose first item");
                 selectedItem = itemNames[selectedIndex];
             }
             else {
+                console.log("starting quick pick");
                 selectedItem = await vscode.window.showQuickPick(itemNames, {
                     matchOnDescription: true,
                     placeHolder: "Select the project to launch"
@@ -581,7 +583,7 @@ async function shouldGenerateAssets(generator: AssetGenerator): Promise<boolean>
             if (res) {
                 const yesItem = { title: 'Yes' };
                 const cancelItem = { title: 'Cancel', isCloseAffordance: true };
-
+                console.log("prompting about assets replacement");
                 vscode.window.showWarningMessage('Replace existing build and debug assets?', cancelItem, yesItem)
                     .then(selection => {
                         if (selection === yesItem) {
