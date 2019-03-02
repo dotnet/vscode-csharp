@@ -66,12 +66,12 @@ export class AssetGenerator {
             this.executeableProjects = [];
         }
     }
-    
-    public hasExecutableProjects() : boolean {
+
+    public hasExecutableProjects(): boolean {
         return this.executeableProjects.length > 0;
     }
 
-    public isStartupProjectSelected() : boolean {
+    public isStartupProjectSelected(): boolean {
         if (this.startupProject) {
             return true;
         } else {
@@ -79,11 +79,11 @@ export class AssetGenerator {
         }
     }
 
-    public async selectStartupProject(): Promise<boolean> {
+    public async selectStartupProject(selectedIndex?: number): Promise<boolean> {
         if (!this.hasExecutableProjects()) {
             throw new Error("No executable projects");
         }
-        
+
         if (this.executeableProjects.length === 1) {
             this.startupProject = this.executeableProjects[0];
             return true;
@@ -96,11 +96,17 @@ export class AssetGenerator {
                 itemNames.push(itemName);
                 mapItemNameToProject[itemName] = project;
             });
-            
-            const selectedItem : string = await vscode.window.showQuickPick(itemNames, {
-                matchOnDescription: true,
-                placeHolder: "Select the project to launch"
-            });
+
+            let selectedItem: string;
+            if (selectedIndex != null) {
+                selectedItem = itemNames[selectedIndex];
+            }
+            else {
+                selectedItem = await vscode.window.showQuickPick(itemNames, {
+                    matchOnDescription: true,
+                    placeHolder: "Select the project to launch"
+                });
+            }
             if (!selectedItem || !mapItemNameToProject[selectedItem]) {
                 return false;
             }
@@ -111,7 +117,7 @@ export class AssetGenerator {
     }
 
     // This method is used by the unit tests instead of selectStartupProject
-    public setStartupProject(index : number) : void {
+    public setStartupProject(index: number): void {
         if (index >= this.executeableProjects.length) {
             throw new Error("Invalid project index");
         }
@@ -176,7 +182,7 @@ export class AssetGenerator {
     }
 
     private createBuildTaskDescription(): tasks.TaskDescription {
-        let commandArgs = [ 'build' ];
+        let commandArgs = ['build'];
 
         let buildProject = this.startupProject;
         if (!buildProject) {
@@ -248,7 +254,7 @@ export function createLaunchConfiguration(programPath: string, workingDirectory:
 }
 
 // DebugConfiguration written to launch.json when the extension fails to generate a good configuration
-export function createFallbackLaunchConfiguration() : vscode.DebugConfiguration {
+export function createFallbackLaunchConfiguration(): vscode.DebugConfiguration {
     return {
         "name": ".NET Core Launch (console)",
         "type": "coreclr",
@@ -300,7 +306,7 @@ function hasAddOperations(operations: AssetOperations) {
     return operations.addTasksJson || operations.addLaunchJson;
 }
 
-async function getOperations(generator: AssetGenerator) : Promise<AssetOperations> {
+async function getOperations(generator: AssetGenerator): Promise<AssetOperations> {
     return getBuildOperations(generator).then(async operations =>
         getLaunchOperations(generator, operations));
 }
@@ -339,7 +345,7 @@ function getBuildTasks(tasksConfiguration: tasks.TaskConfiguration): tasks.TaskD
     return result;
 }
 
-export async function getBuildOperations(generator: AssetGenerator) : Promise<AssetOperations> {
+export async function getBuildOperations(generator: AssetGenerator): Promise<AssetOperations> {
     return new Promise<AssetOperations>((resolve, reject) => {
         fs.exists(generator.tasksJsonPath, exists => {
             if (exists) {
@@ -376,7 +382,7 @@ export async function getBuildOperations(generator: AssetGenerator) : Promise<As
     });
 }
 
-async function getLaunchOperations(generator: AssetGenerator, operations: AssetOperations) : Promise<AssetOperations> {
+async function getLaunchOperations(generator: AssetGenerator, operations: AssetOperations): Promise<AssetOperations> {
 
     if (!generator.hasExecutableProjects()) {
         return Promise.resolve(operations);
@@ -569,13 +575,12 @@ async function deleteAssets(generator: AssetGenerator) {
     ]);
 }
 
-async function shouldGenerateAssets(generator: AssetGenerator) : Promise<boolean> {
+async function shouldGenerateAssets(generator: AssetGenerator): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
         doesAnyAssetExist(generator).then(res => {
             if (res) {
                 const yesItem = { title: 'Yes' };
                 const cancelItem = { title: 'Cancel', isCloseAffordance: true };
-
                 vscode.window.showWarningMessage('Replace existing build and debug assets?', cancelItem, yesItem)
                     .then(selection => {
                         if (selection === yesItem) {
@@ -596,9 +601,8 @@ async function shouldGenerateAssets(generator: AssetGenerator) : Promise<boolean
     });
 }
 
-export async function generateAssets(server: OmniSharpServer) : Promise<void> {
-    try
-    {
+export async function generateAssets(server: OmniSharpServer, selectedIndex?: number): Promise<void> {
+    try {
         let workspaceInformation = await serverUtils.requestWorkspaceInformation(server);
         if (workspaceInformation.MsBuild && workspaceInformation.MsBuild.Projects.length > 0) {
             const generator = new AssetGenerator(workspaceInformation);
@@ -607,12 +611,12 @@ export async function generateAssets(server: OmniSharpServer) : Promise<void> {
                 return; // user cancelled
             }
 
-            const operations : AssetOperations = { 
-                addLaunchJson: generator.hasExecutableProjects(), 
-                addTasksJson: true 
+            const operations: AssetOperations = {
+                addLaunchJson: generator.hasExecutableProjects(),
+                addTasksJson: true
             };
             if (operations.addLaunchJson) {
-                if (!await generator.selectStartupProject()) {
+                if (!await generator.selectStartupProject(selectedIndex)) {
                     return; // user cancelled
                 }
             }
