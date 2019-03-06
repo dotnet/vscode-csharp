@@ -5,7 +5,7 @@
 import { should, expect } from 'chai';
 import { TelemetryObserver } from '../../../src/observers/TelemetryObserver';
 import { PlatformInformation } from '../../../src/platform';
-import { PackageInstallation, InstallationFailure, InstallationSuccess, TestExecutionCountReport, TelemetryEventWithMeasures, OmnisharpDelayTrackerEventMeasures, OmnisharpStart, TelemetryEvent } from '../../../src/omnisharp/loggingEvents';
+import { PackageInstallation, InstallationFailure, InstallationSuccess, TestExecutionCountReport, TelemetryEventWithMeasures, OmnisharpDelayTrackerEventMeasures, OmnisharpStart, TelemetryEvent, ProjectConfiguration } from '../../../src/omnisharp/loggingEvents';
 import { getNullTelemetryReporter } from '../testAssets/Fakes';
 import { Package } from '../../../src/packageManager/Package';
 import { PackageError } from '../../../src/packageManager/PackageError';
@@ -47,6 +47,15 @@ suite('TelemetryReporterObserver', () => {
         observer.post(event);
         expect(name).to.be.equal("Acquisition");
         expect(property).to.have.property("installStage", "completeSuccess");
+    });
+
+    test(`${ProjectConfiguration.name}: Telemetry props contains project file path and target framework`, () => {
+        const targetFramework = "targetFramework";
+        const projectFilePath = "projectFilePath";
+        let event = new ProjectConfiguration({ TargetFramework: targetFramework, ProjectFilePath: projectFilePath });
+        observer.post(event);
+        expect(property["TargetFramework"]).to.be.equal(targetFramework);
+        expect(property["ProjectFilePath"]).to.be.equal(projectFilePath);
     });
 
     [

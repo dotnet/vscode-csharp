@@ -69,7 +69,7 @@ module Events {
 
     export const Started = 'started';
 
-    export const ProjectConfigurationReceived = 'ProjectConfigurationReceived';
+    export const ProjectConfiguration = 'ProjectConfiguration';
 }
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
@@ -283,7 +283,7 @@ export class OmniSharpServer {
         }));
 
         disposables.add(this.onProjectConfigurationReceived((message: protocol.ProjectConfigurationMessage) => {
-            this.eventStream.post(new ObservableEvents.ProjectConfigurationReceived(message));
+            this.eventStream.post(new ObservableEvents.ProjectConfiguration(message));
         }));
 
         disposables.add(this.onProjectAdded(this.debounceUpdateProjectWithLeadingTrue));
@@ -368,7 +368,7 @@ export class OmniSharpServer {
     }
     
     private onProjectConfigurationReceived(listener: (e: protocol.ProjectConfigurationMessage) => void){
-        return this._addListener(Events.ProjectConfigurationReceived, listener);
+        return this._addListener(Events.ProjectConfiguration, listener);
     }
 
     private debounceUpdateProjectWithLeadingTrue = () => {
