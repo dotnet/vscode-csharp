@@ -430,6 +430,11 @@ export interface UnresolvedDependenciesMessage {
     UnresolvedDependencies: PackageDependency[];
 }
 
+export interface ProjectConfigurationMessage {
+    ProjectFilePath: string;
+    TargetFramework: string;
+}
+
 export interface PackageDependency {
     Name: string;
     Version: string;
@@ -618,13 +623,11 @@ export namespace V2 {
         Message: string;
     }
 
-    export interface BlockStructureRequest
-    {
+    export interface BlockStructureRequest {
         FileName: string;
     }
 
-    export interface BlockStructureResponse
-    {
+    export interface BlockStructureResponse {
         Spans: CodeFoldingBlock[];
     }
 
@@ -699,8 +702,7 @@ export namespace V2 {
 
         export function walkCodeElements(elements: CodeElement[], action: (element: CodeElement, parentElement?: CodeElement) => void) {
             function walker(elements: CodeElement[], parentElement?: CodeElement) {
-                for (let element of elements)
-                {
+                for (let element of elements) {
                     action(element, parentElement);
 
                     if (element.Children) {

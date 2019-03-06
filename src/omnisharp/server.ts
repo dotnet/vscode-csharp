@@ -68,6 +68,8 @@ module Events {
     export const MultipleLaunchTargets = 'server:MultipleLaunchTargets';
 
     export const Started = 'started';
+
+    export const ProjectConfigurationReceived = 'ProjectConfigurationReceived';
 }
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
@@ -280,6 +282,10 @@ export class OmniSharpServer {
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnStart());
         }));
 
+        disposables.add(this.onProjectConfigurationReceived((message: protocol.ProjectConfigurationMessage) => {
+            this.eventStream.post(new ObservableEvents.ProjectConfigurationReceived(message));
+        }));
+
         disposables.add(this.onProjectAdded(this.debounceUpdateProjectWithLeadingTrue));
         disposables.add(this.onProjectChange(this.debounceUpdateProjectWithLeadingTrue));
         disposables.add(this.onProjectRemoved(this.debounceUpdateProjectWithLeadingTrue));
@@ -359,6 +365,10 @@ export class OmniSharpServer {
             this._fireEvent(Events.ServerError, err);
             return this.stop();
         }
+    }
+    
+    private onProjectConfigurationReceived(listener: (e: protocol.ProjectConfigurationMessage) => void){
+        return this._addListener(Events.ProjectConfigurationReceived, listener);
     }
 
     private debounceUpdateProjectWithLeadingTrue = () => {
