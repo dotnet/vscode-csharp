@@ -52,10 +52,17 @@ suite('TelemetryReporterObserver', () => {
     test(`${ProjectConfiguration.name}: Telemetry props contains project file path and target framework`, () => {
         const targetFramework = "targetFramework";
         const projectFilePath = "projectFilePath";
-        let event = new ProjectConfiguration({ TargetFramework: targetFramework, ProjectFilePath: projectFilePath });
+        const references =new Array("ref1", "ref2");
+        let event = new ProjectConfiguration({
+            TargetFramework: targetFramework,
+            ProjectFilePath: projectFilePath,
+            References: references
+        });
+
         observer.post(event);
         expect(property["TargetFramework"]).to.be.equal(targetFramework);
         expect(property["ProjectFilePath"]).to.be.equal(projectFilePath);
+        expect(property["References"]).to.be.equal("ref1,ref2");
     });
 
     [

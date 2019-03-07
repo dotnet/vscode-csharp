@@ -433,6 +433,7 @@ export interface UnresolvedDependenciesMessage {
 export interface ProjectConfigurationMessage {
     ProjectFilePath: string;
     TargetFramework: string;
+    References: string[];
 }
 
 export interface PackageDependency {
