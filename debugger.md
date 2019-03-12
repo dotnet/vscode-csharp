@@ -41,7 +41,7 @@ You can start from scratch by creating an empty project with `dotnet new`. Begin
 If you want a web project (ASP.NET project) use `dotnet new web`. For web projects, makes sure to run `bower install` before running so that they can restore assets.
 
 ##### 2: Open the directory in VS Code
-Go to `File->Open Folder` and open the directory in Visual Studio Code. If this is the first time that the C# extension has been activated, it will now download additional platform-specific dependencies.
+Go to `File->Open Folder` (`File->Open` on macOS) and open the directory in Visual Studio Code. If this is the first time that the C# extension has been activated, it will now download additional platform-specific dependencies.
 
 ##### 3: Add VS Code configuration files to the workspace
 VS Code needs to be configured so it understands how to build your project and debug it. For this there are two files which need to be added -- `.vscode/tasks.json` and `.vscode/launch.json`. 
