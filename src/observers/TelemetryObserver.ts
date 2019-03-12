@@ -46,7 +46,7 @@ export class TelemetryObserver {
                 break;
             case EventType.ProjectConfigurationReceived:
                 let projectConfig = (<ProjectConfiguration>event).projectConfiguration;
-                telemetryProps['ProjectFilePath'] = projectConfig.ProjectFilePath;
+                telemetryProps['ProjectGuid'] = projectConfig.ProjectGuid;
                 telemetryProps['TargetFrameworks'] = projectConfig.TargetFrameworks.join(";");
                 telemetryProps['References'] = projectConfig.References.join(";");
                 this.reporter.sendTelemetryEvent("ProjectConfiguration", telemetryProps);

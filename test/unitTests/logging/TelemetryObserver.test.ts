@@ -55,13 +55,13 @@ suite('TelemetryReporterObserver', () => {
         const references =new Array("ref1", "ref2");
         let event = new ProjectConfiguration({
             TargetFrameworks: targetFrameworks,
-            ProjectFilePath: projectFilePath,
+            ProjectGuid: projectFilePath,
             References: references
         });
 
         observer.post(event);
         expect(property["TargetFrameworks"]).to.be.equal("tfm1;tfm2");
-        expect(property["ProjectFilePath"]).to.be.equal(projectFilePath);
+        expect(property["ProjectGuid"]).to.be.equal(projectFilePath);
         expect(property["References"]).to.be.equal("ref1;ref2");
     });
 
