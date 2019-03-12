@@ -49,6 +49,7 @@ export class TelemetryObserver {
                 telemetryProps['ProjectGuid'] = projectConfig.ProjectGuid;
                 telemetryProps['TargetFrameworks'] = projectConfig.TargetFrameworks.join(";");
                 telemetryProps['References'] = projectConfig.References.join(";");
+                telemetryProps['FileExtensions'] = projectConfig.FileExtensions.join(";");
                 this.reporter.sendTelemetryEvent("ProjectConfiguration", telemetryProps);
                 break;
         }

@@ -434,6 +434,7 @@ export interface ProjectConfigurationMessage {
     ProjectGuid: string;
     TargetFrameworks: string[];
     References: string[];
+    FileExtensions: string[];
 }
 
 export interface PackageDependency {

@@ -52,17 +52,20 @@ suite('TelemetryReporterObserver', () => {
     test(`${ProjectConfiguration.name}: Telemetry props contains project file path and target framework`, () => {
         const targetFrameworks = new Array("tfm1", "tfm2");
         const projectFilePath = "projectFilePath";
-        const references =new Array("ref1", "ref2");
+        const references = new Array("ref1", "ref2");
+        const fileExtensions = new Array(".cs", ".cshtml");
         let event = new ProjectConfiguration({
             TargetFrameworks: targetFrameworks,
             ProjectGuid: projectFilePath,
-            References: references
+            References: references,
+            FileExtensions: fileExtensions
         });
 
         observer.post(event);
         expect(property["TargetFrameworks"]).to.be.equal("tfm1;tfm2");
         expect(property["ProjectGuid"]).to.be.equal(projectFilePath);
         expect(property["References"]).to.be.equal("ref1;ref2");
+        expect(property["FileExtensions"]).to.be.equal(".cs;.cshtml");
     });
 
     [
