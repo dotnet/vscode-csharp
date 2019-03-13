@@ -132,6 +132,11 @@ export class OmnisharpOnMultipleLaunchTargets implements BaseEvent {
     constructor(public targets: LaunchTarget[]) { }
 }
 
+export class ProjectConfiguration implements BaseEvent{
+    type = EventType.ProjectConfigurationReceived;
+    constructor(public projectConfiguration: protocol.ProjectConfigurationMessage){}
+}
+
 export class WorkspaceInformationUpdated implements BaseEvent {
     type=EventType.WorkspaceInformationUpdated;
     constructor(public info: protocol.WorkspaceInformationResponse) { }
