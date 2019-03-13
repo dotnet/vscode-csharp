@@ -227,10 +227,33 @@ export class AssetGenerator {
         };
     }
 
+    private createWatchTaskDescription(): tasks.TaskDescription {
+        let commandArgs = ['watch','run'];
+
+        let buildProject = this.startupProject;
+        if (!buildProject) {
+            buildProject = this.fallbackBuildProject;
+        }
+        if (buildProject) {
+            const buildPath = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, buildProject.Path));
+            commandArgs.push(util.convertNativePathToPosix(buildPath));
+        }
+
+        return {
+            label: 'watch',
+            command: 'dotnet',
+            type: 'process',
+            args: commandArgs,
+            // NOTE: The "$msCompile" matcher isn't the correct matcher for 'dotnet build' as it expects all
+            // file paths to be fully qualified. The tsc matcher seems to work as we would like.
+            problemMatcher: '$tsc'
+        };
+    }
+
     public createTasksConfiguration(): tasks.TaskConfiguration {
         return {
             version: "2.0.0",
-            tasks: [this.createBuildTaskDescription(), this.createPublishTaskDescription()]
+            tasks: [this.createBuildTaskDescription(), this.createPublishTaskDescription(), this.createWatchTaskDescription()]
         };
     }
 }
