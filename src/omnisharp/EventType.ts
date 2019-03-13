@@ -77,5 +77,6 @@ export enum EventType {
     OmnisharpServerDequeueRequest,
     OmnisharpServerOnStop,
     OmnisharpServerOnStart,
-    OmnisharpOnBeforeServerInstall
+    OmnisharpOnBeforeServerInstall,
+    ProjectConfigurationReceived
 }
