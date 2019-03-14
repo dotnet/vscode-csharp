@@ -16,7 +16,7 @@ import { mkdirpSync } from "fs-extra";
 import { PackageInstallStart } from "../omnisharp/loggingEvents";
 import { DownloadValidator } from './isValidDownload';
 
-export async function downloadAndInstallPackages(packages: AbsolutePathPackage[], provider: NetworkSettingsProvider, eventStream: EventStream, downloadValidator: DownloadValidator) {
+export async function downloadAndInstallPackages(packages: AbsolutePathPackage[], provider: NetworkSettingsProvider, eventStream: EventStream, downloadValidator: DownloadValidator): Promise<boolean> {
     if (packages) {
         eventStream.post(new PackageInstallStart());
         for (let pkg of packages) {
@@ -46,12 +46,12 @@ export async function downloadAndInstallPackages(packages: AbsolutePathPackage[]
                 if (error instanceof NestedError) {
                     let packageError = new PackageError(error.message, pkg, error.err);
                     eventStream.post(new InstallationFailure(installationStage, packageError));
-                    throw packageError;
                 }
                 else {
                     eventStream.post(new InstallationFailure(installationStage, error));
-                    throw error;
                 }
+
+                return false;
             }
             finally {
                 try {
@@ -62,5 +62,7 @@ export async function downloadAndInstallPackages(packages: AbsolutePathPackage[]
                 catch (error) { }
             }
         }
+
+        return true; //if all packages succeded in installing return true
     }
 }
