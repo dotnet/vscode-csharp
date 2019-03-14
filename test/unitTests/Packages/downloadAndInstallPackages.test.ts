@@ -19,7 +19,6 @@ import TestEventBus from '../testAssets/TestEventBus';
 import { AbsolutePathPackage } from '../../../src/packageManager/AbsolutePathPackage';
 import { AbsolutePath } from '../../../src/packageManager/AbsolutePath';
 import { DownloadValidator } from '../../../src/packageManager/isValidDownload';
-import { PackageError } from '../../../src/packageManager/PackageError';
 
 chai.use(chaiAsPromised);
 let expect = chai.expect;
