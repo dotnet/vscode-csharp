@@ -46,8 +46,8 @@ suite('OmnisharpDownloader', () => {
         }, testZip.buffer);
     });
 
-    test('Throws error if request is made for a version that doesnot exist on the server', () => {
-        expect(downloader.DownloadAndInstallOmnisharp("1.00000001.0000", server.baseUrl, installPath)).to.be.rejectedWith(Error);
+    test('Returns false if request is made for a version that doesnot exist on the server', async() => {
+        expect(await downloader.DownloadAndInstallOmnisharp("1.00000001.0000", server.baseUrl, installPath)).to.be.false;
     });
 
     test('Packages are downloaded and installed', async () => {

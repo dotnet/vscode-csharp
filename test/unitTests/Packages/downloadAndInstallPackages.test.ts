@@ -12,7 +12,7 @@ import TestZip from '../testAssets/TestZip';
 import { downloadAndInstallPackages } from '../../../src/packageManager/downloadAndInstallPackages';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { EventStream } from '../../../src/EventStream';
-import { DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart, PackageInstallStart, IntegrityCheckFailure } from '../../../src/omnisharp/loggingEvents';
+import { DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart, PackageInstallStart, IntegrityCheckFailure, DownloadFailure, InstallationFailure } from '../../../src/omnisharp/loggingEvents';
 import MockHttpsServer from '../testAssets/MockHttpsServer';
 import { createTestFile } from '../testAssets/TestFile';
 import TestEventBus from '../testAssets/TestEventBus';
@@ -95,7 +95,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
             expect(eventBus.getEvents()).to.be.deep.equal(eventsSequence);
         });
 
-        test("If the download validation fails for the first time and passed second time, the correct events are logged", async() => {
+        test("If the download validation fails for the first time and passed second time, the correct events are logged", async () => {
             let count = 1;
             let downloadValidator = () => {
                 if (count > 1) {
@@ -126,7 +126,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
     });
 
     suite("If the download and install fails", () => {
-        test("If the download succeeds but the validation fails, events are logged", async() => {
+        test("If the download succeeds but the validation fails, events are logged", async () => {
             let downloadValidator = () => false;
             let eventsSequence = [
                 new PackageInstallStart(),
@@ -146,17 +146,26 @@ suite(`${downloadAndInstallPackages.name}`, () => {
             expect(eventBus.getEvents()).to.be.deep.equal(eventsSequence);
         });
 
-        test("Throws an exception when the download fails", async () => {
-            await downloadAndInstallPackages(notDownloadablePackage, networkSettingsProvider, eventStream, downloadValidator).should.be.rejected;
+        test("Returns false when the download fails", async () => {
+            let eventsSequence = [
+                new PackageInstallStart(),
+                new DownloadStart(packageDescription),
+                new DownloadFailure(`Failed to download from ${notDownloadablePackage[0].url}. Error code '404')`),
+            ];
+
+            await downloadAndInstallPackages(notDownloadablePackage, networkSettingsProvider, eventStream, downloadValidator);
+            let obtainedEvents = eventBus.getEvents();
+            expect(obtainedEvents[0]).to.be.deep.equal(eventsSequence[0]);
+            expect(obtainedEvents[1]).to.be.deep.equal(eventsSequence[1]);
+            expect(obtainedEvents[2]).to.be.deep.equal(eventsSequence[2]);
+            let installationFailureEvent = <InstallationFailure>obtainedEvents[3];
+            expect(installationFailureEvent.stage).to.be.equal("downloadPackage");
+            expect(installationFailureEvent.error).to.not.be.null;
         });
 
         test("install.Lock is not present when the download fails", async () => {
-            try {
-                await downloadAndInstallPackages(notDownloadablePackage, networkSettingsProvider, eventStream, downloadValidator);
-            } 
-            catch (error) {
-                expect(await util.fileExists(path.join(tmpDirPath, "install.Lock"))).to.be.false;
-            }
+            await downloadAndInstallPackages(notDownloadablePackage, networkSettingsProvider, eventStream, downloadValidator);
+            expect(await util.fileExists(path.join(tmpDirPath, "install.Lock"))).to.be.false;
         });
     });
 
