@@ -12,7 +12,7 @@ import TestZip from '../testAssets/TestZip';
 import { downloadAndInstallPackages } from '../../../src/packageManager/downloadAndInstallPackages';
 import NetworkSettings from '../../../src/NetworkSettings';
 import { EventStream } from '../../../src/EventStream';
-import { DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart, PackageInstallStart, IntegrityCheckFailure } from '../../../src/omnisharp/loggingEvents';
+import { DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart, PackageInstallStart, IntegrityCheckFailure, DownloadFailure, InstallationFailure } from '../../../src/omnisharp/loggingEvents';
 import MockHttpsServer from '../testAssets/MockHttpsServer';
 import { createTestFile } from '../testAssets/TestFile';
 import TestEventBus from '../testAssets/TestEventBus';
@@ -147,7 +147,15 @@ suite(`${downloadAndInstallPackages.name}`, () => {
         });
 
         test("Throws an exception when the download fails", async () => {
+            let eventsSequence = [
+                new PackageInstallStart(),
+                new DownloadStart(packageDescription),
+                new DownloadFailure(`Failed to download from ${notDownloadablePackage[0].url}. Error code '404')`),
+                new InstallationFailure("downloadPackage", "Error: 404")
+            ];
+
             await downloadAndInstallPackages(notDownloadablePackage, networkSettingsProvider, eventStream, downloadValidator).should.be.rejected;
+            expect(eventBus.getEvents()).to.be.deep.equal(eventsSequence);
         });
 
         test("install.Lock is not present when the download fails", async () => {
