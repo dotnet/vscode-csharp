@@ -152,7 +152,6 @@ suite(`${downloadAndInstallPackages.name}`, () => {
                 new PackageInstallStart(),
                 new DownloadStart(packageDescription),
                 new DownloadFailure(`Failed to download from ${notDownloadablePackage[0].url}. Error code '404')`),
-                new InstallationFailure("downloadPackage", new PackageError("404", notDownloadablePackage[0]))
             ];
 
             await downloadAndInstallPackages(notDownloadablePackage, networkSettingsProvider, eventStream, downloadValidator);
@@ -162,6 +161,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
             expect(obtainedEvents[2]).to.be.deep.equal(eventsSequence[2]);
             let installationFailureEvent = <InstallationFailure>obtainedEvents[3];
             expect(installationFailureEvent.stage).to.be.equal("downloadPackage");
+            expect(installationFailureEvent.error).to.not.be.null;
         });
 
         test("install.Lock is not present when the download fails", async () => {
