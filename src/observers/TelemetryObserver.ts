@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { PlatformInformation } from "../platform";
-import { BaseEvent, InstallationFailure, TestExecutionCountReport, TelemetryEventWithMeasures, TelemetryEvent} from "../omnisharp/loggingEvents";
+import { BaseEvent, InstallationFailure, TestExecutionCountReport, TelemetryEventWithMeasures, TelemetryEvent, ProjectConfiguration} from "../omnisharp/loggingEvents";
 import { PackageError } from "../packageManager/PackageError";
 import { EventType } from "../omnisharp/EventType";
 
@@ -43,6 +43,14 @@ export class TelemetryObserver {
             case EventType.TelemetryEvent:
                 let telemetryEvent = <TelemetryEvent>event;
                 this.reporter.sendTelemetryEvent(telemetryEvent.eventName, telemetryEvent.properties, telemetryEvent.measures);
+                break;
+            case EventType.ProjectConfigurationReceived:
+                let projectConfig = (<ProjectConfiguration>event).projectConfiguration;
+                telemetryProps['ProjectGuid'] = projectConfig.ProjectGuid;
+                telemetryProps['TargetFrameworks'] = projectConfig.TargetFrameworks.join(";");
+                telemetryProps['References'] = projectConfig.References.join(";");
+                telemetryProps['FileExtensions'] = projectConfig.FileExtensions.join(";");
+                this.reporter.sendTelemetryEvent("ProjectConfiguration", telemetryProps);
                 break;
         }
     }

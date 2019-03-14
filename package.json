@@ -244,8 +244,8 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9c36608c-cb04-451f-8df7-547eeb9b5d55/4b9c72a90d4558d8e72e653c1ea79936/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-18-0/coreclr-debug-win7-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/b1805db4-65e6-43ed-a464-76152ea559f5/eca562ff445bfdb27a07796b7a0d355b/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-18-1/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -254,13 +254,13 @@
         "x86_64"
       ],
       "installTestPath": "./.debugger/vsdbg-ui.exe",
-      "integrity": "3CE3584FA7E16F6E762866764C8BC51F71CF4E861AE1076AB5A8BB48150A2CFB"
+      "integrity": "CBD6CB8DC028CAAFDB182E0AFB71C0159B6DEB587ADBE9B2C0E732B0A53CB6A1"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9c36608c-cb04-451f-8df7-547eeb9b5d55/b5b307980f5da0bc161018acfad043c9/coreclr-debug-osx-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-18-0/coreclr-debug-osx-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/b1805db4-65e6-43ed-a464-76152ea559f5/2480b4ee78bebd3cc01c766a931a06e3/coreclr-debug-osx-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-18-1/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "darwin"
@@ -273,13 +273,13 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "B45E69F16B5F9363A7D706DE1133EF048E973AD6EEF8EFE69CE596270096CED0"
+      "integrity": "E98382C51AACEB6B4060FFDF60EFF7D6F55BB0C437DCBE69E8728FCC280CBCA6"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9c36608c-cb04-451f-8df7-547eeb9b5d55/8626f25cb9fb40cd6fa2508009fccd1d/coreclr-debug-linux-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-18-0/coreclr-debug-linux-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/b1805db4-65e6-43ed-a464-76152ea559f5/d0e97500551286b5d75bc5904a2d1275/coreclr-debug-linux-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-18-1/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -292,7 +292,7 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "A184C815F6F99F4627197BBE605DCAF32174BC66E283908B27F0508F958BB203"
+      "integrity": "C8C1E35A25BF40AD0E4745DEB828E36751A5EDA05FF679A1CED219218E30C03B"
     },
     {
       "id": "Razor",
@@ -482,8 +482,8 @@
                 },
                 "cachePath": {
                   "type": "string",
-                  "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.vsdbg/SymbolCache.",
-                  "default": "~/.vsdbg/SymbolCache"
+                  "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
+                  "default": "~/.dotnet/symbolcache"
                 },
                 "moduleFilter": {
                   "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
@@ -1321,8 +1321,8 @@
                   },
                   "cachePath": {
                     "type": "string",
-                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.vsdbg/SymbolCache.",
-                    "default": "~/.vsdbg/SymbolCache"
+                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
+                    "default": "~/.dotnet/symbolcache"
                   },
                   "moduleFilter": {
                     "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
@@ -1722,8 +1722,8 @@
                   },
                   "cachePath": {
                     "type": "string",
-                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.vsdbg/SymbolCache.",
-                    "default": "~/.vsdbg/SymbolCache"
+                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
+                    "default": "~/.dotnet/symbolcache"
                   },
                   "moduleFilter": {
                     "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
@@ -2368,8 +2368,8 @@
                   },
                   "cachePath": {
                     "type": "string",
-                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.vsdbg/SymbolCache.",
-                    "default": "~/.vsdbg/SymbolCache"
+                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
+                    "default": "~/.dotnet/symbolcache"
                   },
                   "moduleFilter": {
                     "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
@@ -2769,8 +2769,8 @@
                   },
                   "cachePath": {
                     "type": "string",
-                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.vsdbg/SymbolCache.",
-                    "default": "~/.vsdbg/SymbolCache"
+                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
+                    "default": "~/.dotnet/symbolcache"
                   },
                   "moduleFilter": {
                     "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
