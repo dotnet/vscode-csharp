@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { PlatformInformation } from "../platform";
-import { BaseEvent, InstallationFailure, TestExecutionCountReport, TelemetryEventWithMeasures, TelemetryEvent, ProjectConfiguration} from "../omnisharp/loggingEvents";
+import { BaseEvent, InstallationFailure, TestExecutionCountReport, TelemetryEventWithMeasures, TelemetryEvent, ProjectConfiguration } from "../omnisharp/loggingEvents";
 import { PackageError } from "../packageManager/PackageError";
 import { EventType } from "../omnisharp/EventType";
 
@@ -61,7 +61,7 @@ export class TelemetryObserver {
 
     private handleInstallationSuccess(telemetryProps: { [key: string]: string; }) {
         telemetryProps['installStage'] = 'completeSuccess';
-        this.reporter.sendTelemetryEvent('Acquisition', telemetryProps);
+        this.reporter.sendTelemetryEvent('AcquisitionSucceeded', telemetryProps);
     }
 
     private handleInstallationFailure(event: InstallationFailure, telemetryProps: { [key: string]: string; }) {
@@ -75,7 +75,7 @@ export class TelemetryObserver {
             }
         }
 
-        this.reporter.sendTelemetryEvent('Acquisition', telemetryProps);
+        this.reporter.sendTelemetryEvent('AcquisitionFailed', telemetryProps);
     }
 
     private handleTestExecutionCountReport(event: TestExecutionCountReport) {
