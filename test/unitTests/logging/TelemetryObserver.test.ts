@@ -45,7 +45,7 @@ suite('TelemetryReporterObserver', () => {
     test('InstallationSuccess: Telemetry props contain installation stage', () => {
         let event = new InstallationSuccess();
         observer.post(event);
-        expect(name).to.be.equal("Acquisition");
+        expect(name).to.be.equal("AcquisitionSucceeded");
         expect(property).to.have.property("installStage", "completeSuccess");
     });
 
@@ -91,16 +91,17 @@ suite('TelemetryReporterObserver', () => {
         test("Telemetry Props contains platform information, install stage and an event name", () => {
             let event = new InstallationFailure("someStage", "someError");
             observer.post(event);
+            expect(name).to.be.equal("AcquisitionFailed");
             expect(property).to.have.property("platform.architecture", platformInfo.architecture);
             expect(property).to.have.property("platform.platform", platformInfo.platform);
             expect(property).to.have.property("installStage");
-            expect(name).to.not.be.empty;
         });
 
         test(`Telemetry Props contains message and packageUrl if error is package error`, () => {
             let error = new PackageError("someError", <Package>{ "description": "foo", "url": "someurl" });
             let event = new InstallationFailure("someStage", error);
             observer.post(event);
+            expect(name).to.be.equal("AcquisitionFailed");
             expect(property).to.have.property("error.message", error.message);
             expect(property).to.have.property("error.packageUrl", error.pkg.url);
         });

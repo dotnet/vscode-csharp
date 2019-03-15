@@ -10,19 +10,17 @@ import { getRuntimeDependenciesPackages } from './tools/RuntimeDependencyPackage
 import { getAbsolutePathPackagesToInstall } from './packageManager/getAbsolutePathPackagesToInstall';
 import IInstallDependencies from './packageManager/IInstallDependencies';
 
-export async function installRuntimeDependencies(packageJSON: any, extensionPath: string, installDependencies: IInstallDependencies, eventStream: EventStream, platformInfo: PlatformInformation): Promise<boolean>{
+export async function installRuntimeDependencies(packageJSON: any, extensionPath: string, installDependencies: IInstallDependencies, eventStream: EventStream, platformInfo: PlatformInformation): Promise<boolean> {
     let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON);
     let packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, extensionPath);
     if (packagesToInstall && packagesToInstall.length > 0) {
         eventStream.post(new PackageInstallation("C# dependencies"));
-        try {
-            // Display platform information and RID
-            eventStream.post(new LogPlatformInfo(platformInfo));
-            await installDependencies(packagesToInstall);
+        // Display platform information and RID
+        eventStream.post(new LogPlatformInfo(platformInfo));
+        if (await installDependencies(packagesToInstall)) {
             eventStream.post(new InstallationSuccess());
-            return true;
         }
-        catch (error) {
+        else {
             return false;
         }
     }
