@@ -20,6 +20,7 @@
 * Improved detection of MSBuild when multiple instances are available _(Contributed by [@johnnyasantoss ](https://github.com/johnnyasantoss))_ (PR: [omnisharp-roslyn#1349](https://github.com/OmniSharp/omnisharp-roslyn/pull/1349))
 * Fixed a bug where the "OmniSharp" and "C# log" would steal the editor focus and hinder the user's development flow.(PR: [#2828](https://github.com/OmniSharp/omnisharp-vscode/pull/2828))
 * Improvement in code load times for the extension by using webpack (PR: [#2835](https://github.com/OmniSharp/omnisharp-vscode/pull/2835))
+* Added tasks for "dotnet publish" and "dotnet watch" in the initial asset generation  _(Contributed by [@timheuer ](https://github.com/timheuer))_ (PR: [#2903](https://github.com/OmniSharp/omnisharp-vscode/pull/2903))
 
 #### Debugger
 * Added support for set next statement. Set next statement is a feature that has been available for a long time in full Visual Studio, and this brings the feature to Visual Studio Code. This feature allows developers to change what code is executed next in the target program. For example, you can move the instruction pointer back to re-execute a function that you just ran so you can debug into it, or you can skip over some code that you don't want to execute. To use this feature, move your cursor to the statement you would like to execute next, and either open the editor context menu and invoke 'Set Next Statement (.NET)', or use the keyboard shortcut of <kbd>Ctrl+Shift+F10</kbd> ([#1753](https://github.com/OmniSharp/omnisharp-vscode/issues/1753))
