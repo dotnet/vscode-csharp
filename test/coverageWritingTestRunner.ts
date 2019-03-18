@@ -2,8 +2,8 @@
  * Copyright (C) Microsoft Corporation. All rights reserved.
  *--------------------------------------------------------*/
 
- import shelljs = require("async-shelljs");
-import path = require('path');
+import * as shelljs from "async-shelljs";
+import * as path from "path";
 const fs = require('async-file');
 
 declare var __coverage__: any;
