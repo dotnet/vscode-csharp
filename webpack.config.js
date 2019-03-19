@@ -25,6 +25,9 @@ const config = {
     resolve: { // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
         extensions: ['.ts', '.js']
     },
+    node: {
+        __dirname: false //preserve the default node.js behavior for __dirname
+    },
     module: {
         rules: [{
             test: /\.ts$/,
