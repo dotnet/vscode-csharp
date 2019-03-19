@@ -6,10 +6,10 @@
 'use strict';
 
 import { SpawnOptions, spawn } from "child_process";
-import { join, Result } from "async-child-process";
 import { nodePath, rootPath } from "./projectPaths";
+const { join } = require("async-child-process");
 
-export default async function spawnNode(args?: string[], options?: SpawnOptions): Promise<Result> {
+export default async function spawnNode(args?: string[], options?: SpawnOptions): Promise<{code: string; signal: string;}> {
     if (!options) {
         options = {
             env: {}

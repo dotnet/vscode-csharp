@@ -1,10 +1,10 @@
 language: node_js
 
 node_js:
-- "8"
+- "10"
 
 env:
-- CODE_VERSION=1.28.0
+- CODE_VERSION=1.31.0
 
 before_install:
   - if [ $TRAVIS_OS_NAME == "linux" ]; then
@@ -31,7 +31,6 @@ install:
 - gulp 'vsix:release:package'
 
 script:
-  - gulp 'vsix:release:unpackage'
   - gulp cov:instrument
   - gulp test
   - gulp cov:report

@@ -20,7 +20,7 @@ export default async function reportIssue(vscode: vscode, eventStream: EventStre
     let extensions = getInstalledExtensions(vscode);
     let csharpExtVersion = getCsharpExtensionVersion(vscode);
 
-    const body = encodeURIComponent(`## Issue Description ##
+    const body =`## Issue Description ##
 ## Steps to Reproduce ##
 
 ## Expected Behavior ##
@@ -46,11 +46,12 @@ ${dotnetInfo}</details>
 <details><summary>Visual Studio Code Extensions</summary>
 ${generateExtensionTable(extensions)}
 </details>
-`);
-
-    const encodedBody = encodeURIComponent(body);
+`;
+    
     const queryStringPrefix: string = "?";
-    const fullUrl = `${issuesUrl}${queryStringPrefix}body=${encodedBody}`;
+    const issueDefault = "Please paste the output from your clipboard";
+    const fullUrl = `${issuesUrl}${queryStringPrefix}body=${issueDefault}`;
+    await vscode.env.clipboard.writeText(body);
     eventStream.post(new OpenURL(fullUrl));
 }
 

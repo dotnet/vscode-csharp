@@ -9,7 +9,8 @@
         "curly": true,
         "semicolon": true,
         "indent": [true, "spaces", 4],
-        "file-header": [true, ".*"]
+        "file-header": [true, ".*"],
+        "no-buffer-constructor": "error"
     },
     "rulesDirectory": [
       "tslint-microsoft-contrib",

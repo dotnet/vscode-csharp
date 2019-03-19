@@ -8,10 +8,10 @@
 import * as del from 'del';
 import * as fs from 'fs';
 import * as gulp from 'gulp';
-import * as unzip from 'unzip2';
 import { onlineVscodeignorePath, unpackedVsixPath, vscePath, vscodeignorePath } from './projectPaths';
 import { getPackageJSON } from './packageJson';
 import spawnNode from './spawnNode';
+import { Extract } from 'unzipper';
 
 gulp.task('vsix:release:unpackage', () => {
     const packageJSON = getPackageJSON();
@@ -20,7 +20,7 @@ gulp.task('vsix:release:unpackage', () => {
     const packageName = `${name}-${version}.vsix`;
 
     del.sync(unpackedVsixPath);
-    return fs.createReadStream(packageName).pipe(unzip.Extract({ path: unpackedVsixPath }));
+    return fs.createReadStream(packageName).pipe(Extract({ path: unpackedVsixPath }));
 });
 
 gulp.task('vsix:release:package', async (onError) => {

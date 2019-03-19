@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.18.0-beta7",
+  "version": "1.18.0-beta10",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -25,7 +25,7 @@
     "multi-root ready"
   ],
   "defaults": {
-    "omniSharp": "1.32.10"
+    "omniSharp": "1.32.11"
   },
   "main": "./dist/extension",
   "scripts": {
@@ -73,11 +73,10 @@
     "fs-extra": "7.0.1",
     "http-proxy-agent": "2.1.0",
     "https-proxy-agent": "2.2.1",
-    "jsonc-parser": "2.0.2",
+    "jsonc-parser": "2.0.3",
     "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/3b0ae709-c067-48b4-a658-549ca972e437/386a5dff35391e14f14e5945e7903f63/microsoft.aspnetcore.razor.vscode-1.0.0-alpha2-20181112.3.tgz",
     "mkdirp": "0.5.1",
     "node-filter-async": "1.1.1",
-    "open": "*",
     "remove-bom-buffer": "3.0.0",
     "request-light": "0.2.4",
     "rxjs": "6.4.0",
@@ -90,105 +89,106 @@
     "yauzl": "2.10.0"
   },
   "devDependencies": {
-    "@types/archiver": "2.1.1",
-    "@types/chai": "4.1.2",
+    "@types/archiver": "2.1.2",
+    "@types/chai": "4.1.7",
     "@types/chai-arrays": "1.0.2",
     "@types/chai-as-promised": "7.1.0",
-    "@types/chai-string": "1.4.0",
+    "@types/chai-string": "1.4.1",
     "@types/del": "3.0.1",
-    "@types/fs-extra": "5.0.1",
+    "@types/fs-extra": "5.0.4",
     "@types/gulp": "4.0.5",
     "@types/gulp-mocha": "0.0.32",
     "@types/istanbul": "0.4.30",
     "@types/minimist": "1.2.0",
     "@types/mkdirp": "0.5.2",
-    "@types/mocha": "2.2.48",
-    "@types/node": "8.9.3",
+    "@types/mocha": "5.2.5",
+    "@types/node": "10.12.24",
     "@types/semver": "5.5.0",
     "@types/tmp": "0.0.33",
-    "@types/yauzl": "2.9.0",
-    "archiver": "2.1.1",
+    "@types/unzipper": "^0.9.1",
+    "@types/yauzl": "2.9.1",
+    "archiver": "3.0.0",
     "async-child-process": "1.1.1",
     "async-shelljs": "0.1.2",
-    "chai": "4.1.2",
+    "chai": "4.2.0",
     "chai-arrays": "2.0.0",
     "chai-as-promised": "7.1.1",
     "chai-fs": "2.0.0",
-    "chai-string": "1.4.0",
-    "codecov": "3.0.2",
-    "copyfiles": "2.0.0",
-    "cross-env": "5.1.4",
+    "chai-string": "1.5.0",
+    "codecov": "3.1.0",
+    "copyfiles": "2.1.0",
+    "cross-env": "5.2.0",
     "del": "3.0.0",
-    "find-versions": "^3.0.0",
-    "get-port": "3.2.0",
+    "find-versions": "3.0.0",
+    "get-port": "4.1.0",
     "glob-promise": "3.4.0",
     "gulp": "4.0.0",
-    "gulp-mocha": "5.0.0",
+    "gulp-mocha": "6.0.0",
     "gulp-tslint": "8.1.3",
     "istanbul": "0.4.5",
     "ltcdr": "2.2.1",
     "minimist": "1.2.0",
-    "mocha": "5.0.4",
-    "mocha-typescript": "1.1.12",
-    "mock-fs": "4.7.0",
+    "mocha": "5.2.0",
+    "mocha-typescript": "1.1.17",
+    "mock-fs": "4.8.0",
     "mock-http-server": "0.2.0",
     "natives": "1.1.6",
-    "npm-run-all": "4.1.2",
-    "nyc": "11.8.0",
+    "npm-run-all": "4.1.5",
+    "nyc": "13.2.0",
     "plist": "3.0.1",
-    "remap-istanbul": "0.11.0",
-    "source-map-support": "0.5.4",
+    "remap-istanbul": "0.13.0",
+    "source-map-support": "0.5.10",
     "ts-loader": "5.3.3",
-    "ts-node": "6.0.3",
-    "tslint": "5.10.0",
-    "tslint-microsoft-contrib": "5.0.3",
-    "tslint-no-unused-expression-chai": "0.1.3",
-    "typescript": "3.3.1",
-    "unzip2": "0.2.5",
-    "vsce": "1.55.0",
-    "vscode": "1.1.28",
-    "webpack": "^4.29.0",
-    "webpack-cli": "3.2.1"
+    "ts-node": "8.0.2",
+    "tslint": "5.12.1",
+    "tslint-microsoft-contrib": "6.0.0",
+    "tslint-no-unused-expression-chai": "0.1.4",
+    "typescript": "3.3.3",
+    "unzipper": "0.9.10",
+    "vsce": "1.57.0",
+    "vscode": "1.1.29",
+    "webpack": "4.29.3",
+    "webpack-cli": "3.2.3"
   },
   "runtimeDependencies": [
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/ba24338c-d474-4f60-a343-e350f5a9c16d/368354f8a7f00e57ceff08f9c99f42b2/omnisharp-win-x86-1.32.10.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.32.10.zip",
-      "installPath": ".omnisharp/1.32.10",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/589d976c-645f-4762-9a9b-d8dcc3e58756/2b4f781a43ed12ee45123af2a9c383a1/omnisharp-win-x86-1.32.11.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.32.11.zip",
+      "installPath": ".omnisharp/1.32.11",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.omnisharp/1.32.10/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.32.11/OmniSharp.exe",
       "platformId": "win-x86",
-      "integrity": "0CB2866619DC3C1F87C7676F7A4090A08EA84797E6F4D9FAA5D6D74408973A6E"
+      "integrity": "2033902379327B95222FD6CEFECE6C69AA078B7EF40393A2CCFDF9AB08E6C16E"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/ba24338c-d474-4f60-a343-e350f5a9c16d/d2cdb97c0357a1a1fbf76a71df0b5e95/omnisharp-win-x64-1.32.10.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.32.10.zip",
-      "installPath": ".omnisharp/1.32.10",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/589d976c-645f-4762-9a9b-d8dcc3e58756/c5b3a4f9a05ae8b2a7f87db37303c120/omnisharp-win-x64-1.32.11.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.32.11.zip",
+      "installPath": ".omnisharp/1.32.11",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/1.32.10/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.32.11/OmniSharp.exe",
       "platformId": "win-x64",
-      "integrity": "B2534D85933516C6DD2672C6700FA04EEF8E8BAC62E51246B0E92318445D65A9"
+      "integrity": "E5D89064F520F9A37709AF550A65BDAE6374FD8193485D5AFFE519415A6C0678"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/ba24338c-d474-4f60-a343-e350f5a9c16d/0a16a2698afb102bd08d22a55aa6ad76/omnisharp-osx-1.32.10.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.32.10.zip",
-      "installPath": ".omnisharp/1.32.10",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/589d976c-645f-4762-9a9b-d8dcc3e58756/75c6fc5949ccbca7b086c445fcf49a82/omnisharp-osx-1.32.11.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.32.11.zip",
+      "installPath": ".omnisharp/1.32.11",
       "platforms": [
         "darwin"
       ],
@@ -196,16 +196,16 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.32.10/run",
+      "installTestPath": "./.omnisharp/1.32.11/run",
       "platformId": "osx",
-      "integrity": "4DBCD2590D27ED64625F5116A7C9EFA8774B100DBB18DB0B91109EF6E079EB80"
+      "integrity": "C8ECC3C4620A4607617FEE4CC84FB3A4C76F2762F75A0953B9BC96992A486608"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/ba24338c-d474-4f60-a343-e350f5a9c16d/0fa53ac7328b06c6ed3a361b901f4146/omnisharp-linux-x86-1.32.10.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.32.10.zip",
-      "installPath": ".omnisharp/1.32.10",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/589d976c-645f-4762-9a9b-d8dcc3e58756/0ecf73163422fc7037f8635fd984f25b/omnisharp-linux-x86-1.32.11.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.32.11.zip",
+      "installPath": ".omnisharp/1.32.11",
       "platforms": [
         "linux"
       ],
@@ -217,16 +217,16 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.32.10/run",
+      "installTestPath": "./.omnisharp/1.32.11/run",
       "platformId": "linux-x86",
-      "integrity": "3025730DAB15637B0D455F25D8E4F06022E3B713495FF0ABEF893CD54163D153"
+      "integrity": "2F2D2688F19FC59C4712D57AFFC553DAF62B873CA092A74FC587F8499148B6F9"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/ba24338c-d474-4f60-a343-e350f5a9c16d/cc763a525a343252f4126812a721d970/omnisharp-linux-x64-1.32.10.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.32.10.zip",
-      "installPath": ".omnisharp/1.32.10",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/589d976c-645f-4762-9a9b-d8dcc3e58756/5654b2e66b8ef31eafd254933d568a67/omnisharp-linux-x64-1.32.11.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.32.11.zip",
+      "installPath": ".omnisharp/1.32.11",
       "platforms": [
         "linux"
       ],
@@ -237,15 +237,15 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.32.10/run",
+      "installTestPath": "./.omnisharp/1.32.11/run",
       "platformId": "linux-x64",
-      "integrity": "8815DA35F84FEDFAF52EB1FBED1BA6CF3AD6F6AA5B7686817FA2A3F2A4E40E86"
+      "integrity": "BA21D9D0C66997E2384AA1213996690E326FA967BFC9B10ED236DCC48A643ED1"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9c36608c-cb04-451f-8df7-547eeb9b5d55/4b9c72a90d4558d8e72e653c1ea79936/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-18-0/coreclr-debug-win7-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/bd57f98a-7075-4438-a8b4-73d385fcd92e/025d768beda9e390fd30e5e03853dccd/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-18-3/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -254,13 +254,13 @@
         "x86_64"
       ],
       "installTestPath": "./.debugger/vsdbg-ui.exe",
-      "integrity": "3CE3584FA7E16F6E762866764C8BC51F71CF4E861AE1076AB5A8BB48150A2CFB"
+      "integrity": "A162C33FA22C8D05C8B7F5F9D8F61DA9B9CFA5AB66CE5FAD7A6502708B2842F3"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9c36608c-cb04-451f-8df7-547eeb9b5d55/b5b307980f5da0bc161018acfad043c9/coreclr-debug-osx-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-18-0/coreclr-debug-osx-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/bd57f98a-7075-4438-a8b4-73d385fcd92e/104dc299f38cbb9c871c20b5b80d69ab/coreclr-debug-osx-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-18-3/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "darwin"
@@ -273,13 +273,13 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "B45E69F16B5F9363A7D706DE1133EF048E973AD6EEF8EFE69CE596270096CED0"
+      "integrity": "7752966F7ADA00132055CC6D1E847B8CBA2F9494D27CEB352822B35FF9384DCA"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9c36608c-cb04-451f-8df7-547eeb9b5d55/8626f25cb9fb40cd6fa2508009fccd1d/coreclr-debug-linux-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-18-0/coreclr-debug-linux-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/bd57f98a-7075-4438-a8b4-73d385fcd92e/4f608fc31626c3105ba2d25a5acc26bd/coreclr-debug-linux-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-18-3/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -292,7 +292,7 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "A184C815F6F99F4627197BBE605DCAF32174BC66E283908B27F0508F958BB203"
+      "integrity": "F57C09322895039642661B05AF829BAC121E2F81EBE5A5378E09A7B60902C06F"
     },
     {
       "id": "Razor",
@@ -350,7 +350,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.28.0"
+    "vscode": "^1.31.0"
   },
   "activationEvents": [
     "onDebugInitialConfigurations",
@@ -472,18 +472,18 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                  "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                   "default": []
                 },
                 "searchMicrosoftSymbolServer": {
                   "type": "boolean",
-                  "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                  "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                   "default": false
                 },
                 "cachePath": {
                   "type": "string",
-                  "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.vsdbg/SymbolCache.",
-                  "default": "~/.vsdbg/SymbolCache"
+                  "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
+                  "default": "~/.dotnet/symbolcache"
                 },
                 "moduleFilter": {
                   "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
@@ -806,7 +806,7 @@
       },
       {
         "command": "csharp.reportIssue",
-        "title": "Start authoring a new issue on GitHub",
+        "title": "Report an issue",
         "category": "CSharp"
       },
       {
@@ -1316,18 +1316,18 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
                     "type": "string",
-                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.vsdbg/SymbolCache.",
-                    "default": "~/.vsdbg/SymbolCache"
+                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
+                    "default": "~/.dotnet/symbolcache"
                   },
                   "moduleFilter": {
                     "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
@@ -1717,18 +1717,18 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
                     "type": "string",
-                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.vsdbg/SymbolCache.",
-                    "default": "~/.vsdbg/SymbolCache"
+                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
+                    "default": "~/.dotnet/symbolcache"
                   },
                   "moduleFilter": {
                     "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
@@ -2363,18 +2363,18 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
                     "type": "string",
-                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.vsdbg/SymbolCache.",
-                    "default": "~/.vsdbg/SymbolCache"
+                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
+                    "default": "~/.dotnet/symbolcache"
                   },
                   "moduleFilter": {
                     "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
@@ -2764,18 +2764,18 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
                     "type": "string",
-                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.vsdbg/SymbolCache.",
-                    "default": "~/.vsdbg/SymbolCache"
+                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
+                    "default": "~/.dotnet/symbolcache"
                   },
                   "moduleFilter": {
                     "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",

@@ -6,7 +6,7 @@
 		"lib": [
 			"es6"
 		],
-		"inlineSourceMap": true,
+		"sourceMap": true,
 		"moduleResolution": "node",
 		"alwaysStrict": true,
 		"noImplicitAny": true,
