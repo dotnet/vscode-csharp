@@ -25,7 +25,8 @@
     "multi-root ready"
   ],
   "defaults": {
-    "omniSharp": "1.32.11"
+    "omniSharp": "1.32.11",
+    "razor": "1.0.0-alpha2-20181112.3"
   },
   "main": "./dist/extension",
   "scripts": {
