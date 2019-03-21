@@ -7,7 +7,7 @@ import * as assert from 'assert';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import testAssetWorkspace from '../integrationTests/testAssets/testAssetWorkspace';
-import { activateCSharpExtension, pollUntil, waitForDocumentUpdate, htmlLanguageFeaturesExtensionReady, extensionActivated } from '../integrationTests/integrationHelpers';
+import { activateCSharpExtension, pollUntil, waitForDocumentUpdate, htmlLanguageFeaturesExtensionReady } from '../integrationTests/integrationHelpers';
 
 let doc: vscode.TextDocument;
 let editor: vscode.TextEditor;
@@ -23,7 +23,7 @@ suite(`Completions ${testAssetWorkspace.description}`, () => {
         const filePath = path.join(testAssetWorkspace.projects[0].projectDirectoryPath, 'Pages', 'Index.cshtml');
         doc = await vscode.workspace.openTextDocument(filePath);
         editor = await vscode.window.showTextDocument(doc);
-        await extensionActivated;
+        await activateCSharpExtension();
     });
     
     teardown(async () => {
@@ -33,6 +33,25 @@ suite(`Completions ${testAssetWorkspace.description}`, () => {
 
     suiteTeardown(async () => {
         await testAssetWorkspace.cleanupWorkspace();    
+    });
+
+    test('Can get HTML completions on document open', async () => {
+        // This test relies on the Index.cshtml document containing at least 1 HTML tag in it.
+        // For the purposes of this test it locates that tag and tries to get the Html completion
+        // list from it.
+
+        const content = doc.getText();
+        const tagNameIndex = content.indexOf('<') + 1;
+        const docPosition = doc.positionAt(tagNameIndex);
+        const completions = await vscode.commands.executeCommand<vscode.CompletionList>(
+            'vscode.executeCompletionItemProvider',
+            doc.uri,
+            docPosition);
+        const matchingCompletions = completions!.items
+            .filter(item => (typeof item.insertText === 'string') && item.insertText === 'iframe')
+            .map(item => item.insertText as string);
+
+        assert.deepEqual(matchingCompletions, ['iframe']);
     });
 
     test('Can complete C# code blocks', async () => {

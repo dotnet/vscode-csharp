@@ -141,12 +141,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         coreClrDebugPromise = coreclrdebug.activate(extension, context, platformInfo, eventStream);
     }
 
+    let razorPromise = Promise.resolve();
     if (!optionProvider.GetLatestOptions().razorDisabled) {
         const razorObserver = new RazorLoggerObserver(omnisharpChannel);
         eventStream.subscribe(razorObserver.post);
 
         if (!optionProvider.GetLatestOptions().razorDevMode) {
-            await activateRazorExtension(context, extension.extensionPath, eventStream);
+            razorPromise = activateRazorExtension(context, extension.extensionPath, eventStream);
         }
     }
 
@@ -155,6 +156,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
             let langService = await langServicePromise;
             await langService.server.waitForEmptyEventQueue();
             await coreClrDebugPromise;
+            await razorPromise;
         },
         getAdvisor: async () => {
             let langService = await langServicePromise;
