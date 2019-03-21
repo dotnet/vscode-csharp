@@ -122,7 +122,7 @@
             ],
             "env": {
                 "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests/razorTests",
+                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/razorTests",
                 "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/BasicRazorApp2_1",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "BasicRazorApp2_1"
