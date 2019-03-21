@@ -161,7 +161,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         getAdvisor: async () => {
             let langService = await langServicePromise;
             return langService.advisor;
-        }
+        },
+        eventStream
     };
 }
 
