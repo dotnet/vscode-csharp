@@ -14,11 +14,9 @@ import { TelemetryEvent } from 'microsoft.aspnetcore.razor.vscode/dist/HostEvent
 import { Subscription } from 'rxjs';
 
 let eventStream: EventStream;
-
-
 let subscription: Subscription;
 
-suite(`Completions ${testAssetWorkspace.description}`, () => {
+suite(`Razor Telemetry ${testAssetWorkspace.description}`, () => {
     suiteSetup(async function () {
         eventStream = (await activateCSharpExtension()).eventStream;
         await htmlLanguageFeaturesExtensionReady();
@@ -35,8 +33,7 @@ suite(`Completions ${testAssetWorkspace.description}`, () => {
        } 
     });
 
-    test("The DocumentOpened event is received when a document is opened", async () => {
-
+    test("The DocumentOpened telemevent is received when a document is opened", async () => {
         let telemetryEventResolver: (value?: any) => void;
         // tslint:disable-next-line:promise-must-complete
         const extensionActivated = new Promise(resolve => {

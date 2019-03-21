@@ -80,3 +80,6 @@ export enum EventType {
     OmnisharpOnBeforeServerInstall = 73,
     ProjectConfigurationReceived = 74,
 }
+
+//Note that the EventType protocol is shared with Razor.VSCode and the numbers here should not be altered
+//The enum is needed because we use webpack for the extension(which trims the names in production mode) and need to be able to filter on the eventType
