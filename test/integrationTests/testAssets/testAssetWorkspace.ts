@@ -10,10 +10,12 @@ import {ITestAssetWorkspace, TestAssetWorkspace} from './testAssets';
 
 import singleCsproj from './singleCsproj';
 import slnWithCsproj from './slnWithCsproj';
+import BasicRazorApp2_1 from './BasicRazorApp2_1';
 
 const testAssetWorkspaces: { [x: string]: ITestAssetWorkspace } = {
     singleCsproj,
-    slnWithCsproj
+    slnWithCsproj,
+    BasicRazorApp2_1
 };
 
 const workspaceName = vscode.workspace.rootPath

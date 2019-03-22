@@ -3,11 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Advisor } from "./features/diagnosticsProvider";
-import { EventStream } from "./EventStream";
+import * as vscode from "vscode";
 
- export default interface CSharpExtensionExports {
-    initializationFinished: () => Promise<void>;
-    getAdvisor: () => Promise<Advisor>;
-    eventStream: EventStream;
- }
+export async function htmlLanguageFeaturesExtensionReady() {
+    let extension = vscode.extensions.getExtension<any>('vscode.html-language-features');
+
+    if (!extension.isActive) {
+        await extension.activate();
+    }
+}
