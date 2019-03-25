@@ -22,7 +22,11 @@
     "Snippets"
   ],
   "keywords": [
-    "multi-root ready"
+    "multi-root ready",
+    ".NET",
+    "ASP.NET",
+    ".NET Core",
+    "dotnet"
   ],
   "defaults": {
     "omniSharp": "1.32.11",
