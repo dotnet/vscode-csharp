@@ -1,4 +1,4 @@
-## Known Issues in 1.17.1
+## Known Issues in 1.18.0
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
@@ -11,9 +11,10 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.18.0 (Not yet released)
+## 1.18.0 (March 26, 2019)
 
 * Added a `csharp.maxProjectFileCountForDiagnosticAnalysis` setting to configure the file limit when the extension stops reporting errors for whole workspace. When this threshold is reached, the diagnostics are reported for currently opened files only. This mechanism was available in previous versions, but now can be configured. The default is 1000. (PR: [#1877](https://github.com/OmniSharp/omnisharp-vscode/pull/1877))
+* Added a `omnisharp.enableMsBuildLoadProjectsOnDemand` setting to load project for files that were opened in the editor. This setting is useful for big C# codebases and allows for faster initialization of code navigation features only for projects that are relevant to code that is being edited._(Contributed by [@dmgonch](https://github.com/dmgonch))(PR: [#2750](https://github.com/OmniSharp/omnisharp-vscode/pull/2750/files))
 * Added initial support for C# 8. (PR: [omnisharp-roslyn#1365](https://github.com/OmniSharp/omnisharp-roslyn/pull/1365))
 * Fixed finding references to operator overloads _(Contributed by [@SirIntruder](https://github.com/SirIntruder))_ (PR: [omnisharp-roslyn#1371](https://github.com/OmniSharp/omnisharp-roslyn/pull/1371))
 * Improved handling of files moving on disk (PR: [omnisharp-roslyn#1368](https://github.com/OmniSharp/omnisharp-roslyn/pull/1368))
