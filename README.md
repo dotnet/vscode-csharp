@@ -20,16 +20,17 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
-### What's new in 1.17.1
+### What's new in 1.18.0
 
-* Updated Razor language service to fix various Razor editing reliability issues. For details see https://github.com/aspnet/Razor.VSCode/releases/tag/1.0.0-alpha2.
+* Added a `csharp.maxProjectFileCountForDiagnosticAnalysis` setting to configure the file limit when the extension stops reporting errors for whole workspace. When this threshold is reached, the diagnostics are reported for currently opened files only.
+* Added a `omnisharp.enableMsBuildLoadProjectsOnDemand` setting to load project for files that were opened in the editor. This enables faster navigation of the codebase for the larger codebases.
+* Added initial support for C# 8.
+* Improvement in load times for the extension.
+* Added tasks for "dotnet publish" and "dotnet watch" in the initial asset generation.
+* Added support for set next statement. This feature allows developers to change what code is executed next in the target program.
+* Added support for showing return values in the variables window.
 
-### What's new in 1.17.0
-* Added preview Razor (cshtml) language service with support for C# completions and diagnostics.
-* Added omnisharp.minFindSymbolsFilterLength setting to configure the number of characters a user must type in for "Go to Symbol in Workspace" command to return any results
-* Added a command - "CSharp: Start authoring a new issue on GitHub" to enable the users to file issues on github from within the extension with helpful config information from their system
-
-See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.17.0/CHANGELOG.md) for more detail.
+See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.18.0/CHANGELOG.md) for more detail.
 
 ### Supported Operating Systems for Debugging
 
@@ -45,7 +46,7 @@ See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.17.0/
 ### Found a Bug?
 
 To file a new issue to include all the related config information directly from vscode by entering the command pallette with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>
-(<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> on macOS) and running `CSharp: Start authoring a new issue on GitHub` command. This will open a browser window with all the necessary information related to the installed extensions, dotnet version, mono version, etc. Enter all the remaining information and hit submit. More information can be found on the [wiki](https://github.com/OmniSharp/omnisharp-vscode/wiki/Reporting-Issues).
+(<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> on macOS) and running `CSharp: Report an issue` command. This will open a browser window with all the necessary information related to the installed extensions, dotnet version, mono version, etc. Enter all the remaining information and hit submit. More information can be found on the [wiki](https://github.com/OmniSharp/omnisharp-vscode/wiki/Reporting-Issues).
 
 Alternatively you could visit https://github.com/OmniSharp/omnisharp-vscode/issues and file a new one.
 
