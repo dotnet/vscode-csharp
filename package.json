@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.18.0",
+  "version": "1.18.1",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -29,7 +29,7 @@
     "dotnet"
   ],
   "defaults": {
-    "omniSharp": "1.32.11",
+    "omniSharp": "1.32.13",
     "razor": "1.0.0-alpha2.1-20190322.5"
   },
   "main": "./dist/extension",
@@ -159,41 +159,41 @@
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/589d976c-645f-4762-9a9b-d8dcc3e58756/2b4f781a43ed12ee45123af2a9c383a1/omnisharp-win-x86-1.32.11.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.32.11.zip",
-      "installPath": ".omnisharp/1.32.11",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/8fe6eb8c-375b-4b07-a65e-78ea53993aef/32011b2b326552dbdef73952ad67a382/omnisharp-win-x86-1.32.13.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.32.13.zip",
+      "installPath": ".omnisharp/1.32.13",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.omnisharp/1.32.11/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.32.13/OmniSharp.exe",
       "platformId": "win-x86",
-      "integrity": "2033902379327B95222FD6CEFECE6C69AA078B7EF40393A2CCFDF9AB08E6C16E"
+      "integrity": "CCA922DBBBDE6D416FD774F31BB8A5CDC99A389F9F7ED669E6C3B10EA74D1919"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/589d976c-645f-4762-9a9b-d8dcc3e58756/c5b3a4f9a05ae8b2a7f87db37303c120/omnisharp-win-x64-1.32.11.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.32.11.zip",
-      "installPath": ".omnisharp/1.32.11",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/8fe6eb8c-375b-4b07-a65e-78ea53993aef/f0b0e318d1bd9eae2b694e5a47b1615f/omnisharp-win-x64-1.32.13.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.32.13.zip",
+      "installPath": ".omnisharp/1.32.13",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/1.32.11/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.32.13/OmniSharp.exe",
       "platformId": "win-x64",
-      "integrity": "E5D89064F520F9A37709AF550A65BDAE6374FD8193485D5AFFE519415A6C0678"
+      "integrity": "F2FF5330E83DFC6E8C0F31276C66850DD5A2677026FC47DD853BA6A52903D3C0"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/589d976c-645f-4762-9a9b-d8dcc3e58756/75c6fc5949ccbca7b086c445fcf49a82/omnisharp-osx-1.32.11.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.32.11.zip",
-      "installPath": ".omnisharp/1.32.11",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/8fe6eb8c-375b-4b07-a65e-78ea53993aef/88198e741f987291ff067179fb47e063/omnisharp-osx-1.32.13.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.32.13.zip",
+      "installPath": ".omnisharp/1.32.13",
       "platforms": [
         "darwin"
       ],
@@ -201,16 +201,16 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.32.11/run",
+      "installTestPath": "./.omnisharp/1.32.13/run",
       "platformId": "osx",
-      "integrity": "C8ECC3C4620A4607617FEE4CC84FB3A4C76F2762F75A0953B9BC96992A486608"
+      "integrity": "46D9AECA3D84F8727EA803AABF4BC5A35D60E281CC347E7A7460FA1BB75C730D"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/589d976c-645f-4762-9a9b-d8dcc3e58756/0ecf73163422fc7037f8635fd984f25b/omnisharp-linux-x86-1.32.11.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.32.11.zip",
-      "installPath": ".omnisharp/1.32.11",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/8fe6eb8c-375b-4b07-a65e-78ea53993aef/e3e29593834e777ed825d856e1ecacee/omnisharp-linux-x86-1.32.13.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.32.13.zip",
+      "installPath": ".omnisharp/1.32.13",
       "platforms": [
         "linux"
       ],
@@ -222,16 +222,16 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.32.11/run",
+      "installTestPath": "./.omnisharp/1.32.13/run",
       "platformId": "linux-x86",
-      "integrity": "2F2D2688F19FC59C4712D57AFFC553DAF62B873CA092A74FC587F8499148B6F9"
+      "integrity": "A55E67FF75779A118EBDC6CCCFC880A9C79EEB8DBC07661FB27897E59642A55C"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/589d976c-645f-4762-9a9b-d8dcc3e58756/5654b2e66b8ef31eafd254933d568a67/omnisharp-linux-x64-1.32.11.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.32.11.zip",
-      "installPath": ".omnisharp/1.32.11",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/8fe6eb8c-375b-4b07-a65e-78ea53993aef/05754b42f101bd577c701b871a950390/omnisharp-linux-x64-1.32.13.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.32.13.zip",
+      "installPath": ".omnisharp/1.32.13",
       "platforms": [
         "linux"
       ],
@@ -242,9 +242,9 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.32.11/run",
+      "installTestPath": "./.omnisharp/1.32.13/run",
       "platformId": "linux-x64",
-      "integrity": "BA21D9D0C66997E2384AA1213996690E326FA967BFC9B10ED236DCC48A643ED1"
+      "integrity": "D44C4164193F39D2E3DBB6A93432D0D92C2ADEDC162DD807A6A15F68935593F1"
     },
     {
       "id": "Debugger",
