@@ -327,6 +327,10 @@ export class OmniSharpServer {
             args.push('MsBuild:LoadProjectsOnDemand=true');
         }
 
+        if (options.enableRoslynAnalyzers === true) {
+            args.push('RoslynExtensionsOptions:EnableAnalyzersSupport=true');
+        }
+
         let launchInfo: LaunchInfo;
         try {
             launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, serverUrl, latestVersionFileServerPath, installPath, this.extensionPath);
