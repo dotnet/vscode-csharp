@@ -247,9 +247,9 @@ class DiagnosticsProvider extends AbstractSupport {
                 }
 
                 // (re)set new diagnostics for this document
-                let diagnostics = this._mapQuickFixesAsDiagnostics(quickFixes);
+                let diagnosticsInFile = this._mapQuickFixesAsDiagnosticsInFile(quickFixes);
 
-                this._diagnostics.set(document.uri, diagnostics.map(x => x.diag));
+                this._diagnostics.set(document.uri, diagnosticsInFile.map(x => x.diag));
             }
             catch (error) {
                 return;
@@ -260,7 +260,7 @@ class DiagnosticsProvider extends AbstractSupport {
         this._documentValidations[key] = source;
     }
 
-    private _mapQuickFixesAsDiagnostics(quickFixes: protocol.QuickFix[]): { diag: vscode.Diagnostic, fileName: string }[]
+    private _mapQuickFixesAsDiagnosticsInFile(quickFixes: protocol.QuickFix[]): { diag: vscode.Diagnostic, fileName: string }[]
     {
         return quickFixes
             .map(qf => ({ diag: this._asDiagnostic(qf), fileName: qf.FileName }))
@@ -288,17 +288,17 @@ class DiagnosticsProvider extends AbstractSupport {
                 let entries: [vscode.Uri, vscode.Diagnostic[]][] = [];
                 let lastEntry: [vscode.Uri, vscode.Diagnostic[]];
 
-                for (let quickFix of this._mapQuickFixesAsDiagnostics(quickFixes)) {
-                    let uri = vscode.Uri.file(quickFix.fileName);
+                for (let diagnosticInFile of this._mapQuickFixesAsDiagnosticsInFile(quickFixes)) {
+                    let uri = vscode.Uri.file(diagnosticInFile.fileName);
 
                     if (lastEntry && lastEntry[0].toString() === uri.toString()) {
-                        lastEntry[1].push(quickFix.diag);
+                        lastEntry[1].push(diagnosticInFile.diag);
                     } else {
                         // We're replacing all diagnostics in this file. Pushing an entry with undefined for
                         // the diagnostics first ensures that the previous diagnostics for this file are
                         // cleared. Otherwise, new entries will be merged with the old ones.
                         entries.push([uri, undefined]);
-                        lastEntry = [uri, [quickFix.diag]];
+                        lastEntry = [uri, [diagnosticInFile.diag]];
                         entries.push(lastEntry);
                     }
                 }
