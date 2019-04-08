@@ -22,7 +22,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.restore();
         await activateCSharpExtension();
 
-        let fileName = 'Program.cs';
+        let fileName = 'documentSymbols.cs';
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
         let filePath = path.join(projectDirectory, fileName);
         fileUri = vscode.Uri.file(filePath);
@@ -37,13 +37,29 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test("Returns all code lenses", async function () {
-        // let codeLenses = await GetCodeLenses(fileUri);
-        // expect(codeLenses.length).to.equal(2);
-
-        // for (let codeLens of codeLenses) {
-        //     expect(codeLens.isResolved).to.be.false;
-        //     expect(codeLens.command).to.be.undefined;
-        // }
+    test("Returns diagnostics from file", async function () {
+        let result = await pollForAny(() => vscode.languages.getDiagnostics(fileUri), 1000, 50);
+        expect(result.length).to.be.greaterThan(0); // dummy test as proof of concept...
     });
 });
+
+// todo refactor this to poll function with type interference etc etc
+async function pollForAny<T>(getValue: () => T[], duration: number, step: number): Promise<T[]> {
+    while (duration > 0) {
+        let value = await getValue();
+ 
+        if (value && value.length > 0) {
+            return value;
+        } 
+ 
+        await sleep(step);
+ 
+        duration -= step; 
+    } 
+ 
+    throw new Error("Polling did not succeed within the alotted duration.");
+} 
+
+async function sleep(ms = 0) {
+    return new Promise(r => setTimeout(r, ms)); 
+}
