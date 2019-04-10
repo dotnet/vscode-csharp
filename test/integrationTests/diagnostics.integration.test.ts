@@ -40,6 +40,12 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
 
     test("Returns any diagnostics from file", async function () {
         let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 10*1000, 500);
-        expect(result.length).to.be.greaterThan(0); // dummy test as proof of concept...
+        expect(result.length).to.be.greaterThan(0);
+    });
+
+    test("Return fadeout diagnostics like unused usings", async function () {
+        let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 10*1000, 500);
+        expect(result.map(x => x.message).join('|')).to.have.string("IDE0005");
+        expect(result.map(x => x.tags).reduce(x => x)).to.include(vscode.DiagnosticTag.Unnecessary);
     });
 });
