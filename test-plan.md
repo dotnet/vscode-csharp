@@ -94,9 +94,12 @@ The easist way to verify that a project was successfully loaded is to open a .cs
 * Add a new file and reference a type in it from a different file. Deleting from disk the file containing the referenced type  should produce error messages
 
 #### ASP.NET Core Razor
-The Razor experience is available when you open a .cshtml file in a valid OmniSharp project. To setup a test project to verify on you can do:  
-1. `dotnet new razor`
-2. Open `Pages/Index.cshtml`
+The Razor experience is available when you open a .cshtml file in a valid OmniSharp project.
+
+To setup a test project to verify on you can do:  
+1. Install the latest preview of the .NET Core 3.0 SDK by going to https://github.com/dotnet/core-sdk and picking the appropriate platform specific installer from the Release/3.0.1XX column. The version should be 3.0.0-preview4-nnnnnn.
+2. `dotnet new webapp`
+3. Open `Pages/Index.cshtml`
 
 ##### C# Completion
 * Typing `@DateTime.Now` and `@(DateTime.Now)` provides completions throughout typing.
@@ -109,14 +112,26 @@ The Razor experience is available when you open a .cshtml file in a valid OmniSh
 ##### C# Diagnostics
 * Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file. NOTE: This error squiggly will be misaligned due to known issues.
 
+##### TagHelper completion
+Note that the pipe in the below examples indicates the cursor.
+* Typing `<environment>` prompts you with HTML completion for the `environment` tag and on completion commit auto-completes the closing tag.
+* Type `<cache |`, hit ctrl + space, search for `asp-vary-by-user`, commit the completion. Ensure that it auto-completes the attribute to: `<cache asp-vary-by-user`.
+* Type `<form |`, hit ctrl + space, search for `asp-route-...`, commit the completion. Ensure that it auto-completes the attribute to: `<form asp-route-|=""`. Type `foo` and then hit tab. Cursor should be inside of the double quotes: `<form asp-route-foo="|"`.
+
+##### Razor Diagnostics
+* Typing `@{ <strong> }` results in errors. One error should be about the "strong" tag missing a closing tag.
+* Fixing the error and typing `</strong>` i.e. `@{ <strong></strong> }` results in the diagnostic going away.
+
 ##### Known issues:
 - Error squiggles may be misaligned due to known issues.  
 
 #### Blazor
-The Blazor experience is available when you open a .cshtml file in a valid OmniSharp/Blazor project. To setup a test project to verify on you can do:  
-1. `dotnet new -i Microsoft.AspNetCore.Blazor.Templates`
-2. `dotnet new blazor`
-3. Open `Pages/Index.cshtml`
+The Blazor experience is available when you open a .razor file in a valid OmniSharp/Blazor project.
+
+To setup a test project to verify on you can do:  
+1. Install the latest preview of the .NET Core 3.0 SDK by going to https://github.com/dotnet/core-sdk and picking the appropriate platform specific installer from the Release/3.0.1XX column. The version should be 3.0.0-preview4-nnnnnn.
+2. `dotnet new blazorserverside`
+3. Open `Pages/Index.razor`
 
 ##### C# Completion
 * Typing `@DateTime.Now` and `@(DateTime.Now)` provides completions throughout typing.
@@ -128,11 +143,31 @@ The Blazor experience is available when you open a .cshtml file in a valid OmniS
 
 ##### C# Diagnostics
 * When no changes have been performed on `Pages/Index.cshtml`, there are 0 errors.
-* Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file. 
+* Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file.
+
+##### Components
+* Typing `<Counter>` prompts you with HTML completion for the `Counter` tag and on completion commit auto-completes the closing tag.
+  - In the completion list that pops up ensure there's also a `YourProjectName.Pages.Counter` entry in the HTML completion list.
+* Open `Counter.razor`, in the `@functions { ... }` block add:
+  ```C#
+  [Parameter]
+  private int IncrementAmount { get; set; }
+  ```
+  - Save `Counter.razor` then wait 5 seconds.
+  - Go back to `Index.razor` and type `<Counter |`, hit ctrl space, search for `IncrementAmount` attribute, commit the completion. Ensure that it auto-completes to `<Counter IncrementAmount="|"`
+  - While inside the `IncrementAmount` attribute type `in`, hit ctrl + space, search for `int`, type `.`, search for `MaxValue` commit it, you should have `<Counter IncrementAmount="int.MaxValue"`
+* Verify `_Imports.razor` works as expected: 
+  - Add a new Folder `Utilities` under the `/Pages` folder. Within that folder add a `Helper.razor` file.
+  - Open the `_Imports.razor` under the `/Pages` folder. Add `@using YourProjectName.Pages.Utilities`
+  - Go back to `Index.razor`. Typing `<Helper>` prompts you with HTML completion for the `Helper` tag.
+
+
+##### Razor Diagnostics
+* Typing `@{ <strong> }` results in errors. One error should be about the "strong" tag missing a closing tag.
+* Fixing the error and typing `</strong>` i.e. `@{ <strong></strong> }` results in the diagnostic going away.
 
 ##### Known issues:
-- Error squiggles may be misaligned due to known issues.  
-- There are some errors in the default Blazor project that are known. All errors that read like `Cannot convert method group 'SomeMethodName' to non-delegate type 'object'. Did you intend to invoke the method? [ProjectName]` are expected.
+- Error squiggles may be misaligned due to known issues.
 
 #### Legacy Razor
 The Razor experience is degraded (but no errors) when you open a .cshtml file in a valid OmniSharp/Legacy Razor project. To setup a test project to verify on you can do:  
@@ -165,47 +200,53 @@ Verifying Html is needed to ensure the Razor experience is still partially enabl
 
 #### Razor Project level Information
 To verify the project level information for Razor do the following:
-1. Verify the `obj/Debug/TheTFMOfTheProject` folder contains a `project.razor.json` file (once the project is restored)
-2. Verify the `project.razor.json`'s `Configuration` section is not set to `null`.
+1. Install the latest preview of the .NET Core 3.0 SDK by going to https://github.com/dotnet/core-sdk and picking the appropriate platform specific installer from the Release/3.0.1XX column. The version should be 3.0.0-preview4-nnnnnn.
+2. Verify the `obj/Debug/TheTFMOfTheProject` folder contains a `project.razor.json` file (once the project is restored)
+3. Verify the `project.razor.json`'s `Configuration` section is not set to `null`.
 
 Verify each of the test projects above's `project.razor.json` file (ASP.NET Core Razor, Blazor and Legacy Razor) looks something like the following:
 
 ##### ASP.NET Core Razor
 ```JSON
 {
-  "ProjectFilePath": "c:\\Users\\JohnDoe\\Projects\\RazorCoreTestApp\\RazorCoreTestApp.csproj",
-  "TargetFramework": "netcoreapp2.1",
-  "TagHelpers": [],
+  "FilePath": "c:\\Users\\JohnDoe\\Projects\\RazorCoreTestApp\\RazorCoreTestApp.csproj",
   "Configuration": {
-    "ConfigurationName": "MVC-2.1",
-    "LanguageVersion": "2.1",
+    "ConfigurationName": "MVC-3.0",
+    "LanguageVersion": "3.0",
     "Extensions": [
       {
-        "ExtensionName": "MVC-2.1"
+        "ExtensionName": "MVC-3.0"
       }
     ]
-  }
+  },
+  "ProjectWorkspaceState": {
+    "TagHelpers": [ /* LOTS OF ENTRIES HERE */ ],
+    "CSharpLanguageVersion": 703 // This may be different
+  },
+  "RootNamespace": "RazorCoreTestApp",
+  "Documents": [ /* LOTS OF ENTRIES HERE */]
 }
 ```
 
 ##### Blazor
 ```JSON
 {
-  "ProjectFilePath": "c:\\Users\\JohnDoe\\Projects\\BlazorTestApp\\BlazorTestApp.csproj",
-  "TargetFramework": "netstandard2.0",
-  "TagHelpers": [],
+  "FilePath": "c:\\Users\\JohnDoe\\Projects\\BlazorTestApp\\BlazorTestApp.csproj",
   "Configuration": {
-    "ConfigurationName": "Blazor-0.1",
-    "LanguageVersion": "1337.1337",
+    "ConfigurationName": "MVC-3.0",
+    "LanguageVersion": "MVC-3.0",
     "Extensions": [
       {
-        "ExtensionName": "Blazor.AngleSharp-0.1"
-      },
-      {
-        "ExtensionName": "Blazor-0.1"
+        "ExtensionName": "MVC-3.0"
       }
     ]
-  }
+  },
+  "ProjectWorkspaceState": {
+    "TagHelpers": [ /* LOTS OF ENTRIES HERE */ ],
+    "CSharpLanguageVersion": 703 // This may be different
+  },
+  "RootNamespace": "BlazorTestApp",
+  "Documents": [ /* LOTS OF ENTRIES HERE */]
 }
 ```
 
@@ -213,8 +254,6 @@ Verify each of the test projects above's `project.razor.json` file (ASP.NET Core
 ```JSON
 {
   "ProjectFilePath": "c:\\Users\\JohnDoe\\Projects\\LegacyRazorTestApp\\LegacyRazorTestApp.csproj",
-  "TargetFramework": "v4.6.1",
-  "TagHelpers": [],
   "Configuration": {
     "ConfigurationName": "UnsupportedRazor",
     "LanguageVersion": "1.0",
@@ -223,9 +262,26 @@ Verify each of the test projects above's `project.razor.json` file (ASP.NET Core
         "ExtensionName": "UnsupportedRazorExtension"
       }
     ]
-  }
+  },
+  "ProjectWorkspaceState": {
+    "TagHelpers": [],
+    "CSharpLanguageVersion": 703 // This may be different
+  },
+  "RootNamespace": null,
+  "Documents": []
 }
 ```
+
+#### Report a Razor issue
+Perform the following in any of the above Razor projects.
+* Run the `Report a Razor issue` command while `razor.trace` is set to `Off`. Ensure that you get a dialog stating that `razor.trace` must be set to `Verbose`.
+* Run the `Report a Razor issue` command while `razor.trace` is set to `Verbose`. Follow the instructions, type a little bit in a .cshtml file when it's recording. Once you stop the recording ensure that the content copied to your clipboard has the following information: 
+  - Razor log output under the **Logs** section
+  - The Razor document content under the **Workspace information** section
+  - Projected CSharp document under the **Workspace information** section
+  - Projected Html document under the **Workspace information** section
+  - `dotnet --info` output under **Machine information** section
+  - The table of extensions under the **Machine information** section
 
 #### Razor Options
 
