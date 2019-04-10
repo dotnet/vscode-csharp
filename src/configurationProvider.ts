@@ -149,7 +149,7 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
     /**
 	 * Try to add all missing attributes to the debug configuration being launched.
 	 */
-    resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, config: vscode.DebugConfiguration, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration> {
+    async resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, config: vscode.DebugConfiguration, token?: vscode.CancellationToken): Promise<vscode.DebugConfiguration> {
 
         if (!config.type) {
             // If the config doesn't look functional force VSCode to open a configuration file https://github.com/Microsoft/vscode/issues/54213
@@ -159,15 +159,18 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
         if (config.request === "attach" && config.processCommand) {
             const processCommand = config.processCommand.replace(/\${workspaceFolder}/g, folder.uri.fsPath);
             delete config.processCommand;
-            return this.attachItemsProvider.getAttachItems()
-                .then(attachItems => {
-                    const attachItem = attachItems.find(ai => ai.detail === processCommand);
-                    if (attachItem == null) {
-                        throw new Error("Can't find process");
-                    }
-                    config.processId = attachItem.id;
-                    return config;
-                });
+            const attachItems = await this.attachItemsProvider.getAttachItems();
+            const foundAttatchItems = attachItems.filter(ai => ai.detail === processCommand);
+
+            if (foundAttatchItems.length === 0) {
+                throw new Error(`Couldn't find a process with the command "${processCommand}"`);
+            }
+
+            if (foundAttatchItems.length > 1) {
+                throw new Error(`Find ${foundAttatchItems.length} processes with the command "${processCommand}"`);
+            }
+            config.processId = foundAttatchItems[0].id;
+            return config;
         }
 
         if (config.request === "launch") {
