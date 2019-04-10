@@ -20,6 +20,10 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
 
     suiteSetup(async function () {
         should();
+
+        let csharpConfig = vscode.workspace.getConfiguration('omnisharp');
+        await csharpConfig.update('enableRoslynAnalyzers', true);
+
         await testAssetWorkspace.restore();
         await activateCSharpExtension();
 
@@ -27,9 +31,6 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
         let filePath = path.join(projectDirectory, fileName);
         fileUri = vscode.Uri.file(filePath);
-
-        let csharpConfig = vscode.workspace.getConfiguration('omnisharp');
-        await csharpConfig.update('enableRoslynAnalyzers', true);
 
         await vscode.commands.executeCommand("vscode.open", fileUri);
     });
