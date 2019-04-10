@@ -25,11 +25,11 @@ export class Options {
         public razorDisabled: boolean,
         public razorDevMode: boolean,
         public enableMsBuildLoadProjectsOnDemand: boolean,
+        public enableRoslynAnalyzers: boolean,
         public razorPluginPath?: string,
         public defaultLaunchSolution?: string,
         public monoPath?: string,
         public maxProjectFileCountForDiagnosticAnalysis?: number | null) { }
-
 
     public static Read(vscode: vscode): Options {
         // Extra effort is taken below to ensure that legacy versions of options
@@ -61,6 +61,8 @@ export class Options {
         const maxProjectResults = omnisharpConfig.get<number>('maxProjectResults', 250);
         const defaultLaunchSolution = omnisharpConfig.get<string>('defaultLaunchSolution', undefined);
         const useEditorFormattingSettings = omnisharpConfig.get<boolean>('useEditorFormattingSettings', true);
+
+        const enableRoslynAnalyzers = omnisharpConfig.get<boolean>('enableRoslynAnalyzers', false);
 
         const useFormatting = csharpConfig.get<boolean>('format.enable', true);
 
@@ -101,6 +103,7 @@ export class Options {
             razorDisabled,
             razorDevMode,
             enableMsBuildLoadProjectsOnDemand,
+            enableRoslynAnalyzers,
             razorPluginPath,
             defaultLaunchSolution,
             monoPath,
