@@ -590,11 +590,6 @@
           "default": false,
           "description": "Suppress the warning that project.json is no longer a supported project format for .NET Core applications"
         },
-        "csharp.suppressHiddenDiagnostics": {
-          "type": "boolean",
-          "default": true,
-          "description": "Suppress 'hidden' diagnostics (such as 'unnecessary using directives') from appearing in the editor or the Problems pane."
-        },
         "csharp.referencesCodeLens.enabled": {
           "type": "boolean",
           "default": true,
