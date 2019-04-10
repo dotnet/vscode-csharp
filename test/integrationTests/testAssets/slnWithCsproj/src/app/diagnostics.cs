@@ -6,8 +6,7 @@ namespace Foo
     {
         public void FooBarBar()
         {
-            return;
-            Console.WriteLine("something");
+            var notUsed = 3;
         }
     }
 }
