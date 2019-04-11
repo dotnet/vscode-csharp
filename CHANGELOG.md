@@ -11,6 +11,9 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
+## 1.18.1 (April 11, 2019)
+* Improved support for .NET Core 3
+
 ## 1.18.0 (March 26, 2019)
 
 * Added a `csharp.maxProjectFileCountForDiagnosticAnalysis` setting to configure the file limit when the extension stops reporting errors for whole workspace. When this threshold is reached, the diagnostics are reported for currently opened files only. This mechanism was available in previous versions, but now can be configured. The default is 1000. (PR: [#1877](https://github.com/OmniSharp/omnisharp-vscode/pull/1877))
