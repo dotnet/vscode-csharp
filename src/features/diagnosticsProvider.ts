@@ -365,6 +365,12 @@ class DiagnosticsProvider extends AbstractSupport {
                 return vscode.DiagnosticSeverity.Warning;
             case 'info':
                 return vscode.DiagnosticSeverity.Information;
+            case 'hidden':
+                if(vscode.workspace.getConfiguration('csharp').get('suppressHiddenDiagnostics', true))
+                {
+                    return undefined;
+                }
+                return vscode.DiagnosticSeverity.Hint;
             default:
                 return undefined;
         }
