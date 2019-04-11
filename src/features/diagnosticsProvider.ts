@@ -325,7 +325,10 @@ class DiagnosticsProvider extends AbstractSupport {
     }
 
     private _asDiagnostic(quickFix: protocol.QuickFix): vscode.Diagnostic | undefined {
-        let isFadeout = (quickFix.Tags && !!quickFix.Tags.find(x => x.toLowerCase() == 'unnecessary'));
+        // CS0162 & CS8019 => Unnused using and unreachable code.
+        // These hard coded values bring some goodnes of fading even when analyzers are disabled.
+        let isFadeout = (quickFix.Tags && !!quickFix.Tags.find(x => x.toLowerCase() == 'unnecessary')) || quickFix.Id == "CS0162" || quickFix.Id == "CS8019";
+
 
         let severity = this._asDiagnosticSeverity(quickFix, isFadeout);
 
