@@ -49,14 +49,14 @@ suite('TelemetryReporterObserver', () => {
         expect(property).to.have.property("installStage", "completeSuccess");
     });
 
-    test(`${ProjectConfiguration.name}: Telemetry props contains project file path and target framework`, () => {
+    test(`${ProjectConfiguration.name}: Telemetry props contains project id and target framework`, () => {
         const targetFrameworks = new Array("tfm1", "tfm2");
-        const projectId = "projectFilePath";
+        const projectId = "sample";
         const references = new Array("ref1", "ref2");
         const fileExtensions = new Array(".cs", ".cshtml");
         let event = new ProjectConfiguration({
             TargetFrameworks: targetFrameworks,
-            ProjectGuid: projectId,
+            ProjectId: projectId,
             References: references,
             FileExtensions: fileExtensions
         });

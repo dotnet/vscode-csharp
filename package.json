@@ -837,8 +837,8 @@
     "keybindings": [
       {
         "command": "o.showOutput",
-        "key": "Ctrl+L L",
-        "mac": "Cmd+L L"
+        "key": "Ctrl+Shift+F9",
+        "mac": "Cmd+Shift+F9"
       },
       {
         "command": "csharp.setNextStatement",

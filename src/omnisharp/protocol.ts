@@ -431,7 +431,7 @@ export interface UnresolvedDependenciesMessage {
 }
 
 export interface ProjectConfigurationMessage {
-    ProjectGuid: string;
+    ProjectId: string;
     TargetFrameworks: string[];
     References: string[];
     FileExtensions: string[];
