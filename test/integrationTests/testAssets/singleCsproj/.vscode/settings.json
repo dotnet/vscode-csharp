@@ -1,3 +1,4 @@
 {
-    "omnisharp.path": "latest"
+    "omnisharp.path": "latest",
+    "omnisharp.enableRoslynAnalyzers": true
 }
