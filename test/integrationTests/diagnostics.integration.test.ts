@@ -45,8 +45,32 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
     });
 
     test("Return fadeout diagnostics like unused usings", async function () {
-        let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 10*1000, 500);
-        expect(result.map(x => x.message).join('|')).to.have.string("IDE0005");
+        let diagMessageAsSingleString = (diagnostics: vscode.Diagnostic[]) => diagnostics.map(x => x.message).join('|');
+
+        let result = await pollExpression(value => diagMessageAsSingleString(value).indexOf("IDE0005") >= 0,
+            () => vscode.languages.getDiagnostics(fileUri), 15*1000, 500);
+
+        expect(diagMessageAsSingleString(result)).to.have.string("IDE0005");
         expect(result.map(x => x.tags).reduce(x => x)).to.include(vscode.DiagnosticTag.Unnecessary);
     });
 });
+
+export default async function pollExpression<T>(expression: (value: T) => boolean, getValue: () => T, duration: number, step: number): Promise<T> {
+    while (duration > 0) {
+        let value = await getValue();
+
+        if(expression(value)) {
+            return value;
+        }
+
+        await sleep(step);
+
+        duration -= step;
+    }
+
+    throw new Error("Polling did not succeed within the alotted duration.");
+}
+
+async function sleep(ms = 0) {
+    return new Promise(r => setTimeout(r, ms));
+}
