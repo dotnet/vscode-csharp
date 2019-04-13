@@ -251,7 +251,7 @@ class DiagnosticsProvider extends AbstractSupport {
                 // (re)set new diagnostics for this document
                 let diagnosticsInFile = this._mapQuickFixesAsDiagnosticsInFile(quickFixes);
 
-                this._diagnostics.set(document.uri, diagnosticsInFile.map(x => x.diag));
+                this._diagnostics.set(document.uri, diagnosticsInFile.map(x => x.diagnostic));
             }
             catch (error) {
                 return;
@@ -262,10 +262,10 @@ class DiagnosticsProvider extends AbstractSupport {
         this._documentValidations[key] = source;
     }
 
-    private _mapQuickFixesAsDiagnosticsInFile(quickFixes: protocol.QuickFix[]): { diag: vscode.Diagnostic, fileName: string }[] {
+    private _mapQuickFixesAsDiagnosticsInFile(quickFixes: protocol.QuickFix[]): { diagnostic: vscode.Diagnostic, fileName: string }[] {
         return quickFixes
-            .map(qf => ({ diag: this._asDiagnostic(qf), fileName: qf.FileName }))
-            .filter(item => item.diag !== undefined);
+            .map(quickFix => this._asDiagnosticInFileIfAny(quickFix))
+            .filter(diagnosticInFile => diagnosticInFile !== undefined);
     }
 
     private _validateProject(): void {
@@ -293,13 +293,13 @@ class DiagnosticsProvider extends AbstractSupport {
                     let uri = vscode.Uri.file(diagnosticInFile.fileName);
 
                     if (lastEntry && lastEntry[0].toString() === uri.toString()) {
-                        lastEntry[1].push(diagnosticInFile.diag);
+                        lastEntry[1].push(diagnosticInFile.diagnostic);
                     } else {
                         // We're replacing all diagnostics in this file. Pushing an entry with undefined for
                         // the diagnostics first ensures that the previous diagnostics for this file are
                         // cleared. Otherwise, new entries will be merged with the old ones.
                         entries.push([uri, undefined]);
-                        lastEntry = [uri, [diagnosticInFile.diag]];
+                        lastEntry = [uri, [diagnosticInFile.diagnostic]];
                         entries.push(lastEntry);
                     }
                 }
@@ -325,36 +325,41 @@ class DiagnosticsProvider extends AbstractSupport {
         });
     }
 
-    private _asDiagnostic(quickFix: protocol.QuickFix): vscode.Diagnostic | undefined {
-        // CS0162 & CS8019 => Unnused using and unreachable code.
-        // These hard coded values bring some goodnes of fading even when analyzers are disabled.
-        let isFadeout = (quickFix.Tags && !!quickFix.Tags.find(x => x.toLowerCase() == 'unnecessary')) || quickFix.Id == "CS0162" || quickFix.Id == "CS8019";
+    private _asDiagnosticInFileIfAny(quickFix: protocol.QuickFix): { diagnostic: vscode.Diagnostic, fileName: string } {
+        let display = this._getDiagnosticDisplay(quickFix, this._asDiagnosticSeverity(quickFix));
 
-        let severity = this._asDiagnosticSeverity(quickFix, isFadeout);
-
-        if (severity === undefined) {
+        if (display.severity === "hidden") {
             return undefined;
         }
 
         let message = `${quickFix.Text} [${quickFix.Projects.map(n => this._asProjectLabel(n)).join(', ')}]`;
 
-        let diagnostic = new vscode.Diagnostic(toRange(quickFix), message, severity);
+        let diagnostic = new vscode.Diagnostic(toRange(quickFix), message, display.severity);
 
-        if (isFadeout) {
+        if (display.isFadeout) {
             diagnostic.tags = [vscode.DiagnosticTag.Unnecessary];
         }
 
-        return diagnostic;
+        return { diagnostic: diagnostic, fileName: quickFix.FileName };
     }
 
-    private _asDiagnosticSeverity(quickFix: protocol.QuickFix, fadeOut: boolean): vscode.DiagnosticSeverity | undefined {
-        if (fadeOut && quickFix.LogLevel.toLowerCase() === 'hidden' || quickFix.LogLevel.toLowerCase() === 'none') {
+    private _getDiagnosticDisplay(quickFix: protocol.QuickFix, severity: vscode.DiagnosticSeverity | "hidden"): { severity: vscode.DiagnosticSeverity | "hidden", isFadeout: boolean }
+    {
+        // CS0162 & CS8019 => Unnused using and unreachable code.
+        // These hard coded values bring some goodnes of fading even when analyzers are disabled.
+        let isFadeout = (quickFix.Tags && !!quickFix.Tags.find(x => x.toLowerCase() == 'unnecessary')) || quickFix.Id == "CS0162" || quickFix.Id == "CS8019";
+
+        if (isFadeout && quickFix.LogLevel.toLowerCase() === 'hidden' || quickFix.LogLevel.toLowerCase() === 'none') {
             // Theres no such thing as hidden severity in VSCode,
             // however roslyn uses commonly analyzer with hidden to fade out things.
             // Without this any of those doesn't fade anything in vscode.
-            return vscode.DiagnosticSeverity.Hint;
+            return { severity: vscode.DiagnosticSeverity.Hint , isFadeout };
         }
 
+        return { severity: severity, isFadeout };
+    }
+
+    private _asDiagnosticSeverity(quickFix: protocol.QuickFix): vscode.DiagnosticSeverity | "hidden" {
         switch (quickFix.LogLevel.toLowerCase()) {
             case 'error':
                 return vscode.DiagnosticSeverity.Error;
@@ -364,11 +369,11 @@ class DiagnosticsProvider extends AbstractSupport {
                 return vscode.DiagnosticSeverity.Information;
             case 'hidden':
                 if (this._suppressHiddenDiagnostics) {
-                    return undefined;
+                    return "hidden";
                 }
                 return vscode.DiagnosticSeverity.Hint;
             default:
-                return undefined;
+                return "hidden";
         }
     }
 
