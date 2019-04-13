@@ -127,12 +127,14 @@ class DiagnosticsProvider extends AbstractSupport {
     private _documentValidations: { [uri: string]: vscode.CancellationTokenSource } = Object.create(null);
     private _projectValidation: vscode.CancellationTokenSource;
     private _diagnostics: vscode.DiagnosticCollection;
+    private _suppressHiddenDiagnostics: boolean;
 
     constructor(server: OmniSharpServer, validationAdvisor: Advisor) {
         super(server);
 
         this._validationAdvisor = validationAdvisor;
         this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
+        this._suppressHiddenDiagnostics = vscode.workspace.getConfiguration('csharp').get('suppressHiddenDiagnostics', true);
 
         let d1 = this._server.onPackageRestore(this._validateProject, this);
         let d2 = this._server.onProjectChange(this._validateProject, this);
@@ -260,8 +262,7 @@ class DiagnosticsProvider extends AbstractSupport {
         this._documentValidations[key] = source;
     }
 
-    private _mapQuickFixesAsDiagnosticsInFile(quickFixes: protocol.QuickFix[]): { diag: vscode.Diagnostic, fileName: string }[]
-    {
+    private _mapQuickFixesAsDiagnosticsInFile(quickFixes: protocol.QuickFix[]): { diag: vscode.Diagnostic, fileName: string }[] {
         return quickFixes
             .map(qf => ({ diag: this._asDiagnostic(qf), fileName: qf.FileName }))
             .filter(item => item.diag !== undefined);
@@ -329,11 +330,9 @@ class DiagnosticsProvider extends AbstractSupport {
         // These hard coded values bring some goodnes of fading even when analyzers are disabled.
         let isFadeout = (quickFix.Tags && !!quickFix.Tags.find(x => x.toLowerCase() == 'unnecessary')) || quickFix.Id == "CS0162" || quickFix.Id == "CS8019";
 
-
         let severity = this._asDiagnosticSeverity(quickFix, isFadeout);
 
-        if(severity === undefined)
-        {
+        if (severity === undefined) {
             return undefined;
         }
 
@@ -341,8 +340,7 @@ class DiagnosticsProvider extends AbstractSupport {
 
         let diagnostic = new vscode.Diagnostic(toRange(quickFix), message, severity);
 
-        if(isFadeout)
-        {
+        if (isFadeout) {
             diagnostic.tags = [vscode.DiagnosticTag.Unnecessary];
         }
 
@@ -350,8 +348,7 @@ class DiagnosticsProvider extends AbstractSupport {
     }
 
     private _asDiagnosticSeverity(quickFix: protocol.QuickFix, fadeOut: boolean): vscode.DiagnosticSeverity | undefined {
-        if(fadeOut && quickFix.LogLevel.toLowerCase() === 'hidden' || quickFix.LogLevel.toLowerCase() === 'none')
-        {
+        if (fadeOut && quickFix.LogLevel.toLowerCase() === 'hidden' || quickFix.LogLevel.toLowerCase() === 'none') {
             // Theres no such thing as hidden severity in VSCode,
             // however roslyn uses commonly analyzer with hidden to fade out things.
             // Without this any of those doesn't fade anything in vscode.
@@ -366,8 +363,7 @@ class DiagnosticsProvider extends AbstractSupport {
             case 'info':
                 return vscode.DiagnosticSeverity.Information;
             case 'hidden':
-                if(vscode.workspace.getConfiguration('csharp').get('suppressHiddenDiagnostics', true))
-                {
+                if (this._suppressHiddenDiagnostics) {
                     return undefined;
                 }
                 return vscode.DiagnosticSeverity.Hint;
