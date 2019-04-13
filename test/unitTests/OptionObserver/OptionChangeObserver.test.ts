@@ -39,8 +39,8 @@ suite("OmniSharpConfigChangeObserver", () => {
         { config: "omnisharp", section: "path", value: "somePath" },
         { config: "omnisharp", section: "waitForDebugger", value: true },
         { config: "omnisharp", section: "enableMsBuildLoadProjectsOnDemand", value: true },
-        { config: "omnisharp", section: "useGlobalMono", value: "always" }
-
+        { config: "omnisharp", section: "useGlobalMono", value: "always" },
+        { config: "omnisharp", section: 'loggingLevel', value: 'verbose' }
     ].forEach(elem => {
         suite(`When the ${elem.config} ${elem.section} changes`, () => {
             setup(() => {
@@ -77,8 +77,7 @@ suite("OmniSharpConfigChangeObserver", () => {
             { config: "omnisharp", section: 'useEditorFormattingSettings', value: false },
             { config: "omnisharp", section: 'maxProjectResults', value: 1000 },
             { config: "omnisharp", section: 'projectLoadTimeout', value: 1000 },
-            { config: "omnisharp", section: 'autoStart', value: false },
-            { config: "omnisharp", section: 'loggingLevel', value: 'verbose' }
+            { config: "omnisharp", section: 'autoStart', value: false }
         ].forEach(elem => {
             test(`${elem.config} ${elem.section}`, async () => {
                 expect(infoMessage).to.be.undefined;
