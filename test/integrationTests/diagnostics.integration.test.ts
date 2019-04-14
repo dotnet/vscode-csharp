@@ -21,9 +21,6 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
 
-        let csharpConfig = vscode.workspace.getConfiguration('omnisharp');
-        await csharpConfig.update('enableRoslynAnalyzers', true);
-
         await testAssetWorkspace.restore();
         await activateCSharpExtension();
 
@@ -44,33 +41,20 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         expect(result.length).to.be.greaterThan(0);
     });
 
-    test("Return fadeout diagnostics like unused usings", async function () {
-        let diagMessageAsSingleString = (diagnostics: vscode.Diagnostic[]) => diagnostics.map(x => x.message).join('|');
+    test("Return unnecessary tag in case of unnesessary using", async function () {
+        let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 15*1000, 500);
 
-        let result = await pollExpression(value => diagMessageAsSingleString(value).indexOf("IDE0005") >= 0,
-            () => vscode.languages.getDiagnostics(fileUri), 15*1000, 500);
-
-        expect(diagMessageAsSingleString(result)).to.have.string("IDE0005");
-        expect(result.map(x => x.tags).reduce(x => x)).to.include(vscode.DiagnosticTag.Unnecessary);
+        let cs8019 = result.find(x => x.message.includes("CS8019"));
+        expect(cs8019).to.not.be(undefined);
+        expect(cs8019.tags).to.include(vscode.DiagnosticTag.Unnecessary);
     });
+
+    test("Return fadeout diagnostics like unused usings based on roslyn analyzers, fix this once https://github.com/OmniSharp/omnisharp-roslyn/issues/1458 is resolved", async function () {
+        let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 15*1000, 500);
+
+        let ide0005 = result.find(x => x.message.includes("IDE0005"));
+        expect(ide0005).to.not.be(undefined);
+        expect(ide0005.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+    })
+    .skip();
 });
-
-export default async function pollExpression<T>(expression: (value: T) => boolean, getValue: () => T, duration: number, step: number): Promise<T> {
-    while (duration > 0) {
-        let value = await getValue();
-
-        if(expression(value)) {
-            return value;
-        }
-
-        await sleep(step);
-
-        duration -= step;
-    }
-
-    throw new Error("Polling did not succeed within the alotted duration.");
-}
-
-async function sleep(ms = 0) {
-    return new Promise(r => setTimeout(r, ms));
-}
