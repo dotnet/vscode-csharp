@@ -20,18 +20,12 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
-### What's new in 1.18.1
+### What's new in 1.19.0
 
+* Improved support for .NET Core 3
 * Added support for roslyn analyzers, code fixes and rulesets which can be enabled via`omnisharp.enableRoslynAnalyzers` setting.
-* Added a `csharp.maxProjectFileCountForDiagnosticAnalysis` setting to configure the file limit when the extension stops reporting errors for whole workspace. When this threshold is reached, the diagnostics are reported for currently opened files only.
-* Added a `omnisharp.enableMsBuildLoadProjectsOnDemand` setting to load project for files that were opened in the editor. This enables faster navigation of the codebase for the larger codebases.
-* Added initial support for C# 8.
-* Improvement in load times for the extension.
-* Added tasks for "dotnet publish" and "dotnet watch" in the initial asset generation.
-* Added support for set next statement. This feature allows developers to change what code is executed next in the target program.
-* Added support for showing return values in the variables window.
 
-See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.18.1/CHANGELOG.md) for more detail.
+See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.19.0/CHANGELOG.md) for more detail.
 
 ### Supported Operating Systems for Debugging
 
