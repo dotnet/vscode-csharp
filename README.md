@@ -24,6 +24,8 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 
 * Improved support for .NET Core 3
 * Added support for roslyn analyzers, code fixes and rulesets which can be enabled via`omnisharp.enableRoslynAnalyzers` setting.
+* Improved Razor diagnostics
+* Razor tooling support for tag helpers
 
 See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.19.0/CHANGELOG.md) for more detail.
 
