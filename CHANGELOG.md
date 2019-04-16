@@ -1,18 +1,19 @@
-## Known Issues in 1.18.1
+## Known Issues in 1.19.0
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
-  * Support for tag helpers and formatting not yet implemented
-  * Limited support for colorization
+  * Limited support for colorization and formatting
   * Loss of HTML completions following C# less than (`<`) operator
   * Error squiggles misaligned for expressions near the start of a new line
-  * Incorrect errors in Blazor projects for event bindings
   * Emmet based abbreviation expansion is not yet supported
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.18.1 (April 16, 2019)
+## 1.19.0 (April 16, 2019)
 * Improved support for .NET Core 3
+* Added support for roslyn analyzers, code fixes and rulesets which can be enabled via`omnisharp.enableRoslynAnalyzers` setting.
+* Improved Razor diagnostics
+* Razor tooling support for tag helpers
 
 ## 1.18.0 (March 26, 2019)
 
