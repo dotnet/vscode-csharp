@@ -9,6 +9,10 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
+## 1.19.1 (Not yet released)
+
+* Updated debugger to work correctly on Linux distributions with openssl 1.1 such as Ubuntu 19.04 ([#3010](https://github.com/OmniSharp/omnisharp-vscode/issues/3010))
+
 ## 1.19.0 (April 16, 2019)
 * Improved support for .NET Core 3
 * Added support for roslyn analyzers, code fixes and rulesets which can be enabled via`omnisharp.enableRoslynAnalyzers` setting.
