@@ -23,8 +23,8 @@ addons:
     packages:
       - g++-4.9
       - libsecret-1-dev
-      - dotnet-runtime-2.0.0
-      - dotnet-sdk-2.0.2
+      - dotnet-runtime-2.1
+      - dotnet-sdk-2.1
 
 install:
 - npm ci
