@@ -3,11 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Advisor } from "./features/diagnosticsProvider";
-import { EventStream } from "./EventStream";
+import { ITestAssetWorkspace } from "./testAssets";
 
- export default interface CSharpExtensionExports {
-    initializationFinished: () => Promise<void>;
-    getAdvisor: () => Promise<Advisor>;
-    eventStream: EventStream;
- }
+let workspace: ITestAssetWorkspace = {
+    description: "Basic Razor app",
+    projects: [{
+        relativeFilePath: "BasicRazorApp2_1.csproj"
+    }]
+};
+
+export default workspace;

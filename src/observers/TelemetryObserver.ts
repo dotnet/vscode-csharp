@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { PlatformInformation } from "../platform";
-import { BaseEvent, InstallationFailure, TestExecutionCountReport, TelemetryEventWithMeasures, TelemetryEvent} from "../omnisharp/loggingEvents";
+import { BaseEvent, InstallationFailure, TestExecutionCountReport, TelemetryEventWithMeasures, TelemetryEvent, ProjectConfiguration } from "../omnisharp/loggingEvents";
 import { PackageError } from "../packageManager/PackageError";
 import { EventType } from "../omnisharp/EventType";
 
@@ -44,6 +44,14 @@ export class TelemetryObserver {
                 let telemetryEvent = <TelemetryEvent>event;
                 this.reporter.sendTelemetryEvent(telemetryEvent.eventName, telemetryEvent.properties, telemetryEvent.measures);
                 break;
+            case EventType.ProjectConfigurationReceived:
+                let projectConfig = (<ProjectConfiguration>event).projectConfiguration;
+                telemetryProps['ProjectId'] = projectConfig.ProjectId;
+                telemetryProps['TargetFrameworks'] = projectConfig.TargetFrameworks.join("|");
+                telemetryProps['References'] = projectConfig.References.join("|");
+                telemetryProps['FileExtensions'] = projectConfig.FileExtensions.join("|");
+                this.reporter.sendTelemetryEvent("ProjectConfiguration", telemetryProps);
+                break;
         }
     }
 
@@ -53,7 +61,7 @@ export class TelemetryObserver {
 
     private handleInstallationSuccess(telemetryProps: { [key: string]: string; }) {
         telemetryProps['installStage'] = 'completeSuccess';
-        this.reporter.sendTelemetryEvent('Acquisition', telemetryProps);
+        this.reporter.sendTelemetryEvent('AcquisitionSucceeded', telemetryProps);
     }
 
     private handleInstallationFailure(event: InstallationFailure, telemetryProps: { [key: string]: string; }) {
@@ -67,7 +75,7 @@ export class TelemetryObserver {
             }
         }
 
-        this.reporter.sendTelemetryEvent('Acquisition', telemetryProps);
+        this.reporter.sendTelemetryEvent('AcquisitionFailed', telemetryProps);
     }
 
     private handleTestExecutionCountReport(event: TestExecutionCountReport) {

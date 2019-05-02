@@ -204,10 +204,56 @@ export class AssetGenerator {
         };
     }
 
+    private createPublishTaskDescription(): tasks.TaskDescription {
+        let commandArgs = ['publish'];
+
+        let buildProject = this.startupProject;
+        if (!buildProject) {
+            buildProject = this.fallbackBuildProject;
+        }
+        if (buildProject) {
+            const buildPath = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, buildProject.Path));
+            commandArgs.push(util.convertNativePathToPosix(buildPath));
+        }
+
+        return {
+            label: 'publish',
+            command: 'dotnet',
+            type: 'process',
+            args: commandArgs,
+            // NOTE: The "$msCompile" matcher isn't the correct matcher for 'dotnet build' as it expects all
+            // file paths to be fully qualified. The tsc matcher seems to work as we would like.
+            problemMatcher: '$tsc'
+        };
+    }
+
+    private createWatchTaskDescription(): tasks.TaskDescription {
+        let commandArgs = ['watch','run'];
+
+        let buildProject = this.startupProject;
+        if (!buildProject) {
+            buildProject = this.fallbackBuildProject;
+        }
+        if (buildProject) {
+            const buildPath = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, buildProject.Path));
+            commandArgs.push(util.convertNativePathToPosix(buildPath));
+        }
+
+        return {
+            label: 'watch',
+            command: 'dotnet',
+            type: 'process',
+            args: commandArgs,
+            // NOTE: The "$msCompile" matcher isn't the correct matcher for 'dotnet build' as it expects all
+            // file paths to be fully qualified. The tsc matcher seems to work as we would like.
+            problemMatcher: '$tsc'
+        };
+    }
+
     public createTasksConfiguration(): tasks.TaskConfiguration {
         return {
             version: "2.0.0",
-            tasks: [this.createBuildTaskDescription()]
+            tasks: [this.createBuildTaskDescription(), this.createPublishTaskDescription(), this.createWatchTaskDescription()]
         };
     }
 }
@@ -433,7 +479,7 @@ export async function addTasksJsonIfNecessary(generator: AssetGenerator, operati
 
         const tasksJson = generator.createTasksConfiguration();
 
-        // NOTE: We only want to do this when we are supposed to update the task configuration. Otherwise, 
+        // NOTE: We only want to do this when we are supposed to update the task configuration. Otherwise,
         // in the case of the 'generateAssets' command, even though we already deleted the tasks.json file
         // this will still return the old tasks.json content
         if (operations.updateTasksJson) {
