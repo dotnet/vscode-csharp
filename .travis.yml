@@ -28,6 +28,7 @@ addons:
     packages:
       - g++-4.9
       - libsecret-1-dev
+      - libgtk-3-0
 
 install:
 - npm ci
