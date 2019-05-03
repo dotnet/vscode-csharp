@@ -31,7 +31,7 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
     
     let errorString = "";
     spawned.stderr.on("readable", function (buffer:any) {
-        let part = buffer.read().toString();
+        let part = spawned.stderr.read().toString();
         errorString += part;
         console.log('error:' + part);
     });
@@ -41,18 +41,15 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
     });
 
     let outputString = "";
-    spawned.stderr.on("readable", function (buffer:any) {
+    spawned.stdout.on("readable", function (buffer:any) {
         let part = buffer.read().toString();
         outputString += part;
         console.log('output:' + part);
     });
 
-    spawned.stderr.on('end',function(){
+    spawned.stdout.on('end',function(){
         console.log('final output ' + outputString);
     });
-
-    spawned.stdout.on("data", chunk =>
-        console.log(chunk));
-
+    
     return join(spawned);
 }
