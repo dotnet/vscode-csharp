@@ -9,7 +9,7 @@ env:
 before_install:
   - if [ $TRAVIS_OS_NAME == "linux" ]; then
       export CXX="g++-4.9" CC="gcc-4.9" DISPLAY=:99.0;
-      Xvfb :99;
+      Xvfb :99 &
       sleep 3;
     fi
   - dpkg --compare-versions `npm -v` ge 6.7 || npm i -g npm@^6.7
