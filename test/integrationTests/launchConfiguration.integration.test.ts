@@ -30,7 +30,7 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test.only("Starting .NET Core Launch (console) from the workspace root should create an Active Debug Session", async () => {
+    test("Starting .NET Core Launch (console) from the workspace root should create an Active Debug Session", async () => {
         
         vscode.debug.onDidChangeActiveDebugSession((e) => {
             expect(vscode.debug.activeDebugSession).not.to.be.undefined;

@@ -16,19 +16,10 @@ gulp.task("test:feature", async () => {
         OSVC_SUITE: "featureTests",
         CODE_TESTS_PATH: path.join(testRootPath, "featureTests")
     };
-    try {
         
-        let a = await spawnNode([vscodeTestHostPath, "--verbose"], {
-            env
-        });
-
-        console.log("output is", a);
-        return a;
-
-    }
-    catch (error) {
-        console.log("error is", error);
-    }
+    return spawnNode([vscodeTestHostPath, "--verbose"], {
+        env
+    });
 });
 
 gulp.task("test:unit", async () => {
