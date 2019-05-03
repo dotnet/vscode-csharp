@@ -18,12 +18,16 @@ gulp.task("test:feature", async () => {
     };
     try {
         
-        return spawnNode([vscodeTestHostPath, "--verbose"], {
+        let a = await spawnNode([vscodeTestHostPath, "--verbose"], {
             env
         });
+
+        console.log("output is", a);
+        return a;
+
     }
     catch (error) {
-        console.log(error);
+        console.log("error is", error);
     }
 });
 
