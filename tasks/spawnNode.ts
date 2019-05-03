@@ -5,7 +5,7 @@
 
 'use strict';
 
-import { SpawnOptions, spawn } from "child_process";
+import { SpawnOptions, spawn, spawnSync } from "child_process";
 import { nodePath, rootPath } from "./projectPaths";
 const { join } = require("async-child-process");
 
@@ -27,34 +27,36 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
     
     console.log(`starting ${nodePath} ${args.join(' ')}`);
 
-    let spawned = spawn(nodePath, args, optionsWithFullEnvironment);
+    let spawned = spawnSync(nodePath, args, optionsWithFullEnvironment);
     
-    let errorString = "";
-    spawned.stderr.on("readable", function (buffer:any) {
-        let part = spawned.stderr.read();
-        if(part){
-            errorString += part.toString();
-            console.log('error:' + part.toString());
-        }
+    console.log("error:", spawned.stderr.toString());
+    console.log("output:", spawned.stdout.toString());
+    // let errorString = "";
+    // spawned.stderr.to("readable", function (buffer:any) {
+    //     let part = spawned.stderr.read();
+    //     if(part){
+    //         errorString += part.toString();
+    //         console.log('error:' + part.toString());
+    //     }
         
-    });
+    // });
 
-    spawned.stderr.on('end',function(){
-        console.log('final error ' + errorString);
-    });
+    // spawned.stderr.on('end',function(){
+    //     console.log('final error ' + errorString);
+    // });
 
-    let outputString = "";
-    spawned.stdout.on("readable", function (buffer:any) {
-        let part = spawned.stdout.read();
-        if(part){
-            outputString += part.toString();
-            console.log('output:' + part.toString());
-        }
-    });
+    // let outputString = "";
+    // spawned.stdout.on("readable", function (buffer:any) {
+    //     let part = spawned.stdout.read();
+    //     if(part){
+    //         outputString += part.toString();
+    //         console.log('output:' + part.toString());
+    //     }
+    // });
 
-    spawned.stdout.on('end',function(){
-        console.log('final output ' + outputString);
-    });
+    // spawned.stdout.on('end',function(){
+    //     console.log('final output ' + outputString);
+    // });
 
     return join(spawned);
 }
