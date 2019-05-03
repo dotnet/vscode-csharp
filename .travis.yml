@@ -33,7 +33,6 @@ install:
 - npm ci
 - npm i -g gulp
 - gulp 'vsix:release:package'
-- /home/travis/build/OmniSharp/omnisharp-vscode/.vscode-test/vscode-1.33.0/VSCode-linux-x64/code /home/travis/build/OmniSharp/omnisharp-vscode/out/test/featureTests --extensionDevelopmentPath=/home/travis/build/OmniSharp/omnisharp-vscode --extensionTestsPath=/home/travis/build/OmniSharp/omnisharp-vscode/out/test/featureTests --locale=en
 
 
 script:
@@ -41,6 +40,7 @@ script:
   - gulp test
   - gulp cov:report
   - npm run test:artifacts
+  - /home/travis/build/OmniSharp/omnisharp-vscode/.vscode-test/vscode-1.33.0/VSCode-linux-x64/code /home/travis/build/OmniSharp/omnisharp-vscode/out/test/featureTests --extensionDevelopmentPath=/home/travis/build/OmniSharp/omnisharp-vscode --extensionTestsPath=/home/travis/build/OmniSharp/omnisharp-vscode/out/test/featureTests --locale=en
   - 'if [[ "$TRAVIS_BRANCH" != "master" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then npm run test:release; fi'
 
 after_failure:
