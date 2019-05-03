@@ -32,7 +32,7 @@ addons:
 install:
 - npm ci
 - npm i -g gulp
-#-gulp 'vsix:release:package'
+- gulp 'vsix:release:package'
 
 script:
   - gulp cov:instrument
