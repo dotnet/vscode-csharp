@@ -9,7 +9,7 @@ env:
 before_install:
   - if [ $TRAVIS_OS_NAME == "linux" ]; then
       export CXX="g++-4.9" CC="gcc-4.9" DISPLAY=:99.0;
-      sh -e /etc/init.d/xvfb start;
+      Xvfb :99&;
       sleep 3;
     fi
   - dpkg --compare-versions `npm -v` ge 6.7 || npm i -g npm@^6.7
@@ -18,8 +18,7 @@ before_install:
   - sudo apt-get install apt-transport-https
   - sudo apt-get update
   - sudo apt-get install dotnet-sdk-2.2
-  - wget -O code.deb -q https://go.microsoft.com/fwlink/?LinkID=760868
-  - sudo apt install ./code.deb
+  - sudo apt install xvfb
 
 addons:
   apt:
