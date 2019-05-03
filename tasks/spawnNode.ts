@@ -29,8 +29,28 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
 
     let spawned = spawn(nodePath, args, optionsWithFullEnvironment);
     
-    spawned.stderr.on("data", chunk =>
-    console.log(chunk));
+    let errorString = "";
+    spawned.stderr.on("readable", function (buffer:any) {
+        let part = buffer.read().toString();
+        errorString += part;
+        console.log('error:' + part);
+    });
+
+    spawned.stderr.on('end',function(){
+        console.log('final error ' + errorString);
+    });
+
+    let outputString = "";
+    spawned.stderr.on("readable", function (buffer:any) {
+        let part = buffer.read().toString();
+        outputString += part;
+        console.log('output:' + part);
+    });
+
+    spawned.stderr.on('end',function(){
+        console.log('final output ' + outputString);
+    });
+
     spawned.stdout.on("data", chunk =>
         console.log(chunk));
 
