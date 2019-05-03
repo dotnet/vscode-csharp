@@ -37,6 +37,7 @@ install:
 script:
   - gulp cov:instrument
   - gulp test
+  - npm run test:feature
   - gulp cov:report
   - npm run test:artifacts
   - 'if [[ "$TRAVIS_BRANCH" != "master" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then npm run test:release; fi'

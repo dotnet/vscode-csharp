@@ -57,7 +57,7 @@ gulp.task(
     ));
 
 gulp.task("test", gulp.series(
-    "test:feature",
+    //"test:feature",
     "test:unit",
     "test:integration"));
 
