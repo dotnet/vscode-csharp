@@ -33,6 +33,8 @@ install:
 - npm ci
 - npm i -g gulp
 - gulp 'vsix:release:package'
+- /home/travis/build/OmniSharp/omnisharp-vscode/.vscode-test/vscode-1.33.0/VSCode-linux-x64/code /home/travis/build/OmniSharp/omnisharp-vscode/out/test/featureTests --extensionDevelopmentPath=/home/travis/build/OmniSharp/omnisharp-vscode --extensionTestsPath=/home/travis/build/OmniSharp/omnisharp-vscode/out/test/featureTests --locale=en
+
 
 script:
   - gulp cov:instrument
