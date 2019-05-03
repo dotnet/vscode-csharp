@@ -42,7 +42,7 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
 
     let outputString = "";
     spawned.stdout.on("readable", function (buffer:any) {
-        let part = buffer.read().toString();
+        let part = spawned.stdout.read().toString();
         outputString += part;
         console.log('output:' + part);
     });
@@ -50,6 +50,6 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
     spawned.stdout.on('end',function(){
         console.log('final output ' + outputString);
     });
-    
+
     return join(spawned);
 }
