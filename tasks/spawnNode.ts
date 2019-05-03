@@ -31,9 +31,12 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
     
     let errorString = "";
     spawned.stderr.on("readable", function (buffer:any) {
-        let part = spawned.stderr.read().toString();
-        errorString += part;
-        console.log('error:' + part);
+        let part = spawned.stderr.read();
+        if(part){
+            errorString += part.toString();
+            console.log('error:' + part.toString());
+        }
+        
     });
 
     spawned.stderr.on('end',function(){
@@ -42,9 +45,11 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
 
     let outputString = "";
     spawned.stdout.on("readable", function (buffer:any) {
-        let part = spawned.stdout.read().toString();
-        outputString += part;
-        console.log('output:' + part);
+        let part = spawned.stdout.read();
+        if(part){
+            outputString += part.toString();
+            console.log('output:' + part.toString());
+        }
     });
 
     spawned.stdout.on('end',function(){
