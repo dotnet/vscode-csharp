@@ -5,7 +5,7 @@
 
 'use strict';
 
-import { SpawnOptions, spawn, spawnSync } from "child_process";
+import { SpawnOptions, spawnSync } from "child_process";
 import { nodePath, rootPath } from "./projectPaths";
 const { join } = require("async-child-process");
 
