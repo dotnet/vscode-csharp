@@ -16,10 +16,15 @@ gulp.task("test:feature", async () => {
         OSVC_SUITE: "featureTests",
         CODE_TESTS_PATH: path.join(testRootPath, "featureTests")
     };
-
-    return spawnNode([vscodeTestHostPath, "--verbose"], {
-        env
-    });
+    try {
+        
+        return spawnNode([vscodeTestHostPath, "--verbose"], {
+            env
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
 });
 
 gulp.task("test:unit", async () => {
@@ -57,7 +62,7 @@ gulp.task(
     ));
 
 gulp.task("test", gulp.series(
-    //"test:feature",
+    "test:feature",
     "test:unit",
     "test:integration"));
 
