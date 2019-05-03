@@ -18,7 +18,8 @@ before_install:
   - sudo apt-get install apt-transport-https
   - sudo apt-get update
   - sudo apt-get install dotnet-sdk-2.2
-  - sudo apt-get install code
+  - wget -O code.deb -q https://go.microsoft.com/fwlink/?LinkID=760868
+  - sudo apt install code.deb
 
 addons:
   apt:
