@@ -17,7 +17,7 @@ gulp.task("test:feature", async () => {
         CODE_TESTS_PATH: path.join(testRootPath, "featureTests")
     };
 
-    return spawnNode([vscodeTestHostPath], {
+    return spawnNode([vscodeTestHostPath, "--verbose"], {
         env
     });
 });
