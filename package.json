@@ -151,7 +151,7 @@
     "typescript": "3.3.3",
     "unzipper": "0.9.10",
     "vsce": "1.57.0",
-    "vscode": "1.1.29",
+    "vscode": "1.1.33",
     "webpack": "4.29.3",
     "webpack-cli": "3.2.3"
   },
