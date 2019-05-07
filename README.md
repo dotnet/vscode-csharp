@@ -20,6 +20,12 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
+### What's new in 1.19.1
+
+* Updated debugger to work correctly on Linux distributions with openssl 1.1 such as Ubuntu 19.04.
+* Fixed OmniSharp hanging on wildcard Nuget package references.
+* OmniSharp now uses correct 4.7.2 framework sku to prompt for installation of .NET 4.7.2 if missing.
+
 ### What's new in 1.19.0
 
 * Improved support for .NET Core 3
@@ -27,7 +33,7 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * Improved Razor diagnostics
 * Razor tooling support for tag helpers
 
-See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.19.0/CHANGELOG.md) for more detail.
+See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.19.1/CHANGELOG.md) for more detail.
 
 ### Supported Operating Systems for Debugging
 

@@ -1,4 +1,4 @@
-## Known Issues in 1.19.0
+## Known Issues in 1.19.1
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
@@ -12,6 +12,8 @@
 ## 1.19.1 (Not yet released)
 
 * Updated debugger to work correctly on Linux distributions with openssl 1.1 such as Ubuntu 19.04 ([#3010](https://github.com/OmniSharp/omnisharp-vscode/issues/3010))
+* Fixed OmniSharp hanging on wildcard Nuget package references.(PR: [omnisharp-roslyn#1473](https://github.com/OmniSharp/omnisharp-roslyn/pull/1473))
+* OmniSharp now uses correct 4.7.2 framework sku to prompt for installation of .NET 4.7.2 if missing.(PR: [omnisharp-roslyn#1469](https://github.com/OmniSharp/omnisharp-roslyn/pull/1469)).
 
 ## 1.19.0 (April 16, 2019)
 * Improved support for .NET Core 3
