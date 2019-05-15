@@ -274,7 +274,7 @@
         },
         "launchBrowser": {
           "$ref": "#/definitions/LaunchBrowser",
-          "description": "Describes options to launch a web browser as part of launch",
+          "description": "Legacy option used to enable launching a web browser. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser",
           "default": {
             "enabled": true
           }

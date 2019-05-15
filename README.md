@@ -42,7 +42,7 @@ See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.19.1/
   * X64 operating systems:
     * Windows 7 SP1 and newer
     * macOS 10.12 (Sierra) and newer
-    * Linux: see [.NET Core documentation](https://github.com/dotnet/core/blob/master/release-notes/2.0/2.0-supported-os.md#linux) for the list of supported distributions. Note that other Linux distributions will likely work as well as long as they include glibc and OpenSSL.
+    * Linux: see [.NET Core documentation](https://github.com/dotnet/core/blob/master/release-notes/2.2/2.2-supported-os.md#linux) for the list of supported distributions. Note that other Linux distributions will likely work as well as long as they include glibc and OpenSSL.
   * ARM operating systems:
     * Linux is supported as a remote debugging target
 
@@ -52,10 +52,6 @@ To file a new issue to include all the related config information directly from 
 (<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> on macOS) and running `CSharp: Report an issue` command. This will open a browser window with all the necessary information related to the installed extensions, dotnet version, mono version, etc. Enter all the remaining information and hit submit. More information can be found on the [wiki](https://github.com/OmniSharp/omnisharp-vscode/wiki/Reporting-Issues).
 
 Alternatively you could visit https://github.com/OmniSharp/omnisharp-vscode/issues and file a new one.
-
-### Debugging
-
-The C# extension now supports basic debugging capabilities! See http://aka.ms/vscclrdebugger for details.
 
 ### Development
 
