@@ -13,7 +13,7 @@
 
 * Updated the auto-generated launch.json to use new mechanism for starting web browser. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
 
-## 1.19.1 (Not yet released)
+## 1.19.1 (May 6, 2019)
 
 * Updated debugger to work correctly on Linux distributions with openssl 1.1 such as Ubuntu 19.04 ([#3010](https://github.com/OmniSharp/omnisharp-vscode/issues/3010))
 * Fixed OmniSharp hanging on wildcard Nuget package references.(PR: [omnisharp-roslyn#1473](https://github.com/OmniSharp/omnisharp-roslyn/pull/1473))
