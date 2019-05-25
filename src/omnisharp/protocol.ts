@@ -28,6 +28,7 @@ export module Requests {
     export const TypeLookup = '/typelookup';
     export const UpdateBuffer = '/updatebuffer';
     export const Metadata = '/metadata';
+    export const ReAnalyze = '/reanalyze';
 }
 
 export namespace WireProtocol {

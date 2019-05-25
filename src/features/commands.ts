@@ -32,6 +32,9 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
     disposable.add(vscode.commands.registerCommand('dotnet.restore.project', async () => pickProjectAndDotnetRestore(server, eventStream)));
     disposable.add(vscode.commands.registerCommand('dotnet.restore.all', async () => dotnetRestoreAllProjects(server, eventStream)));
 
+    disposable.add(vscode.commands.registerCommand('o.reanalyze.allProjects', async () => reAnalyzeAllProjects(server, eventStream)));
+    disposable.add(vscode.commands.registerCommand('o.reanalyze.currentProject', async () => reAnalyzeCurrentProject(server, eventStream)));
+
     // register empty handler for csharp.installDebugger
     // running the command activates the extension, which is all we need for installation to kickoff
     disposable.add(vscode.commands.registerCommand('csharp.downloadDebugger', () => { }));
@@ -130,6 +133,16 @@ async function pickProjectAndDotnetRestore(server: OmniSharpServer, eventStream:
     if (command) {
         return command.execute();
     }
+}
+
+async function reAnalyzeAllProjects(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
+    await serverUtils.reAnalyze(server, {});
+}
+
+async function reAnalyzeCurrentProject(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
+    await serverUtils.reAnalyze(server, {
+        currentOpenFilePathAsContext: vscode.window.activeTextEditor.document.uri.fsPath
+    });
 }
 
 async function dotnetRestoreAllProjects(server: OmniSharpServer, eventStream: EventStream): Promise<void> {

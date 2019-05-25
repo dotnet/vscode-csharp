@@ -87,6 +87,10 @@ export async function getMetadata(server: OmniSharpServer, request: protocol.Met
     return server.makeRequest<protocol.MetadataResponse>(protocol.Requests.Metadata, request);
 }
 
+export async function reAnalyze(server: OmniSharpServer, request: any) {
+    return server.makeRequest<any>(protocol.Requests.ReAnalyze, request);
+}
+
 export async function getTestStartInfo(server: OmniSharpServer, request: protocol.V2.GetTestStartInfoRequest) {
     return server.makeRequest<protocol.V2.GetTestStartInfoResponse>(protocol.V2.Requests.GetTestStartInfo, request);
 }

@@ -134,14 +134,16 @@ class DiagnosticsProvider extends AbstractSupport {
         this._validationAdvisor = validationAdvisor;
         this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
 
-        let d1 = this._server.onPackageRestore(this._validateProject, this);
-        let d2 = this._server.onProjectChange(this._validateProject, this);
-        let d4 = vscode.workspace.onDidOpenTextDocument(event => this._onDocumentAddOrChange(event), this);
-        let d3 = vscode.workspace.onDidChangeTextDocument(event => this._onDocumentAddOrChange(event.document), this);
-        let d5 = vscode.workspace.onDidCloseTextDocument(this._onDocumentRemove, this);
-        let d6 = vscode.window.onDidChangeActiveTextEditor(event => this._onDidChangeActiveTextEditor(event), this);
-        let d7 = vscode.window.onDidChangeWindowState(event => this._OnDidChangeWindowState(event), this);
-        this._disposable = new CompositeDisposable(this._diagnostics, d1, d2, d3, d4, d5, d6, d7);
+        this._disposable = new CompositeDisposable(this._diagnostics,
+            this._server.onPackageRestore(this._validateProject, this),
+            this._server.onProjectChange(this._validateProject, this),
+            this._server.onProjectAnalyzed(this._validateProject, this),
+            vscode.workspace.onDidOpenTextDocument(event => this._onDocumentAddOrChange(event), this),
+            vscode.workspace.onDidChangeTextDocument(event => this._onDocumentAddOrChange(event.document), this),
+            vscode.workspace.onDidCloseTextDocument(this._onDocumentRemove, this),
+            vscode.window.onDidChangeActiveTextEditor(event => this._onDidChangeActiveTextEditor(event), this),
+            vscode.window.onDidChangeWindowState(event => this._OnDidChangeWindowState(event), this),
+        );
 
         // Go ahead and check for diagnostics in the currently visible editors.
         for (let editor of vscode.window.visibleTextEditors) {
