@@ -285,6 +285,12 @@ export interface ProjectInformationResponse {
     DotNetProject: DotNetProject;
 }
 
+export interface ProjectDiagnosticStatus {
+    ProjectDiagnosticStatus: 0 | 1;
+    ProjectFilePath: string;
+    Type: "background";
+}
+
 export interface WorkspaceInformationResponse {
     MsBuild?: MsBuildWorkspaceInformation;
     DotNet?: DotNetWorkspaceInformation;

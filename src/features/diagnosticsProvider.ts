@@ -137,7 +137,7 @@ class DiagnosticsProvider extends AbstractSupport {
         this._disposable = new CompositeDisposable(this._diagnostics,
             this._server.onPackageRestore(this._validateProject, this),
             this._server.onProjectChange(this._validateProject, this),
-            this._server.onProjectAnalyzed(this._validateProject, this),
+            this._server.onProjectDiagnosticStatus(e => e.ProjectDiagnosticStatus === 1 ? this._validateProject() : undefined, this),
             vscode.workspace.onDidOpenTextDocument(event => this._onDocumentAddOrChange(event), this),
             vscode.workspace.onDidChangeTextDocument(event => this._onDocumentAddOrChange(event.document), this),
             vscode.workspace.onDidCloseTextDocument(this._onDocumentRemove, this),
