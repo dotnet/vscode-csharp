@@ -137,7 +137,7 @@ class DiagnosticsProvider extends AbstractSupport {
         this._disposable = new CompositeDisposable(this._diagnostics,
             this._server.onPackageRestore(this._validateProject, this),
             this._server.onProjectChange(this._validateProject, this),
-            this._server.onProjectDiagnosticStatus(e => e.ProjectDiagnosticStatus === 1 ? this._validateProject() : undefined, this),
+            this._server.onProjectDiagnosticStatus(this.onProjectAnalysis, this),
             vscode.workspace.onDidOpenTextDocument(event => this._onDocumentAddOrChange(event), this),
             vscode.workspace.onDidChangeTextDocument(event => this._onDocumentAddOrChange(event.document), this),
             vscode.workspace.onDidCloseTextDocument(this._onDocumentRemove, this),
@@ -203,6 +203,14 @@ class DiagnosticsProvider extends AbstractSupport {
         this._validateProject();
     }
 
+    private onProjectAnalysis(event: protocol.ProjectDiagnosticStatus)
+    {
+        if(event.Status == 1)
+        {
+            this._validateProject();
+        }
+    }
+
     private _onDocumentRemove(document: vscode.TextDocument): void {
         let key = document.uri;
         let didChange = false;
@@ -263,9 +271,9 @@ class DiagnosticsProvider extends AbstractSupport {
 
     private _validateProject(): void {
         // If we've already started computing for this project, cancel that work.
-        if (this._projectValidation) {
-            this._projectValidation.cancel();
-        }
+        // if (this._projectValidation) {
+        //     this._projectValidation.cancel();
+        // }
 
         if (!this._validationAdvisor.shouldValidateProject()) {
             return;

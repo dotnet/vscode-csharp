@@ -286,7 +286,7 @@ export interface ProjectInformationResponse {
 }
 
 export interface ProjectDiagnosticStatus {
-    ProjectDiagnosticStatus: 0 | 1;
+    Status: 0 | 1;
     ProjectFilePath: string;
     Type: "background";
 }
