@@ -200,7 +200,7 @@ class DiagnosticsProvider extends AbstractSupport {
         }
 
         this._validateDocument(document);
-        this._validateProject();
+        //this._validateProject();
     }
 
     private onProjectAnalysis(event: protocol.ProjectDiagnosticStatus)
