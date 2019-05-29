@@ -29,7 +29,10 @@ export class Options {
         public razorPluginPath?: string,
         public defaultLaunchSolution?: string,
         public monoPath?: string,
-        public maxProjectFileCountForDiagnosticAnalysis?: number | null) { }
+        public excludePaths?: string[],
+        public maxProjectFileCountForDiagnosticAnalysis?: number | null) 
+        {    
+        }
 
     public static Read(vscode: vscode): Options {
         // Extra effort is taken below to ensure that legacy versions of options
@@ -84,6 +87,22 @@ export class Options {
 
         const maxProjectFileCountForDiagnosticAnalysis = csharpConfig.get<number | null>('maxProjectFileCountForDiagnosticAnalysis', 1000);
 
+        let workspaceConfig = vscode.workspace.getConfiguration();
+        let excludePaths = [];
+        if (workspaceConfig)
+        {
+            let excludeFilesOption = workspaceConfig.get<{ [i: string]: boolean }>('files.exclude');
+            if (excludeFilesOption)
+            {
+                for (let field in excludeFilesOption) {
+                    if (excludeFilesOption[field]) {
+                        excludePaths.push(field);
+                    }
+                }
+            }
+        }
+        
+
         return new Options(
             path,
             useGlobalMono,
@@ -107,7 +126,8 @@ export class Options {
             razorPluginPath,
             defaultLaunchSolution,
             monoPath,
-            maxProjectFileCountForDiagnosticAnalysis,
+            excludePaths,
+            maxProjectFileCountForDiagnosticAnalysis
         );
     }
 

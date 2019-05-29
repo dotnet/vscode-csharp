@@ -4,26 +4,29 @@ node_js:
 - "10"
 
 env:
-- CODE_VERSION=1.31.0
+- CODE_VERSION=1.33.0
 
 before_install:
   - if [ $TRAVIS_OS_NAME == "linux" ]; then
       export CXX="g++-4.9" CC="gcc-4.9" DISPLAY=:99.0;
-      sh -e /etc/init.d/xvfb start;
+      Xvfb :99 &
       sleep 3;
     fi
   - dpkg --compare-versions `npm -v` ge 6.7 || npm i -g npm@^6.7
+  - wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb
+  - sudo dpkg -i packages-microsoft-prod.deb
+  - sudo apt-get install apt-transport-https
+  - sudo apt-get update
+  - sudo apt-get install dotnet-sdk-2.2
+  - sudo apt install xvfb
 
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      - sourceline: 'deb https://packages.microsoft.com/repos/microsoft-ubuntu-trusty-prod trusty main'
-        key_url: 'https://packages.microsoft.com/keys/microsoft.asc'
     packages:
       - g++-4.9
       - libsecret-1-dev
-      - dotnet-sdk-2.0.2
 
 install:
 - npm ci
