@@ -323,6 +323,11 @@ export class OmniSharpServer {
             args.push('--debug');
         }
 
+        for (let i = 0; i < options.excludePaths.length; i++)
+        {
+            args.push(`FileOptions:SystemExcludeSearchPatterns:${i}=${options.excludePaths[i]}`);
+        }
+        
         if (options.enableMsBuildLoadProjectsOnDemand === true) {
             args.push('MsBuild:LoadProjectsOnDemand=true');
         }
@@ -356,7 +361,7 @@ export class OmniSharpServer {
             }
 
             this._serverProcess = launchResult.process;
-            this._delayTrackers = {};       
+            this._delayTrackers = {};
 
             await this._doConnect(options);
             this._setState(ServerState.Started);

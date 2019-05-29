@@ -270,8 +270,10 @@ export function createWebLaunchConfiguration(programPath: string, workingDirecto
     "args": [],
     "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
     "stopAtEntry": false,
-    "launchBrowser": {
-        "enabled": true
+    // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+    "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "^\\\\s*Now listening on:\\\\s+(https?://\\\\S+)"                
     },
     "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -293,7 +295,7 @@ export function createLaunchConfiguration(programPath: string, workingDirectory:
     "program": "${util.convertNativePathToPosix(programPath)}",
     "args": [],
     "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
-    // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+    // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
     "console": "internalConsole",
     "stopAtEntry": false
 }`;
@@ -306,8 +308,8 @@ export function createFallbackLaunchConfiguration(): vscode.DebugConfiguration {
         "type": "coreclr",
         "request": "launch",
         "WARNING01": "*********************************************************************************",
-        "WARNING02": "The C# extension was unable to automatically to decode projects in the current",
-        "WARNING03": "workspace to create a runnable lanch.json file. A template launch.json file has",
+        "WARNING02": "The C# extension was unable to automatically decode projects in the current",
+        "WARNING03": "workspace to create a runnable launch.json file. A template launch.json file has",
         "WARNING04": "been created as a placeholder.",
         "WARNING05": "",
         "WARNING06": "If OmniSharp is currently unable to load your project, you can attempt to resolve",
