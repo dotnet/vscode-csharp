@@ -42,6 +42,7 @@ import { AbsolutePathPackage } from './packageManager/AbsolutePathPackage';
 import { downloadAndInstallPackages } from './packageManager/downloadAndInstallPackages';
 import IInstallDependencies from './packageManager/IInstallDependencies';
 import { installRuntimeDependencies } from './InstallRuntimeDependencies';
+import { isValidDownload } from './packageManager/isValidDownload';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -119,7 +120,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     eventStream.subscribe(telemetryObserver.post);
 
     let networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
-    let installDependencies: IInstallDependencies = (dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream);
+    let installDependencies: IInstallDependencies = async(dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload);
     let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo, installDependencies);
 
     // activate language services
@@ -140,12 +141,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         coreClrDebugPromise = coreclrdebug.activate(extension, context, platformInfo, eventStream);
     }
 
+    let razorPromise = Promise.resolve();
     if (!optionProvider.GetLatestOptions().razorDisabled) {
         const razorObserver = new RazorLoggerObserver(omnisharpChannel);
         eventStream.subscribe(razorObserver.post);
 
         if (!optionProvider.GetLatestOptions().razorDevMode) {
-            await activateRazorExtension(context, extension.extensionPath, eventStream);
+            razorPromise = activateRazorExtension(context, extension.extensionPath, eventStream);
         }
     }
 
@@ -154,11 +156,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
             let langService = await langServicePromise;
             await langService.server.waitForEmptyEventQueue();
             await coreClrDebugPromise;
+            await razorPromise;
         },
         getAdvisor: async () => {
             let langService = await langServicePromise;
             return langService.advisor;
-        }
+        },
+        eventStream
     };
 }
 

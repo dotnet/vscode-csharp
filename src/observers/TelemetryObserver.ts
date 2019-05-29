@@ -4,8 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { PlatformInformation } from "../platform";
-import { BaseEvent, PackageInstallation, InstallationFailure, InstallationSuccess, OmnisharpDelayTrackerEventMeasures, OmnisharpStart, TestExecutionCountReport, TelemetryEventWithMeasures, TelemetryEvent } from "../omnisharp/loggingEvents";
+import { BaseEvent, InstallationFailure, TestExecutionCountReport, TelemetryEventWithMeasures, TelemetryEvent, ProjectConfiguration } from "../omnisharp/loggingEvents";
 import { PackageError } from "../packageManager/PackageError";
+import { EventType } from "../omnisharp/EventType";
 
 export interface ITelemetryReporter {
     sendTelemetryEvent(eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }): void;
@@ -22,26 +23,34 @@ export class TelemetryObserver {
 
     public post = (event: BaseEvent) => {
         let telemetryProps = this.getTelemetryProps();
-        switch (event.constructor.name) {
-            case PackageInstallation.name:
+        switch (event.type) {
+            case EventType.PackageInstallation:
                 this.reporter.sendTelemetryEvent("AcquisitionStart");
                 break;
-            case InstallationFailure.name:
+            case EventType.InstallationFailure:
                 this.handleInstallationFailure(<InstallationFailure>event, telemetryProps);
                 break;
-            case InstallationSuccess.name:
+            case EventType.InstallationSuccess:
                 this.handleInstallationSuccess(telemetryProps);
                 break;
-            case OmnisharpDelayTrackerEventMeasures.name:
-            case OmnisharpStart.name:
+            case EventType.OmnisharpDelayTrackerEventMeasures:
+            case EventType.OmnisharpStart:
                 this.handleTelemetryEventMeasures(<TelemetryEventWithMeasures>event);
                 break;
-            case TestExecutionCountReport.name:
+            case EventType.TestExecutionCountReport:
                 this.handleTestExecutionCountReport(<TestExecutionCountReport>event);
                 break;
-            case TelemetryEvent.name:
+            case EventType.TelemetryEvent:
                 let telemetryEvent = <TelemetryEvent>event;
                 this.reporter.sendTelemetryEvent(telemetryEvent.eventName, telemetryEvent.properties, telemetryEvent.measures);
+                break;
+            case EventType.ProjectConfigurationReceived:
+                let projectConfig = (<ProjectConfiguration>event).projectConfiguration;
+                telemetryProps['ProjectId'] = projectConfig.ProjectId;
+                telemetryProps['TargetFrameworks'] = projectConfig.TargetFrameworks.join("|");
+                telemetryProps['References'] = projectConfig.References.join("|");
+                telemetryProps['FileExtensions'] = projectConfig.FileExtensions.join("|");
+                this.reporter.sendTelemetryEvent("ProjectConfiguration", telemetryProps);
                 break;
         }
     }
@@ -52,7 +61,7 @@ export class TelemetryObserver {
 
     private handleInstallationSuccess(telemetryProps: { [key: string]: string; }) {
         telemetryProps['installStage'] = 'completeSuccess';
-        this.reporter.sendTelemetryEvent('Acquisition', telemetryProps);
+        this.reporter.sendTelemetryEvent('AcquisitionSucceeded', telemetryProps);
     }
 
     private handleInstallationFailure(event: InstallationFailure, telemetryProps: { [key: string]: string; }) {
@@ -66,7 +75,7 @@ export class TelemetryObserver {
             }
         }
 
-        this.reporter.sendTelemetryEvent('Acquisition', telemetryProps);
+        this.reporter.sendTelemetryEvent('AcquisitionFailed', telemetryProps);
     }
 
     private handleTestExecutionCountReport(event: TestExecutionCountReport) {

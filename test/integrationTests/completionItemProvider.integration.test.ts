@@ -23,6 +23,10 @@ suite(`${OmniSharpCompletionItemProvider.name}: Returns the completion items`, (
         await vscode.commands.executeCommand("vscode.open", fileUri);
     });
 
+    suiteTeardown(async () => {
+        await testAssetWorkspace.cleanupWorkspace();
+    });
+
     test("Returns the completion items", async () => {
         let completionList = <vscode.CompletionList>(await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", fileUri, new vscode.Position(8, 31), " "));
         expect(completionList.items).to.not.be.empty;

@@ -4,17 +4,18 @@
  *--------------------------------------------------------------------------------------------*/
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import { BaseEvent, CommandDotNetRestoreProgress, CommandDotNetRestoreSucceeded, CommandDotNetRestoreFailed } from "../omnisharp/loggingEvents";
+import { EventType } from "../omnisharp/EventType";
 
 export class DotnetLoggerObserver extends BaseLoggerObserver {
     public post = (event: BaseEvent) => {
-        switch (event.constructor.name) {
-            case CommandDotNetRestoreProgress.name:
+        switch (event.type) {
+            case EventType.CommandDotNetRestoreProgress:
                 this.logger.append((<CommandDotNetRestoreProgress>event).message);
                 break;
-            case CommandDotNetRestoreSucceeded.name:
+            case EventType.CommandDotNetRestoreSucceeded:
                 this.logger.appendLine((<CommandDotNetRestoreSucceeded>event).message);
                 break;    
-            case CommandDotNetRestoreFailed.name:
+            case EventType.CommandDotNetRestoreFailed:
                 this.logger.appendLine((<CommandDotNetRestoreFailed>event).message);
                 break;
         }

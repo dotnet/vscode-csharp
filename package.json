@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.18.0-beta2",
+  "version": "1.20.0-beta1",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -22,15 +22,21 @@
     "Snippets"
   ],
   "keywords": [
-    "multi-root ready"
+    "multi-root ready",
+    ".NET",
+    "ASP.NET",
+    ".NET Core",
+    "dotnet"
   ],
   "defaults": {
-    "omniSharp": "1.32.8"
+    "omniSharp": "1.32.19",
+    "razor": "1.0.0-alpha3-20190425.1"
   },
-  "main": "./out/src/main",
+  "main": "./dist/extension",
   "scripts": {
-    "vscode:prepublish": "tsc -p ./",
+    "vscode:prepublish": "tsc -p ./ && webpack --mode production",
     "compile": "tsc -p ./ && gulp tslint",
+    "compileDev": "tsc -p ./ && gulp tslint && webpack --mode development",
     "watch": "tsc -watch -p ./",
     "tdd": "mocha --opts ./mocha.opts --watch --watch-extensions ts test/unitTests/**/*.test.ts*",
     "test": "gulp test",
@@ -69,117 +75,125 @@
   },
   "dependencies": {
     "async-file": "2.0.2",
-    "fs-extra": "5.0.0",
+    "fs-extra": "7.0.1",
     "http-proxy-agent": "2.1.0",
     "https-proxy-agent": "2.2.1",
-    "jsonc-parser": "1.0.0",
-    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/3b0ae709-c067-48b4-a658-549ca972e437/386a5dff35391e14f14e5945e7903f63/microsoft.aspnetcore.razor.vscode-1.0.0-alpha2-20181112.3.tgz",
+    "jsonc-parser": "2.0.3",
+    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/0e0f8c6d-f6d0-43a9-9ad4-29d160de5a31/88ef3084e81a41773ad6cd875fa4a653/microsoft.aspnetcore.razor.vscode-1.0.0-alpha3-20190425.1.tgz",
     "mkdirp": "0.5.1",
-    "node-filter-async": "0.0.4",
-    "open": "*",
+    "node-filter-async": "1.1.1",
     "remove-bom-buffer": "3.0.0",
     "request-light": "0.2.4",
-    "rxjs": "5.5.6",
-    "semver": "*",
+    "rxjs": "6.4.0",
+    "semver": "5.6.0",
+    "stream": "0.0.2",
     "strip-bom": "3.0.0",
     "tmp": "0.0.33",
-    "vscode-debugprotocol": "1.6.1",
-    "vscode-extension-telemetry": "0.1.0",
+    "vscode-debugprotocol": "1.33.0",
+    "vscode-extension-telemetry": "0.1.1",
     "yauzl": "2.10.0"
   },
   "devDependencies": {
-    "@types/archiver": "2.1.1",
-    "@types/chai": "4.1.2",
+    "@types/archiver": "2.1.2",
+    "@types/chai": "4.1.7",
     "@types/chai-arrays": "1.0.2",
     "@types/chai-as-promised": "7.1.0",
-    "@types/chai-string": "1.4.0",
+    "@types/chai-string": "1.4.1",
     "@types/del": "3.0.1",
-    "@types/fs-extra": "5.0.1",
+    "@types/fs-extra": "5.0.4",
     "@types/gulp": "4.0.5",
     "@types/gulp-mocha": "0.0.32",
     "@types/istanbul": "0.4.30",
     "@types/minimist": "1.2.0",
     "@types/mkdirp": "0.5.2",
-    "@types/mocha": "2.2.48",
-    "@types/node": "9.4.7",
+    "@types/mocha": "5.2.5",
+    "@types/node": "10.12.24",
     "@types/semver": "5.5.0",
     "@types/tmp": "0.0.33",
-    "@types/yauzl": "2.9.0",
-    "archiver": "2.1.1",
+    "@types/unzipper": "^0.9.1",
+    "@types/yauzl": "2.9.1",
+    "archiver": "3.0.0",
     "async-child-process": "1.1.1",
     "async-shelljs": "0.1.2",
-    "chai": "4.1.2",
+    "chai": "4.2.0",
     "chai-arrays": "2.0.0",
     "chai-as-promised": "7.1.1",
     "chai-fs": "2.0.0",
-    "chai-string": "1.4.0",
-    "codecov": "3.0.2",
-    "copyfiles": "2.0.0",
-    "cross-env": "5.1.4",
+    "chai-string": "1.5.0",
+    "codecov": "3.1.0",
+    "copyfiles": "2.1.0",
+    "cross-env": "5.2.0",
     "del": "3.0.0",
-    "get-port": "3.2.0",
+    "find-versions": "3.0.0",
+    "get-port": "4.1.0",
     "glob-promise": "3.4.0",
     "gulp": "4.0.0",
-    "gulp-mocha": "5.0.0",
+    "gulp-mocha": "6.0.0",
     "gulp-tslint": "8.1.3",
     "istanbul": "0.4.5",
     "ltcdr": "2.2.1",
     "minimist": "1.2.0",
-    "mocha": "5.0.4",
-    "mocha-typescript": "1.1.12",
-    "mock-fs": "^4.7.0",
+    "mocha": "5.2.0",
+    "mocha-typescript": "1.1.17",
+    "mock-fs": "4.8.0",
     "mock-http-server": "0.2.0",
-    "npm-run-all": "4.1.2",
-    "nyc": "11.8.0",
+    "natives": "1.1.6",
+    "npm-run-all": "4.1.5",
+    "nyc": "13.3.0",
     "plist": "3.0.1",
-    "remap-istanbul": "0.11.0",
-    "source-map-support": "0.5.4",
-    "ts-node": "6.0.3",
-    "tslint": "5.10.0",
-    "tslint-microsoft-contrib": "5.0.3",
-    "tslint-no-unused-expression-chai": "0.1.3",
-    "typescript": "2.8.3",
-    "unzip2": "0.2.5",
-    "vsce": "1.40.0",
-    "vscode": "1.1.22"
+    "remap-istanbul": "0.13.0",
+    "source-map-support": "0.5.10",
+    "ts-loader": "5.3.3",
+    "ts-node": "8.0.2",
+    "tslint": "5.12.1",
+    "tslint-microsoft-contrib": "6.0.0",
+    "tslint-no-unused-expression-chai": "0.1.4",
+    "typescript": "3.3.3",
+    "unzipper": "0.9.10",
+    "vsce": "1.57.0",
+    "vscode": "1.1.33",
+    "webpack": "4.29.3",
+    "webpack-cli": "3.2.3"
   },
   "runtimeDependencies": [
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/515dbb33-d644-4ba6-9ee4-8ca7227ab580/02621f196a581cb3062dbeab2ec28429/omnisharp-win-x86-1.32.8.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.32.8.zip",
-      "installPath": ".omnisharp/1.32.8",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/5bcaad04-3ddd-4e03-b5ea-272ae754ff62/37ec7168f67fa09a9ecb6ca4fe624a0b/omnisharp-win-x86-1.32.19.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.32.19.zip",
+      "installPath": ".omnisharp/1.32.19",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.omnisharp/1.32.8/OmniSharp.exe",
-      "platformId": "win-x86"
+      "installTestPath": "./.omnisharp/1.32.19/OmniSharp.exe",
+      "platformId": "win-x86",
+      "integrity": "5C57EC4FEBF8EB6F8092B7CE95FB96066C35B52D0BBA382A423F0C998A94271E"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/515dbb33-d644-4ba6-9ee4-8ca7227ab580/bdfde5788994e381c9a3efe5777081bd/omnisharp-win-x64-1.32.8.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.32.8.zip",
-      "installPath": ".omnisharp/1.32.8",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/5bcaad04-3ddd-4e03-b5ea-272ae754ff62/af656da5cad82a135c6d1621df76e95f/omnisharp-win-x64-1.32.19.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.32.19.zip",
+      "installPath": ".omnisharp/1.32.19",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/1.32.8/OmniSharp.exe",
-      "platformId": "win-x64"
+      "installTestPath": "./.omnisharp/1.32.19/OmniSharp.exe",
+      "platformId": "win-x64",
+      "integrity": "FD477C65D9CC6A716BF35E26027A683CB4D3F3FCB251EC3699D786C2F3D6A4A8"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/515dbb33-d644-4ba6-9ee4-8ca7227ab580/dcead54f3e2dcc736d0ca1cbfde2ad0c/omnisharp-osx-1.32.8.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.32.8.zip",
-      "installPath": ".omnisharp/1.32.8",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/5bcaad04-3ddd-4e03-b5ea-272ae754ff62/1b692fd2311e6533d34375cf74830cd1/omnisharp-osx-1.32.19.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.32.19.zip",
+      "installPath": ".omnisharp/1.32.19",
       "platforms": [
         "darwin"
       ],
@@ -187,15 +201,16 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.32.8/run",
-      "platformId": "osx"
+      "installTestPath": "./.omnisharp/1.32.19/run",
+      "platformId": "osx",
+      "integrity": "CF64448EAD3E61C60CB59C9ABF7B0F0A589575F96361D95EA5874BB444B82A8E"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/515dbb33-d644-4ba6-9ee4-8ca7227ab580/ac9dde43e4905a8481c35f557fe09502/omnisharp-linux-x86-1.32.8.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.32.8.zip",
-      "installPath": ".omnisharp/1.32.8",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/5bcaad04-3ddd-4e03-b5ea-272ae754ff62/3c0660659879ff587f96b73ca5b12add/omnisharp-linux-x86-1.32.19.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.32.19.zip",
+      "installPath": ".omnisharp/1.32.19",
       "platforms": [
         "linux"
       ],
@@ -207,15 +222,16 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.32.8/run",
-      "platformId": "linux-x86"
+      "installTestPath": "./.omnisharp/1.32.19/run",
+      "platformId": "linux-x86",
+      "integrity": "FFC856543AE95F961CB86FF2E47DD1ED1B56751A0E4B385233AA6A9BA3B6D414"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/515dbb33-d644-4ba6-9ee4-8ca7227ab580/ee3801c7083438b5e54fa7405662565a/omnisharp-linux-x64-1.32.8.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.32.8.zip",
-      "installPath": ".omnisharp/1.32.8",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/5bcaad04-3ddd-4e03-b5ea-272ae754ff62/d211806a816c8d20a516ec4b6e040dbe/omnisharp-linux-x64-1.32.19.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.32.19.zip",
+      "installPath": ".omnisharp/1.32.19",
       "platforms": [
         "linux"
       ],
@@ -226,14 +242,15 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.32.8/run",
-      "platformId": "linux-x64"
+      "installTestPath": "./.omnisharp/1.32.19/run",
+      "platformId": "linux-x64",
+      "integrity": "60A5F73BC06F25C672863BD5FF60E9DF754D7C8F5AFE65E095362606F234563D"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/90e2038c-960d-4018-924e-30f520f887ab/117523c7024fbf6ffef530b707d7253a/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-17-1/coreclr-debug-win7-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/1a81b7f6-0ec7-4daa-a5bd-7a4eea0d618a/aaa3d977f41f306f7be4029de44b1123/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-18-4/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -241,13 +258,14 @@
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.debugger/vsdbg-ui.exe"
+      "installTestPath": "./.debugger/vsdbg-ui.exe",
+      "integrity": "761518B411FBB98F728789983B58872603BC3DF97CE040E9496AAF5DC90495E1"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/90e2038c-960d-4018-924e-30f520f887ab/2d53db027d1e67b899a7f083800b2bd4/coreclr-debug-osx-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-17-1/coreclr-debug-osx-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/1a81b7f6-0ec7-4daa-a5bd-7a4eea0d618a/ed0ba9ea97f0e9c41d1d605db8d55772/coreclr-debug-osx-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-18-4/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "darwin"
@@ -259,13 +277,14 @@
         "./vsdbg-ui",
         "./vsdbg"
       ],
-      "installTestPath": "./.debugger/vsdbg-ui"
+      "installTestPath": "./.debugger/vsdbg-ui",
+      "integrity": "AC598AA47570D3101E1F174BD695A678AFAAE3F671A4BDD51C639CA23095F14E"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/90e2038c-960d-4018-924e-30f520f887ab/090d7ebd63a3d44b31cb23568b53833d/coreclr-debug-linux-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-17-1/coreclr-debug-linux-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/1a81b7f6-0ec7-4daa-a5bd-7a4eea0d618a/422bd87c500a7247419315ada701f677/coreclr-debug-linux-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-18-4/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -277,12 +296,14 @@
         "./vsdbg-ui",
         "./vsdbg"
       ],
-      "installTestPath": "./.debugger/vsdbg-ui"
+      "installTestPath": "./.debugger/vsdbg-ui",
+      "integrity": "28969664A869DA2E4AE345A6DB131D172338B362AF10F01BAD55F8631895E4E0"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/3b0ae709-c067-48b4-a658-549ca972e437/bbd021dbeab477395f37f1c4e39c31ad/razorlanguageserver-win-x64-1.0.0-alpha2-20181112.3.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/0e0f8c6d-f6d0-43a9-9ad4-29d160de5a31/b724216349e3fbf0bcc9adc852245385/razorlanguageserver-win-x64-1.0.0-alpha3-20190425.1.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x64-1.0.0-alpha3-20190425.1.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -294,7 +315,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/3b0ae709-c067-48b4-a658-549ca972e437/d4196db447b32b655910532321f4bd6a/razorlanguageserver-win-x86-1.0.0-alpha2-20181112.3.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/0e0f8c6d-f6d0-43a9-9ad4-29d160de5a31/edb817f3223ba1aafc6f63b264055db0/razorlanguageserver-win-x86-1.0.0-alpha3-20190425.1.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x86-1.0.0-alpha3-20190425.1.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -306,7 +328,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/3b0ae709-c067-48b4-a658-549ca972e437/ad6d340d6d68e760bb1bb7a8073051f3/razorlanguageserver-linux-x64-1.0.0-alpha2-20181112.3.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/0e0f8c6d-f6d0-43a9-9ad4-29d160de5a31/10304fbbf28c7595017652c751870d73/razorlanguageserver-linux-x64-1.0.0-alpha3-20190425.1.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-linux-x64-1.0.0-alpha3-20190425.1.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -321,7 +344,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/3b0ae709-c067-48b4-a658-549ca972e437/e4808fd370ba60d528944a5a36543cf0/razorlanguageserver-osx-x64-1.0.0-alpha2-20181112.3.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/0e0f8c6d-f6d0-43a9-9ad4-29d160de5a31/b573694261493d9ad305a4a5c72268c6/razorlanguageserver-osx-x64-1.0.0-alpha3-20190425.1.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-osx-x64-1.0.0-alpha3-20190425.1.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -335,7 +359,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.28.0"
+    "vscode": "^1.31.0"
   },
   "activationEvents": [
     "onDebugInitialConfigurations",
@@ -457,18 +481,18 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                  "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                   "default": []
                 },
                 "searchMicrosoftSymbolServer": {
                   "type": "boolean",
-                  "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                  "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                   "default": false
                 },
                 "cachePath": {
                   "type": "string",
-                  "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.vsdbg/SymbolCache.",
-                  "default": "~/.vsdbg/SymbolCache"
+                  "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
+                  "default": "~/.dotnet/symbolcache"
                 },
                 "moduleFilter": {
                   "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
@@ -574,7 +598,7 @@
         "csharp.referencesCodeLens.enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Specifies whether the references CodeLens should be show be shown."
+          "description": "Specifies whether the references CodeLens should be shown."
         },
         "csharp.testsCodeLens.enabled": {
           "type": "boolean",
@@ -674,6 +698,16 @@
           "type": "boolean",
           "default": false,
           "description": "Specifies whether notifications should be shown if OmniSharp encounters warnings or errors loading a project. Note that these warnings/errors are always emitted to the OmniSharp log"
+        },
+        "omnisharp.enableMsBuildLoadProjectsOnDemand": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, MSBuild project system will only load projects for files that were opened in the editor. This setting is useful for big C# codebases and allows for faster initialization of code navigation features only for projects that are relevant to code that is being edited. With this setting enabled OmniSharp may load fewer projects and may thus display incomplete reference lists for symbols."
+        },
+        "omnisharp.enableRoslynAnalyzers": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enables support for roslyn analyzers, code fixes and rulesets."
         },
         "razor.plugin.path": {
           "type": [
@@ -775,8 +809,13 @@
         "category": "CSharp"
       },
       {
+        "command": "csharp.setNextStatement",
+        "title": "Set Next Statement (.NET)",
+        "category": "Debug"
+      },
+      {
         "command": "csharp.reportIssue",
-        "title": "Start authoring a new issue on GitHub",
+        "title": "Report an issue",
         "category": "CSharp"
       },
       {
@@ -788,13 +827,28 @@
         "command": "extension.showRazorHtmlWindow",
         "title": "Show Razor Html",
         "category": "Razor"
+      },
+      {
+        "command": "razor.reportIssue",
+        "title": "Report a Razor issue",
+        "category": "Razor"
       }
     ],
     "keybindings": [
       {
         "command": "o.showOutput",
-        "key": "Ctrl+L L",
-        "mac": "Cmd+L L"
+        "key": "Ctrl+Shift+F9",
+        "mac": "Cmd+Shift+F9"
+      },
+      {
+        "command": "csharp.setNextStatement",
+        "key": "Ctrl+Shift+F10",
+        "when": "inDebugMode && debugType == 'coreclr'"
+      },
+      {
+        "command": "csharp.setNextStatement",
+        "key": "Ctrl+Shift+F10",
+        "when": "inDebugMode && debugType == 'clr'"
       }
     ],
     "snippets": [
@@ -860,22 +914,14 @@
                 "default": false
               },
               "launchBrowser": {
-                "description": "Describes options to launch a web browser as part of launch",
+                "description": "Legacy option used to enable launching a web browser. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser",
                 "default": {
-                  "enabled": true,
-                  "args": "${auto-detect-url}",
-                  "windows": {
-                    "command": "cmd.exe",
-                    "args": "/C start ${auto-detect-url}"
-                  },
-                  "osx": {
-                    "command": "open"
-                  },
-                  "linux": {
-                    "command": "xdg-open"
-                  }
+                  "enabled": true
                 },
                 "type": "object",
+                "required": [
+                  "enabled"
+                ],
                 "properties": {
                   "enabled": {
                     "type": "boolean",
@@ -883,78 +929,76 @@
                     "default": true
                   },
                   "args": {
-                    "anyOf": [
-                      {
-                        "type": "array",
-                        "description": "Command line arguments passed to the program.",
-                        "items": {
-                          "type": "string"
-                        },
-                        "default": []
-                      },
-                      {
-                        "type": "string",
-                        "description": "Stringified version of command line arguments passed to the program.",
-                        "default": ""
-                      }
-                    ],
+                    "type": "string",
+                    "description": "The arguments to pass to the command to open the browser. This is used only if the platform-specific element (`osx`, `linux` or `windows`) doesn't specify a value for `args`. Use ${auto-detect-url} to automatically use the address the server is listening to.",
                     "default": "${auto-detect-url}"
                   },
                   "osx": {
-                    "description": "OSX-specific web launch configuration options",
+                    "description": "OSX-specific web launch configuration options. By default, this will start the browser using `open`.",
                     "default": {
-                      "command": "open"
+                      "command": "open",
+                      "args": "${auto-detect-url}"
                     },
                     "type": "object",
+                    "required": [
+                      "command"
+                    ],
                     "properties": {
                       "command": {
                         "type": "string",
-                        "description": "The command to execute for launching the web browser",
+                        "description": "The executable which will start the web browser",
                         "default": "open"
                       },
                       "args": {
                         "type": "string",
-                        "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
+                        "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to.",
                         "default": "${auto-detect-url}"
                       }
                     }
                   },
                   "linux": {
-                    "description": "Linux-specific web launch configuration options",
+                    "description": "Linux-specific web launch configuration options. By default, this will start the browser using `xdg-open`.",
                     "default": {
-                      "command": "xdg-open"
+                      "command": "xdg-open",
+                      "args": "${auto-detect-url}"
                     },
                     "type": "object",
+                    "required": [
+                      "command"
+                    ],
                     "properties": {
                       "command": {
                         "type": "string",
-                        "description": "The command to execute for launching the web browser",
+                        "description": "The executable which will start the web browser",
                         "default": "xdg-open"
                       },
                       "args": {
                         "type": "string",
-                        "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
+                        "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to.",
                         "default": "${auto-detect-url}"
                       }
                     }
                   },
                   "windows": {
-                    "description": "Windows-specific web launch configuration options",
+                    "description": "Windows-specific web launch configuration options. By default, this will start the browser using `cmd /c start`.",
                     "default": {
                       "command": "cmd.exe",
                       "args": "/C start ${auto-detect-url}"
                     },
                     "type": "object",
+                    "required": [
+                      "command"
+                    ],
                     "properties": {
                       "command": {
                         "type": "string",
-                        "description": "The command to execute for launching the web browser",
+                        "description": "The executable which will start the web browser",
                         "default": "cmd.exe"
                       },
                       "args": {
                         "type": "string",
-                        "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
-                        "default": "${auto-detect-url}"
+                        "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to.",
+                        "default": "/C start ${auto-detect-url}"
                       }
                     }
                   }
@@ -1286,18 +1330,18 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
                     "type": "string",
-                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.vsdbg/SymbolCache.",
-                    "default": "~/.vsdbg/SymbolCache"
+                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
+                    "default": "~/.dotnet/symbolcache"
                   },
                   "moduleFilter": {
                     "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
@@ -1687,18 +1731,18 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
                     "type": "string",
-                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.vsdbg/SymbolCache.",
-                    "default": "~/.vsdbg/SymbolCache"
+                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
+                    "default": "~/.dotnet/symbolcache"
                   },
                   "moduleFilter": {
                     "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
@@ -1811,19 +1855,9 @@
               "args": [],
               "cwd": "^\"\\${workspaceFolder}\"",
               "stopAtEntry": false,
-              "launchBrowser": {
-                "enabled": true,
-                "args": "^\"\\${auto-detect-url}\"",
-                "windows": {
-                  "command": "cmd.exe",
-                  "args": "^\"/C start \\${auto-detect-url}\""
-                },
-                "osx": {
-                  "command": "open"
-                },
-                "linux": {
-                  "command": "xdg-open"
-                }
+              "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "^\"^\\\\\\\\s*Now listening on:\\\\\\\\s+(https?://\\\\\\\\S+)\""
               },
               "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
@@ -1928,22 +1962,14 @@
                 "default": false
               },
               "launchBrowser": {
-                "description": "Describes options to launch a web browser as part of launch",
+                "description": "Legacy option used to enable launching a web browser. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser",
                 "default": {
-                  "enabled": true,
-                  "args": "${auto-detect-url}",
-                  "windows": {
-                    "command": "cmd.exe",
-                    "args": "/C start ${auto-detect-url}"
-                  },
-                  "osx": {
-                    "command": "open"
-                  },
-                  "linux": {
-                    "command": "xdg-open"
-                  }
+                  "enabled": true
                 },
                 "type": "object",
+                "required": [
+                  "enabled"
+                ],
                 "properties": {
                   "enabled": {
                     "type": "boolean",
@@ -1951,78 +1977,76 @@
                     "default": true
                   },
                   "args": {
-                    "anyOf": [
-                      {
-                        "type": "array",
-                        "description": "Command line arguments passed to the program.",
-                        "items": {
-                          "type": "string"
-                        },
-                        "default": []
-                      },
-                      {
-                        "type": "string",
-                        "description": "Stringified version of command line arguments passed to the program.",
-                        "default": ""
-                      }
-                    ],
+                    "type": "string",
+                    "description": "The arguments to pass to the command to open the browser. This is used only if the platform-specific element (`osx`, `linux` or `windows`) doesn't specify a value for `args`. Use ${auto-detect-url} to automatically use the address the server is listening to.",
                     "default": "${auto-detect-url}"
                   },
                   "osx": {
-                    "description": "OSX-specific web launch configuration options",
+                    "description": "OSX-specific web launch configuration options. By default, this will start the browser using `open`.",
                     "default": {
-                      "command": "open"
+                      "command": "open",
+                      "args": "${auto-detect-url}"
                     },
                     "type": "object",
+                    "required": [
+                      "command"
+                    ],
                     "properties": {
                       "command": {
                         "type": "string",
-                        "description": "The command to execute for launching the web browser",
+                        "description": "The executable which will start the web browser",
                         "default": "open"
                       },
                       "args": {
                         "type": "string",
-                        "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
+                        "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to.",
                         "default": "${auto-detect-url}"
                       }
                     }
                   },
                   "linux": {
-                    "description": "Linux-specific web launch configuration options",
+                    "description": "Linux-specific web launch configuration options. By default, this will start the browser using `xdg-open`.",
                     "default": {
-                      "command": "xdg-open"
+                      "command": "xdg-open",
+                      "args": "${auto-detect-url}"
                     },
                     "type": "object",
+                    "required": [
+                      "command"
+                    ],
                     "properties": {
                       "command": {
                         "type": "string",
-                        "description": "The command to execute for launching the web browser",
+                        "description": "The executable which will start the web browser",
                         "default": "xdg-open"
                       },
                       "args": {
                         "type": "string",
-                        "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
+                        "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to.",
                         "default": "${auto-detect-url}"
                       }
                     }
                   },
                   "windows": {
-                    "description": "Windows-specific web launch configuration options",
+                    "description": "Windows-specific web launch configuration options. By default, this will start the browser using `cmd /c start`.",
                     "default": {
                       "command": "cmd.exe",
                       "args": "/C start ${auto-detect-url}"
                     },
                     "type": "object",
+                    "required": [
+                      "command"
+                    ],
                     "properties": {
                       "command": {
                         "type": "string",
-                        "description": "The command to execute for launching the web browser",
+                        "description": "The executable which will start the web browser",
                         "default": "cmd.exe"
                       },
                       "args": {
                         "type": "string",
-                        "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to",
-                        "default": "${auto-detect-url}"
+                        "description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to.",
+                        "default": "/C start ${auto-detect-url}"
                       }
                     }
                   }
@@ -2354,18 +2378,18 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
                     "type": "string",
-                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.vsdbg/SymbolCache.",
-                    "default": "~/.vsdbg/SymbolCache"
+                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
+                    "default": "~/.dotnet/symbolcache"
                   },
                   "moduleFilter": {
                     "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
@@ -2755,18 +2779,18 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
                     "type": "string",
-                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.vsdbg/SymbolCache.",
-                    "default": "~/.vsdbg/SymbolCache"
+                    "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
+                    "default": "~/.dotnet/symbolcache"
                   },
                   "moduleFilter": {
                     "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
@@ -2847,7 +2871,8 @@
       {
         "id": "aspnetcorerazor",
         "extensions": [
-          ".cshtml"
+          ".cshtml",
+          ".razor"
         ],
         "mimetypes": [
           "text/x-cshtml"
@@ -2871,6 +2896,20 @@
         {
           "command": "extension.showRazorHtmlWindow",
           "when": "resourceLangId == aspnetcorerazor"
+        },
+        {
+          "command": "razor.reportIssue",
+          "when": "resourceLangId == aspnetcorerazor"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "csharp.setNextStatement",
+          "when": "inDebugMode && debugType == 'coreclr'"
+        },
+        {
+          "command": "csharp.setNextStatement",
+          "when": "inDebugMode && debugType == 'clr'"
         }
       ]
     }

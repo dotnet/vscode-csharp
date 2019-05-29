@@ -1,18 +1,15 @@
 /*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+*  Copyright (c) Microsoft Corporation. All rights reserved.
+*  Licensed under the MIT License. See License.txt in the project root for license information.
+*--------------------------------------------------------------------------------------------*/
 
 import { use as chaiUse, expect, should } from 'chai';
 import { updateConfig, getVSCodeWithConfig } from '../testAssets/Fakes';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/operator/timeout';
+import { timeout } from 'rxjs/operators';
+import { from as observableFrom, Subject, BehaviorSubject } from 'rxjs';
 import { vscode } from '../../../src/vscodeAdapter';
 import { ShowOmniSharpConfigChangePrompt } from '../../../src/observers/OptionChangeObserver';
-import { Subject } from 'rxjs/Subject';
 import { Options } from '../../../src/omnisharp/options';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 chaiUse(require('chai-as-promised'));
 chaiUse(require('chai-string'));
@@ -37,12 +34,13 @@ suite("OmniSharpConfigChangeObserver", () => {
             signalCommandDone = () => { resolve(); };
         });
     });
-    
+
     [
         { config: "omnisharp", section: "path", value: "somePath" },
         { config: "omnisharp", section: "waitForDebugger", value: true },
-        { config: "omnisharp", section: "useGlobalMono", value: "always" }
-
+        { config: "omnisharp", section: "enableMsBuildLoadProjectsOnDemand", value: true },
+        { config: "omnisharp", section: "useGlobalMono", value: "always" },
+        { config: "omnisharp", section: 'loggingLevel', value: 'verbose' }
     ].forEach(elem => {
         suite(`When the ${elem.config} ${elem.section} changes`, () => {
             setup(() => {
@@ -58,7 +56,7 @@ suite("OmniSharpConfigChangeObserver", () => {
 
             test('Given an information message if the user clicks cancel, the command is not executed', async () => {
                 doClickCancel();
-                await expect(Observable.fromPromise(commandDone).timeout(1).toPromise()).to.be.rejected;
+                await expect(observableFrom(commandDone).pipe(timeout(1)).toPromise()).to.be.rejected;
                 expect(invokedCommand).to.be.undefined;
             });
 
@@ -68,9 +66,9 @@ suite("OmniSharpConfigChangeObserver", () => {
                 expect(invokedCommand).to.be.equal("o.restart");
             });
         });
-        });
-    
-    suite('Information Message is not shown on change in',() => {
+    });
+
+    suite('Information Message is not shown on change in', () => {
         [
             { config: "csharp", section: 'disableCodeActions', value: true },
             { config: "csharp", section: 'testsCodeLens.enabled', value: false },
@@ -79,8 +77,7 @@ suite("OmniSharpConfigChangeObserver", () => {
             { config: "omnisharp", section: 'useEditorFormattingSettings', value: false },
             { config: "omnisharp", section: 'maxProjectResults', value: 1000 },
             { config: "omnisharp", section: 'projectLoadTimeout', value: 1000 },
-            { config: "omnisharp", section: 'autoStart', value: false },
-            { config: "omnisharp", section: 'loggingLevel', value: 'verbose' }
+            { config: "omnisharp", section: 'autoStart', value: false }
         ].forEach(elem => {
             test(`${elem.config} ${elem.section}`, async () => {
                 expect(infoMessage).to.be.undefined;

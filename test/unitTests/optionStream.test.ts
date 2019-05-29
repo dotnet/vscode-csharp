@@ -7,10 +7,9 @@ import { should, expect } from 'chai';
 import { ConfigurationChangeEvent, vscode } from "../../src/vscodeAdapter";
 import { getVSCodeWithConfig, updateConfig } from "./testAssets/Fakes";
 import Disposable from "../../src/Disposable";
-import { Observable } from "rxjs/Observable";
+import { Observable, Subscription } from "rxjs";
 import { Options } from "../../src/omnisharp/options";
 import { GetConfigChangeEvent } from './testAssets/GetConfigChangeEvent';
-import { Subscription } from 'rxjs/Subscription';
 import createOptionStream from '../../src/observables/CreateOptionStream';
 
 suite('OptionStream', () => {
@@ -51,7 +50,9 @@ suite('OptionStream', () => {
             options.disableCodeActions.should.equal(false);
             options.minFindSymbolsFilterLength.should.equal(0);
             options.maxFindSymbolsItems.should.equal(1000);
-                expect(options.defaultLaunchSolution).to.be.undefined;
+            options.enableMsBuildLoadProjectsOnDemand.should.equal(false);
+            options.enableRoslynAnalyzers.should.equal(false);
+            expect(options.defaultLaunchSolution).to.be.undefined;
         });
 
         test('Gives the changed option when the omnisharp config changes', () => {

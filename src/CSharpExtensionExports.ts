@@ -4,9 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Advisor } from "./features/diagnosticsProvider";
+import { EventStream } from "./EventStream";
 
  export default interface CSharpExtensionExports {
     initializationFinished: () => Promise<void>;
-
     getAdvisor: () => Promise<Advisor>;
+    eventStream: EventStream;
  }

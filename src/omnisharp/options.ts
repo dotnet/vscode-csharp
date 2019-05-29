@@ -24,13 +24,14 @@ export class Options {
         public maxFindSymbolsItems: number,
         public razorDisabled: boolean,
         public razorDevMode: boolean,
+        public enableMsBuildLoadProjectsOnDemand: boolean,
+        public enableRoslynAnalyzers: boolean,
         public razorPluginPath?: string,
         public defaultLaunchSolution?: string,
         public monoPath?: string,
         public excludePaths?: string[],
         public maxProjectFileCountForDiagnosticAnalysis?: number | null) { }
     ;
-
 
     public static Read(vscode: vscode): Options {
         // Extra effort is taken below to ensure that legacy versions of options
@@ -63,6 +64,8 @@ export class Options {
         const defaultLaunchSolution = omnisharpConfig.get<string>('defaultLaunchSolution', undefined);
         const useEditorFormattingSettings = omnisharpConfig.get<boolean>('useEditorFormattingSettings', true);
 
+        const enableRoslynAnalyzers = omnisharpConfig.get<boolean>('enableRoslynAnalyzers', false);
+
         const useFormatting = csharpConfig.get<boolean>('format.enable', true);
 
         const showReferencesCodeLens = csharpConfig.get<boolean>('referencesCodeLens.enabled', true);
@@ -74,6 +77,8 @@ export class Options {
 
         const minFindSymbolsFilterLength = omnisharpConfig.get<number>('minFindSymbolsFilterLength', 0);
         const maxFindSymbolsItems = omnisharpConfig.get<number>('maxFindSymbolsItems', 1000);   // The limit is applied only when this setting is set to a number greater than zero
+
+        const enableMsBuildLoadProjectsOnDemand = omnisharpConfig.get<boolean>('enableMsBuildLoadProjectsOnDemand', false);
 
         const razorDisabled = !!razorConfig && razorConfig.get<boolean>('disabled', false);
         const razorDevMode = !!razorConfig && razorConfig.get<boolean>('devmode', false);
@@ -107,6 +112,8 @@ export class Options {
             maxFindSymbolsItems,
             razorDisabled,
             razorDevMode,
+            enableMsBuildLoadProjectsOnDemand,
+            enableRoslynAnalyzers,
             razorPluginPath,
             defaultLaunchSolution,
             monoPath,

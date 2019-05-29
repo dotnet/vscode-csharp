@@ -38,12 +38,69 @@ These are the arguments that will be passed to your program.
 ## Stop at Entry
 If you need to stop at the entry point of the target, you can optionally set `stopAtEntry` to be "true".
 
-## Launch Browser
-The launch browser field can be optionally added if you need to launch with a web browser.
-If there are web server dependencies in your project.json, the auto generated launch file will add launch 
-browser for you. It will open with the default program to handle URLs.
+## Starting a Web Browser
 
-Note that `launchBrowser` requires `"console": "internalConsole"`, as the browser launcher scrapes the standard output of the target process to know when the web server has initialized itself.
+The default launch.json template (as of C# extension v1.20.0) for ASP.NET Core projects will use the following to configure VS Code to launch a web browser when ASP.NET starts:
+
+```json
+    "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)"
+    }
+```
+
+Notes about this:
+1. If you do **NOT** want the browser to automatically start, you can just delete this element 
+    (and a `launchBrowser` element if your launch.json has that instead).
+2. This pattern will launch the web browser using the URL that ASP.NET Core writes 
+    to the console. If you want to modify the URL see [specifying the browser's URL](#specifying-the-browsers-url).
+    This may be useful if the target application is running on another machine or container, 
+    or if `applicationUrl` has a special host name (example: `"applicationUrl": "http://*:1234/"`).
+3. `serverReadyAction` is a new feature from VS Code. It is recommended over the previous 
+    `launchBrowser` feature that is built into the C# extension's debugger as it can work when
+    the C# extension is running on a remote machine, it uses the default browser configured for VS 
+    Code, and it also allows using a script debugger. You can continue using `launchBrowser` instead 
+    if none of those features are important to you. You also can continue to use `launchBrowser` if
+    you want to run a specific program instead of starting the default browser.
+4. More documentation for `servereReadyAction` can be found in the [Visual Studio Code February 2019 release notes](https://code.visualstudio.com/updates/v1_32#_automatically-open-a-uri-when-debugging-a-server-program).
+5. The way this works is that VS Code will scrape the output which is set to the console. If a line 
+    matches the pattern, it will launch a browser against the URL which was 'captured' by the pattern.
+    Here is an explanation of what the pattern does:
+    * `^`: This indicates that the pattern should only be matched against the beginning of a line.
+    * `\\s*` : Matches zero or more whitespace characters. Note that `\s` indicates a whitespace character, but because this is in a json string, the `\` needs to be escaped, hence `\\s`.
+    * `Now listening on:` : This is a string literal, meaning that the next text must be `Now listening on:`.
+    * `\\s+` : Matches one or more space characters.
+    * `(` : This is the beginning of a 'capture group' -- this indicates which region of text will be saved and used to launch the browser.
+    * `http` : String literal.
+    * `s?` : Either the character `s` or nothing.
+    * `://` : String literal.
+    * `\\S+` : One or more non-whitespace characters.
+    * `)` : The end of the capture group.
+6. Both forms of browser launch require `"console": "internalConsole"`, as the browser launcher scrapes 
+    the standard output of the target process to know when the web server has initialized itself.
+
+### Specifying the browser's URL
+
+If you want to ignore the URL from the console output, you can remove the 
+`(` and `)` from the pattern, and the set `uriFormat` to what you want to launch. Example:
+
+```json
+    "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "^\\s*Now listening on:\\s+https?://\\S",
+        "uriFormat": "http://localhost:1234"
+    }
+```
+
+If you want to use the port number from the console output, but not the host name, you can also use something like this:
+
+```json
+    "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "^\\s*Now listening on:\\s+http://\\S+:([0-9]+)",
+        "uriFormat": "http://localhost:%s"
+    }
+```
 
 ## Environment variables
 Environment variables may be passed to your program using this schema:
@@ -189,7 +246,7 @@ The `symbolOptions` element allows customization of how the debugger searches fo
 
 **searchMicrosoftSymbolServer**: If `true` the Microsoft Symbol server (https://msdl.microsoft.com/download/symbols) is added to the symbols search path. If unspecified, this option defaults to `false`.
 
-**cachePath**": Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.vsdbg/SymbolCache.
+**cachePath**": Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.
 
 **moduleFilter.mode**: This value is either `"loadAllButExcluded"` or `"loadOnlyIncluded"`. In `"loadAllButExcluded"` mode, the debugger loads symbols for all modules unless the module is in the 'excludedModules' array. In `"loadOnlyIncluded"` mode, the debugger will not attempt to load symbols for ANY module unless it is in the 'includedModules' array, or it is included through the 'includeSymbolsNextToModules' setting.
 

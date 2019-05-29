@@ -1,31 +1,53 @@
 {
-	"version": "0.1.0",
+	"version": "2.0.0",
+	"presentation": {
+		"echo": true,
+		"reveal": "always",
+		"focus": false,
+		"panel": "shared"
+	},
 	"tasks": [
 		{
-			"taskName": "build",
+			"label": "build",
 			"command": "npm",
-			"isShellCommand": true,
+			"type": "shell",
 			"args": [
 				"run",
 				"compile"
 			],
-			"showOutput": "always",
-			"isBuildCommand": true
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
 		},
 		{
-			"taskName": "test",
+			"label": "buildDev",
+			"command": "npm",
+			"type": "shell",
+			"args": [
+				"run",
+				"compileDev"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "test",
 			"command": "echo",
-			"showOutput": "always",
-			"isShellCommand": true,
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
 			"args": [
 				"Run tests in VS Code by launching the debugger with the 'Launch Tests' configuration."
-			],
-			"isTestCommand": true
+			]
 		},
 		{
-			"taskName": "tslint",
+			"label": "tslint",
 			"command": "gulp",
-			"isShellCommand": true,
+			"type": "shell",
 			"args": [
 				"tslint"
 			],

@@ -4,14 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { BaseChannelObserver } from "./BaseChannelObserver";
-import { BaseEvent, CommandDotNetRestoreStart } from "../omnisharp/loggingEvents";
+import { BaseEvent } from "../omnisharp/loggingEvents";
+import { EventType } from "../omnisharp/EventType";
 
 export class DotNetChannelObserver extends BaseChannelObserver {
     public post = (event: BaseEvent) => {
-        switch (event.constructor.name) {
-            case CommandDotNetRestoreStart.name:
+        switch (event.type) {
+            case EventType.CommandDotNetRestoreStart:
                 this.clearChannel();
-                this.showChannel();
+                this.showChannel(true);
                 break;
         }
     }

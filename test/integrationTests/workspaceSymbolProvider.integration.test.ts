@@ -4,10 +4,9 @@
 *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { should, expect } from 'chai';
+import { expect } from 'chai';
 import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-
 const chai = require('chai');
 chai.use(require('chai-arrays'));
 chai.use(require('chai-fs'));
@@ -15,12 +14,10 @@ chai.use(require('chai-fs'));
 suite(`WorkspaceSymbolProvider: ${testAssetWorkspace.description}`, function () {
 
     suiteSetup(async function () {
-        should();
         await testAssetWorkspace.restore();
         await activateCSharpExtension();
-
         let projectDirectory = vscode.Uri.file(testAssetWorkspace.projects[0].projectDirectoryPath);
-        await vscode.commands.executeCommand("vscode.openFolder", projectDirectory);
+        await vscode.commands.executeCommand("vscode.open", projectDirectory);
     });
 
     suiteTeardown(async () => {

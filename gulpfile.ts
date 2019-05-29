@@ -16,12 +16,17 @@ require('./tasks/offlinePackagingTasks');
 require('./tasks/backcompatTasks');
 require('./tasks/coverageTasks');
 
-gulp.task('generateOptionsSchema', () => {
+// Disable warning about wanting an async function
+// tslint:disable-next-line
+gulp.task('generateOptionsSchema', () : Promise<void> => {
     optionsSchemaGenerator.GenerateOptionsSchema();
+    return Promise.resolve();
 });
 
-gulp.task('updatePackageDependencies', () => {
-    packageDependencyUpdater.updatePackageDependencies();
+// Disable warning about wanting an async function
+// tslint:disable-next-line
+gulp.task('updatePackageDependencies', () : Promise<void> => {
+    return packageDependencyUpdater.updatePackageDependencies();
 });
 
 gulp.task('tslint', () => {

@@ -1,7 +1,8 @@
+
 /*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+*  Copyright (c) Microsoft Corporation. All rights reserved.
+*  Licensed under the MIT License. See License.txt in the project root for license information.
+*--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs';
 import * as path from 'path';
@@ -24,8 +25,8 @@ import { OmnisharpDownloader } from './OmnisharpDownloader';
 import * as ObservableEvents from './loggingEvents';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/debounceTime';
+import { Subject } from 'rxjs';
+import {debounceTime} from 'rxjs/operators';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
@@ -67,6 +68,8 @@ module Events {
     export const MultipleLaunchTargets = 'server:MultipleLaunchTargets';
 
     export const Started = 'started';
+
+    export const ProjectConfiguration = 'ProjectConfiguration';
 }
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
@@ -97,7 +100,7 @@ export class OmniSharpServer {
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
         let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, this.packageJSON, platformInfo, extensionPath);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
-        this.updateProjectDebouncer.debounceTime(1500).subscribe((event) => { this.updateProjectInfo(); });
+        this.updateProjectDebouncer.pipe(debounceTime(1500)).subscribe((event) => { this.updateProjectInfo(); });
         this.firstUpdateProject = true;
     }
 
@@ -279,6 +282,10 @@ export class OmniSharpServer {
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnStart());
         }));
 
+        disposables.add(this.onProjectConfigurationReceived((message: protocol.ProjectConfigurationMessage) => {
+            this.eventStream.post(new ObservableEvents.ProjectConfiguration(message));
+        }));
+
         disposables.add(this.onProjectAdded(this.debounceUpdateProjectWithLeadingTrue));
         disposables.add(this.onProjectChange(this.debounceUpdateProjectWithLeadingTrue));
         disposables.add(this.onProjectRemoved(this.debounceUpdateProjectWithLeadingTrue));
@@ -294,7 +301,6 @@ export class OmniSharpServer {
         let args = [
             '-s', solutionPath,
             '--hostPID', process.pid.toString(),
-            '--stdio',
             'DotNet:enablePackageRestore=false',
             '--encoding', 'utf-8',
             '--loglevel', options.loggingLevel
@@ -318,7 +324,17 @@ export class OmniSharpServer {
         }
 
         for (let i = 0; i < options.excludePaths.length; i++)
-            args.push(`FileOptions:SystemExcludeSearchPatterns:${i}=${options.excludePaths[i]}`)
+        {
+            args.push(`FileOptions:SystemExcludeSearchPatterns:${i}=${options.excludePaths[i]}`);
+        }
+        
+        if (options.enableMsBuildLoadProjectsOnDemand === true) {
+            args.push('MsBuild:LoadProjectsOnDemand=true');
+        }
+
+        if (options.enableRoslynAnalyzers === true) {
+            args.push('RoslynExtensionsOptions:EnableAnalyzersSupport=true');
+        }
 
         let launchInfo: LaunchInfo;
         try {
@@ -358,6 +374,10 @@ export class OmniSharpServer {
             this._fireEvent(Events.ServerError, err);
             return this.stop();
         }
+    }
+    
+    private onProjectConfigurationReceived(listener: (e: protocol.ProjectConfigurationMessage) => void){
+        return this._addListener(Events.ProjectConfiguration, listener);
     }
 
     private debounceUpdateProjectWithLeadingTrue = () => {
@@ -500,7 +520,7 @@ export class OmniSharpServer {
     public async makeRequest<TResponse>(command: string, data?: any, token?: CancellationToken): Promise<TResponse> {
 
         if (!this.isRunning()) {
-            return Promise.reject<TResponse>('server has been stopped or not started');
+            return Promise.reject<TResponse>('OmniSharp server is not running.');
         }
 
         let startTime: number;

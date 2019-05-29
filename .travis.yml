@@ -1,29 +1,32 @@
 language: node_js
 
 node_js:
-- "8"
+- "10"
 
 env:
-- CODE_VERSION=1.28.0
+- CODE_VERSION=1.33.0
 
 before_install:
   - if [ $TRAVIS_OS_NAME == "linux" ]; then
       export CXX="g++-4.9" CC="gcc-4.9" DISPLAY=:99.0;
-      sh -e /etc/init.d/xvfb start;
+      Xvfb :99 &
       sleep 3;
     fi
-  - dpkg --compare-versions `npm -v` ge 5.8 || npm i -g npm@^5.8
+  - dpkg --compare-versions `npm -v` ge 6.7 || npm i -g npm@^6.7
+  - wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb
+  - sudo dpkg -i packages-microsoft-prod.deb
+  - sudo apt-get install apt-transport-https
+  - sudo apt-get update
+  - sudo apt-get install dotnet-sdk-2.2
+  - sudo apt install xvfb
 
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      - sourceline: 'deb https://packages.microsoft.com/repos/microsoft-ubuntu-trusty-prod trusty main'
-        key_url: 'https://packages.microsoft.com/keys/microsoft.asc'
     packages:
       - g++-4.9
       - libsecret-1-dev
-      - dotnet-sdk-2.0.2
 
 install:
 - npm ci
@@ -31,10 +34,9 @@ install:
 - gulp 'vsix:release:package'
 
 script:
-  - gulp 'vsix:release:unpackage'
-  - gulp cov:instrument --codeExtensionPath ./vsix/extension
-  - gulp test --codeExtensionPath ./vsix/extension
-  - gulp cov:report --codeExtensionPath ./vsix/extension
+  - gulp cov:instrument
+  - gulp test
+  - gulp cov:report
   - npm run test:artifacts
   - 'if [[ "$TRAVIS_BRANCH" != "master" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then npm run test:release; fi'
 

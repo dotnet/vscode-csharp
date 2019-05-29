@@ -20,8 +20,8 @@
         },
         "cachePath": {
           "type": "string",
-          "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.vsdbg/SymbolCache.",
-          "default": "~/.vsdbg/SymbolCache"
+          "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
+          "default": "~/.dotnet/symbolcache"
         },
         "moduleFilter": {
           "$ref": "#/definitions/VSSymbolOptionsModuleFilter",

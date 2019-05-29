@@ -6,36 +6,37 @@
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import { BaseEvent, OmnisharpInitialisation, OmnisharpLaunch, OmnisharpFailure, OmnisharpServerMessage, OmnisharpServerOnServerError, OmnisharpServerOnError, OmnisharpServerMsBuildProjectDiagnostics, OmnisharpServerOnStdErr, OmnisharpEventPacketReceived } from "../omnisharp/loggingEvents";
 import * as os from 'os';
+import { EventType } from "../omnisharp/EventType";
 
 export class OmnisharpLoggerObserver extends BaseLoggerObserver {
     public post = (event: BaseEvent) => {
-        switch (event.constructor.name) {
-            case OmnisharpInitialisation.name:
+        switch (event.type) {
+            case EventType.OmnisharpInitialisation:
                 this.handleOmnisharpInitialisation(<OmnisharpInitialisation>event);
                 break;
-            case OmnisharpLaunch.name:
+            case EventType.OmnisharpLaunch:
                 this.handleOmnisharpLaunch(<OmnisharpLaunch>event);
                 break;
-            case OmnisharpFailure.name:
+            case EventType.OmnisharpFailure:
                 this.logger.appendLine((<OmnisharpFailure>event).message);
                 this.logger.appendLine();
                 break;
-            case OmnisharpServerMessage.name:
+            case EventType.OmnisharpServerMessage:
                 this.logger.appendLine((<OmnisharpServerMessage>event).message);
                 break;
-            case OmnisharpServerOnServerError.name:
+            case EventType.OmnisharpServerOnServerError:
                 this.handleOmnisharpServerOnServerError(<OmnisharpServerOnServerError>event);
                 break;
-            case OmnisharpServerOnError.name:
+            case EventType.OmnisharpServerOnError:
                 this.handleOmnisharpServerOnError(<OmnisharpServerOnError>event);
                 break;
-            case OmnisharpServerMsBuildProjectDiagnostics.name:
+            case EventType.OmnisharpServerMsBuildProjectDiagnostics:
                 this.handleOmnisharpServerMsBuildProjectDiagnostics(<OmnisharpServerMsBuildProjectDiagnostics>event);
                 break;
-            case OmnisharpServerOnStdErr.name:
+            case EventType.OmnisharpServerOnStdErr:
                 this.logger.append((<OmnisharpServerOnStdErr>event).message);
                 break;
-            case OmnisharpEventPacketReceived.name:
+            case EventType.OmnisharpEventPacketReceived:
                 this.handleOmnisharpEventPacketReceived(<OmnisharpEventPacketReceived>event);
                 break;
         }

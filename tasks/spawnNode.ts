@@ -6,10 +6,10 @@
 'use strict';
 
 import { SpawnOptions, spawn } from "child_process";
-import { join, Result } from "async-child-process";
 import { nodePath, rootPath } from "./projectPaths";
+const { join } = require("async-child-process");
 
-export default async function spawnNode(args?: string[], options?: SpawnOptions): Promise<Result> {
+export default async function spawnNode(args?: string[], options?: SpawnOptions): Promise<{code: string; signal: string;}> {
     if (!options) {
         options = {
             env: {}
@@ -18,7 +18,6 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
     
     let optionsWithFullEnvironment = {
         cwd: rootPath,
-        stdio: 'inherit', 
         ...options,
         env: {
             ...process.env,
@@ -30,8 +29,8 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
 
     let spawned = spawn(nodePath, args, optionsWithFullEnvironment);
     
-    // spawned.stderr.pipe(process.stdout);
-    // spawned.stdout.pipe(process.stdout);
+    spawned.stderr.pipe(process.stdout);
+    spawned.stdout.pipe(process.stdout);
 
     return join(spawned);
 }

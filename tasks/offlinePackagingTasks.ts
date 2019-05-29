@@ -23,6 +23,7 @@ import NetworkSettings from '../src/NetworkSettings';
 import { commandLineOptions } from '../tasks/commandLineArguments';
 import { getRuntimeDependenciesPackages } from '../src/tools/RuntimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from '../src/packageManager/getAbsolutePathPackagesToInstall';
+import { isValidDownload } from '../src/packageManager/isValidDownload';
 
 gulp.task('vsix:offline:package', async () => {
     del.sync(vscodeignorePath);
@@ -66,6 +67,7 @@ function cleanSync(deleteVsix: boolean) {
     del.sync('install.*');
     del.sync('.omnisharp*');
     del.sync('.debugger');
+    del.sync('.razor');
 
     if (deleteVsix) {
         del.sync('*.vsix');
@@ -93,7 +95,7 @@ async function install(platformInfo: PlatformInformation, packageJSON: any) {
     let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON);
     let packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, codeExtensionPath);
     let provider = () => new NetworkSettings(undefined, undefined);
-    await downloadAndInstallPackages(packagesToInstall, provider, eventStream);
+    await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload);
     await debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());
 }
 

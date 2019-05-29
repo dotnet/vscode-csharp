@@ -5,10 +5,8 @@
 
 import { Options } from "../omnisharp/options";
 import { vscode } from "../vscodeAdapter";
-import 'rxjs/add/operator/take';
-import 'rxjs/add/operator/publishBehavior';
-import { Observable } from "rxjs/Observable";
-import { Observer } from "rxjs/Observer";
+import { Observable, Observer } from "rxjs";
+import { publishBehavior } from "rxjs/operators";
 
 export default function createOptionStream(vscode: vscode): Observable<Options> {
     return Observable.create((observer: Observer<Options>) => {
@@ -20,5 +18,5 @@ export default function createOptionStream(vscode: vscode): Observable<Options> 
         });
 
         return () => disposable.dispose();
-    }).publishBehavior(Options.Read(vscode)).refCount();
+    }).pipe(publishBehavior(Options.Read(vscode))).refCount();
 }

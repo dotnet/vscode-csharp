@@ -2,9 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { Subject } from "rxjs/Subject";
+import { Subject ,  Subscription } from "rxjs";
 import { BaseEvent } from "./omnisharp/loggingEvents";
-import { Subscription } from "rxjs/Subscription";
 
 export class EventStream {
     private sink: Subject<BaseEvent>;

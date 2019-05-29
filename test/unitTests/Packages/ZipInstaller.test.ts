@@ -76,12 +76,12 @@ suite('ZipInstaller', () => {
     });
 
     test('Error is thrown when the buffer contains an invalid zip', async () => {
-        expect(InstallZip(new Buffer("My file", "utf8"), "Text File", installationPath, [], eventStream)).to.be.rejected;
+        expect(InstallZip(Buffer.from("My file", "utf8"), "Text File", installationPath, [], eventStream)).to.be.rejected;
     });
 
     test('Error event is created when the buffer contains an invalid zip', async () => {
         try {
-            await InstallZip(new Buffer("some content", "utf8"), "Text File", installationPath, [], eventStream);
+            await InstallZip(Buffer.from("some content", "utf8"), "Text File", installationPath, [], eventStream);
         }
         catch{
             let eventSequence: BaseEvent[] = [

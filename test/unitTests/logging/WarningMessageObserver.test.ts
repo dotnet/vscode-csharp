@@ -1,20 +1,15 @@
 /*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+*  Copyright (c) Microsoft Corporation. All rights reserved.
+*  Licensed under the MIT License. See License.txt in the project root for license information.
+*--------------------------------------------------------------------------------------------*/
 
 import { WarningMessageObserver } from '../../../src/observers/WarningMessageObserver';
 import { assert, use as chaiUse, expect, should } from 'chai';
 import { getFakeVsCode, getMSBuildDiagnosticsMessage, getOmnisharpMSBuildProjectDiagnosticsEvent, getOmnisharpServerOnErrorEvent } from '../testAssets/Fakes';
 import { vscode } from '../../../src/vscodeAdapter';
-import { TestScheduler } from 'rxjs/testing/TestScheduler';
-import { Observable } from 'rxjs/Observable';
-import "rxjs/add/operator/map";
-import "rxjs/add/operator/debounceTime";
-import 'rxjs/add/operator/timeout';
-import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/observable/timer';
-import { Subject } from 'rxjs/Subject';
+import { TestScheduler } from 'rxjs/testing';
+import { from as observableFrom, Subject } from 'rxjs';
+import { timeout, map } from 'rxjs/operators';
 
 chaiUse(require('chai-as-promised'));
 chaiUse(require('chai-string'));
@@ -165,7 +160,7 @@ suite('WarningMessageObserver', () => {
             test(`Given a warning message, when the user clicks ok the command is executed`, async () => {
                 let marble = `${timeToMarble(1500)}a`;
                 let eventList = scheduler.createHotObservable(marble, { a: elem.eventA });
-                scheduler.expectObservable(eventList.map(e => observer.post(e)));
+                scheduler.expectObservable(eventList.pipe(map(e => observer.post(e))));
                 scheduler.flush();
                 doClickOk();
                 await commandDone;
@@ -175,10 +170,10 @@ suite('WarningMessageObserver', () => {
             test(`Given a warning message, when the user clicks cancel the command is not executed`, async () => {
                 let marble = `${timeToMarble(1500)}a--|`;
                 let eventList = scheduler.createHotObservable(marble, { a: elem.eventA });
-                scheduler.expectObservable(eventList.map(e => observer.post(e)));
+                scheduler.expectObservable(eventList.pipe(map(e => observer.post(e))));
                 scheduler.flush();
                 doClickCancel();
-                await expect(Observable.fromPromise(commandDone).timeout(1).toPromise()).to.be.rejected;
+                await expect(observableFrom(commandDone).pipe(timeout(1)).toPromise()).to.be.rejected;
                 expect(invokedCommand).to.be.undefined;
             });
         });

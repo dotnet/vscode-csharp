@@ -110,7 +110,7 @@ export function getFakeVsCode(): vscode.vscode {
         },
         window: {
             activeTextEditor: undefined,
-            showInformationMessage:  <T extends MessageItem>(message: string, ...items: T[]) => {
+            showInformationMessage: <T extends MessageItem>(message: string, ...items: T[]) => {
                 throw new Error("Not Implemented");
             },
             showWarningMessage: <T extends MessageItem>(message: string, ...items: T[]) => {
@@ -145,7 +145,25 @@ export function getFakeVsCode(): vscode.vscode {
                 throw new Error("Not Implemented");
             }
         },
-        version: ""
+        version: "",
+        env: {
+            appName: null,
+            appRoot: null,
+            language: null,
+            clipboard: {
+                writeText: () => {
+                    throw new Error("Not Implemented");
+                },
+                readText: () => {
+                    throw new Error("Not Implemented");
+                }
+            },
+            machineId: null,
+            sessionId: null,
+            openExternal: () => {
+                throw new Error("Not Implemented");
+            }
+        }
     };
 }
 
@@ -162,7 +180,7 @@ export function getWorkspaceInformationUpdated(msbuild: protocol.MsBuildWorkspac
     };
 
     return new WorkspaceInformationUpdated(a);
-} 
+}
 
 export function getVSCodeWithConfig() {
     const vscode = getFakeVsCode();
@@ -170,15 +188,12 @@ export function getVSCodeWithConfig() {
     const _omnisharpConfig = getWorkspaceConfiguration();
     const _csharpConfig = getWorkspaceConfiguration();
 
-    vscode.workspace.getConfiguration = (section?, resource?) =>
-    {
-        if (section === 'omnisharp')
-        {
+    vscode.workspace.getConfiguration = (section?, resource?) => {
+        if (section === 'omnisharp') {
             return _omnisharpConfig;
         }
 
-        if (section === 'csharp')
-        {
+        if (section === 'csharp') {
             return _csharpConfig;
         }
 

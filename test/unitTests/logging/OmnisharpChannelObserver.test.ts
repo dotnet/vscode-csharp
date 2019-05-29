@@ -11,14 +11,19 @@ suite("OmnisharpChannelObserver", () => {
 
     let hasShown: boolean;
     let hasCleared: boolean;
+    let preserveFocus: boolean;
     let observer: OmnisharpChannelObserver;
 
     setup(() => {
         hasShown = false;
         hasCleared = false;
+        preserveFocus = false;
         observer = new OmnisharpChannelObserver({
             ...getNullChannel(),
-            show: () => { hasShown = true; },
+            show: (preserve) => {
+                hasShown = true;
+                preserveFocus = preserve;
+            },
             clear: () => { hasCleared = true; }
         });
     });
@@ -28,10 +33,11 @@ suite("OmnisharpChannelObserver", () => {
         new ShowOmniSharpChannel(),
         new OmnisharpServerOnStdErr("std err")
     ].forEach((event: BaseEvent) => {
-        test(`${event.constructor.name}: Channel is shown`, () => {
+        test(`${event.constructor.name}: Channel is shown and preserveFocus is set to true`, () => {
             expect(hasShown).to.be.false;
             observer.post(event);
             expect(hasShown).to.be.true;
+            expect(preserveFocus).to.be.true;
         });
     });
 

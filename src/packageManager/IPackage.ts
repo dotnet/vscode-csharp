@@ -11,4 +11,5 @@ export interface IPackage {
     platforms: string[];
     architectures: string[];
     platformId?: string;
+    integrity?: string;
 }

@@ -11,11 +11,12 @@ import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from "../NetworkSettings";
 import { AbsolutePathPackage } from "./AbsolutePathPackage";
 import { touchInstallFile, InstallFileType, deleteInstallFile, installFileExists } from "../common";
-import { InstallationFailure } from "../omnisharp/loggingEvents";
+import { InstallationFailure, IntegrityCheckFailure } from "../omnisharp/loggingEvents";
 import { mkdirpSync } from "fs-extra";
 import { PackageInstallStart } from "../omnisharp/loggingEvents";
+import { DownloadValidator } from './isValidDownload';
 
-export async function downloadAndInstallPackages(packages: AbsolutePathPackage[], provider: NetworkSettingsProvider, eventStream: EventStream) {
+export async function downloadAndInstallPackages(packages: AbsolutePathPackage[], provider: NetworkSettingsProvider, eventStream: EventStream, downloadValidator: DownloadValidator): Promise<boolean> {
     if (packages) {
         eventStream.post(new PackageInstallStart());
         for (let pkg of packages) {
@@ -23,23 +24,34 @@ export async function downloadAndInstallPackages(packages: AbsolutePathPackage[]
             try {
                 mkdirpSync(pkg.installPath.value);
                 await touchInstallFile(pkg.installPath, InstallFileType.Begin);
-                installationStage = 'downloadAndInstallPackages';
-                let buffer = await DownloadFile(pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
-                await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
-                installationStage = 'touchLockFile';
-                await touchInstallFile(pkg.installPath, InstallFileType.Lock);
+                let count = 1;
+                let willTryInstallingPackage = () => count <= 2; // try 2 times
+                while (willTryInstallingPackage()) {
+                    count = count + 1;
+                    installationStage = "downloadPackage";
+                    let buffer = await DownloadFile(pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
+                    if (downloadValidator(buffer, pkg.integrity, eventStream)) {
+                        installationStage = "installPackage";
+                        await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
+                        installationStage = 'touchLockFile';
+                        await touchInstallFile(pkg.installPath, InstallFileType.Lock);
+                        break;
+                    }
+                    else {
+                        eventStream.post(new IntegrityCheckFailure(pkg.description, pkg.url, willTryInstallingPackage()));
+                    }
+                }
             }
             catch (error) {
-                eventStream.post(new InstallationFailure(installationStage, error));
                 if (error instanceof NestedError) {
                     let packageError = new PackageError(error.message, pkg, error.err);
                     eventStream.post(new InstallationFailure(installationStage, packageError));
-                    throw packageError;
                 }
                 else {
                     eventStream.post(new InstallationFailure(installationStage, error));
-                    throw error;
                 }
+
+                return false;
             }
             finally {
                 try {
@@ -50,5 +62,7 @@ export async function downloadAndInstallPackages(packages: AbsolutePathPackage[]
                 catch (error) { }
             }
         }
+
+        return true; //if all packages succeded in installing return true
     }
 }

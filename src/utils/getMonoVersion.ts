@@ -23,7 +23,7 @@ export const getMonoVersion: IGetMonoVersion = async (environment: NodeJS.Proces
         });
 
         let stdout = '';
-        childprocess.stdout.on('data', (data: NodeBuffer) => {
+        childprocess.stdout.on('data', (data: any) => {
             stdout += data.toString();
         });
 

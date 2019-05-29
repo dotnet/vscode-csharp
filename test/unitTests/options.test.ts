@@ -30,6 +30,8 @@ suite("Options tests", () => {
         options.disableCodeActions.should.equal(false);
         options.minFindSymbolsFilterLength.should.equal(0);
         options.maxFindSymbolsItems.should.equal(1000);
+        options.enableMsBuildLoadProjectsOnDemand.should.equal(false);
+        options.enableRoslynAnalyzers.should.equal(false);
         expect(options.defaultLaunchSolution).to.be.undefined;
     });
 
