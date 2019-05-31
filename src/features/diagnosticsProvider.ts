@@ -212,7 +212,7 @@ class DiagnosticsProvider extends AbstractSupport {
         this._validateCurrentDocumentPipe.next(document);
 
         // This check is just small perf optimization to reduce queries
-        // for omnisharp with analyzers (which have enents to notify updates.)
+        // for omnisharp with analyzers (which has event to notify about updates.)
         if (!this._analyzersEnabled) {
             this._validateAllPipe.next();
         }
@@ -257,6 +257,8 @@ class DiagnosticsProvider extends AbstractSupport {
         }, 2000);
     }
 
+    // On large workspaces (if maxProjectFileCountForDiagnosticAnalysis) is less than workspace size,
+    // diagnostic fallback to mode where only open documents are analyzed.
     private async _validateLargeWorkspace(): Promise<void> {
         await setTimeout(async () => {
             for (let editor of vscode.window.visibleTextEditors) {
