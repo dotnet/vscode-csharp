@@ -128,8 +128,8 @@ class DiagnosticsProvider extends AbstractSupport {
     private _validationAdvisor: Advisor;
     private _disposable: CompositeDisposable;
     private _diagnostics: vscode.DiagnosticCollection;
-    private _validateDocumentStream = new Subject<vscode.TextDocument>();
-    private _validateAllStream = new Subject();
+    private _validateCurrentDocumentPipe = new Subject<vscode.TextDocument>();
+    private _validateAllPipe = new Subject();
     private _analyzersEnabled: boolean;
     private _subscriptions: Subscription[] = [];
 
@@ -140,19 +140,28 @@ class DiagnosticsProvider extends AbstractSupport {
         this._validationAdvisor = validationAdvisor;
         this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
 
-        this._subscriptions.push(this._validateDocumentStream
+        this._subscriptions.push(this._validateCurrentDocumentPipe
             .asObservable()
             .pipe(throttleTime(750))
             .subscribe(async x => await this._validateDocument(x)));
 
-        this._subscriptions.push(this._validateAllStream
+        this._subscriptions.push(this._validateAllPipe
             .asObservable()
             .pipe(throttleTime(3000))
-            .subscribe(async () => await this._validateAll()));
+            .subscribe(async () => {
+                try {
+                    if (this._validationAdvisor.shouldValidateAll()) {
+                        await this._validateSmallWorkspace();
+                    }
+                    else if (this._validationAdvisor.shouldValidateFiles()) {
+                        await this._validateLargeWorkspace();
+                    }
+                } catch { }
+            }));
 
         this._disposable = new CompositeDisposable(this._diagnostics,
-            this._server.onPackageRestore(() => this._validateAllStream.next(), this),
-            this._server.onProjectChange(() => this._validateAllStream.next(), this),
+            this._server.onPackageRestore(() => this._validateAllPipe.next(), this),
+            this._server.onProjectChange(() => this._validateAllPipe.next(), this),
             this._server.onProjectDiagnosticStatus(this._onProjectAnalysis, this),
             vscode.workspace.onDidOpenTextDocument(event => this._onDocumentAddOrChange(event), this),
             vscode.workspace.onDidChangeTextDocument(event => this._onDocumentAddOrChange(event.document), this),
@@ -160,21 +169,11 @@ class DiagnosticsProvider extends AbstractSupport {
             vscode.window.onDidChangeActiveTextEditor(event => this._onDidChangeActiveTextEditor(event), this),
             vscode.window.onDidChangeWindowState(event => this._OnDidChangeWindowState(event), this),
         );
-
-        // // Go ahead and check for diagnostics in the currently visible editors.
-        // for (let editor of vscode.window.visibleTextEditors) {
-        //     let document = editor.document;
-        //     if (this.shouldIgnoreDocument(document)) {
-        //         continue;
-        //     }
-
-        //     this._validateDocumentStream.next(document);
-        // }
     }
 
     public dispose = () => {
-        this._validateAllStream.complete();
-        this._validateDocumentStream.complete();
+        this._validateAllPipe.complete();
+        this._validateCurrentDocumentPipe.complete();
         this._subscriptions.forEach(x => x.unsubscribe());
         this._disposable.dispose();
     }
@@ -210,24 +209,23 @@ class DiagnosticsProvider extends AbstractSupport {
             return;
         }
 
-        this._validateDocumentStream.next(document);
+        this._validateCurrentDocumentPipe.next(document);
 
         // This check is just small perf optimization to reduce queries
         // for omnisharp with analyzers (which have enents to notify updates.)
-        if(!this._analyzersEnabled)
-        {
-            this._validateAllStream.next();
+        if (!this._analyzersEnabled) {
+            this._validateAllPipe.next();
         }
     }
 
     private _onProjectAnalysis(event: protocol.ProjectDiagnosticStatus) {
         if (event.Status == DiagnosticStatus.Ready) {
-            this._validateAllStream.next();
+            this._validateAllPipe.next();
         }
     }
 
     private _onDocumentRemove(document: vscode.TextDocument): void {
-        this._validateAllStream.next();
+        this._validateAllPipe.next();
     }
 
     private async _validateDocument(document: vscode.TextDocument): Promise<void> {
@@ -259,52 +257,56 @@ class DiagnosticsProvider extends AbstractSupport {
         }, 2000);
     }
 
-    private async _validateAll(): Promise<void> {
-        if (!this._validationAdvisor.shouldValidateAll()) {
-            return;
-        }
-
-        await setTimeout(async() => {
-            try {
-                let value = await serverUtils.codeCheck(this._server, { FileName: null }, new vscode.CancellationTokenSource().token);
-
-                let quickFixes = value.QuickFixes
-                    .filter(DiagnosticsProvider._shouldInclude)
-                    .sort((a, b) => a.FileName.localeCompare(b.FileName));
-
-                let entries: [vscode.Uri, vscode.Diagnostic[]][] = [];
-                let lastEntry: [vscode.Uri, vscode.Diagnostic[]];
-
-                for (let quickFix of quickFixes) {
-
-                    let diag = DiagnosticsProvider._asDiagnostic(quickFix);
-                    let uri = vscode.Uri.file(quickFix.FileName);
-
-                    if (lastEntry && lastEntry[0].toString() === uri.toString()) {
-                        lastEntry[1].push(diag);
-                    } else {
-                        // We're replacing all diagnostics in this file. Pushing an entry with undefined for
-                        // the diagnostics first ensures that the previous diagnostics for this file are
-                        // cleared. Otherwise, new entries will be merged with the old ones.
-                        entries.push([uri, undefined]);
-                        lastEntry = [uri, [diag]];
-                        entries.push(lastEntry);
-                    }
+    private async _validateLargeWorkspace(): Promise<void> {
+        await setTimeout(async () => {
+            for (let editor of vscode.window.visibleTextEditors) {
+                let document = editor.document;
+                if (this.shouldIgnoreDocument(document)) {
+                    continue;
                 }
 
-                // Clear diagnostics for files that no longer have any diagnostics.
-                this._diagnostics.forEach((uri) => {
-                    if (!entries.find(tuple => tuple[0].toString() === uri.toString())) {
-                        this._diagnostics.delete(uri);
-                    }
-                });
+                await this._validateDocument(document);
+            }
+        }, 3000);
+    }
 
-                // replace all entries
-                this._diagnostics.set(entries);
+    private async _validateSmallWorkspace(): Promise<void> {
+        await setTimeout(async () => {
+            let value = await serverUtils.codeCheck(this._server, { FileName: null }, new vscode.CancellationTokenSource().token);
+
+            let quickFixes = value.QuickFixes
+                .filter(DiagnosticsProvider._shouldInclude)
+                .sort((a, b) => a.FileName.localeCompare(b.FileName));
+
+            let entries: [vscode.Uri, vscode.Diagnostic[]][] = [];
+            let lastEntry: [vscode.Uri, vscode.Diagnostic[]];
+
+            for (let quickFix of quickFixes) {
+
+                let diag = DiagnosticsProvider._asDiagnostic(quickFix);
+                let uri = vscode.Uri.file(quickFix.FileName);
+
+                if (lastEntry && lastEntry[0].toString() === uri.toString()) {
+                    lastEntry[1].push(diag);
+                } else {
+                    // We're replacing all diagnostics in this file. Pushing an entry with undefined for
+                    // the diagnostics first ensures that the previous diagnostics for this file are
+                    // cleared. Otherwise, new entries will be merged with the old ones.
+                    entries.push([uri, undefined]);
+                    lastEntry = [uri, [diag]];
+                    entries.push(lastEntry);
+                }
             }
-            catch (error) {
-                return;
-            }
+
+            // Clear diagnostics for files that no longer have any diagnostics.
+            this._diagnostics.forEach((uri) => {
+                if (!entries.find(tuple => tuple[0].toString() === uri.toString())) {
+                    this._diagnostics.delete(uri);
+                }
+            });
+
+            // replace all entries
+            this._diagnostics.set(entries);
         }, 3000);
     }
 
