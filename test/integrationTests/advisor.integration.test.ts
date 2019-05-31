@@ -43,7 +43,7 @@ suite(`Advisor ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test('Advisor.shouldValidateProject returns true when maxProjectFileCountForDiagnosticAnalysis is higher than the file count', async () => {
+    test('Advisor.shouldValidateAll returns true when maxProjectFileCountForDiagnosticAnalysis is higher than the file count', async () => {
         await setLimit(1000);
 
         expect(advisor.shouldValidateAll()).to.be.true;
@@ -55,7 +55,7 @@ suite(`Advisor ${testAssetWorkspace.description}`, function () {
         expect(advisor.shouldValidateFiles()).to.be.true;
     });
 
-    test('Advisor.shouldValidateProject returns false when maxProjectFileCountForDiagnosticAnalysis is lower than the file count', async () => {
+    test('Advisor.shouldValidateAll returns false when maxProjectFileCountForDiagnosticAnalysis is lower than the file count', async () => {
         await setLimit(1);
 
         expect(advisor.shouldValidateAll()).to.be.false;
@@ -67,7 +67,7 @@ suite(`Advisor ${testAssetWorkspace.description}`, function () {
         expect(advisor.shouldValidateFiles()).to.be.true;
     });
 
-    test('Advisor.shouldValidateProject returns true when maxProjectFileCountForDiagnosticAnalysis is null', async () => {
+    test('Advisor.shouldValidateAll returns true when maxProjectFileCountForDiagnosticAnalysis is null', async () => {
         await setLimit(null);
 
         expect(advisor.shouldValidateAll()).to.be.true;

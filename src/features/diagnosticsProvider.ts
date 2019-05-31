@@ -141,6 +141,15 @@ class DiagnosticsProvider extends AbstractSupport {
         this._validationAdvisor = validationAdvisor;
         this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
 
+
+        this._validateDocumentStream
+            .pipe(throttleTime(750))
+            .subscribe(async x => await this._validateDocument(x));
+
+        this._validateAllStream
+            .pipe(throttleTime(3000))
+            .subscribe(async () => await this._validateAll());
+
         this._disposable = new CompositeDisposable(this._diagnostics,
             this._server.onPackageRestore(this._validateAllStream.next, this),
             this._server.onProjectChange(this._validateAllStream.next, this),
@@ -151,16 +160,6 @@ class DiagnosticsProvider extends AbstractSupport {
             vscode.window.onDidChangeActiveTextEditor(event => this._onDidChangeActiveTextEditor(event), this),
             vscode.window.onDidChangeWindowState(event => this._OnDidChangeWindowState(event), this),
         );
-
-        this._validateDocumentStream
-            .pipe(throttleTime(750))
-            .subscribe(async x => await this._validateDocument(x));
-
-        this._validateAllStream
-            .pipe(throttleTime(3000))
-            .subscribe(async () => await this._validateAll());
-
-        this._validateAllStream.next();
 
         // Go ahead and check for diagnostics in the currently visible editors.
         for (let editor of vscode.window.visibleTextEditors) {

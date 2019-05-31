@@ -1,5 +1,5 @@
 {
     "omnisharp.defaultLaunchSolution": "b_SecondInOrder_SlnFile.sln",
-    "omnisharp.path": "latest",
+    "omnisharp.path": "C:\\tmp\\Omnisharp-combined0\\Omnisharp.exe",
     "csharp.maxProjectFileCountForDiagnosticAnalysis": 1000,
 }
