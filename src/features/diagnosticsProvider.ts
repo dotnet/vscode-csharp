@@ -14,7 +14,7 @@ import { IDisposable } from '../Disposable';
 import { isVirtualCSharpDocument } from './virtualDocumentTracker';
 import { TextDocument } from '../vscodeAdapter';
 import OptionProvider from '../observers/OptionProvider';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { throttleTime } from 'rxjs/operators';
 import { DiagnosticStatus } from '../omnisharp/protocol';
 
@@ -127,12 +127,11 @@ class DiagnosticsProvider extends AbstractSupport {
 
     private _validationAdvisor: Advisor;
     private _disposable: CompositeDisposable;
-    private _documentValidations: { [uri: string]: vscode.CancellationTokenSource } = Object.create(null);
-    private _projectValidation: vscode.CancellationTokenSource;
     private _diagnostics: vscode.DiagnosticCollection;
     private _validateDocumentStream = new Subject<vscode.TextDocument>();
     private _validateAllStream = new Subject();
     private _analyzersEnabled: boolean;
+    private _subscriptions: Subscription[] = [];
 
     constructor(server: OmniSharpServer, validationAdvisor: Advisor) {
         super(server);
@@ -141,18 +140,19 @@ class DiagnosticsProvider extends AbstractSupport {
         this._validationAdvisor = validationAdvisor;
         this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
 
-
-        this._validateDocumentStream
+        this._subscriptions.push(this._validateDocumentStream
+            .asObservable()
             .pipe(throttleTime(750))
-            .subscribe(async x => await this._validateDocument(x));
+            .subscribe(async x => await this._validateDocument(x)));
 
-        this._validateAllStream
+        this._subscriptions.push(this._validateAllStream
+            .asObservable()
             .pipe(throttleTime(3000))
-            .subscribe(async () => await this._validateAll());
+            .subscribe(async () => await this._validateAll()));
 
         this._disposable = new CompositeDisposable(this._diagnostics,
-            this._server.onPackageRestore(this._validateAllStream.next, this),
-            this._server.onProjectChange(this._validateAllStream.next, this),
+            this._server.onPackageRestore(() => this._validateAllStream.next(), this),
+            this._server.onProjectChange(() => this._validateAllStream.next(), this),
             this._server.onProjectDiagnosticStatus(this._onProjectAnalysis, this),
             vscode.workspace.onDidOpenTextDocument(event => this._onDocumentAddOrChange(event), this),
             vscode.workspace.onDidChangeTextDocument(event => this._onDocumentAddOrChange(event.document), this),
@@ -161,26 +161,21 @@ class DiagnosticsProvider extends AbstractSupport {
             vscode.window.onDidChangeWindowState(event => this._OnDidChangeWindowState(event), this),
         );
 
-        // Go ahead and check for diagnostics in the currently visible editors.
-        for (let editor of vscode.window.visibleTextEditors) {
-            let document = editor.document;
-            if (this.shouldIgnoreDocument(document)) {
-                continue;
-            }
+        // // Go ahead and check for diagnostics in the currently visible editors.
+        // for (let editor of vscode.window.visibleTextEditors) {
+        //     let document = editor.document;
+        //     if (this.shouldIgnoreDocument(document)) {
+        //         continue;
+        //     }
 
-            this._validateDocumentStream.next(document);
-        }
+        //     this._validateDocumentStream.next(document);
+        // }
     }
 
     public dispose = () => {
-        if (this._projectValidation) {
-            this._projectValidation.dispose();
-        }
-
-        for (let key in this._documentValidations) {
-            this._documentValidations[key].dispose();
-        }
-
+        this._validateAllStream.complete();
+        this._validateDocumentStream.complete();
+        this._subscriptions.forEach(x => x.unsubscribe());
         this._disposable.dispose();
     }
 
@@ -232,23 +227,7 @@ class DiagnosticsProvider extends AbstractSupport {
     }
 
     private _onDocumentRemove(document: vscode.TextDocument): void {
-        let key = document.uri;
-        let didChange = false;
-        if (this._diagnostics.get(key)) {
-            didChange = true;
-            this._diagnostics.delete(key);
-        }
-
-        let keyString = key.toString();
-
-        if (this._documentValidations[keyString]) {
-            didChange = true;
-            this._documentValidations[keyString].cancel();
-            delete this._documentValidations[keyString];
-        }
-        if (didChange) {
-            this._validateAllStream.next();
-        }
+        this._validateAllStream.next();
     }
 
     private async _validateDocument(document: vscode.TextDocument): Promise<void> {
