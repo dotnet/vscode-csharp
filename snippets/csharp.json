@@ -317,8 +317,8 @@
             "private ${1:int} ${2:myVar};",
             "public ${1:int} ${3:MyProperty}",
             "{",
-            "    get { return ${2:myVar};}",
-            "    set { ${2:myVar} = value;}",
+            "    get { return ${2:myVar}; }",
+            "    set { ${2:myVar} = value; }",
             "}",
             "$0"
         ],
