@@ -92,6 +92,11 @@ export class OmnisharpServerOnError implements BaseEvent {
     constructor(public errorMessage: protocol.ErrorMessage) { }
 }
 
+export class OmnisharpProjectDiagnosticStatus implements BaseEvent {
+    type=EventType.ProjectDiagnosticStatus;
+    constructor(public message: protocol.ProjectDiagnosticStatus) { }
+}
+
 export class OmnisharpServerMsBuildProjectDiagnostics implements BaseEvent {
     type=EventType.OmnisharpServerMsBuildProjectDiagnostics;
     constructor(public diagnostics: protocol.MSBuildProjectDiagnostics) { }

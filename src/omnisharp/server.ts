@@ -288,6 +288,10 @@ export class OmniSharpServer {
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnStart());
         }));
 
+        disposables.add(this.onProjectDiagnosticStatus((message: protocol.ProjectDiagnosticStatus) =>
+            this.eventStream.post(new ObservableEvents.OmnisharpProjectDiagnosticStatus(message))
+        ));
+
         disposables.add(this.onProjectConfigurationReceived((message: protocol.ProjectConfigurationMessage) => {
             this.eventStream.post(new ObservableEvents.ProjectConfiguration(message));
         }));

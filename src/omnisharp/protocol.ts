@@ -285,8 +285,14 @@ export interface ProjectInformationResponse {
     DotNetProject: DotNetProject;
 }
 
+export enum DiagnosticStatus
+{
+    Processing = 0,
+    Ready = 1
+}
+
 export interface ProjectDiagnosticStatus {
-    Status: 0 | 1;
+    Status: DiagnosticStatus;
     ProjectFilePath: string;
     Type: "background";
 }

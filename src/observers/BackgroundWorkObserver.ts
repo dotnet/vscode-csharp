@@ -4,16 +4,26 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { BaseStatusBarItemObserver } from './BaseStatusBarItemObserver';
-
-export enum StatusBarColors{
-    Red = 'rgb(218,0,0)',
-    Green = 'rgb(0,218,0)',
-    Yellow = 'rgb(218,218,0)'
-}
+import { BaseEvent, OmnisharpProjectDiagnosticStatus } from '../omnisharp/loggingEvents';
+import { EventType } from '../omnisharp/EventType';
+import { DiagnosticStatus } from '../omnisharp/protocol';
 
 export class BackgroundWorkObserver extends BaseStatusBarItemObserver {
-    public post = () => {
-        this.SetAndShowStatusBar('$(sync~spin) Analyzing project.foo.csproj', 'o.showOutput', null, 'Analyzing project.foo.csproj...');
+    public post = (event: BaseEvent) => {
+        if(event.type == EventType.ProjectDiagnosticStatus)
+        {
+            let asProjectEvent = <OmnisharpProjectDiagnosticStatus>event;
+
+            if(asProjectEvent.message.Status === DiagnosticStatus.Processing)
+            {
+                let projectFile = asProjectEvent.message.ProjectFilePath.replace(/^.*[\\\/]/, '');
+                this.SetAndShowStatusBar(`$(sync~spin) Analyzing ${projectFile}`, 'o.showOutput', null, `Analyzing ${projectFile}`);
+            }
+            else
+            {
+                this.ResetAndHideStatusBar();
+            }
+        }
     }
 }
 
