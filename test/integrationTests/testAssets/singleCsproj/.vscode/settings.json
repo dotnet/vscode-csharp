@@ -1,5 +1,3 @@
 {
-    "omnisharp.path": "latest",
-    "csharp.referencesCodeLens.enabled": true,
-    "csharp.testsCodeLens.enabled": true
+    "omnisharp.path": "latest"
 }
