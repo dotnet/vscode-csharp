@@ -14,6 +14,9 @@ import { IDisposable } from '../Disposable';
 import { isVirtualCSharpDocument } from './virtualDocumentTracker';
 import { TextDocument } from '../vscodeAdapter';
 import OptionProvider from '../observers/OptionProvider';
+import { Subject } from 'rxjs';
+import { throttleTime } from 'rxjs/operators';
+import { DiagnosticStatus } from '../omnisharp/protocol';
 
 export class Advisor {
 
@@ -42,7 +45,7 @@ export class Advisor {
             && !this._isRestoringPackages();
     }
 
-    public shouldValidateProject(): boolean {
+    public shouldValidateAll(): boolean {
         return this._isServerStarted()
             && !this._isRestoringPackages()
             && !this._isOverFileLimit();
@@ -127,16 +130,20 @@ class DiagnosticsProvider extends AbstractSupport {
     private _documentValidations: { [uri: string]: vscode.CancellationTokenSource } = Object.create(null);
     private _projectValidation: vscode.CancellationTokenSource;
     private _diagnostics: vscode.DiagnosticCollection;
+    private _validateDocumentStream = new Subject<vscode.TextDocument>();
+    private _validateAllStream = new Subject();
+    private _analyzersEnabled: boolean;
 
     constructor(server: OmniSharpServer, validationAdvisor: Advisor) {
         super(server);
 
+        this._analyzersEnabled = vscode.workspace.getConfiguration('omnisharp').get('enableRoslynAnalyzers', false);
         this._validationAdvisor = validationAdvisor;
         this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
 
         this._disposable = new CompositeDisposable(this._diagnostics,
-            this._server.onPackageRestore(this._validateProject, this),
-            this._server.onProjectChange(this._validateProject, this),
+            this._server.onPackageRestore(this._validateAllStream.next, this),
+            this._server.onProjectChange(this._validateAllStream.next, this),
             this._server.onProjectDiagnosticStatus(this._onProjectAnalysis, this),
             vscode.workspace.onDidOpenTextDocument(event => this._onDocumentAddOrChange(event), this),
             vscode.workspace.onDidChangeTextDocument(event => this._onDocumentAddOrChange(event.document), this),
@@ -145,6 +152,16 @@ class DiagnosticsProvider extends AbstractSupport {
             vscode.window.onDidChangeWindowState(event => this._OnDidChangeWindowState(event), this),
         );
 
+        this._validateDocumentStream
+            .pipe(throttleTime(750))
+            .subscribe(async x => await this._validateDocument(x));
+
+        this._validateAllStream
+            .pipe(throttleTime(3000))
+            .subscribe(async () => await this._validateAll());
+
+        this._validateAllStream.next();
+
         // Go ahead and check for diagnostics in the currently visible editors.
         for (let editor of vscode.window.visibleTextEditors) {
             let document = editor.document;
@@ -152,7 +169,7 @@ class DiagnosticsProvider extends AbstractSupport {
                 continue;
             }
 
-            this._validateDocument(document);
+            this._validateDocumentStream.next(document);
         }
     }
 
@@ -199,15 +216,19 @@ class DiagnosticsProvider extends AbstractSupport {
             return;
         }
 
-        this._validateDocument(document);
-        //this._validateProject();
+        this._validateDocumentStream.next(document);
+
+        // This check is just small perf optimization to reduce queries
+        // for omnisharp with analyzers (which have enents to notify updates.)
+        if(!this._analyzersEnabled)
+        {
+            this._validateAllStream.next();
+        }
     }
 
-    private _onProjectAnalysis(event: protocol.ProjectDiagnosticStatus)
-    {
-        if(event.Status == 1)
-        {
-            this._validateProject();
+    private _onProjectAnalysis(event: protocol.ProjectDiagnosticStatus) {
+        if (event.Status == DiagnosticStatus.Ready) {
+            this._validateAllStream.next();
         }
     }
 
@@ -227,23 +248,17 @@ class DiagnosticsProvider extends AbstractSupport {
             delete this._documentValidations[keyString];
         }
         if (didChange) {
-            this._validateProject();
+            this._validateAllStream.next();
         }
     }
 
-    private _validateDocument(document: vscode.TextDocument): void {
-        // If we've already started computing for this document, cancel that work.
-        let key = document.uri.toString();
-        if (this._documentValidations[key]) {
-            this._documentValidations[key].cancel();
-        }
-
+    private async _validateDocument(document: vscode.TextDocument): Promise<void> {
         if (!this._validationAdvisor.shouldValidateFiles()) {
             return;
         }
 
-        let source = new vscode.CancellationTokenSource();
-        let handle = setTimeout(async () => {
+        await setTimeout(async () => {
+            let source = new vscode.CancellationTokenSource();
             try {
                 let value = await serverUtils.codeCheck(this._server, { FileName: document.fileName }, source.token);
                 let quickFixes = value.QuickFixes.filter(DiagnosticsProvider._shouldInclude);
@@ -263,26 +278,17 @@ class DiagnosticsProvider extends AbstractSupport {
             catch (error) {
                 return;
             }
-        }, 750);
-
-        source.token.onCancellationRequested(() => clearTimeout(handle));
-        this._documentValidations[key] = source;
+        }, 2000);
     }
 
-    private _validateProject(): void {
-        // If we've already started computing for this project, cancel that work.
-        // if (this._projectValidation) {
-        //     this._projectValidation.cancel();
-        // }
-
-        if (!this._validationAdvisor.shouldValidateProject()) {
+    private async _validateAll(): Promise<void> {
+        if (!this._validationAdvisor.shouldValidateAll()) {
             return;
         }
 
-        this._projectValidation = new vscode.CancellationTokenSource();
-        let handle = setTimeout(async () => {
+        await setTimeout(async() => {
             try {
-                let value = await serverUtils.codeCheck(this._server, { FileName: null }, this._projectValidation.token);
+                let value = await serverUtils.codeCheck(this._server, { FileName: null }, new vscode.CancellationTokenSource().token);
 
                 let quickFixes = value.QuickFixes
                     .filter(DiagnosticsProvider._shouldInclude)
@@ -309,7 +315,7 @@ class DiagnosticsProvider extends AbstractSupport {
                 }
 
                 // Clear diagnostics for files that no longer have any diagnostics.
-                this._diagnostics.forEach((uri, diagnostics) => {
+                this._diagnostics.forEach((uri) => {
                     if (!entries.find(tuple => tuple[0].toString() === uri.toString())) {
                         this._diagnostics.delete(uri);
                     }
@@ -322,11 +328,6 @@ class DiagnosticsProvider extends AbstractSupport {
                 return;
             }
         }, 3000);
-
-        // clear timeout on cancellation
-        this._projectValidation.token.onCancellationRequested(() => {
-            clearTimeout(handle);
-        });
     }
 
     private static _shouldInclude(quickFix: protocol.QuickFix): boolean {
