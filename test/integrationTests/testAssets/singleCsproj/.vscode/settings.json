@@ -1,3 +1,5 @@
 {
-    "omnisharp.path": "C:\\tmp\\Omnisharp-combined0\\Omnisharp.exe"
+    "omnisharp.path": "latest",
+    "csharp.referencesCodeLens.enabled": true,
+    "csharp.testsCodeLens.enabled": true
 }
