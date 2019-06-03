@@ -29,7 +29,7 @@
     "dotnet"
   ],
   "defaults": {
-    "omniSharp": "1.32.19",
+    "omniSharp": "1.32.20",
     "razor": "1.0.0-alpha3-20190425.1"
   },
   "main": "./dist/extension",
@@ -159,41 +159,41 @@
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/5bcaad04-3ddd-4e03-b5ea-272ae754ff62/37ec7168f67fa09a9ecb6ca4fe624a0b/omnisharp-win-x86-1.32.19.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.32.19.zip",
-      "installPath": ".omnisharp/1.32.19",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/755e362e-039d-4a06-ac3e-5101d4fd3c1c/20324ada05916ab0dcac3e607615ee10/omnisharp-win-x86-1.32.20.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.32.20.zip",
+      "installPath": ".omnisharp/1.32.20",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.omnisharp/1.32.19/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.32.20/OmniSharp.exe",
       "platformId": "win-x86",
-      "integrity": "5C57EC4FEBF8EB6F8092B7CE95FB96066C35B52D0BBA382A423F0C998A94271E"
+      "integrity": "B55240FD10222A3368A1C913DC73A8AB6C9406B986B69E8E575668F575229F4D"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/5bcaad04-3ddd-4e03-b5ea-272ae754ff62/af656da5cad82a135c6d1621df76e95f/omnisharp-win-x64-1.32.19.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.32.19.zip",
-      "installPath": ".omnisharp/1.32.19",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/755e362e-039d-4a06-ac3e-5101d4fd3c1c/5e689ab2a27cee718713f8ca429cad69/omnisharp-win-x64-1.32.20.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.32.20.zip",
+      "installPath": ".omnisharp/1.32.20",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/1.32.19/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.32.20/OmniSharp.exe",
       "platformId": "win-x64",
-      "integrity": "FD477C65D9CC6A716BF35E26027A683CB4D3F3FCB251EC3699D786C2F3D6A4A8"
+      "integrity": "376ECB1BCF4774CF23E2F429FD4FC9A2307EBD36023DD5B1CBCA92974A335CB6"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/5bcaad04-3ddd-4e03-b5ea-272ae754ff62/1b692fd2311e6533d34375cf74830cd1/omnisharp-osx-1.32.19.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.32.19.zip",
-      "installPath": ".omnisharp/1.32.19",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/755e362e-039d-4a06-ac3e-5101d4fd3c1c/873407a221e5fc5058917d31c3dea613/omnisharp-osx-1.32.20.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.32.20.zip",
+      "installPath": ".omnisharp/1.32.20",
       "platforms": [
         "darwin"
       ],
@@ -201,16 +201,16 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.32.19/run",
+      "installTestPath": "./.omnisharp/1.32.20/run",
       "platformId": "osx",
-      "integrity": "CF64448EAD3E61C60CB59C9ABF7B0F0A589575F96361D95EA5874BB444B82A8E"
+      "integrity": "BF15E3C4E65EA1C377D6FA7F20755A467E6EE1E065AE635D49F8F354182C47E8"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/5bcaad04-3ddd-4e03-b5ea-272ae754ff62/3c0660659879ff587f96b73ca5b12add/omnisharp-linux-x86-1.32.19.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.32.19.zip",
-      "installPath": ".omnisharp/1.32.19",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/755e362e-039d-4a06-ac3e-5101d4fd3c1c/c7efc097817dc36464498a43b5ffc98b/omnisharp-linux-x86-1.32.20.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.32.20.zip",
+      "installPath": ".omnisharp/1.32.20",
       "platforms": [
         "linux"
       ],
@@ -222,16 +222,16 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.32.19/run",
+      "installTestPath": "./.omnisharp/1.32.20/run",
       "platformId": "linux-x86",
-      "integrity": "FFC856543AE95F961CB86FF2E47DD1ED1B56751A0E4B385233AA6A9BA3B6D414"
+      "integrity": "997D9FAF5ECCF7C6637A71AA74EAB88F83EEF28FAB0852289CD84195B4F6481B"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/5bcaad04-3ddd-4e03-b5ea-272ae754ff62/d211806a816c8d20a516ec4b6e040dbe/omnisharp-linux-x64-1.32.19.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.32.19.zip",
-      "installPath": ".omnisharp/1.32.19",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/755e362e-039d-4a06-ac3e-5101d4fd3c1c/3b836599efee25a95eaa1329f2a46b7a/omnisharp-linux-x64-1.32.20.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.32.20.zip",
+      "installPath": ".omnisharp/1.32.20",
       "platforms": [
         "linux"
       ],
@@ -242,9 +242,9 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.32.19/run",
+      "installTestPath": "./.omnisharp/1.32.20/run",
       "platformId": "linux-x64",
-      "integrity": "60A5F73BC06F25C672863BD5FF60E9DF754D7C8F5AFE65E095362606F234563D"
+      "integrity": "96635DF7B240BCAD8CE76F9A73D414171186C6006B3EF9F6E73D694798D463CB"
     },
     {
       "id": "Debugger",
