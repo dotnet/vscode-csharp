@@ -12,6 +12,7 @@
 ## 1.20.0 (Not yet released)
 
 * Updated the auto-generated launch.json to use new mechanism for starting web browser. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+* Fadeout support [#2873](https://github.com/OmniSharp/omnisharp-vscode/pull/2873)
 
 ## 1.19.1 (May 6, 2019)
 
