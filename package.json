@@ -709,6 +709,11 @@
           "default": false,
           "description": "Enables support for roslyn analyzers, code fixes and rulesets."
         },
+        "omnisharp.enableEditorConfigSupport": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enables support for reading code style, naming convention and analyzer settings from .editorconfig."
+        },
         "razor.plugin.path": {
           "type": [
             "string",

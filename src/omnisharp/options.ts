@@ -26,6 +26,7 @@ export class Options {
         public razorDevMode: boolean,
         public enableMsBuildLoadProjectsOnDemand: boolean,
         public enableRoslynAnalyzers: boolean,
+        public enableEditorConfigSupport: boolean,
         public razorPluginPath?: string,
         public defaultLaunchSolution?: string,
         public monoPath?: string,
@@ -64,8 +65,9 @@ export class Options {
         const maxProjectResults = omnisharpConfig.get<number>('maxProjectResults', 250);
         const defaultLaunchSolution = omnisharpConfig.get<string>('defaultLaunchSolution', undefined);
         const useEditorFormattingSettings = omnisharpConfig.get<boolean>('useEditorFormattingSettings', true);
-
+        
         const enableRoslynAnalyzers = omnisharpConfig.get<boolean>('enableRoslynAnalyzers', false);
+        const enableEditorConfigSupport = omnisharpConfig.get<boolean>('enableEditorConfigSupport', false);
 
         const useFormatting = csharpConfig.get<boolean>('format.enable', true);
 
@@ -123,6 +125,7 @@ export class Options {
             razorDevMode,
             enableMsBuildLoadProjectsOnDemand,
             enableRoslynAnalyzers,
+            enableEditorConfigSupport,
             razorPluginPath,
             defaultLaunchSolution,
             monoPath,
