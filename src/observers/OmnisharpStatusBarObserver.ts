@@ -7,10 +7,11 @@ import { BaseEvent, DownloadStart, InstallationStart, DownloadProgress, Omnishar
 import { BaseStatusBarItemObserver } from './BaseStatusBarItemObserver';
 import { EventType } from "../omnisharp/EventType";
 
-export enum StatusBarColors{
+export enum StatusBarColors {
     Red = 'rgb(218,0,0)',
     Green = 'rgb(0,218,0)',
-    Yellow = 'rgb(218,218,0)'
+    Yellow = 'rgb(218,218,0)',
+    White = 'rgb(256,256,256)'
 }
 
 export class OmnisharpStatusBarObserver extends BaseStatusBarItemObserver {
@@ -33,7 +34,7 @@ export class OmnisharpStatusBarObserver extends BaseStatusBarItemObserver {
                 this.ResetAndHideStatusBar();
                 break;
             case EventType.OmnisharpServerOnStart:
-                this.SetAndShowStatusBar('$(flame)', 'o.showOutput', StatusBarColors.Green, 'OmniSharp server is running');
+                this.SetAndShowStatusBar('$(flame)', 'o.showOutput', StatusBarColors.White, 'OmniSharp server is running');
                 break;
             case EventType.DownloadStart:
                 this.SetAndShowStatusBar("$(cloud-download) Downloading packages", '', '', `Downloading package '${(<DownloadStart>event).packageDescription}...' `);
