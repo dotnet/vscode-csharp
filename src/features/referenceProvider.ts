@@ -15,7 +15,7 @@ export default class OmnisharpReferenceProvider extends AbstractSupport implemen
 
         let req = createRequest<protocol.FindUsagesRequest>(document, position);
         req.OnlyThisFile = false;
-        req.ExcludeDefinition = false;
+        req.ExcludeDefinition = true;
 
         try {
             let res = await serverUtils.findUsages(this._server, req, token);
