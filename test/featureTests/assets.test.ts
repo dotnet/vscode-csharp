@@ -27,6 +27,26 @@ suite("Asset generation: csproj", () => {
         segments.should.deep.equal(['${workspaceFolder}', 'testApp.csproj']);
     });
 
+    test("Generated tasks.json has the property GenerateFullPaths set to true ", () => {
+        let rootPath = path.resolve('testRoot');
+        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netcoreapp1.0');
+        let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
+        generator.setStartupProject(0);
+        let tasksJson = generator.createTasksConfiguration();
+
+        tasksJson.tasks.forEach(task => task.args.should.contain("/property:GenerateFullPaths=true"));
+    });
+
+    test("Generated tasks.json has the consoleloggerparameters argument set to NoSummary", () => {
+        let rootPath = path.resolve('testRoot');
+        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netcoreapp1.0');
+        let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
+        generator.setStartupProject(0);
+        let tasksJson = generator.createTasksConfiguration();
+
+        tasksJson.tasks.forEach(task=> task.args.should.contain("/consoleloggerparameters:NoSummary"));
+    });
+
     test("Create tasks.json for nested project opened in workspace", () => {
         let rootPath = path.resolve('testRoot');
         let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'nested', 'testApp.csproj'), 'testApp', 'netcoreapp1.0');
