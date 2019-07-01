@@ -32,6 +32,7 @@ suite("Options tests", () => {
         options.maxFindSymbolsItems.should.equal(1000);
         options.enableMsBuildLoadProjectsOnDemand.should.equal(false);
         options.enableRoslynAnalyzers.should.equal(false);
+        options.enableEditorConfigSupport.should.equal(false);
         expect(options.defaultLaunchSolution).to.be.undefined;
     });
 
