@@ -184,52 +184,47 @@ export class AssetGenerator {
     private createBuildTaskDescription(): tasks.TaskDescription {
         let commandArgs = ['build'];
 
-        let buildProject = this.startupProject;
-        if (!buildProject) {
-            buildProject = this.fallbackBuildProject;
-        }
-        if (buildProject) {
-            const buildPath = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, buildProject.Path));
-            commandArgs.push(util.convertNativePathToPosix(buildPath));
-        }
+        this.AddAdditionalCommandArgs(commandArgs);
 
         return {
             label: 'build',
             command: 'dotnet',
             type: 'process',
             args: commandArgs,
-            // NOTE: The "$msCompile" matcher isn't the correct matcher for 'dotnet build' as it expects all
-            // file paths to be fully qualified. The tsc matcher seems to work as we would like.
-            problemMatcher: '$tsc'
+            problemMatcher: '$msCompile'
         };
     }
 
+    
     private createPublishTaskDescription(): tasks.TaskDescription {
         let commandArgs = ['publish'];
-
-        let buildProject = this.startupProject;
-        if (!buildProject) {
-            buildProject = this.fallbackBuildProject;
-        }
-        if (buildProject) {
-            const buildPath = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, buildProject.Path));
-            commandArgs.push(util.convertNativePathToPosix(buildPath));
-        }
-
+        
+        this.AddAdditionalCommandArgs(commandArgs);
+        
         return {
             label: 'publish',
             command: 'dotnet',
             type: 'process',
             args: commandArgs,
-            // NOTE: The "$msCompile" matcher isn't the correct matcher for 'dotnet build' as it expects all
-            // file paths to be fully qualified. The tsc matcher seems to work as we would like.
-            problemMatcher: '$tsc'
+            problemMatcher: '$msCompile'
         };
     }
-
+    
     private createWatchTaskDescription(): tasks.TaskDescription {
         let commandArgs = ['watch','run'];
-
+        
+        this.AddAdditionalCommandArgs(commandArgs);
+        
+        return {
+            label: 'watch',
+            command: 'dotnet',
+            type: 'process',
+            args: commandArgs,
+            problemMatcher: '$msCompile'
+        };
+    }
+    
+    private AddAdditionalCommandArgs(commandArgs: string[]) {
         let buildProject = this.startupProject;
         if (!buildProject) {
             buildProject = this.fallbackBuildProject;
@@ -239,17 +234,10 @@ export class AssetGenerator {
             commandArgs.push(util.convertNativePathToPosix(buildPath));
         }
 
-        return {
-            label: 'watch',
-            command: 'dotnet',
-            type: 'process',
-            args: commandArgs,
-            // NOTE: The "$msCompile" matcher isn't the correct matcher for 'dotnet build' as it expects all
-            // file paths to be fully qualified. The tsc matcher seems to work as we would like.
-            problemMatcher: '$tsc'
-        };
+        commandArgs.push("/property:GenerateFullPaths=true");
+        commandArgs.push("/consoleloggerparameters:NoSummary");
     }
-
+    
     public createTasksConfiguration(): tasks.TaskConfiguration {
         return {
             version: "2.0.0",
