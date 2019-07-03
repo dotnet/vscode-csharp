@@ -249,8 +249,8 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/1a81b7f6-0ec7-4daa-a5bd-7a4eea0d618a/aaa3d977f41f306f7be4029de44b1123/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-18-4/coreclr-debug-win7-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/6ebd6da8-bbe3-42f7-924b-aa921730ee2f/efad9a8d86f35c3945b95b8da80845dd/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-21-0/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -259,13 +259,13 @@
         "x86_64"
       ],
       "installTestPath": "./.debugger/vsdbg-ui.exe",
-      "integrity": "761518B411FBB98F728789983B58872603BC3DF97CE040E9496AAF5DC90495E1"
+      "integrity": "1F426E6D8CA1BA7E067BC9A99974B113DC3C16B34BA963DA76EF23C3B0221D10"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/1a81b7f6-0ec7-4daa-a5bd-7a4eea0d618a/ed0ba9ea97f0e9c41d1d605db8d55772/coreclr-debug-osx-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-18-4/coreclr-debug-osx-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/6ebd6da8-bbe3-42f7-924b-aa921730ee2f/ea2e64051a68c1a939395ea4b22131be/coreclr-debug-osx-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-21-0/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "darwin"
@@ -278,13 +278,13 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "AC598AA47570D3101E1F174BD695A678AFAAE3F671A4BDD51C639CA23095F14E"
+      "integrity": "EDA155BEE247321876EE59D359196F7AC5D55F54D2A20927C1B737B5723E91EA"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/1a81b7f6-0ec7-4daa-a5bd-7a4eea0d618a/422bd87c500a7247419315ada701f677/coreclr-debug-linux-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-18-4/coreclr-debug-linux-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/6ebd6da8-bbe3-42f7-924b-aa921730ee2f/3c87589b7075173f12c4ae114b7020df/coreclr-debug-linux-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-21-0/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -297,7 +297,7 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "28969664A869DA2E4AE345A6DB131D172338B362AF10F01BAD55F8631895E4E0"
+      "integrity": "D6EA62622788617163B758F5535E65BD1D010A0D362B422039ED6EE64D84D725"
     },
     {
       "id": "Razor",
@@ -460,6 +460,11 @@
                   "type": "boolean",
                   "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
                   "default": true
+                },
+                "elapsedTiming": {
+                  "type": "boolean",
+                  "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
+                  "default": false
                 }
               }
             },
@@ -563,6 +568,11 @@
                   }
                 }
               }
+            },
+            "allowFastEvaluate": {
+              "type": "boolean",
+              "description": "When true (the default state), the debugger will attempt faster evaluation by simulating execution of simple properties and methods.",
+              "default": true
             },
             "type": {
               "type": "string",
@@ -919,7 +929,7 @@
                 "default": false
               },
               "launchBrowser": {
-                "description": "Legacy option used to enable launching a web browser. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser",
+                "description": "Describes options to launch a web browser as part of launch",
                 "default": {
                   "enabled": true
                 },
@@ -1097,6 +1107,11 @@
                     "type": "boolean",
                     "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
                     "default": true
+                  },
+                  "elapsedTiming": {
+                    "type": "boolean",
+                    "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
+                    "default": false
                   }
                 }
               },
@@ -1127,7 +1142,7 @@
                     "anyOf": [
                       {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "items": {
                           "type": "string"
                         },
@@ -1135,7 +1150,7 @@
                       },
                       {
                         "type": "string",
-                        "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                        "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "default": ""
                       }
                     ],
@@ -1182,7 +1197,7 @@
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "items": {
                               "type": "string"
                             },
@@ -1190,7 +1205,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "default": ""
                           }
                         ],
@@ -1234,7 +1249,7 @@
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "items": {
                               "type": "string"
                             },
@@ -1242,7 +1257,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "default": ""
                           }
                         ],
@@ -1286,7 +1301,7 @@
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "items": {
                               "type": "string"
                             },
@@ -1294,7 +1309,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "default": ""
                           }
                         ],
@@ -1417,6 +1432,11 @@
                     }
                   }
                 }
+              },
+              "allowFastEvaluate": {
+                "type": "boolean",
+                "description": "When true (the default state), the debugger will attempt faster evaluation by simulating execution of simple properties and methods.",
+                "default": true
               }
             }
           },
@@ -1498,6 +1518,11 @@
                     "type": "boolean",
                     "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
                     "default": true
+                  },
+                  "elapsedTiming": {
+                    "type": "boolean",
+                    "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
+                    "default": false
                   }
                 }
               },
@@ -1528,7 +1553,7 @@
                     "anyOf": [
                       {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "items": {
                           "type": "string"
                         },
@@ -1536,7 +1561,7 @@
                       },
                       {
                         "type": "string",
-                        "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                        "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "default": ""
                       }
                     ],
@@ -1583,7 +1608,7 @@
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "items": {
                               "type": "string"
                             },
@@ -1591,7 +1616,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "default": ""
                           }
                         ],
@@ -1635,7 +1660,7 @@
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "items": {
                               "type": "string"
                             },
@@ -1643,7 +1668,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "default": ""
                           }
                         ],
@@ -1687,7 +1712,7 @@
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "items": {
                               "type": "string"
                             },
@@ -1695,7 +1720,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "default": ""
                           }
                         ],
@@ -1818,6 +1843,11 @@
                     }
                   }
                 }
+              },
+              "allowFastEvaluate": {
+                "type": "boolean",
+                "description": "When true (the default state), the debugger will attempt faster evaluation by simulating execution of simple properties and methods.",
+                "default": true
               }
             }
           }
@@ -1967,7 +1997,7 @@
                 "default": false
               },
               "launchBrowser": {
-                "description": "Legacy option used to enable launching a web browser. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser",
+                "description": "Describes options to launch a web browser as part of launch",
                 "default": {
                   "enabled": true
                 },
@@ -2145,6 +2175,11 @@
                     "type": "boolean",
                     "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
                     "default": true
+                  },
+                  "elapsedTiming": {
+                    "type": "boolean",
+                    "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
+                    "default": false
                   }
                 }
               },
@@ -2175,7 +2210,7 @@
                     "anyOf": [
                       {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "items": {
                           "type": "string"
                         },
@@ -2183,7 +2218,7 @@
                       },
                       {
                         "type": "string",
-                        "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                        "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "default": ""
                       }
                     ],
@@ -2230,7 +2265,7 @@
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "items": {
                               "type": "string"
                             },
@@ -2238,7 +2273,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "default": ""
                           }
                         ],
@@ -2282,7 +2317,7 @@
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "items": {
                               "type": "string"
                             },
@@ -2290,7 +2325,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "default": ""
                           }
                         ],
@@ -2334,7 +2369,7 @@
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "items": {
                               "type": "string"
                             },
@@ -2342,7 +2377,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "default": ""
                           }
                         ],
@@ -2465,6 +2500,11 @@
                     }
                   }
                 }
+              },
+              "allowFastEvaluate": {
+                "type": "boolean",
+                "description": "When true (the default state), the debugger will attempt faster evaluation by simulating execution of simple properties and methods.",
+                "default": true
               }
             }
           },
@@ -2546,6 +2586,11 @@
                     "type": "boolean",
                     "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
                     "default": true
+                  },
+                  "elapsedTiming": {
+                    "type": "boolean",
+                    "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
+                    "default": false
                   }
                 }
               },
@@ -2576,7 +2621,7 @@
                     "anyOf": [
                       {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "items": {
                           "type": "string"
                         },
@@ -2584,7 +2629,7 @@
                       },
                       {
                         "type": "string",
-                        "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                        "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                         "default": ""
                       }
                     ],
@@ -2631,7 +2676,7 @@
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "items": {
                               "type": "string"
                             },
@@ -2639,7 +2684,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "default": ""
                           }
                         ],
@@ -2683,7 +2728,7 @@
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "items": {
                               "type": "string"
                             },
@@ -2691,7 +2736,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "default": ""
                           }
                         ],
@@ -2735,7 +2780,7 @@
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "items": {
                               "type": "string"
                             },
@@ -2743,7 +2788,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
                             "default": ""
                           }
                         ],
@@ -2866,6 +2911,11 @@
                     }
                   }
                 }
+              },
+              "allowFastEvaluate": {
+                "type": "boolean",
+                "description": "When true (the default state), the debugger will attempt faster evaluation by simulating execution of simple properties and methods.",
+                "default": true
               }
             }
           }
