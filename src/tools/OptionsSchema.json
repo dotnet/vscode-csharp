@@ -28,7 +28,7 @@
           "anyOf": [
             {
               "type": "array",
-              "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+              "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
               "items": {
                 "type": "string"
               },
@@ -36,7 +36,7 @@
             },
             {
               "type": "string",
-              "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+              "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
               "default": ""
             }
           ]
@@ -81,7 +81,7 @@
           "anyOf": [
             {
               "type": "array",
-              "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+              "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
               "items": {
                 "type": "string"
               },
@@ -89,7 +89,7 @@
             },
             {
               "type": "string",
-              "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn’t used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+              "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
               "default": ""
             }
           ]
@@ -171,6 +171,11 @@
           "type": "boolean",
           "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
           "default": true
+        },
+        "elapsedTiming": {
+          "type": "boolean",
+          "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
+          "default": false
         }
       }
     },
@@ -274,7 +279,7 @@
         },
         "launchBrowser": {
           "$ref": "#/definitions/LaunchBrowser",
-          "description": "Legacy option used to enable launching a web browser. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser",
+          "description": "Describes options to launch a web browser as part of launch",
           "default": {
             "enabled": true
           }
@@ -360,6 +365,11 @@
           "default": {
             "*": { "enabled": true }
           }
+        },
+        "allowFastEvaluate": {
+          "type": "boolean",
+          "description": "When true (the default state), the debugger will attempt faster evaluation by simulating execution of simple properties and methods.",
+          "default": true
         }
       }
     },
@@ -438,6 +448,11 @@
           "default": {
             "*": { "enabled": true }
           }
+        },
+        "allowFastEvaluate": {
+          "type": "boolean",
+          "description": "When true (the default state), the debugger will attempt faster evaluation by simulating execution of simple properties and methods.",
+          "default": true
         }
       }
     },
