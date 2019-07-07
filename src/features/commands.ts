@@ -141,7 +141,7 @@ async function reAnalyzeAllProjects(server: OmniSharpServer, eventStream: EventS
 
 async function reAnalyzeCurrentProject(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
     await serverUtils.reAnalyze(server, {
-        currentOpenFilePathAsContext: vscode.window.activeTextEditor.document.uri.fsPath
+        fileName: vscode.window.activeTextEditor.document.uri.fsPath
     });
 }
 
