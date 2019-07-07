@@ -55,12 +55,4 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         let ide0059 = result.find(x => x.message.includes("IDE0059"));
         expect(ide0059.tags).to.include(vscode.DiagnosticTag.Unnecessary);
     });
-
-    test("When re-analyze for project is executed then eventually get correct result", async function () {
-        // let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 15*1000, 500);
-
-        // let ide0005 = result.find(x => x.message.includes("IDE0059"));
-        // expect(ide0005).to.not.be.undefined;
-        // expect(ide0005.tags).to.include(vscode.DiagnosticTag.Unnecessary);
-    });
 });
