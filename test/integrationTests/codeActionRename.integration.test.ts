@@ -8,16 +8,24 @@ import * as vscode from 'vscode';
 import { should, expect } from 'chai';
 import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import * as path from 'path';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
 chai.use(require('chai-fs'));
 
 suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
+    let fileUri: vscode.Uri;
+
     suiteSetup(async function () {
         should();
         await testAssetWorkspace.restore();
         await activateCSharpExtension();
+
+        let fileName = 'A.cs';
+        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
+        let filePath = path.join(projectDirectory, fileName);
+        fileUri = vscode.Uri.file(filePath)
     });
 
     suiteTeardown(async () => {
@@ -25,7 +33,6 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
     });
 
     test("Code actions can rename and open files", async () => {
-        let fileUri = await testAssetWorkspace.projects[0].addFileWithContents("test.cs", "class C {}");
         await vscode.commands.executeCommand("vscode.open", fileUri);
         let c = await vscode.commands.executeCommand("vscode.executeCodeActionProvider", fileUri, new vscode.Range(0, 7, 0, 7)) as { command: string, title: string, arguments: string[] }[];
         let command = c.find(
