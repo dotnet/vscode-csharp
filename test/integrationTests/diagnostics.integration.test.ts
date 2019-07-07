@@ -50,10 +50,9 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
     });
 
     test("Return fadeout diagnostics like unused variables based on roslyn analyzers", async function () {
-        let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 15*1000, 500);
+        let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 15*1000, 500, result => result.find(x => x.message.includes("IDE0059")) != undefined);
 
         let ide0059 = result.find(x => x.message.includes("IDE0059"));
-        expect(ide0059).to.not.be.undefined;
         expect(ide0059.tags).to.include(vscode.DiagnosticTag.Unnecessary);
     });
 
