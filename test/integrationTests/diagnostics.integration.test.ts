@@ -50,11 +50,10 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
     });
 
     test("Return fadeout diagnostics like unused usings based on roslyn analyzers", async function () {
-        this.skip(); // Remove this once https://github.com/OmniSharp/omnisharp-roslyn/issues/1458 is resolved.
         let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 15*1000, 500);
 
         let ide0005 = result.find(x => x.message.includes("IDE0005"));
-        expect(ide0005).to.not.be(undefined);
+        expect(ide0005).to.not.be.undefined;
         expect(ide0005.tags).to.include(vscode.DiagnosticTag.Unnecessary);
     });
 });
