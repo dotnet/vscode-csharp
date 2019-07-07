@@ -49,11 +49,19 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         expect(cs8019.tags).to.include(vscode.DiagnosticTag.Unnecessary);
     });
 
-    test("Return fadeout diagnostics like unused usings based on roslyn analyzers", async function () {
+    test("Return fadeout diagnostics like unused variables based on roslyn analyzers", async function () {
         let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 15*1000, 500);
 
-        let ide0005 = result.find(x => x.message.includes("IDE0005"));
-        expect(ide0005).to.not.be.undefined;
-        expect(ide0005.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+        let ide0059 = result.find(x => x.message.includes("IDE0059"));
+        expect(ide0059).to.not.be.undefined;
+        expect(ide0059.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+    });
+
+    test("When re-analyze for project is executed then eventually get correct result", async function () {
+        // let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 15*1000, 500);
+
+        // let ide0005 = result.find(x => x.message.includes("IDE0059"));
+        // expect(ide0005).to.not.be.undefined;
+        // expect(ide0005.tags).to.include(vscode.DiagnosticTag.Unnecessary);
     });
 });
