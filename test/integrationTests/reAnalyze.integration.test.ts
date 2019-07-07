@@ -6,9 +6,10 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-import { should } from 'chai';
+import { should, expect } from 'chai';
 import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import poll from './poll';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -37,9 +38,17 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
     });
 
     test("When interface is manually renamed, then return correct analysis after re-analysis of project", async function () {
-        vscode.TextEdit.replace(new vscode.Range(1, 0, 1, 100), 'foo');
-        await vscode.commands.executeCommand('o.reanalyze.currentProject', interfaceUri);
-        // let result = await poll(() => vscode.languages.getDiagnostics(interfaceImplUri), 10*1000, 500);
-        // let cs8019 = result.find(x => x.message.includes("CS8019"));
+        await vscode.commands.executeCommand("vscode.open", interfaceUri);
+
+        let editor = vscode.window.activeTextEditor;
+
+        await editor.edit(editorBuilder => editorBuilder.replace(new vscode.Range(2, 0, 2, 50), 'public interface ISomeInterfaceRenamedNow'));
+
+        await vscode.commands.executeCommand('o.reanalyze.currentProject', interfaceImplUri);
+
+        let result = await poll(() => vscode.languages.getDiagnostics(interfaceImplUri), 10*1000, 500);
+
+        let cs8019 = result.find(x => x.message.includes("CS8019"));
+        expect(cs8019).to.not.be.undefined;
     });
 });

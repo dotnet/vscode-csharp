@@ -1,6 +1,6 @@
 namespace ReAnalyze
 {
-    public interface ISomeInterface
+public interface ISomeInterfaceRenamedNow
     {
     }
 }
