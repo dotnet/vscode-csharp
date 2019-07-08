@@ -57,6 +57,7 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
     });
 
     test("When interface is manually renamed, then return correct analysis after re-analysis of project", async function () {
+        this.skip(); // Enable once background analysis is merged on omnisharp-roslyn side.
         let diagnosticStatusEvents = listenEvents<OmnisharpProjectDiagnosticStatus>(eventStream, EventType.ProjectDiagnosticStatus);
 
         await vscode.commands.executeCommand("vscode.open", interfaceUri);
@@ -74,6 +75,7 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
     });
 
     test("When re-analyze of project is executed then eventually get notified about them.", async function () {
+        this.skip(); // Enable once background analysis is merged on omnisharp-roslyn side.
         let diagnosticStatusEvents = listenEvents<OmnisharpProjectDiagnosticStatus>(eventStream, EventType.ProjectDiagnosticStatus);
 
         await vscode.commands.executeCommand('o.reanalyze.currentProject', interfaceImplUri);
@@ -83,6 +85,7 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
     });
 
     test("When re-analyze of all projects is executed then eventually get notified about them.", async function () {
+        this.skip(); // Enable once background analysis is merged on omnisharp-roslyn side.
         let diagnosticStatusEvents = listenEvents<OmnisharpProjectDiagnosticStatus>(eventStream, EventType.ProjectDiagnosticStatus);
 
         await vscode.commands.executeCommand('o.reanalyze.allProjects', interfaceImplUri);
