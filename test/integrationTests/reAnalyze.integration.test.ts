@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-import { should, expect } from 'chai';
+import { should } from 'chai';
 import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import poll from './poll';
@@ -46,9 +46,7 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
 
         await vscode.commands.executeCommand('o.reanalyze.currentProject', interfaceImplUri);
 
-        let result = await poll(() => vscode.languages.getDiagnostics(interfaceImplUri), 10*1000, 500);
-
-        let cs8019 = result.find(x => x.message.includes("CS8019"));
-        expect(cs8019).to.not.be.undefined;
+        await poll(() => vscode.languages.getDiagnostics(interfaceImplUri), 10*1000, 500,
+            r => r.find(x => x.message.includes("CS0246")) != undefined);
     });
 });
