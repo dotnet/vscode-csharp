@@ -43,7 +43,7 @@ import { downloadAndInstallPackages } from './packageManager/downloadAndInstallP
 import IInstallDependencies from './packageManager/IInstallDependencies';
 import { installRuntimeDependencies } from './InstallRuntimeDependencies';
 import { isValidDownload } from './packageManager/isValidDownload';
-import { BackgroundWorkObserver } from './observers/BackgroundWorkObserver';
+import { BackgroundWorkStatusBarObserver } from './observers/BackgroundWorkStatusBarObserver';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -101,7 +101,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     eventStream.subscribe(projectStatusBarObserver.post);
 
     let backgroundWorkStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, Number.MIN_VALUE));
-    let backgroundWorkStatusBarObserver = new BackgroundWorkObserver(backgroundWorkStatusBar);
+    let backgroundWorkStatusBarObserver = new BackgroundWorkStatusBarObserver(backgroundWorkStatusBar);
     eventStream.subscribe(backgroundWorkStatusBarObserver.post);
 
     let openURLObserver = new OpenURLObserver(vscode);

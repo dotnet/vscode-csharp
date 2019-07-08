@@ -8,7 +8,7 @@ import { BaseEvent, OmnisharpProjectDiagnosticStatus } from '../omnisharp/loggin
 import { EventType } from '../omnisharp/EventType';
 import { DiagnosticStatus } from '../omnisharp/protocol';
 
-export class BackgroundWorkObserver extends BaseStatusBarItemObserver {
+export class BackgroundWorkStatusBarObserver extends BaseStatusBarItemObserver {
     public post = (event: BaseEvent) => {
         if(event.type == EventType.ProjectDiagnosticStatus)
         {
