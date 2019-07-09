@@ -794,6 +794,16 @@
         "category": "OmniSharp"
       },
       {
+        "command": "o.fixAll.solution",
+        "title": "Fix all code issues in solution",
+        "category": "OmniSharp"
+      },
+      {
+        "command": "o.fixAll.project",
+        "title": "Fix all code issues in project",
+        "category": "OmniSharp"
+      },
+      {
         "command": "dotnet.generateAssets",
         "title": "Generate Assets for Build and Debug",
         "category": ".NET"

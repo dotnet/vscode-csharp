@@ -29,6 +29,11 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
     disposable.add(vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server)));
     disposable.add(vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionProvider)));
     disposable.add(vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new ShowOmniSharpChannel())));
+
+    // Todo these should really open new menu that lists correct options...
+    disposable.add(vscode.commands.registerCommand('o.fixAll.solution', () => fixAllTemporary(server)));
+    disposable.add(vscode.commands.registerCommand('o.fixAll.project', () => fixAllTemporary(server)));
+
     disposable.add(vscode.commands.registerCommand('dotnet.restore.project', async () => pickProjectAndDotnetRestore(server, eventStream)));
     disposable.add(vscode.commands.registerCommand('dotnet.restore.all', async () => dotnetRestoreAllProjects(server, eventStream)));
 
@@ -55,6 +60,11 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
     disposable.add(vscode.commands.registerCommand('csharp.reportIssue', async () => reportIssue(vscode, eventStream, getDotnetInfo, platformInfo.isValidPlatformForMono(), optionProvider.GetLatestOptions(), monoResolver)));
 
     return new CompositeDisposable(disposable);
+}
+
+// This should be replaced with method that opens menu.
+async function fixAllTemporary(server: OmniSharpServer): Promise<void> {
+    await serverUtils.fixAll(server, {});
 }
 
 function restartOmniSharp(server: OmniSharpServer) {
