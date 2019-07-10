@@ -43,7 +43,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
         try {
             let responses = await serverUtils.autoComplete(this._server, req);
 
-            if (!responses) {
+            if (!responses || token && token.isCancellationRequested) {
                 return;
             }
 
