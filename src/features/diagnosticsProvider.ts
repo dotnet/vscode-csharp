@@ -151,14 +151,12 @@ class DiagnosticsProvider extends AbstractSupport {
             .asObservable()
             .pipe(throttleTime(3000))
             .subscribe(async () => {
-                try {
-                    if (this._validationAdvisor.shouldValidateAll()) {
-                        await this._validateSmallWorkspace();
-                    }
-                    else if (this._validationAdvisor.shouldValidateFiles()) {
-                        await this._validateLargeWorkspace();
-                    }
-                } catch { }
+                if (this._validationAdvisor.shouldValidateAll()) {
+                    await this._validateSmallWorkspace();
+                }
+                else if (this._validationAdvisor.shouldValidateFiles()) {
+                    await this._validateLargeWorkspace();
+                }
             }));
 
         this._disposable = new CompositeDisposable(this._diagnostics,
@@ -230,12 +228,12 @@ class DiagnosticsProvider extends AbstractSupport {
         this._validateAllPipe.next();
     }
 
-    private async _validateDocument(document: vscode.TextDocument): Promise<void> {
+    private _validateDocument(document: vscode.TextDocument): NodeJS.Timeout {
         if (!this._validationAdvisor.shouldValidateFiles()) {
             return;
         }
 
-        await setTimeout(async () => {
+        return setTimeout(async () => {
             let source = new vscode.CancellationTokenSource();
             try {
                 let value = await serverUtils.codeCheck(this._server, { FileName: document.fileName }, source.token);
@@ -262,8 +260,8 @@ class DiagnosticsProvider extends AbstractSupport {
 
     // On large workspaces (if maxProjectFileCountForDiagnosticAnalysis) is less than workspace size,
     // diagnostic fallback to mode where only open documents are analyzed.
-    private async _validateLargeWorkspace(): Promise<void> {
-        await setTimeout(async () => {
+    private _validateLargeWorkspace(): NodeJS.Timeout {
+        return setTimeout(async () => {
             for (let editor of vscode.window.visibleTextEditors) {
                 let document = editor.document;
                 if (this.shouldIgnoreDocument(document)) {
@@ -281,8 +279,8 @@ class DiagnosticsProvider extends AbstractSupport {
             .filter(diagnosticInFile => diagnosticInFile !== undefined);
     }
 
-    private async _validateSmallWorkspace(): Promise<void> {
-        await setTimeout(async () => {
+    private _validateSmallWorkspace(): NodeJS.Timeout {
+        return setTimeout(async () => {
             let value = await serverUtils.codeCheck(this._server, { FileName: null }, new vscode.CancellationTokenSource().token);
 
             let quickFixes = value.QuickFixes

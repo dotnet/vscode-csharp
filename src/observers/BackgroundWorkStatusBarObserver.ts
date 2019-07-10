@@ -10,7 +10,7 @@ import { DiagnosticStatus } from '../omnisharp/protocol';
 
 export class BackgroundWorkStatusBarObserver extends BaseStatusBarItemObserver {
     public post = (event: BaseEvent) => {
-        if(event.type == EventType.ProjectDiagnosticStatus)
+        if(event.type === EventType.ProjectDiagnosticStatus)
         {
             let asProjectEvent = <OmnisharpProjectDiagnosticStatus>event;
 
