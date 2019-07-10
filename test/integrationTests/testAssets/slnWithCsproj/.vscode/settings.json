@@ -1,9 +1,5 @@
 {
     "omnisharp.defaultLaunchSolution": "b_SecondInOrder_SlnFile.sln",
     "omnisharp.path": "latest",
-    "omnisharp.enableRoslynAnalyzers": true,
-    "csharp.maxProjectFileCountForDiagnosticAnalysis": 1,
-    "csharp.referencesCodeLens.enabled": false,
-    "csharp.testsCodeLens.enabled": false,
-    "omnisharp.minFindSymbolsFilterLength": 2
+    "omnisharp.enableRoslynAnalyzers": true
 }
