@@ -159,15 +159,16 @@ class DiagnosticsProvider extends AbstractSupport {
                 }
             }));
 
+
         this._disposable = new CompositeDisposable(this._diagnostics,
             this._server.onPackageRestore(() => this._validateAllPipe.next(), this),
             this._server.onProjectChange(() => this._validateAllPipe.next(), this),
             this._server.onProjectDiagnosticStatus(this._onProjectAnalysis, this),
-            vscode.workspace.onDidOpenTextDocument(event => this._onDocumentAddOrChange(event), this),
-            vscode.workspace.onDidChangeTextDocument(event => this._onDocumentAddOrChange(event.document), this),
-            vscode.workspace.onDidCloseTextDocument(this._onDocumentRemove, this),
+            vscode.workspace.onDidOpenTextDocument(event => this._onDocumentOpenOrChange(event), this),
+            vscode.workspace.onDidChangeTextDocument(event => this._onDocumentOpenOrChange(event.document), this),
+            vscode.workspace.onDidCloseTextDocument(this._onDocumentClose, this),
             vscode.window.onDidChangeActiveTextEditor(event => this._onDidChangeActiveTextEditor(event), this),
-            vscode.window.onDidChangeWindowState(event => this._OnDidChangeWindowState(event), this),
+            vscode.window.onDidChangeWindowState(event => this._OnDidChangeWindowState(event), this,),
         );
     }
 
@@ -200,11 +201,11 @@ class DiagnosticsProvider extends AbstractSupport {
     private _onDidChangeActiveTextEditor(textEditor: vscode.TextEditor): void {
         // active text editor can be undefined.
         if (textEditor != undefined && textEditor.document != null) {
-            this._onDocumentAddOrChange(textEditor.document);
+            this._onDocumentOpenOrChange(textEditor.document);
         }
     }
 
-    private _onDocumentAddOrChange(document: vscode.TextDocument): void {
+    private _onDocumentOpenOrChange(document: vscode.TextDocument): void {
         if (this.shouldIgnoreDocument(document)) {
             return;
         }
@@ -224,8 +225,10 @@ class DiagnosticsProvider extends AbstractSupport {
         }
     }
 
-    private _onDocumentRemove(document: vscode.TextDocument): void {
-        this._validateAllPipe.next();
+    private _onDocumentClose(document: vscode.TextDocument): void {
+        if (this._diagnostics.has(document.uri) && !this._validationAdvisor.shouldValidateAll()) {
+            this._diagnostics.delete(document.uri);
+        }
     }
 
     private _validateDocument(document: vscode.TextDocument): NodeJS.Timeout {

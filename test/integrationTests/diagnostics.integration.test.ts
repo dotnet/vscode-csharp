@@ -15,6 +15,11 @@ const chai = require('chai');
 chai.use(require('chai-arrays'));
 chai.use(require('chai-fs'));
 
+function setDiagnosticWorkspaceLimit(to: number | null) {
+    let csharpConfig = vscode.workspace.getConfiguration('csharp');
+    return csharpConfig.update('maxProjectFileCountForDiagnosticAnalysis', to);
+}
+
 suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
     let secondaryFileUri: vscode.Uri;
@@ -22,49 +27,77 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
 
-        await testAssetWorkspace.restore();
-        await activateCSharpExtension();
-
         let fileName = 'diagnostics.cs';
         let secondaryFileName = 'secondaryDiagnostics.cs';
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
 
         fileUri = vscode.Uri.file(path.join(projectDirectory, fileName));
         secondaryFileUri = vscode.Uri.file(path.join(projectDirectory, secondaryFileName));
-
-        await vscode.commands.executeCommand("vscode.open", fileUri);
     });
 
-    suiteTeardown(async () => {
-        await testAssetWorkspace.cleanupWorkspace();
+    suite("small workspace (based on maxProjectFileCountForDiagnosticAnalysis setting)", () => {
+        suiteSetup(async function () {
+            should();
+            await testAssetWorkspace.restore();
+            await activateCSharpExtension();
+            await vscode.commands.executeCommand("vscode.open", fileUri);
+        });
+
+        test("Returns any diagnostics from file", async function () {
+            let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 10 * 1000, 500);
+            expect(result.length).to.be.greaterThan(0);
+        });
+
+        test("Return unnecessary tag in case of unnesessary using", async function () {
+            let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 15 * 1000, 500);
+
+            let cs8019 = result.find(x => x.message.includes("CS8019"));
+            expect(cs8019).to.not.be.undefined;
+            expect(cs8019.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+        });
+
+        test("Return fadeout diagnostics like unused variables based on roslyn analyzers", async function () {
+            let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 15 * 1000, 500, result => result.find(x => x.message.includes("IDE0059")) != undefined);
+
+            let ide0059 = result.find(x => x.message.includes("IDE0059"));
+            expect(ide0059.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+        });
+
+        test("On small workspaces also show/fetch closed document analysis results", async function () {
+            let result = await poll(() => vscode.languages.getDiagnostics(secondaryFileUri), 15 * 1000, 500);
+
+            expect(result.length).to.not.greaterThan(0);
+        });
+
+        suiteTeardown(async () => {
+            await testAssetWorkspace.cleanupWorkspace();
+        });
     });
 
-    test("Returns any diagnostics from file", async function () {
-        let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 10*1000, 500);
-        expect(result.length).to.be.greaterThan(0);
-    });
+    suite("large workspace (based on maxProjectFileCountForDiagnosticAnalysis setting)", () => {
+        suiteSetup(async function () {
+            should();
+            await setDiagnosticWorkspaceLimit(1);
+            await testAssetWorkspace.restore();
+            await activateCSharpExtension();
+        });
 
-    test("Return unnecessary tag in case of unnesessary using", async function () {
-        let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 15*1000, 500);
+        test("When workspace is count as 'large', then only show/fetch diagnostics from open documents", async function () {
+            // This is to trigger manual cleanup for diagnostics before test because we modify max project file count on fly.
+            await vscode.commands.executeCommand("vscode.open", secondaryFileUri);
+            await vscode.commands.executeCommand("workbench.action.closeAllEditors");
 
-        let cs8019 = result.find(x => x.message.includes("CS8019"));
-        expect(cs8019).to.not.be.undefined;
-        expect(cs8019.tags).to.include(vscode.DiagnosticTag.Unnecessary);
-    });
+            await vscode.commands.executeCommand("vscode.open", fileUri);
 
-    test("Return fadeout diagnostics like unused variables based on roslyn analyzers", async function () {
-        let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 15*1000, 500, result => result.find(x => x.message.includes("IDE0059")) != undefined);
+            let openFileDiagnostics = await poll(() => vscode.languages.getDiagnostics(fileUri), 15 * 1000, 500);
+            let secondaryDiagnostic = await vscode.languages.getDiagnostics(secondaryFileUri);
 
-        let ide0059 = result.find(x => x.message.includes("IDE0059"));
-        expect(ide0059.tags).to.include(vscode.DiagnosticTag.Unnecessary);
-    });
+            expect(openFileDiagnostics.length).to.be.greaterThan(0);
+            expect(secondaryDiagnostic.length).to.be.eq(0);
+        });
 
-    test("When workspace is count as 'large', then only return diagnostics from open documents", async function () {
-        let openFileDiagnostics = await poll(() => vscode.languages.getDiagnostics(fileUri), 15*1000, 500);
-        //let secondaryNonOpenFileDiagnostics = await vscode.languages.getDiagnostics(secondaryFileUri);
-        let secondaryNonOpenFileDiagnostics = await poll(() => vscode.languages.getDiagnostics(secondaryFileUri), 15*1000, 500);
-
-        expect(openFileDiagnostics.length).to.be.greaterThan(0);
-        expect(secondaryNonOpenFileDiagnostics.length).to.be.eq(0);
+        suiteTeardown(async () => {
+            await testAssetWorkspace.cleanupWorkspace();
+        });
     });
 });
