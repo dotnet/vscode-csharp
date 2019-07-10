@@ -64,6 +64,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         });
 
         test("On small workspaces also show/fetch closed document analysis results", async function () {
+            this.skip(); // Enable once background analysis support is merged to omnisharp-roslyn.
             let result = await poll(() => vscode.languages.getDiagnostics(secondaryFileUri), 15 * 1000, 500);
 
             expect(result.length).to.not.greaterThan(0);
