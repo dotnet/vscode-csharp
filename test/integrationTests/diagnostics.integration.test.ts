@@ -17,6 +17,7 @@ chai.use(require('chai-fs'));
 
 suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
+    let secondaryFileUri: vscode.Uri;
 
     suiteSetup(async function () {
         should();
@@ -25,9 +26,11 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         await activateCSharpExtension();
 
         let fileName = 'diagnostics.cs';
+        let secondaryFileName = 'secondaryFileDiagnostics.cs';
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
-        let filePath = path.join(projectDirectory, fileName);
-        fileUri = vscode.Uri.file(filePath);
+
+        fileUri = vscode.Uri.file(path.join(projectDirectory, fileName));
+        secondaryFileUri = vscode.Uri.file(path.join(projectDirectory, secondaryFileName));
 
         await vscode.commands.executeCommand("vscode.open", fileUri);
     });
@@ -54,5 +57,14 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
 
         let ide0059 = result.find(x => x.message.includes("IDE0059"));
         expect(ide0059.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+    });
+
+    test("When workspace is count as 'large', then only return diagnostics from open documents", async function () {
+        let openFileDiagnostics = await poll(() => vscode.languages.getDiagnostics(fileUri), 15*1000, 500);
+        //let secondaryNonOpenFileDiagnostics = await vscode.languages.getDiagnostics(secondaryFileUri);
+        let secondaryNonOpenFileDiagnostics = await poll(() => vscode.languages.getDiagnostics(secondaryFileUri), 15*1000, 500);
+
+        expect(openFileDiagnostics.length).to.be.greaterThan(0);
+        expect(secondaryNonOpenFileDiagnostics.length).to.be.eq(0);
     });
 });
