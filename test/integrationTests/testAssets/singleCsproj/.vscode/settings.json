@@ -1,5 +1,4 @@
 {
-    //"omnisharp.path": "latest",
-    "omnisharp.path": "C:\\Github\\omnisharp-roslyn\\bin\\Debug\\OmniSharp.Stdio.Driver\\net472\\Omnisharp.exe",
+    "omnisharp.path": "latest",
     "omnisharp.enableRoslynAnalyzers": true
 }
