@@ -26,7 +26,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         await activateCSharpExtension();
 
         let fileName = 'diagnostics.cs';
-        let secondaryFileName = 'secondaryFileDiagnostics.cs';
+        let secondaryFileName = 'secondaryDiagnostics.cs';
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
 
         fileUri = vscode.Uri.file(path.join(projectDirectory, fileName));
