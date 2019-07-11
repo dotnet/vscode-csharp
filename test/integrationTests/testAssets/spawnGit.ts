@@ -25,8 +25,8 @@ export default async function spawnGit(args?: string[], options?: SpawnOptions):
 
     let spawned = spawn('git', args, optionsWithFullEnvironment);
 
-    spawned.stdout.on('data', (data) => console.log(data.toString()));
-    spawned.stderr.on('data', (data) => console.log(data.toString()));
+    //spawned.stdout.on('data', (data) => console.log(data.toString()));
+    //spawned.stderr.on('data', (data) => console.log(data.toString()));
 
     return join(spawned);
 }
