@@ -67,7 +67,7 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
 
         await vscode.commands.executeCommand('o.reanalyze.currentProject', interfaceImplUri);
 
-        await poll(() => diagnosticStatusEvents, 10*1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Ready) != undefined);
+        await poll(() => diagnosticStatusEvents, 10*1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Ready) !== undefined);
 
         let typeNotFoundCs = vscode.languages.getDiagnostics(interfaceImplUri).find(x => x.message.includes("CS0246"));
         expect(typeNotFoundCs).to.not.be.undefined;

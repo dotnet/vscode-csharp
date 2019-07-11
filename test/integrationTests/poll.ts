@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information. 
  *--------------------------------------------------------------------------------------------*/ 
 
-export default async function poll<T>(getValue: () => T, duration: number, step: number, expression: (input: T) => boolean = _ => true): Promise<T> {
+export default async function poll<T>(
+        getValue: () => T,
+        duration: number,
+        step: number,
+        expression: (input: T) => boolean = x => x !== undefined && ((Array.isArray(x) && x.length > 0) || !Array.isArray(x))): Promise<T> {
     while (duration > 0) {
         let value = await getValue();
 
-        if(Array.isArray(value) && value.length > 0 && expression(value)) {
-            return value;
-        }
-
-        if (!Array.isArray(value) && value && expression(value)) {
+        if(expression(value)) {
             return value;
         }
 

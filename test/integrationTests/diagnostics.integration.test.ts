@@ -79,7 +79,10 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             should();
             await setDiagnosticWorkspaceLimit(1);
             await testAssetWorkspace.restore();
-            await activateCSharpExtension();
+            let activationResult = await activateCSharpExtension();
+
+
+            expect(activationResult.advisor.shouldValidateAll()).to.be.false;
         });
 
         test("When workspace is count as 'large', then only show/fetch diagnostics from open documents", async function () {
@@ -89,8 +92,8 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
 
             await vscode.commands.executeCommand("vscode.open", fileUri);
 
-            let openFileDiagnostics = await poll(() => vscode.languages.getDiagnostics(fileUri), 15 * 1000, 500);
-            let secondaryDiagnostic = await vscode.languages.getDiagnostics(secondaryFileUri);
+            let openFileDiagnostics = await poll(() => vscode.languages.getDiagnostics(fileUri), 10 * 1000, 500);
+            let secondaryDiagnostic = await poll(() => vscode.languages.getDiagnostics(secondaryFileUri), 10 * 1000, 500, x => x.length === 0);
 
             expect(openFileDiagnostics.length).to.be.greaterThan(0);
             expect(secondaryDiagnostic.length).to.be.eq(0);
