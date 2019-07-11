@@ -66,7 +66,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         test("On small workspaces also show/fetch closed document analysis results", async function () {
             let result = await poll(() => vscode.languages.getDiagnostics(secondaryFileUri), 15 * 1000, 500);
 
-            expect(result.length).to.not.greaterThan(0);
+            expect(result.length).to.be.greaterThan(0);
         });
 
         suiteTeardown(async () => {
