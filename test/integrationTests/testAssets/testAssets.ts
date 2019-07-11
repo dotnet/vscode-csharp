@@ -20,19 +20,6 @@ export class TestAssetProject {
             path.dirname(this.relativeFilePath));
     }
 
-    get binDirectoryPath(): string {
-        return path.join(this.projectDirectoryPath, 'bin');
-    }
-
-    get objDirectoryPath(): string {
-        return path.join(this.projectDirectoryPath, 'obj');
-    }
-
-    async deleteBuildArtifacts(): Promise<void> {
-        await fs.rimraf(this.binDirectoryPath);
-        await fs.rimraf(this.objDirectoryPath);
-    }
-
     async addFileWithContents(fileName: string, contents: string): Promise<vscode.Uri> {
         let dir = this.projectDirectoryPath;
         let loc = path.join(dir, fileName);
@@ -48,10 +35,6 @@ export class TestAssetWorkspace {
         );
 
         this.description = workspace.description;
-    }
-
-    async deleteBuildArtifacts(): Promise<void> {
-        this.projects.forEach(async p => await p.deleteBuildArtifacts());
     }
 
     async restore(): Promise<void> {
@@ -74,12 +57,8 @@ export class TestAssetWorkspace {
         let cleanUpRoutine = async () =>
         {
             await vscode.commands.executeCommand("workbench.action.closeAllEditors");
-
-            for (let project of this.projects) {
-                let wd = project.projectDirectoryPath;
-                await spawnGit(["clean", "-xdf", "."], { cwd: wd });
-                await spawnGit(["checkout", "--", "."], { cwd: wd });
-            }
+            await spawnGit(["clean", "-xdf", "."], { cwd: vscode.workspace.rootPath });
+            await spawnGit(["checkout", "--", "."], { cwd: vscode.workspace.rootPath });
         };
 
         let sleep = () => new Promise((resolve) => setTimeout(resolve, 2*1000));
