@@ -66,7 +66,7 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
 
         await vscode.commands.executeCommand('o.reanalyze.currentProject', interfaceImplUri);
 
-        await poll(() => diagnosticStatusEvents, 10*1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Ready) !== undefined);
+        await poll(() => diagnosticStatusEvents, 15*1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Ready) !== undefined);
 
         let typeNotFoundCs = vscode.languages.getDiagnostics(interfaceImplUri).find(x => x.message.includes("CS0246"));
         expect(typeNotFoundCs).to.not.be.undefined;
@@ -77,8 +77,8 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
 
         await vscode.commands.executeCommand('o.reanalyze.currentProject', interfaceImplUri);
 
-        await poll(() => diagnosticStatusEvents, 10*1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Processing) != undefined);
-        await poll(() => diagnosticStatusEvents, 10*1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Ready) != undefined);
+        await poll(() => diagnosticStatusEvents, 15*1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Processing) != undefined);
+        await poll(() => diagnosticStatusEvents, 15*1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Ready) != undefined);
     });
 
     test("When re-analyze of all projects is executed then eventually get notified about them.", async function () {
@@ -86,7 +86,7 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
 
         await vscode.commands.executeCommand('o.reanalyze.allProjects', interfaceImplUri);
 
-        await poll(() => diagnosticStatusEvents, 10*1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Processing) != undefined);
-        await poll(() => diagnosticStatusEvents, 10*1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Ready) != undefined);
+        await poll(() => diagnosticStatusEvents, 15*1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Processing) != undefined);
+        await poll(() => diagnosticStatusEvents, 15*1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Ready) != undefined);
     });
 });
