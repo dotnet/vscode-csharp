@@ -18,12 +18,12 @@ chai.use(require('chai-fs'));
 suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
-        await testAssetWorkspace.restore();
         await activateCSharpExtension();
+        await testAssetWorkspace.restore();
 
         await vscode.commands.executeCommand("dotnet.generateAssets", 0);
 
-        await poll(async () => await fs.exists(testAssetWorkspace.launchJsonPath), 10000, 100);
+        await poll(() => fs.exists(testAssetWorkspace.launchJsonPath), 10000, 100);
     });
 
     suiteTeardown(async () => {

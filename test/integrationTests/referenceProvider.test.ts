@@ -14,8 +14,8 @@ suite(`${OmnisharpReferenceProvider.name}: ${testAssetWorkspace.description}`, (
     let fileUri: vscode.Uri;
 
     suiteSetup(async () => {
-        await testAssetWorkspace.restore();
         await activateCSharpExtension();
+        await testAssetWorkspace.restore();
 
         let fileName = 'reference.cs';
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;

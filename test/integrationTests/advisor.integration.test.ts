@@ -25,8 +25,8 @@ suite(`Advisor ${testAssetWorkspace.description}`, function () {
     let advisor: Advisor;
 
     suiteSetup(async function () {
-        await testAssetWorkspace.restore();
         let activationResult = await activateCSharpExtension();
+        await testAssetWorkspace.restore();
         if (!activationResult) {
             throw new Error('Cannot activate extension.');
         } else {

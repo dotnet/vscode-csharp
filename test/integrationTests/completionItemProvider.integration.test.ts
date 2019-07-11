@@ -14,8 +14,8 @@ suite(`${OmniSharpCompletionItemProvider.name}: Returns the completion items`, (
     let fileUri: vscode.Uri;
     
     suiteSetup(async () => {
-        await testAssetWorkspace.restore();
         await activateCSharpExtension();
+        await testAssetWorkspace.restore();
 
         let fileName = 'completion.cs';
         let dir = testAssetWorkspace.projects[0].projectDirectoryPath;

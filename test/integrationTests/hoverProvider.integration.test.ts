@@ -17,8 +17,8 @@ chai.use(require('chai-fs'));
 suite(`Hover Provider: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
-        await testAssetWorkspace.restore();
         await activateCSharpExtension();
+        await testAssetWorkspace.restore();
     });
 
     suiteTeardown(async () => {

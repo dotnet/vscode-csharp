@@ -19,8 +19,8 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
 
     suiteSetup(async function () {
         should();
-        await testAssetWorkspace.restore();
         await activateCSharpExtension();
+        await testAssetWorkspace.restore();
 
         let fileName = 'A.cs';
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;

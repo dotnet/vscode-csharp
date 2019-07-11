@@ -38,8 +38,8 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
     suite("small workspace (based on maxProjectFileCountForDiagnosticAnalysis setting)", () => {
         suiteSetup(async function () {
             should();
-            await testAssetWorkspace.restore();
             await activateCSharpExtension();
+            await testAssetWorkspace.restore();
             await vscode.commands.executeCommand("vscode.open", fileUri);
         });
 
@@ -75,26 +75,18 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
     suite("large workspace (based on maxProjectFileCountForDiagnosticAnalysis setting)", () => {
         suiteSetup(async function () {
             should();
-            await testAssetWorkspace.cleanupWorkspace();
             await setDiagnosticWorkspaceLimit(1);
             await testAssetWorkspace.restore();
-            let activationResult = await activateCSharpExtension();
-
-
-            expect(activationResult.advisor.shouldValidateAll()).to.be.false;
+            await activateCSharpExtension();
         });
 
         test("When workspace is count as 'large', then only show/fetch diagnostics from open documents", async function () {
             // This is to trigger manual cleanup for diagnostics before test because we modify max project file count on fly.
             await vscode.commands.executeCommand("vscode.open", secondaryFileUri);
-            await vscode.commands.executeCommand("workbench.action.closeAllEditors");
-
             await vscode.commands.executeCommand("vscode.open", fileUri);
 
-            let openFileDiagnostics = await poll(() => vscode.languages.getDiagnostics(fileUri), 10 * 1000, 500);
+            await assertWithPoll(() => vscode.languages.getDiagnostics(fileUri), 10 * 1000, 500, openFileDiag =>  expect(openFileDiag.length).to.be.greaterThan(0));
             await assertWithPoll(() => vscode.languages.getDiagnostics(secondaryFileUri), 10 * 1000, 500, secondaryDiag => expect(secondaryDiag.length).to.be.eq(0));
-
-            expect(openFileDiagnostics.length).to.be.greaterThan(0);
         });
 
         suiteTeardown(async () => {

@@ -19,8 +19,8 @@ suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
 
     suiteSetup(async function () {
         should();
-        await testAssetWorkspace.restore();
         await activateCSharpExtension();
+        await testAssetWorkspace.restore();
 
         let fileName = 'Program.cs';
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
@@ -72,8 +72,8 @@ suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function() 
         }
         else
         {
-            await testAssetWorkspace.restore();
             await activateCSharpExtension();
+            await testAssetWorkspace.restore();
 
             let fileName = 'UnitTest1.cs';
             let projectDirectory = testAssetWorkspace.projects[2].projectDirectoryPath;

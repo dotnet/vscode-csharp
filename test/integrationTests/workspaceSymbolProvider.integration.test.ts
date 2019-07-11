@@ -14,8 +14,8 @@ chai.use(require('chai-fs'));
 suite(`WorkspaceSymbolProvider: ${testAssetWorkspace.description}`, function () {
 
     suiteSetup(async function () {
-        await testAssetWorkspace.restore();
         await activateCSharpExtension();
+        await testAssetWorkspace.restore();
         let projectDirectory = vscode.Uri.file(testAssetWorkspace.projects[0].projectDirectoryPath);
         await vscode.commands.executeCommand("vscode.open", projectDirectory);
     });

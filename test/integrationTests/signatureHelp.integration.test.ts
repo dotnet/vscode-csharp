@@ -18,8 +18,8 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
     
     suiteSetup(async function () {
-        await testAssetWorkspace.restore();
         await activateCSharpExtension();
+        await testAssetWorkspace.restore();
 
         let fileName = 'sigHelp.cs';
         let dir = testAssetWorkspace.projects[0].projectDirectoryPath;
