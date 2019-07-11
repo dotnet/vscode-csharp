@@ -41,6 +41,8 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
 
+        await testAssetWorkspace.cleanupWorkspace();
+
         await testAssetWorkspace.restore();
         eventStream = (await activateCSharpExtension()).eventStream;
 

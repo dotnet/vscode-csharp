@@ -9,7 +9,7 @@ import * as path from 'path';
 import { should, expect } from 'chai';
 import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import poll from './poll';
+import poll, { assertWithPoll } from './poll';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -44,8 +44,8 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         });
 
         test("Returns any diagnostics from file", async function () {
-            let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 10 * 1000, 500);
-            expect(result.length).to.be.greaterThan(0);
+            await assertWithPoll(() => vscode.languages.getDiagnostics(fileUri), 10 * 1000, 500,
+                res => expect(res.length).to.be.greaterThan(0));
         });
 
         test("Return unnecessary tag in case of unnesessary using", async function () {
@@ -64,9 +64,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         });
 
         test("On small workspaces also show/fetch closed document analysis results", async function () {
-            let result = await poll(() => vscode.languages.getDiagnostics(secondaryFileUri), 15 * 1000, 500);
-
-            expect(result.length).to.be.greaterThan(0);
+            await assertWithPoll(() => vscode.languages.getDiagnostics(secondaryFileUri), 15 * 1000, 500, res => expect(res.length).to.be.greaterThan(0));
         });
 
         suiteTeardown(async () => {
@@ -77,6 +75,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
     suite("large workspace (based on maxProjectFileCountForDiagnosticAnalysis setting)", () => {
         suiteSetup(async function () {
             should();
+            await testAssetWorkspace.cleanupWorkspace();
             await setDiagnosticWorkspaceLimit(1);
             await testAssetWorkspace.restore();
             let activationResult = await activateCSharpExtension();
@@ -93,10 +92,9 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             await vscode.commands.executeCommand("vscode.open", fileUri);
 
             let openFileDiagnostics = await poll(() => vscode.languages.getDiagnostics(fileUri), 10 * 1000, 500);
-            let secondaryDiagnostic = await poll(() => vscode.languages.getDiagnostics(secondaryFileUri), 10 * 1000, 500, x => x.length === 0);
+            await assertWithPoll(() => vscode.languages.getDiagnostics(secondaryFileUri), 10 * 1000, 500, secondaryDiag => expect(secondaryDiag.length).to.be.eq(0));
 
             expect(openFileDiagnostics.length).to.be.greaterThan(0);
-            expect(secondaryDiagnostic.length).to.be.eq(0);
         });
 
         suiteTeardown(async () => {

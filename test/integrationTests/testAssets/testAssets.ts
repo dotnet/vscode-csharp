@@ -77,10 +77,23 @@ export class TestAssetWorkspace {
     }
 
     async cleanupWorkspace(): Promise<void> {
-        for (let project of this.projects) {
-            let wd = project.projectDirectoryPath;
-            await spawnGit(["clean", "-xdf", "."], { cwd: wd });
-            await spawnGit(["checkout", "--", "."], { cwd: wd });
+        let cleanUpRoutine = async () =>
+        {
+            for (let project of this.projects) {
+                let wd = project.projectDirectoryPath;
+                await spawnGit(["clean", "-xdf", "."], { cwd: wd });
+                await spawnGit(["checkout", "--", "."], { cwd: wd });
+            }
+        };
+
+        let sleep = () => new Promise((resolve) => setTimeout(resolve, 2*1000));
+
+        try {
+            await cleanUpRoutine();
+        } catch (error) {
+            // Its possible that cleanup fails for locked files etc, for this reason retry is added.
+            await sleep();
+            await cleanUpRoutine();
         }
     }
 
