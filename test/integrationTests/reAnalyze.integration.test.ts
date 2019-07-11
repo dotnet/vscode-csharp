@@ -9,7 +9,7 @@ import * as path from 'path';
 import { should, expect } from 'chai';
 import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import poll from './poll';
+import poll, { assertWithPoll } from './poll';
 import { EventStream } from '../../src/EventStream';
 import { EventType } from '../../src/omnisharp/EventType';
 import { BaseEvent, OmnisharpProjectDiagnosticStatus } from '../../src/omnisharp/loggingEvents';
@@ -68,8 +68,11 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
 
         await poll(() => diagnosticStatusEvents, 15*1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Ready) !== undefined);
 
-        let typeNotFoundCs = vscode.languages.getDiagnostics(interfaceImplUri).find(x => x.message.includes("CS0246"));
-        expect(typeNotFoundCs).to.not.be.undefined;
+        await assertWithPoll(
+            () => vscode.languages.getDiagnostics(interfaceImplUri),
+            15*1000,
+            500,
+            res => expect(res.find(x => x.message.includes("CS0246"))));
     });
 
     test("When re-analyze of project is executed then eventually get notified about them.", async function () {
