@@ -7,8 +7,8 @@ import { OmniSharpServer } from './server';
 import * as protocol from './protocol';
 import * as vscode from 'vscode';
 
-export async function autoComplete(server: OmniSharpServer, request: protocol.AutoCompleteRequest) {
-    return server.makeRequest<protocol.AutoCompleteResponse[]>(protocol.Requests.AutoComplete, request);
+export async function autoComplete(server: OmniSharpServer, request: protocol.AutoCompleteRequest, token: vscode.CancellationToken) {
+    return server.makeRequest<protocol.AutoCompleteResponse[]>(protocol.Requests.AutoComplete, request, token);
 }
 
 export async function codeCheck(server: OmniSharpServer, request: protocol.Request, token: vscode.CancellationToken) {
