@@ -40,8 +40,9 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
             (s) => { return s.title == "Rename file to C.cs"; }
         );
         expect(command, "Didn't find rename class command");
+
         await vscode.commands.executeCommand(command.command, ...command.arguments);
 
-        assertWithPoll(await vscode.commands.executeCommand(command.command, ...command.arguments), 15*1000, 500, expect(vscode.window.activeTextEditor.document.fileName).contains("C.cs"));
+        await assertWithPoll(() => {}, 15*1000, 500, _ => expect(vscode.window.activeTextEditor.document.fileName).contains("C.cs"));
     });
 });
