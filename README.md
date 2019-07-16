@@ -20,28 +20,16 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
-### What's new in 1.20.0
+### What's new in 1.21.0
 
-* Updated the auto-generated launch.json to use new mechanism for starting web browser. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
-* Improved support for .NET Core 3
-* Updates to Razor support
-* Made QuickInfo display more consistent with Visual Studio. ([#2610](https://github.com/OmniSharp/omnisharp-vscode/issues/2610))  (_Contributed by_ [@paladique](https://github.com/paladique))(PR: [#3090](https://github.com/OmniSharp/omnisharp-vscode/pull/3090/))
-* Added support for fading unnecessary code and using statements [#2873](https://github.com/OmniSharp/omnisharp-vscode/pull/2873)
+* Added a `omnisharp.enableEditorConfigSupport` setting to enable support for .editorconfig.
+* Modified the auto generated tasks in tasks.json to generate full paths and disable summary to fix the problem of no source links in the problems panel.
+* Improved analyzers performance by introducing background analysis support 
+* End of support for .NET Core 1.0 and 1.1 (`project.json`-based .NET Core flavors).
+* Added support for *AdditionalFiles* in csproj files
+* Improved the MSBuild selection logic. The standalone instance inside OmniSharp is now preferred over VS2017, with VS2019 given the highest priority.
 
-### What's new in 1.19.1
-
-* Updated debugger to work correctly on Linux distributions with openssl 1.1 such as Ubuntu 19.04.
-* Fixed OmniSharp hanging on wildcard Nuget package references.
-* OmniSharp now uses correct 4.7.2 framework sku to prompt for installation of .NET 4.7.2 if missing.
-
-### What's new in 1.19.0
-
-* Improved support for .NET Core 3
-* Added support for roslyn analyzers, code fixes and rulesets which can be enabled via`omnisharp.enableRoslynAnalyzers` setting.
-* Improved Razor diagnostics
-* Razor tooling support for tag helpers
-
-See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.19.1/CHANGELOG.md) for more detail.
+See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.21.0/CHANGELOG.md) for more detail.
 
 ### Supported Operating Systems for Debugging
 

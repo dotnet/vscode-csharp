@@ -9,14 +9,40 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.20.0 (Not yet released)
+## 1.21.0 (July 15, 2019)
+
+* Added a `omnisharp.enableEditorConfigSupport` setting to enable support for .editorconfig [#3136](https://github.com/OmniSharp/omnisharp-vscode/pull/3136) (_Contributed by_ [@hoffs](https://github.com/hoffs))(PR: [omnisharp-roslyn#1526](https://github.com/OmniSharp/omnisharp-roslyn/pull/1526) (_Contributed by_ [@filipw](https://github.com/filipw)))
+* Modified the auto generated tasks in tasks.json to generate full paths and disable summary to fix the problem of no source links in the problems panel. (PR:[#3145](https://github.com/OmniSharp/omnisharp-vscode/pull/3145))
+* Added support for Roslyn code actions that normally need UI - they used to be explicitly sipped by OmniSharp, now it surfaces them with predefined defaults instead. ([omnisharp-roslyn#1220](https://github.com/OmniSharp/omnisharp-roslyn/issues/1220), PR: [#1406](https://github.com/OmniSharp/omnisharp-roslyn/pull/1406)) These are:
+  * extract interface
+  * generate constructor
+  * generate overrides
+  * generate *Equals* and *GetHashCode*
+* Improved analyzers performance by introducing background analysis support ([omnisharp-roslyn#1507](https://github.com/OmniSharp/omnisharp-roslyn/pull/1507))
+* According to [official Microsoft .NET Core support policy](https://dotnet.microsoft.com/platform/support/policy/dotnet-core), .NET Core 1.0 and 1.1 (`project.json`-based .NET Core flavors) have reached end of life and went out of support on 27 June 2019. OmniSharp features to support that, which have been obsolete and disabled by default since version 1.32.2 (2018-08-07), are now completely removed.
+* Fixed a bug where some internal services didn't respect the disabling of a project system ([omnisharp-roslyn#1543](https://github.com/OmniSharp/omnisharp-roslyn/pull/1543))
+* Improved the MSBuild selection logic. The standalone instance inside OmniSharp is now preferred over VS2017, with VS2019 given the highest priority. This ensures that .NET Core 3.0 works correctly. It is also possible manually provide an MSBuild path using OmniSharp configuration, which is then always selected. ([omnisharp-roslyn#1541](https://github.com/OmniSharp/omnisharp-roslyn/issues/1541), PR: [omnisharp-roslyn#1545](https://github.com/OmniSharp/omnisharp-roslyn/pull/1545))
+    ```JSON
+        {
+            "MSBuild": {
+                "MSBuildOverride": {
+                    "MSBuildPath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\MSBuild\\15.0\\Bin",
+                    "Name": "vs2017 msbuild"
+                }
+            }
+        }
+    ```
+* Added support for *AdditionalFiles* in csproj files ([omnisharp-roslyn#1510](https://github.com/OmniSharp/omnisharp-roslyn/issues/1510), PR: [omnisharp-roslyn#1547](https://github.com/OmniSharp/omnisharp-roslyn/pull/1547))
+* Fixed a bug in *.editorconfig* where formatting settings were not correctly passed into external code fixes ([omnisharp-roslyn#1558](https://github.com/OmniSharp/omnisharp-roslyn/issues/1558), PR: [omnisharp-roslyn#1559](https://github.com/OmniSharp/omnisharp-roslyn/pull/1559))
+
+
+## 1.20.0 (June 11, 2019)
 
 * Updated the auto-generated launch.json to use new mechanism for starting web browser. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
 * Improved support for .NET Core 3
 * Updates to Razor support
 * Made QuickInfo display more consistent with Visual Studio. ([#2610](https://github.com/OmniSharp/omnisharp-vscode/issues/2610))  (_Contributed by_ [@paladique](https://github.com/paladique))(PR: [#3090](https://github.com/OmniSharp/omnisharp-vscode/pull/3090/))
 * Added support for fading unnecessary code and using statements [#2873](https://github.com/OmniSharp/omnisharp-vscode/pull/2873)
-* Added a `omnisharp.enableEditorConfigSupport` setting to enable support for .editorconfig [#3136](https://github.com/OmniSharp/omnisharp-vscode/pull/3136) (_Contributed by_ [@hoffs](https://github.com/hoffs))(PR: [omnisharp-roslyn#1526](https://github.com/OmniSharp/omnisharp-roslyn/pull/1526) (_Contributed by_ [@filipw](https://github.com/filipw)))
 
 ## 1.19.1 (May 6, 2019)
 
