@@ -35,8 +35,8 @@ export async function findSymbols(server: OmniSharpServer, request: protocol.Fin
     return server.makeRequest<protocol.FindSymbolsResponse>(protocol.Requests.FindSymbols, request, token);
 }
 
-export async function fixAll(server: OmniSharpServer, request: any) {
-    return server.makeRequest<any>(protocol.Requests.FixAll, request);
+export async function fixAll(server: OmniSharpServer, request: protocol.FileBasedRequest): Promise<protocol.RunFixAllActionResponse> {
+    return server.makeRequest<protocol.RunFixAllActionResponse>(protocol.Requests.RunFixAll, request);
 }
 
 export async function findUsages(server: OmniSharpServer, request: protocol.FindUsagesRequest, token: vscode.CancellationToken) {

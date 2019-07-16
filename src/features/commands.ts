@@ -23,6 +23,7 @@ import reportIssue from './reportIssue';
 import setNextStatement from '../coreclr-debug/setNextStatement';
 import { IMonoResolver } from '../constants/IMonoResolver';
 import { getDotnetInfo } from '../utils/getDotnetInfo';
+import { WorkspaceEdit } from 'vscode';
 
 export default function registerCommands(server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionProvider: OptionProvider, monoResolver: IMonoResolver, packageJSON: any, extensionPath: string): CompositeDisposable {
     let disposable = new CompositeDisposable();
@@ -64,7 +65,20 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
 
 // This should be replaced with method that opens menu.
 async function fixAllTemporary(server: OmniSharpServer): Promise<void> {
-    await serverUtils.fixAll(server, {});
+    let response = await serverUtils.fixAll(server, { FileName: "not_used_yet"});
+
+    response.Changes.forEach(change => {
+        const uri = vscode.Uri.file(change.FileName);
+
+        let edits: WorkspaceEdit = new WorkspaceEdit();
+        change.Changes.forEach(change => {
+            edits.replace(uri,
+                new vscode.Range(change.StartLine - 1, change.StartColumn - 1, change.EndLine - 1, change.EndColumn - 1),
+                change.NewText);
+        });
+
+        vscode.workspace.applyEdit(edits);
+    });
 }
 
 function restartOmniSharp(server: OmniSharpServer) {

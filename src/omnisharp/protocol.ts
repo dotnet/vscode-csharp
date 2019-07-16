@@ -28,7 +28,8 @@ export module Requests {
     export const TypeLookup = '/typelookup';
     export const UpdateBuffer = '/updatebuffer';
     export const Metadata = '/metadata';
-    export const FixAll = '/fixall';
+    export const RunFixAll = '/runfixall';
+    export const GetFixAll = '/getfixall';
 }
 
 export namespace WireProtocol {
@@ -251,6 +252,11 @@ export interface RunCodeActionResponse {
 
 export interface GetCodeActionsResponse {
     CodeActions: string[];
+}
+
+export interface RunFixAllActionResponse {
+    Text: string;
+    Changes: ModifiedFileResponse[];
 }
 
 export interface SyntaxFeature {
