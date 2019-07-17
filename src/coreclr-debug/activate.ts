@@ -90,7 +90,7 @@ function showDotnetToolsWarning(message: string): void {
         vscode.window.showErrorMessage(message,
             goToSettingsMessage, getDotNetMessage).then(value => {
                 if (value === getDotNetMessage) {
-                    let dotnetcoreURL = 'https://www.microsoft.com/net/core';
+                    let dotnetcoreURL = 'https://dotnet.microsoft.com/download';
 
                     vscode.env.openExternal(vscode.Uri.parse(dotnetcoreURL));
                 } else if (value === goToSettingsMessage) {
