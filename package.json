@@ -398,7 +398,7 @@
         "csharp.suppressDotnetInstallWarning": {
           "type": "boolean",
           "default": false,
-          "description": "Suppress the warning that the .NET SDK is not on the path."
+          "description": "Suppress the warning that the .NET Core SDK is not on the path."
         },
         "csharp.unitTestDebuggingOptions": {
           "type": "object",
