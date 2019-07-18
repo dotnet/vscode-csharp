@@ -9,7 +9,7 @@ import * as semver from 'semver';
 import * as os from 'os';
 import { execChildProcess } from './../common';
 
-const MINIMUM_SUPPORTED_DOTNET_CLI: string = '1.0.0-preview2-003121';
+const MINIMUM_SUPPORTED_DOTNET_CLI: string = '1.0.0';
 
 export class DotnetInfo
 {
@@ -98,7 +98,7 @@ export class CoreClrDebugUtil
         }).catch((error) => {
             // something went wrong with spawning 'dotnet --info'
             let dotnetError = new DotNetCliError();
-            dotnetError.ErrorMessage = 'The .NET CLI tools cannot be located. .NET Core debugging will not be enabled. Make sure .NET CLI tools are installed and are on the path.';
+            dotnetError.ErrorMessage = 'The .NET Core SDK cannot be located. .NET Core debugging will not be enabled. Make sure the .NET Core SDK is installed and is on the path.';
             dotnetError.ErrorString = "Failed to spawn 'dotnet --info'";
             throw dotnetError;
         }).then(() => {
@@ -106,7 +106,7 @@ export class CoreClrDebugUtil
             if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_DOTNET_CLI))
             {
                 let dotnetError = new DotNetCliError();
-                dotnetError.ErrorMessage = 'The .NET CLI tools on the path are too old. .NET Core debugging will not be enabled. The minimum supported version is ' + MINIMUM_SUPPORTED_DOTNET_CLI + '.';
+                dotnetError.ErrorMessage = 'The .NET Core SDK located on the path is too old. .NET Core debugging will not be enabled. The minimum supported version is ' + MINIMUM_SUPPORTED_DOTNET_CLI + '.';
                 dotnetError.ErrorString = "dotnet cli is too old";
                 throw dotnetError;
             }
