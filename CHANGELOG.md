@@ -9,7 +9,7 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.21.0 (July 15, 2019)
+## 1.21.0 (July 18, 2019)
 
 * Added a `omnisharp.enableEditorConfigSupport` setting to enable support for .editorconfig [#3136](https://github.com/OmniSharp/omnisharp-vscode/pull/3136) (_Contributed by_ [@hoffs](https://github.com/hoffs))(PR: [omnisharp-roslyn#1526](https://github.com/OmniSharp/omnisharp-roslyn/pull/1526) (_Contributed by_ [@filipw](https://github.com/filipw)))
 * Modified the auto generated tasks in tasks.json to generate full paths and disable summary to fix the problem of no source links in the problems panel. (PR:[#3145](https://github.com/OmniSharp/omnisharp-vscode/pull/3145))
