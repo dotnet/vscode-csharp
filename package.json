@@ -38,6 +38,7 @@
     "compile": "tsc -p ./ && gulp tslint",
     "compileDev": "tsc -p ./ && gulp tslint && webpack --mode development",
     "watch": "tsc -watch -p ./",
+    "watch2": "tsc -p ./ && webpack --mode development --watch",
     "tdd": "mocha --opts ./mocha.opts --watch --watch-extensions ts test/unitTests/**/*.test.ts*",
     "test": "gulp test",
     "test:unit": "gulp test:unit",
@@ -395,6 +396,16 @@
           "default": true,
           "description": "Enable/disable default C# formatter (requires restart)."
         },
+        "csharp.diagnosticLevel": {
+          "type": "string",
+          "enum": [
+            "none",
+            "error",
+            "warning"
+          ],
+          "default": "error",
+          "description": "which should show in problems panel"
+        },
         "csharp.suppressDotnetInstallWarning": {
           "type": "boolean",
           "default": false,
@@ -486,12 +497,12 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                  "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                   "default": []
                 },
                 "searchMicrosoftSymbolServer": {
                   "type": "boolean",
-                  "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                  "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                   "default": false
                 },
                 "cachePath": {
@@ -1350,12 +1361,12 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -1761,12 +1772,12 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -2418,12 +2429,12 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -2829,12 +2840,12 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {

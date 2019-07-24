@@ -27,13 +27,14 @@ export class Options {
         public enableMsBuildLoadProjectsOnDemand: boolean,
         public enableRoslynAnalyzers: boolean,
         public enableEditorConfigSupport: boolean,
+        public diagnosticLevel: string,
         public razorPluginPath?: string,
         public defaultLaunchSolution?: string,
         public monoPath?: string,
         public excludePaths?: string[],
-        public maxProjectFileCountForDiagnosticAnalysis?: number | null) 
-        {    
-        }
+        public maxProjectFileCountForDiagnosticAnalysis?: number | null,
+    ) {
+    }
 
     public static Read(vscode: vscode): Options {
         // Extra effort is taken below to ensure that legacy versions of options
@@ -65,9 +66,10 @@ export class Options {
         const maxProjectResults = omnisharpConfig.get<number>('maxProjectResults', 250);
         const defaultLaunchSolution = omnisharpConfig.get<string>('defaultLaunchSolution', undefined);
         const useEditorFormattingSettings = omnisharpConfig.get<boolean>('useEditorFormattingSettings', true);
-        
+
         const enableRoslynAnalyzers = omnisharpConfig.get<boolean>('enableRoslynAnalyzers', false);
         const enableEditorConfigSupport = omnisharpConfig.get<boolean>('enableEditorConfigSupport', false);
+        const diagnosticLevel = csharpConfig.get<string>('diagnosticLevel', 'error');
 
         const useFormatting = csharpConfig.get<boolean>('format.enable', true);
 
@@ -91,11 +93,9 @@ export class Options {
 
         let workspaceConfig = vscode.workspace.getConfiguration();
         let excludePaths = [];
-        if (workspaceConfig)
-        {
+        if (workspaceConfig) {
             let excludeFilesOption = workspaceConfig.get<{ [i: string]: boolean }>('files.exclude');
-            if (excludeFilesOption)
-            {
+            if (excludeFilesOption) {
                 for (let field in excludeFilesOption) {
                     if (excludeFilesOption[field]) {
                         excludePaths.push(field);
@@ -103,7 +103,7 @@ export class Options {
                 }
             }
         }
-        
+
 
         return new Options(
             path,
@@ -126,6 +126,7 @@ export class Options {
             enableMsBuildLoadProjectsOnDemand,
             enableRoslynAnalyzers,
             enableEditorConfigSupport,
+            diagnosticLevel,
             razorPluginPath,
             defaultLaunchSolution,
             monoPath,

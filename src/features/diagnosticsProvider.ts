@@ -22,8 +22,9 @@ export class Advisor {
     private _packageRestoreCounter: number = 0;
     private _projectSourceFileCounts: { [path: string]: number } = Object.create(null);
 
-    constructor(server: OmniSharpServer, private optionProvider: OptionProvider) {
+    constructor(server: OmniSharpServer, public optionProvider: OptionProvider) {
         this._server = server;
+        this.optionProvider = optionProvider;
 
         let d1 = server.onProjectChange(this._onProjectChange, this);
         let d2 = server.onProjectAdded(this._onProjectAdded, this);
@@ -250,8 +251,7 @@ class DiagnosticsProvider extends AbstractSupport {
 
                 // (re)set new diagnostics for this document
                 let diagnosticsInFile = this._mapQuickFixesAsDiagnosticsInFile(quickFixes);
-
-                this._diagnostics.set(document.uri, diagnosticsInFile.map(x => x.diagnostic));
+                this._diagnostics.set(document.uri, this.filterDiagnostic(diagnosticsInFile.map(x => x.diagnostic)));
             }
             catch (error) {
                 return;
@@ -260,6 +260,16 @@ class DiagnosticsProvider extends AbstractSupport {
 
         source.token.onCancellationRequested(() => clearTimeout(handle));
         this._documentValidations[key] = source;
+    }
+    private filterDiagnostic(diagnostics: vscode.Diagnostic[]) {
+        if (diagnostics == null) { return null; }
+        let dl = this._validationAdvisor.optionProvider.GetLatestOptions().diagnosticLevel;
+        return diagnostics.filter(x => {
+            if (dl == 'none') { return false; }
+            else if (dl == 'error') { return x.severity == vscode.DiagnosticSeverity.Error; }
+            else { return true; }
+        });
+        // console.log('set diag...', document.uri, diagnosticsInFile.length, diagnosticsFiltered.length, dl);
     }
 
     private _mapQuickFixesAsDiagnosticsInFile(quickFixes: protocol.QuickFix[]): { diagnostic: vscode.Diagnostic, fileName: string }[] {
@@ -310,11 +320,15 @@ class DiagnosticsProvider extends AbstractSupport {
                         this._diagnostics.delete(uri);
                     }
                 });
+                entries.forEach(v => {
+                    v[1] = this.filterDiagnostic(v[1]);
+                });
 
                 // replace all entries
                 this._diagnostics.set(entries);
             }
             catch (error) {
+                console.log('valid project error', error);
                 return;
             }
         }, 3000);
@@ -343,8 +357,7 @@ class DiagnosticsProvider extends AbstractSupport {
         return { diagnostic: diagnostic, fileName: quickFix.FileName };
     }
 
-    private _getDiagnosticDisplay(quickFix: protocol.QuickFix, severity: vscode.DiagnosticSeverity | "hidden"): { severity: vscode.DiagnosticSeverity | "hidden", isFadeout: boolean }
-    {
+    private _getDiagnosticDisplay(quickFix: protocol.QuickFix, severity: vscode.DiagnosticSeverity | "hidden"): { severity: vscode.DiagnosticSeverity | "hidden", isFadeout: boolean } {
         // CS0162 & CS8019 => Unnused using and unreachable code.
         // These hard coded values bring some goodnes of fading even when analyzers are disabled.
         let isFadeout = (quickFix.Tags && !!quickFix.Tags.find(x => x.toLowerCase() == 'unnecessary')) || quickFix.Id == "CS0162" || quickFix.Id == "CS8019";
@@ -353,7 +366,7 @@ class DiagnosticsProvider extends AbstractSupport {
             // Theres no such thing as hidden severity in VSCode,
             // however roslyn uses commonly analyzer with hidden to fade out things.
             // Without this any of those doesn't fade anything in vscode.
-            return { severity: vscode.DiagnosticSeverity.Hint , isFadeout };
+            return { severity: vscode.DiagnosticSeverity.Hint, isFadeout };
         }
 
         return { severity: severity, isFadeout };
