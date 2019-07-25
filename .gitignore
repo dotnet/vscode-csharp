@@ -9,6 +9,7 @@ out
 .razor
 dist/
 *.razor.json
+yarn.lock
 
 install.*
 

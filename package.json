@@ -403,7 +403,7 @@
             "error",
             "warning"
           ],
-          "default": "error",
+          "default": "warning",
           "description": "which should show in problems panel"
         },
         "csharp.suppressDotnetInstallWarning": {
