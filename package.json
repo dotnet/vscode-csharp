@@ -626,11 +626,13 @@
             "null"
           ],
           "default": null,
+          "scope": "machine",
           "description": "Specifies the path to OmniSharp. This can be the absolute path to an OmniSharp executable, a specific version number, or \"latest\". If a version number or \"latest\" is specified, the appropriate version of OmniSharp will be downloaded on your behalf."
         },
         "omnisharp.useGlobalMono": {
           "type": "string",
           "default": "auto",
+          "scope": "machine",
           "enum": [
             "auto",
             "always",
@@ -649,6 +651,7 @@
             "null"
           ],
           "default": null,
+          "scope": "machine",
           "description": "Specifies the path to a mono installation to use when \"useGlobalMono\" is set to \"always\" or \"auto\", instead of the default system one."
         },
         "omnisharp.waitForDebugger": {
@@ -730,6 +733,7 @@
             "null"
           ],
           "default": null,
+          "scope": "machine",
           "description": "Overrides the path to the Razor plugin dll."
         },
         "razor.devmode": {
@@ -748,6 +752,7 @@
             "null"
           ],
           "default": null,
+          "scope": "machine",
           "description": "Overrides the path to the Razor Language Server directory."
         },
         "razor.languageServer.debug": {
