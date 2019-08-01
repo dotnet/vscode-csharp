@@ -118,3 +118,7 @@ export async function debugTestStop(server: OmniSharpServer, request: protocol.V
 export async function isNetCoreProject(project: protocol.MSBuildProject) {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp') || tf.ShortName.startsWith('netstandard')) !== undefined;
 }
+
+export async function overrideImplement(server: OmniSharpServer, request: protocol.OverrideImplementRequest, token: vscode.CancellationToken) {
+    return server.makeRequest<protocol.OverrideImplementResponse>(protocol.Requests.OverrideImplement, request, token);
+}

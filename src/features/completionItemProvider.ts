@@ -2,13 +2,15 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-
+import * as vscode from 'vscode';
 import { extractSummaryText } from './documentation';
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import { createRequest } from '../omnisharp/typeConversion';
-import { CompletionItemProvider, CompletionItem, CompletionItemKind, CompletionContext, CompletionTriggerKind, CancellationToken, TextDocument, Range, Position, CompletionList } from 'vscode';
+import { createRequest, toRange2 } from '../omnisharp/typeConversion';
+import { CompletionItemProvider, CompletionItem, CompletionItemKind, CompletionContext, CompletionTriggerKind, CancellationToken, TextDocument, Range, Position, CompletionList, ProviderResult, TextEdit, WorkspaceEdit } from 'vscode';
+import { OmniSharpServer } from '../omnisharp/server';
+import CompositeDisposable from '../CompositeDisposable';
 
 export default class OmniSharpCompletionItemProvider extends AbstractSupport implements CompletionItemProvider {
 
@@ -22,6 +24,23 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
         '{', '}', '[', ']', '(', ')', '.', ',', ':',
         ';', '+', '-', '*', '/', '%', '&', '|', '^', '!',
         '~', '=', '<', '>', '?', '@', '#', '\'', '\"', '\\'];
+
+    private static CommandId = "omnisharp.overrideImplement";
+
+    constructor(server: OmniSharpServer) {
+        super(server);
+        let registerCommandDisposable = vscode.commands.registerCommand(OmniSharpCompletionItemProvider.CommandId, this._overrideImplement, this);
+        this.addDisposables(new CompositeDisposable(registerCommandDisposable));
+    }
+
+    resolveCompletionItem(item: CompletionItem, token: CancellationToken): ProviderResult<CompletionItem> {
+        setTimeout(() => { 
+
+            item.insertText = "delay insert";
+         }, 10000);
+
+        return item;
+    }
 
     public async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionList> {
 
@@ -61,7 +80,19 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
 
                 completion.documentation = extractSummaryText(response.Description);
                 completion.kind = _kinds[response.Kind] || CompletionItemKind.Property;
-                completion.insertText = response.CompletionText.replace(/<>/g, '');
+
+                if (!response.OverrideTarget) {
+                    completion.insertText = response.CompletionText.replace(/<>/g, '');
+                } else {
+                    let req = createRequest<protocol.OverrideImplementRequest>(document, position);
+                    req.OverrideTarget = response.OverrideTarget;
+                    completion.insertText = "";
+                    completion.command = {
+                        title: `Override ${response.CompletionText}`,
+                        command: OmniSharpCompletionItemProvider.CommandId,
+                        arguments: [req]
+                    };
+                }
 
                 completion.commitCharacters = response.IsSuggestionMode
                     ? OmniSharpCompletionItemProvider.CommitCharactersWithoutSpace
@@ -106,6 +137,34 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
         catch (error) {
             return;
         }
+    }
+
+    private async _overrideImplement(req: protocol.OverrideImplementRequest) {
+        let uri = vscode.Uri.file(req.FileName);
+
+        let token = this._createCancellationToken(1000);
+        let response = await serverUtils.overrideImplement(this._server, req, token);
+
+        if (!token.isCancellationRequested) {
+            let edits: TextEdit[] = [];
+            for (let change of response.Changes) {
+                let range = toRange2(change);
+                edits.push(TextEdit.replace(range, change.NewText));
+            }
+
+            let edit = new WorkspaceEdit();
+            edit.set(uri, edits);
+            vscode.workspace.applyEdit(edit);
+        }
+    }
+
+    private _createCancellationToken(timeoutMs: number): vscode.CancellationToken {
+        const cancellationTokenSource = new vscode.CancellationTokenSource();
+
+        setTimeout(() => {
+            cancellationTokenSource.cancel();
+        }, timeoutMs);
+        return cancellationTokenSource.token;
     }
 }
 

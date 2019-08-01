@@ -28,6 +28,7 @@ export module Requests {
     export const TypeLookup = '/typelookup';
     export const UpdateBuffer = '/updatebuffer';
     export const Metadata = '/metadata';
+    export const OverrideImplement = "/overrideImplement";
 }
 
 export namespace WireProtocol {
@@ -279,6 +280,7 @@ export interface AutoCompleteResponse {
     Kind: string;
     IsSuggestionMode: boolean;
     Preselect: boolean;
+    OverrideTarget: string;
 }
 
 export interface ProjectInformationResponse {
@@ -446,6 +448,14 @@ export interface PackageDependency {
 
 export interface FilesChangedRequest extends Request {
     ChangeType: FileChangeType;
+}
+
+export interface OverrideImplementRequest extends Request {
+    OverrideTarget: string;
+}
+
+export interface OverrideImplementResponse {
+    Changes: TextChange[];
 }
 
 export enum FileChangeType {
