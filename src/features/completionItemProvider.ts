@@ -8,7 +8,7 @@ import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { createRequest, toRange2 } from '../omnisharp/typeConversion';
-import { CompletionItemProvider, CompletionItem, CompletionItemKind, CompletionContext, CompletionTriggerKind, CancellationToken, TextDocument, Range, Position, CompletionList, ProviderResult, TextEdit, WorkspaceEdit } from 'vscode';
+import { CompletionItemProvider, CompletionItem, CompletionItemKind, CompletionContext, CompletionTriggerKind, CancellationToken, TextDocument, Range, Position, CompletionList, TextEdit, WorkspaceEdit } from 'vscode';
 import { OmniSharpServer } from '../omnisharp/server';
 import CompositeDisposable from '../CompositeDisposable';
 
@@ -31,15 +31,6 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
         super(server);
         let registerCommandDisposable = vscode.commands.registerCommand(OmniSharpCompletionItemProvider.CommandId, this._overrideImplement, this);
         this.addDisposables(new CompositeDisposable(registerCommandDisposable));
-    }
-
-    resolveCompletionItem(item: CompletionItem, token: CancellationToken): ProviderResult<CompletionItem> {
-        setTimeout(() => { 
-
-            item.insertText = "delay insert";
-         }, 10000);
-
-        return item;
     }
 
     public async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionList> {
