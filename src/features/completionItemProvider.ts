@@ -72,7 +72,7 @@ export default class OmniSharpCompletionItemProvider extends AbstractSupport imp
                 completion.documentation = extractSummaryText(response.Description);
                 completion.kind = _kinds[response.Kind] || CompletionItemKind.Property;
 
-                if (!response.OverrideTarget) {
+                if (response.OverrideTarget == null) {
                     completion.insertText = response.CompletionText.replace(/<>/g, '');
                 } else {
                     let req = createRequest<protocol.OverrideImplementRequest>(document, position);
