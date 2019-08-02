@@ -32,8 +32,8 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
     disposable.add(vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new ShowOmniSharpChannel())));
 
     // Todo these should really open new menu that lists correct options...
-    disposable.add(vscode.commands.registerCommand('o.fixAll.solution', () => fixAllTemporary(server)));
-    disposable.add(vscode.commands.registerCommand('o.fixAll.project', () => fixAllTemporary(server)));
+    disposable.add(vscode.commands.registerCommand('o.fixAll.solution', async () => fixAllTemporary(server)));
+    disposable.add(vscode.commands.registerCommand('o.fixAll.project', async () => fixAllTemporary(server)));
 
     disposable.add(vscode.commands.registerCommand('dotnet.restore.project', async () => pickProjectAndDotnetRestore(server, eventStream)));
     disposable.add(vscode.commands.registerCommand('dotnet.restore.all', async () => dotnetRestoreAllProjects(server, eventStream)));
@@ -65,19 +65,30 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
 
 // This should be replaced with method that opens menu.
 async function fixAllTemporary(server: OmniSharpServer): Promise<void> {
-    let response = await serverUtils.fixAll(server, { FileName: "not_used_yet"});
+    let availableFixes = await serverUtils.getFixAll(server, { FileName: vscode.window.activeTextEditor.document.fileName, Scope: protocol.FixAllScope.Solution });
+    let targets = availableFixes.Items.map(x => `${x.Id}: ${x.Message}`);
 
-    response.Changes.forEach(change => {
-        const uri = vscode.Uri.file(change.FileName);
+    return vscode.window.showQuickPick(targets, {
+        matchOnDescription: true,
+        placeHolder: `Select fix all action`
+    }).then(async selectedAction => {
+        // action comes in form like "CS0000: Description message"
+        let actionTokens = selectedAction.split(":");
 
-        let edits: WorkspaceEdit = new WorkspaceEdit();
-        change.Changes.forEach(change => {
-            edits.replace(uri,
-                new vscode.Range(change.StartLine - 1, change.StartColumn - 1, change.EndLine - 1, change.EndColumn - 1),
-                change.NewText);
+        let response = await serverUtils.runFixAll(server, { FileName: vscode.window.activeTextEditor.document.fileName, Scope: protocol.FixAllScope.Solution, FixAllFilter: [{ Id: actionTokens[0], Message: actionTokens[1] }] });
+
+        response.Changes.forEach(change => {
+            const uri = vscode.Uri.file(change.FileName);
+
+            let edits: WorkspaceEdit = new WorkspaceEdit();
+            change.Changes.forEach(change => {
+                edits.replace(uri,
+                    new vscode.Range(change.StartLine - 1, change.StartColumn - 1, change.EndLine - 1, change.EndColumn - 1),
+                    change.NewText);
+            });
+
+            vscode.workspace.applyEdit(edits);
         });
-
-        vscode.workspace.applyEdit(edits);
     });
 }
 
