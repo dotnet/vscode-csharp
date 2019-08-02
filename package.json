@@ -191,9 +191,9 @@
     {
       "id": "OmniSharp",
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/73cab26d-cc33-42ee-bbee-4ee2399bcd00/df8feab37b0c49457b9f6fe62f940207/omnisharp-osx-1.34.0.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.34.0.zip",
-      "installPath": ".omnisharp/1.34.0",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/b0452083-1611-4ec7-bc02-078587e73e19/42f6cfa5b1b33c167f00827ead88c972/omnisharp-osx-1.34.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.34.1.zip",
+      "installPath": ".omnisharp/1.34.1",
       "platforms": [
         "darwin"
       ],
@@ -201,16 +201,16 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.34.0/run",
+      "installTestPath": "./.omnisharp/1.34.1/run",
       "platformId": "osx",
-      "integrity": "3C2DE49C24590F6C3C91A9FB421DFC65C0A0AFA4A2C5A5743411CB21DE46170D"
+      "integrity": "9E313CD7D3310D20F5DB94F21CF36A535F1F88E4C9B8859B50567F9FF8528396"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/73cab26d-cc33-42ee-bbee-4ee2399bcd00/572c0f88abe6a55a6a5a474f0c8f1965/omnisharp-linux-x86-1.34.0.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.34.0.zip",
-      "installPath": ".omnisharp/1.34.0",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/b0452083-1611-4ec7-bc02-078587e73e19/9cf6a6dee0ae62ef55263daf30900c17/omnisharp-linux-x86-1.34.1.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.34.1.zip",
+      "installPath": ".omnisharp/1.34.1",
       "platforms": [
         "linux"
       ],
@@ -222,9 +222,9 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.34.0/run",
+      "installTestPath": "./.omnisharp/1.34.1/run",
       "platformId": "linux-x86",
-      "integrity": "7211D70DF39C4CAA65BAA8FD2244C317AAAE316FFA75C9A64256DD91C8977B60"
+      "integrity": "E7487A072B42D068D4BE7EEBF3B2C8201F70B6A960A58CF59A7070A786A23780"
     },
     {
       "id": "OmniSharp",
