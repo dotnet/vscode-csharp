@@ -804,6 +804,11 @@
         "category": "OmniSharp"
       },
       {
+        "command": "o.fixAll.document",
+        "title": "Fix all code issues in document",
+        "category": "OmniSharp"
+      },
+      {
         "command": "dotnet.generateAssets",
         "title": "Generate Assets for Build and Debug",
         "category": ".NET"

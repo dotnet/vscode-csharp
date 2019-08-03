@@ -32,8 +32,9 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
     disposable.add(vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new ShowOmniSharpChannel())));
 
     // Todo these should really open new menu that lists correct options...
-    disposable.add(vscode.commands.registerCommand('o.fixAll.solution', async () => fixAllTemporary(server)));
-    disposable.add(vscode.commands.registerCommand('o.fixAll.project', async () => fixAllTemporary(server)));
+    disposable.add(vscode.commands.registerCommand('o.fixAll.solution', async () => fixAllTemporary(server, protocol.FixAllScope.Solution)));
+    disposable.add(vscode.commands.registerCommand('o.fixAll.project', async () => fixAllTemporary(server, protocol.FixAllScope.Project)));
+    disposable.add(vscode.commands.registerCommand('o.fixAll.document', async () => fixAllTemporary(server, protocol.FixAllScope.Document)));
 
     disposable.add(vscode.commands.registerCommand('dotnet.restore.project', async () => pickProjectAndDotnetRestore(server, eventStream)));
     disposable.add(vscode.commands.registerCommand('dotnet.restore.all', async () => dotnetRestoreAllProjects(server, eventStream)));
@@ -63,8 +64,8 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
     return new CompositeDisposable(disposable);
 }
 
-// This should be replaced with method that opens menu.
-async function fixAllTemporary(server: OmniSharpServer): Promise<void> {
+// This should be replaced with method that opens menu etc.
+async function fixAllTemporary(server: OmniSharpServer, scope: protocol.FixAllScope): Promise<void> {
     let availableFixes = await serverUtils.getFixAll(server, { FileName: vscode.window.activeTextEditor.document.fileName, Scope: protocol.FixAllScope.Solution });
     let targets = availableFixes.Items.map(x => `${x.Id}: ${x.Message}`);
 
@@ -72,10 +73,14 @@ async function fixAllTemporary(server: OmniSharpServer): Promise<void> {
         matchOnDescription: true,
         placeHolder: `Select fix all action`
     }).then(async selectedAction => {
+        if (selectedAction === undefined) {
+            return;
+        }
+
         // action comes in form like "CS0000: Description message"
         let actionTokens = selectedAction.split(":");
 
-        let response = await serverUtils.runFixAll(server, { FileName: vscode.window.activeTextEditor.document.fileName, Scope: protocol.FixAllScope.Solution, FixAllFilter: [{ Id: actionTokens[0], Message: actionTokens[1] }] });
+        let response = await serverUtils.runFixAll(server, { FileName: vscode.window.activeTextEditor.document.fileName, Scope: scope, FixAllFilter: [{ Id: actionTokens[0], Message: actionTokens[1] }] });
 
         response.Changes.forEach(change => {
             const uri = vscode.Uri.file(change.FileName);
