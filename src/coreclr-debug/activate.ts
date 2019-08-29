@@ -77,7 +77,7 @@ async function completeDebuggerInstall(platformInformation: PlatformInformation,
 
 function showInstallErrorMessage(eventStream : EventStream) {
     eventStream.post(new DebuggerNotInstalledFailure());
-    vscode.window.showErrorMessage("An error occured during installation of the .NET Core Debugger. The C# extension may need to be reinstalled.");
+    vscode.window.showErrorMessage("An error occurred during installation of the .NET Core Debugger. The C# extension may need to be reinstalled.");
 }
 
 function showDotnetToolsWarning(message: string): void {
