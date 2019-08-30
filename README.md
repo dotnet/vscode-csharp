@@ -20,7 +20,7 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
-### What's new in 1.21.0
+### What's new in 1.21.2
 
 * Added a `omnisharp.enableEditorConfigSupport` setting to enable support for .editorconfig.
 * Modified the auto generated tasks in tasks.json to generate full paths and disable summary to fix the problem of no source links in the problems panel.
@@ -29,7 +29,7 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * Added support for *AdditionalFiles* in csproj files
 * Improved the MSBuild selection logic. The standalone instance inside OmniSharp is now preferred over VS2017, with VS2019 given the highest priority.
 
-See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.21.0/CHANGELOG.md) for more detail.
+See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.21.2/CHANGELOG.md) for more detail.
 
 ### Supported Operating Systems for Debugging
 

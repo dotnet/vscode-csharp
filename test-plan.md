@@ -151,7 +151,7 @@ To setup a test project to verify on you can do:
 * Open `Counter.razor`, in the `@functions { ... }` block add:
   ```C#
   [Parameter]
-  private int IncrementAmount { get; set; }
+  public int IncrementAmount { get; set; }
   ```
   - Save `Counter.razor` then wait 5 seconds.
   - Go back to `Index.razor` and type `<Counter |`, hit ctrl space, search for `IncrementAmount` attribute, commit the completion. Ensure that it auto-completes to `<Counter IncrementAmount="|"`

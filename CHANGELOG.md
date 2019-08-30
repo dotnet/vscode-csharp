@@ -9,7 +9,7 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.21.1 [To be released]
+## 1.21.1 (August 20, 2019)
 * Fixed a regression which caused AllowUnsafeCode in csproj to also enable TreatWarningsAsErrors behavior.([omnisharp-roslyn#1565](https://github.com/OmniSharp/omnisharp-roslyn/issues/1565), PR: [omnisharp-roslyn#1567](https://github.com/OmniSharp/omnisharp-roslyn/pull/1567))
 
 ## 1.21.0 (July 18, 2019)
