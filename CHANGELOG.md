@@ -1,4 +1,4 @@
-## Known Issues in 1.19.1
+## Known Issues in 1.21.2
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
@@ -8,6 +8,9 @@
   * Emmet based abbreviation expansion is not yet supported
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
+
+## 1.21.2 (September 5, 2019)
+* Improved support for .NET Core 3
 
 ## 1.21.1 (August 20, 2019)
 * Fixed a regression which caused AllowUnsafeCode in csproj to also enable TreatWarningsAsErrors behavior.([omnisharp-roslyn#1565](https://github.com/OmniSharp/omnisharp-roslyn/issues/1565), PR: [omnisharp-roslyn#1567](https://github.com/OmniSharp/omnisharp-roslyn/pull/1567))
