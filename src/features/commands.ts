@@ -55,7 +55,7 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
     disposable.add(vscode.commands.registerCommand('csharp.listRemoteProcess', async (args) => RemoteAttachPicker.ShowAttachEntries(args, platformInfo)));
 
     disposable.add(vscode.commands.registerCommand('csharp.setNextStatement', async () => setNextStatement()));
-
+ 
     // Register command for adapter executable command.
     disposable.add(vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream, packageJSON, extensionPath)));
     disposable.add(vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream, packageJSON, extensionPath)));
@@ -66,7 +66,7 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
 
 // This should be replaced with method that opens menu etc.
 async function fixAllTemporary(server: OmniSharpServer, scope: protocol.FixAllScope): Promise<void> {
-    let availableFixes = await serverUtils.getFixAll(server, { FileName: vscode.window.activeTextEditor.document.fileName, Scope: protocol.FixAllScope.Solution });
+    let availableFixes = await serverUtils.getFixAll(server, { FileName: vscode.window.activeTextEditor.document.fileName, Scope: scope });
     let targets = availableFixes.Items.map(x => `${x.Id}: ${x.Message}`);
 
     return vscode.window.showQuickPick(targets, {
