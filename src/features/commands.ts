@@ -55,7 +55,7 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
     disposable.add(vscode.commands.registerCommand('csharp.listRemoteProcess', async (args) => RemoteAttachPicker.ShowAttachEntries(args, platformInfo)));
 
     disposable.add(vscode.commands.registerCommand('csharp.setNextStatement', async () => setNextStatement()));
- 
+
     // Register command for adapter executable command.
     disposable.add(vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream, packageJSON, extensionPath)));
     disposable.add(vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream, packageJSON, extensionPath)));
@@ -69,7 +69,9 @@ async function fixAllTemporary(server: OmniSharpServer, scope: protocol.FixAllSc
     let availableFixes = await serverUtils.getFixAll(server, { FileName: vscode.window.activeTextEditor.document.fileName, Scope: scope });
     let targets = availableFixes.Items.map(x => `${x.Id}: ${x.Message}`);
 
-    return vscode.window.showQuickPick(targets, {
+    const fixAllIssuesSelectItem = "Fix all issues";
+
+    return vscode.window.showQuickPick([fixAllIssuesSelectItem, ...targets], {
         matchOnDescription: true,
         placeHolder: `Select fix all action`
     }).then(async selectedAction => {
@@ -77,10 +79,15 @@ async function fixAllTemporary(server: OmniSharpServer, scope: protocol.FixAllSc
             return;
         }
 
-        // action comes in form like "CS0000: Description message"
-        let actionTokens = selectedAction.split(":");
+        let response = undefined;
 
-        let response = await serverUtils.runFixAll(server, { FileName: vscode.window.activeTextEditor.document.fileName, Scope: scope, FixAllFilter: [{ Id: actionTokens[0], Message: actionTokens[1] }] });
+        if (selectedAction == fixAllIssuesSelectItem) {
+            response = await serverUtils.runFixAll(server, { FileName: vscode.window.activeTextEditor.document.fileName, Scope: scope, FixAllFilter: undefined });
+        } else {
+            // action comes in form like "CS0000: Description message"
+            let actionTokens = selectedAction.split(":");
+            response = await serverUtils.runFixAll(server, { FileName: vscode.window.activeTextEditor.document.fileName, Scope: scope, FixAllFilter: [{ Id: actionTokens[0], Message: actionTokens[1] }] });
+        }
 
         response.Changes.forEach(change => {
             const uri = vscode.Uri.file(change.FileName);
