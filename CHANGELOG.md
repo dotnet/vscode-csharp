@@ -1,4 +1,4 @@
-## Known Issues in 1.21.3
+## Known Issues in 1.21.4
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
@@ -9,7 +9,7 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.21.3 (September 30, 2019)
+## 1.21.4 (September 30, 2019)
 * Improved support for .NET Core 3
 
 ## 1.21.3 (September 18, 2019)
