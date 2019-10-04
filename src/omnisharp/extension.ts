@@ -38,6 +38,7 @@ import trackVirtualDocuments from '../features/virtualDocumentTracker';
 import { StructureProvider } from '../features/structureProvider';
 import { OmniSharpMonoResolver } from './OmniSharpMonoResolver';
 import { getMonoVersion } from '../utils/getMonoVersion';
+import { FixAllProvider } from '../features/fixAllProvider';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
@@ -84,6 +85,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         const codeActionProvider = new CodeActionProvider(server, optionProvider);
         localDisposables.add(codeActionProvider);
         localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
+        localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, new FixAllProvider(server)));
         localDisposables.add(reportDiagnostics(server, advisor));
         localDisposables.add(forwardChanges(server));
         localDisposables.add(trackVirtualDocuments(server, eventStream));
