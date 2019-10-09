@@ -77,7 +77,7 @@
     "async-file": "2.0.2",
     "fs-extra": "7.0.1",
     "http-proxy-agent": "2.1.0",
-    "https-proxy-agent": "2.2.1",
+    "https-proxy-agent": "3.0.0",
     "jsonc-parser": "2.0.3",
     "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/e9818322-b13b-44d7-b54b-16d2861ccdab/12a03813486ddd38c2cd544d8d321d1e/microsoft.aspnetcore.razor.vscode-1.0.0-alpha3-20190819.3.tgz",
     "mkdirp": "0.5.1",
