@@ -20,6 +20,12 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
+## What's new in 1.21.5
+* Fixed regression that caused "go to metadata" to not work ([omnisharp-roslyn/#1624](https://github.com/OmniSharp/omnisharp-roslyn/issues/1624), PR: [omnisharp-roslyn/#1625](https://github.com/OmniSharp/omnisharp-roslyn/pull/1625))
+
+## What's new in 1.21.4
+* Improved support for .NET Core 3
+
 ### What's new in 1.21.3
 
 * Added support for `CheckForOverflowUnderflow ` in csproj files
@@ -29,7 +35,7 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 
 * Added a `omnisharp.enableEditorConfigSupport` setting to enable support for .editorconfig.
 * Modified the auto generated tasks in tasks.json to generate full paths and disable summary to fix the problem of no source links in the problems panel.
-* Improved analyzers performance by introducing background analysis support 
+* Improved analyzers performance by introducing background analysis support
 * End of support for .NET Core 1.0 and 1.1 (`project.json`-based .NET Core flavors).
 * Added support for *AdditionalFiles* in csproj files
 * Improved the MSBuild selection logic. The standalone instance inside OmniSharp is now preferred over VS2017, with VS2019 given the highest priority.
