@@ -1,6 +1,6 @@
 {
     "version": "0.2.0",
-    "configurations": [    
+    "configurations": [
         {
             "name": "Launch Extension",
             "type": "extensionHost",
@@ -144,8 +144,8 @@
                 "updatePackageDependencies"
             ],
             "env": {
-                "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/bafccf8e-fa3b-4011-97e7-14ae0d4cd67f/3eddc6c5df0592ef376b1e3f42ebd69f/omnisharp-linux-x64-1.34.4.zip,https://download.visualstudio.microsoft.com/download/pr/bafccf8e-fa3b-4011-97e7-14ae0d4cd67f/9bb38e61e325bc75e54e16f6dbb996da/omnisharp-linux-x86-1.34.4.zip,https://download.visualstudio.microsoft.com/download/pr/bafccf8e-fa3b-4011-97e7-14ae0d4cd67f/3bf8dfff25975c5ac921e3db7c1d0ad1/omnisharp-osx-1.34.4.zip,https://download.visualstudio.microsoft.com/download/pr/bafccf8e-fa3b-4011-97e7-14ae0d4cd67f/b6f86a777b76130fdf9868f9624cf746/omnisharp-win-x64-1.34.4.zip,https://download.visualstudio.microsoft.com/download/pr/bafccf8e-fa3b-4011-97e7-14ae0d4cd67f/a3440be64872dc1df4b624b35917bee7/omnisharp-win-x86-1.34.4.zip" ,
-                "NEW_DEPS_VERSION": "1.34.4"
+                "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/0093813b-a367-4d2a-beaf-a56ed844b4a5/e9a161e44376a20a44bc2401ea586632/omnisharp-linux-x64-1.34.5.zip,https://download.visualstudio.microsoft.com/download/pr/0093813b-a367-4d2a-beaf-a56ed844b4a5/19a580a49dd9629e3b425d0e18debffe/omnisharp-linux-x86-1.34.5.zip,https://download.visualstudio.microsoft.com/download/pr/0093813b-a367-4d2a-beaf-a56ed844b4a5/f5acacd403cf5d9d905c1eb8bdd96186/omnisharp-osx-1.34.5.zip,https://download.visualstudio.microsoft.com/download/pr/0093813b-a367-4d2a-beaf-a56ed844b4a5/54ea7bc195be890db2fc0e8f5f9d3662/omnisharp-win-x64-1.34.5.zip,https://download.visualstudio.microsoft.com/download/pr/0093813b-a367-4d2a-beaf-a56ed844b4a5/6dcb3a71c29bbcf0ffff994954b2a3ee/omnisharp-win-x86-1.34.5.zip" ,
+                "NEW_DEPS_VERSION": "1.34.5"
             },
             "cwd": "${workspaceFolder}"
         }
