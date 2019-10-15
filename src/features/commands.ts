@@ -23,18 +23,12 @@ import reportIssue from './reportIssue';
 import setNextStatement from '../coreclr-debug/setNextStatement';
 import { IMonoResolver } from '../constants/IMonoResolver';
 import { getDotnetInfo } from '../utils/getDotnetInfo';
-import { WorkspaceEdit } from 'vscode';
 
 export default function registerCommands(server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionProvider: OptionProvider, monoResolver: IMonoResolver, packageJSON: any, extensionPath: string): CompositeDisposable {
     let disposable = new CompositeDisposable();
     disposable.add(vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server)));
     disposable.add(vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionProvider)));
     disposable.add(vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new ShowOmniSharpChannel())));
-
-    // Todo these should really open new menu that lists correct options...
-    disposable.add(vscode.commands.registerCommand('o.fixAll.solution', async () => fixAllTemporary(server, protocol.FixAllScope.Solution)));
-    disposable.add(vscode.commands.registerCommand('o.fixAll.project', async () => fixAllTemporary(server, protocol.FixAllScope.Project)));
-    disposable.add(vscode.commands.registerCommand('o.fixAll.document', async () => fixAllTemporary(server, protocol.FixAllScope.Document)));
 
     disposable.add(vscode.commands.registerCommand('dotnet.restore.project', async () => pickProjectAndDotnetRestore(server, eventStream)));
     disposable.add(vscode.commands.registerCommand('dotnet.restore.all', async () => dotnetRestoreAllProjects(server, eventStream)));
@@ -63,48 +57,7 @@ vscode.CodeAction
     return new CompositeDisposable(disposable);
 }
 
-// This should be replaced with method that opens menu etc.
-async function fixAllTemporary(server: OmniSharpServer, scope: protocol.FixAllScope): Promise<void> {
-    let availableFixes = await serverUtils.getFixAll(server, { FileName: vscode.window.activeTextEditor.document.fileName, Scope: scope });
 
-    let targets = availableFixes.Items.map(x => `${x.Id}: ${x.Message}`);
-
-    if (scope === protocol.FixAllScope.Document) {
-        targets = ["Fix all issues", ...targets];
-    }
-
-    return vscode.window.showQuickPick(targets, {
-        matchOnDescription: true,
-        placeHolder: `Select fix all action`
-    }).then(async selectedAction => {
-        let filter = undefined;
-
-        if (selectedAction === undefined) {
-            return;
-        }
-
-        if (selectedAction !== "Fix all issues") {
-            let actionTokens = selectedAction.split(":");
-            filter = [{ Id: actionTokens[0], Message: actionTokens[1] }]
-        }
-
-        // action comes in form like "CS0000: Description message"
-        let response = await serverUtils.runFixAll(server, { FileName: vscode.window.activeTextEditor.document.fileName, Scope: scope, FixAllFilter: filter });
-
-        response.Changes.forEach(change => {
-            const uri = vscode.Uri.file(change.FileName);
-
-            let edits: WorkspaceEdit = new WorkspaceEdit();
-            change.Changes.forEach(change => {
-                edits.replace(uri,
-                    new vscode.Range(change.StartLine - 1, change.StartColumn - 1, change.EndLine - 1, change.EndColumn - 1),
-                    change.NewText);
-            });
-
-            vscode.workspace.applyEdit(edits);
-        });
-    });
-}
 
 function restartOmniSharp(server: OmniSharpServer) {
     if (server.isRunning()) {
