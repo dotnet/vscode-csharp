@@ -613,7 +613,7 @@
         "csharp.testsCodeLens.enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Specifies whether the run and debug test CodeLens should be show be shown."
+          "description": "Specifies whether the run and debug test CodeLens should be shown."
         },
         "csharp.maxProjectFileCountForDiagnosticAnalysis": {
           "type": "number",
