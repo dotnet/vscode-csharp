@@ -28,7 +28,7 @@ The first time that C# code is opened in VS Code, the extension will download th
 
 
 ### Once for each project
-The following steps have to executed for every project. 
+The following steps have to be executed for every project. 
 ##### 1: Get a project
 You can start from scratch by creating an empty project with `dotnet new`. Begin by opening the terminal in Visual Studio Code (`View->Integrated Terminal`) and type these commands:
 
