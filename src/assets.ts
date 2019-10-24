@@ -189,41 +189,41 @@ export class AssetGenerator {
         return {
             label: 'build',
             command: 'dotnet',
-            type: 'process',
+            type: 'shell',
             args: commandArgs,
             problemMatcher: '$msCompile'
         };
     }
 
-    
+
     private createPublishTaskDescription(): tasks.TaskDescription {
         let commandArgs = ['publish'];
-        
+
         this.AddAdditionalCommandArgs(commandArgs);
-        
+
         return {
             label: 'publish',
             command: 'dotnet',
-            type: 'process',
+            type: 'shell',
             args: commandArgs,
             problemMatcher: '$msCompile'
         };
     }
-    
+
     private createWatchTaskDescription(): tasks.TaskDescription {
         let commandArgs = ['watch','run'];
-        
+
         this.AddAdditionalCommandArgs(commandArgs);
-        
+
         return {
             label: 'watch',
             command: 'dotnet',
-            type: 'process',
+            type: 'shell',
             args: commandArgs,
             problemMatcher: '$msCompile'
         };
     }
-    
+
     private AddAdditionalCommandArgs(commandArgs: string[]) {
         let buildProject = this.startupProject;
         if (!buildProject) {
@@ -237,7 +237,7 @@ export class AssetGenerator {
         commandArgs.push("/property:GenerateFullPaths=true");
         commandArgs.push("/consoleloggerparameters:NoSummary");
     }
-    
+
     public createTasksConfiguration(): tasks.TaskConfiguration {
         return {
             version: "2.0.0",
@@ -261,7 +261,7 @@ export function createWebLaunchConfiguration(programPath: string, workingDirecto
     // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
     "serverReadyAction": {
         "action": "openExternally",
-        "pattern": "^\\\\s*Now listening on:\\\\s+(https?://\\\\S+)"                
+        "pattern": "^\\\\s*Now listening on:\\\\s+(https?://\\\\S+)"
     },
     "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
