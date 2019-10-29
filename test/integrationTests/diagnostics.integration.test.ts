@@ -44,7 +44,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
     test("Return unnecessary tag in case of unnesessary using", async function () {
         let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 15*1000, 500);
 
-        let cs8019 = result.find(x => x.message.includes("CS8019"));
+        let cs8019 = result.find(x => x.source == "csharp" && x.code == "CS8019");
         expect(cs8019).to.not.be.undefined;
         expect(cs8019.tags).to.include(vscode.DiagnosticTag.Unnecessary);
     });
@@ -53,8 +53,8 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         this.skip(); // Remove this once https://github.com/OmniSharp/omnisharp-roslyn/issues/1458 is resolved.
         let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 15*1000, 500);
 
-        let ide0005 = result.find(x => x.message.includes("IDE0005"));
-        expect(ide0005).to.not.be(undefined);
+        let ide0005 = result.find(x => x.source == "csharp" && x.code == "IDE0005");
+        expect(ide0005).to.not.be.undefined;
         expect(ide0005.tags).to.include(vscode.DiagnosticTag.Unnecessary);
     });
 });

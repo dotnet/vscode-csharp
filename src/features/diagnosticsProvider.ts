@@ -335,6 +335,8 @@ class DiagnosticsProvider extends AbstractSupport {
         let message = `${quickFix.Text} [${quickFix.Projects.map(n => this._asProjectLabel(n)).join(', ')}]`;
 
         let diagnostic = new vscode.Diagnostic(toRange(quickFix), message, display.severity);
+        diagnostic.source = 'csharp';
+        diagnostic.code = quickFix.Id;
 
         if (display.isFadeout) {
             diagnostic.tags = [vscode.DiagnosticTag.Unnecessary];
