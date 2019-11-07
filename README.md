@@ -20,7 +20,11 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
-## What's new in  1.21.6
+# What's new in  1.21.7
+* Updated the embedded Mono to 6.4.0 (PR:[omnisharp-roslyn/#1640](https://github.com/OmniSharp/omnisharp-roslyn/pull/1640))
+* Improved support for .NET Core 3
+
+## What's new in 1.21.6
 * Fixed a bug that caused CS0019 diagnostic to be erroneously reported when comparing to `default` ([omnisharp-roslyn/#1619](https://github.com/OmniSharp/omnisharp-roslyn/issues/1619), PR:[omnisharp-roslyn/#1634](https://github.com/OmniSharp/omnisharp-roslyn/pull/1634))
 * Correctly respect request cancellation token in metadata service ([omnisharp-roslyn/#1631](https://github.com/OmniSharp/omnisharp-roslyn/pull/1631))
 * Improved support for .NET Core 3

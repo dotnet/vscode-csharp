@@ -9,6 +9,10 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
+## [1.21.7] (November 6, 2019)
+* Updated the embedded Mono to 6.4.0 (PR:[omnisharp-roslyn/#1640](https://github.com/OmniSharp/omnisharp-roslyn/pull/1640))
+* Improved support for .NET Core 3
+
 ## 1.21.6 (October 28, 2019)
 * Fixed a bug that caused CS0019 diagnostic to be erroneously reported when comparing to `default` ([omnisharp-roslyn/#1619](https://github.com/OmniSharp/omnisharp-roslyn/issues/1619), PR:[omnisharp-roslyn/#1634](https://github.com/OmniSharp/omnisharp-roslyn/pull/1634))
 * Fixed a concurrency bug in scripting/Cake support ([omnisharp-roslyn/#1627](https://github.com/OmniSharp/omnisharp-roslyn/pull/1627))
