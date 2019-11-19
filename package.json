@@ -829,11 +829,6 @@
         "category": "CSharp"
       },
       {
-        "command": "csharp.setNextStatement",
-        "title": "Set Next Statement (.NET)",
-        "category": "Debug"
-      },
-      {
         "command": "csharp.reportIssue",
         "title": "Report an issue",
         "category": "CSharp"
@@ -859,16 +854,6 @@
         "command": "o.showOutput",
         "key": "Ctrl+Shift+F9",
         "mac": "Cmd+Shift+F9"
-      },
-      {
-        "command": "csharp.setNextStatement",
-        "key": "Ctrl+Shift+F10",
-        "when": "inDebugMode && debugType == 'coreclr'"
-      },
-      {
-        "command": "csharp.setNextStatement",
-        "key": "Ctrl+Shift+F10",
-        "when": "inDebugMode && debugType == 'clr'"
       }
     ],
     "snippets": [
@@ -2960,16 +2945,6 @@
         {
           "command": "razor.reportIssue",
           "when": "resourceLangId == aspnetcorerazor"
-        }
-      ],
-      "editor/context": [
-        {
-          "command": "csharp.setNextStatement",
-          "when": "inDebugMode && debugType == 'coreclr'"
-        },
-        {
-          "command": "csharp.setNextStatement",
-          "when": "inDebugMode && debugType == 'clr'"
         }
       ]
     }
