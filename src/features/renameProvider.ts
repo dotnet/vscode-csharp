@@ -27,6 +27,7 @@ export default class OmnisharpRenameProvider extends AbstractSupport implements 
             const edit = new WorkspaceEdit();
             response.Changes.forEach(change => {
                 const uri = Uri.file(change.FileName);
+
                 change.Changes.forEach(change => {
                     edit.replace(uri,
                         new Range(change.StartLine - 1, change.StartColumn - 1, change.EndLine - 1, change.EndColumn - 1),
@@ -34,7 +35,27 @@ export default class OmnisharpRenameProvider extends AbstractSupport implements 
                 });
             });
 
-            return edit;
+            // Allow language middlewares to re-map its edits if necessary.
+            try {
+                const languageMiddlewares = this._languageMiddlewareFeature.getLanguageMiddlewares();
+                let remappedEdit = edit;
+                for (const middleware of languageMiddlewares) {
+                    if (!middleware.remapWorkspaceEdit) {
+                        continue;
+                    }
+
+                    const result = await middleware.remapWorkspaceEdit(remappedEdit, token);
+                    if (result) {
+                        remappedEdit = result;
+                    }
+                }
+
+                return remappedEdit;
+            }
+            catch (error) {
+                // Something happened while remapping edits. Return the original edit.
+                return edit;
+            }
         }
         catch (error) {
             return undefined;

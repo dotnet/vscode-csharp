@@ -14,6 +14,7 @@ import { IDisposable } from '../Disposable';
 import { isVirtualCSharpDocument } from './virtualDocumentTracker';
 import { TextDocument } from '../vscodeAdapter';
 import OptionProvider from '../observers/OptionProvider';
+import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
 
 export class Advisor {
 
@@ -116,8 +117,8 @@ export class Advisor {
     }
 }
 
-export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor): IDisposable {
-    return new DiagnosticsProvider(server, advisor);
+export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor, languageMiddlewareFeature: LanguageMiddlewareFeature): IDisposable {
+    return new DiagnosticsProvider(server, advisor, languageMiddlewareFeature);
 }
 
 class DiagnosticsProvider extends AbstractSupport {
@@ -129,8 +130,8 @@ class DiagnosticsProvider extends AbstractSupport {
     private _diagnostics: vscode.DiagnosticCollection;
     private _suppressHiddenDiagnostics: boolean;
 
-    constructor(server: OmniSharpServer, validationAdvisor: Advisor) {
-        super(server);
+    constructor(server: OmniSharpServer, validationAdvisor: Advisor, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+        super(server, languageMiddlewareFeature);
 
         this._validationAdvisor = validationAdvisor;
         this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
