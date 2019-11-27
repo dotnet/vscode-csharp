@@ -115,7 +115,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
         });
 
         expect(getMonoCalled).to.be.equal(true);
-        expect(environment["PATH"]).to.not.contain(join(monoPath, 'bin'));
+        expect(environment["PATH"] || "").to.not.contain(join(monoPath, 'bin'));
         expect(environment["MONO_GAC_PREFIX"]).to.be.undefined;
     });
 
