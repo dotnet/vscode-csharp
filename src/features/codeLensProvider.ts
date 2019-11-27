@@ -17,6 +17,7 @@ import Structure = protocol.V2.Structure;
 import SymbolKinds = protocol.V2.SymbolKinds;
 import SymbolPropertyNames = protocol.V2.SymbolPropertyNames;
 import SymbolRangeNames = protocol.V2.SymbolRangeNames;
+import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
 
 abstract class OmniSharpCodeLens extends vscode.CodeLens {
     constructor(
@@ -78,8 +79,8 @@ class DebugTestsCodeLens extends TestCodeLens {
 
 export default class OmniSharpCodeLensProvider extends AbstractProvider implements vscode.CodeLensProvider {
 
-    constructor(server: OmniSharpServer, testManager: TestManager, private optionProvider: OptionProvider) {
-        super(server);
+    constructor(server: OmniSharpServer, testManager: TestManager, private optionProvider: OptionProvider, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+        super(server, languageMiddlewareFeature);
     }
 
     async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.CodeLens[]> {

@@ -10,12 +10,13 @@ import { createRequest, toLocation, toLocationFromUri } from '../omnisharp/typeC
 import AbstractSupport from './abstractProvider';
 import DefinitionMetadataDocumentProvider from './definitionMetadataDocumentProvider';
 import { OmniSharpServer } from '../omnisharp/server';
+import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
 
 export default class CSharpDefinitionProvider extends AbstractSupport implements DefinitionProvider {
     private _definitionMetadataDocumentProvider: DefinitionMetadataDocumentProvider;
 
-    constructor(server: OmniSharpServer, definitionMetadataDocumentProvider: DefinitionMetadataDocumentProvider) {
-        super(server);
+    constructor(server: OmniSharpServer, definitionMetadataDocumentProvider: DefinitionMetadataDocumentProvider, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+        super(server, languageMiddlewareFeature);
 
         this._definitionMetadataDocumentProvider = definitionMetadataDocumentProvider;
     }
