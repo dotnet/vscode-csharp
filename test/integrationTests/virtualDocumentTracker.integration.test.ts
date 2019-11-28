@@ -20,8 +20,8 @@ suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function ()
 
     suiteSetup(async function () {
         should();
-        await testAssetWorkspace.restore();
         await activateCSharpExtension();
+        await testAssetWorkspace.restore();
 
         let virtualCSharpDocumentProvider = new VirtualCSharpDocumentProvider();
         virtualDocumentRegistration = vscode.workspace.registerTextDocumentContentProvider(virtualScheme, virtualCSharpDocumentProvider);
@@ -51,11 +51,11 @@ suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function ()
 
 class VirtualCSharpDocumentProvider implements vscode.TextDocumentContentProvider {
     onDidChange?: vscode.Event<vscode.Uri>;
-    
+
     provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): vscode.ProviderResult<string> {
         return `namespace Test
 {
-    
+
 }`;
     }
 }

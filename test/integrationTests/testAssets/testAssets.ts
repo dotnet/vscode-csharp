@@ -7,8 +7,6 @@ import * as fs from 'async-file';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import spawnGit from './spawnGit';
-import { dotnetRestore } from '../../../src/features/commands';
-import { EventStream } from '../../../src/EventStream';
 
 export class TestAssetProject {
     constructor(project: ITestAssetProject) {
@@ -20,23 +18,6 @@ export class TestAssetProject {
     get projectDirectoryPath(): string {
         return path.join(vscode.workspace.workspaceFolders[0].uri.fsPath,
             path.dirname(this.relativeFilePath));
-    }
-
-    get binDirectoryPath(): string {
-        return path.join(this.projectDirectoryPath, 'bin');
-    }
-
-    get objDirectoryPath(): string {
-        return path.join(this.projectDirectoryPath, 'obj');
-    }
-
-    async deleteBuildArtifacts(): Promise<void> {
-        await fs.rimraf(this.binDirectoryPath);
-        await fs.rimraf(this.objDirectoryPath);
-    }
-
-    async restore(): Promise<void> {
-        await dotnetRestore(this.projectDirectoryPath, new EventStream());
     }
 
     async addFileWithContents(fileName: string, contents: string): Promise<vscode.Uri> {
@@ -56,16 +37,12 @@ export class TestAssetWorkspace {
         this.description = workspace.description;
     }
 
-    async deleteBuildArtifacts(): Promise<void> {
-        this.projects.forEach(async p => await p.deleteBuildArtifacts());
-    }
-
     async restore(): Promise<void> {
-        this.projects.forEach(async p => await p.restore());
+        await vscode.commands.executeCommand("dotnet.restore.all");
     }
 
     get vsCodeDirectoryPath(): string {
-        return path.join(vscode.workspace.rootPath, ".vscode");
+        return path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, ".vscode");
     }
 
     get launchJsonPath(): string {
@@ -77,10 +54,21 @@ export class TestAssetWorkspace {
     }
 
     async cleanupWorkspace(): Promise<void> {
-        for (let project of this.projects) {
-            let wd = project.projectDirectoryPath;
-            await spawnGit(["clean", "-xdf", "."], { cwd: wd });
-            await spawnGit(["checkout", "--", "."], { cwd: wd });
+        let workspaceRootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+        let cleanUpRoutine = async () => {
+            await vscode.commands.executeCommand("workbench.action.closeAllEditors");
+            await spawnGit(["clean", "-xdf", "."], { cwd: workspaceRootPath });
+            await spawnGit(["checkout", "--", "."], { cwd: workspaceRootPath });
+        };
+
+        let sleep = async () => new Promise((resolve) => setTimeout(resolve, 2 * 1000));
+
+        try {
+            await cleanUpRoutine();
+        } catch (error) {
+            // Its possible that cleanup fails for locked files etc, for this reason retry is added.
+            await sleep();
+            await cleanUpRoutine();
         }
     }
 

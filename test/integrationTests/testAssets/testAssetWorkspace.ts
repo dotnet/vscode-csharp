@@ -18,7 +18,7 @@ const testAssetWorkspaces: { [x: string]: ITestAssetWorkspace } = {
     BasicRazorApp2_1
 };
 
-const workspaceName = vscode.workspace.rootPath
+const workspaceName = vscode.workspace.workspaceFolders[0].uri.fsPath
     .split(path.sep)
     .pop();
 
