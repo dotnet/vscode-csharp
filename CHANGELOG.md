@@ -1,4 +1,4 @@
-## Known Issues in 1.21.5
+## Known Issues in 1.21.6
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
@@ -9,7 +9,25 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.24.5 (October 9, 2019)
+## 1.21.9 (Not yet released)
+* Use the base filename instead of 'ClassName' in ctor snippet (PR:[#3385](https://github.com/OmniSharp/omnisharp-vscode/pull/3385))
+
+## 1.21.8 (November 11, 2019)
+* Update Razor to work for 3.1 SDKs (PR:[#3406](https://github.com/OmniSharp/omnisharp-vscode/pull/3406))
+* Support plugins configuration in omnisharp.json (PR:[omnisharp-roslyn/#1615](https://github.com/OmniSharp/omnisharp-roslyn/pull/1615))
+* Improved support for .NET Core 3.1
+
+## 1.21.7 (November 6, 2019)
+* Updated the embedded Mono to 6.4.0 (PR:[omnisharp-roslyn/#1640](https://github.com/OmniSharp/omnisharp-roslyn/pull/1640))
+* Improved support for .NET Core 3
+
+## 1.21.6 (October 28, 2019)
+* Fixed a bug that caused CS0019 diagnostic to be erroneously reported when comparing to `default` ([omnisharp-roslyn/#1619](https://github.com/OmniSharp/omnisharp-roslyn/issues/1619), PR:[omnisharp-roslyn/#1634](https://github.com/OmniSharp/omnisharp-roslyn/pull/1634))
+* Fixed a concurrency bug in scripting/Cake support ([omnisharp-roslyn/#1627](https://github.com/OmniSharp/omnisharp-roslyn/pull/1627))
+* Correctly respect request cancellation token in metadata service ([omnisharp-roslyn/#1631](https://github.com/OmniSharp/omnisharp-roslyn/pull/1631))
+* Improved support for .NET Core 3
+
+## 1.21.5 (October 9, 2019)
 * Fixed regression that caused "go to metadata" to not work ([omnisharp-roslyn/#1624](https://github.com/OmniSharp/omnisharp-roslyn/issues/1624), PR: [omnisharp-roslyn/#1625](https://github.com/OmniSharp/omnisharp-roslyn/pull/1625))
 
 ## 1.21.4 (September 30, 2019)

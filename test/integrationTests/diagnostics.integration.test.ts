@@ -1,6 +1,6 @@
-/*--------------------------------------------------------------------------------------------- 
-*  Copyright (c) Microsoft Corporation. All rights reserved. 
-*  Licensed under the MIT License. See License.txt in the project root for license information. 
+/*---------------------------------------------------------------------------------------------
+*  Copyright (c) Microsoft Corporation. All rights reserved.
+*  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
@@ -26,6 +26,9 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
 
     suiteSetup(async function () {
         should();
+
+        await activateCSharpExtension();
+        await testAssetWorkspace.restore();
 
         let fileName = 'diagnostics.cs';
         let secondaryFileName = 'secondaryDiagnostics.cs';
@@ -92,5 +95,8 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         suiteTeardown(async () => {
             await testAssetWorkspace.cleanupWorkspace();
         });
+        let cs8019 = result.find(x => x.source == "csharp" && x.code == "CS8019");
+        expect(cs8019).to.not.be.undefined;
+        expect(cs8019.tags).to.include(vscode.DiagnosticTag.Unnecessary);
     });
 });

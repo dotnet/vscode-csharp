@@ -42,7 +42,7 @@ export class TestAssetWorkspace {
     }
 
     get vsCodeDirectoryPath(): string {
-        return path.join(vscode.workspace.rootPath, ".vscode");
+        return path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, ".vscode");
     }
 
     get launchJsonPath(): string {
@@ -54,14 +54,14 @@ export class TestAssetWorkspace {
     }
 
     async cleanupWorkspace(): Promise<void> {
-        let cleanUpRoutine = async () =>
-        {
+        let workspaceRootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+        let cleanUpRoutine = async () => {
             await vscode.commands.executeCommand("workbench.action.closeAllEditors");
-            await spawnGit(["clean", "-xdf", "."], { cwd: vscode.workspace.rootPath });
-            await spawnGit(["checkout", "--", "."], { cwd: vscode.workspace.rootPath });
+            await spawnGit(["clean", "-xdf", "."], { cwd: workspaceRootPath });
+            await spawnGit(["checkout", "--", "."], { cwd: workspaceRootPath });
         };
 
-        let sleep = () => new Promise((resolve) => setTimeout(resolve, 2*1000));
+        let sleep = async () => new Promise((resolve) => setTimeout(resolve, 2 * 1000));
 
         try {
             await cleanUpRoutine();

@@ -43,6 +43,6 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
 
         await vscode.commands.executeCommand(command.command, ...command.arguments);
 
-        await assertWithPoll(() => {}, 15*1000, 500, _ => expect(vscode.window.activeTextEditor.document.fileName).contains("C.cs"));
+        await assertWithPoll(() => { }, 15 * 1000, 500, _ => expect(vscode.window.activeTextEditor.document.fileName).contains("C.cs"));
     });
 });

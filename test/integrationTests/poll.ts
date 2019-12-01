@@ -1,6 +1,6 @@
-/*--------------------------------------------------------------------------------------------- 
- *  Copyright (c) Microsoft Corporation. All rights reserved. 
- *  Licensed under the MIT License. See License.txt in the project root for license information. 
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 function defaultAssertion<T>(value: T): void {
@@ -43,8 +43,12 @@ export async function assertWithPoll<T>(
     throw assertResult;
 }
 
+<<<<<<< HEAD
 function defaultPollExpression<T>(value: T): boolean
 {
+=======
+function defaultPollExpression<T>(value: T): boolean {
+>>>>>>> upstream/master
     return value !== undefined && ((Array.isArray(value) && value.length > 0) || !Array.isArray(value));
 }
 
