@@ -95,8 +95,5 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         suiteTeardown(async () => {
             await testAssetWorkspace.cleanupWorkspace();
         });
-        let cs8019 = result.find(x => x.source == "csharp" && x.code == "CS8019");
-        expect(cs8019).to.not.be.undefined;
-        expect(cs8019.tags).to.include(vscode.DiagnosticTag.Unnecessary);
     });
 });

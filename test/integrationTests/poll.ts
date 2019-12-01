@@ -43,12 +43,7 @@ export async function assertWithPoll<T>(
     throw assertResult;
 }
 
-<<<<<<< HEAD
-function defaultPollExpression<T>(value: T): boolean
-{
-=======
 function defaultPollExpression<T>(value: T): boolean {
->>>>>>> upstream/master
     return value !== undefined && ((Array.isArray(value) && value.length > 0) || !Array.isArray(value));
 }
 
