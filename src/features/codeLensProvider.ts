@@ -129,11 +129,15 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 
             const quickFixes = result.QuickFixes;
             const count = quickFixes.length;
+            const locations = quickFixes.map(toLocation);
+            
+            // Allow language middlewares to re-map its edits if necessary.
+            const remappedLocations = await this._languageMiddlewareFeature.remap("remapLocations", locations, token);
 
             codeLens.command = {
                 title: count === 1 ? '1 reference' : `${count} references`,
                 command: 'editor.action.showReferences',
-                arguments: [vscode.Uri.file(request.FileName), codeLens.range.start, quickFixes.map(toLocation)]
+                arguments: [vscode.Uri.file(request.FileName), codeLens.range.start, remappedLocations]
             };
 
             return codeLens;

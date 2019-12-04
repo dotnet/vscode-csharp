@@ -23,26 +23,8 @@ export default class OmnisharpReferenceProvider extends AbstractSupport implemen
                 const references = res.QuickFixes.map(toLocation);
                 
                 // Allow language middlewares to re-map its edits if necessary.
-                try {
-                    const languageMiddlewares = this._languageMiddlewareFeature.getLanguageMiddlewares();
-                    let locations = references;
-                    for (const middleware of languageMiddlewares) {
-                        if (!middleware.remapLocations) {
-                            continue;
-                        }
-
-                        const result = await middleware.remapLocations(locations, token);
-                        if (result) {
-                            locations = result;
-                        }
-                    }
-
-                    return locations;
-                }
-                catch (error) {
-                    // Something happened while remapping locations. Return the original set of locations.
-                    return references;
-                }
+                const result = await this._languageMiddlewareFeature.remap("remapLocations", references, token);
+                return result;
             }
         }
         catch (error) {
