@@ -26,6 +26,7 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
         let req = <GoToDefinitionRequest>createRequest(document, position);
         req.WantMetadata = true;
 
+        let location: Location;
         try {
             let gotoDefinitionResponse = await serverUtils.goToDefinition(this._server, req, token);
             // the defintion is in source
@@ -34,18 +35,18 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
                 // if it is part of an already used metadata file, retrieve its uri instead of going to the physical file
                 if (gotoDefinitionResponse.FileName.startsWith("$metadata$")) {
                     const uri = this._definitionMetadataDocumentProvider.getExistingMetadataResponseUri(gotoDefinitionResponse.FileName);
-                    return toLocationFromUri(uri, gotoDefinitionResponse);
+                    location = toLocationFromUri(uri, gotoDefinitionResponse);
+                } else {
+                    // if it is a normal source definition, convert the response to a location
+                    location = toLocation(gotoDefinitionResponse);
                 }
-
-                // if it is a normal source definition, convert the response to a location
-                return toLocation(gotoDefinitionResponse);
 
                 // the definition is in metadata
             } else if (gotoDefinitionResponse.MetadataSource) {
                 const metadataSource: MetadataSource = gotoDefinitionResponse.MetadataSource;
 
                 // go to metadata endpoint for more information
-                return serverUtils.getMetadata(this._server, <MetadataRequest>{
+                serverUtils.getMetadata(this._server, <MetadataRequest>{
                     Timeout: 5000,
                     AssemblyName: metadataSource.AssemblyName,
                     VersionNumber: metadataSource.VersionNumber,
@@ -58,9 +59,17 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
                     }
 
                     const uri: Uri = this._definitionMetadataDocumentProvider.addMetadataResponse(metadataResponse);
-                    return new Location(uri, new Position(gotoDefinitionResponse.Line - 1, gotoDefinitionResponse.Column - 1));
+                    location = new Location(uri, new Position(gotoDefinitionResponse.Line - 1, gotoDefinitionResponse.Column - 1));
                 });
             }
+
+            // Allow language middlewares to re-map its edits if necessary.
+            const result = await this._languageMiddlewareFeature.remap("remapLocations", [location], token);
+            if (result && result.length == 1) {
+                return result[0];
+            }
+
+            return location;
         }
         catch (error) {
             return;

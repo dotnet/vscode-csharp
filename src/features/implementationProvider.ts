@@ -22,25 +22,7 @@ export default class CSharpImplementationProvider extends AbstractSupport implem
         }).catch();
 
         // Allow language middlewares to re-map its edits if necessary.
-        try {
-            const languageMiddlewares = this._languageMiddlewareFeature.getLanguageMiddlewares();
-            let locations = implementations;
-            for (const middleware of languageMiddlewares) {
-                if (!middleware.remapLocations) {
-                    continue;
-                }
-
-                const result = await middleware.remapLocations(locations, token);
-                if (result) {
-                    locations = result;
-                }
-            }
-
-            return locations;
-        }
-        catch (error) {
-            // Something happened while remapping locations. Return the original set of locations.
-            return implementations;
-        }
+        const result = await this._languageMiddlewareFeature.remap("remapLocations", implementations, token);
+        return result;
     }
 }

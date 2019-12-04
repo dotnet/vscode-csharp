@@ -36,26 +36,8 @@ export default class OmnisharpRenameProvider extends AbstractSupport implements 
             });
 
             // Allow language middlewares to re-map its edits if necessary.
-            try {
-                const languageMiddlewares = this._languageMiddlewareFeature.getLanguageMiddlewares();
-                let remappedEdit = edit;
-                for (const middleware of languageMiddlewares) {
-                    if (!middleware.remapWorkspaceEdit) {
-                        continue;
-                    }
-
-                    const result = await middleware.remapWorkspaceEdit(remappedEdit, token);
-                    if (result) {
-                        remappedEdit = result;
-                    }
-                }
-
-                return remappedEdit;
-            }
-            catch (error) {
-                // Something happened while remapping edits. Return the original edit.
-                return edit;
-            }
+            const result = await this._languageMiddlewareFeature.remap("remapWorkspaceEdit", edit, token);
+            return result;
         }
         catch (error) {
             return undefined;
