@@ -213,11 +213,12 @@ If you are only interested in debugging code you are building locally, it is bes
 
 1: In situations where you are attaching the debugger to an already running process, this option will have no effect on modules that were already loaded at the time the debugger was attached.
 
-2: This option has no effect on dlls that have been pre-compiled (a.k.a ngen'ed) to native code. However, you can disable usage of pre-compiled code by starting the process with the environment variable 'COMPlus_ZapDisable' set to '1'. If you are launching under the debugger, this code be done by adding this to launch.json --
+2: This option has no effect on dlls that have been pre-compiled (a.k.a ngen'ed) to native code. However, you can disable usage of pre-compiled code by starting the process with the environment variable `COMPlus_ReadyToRun` set to `0`. If you are targetting an older version of .NET Core (2.x) also set `COMPlus_ZapDisable` set to '1'. If you are launching under the debugger, this code be done by adding this to launch.json --
 
 ```json
     "env": {
-        "COMPlus_ZapDisable": "1"
+        "COMPlus_ZapDisable": "1",
+        "COMPlus_ReadyToRun": "0"
     }
 ```
 
