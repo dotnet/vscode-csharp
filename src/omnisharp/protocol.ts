@@ -259,11 +259,6 @@ export interface RunFixAllActionResponse {
     Changes: ModifiedFileResponse[];
 }
 
-export interface RunFixAllActionResponse {
-    Text: string;
-    Changes: ModifiedFileResponse[];
-}
-
 export interface FixAllItem {
     Id: string;
     Message: string;
@@ -481,9 +476,16 @@ export enum FixAllScope {
     Solution = "Solution"
 }
 
-export interface FixAllRequest extends FileBasedRequest {
+export interface GetFixAllRequest extends FileBasedRequest {
     Scope: FixAllScope;
     FixAllFilter?: FixAllItem[];
+}
+
+export interface RunFixAllRequest extends FileBasedRequest {
+    Scope: FixAllScope;
+    FixAllFilter?: FixAllItem[];
+    WantsTextChanges: boolean;
+    WantsAllCodeActionOperations: boolean;
 }
 
 export namespace V2 {
