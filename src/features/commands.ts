@@ -40,7 +40,6 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
     let attachItemsProvider = DotNetAttachItemsProviderFactory.Get();
     let attacher = new AttachPicker(attachItemsProvider);
     disposable.add(vscode.commands.registerCommand('csharp.listProcess', async () => attacher.ShowAttachEntries()));
-vscode.CodeAction
     // Register command for generating tasks.json and launch.json assets.
     disposable.add(vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex) => generateAssets(server, selectedIndex)));
     // Register command for remote process picker for attach

@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import * as vscode from 'vscode';
 import * as serverUtils from '../omnisharp/utils';
 import * as protocol from '../omnisharp/protocol';
@@ -57,7 +62,7 @@ export class FixAllProvider extends AbstractProvider implements vscode.CodeActio
 
         if (selectedAction !== "Fix all issues") {
             let actionTokens = selectedAction.split(":");
-            filter = [{ Id: actionTokens[0], Message: actionTokens[1] }]
+            filter = [{ Id: actionTokens[0], Message: actionTokens[1] }];
         }
 
         await this.applyFixes(vscode.window.activeTextEditor.document.fileName, scope, filter);
