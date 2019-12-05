@@ -6,10 +6,10 @@
 import * as fs from 'async-file';
 import * as vscode from 'vscode';
 
-import poll from './poll';
 import { should, expect } from 'chai';
 import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import { poll } from './poll';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -23,7 +23,7 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
 
         await vscode.commands.executeCommand("dotnet.generateAssets", 0);
 
-        await poll(() => fs.exists(testAssetWorkspace.launchJsonPath), 10000, 100);
+        await poll(async () => await fs.exists(testAssetWorkspace.launchJsonPath), 10000, 100);
     });
 
     suiteTeardown(async () => {
@@ -31,6 +31,7 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
     });
 
     test("Starting .NET Core Launch (console) from the workspace root should create an Active Debug Session", async () => {
+
         vscode.debug.onDidChangeActiveDebugSession((e) => {
             expect(vscode.debug.activeDebugSession).not.to.be.undefined;
             expect(vscode.debug.activeDebugSession.type).to.equal("coreclr");

@@ -9,7 +9,7 @@ import * as path from 'path';
 import { should, expect } from 'chai';
 import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import poll, { assertWithPoll } from './poll';
+import { poll, assertWithPoll } from './poll';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));

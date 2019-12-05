@@ -9,7 +9,7 @@ import * as path from 'path';
 import { should, expect } from 'chai';
 import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import poll, { assertWithPoll } from './poll';
+import { poll, assertWithPoll } from './poll';
 import { EventStream } from '../../src/EventStream';
 import { EventType } from '../../src/omnisharp/EventType';
 import { BaseEvent, OmnisharpProjectDiagnosticStatus } from '../../src/omnisharp/loggingEvents';

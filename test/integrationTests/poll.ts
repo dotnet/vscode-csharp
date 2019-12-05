@@ -47,7 +47,7 @@ function defaultPollExpression<T>(value: T): boolean {
     return value !== undefined && ((Array.isArray(value) && value.length > 0) || !Array.isArray(value));
 }
 
-export default async function poll<T>(
+export async function poll<T>(
     getValue: () => T,
     duration: number,
     step: number,
@@ -67,6 +67,6 @@ export default async function poll<T>(
     throw new Error("Polling did not succeed within the alotted duration.");
 }
 
-function sleep(ms = 0) {
+async function sleep(ms = 0) {
     return new Promise(r => setTimeout(r, ms));
 }
