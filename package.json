@@ -376,6 +376,7 @@
     "onCommand:csharp.downloadDebugger",
     "onCommand:csharp.listProcess",
     "onCommand:csharp.listRemoteProcess",
+    "onCommand:omnisharp.registerLanguageMiddleware",
     "workspaceContains:project.json",
     "workspaceContains:*.csproj",
     "workspaceContains:*.sln",

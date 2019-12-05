@@ -17,6 +17,7 @@ import OptionProvider from '../observers/OptionProvider';
 import { Subject, Subscription } from 'rxjs';
 import { throttleTime } from 'rxjs/operators';
 import { DiagnosticStatus } from '../omnisharp/protocol';
+import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
 
 export class Advisor {
 
@@ -119,8 +120,8 @@ export class Advisor {
     }
 }
 
-export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor): IDisposable {
-    return new DiagnosticsProvider(server, advisor);
+export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor, languageMiddlewareFeature: LanguageMiddlewareFeature): IDisposable {
+    return new DiagnosticsProvider(server, advisor, languageMiddlewareFeature);
 }
 
 class DiagnosticsProvider extends AbstractSupport {
@@ -134,8 +135,8 @@ class DiagnosticsProvider extends AbstractSupport {
     private _subscriptions: Subscription[] = [];
     private _suppressHiddenDiagnostics: boolean;
 
-    constructor(server: OmniSharpServer, validationAdvisor: Advisor) {
-        super(server);
+    constructor(server: OmniSharpServer, validationAdvisor: Advisor, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+        super(server, languageMiddlewareFeature);
 
         this._analyzersEnabled = vscode.workspace.getConfiguration('omnisharp').get('enableRoslynAnalyzers', false);
         this._validationAdvisor = validationAdvisor;

@@ -13,13 +13,14 @@ import { FileModificationType } from '../omnisharp/protocol';
 import { Uri } from 'vscode';
 import CompositeDisposable from '../CompositeDisposable';
 import OptionProvider from '../observers/OptionProvider';
+import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
 
 export default class CodeActionProvider extends AbstractProvider implements vscode.CodeActionProvider {
 
     private _commandId: string;
 
-    constructor(server: OmniSharpServer, private optionProvider: OptionProvider) {
-        super(server);
+    constructor(server: OmniSharpServer, private optionProvider: OptionProvider, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+        super(server, languageMiddlewareFeature);
         this._commandId = 'omnisharp.runCodeAction';
         let registerCommandDisposable = vscode.commands.registerCommand(this._commandId, this._runCodeAction, this);
         this.addDisposables(new CompositeDisposable(registerCommandDisposable));

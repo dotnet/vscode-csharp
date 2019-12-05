@@ -17,6 +17,7 @@ import Structure = protocol.V2.Structure;
 import SymbolKinds = protocol.V2.SymbolKinds;
 import SymbolPropertyNames = protocol.V2.SymbolPropertyNames;
 import SymbolRangeNames = protocol.V2.SymbolRangeNames;
+import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
 
 abstract class OmniSharpCodeLens extends vscode.CodeLens {
     constructor(
@@ -78,8 +79,8 @@ class DebugTestsCodeLens extends TestCodeLens {
 
 export default class OmniSharpCodeLensProvider extends AbstractProvider implements vscode.CodeLensProvider {
 
-    constructor(server: OmniSharpServer, testManager: TestManager, private optionProvider: OptionProvider) {
-        super(server);
+    constructor(server: OmniSharpServer, testManager: TestManager, private optionProvider: OptionProvider, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+        super(server, languageMiddlewareFeature);
     }
 
     async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.CodeLens[]> {
@@ -128,11 +129,15 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 
             const quickFixes = result.QuickFixes;
             const count = quickFixes.length;
+            const locations = quickFixes.map(toLocation);
+            
+            // Allow language middlewares to re-map its edits if necessary.
+            const remappedLocations = await this._languageMiddlewareFeature.remap("remapLocations", locations, token);
 
             codeLens.command = {
                 title: count === 1 ? '1 reference' : `${count} references`,
                 command: 'editor.action.showReferences',
-                arguments: [vscode.Uri.file(request.FileName), codeLens.range.start, quickFixes.map(toLocation)]
+                arguments: [vscode.Uri.file(request.FileName), codeLens.range.start, remappedLocations]
             };
 
             return codeLens;

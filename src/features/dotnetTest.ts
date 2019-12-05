@@ -18,6 +18,7 @@ import { EventStream } from '../EventStream';
 import LaunchConfiguration from './launchConfiguration';
 import Disposable from '../Disposable';
 import CompositeDisposable from '../CompositeDisposable';
+import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 
@@ -28,8 +29,8 @@ export default class TestManager extends AbstractProvider {
     private _telemetryIntervalId: NodeJS.Timer = undefined;
     private _eventStream: EventStream;
 
-    constructor(server: OmniSharpServer, eventStream: EventStream) {
-        super(server);
+    constructor(server: OmniSharpServer, eventStream: EventStream, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+        super(server, languageMiddlewareFeature);
         this._eventStream = eventStream;
 
         // register commands
