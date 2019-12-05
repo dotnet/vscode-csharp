@@ -77,25 +77,20 @@ async function completeDebuggerInstall(platformInformation: PlatformInformation,
 
 function showInstallErrorMessage(eventStream : EventStream) {
     eventStream.post(new DebuggerNotInstalledFailure());
-    vscode.window.showErrorMessage("An error occured during installation of the .NET Core Debugger. The C# extension may need to be reinstalled.");
+    vscode.window.showErrorMessage("An error occurred during installation of the .NET Core Debugger. The C# extension may need to be reinstalled.");
 }
 
 function showDotnetToolsWarning(message: string): void {
     const config = vscode.workspace.getConfiguration('csharp');
     if (!config.get('suppressDotnetInstallWarning', false)) {
-        const getDotNetMessage = 'Get .NET CLI tools';
+        const getDotNetMessage = 'Get the .NET Core SDK';
         const goToSettingsMessage = 'Disable this message in user settings';
         // Buttons are shown in right-to-left order, with a close button to the right of everything;
         // getDotNetMessage will be the first button, then goToSettingsMessage, then the close button.
         vscode.window.showErrorMessage(message,
             goToSettingsMessage, getDotNetMessage).then(value => {
                 if (value === getDotNetMessage) {
-                    let dotnetcoreURL = 'https://www.microsoft.com/net/core';
-
-                    // Windows redirects https://www.microsoft.com/net/core to https://www.microsoft.com/net/core#windowsvs2015
-                    if (process.platform == "win32") {
-                        dotnetcoreURL = dotnetcoreURL + '#windowscmd';
-                    }
+                    let dotnetcoreURL = 'https://dot.net/core-sdk-vscode';
 
                     vscode.env.openExternal(vscode.Uri.parse(dotnetcoreURL));
                 } else if (value === goToSettingsMessage) {

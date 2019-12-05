@@ -9,6 +9,7 @@ import { should, expect } from 'chai';
 import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as path from 'path';
+import { assertWithPoll } from './poll';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -19,8 +20,8 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
 
     suiteSetup(async function () {
         should();
-        await testAssetWorkspace.restore();
         await activateCSharpExtension();
+        await testAssetWorkspace.restore();
 
         let fileName = 'A.cs';
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
@@ -39,7 +40,9 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
             (s) => { return s.title == "Rename file to C.cs"; }
         );
         expect(command, "Didn't find rename class command");
+
         await vscode.commands.executeCommand(command.command, ...command.arguments);
-        expect(vscode.window.activeTextEditor.document.fileName).contains("C.cs");
+
+        await assertWithPoll(() => { }, 15 * 1000, 500, _ => expect(vscode.window.activeTextEditor.document.fileName).contains("C.cs"));
     });
 });

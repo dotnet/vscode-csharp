@@ -1,6 +1,6 @@
-/*--------------------------------------------------------------------------------------------- 
-*  Copyright (c) Microsoft Corporation. All rights reserved. 
-*  Licensed under the MIT License. See License.txt in the project root for license information. 
+/*---------------------------------------------------------------------------------------------
+*  Copyright (c) Microsoft Corporation. All rights reserved.
+*  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
@@ -16,10 +16,10 @@ chai.use(require('chai-fs'));
 
 suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
-    
+
     suiteSetup(async function () {
-        await testAssetWorkspace.restore();
         await activateCSharpExtension();
+        await testAssetWorkspace.restore();
 
         let fileName = 'sigHelp.cs';
         let dir = testAssetWorkspace.projects[0].projectDirectoryPath;
@@ -30,7 +30,7 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
 
     suiteTeardown(async () => {
         await testAssetWorkspace.cleanupWorkspace();
-    });    
+    });
 
     test("Returns response with documentation as undefined when method does not have documentation", async function () {
         let c = await GetSignatureHelp(fileUri, new vscode.Position(19, 23));

@@ -71,7 +71,7 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
         let event = new ReportDotNetTestResults(
             [
                 getDotNetTestResults("foo", "failed", "assertion failed", "stacktrace1" , ["message1", "message2"], ["errorMessage1"]),
-                getDotNetTestResults("failinator", "failed", "error occured", "stacktrace2", [], []),
+                getDotNetTestResults("failinator", "failed", "error occurred", "stacktrace2", [], []),
                 getDotNetTestResults("bar", "skipped", "", "", ["message3", "message4"], []),
                 getDotNetTestResults("passinator", "passed", "", "", [], []),
             ]);
@@ -91,7 +91,7 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
         test('Displays the error message and error stack trace if any is present', () => {
             observer.post(event);
             expect(appendedMessage).to.contain("foo:\n    Outcome: Failed\n    Error Message:\n    assertion failed\n    Stack Trace:\n    stacktrace1");
-            expect(appendedMessage).to.contain("failinator:\n    Outcome: Failed\n    Error Message:\n    error occured\n    Stack Trace:\n    stacktrace2");
+            expect(appendedMessage).to.contain("failinator:\n    Outcome: Failed\n    Error Message:\n    error occurred\n    Stack Trace:\n    stacktrace2");
         });
 
         test(`Displays the standard output messages if any`, () => {

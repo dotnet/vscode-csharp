@@ -20,28 +20,30 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
-### What's new in 1.20.0
+# What's new in  1.21.8
+* Update Razor to work for 3.1 SDKs (PR:[#3406](https://github.com/OmniSharp/omnisharp-vscode/pull/3406))
+* Support plugins configuration in omnisharp.json (PR:[omnisharp-roslyn/#1615](https://github.com/OmniSharp/omnisharp-roslyn/pull/1615))
+* Improved support for .NET Core 3.1
 
-* Updated the auto-generated launch.json to use new mechanism for starting web browser. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+# What's new in  1.21.7
+* Updated the embedded Mono to 6.4.0 (PR:[omnisharp-roslyn/#1640](https://github.com/OmniSharp/omnisharp-roslyn/pull/1640))
 * Improved support for .NET Core 3
-* Updates to Razor support
-* Made QuickInfo display more consistent with Visual Studio. ([#2610](https://github.com/OmniSharp/omnisharp-vscode/issues/2610))  (_Contributed by_ [@paladique](https://github.com/paladique))(PR: [#3090](https://github.com/OmniSharp/omnisharp-vscode/pull/3090/))
-* Added support for fading unnecessary code and using statements [#2873](https://github.com/OmniSharp/omnisharp-vscode/pull/2873)
 
-### What's new in 1.19.1
-
-* Updated debugger to work correctly on Linux distributions with openssl 1.1 such as Ubuntu 19.04.
-* Fixed OmniSharp hanging on wildcard Nuget package references.
-* OmniSharp now uses correct 4.7.2 framework sku to prompt for installation of .NET 4.7.2 if missing.
-
-### What's new in 1.19.0
-
+## What's new in 1.21.6
+* Fixed a bug that caused CS0019 diagnostic to be erroneously reported when comparing to `default` ([omnisharp-roslyn/#1619](https://github.com/OmniSharp/omnisharp-roslyn/issues/1619), PR:[omnisharp-roslyn/#1634](https://github.com/OmniSharp/omnisharp-roslyn/pull/1634))
+* Correctly respect request cancellation token in metadata service ([omnisharp-roslyn/#1631](https://github.com/OmniSharp/omnisharp-roslyn/pull/1631))
 * Improved support for .NET Core 3
-* Added support for roslyn analyzers, code fixes and rulesets which can be enabled via`omnisharp.enableRoslynAnalyzers` setting.
-* Improved Razor diagnostics
-* Razor tooling support for tag helpers
 
-See our [change log](https://github.com/OmniSharp/omnisharp-vscode/blob/v1.19.1/CHANGELOG.md) for more detail.
+## What's new in 1.21.5
+* Fixed regression that caused "go to metadata" to not work ([omnisharp-roslyn/#1624](https://github.com/OmniSharp/omnisharp-roslyn/issues/1624), PR: [omnisharp-roslyn/#1625](https://github.com/OmniSharp/omnisharp-roslyn/pull/1625))
+
+## What's new in 1.21.4
+* Improved support for .NET Core 3
+
+### What's new in 1.21.3
+
+* Added support for `CheckForOverflowUnderflow ` in csproj files
+* Improved support for .NET Core 3
 
 ### Supported Operating Systems for Debugging
 
