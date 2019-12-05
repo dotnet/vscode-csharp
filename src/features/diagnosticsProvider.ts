@@ -152,10 +152,10 @@ class DiagnosticsProvider extends AbstractSupport {
             .pipe(throttleTime(3000))
             .subscribe(async () => {
                 if (this._validationAdvisor.shouldValidateAll()) {
-                    await this._validateSmallWorkspace();
+                    await this._validateEntireWorkspace();
                 }
                 else if (this._validationAdvisor.shouldValidateFiles()) {
-                    await this._validateLargeWorkspace();
+                    await this._validateOpenDocuments();
                 }
             }));
 
@@ -263,7 +263,7 @@ class DiagnosticsProvider extends AbstractSupport {
 
     // On large workspaces (if maxProjectFileCountForDiagnosticAnalysis) is less than workspace size,
     // diagnostic fallback to mode where only open documents are analyzed.
-    private _validateLargeWorkspace(): NodeJS.Timeout {
+    private _validateOpenDocuments(): NodeJS.Timeout {
         return setTimeout(async () => {
             for (let editor of vscode.window.visibleTextEditors) {
                 let document = editor.document;
@@ -282,7 +282,7 @@ class DiagnosticsProvider extends AbstractSupport {
             .filter(diagnosticInFile => diagnosticInFile !== undefined);
     }
 
-    private _validateSmallWorkspace(): NodeJS.Timeout {
+    private _validateEntireWorkspace(): NodeJS.Timeout {
         return setTimeout(async () => {
             let value = await serverUtils.codeCheck(this._server, { FileName: null }, new vscode.CancellationTokenSource().token);
 
