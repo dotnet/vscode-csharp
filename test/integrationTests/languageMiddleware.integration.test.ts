@@ -32,6 +32,10 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
     });
 
     test("Returns the remapped workspaceEdit", async() => {
+
+        // Avoid flakiness with renames.
+        await new Promise(r => setTimeout(r, 2000));
+
         let workspaceEdit = <vscode.WorkspaceEdit>(await vscode.commands.executeCommand(
             "vscode.executeDocumentRenameProvider",
             fileUri,
