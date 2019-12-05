@@ -18,5 +18,6 @@
 
     "tslint.rulesDirectory": "node_modules/tslint-microsoft-contrib",
     "typescript.tsdk": "./node_modules/typescript/lib",
-    "mocha.enabled": true
+    "mocha.enabled": true,
+    "omnisharp.autoStart": false
 }

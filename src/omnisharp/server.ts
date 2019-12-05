@@ -56,6 +56,8 @@ module Events {
     export const ProjectAdded = 'ProjectAdded';
     export const ProjectRemoved = 'ProjectRemoved';
 
+    export const ProjectDiagnosticStatus = 'ProjectDiagnosticStatus';
+
     export const MsBuildProjectDiagnostics = 'MsBuildProjectDiagnostics';
 
     export const TestMessage = 'TestMessage';
@@ -194,6 +196,10 @@ export class OmniSharpServer {
         return this._addListener(Events.ProjectRemoved, listener, thisArg);
     }
 
+    public onProjectDiagnosticStatus(listener: (e: protocol.ProjectDiagnosticStatus) => any, thisArg?: any) {
+        return this._addListener(Events.ProjectDiagnosticStatus, listener, thisArg);
+    }
+
     public onMsBuildProjectDiagnostics(listener: (e: protocol.MSBuildProjectDiagnostics) => any, thisArg?: any) {
         return this._addListener(Events.MsBuildProjectDiagnostics, listener, thisArg);
     }
@@ -281,6 +287,10 @@ export class OmniSharpServer {
         disposables.add(this.onServerStart(() => {
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnStart());
         }));
+
+        disposables.add(this.onProjectDiagnosticStatus((message: protocol.ProjectDiagnosticStatus) =>
+            this.eventStream.post(new ObservableEvents.OmnisharpProjectDiagnosticStatus(message))
+        ));
 
         disposables.add(this.onProjectConfigurationReceived((message: protocol.ProjectConfigurationMessage) => {
             this.eventStream.post(new ObservableEvents.ProjectConfiguration(message));
@@ -379,7 +389,7 @@ export class OmniSharpServer {
             return this.stop();
         }
     }
-    
+
     private onProjectConfigurationReceived(listener: (e: protocol.ProjectConfigurationMessage) => void){
         return this._addListener(Events.ProjectConfiguration, listener);
     }

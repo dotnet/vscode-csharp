@@ -800,6 +800,16 @@
         "category": "OmniSharp"
       },
       {
+        "command": "o.reanalyze.allProjects",
+        "title": "Analyze all projects",
+        "category": "OmniSharp"
+      },
+      {
+        "command": "o.reanalyze.currentProject",
+        "title": "Analyze current project",
+        "category": "OmniSharp"
+      },
+      {
         "command": "dotnet.generateAssets",
         "title": "Generate Assets for Build and Debug",
         "category": ".NET"
