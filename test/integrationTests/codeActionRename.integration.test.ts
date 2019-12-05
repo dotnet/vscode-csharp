@@ -25,7 +25,7 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
         let fileName = 'A.cs';
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
         let filePath = path.join(projectDirectory, fileName);
-        fileUri = vscode.Uri.file(filePath)
+        fileUri = vscode.Uri.file(filePath);
     });
 
     suiteTeardown(async () => {
