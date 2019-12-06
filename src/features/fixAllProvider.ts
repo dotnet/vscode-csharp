@@ -12,10 +12,11 @@ import { Uri } from 'vscode';
 import CompositeDisposable from '../CompositeDisposable';
 import AbstractProvider from './abstractProvider';
 import { toRange2 } from '../omnisharp/typeConversion';
+import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
 
 export class FixAllProvider extends AbstractProvider implements vscode.CodeActionProvider {
-    public constructor(private server: OmniSharpServer) {
-        super(server);
+    public constructor(private server: OmniSharpServer, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+        super(server, languageMiddlewareFeature);
         let disposable = new CompositeDisposable();
         disposable.add(vscode.commands.registerCommand('o.fixAll.solution', async () => this.fixAllMenu(server, protocol.FixAllScope.Solution)));
         disposable.add(vscode.commands.registerCommand('o.fixAll.project', async () => this.fixAllMenu(server, protocol.FixAllScope.Project)));

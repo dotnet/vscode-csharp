@@ -800,7 +800,6 @@
         "category": "OmniSharp"
       },
       {
-<<<<<<< HEAD
         "command": "o.fixAll.solution",
         "title": "Fix all code issues in solution",
         "category": "OmniSharp"
@@ -813,7 +812,9 @@
       {
         "command": "o.fixAll.document",
         "title": "Fix all code issues in document",
-=======
+        "category": "OmniSharp"
+      },
+      {
         "command": "o.reanalyze.allProjects",
         "title": "Analyze all projects",
         "category": "OmniSharp"
@@ -821,7 +822,6 @@
       {
         "command": "o.reanalyze.currentProject",
         "title": "Analyze current project",
->>>>>>> upstream/master
         "category": "OmniSharp"
       },
       {

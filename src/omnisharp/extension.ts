@@ -89,7 +89,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         const codeActionProvider = new CodeActionProvider(server, optionProvider, languageMiddlewareFeature);
         localDisposables.add(codeActionProvider);
         localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
-        localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, new FixAllProvider(server)));
+        localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, new FixAllProvider(server, languageMiddlewareFeature)));
         localDisposables.add(reportDiagnostics(server, advisor, languageMiddlewareFeature));
         localDisposables.add(forwardChanges(server));
         localDisposables.add(trackVirtualDocuments(server, eventStream));
