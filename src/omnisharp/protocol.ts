@@ -28,12 +28,9 @@ export module Requests {
     export const TypeLookup = '/typelookup';
     export const UpdateBuffer = '/updatebuffer';
     export const Metadata = '/metadata';
-<<<<<<< HEAD
     export const RunFixAll = '/runfixall';
     export const GetFixAll = '/getfixall';
-=======
     export const ReAnalyze = '/reanalyze';
->>>>>>> upstream/master
 }
 
 export namespace WireProtocol {
