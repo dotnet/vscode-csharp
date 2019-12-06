@@ -27,6 +27,7 @@ export default class OmnisharpRenameProvider extends AbstractSupport implements 
             const edit = new WorkspaceEdit();
             response.Changes.forEach(change => {
                 const uri = Uri.file(change.FileName);
+
                 change.Changes.forEach(change => {
                     edit.replace(uri,
                         new Range(change.StartLine - 1, change.StartColumn - 1, change.EndLine - 1, change.EndColumn - 1),
@@ -34,7 +35,9 @@ export default class OmnisharpRenameProvider extends AbstractSupport implements 
                 });
             });
 
-            return edit;
+            // Allow language middlewares to re-map its edits if necessary.
+            const result = await this._languageMiddlewareFeature.remap("remapWorkspaceEdit", edit, token);
+            return result;
         }
         catch (error) {
             return undefined;

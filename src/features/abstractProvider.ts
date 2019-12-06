@@ -5,14 +5,17 @@
 
 import { OmniSharpServer } from '../omnisharp/server';
 import CompositeDisposable from '../CompositeDisposable';
+import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
 
 export default abstract class AbstractProvider {
 
     protected _server: OmniSharpServer;
+    protected _languageMiddlewareFeature: LanguageMiddlewareFeature;
     private _disposables: CompositeDisposable;
 
-    constructor(server: OmniSharpServer) {
+    constructor(server: OmniSharpServer, languageMiddlewareFeature: LanguageMiddlewareFeature) {
         this._server = server;
+        this._languageMiddlewareFeature = languageMiddlewareFeature;
         this._disposables = new CompositeDisposable();
     }
 

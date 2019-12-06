@@ -28,8 +28,12 @@ export module Requests {
     export const TypeLookup = '/typelookup';
     export const UpdateBuffer = '/updatebuffer';
     export const Metadata = '/metadata';
+<<<<<<< HEAD
     export const RunFixAll = '/runfixall';
     export const GetFixAll = '/getfixall';
+=======
+    export const ReAnalyze = '/reanalyze';
+>>>>>>> upstream/master
 }
 
 export namespace WireProtocol {
@@ -300,6 +304,18 @@ export interface AutoCompleteResponse {
 export interface ProjectInformationResponse {
     MsBuildProject: MSBuildProject;
     DotNetProject: DotNetProject;
+}
+
+export enum DiagnosticStatus
+{
+    Processing = 0,
+    Ready = 1
+}
+
+export interface ProjectDiagnosticStatus {
+    Status: DiagnosticStatus;
+    ProjectFilePath: string;
+    Type: "background";
 }
 
 export interface WorkspaceInformationResponse {

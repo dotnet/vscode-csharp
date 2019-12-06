@@ -47,7 +47,7 @@ function defaultPollExpression<T>(value: T): boolean {
     return value !== undefined && ((Array.isArray(value) && value.length > 0) || !Array.isArray(value));
 }
 
-export default async function poll<T>(
+export async function poll<T>(
     getValue: () => T,
     duration: number,
     step: number,

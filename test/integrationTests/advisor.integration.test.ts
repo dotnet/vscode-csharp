@@ -44,10 +44,10 @@ suite(`Advisor ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test('Advisor.shouldValidateProject returns true when maxProjectFileCountForDiagnosticAnalysis is higher than the file count', async () => {
+    test('Advisor.shouldValidateAll returns true when maxProjectFileCountForDiagnosticAnalysis is higher than the file count', async () => {
         await setLimit(1000);
 
-        expect(advisor.shouldValidateProject()).to.be.true;
+        expect(advisor.shouldValidateAll()).to.be.true;
     });
 
     test('Advisor.shouldValidateFiles returns true when maxProjectFileCountForDiagnosticAnalysis is higher than the file count', async () => {
@@ -56,10 +56,10 @@ suite(`Advisor ${testAssetWorkspace.description}`, function () {
         expect(advisor.shouldValidateFiles()).to.be.true;
     });
 
-    test('Advisor.shouldValidateProject returns false when maxProjectFileCountForDiagnosticAnalysis is lower than the file count', async () => {
+    test('Advisor.shouldValidateAll returns false when maxProjectFileCountForDiagnosticAnalysis is lower than the file count', async () => {
         await setLimit(1);
 
-        expect(advisor.shouldValidateProject()).to.be.false;
+        expect(advisor.shouldValidateAll()).to.be.false;
     });
 
     test('Advisor.shouldValidateFiles returns true when maxProjectFileCountForDiagnosticAnalysis is lower than the file count', async () => {
@@ -68,10 +68,10 @@ suite(`Advisor ${testAssetWorkspace.description}`, function () {
         expect(advisor.shouldValidateFiles()).to.be.true;
     });
 
-    test('Advisor.shouldValidateProject returns true when maxProjectFileCountForDiagnosticAnalysis is null', async () => {
+    test('Advisor.shouldValidateAll returns true when maxProjectFileCountForDiagnosticAnalysis is null', async () => {
         await setLimit(null);
 
-        expect(advisor.shouldValidateProject()).to.be.true;
+        expect(advisor.shouldValidateAll()).to.be.true;
     });
 
     test('Advisor.shouldValidateFiles returns true when maxProjectFileCountForDiagnosticAnalysis is null', async () => {

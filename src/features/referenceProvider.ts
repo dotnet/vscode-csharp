@@ -20,7 +20,11 @@ export default class OmnisharpReferenceProvider extends AbstractSupport implemen
         try {
             let res = await serverUtils.findUsages(this._server, req, token);
             if (res && Array.isArray(res.QuickFixes)) {
-                return res.QuickFixes.map(toLocation);
+                const references = res.QuickFixes.map(toLocation);
+                
+                // Allow language middlewares to re-map its edits if necessary.
+                const result = await this._languageMiddlewareFeature.remap("remapLocations", references, token);
+                return result;
             }
         }
         catch (error) {

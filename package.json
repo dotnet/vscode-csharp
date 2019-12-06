@@ -376,6 +376,7 @@
     "onCommand:csharp.downloadDebugger",
     "onCommand:csharp.listProcess",
     "onCommand:csharp.listRemoteProcess",
+    "onCommand:omnisharp.registerLanguageMiddleware",
     "workspaceContains:project.json",
     "workspaceContains:*.csproj",
     "workspaceContains:*.sln",
@@ -799,6 +800,7 @@
         "category": "OmniSharp"
       },
       {
+<<<<<<< HEAD
         "command": "o.fixAll.solution",
         "title": "Fix all code issues in solution",
         "category": "OmniSharp"
@@ -811,6 +813,15 @@
       {
         "command": "o.fixAll.document",
         "title": "Fix all code issues in document",
+=======
+        "command": "o.reanalyze.allProjects",
+        "title": "Analyze all projects",
+        "category": "OmniSharp"
+      },
+      {
+        "command": "o.reanalyze.currentProject",
+        "title": "Analyze current project",
+>>>>>>> upstream/master
         "category": "OmniSharp"
       },
       {
