@@ -109,6 +109,31 @@ To setup a test project to verify on you can do:
 ##### C# Signature Help
 * Typing `@Html.Raw()` prompts for signature help inside of the `()`.
 
+##### C# Rename
+* Renaming "someVariable" in `@{var someVariable = true;} @someVariable` results in both locations being changed.
+
+##### C# Go to definition
+* Performing go to definition on "@somevariable" `@{var someVariable = true;} @someVariable` brings you up to where it's declared
+
+##### C# Go to implementation
+* Performing go to implementation on "Foo" `@functions {interface Foo {} class Bar: Foo {}}` brings you to where "Bar" is declared
+
+##### C# Find all references
+* Performing find all references on "@someVariable" in `@{var someVariable = true;} @(someVariable) @someVariable` results in references to the other instance of someVariable
+
+##### C# CodeLens
+* Having the following results in a CodeLens entry above "Foo"
+```
+@functions {
+  void Foo()
+  {
+  }
+}
+
+@Foo()
+```
+* Clicking on the CodeLens entry results in a find all references window that has an entry for `@Foo()`
+
 ##### C# Diagnostics
 * Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file. NOTE: This error squiggly will be misaligned due to known issues.
 
@@ -140,6 +165,31 @@ To setup a test project to verify on you can do:
 
 ##### C# Signature Help
 * Typing `@SetParameters()` prompts for signature help inside of the `()`.
+
+##### C# Rename
+* Renaming "someVariable" in `@{var someVariable = true;} @someVariable` results in both locations being changed.
+
+##### C# Go to definition
+* Performing go to definition on "@somevariable" `@{var someVariable = true;} @someVariable` brings you up to where it's declared
+
+##### C# Go to implementation
+* Performing go to implementation on "Foo" `@functions {interface Foo {} class Bar: Foo {}}` brings you to where "Bar" is declared
+
+##### C# Find all references
+* Performing find all references on "@someVariable" in `@{var someVariable = true;} @(someVariable) @someVariable` results in references to the other instance of someVariable
+
+##### C# CodeLens
+* Having the following results in a CodeLens entry above "Foo"
+```C#
+@functions {
+  void Foo()
+  {
+  }
+}
+
+@Foo()
+```
+* Clicking on the CodeLens entry results in a find all references window that has an entry for `@Foo()`
 
 ##### C# Diagnostics
 * When no changes have been performed on `Pages/Index.cshtml`, there are 0 errors.

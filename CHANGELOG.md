@@ -11,6 +11,13 @@
 
 ## 1.21.9 (Not yet released)
 * Use the base filename instead of 'ClassName' in ctor snippet (PR:[#3385](https://github.com/OmniSharp/omnisharp-vscode/pull/3385))
+* Updated Razor
+  * Rename support
+  * Go to definition support
+  * Go to implementation support
+  * Find all references support
+  * CodeLens support
+  * Several mainline bug fixes
 
 ## 1.21.8 (November 11, 2019)
 * Update Razor to work for 3.1 SDKs (PR:[#3406](https://github.com/OmniSharp/omnisharp-vscode/pull/3406))
