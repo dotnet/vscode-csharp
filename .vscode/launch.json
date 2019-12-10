@@ -144,8 +144,8 @@
                 "updatePackageDependencies"
             ],
             "env": {
-                "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/e9348d8e-ce4b-4f43-9d80-f2dd14adc9ef/182b76b3789eefc049bc297fb9e21691/omnisharp-linux-x64-1.34.8.zip,https://download.visualstudio.microsoft.com/download/pr/e9348d8e-ce4b-4f43-9d80-f2dd14adc9ef/335bd47b2566967f5f779257f2de7bdf/omnisharp-linux-x86-1.34.8.zip,https://download.visualstudio.microsoft.com/download/pr/e9348d8e-ce4b-4f43-9d80-f2dd14adc9ef/be88e7cefa9f05263653195476821297/omnisharp-osx-1.34.8.zip,https://download.visualstudio.microsoft.com/download/pr/e9348d8e-ce4b-4f43-9d80-f2dd14adc9ef/00b16a744c6f0ad5b952ffb1d88c5928/omnisharp-win-x64-1.34.8.zip,https://download.visualstudio.microsoft.com/download/pr/e9348d8e-ce4b-4f43-9d80-f2dd14adc9ef/7b1a5b88d2c2bb0580c93b920830f16a/omnisharp-win-x86-1.34.8.zip" ,
-                "NEW_DEPS_VERSION": "1.34.8"
+                "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/f90b2712-8f9e-4922-8c16-8b556e3de023/529091dc87db6486f018ef7a958d33c4/omnisharp-linux-x64-1.34.9.zip,https://download.visualstudio.microsoft.com/download/pr/f90b2712-8f9e-4922-8c16-8b556e3de023/e69bdd4608df209c392b060d2c4d5bcb/omnisharp-linux-x86-1.34.9.zip,https://download.visualstudio.microsoft.com/download/pr/f90b2712-8f9e-4922-8c16-8b556e3de023/9f14159516a93f06fcd965ef7f335dc1/omnisharp-osx-1.34.9.zip,https://download.visualstudio.microsoft.com/download/pr/f90b2712-8f9e-4922-8c16-8b556e3de023/66b355b126f43f17270951e9d99ab8d8/omnisharp-win-x64-1.34.9.zip,https://download.visualstudio.microsoft.com/download/pr/f90b2712-8f9e-4922-8c16-8b556e3de023/0d23eeab530c0fb23f517275eaff0db3/omnisharp-win-x86-1.34.9.zip",
+                "NEW_DEPS_VERSION": "1.34.9"
             },
             "cwd": "${workspaceFolder}"
         }

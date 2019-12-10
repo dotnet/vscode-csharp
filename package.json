@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.21.8",
+  "version": "1.21.9",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -29,7 +29,7 @@
     "dotnet"
   ],
   "defaults": {
-    "omniSharp": "1.34.8",
+    "omniSharp": "1.34.9",
     "razor": "1.0.0-alpha3-5.0.0-alpha.1.19605.17"
   },
   "main": "./dist/extension",
@@ -159,41 +159,41 @@
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/e9348d8e-ce4b-4f43-9d80-f2dd14adc9ef/7b1a5b88d2c2bb0580c93b920830f16a/omnisharp-win-x86-1.34.8.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.34.8.zip",
-      "installPath": ".omnisharp/1.34.8",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/f90b2712-8f9e-4922-8c16-8b556e3de023/0d23eeab530c0fb23f517275eaff0db3/omnisharp-win-x86-1.34.9.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.34.9.zip",
+      "installPath": ".omnisharp/1.34.9",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.omnisharp/1.34.8/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.34.9/OmniSharp.exe",
       "platformId": "win-x86",
-      "integrity": "0AF85827E0729A77452F29241BA703EB381C2F8E9471EEFE0E0E3504950E699F"
+      "integrity": "B470A6211FC619E84A091BE558CE13D02B564BC72E702566B89AD6066CA1E30B"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/e9348d8e-ce4b-4f43-9d80-f2dd14adc9ef/00b16a744c6f0ad5b952ffb1d88c5928/omnisharp-win-x64-1.34.8.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.34.8.zip",
-      "installPath": ".omnisharp/1.34.8",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/f90b2712-8f9e-4922-8c16-8b556e3de023/66b355b126f43f17270951e9d99ab8d8/omnisharp-win-x64-1.34.9.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.34.9.zip",
+      "installPath": ".omnisharp/1.34.9",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/1.34.8/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.34.9/OmniSharp.exe",
       "platformId": "win-x64",
-      "integrity": "CC9DAE8451E59880C95A3AF274310C645D69188AF41BA95317465FD613053B65"
+      "integrity": "EACBAF4C6B5788892361B47877BDB5FD2C8F64195C5ECBC257FEF14E61DA25DE"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/e9348d8e-ce4b-4f43-9d80-f2dd14adc9ef/be88e7cefa9f05263653195476821297/omnisharp-osx-1.34.8.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.34.8.zip",
-      "installPath": ".omnisharp/1.34.8",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/f90b2712-8f9e-4922-8c16-8b556e3de023/9f14159516a93f06fcd965ef7f335dc1/omnisharp-osx-1.34.9.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.34.9.zip",
+      "installPath": ".omnisharp/1.34.9",
       "platforms": [
         "darwin"
       ],
@@ -201,16 +201,16 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.34.8/run",
+      "installTestPath": "./.omnisharp/1.34.9/run",
       "platformId": "osx",
-      "integrity": "FF6EB5C6F410B601977293B83784AADE92C535FAB27D7A2D676017ED30E3C1D1"
+      "integrity": "7B117B9C8F68C2018F50F04031E34D1F25A2D86A7A999CDD310BC2953D450C70"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/e9348d8e-ce4b-4f43-9d80-f2dd14adc9ef/335bd47b2566967f5f779257f2de7bdf/omnisharp-linux-x86-1.34.8.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.34.8.zip",
-      "installPath": ".omnisharp/1.34.8",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/f90b2712-8f9e-4922-8c16-8b556e3de023/e69bdd4608df209c392b060d2c4d5bcb/omnisharp-linux-x86-1.34.9.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.34.9.zip",
+      "installPath": ".omnisharp/1.34.9",
       "platforms": [
         "linux"
       ],
@@ -222,16 +222,16 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.34.8/run",
+      "installTestPath": "./.omnisharp/1.34.9/run",
       "platformId": "linux-x86",
-      "integrity": "AE67C6E573084275CA14BB84CF7BE88436B28A121EB71E63CBB288A3EC9F9105"
+      "integrity": "85D2584248B5B9AF8CB68510A5E7BCE1C516B2F581486C369046F195BC40B0A4"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/e9348d8e-ce4b-4f43-9d80-f2dd14adc9ef/182b76b3789eefc049bc297fb9e21691/omnisharp-linux-x64-1.34.8.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.34.8.zip",
-      "installPath": ".omnisharp/1.34.8",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/f90b2712-8f9e-4922-8c16-8b556e3de023/529091dc87db6486f018ef7a958d33c4/omnisharp-linux-x64-1.34.9.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.34.9.zip",
+      "installPath": ".omnisharp/1.34.9",
       "platforms": [
         "linux"
       ],
@@ -242,9 +242,9 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.34.8/run",
+      "installTestPath": "./.omnisharp/1.34.9/run",
       "platformId": "linux-x64",
-      "integrity": "9C927AD32CD04048B2C3732111BA14E5617BB5B0492BBE9B6BCBE8B677D5E1D2"
+      "integrity": "2D973B6EE3CB715470FAA63B16DCEE1948BF8275E7DA7546742D1A7146A3298A"
     },
     {
       "id": "Debugger",
@@ -487,12 +487,12 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                  "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                   "default": []
                 },
                 "searchMicrosoftSymbolServer": {
                   "type": "boolean",
-                  "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                  "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                   "default": false
                 },
                 "cachePath": {
@@ -1352,12 +1352,12 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -1763,12 +1763,12 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -2421,12 +2421,12 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -2832,12 +2832,12 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
