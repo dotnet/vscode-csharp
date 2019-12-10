@@ -20,6 +20,22 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
+## What's new in 1.21.9
+* Use the base filename instead of 'ClassName' in ctor snippet (PR:[#3385](https://github.com/OmniSharp/omnisharp-vscode/pull/3385))
+* Added command to re-run code analysis on single project or all projects (PR:[#3089](https://github.com/OmniSharp/omnisharp-vscode/pull/3089))
+* Updated Razor
+  * Rename support
+  * Go to definition support
+  * Go to implementation support
+  * Find all references support
+  * CodeLens support
+  * Several mainline bug fixes
+* Updated to MsBuild 16.4.0 (PR:[omnisharp-roslyn/#1662](https://github.com/OmniSharp/omnisharp-roslyn/pull/1662))
+* Line pragma is now respected in find references ([omnisharp-roslyn/#1649](https://github.com/OmniSharp/omnisharp-roslyn/issues/1649), PR:[omnisharp-roslyn/#1660](https://github.com/OmniSharp/omnisharp-roslyn/pull/1660))
+* Do not set mono paths when running in standalone mode ([omnisharp-vscode#3410](https://github.com/OmniSharp/omnisharp-vscode/issues/3410), [omnisharp-vscode#3340](https://github.com/OmniSharp/omnisharp-vscode/issues/3340), [omnisharp-roslyn/#1650](https://github.com/OmniSharp/omnisharp-roslyn/issues/1650), PR:[omnisharp-roslyn/#1656](https://github.com/OmniSharp/omnisharp-roslyn/pull/1656))
+* Fixed a bug where OmniSharp would crash on startup if the path contained `=` sign ([omnisharp-vscode#3436](https://github.com/OmniSharp/omnisharp-vscode/issues/3436), PR:[omnisharp-roslyn/#1661](https://github.com/OmniSharp/omnisharp-roslyn/pull/1661))
+* Improved support for .NET Core 3.1
+
 # What's new in  1.21.8
 * Update Razor to work for 3.1 SDKs (PR:[#3406](https://github.com/OmniSharp/omnisharp-vscode/pull/3406))
 * Support plugins configuration in omnisharp.json (PR:[omnisharp-roslyn/#1615](https://github.com/OmniSharp/omnisharp-roslyn/pull/1615))
@@ -36,14 +52,6 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 
 ## What's new in 1.21.5
 * Fixed regression that caused "go to metadata" to not work ([omnisharp-roslyn/#1624](https://github.com/OmniSharp/omnisharp-roslyn/issues/1624), PR: [omnisharp-roslyn/#1625](https://github.com/OmniSharp/omnisharp-roslyn/pull/1625))
-
-## What's new in 1.21.4
-* Improved support for .NET Core 3
-
-### What's new in 1.21.3
-
-* Added support for `CheckForOverflowUnderflow ` in csproj files
-* Improved support for .NET Core 3
 
 ### Supported Operating Systems for Debugging
 
