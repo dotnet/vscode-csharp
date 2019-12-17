@@ -21,7 +21,7 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
         this._definitionMetadataDocumentProvider = definitionMetadataDocumentProvider;
     }
 
-    public async provideDefinition(document: TextDocument, position: Position, token: CancellationToken): Promise<Location> {
+    public async provideDefinition(document: TextDocument, position: Position, token: CancellationToken): Promise<Location[]> {
 
         let req = <GoToDefinitionRequest>createRequest(document, position);
         req.WantMetadata = true;
@@ -65,14 +65,10 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
 
             // Allow language middlewares to re-map its edits if necessary.
             const result = await this._languageMiddlewareFeature.remap("remapLocations", [location], token);
-            if (result && result.length == 1) {
-                return result[0];
-            }
-
-            return location;
+            return result;
         }
         catch (error) {
-            return;
+            return [];
         }
     }
 }
