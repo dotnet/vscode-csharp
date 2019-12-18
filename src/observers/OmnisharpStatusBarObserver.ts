@@ -42,6 +42,9 @@ export class OmnisharpStatusBarObserver extends BaseStatusBarItemObserver {
             case EventType.InstallationStart:
                 this.SetAndShowStatusBar("$(desktop-download) Installing packages...", '', '', `Installing package '${(<InstallationStart>event).packageDescription}'`);
                 break;
+            case EventType.InstallationSuccess:
+                this.ResetAndHideStatusBar();
+                break;
             case EventType.DownloadProgress:
                 let progressEvent = <DownloadProgress>event;
                 this.SetAndShowStatusBar("$(cloud-download) Downloading packages", '', '', `Downloading package '${progressEvent.packageDescription}'... ${progressEvent.downloadPercentage}%`);
