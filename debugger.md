@@ -19,7 +19,7 @@ Install the .NET Core command line tools (CLI) by following the installation par
 **OSX:** .NET Core requires openSSL to work. Don't forget this! Execute: `brew install openssl`
 
 ##### 3: Install C# Extension for VS Code
-Open the command palette in VS Code (press <kbd>F1</kbd>) and type `ext install C#` to trigger the installation of the extension. VS Code will show a message that the extension has been installed and it will restart.
+Open the command palette in VS Code (press <kbd>F1</kbd>) and run `Extensions: Install Extensions`. Enter `C#` in the search box and press `Enter`. Select the extension and click on `Install`.
 
 If you have previously installed the C# extension, make sure that you have a recent version. You can check this by opening the command palette (press <kbd>F1</kbd>) and running `Extensions: Show Installed Extensions`.
 
