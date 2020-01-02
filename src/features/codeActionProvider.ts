@@ -149,21 +149,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
                 }
 
                 // Allow language middlewares to re-map its edits if necessary.
-                try {
-                    const languageMiddlewares = this._languageMiddlewareFeature.getLanguageMiddlewares();
-                    for ( const middleware of languageMiddlewares)
-                    {
-                        if(!middleware.remapWorkspaceEdit) {
-                            continue;
-                        }
-
-                        const modifiedEdit = await middleware.remapWorkspaceEdit(edit, /*token*/ null);
-                        edit = modifiedEdit;
-                    }
-                }
-                catch (error) {
-                    // Something happened while remapping locations. Return the original set of locations.
-                }
+                edit = await this._languageMiddlewareFeature.remap("remapWorkspaceEdit", edit, /*token*/ null);
 
                 let applyEditPromise = vscode.workspace.applyEdit(edit);
 
