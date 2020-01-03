@@ -90,7 +90,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
                 return {
                     title: codeAction.Name,
                     command: this._commandId,
-                    arguments: [runRequest]
+                    arguments: [runRequest, token]
                 };
             });
         }
@@ -99,7 +99,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
         }
     }
 
-    private async _runCodeAction(req: protocol.V2.RunCodeActionRequest): Promise<boolean | string | {}> {
+    private async _runCodeAction(req: protocol.V2.RunCodeActionRequest, token: vscode.CancellationToken): Promise<boolean | string | {}> {
 
         return serverUtils.runCodeAction(this._server, req).then(async response => {
             if (response && Array.isArray(response.Changes)) {
@@ -149,7 +149,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
                 }
 
                 // Allow language middlewares to re-map its edits if necessary.
-                edit = await this._languageMiddlewareFeature.remap("remapWorkspaceEdit", edit, /*token*/ null);
+                edit = await this._languageMiddlewareFeature.remap("remapWorkspaceEdit", edit, token);
 
                 let applyEditPromise = vscode.workspace.applyEdit(edit);
 
