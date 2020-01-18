@@ -14,13 +14,6 @@
           "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
           "default": []
         },
-        "authenticatedSymbolServers": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/VSAuthenticatedSymbolServer"
-          },
-          "description": "Array of authenticated symbol server URLs and associated authentication data."
-        },
         "searchMicrosoftSymbolServer": {
           "type": "boolean",
           "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
@@ -84,35 +77,6 @@
           "default": true
         }
       }
-    },
-    "VSAuthenticatedSymbolServer": {
-      "type": "object",
-      "description": "Provides configuration for a symbol server that requires authentication.",
-      "properties": {
-        "url": {
-          "type": "string",
-          "description": "The URL for this authenticated symbol server."
-        },
-        "authorization": {
-          "type": "string",
-          "description": "The HTTP Authorization header to use for this symbol server."
-        },
-        "errorInfo": {
-          "type": "string",
-          "description": "A user visible error message explaining why authorization could not be obtained for this server."
-        }
-      },
-      "required": [ "url" ]
-    },
-
-    "Capabilities": {
-      "properties": {
-        "supportsAuthenticatedSymbolServers": {
-          "type": "boolean",
-          "description": "The debug adapter supports the 'authenticatedSymbolServers' field of VSSymbolOptions."
-        }
-      }
     }
-
   }
 }
