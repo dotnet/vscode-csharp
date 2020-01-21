@@ -4,6 +4,7 @@
   "definitions": {
     "VSSymbolOptions": {
       "type": "object",
+      "description": "Provides configuration for locating and loading symbols to the debug adapter.",
       "properties": {
         "searchPaths": {
           "type": "array",
@@ -16,6 +17,11 @@
         "searchMicrosoftSymbolServer": {
           "type": "boolean",
           "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+          "default": false
+        },
+        "searchNuGetOrgSymbolServer": {
+          "type": "boolean",
+          "description": "If 'true' the NuGet.org symbol server (https\u200b://symbols.nuget.org\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
           "default": false
         },
         "cachePath": {
@@ -36,6 +42,7 @@
     },
     "VSSymbolOptionsModuleFilter": {
       "type": "object",
+      "description": "Provides configuration for loading symbols to the debug adapter.",
       "required": [ "mode" ],
       "properties": {
         "mode": {
