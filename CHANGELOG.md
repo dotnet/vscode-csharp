@@ -1,3 +1,11 @@
+## 1.21.10 (Not yet released)
+* Updated Razor support (PR:[#3524](https://github.com/OmniSharp/omnisharp-vscode/pull/3524))
+    * Added quick info (hover) support for TagHelper and Blazor components. You can now hover over TagHelpers, Components and their attributes to understand what associated C# type you're hovering over in addition to an attributes expected value type.
+    * Migrated Razor's project understanding from the VSCode extension into the Language Server. This enables the language server to reboot without extra assistance (reliability) from an LSP client and also enables future Razor LSP clients to have richer functionality with less "work".
+    * Added C# light bulbs to enable users to "Fully Qualify" members that are causing errors.
+    * Expanded Razor's TextMate grammar colorization support to understand email addresses and `await foreach`.
+    * Several bug fixes
+
 ## Known Issues in 1.21.9
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
