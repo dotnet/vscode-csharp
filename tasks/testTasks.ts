@@ -48,8 +48,7 @@ gulp.task("test:integration:slnWithCsproj", async () => {
 gulp.task(
     "test:integration", gulp.series(
         "test:integration:singleCsproj",
-        "test:integration:slnWithCsproj",
-        "test:integration:razor:BasicRazorApp2_1"
+        "test:integration:slnWithCsproj"
     ));
 
 gulp.task("test", gulp.series(
