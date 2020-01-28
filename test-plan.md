@@ -106,6 +106,9 @@ To setup a test project to verify on you can do:
 * Completion is available for types that exist in the project (i.e. `Program`)
 * Typing `@model DateTime` prompts for completion for the `model` symbol and the `DateTime` symbol.
 
+##### C# Lightbulbs
+* Typing `@{ var x = new HtmlString("sdf"); }`results in squiggles under `HtmlString`. Selecting `HtmlString` and pressing Ctrl+. results in a change suggestion to fully-qualify that type name as `Microsoft.AspNetCore.Html.HtmlString`. Hitting enter on that suggestion resolves the squiggles and changes the line.
+
 ##### C# Signature Help
 * Typing `@Html.Raw()` prompts for signature help inside of the `()`.
 
@@ -136,6 +139,9 @@ To setup a test project to verify on you can do:
 
 ##### C# Diagnostics
 * Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file. NOTE: This error squiggly will be misaligned due to known issues.
+
+##### TagHelper Quick Info
+* Typing `<environment></environment>` then hovering the mouse over the opening tag results in a window about that TagHelper that should read something like `EnvironmentTagHelper ITagHelper implementation targeting <environment> elements that conditionally renders content based on the current value of IHostingEnvironment.EnvironmentName...`.
 
 ##### TagHelper completion
 Note that the pipe in the below examples indicates the cursor.
