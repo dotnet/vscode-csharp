@@ -141,7 +141,7 @@ To setup a test project to verify on you can do:
 * Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file. NOTE: This error squiggly will be misaligned due to known issues.
 
 ##### TagHelper Quick Info
-* Typing `<environment></environment>` then hovering the mouse over the opening tag results in an informative window about that TagHelper.
+* Typing `<environment></environment>` then hovering the mouse over the opening tag results in a window about that TagHelper that should read something like `EnvironmentTagHelper ITagHelper implementation targeting <environment> elements that conditionally renders content based on the current value of IHostingEnvironment.EnvironmentName...`.
 
 ##### TagHelper completion
 Note that the pipe in the below examples indicates the cursor.
