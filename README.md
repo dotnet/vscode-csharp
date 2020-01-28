@@ -20,6 +20,22 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
+## What's new in 1.21.10
+* Updated Razor support (PR:[#3524](https://github.com/OmniSharp/omnisharp-vscode/pull/3524))
+    * Added quick info (hover) support for TagHelper and Blazor components. You can now hover over TagHelpers, Components and their attributes to understand what associated C# type you're hovering over in addition to an attributes expected value type.
+    * Migrated Razor's project understanding from the VSCode extension into the Language Server. This enables the language server to reboot without extra assistance (reliability) from an LSP client and also enables future Razor LSP clients to have richer functionality with less "work".
+    * Added C# light bulbs to enable users to "Fully Qualify" members that are causing errors.
+    * Expanded Razor's TextMate grammar colorization support to understand email addresses and `await foreach`.
+    * Several bug fixes
+* Updated Debugger support (PR:[#3515](https://github.com/OmniSharp/omnisharp-vscode/pull/3515))
+    * Added option to search the NuGet.org Symbol Server
+    * Added options to control logging Process and Thread exits while debugging
+* Fixed a bug where completion items didn't decode symbols corectly (impacted, for example, object initializer completion quality) ([#3465](https://github.com/OmniSharp/omnisharp-vscode/issues/3465), PR:[omnisharp-roslyn/#1670](https://github.com/OmniSharp/omnisharp-roslyn/pull/1670))
+* Updated to MsBuild 16.4.0 on Linux/MacOS (PR:[omnisharp-roslyn/#1669](https://github.com/OmniSharp/omnisharp-roslyn/pull/1669))
+* Added support for implement type options - it is now possible to define whether code-fix/refactoring generated properties should be auto- or throwing-properties and at which place in the class should newly generated members be inserted. They can be set via OmniSharp configuration, such as `omnisharp.json` file. (PR: [omnisharp-roslyn/#1672](https://github.com/OmniSharp/omnisharp-roslyn/pull/1672))
+* Added support for organizing usings on format. This can be set via OmniSharp configuration, such as `omnisharp.json` file. (PR:[omnisharp-roslyn/#1686](https://github.com/OmniSharp/omnisharp-roslyn/pull/1686))
+* Improved support for .NET Core 3.1
+
 ## What's new in 1.21.9
 * Use the base filename instead of 'ClassName' in ctor snippet (PR:[#3385](https://github.com/OmniSharp/omnisharp-vscode/pull/3385))
 * Added command to re-run code analysis on single project or all projects (PR:[#3089](https://github.com/OmniSharp/omnisharp-vscode/pull/3089))
@@ -45,14 +61,6 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 # What's new in  1.21.7
 * Updated the embedded Mono to 6.4.0 (PR:[omnisharp-roslyn/#1640](https://github.com/OmniSharp/omnisharp-roslyn/pull/1640))
 * Improved support for .NET Core 3
-
-## What's new in 1.21.6
-* Fixed a bug that caused CS0019 diagnostic to be erroneously reported when comparing to `default` ([omnisharp-roslyn/#1619](https://github.com/OmniSharp/omnisharp-roslyn/issues/1619), PR:[omnisharp-roslyn/#1634](https://github.com/OmniSharp/omnisharp-roslyn/pull/1634))
-* Correctly respect request cancellation token in metadata service ([omnisharp-roslyn/#1631](https://github.com/OmniSharp/omnisharp-roslyn/pull/1631))
-* Improved support for .NET Core 3
-
-## What's new in 1.21.5
-* Fixed regression that caused "go to metadata" to not work ([omnisharp-roslyn/#1624](https://github.com/OmniSharp/omnisharp-roslyn/issues/1624), PR: [omnisharp-roslyn/#1625](https://github.com/OmniSharp/omnisharp-roslyn/pull/1625))
 
 ### Supported Operating Systems for Debugging
 

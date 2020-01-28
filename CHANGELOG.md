@@ -1,12 +1,4 @@
-## 1.21.10 (Not yet released)
-* Updated Razor support (PR:[#3524](https://github.com/OmniSharp/omnisharp-vscode/pull/3524))
-    * Added quick info (hover) support for TagHelper and Blazor components. You can now hover over TagHelpers, Components and their attributes to understand what associated C# type you're hovering over in addition to an attributes expected value type.
-    * Migrated Razor's project understanding from the VSCode extension into the Language Server. This enables the language server to reboot without extra assistance (reliability) from an LSP client and also enables future Razor LSP clients to have richer functionality with less "work".
-    * Added C# light bulbs to enable users to "Fully Qualify" members that are causing errors.
-    * Expanded Razor's TextMate grammar colorization support to understand email addresses and `await foreach`.
-    * Several bug fixes
-
-## Known Issues in 1.21.9
+## Known Issues in 1.21.10
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
@@ -16,6 +8,22 @@
   * Emmet based abbreviation expansion is not yet supported
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
+
+## 1.21.10 (Not yet released)
+* Updated Razor support (PR:[#3524](https://github.com/OmniSharp/omnisharp-vscode/pull/3524))
+    * Added quick info (hover) support for TagHelper and Blazor components. You can now hover over TagHelpers, Components and their attributes to understand what associated C# type you're hovering over in addition to an attributes expected value type.
+    * Migrated Razor's project understanding from the VSCode extension into the Language Server. This enables the language server to reboot without extra assistance (reliability) from an LSP client and also enables future Razor LSP clients to have richer functionality with less "work".
+    * Added C# light bulbs to enable users to "Fully Qualify" members that are causing errors.
+    * Expanded Razor's TextMate grammar colorization support to understand email addresses and `await foreach`.
+    * Several bug fixes
+* Updated Debugger support (PR:[#3515](https://github.com/OmniSharp/omnisharp-vscode/pull/3515))
+    * Added option to search the NuGet.org Symbol Server
+    * Added options to control logging Process and Thread exits while debugging
+* Fixed a bug where completion items didn't decode symbols corectly (impacted, for example, object initializer completion quality) ([#3465](https://github.com/OmniSharp/omnisharp-vscode/issues/3465), PR:[omnisharp-roslyn/#1670](https://github.com/OmniSharp/omnisharp-roslyn/pull/1670))
+* Updated to MsBuild 16.4.0 on Linux/MacOS (PR:[omnisharp-roslyn/#1669](https://github.com/OmniSharp/omnisharp-roslyn/pull/1669))
+* Added support for implement type options - it is now possible to define whether code-fix/refactoring generated properties should be auto- or throwing-properties and at which place in the class should newly generated members be inserted. They can be set via OmniSharp configuration, such as `omnisharp.json` file. (PR: [omnisharp-roslyn/#1672](https://github.com/OmniSharp/omnisharp-roslyn/pull/1672))
+* Added support for organizing usings on format. This can be set via OmniSharp configuration, such as `omnisharp.json` file. (PR:[omnisharp-roslyn/#1686](https://github.com/OmniSharp/omnisharp-roslyn/pull/1686))
+* Improved support for .NET Core 3.1
 
 ## 1.21.9 (December 16, 2019)
 * Use the base filename instead of 'ClassName' in ctor snippet (PR:[#3385](https://github.com/OmniSharp/omnisharp-vscode/pull/3385))
