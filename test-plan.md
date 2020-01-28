@@ -140,7 +140,7 @@ To setup a test project to verify on you can do:
 ##### C# Diagnostics
 * Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file. NOTE: This error squiggly will be misaligned due to known issues.
 
-#### TagHelper Quick Info
+##### TagHelper Quick Info
 * Typing `<environment></environment>` then hovering the mouse over the opening tag results in an informative window about that TagHelper.
 
 ##### TagHelper completion
