@@ -617,6 +617,11 @@
           "default": false,
           "description": "Suppress the warning that project.json is no longer a supported project format for .NET Core applications"
         },
+        "csharp.supressBuildAssetsNotification": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress the notification window to add missing assets to build or debug the application."
+        },
         "csharp.suppressHiddenDiagnostics": {
           "type": "boolean",
           "default": true,
