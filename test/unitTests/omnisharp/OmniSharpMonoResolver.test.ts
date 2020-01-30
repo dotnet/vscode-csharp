@@ -16,7 +16,13 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
     let getMonoCalled: boolean;
     let environment: NodeJS.ProcessEnv;
     let options: Options;
+
     const monoPath = "monoPath";
+
+    const lowerMonoVersion = "6.4.0";
+    const requiredMonoVersion = "6.6.0";
+    const higherMonoVersion = "6.8.0";
+
     const getMono = (version: string) => async(env: NodeJS.ProcessEnv) => {
         getMonoCalled = true;
         environment = env;
@@ -28,8 +34,8 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
         options = getEmptyOptions();
     });
 
-    test("it returns undefined if the version is less than 5.8.1 and useGlobalMono is auto", async () => {
-        let monoResolver = new OmniSharpMonoResolver(getMono("5.0.0"));
+    test(`it returns undefined if the version is less than ${requiredMonoVersion} and useGlobalMono is auto`, async () => {
+        let monoResolver = new OmniSharpMonoResolver(getMono(lowerMonoVersion));
         let monoInfo = await monoResolver.getGlobalMonoInfo({
             ...options,
             useGlobalMono: "auto",
@@ -39,7 +45,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
     });
 
     test("it returns undefined if useGlobalMono is never", async () => {
-        let monoResolver = new OmniSharpMonoResolver(getMono("5.8.2"));
+        let monoResolver = new OmniSharpMonoResolver(getMono(higherMonoVersion));
         let monoInfo = await monoResolver.getGlobalMonoInfo({
             ...options,
             useGlobalMono: "never",
@@ -48,32 +54,32 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
         expect(monoInfo).to.be.undefined;
     });
 
-    test("it returns the path and version if the version is greater than or equal to 5.8.1 and getGlobalMonoInfo is always", async () => {
-        let monoResolver = new OmniSharpMonoResolver(getMono("5.8.1"));
+    test(`it returns the path and version if the version is greater than or equal to ${requiredMonoVersion} and getGlobalMonoInfo is always`, async () => {
+        let monoResolver = new OmniSharpMonoResolver(getMono(requiredMonoVersion));
         let monoInfo = await monoResolver.getGlobalMonoInfo({
             ...options,
             useGlobalMono: "always",
             monoPath: monoPath
         });
 
-        expect(monoInfo.version).to.be.equal("5.8.1");
+        expect(monoInfo.version).to.be.equal(requiredMonoVersion);
         expect(monoInfo.path).to.be.equal(monoPath);
     });
 
-    test("it returns the path and version if the version is greater than or equal to 5.8.1 and getGlobalMonoInfo is auto", async () => {
-        let monoResolver = new OmniSharpMonoResolver(getMono("5.8.2"));
+    test(`it returns the path and version if the version is greater than or equal to ${requiredMonoVersion} and getGlobalMonoInfo is auto`, async () => {
+        let monoResolver = new OmniSharpMonoResolver(getMono(higherMonoVersion));
         let monoInfo = await monoResolver.getGlobalMonoInfo({
             ...options,
             useGlobalMono: "auto",
             monoPath: monoPath
         });
 
-        expect(monoInfo.version).to.be.equal("5.8.2");
+        expect(monoInfo.version).to.be.equal(higherMonoVersion);
         expect(monoInfo.path).to.be.equal(monoPath);
     });
 
-    test("it throws exception if getGlobalMonoInfo is always and version<5.8.1", async () => {
-        let monoResolver = new OmniSharpMonoResolver(getMono("5.8.0"));
+    test(`it throws exception if getGlobalMonoInfo is always and version<${requiredMonoVersion}`, async () => {
+        let monoResolver = new OmniSharpMonoResolver(getMono(lowerMonoVersion));
 
         await expect(monoResolver.getGlobalMonoInfo({
             ...options,
@@ -83,7 +89,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
     });
 
     test("sets the environment with the monoPath id useGlobalMono is auto", async () => {
-        let monoResolver = new OmniSharpMonoResolver(getMono("5.8.1"));
+        let monoResolver = new OmniSharpMonoResolver(getMono(requiredMonoVersion));
         let monoInfo = await monoResolver.getGlobalMonoInfo({
             ...options,
             useGlobalMono: "auto",
@@ -95,7 +101,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
     });
 
     test("sets the environment with the monoPath id useGlobalMono is always", async () => {
-        let monoResolver = new OmniSharpMonoResolver(getMono("5.8.1"));
+        let monoResolver = new OmniSharpMonoResolver(getMono(requiredMonoVersion));
         let monoInfo = await monoResolver.getGlobalMonoInfo({
             ...options,
             useGlobalMono: "auto",
@@ -107,7 +113,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
     });
 
     test("doesn't set the environment with the monoPath if useGlobalMono is never", async () => {
-        let monoResolver = new OmniSharpMonoResolver(getMono("5.8.1"));
+        let monoResolver = new OmniSharpMonoResolver(getMono(requiredMonoVersion));
         await monoResolver.getGlobalMonoInfo({
             ...options,
             useGlobalMono: "never",
@@ -120,7 +126,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
     });
 
     test("getMono is called with the environment that includes the monoPath if the useGlobalMono is auto or always", async () => {
-        let monoResolver = new OmniSharpMonoResolver(getMono("5.8.1"));
+        let monoResolver = new OmniSharpMonoResolver(getMono(requiredMonoVersion));
         await monoResolver.getGlobalMonoInfo({
             ...options,
             useGlobalMono: "auto",
