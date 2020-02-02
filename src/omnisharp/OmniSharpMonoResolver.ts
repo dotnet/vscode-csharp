@@ -11,7 +11,8 @@ import { MonoInformation } from '../constants/MonoInformation';
 import { IGetMonoVersion } from '../constants/IGetMonoVersion';
 
 export class OmniSharpMonoResolver implements IMonoResolver { 
-    private minimumMonoVersion = "5.8.1";
+    private minimumMonoVersion = "6.6.0";
+    
     constructor(private getMonoVersion: IGetMonoVersion) {
     }
 

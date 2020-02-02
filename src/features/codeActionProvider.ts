@@ -90,7 +90,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
                 return {
                     title: codeAction.Name,
                     command: this._commandId,
-                    arguments: [runRequest]
+                    arguments: [runRequest, token]
                 };
             });
         }
@@ -99,10 +99,9 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
         }
     }
 
-    private async _runCodeAction(req: protocol.V2.RunCodeActionRequest): Promise<boolean | string | {}> {
+    private async _runCodeAction(req: protocol.V2.RunCodeActionRequest, token: vscode.CancellationToken): Promise<boolean | string | {}> {
 
-        return serverUtils.runCodeAction(this._server, req).then(response => {
-
+        return serverUtils.runCodeAction(this._server, req).then(async response => {
             if (response && Array.isArray(response.Changes)) {
 
                 let edit = new vscode.WorkspaceEdit();
@@ -123,9 +122,9 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
                 for (let change of response.Changes) {
                     if (change.ModificationType == FileModificationType.Opened)
                     {
-                        // The CodeAction requested that we open a file. 
+                        // The CodeAction requested that we open a file.
                         // Record that file name and keep processing CodeActions.
-                        // If a CodeAction requests that we open multiple files 
+                        // If a CodeAction requests that we open multiple files
                         // we only open the last one (what would it mean to open multiple files?)
                         fileToOpen = vscode.Uri.file(change.FileName);
                     }
@@ -135,7 +134,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
                         let uri = vscode.Uri.file(change.FileName);
                         if (renamedFiles.some(r => r == uri))
                         {
-                            // This file got renamed. Omnisharp has already
+                            // This file got renamed. OmniSharp has already
                             // persisted the new file with any applicable changes.
                             continue;
                         }
@@ -144,10 +143,13 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
                         for (let textChange of change.Changes) {
                             edits.push(vscode.TextEdit.replace(toRange2(textChange), textChange.NewText));
                         }
-    
+
                         edit.set(uri, edits);
                     }
                 }
+
+                // Allow language middlewares to re-map its edits if necessary.
+                edit = await this._languageMiddlewareFeature.remap("remapWorkspaceEdit", edit, token);
 
                 let applyEditPromise = vscode.workspace.applyEdit(edit);
 
@@ -158,14 +160,14 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
                 let next = applyEditPromise;
                 if (renamedFiles.some(r => r.fsPath == vscode.window.activeTextEditor.document.uri.fsPath))
                 {
-                    next = applyEditPromise.then(_ => 
+                    next = applyEditPromise.then(_ =>
                         {
                             return vscode.commands.executeCommand("workbench.action.closeActiveEditor");
                         });
                 }
 
                 return fileToOpen != null
-                 ? next.then(_ => 
+                 ? next.then(_ =>
                         {
                             return vscode.commands.executeCommand("vscode.open", fileToOpen);
                         })

@@ -85,16 +85,19 @@ function showDotnetToolsWarning(message: string): void {
     if (!config.get('suppressDotnetInstallWarning', false)) {
         const getDotNetMessage = 'Get the .NET Core SDK';
         const goToSettingsMessage = 'Disable this message in user settings';
+        const helpMessage = 'Help';
         // Buttons are shown in right-to-left order, with a close button to the right of everything;
         // getDotNetMessage will be the first button, then goToSettingsMessage, then the close button.
         vscode.window.showErrorMessage(message,
-            goToSettingsMessage, getDotNetMessage).then(value => {
+            goToSettingsMessage, getDotNetMessage, helpMessage).then(value => {
                 if (value === getDotNetMessage) {
                     let dotnetcoreURL = 'https://dot.net/core-sdk-vscode';
-
                     vscode.env.openExternal(vscode.Uri.parse(dotnetcoreURL));
                 } else if (value === goToSettingsMessage) {
                     vscode.commands.executeCommand('workbench.action.openGlobalSettings');
+                } else if (value == helpMessage) {
+                    let helpURL = 'https://aka.ms/VSCode-CS-DotnetNotFoundHelp';
+                    vscode.env.openExternal(vscode.Uri.parse(helpURL));
                 }
             });
     }

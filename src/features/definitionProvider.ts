@@ -21,7 +21,7 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
         this._definitionMetadataDocumentProvider = definitionMetadataDocumentProvider;
     }
 
-    public async provideDefinition(document: TextDocument, position: Position, token: CancellationToken): Promise<Location> {
+    public async provideDefinition(document: TextDocument, position: Position, token: CancellationToken): Promise<Location[]> {
 
         let req = <GoToDefinitionRequest>createRequest(document, position);
         req.WantMetadata = true;
@@ -46,33 +46,29 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
                 const metadataSource: MetadataSource = gotoDefinitionResponse.MetadataSource;
 
                 // go to metadata endpoint for more information
-                serverUtils.getMetadata(this._server, <MetadataRequest>{
+                const metadataResponse = await serverUtils.getMetadata(this._server, <MetadataRequest>{
                     Timeout: 5000,
                     AssemblyName: metadataSource.AssemblyName,
                     VersionNumber: metadataSource.VersionNumber,
                     ProjectName: metadataSource.ProjectName,
                     Language: metadataSource.Language,
                     TypeName: metadataSource.TypeName
-                }).then(metadataResponse => {
-                    if (!metadataResponse || !metadataResponse.Source || !metadataResponse.SourceName) {
-                        return;
-                    }
-
-                    const uri: Uri = this._definitionMetadataDocumentProvider.addMetadataResponse(metadataResponse);
-                    location = new Location(uri, new Position(gotoDefinitionResponse.Line - 1, gotoDefinitionResponse.Column - 1));
                 });
+
+                if (!metadataResponse || !metadataResponse.Source || !metadataResponse.SourceName) {
+                    return;
+                }
+
+                const uri: Uri = this._definitionMetadataDocumentProvider.addMetadataResponse(metadataResponse);
+                location = new Location(uri, new Position(gotoDefinitionResponse.Line - 1, gotoDefinitionResponse.Column - 1));
             }
 
             // Allow language middlewares to re-map its edits if necessary.
             const result = await this._languageMiddlewareFeature.remap("remapLocations", [location], token);
-            if (result && result.length == 1) {
-                return result[0];
-            }
-
-            return location;
+            return result;
         }
         catch (error) {
-            return;
+            return [];
         }
     }
 }
