@@ -10,9 +10,9 @@ import { IMonoResolver } from '../constants/IMonoResolver';
 import { MonoInformation } from '../constants/MonoInformation';
 import { IGetMonoVersion } from '../constants/IGetMonoVersion';
 
-export class OmniSharpMonoResolver implements IMonoResolver { 
-    private minimumMonoVersion = "6.6.0";
-    
+export class OmniSharpMonoResolver implements IMonoResolver {
+    private minimumMonoVersion = "6.4.0";
+
     constructor(private getMonoVersion: IGetMonoVersion) {
     }
 
@@ -24,7 +24,7 @@ export class OmniSharpMonoResolver implements IMonoResolver {
             env['MONO_GAC_PREFIX'] = options.monoPath;
             monoPath = options.monoPath;
         }
-    
+
         let version = await this.getMonoVersion(env);
 
         return {
