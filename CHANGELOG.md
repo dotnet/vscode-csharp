@@ -1,4 +1,4 @@
-## Known Issues in 1.21.10
+## Known Issues in 1.21.11
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
@@ -9,7 +9,13 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.21.10 (Not yet released)
+## 1.21.11 (Not Yet Released)
+* Updated the bundled to Mono 6.8.0 and MSBuild to be copied from Mono 6.8.0 ([omnisharp-roslyn/#1693](https://github.com/OmniSharp/omnisharp-roslyn/issues/1693), PR: [omnisharp-roslyn/#1697](https://github.com/OmniSharp/omnisharp-roslyn/pull/1697))
+* Included NugetSDKResolver in the minimal MSBuild, which introduces support for Nuget based project SDKs like Arcade ([omnisharp-roslyn/#1678](https://github.com/OmniSharp/omnisharp-roslyn/issues/1678), PR: [omnisharp-roslyn/#1696](https://github.com/OmniSharp/omnisharp-roslyn/pull/1696))
+* Added option (`csharp.supressBuildAssetsNotification`) to surpress missing build asset notifications (PR:[#3538](https://github.com/OmniSharp/omnisharp-vscode/pull/3538))
+* The minimum Mono version required to run OmniSharp on has been increased to 6.4.0
+
+## 1.21.10 (February 2, 2020)
 * Updated Razor support (PR:[#3524](https://github.com/OmniSharp/omnisharp-vscode/pull/3524))
     * Added quick info (hover) support for TagHelper and Blazor components. You can now hover over TagHelpers, Components and their attributes to understand what associated C# type you're hovering over in addition to an attributes expected value type.
     * Migrated Razor's project understanding from the VSCode extension into the Language Server. This enables the language server to reboot without extra assistance (reliability) from an LSP client and also enables future Razor LSP clients to have richer functionality with less "work".
