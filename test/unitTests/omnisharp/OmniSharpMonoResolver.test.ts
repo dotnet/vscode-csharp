@@ -19,9 +19,9 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
 
     const monoPath = "monoPath";
 
-    const lowerMonoVersion = "6.4.0";
-    const requiredMonoVersion = "6.6.0";
-    const higherMonoVersion = "6.8.0";
+    const lowerMonoVersion = "6.2.0";
+    const requiredMonoVersion = "6.4.0";
+    const higherMonoVersion = "6.6.0";
 
     const getMono = (version: string) => async(env: NodeJS.ProcessEnv) => {
         getMonoCalled = true;
