@@ -28,5 +28,6 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
       with:
-        name: vsix
+        name: omnisharp-vscode.vsix
         path: ./artifact/omnisharp-vscode.vsix
+
