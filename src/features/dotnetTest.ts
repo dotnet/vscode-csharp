@@ -36,19 +36,19 @@ export default class TestManager extends AbstractProvider {
         // register commands
         let d1 = vscode.commands.registerCommand(
             'dotnet.test.run',
-            async (testMethod, fileName, testFrameworkName) => this._runDotnetTest(testMethod, fileName, testFrameworkName));
+            async (testMethod, fileName, testFrameworkName) => this.runDotnetTest(testMethod, fileName, testFrameworkName));
 
         let d2 = vscode.commands.registerCommand(
             'dotnet.test.debug',
-            async (testMethod, fileName, testFrameworkName) => this._debugDotnetTest(testMethod, fileName, testFrameworkName));
+            async (testMethod, fileName, testFrameworkName) => this.debugDotnetTest(testMethod, fileName, testFrameworkName));
 
         let d4 = vscode.commands.registerCommand(
             'dotnet.classTests.run',
-            async (className, methodsInClass, fileName, testFrameworkName) => this._runDotnetTestsInClass(className, methodsInClass, fileName, testFrameworkName));
+            async (className, methodsInClass, fileName, testFrameworkName) => this.runDotnetTestsInClass(className, methodsInClass, fileName, testFrameworkName));
 
         let d5 = vscode.commands.registerCommand(
             'dotnet.classTests.debug',
-            async (className, methodsInClass, fileName, testFrameworkName) => this._debugDotnetTestsInClass(className, methodsInClass, fileName, testFrameworkName));
+            async (className, methodsInClass, fileName, testFrameworkName) => this.debugDotnetTestsInClass(className, methodsInClass, fileName, testFrameworkName));
 
         this._telemetryIntervalId = setInterval(() =>
             this._reportTelemetry(), TelemetryReportingDelay);
@@ -155,7 +155,28 @@ export default class TestManager extends AbstractProvider {
         return targetFrameworkVersion;
     }
 
-    private async _runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string) {
+    public async discoverTests(fileName: string, testFrameworkName: string): Promise<protocol.V2.TestInfo[]> {
+       
+        let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
+        let runSettings = vscode.workspace.getConfiguration('omnisharp').get<string>('testRunSettings');
+
+        const request: protocol.V2.DiscoverTestsRequest = {
+            FileName: fileName,
+            RunSettings: runSettings,
+            TestFrameworkName: testFrameworkName,
+            TargetFrameworkVersion: targetFrameworkVersion
+        };
+
+        try {
+            let response = await serverUtils.discoverTests(this._server, request);
+            return response.Tests;
+        }
+        catch (error) {
+            return undefined;
+        }
+    }
+
+    public async runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string) {
 
         this._eventStream.post(new DotNetTestRunStart(testMethod));
 
@@ -178,7 +199,7 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    private async _runDotnetTestsInClass(className: string, methodsInClass: string[], fileName: string, testFrameworkName: string) {
+    public async runDotnetTestsInClass(className: string, methodsInClass: string[], fileName: string, testFrameworkName: string) {
 
         //to do: try to get the class name here
         this._eventStream.post(new DotNetTestsInClassRunStart(className));
@@ -351,7 +372,7 @@ export default class TestManager extends AbstractProvider {
         return { debugType, debugEventListener, targetFrameworkVersion };
     }
 
-    private async _debugDotnetTest(testMethod: string, fileName: string, testFrameworkName: string) {
+    public async debugDotnetTest(testMethod: string, fileName: string, testFrameworkName: string) {
         // We support to styles of 'dotnet test' for debugging: The legacy 'project.json' testing, and the newer csproj support
         // using VS Test. These require a different level of communication.
 
@@ -373,7 +394,7 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    private async _debugDotnetTestsInClass(className: string, methodsToRun: string[], fileName: string, testFrameworkName: string) {
+    public async debugDotnetTestsInClass(className: string, methodsToRun: string[], fileName: string, testFrameworkName: string) {
 
         this._eventStream.post(new DotNetTestsInClassDebugStart(className));
 

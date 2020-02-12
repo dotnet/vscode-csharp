@@ -43,6 +43,7 @@ import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
 export interface ActivationResult {
     readonly server: OmniSharpServer;
     readonly advisor: Advisor;
+    readonly testManager: TestManager;
 }
 
 export async function activate(context: vscode.ExtensionContext, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, eventStream: EventStream, optionProvider: OptionProvider, extensionPath: string) {
@@ -59,6 +60,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     languageMiddlewareFeature.register();
     disposables.add(languageMiddlewareFeature);
     let localDisposables: CompositeDisposable;
+    const testManager = new TestManager(server, eventStream, languageMiddlewareFeature);
 
     disposables.add(server.onServerStart(() => {
         // register language feature provider on start
@@ -70,8 +72,6 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables.add(vscode.languages.registerDefinitionProvider(documentSelector, definitionProvider));
         localDisposables.add(vscode.languages.registerDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
         localDisposables.add(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server, languageMiddlewareFeature)));
-        const testManager = new TestManager(server, eventStream, languageMiddlewareFeature);
-        localDisposables.add(testManager);
         localDisposables.add(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, testManager, optionProvider, languageMiddlewareFeature)));
         localDisposables.add(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server, languageMiddlewareFeature)));
         localDisposables.add(vscode.languages.registerDocumentSymbolProvider(documentSelector, new DocumentSymbolProvider(server, languageMiddlewareFeature)));
@@ -173,6 +173,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
 
     // stop server on deactivate
     disposables.add(new Disposable(() => {
+        testManager.dispose();
         advisor.dispose();
         server.stop();
     }));
@@ -184,5 +185,5 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
 
     return new Promise<ActivationResult>(resolve =>
         server.onServerStart(e =>
-            resolve({ server, advisor })));
+            resolve({ server, advisor, testManager })));
 }

@@ -44,6 +44,7 @@ import IInstallDependencies from './packageManager/IInstallDependencies';
 import { installRuntimeDependencies } from './InstallRuntimeDependencies';
 import { isValidDownload } from './packageManager/isValidDownload';
 import { BackgroundWorkStatusBarObserver } from './observers/BackgroundWorkStatusBarObserver';
+import { MSTestAdapter } from './mstest-adapter/adapter';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -156,6 +157,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         }
     }
 
+    MSTestAdapter.register(context, eventStream, langServicePromise.then(x => x.testManager));
+
     return {
         initializationFinished: async () => {
             let langService = await langServicePromise;
@@ -166,6 +169,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         getAdvisor: async () => {
             let langService = await langServicePromise;
             return langService.advisor;
+        },
+        getTestManager: async() => {
+            let langService = await langServicePromise;
+            return langService.testManager;
         },
         eventStream
     };

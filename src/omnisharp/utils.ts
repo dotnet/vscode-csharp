@@ -23,6 +23,10 @@ export async function codeStructure(server: OmniSharpServer, request: protocol.V
     return server.makeRequest<protocol.V2.Structure.CodeStructureResponse>(protocol.V2.Requests.CodeStructure, request, token);
 }
 
+export async function discoverTests(server: OmniSharpServer, request: protocol.V2.DiscoverTestsRequest) {
+    return server.makeRequest<protocol.V2.DiscoverTestsResponse>(protocol.V2.Requests.DiscoverTests, request);
+}
+
 export async function filesChanged(server: OmniSharpServer, requests: protocol.Request[]) {
     return server.makeRequest<void>(protocol.Requests.FilesChanged, requests);
 }
