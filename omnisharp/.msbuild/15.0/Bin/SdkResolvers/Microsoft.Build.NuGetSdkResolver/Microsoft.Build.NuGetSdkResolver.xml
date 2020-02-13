@@ -1,0 +1,3 @@
+<SdkResolver>
+  <Path>../../Microsoft.Build.NuGetSdkResolver.dll</Path>
+</SdkResolver>
