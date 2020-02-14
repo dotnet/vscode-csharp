@@ -121,6 +121,32 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         eventStream.post(new ActivationFailure());
     }
 
+    if (!isSupportedPlatform(platformInfo)) {
+        const platform: string = platformInfo.platform ? platformInfo.platform : "this platform";
+        const architecture: string = platformInfo.architecture ? platformInfo.architecture : " and architecture";
+        let errorMessage: string = `The C# extension for Visual Studio Code (powered by OmniSharp) is incompatiable on ${platform} ${architecture}`;
+        const messageOptions: vscode.MessageOptions = {
+        };
+
+        // Check to see if VS Code is running remotely
+        if (extension.extensionKind === vscode.ExtensionKind.Workspace) {
+            const setupButton: string = "How to setup Remote Debugging";
+            errorMessage += ` with the VS Code Remote Extensions. To see avaliable workarounds, click on '${setupButton}'.`;
+
+            await vscode.window.showErrorMessage(errorMessage, messageOptions, setupButton).then((selectedItem: string) => {
+                if (selectedItem === setupButton) {
+                    let remoteDebugInfoURL = 'https://github.com/OmniSharp/omnisharp-vscode/wiki/Remote-Debugging-On-Linux-Arm';
+                    vscode.env.openExternal(vscode.Uri.parse(remoteDebugInfoURL));
+                }
+            });
+        } else {
+            await vscode.window.showErrorMessage(errorMessage, messageOptions);
+        }
+
+        // Unsupported platform
+        return null;
+    }
+
     let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter);
     eventStream.subscribe(telemetryObserver.post);
 
@@ -169,6 +195,24 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         },
         eventStream
     };
+}
+
+function isSupportedPlatform(platform: PlatformInformation): boolean {
+    if (platform.isWindows()) {
+        return platform.architecture === "x86" || platform.architecture === "x86_64";
+    }
+
+    if (platform.isMacOS()) {
+        return true;
+    }
+
+    if (platform.isLinux()) {
+        return platform.architecture === "x86_64" ||
+               platform.architecture === "x86" ||
+               platform.architecture === "i686";
+    }
+
+    return false;
 }
 
 async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, installDependencies: IInstallDependencies): Promise<boolean> {
