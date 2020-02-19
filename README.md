@@ -20,6 +20,12 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 * [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
+## What's new in 1.21.12
+* Fixed out of bounds exception in line mapping ([#3485](https://github.com/OmniSharp/omnisharp-vscode/issues/3485), PR: [omnisharp-roslyn/#1707](https://github.com/OmniSharp/omnisharp-roslyn/pull/1707))
+* Added support for aliases in project references ([omnisharp-roslyn/#1685](https://github.com/OmniSharp/omnisharp-roslyn/issues/1685), PR: [omnisharp-roslyn/#1701](https://github.com/OmniSharp/omnisharp-roslyn/pull/1701))
+* Raised the lowest discovered VS2019 version to 16.3 ([omnisharp-roslyn/#1700](https://github.com/OmniSharp/omnisharp-roslyn/issues/1700), PR: (#1713)(https://github.com/OmniSharp/omnisharp-roslyn/pull/1713))
+* Fixed a bug where organizing usings clashed with other formatting settings (PR: [omnisharp-roslyn/#1715](https://github.com/OmniSharp/omnisharp-roslyn/pull/1713))
+
 ## What's new in 1.21.11
 * Updated the bundled to Mono 6.8.0 and MSBuild to be copied from Mono 6.8.0 ([omnisharp-roslyn/#1693](https://github.com/OmniSharp/omnisharp-roslyn/issues/1693), PR: [omnisharp-roslyn/#1697](https://github.com/OmniSharp/omnisharp-roslyn/pull/1697))
 * Included NugetSDKResolver in the minimal MSBuild, which introduces support for Nuget based project SDKs like Arcade ([omnisharp-roslyn/#1678](https://github.com/OmniSharp/omnisharp-roslyn/issues/1678), PR: [omnisharp-roslyn/#1696](https://github.com/OmniSharp/omnisharp-roslyn/pull/1696))
@@ -57,11 +63,6 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 * Line pragma is now respected in find references ([omnisharp-roslyn/#1649](https://github.com/OmniSharp/omnisharp-roslyn/issues/1649), PR:[omnisharp-roslyn/#1660](https://github.com/OmniSharp/omnisharp-roslyn/pull/1660))
 * Do not set mono paths when running in standalone mode ([omnisharp-vscode#3410](https://github.com/OmniSharp/omnisharp-vscode/issues/3410), [omnisharp-vscode#3340](https://github.com/OmniSharp/omnisharp-vscode/issues/3340), [omnisharp-roslyn/#1650](https://github.com/OmniSharp/omnisharp-roslyn/issues/1650), PR:[omnisharp-roslyn/#1656](https://github.com/OmniSharp/omnisharp-roslyn/pull/1656))
 * Fixed a bug where OmniSharp would crash on startup if the path contained `=` sign ([omnisharp-vscode#3436](https://github.com/OmniSharp/omnisharp-vscode/issues/3436), PR:[omnisharp-roslyn/#1661](https://github.com/OmniSharp/omnisharp-roslyn/pull/1661))
-* Improved support for .NET Core 3.1
-
-# What's new in  1.21.8
-* Update Razor to work for 3.1 SDKs (PR:[#3406](https://github.com/OmniSharp/omnisharp-vscode/pull/3406))
-* Support plugins configuration in omnisharp.json (PR:[omnisharp-roslyn/#1615](https://github.com/OmniSharp/omnisharp-roslyn/pull/1615))
 * Improved support for .NET Core 3.1
 
 ### Supported Operating Systems for Debugging
