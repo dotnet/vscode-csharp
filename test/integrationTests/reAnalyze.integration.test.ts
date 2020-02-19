@@ -1,6 +1,6 @@
-/*--------------------------------------------------------------------------------------------- 
-*  Copyright (c) Microsoft Corporation. All rights reserved. 
-*  Licensed under the MIT License. See License.txt in the project root for license information. 
+/*---------------------------------------------------------------------------------------------
+*  Copyright (c) Microsoft Corporation. All rights reserved.
+*  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
@@ -40,6 +40,12 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
 
     suiteSetup(async function () {
         should();
+
+        // These tests don't run on the BasicRazorApp2_1 solution
+        if (vscode.workspace.workspaceFolders[0].uri.fsPath.split(path.sep).pop() === 'BasicRazorApp2_1') {
+            this.skip();
+        }
+
         eventStream = (await activateCSharpExtension()).eventStream;
         await testAssetWorkspace.restore();
 

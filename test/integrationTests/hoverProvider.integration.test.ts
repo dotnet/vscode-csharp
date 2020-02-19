@@ -17,6 +17,12 @@ chai.use(require('chai-fs'));
 suite(`Hover Provider: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
+
+        // These tests don't run on the BasicRazorApp2_1 solution
+        if (vscode.workspace.workspaceFolders[0].uri.fsPath.split(path.sep).pop() === 'BasicRazorApp2_1') {
+            this.skip();
+        }
+
         await activateCSharpExtension();
         await testAssetWorkspace.restore();
     });

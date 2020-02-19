@@ -13,7 +13,12 @@ import { activateCSharpExtension } from './integrationHelpers';
 suite(`${OmnisharpReferenceProvider.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;
 
-    suiteSetup(async () => {
+    suiteSetup(async function () {
+        // These tests don't run on the BasicRazorApp2_1 solution
+        if (vscode.workspace.workspaceFolders[0].uri.fsPath.split(path.sep).pop() === 'BasicRazorApp2_1') {
+            this.skip();
+        }
+
         await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
