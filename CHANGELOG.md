@@ -1,4 +1,4 @@
-## Known Issues in 1.21.11
+## Known Issues in 1.21.12
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
@@ -9,7 +9,13 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.21.11 (Not Yet Released)
+## 1.21.12 (Not Yet Released)
+* Fixed out of bounds exception in line mapping ([#3485](https://github.com/OmniSharp/omnisharp-vscode/issues/3485), PR: [omnisharp-roslyn/#1707](https://github.com/OmniSharp/omnisharp-roslyn/pull/1707))
+* Added support for aliases in project references ([omnisharp-roslyn/#1685](https://github.com/OmniSharp/omnisharp-roslyn/issues/1685), PR: [omnisharp-roslyn/#1701](https://github.com/OmniSharp/omnisharp-roslyn/pull/1701))
+* Raised the lowest discovered VS2019 version to 16.3 ([omnisharp-roslyn/#1700](https://github.com/OmniSharp/omnisharp-roslyn/issues/1700), PR: (#1713)(https://github.com/OmniSharp/omnisharp-roslyn/pull/1713))
+* Fixed a bug where organizing usings clashed with other formatting settings (PR: [omnisharp-roslyn/#1715](https://github.com/OmniSharp/omnisharp-roslyn/pull/1713))
+
+## 1.21.11 (February 6, 2020)
 * Updated the bundled to Mono 6.8.0 and MSBuild to be copied from Mono 6.8.0 ([omnisharp-roslyn/#1693](https://github.com/OmniSharp/omnisharp-roslyn/issues/1693), PR: [omnisharp-roslyn/#1697](https://github.com/OmniSharp/omnisharp-roslyn/pull/1697))
 * Included NugetSDKResolver in the minimal MSBuild, which introduces support for Nuget based project SDKs like Arcade ([omnisharp-roslyn/#1678](https://github.com/OmniSharp/omnisharp-roslyn/issues/1678), PR: [omnisharp-roslyn/#1696](https://github.com/OmniSharp/omnisharp-roslyn/pull/1696))
 * Added option (`csharp.supressBuildAssetsNotification`) to surpress missing build asset notifications (PR:[#3538](https://github.com/OmniSharp/omnisharp-vscode/pull/3538))
