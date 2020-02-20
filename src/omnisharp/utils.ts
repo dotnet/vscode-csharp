@@ -3,9 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as fs from 'fs-extra';
+import * as glob from 'glob';
 import { OmniSharpServer } from './server';
+import * as path from 'path';
 import * as protocol from './protocol';
 import * as vscode from 'vscode';
+import { MSBuildProject, findNetStandardTargetFramework } from './protocol';
 
 export async function autoComplete(server: OmniSharpServer, request: protocol.AutoCompleteRequest, token: vscode.CancellationToken) {
     return server.makeRequest<protocol.AutoCompleteResponse[]>(protocol.Requests.AutoComplete, request, token);
@@ -64,7 +68,15 @@ export async function requestProjectInformation(server: OmniSharpServer, request
 }
 
 export async function requestWorkspaceInformation(server: OmniSharpServer) {
-    return server.makeRequest<protocol.WorkspaceInformationResponse>(protocol.Requests.Projects);
+    const response = await server.makeRequest<protocol.WorkspaceInformationResponse>(protocol.Requests.Projects);
+    if (response.MsBuild && response.MsBuild.Projects) {
+        for (const project of response.MsBuild.Projects) {
+            project.IsWebProject = isWebProject(project);
+            project.IsBlazorWebAssemblyProject = isBlazorWebAssemblyProject(project);
+        }
+    }
+
+    return response;
 }
 
 export async function runCodeAction(server: OmniSharpServer, request: protocol.V2.RunCodeActionRequest) {
@@ -121,4 +133,46 @@ export async function debugTestStop(server: OmniSharpServer, request: protocol.V
 
 export async function isNetCoreProject(project: protocol.MSBuildProject) {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp') || tf.ShortName.startsWith('netstandard')) !== undefined;
+}
+
+function isBlazorWebAssemblyProject(project: MSBuildProject): boolean {
+    if (!project.IsExe) {
+        return false;
+    }
+
+    if (!isWebProject(project)) {
+        return false;
+    }
+
+    // So we're a EXE web projct. We now need to differentiate between a typical web app and a Blazor WASM
+    // project. WebApps are typically executables and netcoreapp targeting; therefore, we're going to make
+    // the assumption that any app that's an executable and targeting netstandard2.1 or great is Blazor WASM.
+
+    const netstandardTFM = findNetStandardTargetFramework(project);
+    if (netstandardTFM === undefined) {
+        return false;
+    }
+
+    const netstandardTFMVersionString = netstandardTFM.ShortName.substring('netstandard'.length);
+    const netstandardTFMVersion = parseFloat(netstandardTFMVersionString);
+    if (!netstandardTFMVersion || netstandardTFMVersion < 2.1) {
+        return false;
+    }
+
+    const projectDirectory = path.dirname(project.Path);
+    const razorFiles = glob.sync('**/*.razor', { cwd: projectDirectory });
+    if (!razorFiles || razorFiles.length === 0) {
+        // No Razor files in the project
+        return false;
+    }
+
+    return true;
+}
+
+function isWebProject(project: MSBuildProject): boolean {
+    let projectFileText = fs.readFileSync(project.Path, 'utf8');
+
+    // Assume that this is an MSBuild project. In that case, look for the 'Sdk="Microsoft.NET.Sdk.Web"' attribute.
+    // TODO: Have OmniSharp provide the list of SDKs used by a project and check that list instead.
+    return projectFileText.toLowerCase().indexOf('sdk="microsoft.net.sdk.web"') >= 0;
 }

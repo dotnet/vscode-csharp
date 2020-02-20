@@ -98,8 +98,8 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
                 const buildOperations : AssetOperations = await getBuildOperations(generator);
                 await addTasksJsonIfNecessary(generator, buildOperations);
                 
-                const isWebProject = generator.hasWebServerDependency();
-                const launchJson: string = generator.createLaunchJson(isWebProject);
+                const programLaunchType = generator.computeProgramLaunchType();
+                const launchJson: string = generator.createLaunchJson(programLaunchType);
 
                 // jsonc-parser's parse function parses a JSON string with comments into a JSON object. However, this removes the comments. 
                 return parse(launchJson);
