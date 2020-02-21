@@ -1,6 +1,10 @@
 {
-  "name": "ASP.NET Core Razor",
+  "name": "ASP.NET Razor",
   "scopeName": "text.aspnetcorerazor",
+  "fileTypes": [
+    "razor",
+    "cshtml"
+  ],
   "patterns": [
     {
       "include": "#razor-control-structures"
@@ -9,6 +13,54 @@
       "include": "text.html.basic"
     }
   ],
+  "injections": {
+    "R:text.aspnetcorerazor": {
+      "patterns": [
+        {
+          "name": "meta.structure.template.razor",
+          "begin": "(@)(?=\\<)",
+          "beginCaptures": {
+            "1": {
+              "patterns": [
+                {
+                  "include": "#transition"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "include": "#wellformed-html"
+            }
+          ],
+          "end": "(?<=\\>)"
+        }
+      ]
+    },
+    "L:meta.structure.razor.codeblock - (meta.statement | string.quoted | comment), L:meta.structure.razor.directive.codeblock - (meta.statement | string.quoted | comment)": {
+      "patterns": [
+        {
+          "begin": "(\\{)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.curlybrace.open.cs"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#razor-codeblock-body"
+            }
+          ],
+          "end": "(\\})",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.curlybrace.close.cs"
+            }
+          }
+        }
+      ]
+    }
+  },
   "repository": {
     "razor-control-structures": {
       "patterns": [
@@ -44,6 +96,7 @@
       "name": "keyword.control.cshtml.transition"
     },
     "razor-codeblock": {
+      "name": "meta.structure.razor.codeblock",
       "begin": "(@)(\\{)",
       "beginCaptures": {
         "1": {
@@ -304,7 +357,7 @@
     },
     "implicit-expression": {
       "name": "meta.expression.implicit.cshtml",
-      "begin": "(@)",
+      "begin": "(?<![[:alpha:][:alnum:]])(@)",
       "beginCaptures": {
         "1": {
           "patterns": [
@@ -1013,7 +1066,7 @@
     },
     "using-statement": {
       "name": "meta.statement.using.razor",
-      "begin": "(@)(using)\\b\\s*(?=\\()",
+      "begin": "(?:^\\s*|(@))(using)\\b\\s*(?=\\()",
       "beginCaptures": {
         "1": {
           "patterns": [
@@ -1041,7 +1094,7 @@
     },
     "if-statement": {
       "name": "meta.statement.if.razor",
-      "begin": "(@)(if)\\b\\s*(?=\\()",
+      "begin": "(?:^\\s*|(@))(if)\\b\\s*(?=\\()",
       "beginCaptures": {
         "1": {
           "patterns": [
@@ -1093,7 +1146,7 @@
     },
     "for-statement": {
       "name": "meta.statement.for.razor",
-      "begin": "(@)(for)\\b\\s*(?=\\()",
+      "begin": "(?:^\\s*|(@))(for)\\b\\s*(?=\\()",
       "beginCaptures": {
         "1": {
           "patterns": [
@@ -1121,7 +1174,7 @@
     },
     "foreach-statement": {
       "name": "meta.statement.foreach.razor",
-      "begin": "(@)(foreach)\\b\\s*(?=\\()",
+      "begin": "(?:^\\s*|(@)(await\\s+)?)(foreach)\\b\\s*(?=\\()",
       "beginCaptures": {
         "1": {
           "patterns": [
@@ -1131,6 +1184,13 @@
           ]
         },
         "2": {
+          "patterns": [
+            {
+              "include": "#await-prefix"
+            }
+          ]
+        },
+        "3": {
           "name": "keyword.control.loop.foreach.cs"
         }
       },
@@ -1207,7 +1267,7 @@
     },
     "do-statement": {
       "name": "meta.statement.do.razor",
-      "begin": "(@)(do)\\b\\s*",
+      "begin": "(?:^\\s*|(@))(do)\\b\\s*",
       "beginCaptures": {
         "1": {
           "patterns": [
@@ -1268,7 +1328,7 @@
     },
     "switch-statement": {
       "name": "meta.statement.switch.razor",
-      "begin": "(@)(switch)\\b\\s*(?=\\()",
+      "begin": "(?:^\\s*|(@))(switch)\\b\\s*(?=\\()",
       "beginCaptures": {
         "1": {
           "patterns": [
@@ -1319,7 +1379,7 @@
     },
     "lock-statement": {
       "name": "meta.statement.lock.razor",
-      "begin": "(@)(lock)\\b\\s*(?=\\()",
+      "begin": "(?:^\\s*|(@))(lock)\\b\\s*(?=\\()",
       "beginCaptures": {
         "1": {
           "patterns": [
@@ -1360,7 +1420,7 @@
     },
     "try-block": {
       "name": "meta.statement.try.razor",
-      "begin": "(@)(try)\\b\\s*",
+      "begin": "(?:^\\s*|(@))(try)\\b\\s*",
       "beginCaptures": {
         "1": {
           "patterns": [

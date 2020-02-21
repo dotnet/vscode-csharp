@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-vscode",
-  "version": "1.21.9",
+  "version": "1.21.12",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -29,8 +29,8 @@
     "dotnet"
   ],
   "defaults": {
-    "omniSharp": "1.34.9",
-    "razor": "1.0.0-alpha3-5.0.0-alpha.1.19605.17"
+    "omniSharp": "1.34.13",
+    "razor": "1.0.0-alpha3-5.0.0-preview.2.20120.8"
   },
   "main": "./dist/extension",
   "scripts": {
@@ -79,7 +79,7 @@
     "http-proxy-agent": "2.1.0",
     "https-proxy-agent": "^3.0.1",
     "jsonc-parser": "2.0.3",
-    "microsoft.aspnetcore.razor.vscode": "https://razorvscodetest.blob.core.windows.net/npm/microsoft.aspnetcore.razor.vscode-5.0.0-alpha.1.19612.7.tgz",
+    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/9eb262e8-f9ae-4a27-969d-5eb831a797c5/6960b69edc66c1023db5a66ff9552203/microsoft.aspnetcore.razor.vscode-5.0.0-preview.2.20120.8.tgz",
     "mkdirp": "0.5.1",
     "node-filter-async": "1.1.1",
     "remove-bom-buffer": "3.0.0",
@@ -120,7 +120,7 @@
     "chai-as-promised": "7.1.1",
     "chai-fs": "2.0.0",
     "chai-string": "1.5.0",
-    "codecov": "3.1.0",
+    "codecov": "3.6.5",
     "copyfiles": "2.1.0",
     "cross-env": "5.2.0",
     "del": "3.0.0",
@@ -153,47 +153,47 @@
     "vsce": "1.57.0",
     "vscode": "1.1.33",
     "webpack": "4.29.3",
-    "webpack-cli": "3.2.3"
+    "webpack-cli": "^3.2.3"
   },
   "runtimeDependencies": [
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/f90b2712-8f9e-4922-8c16-8b556e3de023/0d23eeab530c0fb23f517275eaff0db3/omnisharp-win-x86-1.34.9.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.34.9.zip",
-      "installPath": ".omnisharp/1.34.9",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/e5c16d5c-a379-4ea6-afbe-cbedf90a0876/63e562d25165bd940995465124a5e0d1/omnisharp-win-x86-1.34.13.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.34.13.zip",
+      "installPath": ".omnisharp/1.34.13",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.omnisharp/1.34.9/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.34.13/OmniSharp.exe",
       "platformId": "win-x86",
-      "integrity": "B470A6211FC619E84A091BE558CE13D02B564BC72E702566B89AD6066CA1E30B"
+      "integrity": "1E052090B2C1F6D42C20E3CA1318738C574D3D846401F0F9BB2B7F22617919C7"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/f90b2712-8f9e-4922-8c16-8b556e3de023/66b355b126f43f17270951e9d99ab8d8/omnisharp-win-x64-1.34.9.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.34.9.zip",
-      "installPath": ".omnisharp/1.34.9",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/e5c16d5c-a379-4ea6-afbe-cbedf90a0876/b89bee247c303002d7b045d9787ffc1e/omnisharp-win-x64-1.34.13.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.34.13.zip",
+      "installPath": ".omnisharp/1.34.13",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/1.34.9/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.34.13/OmniSharp.exe",
       "platformId": "win-x64",
-      "integrity": "EACBAF4C6B5788892361B47877BDB5FD2C8F64195C5ECBC257FEF14E61DA25DE"
+      "integrity": "92FE3BE46064B8AA17CD714671A28779D1B720D58B45B89E35D1A0DE0898D1CD"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/f90b2712-8f9e-4922-8c16-8b556e3de023/9f14159516a93f06fcd965ef7f335dc1/omnisharp-osx-1.34.9.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.34.9.zip",
-      "installPath": ".omnisharp/1.34.9",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/e5c16d5c-a379-4ea6-afbe-cbedf90a0876/fcda5b4d6b207245a2e76118d8b059c2/omnisharp-osx-1.34.13.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.34.13.zip",
+      "installPath": ".omnisharp/1.34.13",
       "platforms": [
         "darwin"
       ],
@@ -201,16 +201,16 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.34.9/run",
+      "installTestPath": "./.omnisharp/1.34.13/run",
       "platformId": "osx",
-      "integrity": "7B117B9C8F68C2018F50F04031E34D1F25A2D86A7A999CDD310BC2953D450C70"
+      "integrity": "92F65C0F8F0A9748DF9878E41D2BA047D1073B27FE0C161129E1EC21DAEA1998"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/f90b2712-8f9e-4922-8c16-8b556e3de023/e69bdd4608df209c392b060d2c4d5bcb/omnisharp-linux-x86-1.34.9.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.34.9.zip",
-      "installPath": ".omnisharp/1.34.9",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/e5c16d5c-a379-4ea6-afbe-cbedf90a0876/f8aa092d3c2b81ebbcd065c79fc3d7ac/omnisharp-linux-x86-1.34.13.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.34.13.zip",
+      "installPath": ".omnisharp/1.34.13",
       "platforms": [
         "linux"
       ],
@@ -222,16 +222,16 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.34.9/run",
+      "installTestPath": "./.omnisharp/1.34.13/run",
       "platformId": "linux-x86",
-      "integrity": "85D2584248B5B9AF8CB68510A5E7BCE1C516B2F581486C369046F195BC40B0A4"
+      "integrity": "47F0CEDE055AC3112E0B288FFDECEEFC46C258EE6E193DB931E191BD74FD4C2C"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/f90b2712-8f9e-4922-8c16-8b556e3de023/529091dc87db6486f018ef7a958d33c4/omnisharp-linux-x64-1.34.9.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.34.9.zip",
-      "installPath": ".omnisharp/1.34.9",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/e5c16d5c-a379-4ea6-afbe-cbedf90a0876/0dbfeeaff92f544c022dc7406b3ac2e8/omnisharp-linux-x64-1.34.13.zip",
+      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.34.13.zip",
+      "installPath": ".omnisharp/1.34.13",
       "platforms": [
         "linux"
       ],
@@ -242,15 +242,15 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.34.9/run",
+      "installTestPath": "./.omnisharp/1.34.13/run",
       "platformId": "linux-x64",
-      "integrity": "2D973B6EE3CB715470FAA63B16DCEE1948BF8275E7DA7546742D1A7146A3298A"
+      "integrity": "96B16D8D029B07FCE4B212B50BBE65DDCBDC3B059AC1F5D72F6F893456DB74D3"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/6ebd6da8-bbe3-42f7-924b-aa921730ee2f/efad9a8d86f35c3945b95b8da80845dd/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-21-0/coreclr-debug-win7-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/8453f1ae-2bda-4d6a-97fa-9a752f968dc1/5157a2a463cc8a4afa0621f1ec594732/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-22-0/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -259,13 +259,13 @@
         "x86_64"
       ],
       "installTestPath": "./.debugger/vsdbg-ui.exe",
-      "integrity": "1F426E6D8CA1BA7E067BC9A99974B113DC3C16B34BA963DA76EF23C3B0221D10"
+      "integrity": "9188583AF7E150C8A8AB7501A75C15A53EB5EA9E40D1ED93458E989A15B95FF6"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/6ebd6da8-bbe3-42f7-924b-aa921730ee2f/ea2e64051a68c1a939395ea4b22131be/coreclr-debug-osx-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-21-0/coreclr-debug-osx-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/8453f1ae-2bda-4d6a-97fa-9a752f968dc1/575994a4df09b34c3314ee30e007ed45/coreclr-debug-osx-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-22-0/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "darwin"
@@ -278,13 +278,13 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "EDA155BEE247321876EE59D359196F7AC5D55F54D2A20927C1B737B5723E91EA"
+      "integrity": "B29D7DA252308470E215F52E09A632CA1B5E0A6F74D6A37473A7E4CFDF92266F"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/6ebd6da8-bbe3-42f7-924b-aa921730ee2f/3c87589b7075173f12c4ae114b7020df/coreclr-debug-linux-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-21-0/coreclr-debug-linux-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/8453f1ae-2bda-4d6a-97fa-9a752f968dc1/0f8c37b08e1afd2360bde4a5764d403e/coreclr-debug-linux-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-22-0/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -297,13 +297,13 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "D6EA62622788617163B758F5535E65BD1D010A0D362B422039ED6EE64D84D725"
+      "integrity": "2F6657B3D3C1044E9293F9C7E498AF283600DEAAF052975EBFBDD1296C8C6C05"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/59f9e3a8-cd84-4b37-927e-256a518e62b9/36ef731842d0b93e3f69972bf9b5cf98/razorlanguageserver-win-x64-5.0.0-alpha.1.19605.17.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x64-5.0.0-alpha.1.19605.17.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9eb262e8-f9ae-4a27-969d-5eb831a797c5/598cfb26425be866525df2f4cc76dab5/razorlanguageserver-win-x64-5.0.0-preview.2.20120.8.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x64-5.0.0-preview.2.20120.8.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -315,8 +315,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/59f9e3a8-cd84-4b37-927e-256a518e62b9/e7d9c51b3a91dff4fbd941da04a6533b/razorlanguageserver-win-x86-5.0.0-alpha.1.19605.17.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x86-5.0.0-alpha.1.19605.17.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9eb262e8-f9ae-4a27-969d-5eb831a797c5/91bb95b2c64fb0ed925f6c1b5d227342/razorlanguageserver-win-x86-5.0.0-preview.2.20120.8.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x86-5.0.0-preview.2.20120.8.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -328,8 +328,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/59f9e3a8-cd84-4b37-927e-256a518e62b9/2562fe7def9d532cd8a5f7224ba1e9d6/razorlanguageserver-linux-x64-5.0.0-alpha.1.19605.17.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-linux-x64-5.0.0-alpha.1.19605.17.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9eb262e8-f9ae-4a27-969d-5eb831a797c5/3fd0d88026a997250736c1c516cde2eb/razorlanguageserver-linux-x64-5.0.0-preview.2.20120.8.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-linux-x64-5.0.0-preview.2.20120.8.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -344,8 +344,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/59f9e3a8-cd84-4b37-927e-256a518e62b9/d22ddac876bacbedf18c37535aaf9274/razorlanguageserver-osx-x64-5.0.0-alpha.1.19605.17.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-osx-x64-5.0.0-alpha.1.19605.17.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9eb262e8-f9ae-4a27-969d-5eb831a797c5/d46d6811b862fc656537427d41573c28/razorlanguageserver-osx-x64-5.0.0-preview.2.20120.8.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-osx-x64-5.0.0-preview.2.20120.8.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -466,6 +466,16 @@
                   "type": "boolean",
                   "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
                   "default": false
+                },
+                "threadExit": {
+                  "type": "boolean",
+                  "description": "Controls if a message is logged when a thread in the target process exits. Default: `false`.",
+                  "default": false
+                },
+                "processExit": {
+                  "type": "boolean",
+                  "description": "Controls if a message is logged when the target process exits, or debugging is stopped. Default: `true`.",
+                  "default": true
                 }
               }
             },
@@ -478,7 +488,8 @@
               "description": "Options to control how symbols (.pdb files) are found and loaded.",
               "default": {
                 "searchPaths": [],
-                "searchMicrosoftSymbolServer": false
+                "searchMicrosoftSymbolServer": false,
+                "searchNuGetOrgSymbolServer": false
               },
               "type": "object",
               "properties": {
@@ -487,12 +498,17 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                  "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                   "default": []
                 },
                 "searchMicrosoftSymbolServer": {
                   "type": "boolean",
-                  "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                  "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                  "default": false
+                },
+                "searchNuGetOrgSymbolServer": {
+                  "type": "boolean",
+                  "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                   "default": false
                 },
                 "cachePath": {
@@ -601,6 +617,11 @@
           "default": false,
           "description": "Suppress the warning that project.json is no longer a supported project format for .NET Core applications"
         },
+        "csharp.supressBuildAssetsNotification": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress the notification window to add missing assets to build or debug the application."
+        },
         "csharp.suppressHiddenDiagnostics": {
           "type": "boolean",
           "default": true,
@@ -640,11 +661,11 @@
             "never"
           ],
           "enumDescriptions": [
-            "Automatically launch OmniSharp with \"mono\" if version 5.8.1 or greater is available on the PATH.",
-            "Always launch OmniSharp with \"mono\". If version 5.8.1 or greater is not available on the PATH, an error will be printed.",
+            "Automatically launch OmniSharp with \"mono\" if version 6.4.0 or greater is available on the PATH.",
+            "Always launch OmniSharp with \"mono\". If version 6.4.0 or greater is not available on the PATH, an error will be printed.",
             "Never launch OmniSharp on a globally-installed Mono."
           ],
-          "description": "Launch OmniSharp with the globally-installed Mono. If set to \"always\", \"mono\" version 5.8.1 or greater must be available on the PATH. If set to \"auto\", OmniSharp will be launched with \"mono\" if version 5.8.1 or greater is available on the PATH."
+          "description": "Launch OmniSharp with the globally-installed Mono. If set to \"always\", \"mono\" version 6.4.0 or greater must be available on the PATH. If set to \"auto\", OmniSharp will be launched with \"mono\" if version 6.4.0 or greater is available on the PATH."
         },
         "omnisharp.monoPath": {
           "type": [
@@ -775,6 +796,12 @@
             "Logs all messages from the Razor extension"
           ],
           "description": "Specifies whether to output all messages [Verbose], some messages [Messages] or not at all [Off]."
+        },
+        "razor.format.enable": {
+          "type": "boolean",
+          "scope": "window",
+          "default": true,
+          "description": "Enable/disable default Razor formatter."
         }
       }
     },
@@ -1114,6 +1141,16 @@
                     "type": "boolean",
                     "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
                     "default": false
+                  },
+                  "threadExit": {
+                    "type": "boolean",
+                    "description": "Controls if a message is logged when a thread in the target process exits. Default: `false`.",
+                    "default": false
+                  },
+                  "processExit": {
+                    "type": "boolean",
+                    "description": "Controls if a message is logged when the target process exits, or debugging is stopped. Default: `true`.",
+                    "default": true
                   }
                 }
               },
@@ -1343,7 +1380,8 @@
                 "description": "Options to control how symbols (.pdb files) are found and loaded.",
                 "default": {
                   "searchPaths": [],
-                  "searchMicrosoftSymbolServer": false
+                  "searchMicrosoftSymbolServer": false,
+                  "searchNuGetOrgSymbolServer": false
                 },
                 "type": "object",
                 "properties": {
@@ -1352,12 +1390,17 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "default": false
+                  },
+                  "searchNuGetOrgSymbolServer": {
+                    "type": "boolean",
+                    "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -1439,6 +1482,11 @@
                 "type": "boolean",
                 "description": "When true (the default state), the debugger will attempt faster evaluation by simulating execution of simple properties and methods.",
                 "default": true
+              },
+              "targetOutputLogPath": {
+                "type": "string",
+                "description": "When set, text that the target application writes to stdout and stderr (ex: Console.WriteLine) will be saved to the specified file. This option is ignored if console is set to something other than internalConsole.",
+                "default": "${workspaceFolder}/out.txt"
               }
             }
           },
@@ -1525,6 +1573,16 @@
                     "type": "boolean",
                     "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
                     "default": false
+                  },
+                  "threadExit": {
+                    "type": "boolean",
+                    "description": "Controls if a message is logged when a thread in the target process exits. Default: `false`.",
+                    "default": false
+                  },
+                  "processExit": {
+                    "type": "boolean",
+                    "description": "Controls if a message is logged when the target process exits, or debugging is stopped. Default: `true`.",
+                    "default": true
                   }
                 }
               },
@@ -1754,7 +1812,8 @@
                 "description": "Options to control how symbols (.pdb files) are found and loaded.",
                 "default": {
                   "searchPaths": [],
-                  "searchMicrosoftSymbolServer": false
+                  "searchMicrosoftSymbolServer": false,
+                  "searchNuGetOrgSymbolServer": false
                 },
                 "type": "object",
                 "properties": {
@@ -1763,12 +1822,17 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "default": false
+                  },
+                  "searchNuGetOrgSymbolServer": {
+                    "type": "boolean",
+                    "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -2183,6 +2247,16 @@
                     "type": "boolean",
                     "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
                     "default": false
+                  },
+                  "threadExit": {
+                    "type": "boolean",
+                    "description": "Controls if a message is logged when a thread in the target process exits. Default: `false`.",
+                    "default": false
+                  },
+                  "processExit": {
+                    "type": "boolean",
+                    "description": "Controls if a message is logged when the target process exits, or debugging is stopped. Default: `true`.",
+                    "default": true
                   }
                 }
               },
@@ -2412,7 +2486,8 @@
                 "description": "Options to control how symbols (.pdb files) are found and loaded.",
                 "default": {
                   "searchPaths": [],
-                  "searchMicrosoftSymbolServer": false
+                  "searchMicrosoftSymbolServer": false,
+                  "searchNuGetOrgSymbolServer": false
                 },
                 "type": "object",
                 "properties": {
@@ -2421,12 +2496,17 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "default": false
+                  },
+                  "searchNuGetOrgSymbolServer": {
+                    "type": "boolean",
+                    "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -2508,6 +2588,11 @@
                 "type": "boolean",
                 "description": "When true (the default state), the debugger will attempt faster evaluation by simulating execution of simple properties and methods.",
                 "default": true
+              },
+              "targetOutputLogPath": {
+                "type": "string",
+                "description": "When set, text that the target application writes to stdout and stderr (ex: Console.WriteLine) will be saved to the specified file. This option is ignored if console is set to something other than internalConsole.",
+                "default": "${workspaceFolder}/out.txt"
               }
             }
           },
@@ -2594,6 +2679,16 @@
                     "type": "boolean",
                     "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
                     "default": false
+                  },
+                  "threadExit": {
+                    "type": "boolean",
+                    "description": "Controls if a message is logged when a thread in the target process exits. Default: `false`.",
+                    "default": false
+                  },
+                  "processExit": {
+                    "type": "boolean",
+                    "description": "Controls if a message is logged when the target process exits, or debugging is stopped. Default: `true`.",
+                    "default": true
                   }
                 }
               },
@@ -2823,7 +2918,8 @@
                 "description": "Options to control how symbols (.pdb files) are found and loaded.",
                 "default": {
                   "searchPaths": [],
-                  "searchMicrosoftSymbolServer": false
+                  "searchMicrosoftSymbolServer": false,
+                  "searchNuGetOrgSymbolServer": false
                 },
                 "type": "object",
                 "properties": {
@@ -2832,12 +2928,17 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "default": false
+                  },
+                  "searchNuGetOrgSymbolServer": {
+                    "type": "boolean",
+                    "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
