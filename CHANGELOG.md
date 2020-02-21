@@ -1,4 +1,4 @@
-## Known Issues in 1.21.12
+## Known Issues in 1.21.13
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
@@ -9,11 +9,13 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.21.12 (Not Yet Released)
+## 1.21.13 (Not Yet Released)
 * Updated Razor support (PR:[3594](https://github.com/OmniSharp/omnisharp-vscode/pull/3594))
   * Support for @code/@functions block formatting
   * Updated Razor's TextMate grammar to include full syntactic colorization
   * Several bug fixes
+
+## 1.21.12 (February 20, 2020)
 * Fixed out of bounds exception in line mapping ([#3485](https://github.com/OmniSharp/omnisharp-vscode/issues/3485), PR: [omnisharp-roslyn/#1707](https://github.com/OmniSharp/omnisharp-roslyn/pull/1707))
 * Added support for aliases in project references ([omnisharp-roslyn/#1685](https://github.com/OmniSharp/omnisharp-roslyn/issues/1685), PR: [omnisharp-roslyn/#1701](https://github.com/OmniSharp/omnisharp-roslyn/pull/1701))
 * Raised the lowest discovered VS2019 version to 16.3 ([omnisharp-roslyn/#1700](https://github.com/OmniSharp/omnisharp-roslyn/issues/1700), PR: (#1713)(https://github.com/OmniSharp/omnisharp-roslyn/pull/1713))
