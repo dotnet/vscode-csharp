@@ -23,7 +23,7 @@ export class OmnisharpManager {
     public async GetOmniSharpLaunchInfo(defaultOmnisharpVersion: string, omnisharpPath: string, serverUrl: string, latestVersionFileServerPath: string, installPath: string, extensionPath: string): Promise<LaunchInfo> {
         if (!omnisharpPath) {
             // If omnisharpPath was not specified, return the default path.
-            let basePath = path.resolve(extensionPath, '.omnisharp', defaultOmnisharpVersion);
+            let basePath = extensionPath; // path.resolve(extensionPath, '.omnisharp', defaultOmnisharpVersion); Currently just using the omnisharp version built into the extension
             return this.GetLaunchInfo(this.platformInfo, basePath);
         }
 
