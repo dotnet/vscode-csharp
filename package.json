@@ -91,13 +91,8 @@
     "tmp": "0.0.33",
     "vscode-debugprotocol": "1.33.0",
     "vscode-extension-telemetry": "0.1.1",
-    "vscode-test-adapter-api": "^1.7.0",
-    "vscode-test-adapter-util": "^0.7.0",
     "yauzl": "2.10.0"
   },
-  "extensionDependencies": [
-    "hbenl.vscode-test-explorer"
-  ],
   "devDependencies": {
     "@types/archiver": "2.1.2",
     "@types/chai": "4.1.7",
