@@ -157,8 +157,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         }
     }
 
-    MSTestAdapter.register(context, eventStream, langServicePromise.then(x => x.testManager));
-
     return {
         initializationFinished: async () => {
             let langService = await langServicePromise;

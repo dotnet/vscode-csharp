@@ -561,6 +561,7 @@ export namespace V2 {
         RunSettings: string;
         TestFrameworkName: string;
         TargetFrameworkVersion: string;
+        NoBuild?: boolean;
     }
 
     interface SingleTestRequest extends BaseTestRequest {

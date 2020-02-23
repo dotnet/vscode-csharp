@@ -110,13 +110,14 @@ export default class TestManager extends AbstractProvider {
             vscode.workspace.saveAll(/*includeUntitled*/ false));
     }
 
-    private async _runTest(fileName: string, testMethod: string, runSettings: string, testFrameworkName: string, targetFrameworkVersion: string): Promise<protocol.V2.DotNetTestResult[]> {
+    private async _runTest(fileName: string, testMethod: string, runSettings: string, testFrameworkName: string, targetFrameworkVersion: string, noBuild: boolean): Promise<protocol.V2.DotNetTestResult[]> {
         const request: protocol.V2.RunTestRequest = {
             FileName: fileName,
             MethodName: testMethod,
             RunSettings: runSettings,
             TestFrameworkName: testFrameworkName,
-            TargetFrameworkVersion: targetFrameworkVersion
+            TargetFrameworkVersion: targetFrameworkVersion,
+            NoBuild: noBuild
         };
 
         try {
@@ -155,7 +156,7 @@ export default class TestManager extends AbstractProvider {
         return targetFrameworkVersion;
     }
 
-    public async discoverTests(fileName: string, testFrameworkName: string): Promise<protocol.V2.TestInfo[]> {
+    public async discoverTests(fileName: string, testFrameworkName: string, noBuild: boolean): Promise<protocol.V2.TestInfo[]> {
        
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
         let runSettings = vscode.workspace.getConfiguration('omnisharp').get<string>('testRunSettings');
@@ -164,7 +165,8 @@ export default class TestManager extends AbstractProvider {
             FileName: fileName,
             RunSettings: runSettings,
             TestFrameworkName: testFrameworkName,
-            TargetFrameworkVersion: targetFrameworkVersion
+            TargetFrameworkVersion: targetFrameworkVersion,
+            NoBuild: noBuild
         };
 
         try {
@@ -176,7 +178,7 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    public async runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string) {
+    public async runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string, noBuild: boolean = false) {
 
         this._eventStream.post(new DotNetTestRunStart(testMethod));
 
@@ -188,7 +190,7 @@ export default class TestManager extends AbstractProvider {
         let runSettings = vscode.workspace.getConfiguration('omnisharp').get<string>('testRunSettings');
 
         try {
-            let results = await this._runTest(fileName, testMethod, runSettings, testFrameworkName, targetFrameworkVersion);
+            let results = await this._runTest(fileName, testMethod, runSettings, testFrameworkName, targetFrameworkVersion, noBuild);
             this._eventStream.post(new ReportDotNetTestResults(results));
         }
         catch (reason) {
@@ -199,7 +201,7 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    public async runDotnetTestsInClass(className: string, methodsInClass: string[], fileName: string, testFrameworkName: string) {
+    public async runDotnetTestsInClass(className: string, methodsInClass: string[], fileName: string, testFrameworkName: string, noBuild: boolean = false) {
 
         //to do: try to get the class name here
         this._eventStream.post(new DotNetTestsInClassRunStart(className));
@@ -212,7 +214,7 @@ export default class TestManager extends AbstractProvider {
         let runSettings = vscode.workspace.getConfiguration('omnisharp').get<string>('testRunSettings');
 
         try {
-            let results = await this._runTestsInClass(fileName, runSettings, testFrameworkName, targetFrameworkVersion, methodsInClass);
+            let results = await this._runTestsInClass(fileName, runSettings, testFrameworkName, targetFrameworkVersion, methodsInClass, noBuild);
             this._eventStream.post(new ReportDotNetTestResults(results));
         }
         catch (reason) {
@@ -223,13 +225,14 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    private async _runTestsInClass(fileName: string, runSettings: string, testFrameworkName: string, targetFrameworkVersion: string, methodsToRun: string[]): Promise<protocol.V2.DotNetTestResult[]> {
+    private async _runTestsInClass(fileName: string, runSettings: string, testFrameworkName: string, targetFrameworkVersion: string, methodsToRun: string[], noBuild: boolean): Promise<protocol.V2.DotNetTestResult[]> {
         const request: protocol.V2.RunTestsInClassRequest = {
             FileName: fileName,
             RunSettings: runSettings,
             TestFrameworkName: testFrameworkName,
             TargetFrameworkVersion: targetFrameworkVersion,
-            MethodNames: methodsToRun
+            MethodNames: methodsToRun,
+            NoBuild: noBuild
         };
 
         let response = await serverUtils.runTestsInClass(this._server, request);
@@ -269,7 +272,8 @@ export default class TestManager extends AbstractProvider {
         runSettings: string,
         testFrameworkName: string,
         targetFrameworkVersion: string,
-        debugEventListener: DebugEventListener): Promise<LaunchConfiguration> {
+        debugEventListener: DebugEventListener,
+        noBuild: boolean): Promise<LaunchConfiguration> {
 
         // Listen for test messages while getting start info.
         const listener = this._server.onTestMessage(e => {
@@ -281,7 +285,8 @@ export default class TestManager extends AbstractProvider {
             MethodName: testMethod,
             RunSettings: runSettings,
             TestFrameworkName: testFrameworkName,
-            TargetFrameworkVersion: targetFrameworkVersion
+            TargetFrameworkVersion: targetFrameworkVersion,
+            NoBuild: noBuild
         };
 
         try {
@@ -297,7 +302,7 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    private async _getLaunchConfigurationForLegacy(fileName: string, testMethod: string, runSettings: string, testFrameworkName: string, targetFrameworkVersion: string): Promise<LaunchConfiguration> {
+    private async _getLaunchConfigurationForLegacy(fileName: string, testMethod: string, runSettings: string, testFrameworkName: string, targetFrameworkVersion: string, noBuild: boolean): Promise<LaunchConfiguration> {
 
         // Listen for test messages while getting start info.
         const listener = this._server.onTestMessage(e => {
@@ -309,7 +314,8 @@ export default class TestManager extends AbstractProvider {
             MethodName: testMethod,
             RunSettings: runSettings,
             TestFrameworkName: testFrameworkName,
-            TargetFrameworkVersion: targetFrameworkVersion
+            TargetFrameworkVersion: targetFrameworkVersion,
+            NoBuild: noBuild
         };
 
         try {
@@ -328,12 +334,13 @@ export default class TestManager extends AbstractProvider {
         runSettings: string,
         testFrameworkName: string,
         targetFrameworkVersion: string,
-        debugEventListener: DebugEventListener): Promise<LaunchConfiguration> {
+        debugEventListener: DebugEventListener,
+        noBuild: boolean): Promise<LaunchConfiguration> {
         switch (debugType) {
             case 'legacy':
-                return this._getLaunchConfigurationForLegacy(fileName, testMethod, runSettings, testFrameworkName, targetFrameworkVersion);
+                return this._getLaunchConfigurationForLegacy(fileName, testMethod, runSettings, testFrameworkName, targetFrameworkVersion, noBuild);
             case 'vstest':
-                return this._getLaunchConfigurationForVSTest(fileName, testMethod, runSettings, testFrameworkName, targetFrameworkVersion, debugEventListener);
+                return this._getLaunchConfigurationForVSTest(fileName, testMethod, runSettings, testFrameworkName, targetFrameworkVersion, debugEventListener, noBuild);
 
             default:
                 throw new Error(`Unexpected debug type: ${debugType}`);
@@ -372,7 +379,7 @@ export default class TestManager extends AbstractProvider {
         return { debugType, debugEventListener, targetFrameworkVersion };
     }
 
-    public async debugDotnetTest(testMethod: string, fileName: string, testFrameworkName: string) {
+    public async debugDotnetTest(testMethod: string, fileName: string, testFrameworkName: string, noBuild: boolean = false) {
         // We support to styles of 'dotnet test' for debugging: The legacy 'project.json' testing, and the newer csproj support
         // using VS Test. These require a different level of communication.
 
@@ -382,7 +389,7 @@ export default class TestManager extends AbstractProvider {
         let runSettings = vscode.workspace.getConfiguration('omnisharp').get<string>('testRunSettings');
 
         try {
-            let config = await this._getLaunchConfiguration(debugType, fileName, testMethod, runSettings, testFrameworkName, targetFrameworkVersion, debugEventListener);
+            let config = await this._getLaunchConfiguration(debugType, fileName, testMethod, runSettings, testFrameworkName, targetFrameworkVersion, debugEventListener, noBuild);
             const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(fileName));
             return vscode.debug.startDebugging(workspaceFolder, config);
         }
@@ -394,7 +401,7 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    public async debugDotnetTestsInClass(className: string, methodsToRun: string[], fileName: string, testFrameworkName: string) {
+    public async debugDotnetTestsInClass(className: string, methodsToRun: string[], fileName: string, testFrameworkName: string, noBuild: boolean = false) {
 
         this._eventStream.post(new DotNetTestsInClassDebugStart(className));
 
@@ -402,7 +409,7 @@ export default class TestManager extends AbstractProvider {
         let runSettings = vscode.workspace.getConfiguration('omnisharp').get<string>('testRunSettings');
 
         try {
-            let config = await this._getLaunchConfigurationForClass(debugType, fileName, methodsToRun, runSettings, testFrameworkName, targetFrameworkVersion, debugEventListener);
+            let config = await this._getLaunchConfigurationForClass(debugType, fileName, methodsToRun, runSettings, testFrameworkName, targetFrameworkVersion, debugEventListener, noBuild);
             const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(fileName));
             return vscode.debug.startDebugging(workspaceFolder, config);
         }
@@ -421,9 +428,10 @@ export default class TestManager extends AbstractProvider {
         runSettings: string,
         testFrameworkName: string,
         targetFrameworkVersion: string,
-        debugEventListener: DebugEventListener): Promise<LaunchConfiguration> {
+        debugEventListener: DebugEventListener,
+        noBuild: boolean): Promise<LaunchConfiguration> {
         if (debugType == 'vstest') {
-            return this._getLaunchConfigurationForVSTestClass(fileName, methodsToRun, runSettings, testFrameworkName, targetFrameworkVersion, debugEventListener);
+            return this._getLaunchConfigurationForVSTestClass(fileName, methodsToRun, runSettings, testFrameworkName, targetFrameworkVersion, debugEventListener, noBuild);
         }
         throw new Error(`Unexpected debug type: ${debugType}`);
     }
@@ -434,7 +442,8 @@ export default class TestManager extends AbstractProvider {
         runSettings: string,
         testFrameworkName: string,
         targetFrameworkVersion: string,
-        debugEventListener: DebugEventListener): Promise<LaunchConfiguration> {
+        debugEventListener: DebugEventListener,
+        noBuild: boolean): Promise<LaunchConfiguration> {
 
         const listener = this._server.onTestMessage(e => {
             this._eventStream.post(new DotNetTestMessage(e.Message));
@@ -445,7 +454,8 @@ export default class TestManager extends AbstractProvider {
             MethodNames: methodsToRun,
             RunSettings: runSettings,
             TestFrameworkName: testFrameworkName,
-            TargetFrameworkVersion: targetFrameworkVersion
+            TargetFrameworkVersion: targetFrameworkVersion,
+            NoBuild: noBuild
         };
 
         try {
