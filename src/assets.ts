@@ -138,8 +138,12 @@ export class AssetGenerator {
             throw new Error("Startup project not set");
         }
 
-        if (this.startupProject.IsBlazorWebAssemblyProject) {
-            return ProgramLaunchType.BlazorWebAssembly;
+        if (this.startupProject.IsBlazorWebAssemblyStandalone) {
+            return ProgramLaunchType.BlazorWebAssemblyStandalone;
+        }
+
+        if (this.startupProject.IsBlazorWebAssemblyHosted) {
+            return ProgramLaunchType.BlazorWebAssemblyHosted;
         }
 
         if (this.startupProject.IsWebProject) {
@@ -172,7 +176,7 @@ export class AssetGenerator {
         return path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, startupProjectDir));
     }
 
-    public createLaunchJson(programLaunchType: ProgramLaunchType): string {
+    public createLaunchJsonConfigurations(programLaunchType: ProgramLaunchType): string {
         switch (programLaunchType) {
             case ProgramLaunchType.Console: {
                 const launchConfigurationsMassaged: string = indentJsonString(createLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory()));
@@ -192,13 +196,45 @@ export class AssetGenerator {
     ${attachConfigurationsMassaged}
 ]`;
             }
-            case ProgramLaunchType.BlazorWebAssembly: {
-                const webLaunchConfigurationsMassaged: string = indentJsonString(createBlazorWebAssemblyLaunchConfiguration(this.computeWorkingDirectory()));
+            case ProgramLaunchType.BlazorWebAssemblyHosted: {
+                const chromeLaunchConfigurationsMassaged: string = indentJsonString(createBlazorWebAssemblyLaunchConfiguration(this.computeWorkingDirectory()));
+                const hostedLaunchConfigurationsMassaged: string = indentJsonString(createWebAssemblyHostedLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory()));
+                return `
+[
+    ${hostedLaunchConfigurationsMassaged},
+    ${chromeLaunchConfigurationsMassaged}
+]`;
+            }
+            case ProgramLaunchType.BlazorWebAssemblyStandalone: {
+                const chromeLaunchConfigurationsMassaged: string = indentJsonString(createBlazorWebAssemblyLaunchConfiguration(this.computeWorkingDirectory()));
                 const devServerLaunchConfigurationMassaged: string = indentJsonString(createBlazorWebAssemblyDevServerLaunchConfiguration(this.computeWorkingDirectory()));
                 return `
 [
     ${devServerLaunchConfigurationMassaged},
-    ${webLaunchConfigurationsMassaged}
+    ${chromeLaunchConfigurationsMassaged}
+]`;
+            }
+        }
+    }
+
+    public createLaunchJsonCompounds(programLaunchType: ProgramLaunchType): string | undefined {
+        switch (programLaunchType) {
+            case ProgramLaunchType.Console:
+            case ProgramLaunchType.Web: {
+                return;
+            }
+            case ProgramLaunchType.BlazorWebAssemblyHosted: {
+                const launchAndDebugCompoundMassaged: string = indentJsonString(createBlazorWebAssemblyHostedLaunchCompound());
+                return `
+[
+${launchAndDebugCompoundMassaged}
+]`;
+            }
+            case ProgramLaunchType.BlazorWebAssemblyStandalone: {
+                const launchAndDebugCompoundMassaged: string = indentJsonString(createBlazorWebAssemblyStandaloneLaunchCompound());
+                return `
+[
+${launchAndDebugCompoundMassaged}
 ]`;
             }
         }
@@ -272,7 +308,8 @@ export class AssetGenerator {
 export enum ProgramLaunchType {
     Console,
     Web,
-    BlazorWebAssembly,
+    BlazorWebAssemblyHosted,
+    BlazorWebAssemblyStandalone,
 }
 
 export function createWebLaunchConfiguration(programPath: string, workingDirectory: string): string {
@@ -301,30 +338,87 @@ export function createWebLaunchConfiguration(programPath: string, workingDirecto
 }`;
 }
 
+export function createWebAssemblyHostedLaunchConfiguration(programPath: string, workingDirectory: string): string {
+    return `
+{
+    "name": ".NET Core Launch (Blazor Hosted)",
+    "type": "coreclr",
+    "request": "launch",
+    // If you have changed target frameworks, make sure to update the program path.
+    "program": "${util.convertNativePathToPosix(programPath)}",
+    "args": [],
+    "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
+    "stopAtEntry": false,
+    "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+    },
+    "presentation": {
+        "order": 2
+    }
+}`;
+}
+
 export function createBlazorWebAssemblyLaunchConfiguration(workingDirectory: string): string {
     return `
 {
-    "name": "Launch Blazor web assembly project in Chrome",
+    "name": ".NET Core Debug Blazor Web Assembly in Chrome",
     "type": "pwa-chrome",
     "request": "launch",
+    "timeout": 30000,
     // If you have changed the default port / launch URL make sure to update the expectation below
     "url": "https://localhost:5001",
     "webRoot": "${util.convertNativePathToPosix(workingDirectory)}",
-    "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
+    "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
+    "presentation": {
+        "order": 3
+    }
 }`;
 }
 
 export function createBlazorWebAssemblyDevServerLaunchConfiguration(workingDirectory: string): string {
     return `
 {
-    "name": "Start Blazor web assembly dev server",
+    "name": ".NET Core Launch (Blazor Standalone)",
     "type": "coreclr",
     "request": "launch",
     "program": "dotnet",
-    "args": ["run"],
+    "args": ["run", "--no-build"],
     "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
     "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
+    },
+    "presentation": {
+        "order": 2
+    }
+}`;
+}
+
+export function createBlazorWebAssemblyStandaloneLaunchCompound(): string {
+    return `
+{
+    "name": ".NET Core Launch and Debug Blazor web assembly",
+    "configurations": [
+        ".NET Core Launch (Blazor Standalone)",
+        ".NET Core Debug Blazor Web Assembly in Chrome",
+    ],
+    "preLaunchTask": "build",
+    "presentation": {
+        "order": 1
+    }
+}`;
+}
+
+export function createBlazorWebAssemblyHostedLaunchCompound(): string {
+    return `
+{
+    "name": ".NET Core Launch and Debug Blazor server and web assembly",
+    "configurations": [
+        ".NET Core Launch (Blazor Hosted)",
+        ".NET Core Debug Blazor Web Assembly in Chrome",
+    ],
+    "preLaunchTask": "build",
+    "presentation": {
+        "order": 1
     }
 }`;
 }
@@ -568,10 +662,10 @@ async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: A
         // Code API will return old configurations anyway, which we do NOT want.
 
         const programLaunchType = generator.computeProgramLaunchType();
-        let launchJson: string = generator.createLaunchJson(programLaunchType);
+        const launchJsonConfigurations: string = generator.createLaunchJsonConfigurations(programLaunchType);
+        const configurationsMassaged: string = indentJsonString(launchJsonConfigurations);
 
-        const configurationsMassaged: string = indentJsonString(launchJson);
-        const launchJsonText = `
+        let launchJsonText = `
 {
    // Use IntelliSense to find out which attributes exist for C# debugging
    // Use hover for the description of the existing attributes
@@ -579,6 +673,20 @@ async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: A
    "version": "0.2.0",
    "configurations": ${configurationsMassaged}
 }`;
+
+        const launchJsonCompounds = generator.createLaunchJsonCompounds(programLaunchType);
+        if (launchJsonCompounds !== undefined) {
+            const compoundsMassaged = indentJsonString(launchJsonCompounds);
+            launchJsonText = `
+{
+   // Use IntelliSense to find out which attributes exist for C# debugging
+   // Use hover for the description of the existing attributes
+   // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+   "version": "0.2.0",
+   "configurations": ${configurationsMassaged},
+   "compounds": ${compoundsMassaged}
+}`;
+        }
 
         fs.writeFile(generator.launchJsonPath, launchJsonText.trim(), err => {
             if (err) {
