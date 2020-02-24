@@ -44,7 +44,6 @@ import IInstallDependencies from './packageManager/IInstallDependencies';
 import { installRuntimeDependencies } from './InstallRuntimeDependencies';
 import { isValidDownload } from './packageManager/isValidDownload';
 import { BackgroundWorkStatusBarObserver } from './observers/BackgroundWorkStatusBarObserver';
-import { MSTestAdapter } from './mstest-adapter/adapter';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
