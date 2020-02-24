@@ -9,7 +9,7 @@ import { OmniSharpServer } from './server';
 import * as path from 'path';
 import * as protocol from './protocol';
 import * as vscode from 'vscode';
-import { MSBuildProject, findNetStandardTargetFramework } from './protocol';
+import { MSBuildProject } from './protocol';
 
 export async function autoComplete(server: OmniSharpServer, request: protocol.AutoCompleteRequest, token: vscode.CancellationToken) {
     return server.makeRequest<protocol.AutoCompleteResponse[]>(protocol.Requests.AutoComplete, request, token);
@@ -72,7 +72,8 @@ export async function requestWorkspaceInformation(server: OmniSharpServer) {
     if (response.MsBuild && response.MsBuild.Projects) {
         for (const project of response.MsBuild.Projects) {
             project.IsWebProject = isWebProject(project);
-            project.IsBlazorWebAssemblyProject = isBlazorWebAssemblyProject(project);
+            project.IsBlazorWebAssemblyHosted = isBlazorWebAssemblyHosted(project);
+            project.IsBlazorWebAssemblyStandalone = !project.IsBlazorWebAssemblyHosted && isBlazorWebAssemblyProject(project);
         }
     }
 
@@ -135,38 +136,50 @@ export async function isNetCoreProject(project: protocol.MSBuildProject) {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp') || tf.ShortName.startsWith('netstandard')) !== undefined;
 }
 
-function isBlazorWebAssemblyProject(project: MSBuildProject): boolean {
+function isBlazorWebAssemblyHosted(project: protocol.MSBuildProject): boolean {
+    if (!isBlazorWebAssemblyProject(project)) {
+        return false;
+    }
+
     if (!project.IsExe) {
         return false;
     }
 
-    if (!isWebProject(project)) {
+    if (!project.IsWebProject) {
         return false;
     }
 
-    // So we're a EXE web projct. We now need to differentiate between a typical web app and a Blazor WASM
-    // project. WebApps are typically executables and netcoreapp targeting; therefore, we're going to make
-    // the assumption that any app that's an executable and targeting netstandard2.1 or great is Blazor WASM.
-
-    const netstandardTFM = findNetStandardTargetFramework(project);
-    if (netstandardTFM === undefined) {
+    if (protocol.findNetCoreAppTargetFramework(project) === undefined) {
         return false;
     }
-
-    const netstandardTFMVersionString = netstandardTFM.ShortName.substring('netstandard'.length);
-    const netstandardTFMVersion = parseFloat(netstandardTFMVersionString);
-    if (!netstandardTFMVersion || netstandardTFMVersion < 2.1) {
-        return false;
-    }
-
-    const projectDirectory = path.dirname(project.Path);
-    const razorFiles = glob.sync('**/*.razor', { cwd: projectDirectory });
-    if (!razorFiles || razorFiles.length === 0) {
-        // No Razor files in the project
-        return false;
-    }
-
+    
     return true;
+}
+
+function isBlazorWebAssemblyProject(project: MSBuildProject): boolean {
+    const projectDirectory = path.dirname(project.Path);
+    const launchSettings = glob.sync('**/launchSettings.json', { cwd: projectDirectory });
+    if (!launchSettings) {
+        return false;
+    }
+
+    for (const launchSetting of launchSettings) {
+        try {
+            const absoluteLaunchSetting = path.join(projectDirectory, launchSetting);
+            const launchSettingContent = fs.readFileSync(absoluteLaunchSetting);
+            if (!launchSettingContent) {
+                continue;
+            }
+
+            if (launchSettingContent.indexOf('"inspectUri"') > 0) {
+                return true;
+            }
+        } catch {
+            // Swallow IO errors from reading the launchSettings.json files
+        }
+    }
+
+    return false;
 }
 
 function isWebProject(project: MSBuildProject): boolean {
