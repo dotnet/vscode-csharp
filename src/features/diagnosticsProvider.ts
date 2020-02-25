@@ -251,6 +251,12 @@ class DiagnosticsProvider extends AbstractSupport {
                     return;
                 }
 
+                // No problems published for virtual files
+                if(isVirtualCSharpDocument(document))
+                {
+                    return;
+                }
+
                 // (re)set new diagnostics for this document
                 let diagnosticsInFile = this._mapQuickFixesAsDiagnosticsInFile(quickFixes);
 
