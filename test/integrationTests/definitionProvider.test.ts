@@ -8,14 +8,14 @@ import CSharpDefinitionProvider from "../../src/features/definitionProvider";
 import * as path from "path";
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
 import { expect } from "chai";
-import { activateCSharpExtension } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
 
 suite(`${CSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;
 
     suiteSetup(async function () {
         // These tests don't run on the BasicRazorApp2_1 solution
-        if (vscode.workspace.workspaceFolders[0].uri.fsPath.split(path.sep).pop() === 'BasicRazorApp2_1') {
+        if (isRazorWorkspace(vscode.workspace)) {
             this.skip();
         }
 

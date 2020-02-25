@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { should, expect } from 'chai';
-import { activateCSharpExtension } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { poll, assertWithPoll, pollDoesNotHappen } from './poll';
 
@@ -47,7 +47,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             should();
 
             // These tests only run on the BasicRazorApp2_1 solution
-            if (vscode.workspace.workspaceFolders[0].uri.fsPath.split(path.sep).pop() !== 'BasicRazorApp2_1') {
+            if (!isRazorWorkspace(vscode.workspace)) {
                 this.skip();
             }
 
@@ -84,7 +84,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             should();
 
             // These tests don't run on the BasicRazorApp2_1 solution
-            if (vscode.workspace.workspaceFolders[0].uri.fsPath.split(path.sep).pop() === 'BasicRazorApp2_1') {
+            if (isRazorWorkspace(vscode.workspace)) {
                 this.skip();
             }
 
@@ -127,7 +127,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             should();
 
             // These tests don't run on the BasicRazorApp2_1 solution
-            if (vscode.workspace.workspaceFolders[0].uri.fsPath.split(path.sep).pop() === 'BasicRazorApp2_1') {
+            if (isRazorWorkspace(vscode.workspace)) {
                 this.skip();
             }
 

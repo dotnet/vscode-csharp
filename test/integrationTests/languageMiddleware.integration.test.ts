@@ -7,7 +7,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
 import { expect } from "chai";
-import { activateCSharpExtension } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
 import { LanguageMiddleware, LanguageMiddlewareFeature } from "../../src/omnisharp/LanguageMiddlewareFeature";
 
 suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, () => {
@@ -16,7 +16,7 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
 
     suiteSetup(async function () {
         // These tests don't run on the BasicRazorApp2_1 solution
-        if (vscode.workspace.workspaceFolders[0].uri.fsPath.split(path.sep).pop() === 'BasicRazorApp2_1') {
+        if (isRazorWorkspace(vscode.workspace)) {
             this.skip();
         }
 

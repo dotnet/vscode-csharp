@@ -8,14 +8,14 @@ import * as vscode from 'vscode';
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
 import * as path from "path";
 import { expect } from "chai";
-import { activateCSharpExtension } from "./integrationHelpers";
+import { activateCSharpExtension, isRazorWorkspace } from "./integrationHelpers";
 
 suite(`${OmniSharpCompletionItemProvider.name}: Returns the completion items`, () => {
     let fileUri: vscode.Uri;
 
     suiteSetup(async function() {
         // These tests don't run on the BasicRazorApp2_1 solution
-        if (vscode.workspace.workspaceFolders[0].uri.fsPath.split(path.sep).pop() === 'BasicRazorApp2_1') {
+        if (isRazorWorkspace(vscode.workspace)) {
             this.skip();
         }
 
