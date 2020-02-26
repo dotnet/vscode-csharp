@@ -81,7 +81,7 @@ export async function requestWorkspaceInformation(server: OmniSharpServer) {
         if (!blazorDetectionEnabled && response.MsBuild.Projects.some(project => isBlazorWebAssemblyProject(project))) {
             // There's a Blazor Web Assembly project but VSCode isn't configured to debug the WASM code, show a notification
             // to help the user configure their VSCode appropriately.
-            vscode.window.showInformationMessage('Your VSCode is not configured to debug Blazor web assembly applications.', 'Learn more', 'Close')
+            vscode.window.showInformationMessage('Additional setup is required to debug Blazor WebAssembly apps.', 'Learn more', 'Close')
                 .then(async result => {
                     if (result === 'Learn more') {
                         const uriToOpen = vscode.Uri.parse('https://aka.ms/blazordebugging#vscode');
