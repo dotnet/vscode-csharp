@@ -70,10 +70,12 @@ export async function requestProjectInformation(server: OmniSharpServer, request
 export async function requestWorkspaceInformation(server: OmniSharpServer) {
     const response = await server.makeRequest<protocol.WorkspaceInformationResponse>(protocol.Requests.Projects);
     if (response.MsBuild && response.MsBuild.Projects) {
+        const blazorDetectionEnabled = hasBlazorWebAssemblyDebugPrerequisites();
+
         for (const project of response.MsBuild.Projects) {
             project.IsWebProject = isWebProject(project);
-            project.IsBlazorWebAssemblyHosted = isBlazorWebAssemblyHosted(project);
-            project.IsBlazorWebAssemblyStandalone = !project.IsBlazorWebAssemblyHosted && isBlazorWebAssemblyProject(project);
+            project.IsBlazorWebAssemblyHosted = blazorDetectionEnabled && isBlazorWebAssemblyHosted(project);
+            project.IsBlazorWebAssemblyStandalone = blazorDetectionEnabled && !project.IsBlazorWebAssemblyHosted && isBlazorWebAssemblyProject(project);
         }
     }
 
@@ -152,7 +154,7 @@ function isBlazorWebAssemblyHosted(project: protocol.MSBuildProject): boolean {
     if (protocol.findNetCoreAppTargetFramework(project) === undefined) {
         return false;
     }
-    
+
     return true;
 }
 
@@ -180,6 +182,27 @@ function isBlazorWebAssemblyProject(project: MSBuildProject): boolean {
     }
 
     return false;
+}
+
+function hasBlazorWebAssemblyDebugPrerequisites() {
+    const jsDebugExtension = vscode.extensions.getExtension('ms-vscode.js-debug-nightly');
+    if (!jsDebugExtension) {
+        return false;
+    }
+
+    const debugNodeConfigSection = vscode.workspace.getConfiguration('debug.node');
+    const useV3NodeValue = debugNodeConfigSection.get('useV3');
+    if (!useV3NodeValue) {
+        return false;
+    }
+
+    const debugChromeConfigSection = vscode.workspace.getConfiguration('debug.chrome');
+    const useV3ChromeValue = debugChromeConfigSection.get('useV3');
+    if (!useV3ChromeValue) {
+        return false;
+    }
+
+    return true;
 }
 
 function isWebProject(project: MSBuildProject): boolean {
