@@ -15,7 +15,7 @@ export interface ActivationResult {
 }
 
 export async function activateCSharpExtension(): Promise<ActivationResult | undefined> {
-    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-vscode.csharp");
+    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-dotnettools.csharp");
 
     if (!csharpExtension.isActive) {
         await csharpExtension.activate();
@@ -23,7 +23,7 @@ export async function activateCSharpExtension(): Promise<ActivationResult | unde
 
     try {
         await csharpExtension.exports.initializationFinished();
-        console.log("ms-vscode.csharp activated");
+        console.log("ms-dotnettools.csharp activated");
         return {
             advisor: await csharpExtension.exports.getAdvisor(),
             eventStream: csharpExtension.exports.eventStream
