@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as path from 'path';
 import * as vscode from 'vscode';
 import CSharpExtensionExports from '../../src/CSharpExtensionExports';
 import { Advisor } from '../../src/features/diagnosticsProvider';
@@ -34,4 +35,9 @@ export async function activateCSharpExtension(): Promise<ActivationResult | unde
     }
 }
 
+export function isRazorWorkspace(workspace: typeof vscode.workspace) {
+    const primeWorkspace = workspace.workspaceFolders[0];
+    const projectFileName = primeWorkspace.uri.fsPath.split(path.sep).pop();
 
+    return projectFileName === 'BasicRazorApp2_1';
+}
