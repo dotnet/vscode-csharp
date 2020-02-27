@@ -202,6 +202,13 @@ function hasBlazorWebAssemblyDebugPrerequisites() {
         return false;
     }
 
+    const debugJavaScriptConfigSection = vscode.workspace.getConfiguration('debug.javascript');
+    const usePreviewValue = debugJavaScriptConfigSection.get('usePreview');
+    if (usePreviewValue) {
+        // If usePreview is truthy it takes priority over the useV3 variants.
+        return true;
+    }
+
     const debugNodeConfigSection = vscode.workspace.getConfiguration('debug.node');
     const useV3NodeValue = debugNodeConfigSection.get('useV3');
     if (!useV3NodeValue) {
