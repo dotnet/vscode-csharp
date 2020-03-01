@@ -94,6 +94,7 @@
     "yauzl": "2.10.0"
   },
   "devDependencies": {
+    "@types/vscode": "1.33.0",
     "@types/archiver": "2.1.2",
     "@types/chai": "4.1.7",
     "@types/chai-arrays": "1.0.2",
@@ -151,7 +152,6 @@
     "typescript": "^3.3.3",
     "unzipper": "0.9.10",
     "vsce": "1.57.0",
-    "vscode": "1.1.33",
     "webpack": "4.29.3",
     "webpack-cli": "^3.2.3"
   },
