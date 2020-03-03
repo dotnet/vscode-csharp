@@ -114,7 +114,7 @@ function projectsToCommands(projects: protocol.ProjectDescriptor[], eventStream:
                     label: `dotnet restore - (${project.Name || path.basename(project.Directory)})`,
                     description: projectDirectory,
                     async execute() {
-                        return dotnetRestore(projectDirectory, eventStream);
+                        return dotnetRestore(projectDirectory, eventStream, project.Name);
                     }
                 });
             });
@@ -146,7 +146,7 @@ async function dotnetRestoreAllProjects(server: OmniSharpServer, eventStream: Ev
     let descriptors = await getProjectDescriptors(server);
     eventStream.post(new CommandDotNetRestoreStart());
     for (let descriptor of descriptors) {
-        await dotnetRestore(descriptor.Directory, eventStream);
+        await dotnetRestore(descriptor.Directory, eventStream, descriptor.Name);
     }
 }
 
