@@ -126,7 +126,7 @@ To setup a test project to verify on you can do:
 
 ##### C# CodeLens
 * Having the following results in a CodeLens entry above "Foo"
-```
+```razor
 @functions {
   void Foo()
   {
@@ -136,6 +136,14 @@ To setup a test project to verify on you can do:
 @Foo()
 ```
 * Clicking on the CodeLens entry results in a find all references window that has an entry for `@Foo()`
+
+##### C# Formatting
+* Running the "Format Document" command with the below text results in correctly formatted C#,
+```razor
+@functions {
+void Foo(){
+}}
+```
 
 ##### C# Diagnostics
 * Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file. NOTE: This error squiggly will be misaligned due to known issues.

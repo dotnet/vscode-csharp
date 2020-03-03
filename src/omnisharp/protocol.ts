@@ -334,6 +334,9 @@ export interface MSBuildProject {
     OutputPath: string;
     IsExe: boolean;
     IsUnityProject: boolean;
+    IsWebProject: boolean;
+    IsBlazorWebAssemblyStandalone: boolean;
+    IsBlazorWebAssemblyHosted: boolean;
 }
 
 export interface TargetFramework {
@@ -789,7 +792,7 @@ export function findExecutableMSBuildProjects(projects: MSBuildProject[]) {
     let result: MSBuildProject[] = [];
 
     projects.forEach(project => {
-        if (project.IsExe && findNetCoreAppTargetFramework(project) !== undefined) {
+        if (project.IsExe && (findNetCoreAppTargetFramework(project) !== undefined || project.IsBlazorWebAssemblyStandalone)) {
             result.push(project);
         }
     });

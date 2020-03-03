@@ -3,4 +3,4 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-export const CSharpExtensionId = 'ms-vscode.csharp';
+export const CSharpExtensionId = 'ms-dotnettools.csharp';

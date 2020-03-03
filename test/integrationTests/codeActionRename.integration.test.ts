@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 
 import { should, expect } from 'chai';
-import { activateCSharpExtension } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as path from 'path';
 import { assertWithPoll } from './poll';
@@ -20,6 +20,12 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
 
     suiteSetup(async function () {
         should();
+
+        // These tests don't run on the BasicRazorApp2_1 solution
+        if (isRazorWorkspace(vscode.workspace)) {
+            this.skip();
+        }
+
         await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
