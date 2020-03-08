@@ -1,4 +1,4 @@
-## Known Issues in 1.21.13
+## Known Issues in 1.21.14
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
@@ -9,7 +9,10 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.21.13 (Not Yet Released)
+## 1.21.14 (Not Yet Released)
+* Fixed an issue where Razor formatting fails in the presence of @using directives
+
+## 1.21.13 (March 5, 2020)
 * Change Marketplace publisher for the C# extension from ms-vscode to ms-dotnettools 
 * Ignore diagnostics from virtual files ([aspnetcore/#18927](https://github.com/dotnet/aspnetcore/issues/18927), PR: [#3592](https://github.com/OmniSharp/omnisharp-vscode/pull/3592))
 * Detect and create Blazor WASM launch and debug settings ([aspnetcore/#17549](https://github.com/dotnet/aspnetcore/issues/17549), PR: [#3593](https://github.com/OmniSharp/omnisharp-vscode/pull/3593))
