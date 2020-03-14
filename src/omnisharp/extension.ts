@@ -39,6 +39,7 @@ import { StructureProvider } from '../features/structureProvider';
 import { OmniSharpMonoResolver } from './OmniSharpMonoResolver';
 import { getMonoVersion } from '../utils/getMonoVersion';
 import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
+import SemanticTokensProvider from '../features/semanticTokensProvider';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
@@ -93,6 +94,9 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables.add(forwardChanges(server));
         localDisposables.add(trackVirtualDocuments(server, eventStream));
         localDisposables.add(vscode.languages.registerFoldingRangeProvider(documentSelector, new StructureProvider(server, languageMiddlewareFeature)));
+        const semanticTokensProvider = new SemanticTokensProvider(server, languageMiddlewareFeature);
+        localDisposables.add(vscode.languages.registerDocumentSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
+        localDisposables.add(vscode.languages.registerDocumentRangeSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
     }));
 
     disposables.add(server.onServerStop(() => {
