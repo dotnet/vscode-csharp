@@ -152,7 +152,7 @@ export async function debugTestStop(server: OmniSharpServer, request: protocol.V
 }
 
 export async function getSemanticHighlights(server: OmniSharpServer, request: protocol.V2.SemanticHighlightRequest) {
-    return server.makeRequest<protocol.V2.SemanticHighlightResponse>(protocol.V2.Requests.SemanticHighlight, request);
+    return server.makeRequest<protocol.V2.SemanticHighlightResponse>(protocol.V2.Requests.Highlight, request);
 }
 
 export async function isNetCoreProject(project: protocol.MSBuildProject) {

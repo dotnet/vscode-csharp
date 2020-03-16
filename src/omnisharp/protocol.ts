@@ -483,7 +483,7 @@ export namespace V2 {
         export const DebugTestStop = '/v2/debugtest/stop';
         export const BlockStructure = '/v2/blockstructure';
         export const CodeStructure = '/v2/codestructure';
-        export const SemanticHighlight = '/v2/semantichighlight';
+        export const Highlight = '/v2/highlight';
     }
 
     export interface SemanticHighlightSpan {
