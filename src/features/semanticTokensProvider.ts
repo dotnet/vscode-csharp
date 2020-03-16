@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import { Proposed } from 'vscode-languageserver-protocol';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import { createRequest } from '../omnisharp/typeConversion';
+import { createRequest, toRange2 } from '../omnisharp/typeConversion';
 import AbstractProvider from './abstractProvider';
 
 // The default TokenTypes defined by VS Code https://github.com/microsoft/vscode/blob/master/src/vs/platform/theme/common/tokenClassificationRegistry.ts#L393
@@ -133,6 +133,10 @@ enum SemanticHighlightClassification {
     RegexOtherEscape,
 }
 
+enum SemanticHighlightModifier {
+    Static
+}
+
 export default class SemanticTokensProvider extends AbstractProvider implements vscode.DocumentSemanticTokensProvider, vscode.DocumentRangeSemanticTokensProvider {
 
     getLegend(): vscode.SemanticTokensLegend {
@@ -174,12 +178,20 @@ export default class SemanticTokensProvider extends AbstractProvider implements 
                 continue;
             }
 
-            let tokenModifiers = tokenModifierMap[span.Type] ?? 0;
+            let tokenModifiers = span.Modifiers.reduce((modifiers, modifier) => modifiers + tokenModifierMap[modifier], 0);
 
-            for (let line = span.StartLine; line <= span.EndLine; line++) {
-                const startCharacter = (line === span.StartLine ? span.StartColumn - 1 : 0);
-                const endCharacter = (line === span.EndLine ? span.EndColumn - 1 : document.lineAt(line - 1).text.length);
-                builder.push(line - 1, startCharacter, endCharacter - startCharacter, tokenType, tokenModifiers);
+            // We could add a separate classification for constants but they are
+            // supported as a readonly variable. Until we start getting more complete
+            // modifiers from the highlight service we can add the readonly modifier here.
+            if (span.Type === SemanticHighlightClassification.ConstantName) {
+                tokenModifiers += 2 ** DefaultTokenModifier.readonly;
+            }
+
+            var spanRange = toRange2(span);
+            for (let line = spanRange.start.line; line <= spanRange.end.line; line++) {
+                const startCharacter = (line === spanRange.start.line ? spanRange.start.character : 0);
+                const endCharacter = (line === spanRange.end.line ? spanRange.end.character : document.lineAt(line).text.length);
+                builder.push(line, startCharacter, endCharacter - startCharacter, tokenType, tokenModifiers);
             }
         }
         return new vscode.SemanticTokens(builder.build());
@@ -300,68 +312,4 @@ tokenTypeMap[SemanticHighlightClassification.RegexSelfEscapedCharacter] = Defaul
 tokenTypeMap[SemanticHighlightClassification.RegexOtherEscape] = DefaultTokenType.regexp;
 
 const tokenModifierMap: number[] = [];
-tokenModifierMap[SemanticHighlightClassification.Comment] = undefined;
-tokenModifierMap[SemanticHighlightClassification.ExcludedCode] = undefined;
-tokenModifierMap[SemanticHighlightClassification.Identifier] = undefined;
-tokenModifierMap[SemanticHighlightClassification.Keyword] = undefined;
-tokenModifierMap[SemanticHighlightClassification.ControlKeyword] = undefined;
-tokenModifierMap[SemanticHighlightClassification.NumericLiteral] = undefined;
-tokenModifierMap[SemanticHighlightClassification.Operator] = undefined;
-tokenModifierMap[SemanticHighlightClassification.OperatorOverloaded] = undefined;
-tokenModifierMap[SemanticHighlightClassification.PreprocessorKeyword] = undefined;
-tokenModifierMap[SemanticHighlightClassification.StringLiteral] = undefined;
-tokenModifierMap[SemanticHighlightClassification.WhiteSpace] = undefined;
-tokenModifierMap[SemanticHighlightClassification.Text] = undefined;
-tokenModifierMap[SemanticHighlightClassification.StaticSymbol] = undefined;
-tokenModifierMap[SemanticHighlightClassification.PreprocessorText] = undefined;
-tokenModifierMap[SemanticHighlightClassification.Punctuation] = undefined;
-tokenModifierMap[SemanticHighlightClassification.VerbatimStringLiteral] = undefined;
-tokenModifierMap[SemanticHighlightClassification.StringEscapeCharacter] = undefined;
-tokenModifierMap[SemanticHighlightClassification.ClassName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.DelegateName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.EnumName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.InterfaceName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.ModuleName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.StructName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.TypeParameterName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.FieldName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.EnumMemberName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.ConstantName] = 2 ** DefaultTokenModifier.readonly;
-tokenModifierMap[SemanticHighlightClassification.LocalName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.ParameterName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.MethodName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.ExtensionMethodName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.PropertyName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.EventName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.NamespaceName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.LabelName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlDocCommentAttributeName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlDocCommentAttributeQuotes] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlDocCommentAttributeValue] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlDocCommentCDataSection] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlDocCommentComment] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlDocCommentDelimiter] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlDocCommentEntityReference] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlDocCommentName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlDocCommentProcessingInstruction] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlDocCommentText] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlLiteralAttributeName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlLiteralAttributeQuotes] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlLiteralAttributeValue] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlLiteralCDataSection] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlLiteralComment] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlLiteralDelimiter] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlLiteralEmbeddedExpression] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlLiteralEntityReference] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlLiteralName] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlLiteralProcessingInstruction] = undefined;
-tokenModifierMap[SemanticHighlightClassification.XmlLiteralText] = undefined;
-tokenModifierMap[SemanticHighlightClassification.RegexComment] = undefined;
-tokenModifierMap[SemanticHighlightClassification.RegexCharacterClass] = undefined;
-tokenModifierMap[SemanticHighlightClassification.RegexAnchor] = undefined;
-tokenModifierMap[SemanticHighlightClassification.RegexQuantifier] = undefined;
-tokenModifierMap[SemanticHighlightClassification.RegexGrouping] = undefined;
-tokenModifierMap[SemanticHighlightClassification.RegexAlternation] = undefined;
-tokenModifierMap[SemanticHighlightClassification.RegexText] = undefined;
-tokenModifierMap[SemanticHighlightClassification.RegexSelfEscapedCharacter] = undefined;
-tokenModifierMap[SemanticHighlightClassification.RegexOtherEscape] = undefined;
+tokenModifierMap[SemanticHighlightModifier.Static] = 2 ** DefaultTokenModifier.static;
