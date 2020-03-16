@@ -167,13 +167,25 @@ export default class SemanticTokensProvider extends AbstractProvider implements 
         let req = createRequest<protocol.V2.SemanticHighlightRequest>(document, new vscode.Position(0, 0));
         req.Range = range;
 
-        let response = await serverUtils.getSemanticHighlights(this._server, req);
+        const versionBeforeRequest = document.version;
 
-        const semanticSpans = response.Spans;
+        const response = await serverUtils.getSemanticHighlights(this._server, req);
+
+        const versionAfterRequest = document.version;
+
+        if (versionBeforeRequest !== versionAfterRequest) {
+            // cannot convert result's offsets to (line;col) values correctly
+            // a new request will come in soon...
+            //
+            // here we cannot return null, because returning null would remove all semantic tokens.
+            // we must throw to indicate that the semantic tokens should not be removed.
+            // using the string busy here because it is not logged to error telemetry if the error text contains busy.
+            throw new Error('busy');
+        }
 
         const builder = new vscode.SemanticTokensBuilder();
-        for (let span of semanticSpans) {
-            let tokenType = tokenTypeMap[span.Type];
+        for (let span of response.Spans) {
+            const tokenType = tokenTypeMap[span.Type];
             if (tokenType === undefined) {
                 continue;
             }
@@ -187,7 +199,8 @@ export default class SemanticTokensProvider extends AbstractProvider implements 
                 tokenModifiers += 2 ** DefaultTokenModifier.readonly;
             }
 
-            var spanRange = toRange2(span);
+            // We can use the returned range because we made sure the document version is the same.
+            let spanRange = toRange2(span);
             for (let line = spanRange.start.line; line <= spanRange.end.line; line++) {
                 const startCharacter = (line === spanRange.start.line ? spanRange.start.character : 0);
                 const endCharacter = (line === spanRange.end.line ? spanRange.end.character : document.lineAt(line).text.length);
