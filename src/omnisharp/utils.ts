@@ -179,7 +179,7 @@ function isBlazorWebAssemblyHosted(project: protocol.MSBuildProject, isProjectBl
 async function isBlazorWebAssemblyProject(project: MSBuildProject): Promise<boolean> {
     const projectDirectory = path.dirname(project.Path);
     const launchSettingsPattern = new vscode.RelativePattern(projectDirectory, '**/launchSettings.json');
-    const excludedPathPattern = `{${Options.getExcludedPaths(vscode).join(',')}}`;
+    const excludedPathPattern = `{${Options.getExcludedPaths(vscode, true).join(',')}}`;
 
     const launchSettings = await vscode.workspace.findFiles(launchSettingsPattern, excludedPathPattern);
     if (!launchSettings) {

@@ -119,26 +119,30 @@ export class Options {
         );
     }
 
-    public static getExcludedPaths(vscode: vscode): string[] {
-        let excludePaths: string[] = [];
-
+    public static getExcludedPaths(vscode: vscode, includeSearchExcludes: boolean = false): string[] {
         let workspaceConfig = vscode.workspace.getConfiguration();
         if (!workspaceConfig) {
-            return excludePaths;
+            return [];
         }
 
-        let excludeFilesOption = workspaceConfig.get<{ [i: string]: boolean }>('files.exclude');
-        if (!excludeFilesOption) {
-            return excludePaths;
-        }
+        let excludePaths = getExcludes(workspaceConfig, 'files.exclude');
 
-        for (let field in excludeFilesOption) {
-            if (excludeFilesOption[field]) {
-                excludePaths.push(field);
-            }
+        if (includeSearchExcludes) {
+            excludePaths = excludePaths.concat(getExcludes(workspaceConfig, 'search.exclude'));
         }
 
         return excludePaths;
+
+        function getExcludes(config: WorkspaceConfiguration, option: string): string[] {
+            let optionValue = config.get<{ [i: string]: boolean }>(option);
+            if (!optionValue) {
+                return [];
+            }
+
+            return Object.entries(optionValue)
+                .filter(([key, value]) => value)
+                .map(([key, value]) => key);
+        }
     }
 
     private static readPathOption(csharpConfig: WorkspaceConfiguration, omnisharpConfig: WorkspaceConfiguration): string | null {

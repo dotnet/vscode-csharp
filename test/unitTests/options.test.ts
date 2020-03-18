@@ -35,7 +35,7 @@ suite("Options tests", () => {
         expect(options.defaultLaunchSolution).to.be.undefined;
     });
 
-    test('Verify return no excluded paths when empty', () => {
+    test('Verify return no excluded paths when files.exclude empty', () => {
         const vscode = getVSCodeWithConfig();
         updateConfig(vscode, null, 'files.exclude', {});
 
@@ -43,12 +43,30 @@ suite("Options tests", () => {
         expect(excludedPaths).to.be.empty;
     });
 
-    test('Verify return excluded paths', () => {
+    test('Verify return excluded paths when files.exclude populated', () => {
         const vscode = getVSCodeWithConfig();
         updateConfig(vscode, null, 'files.exclude', { "**/node_modules": true, "**/assets": false });
 
         const excludedPaths = Options.getExcludedPaths(vscode);
         expect(excludedPaths).to.equalTo(["**/node_modules"]);
+    });
+
+    test('Verify return no excluded paths when files.exclude and search.exclude empty', () => {
+        const vscode = getVSCodeWithConfig();
+        updateConfig(vscode, null, 'files.exclude', {});
+        updateConfig(vscode, null, 'search.exclude', {});
+
+        const excludedPaths = Options.getExcludedPaths(vscode, true);
+        expect(excludedPaths).to.be.empty;
+    });
+
+    test('Verify return excluded paths when files.exclude and search.exclude populated', () => {
+        const vscode = getVSCodeWithConfig();
+        updateConfig(vscode, null, 'files.exclude', { "/Library": true });
+        updateConfig(vscode, null, 'search.exclude', { "**/node_modules": true, "**/assets": false });
+
+        const excludedPaths = Options.getExcludedPaths(vscode, true);
+        expect(excludedPaths).to.be.equalTo(["/Library", "**/node_modules"]);
     });
 
     test('BACK-COMPAT: "omnisharp.loggingLevel": "verbose" == "omnisharp.loggingLevel": "debug"', () => {
