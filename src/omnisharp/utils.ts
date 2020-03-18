@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs-extra';
-import * as glob from 'glob';
 import { OmniSharpServer } from './server';
 import * as path from 'path';
 import * as protocol from './protocol';
@@ -170,9 +169,21 @@ function isBlazorWebAssemblyHosted(project: protocol.MSBuildProject): boolean {
     return true;
 }
 
+function getLaunchSettingsJson(projectDirectory: string) {
+    const rootOfProjectSettings = path.join(projectDirectory, 'launchSettings.json');
+    if (fs.existsSync(rootOfProjectSettings)) {
+        return rootOfProjectSettings;
+    }
+
+    const inPropertiesOfProject = path.join(projectDirectory, 'Properties', 'launchSettings.json');
+    if (fs.existsSync(inPropertiesOfProject)) {
+        return inPropertiesOfProject;
+    }
+}
+
 function isBlazorWebAssemblyProject(project: MSBuildProject): boolean {
     const projectDirectory = path.dirname(project.Path);
-    const launchSettings = glob.sync('**/launchSettings.json', { cwd: projectDirectory });
+    const launchSettings = getLaunchSettingsJson(projectDirectory);
     if (!launchSettings) {
         return false;
     }
