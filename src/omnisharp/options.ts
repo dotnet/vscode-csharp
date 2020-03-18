@@ -120,7 +120,7 @@ export class Options {
     }
 
     public static getExcludedPaths(vscode: vscode, includeSearchExcludes: boolean = false): string[] {
-        let workspaceConfig = vscode.workspace.getConfiguration();
+        let workspaceConfig = vscode.workspace.getConfiguration(undefined, null);
         if (!workspaceConfig) {
             return [];
         }
