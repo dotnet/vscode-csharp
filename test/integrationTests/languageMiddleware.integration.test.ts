@@ -7,14 +7,19 @@ import * as vscode from "vscode";
 import * as path from "path";
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
 import { expect } from "chai";
-import { activateCSharpExtension } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
 import { LanguageMiddleware, LanguageMiddlewareFeature } from "../../src/omnisharp/LanguageMiddlewareFeature";
 
 suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;
     let remappedFileUri: vscode.Uri;
 
-    suiteSetup(async () => {
+    suiteSetup(async function () {
+        // These tests don't run on the BasicRazorApp2_1 solution
+        if (isRazorWorkspace(vscode.workspace)) {
+            this.skip();
+        }
+
         await activateCSharpExtension();
         await registerLanguageMiddleware();
         await testAssetWorkspace.restore();
@@ -41,7 +46,7 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
             fileUri,
             new vscode.Position(4, 30),
             'newName'));
-        
+
         let entries = workspaceEdit!.entries();
         expect(entries.length).to.be.equal(1);
         expect(entries[0][0].path).to.be.equal(remappedFileUri.path);
@@ -93,7 +98,7 @@ class TestLanguageMiddleware implements LanguageMiddleware
         let fileToRemap = 'remap.cs';
         this.fileToRemapUri = vscode.Uri.file(path.join(projectDirectory, fileToRemap));
     }
-    
+
     remapWorkspaceEdit?(workspaceEdit: vscode.WorkspaceEdit, token: vscode.CancellationToken): vscode.ProviderResult<vscode.WorkspaceEdit> {
         const newEdit = new vscode.WorkspaceEdit();
         for (const entry of workspaceEdit.entries()) {

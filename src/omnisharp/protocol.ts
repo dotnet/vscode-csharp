@@ -350,6 +350,9 @@ export interface MSBuildProject {
     OutputPath: string;
     IsExe: boolean;
     IsUnityProject: boolean;
+    IsWebProject: boolean;
+    IsBlazorWebAssemblyStandalone: boolean;
+    IsBlazorWebAssemblyHosted: boolean;
 }
 
 export interface TargetFramework {
@@ -590,16 +593,24 @@ export namespace V2 {
     }
 
     // dotnet-test endpoints
-    export interface DebugTestGetStartInfoRequest extends Request {
+    interface SingleTestRequest extends Request {
         MethodName: string;
+        RunSettings: string;
         TestFrameworkName: string;
         TargetFrameworkVersion: string;
     }
 
-    export interface DebugTestClassGetStartInfoRequest extends Request {
+    interface MultiTestRequest extends Request {
         MethodNames: string[];
+        RunSettings: string;
         TestFrameworkName: string;
         TargetFrameworkVersion: string;
+    }
+
+    export interface DebugTestGetStartInfoRequest extends SingleTestRequest {
+    }
+
+    export interface DebugTestClassGetStartInfoRequest extends MultiTestRequest {
     }
 
     export interface DebugTestGetStartInfoResponse {
@@ -622,10 +633,7 @@ export namespace V2 {
     export interface DebugTestStopResponse {
     }
 
-    export interface GetTestStartInfoRequest extends Request {
-        MethodName: string;
-        TestFrameworkName: string;
-        TargetFrameworkVersion: string;
+    export interface GetTestStartInfoRequest extends SingleTestRequest {
     }
 
     export interface GetTestStartInfoResponse {
@@ -634,16 +642,10 @@ export namespace V2 {
         WorkingDirectory: string;
     }
 
-    export interface RunTestRequest extends Request {
-        MethodName: string;
-        TestFrameworkName: string;
-        TargetFrameworkVersion: string;
+    export interface RunTestRequest extends SingleTestRequest {
     }
 
-    export interface RunTestsInClassRequest extends Request {
-        MethodNames: string[];
-        TestFrameworkName: string;
-        TargetFrameworkVersion: string;
+    export interface RunTestsInClassRequest extends MultiTestRequest {
     }
 
     export module TestOutcomes {
@@ -824,7 +826,7 @@ export function findExecutableMSBuildProjects(projects: MSBuildProject[]) {
     let result: MSBuildProject[] = [];
 
     projects.forEach(project => {
-        if (project.IsExe && findNetCoreAppTargetFramework(project) !== undefined) {
+        if (project.IsExe && (findNetCoreAppTargetFramework(project) !== undefined || project.IsBlazorWebAssemblyStandalone)) {
             result.push(project);
         }
     });
