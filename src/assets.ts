@@ -304,7 +304,7 @@ export function createWebLaunchConfiguration(programPath: string, workingDirecto
     // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
     "serverReadyAction": {
         "action": "openExternally",
-        "pattern": "^\\\\s*Now listening on:\\\\s+(https?://\\\\S+)"                
+        "pattern": "^\\\\s*Now listening on:\\\\s+(https?://\\\\S+)"
     },
     "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -549,7 +549,12 @@ async function promptToAddAssets(workspaceFolder: vscode.WorkspaceFolder) {
         if (!csharpConfig.get<boolean>('supressBuildAssetsNotification')) {
             vscode.window.showWarningMessage(
                 `Required assets to build and debug are missing from '${projectName}'. Add them?`, disableItem, noItem, yesItem)
-                .then(selection => resolve(selection.result));
+                .then(selection => {
+                    if (selection)
+                    {
+                        resolve(selection.result);
+                    }
+                });
         }
     });
 }
