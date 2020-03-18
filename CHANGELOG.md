@@ -9,7 +9,7 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.21.14 (Not Yet Released)
+## 1.21.14 (March 11, 2020)
 * Fixed an issue where Razor formatting fails in the presence of @using directives
 * Added support for `annotations` value of `Nullable` csproj property ([omnisharp-roslyn/#1721](https://github.com/OmniSharp/omnisharp-roslyn/issues/1721), PR: [omnisharp-roslyn/#1722](https://github.com/OmniSharp/omnisharp-roslyn/pull/1722))
 * Added ability to specify custom RunSettings for tests (PR: [#3573](https://github.com/OmniSharp/omnisharp-vscode/pull/3573), PR: [omnisharp-roslyn/#1710](https://github.com/OmniSharp/omnisharp-roslyn/pull/1710))
