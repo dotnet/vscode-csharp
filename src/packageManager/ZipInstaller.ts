@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs';
-import * as mkdirp from 'mkdirp';
+import { mkdirp } from 'async-file';
 import * as path from 'path';
 import * as yauzl from 'yauzl';
 import { EventStream } from "../EventStream";
@@ -25,30 +25,28 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
 
             zipFile.readEntry();
 
-            zipFile.on('entry', (entry: yauzl.Entry) => {
+            zipFile.on('entry', async (entry: yauzl.Entry) => {
                 let absoluteEntryPath = path.resolve(destinationInstallPath.value, entry.fileName);
 
                 if (entry.fileName.endsWith('/')) {
                     // Directory - create it
-                    mkdirp(absoluteEntryPath, { mode: 0o775 }, err => {
-                        if (err) {
-                            return reject(new NestedError('Error creating directory for zip directory entry:' + err.code || '', err));
-                        }
-
+                    try {
+                        await mkdirp(absoluteEntryPath, 0o775);
                         zipFile.readEntry();
-                    });
+                    }
+                    catch (err) {
+                        return reject(new NestedError('Error creating directory for zip directory entry:' + err?.code || '', err));
+                    }
                 }
                 else {
                     // File - extract it
-                    zipFile.openReadStream(entry, (err, readStream) => {
+                    zipFile.openReadStream(entry, async (err, readStream) => {
                         if (err) {
                             return reject(new NestedError('Error reading zip stream', err));
                         }
 
-                        mkdirp(path.dirname(absoluteEntryPath), { mode: 0o775 }, err => {
-                            if (err) {
-                                return reject(new NestedError('Error creating directory for zip file entry', err));
-                            }
+                        try {
+                            await mkdirp(path.dirname(absoluteEntryPath), 0o775);
 
                             let binaryPaths = binaries && binaries.map(binary => binary.value);
 
@@ -59,7 +57,10 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
 
                             readStream.pipe(fs.createWriteStream(absoluteEntryPath, { mode: fileMode }));
                             readStream.on('end', () => zipFile.readEntry());
-                        });
+                        }
+                        catch (err) {
+                            return reject(new NestedError('Error creating directory for zip file entry', err));
+                        }
                     });
                 }
             });

@@ -549,12 +549,7 @@ async function promptToAddAssets(workspaceFolder: vscode.WorkspaceFolder) {
         if (!csharpConfig.get<boolean>('supressBuildAssetsNotification')) {
             vscode.window.showWarningMessage(
                 `Required assets to build and debug are missing from '${projectName}'. Add them?`, disableItem, noItem, yesItem)
-                .then(selection => {
-                    if (selection)
-                    {
-                        resolve(selection.result);
-                    }
-                });
+                .then(selection => resolve(selection?.result ?? PromptResult.No));
         }
     });
 }
