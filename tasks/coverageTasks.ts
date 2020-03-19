@@ -18,6 +18,7 @@ gulp.task("cov:instrument", async () => {
     return spawnNode([
         nycPath,
         'instrument',
+        '--in-place',
         '--require',
         'source-map-support/register',
         '.',
@@ -33,7 +34,7 @@ gulp.task("cov:merge", async () => {
         'report',
         '--dir',
         integrationTestCoverageRootPath,
-        '--include', 
+        '--include',
         `${integrationTestNycOutputPath}/*.json`,
         'lcovonly'
     ], {
@@ -47,7 +48,7 @@ gulp.task("cov:merge-html", async () => {
         'report',
         '--dir',
         integrationTestCoverageRootPath,
-        '--include', 
+        '--include',
         `${integrationTestNycOutputPath}/*.json`,
         'html'
     ], {
