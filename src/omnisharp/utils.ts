@@ -9,7 +9,6 @@ import * as path from 'path';
 import * as protocol from './protocol';
 import * as vscode from 'vscode';
 import { MSBuildProject } from './protocol';
-import { Options } from './options';
 
 export async function autoComplete(server: OmniSharpServer, request: protocol.AutoCompleteRequest, token: vscode.CancellationToken) {
     return server.makeRequest<protocol.AutoCompleteResponse[]>(protocol.Requests.AutoComplete, request, token);
