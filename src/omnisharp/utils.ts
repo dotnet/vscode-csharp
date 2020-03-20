@@ -178,27 +178,23 @@ function isBlazorWebAssemblyHosted(project: protocol.MSBuildProject, isProjectBl
 
 async function isBlazorWebAssemblyProject(project: MSBuildProject): Promise<boolean> {
     const projectDirectory = path.dirname(project.Path);
-    const launchSettingsPattern = new vscode.RelativePattern(projectDirectory, '**/launchSettings.json');
-    const excludedPathPattern = `{${Options.getExcludedPaths(vscode, true).join(',')}}`;
+    const launchSettingsPath = path.join(projectDirectory, 'Properties', 'launchSettings.json');
 
-    const launchSettings = await vscode.workspace.findFiles(launchSettingsPattern, excludedPathPattern);
-    if (!launchSettings) {
-        return false;
-    }
-
-    for (const launchSetting of launchSettings) {
-        try {
-            const launchSettingContent = fs.readFileSync(launchSetting.fsPath);
-            if (!launchSettingContent) {
-                continue;
-            }
-
-            if (launchSettingContent.indexOf('"inspectUri"') > 0) {
-                return true;
-            }
-        } catch {
-            // Swallow IO errors from reading the launchSettings.json files
+    try {
+        if (!fs.pathExistsSync(launchSettingsPath)) {
+            return false;
         }
+
+        const launchSettingContent = fs.readFileSync(launchSettingsPath);
+        if (!launchSettingContent) {
+            return false;
+        }
+
+        if (launchSettingContent.indexOf('"inspectUri"') > 0) {
+            return true;
+        }
+    } catch {
+        // Swallow IO errors from reading the launchSettings.json files
     }
 
     return false;
