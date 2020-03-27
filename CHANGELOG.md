@@ -8,12 +8,15 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.21.16 (Not yet released)
+## 1.21.17 (Not yet released)
+* Updated Razor support (PR:[#3696](https://github.com/OmniSharp/omnisharp-vscode/pull/3696))
+  * Razor support for `<text>` tag completions.
+  * Ability to restart the Razor Language Server to activate changes to the `razor.trace` level.
+  * Bug fixes and performance improvements.
+
+## 1.21.16 (March 30, 2020)
 * Support for .NET Core 3.1 in csx files (PR: [#1731](https://github.com/OmniSharp/omnisharp-roslyn/pull/1731))
 * Update the minimal MSBuild to better support .NET 5 Previews ([omnisharp-vscode#3653](https://github.com/OmniSharp/omnisharp-vscode/issues/3653), PR: [#1746](https://github.com/OmniSharp/omnisharp-roslyn/pull/1746))
-* Razor support for `<text>` tag completions.
-* Ability to restart the Razor Language Server to activate changes to the `razor.trace` level.
-* Bug fixes and performance improvements.
 
 ## 1.21.15 (March 19, 2020)
 * Fixed freezing and unresponsiveness when opening folder with many nested sub-folders (PR: [#3681](https://github.com/OmniSharp/omnisharp-vscode/pull/3681))
