@@ -2,14 +2,19 @@
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
-  * Limited support for colorization and formatting
-  * Loss of HTML completions following C# less than (`<`) operator
+  * Limited support for formatting
   * Error squiggles misaligned for expressions near the start of a new line
   * Emmet based abbreviation expansion is not yet supported
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.21.16 (Not yet released)
+## 1.21.17 (Not yet released)
+* Updated Razor support (PR:[#3696](https://github.com/OmniSharp/omnisharp-vscode/pull/3696))
+  * Razor support for `<text>` tag completions.
+  * Ability to restart the Razor Language Server to activate changes to the `razor.trace` level.
+  * Bug fixes and performance improvements.
+
+## 1.21.16 (March 30, 2020)
 * Support for .NET Core 3.1 in csx files (PR: [#1731](https://github.com/OmniSharp/omnisharp-roslyn/pull/1731))
 * Update the minimal MSBuild to better support .NET 5 Previews ([omnisharp-vscode#3653](https://github.com/OmniSharp/omnisharp-vscode/issues/3653), PR: [#1746](https://github.com/OmniSharp/omnisharp-roslyn/pull/1746))
 
