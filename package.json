@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-dotnettools",
-  "version": "1.21.14",
+  "version": "1.21.16",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -29,8 +29,8 @@
     "dotnet"
   ],
   "defaults": {
-    "omniSharp": "1.34.14",
-    "razor": "1.0.0-alpha3-5.0.0-preview.2.20156.4"
+    "omniSharp": "1.34.15",
+    "razor": "1.0.0-alpha3-5.0.0-preview.3.20176.8"
   },
   "main": "./dist/extension",
   "scripts": {
@@ -79,8 +79,8 @@
     "http-proxy-agent": "2.1.0",
     "https-proxy-agent": "^3.0.1",
     "jsonc-parser": "2.0.3",
-    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/d133ee88-8117-494f-98a7-ae71672f71dc/9ceda6d2cdba3e0e4faeccb56f115078/microsoft.aspnetcore.razor.vscode-5.0.0-preview.2.20156.4.tgz",
-    "mkdirp": "0.5.1",
+    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/d48b3dd6-2eac-41f4-b7e9-f7008908917c/7f5df2f7ce62629d29b9d07b4851ce9b/microsoft.aspnetcore.razor.vscode-5.0.0-preview.3.20176.8.tgz",
+    "mkdirp": "^1.0.3",
     "node-filter-async": "1.1.1",
     "remove-bom-buffer": "3.0.0",
     "request-light": "0.2.4",
@@ -132,14 +132,13 @@
     "gulp-tslint": "8.1.3",
     "istanbul": "0.4.5",
     "ltcdr": "2.2.1",
-    "minimist": "1.2.0",
     "mocha": "5.2.0",
     "mocha-typescript": "1.1.17",
     "mock-fs": "4.8.0",
     "mock-http-server": "0.2.0",
     "natives": "1.1.6",
     "npm-run-all": "4.1.5",
-    "nyc": "13.3.0",
+    "nyc": "^15.0.0",
     "plist": "3.0.1",
     "remap-istanbul": "0.13.0",
     "source-map-support": "0.5.10",
@@ -148,7 +147,7 @@
     "tslint": "5.12.1",
     "tslint-microsoft-contrib": "6.0.0",
     "tslint-no-unused-expression-chai": "0.1.4",
-    "typescript": "^3.3.3",
+    "typescript": "^3.8.3",
     "unzipper": "0.9.10",
     "vsce": "1.57.0",
     "vscode": "1.1.33",
@@ -159,41 +158,41 @@
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/10b0d22c-b2be-401e-bfee-bd3272f69cbd/d3b776c130c38812c0fd383720a5e318/omnisharp-win-x86-1.34.14.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.34.14/omnisharp-win-x86-1.34.14.zip",
-      "installPath": ".omnisharp/1.34.14",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/076ec7ac-bf89-4cfa-9c8d-c440bd14b966/bf0476eb0cc096cfd49b059987431d97/omnisharp-win-x86-1.34.15.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.34.15/omnisharp-win-x86-1.34.15.zip",
+      "installPath": ".omnisharp/1.34.15",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.omnisharp/1.34.14/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.34.15/OmniSharp.exe",
       "platformId": "win-x86",
-      "integrity": "85FBCF380988512654587C41A5105E4248369FC918A28203CEC8ED22C61392B8"
+      "integrity": "A84314A209CFD4B9D65EA3819711EEDD5178CCF784D13993BFE1C8F0E358EEFE"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/10b0d22c-b2be-401e-bfee-bd3272f69cbd/7eb8824895cbdb38af0355380389bcbf/omnisharp-win-x64-1.34.14.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.34.14/omnisharp-win-x64-1.34.14.zip",
-      "installPath": ".omnisharp/1.34.14",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/076ec7ac-bf89-4cfa-9c8d-c440bd14b966/a8f0af91dfcd7ea593dc781bc0f4f7ee/omnisharp-win-x64-1.34.15.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.34.15/omnisharp-win-x64-1.34.15.zip",
+      "installPath": ".omnisharp/1.34.15",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/1.34.14/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.34.15/OmniSharp.exe",
       "platformId": "win-x64",
-      "integrity": "80A56F8F196ADC1B5985D4CC83F55A469D8E4A537F587CA8B2CC0FB889A12394"
+      "integrity": "D26B1B24FCCE54B364B05E9E9C30027A36BD3C3AD456E02CFDFED64D9A9DD5B4"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/10b0d22c-b2be-401e-bfee-bd3272f69cbd/df88496e278305a692e136ba611953df/omnisharp-osx-1.34.14.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.34.14/omnisharp-osx-1.34.14.zip",
-      "installPath": ".omnisharp/1.34.14",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/076ec7ac-bf89-4cfa-9c8d-c440bd14b966/cd8ab832a87dbd4a27bba98577b36c55/omnisharp-osx-1.34.15.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.34.15/omnisharp-osx-1.34.15.zip",
+      "installPath": ".omnisharp/1.34.15",
       "platforms": [
         "darwin"
       ],
@@ -201,16 +200,16 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.34.14/run",
+      "installTestPath": "./.omnisharp/1.34.15/run",
       "platformId": "osx",
-      "integrity": "7205424A09F1DE72FD67CC36C0170B2DD2994F861C9F5F61C7B52B17C27F9F60"
+      "integrity": "056C64CD58376D6C09C6C5A97599E7C05985177FF3DB5F5581825B79E0E64EDA"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/10b0d22c-b2be-401e-bfee-bd3272f69cbd/c817f764b125ba8707bb432190076369/omnisharp-linux-x86-1.34.14.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.34.14/omnisharp-linux-x86-1.34.14.zip",
-      "installPath": ".omnisharp/1.34.14",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/076ec7ac-bf89-4cfa-9c8d-c440bd14b966/172abd4e9fe368b3d9a7dc61be8c7541/omnisharp-linux-x86-1.34.15.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.34.15/omnisharp-linux-x86-1.34.15.zip",
+      "installPath": ".omnisharp/1.34.15",
       "platforms": [
         "linux"
       ],
@@ -222,16 +221,16 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.34.14/run",
+      "installTestPath": "./.omnisharp/1.34.15/run",
       "platformId": "linux-x86",
-      "integrity": "6098A03F845BF7AB0C63C3B11B4A2F8610C6F35858430AF4C5479F3502709D95"
+      "integrity": "B6FDE1D1AC80FD30C985553F976BED290BFBEFE93961CB970EA6FDD1888DB365"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/10b0d22c-b2be-401e-bfee-bd3272f69cbd/cf8b4f8fb15c5ee83df1661b57c27cf5/omnisharp-linux-x64-1.34.14.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.34.14/omnisharp-linux-x64-1.34.14.zip",
-      "installPath": ".omnisharp/1.34.14",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/076ec7ac-bf89-4cfa-9c8d-c440bd14b966/54cf61c59ef7e3376d6460d1af05f7a7/omnisharp-linux-x64-1.34.15.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.34.15/omnisharp-linux-x64-1.34.15.zip",
+      "installPath": ".omnisharp/1.34.15",
       "platforms": [
         "linux"
       ],
@@ -242,9 +241,9 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.34.14/run",
+      "installTestPath": "./.omnisharp/1.34.15/run",
       "platformId": "linux-x64",
-      "integrity": "7168517684C77B1E242AB3F81BB40081D2484ECAF6FF03FF854FF1A1DA239EB4"
+      "integrity": "F110BB85B242964D15AD6B34D47BEB5E20761E232981CF6078AAF4611AEDE4F9"
     },
     {
       "id": "Debugger",
@@ -302,8 +301,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/d133ee88-8117-494f-98a7-ae71672f71dc/4eb950fee2bebe2edbabf8dcf2d77f1d/razorlanguageserver-win-x64-5.0.0-preview.2.20156.4.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x64-5.0.0-preview.2.20156.4.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/d48b3dd6-2eac-41f4-b7e9-f7008908917c/63a80df6345ade745ba4ab05b5c02348/razorlanguageserver-win-x64-5.0.0-preview.3.20176.8.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x64-5.0.0-preview.3.20176.8.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -315,8 +314,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/d133ee88-8117-494f-98a7-ae71672f71dc/b57997b4175112edc7393335555130a0/razorlanguageserver-win-x86-5.0.0-preview.2.20156.4.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x86-5.0.0-preview.2.20156.4.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/d48b3dd6-2eac-41f4-b7e9-f7008908917c/3572052bd5787c0187803ce7fa801d4f/razorlanguageserver-win-x86-5.0.0-preview.3.20176.8.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x86-5.0.0-preview.3.20176.8.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -328,8 +327,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/d133ee88-8117-494f-98a7-ae71672f71dc/79de139da12da03601cd4ab0ac35b151/razorlanguageserver-linux-x64-5.0.0-preview.2.20156.4.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-linux-x64-5.0.0-preview.2.20156.4.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/d48b3dd6-2eac-41f4-b7e9-f7008908917c/57125c181c3b9dce2157e40d1623e8c8/razorlanguageserver-linux-x64-5.0.0-preview.3.20176.8.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-linux-x64-5.0.0-preview.3.20176.8.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -344,8 +343,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/d133ee88-8117-494f-98a7-ae71672f71dc/5a2bef67e8d13bcef95f07972d3357bf/razorlanguageserver-osx-x64-5.0.0-preview.2.20156.4.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-osx-x64-5.0.0-preview.2.20156.4.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/d48b3dd6-2eac-41f4-b7e9-f7008908917c/f5508e6670d0d5de3be09b1b8bc9a484/razorlanguageserver-osx-x64-5.0.0-preview.3.20176.8.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-osx-x64-5.0.0-preview.3.20176.8.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
