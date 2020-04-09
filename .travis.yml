@@ -3,6 +3,9 @@ language: node_js
 node_js:
 - "10"
 
+mono:
+  - latest
+
 env:
 - CODE_VERSION=1.33.0
 

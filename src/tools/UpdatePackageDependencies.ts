@@ -181,7 +181,7 @@ function verifyVersionSubstringCount(value: string, shouldContainVersion = false
     if (shouldContainVersion && matchCount == 0) {
         throw new Error(`Version number not found in '${value}'.`);
     }
-    if (matchCount > 1) {
+    if (matchCount > 2) {
         throw new Error(`Ambiguous version pattern found in '${value}'. Multiple version strings found.`);
     }
 }

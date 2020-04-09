@@ -287,8 +287,7 @@ export interface ProjectInformationResponse {
     DotNetProject: DotNetProject;
 }
 
-export enum DiagnosticStatus
-{
+export enum DiagnosticStatus {
     Processing = 0,
     Ready = 1
 }
@@ -334,6 +333,9 @@ export interface MSBuildProject {
     OutputPath: string;
     IsExe: boolean;
     IsUnityProject: boolean;
+    IsWebProject: boolean;
+    IsBlazorWebAssemblyStandalone: boolean;
+    IsBlazorWebAssemblyHosted: boolean;
 }
 
 export interface TargetFramework {
@@ -556,16 +558,24 @@ export namespace V2 {
     }
 
     // dotnet-test endpoints
-    export interface DebugTestGetStartInfoRequest extends Request {
+    interface SingleTestRequest extends Request {
         MethodName: string;
+        RunSettings: string;
         TestFrameworkName: string;
         TargetFrameworkVersion: string;
     }
 
-    export interface DebugTestClassGetStartInfoRequest extends Request {
+    interface MultiTestRequest extends Request {
         MethodNames: string[];
+        RunSettings: string;
         TestFrameworkName: string;
         TargetFrameworkVersion: string;
+    }
+
+    export interface DebugTestGetStartInfoRequest extends SingleTestRequest {
+    }
+
+    export interface DebugTestClassGetStartInfoRequest extends MultiTestRequest {
     }
 
     export interface DebugTestGetStartInfoResponse {
@@ -588,10 +598,7 @@ export namespace V2 {
     export interface DebugTestStopResponse {
     }
 
-    export interface GetTestStartInfoRequest extends Request {
-        MethodName: string;
-        TestFrameworkName: string;
-        TargetFrameworkVersion: string;
+    export interface GetTestStartInfoRequest extends SingleTestRequest {
     }
 
     export interface GetTestStartInfoResponse {
@@ -600,16 +607,10 @@ export namespace V2 {
         WorkingDirectory: string;
     }
 
-    export interface RunTestRequest extends Request {
-        MethodName: string;
-        TestFrameworkName: string;
-        TargetFrameworkVersion: string;
+    export interface RunTestRequest extends SingleTestRequest {
     }
 
-    export interface RunTestsInClassRequest extends Request {
-        MethodNames: string[];
-        TestFrameworkName: string;
-        TargetFrameworkVersion: string;
+    export interface RunTestsInClassRequest extends MultiTestRequest {
     }
 
     export module TestOutcomes {
@@ -738,6 +739,16 @@ export function findNetFrameworkTargetFramework(project: MSBuildProject): Target
     return project.TargetFrameworks.find(tf => regexp.test(tf.ShortName));
 }
 
+export function findNet5TargetFramework(project: MSBuildProject): TargetFramework {
+    const targetFramework = project.TargetFrameworks.find(tf => tf.ShortName.startsWith('net5'));
+    // Temprorary workaround until changes to support the net5.0 TFM is settled. Some NuGet
+    // builds report the shortname as net50.
+    if (targetFramework !== undefined) {
+        targetFramework.ShortName = "net5.0";
+    }
+    return targetFramework;
+}
+
 export function findNetCoreAppTargetFramework(project: MSBuildProject): TargetFramework {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp'));
 }
@@ -747,7 +758,8 @@ export function findNetStandardTargetFramework(project: MSBuildProject): TargetF
 }
 
 export function isDotNetCoreProject(project: MSBuildProject): Boolean {
-    return findNetCoreAppTargetFramework(project) !== undefined ||
+    return findNet5TargetFramework(project) !== undefined ||
+        findNetCoreAppTargetFramework(project) !== undefined ||
         findNetStandardTargetFramework(project) !== undefined ||
         findNetFrameworkTargetFramework(project) !== undefined;
 }
@@ -790,7 +802,11 @@ export function findExecutableMSBuildProjects(projects: MSBuildProject[]) {
     let result: MSBuildProject[] = [];
 
     projects.forEach(project => {
-        if (project.IsExe && findNetCoreAppTargetFramework(project) !== undefined) {
+        const projectIsNotNetFramework = findNetCoreAppTargetFramework(project) !== undefined
+            || findNet5TargetFramework(project) !== undefined
+            || project.IsBlazorWebAssemblyStandalone;
+
+        if (project.IsExe && projectIsNotNetFramework) {
             result.push(project);
         }
     });
