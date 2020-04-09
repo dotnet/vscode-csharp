@@ -943,7 +943,7 @@ export interface vscode {
     };
     extensions: {
         getExtension(extensionId: string): Extension<any> | undefined;
-        all: Extension<any>[];
+        all: ReadonlyArray<Extension<any>>;
     };
     Uri: {
         parse(value: string): Uri;

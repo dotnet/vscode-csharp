@@ -191,6 +191,9 @@ export class PlatformInformation {
             if (process.env.PROCESSOR_ARCHITECTURE === 'x86' && process.env.PROCESSOR_ARCHITEW6432 === undefined) {
                 resolve('x86');
             }
+            else if (process.env.PROCESSOR_ARCHITECTURE === 'ARM64' && process.env.PROCESSOR_ARCHITEW6432 === undefined) {
+                resolve('ARM64');
+            }
             else {
                 resolve('x86_64');
             }
