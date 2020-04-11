@@ -1,4 +1,4 @@
-## Known Issues in 1.21.16
+## Known Issues in 1.21.17
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
@@ -13,6 +13,9 @@
   * Razor support for `<text>` tag completions.
   * Ability to restart the Razor Language Server to activate changes to the `razor.trace` level.
   * Bug fixes and performance improvements.
+* Support for `<RunAnalyzers />` and `<RunAnalyzersDuringLiveAnalysis />` (PR: [omnisharp-roslyn/#1739](https://github.com/OmniSharp/omnisharp-roslyn/pull/1739))
+* Add `typeparam` documentation comments to text description ([#3516](https://github.com/OmniSharp/omnisharp-vscode/issues/3516), PR: [omnisharp-roslyn/#1749](https://github.com/OmniSharp/omnisharp-roslyn/pull/1749))
+* Tag `#region` blocks appropriately in the block structure service ([#2621](https://github.com/OmniSharp/omnisharp-vscode/issues/2621), PR: [omnisharp-roslyn/#1748](https://github.com/OmniSharp/omnisharp-roslyn/pull/1748))
 
 ## 1.21.16 (March 30, 2020)
 * Support for .NET Core 3.1 in csx files (PR: [#1731](https://github.com/OmniSharp/omnisharp-roslyn/pull/1731))
