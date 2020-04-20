@@ -44,7 +44,7 @@ suite("Asset generation: csproj", () => {
         generator.setStartupProject(0);
         let tasksJson = generator.createTasksConfiguration();
 
-        tasksJson.tasks.forEach(task=> task.args.should.contain("/consoleloggerparameters:NoSummary"));
+        tasksJson.tasks.forEach(task => task.args.should.contain("/consoleloggerparameters:NoSummary"));
     });
 
     test("Create tasks.json for nested project opened in workspace", () => {
@@ -71,6 +71,19 @@ suite("Asset generation: csproj", () => {
         // ${workspaceFolder}/bin/Debug/netcoreapp1.0/testApp.dll
         let segments = programPath.split(path.posix.sep);
         segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
+    });
+
+    test("Create launch.json for NET 5 project opened in workspace", () => {
+        let rootPath = path.resolve('testRoot');
+        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'net5.0', /*isExe*/ true);
+        let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
+        generator.setStartupProject(0);
+        let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Console), undefined, { disallowComments: true });
+        let programPath = launchJson[0].program;
+
+        // ${workspaceFolder}/bin/Debug/net5.0/testApp.dll
+        let segments = programPath.split(path.posix.sep);
+        segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', 'net5.0', 'testApp.dll']);
     });
 
     test("Create launch.json for nested project opened in workspace", () => {

@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs-extra';
-import * as glob from 'glob';
 import { OmniSharpServer } from './server';
 import * as path from 'path';
 import * as protocol from './protocol';
@@ -71,14 +70,20 @@ export async function requestWorkspaceInformation(server: OmniSharpServer) {
     const response = await server.makeRequest<protocol.WorkspaceInformationResponse>(protocol.Requests.Projects);
     if (response.MsBuild && response.MsBuild.Projects) {
         const blazorDetectionEnabled = hasBlazorWebAssemblyDebugPrerequisites();
+        let blazorWebAssemblyProjectFound = false;
 
         for (const project of response.MsBuild.Projects) {
+            const isProjectBlazorWebAssemblyProject = await isBlazorWebAssemblyProject(project);
+            const isProjectBlazorWebAssemblyHosted = isBlazorWebAssemblyHosted(project, isProjectBlazorWebAssemblyProject);
+
             project.IsWebProject = isWebProject(project);
-            project.IsBlazorWebAssemblyHosted = blazorDetectionEnabled && isBlazorWebAssemblyHosted(project);
-            project.IsBlazorWebAssemblyStandalone = blazorDetectionEnabled && !project.IsBlazorWebAssemblyHosted && isBlazorWebAssemblyProject(project);
+            project.IsBlazorWebAssemblyHosted = blazorDetectionEnabled && isProjectBlazorWebAssemblyHosted;
+            project.IsBlazorWebAssemblyStandalone = blazorDetectionEnabled && isProjectBlazorWebAssemblyProject && !project.IsBlazorWebAssemblyHosted;
+
+            blazorWebAssemblyProjectFound = blazorWebAssemblyProjectFound || isProjectBlazorWebAssemblyProject;
         }
 
-        if (!blazorDetectionEnabled && response.MsBuild.Projects.some(project => isBlazorWebAssemblyProject(project))) {
+        if (!blazorDetectionEnabled && blazorWebAssemblyProjectFound) {
             // There's a Blazor Web Assembly project but VSCode isn't configured to debug the WASM code, show a notification
             // to help the user configure their VSCode appropriately.
             vscode.window.showInformationMessage('Additional setup is required to debug Blazor WebAssembly applications.', 'Learn more', 'Close')
@@ -150,8 +155,8 @@ export async function isNetCoreProject(project: protocol.MSBuildProject) {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp') || tf.ShortName.startsWith('netstandard')) !== undefined;
 }
 
-function isBlazorWebAssemblyHosted(project: protocol.MSBuildProject): boolean {
-    if (!isBlazorWebAssemblyProject(project)) {
+function isBlazorWebAssemblyHosted(project: protocol.MSBuildProject, isProjectBlazorWebAssemblyProject: boolean): boolean {
+    if (!isProjectBlazorWebAssemblyProject) {
         return false;
     }
 
@@ -170,27 +175,25 @@ function isBlazorWebAssemblyHosted(project: protocol.MSBuildProject): boolean {
     return true;
 }
 
-function isBlazorWebAssemblyProject(project: MSBuildProject): boolean {
+async function isBlazorWebAssemblyProject(project: MSBuildProject): Promise<boolean> {
     const projectDirectory = path.dirname(project.Path);
-    const launchSettings = glob.sync('**/launchSettings.json', { cwd: projectDirectory });
-    if (!launchSettings) {
-        return false;
-    }
+    const launchSettingsPath = path.join(projectDirectory, 'Properties', 'launchSettings.json');
 
-    for (const launchSetting of launchSettings) {
-        try {
-            const absoluteLaunchSetting = path.join(projectDirectory, launchSetting);
-            const launchSettingContent = fs.readFileSync(absoluteLaunchSetting);
-            if (!launchSettingContent) {
-                continue;
-            }
-
-            if (launchSettingContent.indexOf('"inspectUri"') > 0) {
-                return true;
-            }
-        } catch {
-            // Swallow IO errors from reading the launchSettings.json files
+    try {
+        if (!fs.pathExistsSync(launchSettingsPath)) {
+            return false;
         }
+
+        const launchSettingContent = fs.readFileSync(launchSettingsPath);
+        if (!launchSettingContent) {
+            return false;
+        }
+
+        if (launchSettingContent.indexOf('"inspectUri"') > 0) {
+            return true;
+        }
+    } catch {
+        // Swallow IO errors from reading the launchSettings.json files
     }
 
     return false;

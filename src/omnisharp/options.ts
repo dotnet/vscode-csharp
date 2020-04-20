@@ -31,9 +31,8 @@ export class Options {
         public defaultLaunchSolution?: string,
         public monoPath?: string,
         public excludePaths?: string[],
-        public maxProjectFileCountForDiagnosticAnalysis?: number | null) 
-        {    
-        }
+        public maxProjectFileCountForDiagnosticAnalysis?: number | null) {
+    }
 
     public static Read(vscode: vscode): Options {
         // Extra effort is taken below to ensure that legacy versions of options
@@ -65,7 +64,7 @@ export class Options {
         const maxProjectResults = omnisharpConfig.get<number>('maxProjectResults', 250);
         const defaultLaunchSolution = omnisharpConfig.get<string>('defaultLaunchSolution', undefined);
         const useEditorFormattingSettings = omnisharpConfig.get<boolean>('useEditorFormattingSettings', true);
-        
+
         const enableRoslynAnalyzers = omnisharpConfig.get<boolean>('enableRoslynAnalyzers', false);
         const enableEditorConfigSupport = omnisharpConfig.get<boolean>('enableEditorConfigSupport', false);
 
@@ -89,21 +88,7 @@ export class Options {
 
         const maxProjectFileCountForDiagnosticAnalysis = csharpConfig.get<number | null>('maxProjectFileCountForDiagnosticAnalysis', 1000);
 
-        let workspaceConfig = vscode.workspace.getConfiguration();
-        let excludePaths = [];
-        if (workspaceConfig)
-        {
-            let excludeFilesOption = workspaceConfig.get<{ [i: string]: boolean }>('files.exclude');
-            if (excludeFilesOption)
-            {
-                for (let field in excludeFilesOption) {
-                    if (excludeFilesOption[field]) {
-                        excludePaths.push(field);
-                    }
-                }
-            }
-        }
-        
+        const excludePaths = this.getExcludedPaths(vscode);
 
         return new Options(
             path,
@@ -132,6 +117,32 @@ export class Options {
             excludePaths,
             maxProjectFileCountForDiagnosticAnalysis
         );
+    }
+
+    public static getExcludedPaths(vscode: vscode, includeSearchExcludes: boolean = false): string[] {
+        let workspaceConfig = vscode.workspace.getConfiguration(undefined, null);
+        if (!workspaceConfig) {
+            return [];
+        }
+
+        let excludePaths = getExcludes(workspaceConfig, 'files.exclude');
+
+        if (includeSearchExcludes) {
+            excludePaths = excludePaths.concat(getExcludes(workspaceConfig, 'search.exclude'));
+        }
+
+        return excludePaths;
+
+        function getExcludes(config: WorkspaceConfiguration, option: string): string[] {
+            let optionValue = config.get<{ [i: string]: boolean }>(option);
+            if (!optionValue) {
+                return [];
+            }
+
+            return Object.entries(optionValue)
+                .filter(([key, value]) => value)
+                .map(([key, value]) => key);
+        }
     }
 
     private static readPathOption(csharpConfig: WorkspaceConfiguration, omnisharpConfig: WorkspaceConfiguration): string | null {
