@@ -94,12 +94,19 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         });
 
         test("Returns any diagnostics from file", async function () {
-            await assertWithPoll(() => vscode.languages.getDiagnostics(fileUri), 10 * 1000, 500,
+            await assertWithPoll(
+                () => vscode.languages.getDiagnostics(fileUri),
+                /*duration*/ 10 * 1000,
+                /*step*/ 500,
                 res => expect(res.length).to.be.greaterThan(0));
         });
 
-        test("Return fadeout diagnostic in case of unused variable", async function () {
-            let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 15 * 1000, 500);
+        test("Return unnecessary tag in case of unused variable", async function () {
+            let result = await poll(
+                () => vscode.languages.getDiagnostics(fileUri),
+                /*duration*/ 15 * 1000,
+                /*step*/ 500,
+                result => result.find(x => x.code === "CS0219") != undefined);
 
             let cs0219 = result.find(x => x.code === "CS0219");
             expect(cs0219).to.not.be.undefined;
@@ -107,7 +114,11 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         });
 
         test("Return unnecessary tag in case of unnesessary using", async function () {
-            let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 15 * 1000, 500);
+            let result = await poll(
+                () => vscode.languages.getDiagnostics(fileUri),
+                /*duration*/ 15 * 1000,
+                /*step*/ 500,
+                result => result.find(x => x.code === "CS8019") != undefined);
 
             let cs8019 = result.find(x => x.code === "CS8019");
             expect(cs8019).to.not.be.undefined;
@@ -115,7 +126,11 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         });
 
         test("Return fadeout diagnostics like unused variables based on roslyn analyzers", async function () {
-            let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 20 * 1000, 500, result => result.find(x => x.code === "IDE0059") != undefined);
+            let result = await poll(
+                () => vscode.languages.getDiagnostics(fileUri),
+                /*duration*/ 20 * 1000,
+                /*step*/ 500,
+                result => result.find(x => x.code === "IDE0059") != undefined);
 
             let ide0059 = result.find(x => x.code === "IDE0059");
             expect(ide0059).to.not.be.undefined;
