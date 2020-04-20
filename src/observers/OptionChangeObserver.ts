@@ -1,6 +1,6 @@
-/*--------------------------------------------------------------------------------------------- 
-*  Copyright (c) Microsoft Corporation. All rights reserved. 
-*  Licensed under the MIT License. See License.txt in the project root for license information. 
+/*---------------------------------------------------------------------------------------------
+*  Copyright (c) Microsoft Corporation. All rights reserved.
+*  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
 import { vscode } from "../vscodeAdapter";
@@ -8,11 +8,11 @@ import { Options } from "../omnisharp/options";
 import ShowInformationMessage from "./utils/ShowInformationMessage";
 import { Observable } from "rxjs";
 import Disposable from "../Disposable";
-import { filter} from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 
 function ConfigChangeObservable(optionObservable: Observable<Options>): Observable<Options> {
     let options: Options;
-    return optionObservable.pipe( filter(newOptions => {
+    return optionObservable.pipe(filter(newOptions => {
         let changed = (options && hasChanged(options, newOptions));
         options = newOptions;
         return changed;

@@ -86,11 +86,11 @@ export class ProjectJSONContribution implements IJSONContribution {
     }
 
     public collectPropertySuggestions(
-        resource: string, 
-        location: Location, 
-        currentWord: string, 
-        addValue: boolean, 
-        isLast: boolean, 
+        resource: string,
+        location: Location,
+        currentWord: string,
+        addValue: boolean,
+        isLast: boolean,
         result: ISuggestionsCollector): Thenable<void> {
         if ((location.matches(['dependencies']) || location.matches(['frameworks', '*', 'dependencies']) || location.matches(['frameworks', '*', 'frameworkAssemblies']))) {
 

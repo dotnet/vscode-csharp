@@ -99,7 +99,7 @@ function cleanJsonText(text: string) {
     function peekPastWhitespace(): number | undefined {
         let pos = index;
         let code = undefined;
-        
+
         do {
             code = text.charCodeAt(pos);
             pos++;
@@ -145,7 +145,7 @@ function cleanJsonText(text: string) {
                 parts.push(text.substring(partStart, index - 1));
                 partStart = index;
                 break;
-                
+
             // strings
             case CharCode.doubleQuote:
                 scanString();
@@ -201,7 +201,7 @@ function cleanJsonText(text: string) {
                 }
 
                 break;
-            default: 
+            default:
         }
 
         if (index >= length && index > partStart) {

@@ -71,28 +71,28 @@ suite("Common", () => {
     suite("isSubfolderOf", () => {
         test("same paths", () => {
             let subfolder: string = ["C:", "temp", "VS", "dotnetProject"].join(path.sep);
-            let folder: string= ["C:", "temp", "VS", "dotnetProject"].join(path.sep);
+            let folder: string = ["C:", "temp", "VS", "dotnetProject"].join(path.sep);
 
             expect(isSubfolderOf(subfolder, folder)).to.be.true;
         });
 
         test("correct subfolder", () => {
             let subfolder: string = ["C:", "temp", "VS"].join(path.sep);
-            let folder: string= ["C:", "temp", "VS", "dotnetProject"].join(path.sep);
+            let folder: string = ["C:", "temp", "VS", "dotnetProject"].join(path.sep);
 
             expect(isSubfolderOf(subfolder, folder)).to.be.true;
         });
 
         test("longer subfolder", () => {
             let subfolder: string = ["C:", "temp", "VS", "a", "b", "c"].join(path.sep);
-            let folder: string= ["C:", "temp", "VS"].join(path.sep);
+            let folder: string = ["C:", "temp", "VS"].join(path.sep);
 
             expect(isSubfolderOf(subfolder, folder)).to.be.false;
         });
 
         test("Different drive", () => {
             let subfolder: string = ["C:", "temp", "VS"].join(path.sep);
-            let folder: string= ["E:", "temp", "VS"].join(path.sep);
+            let folder: string = ["E:", "temp", "VS"].join(path.sep);
 
             expect(isSubfolderOf(subfolder, folder)).to.be.false;
         });

@@ -2,7 +2,7 @@
  * Copyright (C) Microsoft Corporation. All rights reserved.
  *--------------------------------------------------------*/
 
- import shelljs = require("async-shelljs");
+import shelljs = require("async-shelljs");
 import path = require('path');
 const fs = require('async-file');
 
@@ -64,7 +64,7 @@ export default class CoverageWritingTestRunner {
 
                     let remappedResult = JSON.parse(await fs.readTextFile(remappedCoverageJsonPath));
 
-                    let finalResult = <{[details: string] : { path: string }}>{};
+                    let finalResult = <{ [details: string]: { path: string } }>{};
 
                     for (let key in remappedResult) {
                         if (remappedResult[key].path) {
@@ -84,14 +84,14 @@ export default class CoverageWritingTestRunner {
                 }
             }
             catch (e) {
-                    console.log(`Coverage remapping failure: ${JSON.stringify(e)}`);
-                    console.log(`* rawCoverageJsonPath: ${rawCoverageJsonPath}`);
-                    console.log(`* remappedCoverageJsonPath: ${remappedCoverageJsonPath}`);
-                    console.log(`* outFolderPath: ${outFolderPath}`);
-                    console.log(`* remapIstanbulPath: ${remapIstanbulPath}`);
-                    console.log(`* nodePath: ${nodePath}`);
-                    console.log(e);
-                }
+                console.log(`Coverage remapping failure: ${JSON.stringify(e)}`);
+                console.log(`* rawCoverageJsonPath: ${rawCoverageJsonPath}`);
+                console.log(`* remappedCoverageJsonPath: ${remappedCoverageJsonPath}`);
+                console.log(`* outFolderPath: ${outFolderPath}`);
+                console.log(`* remapIstanbulPath: ${remapIstanbulPath}`);
+                console.log(`* nodePath: ${nodePath}`);
+                console.log(e);
             }
+        }
     }
-    }
+}

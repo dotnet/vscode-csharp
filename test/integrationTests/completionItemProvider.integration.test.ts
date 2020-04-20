@@ -13,7 +13,7 @@ import { activateCSharpExtension, isRazorWorkspace } from "./integrationHelpers"
 suite(`${OmniSharpCompletionItemProvider.name}: Returns the completion items`, () => {
     let fileUri: vscode.Uri;
 
-    suiteSetup(async function() {
+    suiteSetup(async function () {
         // These tests don't run on the BasicRazorApp2_1 solution
         if (isRazorWorkspace(vscode.workspace)) {
             this.skip();
