@@ -161,7 +161,7 @@ suite("OmnisharpLoggerObserver", () => {
             let fn = function () { observer.post(event); };
             expect(fn).to.not.throw(Error);
         });
-    
+
         [
             new OmnisharpServerOnError({ Text: "someText", FileName: "someFile", Line: 1, Column: 2 }),
         ].forEach((event: OmnisharpServerOnError) => {
@@ -169,7 +169,7 @@ suite("OmnisharpLoggerObserver", () => {
                 observer.post(event);
                 expect(logOutput).to.contain(event.errorMessage.Text);
             });
-    
+
             test(`Contains the error message FileName, Line and column if FileName is not null`, () => {
                 observer.post(event);
                 if (event.errorMessage.FileName) {

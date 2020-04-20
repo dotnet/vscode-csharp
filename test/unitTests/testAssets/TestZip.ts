@@ -7,18 +7,18 @@ import * as archiver from 'archiver';
 import { TestFile } from './TestFile';
 
 export default class TestZip {
-    constructor(private readonly _buffer: Buffer, private readonly _files : TestFile[]){
+    constructor(private readonly _buffer: Buffer, private readonly _files: TestFile[]) {
     }
 
-    get buffer(): Buffer{
+    get buffer(): Buffer {
         return this._buffer;
     }
 
-    get size(): number{
+    get size(): number {
         return this._buffer.length;
     }
 
-    get files(): TestFile[]{
+    get files(): TestFile[] {
         return this._files;
     }
 
@@ -40,8 +40,8 @@ export default class TestZip {
             filesToAdd.forEach(elem => archive.append(elem.content, { name: elem.path }));
             archive.finalize();
         });
-    
+
         return new TestZip(finalBuffer, filesToAdd);
-    }    
+    }
 }
 

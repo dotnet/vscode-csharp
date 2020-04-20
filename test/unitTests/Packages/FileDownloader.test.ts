@@ -76,7 +76,7 @@ suite("FileDownloader", () => {
                 });
 
                 test('Events are created in the correct order', async () => {
-                    await DownloadFile(fileDescription, eventStream, networkSettingsProvider,  getURL(elem.urlPath), getURL(elem.fallBackUrlPath));
+                    await DownloadFile(fileDescription, eventStream, networkSettingsProvider, getURL(elem.urlPath), getURL(elem.fallBackUrlPath));
                     expect(eventBus.getEvents()).to.be.deep.equal(elem.getEventSequence());
                 });
             });

@@ -92,11 +92,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     let errorMessageObserver = new ErrorMessageObserver(vscode);
     eventStream.subscribe(errorMessageObserver.post);
 
-    let omnisharpStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, Number.MIN_VALUE+2));
+    let omnisharpStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, Number.MIN_VALUE + 2));
     let omnisharpStatusBarObserver = new OmnisharpStatusBarObserver(omnisharpStatusBar);
     eventStream.subscribe(omnisharpStatusBarObserver.post);
 
-    let projectStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, Number.MIN_VALUE+1));
+    let projectStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, Number.MIN_VALUE + 1));
     let projectStatusBarObserver = new ProjectStatusBarObserver(projectStatusBar);
     eventStream.subscribe(projectStatusBarObserver.post);
 
@@ -151,7 +151,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     eventStream.subscribe(telemetryObserver.post);
 
     let networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
-    let installDependencies: IInstallDependencies = async(dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload);
+    let installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload);
     let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo, installDependencies);
 
     // activate language services
@@ -208,8 +208,8 @@ function isSupportedPlatform(platform: PlatformInformation): boolean {
 
     if (platform.isLinux()) {
         return platform.architecture === "x86_64" ||
-               platform.architecture === "x86" ||
-               platform.architecture === "i686";
+            platform.architecture === "x86" ||
+            platform.architecture === "i686";
     }
 
     return false;

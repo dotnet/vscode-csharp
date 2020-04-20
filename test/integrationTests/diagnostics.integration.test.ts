@@ -57,18 +57,18 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         });
 
         test("Razor shouldn't give diagnostics for virtual files", async () => {
-            await pollDoesNotHappen(() => vscode.languages.getDiagnostics(), 5 * 1000, 500, function(res) {
+            await pollDoesNotHappen(() => vscode.languages.getDiagnostics(), 5 * 1000, 500, function (res) {
                 const virtual = res.find(r => r[0].fsPath === virtualRazorFileUri.fsPath);
 
-                if(!virtual) {
+                if (!virtual) {
                     return false;
                 }
 
                 const diagnosticsList = virtual[1];
-                if(diagnosticsList.some(diag => diag.code == 'CS0103')) {
+                if (diagnosticsList.some(diag => diag.code == 'CS0103')) {
                     return true;
                 }
-                else{
+                else {
                     return false;
                 }
             });
@@ -141,7 +141,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             await vscode.commands.executeCommand("vscode.open", secondaryFileUri);
             await vscode.commands.executeCommand("vscode.open", fileUri);
 
-            await assertWithPoll(() => vscode.languages.getDiagnostics(fileUri), 10 * 1000, 500, openFileDiag =>  expect(openFileDiag.length).to.be.greaterThan(0));
+            await assertWithPoll(() => vscode.languages.getDiagnostics(fileUri), 10 * 1000, 500, openFileDiag => expect(openFileDiag.length).to.be.greaterThan(0));
             await assertWithPoll(() => vscode.languages.getDiagnostics(secondaryFileUri), 10 * 1000, 500, secondaryDiag => expect(secondaryDiag.length).to.be.eq(0));
         });
 

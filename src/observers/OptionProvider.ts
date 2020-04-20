@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Options } from "../omnisharp/options";
-import { Subscription ,  Observable } from "rxjs";
+import { Subscription, Observable } from "rxjs";
 export default class OptionProvider {
     private options: Options;
     private subscription: Subscription;

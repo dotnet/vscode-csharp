@@ -47,7 +47,7 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
         expect(result, "Debugger could not be started.");
 
         let debugSessionTerminated = new Promise(resolve => {
-            vscode.debug.onDidTerminateDebugSession((e) =>  resolve());
+            vscode.debug.onDidTerminateDebugSession((e) => resolve());
         });
 
         await debugSessionTerminated;

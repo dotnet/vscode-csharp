@@ -26,7 +26,7 @@ import * as ObservableEvents from './loggingEvents';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import { Subject } from 'rxjs';
-import {debounceTime} from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
@@ -333,11 +333,10 @@ export class OmniSharpServer {
             args.push('--debug');
         }
 
-        for (let i = 0; i < options.excludePaths.length; i++)
-        {
+        for (let i = 0; i < options.excludePaths.length; i++) {
             args.push(`FileOptions:SystemExcludeSearchPatterns:${i}=${options.excludePaths[i]}`);
         }
-        
+
         if (options.enableMsBuildLoadProjectsOnDemand === true) {
             args.push('MsBuild:LoadProjectsOnDemand=true');
         }
@@ -390,7 +389,7 @@ export class OmniSharpServer {
         }
     }
 
-    private onProjectConfigurationReceived(listener: (e: protocol.ProjectConfigurationMessage) => void){
+    private onProjectConfigurationReceived(listener: (e: protocol.ProjectConfigurationMessage) => void) {
         return this._addListener(Events.ProjectConfiguration, listener);
     }
 

@@ -5,6 +5,6 @@
 
 // Sample Query: https://api-v2v3search-0.nuget.org/autocomplete
 
- export default interface NuGetSearchAutocompleteServiceResponse {
+export default interface NuGetSearchAutocompleteServiceResponse {
     data: string[];
 }

@@ -5,13 +5,11 @@
 
 import * as fs from 'fs-extra';
 
-export class ParsedEnvironmentFile
-{
+export class ParsedEnvironmentFile {
     public Env: { [key: string]: any };
     public Warning: string | null;
 
-    private constructor(env: { [key: string]: any }, warning: string | null)
-    {
+    private constructor(env: { [key: string]: any }, warning: string | null) {
         this.Env = env;
         this.Warning = warning;
     }
@@ -24,7 +22,7 @@ export class ParsedEnvironmentFile
     public static CreateFromContent(content: string, envFile: string, initialEnv: { [key: string]: any } | undefined): ParsedEnvironmentFile {
 
         // Remove UTF-8 BOM if present
-        if(content.charAt(0) === '\uFEFF') {
+        if (content.charAt(0) === '\uFEFF') {
             content = content.substr(1);
         }
 
@@ -60,7 +58,7 @@ export class ParsedEnvironmentFile
 
         // show error message if single lines cannot get parsed
         let warning: string = null;
-        if(parseErrors.length !== 0) {
+        if (parseErrors.length !== 0) {
             warning = "Ignoring non-parseable lines in envFile " + envFile + ": ";
             parseErrors.forEach(function (value, idx, array) {
                 warning += "\"" + value + "\"" + ((idx !== array.length - 1) ? ", " : ".");

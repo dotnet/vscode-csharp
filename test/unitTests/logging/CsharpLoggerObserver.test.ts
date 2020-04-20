@@ -37,14 +37,14 @@ suite("CsharpLoggerObserver", () => {
             expect(logOutput).to.contain(event.stage);
             expect(logOutput).to.contain(event.error.toString());
         });
-    
+
         test('Stage and Error is logged if a PackageError without inner error', () => {
             let event = new Event.InstallationFailure("someStage", new PackageError("someError", null, null));
             observer.post(event);
             expect(logOutput).to.contain(event.stage);
             expect(logOutput).to.contain(event.error.message);
         });
-    
+
         test('Stage and Inner error is logged if a PackageError without inner error', () => {
             let event = new Event.InstallationFailure("someStage", new PackageError("someError", null, "innerError"));
             observer.post(event);
@@ -95,13 +95,13 @@ suite("CsharpLoggerObserver", () => {
         ].forEach((element) => {
             test(`Prints the download status to the logger as ${element.expected}`, () => {
                 let logOutput = "";
-    
+
                 let observer = new CsharpLoggerObserver({
                     ...getNullChannel(),
                     appendLine: (text?: string) => { logOutput += `${text}\n`; },
                     append: (text?: string) => { logOutput += text; }
                 });
-    
+
                 element.events.forEach((message: Event.BaseEvent) => observer.post(message));
                 expect(logOutput).to.be.equal(element.expected);
             });
@@ -175,7 +175,7 @@ suite("CsharpLoggerObserver", () => {
         expect(logOutput).to.contain(description);
         expect(logOutput).to.contain(url);
     });
-    
+
     test(`${Event.IntegrityCheckSuccess.name}: Some message is logged`, () => {
         let event = new Event.IntegrityCheckSuccess();
         observer.post(event);

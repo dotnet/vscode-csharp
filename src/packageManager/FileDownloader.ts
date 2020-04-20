@@ -21,7 +21,7 @@ export async function DownloadFile(description: string, eventStream: EventStream
         return buffer;
     }
     catch (primaryUrlError) {
-        // If the package has a fallback Url, and downloading from the primary Url failed, try again from 
+        // If the package has a fallback Url, and downloading from the primary Url failed, try again from
         // the fallback. This is used for debugger packages as some users have had issues downloading from
         // the CDN link
         if (fallbackUrl) {

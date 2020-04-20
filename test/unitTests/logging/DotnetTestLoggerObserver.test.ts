@@ -42,18 +42,18 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
             observer.post(event);
             expect(appendedMessage).to.contain("foo");
         });
+    });
+
+    [
+        new DotNetTestsInClassDebugStart("foo"),
+        new DotNetTestsInClassRunStart("foo")
+    ].forEach((event: BaseEvent) => {
+        test(`${event.constructor.name}: Class name is logged`, () => {
+            expect(appendedMessage).to.be.empty;
+            observer.post(event);
+            expect(appendedMessage).to.contain("foo");
         });
-    
-        [
-            new DotNetTestsInClassDebugStart("foo"),
-            new DotNetTestsInClassRunStart("foo")
-        ].forEach((event: BaseEvent) => {
-            test(`${event.constructor.name}: Class name is logged`, () => {
-                expect(appendedMessage).to.be.empty;
-                observer.post(event);
-                expect(appendedMessage).to.contain("foo");
-            });
-        });
+    });
 
     test(`${DotNetTestDebugProcessStart.name}: Target process id is logged`, () => {
         let event = new DotNetTestDebugProcessStart(111);
@@ -70,7 +70,7 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
     suite(`${ReportDotNetTestResults.name}`, () => {
         let event = new ReportDotNetTestResults(
             [
-                getDotNetTestResults("foo", "failed", "assertion failed", "stacktrace1" , ["message1", "message2"], ["errorMessage1"]),
+                getDotNetTestResults("foo", "failed", "assertion failed", "stacktrace1", ["message1", "message2"], ["errorMessage1"]),
                 getDotNetTestResults("failinator", "failed", "error occurred", "stacktrace2", [], []),
                 getDotNetTestResults("bar", "skipped", "", "", ["message3", "message4"], []),
                 getDotNetTestResults("passinator", "passed", "", "", [], []),
@@ -107,7 +107,7 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
                 result.StandardError.forEach(message => expect(appendedMessage).to.contain(message));
             });
         });
-          
+
         test(`Can handle malformed results`, () => {
             observer.post(new ReportDotNetTestResults([]));
             expect(appendedMessage).to.contain("----- Test Execution Summary -----\n\nTotal tests: 0. Passed: 0. Failed: 0. Skipped: 0");
@@ -121,7 +121,7 @@ function getDotNetTestResults(methodname: string, outcome: string, errorMessage:
         Outcome: outcome,
         ErrorMessage: errorMessage,
         ErrorStackTrace: errorStackTrace,
-        StandardOutput : stdoutMessages,
+        StandardOutput: stdoutMessages,
         StandardError: stdErrorMessages
     };
 }
