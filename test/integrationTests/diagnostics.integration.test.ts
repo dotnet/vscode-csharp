@@ -98,6 +98,14 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
                 res => expect(res.length).to.be.greaterThan(0));
         });
 
+        test("Return fadeout diagnostic in case of unused variable", async function () {
+            let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 15 * 1000, 500);
+
+            let cs0219 = result.find(x => x.code === "CS0219");
+            expect(cs0219).to.not.be.undefined;
+            expect(cs0219.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+        });
+
         test("Return unnecessary tag in case of unnesessary using", async function () {
             let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 15 * 1000, 500);
 
@@ -110,6 +118,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             let result = await poll(() => vscode.languages.getDiagnostics(fileUri), 20 * 1000, 500, result => result.find(x => x.code === "IDE0059") != undefined);
 
             let ide0059 = result.find(x => x.code === "IDE0059");
+            expect(ide0059).to.not.be.undefined;
             expect(ide0059.tags).to.include(vscode.DiagnosticTag.Unnecessary);
         });
 
