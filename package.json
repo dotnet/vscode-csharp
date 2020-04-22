@@ -152,7 +152,7 @@
     "typescript": "^3.8.3",
     "unzipper": "0.9.10",
     "vsce": "1.57.0",
-    "vscode": "1.1.33",
+    "vscode": "1.1.36",
     "webpack": "4.29.3",
     "webpack-cli": "^3.2.3"
   },
@@ -360,7 +360,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.36.0"
+    "vscode": "^1.44.0"
   },
   "activationEvents": [
     "onDebugInitialConfigurations",
@@ -3093,92 +3093,58 @@
       }
     ],
     "semanticTokenModifiers": [],
-    "semanticTokenStyleDefaults": [
+    "semanticTokenScopes": [
       {
-        "selector": "plainKeyword",
-        "scope": [
-          "keyword"
-        ]
-      },
-      {
-        "selector": "controlKeyword",
-        "scope": [
-          "keyword.control"
-        ]
-      },
-      {
-        "selector": "operatorOverloaded",
-        "scope": [
-          "entity.name.function.member",
-          "support.function"
-        ]
-      },
-      {
-        "selector": "preprocessorKeyword",
-        "scope": [
-          "keyword.preprocessor"
-        ]
-      },
-      {
-        "selector": "preprocessorText",
-        "scope": [
-          "meta.preprocessor.string"
-        ]
-      },
-      {
-        "selector": "punctuation",
-        "scope": [
-          "punctuation"
-        ]
-      },
-      {
-        "selector": "stringVerbatim",
-        "scope": [
-          "string.verbatim",
-          "string"
-        ]
-      },
-      {
-        "selector": "stringEscapeCharacter",
-        "scope": [
-          "constant.character.escape"
-        ]
-      },
-      {
-        "selector": "delegate",
-        "scope": [
-          "entity.name.type.delegate",
-          "entity.name.type"
-        ]
-      },
-      {
-        "selector": "module",
-        "scope": [
-          "entity.name.type.module",
-          "entity.name.type"
-        ]
-      },
-      {
-        "selector": "extensionMethod",
-        "scope": [
-          "entity.name.function.extension",
-          "entity.name.function.member",
-          "support.function"
-        ]
-      },
-      {
-        "selector": "field",
-        "scope": [
-          "entity.name.variable.field",
-          "entity.name.variable"
-        ]
-      },
-      {
-        "selector": "local",
-        "scope": [
-          "entity.name.variable.local",
-          "entity.name.variable"
-        ]
+        "language": "csharp",
+        "scopes": {
+          "plainKeyword": [
+            "keyword"
+          ],
+          "controlKeyword": [
+            "keyword.control"
+          ],
+          "operatorOverloaded": [
+            "entity.name.function.member",
+            "support.function"
+          ],
+          "preprocessorKeyword": [
+            "keyword.preprocessor"
+          ],
+          "preprocessorText": [
+            "meta.preprocessor.string"
+          ],
+          "punctuation": [
+            "punctuation"
+          ],
+          "stringVerbatim": [
+            "string.verbatim",
+            "string"
+          ],
+          "stringEscapeCharacter": [
+            "constant.character.escape"
+          ],
+          "delegate": [
+            "entity.name.type.delegate",
+            "entity.name.type"
+          ],
+          "module": [
+            "entity.name.type.module",
+            "entity.name.type"
+          ],
+          "extensionMethod": [
+            "entity.name.function.extension",
+            "entity.name.function.member",
+            "support.function"
+          ],
+          "field": [
+            "entity.name.variable.field",
+            "entity.name.variable"
+          ],
+          "local": [
+            "entity.name.variable.local",
+            "entity.name.variable"
+          ]
+        }
       }
     ],
     "languages": [
