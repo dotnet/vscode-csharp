@@ -8,7 +8,16 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.21.17 (Not yet released)
+## 1.21.18 (Not yet released)
+* Fadeout unused variable names ([#1324](https://github.com/OmniSharp/omnisharp-vscode/issues/1324), PR: [#3733](https://github.com/OmniSharp/omnisharp-vscode/pull/3733))
+* Updated debugger (PR: [#3729](https://github.com/OmniSharp/omnisharp-vscode/pull/3729))
+* Fixed not supported exception when trying to decompile a BCL assembly on Mono. For now we do not try to resolve implementation assembly from a ref assembly (PR: [omnisharp-roslyn/#1767](https://github.com/OmniSharp/omnisharp-roslyn/pull/1767))
+* Added support for generic classes in test runner ([#3722](https://github.com/OmniSharp/omnisharp-vscode/issues/3722), PR: [omnisharp-roslyn/#1768](https://github.com/OmniSharp/omnisharp-roslyn/pull/1768))
+* Improved autocompletion performance (PR: [omnisharp-roslyn/#1761](https://github.com/OmniSharp/omnisharp-roslyn/pull/1761))
+* Move to Roslyn's .editorconfig support ([omnisharp-roslyn/#1657](https://github.com/OmniSharp/omnisharp-roslyn/issues/1657), PR: [omnisharp-roslyn/#1771](https://github.com/OmniSharp/omnisharp-roslyn/pull/1771))
+* Fully update CompilationOptions when project files change (PR: [omnisharp-roslyn/#1774](https://github.com/OmniSharp/omnisharp-roslyn/pull/1774))
+
+## 1.21.17 (April 13, 2020)
 * Updated Razor support (PR:[#3696](https://github.com/OmniSharp/omnisharp-vscode/pull/3696))
   * Razor support for `<text>` tag completions.
   * Ability to restart the Razor Language Server to activate changes to the `razor.trace` level.
