@@ -20,6 +20,15 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 -   [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 -   [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
+## What's new in 1.21.18
+-   Fadeout unused variable names ([#1324](https://github.com/OmniSharp/omnisharp-vscode/issues/1324), PR: [#3733](https://github.com/OmniSharp/omnisharp-vscode/pull/3733))
+-   Updated debugger (PR: [#3729](https://github.com/OmniSharp/omnisharp-vscode/pull/3729))
+-   Fixed not supported exception when trying to decompile a BCL assembly on Mono. For now we do not try to resolve implementation assembly from a ref assembly (PR: [omnisharp-roslyn/#1767](https://github.com/OmniSharp/omnisharp-roslyn/pull/1767))
+-   Added support for generic classes in test runner ([#3722](https://github.com/OmniSharp/omnisharp-vscode/issues/3722), PR: [omnisharp-roslyn/#1768](https://github.com/OmniSharp/omnisharp-roslyn/pull/1768))
+-   Improved autocompletion performance (PR: [omnisharp-roslyn/#1761](https://github.com/OmniSharp/omnisharp-roslyn/pull/1761))
+-   Move to Roslyn's .editorconfig support ([omnisharp-roslyn/#1657](https://github.com/OmniSharp/omnisharp-roslyn/issues/1657), PR: [omnisharp-roslyn/#1771](https://github.com/OmniSharp/omnisharp-roslyn/pull/1771))
+-   Fully update CompilationOptions when project files change (PR: [omnisharp-roslyn/#1774](https://github.com/OmniSharp/omnisharp-roslyn/pull/1774))
+
 ## What's new in 1.21.17
 
 -   Updated Razor support (PR:[#3696](https://github.com/OmniSharp/omnisharp-vscode/pull/3696))
@@ -32,29 +41,13 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 
 ## What's new in 1.21.16
 
--   Support for .NET Core 3.1 in csx files (PR: [#1731](https://github.com/OmniSharp/omnisharp-roslyn/pull/1731))
--   Update the minimal MSBuild to better support .NET 5 Previews ([omnisharp-vscode#3653](https://github.com/OmniSharp/omnisharp-vscode/issues/3653), PR: [#1746](https://github.com/OmniSharp/omnisharp-roslyn/pull/1746))
+-   Support for .NET Core 3.1 in csx files (PR: [omnisharp-roslyn/#1731](https://github.com/OmniSharp/omnisharp-roslyn/pull/1731))
+-   Update the minimal MSBuild to better support .NET 5 Previews ([#3653](https://github.com/OmniSharp/omnisharp-vscode/issues/3653), PR: [omnisharp-roslyn/#1746](https://github.com/OmniSharp/omnisharp-roslyn/pull/1746))
 
 ## What's new in 1.21.15
 
 -   Fixed freezing and unresponsiveness when opening folder with many nested sub-folders (PR: [#3681](https://github.com/OmniSharp/omnisharp-vscode/pull/3681))
--   Fixed handling of dismiss response to assets prompt (PR: [3678](https://github.com/OmniSharp/omnisharp-vscode/pull/3678))
-
-## What's new in 1.21.14
-
--   Fixed an issue where Razor formatting fails in the presence of @using directives
--   Added support for `annotations` value of `Nullable` csproj property ([omnisharp-roslyn/#1721](https://github.com/OmniSharp/omnisharp-roslyn/issues/1721), PR: [omnisharp-roslyn/#1722](https://github.com/OmniSharp/omnisharp-roslyn/pull/1722))
--   Added ability to specify custom RunSettings for tests (PR: [#3573](https://github.com/OmniSharp/omnisharp-vscode/pull/3573), PR: [omnisharp-roslyn/#1710](https://github.com/OmniSharp/omnisharp-roslyn/pull/1710))
-
-## What's new in 1.21.13
-
--   Change Marketplace publisher for the C# extension from ms-vscode to ms-dotnettools
--   Ignore diagnostics from virtual files ([aspnetcore/#18927](https://github.com/dotnet/aspnetcore/issues/18927), PR: [#3592](https://github.com/OmniSharp/omnisharp-vscode/pull/3592))
--   Detect and create Blazor WASM launch and debug settings ([aspnetcore/#17549](https://github.com/dotnet/aspnetcore/issues/17549), PR: [#3593](https://github.com/OmniSharp/omnisharp-vscode/pull/3593))
--   Updated Razor support (PR:[3594](https://github.com/OmniSharp/omnisharp-vscode/pull/3594))
-    -   Support for @code/@functions block formatting
-    -   Updated Razor's TextMate grammar to include full syntactic colorization
-    -   Several bug fixes
+-   Fixed handling of dismiss response to assets prompt (PR: [#3678](https://github.com/OmniSharp/omnisharp-vscode/pull/3678))
 
 ### Supported Operating Systems for Debugging
 
