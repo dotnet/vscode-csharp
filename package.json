@@ -3090,6 +3090,46 @@
       {
         "id": "local",
         "description": ""
+      },
+      {
+        "id": "xmlDocCommentAttributeName",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentAttributeQuotes",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentAttributeValue",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentCDataSection",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentComment",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentDelimiter",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentEntityReference",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentName",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentProcessingInstruction",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentText",
+        "description": ""
       }
     ],
     "semanticTokenModifiers": [],
@@ -3098,51 +3138,73 @@
         "language": "csharp",
         "scopes": {
           "plainKeyword": [
-            "keyword"
+            "keyword.cs"
           ],
           "controlKeyword": [
-            "keyword.control"
+            "keyword.control.cs"
           ],
           "operatorOverloaded": [
-            "entity.name.function.member",
-            "support.function"
+            "entity.name.function.member.overload.cs"
           ],
           "preprocessorKeyword": [
-            "keyword.preprocessor"
+            "keyword.preprocessor.cs"
           ],
           "preprocessorText": [
-            "meta.preprocessor.string"
+            "meta.preprocessor.string.cs"
           ],
           "punctuation": [
-            "punctuation"
+            "punctuation.cs"
           ],
           "stringVerbatim": [
-            "string.verbatim",
-            "string"
+            "string.verbatim.cs"
           ],
           "stringEscapeCharacter": [
-            "constant.character.escape"
+            "constant.character.escape.cs"
           ],
           "delegate": [
-            "entity.name.type.delegate",
-            "entity.name.type"
+            "entity.name.type.delegate.cs"
           ],
           "module": [
-            "entity.name.type.module",
-            "entity.name.type"
+            "entity.name.type.module.cs"
           ],
           "extensionMethod": [
-            "entity.name.function.extension",
-            "entity.name.function.member",
-            "support.function"
+            "entity.name.function.extension.cs"
           ],
           "field": [
-            "entity.name.variable.field",
-            "entity.name.variable"
+            "entity.name.variable.field.cs"
           ],
           "local": [
-            "entity.name.variable.local",
-            "entity.name.variable"
+            "entity.name.variable.local.cs"
+          ],
+          "xmlDocCommentAttributeName": [
+            "comment.documentation.attribute.name.cs"
+          ],
+          "xmlDocCommentAttributeQuotes": [
+            "comment.documentation.attribute.quotes.cs"
+          ],
+          "xmlDocCommentAttributeValue": [
+            "comment.documentation.attribute.value.cs"
+          ],
+          "xmlDocCommentCDataSection": [
+            "comment.documentation.cdata.cs"
+          ],
+          "xmlDocCommentComment": [
+            "comment.documentation.comment.cs"
+          ],
+          "xmlDocCommentDelimiter": [
+            "comment.documentation.delimiter.cs"
+          ],
+          "xmlDocCommentEntityReference": [
+            "comment.documentation.entityReference.cs"
+          ],
+          "xmlDocCommentName": [
+            "comment.documentation.name.cs"
+          ],
+          "xmlDocCommentProcessingInstruction": [
+            "comment.documentation.processingInstruction.cs"
+          ],
+          "xmlDocCommentText": [
+            "comment.documentation.cs"
           ]
         }
       }

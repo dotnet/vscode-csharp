@@ -36,7 +36,7 @@ enum DefaultTokenType {
     label,
 }
 
-enum CustomTokenTypes {
+enum CustomTokenType {
     plainKeyword = DefaultTokenType.label + 1,
     controlKeyword,
     operatorOverloaded,
@@ -49,7 +49,17 @@ enum CustomTokenTypes {
     module,
     extensionMethod,
     field,
-    local
+    local,
+    xmlDocCommentAttributeName,
+    xmlDocCommentAttributeQuotes,
+    xmlDocCommentAttributeValue,
+    xmlDocCommentCDataSection,
+    xmlDocCommentComment,
+    xmlDocCommentDelimiter,
+    xmlDocCommentEntityReference,
+    xmlDocCommentName,
+    xmlDocCommentProcessingInstruction,
+    xmlDocCommentText,
 }
 
 // The default TokenModifiers defined by VS Code https://github.com/microsoft/vscode/blob/master/src/vs/platform/theme/common/tokenClassificationRegistry.ts#L393
@@ -234,19 +244,29 @@ tokenTypes[DefaultTokenType.property] = Proposed.SemanticTokenTypes.property;
 tokenTypes[DefaultTokenType.enumMember] = 'enumMember';
 tokenTypes[DefaultTokenType.event] = 'event';
 tokenTypes[DefaultTokenType.label] = Proposed.SemanticTokenTypes.label;
-tokenTypes[CustomTokenTypes.plainKeyword] = "plainKeyword";
-tokenTypes[CustomTokenTypes.controlKeyword] = "controlKeyword";
-tokenTypes[CustomTokenTypes.operatorOverloaded] = "operatorOverloaded";
-tokenTypes[CustomTokenTypes.preprocessorKeyword] = "preprocessorKeyword";
-tokenTypes[CustomTokenTypes.preprocessorText] = "preprocessorText";
-tokenTypes[CustomTokenTypes.punctuation] = "punctuation";
-tokenTypes[CustomTokenTypes.stringVerbatim] = "stringVerbatim";
-tokenTypes[CustomTokenTypes.stringEscapeCharacter] = "stringEscapeCharacter";
-tokenTypes[CustomTokenTypes.delegate] = "delegate";
-tokenTypes[CustomTokenTypes.module] = "module";
-tokenTypes[CustomTokenTypes.extensionMethod] = "extensionMethod";
-tokenTypes[CustomTokenTypes.field] = "field";
-tokenTypes[CustomTokenTypes.local] = "local";
+tokenTypes[CustomTokenType.plainKeyword] = "plainKeyword";
+tokenTypes[CustomTokenType.controlKeyword] = "controlKeyword";
+tokenTypes[CustomTokenType.operatorOverloaded] = "operatorOverloaded";
+tokenTypes[CustomTokenType.preprocessorKeyword] = "preprocessorKeyword";
+tokenTypes[CustomTokenType.preprocessorText] = "preprocessorText";
+tokenTypes[CustomTokenType.punctuation] = "punctuation";
+tokenTypes[CustomTokenType.stringVerbatim] = "stringVerbatim";
+tokenTypes[CustomTokenType.stringEscapeCharacter] = "stringEscapeCharacter";
+tokenTypes[CustomTokenType.delegate] = "delegate";
+tokenTypes[CustomTokenType.module] = "module";
+tokenTypes[CustomTokenType.extensionMethod] = "extensionMethod";
+tokenTypes[CustomTokenType.field] = "field";
+tokenTypes[CustomTokenType.local] = "local";
+tokenTypes[CustomTokenType.xmlDocCommentAttributeName] = "xmlDocCommentAttributeName";
+tokenTypes[CustomTokenType.xmlDocCommentAttributeQuotes] = "xmlDocCommentAttributeQuotes";
+tokenTypes[CustomTokenType.xmlDocCommentAttributeValue] = "xmlDocCommentAttributeValue";
+tokenTypes[CustomTokenType.xmlDocCommentCDataSection] = "xmlDocCommentCDataSection";
+tokenTypes[CustomTokenType.xmlDocCommentComment] = "xmlDocCommentComment";
+tokenTypes[CustomTokenType.xmlDocCommentDelimiter] = "xmlDocCommentDelimiter";
+tokenTypes[CustomTokenType.xmlDocCommentEntityReference] = "xmlDocCommentEntityReference";
+tokenTypes[CustomTokenType.xmlDocCommentName] = "xmlDocCommentName";
+tokenTypes[CustomTokenType.xmlDocCommentProcessingInstruction] = "xmlDocCommentProcessingInstruction";
+tokenTypes[CustomTokenType.xmlDocCommentText] = "xmlDocCommentText";
 
 const tokenModifiers: string[] = [];
 tokenModifiers[DefaultTokenModifier.declaration] = 'declaration';
@@ -261,48 +281,48 @@ const tokenTypeMap: number[] = [];
 tokenTypeMap[SemanticHighlightClassification.Comment] = DefaultTokenType.comment;
 tokenTypeMap[SemanticHighlightClassification.ExcludedCode] = undefined;
 tokenTypeMap[SemanticHighlightClassification.Identifier] = DefaultTokenType.variable;
-tokenTypeMap[SemanticHighlightClassification.Keyword] = CustomTokenTypes.plainKeyword;
-tokenTypeMap[SemanticHighlightClassification.ControlKeyword] = CustomTokenTypes.controlKeyword;
+tokenTypeMap[SemanticHighlightClassification.Keyword] = CustomTokenType.plainKeyword;
+tokenTypeMap[SemanticHighlightClassification.ControlKeyword] = CustomTokenType.controlKeyword;
 tokenTypeMap[SemanticHighlightClassification.NumericLiteral] = DefaultTokenType.number;
 tokenTypeMap[SemanticHighlightClassification.Operator] = DefaultTokenType.operator;
-tokenTypeMap[SemanticHighlightClassification.OperatorOverloaded] = CustomTokenTypes.operatorOverloaded;
-tokenTypeMap[SemanticHighlightClassification.PreprocessorKeyword] = CustomTokenTypes.preprocessorKeyword;
+tokenTypeMap[SemanticHighlightClassification.OperatorOverloaded] = CustomTokenType.operatorOverloaded;
+tokenTypeMap[SemanticHighlightClassification.PreprocessorKeyword] = CustomTokenType.preprocessorKeyword;
 tokenTypeMap[SemanticHighlightClassification.StringLiteral] = DefaultTokenType.string;
 tokenTypeMap[SemanticHighlightClassification.WhiteSpace] = undefined;
 tokenTypeMap[SemanticHighlightClassification.Text] = undefined;
 tokenTypeMap[SemanticHighlightClassification.StaticSymbol] = undefined;
-tokenTypeMap[SemanticHighlightClassification.PreprocessorText] = CustomTokenTypes.preprocessorText;
-tokenTypeMap[SemanticHighlightClassification.Punctuation] = CustomTokenTypes.punctuation;
-tokenTypeMap[SemanticHighlightClassification.VerbatimStringLiteral] = CustomTokenTypes.stringVerbatim;
-tokenTypeMap[SemanticHighlightClassification.StringEscapeCharacter] = CustomTokenTypes.stringEscapeCharacter;
+tokenTypeMap[SemanticHighlightClassification.PreprocessorText] = CustomTokenType.preprocessorText;
+tokenTypeMap[SemanticHighlightClassification.Punctuation] = CustomTokenType.punctuation;
+tokenTypeMap[SemanticHighlightClassification.VerbatimStringLiteral] = CustomTokenType.stringVerbatim;
+tokenTypeMap[SemanticHighlightClassification.StringEscapeCharacter] = CustomTokenType.stringEscapeCharacter;
 tokenTypeMap[SemanticHighlightClassification.ClassName] = DefaultTokenType.class;
-tokenTypeMap[SemanticHighlightClassification.DelegateName] = CustomTokenTypes.delegate;
+tokenTypeMap[SemanticHighlightClassification.DelegateName] = CustomTokenType.delegate;
 tokenTypeMap[SemanticHighlightClassification.EnumName] = DefaultTokenType.enum;
 tokenTypeMap[SemanticHighlightClassification.InterfaceName] = DefaultTokenType.interface;
-tokenTypeMap[SemanticHighlightClassification.ModuleName] = CustomTokenTypes.module;
+tokenTypeMap[SemanticHighlightClassification.ModuleName] = CustomTokenType.module;
 tokenTypeMap[SemanticHighlightClassification.StructName] = DefaultTokenType.struct;
 tokenTypeMap[SemanticHighlightClassification.TypeParameterName] = DefaultTokenType.typeParameter;
-tokenTypeMap[SemanticHighlightClassification.FieldName] = CustomTokenTypes.field;
+tokenTypeMap[SemanticHighlightClassification.FieldName] = CustomTokenType.field;
 tokenTypeMap[SemanticHighlightClassification.EnumMemberName] = DefaultTokenType.enumMember;
 tokenTypeMap[SemanticHighlightClassification.ConstantName] = DefaultTokenType.variable;
-tokenTypeMap[SemanticHighlightClassification.LocalName] = CustomTokenTypes.local;
+tokenTypeMap[SemanticHighlightClassification.LocalName] = CustomTokenType.local;
 tokenTypeMap[SemanticHighlightClassification.ParameterName] = DefaultTokenType.parameter;
 tokenTypeMap[SemanticHighlightClassification.MethodName] = DefaultTokenType.member;
-tokenTypeMap[SemanticHighlightClassification.ExtensionMethodName] = CustomTokenTypes.extensionMethod;
+tokenTypeMap[SemanticHighlightClassification.ExtensionMethodName] = CustomTokenType.extensionMethod;
 tokenTypeMap[SemanticHighlightClassification.PropertyName] = DefaultTokenType.property;
 tokenTypeMap[SemanticHighlightClassification.EventName] = DefaultTokenType.event;
 tokenTypeMap[SemanticHighlightClassification.NamespaceName] = DefaultTokenType.namespace;
 tokenTypeMap[SemanticHighlightClassification.LabelName] = DefaultTokenType.label;
-tokenTypeMap[SemanticHighlightClassification.XmlDocCommentAttributeName] = DefaultTokenType.comment;
-tokenTypeMap[SemanticHighlightClassification.XmlDocCommentAttributeQuotes] = DefaultTokenType.comment;
-tokenTypeMap[SemanticHighlightClassification.XmlDocCommentAttributeValue] = DefaultTokenType.comment;
-tokenTypeMap[SemanticHighlightClassification.XmlDocCommentCDataSection] = DefaultTokenType.comment;
-tokenTypeMap[SemanticHighlightClassification.XmlDocCommentComment] = DefaultTokenType.comment;
-tokenTypeMap[SemanticHighlightClassification.XmlDocCommentDelimiter] = DefaultTokenType.comment;
-tokenTypeMap[SemanticHighlightClassification.XmlDocCommentEntityReference] = DefaultTokenType.comment;
-tokenTypeMap[SemanticHighlightClassification.XmlDocCommentName] = DefaultTokenType.comment;
-tokenTypeMap[SemanticHighlightClassification.XmlDocCommentProcessingInstruction] = DefaultTokenType.comment;
-tokenTypeMap[SemanticHighlightClassification.XmlDocCommentText] = DefaultTokenType.comment;
+tokenTypeMap[SemanticHighlightClassification.XmlDocCommentAttributeName] = CustomTokenType.xmlDocCommentAttributeName;
+tokenTypeMap[SemanticHighlightClassification.XmlDocCommentAttributeQuotes] = CustomTokenType.xmlDocCommentAttributeQuotes;
+tokenTypeMap[SemanticHighlightClassification.XmlDocCommentAttributeValue] = CustomTokenType.xmlDocCommentAttributeValue;
+tokenTypeMap[SemanticHighlightClassification.XmlDocCommentCDataSection] = CustomTokenType.xmlDocCommentCDataSection;
+tokenTypeMap[SemanticHighlightClassification.XmlDocCommentComment] = CustomTokenType.xmlDocCommentComment;
+tokenTypeMap[SemanticHighlightClassification.XmlDocCommentDelimiter] = CustomTokenType.xmlDocCommentDelimiter;
+tokenTypeMap[SemanticHighlightClassification.XmlDocCommentEntityReference] = CustomTokenType.xmlDocCommentEntityReference;
+tokenTypeMap[SemanticHighlightClassification.XmlDocCommentName] = CustomTokenType.xmlDocCommentName;
+tokenTypeMap[SemanticHighlightClassification.XmlDocCommentProcessingInstruction] = CustomTokenType.xmlDocCommentProcessingInstruction;
+tokenTypeMap[SemanticHighlightClassification.XmlDocCommentText] = CustomTokenType.xmlDocCommentText;
 tokenTypeMap[SemanticHighlightClassification.XmlLiteralAttributeName] = undefined;
 tokenTypeMap[SemanticHighlightClassification.XmlLiteralAttributeQuotes] = undefined;
 tokenTypeMap[SemanticHighlightClassification.XmlLiteralAttributeValue] = undefined;
