@@ -202,6 +202,16 @@ export class DotNetTestsInClassDebugStart implements BaseEvent {
     constructor(public className: string) { }
 }
 
+export class DotNetTestRunInContextStart implements BaseEvent {
+    type = EventType.DotNetTestRunInContextStart;
+    constructor(public fileName: string, public line: number, public column: number) { }
+}
+
+export class DotNetTestDebugInContextStart implements BaseEvent {
+    type = EventType.DotNetTestDebugInContextStart;
+    constructor(public fileName: string, public line: number, public column: number) { }
+}
+
 export class DocumentSynchronizationFailure implements BaseEvent {
     type = EventType.DocumentSynchronizationFailure;
     constructor(public documentPath: string, public errorMessage: string) { }

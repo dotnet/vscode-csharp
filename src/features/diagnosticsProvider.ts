@@ -57,20 +57,12 @@ export class Advisor {
     }
 
     private _addOrUpdateProjectFileCount(info: protocol.ProjectInformationResponse): void {
-        if (info.DotNetProject && info.DotNetProject.SourceFiles) {
-            this._updateProjectFileCount(info.DotNetProject.Path, info.DotNetProject.SourceFiles.length);
-        }
-
         if (info.MsBuildProject && info.MsBuildProject.SourceFiles) {
             this._updateProjectFileCount(info.MsBuildProject.Path, info.MsBuildProject.SourceFiles.length);
         }
     }
 
     private _removeProjectFileCount(info: protocol.ProjectInformationResponse): void {
-        if (info.DotNetProject && info.DotNetProject.SourceFiles) {
-            delete this._projectSourceFileCounts[info.DotNetProject.Path];
-        }
-
         if (info.MsBuildProject && info.MsBuildProject.SourceFiles) {
             delete this._projectSourceFileCounts[info.MsBuildProject.Path];
         }

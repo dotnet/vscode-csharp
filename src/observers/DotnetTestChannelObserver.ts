@@ -15,6 +15,8 @@ export default class DotnetTestChannelObserver extends BaseChannelObserver {
             case EventType.DotNetTestsInClassRunStart:
             case EventType.DotNetTestDebugStart:
             case EventType.DotNetTestsInClassDebugStart:
+            case EventType.DotNetTestRunInContextStart:
+            case EventType.DotNetTestDebugInContextStart:
                 this.showChannel(true);
                 break;
         }
