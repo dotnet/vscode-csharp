@@ -9,6 +9,9 @@ import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { createRequest, toRange2 } from '../omnisharp/typeConversion';
 import AbstractProvider from './abstractProvider';
+import { OmniSharpServer } from '../omnisharp/server';
+import OptionProvider from '../observers/OptionProvider';
+import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
 
 // The default TokenTypes defined by VS Code https://github.com/microsoft/vscode/blob/master/src/vs/platform/theme/common/tokenClassificationRegistry.ts#L393
 enum DefaultTokenType {
@@ -149,6 +152,10 @@ enum SemanticHighlightModifier {
 
 export default class SemanticTokensProvider extends AbstractProvider implements vscode.DocumentSemanticTokensProvider, vscode.DocumentRangeSemanticTokensProvider {
 
+    constructor(server: OmniSharpServer, private optionProvider: OptionProvider, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+        super(server, languageMiddlewareFeature);
+    }
+
     getLegend(): vscode.SemanticTokensLegend {
         return new vscode.SemanticTokensLegend(tokenTypes, tokenModifiers);
     }
@@ -174,6 +181,11 @@ export default class SemanticTokensProvider extends AbstractProvider implements 
     }
 
     async _provideSemanticTokens(document: vscode.TextDocument, range: protocol.V2.Range, token: vscode.CancellationToken): Promise<vscode.SemanticTokens | null> {
+        const options = this.optionProvider.GetLatestOptions();
+        if (!options.useSemanticHighlighting) {
+            return null;
+        }
+
         let req = createRequest<protocol.V2.SemanticHighlightRequest>(document, new vscode.Position(0, 0));
         req.Range = range;
 

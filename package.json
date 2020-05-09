@@ -643,6 +643,11 @@
           "default": 1000,
           "description": "Specifies the maximum number of files for which diagnostics are reported for the whole workspace. If this limit is exceeded, diagnostics will be shown for currently opened files only. Specify 0 or less to disable the limit completely."
         },
+        "csharp.semanticHighlighting.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable/disable Semantic Highlighting for C# files (Razor files currently unsupported). Defaults to false. Close open files for changes to take effect."
+        },
         "omnisharp.path": {
           "type": [
             "string",
