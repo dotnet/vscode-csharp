@@ -911,7 +911,7 @@
       {
         "command": "dotnet.test.debugTestsInContext",
         "key": "ctrl+r ctrl+t",
-        "mac": "cmd+r ctrl+t",
+        "mac": "cmd+r cmd+t",
         "when": "editorLangId == csharp && editorTextFocus"
       }
     ],
