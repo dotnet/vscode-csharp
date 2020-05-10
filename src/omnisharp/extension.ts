@@ -46,6 +46,11 @@ export interface ActivationResult {
     readonly advisor: Advisor;
 }
 
+let _semanticTokensProvider: SemanticTokensProvider;
+export function getSemanticTokensProvider() {
+    return _semanticTokensProvider;
+}
+
 export async function activate(context: vscode.ExtensionContext, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, eventStream: EventStream, optionProvider: OptionProvider, extensionPath: string) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
@@ -96,6 +101,11 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables.add(vscode.languages.registerFoldingRangeProvider(documentSelector, new StructureProvider(server, languageMiddlewareFeature)));
 
         const semanticTokensProvider = new SemanticTokensProvider(server, optionProvider, languageMiddlewareFeature);
+        // Make the semantic token provider available for testing
+        if (process.env.OSVC_SUITE !== undefined) {
+            _semanticTokensProvider = semanticTokensProvider;
+        }
+
         localDisposables.add(vscode.languages.registerDocumentSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
         localDisposables.add(vscode.languages.registerDocumentRangeSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
     }));
