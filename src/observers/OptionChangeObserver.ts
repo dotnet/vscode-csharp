@@ -10,29 +10,35 @@ import { Observable } from "rxjs";
 import Disposable from "../Disposable";
 import { filter } from 'rxjs/operators';
 
-function ConfigChangeObservable(optionObservable: Observable<Options>): Observable<Options> {
+type OptionsKey = keyof Options;
+
+const omniSharpOptions: ReadonlyArray<OptionsKey> = [
+    "path",
+    "useGlobalMono",
+    "enableMsBuildLoadProjectsOnDemand",
+    "waitForDebugger",
+    "loggingLevel",
+    "enableEditorConfigSupport",
+    "enableDecompilationSupport"
+];
+
+function OmniSharpOptionChangeObservable(optionObservable: Observable<Options>): Observable<Options> {
     let options: Options;
-    return optionObservable.pipe(filter(newOptions => {
-        let changed = (options && hasChanged(options, newOptions));
-        options = newOptions;
-        return changed;
-    }));
+    return optionObservable.pipe(
+        filter(newOptions => {
+            const changed = options && omniSharpOptions.some(key => options[key] !== newOptions[key]);
+            options = newOptions;
+            return changed;
+        })
+    );
 }
 
 export function ShowOmniSharpConfigChangePrompt(optionObservable: Observable<Options>, vscode: vscode): Disposable {
-    let subscription = ConfigChangeObservable(optionObservable)
+    const subscription = OmniSharpOptionChangeObservable(optionObservable)
         .subscribe(_ => {
             let message = "OmniSharp configuration has changed. Would you like to relaunch the OmniSharp server with your changes?";
             ShowInformationMessage(vscode, message, { title: "Restart OmniSharp", command: 'o.restart' });
         });
 
     return new Disposable(subscription);
-}
-
-function hasChanged(oldOptions: Options, newOptions: Options): boolean {
-    return (oldOptions.path != newOptions.path ||
-        oldOptions.useGlobalMono != newOptions.useGlobalMono ||
-        oldOptions.enableMsBuildLoadProjectsOnDemand != newOptions.enableMsBuildLoadProjectsOnDemand ||
-        oldOptions.waitForDebugger != newOptions.waitForDebugger ||
-        oldOptions.loggingLevel != newOptions.loggingLevel);
 }

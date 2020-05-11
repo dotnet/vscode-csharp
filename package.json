@@ -748,6 +748,12 @@
           "default": false,
           "description": "Enables support for reading code style, naming convention and analyzer settings from .editorconfig."
         },
+        "omnisharp.enableDecompilationSupport": {
+          "type": "boolean",
+          "default": false,
+          "scope": "machine",
+          "description": "Enables support for decompiling external references instead of viewing metadata."
+        },
         "razor.plugin.path": {
           "type": [
             "string",
@@ -868,6 +874,11 @@
       {
         "command": "csharp.reportIssue",
         "title": "Report an issue",
+        "category": "CSharp"
+      },
+      {
+        "command": "csharp.showDecompilationTerms",
+        "title": "Show the decompiler terms agreement",
         "category": "CSharp"
       },
       {

@@ -1,4 +1,4 @@
-## Known Issues in 1.21.17
+## Known Issues in 1.21.18
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
@@ -8,7 +8,7 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.21.18 (Not yet released)
+## 1.21.18 (May 5, 2020)
 * Fadeout unused variable names ([#1324](https://github.com/OmniSharp/omnisharp-vscode/issues/1324), PR: [#3733](https://github.com/OmniSharp/omnisharp-vscode/pull/3733))
 * Updated debugger (PR: [#3729](https://github.com/OmniSharp/omnisharp-vscode/pull/3729))
 * Fixed not supported exception when trying to decompile a BCL assembly on Mono. For now we do not try to resolve implementation assembly from a ref assembly (PR: [omnisharp-roslyn/#1767](https://github.com/OmniSharp/omnisharp-roslyn/pull/1767))
