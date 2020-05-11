@@ -483,6 +483,24 @@ export namespace V2 {
         export const DebugTestStop = '/v2/debugtest/stop';
         export const BlockStructure = '/v2/blockstructure';
         export const CodeStructure = '/v2/codestructure';
+        export const Highlight = '/v2/highlight';
+    }
+
+    export interface SemanticHighlightSpan {
+        StartLine: number;
+        StartColumn: number;
+        EndLine: number;
+        EndColumn: number;
+        Type: number;
+        Modifiers: number[];
+    }
+
+    export interface SemanticHighlightRequest extends Request {
+        Range?: Range;
+    }
+
+    export interface SemanticHighlightResponse {
+        Spans: SemanticHighlightSpan[];
     }
 
     export interface Point {

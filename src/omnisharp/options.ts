@@ -28,6 +28,7 @@ export class Options {
         public enableRoslynAnalyzers: boolean,
         public enableEditorConfigSupport: boolean,
         public enableDecompilationSupport: boolean,
+        public useSemanticHighlighting: boolean,
         public razorPluginPath?: string,
         public defaultLaunchSolution?: string,
         public monoPath?: string,
@@ -75,6 +76,8 @@ export class Options {
         const showReferencesCodeLens = csharpConfig.get<boolean>('referencesCodeLens.enabled', true);
         const showTestsCodeLens = csharpConfig.get<boolean>('testsCodeLens.enabled', true);
 
+        const useSemanticHighlighting = csharpConfig.get<boolean>('semanticHighlighting.enabled', false);
+
         const disableCodeActions = csharpConfig.get<boolean>('disableCodeActions', false);
 
         const disableMSBuildDiagnosticWarning = omnisharpConfig.get<boolean>('disableMSBuildDiagnosticWarning', false);
@@ -114,6 +117,7 @@ export class Options {
             enableRoslynAnalyzers,
             enableEditorConfigSupport,
             enableDecompilationSupport,
+            useSemanticHighlighting,
             razorPluginPath,
             defaultLaunchSolution,
             monoPath,

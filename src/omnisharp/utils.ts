@@ -151,6 +151,10 @@ export async function debugTestStop(server: OmniSharpServer, request: protocol.V
     return server.makeRequest<protocol.V2.DebugTestStopResponse>(protocol.V2.Requests.DebugTestStop, request);
 }
 
+export async function getSemanticHighlights(server: OmniSharpServer, request: protocol.V2.SemanticHighlightRequest) {
+    return server.makeRequest<protocol.V2.SemanticHighlightResponse>(protocol.V2.Requests.Highlight, request);
+}
+
 export async function isNetCoreProject(project: protocol.MSBuildProject) {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp') || tf.ShortName.startsWith('netstandard')) !== undefined;
 }

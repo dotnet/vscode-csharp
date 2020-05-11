@@ -38,7 +38,8 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
 
     test("Starting .NET Core Launch (console) from the workspace root should create an Active Debug Session", async () => {
 
-        vscode.debug.onDidChangeActiveDebugSession((e) => {
+        const onChangeSubscription = vscode.debug.onDidChangeActiveDebugSession((e) => {
+            onChangeSubscription.dispose();
             expect(vscode.debug.activeDebugSession).not.to.be.undefined;
             expect(vscode.debug.activeDebugSession.type).to.equal("coreclr");
         });
@@ -47,7 +48,10 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
         expect(result, "Debugger could not be started.");
 
         let debugSessionTerminated = new Promise(resolve => {
-            vscode.debug.onDidTerminateDebugSession((e) => resolve());
+            const onTerminateSubscription = vscode.debug.onDidTerminateDebugSession((e) => {
+                onTerminateSubscription.dispose();
+                resolve();
+            });
         });
 
         await debugSessionTerminated;
