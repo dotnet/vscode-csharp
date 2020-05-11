@@ -27,6 +27,7 @@ export class Options {
         public enableMsBuildLoadProjectsOnDemand: boolean,
         public enableRoslynAnalyzers: boolean,
         public enableEditorConfigSupport: boolean,
+        public enableDecompilationSupport: boolean,
         public razorPluginPath?: string,
         public defaultLaunchSolution?: string,
         public monoPath?: string,
@@ -67,6 +68,7 @@ export class Options {
 
         const enableRoslynAnalyzers = omnisharpConfig.get<boolean>('enableRoslynAnalyzers', false);
         const enableEditorConfigSupport = omnisharpConfig.get<boolean>('enableEditorConfigSupport', false);
+        const enableDecompilationSupport = omnisharpConfig.get<boolean>('enableDecompilationSupport', false);
 
         const useFormatting = csharpConfig.get<boolean>('format.enable', true);
 
@@ -111,6 +113,7 @@ export class Options {
             enableMsBuildLoadProjectsOnDemand,
             enableRoslynAnalyzers,
             enableEditorConfigSupport,
+            enableDecompilationSupport,
             razorPluginPath,
             defaultLaunchSolution,
             monoPath,
