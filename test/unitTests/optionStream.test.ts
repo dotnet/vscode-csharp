@@ -53,6 +53,7 @@ suite('OptionStream', () => {
             options.enableMsBuildLoadProjectsOnDemand.should.equal(false);
             options.enableRoslynAnalyzers.should.equal(false);
             options.enableEditorConfigSupport.should.equal(false);
+            options.enableDecompilationSupport.should.equal(false);
             expect(options.defaultLaunchSolution).to.be.undefined;
         });
 
