@@ -44,7 +44,7 @@ export async function assertWithPoll<T>(
 }
 
 function defaultPollExpression<T>(value: T): boolean {
-    return value !== undefined && ((Array.isArray(value) && value.length > 0) || !Array.isArray(value));
+    return value !== undefined && ((Array.isArray(value) && value.length > 0) || (!Array.isArray(value) && !!value));
 }
 
 export async function pollDoesNotHappen<T>(
@@ -68,7 +68,7 @@ export async function pollDoesNotHappen<T>(
 }
 
 export async function poll<T>(
-    getValue: () => T,
+    getValue: () => Promise<T> | T,
     duration: number,
     step: number,
     expression: (input: T) => boolean = defaultPollExpression): Promise<T> {

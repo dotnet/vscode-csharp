@@ -40,11 +40,11 @@ export class StatusBarItemAdapter implements vscodeAdapter.StatusBarItem {
         this.statusBarItem.color = value;
     }
 
-    get command(): string {
+    get command(): string | vscode.Command {
         return this.statusBarItem.command;
     }
 
-    set command(value: string) {
+    set command(value: string | vscode.Command) {
         this.statusBarItem.command = value;
     }
 
