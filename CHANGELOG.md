@@ -8,6 +8,10 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
+## 1.21.19 (Not yet released)
+* Add setting for enabling go to decompilation (PR: [#3774](https://github.com/OmniSharp/omnisharp-vscode/pull/3774))
+* Add experimental Semantic Highlighter `csharp.semanticHighlighting.enabled` ([#3565](https://github.com/OmniSharp/omnisharp-vscode/issues/3565), PR: [#3667](https://github.com/OmniSharp/omnisharp-vscode/pull/3667)
+
 ## 1.21.18 (May 5, 2020)
 * Fadeout unused variable names ([#1324](https://github.com/OmniSharp/omnisharp-vscode/issues/1324), PR: [#3733](https://github.com/OmniSharp/omnisharp-vscode/pull/3733))
 * Updated debugger (PR: [#3729](https://github.com/OmniSharp/omnisharp-vscode/pull/3729))
