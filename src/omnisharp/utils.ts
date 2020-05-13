@@ -135,12 +135,20 @@ export async function runTestsInClass(server: OmniSharpServer, request: protocol
     return server.makeRequest<protocol.V2.RunTestResponse>(protocol.V2.Requests.RunAllTestsInClass, request);
 }
 
+export async function runTestsInContext(server: OmniSharpServer, request: protocol.V2.RunTestsInContextRequest) {
+    return server.makeRequest<protocol.V2.RunTestResponse>(protocol.V2.Requests.RunTestsInContext, request);
+}
+
 export async function debugTestGetStartInfo(server: OmniSharpServer, request: protocol.V2.DebugTestGetStartInfoRequest) {
     return server.makeRequest<protocol.V2.DebugTestGetStartInfoResponse>(protocol.V2.Requests.DebugTestGetStartInfo, request);
 }
 
 export async function debugTestClassGetStartInfo(server: OmniSharpServer, request: protocol.V2.DebugTestClassGetStartInfoRequest) {
     return server.makeRequest<protocol.V2.DebugTestGetStartInfoResponse>(protocol.V2.Requests.DebugTestsInClassGetStartInfo, request);
+}
+
+export async function debugTestsInContextGetStartInfo(server: OmniSharpServer, request: protocol.V2.DebugTestsInContextGetStartInfoRequest) {
+    return server.makeRequest<protocol.V2.DebugTestGetStartInfoResponse>(protocol.V2.Requests.DebugTestsInContextGetStartInfo, request);
 }
 
 export async function debugTestLaunch(server: OmniSharpServer, request: protocol.V2.DebugTestLaunchRequest) {

@@ -903,6 +903,16 @@
         "command": "razor.reportIssue",
         "title": "Report a Razor issue",
         "category": "Razor"
+      },
+      {
+        "command": "dotnet.test.runTestsInContext",
+        "title": "Run Tests in Context",
+        "category": ".NET"
+      },
+      {
+        "command": "dotnet.test.debugTestsInContext",
+        "title": "Debug Tests in Context",
+        "category": ".NET"
       }
     ],
     "keybindings": [
@@ -910,6 +920,18 @@
         "command": "o.showOutput",
         "key": "Ctrl+Shift+F9",
         "mac": "Cmd+Shift+F9"
+      },
+      {
+        "command": "dotnet.test.runTestsInContext",
+        "key": "ctrl+r t",
+        "mac": "cmd+r t",
+        "when": "editorLangId == csharp && editorTextFocus"
+      },
+      {
+        "command": "dotnet.test.debugTestsInContext",
+        "key": "ctrl+r ctrl+t",
+        "mac": "cmd+r cmd+t",
+        "when": "editorLangId == csharp && editorTextFocus"
       }
     ],
     "snippets": [
@@ -3248,6 +3270,28 @@
         {
           "command": "razor.reportIssue",
           "when": "resourceLangId == aspnetcorerazor"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "dotnet.test.runTestsInContext",
+          "when": "editorLangId == csharp",
+          "group": "2_dotnet@1"
+        },
+        {
+          "command": "dotnet.test.debugTestsInContext",
+          "when": "editorLangId == csharp",
+          "group": "2_dotnet@2"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "dotnet.test.runTestsInContext",
+          "when": "editorLangId == csharp"
+        },
+        {
+          "command": "dotnet.test.debugTestsInContext",
+          "when": "editorLangId == csharp"
         }
       ]
     }

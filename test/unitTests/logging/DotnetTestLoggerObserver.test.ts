@@ -5,7 +5,7 @@
 
 import * as chai from 'chai';
 import { getNullChannel } from '../testAssets/Fakes';
-import { EventWithMessage, DotNetTestDebugWarning, DotNetTestDebugStart, BaseEvent, DotNetTestRunStart, DotNetTestDebugProcessStart, DotNetTestMessage, DotNetTestDebugComplete, ReportDotNetTestResults, DotNetTestsInClassDebugStart, DotNetTestsInClassRunStart } from '../../../src/omnisharp/loggingEvents';
+import { EventWithMessage, DotNetTestDebugWarning, DotNetTestDebugStart, BaseEvent, DotNetTestRunStart, DotNetTestDebugProcessStart, DotNetTestMessage, DotNetTestDebugComplete, ReportDotNetTestResults, DotNetTestsInClassDebugStart, DotNetTestsInClassRunStart, DotNetTestRunInContextStart, DotNetTestDebugInContextStart } from '../../../src/omnisharp/loggingEvents';
 import DotNetTestLoggerObserver from '../../../src/observers/DotnetTestLoggerObserver';
 import * as protocol from '../../../src/omnisharp/protocol';
 
@@ -52,6 +52,17 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
             expect(appendedMessage).to.be.empty;
             observer.post(event);
             expect(appendedMessage).to.contain("foo");
+        });
+    });
+
+    [
+        new DotNetTestRunInContextStart("foo", 1, 2),
+        new DotNetTestDebugInContextStart("foo", 1, 2)
+    ].forEach((event: BaseEvent) => {
+        test(`${event.constructor.name}: File name and line/column are logged`, () => {
+            expect(appendedMessage).to.be.empty;
+            observer.post(event);
+            expect(appendedMessage).to.contain("foo").and.contain("2").and.contain("3");
         });
     });
 

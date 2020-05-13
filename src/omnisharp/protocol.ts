@@ -284,7 +284,6 @@ export interface AutoCompleteResponse {
 
 export interface ProjectInformationResponse {
     MsBuildProject: MSBuildProject;
-    DotNetProject: DotNetProject;
 }
 
 export enum DiagnosticStatus {
@@ -477,8 +476,10 @@ export namespace V2 {
         export const GetTestStartInfo = '/v2/getteststartinfo';
         export const RunTest = '/v2/runtest';
         export const RunAllTestsInClass = "/v2/runtestsinclass";
+        export const RunTestsInContext = "/v2/runtestsincontext";
         export const DebugTestGetStartInfo = '/v2/debugtest/getstartinfo';
         export const DebugTestsInClassGetStartInfo = '/v2/debugtestsinclass/getstartinfo';
+        export const DebugTestsInContextGetStartInfo = '/v2/debugtestsincontext/getstartinfo';
         export const DebugTestLaunch = '/v2/debugtest/launch';
         export const DebugTestStop = '/v2/debugtest/stop';
         export const BlockStructure = '/v2/blockstructure';
@@ -590,6 +591,11 @@ export namespace V2 {
         TargetFrameworkVersion: string;
     }
 
+    interface TestsInContextRequest extends Request {
+        RunSettings?: string;
+        TargetFrameworkVersion?: string;
+    }
+
     export interface DebugTestGetStartInfoRequest extends SingleTestRequest {
     }
 
@@ -601,6 +607,9 @@ export namespace V2 {
         Arguments: string;
         WorkingDirectory: string;
         EnvironmentVariables: Map<string, string>;
+        Succeeded: boolean;
+        ContextHadNoTests: boolean;
+        FailureReason?: string;
     }
 
     export interface DebugTestLaunchRequest extends Request {
@@ -631,6 +640,12 @@ export namespace V2 {
     export interface RunTestsInClassRequest extends MultiTestRequest {
     }
 
+    export interface RunTestsInContextRequest extends TestsInContextRequest {
+    }
+
+    export interface DebugTestsInContextGetStartInfoRequest extends TestsInContextRequest {
+    }
+
     export module TestOutcomes {
         export const None = 'none';
         export const Passed = 'passed';
@@ -652,6 +667,7 @@ export namespace V2 {
         Failure: string;
         Pass: boolean;
         Results: DotNetTestResult[];
+        ContextHadNoTests: boolean;
     }
 
     export interface TestMessageEvent {
