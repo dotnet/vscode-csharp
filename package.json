@@ -3272,6 +3272,18 @@
           "when": "resourceLangId == aspnetcorerazor"
         }
       ],
+      "editor/context": [
+        {
+          "command": "dotnet.test.runTestsInContext",
+          "when": "editorLangId == csharp",
+          "group": "2_dotnet@1"
+        },
+        {
+          "command": "dotnet.test.debugTestsInContext",
+          "when": "editorLangId == csharp",
+          "group": "2_dotnet@2"
+        }
+      ],
       "commandPalette": [
         {
           "command": "dotnet.test.runTestsInContext",
