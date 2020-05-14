@@ -89,6 +89,16 @@ export async function getUnixChildProcessIds(pid: number): Promise<number[]> {
         });
 
         ps.on('error', reject);
+
+        ps.stderr.setEncoding('utf8');
+        ps.stderr.on('data', data => {
+            const e = data.toString();
+            if (e.indexOf('screen size is bogus') >= 0) {
+                // ignore this error silently; see https://github.com/microsoft/vscode/issues/75932
+            } else {
+                reject(new Error(data.toString()));
+            }
+        });
     });
 }
 
