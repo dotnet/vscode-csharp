@@ -11,8 +11,7 @@ import { execChildProcess } from './../common';
 
 const MINIMUM_SUPPORTED_DOTNET_CLI: string = '1.0.0';
 
-export class DotnetInfo
-{
+export class DotnetInfo {
     public Version: string;
     public OsVersion: string;
     public RuntimeId: string;
@@ -23,8 +22,7 @@ export class DotNetCliError extends Error {
     public ErrorString: string; // the string to log for this error
 }
 
-export class CoreClrDebugUtil
-{
+export class CoreClrDebugUtil {
     private _extensionDir: string = '';
     private _debugAdapterDir: string = '';
     private _installCompleteFilePath: string = '';
@@ -36,8 +34,7 @@ export class CoreClrDebugUtil
     }
 
     public extensionDir(): string {
-        if (this._extensionDir === '')
-        {
+        if (this._extensionDir === '') {
             throw new Error('Failed to set extension directory');
         }
         return this._extensionDir;
@@ -51,14 +48,13 @@ export class CoreClrDebugUtil
     }
 
     public installCompleteFilePath(): string {
-        if (this._installCompleteFilePath === '')
-        {
+        if (this._installCompleteFilePath === '') {
             throw new Error('Failed to set install complete file path');
         }
         return this._installCompleteFilePath;
     }
 
-    public static async writeEmptyFile(path: string) : Promise<void> {
+    public static async writeEmptyFile(path: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             fs.writeFile(path, '', (err) => {
                 if (err) {
@@ -75,53 +71,51 @@ export class CoreClrDebugUtil
     }
 
     // This function checks for the presence of dotnet on the path and ensures the Version
-    // is new enough for us. 
+    // is new enough for us.
     // Returns: a promise that returns a DotnetInfo class
-    // Throws: An DotNetCliError() from the return promise if either dotnet does not exist or is too old. 
-    public async checkDotNetCli(): Promise<DotnetInfo>
-    {
+    // Throws: An DotNetCliError() from the return promise if either dotnet does not exist or is too old.
+    public async checkDotNetCli(): Promise<DotnetInfo> {
         let dotnetInfo = new DotnetInfo();
 
         return execChildProcess('dotnet --info', process.cwd())
-        .then((data: string) => {
-            let lines: string[] = data.replace(/\r/mg, '').split('\n');
-            lines.forEach(line => {
-                let match: RegExpMatchArray;
-                if (match = /^\ Version:\s*([^\s].*)$/.exec(line)) {
-                    dotnetInfo.Version = match[1];
-                } else if (match = /^\ OS Version:\s*([^\s].*)$/.exec(line)) {
-                    dotnetInfo.OsVersion = match[1];
-                } else if (match = /^\ RID:\s*([\w\-\.]+)$/.exec(line)) {
-                    dotnetInfo.RuntimeId = match[1];
-                }
-            });
-        }).catch((error) => {
-            // something went wrong with spawning 'dotnet --info'
-            let dotnetError = new DotNetCliError();
-            dotnetError.ErrorMessage = 'The .NET Core SDK cannot be located. .NET Core debugging will not be enabled. Make sure the .NET Core SDK is installed and is on the path.';
-            dotnetError.ErrorString = "Failed to spawn 'dotnet --info'";
-            throw dotnetError;
-        }).then(() => {
-            // succesfully spawned 'dotnet --info', check the Version
-            if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_DOTNET_CLI))
-            {
+            .then((data: string) => {
+                let lines: string[] = data.replace(/\r/mg, '').split('\n');
+                lines.forEach(line => {
+                    let match: RegExpMatchArray;
+                    if (match = /^\ Version:\s*([^\s].*)$/.exec(line)) {
+                        dotnetInfo.Version = match[1];
+                    } else if (match = /^\ OS Version:\s*([^\s].*)$/.exec(line)) {
+                        dotnetInfo.OsVersion = match[1];
+                    } else if (match = /^\ RID:\s*([\w\-\.]+)$/.exec(line)) {
+                        dotnetInfo.RuntimeId = match[1];
+                    }
+                });
+            }).catch((error) => {
+                // something went wrong with spawning 'dotnet --info'
                 let dotnetError = new DotNetCliError();
-                dotnetError.ErrorMessage = 'The .NET Core SDK located on the path is too old. .NET Core debugging will not be enabled. The minimum supported version is ' + MINIMUM_SUPPORTED_DOTNET_CLI + '.';
-                dotnetError.ErrorString = "dotnet cli is too old";
+                dotnetError.ErrorMessage = 'The .NET Core SDK cannot be located. .NET Core debugging will not be enabled. Make sure the .NET Core SDK is installed and is on the path.';
+                dotnetError.ErrorString = "Failed to spawn 'dotnet --info'";
                 throw dotnetError;
-            }
+            }).then(() => {
+                // succesfully spawned 'dotnet --info', check the Version
+                if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_DOTNET_CLI)) {
+                    let dotnetError = new DotNetCliError();
+                    dotnetError.ErrorMessage = 'The .NET Core SDK located on the path is too old. .NET Core debugging will not be enabled. The minimum supported version is ' + MINIMUM_SUPPORTED_DOTNET_CLI + '.';
+                    dotnetError.ErrorString = "dotnet cli is too old";
+                    throw dotnetError;
+                }
 
-            return dotnetInfo;
-        });
+                return dotnetInfo;
+            });
     }
 
-    public static isMacOSSupported() : boolean {
+    public static isMacOSSupported(): boolean {
         // .NET Core 2.0 requires macOS 10.12 (Sierra), which is Darwin 16.0+
         // Darwin version chart: https://en.wikipedia.org/wiki/Darwin_(operating_system)
         return semver.gte(os.release(), "16.0.0");
     }
 
-    public static existsSync(path: string) : boolean {
+    public static existsSync(path: string): boolean {
         try {
             fs.accessSync(path, fs.constants.F_OK);
             return true;
@@ -134,7 +128,7 @@ export class CoreClrDebugUtil
         }
     }
 
-    public static getPlatformExeExtension() : string {
+    public static getPlatformExeExtension(): string {
         if (process.platform === 'win32') {
             return '.exe';
         }

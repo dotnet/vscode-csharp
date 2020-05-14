@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
- // Sample Request: https://api.nuget.org/v3-flatcontainer/FluentAssertions/index.json
- 
+// Sample Request: https://api.nuget.org/v3-flatcontainer/FluentAssertions/index.json
+
 export default interface NuGetFlatContainerPackageResponse {
     versions: string[];
 }

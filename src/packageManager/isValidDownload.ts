@@ -14,8 +14,8 @@ export interface DownloadValidator {
 export function isValidDownload(buffer: Buffer, integrity: string, eventStream: EventStream): boolean {
     if (integrity && integrity.length > 0) {
         eventStream.post(new DownloadValidation());
-        let value = getBufferIntegrityHash(buffer);       
-        if (value == integrity.toUpperCase()) {         
+        let value = getBufferIntegrityHash(buffer);
+        if (value == integrity.toUpperCase()) {
             eventStream.post(new IntegrityCheckSuccess());
             return true;
         }
@@ -28,7 +28,7 @@ export function isValidDownload(buffer: Buffer, integrity: string, eventStream: 
     return true;
 }
 
-export function getBufferIntegrityHash(buffer: Buffer) : string {
+export function getBufferIntegrityHash(buffer: Buffer): string {
     let hash = crypto.createHash('sha256');
     hash.update(buffer);
     let value = hash.digest('hex').toUpperCase();

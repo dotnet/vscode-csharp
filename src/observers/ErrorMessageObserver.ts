@@ -24,7 +24,7 @@ export class ErrorMessageObserver {
                 this.handleDotNetTestDebugStartFailure(<DotNetTestDebugStartFailure>event);
                 break;
             case EventType.IntegrityCheckFailure:
-                this.handleIntegrityCheckFailure(<IntegrityCheckFailure> event);
+                this.handleIntegrityCheckFailure(<IntegrityCheckFailure>event);
         }
     }
 
@@ -39,7 +39,7 @@ export class ErrorMessageObserver {
     }
 
     private handleDotnetTestRunFailure(event: DotNetTestRunFailure) {
-        showErrorMessage(this.vscode,`Failed to run test because ${event.message}.`);
+        showErrorMessage(this.vscode, `Failed to run test because ${event.message}.`);
     }
 
     private handleDotNetTestDebugStartFailure(event: DotNetTestDebugStartFailure) {

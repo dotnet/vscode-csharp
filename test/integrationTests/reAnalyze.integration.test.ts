@@ -1,13 +1,13 @@
-/*--------------------------------------------------------------------------------------------- 
-*  Copyright (c) Microsoft Corporation. All rights reserved. 
-*  Licensed under the MIT License. See License.txt in the project root for license information. 
+/*---------------------------------------------------------------------------------------------
+*  Copyright (c) Microsoft Corporation. All rights reserved.
+*  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { should, expect } from 'chai';
-import { activateCSharpExtension } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { poll, assertWithPoll } from './poll';
 import { EventStream } from '../../src/EventStream';
@@ -19,13 +19,11 @@ const chai = require('chai');
 chai.use(require('chai-arrays'));
 chai.use(require('chai-fs'));
 
-function listenEvents<T extends BaseEvent>(stream: EventStream, type: EventType): T[]
-{
+function listenEvents<T extends BaseEvent>(stream: EventStream, type: EventType): T[] {
     let results: T[] = [];
 
     stream.subscribe((event: BaseEvent) => {
-        if(event.type === type)
-        {
+        if (event.type === type) {
             results.push(<T>event);
         }
     });
@@ -40,6 +38,12 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
 
     suiteSetup(async function () {
         should();
+
+        // These tests don't run on the BasicRazorApp2_1 solution
+        if (isRazorWorkspace(vscode.workspace)) {
+            this.skip();
+        }
+
         eventStream = (await activateCSharpExtension()).eventStream;
         await testAssetWorkspace.restore();
 
@@ -66,11 +70,11 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
 
         await vscode.commands.executeCommand('o.reanalyze.currentProject', interfaceImplUri);
 
-        await poll(() => diagnosticStatusEvents, 15*1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Ready) !== undefined);
+        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Ready) !== undefined);
 
         await assertWithPoll(
             () => vscode.languages.getDiagnostics(interfaceImplUri),
-            15*1000,
+            15 * 1000,
             500,
             res => expect(res.find(x => x.message.includes("CS0246"))));
     });
@@ -80,8 +84,8 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
 
         await vscode.commands.executeCommand('o.reanalyze.currentProject', interfaceImplUri);
 
-        await poll(() => diagnosticStatusEvents, 15*1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Processing) != undefined);
-        await poll(() => diagnosticStatusEvents, 15*1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Ready) != undefined);
+        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Processing) != undefined);
+        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Ready) != undefined);
     });
 
     test("When re-analyze of all projects is executed then eventually get notified about them.", async function () {
@@ -89,7 +93,7 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
 
         await vscode.commands.executeCommand('o.reanalyze.allProjects', interfaceImplUri);
 
-        await poll(() => diagnosticStatusEvents, 15*1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Processing) != undefined);
-        await poll(() => diagnosticStatusEvents, 15*1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Ready) != undefined);
+        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Processing) != undefined);
+        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Ready) != undefined);
     });
 });

@@ -128,13 +128,13 @@ suite("Remote Process Picker: Validate quoting arguments.", () => {
     test("Multiple ${debuggerCommand} in string args", () => {
         let pipeCmd = RemoteAttachPicker.createPipeCmdFromString("program.exe", "".concat(RemoteAttachPicker.debuggerCommand, " ", RemoteAttachPicker.debuggerCommand, " ", RemoteAttachPicker.debuggerCommand), true);
 
-        pipeCmd.should.deep.equal("program.exe " + RemoteAttachPicker.scriptShellCmd + " " + RemoteAttachPicker.scriptShellCmd + " "  + RemoteAttachPicker.scriptShellCmd);
+        pipeCmd.should.deep.equal("program.exe " + RemoteAttachPicker.scriptShellCmd + " " + RemoteAttachPicker.scriptShellCmd + " " + RemoteAttachPicker.scriptShellCmd);
     });
 
     test("Multiple ${debuggerCommand} in array args", () => {
         let pipeCmd = RemoteAttachPicker.createPipeCmdFromArray("program.exe", [RemoteAttachPicker.debuggerCommand, RemoteAttachPicker.debuggerCommand, RemoteAttachPicker.debuggerCommand], true);
 
-        pipeCmd.should.deep.equal("program.exe \"" + RemoteAttachPicker.scriptShellCmd + "\" \"" + RemoteAttachPicker.scriptShellCmd + "\" \""  + RemoteAttachPicker.scriptShellCmd + "\"");
+        pipeCmd.should.deep.equal("program.exe \"" + RemoteAttachPicker.scriptShellCmd + "\" \"" + RemoteAttachPicker.scriptShellCmd + "\" \"" + RemoteAttachPicker.scriptShellCmd + "\"");
     });
 
     test("OS Specific Configurations", () => {

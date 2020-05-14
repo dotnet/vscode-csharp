@@ -11,7 +11,7 @@ import { CreateTmpDir, TmpAsset } from "../../src/CreateTmpAsset";
 import * as util from '../../src/common';
 import * as path from 'path';
 import MockHttpsServer from "./testAssets/MockHttpsServer";
-import {expect} from 'chai';
+import { expect } from 'chai';
 import TestZip from "./testAssets/TestZip";
 import { createTestFile } from "./testAssets/TestFile";
 import { PackageInstallation, LogPlatformInfo, DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess, InstallationStart, InstallationSuccess, PackageInstallStart } from "../../src/omnisharp/loggingEvents";
@@ -20,7 +20,7 @@ import { testPackageJSON } from "./testAssets/testAssets";
 
 suite('OmnisharpDownloader', () => {
     const networkSettingsProvider = () => new NetworkSettings(undefined, false);
-    let eventStream : EventStream;
+    let eventStream: EventStream;
     const installPath = "somePath";
     let platformInfo = new PlatformInformation("win32", "x86");
     let downloader: OmnisharpDownloader;
@@ -46,7 +46,7 @@ suite('OmnisharpDownloader', () => {
         }, testZip.buffer);
     });
 
-    test('Returns false if request is made for a version that doesnot exist on the server', async() => {
+    test('Returns false if request is made for a version that doesnot exist on the server', async () => {
         expect(await downloader.DownloadAndInstallOmnisharp("1.00000001.0000", server.baseUrl, installPath)).to.be.false;
     });
 
@@ -58,7 +58,7 @@ suite('OmnisharpDownloader', () => {
         }
     });
 
-    test('Events are created', async () => { 
+    test('Events are created', async () => {
         let expectedSequence = [
             new PackageInstallation('OmniSharp Version = 1.2.3'),
             new LogPlatformInfo(new PlatformInformation("win32", "x86")),
@@ -67,14 +67,14 @@ suite('OmnisharpDownloader', () => {
             new DownloadSizeObtained(testZip.size),
             new DownloadProgress(100, 'OmniSharp for Windows (.NET 4.6 / x86), Version = 1.2.3'),
             new DownloadSuccess(' Done!'),
-            new InstallationStart('OmniSharp for Windows (.NET 4.6 / x86), Version = 1.2.3'), 
-            new InstallationSuccess() 
+            new InstallationStart('OmniSharp for Windows (.NET 4.6 / x86), Version = 1.2.3'),
+            new InstallationSuccess()
         ];
- 
-        expect(eventBus.getEvents()).to.be.empty; 
-        await downloader.DownloadAndInstallOmnisharp(version, server.baseUrl, installPath); 
-        expect(eventBus.getEvents()).to.be.deep.equal(expectedSequence); 
-    }); 
+
+        expect(eventBus.getEvents()).to.be.empty;
+        await downloader.DownloadAndInstallOmnisharp(version, server.baseUrl, installPath);
+        expect(eventBus.getEvents()).to.be.deep.equal(expectedSequence);
+    });
 
     teardown(async () => {
         tmpDir.dispose();

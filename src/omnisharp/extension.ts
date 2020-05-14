@@ -39,11 +39,17 @@ import { StructureProvider } from '../features/structureProvider';
 import { OmniSharpMonoResolver } from './OmniSharpMonoResolver';
 import { getMonoVersion } from '../utils/getMonoVersion';
 import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
+import SemanticTokensProvider from '../features/semanticTokensProvider';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
     readonly advisor: Advisor;
     readonly testManager: TestManager;
+}
+
+let _semanticTokensProvider: SemanticTokensProvider;
+export function getSemanticTokensProvider() {
+    return _semanticTokensProvider;
 }
 
 export async function activate(context: vscode.ExtensionContext, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, eventStream: EventStream, optionProvider: OptionProvider, extensionPath: string) {
@@ -53,7 +59,8 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
 
     const options = optionProvider.GetLatestOptions();
     let omnisharpMonoResolver = new OmniSharpMonoResolver(getMonoVersion);
-    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver);
+    const decompilationAuthorized = context.workspaceState.get<boolean | undefined>("decompilationAuthorized") ?? false;
+    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver, decompilationAuthorized);
     const advisor = new Advisor(server, optionProvider); // create before server is started
     const disposables = new CompositeDisposable();
     const languageMiddlewareFeature = new LanguageMiddlewareFeature();
@@ -92,6 +99,15 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables.add(forwardChanges(server));
         localDisposables.add(trackVirtualDocuments(server, eventStream));
         localDisposables.add(vscode.languages.registerFoldingRangeProvider(documentSelector, new StructureProvider(server, languageMiddlewareFeature)));
+
+        const semanticTokensProvider = new SemanticTokensProvider(server, optionProvider, languageMiddlewareFeature);
+        // Make the semantic token provider available for testing
+        if (process.env.OSVC_SUITE !== undefined) {
+            _semanticTokensProvider = semanticTokensProvider;
+        }
+
+        localDisposables.add(vscode.languages.registerDocumentSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
+        localDisposables.add(vscode.languages.registerDocumentRangeSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
     }));
 
     disposables.add(server.onServerStop(() => {
@@ -102,7 +118,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables = null;
     }));
 
-    disposables.add(registerCommands(server, platformInfo, eventStream, optionProvider, omnisharpMonoResolver, packageJSON, extensionPath));
+    disposables.add(registerCommands(context, server, platformInfo, eventStream, optionProvider, omnisharpMonoResolver, packageJSON, extensionPath));
 
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
         disposables.add(server.onServerStart(() => {

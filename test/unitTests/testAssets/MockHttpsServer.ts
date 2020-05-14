@@ -11,10 +11,10 @@ const ServerMock = require("mock-http-server");
 
 export default class MockHttpsServer {
 
-    constructor(private server: any, public readonly baseUrl: string){
+    constructor(private server: any, public readonly baseUrl: string) {
     }
 
-    public addRequestHandler(method: string, path: string, reply_status: number, reply_headers?: any, reply_body?: any){
+    public addRequestHandler(method: string, path: string, reply_status: number, reply_headers?: any, reply_body?: any) {
         this.server.on({
             method,
             path,
@@ -26,11 +26,11 @@ export default class MockHttpsServer {
         });
     }
 
-    public async start(){
+    public async start() {
         return new Promise(resolve => this.server.start(resolve));
     }
 
-    public async stop(){
+    public async stop() {
         return new Promise((resolve, reject) => this.server.stop(resolve));
     }
 
@@ -43,7 +43,7 @@ export default class MockHttpsServer {
                 key: await fs.readFile("test/unitTests/testAssets/private.pem"),
                 cert: await fs.readFile("test/unitTests/testAssets/public.pem")
             });
-    
+
         return new MockHttpsServer(server, `https://localhost:${port}`);
     }
 }

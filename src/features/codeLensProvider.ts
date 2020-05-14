@@ -130,7 +130,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             const quickFixes = result.QuickFixes;
             const count = quickFixes.length;
             const locations = quickFixes.map(toLocation);
-            
+
             // Allow language middlewares to re-map its edits if necessary.
             const remappedLocations = await this._languageMiddlewareFeature.remap("remapLocations", locations, token);
 
@@ -166,9 +166,8 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         catch (error) {
             return undefined;
         }
-            
-        // We do not support running all tests on legacy projects.
-        if (projectInfo.MsBuildProject && !projectInfo.DotNetProject) {
+
+        if (projectInfo.MsBuildProject) {
             codeLens.command = {
                 title: pluralTitle,
                 command: pluralCommandName,
@@ -242,7 +241,8 @@ const filteredSymbolNames: { [name: string]: boolean } = {
     'Equals': true,
     'Finalize': true,
     'GetHashCode': true,
-    'ToString': true
+    'ToString': true,
+    'Dispose': true
 };
 
 function isValidElementForReferencesCodeLens(element: Structure.CodeElement): boolean {
