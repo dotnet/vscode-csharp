@@ -7,7 +7,7 @@ mono:
   - latest
 
 env:
-- CODE_VERSION=1.33.0
+- CODE_VERSION=1.45.0
 
 before_install:
   - if [ $TRAVIS_OS_NAME == "linux" ]; then

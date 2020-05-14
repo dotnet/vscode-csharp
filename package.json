@@ -1,13 +1,14 @@
 {
   "name": "csharp",
   "publisher": "ms-dotnettools",
-  "version": "1.21.13",
+  "version": "1.21.19",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
   "license": "SEE LICENSE IN RuntimeLicenses/license.txt",
   "icon": "images/csharpIcon.png",
   "preview": false,
+  "enableProposedApi": true,
   "bugs": {
     "url": "https://github.com/OmniSharp/omnisharp-vscode/issues"
   },
@@ -29,8 +30,8 @@
     "dotnet"
   ],
   "defaults": {
-    "omniSharp": "1.34.13",
-    "razor": "1.0.0-alpha3-5.0.0-preview.2.20156.4"
+    "omniSharp": "1.35.1",
+    "razor": "1.0.0-alpha3-5.0.0-preview.3.20176.8"
   },
   "main": "./dist/extension",
   "scripts": {
@@ -79,8 +80,8 @@
     "http-proxy-agent": "2.1.0",
     "https-proxy-agent": "^3.0.1",
     "jsonc-parser": "2.0.3",
-    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/d133ee88-8117-494f-98a7-ae71672f71dc/9ceda6d2cdba3e0e4faeccb56f115078/microsoft.aspnetcore.razor.vscode-5.0.0-preview.2.20156.4.tgz",
-    "mkdirp": "0.5.1",
+    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/d48b3dd6-2eac-41f4-b7e9-f7008908917c/7f5df2f7ce62629d29b9d07b4851ce9b/microsoft.aspnetcore.razor.vscode-5.0.0-preview.3.20176.8.tgz",
+    "mkdirp": "^1.0.3",
     "node-filter-async": "1.1.1",
     "remove-bom-buffer": "3.0.0",
     "request-light": "0.2.4",
@@ -91,6 +92,7 @@
     "tmp": "0.0.33",
     "vscode-debugprotocol": "1.33.0",
     "vscode-extension-telemetry": "0.1.1",
+    "vscode-languageserver-protocol": "^3.15.3",
     "yauzl": "2.10.0"
   },
   "devDependencies": {
@@ -132,14 +134,13 @@
     "gulp-tslint": "8.1.3",
     "istanbul": "0.4.5",
     "ltcdr": "2.2.1",
-    "minimist": "1.2.0",
     "mocha": "5.2.0",
     "mocha-typescript": "1.1.17",
     "mock-fs": "4.8.0",
     "mock-http-server": "0.2.0",
     "natives": "1.1.6",
     "npm-run-all": "4.1.5",
-    "nyc": "13.3.0",
+    "nyc": "^15.0.0",
     "plist": "3.0.1",
     "remap-istanbul": "0.13.0",
     "source-map-support": "0.5.10",
@@ -148,10 +149,10 @@
     "tslint": "5.12.1",
     "tslint-microsoft-contrib": "6.0.0",
     "tslint-no-unused-expression-chai": "0.1.4",
-    "typescript": "^3.3.3",
+    "typescript": "^3.8.3",
     "unzipper": "0.9.10",
     "vsce": "1.57.0",
-    "vscode": "1.1.33",
+    "vscode": "1.1.36",
     "webpack": "4.29.3",
     "webpack-cli": "^3.2.3"
   },
@@ -159,41 +160,41 @@
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/e5c16d5c-a379-4ea6-afbe-cbedf90a0876/63e562d25165bd940995465124a5e0d1/omnisharp-win-x86-1.34.13.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.34.13.zip",
-      "installPath": ".omnisharp/1.34.13",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/ce33be0f-2348-4efe-b89b-9db292f8457d/d05b5548bc4ca3efefb7a980d3eb2399/omnisharp-win-x86-1.35.1.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.35.1/omnisharp-win-x86-1.35.1.zip",
+      "installPath": ".omnisharp/1.35.1",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.omnisharp/1.34.13/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.35.1/OmniSharp.exe",
       "platformId": "win-x86",
-      "integrity": "1E052090B2C1F6D42C20E3CA1318738C574D3D846401F0F9BB2B7F22617919C7"
+      "integrity": "EBBF6C697BB14BB512643ADF712F8FDEC52AFFD1CD23C52097CAA85DF81066D0"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/e5c16d5c-a379-4ea6-afbe-cbedf90a0876/b89bee247c303002d7b045d9787ffc1e/omnisharp-win-x64-1.34.13.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.34.13.zip",
-      "installPath": ".omnisharp/1.34.13",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/ce33be0f-2348-4efe-b89b-9db292f8457d/0bee7a0e63dbed4fbc79a64d8947a921/omnisharp-win-x64-1.35.1.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.35.1/omnisharp-win-x64-1.35.1.zip",
+      "installPath": ".omnisharp/1.35.1",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/1.34.13/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.35.1/OmniSharp.exe",
       "platformId": "win-x64",
-      "integrity": "92FE3BE46064B8AA17CD714671A28779D1B720D58B45B89E35D1A0DE0898D1CD"
+      "integrity": "CD9AAB18D19E04E52CE7C06A04F8AD7CFA2AC3DAF40A9D50933F65784877F946"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/e5c16d5c-a379-4ea6-afbe-cbedf90a0876/fcda5b4d6b207245a2e76118d8b059c2/omnisharp-osx-1.34.13.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.34.13.zip",
-      "installPath": ".omnisharp/1.34.13",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/ce33be0f-2348-4efe-b89b-9db292f8457d/8aba20799500ee242a51115e6484b69e/omnisharp-osx-1.35.1.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.35.1/omnisharp-osx-1.35.1.zip",
+      "installPath": ".omnisharp/1.35.1",
       "platforms": [
         "darwin"
       ],
@@ -201,16 +202,16 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.34.13/run",
+      "installTestPath": "./.omnisharp/1.35.1/run",
       "platformId": "osx",
-      "integrity": "92F65C0F8F0A9748DF9878E41D2BA047D1073B27FE0C161129E1EC21DAEA1998"
+      "integrity": "AB0D9EE12008296500497EA2B9E289DB82DDBBB8E0B2D90615737AAAECB07040"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/e5c16d5c-a379-4ea6-afbe-cbedf90a0876/f8aa092d3c2b81ebbcd065c79fc3d7ac/omnisharp-linux-x86-1.34.13.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x86-1.34.13.zip",
-      "installPath": ".omnisharp/1.34.13",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/ce33be0f-2348-4efe-b89b-9db292f8457d/790310bd41f4a8723794ef9a885e2800/omnisharp-linux-x86-1.35.1.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.35.1/omnisharp-linux-x86-1.35.1.zip",
+      "installPath": ".omnisharp/1.35.1",
       "platforms": [
         "linux"
       ],
@@ -222,16 +223,16 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.34.13/run",
+      "installTestPath": "./.omnisharp/1.35.1/run",
       "platformId": "linux-x86",
-      "integrity": "47F0CEDE055AC3112E0B288FFDECEEFC46C258EE6E193DB931E191BD74FD4C2C"
+      "integrity": "B4BEDA3D9E00A835882798D3D9AED0B988B8CBBCD59DF36A7E8D8D86BE922378"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/e5c16d5c-a379-4ea6-afbe-cbedf90a0876/0dbfeeaff92f544c022dc7406b3ac2e8/omnisharp-linux-x64-1.34.13.zip",
-      "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-linux-x64-1.34.13.zip",
-      "installPath": ".omnisharp/1.34.13",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/ce33be0f-2348-4efe-b89b-9db292f8457d/106ca7c87b8cbcae9bc60a7c18a4aee0/omnisharp-linux-x64-1.35.1.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.35.1/omnisharp-linux-x64-1.35.1.zip",
+      "installPath": ".omnisharp/1.35.1",
       "platforms": [
         "linux"
       ],
@@ -242,15 +243,15 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.34.13/run",
+      "installTestPath": "./.omnisharp/1.35.1/run",
       "platformId": "linux-x64",
-      "integrity": "96B16D8D029B07FCE4B212B50BBE65DDCBDC3B059AC1F5D72F6F893456DB74D3"
+      "integrity": "45E21A2187E6A0DA8551EC38660BEEF3A082DAF94E62B1B0CC50B37C82B3F9E4"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/8453f1ae-2bda-4d6a-97fa-9a752f968dc1/5157a2a463cc8a4afa0621f1ec594732/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-22-0/coreclr-debug-win7-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/292d2e01-fb93-455f-a6b3-76cddad4f1ef/74935f0979ba7a260417ef919a8c1c9d/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-22-2/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -259,13 +260,13 @@
         "x86_64"
       ],
       "installTestPath": "./.debugger/vsdbg-ui.exe",
-      "integrity": "9188583AF7E150C8A8AB7501A75C15A53EB5EA9E40D1ED93458E989A15B95FF6"
+      "integrity": "5D60FAC96542300A410D81096E23A505430BAF8DF77D7CFC92F401B95FA39DAA"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/8453f1ae-2bda-4d6a-97fa-9a752f968dc1/575994a4df09b34c3314ee30e007ed45/coreclr-debug-osx-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-22-0/coreclr-debug-osx-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/292d2e01-fb93-455f-a6b3-76cddad4f1ef/5a8d7b0b0c3e2a6097259b0ce98a6f37/coreclr-debug-osx-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-22-2/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "darwin"
@@ -278,13 +279,13 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "B29D7DA252308470E215F52E09A632CA1B5E0A6F74D6A37473A7E4CFDF92266F"
+      "integrity": "13AB14F64BC6B83ECAF716BBD9B237BA2D92261DA3E81D3ABBFEF39C9EE5A2A4"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/8453f1ae-2bda-4d6a-97fa-9a752f968dc1/0f8c37b08e1afd2360bde4a5764d403e/coreclr-debug-linux-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-22-0/coreclr-debug-linux-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/292d2e01-fb93-455f-a6b3-76cddad4f1ef/2e9b8bc5431d8f6c56025e76eaabbdff/coreclr-debug-linux-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-22-2/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -297,13 +298,13 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "2F6657B3D3C1044E9293F9C7E498AF283600DEAAF052975EBFBDD1296C8C6C05"
+      "integrity": "AA651AB01CBA4095248AD4239AAB7E58D792B506EF944F2C598151F30C961ED2"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/d133ee88-8117-494f-98a7-ae71672f71dc/4eb950fee2bebe2edbabf8dcf2d77f1d/razorlanguageserver-win-x64-5.0.0-preview.2.20156.4.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x64-5.0.0-preview.2.20156.4.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/d48b3dd6-2eac-41f4-b7e9-f7008908917c/63a80df6345ade745ba4ab05b5c02348/razorlanguageserver-win-x64-5.0.0-preview.3.20176.8.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x64-5.0.0-preview.3.20176.8.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -315,8 +316,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/d133ee88-8117-494f-98a7-ae71672f71dc/b57997b4175112edc7393335555130a0/razorlanguageserver-win-x86-5.0.0-preview.2.20156.4.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x86-5.0.0-preview.2.20156.4.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/d48b3dd6-2eac-41f4-b7e9-f7008908917c/3572052bd5787c0187803ce7fa801d4f/razorlanguageserver-win-x86-5.0.0-preview.3.20176.8.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x86-5.0.0-preview.3.20176.8.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -328,8 +329,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/d133ee88-8117-494f-98a7-ae71672f71dc/79de139da12da03601cd4ab0ac35b151/razorlanguageserver-linux-x64-5.0.0-preview.2.20156.4.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-linux-x64-5.0.0-preview.2.20156.4.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/d48b3dd6-2eac-41f4-b7e9-f7008908917c/57125c181c3b9dce2157e40d1623e8c8/razorlanguageserver-linux-x64-5.0.0-preview.3.20176.8.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-linux-x64-5.0.0-preview.3.20176.8.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -344,8 +345,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/d133ee88-8117-494f-98a7-ae71672f71dc/5a2bef67e8d13bcef95f07972d3357bf/razorlanguageserver-osx-x64-5.0.0-preview.2.20156.4.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-osx-x64-5.0.0-preview.2.20156.4.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/d48b3dd6-2eac-41f4-b7e9-f7008908917c/f5508e6670d0d5de3be09b1b8bc9a484/razorlanguageserver-osx-x64-5.0.0-preview.3.20176.8.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-osx-x64-5.0.0-preview.3.20176.8.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -359,7 +360,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.31.0"
+    "vscode": "^1.44.0"
   },
   "activationEvents": [
     "onDebugInitialConfigurations",
@@ -642,6 +643,12 @@
           "default": 1000,
           "description": "Specifies the maximum number of files for which diagnostics are reported for the whole workspace. If this limit is exceeded, diagnostics will be shown for currently opened files only. Specify 0 or less to disable the limit completely."
         },
+        "csharp.semanticHighlighting.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable/disable Semantic Highlighting for C# files (Razor files currently unsupported). Defaults to false. Close open files for changes to take effect.",
+          "scope": "window"
+        },
         "omnisharp.path": {
           "type": [
             "string",
@@ -748,6 +755,12 @@
           "type": "boolean",
           "default": false,
           "description": "Enables support for reading code style, naming convention and analyzer settings from .editorconfig."
+        },
+        "omnisharp.enableDecompilationSupport": {
+          "type": "boolean",
+          "default": false,
+          "scope": "machine",
+          "description": "Enables support for decompiling external references instead of viewing metadata."
         },
         "razor.plugin.path": {
           "type": [
@@ -872,6 +885,11 @@
         "category": "CSharp"
       },
       {
+        "command": "csharp.showDecompilationTerms",
+        "title": "Show the decompiler terms agreement",
+        "category": "CSharp"
+      },
+      {
         "command": "extension.showRazorCSharpWindow",
         "title": "Show Razor CSharp",
         "category": "Razor"
@@ -885,6 +903,16 @@
         "command": "razor.reportIssue",
         "title": "Report a Razor issue",
         "category": "Razor"
+      },
+      {
+        "command": "dotnet.test.runTestsInContext",
+        "title": "Run Tests in Context",
+        "category": ".NET"
+      },
+      {
+        "command": "dotnet.test.debugTestsInContext",
+        "title": "Debug Tests in Context",
+        "category": ".NET"
       }
     ],
     "keybindings": [
@@ -892,6 +920,18 @@
         "command": "o.showOutput",
         "key": "Ctrl+Shift+F9",
         "mac": "Cmd+Shift+F9"
+      },
+      {
+        "command": "dotnet.test.runTestsInContext",
+        "key": "ctrl+r t",
+        "mac": "cmd+r t",
+        "when": "editorLangId == csharp && editorTextFocus"
+      },
+      {
+        "command": "dotnet.test.debugTestsInContext",
+        "key": "ctrl+r ctrl+t",
+        "mac": "cmd+r cmd+t",
+        "when": "editorLangId == csharp && editorTextFocus"
       }
     ],
     "snippets": [
@@ -3026,6 +3066,177 @@
         }
       }
     ],
+    "semanticTokenTypes": [
+      {
+        "id": "plainKeyword",
+        "description": "Represents a keyword"
+      },
+      {
+        "id": "controlKeyword",
+        "description": "Represents a control-flow keyword"
+      },
+      {
+        "id": "operatorOverloaded",
+        "description": "Represents a custom implementation of an operator"
+      },
+      {
+        "id": "preprocessorKeyword",
+        "description": "Represents"
+      },
+      {
+        "id": "preprocessorText",
+        "description": "Represents"
+      },
+      {
+        "id": "punctuation",
+        "description": ""
+      },
+      {
+        "id": "stringVerbatim",
+        "description": ""
+      },
+      {
+        "id": "stringEscapeCharacter",
+        "description": ""
+      },
+      {
+        "id": "delegate",
+        "description": ""
+      },
+      {
+        "id": "module",
+        "description": ""
+      },
+      {
+        "id": "extensionMethod",
+        "description": ""
+      },
+      {
+        "id": "field",
+        "description": ""
+      },
+      {
+        "id": "local",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentAttributeName",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentAttributeQuotes",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentAttributeValue",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentCDataSection",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentComment",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentDelimiter",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentEntityReference",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentName",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentProcessingInstruction",
+        "description": ""
+      },
+      {
+        "id": "xmlDocCommentText",
+        "description": ""
+      }
+    ],
+    "semanticTokenModifiers": [],
+    "semanticTokenScopes": [
+      {
+        "language": "csharp",
+        "scopes": {
+          "plainKeyword": [
+            "keyword.cs"
+          ],
+          "controlKeyword": [
+            "keyword.control.cs"
+          ],
+          "operatorOverloaded": [
+            "entity.name.function.member.overload.cs"
+          ],
+          "preprocessorKeyword": [
+            "keyword.preprocessor.cs"
+          ],
+          "preprocessorText": [
+            "meta.preprocessor.string.cs"
+          ],
+          "punctuation": [
+            "punctuation.cs"
+          ],
+          "stringVerbatim": [
+            "string.verbatim.cs"
+          ],
+          "stringEscapeCharacter": [
+            "constant.character.escape.cs"
+          ],
+          "delegate": [
+            "entity.name.type.delegate.cs"
+          ],
+          "module": [
+            "entity.name.type.module.cs"
+          ],
+          "extensionMethod": [
+            "entity.name.function.extension.cs"
+          ],
+          "field": [
+            "entity.name.variable.field.cs"
+          ],
+          "local": [
+            "entity.name.variable.local.cs"
+          ],
+          "xmlDocCommentAttributeName": [
+            "comment.documentation.attribute.name.cs"
+          ],
+          "xmlDocCommentAttributeQuotes": [
+            "comment.documentation.attribute.quotes.cs"
+          ],
+          "xmlDocCommentAttributeValue": [
+            "comment.documentation.attribute.value.cs"
+          ],
+          "xmlDocCommentCDataSection": [
+            "comment.documentation.cdata.cs"
+          ],
+          "xmlDocCommentComment": [
+            "comment.documentation.comment.cs"
+          ],
+          "xmlDocCommentDelimiter": [
+            "comment.documentation.delimiter.cs"
+          ],
+          "xmlDocCommentEntityReference": [
+            "comment.documentation.entityReference.cs"
+          ],
+          "xmlDocCommentName": [
+            "comment.documentation.name.cs"
+          ],
+          "xmlDocCommentProcessingInstruction": [
+            "comment.documentation.processingInstruction.cs"
+          ],
+          "xmlDocCommentText": [
+            "comment.documentation.cs"
+          ]
+        }
+      }
+    ],
     "languages": [
       {
         "id": "aspnetcorerazor",
@@ -3059,6 +3270,28 @@
         {
           "command": "razor.reportIssue",
           "when": "resourceLangId == aspnetcorerazor"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "dotnet.test.runTestsInContext",
+          "when": "editorLangId == csharp",
+          "group": "2_dotnet@1"
+        },
+        {
+          "command": "dotnet.test.debugTestsInContext",
+          "when": "editorLangId == csharp",
+          "group": "2_dotnet@2"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "dotnet.test.runTestsInContext",
+          "when": "editorLangId == csharp"
+        },
+        {
+          "command": "dotnet.test.debugTestsInContext",
+          "when": "editorLangId == csharp"
         }
       ]
     }

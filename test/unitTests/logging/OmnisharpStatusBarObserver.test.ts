@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { StatusBarItem } from '../../../src/vscodeAdapter';
-import { OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpServerOnServerError, OmnisharpServerOnStart, OmnisharpServerOnStop, DownloadStart, InstallationStart, DownloadProgress, OmnisharpServerOnStdErr, BaseEvent } from '../../../src/omnisharp/loggingEvents';
+import { OmnisharpOnBeforeServerInstall, OmnisharpOnBeforeServerStart, OmnisharpServerOnServerError, OmnisharpServerOnStart, OmnisharpServerOnStop, DownloadStart, InstallationStart, DownloadProgress, OmnisharpServerOnStdErr, BaseEvent, InstallationSuccess } from '../../../src/omnisharp/loggingEvents';
 import { expect, should } from 'chai';
 import { OmnisharpStatusBarObserver, StatusBarColors } from '../../../src/observers/OmnisharpStatusBarObserver';
 
@@ -109,5 +109,18 @@ suite('OmnisharpStatusBarObserver', () => {
         observer.post(event);
         expect(statusBarItem.tooltip).to.contain(event.packageDescription);
         expect(statusBarItem.tooltip).to.contain(event.downloadPercentage);
+    });
+
+    test('InstallationSuccess: Status bar is hidden and the attributes are set to undefined', () => {
+        let installationEvent = new InstallationStart("somePackage");
+        observer.post(installationEvent);
+
+        let successEvent = new InstallationSuccess();
+        observer.post(successEvent);
+
+        expect(hideCalled).to.be.true;
+        expect(statusBarItem.text).to.be.undefined;
+        expect(statusBarItem.command).to.be.undefined;
+        expect(statusBarItem.color).to.be.undefined;
     });
 });

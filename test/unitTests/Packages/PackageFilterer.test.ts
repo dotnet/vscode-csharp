@@ -16,41 +16,41 @@ suite(`${getNotInstalledPackagesForPlatform.name}`, () => {
     let absolutePathPackages: AbsolutePathPackage[];
     let extensionPath = "/ExtensionPath";
     const packages = <Package[]>[
-        {   
+        {
             "description": "Platfrom1-Architecture1 uninstalled package",
-            "platforms": [ "platform1" ],
-            "architectures": [ "architecture1" ],
+            "platforms": ["platform1"],
+            "architectures": ["architecture1"],
             "installPath": "path1"
         },
-        {   
+        {
             //already installed package
             "description": "Platfrom1-Architecture1 installed package",
-            "platforms": [ "platform1" ],
-            "architectures": [ "architecture1" ],
+            "platforms": ["platform1"],
+            "architectures": ["architecture1"],
             "installPath": "path5"
         },
         {
             "description": "Platfrom2-Architecture2 uninstalled package",
-            "platforms": [ "platform2" ],
-            "architectures": [ "architecture2" ],
+            "platforms": ["platform2"],
+            "architectures": ["architecture2"],
             "installPath": "path2"
         },
         {
             "description": "Platfrom1-Architecture2 uninstalled package",
-            "platforms": [ "platform1" ],
-            "architectures": [ "architecture2" ],
+            "platforms": ["platform1"],
+            "architectures": ["architecture2"],
             "installPath": "path3"
         },
         {
             "description": "Platfrom2-Architecture1 uninstalled package",
-            "platforms": [ "platform2" ],
-            "architectures": [ "architecture1" ],
+            "platforms": ["platform2"],
+            "architectures": ["architecture1"],
             "installPath": "path4"
         },
         {
             "description": "Platfrom1-Architecture2 uninstalled package",
-            "platforms": [ "platform1" ],
-            "architectures": [ "architecture2" ],
+            "platforms": ["platform1"],
+            "architectures": ["architecture2"],
             "installPath": "path3"
         },
     ];

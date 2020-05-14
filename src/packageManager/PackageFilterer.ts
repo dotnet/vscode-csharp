@@ -44,5 +44,5 @@ async function filterAlreadyInstalledPackages(packages: AbsolutePathPackage[]): 
         }
 
         return !(await util.fileExists(testPath));
-      });
+    });
 }

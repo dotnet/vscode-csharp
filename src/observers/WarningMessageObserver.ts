@@ -3,10 +3,10 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import {debounceTime} from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 import { vscode } from '../vscodeAdapter';
 import { BaseEvent, OmnisharpServerMsBuildProjectDiagnostics } from "../omnisharp/loggingEvents";
-import { Scheduler ,  Subject } from 'rxjs';
+import { Scheduler, Subject } from 'rxjs';
 
 import showWarningMessage from './utils/ShowWarningMessage';
 import { EventType } from '../omnisharp/EventType';

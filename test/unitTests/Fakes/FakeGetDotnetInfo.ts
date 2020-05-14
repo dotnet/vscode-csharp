@@ -6,4 +6,4 @@
 import { IGetDotnetInfo } from "../../../src/constants/IGetDotnetInfo";
 
 export const fakeDotnetInfo = "myDotnetInfo";
-export const FakeGetDotnetInfo: IGetDotnetInfo = async() => Promise.resolve(fakeDotnetInfo);
+export const FakeGetDotnetInfo: IGetDotnetInfo = async () => Promise.resolve(fakeDotnetInfo);
