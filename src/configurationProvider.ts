@@ -26,7 +26,7 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
 
     /**
      * TODO: Remove function when https://github.com/OmniSharp/omnisharp-roslyn/issues/909 is resolved.
-     * 
+     *
      * Note: serverUtils.requestWorkspaceInformation only retrieves one folder for multi-root workspaces. Therefore, generator will be incorrect for all folders
      * except the first in a workspace. Currently, this only works if the requested folder is the same as the server's solution path or folder.
      */
@@ -35,8 +35,7 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
         const solutionPathOrFolder: string = this.server.getSolutionPathOrFolder();
 
         // Make sure folder, folder.uri, and solutionPathOrFolder are defined.
-        if (!solutionPathOrFolder)
-        {
+        if (!solutionPathOrFolder) {
             return Promise.resolve(false);
         }
 
@@ -45,8 +44,7 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
         return fs.lstat(solutionPathOrFolder).then(stat => {
             return stat.isFile();
         }).then(isFile => {
-            if (isFile)
-            {
+            if (isFile) {
                 serverFolder = path.dirname(solutionPathOrFolder);
             }
 
@@ -73,38 +71,36 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
             return [];
         }
 
-        try
-        {
-            let hasWorkspaceMatches : boolean = await this.checkWorkspaceInformationMatchesWorkspaceFolder(folder); 
+        try {
+            let hasWorkspaceMatches: boolean = await this.checkWorkspaceInformationMatchesWorkspaceFolder(folder);
             if (!hasWorkspaceMatches) {
                 vscode.window.showErrorMessage(`Cannot create .NET debug configurations. The active C# project is not within folder '${folder.uri.fsPath}'.`);
                 return [];
             }
 
-            let info: WorkspaceInformationResponse = await serverUtils.requestWorkspaceInformation(this.server);           
+            let info: WorkspaceInformationResponse = await serverUtils.requestWorkspaceInformation(this.server);
 
             const generator = new AssetGenerator(info, folder);
             if (generator.hasExecutableProjects()) {
-                
-                if (!await generator.selectStartupProject())
-                {
+
+                if (!await generator.selectStartupProject()) {
                     return [];
                 }
-               
-                // Make sure .vscode folder exists, addTasksJsonIfNecessary will fail to create tasks.json if the folder does not exist. 
+
+                // Make sure .vscode folder exists, addTasksJsonIfNecessary will fail to create tasks.json if the folder does not exist.
                 await fs.ensureDir(generator.vscodeFolder);
 
                 // Add a tasks.json
-                const buildOperations : AssetOperations = await getBuildOperations(generator);
+                const buildOperations: AssetOperations = await getBuildOperations(generator);
                 await addTasksJsonIfNecessary(generator, buildOperations);
-                
-                const isWebProject = generator.hasWebServerDependency();
-                const launchJson: string = generator.createLaunchJson(isWebProject);
 
-                // jsonc-parser's parse function parses a JSON string with comments into a JSON object. However, this removes the comments. 
+                const programLaunchType = generator.computeProgramLaunchType();
+                const launchJson: string = generator.createLaunchJsonConfigurations(programLaunchType);
+
+                // jsonc-parser's parse function parses a JSON string with comments into a JSON object. However, this removes the comments.
                 return parse(launchJson);
 
-            } else {               
+            } else {
                 // Error to be caught in the .catch() below to write default C# configurations
                 throw new Error("Does not contain .NET Core projects.");
             }
@@ -112,9 +108,9 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
         catch
         {
             // Provider will always create an launch.json file. Providing default C# configurations.
-            // jsonc-parser's parse to convert to JSON object without comments. 
+            // jsonc-parser's parse to convert to JSON object without comments.
             return [
-                createFallbackLaunchConfiguration(),                  
+                createFallbackLaunchConfiguration(),
                 parse(createAttachConfiguration())
             ];
         }
@@ -127,7 +123,7 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
         if (envFile) {
             try {
                 const parsedFile: ParsedEnvironmentFile = ParsedEnvironmentFile.CreateFromFile(envFile, config["env"]);
-                
+
                 // show error message if single lines cannot get parsed
                 if (parsedFile.Warning) {
                     CSharpConfigurationProvider.showFileWarningAsync(parsedFile.Warning, envFile);
@@ -153,14 +149,12 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
 	 */
     resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, config: vscode.DebugConfiguration, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration> {
 
-        if (!config.type)
-        {
+        if (!config.type) {
             // If the config doesn't look functional force VSCode to open a configuration file https://github.com/Microsoft/vscode/issues/54213
             return null;
         }
 
-        if (config.request === "launch")
-        {
+        if (config.request === "launch") {
             if (!config.cwd && !config.pipeTransport) {
                 config.cwd = "${workspaceFolder}";
             }

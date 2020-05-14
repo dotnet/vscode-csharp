@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 // Sample Request: https://api.nuget.org/v3/index.json
- export default interface NuGetIndexResponse {
-     resources: NuGetResource[];
- }
+export default interface NuGetIndexResponse {
+    resources: NuGetResource[];
+}
 
- interface NuGetResource {
-     '@type': string;
-     '@id': string;
- }
+interface NuGetResource {
+    '@type': string;
+    '@id': string;
+}

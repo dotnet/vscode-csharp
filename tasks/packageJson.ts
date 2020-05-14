@@ -8,5 +8,5 @@
 import * as fs from 'fs';
 
 export function getPackageJSON() {
-    return JSON.parse(fs.readFileSync('package.json').toString()); 
+    return JSON.parse(fs.readFileSync('package.json').toString());
 }

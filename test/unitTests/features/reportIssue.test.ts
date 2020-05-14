@@ -57,7 +57,7 @@ suite(`${reportIssue.name}`, () => {
             };
         };
 
-        vscode.env.clipboard.writeText = (body:string) => {
+        vscode.env.clipboard.writeText = (body: string) => {
             issueBody = body;
             return undefined;
         };

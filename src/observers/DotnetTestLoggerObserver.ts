@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseEvent, DotNetTestRunStart, DotNetTestMessage, ReportDotNetTestResults, DotNetTestDebugStart, DotNetTestDebugWarning, DotNetTestDebugProcessStart, DotNetTestsInClassDebugStart, DotNetTestsInClassRunStart } from "../omnisharp/loggingEvents";
+import { BaseEvent, DotNetTestRunStart, DotNetTestMessage, ReportDotNetTestResults, DotNetTestDebugStart, DotNetTestDebugWarning, DotNetTestDebugProcessStart, DotNetTestsInClassDebugStart, DotNetTestsInClassRunStart, DotNetTestRunInContextStart, DotNetTestDebugInContextStart } from "../omnisharp/loggingEvents";
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import * as protocol from '../omnisharp/protocol';
 import { EventType } from "../omnisharp/EventType";
@@ -39,6 +39,12 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
             case EventType.DotNetTestsInClassRunStart:
                 this.handleDotnetTestsInClassRunStart(<DotNetTestsInClassRunStart>event);
                 break;
+            case EventType.DotNetTestRunInContextStart:
+                this.handleDotnetTestsRunInContextStart(<DotNetTestRunInContextStart>event);
+                break;
+            case EventType.DotNetTestDebugInContextStart:
+                this.handleDotnetTestsDebugInContextStart(<DotNetTestDebugInContextStart>event);
+                break;
         }
     }
 
@@ -63,6 +69,16 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
 
     private handleDotnetTestsInClassRunStart(event: DotNetTestsInClassRunStart): any {
         this.logger.appendLine(`----- Running tests in class "${event.className}" -----`);
+        this.logger.appendLine('');
+    }
+
+    private handleDotnetTestsRunInContextStart(event: DotNetTestRunInContextStart) {
+        this.logger.appendLine(`----- Running test(s) in context "${event.fileName} ${event.line + 1}:${event.column + 1}" -----`);
+        this.logger.appendLine('');
+    }
+
+    private handleDotnetTestsDebugInContextStart(event: DotNetTestDebugInContextStart) {
+        this.logger.appendLine(`----- Debugging test(s) in context "${event.fileName} ${event.line + 1}:${event.column + 1}" -----`);
         this.logger.appendLine('');
     }
 

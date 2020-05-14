@@ -5,7 +5,7 @@
 
 import * as ObservableEvent from "../omnisharp/loggingEvents";
 import { vscode } from '../vscodeAdapter';
-import  showInformationMessage from "./utils/ShowInformationMessage";
+import showInformationMessage from "./utils/ShowInformationMessage";
 import { EventType } from "../omnisharp/EventType";
 
 export class InformationMessageObserver {

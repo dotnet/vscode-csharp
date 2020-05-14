@@ -20,7 +20,7 @@ suite("GetOmnisharpPackage : Output package depends on the input package and oth
         version = "0.0.0";
         installPath = "testPath";
         let packageJSON = testPackageJSON;
-        inputPackages = <Package[]> (packageJSON.runtimeDependencies);
+        inputPackages = <Package[]>(packageJSON.runtimeDependencies);
         should();
     });
 
@@ -32,7 +32,7 @@ suite("GetOmnisharpPackage : Output package depends on the input package and oth
 
     test('Throws exception if version is null', () => {
         let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "os-architecture"));
-        let fn = function () { SetBinaryAndGetPackage(testPackage, serverUrl, null, installPath);};
+        let fn = function () { SetBinaryAndGetPackage(testPackage, serverUrl, null, installPath); };
         expect(fn).to.throw('Invalid version');
     });
 
@@ -100,7 +100,7 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
 
     const serverUrl = "http://serverUrl";
     const installPath = "testPath";
-    let inputPackages : any;
+    let inputPackages: any;
 
     suiteSetup(() => {
         inputPackages = <Package[]>(testPackageJSON.runtimeDependencies);

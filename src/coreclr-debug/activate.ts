@@ -75,7 +75,7 @@ async function completeDebuggerInstall(platformInformation: PlatformInformation,
         });
 }
 
-function showInstallErrorMessage(eventStream : EventStream) {
+function showInstallErrorMessage(eventStream: EventStream) {
     eventStream.post(new DebuggerNotInstalledFailure());
     vscode.window.showErrorMessage("An error occurred during installation of the .NET Core Debugger. The C# extension may need to be reinstalled.");
 }
@@ -125,11 +125,10 @@ export async function getAdapterExecutionCommand(platformInfo: PlatformInformati
         // install.Lock does not exist, need to wait for packages to finish downloading.
         let installLock = false;
         let debuggerPackage = getRuntimeDependencyPackageWithId("Debugger", packageJSON, platformInfo, extensionPath);
-        if (debuggerPackage && debuggerPackage.installPath)
-        {
+        if (debuggerPackage && debuggerPackage.installPath) {
             installLock = await common.installFileExists(debuggerPackage.installPath, common.InstallFileType.Lock);
         }
-        
+
         if (!installLock) {
             eventStream.post(new DebuggerNotInstalledFailure());
             throw new Error('The C# extension is still downloading packages. Please see progress in the output window below.');

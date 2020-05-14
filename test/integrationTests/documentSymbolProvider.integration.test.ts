@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { should, expect } from 'chai';
-import { activateCSharpExtension } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
 const chai = require('chai');
@@ -19,6 +19,12 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
 
     suiteSetup(async function () {
         should();
+
+        // These tests don't run on the BasicRazorApp2_1 solution
+        if (isRazorWorkspace(vscode.workspace)) {
+            this.skip();
+        }
+
         await activateCSharpExtension();
         await testAssetWorkspace.restore();
 

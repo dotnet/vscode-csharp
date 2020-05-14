@@ -6,8 +6,8 @@
 import { InformationMessageObserver } from '../../../src/observers/InformationMessageObserver';
 import { use as chaiUse, expect, should } from 'chai';
 import { getUnresolvedDependenices, updateConfig, getVSCodeWithConfig } from '../testAssets/Fakes';
-import {from as observableFrom } from 'rxjs';
-import {timeout} from 'rxjs/operators';
+import { from as observableFrom } from 'rxjs';
+import { timeout } from 'rxjs/operators';
 
 chaiUse(require('chai-as-promised'));
 chaiUse(require('chai-string'));
@@ -76,10 +76,10 @@ suite("InformationMessageObserver", () => {
                 });
             });
         });
-        });
-    
+    });
+
     teardown(() => {
-        commandDone = undefined; 
+        commandDone = undefined;
     });
 
     function getVsCode() {

@@ -27,24 +27,24 @@ suite(`${installRuntimeDependencies.name}`, () => {
     let platformInfo = new PlatformInformation("platform1", "architecture1");
 
     setup(() => {
-        eventStream = new EventStream(); 
+        eventStream = new EventStream();
         eventBus = new TestEventBus(eventStream);
-        installDependencies = async() => Promise.resolve(true);
+        installDependencies = async () => Promise.resolve(true);
     });
-    
+
     suite("When all the dependencies already exist", () => {
         suiteSetup(() => {
             packageJSON = {
                 runtimeDependencies: {}
             };
         });
-        
+
         test("True is returned", async () => {
             let installed = await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo);
             expect(installed).to.be.true;
         });
 
-        test("Doesn't log anything to the eventStream", async() => {
+        test("Doesn't log anything to the eventStream", async () => {
             let packageJSON = {
                 runtimeDependencies: {}
             };
@@ -55,8 +55,8 @@ suite(`${installRuntimeDependencies.name}`, () => {
     });
 
     suite("When there is a dependency to install", () => {
-        let packageToInstall : Package= {
-            id:"myPackage",
+        let packageToInstall: Package = {
+            id: "myPackage",
             description: "somePackage",
             installPath: "installPath",
             binaries: [],
@@ -73,7 +73,7 @@ suite(`${installRuntimeDependencies.name}`, () => {
 
         test("Calls installDependencies with the absolute path package and returns true after successful installation", async () => {
             let inputPackage: AbsolutePathPackage[];
-            installDependencies = async(packages) => {
+            installDependencies = async (packages) => {
                 inputPackage = packages;
                 return Promise.resolve(true);
             };
@@ -85,7 +85,7 @@ suite(`${installRuntimeDependencies.name}`, () => {
         });
 
         test("Returns false when installDependencies returns false", async () => {
-            installDependencies = async() => Promise.resolve(false);
+            installDependencies = async () => Promise.resolve(false);
             let installed = await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo);
             expect(installed).to.be.false;
         });

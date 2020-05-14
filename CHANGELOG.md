@@ -1,15 +1,66 @@
-## Known Issues in 1.21.11
+## Known Issues in 1.21.18
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
-  * Limited support for colorization and formatting
-  * Loss of HTML completions following C# less than (`<`) operator
+  * Limited support for formatting
   * Error squiggles misaligned for expressions near the start of a new line
   * Emmet based abbreviation expansion is not yet supported
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.21.11 (Not Yet Released)
+## 1.21.19 (Not yet released)
+* Add setting for enabling go to decompilation (PR: [#3774](https://github.com/OmniSharp/omnisharp-vscode/pull/3774))
+* Add experimental Semantic Highlighter `csharp.semanticHighlighting.enabled` ([#3565](https://github.com/OmniSharp/omnisharp-vscode/issues/3565), PR: [#3667](https://github.com/OmniSharp/omnisharp-vscode/pull/3667)
+* Add commands for Run and Debug Tests in Context (PR: [#3772](https://github.com/OmniSharp/omnisharp-vscode/pull/3772), PR: [omnisharp-roslyn/#1782](https://github.com/OmniSharp/omnisharp-roslyn/pull/1782))
+* Do not add references CodeLens to Dispose methods ([#3243](https://github.com/OmniSharp/omnisharp-vscode/issues/3243), PR: [#3780](https://github.com/OmniSharp/omnisharp-vscode/pull/3780))
+
+## 1.21.18 (May 5, 2020)
+* Fadeout unused variable names ([#1324](https://github.com/OmniSharp/omnisharp-vscode/issues/1324), PR: [#3733](https://github.com/OmniSharp/omnisharp-vscode/pull/3733))
+* Updated debugger (PR: [#3729](https://github.com/OmniSharp/omnisharp-vscode/pull/3729))
+* Fixed not supported exception when trying to decompile a BCL assembly on Mono. For now we do not try to resolve implementation assembly from a ref assembly (PR: [omnisharp-roslyn/#1767](https://github.com/OmniSharp/omnisharp-roslyn/pull/1767))
+* Added support for generic classes in test runner ([#3722](https://github.com/OmniSharp/omnisharp-vscode/issues/3722), PR: [omnisharp-roslyn/#1768](https://github.com/OmniSharp/omnisharp-roslyn/pull/1768))
+* Improved autocompletion performance (PR: [omnisharp-roslyn/#1761](https://github.com/OmniSharp/omnisharp-roslyn/pull/1761))
+* Move to Roslyn's .editorconfig support ([omnisharp-roslyn/#1657](https://github.com/OmniSharp/omnisharp-roslyn/issues/1657), PR: [omnisharp-roslyn/#1771](https://github.com/OmniSharp/omnisharp-roslyn/pull/1771))
+* Fully update CompilationOptions when project files change (PR: [omnisharp-roslyn/#1774](https://github.com/OmniSharp/omnisharp-roslyn/pull/1774))
+
+## 1.21.17 (April 13, 2020)
+* Updated Razor support (PR:[#3696](https://github.com/OmniSharp/omnisharp-vscode/pull/3696))
+  * Razor support for `<text>` tag completions.
+  * Ability to restart the Razor Language Server to activate changes to the `razor.trace` level.
+  * Bug fixes and performance improvements.
+* Support for `<RunAnalyzers />` and `<RunAnalyzersDuringLiveAnalysis />` (PR: [omnisharp-roslyn/#1739](https://github.com/OmniSharp/omnisharp-roslyn/pull/1739))
+* Add `typeparam` documentation comments to text description ([#3516](https://github.com/OmniSharp/omnisharp-vscode/issues/3516), PR: [omnisharp-roslyn/#1749](https://github.com/OmniSharp/omnisharp-roslyn/pull/1749))
+* Tag `#region` blocks appropriately in the block structure service ([#2621](https://github.com/OmniSharp/omnisharp-vscode/issues/2621), PR: [omnisharp-roslyn/#1748](https://github.com/OmniSharp/omnisharp-roslyn/pull/1748))
+
+## 1.21.16 (March 30, 2020)
+* Support for .NET Core 3.1 in csx files (PR: [#1731](https://github.com/OmniSharp/omnisharp-roslyn/pull/1731))
+* Update the minimal MSBuild to better support .NET 5 Previews ([omnisharp-vscode#3653](https://github.com/OmniSharp/omnisharp-vscode/issues/3653), PR: [#1746](https://github.com/OmniSharp/omnisharp-roslyn/pull/1746))
+
+## 1.21.15 (March 19, 2020)
+* Fixed freezing and unresponsiveness when opening folder with many nested sub-folders (PR: [#3681](https://github.com/OmniSharp/omnisharp-vscode/pull/3681))
+* Fixed handling of dismiss response to assets prompt (PR: [3678](https://github.com/OmniSharp/omnisharp-vscode/pull/3678))
+
+## 1.21.14 (March 11, 2020)
+* Fixed an issue where Razor formatting fails in the presence of @using directives
+* Added support for `annotations` value of `Nullable` csproj property ([omnisharp-roslyn/#1721](https://github.com/OmniSharp/omnisharp-roslyn/issues/1721), PR: [omnisharp-roslyn/#1722](https://github.com/OmniSharp/omnisharp-roslyn/pull/1722))
+* Added ability to specify custom RunSettings for tests (PR: [#3573](https://github.com/OmniSharp/omnisharp-vscode/pull/3573), PR: [omnisharp-roslyn/#1710](https://github.com/OmniSharp/omnisharp-roslyn/pull/1710))
+
+## 1.21.13 (March 5, 2020)
+* Change Marketplace publisher for the C# extension from ms-vscode to ms-dotnettools
+* Ignore diagnostics from virtual files ([aspnetcore/#18927](https://github.com/dotnet/aspnetcore/issues/18927), PR: [#3592](https://github.com/OmniSharp/omnisharp-vscode/pull/3592))
+* Detect and create Blazor WASM launch and debug settings ([aspnetcore/#17549](https://github.com/dotnet/aspnetcore/issues/17549), PR: [#3593](https://github.com/OmniSharp/omnisharp-vscode/pull/3593))
+* Updated Razor support (PR:[3594](https://github.com/OmniSharp/omnisharp-vscode/pull/3594))
+  * Support for @code/@functions block formatting
+  * Updated Razor's TextMate grammar to include full syntactic colorization
+  * Several bug fixes
+
+## 1.21.12 (February 20, 2020)
+* Fixed out of bounds exception in line mapping ([#3485](https://github.com/OmniSharp/omnisharp-vscode/issues/3485), PR: [omnisharp-roslyn/#1707](https://github.com/OmniSharp/omnisharp-roslyn/pull/1707))
+* Added support for aliases in project references ([omnisharp-roslyn/#1685](https://github.com/OmniSharp/omnisharp-roslyn/issues/1685), PR: [omnisharp-roslyn/#1701](https://github.com/OmniSharp/omnisharp-roslyn/pull/1701))
+* Raised the lowest discovered VS2019 version to 16.3 ([omnisharp-roslyn/#1700](https://github.com/OmniSharp/omnisharp-roslyn/issues/1700), PR: (#1713)(https://github.com/OmniSharp/omnisharp-roslyn/pull/1713))
+* Fixed a bug where organizing usings clashed with other formatting settings (PR: [omnisharp-roslyn/#1715](https://github.com/OmniSharp/omnisharp-roslyn/pull/1713))
+
+## 1.21.11 (February 6, 2020)
 * Updated the bundled to Mono 6.8.0 and MSBuild to be copied from Mono 6.8.0 ([omnisharp-roslyn/#1693](https://github.com/OmniSharp/omnisharp-roslyn/issues/1693), PR: [omnisharp-roslyn/#1697](https://github.com/OmniSharp/omnisharp-roslyn/pull/1697))
 * Included NugetSDKResolver in the minimal MSBuild, which introduces support for Nuget based project SDKs like Arcade ([omnisharp-roslyn/#1678](https://github.com/OmniSharp/omnisharp-roslyn/issues/1678), PR: [omnisharp-roslyn/#1696](https://github.com/OmniSharp/omnisharp-roslyn/pull/1696))
 * Added option (`csharp.supressBuildAssetsNotification`) to surpress missing build asset notifications (PR:[#3538](https://github.com/OmniSharp/omnisharp-vscode/pull/3538))

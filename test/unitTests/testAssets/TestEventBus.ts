@@ -11,16 +11,16 @@ export default class TestEventBus {
     private eventBus: Array<BaseEvent>;
     private disposable: IDisposable;
 
-    constructor(eventStream: EventStream){
+    constructor(eventStream: EventStream) {
         this.eventBus = [];
         this.disposable = new Disposable(eventStream.subscribe(event => this.eventBus.push(event)));
     }
 
-    public getEvents(): Array<BaseEvent>{
+    public getEvents(): Array<BaseEvent> {
         return this.eventBus;
     }
 
-    public dispose(){
+    public dispose() {
         this.disposable.dispose();
     }
 }

@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as path from 'path';
 import * as vscode from 'vscode';
 import CSharpExtensionExports from '../../src/CSharpExtensionExports';
 import { Advisor } from '../../src/features/diagnosticsProvider';
@@ -14,7 +15,7 @@ export interface ActivationResult {
 }
 
 export async function activateCSharpExtension(): Promise<ActivationResult | undefined> {
-    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-vscode.csharp");
+    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-dotnettools.csharp");
 
     if (!csharpExtension.isActive) {
         await csharpExtension.activate();
@@ -22,7 +23,7 @@ export async function activateCSharpExtension(): Promise<ActivationResult | unde
 
     try {
         await csharpExtension.exports.initializationFinished();
-        console.log("ms-vscode.csharp activated");
+        console.log("ms-dotnettools.csharp activated");
         return {
             advisor: await csharpExtension.exports.getAdvisor(),
             eventStream: csharpExtension.exports.eventStream
@@ -34,4 +35,9 @@ export async function activateCSharpExtension(): Promise<ActivationResult | unde
     }
 }
 
+export function isRazorWorkspace(workspace: typeof vscode.workspace) {
+    const primeWorkspace = workspace.workspaceFolders[0];
+    const projectFileName = primeWorkspace.uri.fsPath.split(path.sep).pop();
 
+    return projectFileName === 'BasicRazorApp2_1';
+}
