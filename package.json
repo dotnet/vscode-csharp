@@ -389,6 +389,18 @@
     "workspaceContains:**/*.cake"
   ],
   "contributes": {
+    "themes": [
+      {
+        "label": "Visual Studio 2019 Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/vs2019_dark.json"
+      },
+      {
+        "label": "Visual Studio 2019 Light",
+        "uiTheme": "vs",
+        "path": "./themes/vs2019_light.json"
+      }
+    ],
     "configuration": {
       "title": "C# configuration",
       "properties": {
