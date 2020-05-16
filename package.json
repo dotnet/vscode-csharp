@@ -3088,6 +3088,10 @@
         "description": "Represents"
       },
       {
+        "id": "excludedCode",
+        "description": ""
+      },
+      {
         "id": "punctuation",
         "description": ""
       },
@@ -3179,6 +3183,9 @@
           ],
           "preprocessorText": [
             "meta.preprocessor.string.cs"
+          ],
+          "excludedCode": [
+            "support.other.excluded.cs"
           ],
           "punctuation": [
             "punctuation.cs"

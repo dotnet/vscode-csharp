@@ -45,6 +45,7 @@ enum CustomTokenType {
     operatorOverloaded,
     preprocessorKeyword,
     preprocessorText,
+    excludedCode,
     punctuation,
     stringVerbatim,
     stringEscapeCharacter,
@@ -261,6 +262,7 @@ tokenTypes[CustomTokenType.controlKeyword] = "controlKeyword";
 tokenTypes[CustomTokenType.operatorOverloaded] = "operatorOverloaded";
 tokenTypes[CustomTokenType.preprocessorKeyword] = "preprocessorKeyword";
 tokenTypes[CustomTokenType.preprocessorText] = "preprocessorText";
+tokenTypes[CustomTokenType.excludedCode] = "excludedCode";
 tokenTypes[CustomTokenType.punctuation] = "punctuation";
 tokenTypes[CustomTokenType.stringVerbatim] = "stringVerbatim";
 tokenTypes[CustomTokenType.stringEscapeCharacter] = "stringEscapeCharacter";
@@ -291,7 +293,7 @@ tokenModifiers[DefaultTokenModifier.readonly] = 'readonly';
 
 const tokenTypeMap: number[] = [];
 tokenTypeMap[SemanticHighlightClassification.Comment] = DefaultTokenType.comment;
-tokenTypeMap[SemanticHighlightClassification.ExcludedCode] = undefined;
+tokenTypeMap[SemanticHighlightClassification.ExcludedCode] = CustomTokenType.excludedCode;
 tokenTypeMap[SemanticHighlightClassification.Identifier] = DefaultTokenType.variable;
 tokenTypeMap[SemanticHighlightClassification.Keyword] = CustomTokenType.plainKeyword;
 tokenTypeMap[SemanticHighlightClassification.ControlKeyword] = CustomTokenType.controlKeyword;
