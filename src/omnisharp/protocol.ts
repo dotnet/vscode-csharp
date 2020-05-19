@@ -284,11 +284,9 @@ export interface AutoCompleteResponse {
 
 export interface ProjectInformationResponse {
     MsBuildProject: MSBuildProject;
-    DotNetProject: DotNetProject;
 }
 
-export enum DiagnosticStatus
-{
+export enum DiagnosticStatus {
     Processing = 0,
     Ready = 1
 }
@@ -334,6 +332,9 @@ export interface MSBuildProject {
     OutputPath: string;
     IsExe: boolean;
     IsUnityProject: boolean;
+    IsWebProject: boolean;
+    IsBlazorWebAssemblyStandalone: boolean;
+    IsBlazorWebAssemblyHosted: boolean;
 }
 
 export interface TargetFramework {
@@ -475,13 +476,33 @@ export namespace V2 {
         export const GetTestStartInfo = '/v2/getteststartinfo';
         export const RunTest = '/v2/runtest';
         export const RunAllTestsInClass = "/v2/runtestsinclass";
+        export const RunTestsInContext = "/v2/runtestsincontext";
         export const DebugTestGetStartInfo = '/v2/debugtest/getstartinfo';
         export const DebugTestsInClassGetStartInfo = '/v2/debugtestsinclass/getstartinfo';
+        export const DebugTestsInContextGetStartInfo = '/v2/debugtestsincontext/getstartinfo';
         export const DebugTestLaunch = '/v2/debugtest/launch';
         export const DebugTestStop = '/v2/debugtest/stop';
+        export const DiscoverTests = '/v2/discovertests';
         export const BlockStructure = '/v2/blockstructure';
         export const CodeStructure = '/v2/codestructure';
-        export const DiscoverTests = '/v2/discovertests';
+        export const Highlight = '/v2/highlight';
+    }
+
+    export interface SemanticHighlightSpan {
+        StartLine: number;
+        StartColumn: number;
+        EndLine: number;
+        EndColumn: number;
+        Type: number;
+        Modifiers: number[];
+    }
+
+    export interface SemanticHighlightRequest extends Request {
+        Range?: Range;
+    }
+
+    export interface SemanticHighlightResponse {
+        Spans: SemanticHighlightSpan[];
     }
 
     export interface Point {
@@ -555,12 +576,13 @@ export namespace V2 {
         Name: string;
         Version: string;
     }
-    
+
     // dotnet-test endpoints
     interface BaseTestRequest extends Request {
         RunSettings: string;
         TestFrameworkName: string;
         TargetFrameworkVersion: string;
+        NoBuild?: boolean;
     }
 
     interface SingleTestRequest extends BaseTestRequest {
@@ -569,6 +591,11 @@ export namespace V2 {
 
     interface MultiTestRequest extends BaseTestRequest {
         MethodNames: string[];
+    }
+
+    interface TestsInContextRequest extends Request {
+        RunSettings?: string;
+        TargetFrameworkVersion?: string;
     }
 
     export interface DebugTestGetStartInfoRequest extends SingleTestRequest {
@@ -582,6 +609,9 @@ export namespace V2 {
         Arguments: string;
         WorkingDirectory: string;
         EnvironmentVariables: Map<string, string>;
+        Succeeded: boolean;
+        ContextHadNoTests: boolean;
+        FailureReason?: string;
     }
 
     export interface DebugTestLaunchRequest extends Request {
@@ -599,10 +629,9 @@ export namespace V2 {
 
     export interface DiscoverTestsRequest extends BaseTestRequest {
 
-    }    
-    
-    export interface TestInfo
-    {
+    }
+
+    export interface TestInfo {
         FullyQualifiedName: string;
         DisplayName: string;
         Source: string;
@@ -629,6 +658,12 @@ export namespace V2 {
     export interface RunTestsInClassRequest extends MultiTestRequest {
     }
 
+    export interface RunTestsInContextRequest extends TestsInContextRequest {
+    }
+
+    export interface DebugTestsInContextGetStartInfoRequest extends TestsInContextRequest {
+    }
+
     export module TestOutcomes {
         export const None = 'none';
         export const Passed = 'passed';
@@ -650,6 +685,7 @@ export namespace V2 {
         Failure: string;
         Pass: boolean;
         Results: DotNetTestResult[];
+        ContextHadNoTests: boolean;
     }
 
     export interface TestMessageEvent {
@@ -755,6 +791,16 @@ export function findNetFrameworkTargetFramework(project: MSBuildProject): Target
     return project.TargetFrameworks.find(tf => regexp.test(tf.ShortName));
 }
 
+export function findNet5TargetFramework(project: MSBuildProject): TargetFramework {
+    const targetFramework = project.TargetFrameworks.find(tf => tf.ShortName.startsWith('net5'));
+    // Temprorary workaround until changes to support the net5.0 TFM is settled. Some NuGet
+    // builds report the shortname as net50.
+    if (targetFramework !== undefined) {
+        targetFramework.ShortName = "net5.0";
+    }
+    return targetFramework;
+}
+
 export function findNetCoreAppTargetFramework(project: MSBuildProject): TargetFramework {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp'));
 }
@@ -764,7 +810,8 @@ export function findNetStandardTargetFramework(project: MSBuildProject): TargetF
 }
 
 export function isDotNetCoreProject(project: MSBuildProject): Boolean {
-    return findNetCoreAppTargetFramework(project) !== undefined ||
+    return findNet5TargetFramework(project) !== undefined ||
+        findNetCoreAppTargetFramework(project) !== undefined ||
         findNetStandardTargetFramework(project) !== undefined ||
         findNetFrameworkTargetFramework(project) !== undefined;
 }
@@ -807,7 +854,11 @@ export function findExecutableMSBuildProjects(projects: MSBuildProject[]) {
     let result: MSBuildProject[] = [];
 
     projects.forEach(project => {
-        if (project.IsExe && findNetCoreAppTargetFramework(project) !== undefined) {
+        const projectIsNotNetFramework = findNetCoreAppTargetFramework(project) !== undefined
+            || findNet5TargetFramework(project) !== undefined
+            || project.IsBlazorWebAssemblyStandalone;
+
+        if (project.IsExe && projectIsNotNetFramework) {
             result.push(project);
         }
     });

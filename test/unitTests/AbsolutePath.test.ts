@@ -12,13 +12,13 @@ suite(AbsolutePath.name, () => {
     let tmpPath: TmpAsset;
 
     setup(async () => {
-        tmpPath = await CreateTmpFile();   
+        tmpPath = await CreateTmpFile();
     });
 
     teardown(() => {
-        tmpPath.dispose(); 
+        tmpPath.dispose();
     });
-    
+
     test('Throws error when the passed value is not an absolute path', () => {
         expect(() => new AbsolutePath("somePath")).to.throw(Error);
     });

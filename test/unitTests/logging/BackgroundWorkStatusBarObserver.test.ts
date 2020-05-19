@@ -18,7 +18,7 @@ suite('BackgroundWorkStatusBarObserver', () => {
         show: () => { showCalled = true; },
         hide: () => { hideCalled = true; }
     };
-        let observer = new BackgroundWorkStatusBarObserver(statusBarItem);
+    let observer = new BackgroundWorkStatusBarObserver(statusBarItem);
 
     setup(() => {
         showCalled = false;

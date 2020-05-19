@@ -57,20 +57,12 @@ export class Advisor {
     }
 
     private _addOrUpdateProjectFileCount(info: protocol.ProjectInformationResponse): void {
-        if (info.DotNetProject && info.DotNetProject.SourceFiles) {
-            this._updateProjectFileCount(info.DotNetProject.Path, info.DotNetProject.SourceFiles.length);
-        }
-
         if (info.MsBuildProject && info.MsBuildProject.SourceFiles) {
             this._updateProjectFileCount(info.MsBuildProject.Path, info.MsBuildProject.SourceFiles.length);
         }
     }
 
     private _removeProjectFileCount(info: protocol.ProjectInformationResponse): void {
-        if (info.DotNetProject && info.DotNetProject.SourceFiles) {
-            delete this._projectSourceFileCounts[info.DotNetProject.Path];
-        }
-
         if (info.MsBuildProject && info.MsBuildProject.SourceFiles) {
             delete this._projectSourceFileCounts[info.MsBuildProject.Path];
         }
@@ -169,7 +161,7 @@ class DiagnosticsProvider extends AbstractSupport {
             vscode.workspace.onDidChangeTextDocument(event => this._onDocumentOpenOrChange(event.document), this),
             vscode.workspace.onDidCloseTextDocument(this._onDocumentClose, this),
             vscode.window.onDidChangeActiveTextEditor(event => this._onDidChangeActiveTextEditor(event), this),
-            vscode.window.onDidChangeWindowState(event => this._OnDidChangeWindowState(event), this,),
+            vscode.window.onDidChangeWindowState(event => this._OnDidChangeWindowState(event), this),
         );
     }
 
@@ -248,6 +240,11 @@ class DiagnosticsProvider extends AbstractSupport {
                         this._diagnostics.delete(document.uri);
                     }
 
+                    return;
+                }
+
+                // No problems published for virtual files
+                if (isVirtualCSharpDocument(document)) {
                     return;
                 }
 
@@ -340,17 +337,18 @@ class DiagnosticsProvider extends AbstractSupport {
         return { diagnostic: diagnostic, fileName: quickFix.FileName };
     }
 
-    private _getDiagnosticDisplay(quickFix: protocol.QuickFix, severity: vscode.DiagnosticSeverity | "hidden"): { severity: vscode.DiagnosticSeverity | "hidden", isFadeout: boolean }
-    {
-        // CS0162 & CS8019 => Unnused using and unreachable code.
-        // These hard coded values bring some goodnes of fading even when analyzers are disabled.
-        let isFadeout = (quickFix.Tags && !!quickFix.Tags.find(x => x.toLowerCase() == 'unnecessary')) || quickFix.Id == "CS0162" || quickFix.Id == "CS8019";
+    private _getDiagnosticDisplay(quickFix: protocol.QuickFix, severity: vscode.DiagnosticSeverity | "hidden"): { severity: vscode.DiagnosticSeverity | "hidden", isFadeout: boolean } {
+        // These hard coded values bring the goodness of fading even when analyzers are disabled.
+        let isFadeout = (quickFix.Tags && !!quickFix.Tags.find(x => x.toLowerCase() == 'unnecessary'))
+            || quickFix.Id == "CS0162"  // CS0162: Unreachable code
+            || quickFix.Id == "CS0219"  // CS0219: Unused variable
+            || quickFix.Id == "CS8019"; // CS8019: Unnecessary using
 
         if (isFadeout && quickFix.LogLevel.toLowerCase() === 'hidden' || quickFix.LogLevel.toLowerCase() === 'none') {
             // Theres no such thing as hidden severity in VSCode,
             // however roslyn uses commonly analyzer with hidden to fade out things.
             // Without this any of those doesn't fade anything in vscode.
-            return { severity: vscode.DiagnosticSeverity.Hint , isFadeout };
+            return { severity: vscode.DiagnosticSeverity.Hint, isFadeout };
         }
 
         return { severity: severity, isFadeout };

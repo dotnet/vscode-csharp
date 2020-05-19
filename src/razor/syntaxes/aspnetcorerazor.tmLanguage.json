@@ -1,6 +1,10 @@
 {
   "name": "ASP.NET Razor",
   "scopeName": "text.aspnetcorerazor",
+  "fileTypes": [
+    "razor",
+    "cshtml"
+  ],
   "patterns": [
     {
       "include": "#razor-control-structures"
@@ -9,6 +13,54 @@
       "include": "text.html.basic"
     }
   ],
+  "injections": {
+    "R:text.aspnetcorerazor": {
+      "patterns": [
+        {
+          "name": "meta.structure.template.razor",
+          "begin": "(@)(?=\\<)",
+          "beginCaptures": {
+            "1": {
+              "patterns": [
+                {
+                  "include": "#transition"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "include": "#wellformed-html"
+            }
+          ],
+          "end": "(?<=\\>)"
+        }
+      ]
+    },
+    "L:meta.structure.razor.codeblock - (meta.statement | string.quoted | comment), L:meta.structure.razor.directive.codeblock - (meta.statement | string.quoted | comment)": {
+      "patterns": [
+        {
+          "begin": "(\\{)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.curlybrace.open.cs"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#razor-codeblock-body"
+            }
+          ],
+          "end": "(\\})",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.curlybrace.close.cs"
+            }
+          }
+        }
+      ]
+    }
+  },
   "repository": {
     "razor-control-structures": {
       "patterns": [
@@ -44,6 +96,7 @@
       "name": "keyword.control.cshtml.transition"
     },
     "razor-codeblock": {
+      "name": "meta.structure.razor.codeblock",
       "begin": "(@)(\\{)",
       "beginCaptures": {
         "1": {

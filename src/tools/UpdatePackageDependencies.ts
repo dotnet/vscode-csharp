@@ -87,7 +87,7 @@ export async function updatePackageDependencies(): Promise<void> {
         verifyVersionSubstringCount(dependency.installTestPath);
     }
 
-    // Next take another pass to try and update to the URL  
+    // Next take another pass to try and update to the URL
     const eventStream = new EventStream();
     eventStream.subscribe((event: Event.BaseEvent) => {
         switch (event.type) {
@@ -169,11 +169,11 @@ function verifyVersionSubstringCount(value: string, shouldContainVersion = false
         regexp.lastIndex = 0;
         return retVal;
     };
-    
+
     if (!value) {
         return;
     }
-    
+
     const dottedMatches: number = getMatchCount(dottedVersionRegExp, value);
     const dashedMatches: number = getMatchCount(dashedVersionRegExp, value);
     const matchCount: number = dottedMatches + dashedMatches;
@@ -181,7 +181,7 @@ function verifyVersionSubstringCount(value: string, shouldContainVersion = false
     if (shouldContainVersion && matchCount == 0) {
         throw new Error(`Version number not found in '${value}'.`);
     }
-    if (matchCount > 1) {
+    if (matchCount > 2) {
         throw new Error(`Ambiguous version pattern found in '${value}'. Multiple version strings found.`);
     }
 }

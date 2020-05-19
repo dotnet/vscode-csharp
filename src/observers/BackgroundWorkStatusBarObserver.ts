@@ -10,17 +10,14 @@ import { DiagnosticStatus } from '../omnisharp/protocol';
 
 export class BackgroundWorkStatusBarObserver extends BaseStatusBarItemObserver {
     public post = (event: BaseEvent) => {
-        if(event.type === EventType.ProjectDiagnosticStatus)
-        {
+        if (event.type === EventType.ProjectDiagnosticStatus) {
             let asProjectEvent = <OmnisharpProjectDiagnosticStatus>event;
 
-            if(asProjectEvent.message.Status === DiagnosticStatus.Processing)
-            {
+            if (asProjectEvent.message.Status === DiagnosticStatus.Processing) {
                 let projectFile = asProjectEvent.message.ProjectFilePath.replace(/^.*[\\\/]/, '');
                 this.SetAndShowStatusBar(`$(sync~spin) Analyzing ${projectFile}`, 'o.showOutput', null, `Analyzing ${projectFile}`);
             }
-            else
-            {
+            else {
                 this.ResetAndHideStatusBar();
             }
         }
