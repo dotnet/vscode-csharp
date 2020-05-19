@@ -122,33 +122,33 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
     test('Returns experiment packages with install test path depending on install path and version', () => {
         let inputPackages = <Package[]>[
             {
-                "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-                "url": "https://download.visualstudio.microsoft.com/download/pr/100505821/c570a9e20dbf7172f79850babd058872/omnisharp-win-x64-1.28.0.zip",
-                "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.28.0.zip",
-                "installPath": ".omnisharp",
-                "platforms": [
+                description: "OmniSharp for Windows (.NET 4.6 / x64)",
+                url: "https://download.visualstudio.microsoft.com/download/pr/100505821/c570a9e20dbf7172f79850babd058872/omnisharp-win-x64-1.28.0.zip",
+                fallbackUrl: "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.28.0.zip",
+                installPath: ".omnisharp",
+                platforms: [
                     "win32"
                 ],
-                "architectures": [
+                architectures: [
                     "x86_64"
                 ],
-                "installTestPath": "./.omnisharp/OmniSharp.exe",
-                "platformId": "win-x64"
+                installTestPath: "./.omnisharp/OmniSharp.exe",
+                platformId: "win-x64"
             },
             {
-                "description": "OmniSharp for OSX",
-                "url": "https://download.visualstudio.microsoft.com/download/pr/100505818/6b99c6a86da3221919158ca0f36a3e45/omnisharp-osx-1.28.0.zip",
-                "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.28.0.zip",
-                "installPath": ".omnisharp",
-                "platforms": [
+                description: "OmniSharp for OSX",
+                url: "https://download.visualstudio.microsoft.com/download/pr/100505818/6b99c6a86da3221919158ca0f36a3e45/omnisharp-osx-1.28.0.zip",
+                fallbackUrl: "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.28.0.zip",
+                installPath: ".omnisharp",
+                platforms: [
                     "darwin"
                 ],
-                "binaries": [
+                binaries: [
                     "./mono.osx",
                     "./run"
                 ],
-                "installTestPath": "./.omnisharp/mono.osx",
-                "platformId": "osx"
+                installTestPath: "./.omnisharp/mono.osx",
+                platformId: "osx"
             },
         ];
 
@@ -162,32 +162,32 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
         let version = "0.0.0";
         let inputPackages = <Package[]>[
             {
-                "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-                "url": "https://download.visualstudio.microsoft.com/download/pr/100505821/c570a9e20dbf7172f79850babd058872/omnisharp-win-x64-1.28.0.zip",
-                "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.28.0.zip",
-                "installPath": ".omnisharp",
-                "platforms": [
+                description: "OmniSharp for Windows (.NET 4.6 / x64)",
+                url: "https://download.visualstudio.microsoft.com/download/pr/100505821/c570a9e20dbf7172f79850babd058872/omnisharp-win-x64-1.28.0.zip",
+                fallbackUrl: "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.28.0.zip",
+                installPath: ".omnisharp",
+                platforms: [
                     "win32"
                 ],
-                "architectures": [
+                architectures: [
                     "x86_64"
                 ],
-                "installTestPath": "./.omnisharp/OmniSharp.exe",
-                "platformId": "win-x64"
+                installTestPath: "./.omnisharp/OmniSharp.exe",
+                platformId: "win-x64"
             },
             {
-                "description": "Some other package - no experimental id",
-                "url": "https://download.visualstudio.microsoft.com/download/pr/100505818/6b99c6a86da3221919158ca0f36a3e45/omnisharp-osx-1.28.0.zip",
-                "fallbackUrl": "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.28.0.zip",
-                "installPath": ".omnisharp",
-                "platforms": [
+                description: "Some other package - no experimental id",
+                url: "https://download.visualstudio.microsoft.com/download/pr/100505818/6b99c6a86da3221919158ca0f36a3e45/omnisharp-osx-1.28.0.zip",
+                fallbackUrl: "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.28.0.zip",
+                installPath: ".omnisharp",
+                platforms: [
                     "darwin"
                 ],
-                "binaries": [
+                binaries: [
                     "./mono.osx",
                     "./run"
                 ],
-                "installTestPath": "./.omnisharp/mono.osx",
+                installTestPath: "./.omnisharp/mono.osx",
             },
         ];
 
