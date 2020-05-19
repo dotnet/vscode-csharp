@@ -482,6 +482,7 @@ export namespace V2 {
         export const DebugTestsInContextGetStartInfo = '/v2/debugtestsincontext/getstartinfo';
         export const DebugTestLaunch = '/v2/debugtest/launch';
         export const DebugTestStop = '/v2/debugtest/stop';
+        export const DiscoverTests = '/v2/discovertests';
         export const BlockStructure = '/v2/blockstructure';
         export const CodeStructure = '/v2/codestructure';
         export const Highlight = '/v2/highlight';
@@ -577,18 +578,19 @@ export namespace V2 {
     }
 
     // dotnet-test endpoints
-    interface SingleTestRequest extends Request {
-        MethodName: string;
+    interface BaseTestRequest extends Request {
         RunSettings: string;
         TestFrameworkName: string;
         TargetFrameworkVersion: string;
+        NoBuild?: boolean;
     }
 
-    interface MultiTestRequest extends Request {
+    interface SingleTestRequest extends BaseTestRequest {
+        MethodName: string;
+    }
+
+    interface MultiTestRequest extends BaseTestRequest {
         MethodNames: string[];
-        RunSettings: string;
-        TestFrameworkName: string;
-        TargetFrameworkVersion: string;
     }
 
     interface TestsInContextRequest extends Request {
@@ -623,6 +625,22 @@ export namespace V2 {
     }
 
     export interface DebugTestStopResponse {
+    }
+
+    export interface DiscoverTestsRequest extends BaseTestRequest {
+
+    }
+
+    export interface TestInfo {
+        FullyQualifiedName: string;
+        DisplayName: string;
+        Source: string;
+        CodeFilePath: string;
+        LineNumber: number;
+    }
+
+    export interface DiscoverTestsResponse {
+        Tests: TestInfo[];
     }
 
     export interface GetTestStartInfoRequest extends SingleTestRequest {
