@@ -1,4 +1,4 @@
-## Known Issues in 1.21.19
+## Known Issues in 1.22.0
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
@@ -8,7 +8,7 @@
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
-## 1.21.19 (Not yet released)
+## 1.22.0 (Not yet released)
 * Add setting for enabling go to decompilation (PR: [#3774](https://github.com/OmniSharp/omnisharp-vscode/pull/3774))
 * Add experimental Semantic Highlighter `csharp.semanticHighlighting.enabled` ([#3565](https://github.com/OmniSharp/omnisharp-vscode/issues/3565), PR: [#3667](https://github.com/OmniSharp/omnisharp-vscode/pull/3667)
 * Add commands for Run and Debug Tests in Context (PR: [#3772](https://github.com/OmniSharp/omnisharp-vscode/pull/3772), PR: [omnisharp-roslyn/#1782](https://github.com/OmniSharp/omnisharp-roslyn/pull/1782))
