@@ -955,78 +955,6 @@
     ],
     "debuggers": [
       {
-        "type": "blazorwasm",
-        "label": "Blazor WebAssembly Debug",
-        "initialConfigurations": [
-          {
-            "type": "blazorwasm",
-            "name": "Launch and Debug Blazor WebAssembly Application",
-            "request": "launch"
-          }
-        ],
-        "configurationAttributes": {
-          "launch": {
-            "properties": {
-              "cwd": {
-                "type": "string",
-                "description": "The directory of the Blazor WebAssembly app, defaults to the workspace folder.",
-                "default": "${workspaceFolder}"
-              },
-              "url": {
-                "type": "string",
-                "description": "The URL of the application",
-                "default": "https://localhost:5001"
-              },
-              "browser": {
-                "type": "string",
-                "description": "The debugging browser to launch (Edge or Chrome)",
-                "default": "chrome",
-                "enum": [
-                  "chrome",
-                  "edge"
-                ]
-              },
-              "trace": {
-                "type": [
-                  "boolean",
-                  "string"
-                ],
-                "default": "true",
-                "enum": [
-                  "verbose",
-                  true
-                ],
-                "description": "If true, verbose logs from JS debugger are sent to log file. If 'verbose', send logs to console."
-              },
-              "hosted": {
-                "type": "boolean",
-                "default": "false",
-                "description": "True if the app is a hosted Blazor WebAssembly app, false otherwise."
-              },
-              "webRoot": {
-                "type": "string",
-                "default": "${workspaceFolder}",
-                "description": "Specifies the absolute path to the webserver root."
-              },
-              "timeout": {
-                "type": "number",
-                "default": 30000,
-                "description": "Retry for this number of milliseconds to connect to browser."
-              },
-              "program": {
-                "type": "string",
-                "default": "${workspaceFolder}/Server/bin/Debug/<target-framework>/<target-dll>",
-                "description": "The path of the DLL to execute when launching a hosted server app"
-              },
-              "env": {
-                "type": "object",
-                "description": "Environment variables passed to dotnet. Only valid for hosted apps."
-              }
-            }
-          }
-        }
-      },
-      {
         "type": "coreclr",
         "label": ".NET Core",
         "enableBreakpointsFor": {
@@ -3145,6 +3073,78 @@
                 "type": "boolean",
                 "description": "When true (the default state), the debugger will attempt faster evaluation by simulating execution of simple properties and methods.",
                 "default": true
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "blazorwasm",
+        "label": "Blazor WebAssembly Debug",
+        "initialConfigurations": [
+          {
+            "type": "blazorwasm",
+            "name": "Launch and Debug Blazor WebAssembly Application",
+            "request": "launch"
+          }
+        ],
+        "configurationAttributes": {
+          "launch": {
+            "properties": {
+              "cwd": {
+                "type": "string",
+                "description": "The directory of the Blazor WebAssembly app, defaults to the workspace folder.",
+                "default": "${workspaceFolder}"
+              },
+              "url": {
+                "type": "string",
+                "description": "The URL of the application",
+                "default": "https://localhost:5001"
+              },
+              "browser": {
+                "type": "string",
+                "description": "The debugging browser to launch (Edge or Chrome)",
+                "default": "chrome",
+                "enum": [
+                  "chrome",
+                  "edge"
+                ]
+              },
+              "trace": {
+                "type": [
+                  "boolean",
+                  "string"
+                ],
+                "default": "true",
+                "enum": [
+                  "verbose",
+                  true
+                ],
+                "description": "If true, verbose logs from JS debugger are sent to log file. If 'verbose', send logs to console."
+              },
+              "hosted": {
+                "type": "boolean",
+                "default": "false",
+                "description": "True if the app is a hosted Blazor WebAssembly app, false otherwise."
+              },
+              "webRoot": {
+                "type": "string",
+                "default": "${workspaceFolder}",
+                "description": "Specifies the absolute path to the webserver root."
+              },
+              "timeout": {
+                "type": "number",
+                "default": 30000,
+                "description": "Retry for this number of milliseconds to connect to browser."
+              },
+              "program": {
+                "type": "string",
+                "default": "${workspaceFolder}/Server/bin/Debug/<target-framework>/<target-dll>",
+                "description": "The path of the DLL to execute when launching a hosted server app"
+              },
+              "env": {
+                "type": "object",
+                "description": "Environment variables passed to dotnet. Only valid for hosted apps."
               }
             }
           }
