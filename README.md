@@ -20,6 +20,19 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 -   [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 -   [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
+## What's new in 1.21.19
+-   Add setting for enabling go to decompilation (PR: [#3774](https://github.com/OmniSharp/omnisharp-vscode/pull/3774))
+-   Add experimental Semantic Highlighter `csharp.semanticHighlighting.enabled` ([#3565](https://github.com/OmniSharp/omnisharp-vscode/issues/3565), PR: [#3667](https://github.com/OmniSharp/omnisharp-vscode/pull/3667)
+-   Add commands for Run and Debug Tests in Context (PR: [#3772](https://github.com/OmniSharp/omnisharp-vscode/pull/3772), PR: [omnisharp-roslyn/#1782](https://github.com/OmniSharp/omnisharp-roslyn/pull/1782))
+-   Do not add references CodeLens to Dispose methods ([#3243](https://github.com/OmniSharp/omnisharp-vscode/issues/3243), PR: [#3780](https://github.com/OmniSharp/omnisharp-vscode/pull/3780))
+-   Add Visual Studio 2019 themes with semantic colors (PR: [#3790](https://github.com/OmniSharp/omnisharp-vscode/pull/3790))
+-   Added support for `WarningsAsErrors` in csproj files (PR: [omnisharp-roslyn/#1779](https://github.com/OmniSharp/omnisharp-roslyn/pull/1779))
+-   Added support for `WarningsNotAsErrors` in csproj files ([omnisharp-roslyn/#1681](https://github.com/OmniSharp/omnisharp-roslyn/issues/1681), PR: [#1784](https://github.com/OmniSharp/omnisharp-roslyn/pull/1784))
+-   Improved MSBuild scoring system ([omnisharp-roslyn/#1783](https://github.com/OmniSharp/omnisharp-roslyn/issues/1783), PR: [omnisharp-roslyn/#1797](https://github.com/OmniSharp/omnisharp-roslyn/pull/1797))
+-   Updated OmniSharp.Extensions.LanguageServer to `0.14.2` to fix synchronisation (PR: [omnisharp-roslyn/#1791](https://github.com/OmniSharp/omnisharp-roslyn/pull/1791))
+-   Add test discovery and NoBuild option to test requests (PR: [omnisharp-roslyn/#1719](https://github.com/OmniSharp/omnisharp-roslyn/pull/1719))
+
+
 ## What's new in 1.21.18
 -   Fadeout unused variable names ([#1324](https://github.com/OmniSharp/omnisharp-vscode/issues/1324), PR: [#3733](https://github.com/OmniSharp/omnisharp-vscode/pull/3733))
 -   Updated debugger (PR: [#3729](https://github.com/OmniSharp/omnisharp-vscode/pull/3729))
@@ -39,15 +52,21 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 -   Add `typeparam` documentation comments to text description ([#3516](https://github.com/OmniSharp/omnisharp-vscode/issues/3516), PR: [omnisharp-roslyn/#1749](https://github.com/OmniSharp/omnisharp-roslyn/pull/1749))
 -   Tag `#region` blocks appropriately in the block structure service ([#2621](https://github.com/OmniSharp/omnisharp-vscode/issues/2621), PR: [omnisharp-roslyn/#1748](https://github.com/OmniSharp/omnisharp-roslyn/pull/1748))
 
-## What's new in 1.21.16
+### Emmet support in Razor files
 
--   Support for .NET Core 3.1 in csx files (PR: [omnisharp-roslyn/#1731](https://github.com/OmniSharp/omnisharp-roslyn/pull/1731))
--   Update the minimal MSBuild to better support .NET 5 Previews ([#3653](https://github.com/OmniSharp/omnisharp-vscode/issues/3653), PR: [omnisharp-roslyn/#1746](https://github.com/OmniSharp/omnisharp-roslyn/pull/1746))
+To enable emmet support, add the following to your settings.json:
 
-## What's new in 1.21.15
+```json
+"emmet.includeLanguages": {
+    "aspnetcorerazor": "html"
+}
+```
 
--   Fixed freezing and unresponsiveness when opening folder with many nested sub-folders (PR: [#3681](https://github.com/OmniSharp/omnisharp-vscode/pull/3681))
--   Fixed handling of dismiss response to assets prompt (PR: [#3678](https://github.com/OmniSharp/omnisharp-vscode/pull/3678))
+### Semantic Highlighting
+
+The C# semantic highlighting support is in preview. To enable, set `editor.semanticHighlighting.enabled` and `csharp.semanticHighlighting.enabled` to `true` in your settings. Semantic highlighting is only provided for code files that are part of the active project.
+
+To really see the difference, try the new Visual Studio 2019 Light and Dark themes with semantic colors that closely match Visual Studio 2019.
 
 ### Supported Operating Systems for Debugging
 
