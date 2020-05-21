@@ -3144,6 +3144,26 @@
     ],
     "semanticTokenTypes": [
       {
+        "id": "razorTagHelperElement",
+        "description": "A Razor TagHelper Element"
+      },
+      {
+        "id": "razorTagHelperAttribute",
+        "description": "A Razor TagHelper Attribute"
+      },
+      {
+        "id": "razorTransition",
+        "description": "A Razor transition"
+      },
+      {
+        "id": "razorDirectiveAttribute",
+        "description": "A Razor Directive Attribute"
+      },
+      {
+        "id": "razorDirectiveColon",
+        "description": "A colon between directive attribute parameters"
+      },
+      {
         "id": "plainKeyword",
         "description": "Represents a keyword"
       },
@@ -3242,6 +3262,16 @@
     ],
     "semanticTokenModifiers": [],
     "semanticTokenScopes": [
+      {
+        "language": "aspnetcorerazor",
+        "scopes": {
+          "razorTagHelperElement": [ "entity.name.class.element.taghelper" ],
+          "razorTagHelperAttribute": [ "entity.name.class.attribute.taghelper" ],
+          "razorTransition": [ "keyword.control.razor.transition" ],
+          "razorDirectiveAttribute": [ "keyword.control.razor.directive.attribute", "keyword.control.cshtml.directive.attribute" ],
+          "razorDirectiveColon": [ "keyword.control.razor.directive.colon", "keyword.control.cshtml.directive.colon" ]
+        }
+      },
       {
         "language": "csharp",
         "scopes": {
