@@ -158,7 +158,7 @@ Note that the pipe in the below examples indicates the cursor.
 * Type `<form |`, hit ctrl + space, search for `asp-route-...`, commit the completion. Ensure that it auto-completes the attribute to: `<form asp-route-|=""`. Type `foo` and then hit tab. Cursor should be inside of the double quotes: `<form asp-route-foo="|"`.
 
 ##### TagHelper colorization
-* Typing `<environment></environment>` should change the color of that tag to a blue-green color in the dark theme or a darker blue in the light theme. These colors should be visually distinct from html elements on the page while also not being the same color as an invalid element (`<notatag></notatag>` for an example).
+* Typing `<environment include="Development" notcolored="differently"></environment>` should change the color of `environment` and `include` (but not `notcolored`)to a blue-green color in the dark theme or a darker blue in the light theme. These colors should be visually distinct from html elements on the page while also not being the same color as an invalid element (`<notatag></notatag>` for an example).
 
 ##### Razor Diagnostics
 * Typing `@{ <strong> }` results in errors. One error should be about the "strong" tag missing a closing tag.
