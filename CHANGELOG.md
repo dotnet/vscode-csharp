@@ -19,6 +19,9 @@
 * Improved MSBuild scoring system ([omnisharp-roslyn/#1783](https://github.com/OmniSharp/omnisharp-roslyn/issues/1783), PR: [omnisharp-roslyn/#1797](https://github.com/OmniSharp/omnisharp-roslyn/pull/1797))
 * Updated OmniSharp.Extensions.LanguageServer to `0.14.2` to fix synchronisation (PR: [omnisharp-roslyn/#1791](https://github.com/OmniSharp/omnisharp-roslyn/pull/1791))
 * Add test discovery and NoBuild option to test requests (PR: [omnisharp-roslyn/#1719](https://github.com/OmniSharp/omnisharp-roslyn/pull/1719))
+* Updated Razor support
+  * Enable Semantic Highlighting for Razor TagHelpers and Blazor components ([aspnetcore#21713](https://github.com/dotnet/aspnetcore/issues/21713))
+* Add support for Blazor WebAssembly-specific debug adapter ([dotnet/aspnetcore-tooling#1885](https://github.com/dotnet/aspnetcore-tooling/pull/1885))
 
 ## 1.21.18 (May 5, 2020)
 * Fadeout unused variable names ([#1324](https://github.com/OmniSharp/omnisharp-vscode/issues/1324), PR: [#3733](https://github.com/OmniSharp/omnisharp-vscode/pull/3733))

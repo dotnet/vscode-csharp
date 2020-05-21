@@ -31,7 +31,7 @@
   ],
   "defaults": {
     "omniSharp": "1.35.2",
-    "razor": "1.0.0-alpha3-5.0.0-preview.3.20176.8"
+    "razor": "1.0.0-alpha3-5.0.0-preview6.20271.2"
   },
   "main": "./dist/extension",
   "scripts": {
@@ -80,7 +80,7 @@
     "http-proxy-agent": "2.1.0",
     "https-proxy-agent": "^3.0.1",
     "jsonc-parser": "2.0.3",
-    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/d48b3dd6-2eac-41f4-b7e9-f7008908917c/7f5df2f7ce62629d29b9d07b4851ce9b/microsoft.aspnetcore.razor.vscode-5.0.0-preview.3.20176.8.tgz",
+    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/d2ffba2f-7433-49b7-9b8e-d024e5b0286d/fee6bb257d7e01b1fd07d996ab27917f/microsoft.aspnetcore.razor.vscode-5.0.0-preview.6.20271.2.tgz",
     "mkdirp": "^1.0.3",
     "node-filter-async": "1.1.1",
     "remove-bom-buffer": "3.0.0",
@@ -303,8 +303,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/d48b3dd6-2eac-41f4-b7e9-f7008908917c/63a80df6345ade745ba4ab05b5c02348/razorlanguageserver-win-x64-5.0.0-preview.3.20176.8.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x64-5.0.0-preview.3.20176.8.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/d2ffba2f-7433-49b7-9b8e-d024e5b0286d/65ab01c1ecec51039fb991e721c5d8f7/razorlanguageserver-win-x64-5.0.0-preview.6.20271.2.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x64-5.0.0-preview.6.20271.2.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -316,8 +316,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/d48b3dd6-2eac-41f4-b7e9-f7008908917c/3572052bd5787c0187803ce7fa801d4f/razorlanguageserver-win-x86-5.0.0-preview.3.20176.8.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x86-5.0.0-preview.3.20176.8.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/d2ffba2f-7433-49b7-9b8e-d024e5b0286d/85263ae6d125ce51a303e2fe2ffb5c03/razorlanguageserver-win-x86-5.0.0-preview.6.20271.2.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x86-5.0.0-preview.6.20271.2.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -329,8 +329,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/d48b3dd6-2eac-41f4-b7e9-f7008908917c/57125c181c3b9dce2157e40d1623e8c8/razorlanguageserver-linux-x64-5.0.0-preview.3.20176.8.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-linux-x64-5.0.0-preview.3.20176.8.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/d2ffba2f-7433-49b7-9b8e-d024e5b0286d/9c788a8e0d88a3b8a66445b5b303acd3/razorlanguageserver-linux-x64-5.0.0-preview.6.20271.2.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-linux-x64-5.0.0-preview.6.20271.2.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -345,8 +345,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/d48b3dd6-2eac-41f4-b7e9-f7008908917c/f5508e6670d0d5de3be09b1b8bc9a484/razorlanguageserver-osx-x64-5.0.0-preview.3.20176.8.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-osx-x64-5.0.0-preview.3.20176.8.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/d2ffba2f-7433-49b7-9b8e-d024e5b0286d/cccf1e1e059aed5e9fbf68119a16086e/razorlanguageserver-osx-x64-5.0.0-preview.6.20271.2.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-osx-x64-5.0.0-preview.6.20271.2.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -364,6 +364,7 @@
   },
   "activationEvents": [
     "onDebugInitialConfigurations",
+    "onDebugResolve:blazorwasm",
     "onDebugResolve:coreclr",
     "onDebugResolve:clr",
     "onLanguage:csharp",
@@ -3076,9 +3077,101 @@
             }
           }
         }
+      },
+      {
+        "type": "blazorwasm",
+        "label": "Blazor WebAssembly Debug",
+        "initialConfigurations": [
+          {
+            "type": "blazorwasm",
+            "name": "Launch and Debug Blazor WebAssembly Application",
+            "request": "launch"
+          }
+        ],
+        "configurationAttributes": {
+          "launch": {
+            "properties": {
+              "cwd": {
+                "type": "string",
+                "description": "The directory of the Blazor WebAssembly app, defaults to the workspace folder.",
+                "default": "${workspaceFolder}"
+              },
+              "url": {
+                "type": "string",
+                "description": "The URL of the application",
+                "default": "https://localhost:5001"
+              },
+              "browser": {
+                "type": "string",
+                "description": "The debugging browser to launch (Edge or Chrome)",
+                "default": "chrome",
+                "enum": [
+                  "chrome",
+                  "edge"
+                ]
+              },
+              "trace": {
+                "type": [
+                  "boolean",
+                  "string"
+                ],
+                "default": "true",
+                "enum": [
+                  "verbose",
+                  true
+                ],
+                "description": "If true, verbose logs from JS debugger are sent to log file. If 'verbose', send logs to console."
+              },
+              "hosted": {
+                "type": "boolean",
+                "default": "false",
+                "description": "True if the app is a hosted Blazor WebAssembly app, false otherwise."
+              },
+              "webRoot": {
+                "type": "string",
+                "default": "${workspaceFolder}",
+                "description": "Specifies the absolute path to the webserver root."
+              },
+              "timeout": {
+                "type": "number",
+                "default": 30000,
+                "description": "Retry for this number of milliseconds to connect to browser."
+              },
+              "program": {
+                "type": "string",
+                "default": "${workspaceFolder}/Server/bin/Debug/<target-framework>/<target-dll>",
+                "description": "The path of the DLL to execute when launching a hosted server app"
+              },
+              "env": {
+                "type": "object",
+                "description": "Environment variables passed to dotnet. Only valid for hosted apps."
+              }
+            }
+          }
+        }
       }
     ],
     "semanticTokenTypes": [
+      {
+        "id": "razorTagHelperElement",
+        "description": "A Razor TagHelper Element"
+      },
+      {
+        "id": "razorTagHelperAttribute",
+        "description": "A Razor TagHelper Attribute"
+      },
+      {
+        "id": "razorTransition",
+        "description": "A Razor transition"
+      },
+      {
+        "id": "razorDirectiveAttribute",
+        "description": "A Razor Directive Attribute"
+      },
+      {
+        "id": "razorDirectiveColon",
+        "description": "A colon between directive attribute parameters"
+      },
       {
         "id": "plainKeyword",
         "description": "Represents a keyword"
@@ -3178,6 +3271,28 @@
     ],
     "semanticTokenModifiers": [],
     "semanticTokenScopes": [
+      {
+        "language": "aspnetcorerazor",
+        "scopes": {
+          "razorTagHelperElement": [
+            "entity.name.class.element.taghelper"
+          ],
+          "razorTagHelperAttribute": [
+            "entity.name.class.attribute.taghelper"
+          ],
+          "razorTransition": [
+            "keyword.control.razor.transition"
+          ],
+          "razorDirectiveAttribute": [
+            "keyword.control.razor.directive.attribute",
+            "keyword.control.cshtml.directive.attribute"
+          ],
+          "razorDirectiveColon": [
+            "keyword.control.razor.directive.colon",
+            "keyword.control.cshtml.directive.colon"
+          ]
+        }
+      },
       {
         "language": "csharp",
         "scopes": {

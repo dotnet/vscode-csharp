@@ -157,6 +157,9 @@ Note that the pipe in the below examples indicates the cursor.
 * Type `<cache |`, hit ctrl + space, search for `asp-vary-by-user`, commit the completion. Ensure that it auto-completes the attribute to: `<cache asp-vary-by-user`.
 * Type `<form |`, hit ctrl + space, search for `asp-route-...`, commit the completion. Ensure that it auto-completes the attribute to: `<form asp-route-|=""`. Type `foo` and then hit tab. Cursor should be inside of the double quotes: `<form asp-route-foo="|"`.
 
+##### TagHelper colorization
+* Typing `<environment include="Development" notcolored="differently"></environment>` should change the color of `environment` and `include` (but not `notcolored`)to a blue-green color in the dark theme or a darker blue in the light theme. These colors should be visually distinct from html elements on the page while also not being the same color as an invalid element (`<notatag></notatag>` for an example).
+
 ##### Razor Diagnostics
 * Typing `@{ <strong> }` results in errors. One error should be about the "strong" tag missing a closing tag.
 * Fixing the error and typing `</strong>` i.e. `@{ <strong></strong> }` results in the diagnostic going away.
@@ -214,6 +217,52 @@ To setup a test project to verify on you can do:
 ##### C# Diagnostics
 * When no changes have been performed on `Pages/Index.cshtml`, there are 0 errors.
 * Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file.
+
+##### Debugging with blazorwasm debug adapter
+
+###### Standalone app
+
+To set up a test project to verify on, create a new Blazor WebAssembly application using the dotnet CLI.
+
+```
+$ dotnet new blazorwasm -o DebugTestProject
+```
+
+1. Open the project in VS Code.
+2. Press <key>F5</key> to start a new debugging session.
+3. Select the "Blazor WebAssembly Debug" option.
+4. Run the newly-created launch configuration.
+5. Open Pages/Counter.razor and place a breakpoint in the `IncrementCount` method.
+6. Navigate to the Counter page in the browser and click the counter button.
+7. Verify that the breakpoint is hit.
+
+###### Hosted app
+
+Set up a test project to verify on by using the following dotnet CLI command. Note the `--hosted` flag.
+
+```
+$ dotnet new blazorwasm --hosted -o DebugHostedTestProject
+```
+
+1. Open the project in VS Code.
+2. Press <key>F5</key> to start a new debugging session.
+3. Ensure that the launch configuration contains the following properties, in addition to the defaults. Replace the target framework and target DLL fields as necessary.
+
+```
+{
+  "hosted": true,
+  "program": "${workspaceFolder}/Server/bin/Debug/<target-framework>/<target-dll>",
+  "cwd": "${workspaceFolder}/Server"
+}
+```
+
+4. Run the newly-crated launch configuration.
+5. Open Pages/Counter.razor and place a breakpoint in the `IncrementCount` method.
+6. Open the Controllers/WeatherForecastController.cs file and place a breakpoint in the GET handler.
+7. Navigate to the Counter page in the browser and click the counter button.
+8. Verify that the breakpoint in Counter.razor is hit.
+9. Navigate to the weather forecast page. Verify that the breakpoint in WeatherForecastController.cs is hit.
+
 
 ##### Components
 * Typing `<Counter>` prompts you with HTML completion for the `Counter` tag and on completion commit auto-completes the closing tag.
