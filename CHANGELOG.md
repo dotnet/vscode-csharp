@@ -1,10 +1,10 @@
-## Known Issues in 1.21.18
+## Known Issues in 1.21.19
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
   * Limited support for formatting
   * Error squiggles misaligned for expressions near the start of a new line
-  * Emmet based abbreviation expansion is not yet supported
+  * Emmet based abbreviation expansion is not yet supported (See note in readme for how to enable through your settings.json)
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 
@@ -13,6 +13,12 @@
 * Add experimental Semantic Highlighter `csharp.semanticHighlighting.enabled` ([#3565](https://github.com/OmniSharp/omnisharp-vscode/issues/3565), PR: [#3667](https://github.com/OmniSharp/omnisharp-vscode/pull/3667)
 * Add commands for Run and Debug Tests in Context (PR: [#3772](https://github.com/OmniSharp/omnisharp-vscode/pull/3772), PR: [omnisharp-roslyn/#1782](https://github.com/OmniSharp/omnisharp-roslyn/pull/1782))
 * Do not add references CodeLens to Dispose methods ([#3243](https://github.com/OmniSharp/omnisharp-vscode/issues/3243), PR: [#3780](https://github.com/OmniSharp/omnisharp-vscode/pull/3780))
+* Add Visual Studio 2019 themes with semantic colors (PR: [#3790](https://github.com/OmniSharp/omnisharp-vscode/pull/3790))
+* Added support for `WarningsAsErrors` in csproj files (PR: [omnisharp-roslyn/#1779](https://github.com/OmniSharp/omnisharp-roslyn/pull/1779))
+* Added support for `WarningsNotAsErrors` in csproj files ([omnisharp-roslyn/#1681](https://github.com/OmniSharp/omnisharp-roslyn/issues/1681), PR: [#1784](https://github.com/OmniSharp/omnisharp-roslyn/pull/1784))
+* Improved MSBuild scoring system ([omnisharp-roslyn/#1783](https://github.com/OmniSharp/omnisharp-roslyn/issues/1783), PR: [omnisharp-roslyn/#1797](https://github.com/OmniSharp/omnisharp-roslyn/pull/1797))
+* Updated OmniSharp.Extensions.LanguageServer to `0.14.2` to fix synchronisation (PR: [omnisharp-roslyn/#1791](https://github.com/OmniSharp/omnisharp-roslyn/pull/1791))
+* Add test discovery and NoBuild option to test requests (PR: [omnisharp-roslyn/#1719](https://github.com/OmniSharp/omnisharp-roslyn/pull/1719))
 
 ## 1.21.18 (May 5, 2020)
 * Fadeout unused variable names ([#1324](https://github.com/OmniSharp/omnisharp-vscode/issues/1324), PR: [#3733](https://github.com/OmniSharp/omnisharp-vscode/pull/3733))
