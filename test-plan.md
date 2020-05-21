@@ -260,8 +260,8 @@ $ dotnet new blazorwasm --hosted -o DebugHostedTestProject
 5. Open Pages/Counter.razor and place a breakpoint in the `IncrementCount` method.
 6. Open the Controllers/WeatherForecastController.cs file and place a breakpoint in the GET handler.
 7. Navigate to the Counter page in the browser and click the counter button.
-8. Verify that the breakpoint is hit.
-9. Navigate to the weather forecast page. Verify that the breakpoint is hit.
+8. Verify that the breakpoint in Counter.razor is hit.
+9. Navigate to the weather forecast page. Verify that the breakpoint in WeatherForecastController.cs is hit.
 
 
 ##### Components

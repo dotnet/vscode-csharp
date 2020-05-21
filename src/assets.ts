@@ -204,7 +204,7 @@ export class AssetGenerator {
 ]`;
             }
             case ProgramLaunchType.BlazorWebAssemblyStandalone: {
-                const standaloneLaunchConfigMassaged: string = indentJsonString(createBlazorWebAssemblyStandaloneLaunchConfiguration());
+                const standaloneLaunchConfigMassaged: string = indentJsonString(createBlazorWebAssemblyStandaloneLaunchConfiguration(this.computeWorkingDirectory()));
                 return `
 [
     ${standaloneLaunchConfigMassaged}
@@ -324,12 +324,13 @@ export function createBlazorWebAssemblyHostedLaunchConfiguration(programPath: st
 }`;
 }
 
-export function createBlazorWebAssemblyStandaloneLaunchConfiguration(): string {
+export function createBlazorWebAssemblyStandaloneLaunchConfiguration(workingDirectory: string): string {
     return `
 {
     "name": "Launch and Debug Standalone Blazor WebAssembly App",
     "type": "blazorwasm",
-    "request": "launch"
+    "request": "launch",
+    "cwd": "${util.convertNativePathToPosix(workingDirectory)}"
 }`;
 }
 
