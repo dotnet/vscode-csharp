@@ -598,6 +598,12 @@
             }
         },
         {
+            "scope": "punctuation.definition.comment",
+            "settings": {
+                "foreground": "#6A9955"
+            }
+        },
+        {
             "name": "Namespace",
             "scope": "entity.name.namespace",
             "settings": {
