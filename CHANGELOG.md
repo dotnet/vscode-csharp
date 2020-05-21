@@ -21,6 +21,7 @@
 * Add test discovery and NoBuild option to test requests (PR: [omnisharp-roslyn/#1719](https://github.com/OmniSharp/omnisharp-roslyn/pull/1719))
 * Updated Razor support
   * Enable Semantic Highlighting for Razor
+* Add support for Blazor-specific debug adapter ([dotnet/aspnetcore-tooling#1885](https://github.com/dotnet/aspnetcore-tooling/pull/1885))
 
 ## 1.21.18 (May 5, 2020)
 * Fadeout unused variable names ([#1324](https://github.com/OmniSharp/omnisharp-vscode/issues/1324), PR: [#3733](https://github.com/OmniSharp/omnisharp-vscode/pull/3733))

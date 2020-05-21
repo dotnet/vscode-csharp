@@ -218,6 +218,52 @@ To setup a test project to verify on you can do:
 * When no changes have been performed on `Pages/Index.cshtml`, there are 0 errors.
 * Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file.
 
+##### Debugging with blazorwasm debug adapter
+
+###### Standalone app
+
+To set up a test project to verify on, create a new Blazor WebAssembly application using the dotnet CLI.
+
+```
+$ dotnet new blazorwasm -o DebugTestProject
+```
+
+1. Open the project in VS Code.
+2. Press <key>F5</key> to start a new debugging session.
+3. Select the "Blazor WebAssembly Debug" option.
+4. Run the newly-created launch configuration.
+5. Open Pages/Counter.razor and place a breakpoint in the `IncrementCount` method.
+6. Navigate to the Counter page in the browser and click the counter button.
+7. Verify that the breakpoint is hit.
+
+###### Hosted app
+
+Set up a test project to verify on by using the following dotnet CLI command. Note the `--hosted` flag.
+
+```
+$ dotnet new blazorwasm --hosted -o DebugHostedTestProject
+```
+
+1. Open the project in VS Code.
+2. Press <key>F5</key> to start a new debugging session.
+3. Ensure that the launch configuration contains the following properties, in addition to the defaults. Replace the target framework and target DLL fields as necessary.
+
+```
+{
+  "hosted": true,
+  "program": "${workspaceFolder}/Server/bin/Debug/<target-framework>/<target-dll>",
+  "cwd": "${workspaceFolder}/Server"
+}
+```
+
+4. Run the newly-crated launch configuration.
+5. Open Pages/Counter.razor and place a breakpoint in the `IncrementCount` method.
+6. Open the Controllers/WeatherForecastController.cs file and place a breakpoint in the GET handler.
+7. Navigate to the Counter page in the browser and click the counter button.
+8. Verify that the breakpoint is hit.
+9. Navigate to the weather forecast page. Verify that the breakpoint is hit.
+
+
 ##### Components
 * Typing `<Counter>` prompts you with HTML completion for the `Counter` tag and on completion commit auto-completes the closing tag.
   - In the completion list that pops up ensure there's also a `YourProjectName.Pages.Counter` entry in the HTML completion list.
