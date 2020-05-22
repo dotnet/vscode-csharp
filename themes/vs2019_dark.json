@@ -604,6 +604,12 @@
             }
         },
         {
+            "scope": "punctuation.definition.string",
+            "settings": {
+                "foreground": "#ce9178"
+            }
+        },
+        {
             "name": "Namespace",
             "scope": "entity.name.namespace",
             "settings": {
