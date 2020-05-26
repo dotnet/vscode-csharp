@@ -5,7 +5,6 @@
   * Limited support for formatting
   * Error squiggles misaligned for expressions near the start of a new line
   * Emmet based abbreviation expansion is not yet supported (See note in readme for how to enable through your settings.json)
-  * Directive and TagHelper Attribute Completions are now committed contextually with `=`, `:` and ` ` commit characters. However, there's a known issue by which these characters will be added to the attribute value (`@att|` commit using `=` yields `@attributes="=|"` instead of `@attributes="|"` as intended). ([#22150](https://github.com/dotnet/aspnetcore/issues/22150))
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 * There is a known issue with invalid launch configurations being created for hosted Blazor WebAssembly apps. To resolve this issue, ensure that the `program` property is set in your `launch.json` and that `"hosted": true` is set.
