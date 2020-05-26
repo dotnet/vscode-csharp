@@ -22,6 +22,8 @@
 * Add test discovery and NoBuild option to test requests (PR: [omnisharp-roslyn/#1719](https://github.com/OmniSharp/omnisharp-roslyn/pull/1719))
 * Updated Razor support
   * Enable Semantic Highlighting for Razor TagHelpers and Blazor components ([aspnetcore#21713](https://github.com/dotnet/aspnetcore/issues/21713))
+  * Directive and TagHelper Attribute Completions are now committed contextually with `=`, `:` and ` ` commit characters. ([aspnetcore#21485](https://github.com/dotnet/aspnetcore/issues/21485))
+  * Removed TagHelper attribute completion snippet support as we felt the typing experience was superior without it.
 * Add support for Blazor WebAssembly-specific debug adapter ([dotnet/aspnetcore-tooling#1885](https://github.com/dotnet/aspnetcore-tooling/pull/1885))
 
 ## 1.21.18 (May 5, 2020)
