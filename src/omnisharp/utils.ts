@@ -77,10 +77,11 @@ export async function requestWorkspaceInformation(server: OmniSharpServer) {
         let blazorWebAssemblyProjectFound = false;
 
         for (const project of response.MsBuild.Projects) {
+            project.IsWebProject = isWebProject(project);
+
             const isProjectBlazorWebAssemblyProject = await isBlazorWebAssemblyProject(project);
             const isProjectBlazorWebAssemblyHosted = isBlazorWebAssemblyHosted(project, isProjectBlazorWebAssemblyProject);
 
-            project.IsWebProject = isWebProject(project);
             project.IsBlazorWebAssemblyHosted = blazorDetectionEnabled && isProjectBlazorWebAssemblyHosted;
             project.IsBlazorWebAssemblyStandalone = blazorDetectionEnabled && isProjectBlazorWebAssemblyProject && !project.IsBlazorWebAssemblyHosted;
 
