@@ -154,7 +154,6 @@ void Foo(){
 ##### TagHelper completion
 Note that the pipe in the below examples indicates the cursor.
 * Typing `<environment>` prompts you with HTML completion for the `environment` tag and on completion commit auto-completes the closing tag.
-* Type `<cache |`, hit ctrl + space, search for `asp-vary-by-user`, commit the completion. Ensure that it auto-completes the attribute to: `<cache asp-vary-by-user`.
 * Type `<cache |`, hit ctrl + space, search for `enabled`, commit the completion with a ` `. Ensure that it auto-completes the attribute to: `<cache enabled |`.
 * Type `<cache |`, hit ctrl + space, search for `enabled`, commit the completion with a `=`. Ensure that it auto-completes the attribute to: `<cache enabled=|`.
 * Type `<cache |`, hit ctrl + space, search for `vary-by`, commit the completion with a `=`. Ensure that it auto-completes the attribute to: `<cache vary-by=|`.
