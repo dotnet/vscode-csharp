@@ -157,6 +157,8 @@ Note that the pipe in the below examples indicates the cursor.
 * Type `<cache |`, hit ctrl + space, search for `asp-vary-by-user`, commit the completion. Ensure that it auto-completes the attribute to: `<cache asp-vary-by-user`.
 * Type `<cache |`, hit ctrl + space, search for `enabled`, commit the completion with a ` `. Ensure that it auto-completes the attribute to: `<cache enabled |`.
 * Type `<cache |`, hit ctrl + space, search for `enabled`, commit the completion with a `=`. Ensure that it auto-completes the attribute to: `<cache enabled=|`.
+* Type `<cache |`, hit ctrl + space, search for `vary-by`, commit the completion with a `=`. Ensure that it auto-completes the attribute to: `<cache vary-by=|`.
+* Type `<cache |`, hit ctrl + space, search for `vary-by`, commit the completion with a `ENTER`. Ensure that it auto-completes the attribute to: `<cache vary-by|`.
 * Type `<form |`, hit ctrl + space, search for `asp-route-...`, commit the completion. Ensure that it auto-completes the attribute to: `<form asp-route-|`.
 
 ##### TagHelper colorization
