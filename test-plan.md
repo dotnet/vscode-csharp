@@ -263,6 +263,35 @@ $ dotnet new blazorwasm --hosted -o DebugHostedTestProject
 8. Verify that the breakpoint in Counter.razor is hit.
 9. Navigate to the weather forecast page. Verify that the breakpoint in WeatherForecastController.cs is hit.
 
+###### Attaching to an existing running app
+
+To set up a test project to verify on, create a new Blazor WebAssembly application using the dotnet CLI.
+
+```
+$ dotnet new blazorwasm -o DebugTestProject
+```
+
+Then run the project using the dotnet CLI.
+
+```
+$ cd DebugTestProject
+$ dotnet run
+```
+
+1. Open the project in VS Code.
+2. Create a new launch configuration with the following contents.
+
+```
+{
+    "type": "blazorwasm",
+    "request": "attach",
+    "name": "Attach to Existing Blazor WebAssembly App"
+}
+```
+3. Select the "Attach to Existing Blazor WebAssembly App" option and run the launch configuration.
+5. Open Pages/Counter.razor and place a breakpoint in the `IncrementCount` method.
+6. Navigate to the Counter page in the browser and click the counter button.
+7. Verify that the breakpoint is hit.
 
 ##### Components
 * Typing `<Counter>` prompts you with HTML completion for the `Counter` tag and on completion commit auto-completes the closing tag.
