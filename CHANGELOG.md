@@ -7,6 +7,8 @@
   * Emmet based abbreviation expansion is not yet supported (See note in readme for how to enable through your settings.json)
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
+* Renaming symbol fails within a file that had recently been renamed without saving changes.
+  * As a workaround, make an edit within the file before using Rename Symbol.
 
 ## 1.22.0 (Not yet released)
 * Add setting for enabling go to decompilation (PR: [#3774](https://github.com/OmniSharp/omnisharp-vscode/pull/3774))
