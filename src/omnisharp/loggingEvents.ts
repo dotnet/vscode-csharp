@@ -19,6 +19,12 @@ export class TelemetryEvent implements BaseEvent {
     }
 }
 
+export class TelemetryErrorEvent implements BaseEvent {
+    type = EventType.TelemetryErrorEvent;
+    constructor(public eventName: string, public properties?: { [key: string]: string }, public measures?: { [key: string]: number }, public errorProps?: string[]) {
+    }
+}
+
 export class TelemetryEventWithMeasures implements BaseEvent {
     type = EventType.TelemetryEvent;
     constructor(public eventName: string, public measures: { [key: string]: number }) {

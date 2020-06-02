@@ -25,7 +25,8 @@ export const getNullChannel = (): vscode.OutputChannel => {
 
 export const getNullTelemetryReporter = (): ITelemetryReporter => {
     let reporter: ITelemetryReporter = {
-        sendTelemetryEvent: (eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }) => { }
+        sendTelemetryEvent: (eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }) => { },
+        sendTelemetryErrorEvent: (eventName: string, properties?: { [key: string]: string; }, measures?: { [key: string]: number; }, errorProps?: string[]) => { }
     };
 
     return reporter;

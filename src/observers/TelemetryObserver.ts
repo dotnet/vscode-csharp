@@ -4,12 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { PlatformInformation } from "../platform";
-import { BaseEvent, InstallationFailure, TestExecutionCountReport, TelemetryEventWithMeasures, TelemetryEvent, ProjectConfiguration } from "../omnisharp/loggingEvents";
+import { BaseEvent, InstallationFailure, TestExecutionCountReport, TelemetryEventWithMeasures, TelemetryEvent, ProjectConfiguration, TelemetryErrorEvent } from "../omnisharp/loggingEvents";
 import { PackageError } from "../packageManager/PackageError";
 import { EventType } from "../omnisharp/EventType";
 
 export interface ITelemetryReporter {
     sendTelemetryEvent(eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }): void;
+    sendTelemetryErrorEvent(eventName: string, properties?: { [key: string]: string; }, measures?: { [key: string]: number; }, errorProps?: string[]): void;
 }
 
 export class TelemetryObserver {
@@ -43,6 +44,10 @@ export class TelemetryObserver {
             case EventType.TelemetryEvent:
                 let telemetryEvent = <TelemetryEvent>event;
                 this.reporter.sendTelemetryEvent(telemetryEvent.eventName, telemetryEvent.properties, telemetryEvent.measures);
+                break;
+            case EventType.TelemetryErrorEvent:
+                let telemetryErrorEvent = <TelemetryErrorEvent>event;
+                this.reporter.sendTelemetryErrorEvent(telemetryErrorEvent.eventName, telemetryErrorEvent.properties, telemetryErrorEvent.measures, telemetryErrorEvent.errorProps);
                 break;
             case EventType.ProjectConfigurationReceived:
                 let projectConfig = (<ProjectConfiguration>event).projectConfiguration;
