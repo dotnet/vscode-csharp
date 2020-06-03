@@ -5,7 +5,7 @@
 import { should, expect } from 'chai';
 import { TelemetryObserver } from '../../../src/observers/TelemetryObserver';
 import { PlatformInformation } from '../../../src/platform';
-import { PackageInstallation, InstallationFailure, InstallationSuccess, TestExecutionCountReport, TelemetryEventWithMeasures, OmnisharpDelayTrackerEventMeasures, OmnisharpStart, TelemetryEvent, ProjectConfiguration } from '../../../src/omnisharp/loggingEvents';
+import { PackageInstallation, InstallationFailure, InstallationSuccess, TestExecutionCountReport, TelemetryEventWithMeasures, OmnisharpDelayTrackerEventMeasures, OmnisharpStart, TelemetryEvent, ProjectConfiguration, TelemetryErrorEvent } from '../../../src/omnisharp/loggingEvents';
 import { getNullTelemetryReporter } from '../testAssets/Fakes';
 import { Package } from '../../../src/packageManager/Package';
 import { PackageError } from '../../../src/packageManager/PackageError';
@@ -19,6 +19,7 @@ suite('TelemetryReporterObserver', () => {
     let name = "";
     let property: { [key: string]: string } = null;
     let measure: { [key: string]: number }[] = [];
+    let errorProp: string[][] = [];
     let observer = new TelemetryObserver(platformInfo, () => {
         return {
             ...getNullTelemetryReporter,
@@ -26,7 +27,13 @@ suite('TelemetryReporterObserver', () => {
                 name += eventName;
                 property = properties;
                 measure.push(measures);
-            }
+            },
+            sendTelemetryErrorEvent: (eventName: string, properties?: { [key: string]: string; }, measures?: { [key: string]: number; }, errorProps?: string[]) => {
+                name += eventName;
+                property = properties;
+                measure.push(measures);
+                errorProp.push(errorProps);
+            },
         };
     });
 
@@ -34,6 +41,7 @@ suite('TelemetryReporterObserver', () => {
         name = "";
         property = null;
         measure = [];
+        errorProp = [];
     });
 
     test('PackageInstallation: AcquisitionStart is reported', () => {
@@ -85,6 +93,15 @@ suite('TelemetryReporterObserver', () => {
         expect(name).to.contain(event.eventName);
         expect(measure).to.be.containingAllOf([event.measures]);
         expect(property).to.be.equal(event.properties);
+    });
+
+    test(`${TelemetryErrorEvent.name}: SendTelemetry error event is called with the name, properties, measures, and errorProps`, () => {
+        let event = new TelemetryErrorEvent("someName", { "key": "value" }, { someKey: 1 }, ["StackTrace"]);
+        observer.post(event);
+        expect(name).to.contain(event.eventName);
+        expect(measure).to.be.containingAllOf([event.measures]);
+        expect(property).to.be.equal(event.properties);
+        expect(errorProp).to.be.containingAllOf([event.errorProps]);
     });
 
     suite('InstallationFailure', () => {
