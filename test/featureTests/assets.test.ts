@@ -44,7 +44,7 @@ suite("Asset generation: csproj", () => {
         generator.setStartupProject(0);
         let tasksJson = generator.createTasksConfiguration();
 
-        tasksJson.tasks.forEach(task=> task.args.should.contain("/consoleloggerparameters:NoSummary"));
+        tasksJson.tasks.forEach(task => task.args.should.contain("/consoleloggerparameters:NoSummary"));
     });
 
     test("Create tasks.json for nested project opened in workspace", () => {
@@ -73,6 +73,19 @@ suite("Asset generation: csproj", () => {
         segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 
+    test("Create launch.json for NET 5 project opened in workspace", () => {
+        let rootPath = path.resolve('testRoot');
+        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'net5.0', /*isExe*/ true);
+        let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
+        generator.setStartupProject(0);
+        let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Console), undefined, { disallowComments: true });
+        let programPath = launchJson[0].program;
+
+        // ${workspaceFolder}/bin/Debug/net5.0/testApp.dll
+        let segments = programPath.split(path.posix.sep);
+        segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', 'net5.0', 'testApp.dll']);
+    });
+
     test("Create launch.json for nested project opened in workspace", () => {
         let rootPath = path.resolve('testRoot');
         let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'nested', 'testApp.csproj'), 'testApp', 'netcoreapp1.0');
@@ -92,13 +105,10 @@ suite("Asset generation: csproj", () => {
         const generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         const launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.BlazorWebAssemblyStandalone), undefined, { disallowComments: true });
-        const devServerLaunchConfig = launchJson[0];
-        const chromeLaunchConfig = launchJson[1];
-        const devProgram = devServerLaunchConfig.program;
-        const chromeWebRoot = chromeLaunchConfig.webRoot;
+        const blazorLaunchConfig = launchJson[0];
+        const type = blazorLaunchConfig.type;
 
-        devProgram.should.equal('dotnet');
-        chromeWebRoot.should.equal('${workspaceFolder}');
+        type.should.equal('blazorwasm');
     });
 
     test("Create launch.json for nested Blazor web assembly standalone project opened in workspace", () => {
@@ -107,13 +117,10 @@ suite("Asset generation: csproj", () => {
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.BlazorWebAssemblyStandalone), undefined, { disallowComments: true });
-        const devServerLaunchConfig = launchJson[0];
-        const chromeLaunchConfig = launchJson[1];
-        const devProgram = devServerLaunchConfig.program;
-        const chromeWebRoot = chromeLaunchConfig.webRoot;
+        const blazorLaunchConfig = launchJson[0];
+        const cwd = blazorLaunchConfig.cwd;
 
-        devProgram.should.equal('dotnet');
-        chromeWebRoot.should.equal('${workspaceFolder}/nested');
+        cwd.should.equal('${workspaceFolder}/nested');
     });
 
     test("Create launch.json for Blazor web assembly hosted project opened in workspace", () => {
@@ -122,14 +129,15 @@ suite("Asset generation: csproj", () => {
         const generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         const launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.BlazorWebAssemblyHosted), undefined, { disallowComments: true });
-        const hostedServerLaunchConfig = launchJson[0];
-        const chromeLaunchConfig = launchJson[1];
-        const programPath = hostedServerLaunchConfig.program;
-        const chromeWebRoot = chromeLaunchConfig.webRoot;
+        const hostedBlazorLaunchConfig = launchJson[0];
+        const programPath = hostedBlazorLaunchConfig.program;
+        const cwd = hostedBlazorLaunchConfig.cwd;
+        const hosted = hostedBlazorLaunchConfig.hosted;
 
         let segments = programPath.split(path.posix.sep);
         segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', 'netcoreapp3.0', 'testApp.dll']);
-        chromeWebRoot.should.equal('${workspaceFolder}');
+        cwd.should.equal('${workspaceFolder}');
+        hosted.should.equal(true);
     });
 
     test("Create launch.json for nested Blazor web assembly hosted project opened in workspace", () => {
@@ -138,14 +146,15 @@ suite("Asset generation: csproj", () => {
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.BlazorWebAssemblyHosted), undefined, { disallowComments: true });
-        const hostedServerLaunchConfig = launchJson[0];
-        const chromeLaunchConfig = launchJson[1];
-        const programPath = hostedServerLaunchConfig.program;
-        const chromeWebRoot = chromeLaunchConfig.webRoot;
+        const hostedBlazorLaunchConfig = launchJson[0];
+        const programPath = hostedBlazorLaunchConfig.program;
+        const cwd = hostedBlazorLaunchConfig.cwd;
+        const hosted = hostedBlazorLaunchConfig.hosted;
 
         let segments = programPath.split(path.posix.sep);
         segments.should.deep.equal(['${workspaceFolder}', 'nested', 'bin', 'Debug', 'netcoreapp3.0', 'testApp.dll']);
-        chromeWebRoot.should.equal('${workspaceFolder}/nested');
+        cwd.should.equal('${workspaceFolder}/nested');
+        hosted.should.equal(true);
     });
 
     test("Create launch.json for web project opened in workspace", () => {

@@ -39,7 +39,7 @@ suite('ZipInstaller', () => {
     let eventBus: TestEventBus;
 
     setup(async () => {
-        eventStream = new EventStream(); 
+        eventStream = new EventStream();
         eventBus = new TestEventBus(eventStream);
         tmpInstallDir = await CreateTmpDir(true);
         installationPath = new AbsolutePath(tmpInstallDir.name);

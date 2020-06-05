@@ -36,7 +36,7 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test("Returns the remapped workspaceEdit", async() => {
+    test("Returns the remapped workspaceEdit", async () => {
 
         // Avoid flakiness with renames.
         await new Promise(r => setTimeout(r, 2000));
@@ -52,7 +52,7 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
         expect(entries[0][0].path).to.be.equal(remappedFileUri.path);
     });
 
-    test("Returns the remapped references", async() => {
+    test("Returns the remapped references", async () => {
         let references = <vscode.Location[]>(await vscode.commands.executeCommand(
             "vscode.executeReferenceProvider",
             fileUri,
@@ -61,7 +61,7 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
         expect(references[0].uri.path).to.be.equal(remappedFileUri.path);
     });
 
-    test("Returns the remapped definition", async() => {
+    test("Returns the remapped definition", async () => {
         let definitions = <vscode.Location[]>(await vscode.commands.executeCommand(
             "vscode.executeDefinitionProvider",
             fileUri,
@@ -70,7 +70,7 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
         expect(definitions[0].uri.path).to.be.equal(remappedFileUri.path);
     });
 
-    test("Returns the remapped implementations", async() => {
+    test("Returns the remapped implementations", async () => {
         let implementations = <vscode.Location[]>(await vscode.commands.executeCommand(
             "vscode.executeImplementationProvider",
             fileUri,
@@ -85,8 +85,7 @@ async function registerLanguageMiddleware() {
     await vscode.commands.executeCommand<void>('omnisharp.registerLanguageMiddleware', middleware);
 }
 
-class TestLanguageMiddleware implements LanguageMiddleware
-{
+class TestLanguageMiddleware implements LanguageMiddleware {
     public readonly language = 'MyLang';
     private readonly remappedFileUri: vscode.Uri;
     private readonly fileToRemapUri: vscode.Uri;

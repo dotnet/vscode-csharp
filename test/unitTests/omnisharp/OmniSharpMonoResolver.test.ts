@@ -23,7 +23,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
     const requiredMonoVersion = "6.4.0";
     const higherMonoVersion = "6.6.0";
 
-    const getMono = (version: string) => async(env: NodeJS.ProcessEnv) => {
+    const getMono = (version: string) => async (env: NodeJS.ProcessEnv) => {
         getMonoCalled = true;
         environment = env;
         return Promise.resolve(version);

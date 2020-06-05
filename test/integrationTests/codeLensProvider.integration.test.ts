@@ -60,7 +60,7 @@ suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
     });
 });
 
-suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function() {
+suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
 
     suiteSetup(async function () {
@@ -70,8 +70,7 @@ suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function() 
         if (vscode.workspace.workspaceFolders[0].uri.fsPath.split(path.sep).pop() !== 'slnWithCsproj') {
             this.skip();
         }
-        else
-        {
+        else {
             await activateCSharpExtension();
             await testAssetWorkspace.restore();
 

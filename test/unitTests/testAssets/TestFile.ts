@@ -8,7 +8,7 @@ export interface TestFile {
     path: string;
 }
 
-export function createTestFile(content: string, path: string): TestFile{
+export function createTestFile(content: string, path: string): TestFile {
     return {
         content,
         path

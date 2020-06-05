@@ -22,17 +22,17 @@ type RemapParameterType<M extends keyof RemapApi> = GetRemapType<NonNullable<Rem
 
 export class LanguageMiddlewareFeature implements IDisposable {
     private readonly _middlewares: LanguageMiddleware[];
-    private _registration : IDisposable;
+    private _registration: IDisposable;
 
     constructor() {
         this._middlewares = [];
     }
 
-    public dispose() : void {
+    public dispose(): void {
         this._registration.dispose();
     }
 
-    public register() : void {
+    public register(): void {
         this._registration = vscode.commands.registerCommand(
             'omnisharp.registerLanguageMiddleware', (middleware: LanguageMiddleware) => {
                 this._middlewares.push(middleware);
@@ -51,7 +51,7 @@ export class LanguageMiddlewareFeature implements IDisposable {
 
             for (const middleware of languageMiddlewares) {
                 // Commit a type crime because we know better than the compiler
-                const method = <(p: P, c:vscode.CancellationToken)=>vscode.ProviderResult<P>>middleware[remapType];
+                const method = <(p: P, c: vscode.CancellationToken) => vscode.ProviderResult<P>>middleware[remapType];
                 if (!method) {
                     continue;
                 }

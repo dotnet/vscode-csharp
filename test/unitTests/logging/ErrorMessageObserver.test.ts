@@ -50,7 +50,7 @@ suite("ErrorMessageObserver", () => {
             expect(errorMessage).to.contain(description);
             expect(errorMessage).to.contain(url);
         });
-    
+
         test("Nothing is shown if we are retrying", () => {
             let description = 'someDescription';
             let url = 'someUrl';

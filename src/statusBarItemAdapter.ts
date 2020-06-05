@@ -8,15 +8,15 @@ import * as vscode from 'vscode';
 
 export class StatusBarItemAdapter implements vscodeAdapter.StatusBarItem {
 
-    get alignment(): vscodeAdapter.StatusBarAlignment{
+    get alignment(): vscodeAdapter.StatusBarAlignment {
         return this.statusBarItem.alignment;
     }
 
-    get priority(): number{
+    get priority(): number {
         return this.statusBarItem.priority;
     }
 
-    get text(): string{
+    get text(): string {
         return this.statusBarItem.text;
     }
 
@@ -24,15 +24,15 @@ export class StatusBarItemAdapter implements vscodeAdapter.StatusBarItem {
         this.statusBarItem.text = value;
     }
 
-    get tooltip(): string{
+    get tooltip(): string {
         return this.statusBarItem.tooltip;
     }
 
-    set tooltip(value: string){
+    set tooltip(value: string) {
         this.statusBarItem.tooltip = value;
     }
 
-    get color(): string{
+    get color(): string {
         return this.statusBarItem.color as string;
     }
 
@@ -40,11 +40,11 @@ export class StatusBarItemAdapter implements vscodeAdapter.StatusBarItem {
         this.statusBarItem.color = value;
     }
 
-    get command(): string{
+    get command(): string | vscode.Command {
         return this.statusBarItem.command;
     }
 
-    set command(value: string) {
+    set command(value: string | vscode.Command) {
         this.statusBarItem.command = value;
     }
 
@@ -59,7 +59,7 @@ export class StatusBarItemAdapter implements vscodeAdapter.StatusBarItem {
     dispose(): void {
         this.statusBarItem.dispose();
     }
-    
+
     constructor(private statusBarItem: vscode.StatusBarItem) {
     }
 }

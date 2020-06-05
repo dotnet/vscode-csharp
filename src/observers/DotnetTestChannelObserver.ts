@@ -11,10 +11,12 @@ export default class DotnetTestChannelObserver extends BaseChannelObserver {
     public post = (event: BaseEvent) => {
         switch (event.type) {
             case EventType.DotNetTestRunStart:
-            case EventType.DotNetTestRunFailure:   
-            case EventType.DotNetTestsInClassRunStart: 
-            case EventType.DotNetTestDebugStart:    
-            case EventType.DotNetTestsInClassDebugStart:    
+            case EventType.DotNetTestRunFailure:
+            case EventType.DotNetTestsInClassRunStart:
+            case EventType.DotNetTestDebugStart:
+            case EventType.DotNetTestsInClassDebugStart:
+            case EventType.DotNetTestRunInContextStart:
+            case EventType.DotNetTestDebugInContextStart:
                 this.showChannel(true);
                 break;
         }

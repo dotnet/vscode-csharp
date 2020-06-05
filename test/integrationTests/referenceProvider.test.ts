@@ -32,7 +32,7 @@ suite(`${OmnisharpReferenceProvider.name}: ${testAssetWorkspace.description}`, (
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test("Returns the reference without declaration", async() => {
+    test("Returns the reference without declaration", async () => {
         let referenceList = <vscode.Location[]>(await vscode.commands.executeCommand("vscode.executeReferenceProvider", fileUri, new vscode.Position(6, 22)));
         expect(referenceList.length).to.be.equal(1);
         expect(referenceList[0].range.start.line).to.be.equal(13);

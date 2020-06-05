@@ -161,8 +161,8 @@ export class AssetGenerator {
         const startupProjectDir = path.dirname(this.startupProject.Path);
         const relativeProjectDir = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, startupProjectDir));
         const configurationName = 'Debug';
-        const targetFramework = protocol.findNetCoreAppTargetFramework(this.startupProject).ShortName;
-        const result = path.join(relativeProjectDir, `bin/${configurationName}/${targetFramework}/${this.startupProject.AssemblyName}.dll`);
+        const targetFramework = protocol.findNetCoreAppTargetFramework(this.startupProject) ?? protocol.findNet5TargetFramework(this.startupProject);
+        const result = path.join(relativeProjectDir, `bin/${configurationName}/${targetFramework.ShortName}/${this.startupProject.AssemblyName}.dll`);
         return result;
     }
 
@@ -197,21 +197,17 @@ export class AssetGenerator {
 ]`;
             }
             case ProgramLaunchType.BlazorWebAssemblyHosted: {
-                const chromeLaunchConfigurationsMassaged: string = indentJsonString(createBlazorWebAssemblyLaunchConfiguration(this.computeWorkingDirectory()));
-                const hostedLaunchConfigurationsMassaged: string = indentJsonString(createBlazorWebAssemblyHostedLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory()));
+                const hostedLaunchConfigMassaged: string = indentJsonString(createBlazorWebAssemblyHostedLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory()));
                 return `
 [
-    ${hostedLaunchConfigurationsMassaged},
-    ${chromeLaunchConfigurationsMassaged}
+    ${hostedLaunchConfigMassaged}
 ]`;
             }
             case ProgramLaunchType.BlazorWebAssemblyStandalone: {
-                const chromeLaunchConfigurationsMassaged: string = indentJsonString(createBlazorWebAssemblyLaunchConfiguration(this.computeWorkingDirectory()));
-                const devServerLaunchConfigurationMassaged: string = indentJsonString(createBlazorWebAssemblyDevServerLaunchConfiguration(this.computeWorkingDirectory()));
+                const standaloneLaunchConfigMassaged: string = indentJsonString(createBlazorWebAssemblyStandaloneLaunchConfiguration(this.computeWorkingDirectory()));
                 return `
 [
-    ${devServerLaunchConfigurationMassaged},
-    ${chromeLaunchConfigurationsMassaged}
+    ${standaloneLaunchConfigMassaged}
 ]`;
             }
         }
@@ -304,7 +300,7 @@ export function createWebLaunchConfiguration(programPath: string, workingDirecto
     // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
     "serverReadyAction": {
         "action": "openExternally",
-        "pattern": "^\\\\s*Now listening on:\\\\s+(https?://\\\\S+)"                
+        "pattern": "^\\\\s*Now listening on:\\\\s+(https?://\\\\S+)"
     },
     "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -318,47 +314,23 @@ export function createWebLaunchConfiguration(programPath: string, workingDirecto
 export function createBlazorWebAssemblyHostedLaunchConfiguration(programPath: string, workingDirectory: string): string {
     return `
 {
-    "name": ".NET Core Launch (Blazor Hosted)",
-    "type": "coreclr",
+    "name": "Launch and Debug Hosted Blazor WebAssembly App",
+    "type": "blazorwasm",
     "request": "launch",
+    "hosted": true,
     // If you have changed target frameworks, make sure to update the program path.
     "program": "${util.convertNativePathToPosix(programPath)}",
-    "args": [],
-    "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
-    "stopAtEntry": false,
-    "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-    },
-    "preLaunchTask": "build"
+    "cwd": "${util.convertNativePathToPosix(workingDirectory)}"
 }`;
 }
 
-export function createBlazorWebAssemblyLaunchConfiguration(workingDirectory: string): string {
+export function createBlazorWebAssemblyStandaloneLaunchConfiguration(workingDirectory: string): string {
     return `
 {
-    "name": ".NET Core Debug Blazor Web Assembly in Chrome",
-    "type": "pwa-chrome",
+    "name": "Launch and Debug Standalone Blazor WebAssembly App",
+    "type": "blazorwasm",
     "request": "launch",
-    "timeout": 30000,
-    // If you have changed the default port / launch URL make sure to update the expectation below
-    "url": "https://localhost:5001",
-    "webRoot": "${util.convertNativePathToPosix(workingDirectory)}",
-    "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
-}`;
-}
-
-export function createBlazorWebAssemblyDevServerLaunchConfiguration(workingDirectory: string): string {
-    return `
-{
-    "name": ".NET Core Launch (Blazor Standalone)",
-    "type": "coreclr",
-    "request": "launch",
-    "program": "dotnet",
-    "args": ["run"],
-    "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
-    "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-    }
+    "cwd": "${util.convertNativePathToPosix(workingDirectory)}"
 }`;
 }
 
@@ -549,7 +521,7 @@ async function promptToAddAssets(workspaceFolder: vscode.WorkspaceFolder) {
         if (!csharpConfig.get<boolean>('supressBuildAssetsNotification')) {
             vscode.window.showWarningMessage(
                 `Required assets to build and debug are missing from '${projectName}'. Add them?`, disableItem, noItem, yesItem)
-                .then(selection => resolve(selection.result));
+                .then(selection => resolve(selection?.result ?? PromptResult.No));
         }
     });
 }
