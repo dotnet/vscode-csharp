@@ -53,10 +53,8 @@ function forwardFileChanges(server: OmniSharpServer): IDisposable {
                 return;
             }
 
-            if (changeType === FileChangeType.Create) {
-                //let filesToBeCreated = await workspace.findFiles(uri.fsPath + "/**/*.*");
-                //vscode.workspace.fs.readDirectory()
-                let requests = workspace.textDocuments.map(x => { return { FileName: x.uri.fsPath, changeType }; });
+            if (changeType === FileChangeType.Delete) {
+                let requests = [{ FileName: uri.fsPath, changeType: FileChangeType.FolderDelete }];
 
                 serverUtils.filesChanged(server, requests).catch(err => {
                     console.warn(`[o] failed to forward file change event for ${uri.fsPath}`, err);
@@ -73,9 +71,8 @@ function forwardFileChanges(server: OmniSharpServer): IDisposable {
 
     const watcherForFolders = workspace.createFileSystemWatcher('**/');
     let d4 = watcherForFolders.onDidDelete(onFolderEvent(FileChangeType.Delete));
-    let d5 = watcherForFolders.onDidCreate(onFolderEvent(FileChangeType.Create));
 
-    return new CompositeDisposable(watcher, d1, d2, d3, watcherForFolders, d4, d5);
+    return new CompositeDisposable(watcher, d1, d2, d3, watcherForFolders, d4);
 }
 
 export default function forwardChanges(server: OmniSharpServer): IDisposable {

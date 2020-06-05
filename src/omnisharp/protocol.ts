@@ -465,7 +465,8 @@ export interface FilesChangedRequest extends Request {
 export enum FileChangeType {
     Change = "Change",
     Create = "Create",
-    Delete = "Delete"
+    Delete = "Delete",
+    FolderDelete = "FolderDelete"
 }
 
 export namespace V2 {
