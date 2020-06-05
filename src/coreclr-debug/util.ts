@@ -7,15 +7,9 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as semver from 'semver';
 import * as os from 'os';
-import { execChildProcess } from './../common';
+import { getDotnetInfo, DotnetInfo, DOTNET_MISSING_MESSAGE } from '../utils/getDotnetInfo';
 
 const MINIMUM_SUPPORTED_DOTNET_CLI: string = '1.0.0';
-
-export class DotnetInfo {
-    public Version: string;
-    public OsVersion: string;
-    public RuntimeId: string;
-}
 
 export class DotNetCliError extends Error {
     public ErrorMessage: string; // the message to display to the user
@@ -75,38 +69,25 @@ export class CoreClrDebugUtil {
     // Returns: a promise that returns a DotnetInfo class
     // Throws: An DotNetCliError() from the return promise if either dotnet does not exist or is too old.
     public async checkDotNetCli(): Promise<DotnetInfo> {
-        let dotnetInfo = new DotnetInfo();
+        let dotnetInfo = await getDotnetInfo();
 
-        return execChildProcess('dotnet --info', process.cwd())
-            .then((data: string) => {
-                let lines: string[] = data.replace(/\r/mg, '').split('\n');
-                lines.forEach(line => {
-                    let match: RegExpMatchArray;
-                    if (match = /^\ Version:\s*([^\s].*)$/.exec(line)) {
-                        dotnetInfo.Version = match[1];
-                    } else if (match = /^\ OS Version:\s*([^\s].*)$/.exec(line)) {
-                        dotnetInfo.OsVersion = match[1];
-                    } else if (match = /^\ RID:\s*([\w\-\.]+)$/.exec(line)) {
-                        dotnetInfo.RuntimeId = match[1];
-                    }
-                });
-            }).catch((error) => {
-                // something went wrong with spawning 'dotnet --info'
-                let dotnetError = new DotNetCliError();
-                dotnetError.ErrorMessage = 'The .NET Core SDK cannot be located. .NET Core debugging will not be enabled. Make sure the .NET Core SDK is installed and is on the path.';
-                dotnetError.ErrorString = "Failed to spawn 'dotnet --info'";
-                throw dotnetError;
-            }).then(() => {
-                // succesfully spawned 'dotnet --info', check the Version
-                if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_DOTNET_CLI)) {
-                    let dotnetError = new DotNetCliError();
-                    dotnetError.ErrorMessage = 'The .NET Core SDK located on the path is too old. .NET Core debugging will not be enabled. The minimum supported version is ' + MINIMUM_SUPPORTED_DOTNET_CLI + '.';
-                    dotnetError.ErrorString = "dotnet cli is too old";
-                    throw dotnetError;
-                }
+        if (dotnetInfo.FullInfo === DOTNET_MISSING_MESSAGE) {
+            // something went wrong with spawning 'dotnet --info'
+            let dotnetError = new DotNetCliError();
+            dotnetError.ErrorMessage = 'The .NET Core SDK cannot be located. .NET Core debugging will not be enabled. Make sure the .NET Core SDK is installed and is on the path.';
+            dotnetError.ErrorString = "Failed to spawn 'dotnet --info'";
+            throw dotnetError;
+        }
 
-                return dotnetInfo;
-            });
+        // succesfully spawned 'dotnet --info', check the Version
+        if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_DOTNET_CLI)) {
+            let dotnetError = new DotNetCliError();
+            dotnetError.ErrorMessage = 'The .NET Core SDK located on the path is too old. .NET Core debugging will not be enabled. The minimum supported version is ' + MINIMUM_SUPPORTED_DOTNET_CLI + '.';
+            dotnetError.ErrorString = "dotnet cli is too old";
+            throw dotnetError;
+        }
+
+        return dotnetInfo;
     }
 
     public static isMacOSSupported(): boolean {

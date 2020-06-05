@@ -448,9 +448,12 @@ export interface UnresolvedDependenciesMessage {
 
 export interface ProjectConfigurationMessage {
     ProjectId: string;
+    SessionId: string;
+    OutputKind: number;
     TargetFrameworks: string[];
     References: string[];
     FileExtensions: string[];
+    FileCounts: number[];
 }
 
 export interface PackageDependency {

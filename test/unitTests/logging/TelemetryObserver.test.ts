@@ -58,22 +58,31 @@ suite('TelemetryReporterObserver', () => {
     });
 
     test(`${ProjectConfiguration.name}: Telemetry props contains project id and target framework`, () => {
-        const targetFrameworks = new Array("tfm1", "tfm2");
+        const targetFrameworks = ["tfm1", "tfm2"];
         const projectId = "sample";
-        const references = new Array("ref1", "ref2");
-        const fileExtensions = new Array(".cs", ".cshtml");
+        const sessionId = "session01";
+        const outputKind = 3;
+        const references = ["ref1", "ref2"];
+        const fileExtensions = [".cs", ".cshtml"];
+        const fileCounts = [7, 3];
         let event = new ProjectConfiguration({
             TargetFrameworks: targetFrameworks,
             ProjectId: projectId,
+            SessionId: sessionId,
+            OutputKind: outputKind,
             References: references,
-            FileExtensions: fileExtensions
+            FileExtensions: fileExtensions,
+            FileCounts: fileCounts
         });
 
         observer.post(event);
         expect(property["TargetFrameworks"]).to.be.equal("tfm1|tfm2");
         expect(property["ProjectId"]).to.be.equal(projectId);
+        expect(property["SessionId"]).to.be.equal(sessionId);
+        expect(property["OutputType"]).to.be.equal(outputKind.toString());
         expect(property["References"]).to.be.equal("ref1|ref2");
         expect(property["FileExtensions"]).to.be.equal(".cs|.cshtml");
+        expect(property["FileCounts"]).to.be.equal("7|3");
     });
 
     [
