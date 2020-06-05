@@ -9,7 +9,7 @@ import { PlatformInformation } from "../platform";
 import { BaseEvent, InstallationFailure, TestExecutionCountReport, TelemetryEventWithMeasures, TelemetryEvent, ProjectConfiguration, TelemetryErrorEvent, OmnisharpInitialisation } from "../omnisharp/loggingEvents";
 import { PackageError } from "../packageManager/PackageError";
 import { EventType } from "../omnisharp/EventType";
-import { getDotnetInfo } from "../utils/getDotnetInfo";
+import { getDotnetInfo, DotnetInfo } from "../utils/getDotnetInfo";
 
 export interface ITelemetryReporter {
     sendTelemetryEvent(eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }): void;
@@ -20,6 +20,7 @@ export class TelemetryObserver {
     private reporter: ITelemetryReporter;
     private platformInfo: PlatformInformation;
     private solutionId: string;
+    private dotnetInfo: DotnetInfo;
 
     constructor(platformInfo: PlatformInformation, reporterCreator: () => ITelemetryReporter) {
         this.platformInfo = platformInfo;
@@ -66,7 +67,8 @@ export class TelemetryObserver {
         this.reporter.sendTelemetryEvent(event.eventName, null, event.measures);
     }
 
-    private handleOmnisharpInitialisation(event: OmnisharpInitialisation) {
+    private async handleOmnisharpInitialisation(event: OmnisharpInitialisation) {
+        this.dotnetInfo = await getDotnetInfo();
         this.solutionId = this.createSolutionId(event.solutionPath);
     }
 
@@ -98,19 +100,17 @@ export class TelemetryObserver {
         }
     }
 
-    private async handleProjectConfigurationReceived(event: ProjectConfiguration, telemetryProps: { [key: string]: string }) {
-        let dotnetInfo = await getDotnetInfo();
-
+    private handleProjectConfigurationReceived(event: ProjectConfiguration, telemetryProps: { [key: string]: string }) {
         let projectConfig = event.projectConfiguration;
         telemetryProps['SolutionId'] = this.solutionId;
         telemetryProps['ProjectId'] = projectConfig.ProjectId;
         telemetryProps['SessionId'] = projectConfig.SessionId;
-        telemetryProps['OutputType'] = projectConfig.OutputKind.toString();
+        telemetryProps['OutputType'] = projectConfig.OutputKind?.toString() ?? "";
         telemetryProps['TargetFrameworks'] = projectConfig.TargetFrameworks.join("|");
         telemetryProps['References'] = projectConfig.References.join("|");
         telemetryProps['FileExtensions'] = projectConfig.FileExtensions.join("|");
-        telemetryProps['FileCounts'] = projectConfig.FileCounts.join("|");
-        telemetryProps['NetSdkVersion'] = dotnetInfo.Version;
+        telemetryProps['FileCounts'] = projectConfig.FileCounts?.join("|") ?? "";
+        telemetryProps['NetSdkVersion'] = this.dotnetInfo?.Version ?? "";
         this.reporter.sendTelemetryEvent("ProjectConfiguration", telemetryProps);
     }
 
