@@ -466,7 +466,7 @@ export enum FileChangeType {
     Change = "Change",
     Create = "Create",
     Delete = "Delete",
-    FolderDelete = "FolderDelete"
+    DirectoryDelete = "DirectoryDelete"
 }
 
 export namespace V2 {

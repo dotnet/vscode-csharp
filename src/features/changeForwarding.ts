@@ -54,7 +54,7 @@ function forwardFileChanges(server: OmniSharpServer): IDisposable {
             }
 
             if (changeType === FileChangeType.Delete) {
-                let requests = [{ FileName: uri.fsPath, changeType: FileChangeType.FolderDelete }];
+                let requests = [{ FileName: uri.fsPath, changeType: FileChangeType.DirectoryDelete }];
 
                 serverUtils.filesChanged(server, requests).catch(err => {
                     console.warn(`[o] failed to forward file change event for ${uri.fsPath}`, err);
