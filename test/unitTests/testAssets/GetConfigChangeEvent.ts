@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ConfigurationChangeEvent } from "../../../src/vscodeAdapter";
- 
+
 export function GetConfigChangeEvent(changingConfig: string): ConfigurationChangeEvent {
     return {
         affectsConfiguration: (section: string) => section == changingConfig

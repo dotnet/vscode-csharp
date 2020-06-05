@@ -7,7 +7,7 @@ import * as vscodeAdapter from './vscodeAdapter';
 import * as vscode from 'vscode';
 
 export class TextEditorAdapter implements vscodeAdapter.TextEditor {
-    
+
     get document(): any {
         return this.textEditor.document;
     }

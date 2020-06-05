@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs-extra';
-import * as glob from 'glob';
 import { OmniSharpServer } from './server';
 import * as path from 'path';
 import * as protocol from './protocol';
@@ -25,6 +24,10 @@ export async function blockStructure(server: OmniSharpServer, request: protocol.
 
 export async function codeStructure(server: OmniSharpServer, request: protocol.V2.Structure.CodeStructureRequest, token: vscode.CancellationToken) {
     return server.makeRequest<protocol.V2.Structure.CodeStructureResponse>(protocol.V2.Requests.CodeStructure, request, token);
+}
+
+export async function discoverTests(server: OmniSharpServer, request: protocol.V2.DiscoverTestsRequest) {
+    return server.makeRequest<protocol.V2.DiscoverTestsResponse>(protocol.V2.Requests.DiscoverTests, request);
 }
 
 export async function filesChanged(server: OmniSharpServer, requests: protocol.Request[]) {
@@ -71,14 +74,21 @@ export async function requestWorkspaceInformation(server: OmniSharpServer) {
     const response = await server.makeRequest<protocol.WorkspaceInformationResponse>(protocol.Requests.Projects);
     if (response.MsBuild && response.MsBuild.Projects) {
         const blazorDetectionEnabled = hasBlazorWebAssemblyDebugPrerequisites();
+        let blazorWebAssemblyProjectFound = false;
 
         for (const project of response.MsBuild.Projects) {
             project.IsWebProject = isWebProject(project);
-            project.IsBlazorWebAssemblyHosted = blazorDetectionEnabled && isBlazorWebAssemblyHosted(project);
-            project.IsBlazorWebAssemblyStandalone = blazorDetectionEnabled && !project.IsBlazorWebAssemblyHosted && isBlazorWebAssemblyProject(project);
+
+            const isProjectBlazorWebAssemblyProject = await isBlazorWebAssemblyProject(project);
+            const isProjectBlazorWebAssemblyHosted = isBlazorWebAssemblyHosted(project, isProjectBlazorWebAssemblyProject);
+
+            project.IsBlazorWebAssemblyHosted = blazorDetectionEnabled && isProjectBlazorWebAssemblyHosted;
+            project.IsBlazorWebAssemblyStandalone = blazorDetectionEnabled && isProjectBlazorWebAssemblyProject && !project.IsBlazorWebAssemblyHosted;
+
+            blazorWebAssemblyProjectFound = blazorWebAssemblyProjectFound || isProjectBlazorWebAssemblyProject;
         }
 
-        if (!blazorDetectionEnabled && response.MsBuild.Projects.some(project => isBlazorWebAssemblyProject(project))) {
+        if (!blazorDetectionEnabled && blazorWebAssemblyProjectFound) {
             // There's a Blazor Web Assembly project but VSCode isn't configured to debug the WASM code, show a notification
             // to help the user configure their VSCode appropriately.
             vscode.window.showInformationMessage('Additional setup is required to debug Blazor WebAssembly applications.', 'Learn more', 'Close')
@@ -130,12 +140,20 @@ export async function runTestsInClass(server: OmniSharpServer, request: protocol
     return server.makeRequest<protocol.V2.RunTestResponse>(protocol.V2.Requests.RunAllTestsInClass, request);
 }
 
+export async function runTestsInContext(server: OmniSharpServer, request: protocol.V2.RunTestsInContextRequest) {
+    return server.makeRequest<protocol.V2.RunTestResponse>(protocol.V2.Requests.RunTestsInContext, request);
+}
+
 export async function debugTestGetStartInfo(server: OmniSharpServer, request: protocol.V2.DebugTestGetStartInfoRequest) {
     return server.makeRequest<protocol.V2.DebugTestGetStartInfoResponse>(protocol.V2.Requests.DebugTestGetStartInfo, request);
 }
 
 export async function debugTestClassGetStartInfo(server: OmniSharpServer, request: protocol.V2.DebugTestClassGetStartInfoRequest) {
     return server.makeRequest<protocol.V2.DebugTestGetStartInfoResponse>(protocol.V2.Requests.DebugTestsInClassGetStartInfo, request);
+}
+
+export async function debugTestsInContextGetStartInfo(server: OmniSharpServer, request: protocol.V2.DebugTestsInContextGetStartInfoRequest) {
+    return server.makeRequest<protocol.V2.DebugTestGetStartInfoResponse>(protocol.V2.Requests.DebugTestsInContextGetStartInfo, request);
 }
 
 export async function debugTestLaunch(server: OmniSharpServer, request: protocol.V2.DebugTestLaunchRequest) {
@@ -146,12 +164,16 @@ export async function debugTestStop(server: OmniSharpServer, request: protocol.V
     return server.makeRequest<protocol.V2.DebugTestStopResponse>(protocol.V2.Requests.DebugTestStop, request);
 }
 
+export async function getSemanticHighlights(server: OmniSharpServer, request: protocol.V2.SemanticHighlightRequest) {
+    return server.makeRequest<protocol.V2.SemanticHighlightResponse>(protocol.V2.Requests.Highlight, request);
+}
+
 export async function isNetCoreProject(project: protocol.MSBuildProject) {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp') || tf.ShortName.startsWith('netstandard')) !== undefined;
 }
 
-function isBlazorWebAssemblyHosted(project: protocol.MSBuildProject): boolean {
-    if (!isBlazorWebAssemblyProject(project)) {
+function isBlazorWebAssemblyHosted(project: protocol.MSBuildProject, isProjectBlazorWebAssemblyProject: boolean): boolean {
+    if (!isProjectBlazorWebAssemblyProject) {
         return false;
     }
 
@@ -170,27 +192,25 @@ function isBlazorWebAssemblyHosted(project: protocol.MSBuildProject): boolean {
     return true;
 }
 
-function isBlazorWebAssemblyProject(project: MSBuildProject): boolean {
+async function isBlazorWebAssemblyProject(project: MSBuildProject): Promise<boolean> {
     const projectDirectory = path.dirname(project.Path);
-    const launchSettings = glob.sync('**/launchSettings.json', { cwd: projectDirectory });
-    if (!launchSettings) {
-        return false;
-    }
+    const launchSettingsPath = path.join(projectDirectory, 'Properties', 'launchSettings.json');
 
-    for (const launchSetting of launchSettings) {
-        try {
-            const absoluteLaunchSetting = path.join(projectDirectory, launchSetting);
-            const launchSettingContent = fs.readFileSync(absoluteLaunchSetting);
-            if (!launchSettingContent) {
-                continue;
-            }
-
-            if (launchSettingContent.indexOf('"inspectUri"') > 0) {
-                return true;
-            }
-        } catch {
-            // Swallow IO errors from reading the launchSettings.json files
+    try {
+        if (!fs.pathExistsSync(launchSettingsPath)) {
+            return false;
         }
+
+        const launchSettingContent = fs.readFileSync(launchSettingsPath);
+        if (!launchSettingContent) {
+            return false;
+        }
+
+        if (launchSettingContent.indexOf('"inspectUri"') > 0) {
+            return true;
+        }
+    } catch {
+        // Swallow IO errors from reading the launchSettings.json files
     }
 
     return false;

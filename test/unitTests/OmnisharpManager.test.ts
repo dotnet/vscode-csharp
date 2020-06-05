@@ -20,7 +20,7 @@ import * as util from '../../src/common';
 suite(OmnisharpManager.name, () => {
     let server: MockHttpsServer;
     const eventStream = new EventStream();
-    let manager : OmnisharpManager;
+    let manager: OmnisharpManager;
     const defaultVersion = "0.1.2";
     const testVersion = "1.2.3";
     const latestVersion = "2.3.4";

@@ -78,7 +78,7 @@ export class LinuxDistribution {
     public static FromReleaseInfo(releaseInfo: string, eol: string = os.EOL): LinuxDistribution {
         let name = unknown;
         let version = unknown;
-        let idLike : string[] = null;
+        let idLike: string[] = null;
 
         const lines = releaseInfo.split(eol);
         for (let line of lines) {
@@ -118,8 +118,7 @@ export class PlatformInformation {
     public constructor(
         public platform: string,
         public architecture: string,
-        public distribution: LinuxDistribution = null)
-    {
+        public distribution: LinuxDistribution = null) {
     }
 
     public isWindows(): boolean {
@@ -182,7 +181,7 @@ export class PlatformInformation {
         }
 
         const platformData: [string, LinuxDistribution] = await Promise.all([architecturePromise, distributionPromise]);
-        
+
         return new PlatformInformation(platform, platformData[0], platformData[1]);
     }
 
@@ -190,6 +189,9 @@ export class PlatformInformation {
         return new Promise<string>((resolve, reject) => {
             if (process.env.PROCESSOR_ARCHITECTURE === 'x86' && process.env.PROCESSOR_ARCHITEW6432 === undefined) {
                 resolve('x86');
+            }
+            else if (process.env.PROCESSOR_ARCHITECTURE === 'ARM64' && process.env.PROCESSOR_ARCHITEW6432 === undefined) {
+                resolve('ARM64');
             }
             else {
                 resolve('x86_64');

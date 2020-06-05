@@ -11,7 +11,7 @@ suite("ParsedEnvironmentFile", () => {
 
     test("Add single variable", () => {
         const content = `MyName=VALUE`;
-        const fakeConfig : { [key: string]: any } = {};
+        const fakeConfig: { [key: string]: any } = {};
         const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", fakeConfig["env"]);
 
         expect(result.Warning).to.be.null;
@@ -20,7 +20,7 @@ suite("ParsedEnvironmentFile", () => {
 
     test("Handle quoted values", () => {
         const content = `MyName="VALUE"`;
-        const fakeConfig : { [key: string]: any } = {};
+        const fakeConfig: { [key: string]: any } = {};
         const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", fakeConfig["env"]);
 
         expect(result.Warning).to.be.null;
@@ -29,7 +29,7 @@ suite("ParsedEnvironmentFile", () => {
 
     test("Handle BOM", () => {
         const content = "\uFEFFMyName=VALUE";
-        const fakeConfig : { [key: string]: any } = {};
+        const fakeConfig: { [key: string]: any } = {};
         const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", fakeConfig["env"]);
 
         expect(result.Warning).to.be.null;
@@ -42,7 +42,7 @@ MyName1=Value1
 MyName2=Value2
 
 `;
-        const fakeConfig : { [key: string]: any } = {};
+        const fakeConfig: { [key: string]: any } = {};
         const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", fakeConfig["env"]);
 
         expect(result.Warning).to.be.null;
@@ -56,7 +56,7 @@ MyName1=Value1
 MyName2=Value2
 
 `;
-        const initialEnv : { [key: string]: any } = {
+        const initialEnv: { [key: string]: any } = {
             "MyName1": "Value7",
             "ThisShouldNotChange": "StillHere"
         };
@@ -69,19 +69,19 @@ MyName2=Value2
     });
 
     test("Handle comments", () => {
-        const content = `# This is an environment file    
+        const content = `# This is an environment file
 MyName1=Value1
 # This is a comment in the middle of the file
 MyName2=Value2
 `;
-        const fakeConfig : { [key: string]: any } = {};
+        const fakeConfig: { [key: string]: any } = {};
         const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", fakeConfig["env"]);
 
         expect(result.Warning).to.be.null;
         result.Env["MyName1"].should.equal("Value1");
         result.Env["MyName2"].should.equal("Value2");
     });
-    
+
     test("Handle invalid lines", () => {
         const content = `
 This_Line_Is_Wrong
@@ -89,7 +89,7 @@ MyName1=Value1
 MyName2=Value2
 
 `;
-        const fakeConfig : { [key: string]: any } = {};
+        const fakeConfig: { [key: string]: any } = {};
         const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", fakeConfig["env"]);
 
         result.Warning.should.startWith("Ignoring non-parseable lines in envFile TestEnvFileName");

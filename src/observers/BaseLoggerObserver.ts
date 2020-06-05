@@ -15,8 +15,8 @@ export abstract class BaseLoggerObserver {
         }
         else {
             this.logger = new Logger((message) => channel.append(message));
-        }    
+        }
     }
-    
+
     abstract post: (event: BaseEvent) => void;
 }
