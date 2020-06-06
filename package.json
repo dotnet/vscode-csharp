@@ -96,6 +96,7 @@
     "yauzl": "2.10.0"
   },
   "devDependencies": {
+    "@types/vscode": "1.33.0",
     "@types/archiver": "2.1.2",
     "@types/chai": "4.1.7",
     "@types/chai-arrays": "1.0.2",
