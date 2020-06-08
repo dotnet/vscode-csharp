@@ -83,6 +83,7 @@
     "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/2aed3f40-1b74-4798-9516-bd52cfc89a90/14f92987fb2d89fd2b0b7e2e78a50d70/microsoft.aspnetcore.razor.vscode-5.0.0-preview.6.20276.5.tgz",
     "mkdirp": "^1.0.3",
     "node-filter-async": "1.1.1",
+    "node-machine-id": "1.1.12",
     "remove-bom-buffer": "3.0.0",
     "request-light": "0.2.4",
     "rxjs": "6.4.0",
@@ -155,7 +156,7 @@
     "vsce": "1.57.0",
     "vscode": "1.1.36",
     "webpack": "4.29.3",
-    "webpack-cli": "^3.2.3"
+    "webpack-cli": "^3.3.11"
   },
   "runtimeDependencies": [
     {

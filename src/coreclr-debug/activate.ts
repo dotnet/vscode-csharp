@@ -6,12 +6,13 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as common from './../common';
-import { CoreClrDebugUtil, DotnetInfo, } from './util';
+import { CoreClrDebugUtil } from './util';
 import { PlatformInformation } from './../platform';
 import { DebuggerPrerequisiteWarning, DebuggerPrerequisiteFailure, DebuggerNotInstalledFailure } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 import CSharpExtensionExports from '../CSharpExtensionExports';
 import { getRuntimeDependencyPackageWithId } from '../tools/RuntimeDependencyPackageUtils';
+import { DotnetInfo } from '../utils/getDotnetInfo';
 
 let _debugUtil: CoreClrDebugUtil = null;
 
