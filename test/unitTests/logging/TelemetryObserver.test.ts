@@ -62,10 +62,12 @@ suite('TelemetryReporterObserver', () => {
         const projectId = "sample";
         const sessionId = "session01";
         const outputKind = 3;
+        const projectCapabilities = ["cap1", "cap2"];
         const references = ["ref1", "ref2"];
         const fileExtensions = [".cs", ".cshtml"];
         const fileCounts = [7, 3];
         let event = new ProjectConfiguration({
+            ProjectCapabilities: projectCapabilities,
             TargetFrameworks: targetFrameworks,
             ProjectId: projectId,
             SessionId: sessionId,
@@ -76,6 +78,7 @@ suite('TelemetryReporterObserver', () => {
         });
 
         observer.post(event);
+        expect(property["ProjectCapabilities"]).to.be.equal("cap1 cap2");
         expect(property["TargetFrameworks"]).to.be.equal("tfm1|tfm2");
         expect(property["ProjectId"]).to.be.equal(projectId);
         expect(property["SessionId"]).to.be.equal(sessionId);
