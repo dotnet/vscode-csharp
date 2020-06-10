@@ -450,6 +450,7 @@ export interface ProjectConfigurationMessage {
     ProjectId: string;
     SessionId: string;
     OutputKind: number;
+    ProjectCapabilities: string[];
     TargetFrameworks: string[];
     References: string[];
     FileExtensions: string[];

@@ -106,6 +106,7 @@ export class TelemetryObserver {
         telemetryProps['ProjectId'] = projectConfig.ProjectId;
         telemetryProps['SessionId'] = projectConfig.SessionId;
         telemetryProps['OutputType'] = projectConfig.OutputKind?.toString() ?? "";
+        telemetryProps['ProjectCapabilities'] = projectConfig.ProjectCapabilities?.join(" ") ?? "";
         telemetryProps['TargetFrameworks'] = projectConfig.TargetFrameworks.join("|");
         telemetryProps['References'] = projectConfig.References.join("|");
         telemetryProps['FileExtensions'] = projectConfig.FileExtensions.join("|");
