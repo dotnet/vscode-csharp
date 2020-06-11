@@ -45,7 +45,7 @@ The default launch.json template (as of C# extension v1.20.0) for ASP.NET Core p
 ```json
     "serverReadyAction": {
         "action": "openExternally",
-        "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)"
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
     }
 ```
 
@@ -66,8 +66,7 @@ Notes about this:
 5. The way this works is that VS Code will scrape the output which is set to the console. If a line 
     matches the pattern, it will launch a browser against the URL which was 'captured' by the pattern.
     Here is an explanation of what the pattern does:
-    * `^`: This indicates that the pattern should only be matched against the beginning of a line.
-    * `\\s*` : Matches zero or more whitespace characters. Note that `\s` indicates a whitespace character, but because this is in a json string, the `\` needs to be escaped, hence `\\s`.
+    * `\\b` : Matches on a word boundery. Note that `\b` indicates a word boundary, but because this is in a json string, the `\` needs to be escaped, hence `\\b`.
     * `Now listening on:` : This is a string literal, meaning that the next text must be `Now listening on:`.
     * `\\s+` : Matches one or more space characters.
     * `(` : This is the beginning of a 'capture group' -- this indicates which region of text will be saved and used to launch the browser.
@@ -87,7 +86,7 @@ If you want to ignore the URL from the console output, you can remove the
 ```json
     "serverReadyAction": {
         "action": "openExternally",
-        "pattern": "^\\s*Now listening on:\\s+https?://\\S",
+        "pattern": "\\bNow listening on:\\s+https?://\\S",
         "uriFormat": "http://localhost:1234"
     }
 ```
@@ -97,7 +96,7 @@ If you want to use the port number from the console output, but not the host nam
 ```json
     "serverReadyAction": {
         "action": "openExternally",
-        "pattern": "^\\s*Now listening on:\\s+http://\\S+:([0-9]+)",
+        "pattern": "\\bNow listening on:\\s+http://\\S+:([0-9]+)",
         "uriFormat": "http://localhost:%s"
     }
 ```
