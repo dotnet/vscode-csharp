@@ -45,7 +45,7 @@ The default launch.json template (as of C# extension v1.20.0) for ASP.NET Core p
 ```json
     "serverReadyAction": {
         "action": "openExternally",
-        "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)"
+        "pattern": "\\s*Now listening on:\\s+(https?://\\S+)"
     }
 ```
 
@@ -87,7 +87,7 @@ If you want to ignore the URL from the console output, you can remove the
 ```json
     "serverReadyAction": {
         "action": "openExternally",
-        "pattern": "^\\s*Now listening on:\\s+https?://\\S",
+        "pattern": "\\s*Now listening on:\\s+https?://\\S",
         "uriFormat": "http://localhost:1234"
     }
 ```
@@ -97,7 +97,7 @@ If you want to use the port number from the console output, but not the host nam
 ```json
     "serverReadyAction": {
         "action": "openExternally",
-        "pattern": "^\\s*Now listening on:\\s+http://\\S+:([0-9]+)",
+        "pattern": "\\s*Now listening on:\\s+http://\\S+:([0-9]+)",
         "uriFormat": "http://localhost:%s"
     }
 ```
