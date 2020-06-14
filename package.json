@@ -80,7 +80,7 @@
     "http-proxy-agent": "2.1.0",
     "https-proxy-agent": "^3.0.1",
     "jsonc-parser": "2.0.3",
-    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/3196fc62-53d4-468f-86ef-af78aac33d67/0e081e674dbeddf5a6614075fcd2eb9c/microsoft.aspnetcore.razor.vscode-5.0.0-preview.7.20309.2.tgz",
+    "microsoft.aspnetcore.razor.vscode": "https://razorvscodetest.blob.core.windows.net/npm/microsoft.aspnetcore.razor.vscode-5.0.0-preview.7.20312.9.tgz",
     "mkdirp": "^1.0.3",
     "node-filter-async": "1.1.1",
     "node-machine-id": "1.1.12",
