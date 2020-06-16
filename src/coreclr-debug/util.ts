@@ -9,7 +9,7 @@ import * as semver from 'semver';
 import * as os from 'os';
 import { getDotnetInfo, DotnetInfo, DOTNET_MISSING_MESSAGE } from '../utils/getDotnetInfo';
 
-const MINIMUM_SUPPORTED_DOTNET_CLI: string = '1.0.0';
+const MINIMUM_SUPPORTED_DOTNET_CLI: string = '2.1.x';
 
 export class DotNetCliError extends Error {
     public ErrorMessage: string; // the message to display to the user
