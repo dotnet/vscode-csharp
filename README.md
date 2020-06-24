@@ -118,7 +118,7 @@ For more information see the [.NET Foundation Code of Conduct](http://www.dotnet
 
 ## Contribution License Agreement
 
-By signing the [CLA](https://cla.dotnetfoundation.org/OmniSharp/omnisharp-roslyn), the community is free to use your contribution to .NET Foundation projects.
+By signing the [CLA](https://cla.dotnetfoundation.org/OmniSharp/omnisharp-roslyn), the community is free to use your contribution to [.NET Foundation](http://www.dotnetfoundation.org) projects.
 
 ## .NET Foundation
 
