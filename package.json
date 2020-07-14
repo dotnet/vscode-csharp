@@ -97,7 +97,6 @@
     "yauzl": "2.10.0"
   },
   "devDependencies": {
-    "@types/vscode": "1.33.0",
     "@types/archiver": "2.1.2",
     "@types/chai": "4.1.7",
     "@types/chai-arrays": "1.0.2",
@@ -115,6 +114,7 @@
     "@types/semver": "5.5.0",
     "@types/tmp": "0.0.33",
     "@types/unzipper": "^0.9.1",
+    "@types/vscode": "1.33.0",
     "@types/yauzl": "2.9.1",
     "archiver": "3.0.0",
     "async-child-process": "1.1.1",
@@ -125,7 +125,7 @@
     "chai-fs": "2.0.0",
     "chai-string": "1.5.0",
     "codecov": "3.6.5",
-    "copyfiles": "2.1.0",
+    "copyfiles": "^2.3.0",
     "cross-env": "5.2.0",
     "del": "3.0.0",
     "find-versions": "3.0.0",
@@ -955,23 +955,28 @@
         "path": "./snippets/csharp.json"
       }
     ],
+    "breakpoints": [
+      {
+        "language": "csharp"
+      },
+      {
+        "language": "razor"
+      },
+      {
+        "language": "qsharp"
+      },
+      {
+        "language": "aspnetcorerazor"
+      }
+    ],
     "debuggers": [
       {
         "type": "coreclr",
         "label": ".NET Core",
-        "enableBreakpointsFor": {
-          "languageIds": [
-            "csharp",
-            "razor",
-            "qsharp",
-            "aspnetcorerazor"
-          ]
-        },
         "variables": {
           "pickProcess": "csharp.listProcess",
           "pickRemoteProcess": "csharp.listRemoteProcess"
         },
-        "adapterExecutableCommand": "csharp.coreclrAdapterExecutableCommand",
         "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
         "configurationAttributes": {
           "launch": {
@@ -2065,19 +2070,10 @@
       {
         "type": "clr",
         "label": ".NET",
-        "enableBreakpointsFor": {
-          "languageIds": [
-            "csharp",
-            "razor",
-            "qsharp",
-            "aspnetcorerazor"
-          ]
-        },
         "variables": {
           "pickProcess": "csharp.listProcess",
           "pickRemoteProcess": "csharp.listRemoteProcess"
         },
-        "adapterExecutableCommand": "csharp.clrAdapterExecutableCommand",
         "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
         "configurationAttributes": {
           "launch": {
