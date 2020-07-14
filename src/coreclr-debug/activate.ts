@@ -155,14 +155,6 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
         // use the executable specified in the package.json if it exists or determine it based on some other information (e.g. the session)
         if (!executable) {
             const command = path.join(common.getExtensionPath(), ".debugger", "vsdbg-ui" + CoreClrDebugUtil.getPlatformExeExtension());
-            //const args = [
-            //    "some args",
-            //    "another arg"
-            //];
-            //const options = {
-            //    cwd: "working directory for executable",
-            //    env: { "VAR": "some value" }
-            //};
             executable = new vscode.DebugAdapterExecutable(command);
         }
 
