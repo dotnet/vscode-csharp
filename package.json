@@ -392,14 +392,6 @@
     "workspaceContains:**/*.cake"
   ],
   "contributes": {
-    "breakpoints": [
-      {
-        "language": "aspnetcorerazor"
-      },
-      {
-        "language": "csharp"
-      }
-    ],
     "themes": [
       {
         "label": "Visual Studio 2019 Dark",
