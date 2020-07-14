@@ -31,6 +31,7 @@ export async function activate(thisExtension: vscode.Extension<CSharpExtensionEx
 
     const factory = new DebugAdapterExecutableFactory(platformInformation, eventStream, thisExtension.packageJSON, thisExtension.extensionPath);
     context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('coreclr', factory));
+    context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('clr', factory));
 }
 
 async function checkForInvalidArchitecture(platformInformation: PlatformInformation, eventStream: EventStream): Promise<boolean> {
