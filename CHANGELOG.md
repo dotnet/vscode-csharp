@@ -17,6 +17,12 @@
 * Do not crash when plugin assembly cannot be loaded ([omnisharp-roslyn/#1307](https://github.com/OmniSharp/omnisharp-roslyn/issues/1307), PR: [omnisharp-roslyn/#1827](https://github.com/OmniSharp/omnisharp-roslyn/pull/1827))
 * Update browser launch regex to support non-default logging frameworks ([#3842](https://github.com/OmniSharp/omnisharp-vscode/pull/3842))
 * Improved support for Codespaces
+* Updated Razor support
+  * Improved Semantic Highlighting support by fixing some scenarios which might lead to thrown exceptions and incorrect results. [dotnet/aspnetcore-tooling#2126](https://github.com/dotnet/aspnetcore-tooling/pull/2126)
+  * Fixed support in the case of projects with spaces in path. [aspnetcore#23336](https://github.com/dotnet/aspnetcore/issues/23336)
+  * Various performance improvements.
+  * `@inject` completion [aspnetcore#22886](https://github.com/dotnet/aspnetcore/issues/22886)
+  * Improved behavior in cases where expected files are not available. [dotnet/aspnetcore-tooling#2008](https://github.com/dotnet/aspnetcore-tooling/pull/2008)
 
 ## 1.22.0 (May 28, 2020)
 * Add setting for enabling go to decompilation (PR: [#3774](https://github.com/OmniSharp/omnisharp-vscode/pull/3774))
