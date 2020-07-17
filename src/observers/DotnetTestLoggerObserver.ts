@@ -73,12 +73,12 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
     }
 
     private handleDotnetTestsRunInContextStart(event: DotNetTestRunInContextStart) {
-        this.logger.appendLine(`----- Running test(s) in context "${event.fileName} ${event.line + 1}:${event.column + 1}" -----`);
+        this.logger.appendLine(`----- Running test(s) in context "${event.fileName}(${event.line + 1},${event.column + 1})" -----`);
         this.logger.appendLine('');
     }
 
     private handleDotnetTestsDebugInContextStart(event: DotNetTestDebugInContextStart) {
-        this.logger.appendLine(`----- Debugging test(s) in context "${event.fileName} ${event.line + 1}:${event.column + 1}" -----`);
+        this.logger.appendLine(`----- Debugging test(s) in context "${event.fileName}(${event.line + 1},${event.column + 1})" -----`);
         this.logger.appendLine('');
     }
 
