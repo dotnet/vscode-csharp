@@ -23,6 +23,7 @@
   * Various performance improvements.
   * `@inject` completion [aspnetcore#22886](https://github.com/dotnet/aspnetcore/issues/22886)
   * Improved behavior in cases where directory is not available. [dotnet/aspnetcore-tooling#2008](https://github.com/dotnet/aspnetcore-tooling/pull/2008)
+  * Added the `Extract to CodeBehind` light bulb code action. [dotnet/aspnetcore-tooling#2039](https://github.com/dotnet/aspnetcore-tooling/pull/2039)
 
 ## 1.22.0 (May 28, 2020)
 * Add setting for enabling go to decompilation (PR: [#3774](https://github.com/OmniSharp/omnisharp-vscode/pull/3774))
