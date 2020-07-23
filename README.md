@@ -20,6 +20,22 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 -   [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 -   [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
+## What's new in 1.22.2
+-   Updated Razor support
+    -   Improved Semantic Highlighting support by fixing some scenarios which might lead to thrown exceptions and incorrect results. [dotnet/  aspnetcore-tooling#2126](https://github.com/dotnet/aspnetcore-tooling/pull/2126)
+    -   Fixed support in the case of projects with spaces in path. [aspnetcore#23336](https://github.com/dotnet/aspnetcore/issues/23336)
+    -   Various performance improvements.
+    -   `@inject` completion [aspnetcore#22886](https://github.com/dotnet/aspnetcore/issues/22886)
+    -   Improved behavior in cases where directory is not available. [dotnet/aspnetcore-tooling#2008](https://github.com/dotnet/  aspnetcore-tooling/pull/2008)
+    -   Added the `Extract to CodeBehind` light bulb code action. [dotnet/aspnetcore-tooling#2039](https://github.com/dotnet/aspnetcore-tooling/pull/2039)
+-   Use global MSBuild property when resetting target framework ([omnisharp-roslyn/#1738](https://github.com/OmniSharp/omnisharp-roslyn/issues/1738), PR: [omnisharp-roslyn/#1846](https://github.com/OmniSharp/omnisharp-roslyn/pull/1846))
+-   Do not use Visual Studio MSBuild if it doesn't have .NET SDK resolver ([omnisharp-roslyn/#1842](https://github.com/OmniSharp/omnisharp-roslyn/issues/1842), [omnisharp-roslyn/#1730](https://github.com/OmniSharp/omnisharp-roslyn/issues/1730), PR: [omnisharp-roslyn/#1845](https://github.com/OmniSharp/omnisharp-roslyn/pull/1845))
+-   Only request dotnet info once for the solution or directory ([omnisharp-roslyn/#1844](https://github.com/OmniSharp/omnisharp-roslyn/issues/1844), PR: [omnisharp-roslyn/#1857](https://github.com/OmniSharp/omnisharp-roslyn/pull/1857))
+-   Allow client to specify symbol filter for FindSymbols Endpoint. (PR: [omnisharp-roslyn/#1823](https://github.com/OmniSharp/omnisharp-roslyn/pull/1823))
+-   Upgraded to Mono 6.10.0.105, msbuild 16.6 and added missing targets (PR: [omnisharp-roslyn/#1854](https://github.com/OmniSharp/omnisharp-roslyn/pull/1854))
+-   Make "Run/debug tests in context" position a link ([#3915](https://github.com/OmniSharp/omnisharp-vscode/pull/3915))
+-   Update browser launch regex to support non-default logging frameworks ([#3842](https://github.com/OmniSharp/omnisharp-vscode/pull/3842))
+
 ## What's new in 1.22.1
 -   Added LSP handler for `textDocument/codeAction` request. (PR: [omnisharp-roslyn/#1795](https://github.com/OmniSharp/omnisharp-roslyn/pull/1795))
 -   Expose a custom LSP `omnisharp/client/findReferences` command via code lens (meant to be handled by LSP client). (PR: [#omnisharp-roslyn/1807](https://github.com/OmniSharp/omnisharp-roslyn/pull/1807))
@@ -42,15 +58,6 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 -   Updated Razor support
     -   Enable Semantic Highlighting for Razor TagHelpers and Blazor components ([aspnetcore#21713](https://github.com/dotnet/aspnetcore/issues/21713))
 -   Add support for Blazor WebAssembly-specific debug adapter ([dotnet/aspnetcore-tooling#1885](https://github.com/dotnet/aspnetcore-tooling/pull/1885))
-
-## What's new in 1.21.18
--   Fadeout unused variable names ([#1324](https://github.com/OmniSharp/omnisharp-vscode/issues/1324), PR: [#3733](https://github.com/OmniSharp/omnisharp-vscode/pull/3733))
--   Updated debugger (PR: [#3729](https://github.com/OmniSharp/omnisharp-vscode/pull/3729))
--   Fixed not supported exception when trying to decompile a BCL assembly on Mono. For now we do not try to resolve implementation assembly from a ref assembly (PR: [omnisharp-roslyn/#1767](https://github.com/OmniSharp/omnisharp-roslyn/pull/1767))
--   Added support for generic classes in test runner ([#3722](https://github.com/OmniSharp/omnisharp-vscode/issues/3722), PR: [omnisharp-roslyn/#1768](https://github.com/OmniSharp/omnisharp-roslyn/pull/1768))
--   Improved autocompletion performance (PR: [omnisharp-roslyn/#1761](https://github.com/OmniSharp/omnisharp-roslyn/pull/1761))
--   Move to Roslyn's .editorconfig support ([omnisharp-roslyn/#1657](https://github.com/OmniSharp/omnisharp-roslyn/issues/1657), PR: [omnisharp-roslyn/#1771](https://github.com/OmniSharp/omnisharp-roslyn/pull/1771))
--   Fully update CompilationOptions when project files change (PR: [omnisharp-roslyn/#1774](https://github.com/OmniSharp/omnisharp-roslyn/pull/1774))
 
 ### Emmet support in Razor files
 
