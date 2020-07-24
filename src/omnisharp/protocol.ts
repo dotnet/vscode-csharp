@@ -29,6 +29,7 @@ export module Requests {
     export const UpdateBuffer = '/updatebuffer';
     export const Metadata = '/metadata';
     export const ReAnalyze = '/reanalyze';
+    export const QuickInfo = '/quickinfo';
 }
 
 export namespace WireProtocol {
@@ -473,6 +474,19 @@ export enum FileChangeType {
     DirectoryDelete = "DirectoryDelete"
 }
 
+export interface QuickInfoRequest extends Request {
+}
+
+export interface QuickInfoResponse {
+    Sections?: QuickInfoResponseSection[];
+}
+
+export interface QuickInfoResponseSection {
+    IsCSharpCode: boolean;
+    Text: string;
+}
+
+
 export namespace V2 {
 
     export module Requests {
@@ -491,7 +505,6 @@ export namespace V2 {
         export const BlockStructure = '/v2/blockstructure';
         export const CodeStructure = '/v2/codestructure';
         export const Highlight = '/v2/highlight';
-        export const QuickInfo = '/v2/quickinfo';
     }
 
     export interface SemanticHighlightSpan {
@@ -710,20 +723,6 @@ export namespace V2 {
     export interface CodeFoldingBlock {
         Range: Range;
         Kind: string;
-    }
-
-    export interface QuickInfoRequest extends Request {
-    }
-
-    export interface QuickInfoResponse {
-        Description?: string;
-        Summary?: string;
-        RemainingSections?: QuickInfoResponseSection[];
-    }
-
-    export interface QuickInfoResponseSection {
-        IsCSharpCode: boolean;
-        Text: string;
     }
 
     export module SymbolKinds {

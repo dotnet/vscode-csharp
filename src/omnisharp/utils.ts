@@ -169,8 +169,8 @@ export async function getSemanticHighlights(server: OmniSharpServer, request: pr
     return server.makeRequest<protocol.V2.SemanticHighlightResponse>(protocol.V2.Requests.Highlight, request);
 }
 
-export async function getQuickInfo(server: OmniSharpServer, request: protocol.V2.QuickInfoRequest, token: CancellationToken) {
-    return server.makeRequest<protocol.V2.QuickInfoResponse>(protocol.V2.Requests.QuickInfo, request, token);
+export async function getQuickInfo(server: OmniSharpServer, request: protocol.QuickInfoRequest, token: CancellationToken) {
+    return server.makeRequest<protocol.QuickInfoResponse>(protocol.Requests.QuickInfo, request, token);
 }
 
 export async function isNetCoreProject(project: protocol.MSBuildProject) {

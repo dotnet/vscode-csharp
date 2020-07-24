@@ -12,32 +12,22 @@ import { HoverProvider, Hover, TextDocument, CancellationToken, Position, Markdo
 export default class OmniSharpHoverProvider extends AbstractSupport implements HoverProvider {
 
     public async provideHover(document: TextDocument, position: Position, token: CancellationToken): Promise<Hover> {
-        let request = createRequest<protocol.V2.QuickInfoRequest>(document, position);
+        let request = createRequest<protocol.QuickInfoRequest>(document, position);
         try {
             const response = await serverUtils.getQuickInfo(this._server, request, token);
-            if (!response.Description && !response.RemainingSections && !response.Summary) {
+            if (!response || !response.Sections) {
                 return undefined;
             }
 
             let markdownString = new MarkdownString;
             const language = "csharp";
-            if (response.Description) {
-                markdownString.appendCodeblock(response.Description, language);
-            }
-
-            if (response.Summary) {
-                markdownString.appendMarkdown(response.Summary);
-            }
-
-            if (response.RemainingSections) {
-                for (const section of response.RemainingSections) {
-                    if (section.IsCSharpCode) {
-                        markdownString.appendCodeblock(section.Text, language);
-                    }
-                    else {
-                        markdownString.appendText("\n");
-                        markdownString.appendMarkdown(section.Text);
-                    }
+            for (const section of response.Sections) {
+                if (section.IsCSharpCode) {
+                    markdownString.appendCodeblock(section.Text, language);
+                }
+                else {
+                    markdownString.appendText("\n");
+                    markdownString.appendMarkdown(section.Text);
                 }
             }
 
