@@ -491,6 +491,7 @@ export namespace V2 {
         export const BlockStructure = '/v2/blockstructure';
         export const CodeStructure = '/v2/codestructure';
         export const Highlight = '/v2/highlight';
+        export const QuickInfo = '/v2/quickinfo';
     }
 
     export interface SemanticHighlightSpan {
@@ -709,6 +710,20 @@ export namespace V2 {
     export interface CodeFoldingBlock {
         Range: Range;
         Kind: string;
+    }
+
+    export interface QuickInfoRequest extends Request {
+    }
+
+    export interface QuickInfoResponse {
+        Description?: string;
+        Summary?: string;
+        RemainingSections?: QuickInfoResponseSection[];
+    }
+
+    export interface QuickInfoResponseSection {
+        IsCSharpCode: boolean;
+        Text: string;
     }
 
     export module SymbolKinds {
