@@ -15,21 +15,12 @@ export default class OmniSharpHoverProvider extends AbstractSupport implements H
         let request = createRequest<protocol.QuickInfoRequest>(document, position);
         try {
             const response = await serverUtils.getQuickInfo(this._server, request, token);
-            if (!response || !response.Sections) {
+            if (!response || !response.Markdown) {
                 return undefined;
             }
 
-            let markdownString = new MarkdownString;
-            const language = "csharp";
-            for (const section of response.Sections) {
-                if (section.IsCSharpCode) {
-                    markdownString.appendCodeblock(section.Text, language);
-                }
-                else {
-                    markdownString.appendText("\n");
-                    markdownString.appendMarkdown(section.Text);
-                }
-            }
+            const markdownString = new MarkdownString;
+            markdownString.appendMarkdown(response.Markdown);
 
             return new Hover(markdownString);
         }

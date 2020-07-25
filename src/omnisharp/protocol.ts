@@ -478,14 +478,8 @@ export interface QuickInfoRequest extends Request {
 }
 
 export interface QuickInfoResponse {
-    Sections?: QuickInfoResponseSection[];
+    Markdown?: string;
 }
-
-export interface QuickInfoResponseSection {
-    IsCSharpCode: boolean;
-    Text: string;
-}
-
 
 export namespace V2 {
 
