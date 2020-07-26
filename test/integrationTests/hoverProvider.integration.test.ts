@@ -10,6 +10,8 @@ import { should, expect } from 'chai';
 import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
+export type Test = 'a' | 'b' | ['c', any];
+
 const chai = require('chai');
 chai.use(require('chai-arrays'));
 chai.use(require('chai-fs'));
