@@ -517,13 +517,22 @@ async function promptToAddAssets(workspaceFolder: vscode.WorkspaceFolder) {
 
         const projectName = path.basename(workspaceFolder.uri.fsPath);
 
-        let csharpConfig = vscode.workspace.getConfiguration('csharp');
-        if (!csharpConfig.get<boolean>('supressBuildAssetsNotification')) {
+        if (!getBuildAssetsNotificationSetting()) {
             vscode.window.showWarningMessage(
                 `Required assets to build and debug are missing from '${projectName}'. Add them?`, disableItem, noItem, yesItem)
                 .then(selection => resolve(selection?.result ?? PromptResult.No));
         }
     });
+}
+
+function getBuildAssetsNotificationSetting() {
+    const newSettingName: string = 'suppressBuildAssetsNotification';
+    let csharpConfig = vscode.workspace.getConfiguration('csharp');
+    if (csharpConfig.has(newSettingName)) {
+        return csharpConfig.get<boolean>(newSettingName);
+    }
+
+    return csharpConfig.get<boolean>('supressBuildAssetsNotification');
 }
 
 export async function addTasksJsonIfNecessary(generator: AssetGenerator, operations: AssetOperations) {
