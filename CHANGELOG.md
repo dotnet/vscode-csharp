@@ -9,8 +9,9 @@
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 * Renaming symbol fails within a file that had recently been renamed without saving changes.
   * As a workaround, make an edit within the file before using Rename Symbol.
+* Unable to debug unit tests. (This issue is fixed in OmniSharp and will be in the next release.)
 
-## 1.22.2 (Not Yet Released)
+## 1.22.2 (August 04, 2020)
 * Updated Razor support
   * Improved Semantic Highlighting support by fixing some scenarios which might lead to thrown exceptions and incorrect results. [dotnet/aspnetcore-tooling#2126](https://github.com/dotnet/aspnetcore-tooling/pull/2126)
   * Fixed support in the case of projects with spaces in path. [aspnetcore#23336](https://github.com/dotnet/aspnetcore/issues/23336)
