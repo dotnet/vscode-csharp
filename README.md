@@ -22,42 +22,42 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 
 ## What's new in 1.22.2
 -   Updated Razor support
-    -   Improved Semantic Highlighting support by fixing some scenarios which might lead to thrown exceptions and incorrect results. [dotnet/  aspnetcore-tooling#2126](https://github.com/dotnet/aspnetcore-tooling/pull/2126)
+    -   Improved Semantic Highlighting support by fixing some scenarios which might lead to thrown exceptions and incorrect results. [aspnetcore-tooling#2126](https://github.com/dotnet/aspnetcore-tooling/pull/2126)
     -   Fixed support in the case of projects with spaces in path. [aspnetcore#23336](https://github.com/dotnet/aspnetcore/issues/23336)
     -   Various performance improvements.
     -   `@inject` completion [aspnetcore#22886](https://github.com/dotnet/aspnetcore/issues/22886)
-    -   Improved behavior in cases where directory is not available. [dotnet/aspnetcore-tooling#2008](https://github.com/dotnet/  aspnetcore-tooling/pull/2008)
-    -   Added the `Extract to CodeBehind` light bulb code action. [dotnet/aspnetcore-tooling#2039](https://github.com/dotnet/aspnetcore-tooling/pull/2039)
--   Use global MSBuild property when resetting target framework ([omnisharp-roslyn/#1738](https://github.com/OmniSharp/omnisharp-roslyn/issues/1738), PR: [omnisharp-roslyn/#1846](https://github.com/OmniSharp/omnisharp-roslyn/pull/1846))
--   Do not use Visual Studio MSBuild if it doesn't have .NET SDK resolver ([omnisharp-roslyn/#1842](https://github.com/OmniSharp/omnisharp-roslyn/issues/1842), [omnisharp-roslyn/#1730](https://github.com/OmniSharp/omnisharp-roslyn/issues/1730), PR: [omnisharp-roslyn/#1845](https://github.com/OmniSharp/omnisharp-roslyn/pull/1845))
--   Only request dotnet info once for the solution or directory ([omnisharp-roslyn/#1844](https://github.com/OmniSharp/omnisharp-roslyn/issues/1844), PR: [omnisharp-roslyn/#1857](https://github.com/OmniSharp/omnisharp-roslyn/pull/1857))
--   Allow client to specify symbol filter for FindSymbols Endpoint. (PR: [omnisharp-roslyn/#1823](https://github.com/OmniSharp/omnisharp-roslyn/pull/1823))
--   Upgraded to Mono 6.10.0.105, msbuild 16.6 and added missing targets (PR: [omnisharp-roslyn/#1854](https://github.com/OmniSharp/omnisharp-roslyn/pull/1854))
+    -   Improved behavior in cases where directory is not available. [aspnetcore-tooling#2008](https://github.com/dotnet/  aspnetcore-tooling/pull/2008)
+    -   Added the `Extract to CodeBehind` light bulb code action. [aspnetcore-tooling#2039](https://github.com/dotnet/aspnetcore-tooling/pull/2039)
+-   Use global MSBuild property when resetting target framework ([omnisharp-roslyn#1738](https://github.com/OmniSharp/omnisharp-roslyn/issues/1738), PR: [omnisharp-roslyn#1846](https://github.com/OmniSharp/omnisharp-roslyn/pull/1846))
+-   Do not use Visual Studio MSBuild if it doesn't have .NET SDK resolver ([omnisharp-roslyn#1842](https://github.com/OmniSharp/omnisharp-roslyn/issues/1842), [omnisharp-roslyn#1730](https://github.com/OmniSharp/omnisharp-roslyn/issues/1730), PR: [omnisharp-roslyn#1845](https://github.com/OmniSharp/omnisharp-roslyn/pull/1845))
+-   Only request dotnet info once for the solution or directory ([omnisharp-roslyn#1844](https://github.com/OmniSharp/omnisharp-roslyn/issues/1844), PR: [omnisharp-roslyn#1857](https://github.com/OmniSharp/omnisharp-roslyn/pull/1857))
+-   Allow client to specify symbol filter for FindSymbols Endpoint. (PR: [omnisharp-roslyn#1823](https://github.com/OmniSharp/omnisharp-roslyn/pull/1823))
+-   Upgraded to Mono 6.10.0.105, msbuild 16.6 and added missing targets (PR: [omnisharp-roslyn#1854](https://github.com/OmniSharp/omnisharp-roslyn/pull/1854))
 -   Make "Run/debug tests in context" position a link ([#3915](https://github.com/OmniSharp/omnisharp-vscode/pull/3915))
 -   Update browser launch regex to support non-default logging frameworks ([#3842](https://github.com/OmniSharp/omnisharp-vscode/pull/3842))
 
 ## What's new in 1.22.1
--   Added LSP handler for `textDocument/codeAction` request. (PR: [omnisharp-roslyn/#1795](https://github.com/OmniSharp/omnisharp-roslyn/pull/1795))
+-   Added LSP handler for `textDocument/codeAction` request. (PR: [omnisharp-roslyn#1795](https://github.com/OmniSharp/omnisharp-roslyn/pull/1795))
 -   Expose a custom LSP `omnisharp/client/findReferences` command via code lens (meant to be handled by LSP client). (PR: [#omnisharp-roslyn/1807](https://github.com/OmniSharp/omnisharp-roslyn/pull/1807))
--   Added `DirectoryDelete` option to `FileChangeType` allowing clients to report deleted directories that need to be removed (along all the files) from the workspace (PR: [#3829](https://github.com/OmniSharp/omnisharp-vscode/pull/3829), PR: [omnisharp-roslyn/#1821](https://github.com/OmniSharp/omnisharp-roslyn/pull/1821))
--   Do not crash when plugin assembly cannot be loaded ([omnisharp-roslyn/#1307](https://github.com/OmniSharp/omnisharp-roslyn/issues/1307), PR: [omnisharp-roslyn/#1827](https://github.com/OmniSharp/omnisharp-roslyn/pull/1827))
+-   Added `DirectoryDelete` option to `FileChangeType` allowing clients to report deleted directories that need to be removed (along all the files) from the workspace (PR: [#3829](https://github.com/OmniSharp/omnisharp-vscode/pull/3829), PR: [omnisharp-roslyn#1821](https://github.com/OmniSharp/omnisharp-roslyn/pull/1821))
+-   Do not crash when plugin assembly cannot be loaded ([omnisharp-roslyn#1307](https://github.com/OmniSharp/omnisharp-roslyn/issues/1307), PR: [omnisharp-roslyn#1827](https://github.com/OmniSharp/omnisharp-roslyn/pull/1827))
 -   Update browser launch regex to support non-default logging frameworks ([#3842](https://github.com/OmniSharp/omnisharp-vscode/pull/3842))
 -   Improved support for Codespaces
 
 ## What's new in 1.22.0
 -   Add setting for enabling go to decompilation (PR: [#3774](https://github.com/OmniSharp/omnisharp-vscode/pull/3774))
 -   Add experimental Semantic Highlighter `csharp.semanticHighlighting.enabled` ([#3565](https://github.com/OmniSharp/omnisharp-vscode/issues/3565), PR: [#3667](https://github.com/OmniSharp/omnisharp-vscode/pull/3667)
--   Add commands for Run and Debug Tests in Context (PR: [#3772](https://github.com/OmniSharp/omnisharp-vscode/pull/3772), PR: [omnisharp-roslyn/#1782](https://github.com/OmniSharp/omnisharp-roslyn/pull/1782))
+-   Add commands for Run and Debug Tests in Context (PR: [#3772](https://github.com/OmniSharp/omnisharp-vscode/pull/3772), PR: [omnisharp-roslyn#1782](https://github.com/OmniSharp/omnisharp-roslyn/pull/1782))
 -   Do not add references CodeLens to Dispose methods ([#3243](https://github.com/OmniSharp/omnisharp-vscode/issues/3243), PR: [#3780](https://github.com/OmniSharp/omnisharp-vscode/pull/3780))
 -   Add Visual Studio 2019 themes with semantic colors (PR: [#3790](https://github.com/OmniSharp/omnisharp-vscode/pull/3790))
--   Added support for `WarningsAsErrors` in csproj files (PR: [omnisharp-roslyn/#1779](https://github.com/OmniSharp/omnisharp-roslyn/pull/1779))
--   Added support for `WarningsNotAsErrors` in csproj files ([omnisharp-roslyn/#1681](https://github.com/OmniSharp/omnisharp-roslyn/issues/1681), PR: [#1784](https://github.com/OmniSharp/omnisharp-roslyn/pull/1784))
--   Improved MSBuild scoring system ([omnisharp-roslyn/#1783](https://github.com/OmniSharp/omnisharp-roslyn/issues/1783), PR: [omnisharp-roslyn/#1797](https://github.com/OmniSharp/omnisharp-roslyn/pull/1797))
--   Updated OmniSharp.Extensions.LanguageServer to `0.14.2` to fix synchronisation (PR: [omnisharp-roslyn/#1791](https://github.com/OmniSharp/omnisharp-roslyn/pull/1791))
--   Add test discovery and NoBuild option to test requests (PR: [omnisharp-roslyn/#1719](https://github.com/OmniSharp/omnisharp-roslyn/pull/1719))
+-   Added support for `WarningsAsErrors` in csproj files (PR: [omnisharp-roslyn#1779](https://github.com/OmniSharp/omnisharp-roslyn/pull/1779))
+-   Added support for `WarningsNotAsErrors` in csproj files ([omnisharp-roslyn#1681](https://github.com/OmniSharp/omnisharp-roslyn/issues/1681), PR: [#1784](https://github.com/OmniSharp/omnisharp-roslyn/pull/1784))
+-   Improved MSBuild scoring system ([omnisharp-roslyn#1783](https://github.com/OmniSharp/omnisharp-roslyn/issues/1783), PR: [omnisharp-roslyn#1797](https://github.com/OmniSharp/omnisharp-roslyn/pull/1797))
+-   Updated OmniSharp.Extensions.LanguageServer to `0.14.2` to fix synchronisation (PR: [omnisharp-roslyn#1791](https://github.com/OmniSharp/omnisharp-roslyn/pull/1791))
+-   Add test discovery and NoBuild option to test requests (PR: [omnisharp-roslyn#1719](https://github.com/OmniSharp/omnisharp-roslyn/pull/1719))
 -   Updated Razor support
     -   Enable Semantic Highlighting for Razor TagHelpers and Blazor components ([aspnetcore#21713](https://github.com/dotnet/aspnetcore/issues/21713))
--   Add support for Blazor WebAssembly-specific debug adapter ([dotnet/aspnetcore-tooling#1885](https://github.com/dotnet/aspnetcore-tooling/pull/1885))
+-   Add support for Blazor WebAssembly-specific debug adapter ([aspnetcore-tooling#1885](https://github.com/dotnet/aspnetcore-tooling/pull/1885))
 
 ### Emmet support in Razor files
 
