@@ -21,12 +21,12 @@
 
 ## 1.22.2 (August 04, 2020)
 * Updated Razor support
-  * Improved Semantic Highlighting support by fixing some scenarios which might lead to thrown exceptions and incorrect results. [aspnetcore-tooling#2126](https://github.com/dotnet/aspnetcore-tooling/pull/2126)
-  * Fixed support in the case of projects with spaces in path. [aspnetcore#23336](https://github.com/dotnet/aspnetcore/issues/23336)
+  * Improved Semantic Highlighting support by fixing some scenarios which might lead to thrown exceptions and incorrect results. [dotnet/aspnetcore-tooling#2126](https://github.com/dotnet/aspnetcore-tooling/pull/2126)
+  * Fixed support in the case of projects with spaces in path. [dotnet/aspnetcore#23336](https://github.com/dotnet/aspnetcore/issues/23336)
   * Various performance improvements.
-  * `@inject` completion [aspnetcore#22886](https://github.com/dotnet/aspnetcore/issues/22886)
-  * Improved behavior in cases where directory is not available. [aspnetcore-tooling#2008](https://github.com/dotnet/aspnetcore-tooling/pull/2008)
-  * Added the `Extract to CodeBehind` light bulb code action. [aspnetcore-tooling#2039](https://github.com/dotnet/aspnetcore-tooling/pull/2039)
+  * `@inject` completion [dotnet/aspnetcore#22886](https://github.com/dotnet/aspnetcore/issues/22886)
+  * Improved behavior in cases where directory is not available. [dotnet/aspnetcore-tooling#2008](https://github.com/dotnet/aspnetcore-tooling/pull/2008)
+  * Added the `Extract to CodeBehind` light bulb code action. [dotnet/aspnetcore-tooling#2039](https://github.com/dotnet/aspnetcore-tooling/pull/2039)
 * Use global MSBuild property when resetting target framework ([omnisharp-roslyn#1738](https://github.com/OmniSharp/omnisharp-roslyn/issues/1738), PR: [omnisharp-roslyn#1846](https://github.com/OmniSharp/omnisharp-roslyn/pull/1846))
 * Do not use Visual Studio MSBuild if it doesn't have .NET SDK resolver ([omnisharp-roslyn#1842](https://github.com/OmniSharp/omnisharp-roslyn/issues/1842), [omnisharp-roslyn#1730](https://github.com/OmniSharp/omnisharp-roslyn/issues/1730), PR: [omnisharp-roslyn#1845](https://github.com/OmniSharp/omnisharp-roslyn/pull/1845))
 * Only request dotnet info once for the solution or directory ([omnisharp-roslyn#1844](https://github.com/OmniSharp/omnisharp-roslyn/issues/1844), PR: [omnisharp-roslyn#1857](https://github.com/OmniSharp/omnisharp-roslyn/pull/1857))
@@ -55,10 +55,10 @@
 * Updated OmniSharp.Extensions.LanguageServer to `0.14.2` to fix synchronisation (PR: [omnisharp-roslyn#1791](https://github.com/OmniSharp/omnisharp-roslyn/pull/1791))
 * Add test discovery and NoBuild option to test requests (PR: [omnisharp-roslyn#1719](https://github.com/OmniSharp/omnisharp-roslyn/pull/1719))
 * Updated Razor support
-  * Enable Semantic Highlighting for Razor TagHelpers and Blazor components ([aspnetcore#21713](https://github.com/dotnet/aspnetcore/issues/21713))
-  * Directive and TagHelper Attribute Completions are now committed contextually with `=`, `:` and ` ` commit characters. ([aspnetcore#21485](https://github.com/dotnet/aspnetcore/issues/21485))
+  * Enable Semantic Highlighting for Razor TagHelpers and Blazor components ([dotnet/aspnetcore#21713](https://github.com/dotnet/aspnetcore/issues/21713))
+  * Directive and TagHelper Attribute Completions are now committed contextually with `=`, `:` and ` ` commit characters. ([dotnet/aspnetcore#21485](https://github.com/dotnet/aspnetcore/issues/21485))
   * Removed TagHelper attribute completion snippet support as we felt the typing experience was superior without it.
-* Add support for Blazor WebAssembly-specific debug adapter ([aspnetcore-tooling#1885](https://github.com/dotnet/aspnetcore-tooling/pull/1885))
+* Add support for Blazor WebAssembly-specific debug adapter ([dotnet/aspnetcore-tooling#1885](https://github.com/dotnet/aspnetcore-tooling/pull/1885))
 
 ## 1.21.18 (May 5, 2020)
 * Fadeout unused variable names ([#1324](https://github.com/OmniSharp/omnisharp-vscode/issues/1324), PR: [#3733](https://github.com/OmniSharp/omnisharp-vscode/pull/3733))
@@ -93,8 +93,8 @@
 
 ## 1.21.13 (March 5, 2020)
 * Change Marketplace publisher for the C# extension from ms-vscode to ms-dotnettools
-* Ignore diagnostics from virtual files ([aspnetcore#18927](https://github.com/dotnet/aspnetcore/issues/18927), PR: [#3592](https://github.com/OmniSharp/omnisharp-vscode/pull/3592))
-* Detect and create Blazor WASM launch and debug settings ([aspnetcore#17549](https://github.com/dotnet/aspnetcore/issues/17549), PR: [#3593](https://github.com/OmniSharp/omnisharp-vscode/pull/3593))
+* Ignore diagnostics from virtual files ([dotnet/aspnetcore#18927](https://github.com/dotnet/aspnetcore/issues/18927), PR: [#3592](https://github.com/OmniSharp/omnisharp-vscode/pull/3592))
+* Detect and create Blazor WASM launch and debug settings ([dotnet/aspnetcore#17549](https://github.com/dotnet/aspnetcore/issues/17549), PR: [#3593](https://github.com/OmniSharp/omnisharp-vscode/pull/3593))
 * Updated Razor support (PR:[3594](https://github.com/OmniSharp/omnisharp-vscode/pull/3594))
   * Support for @code/@functions block formatting
   * Updated Razor's TextMate grammar to include full syntactic colorization
