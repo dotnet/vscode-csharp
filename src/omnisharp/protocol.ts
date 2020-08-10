@@ -464,9 +464,13 @@ export interface UnresolvedDependenciesMessage {
 
 export interface ProjectConfigurationMessage {
     ProjectId: string;
+    SessionId: string;
+    OutputKind: number;
+    ProjectCapabilities: string[];
     TargetFrameworks: string[];
     References: string[];
     FileExtensions: string[];
+    FileCounts: number[];
 }
 
 export interface PackageDependency {
@@ -481,7 +485,8 @@ export interface FilesChangedRequest extends Request {
 export enum FileChangeType {
     Change = "Change",
     Create = "Create",
-    Delete = "Delete"
+    Delete = "Delete",
+    DirectoryDelete = "DirectoryDelete"
 }
 
 export enum FixAllScope {

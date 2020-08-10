@@ -300,7 +300,7 @@ export function createWebLaunchConfiguration(programPath: string, workingDirecto
     // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
     "serverReadyAction": {
         "action": "openExternally",
-        "pattern": "^\\\\s*Now listening on:\\\\s+(https?://\\\\S+)"
+        "pattern": "\\\\bNow listening on:\\\\s+(https?://\\\\S+)"
     },
     "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -517,13 +517,22 @@ async function promptToAddAssets(workspaceFolder: vscode.WorkspaceFolder) {
 
         const projectName = path.basename(workspaceFolder.uri.fsPath);
 
-        let csharpConfig = vscode.workspace.getConfiguration('csharp');
-        if (!csharpConfig.get<boolean>('supressBuildAssetsNotification')) {
+        if (!getBuildAssetsNotificationSetting()) {
             vscode.window.showWarningMessage(
                 `Required assets to build and debug are missing from '${projectName}'. Add them?`, disableItem, noItem, yesItem)
                 .then(selection => resolve(selection?.result ?? PromptResult.No));
         }
     });
+}
+
+function getBuildAssetsNotificationSetting() {
+    const newSettingName: string = 'suppressBuildAssetsNotification';
+    let csharpConfig = vscode.workspace.getConfiguration('csharp');
+    if (csharpConfig.has(newSettingName)) {
+        return csharpConfig.get<boolean>(newSettingName);
+    }
+
+    return csharpConfig.get<boolean>('supressBuildAssetsNotification');
 }
 
 export async function addTasksJsonIfNecessary(generator: AssetGenerator, operations: AssetOperations) {

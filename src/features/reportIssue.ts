@@ -20,7 +20,7 @@ export default async function reportIssue(vscode: vscode, eventStream: EventStre
     let extensions = getInstalledExtensions(vscode);
     let csharpExtVersion = getCsharpExtensionVersion(vscode);
 
-    const body =`## Issue Description ##
+    const body = `## Issue Description ##
 ## Steps to Reproduce ##
 
 ## Expected Behavior ##
@@ -42,12 +42,12 @@ export default async function reportIssue(vscode: vscode, eventStream: EventStre
 
 ${monoInfo}
 <details><summary>Dotnet Information</summary>
-${dotnetInfo}</details>
+${dotnetInfo.FullInfo}</details>
 <details><summary>Visual Studio Code Extensions</summary>
 ${generateExtensionTable(extensions)}
 </details>
 `;
-    
+
     const queryStringPrefix: string = "?";
     const issueDefault = "Please paste the output from your clipboard";
     const fullUrl = `${issuesUrl}${queryStringPrefix}body=${issueDefault}`;
@@ -116,4 +116,4 @@ function getInstalledExtensions(vscode: vscode) {
 function getCsharpExtensionVersion(vscode: vscode): string {
     const extension = vscode.extensions.getExtension(CSharpExtensionId);
     return extension.packageJSON.version;
-} 
+}

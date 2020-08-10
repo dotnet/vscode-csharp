@@ -95,7 +95,7 @@ suite(`${reportIssue.name}`, () => {
 
         test("it contains dotnet info", async () => {
             await reportIssue(vscode, eventStream, getDotnetInfo, isValidForMono, options, fakeMonoResolver);
-            expect(issueBody).to.contain(fakeDotnetInfo);
+            expect(issueBody).to.contain(fakeDotnetInfo.FullInfo);
         });
 
         test("mono information is obtained when it is a valid mono platform", async () => {

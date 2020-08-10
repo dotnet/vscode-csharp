@@ -7,6 +7,7 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
+                "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceRoot}"
             ],
             "stopOnEntry": false,
@@ -138,8 +139,8 @@
                 "updatePackageDependencies"
             ],
             "env": {
-                "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/97817be8-f22b-4e84-ac13-22bb6b3e5ca3/aa730089b036bbba517fee7a0efad668/omnisharp-linux-x64-1.35.2.zip,https://download.visualstudio.microsoft.com/download/pr/97817be8-f22b-4e84-ac13-22bb6b3e5ca3/ac45265336c139dd0de7c199e0827624/omnisharp-linux-x86-1.35.2.zip,https://download.visualstudio.microsoft.com/download/pr/97817be8-f22b-4e84-ac13-22bb6b3e5ca3/fe342bf369ee65448bc8816c9fc43960/omnisharp-osx-1.35.2.zip,https://download.visualstudio.microsoft.com/download/pr/97817be8-f22b-4e84-ac13-22bb6b3e5ca3/dc67a1d878b133ded275dd7f3ed683b7/omnisharp-win-x64-1.35.2.zip,https://download.visualstudio.microsoft.com/download/pr/97817be8-f22b-4e84-ac13-22bb6b3e5ca3/10582b9aaff6f44b2fbf8fa557748617/omnisharp-win-x86-1.35.2.zip",
-                "NEW_DEPS_VERSION": "1.35.2"
+                "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/36626172-78ba-4d79-9074-38c586befe24/16b7f50392e3cc89b742fa159a52208d/omnisharp-linux-x64-1.35.4.zip,https://download.visualstudio.microsoft.com/download/pr/36626172-78ba-4d79-9074-38c586befe24/dd5cf184c21698d979c3a6222d237269/omnisharp-linux-x86-1.35.4.zip,https://download.visualstudio.microsoft.com/download/pr/36626172-78ba-4d79-9074-38c586befe24/d2f3341bbb5c12ba8ccac537e4bb4ad1/omnisharp-osx-1.35.4.zip,https://download.visualstudio.microsoft.com/download/pr/36626172-78ba-4d79-9074-38c586befe24/daebd0bd81b6fc393c06136749486480/omnisharp-win-x64-1.35.4.zip,https://download.visualstudio.microsoft.com/download/pr/36626172-78ba-4d79-9074-38c586befe24/9188c080f3ac9e2557d5f7e2c59cd5f3/omnisharp-win-x86-1.35.4.zip",
+                "NEW_DEPS_VERSION": "1.35.4"
             },
             "cwd": "${workspaceFolder}"
         }
