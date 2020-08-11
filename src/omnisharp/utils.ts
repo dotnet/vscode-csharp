@@ -9,6 +9,7 @@ import * as path from 'path';
 import * as protocol from './protocol';
 import * as vscode from 'vscode';
 import { MSBuildProject } from './protocol';
+import { CancellationToken } from 'vscode-languageserver-protocol';
 
 export async function autoComplete(server: OmniSharpServer, request: protocol.AutoCompleteRequest, token: vscode.CancellationToken) {
     return server.makeRequest<protocol.AutoCompleteResponse[]>(protocol.Requests.AutoComplete, request, token);
@@ -174,6 +175,10 @@ export async function debugTestStop(server: OmniSharpServer, request: protocol.V
 
 export async function getSemanticHighlights(server: OmniSharpServer, request: protocol.V2.SemanticHighlightRequest) {
     return server.makeRequest<protocol.V2.SemanticHighlightResponse>(protocol.V2.Requests.Highlight, request);
+}
+
+export async function getQuickInfo(server: OmniSharpServer, request: protocol.QuickInfoRequest, token: CancellationToken) {
+    return server.makeRequest<protocol.QuickInfoResponse>(protocol.Requests.QuickInfo, request, token);
 }
 
 export async function isNetCoreProject(project: protocol.MSBuildProject) {

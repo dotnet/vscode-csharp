@@ -31,6 +31,7 @@ export module Requests {
     export const RunFixAll = '/runfixall';
     export const GetFixAll = '/getfixall';
     export const ReAnalyze = '/reanalyze';
+    export const QuickInfo = '/quickinfo';
 }
 
 export namespace WireProtocol {
@@ -505,6 +506,13 @@ export interface RunFixAllRequest extends FileBasedRequest {
     FixAllFilter?: FixAllItem[];
     WantsTextChanges: boolean;
     WantsAllCodeActionOperations: boolean;
+}
+  
+export interface QuickInfoRequest extends Request {
+}
+
+export interface QuickInfoResponse {
+    Markdown?: string;
 }
 
 export namespace V2 {
