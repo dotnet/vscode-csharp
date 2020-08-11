@@ -48,7 +48,7 @@ export async function execChildProcess(command: string, workingDirectory: string
             if (error) {
                 reject(error);
             }
-            else if (stderr && stderr.length > 0) {
+            else if (stderr && !stderr.includes("screen size is bogus")) {
                 reject(new Error(stderr));
             }
             else {
@@ -60,7 +60,7 @@ export async function execChildProcess(command: string, workingDirectory: string
 
 export async function getUnixChildProcessIds(pid: number): Promise<number[]> {
     return new Promise<number[]>((resolve, reject) => {
-        let ps = cp.exec('ps -A -o ppid,pid', (error, stdout, stderr) => {
+        cp.exec('ps -A -o ppid,pid', (error, stdout, stderr) => {
             if (error) {
                 return reject(error);
             }
