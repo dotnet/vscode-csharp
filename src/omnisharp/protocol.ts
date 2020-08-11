@@ -29,6 +29,7 @@ export module Requests {
     export const UpdateBuffer = '/updatebuffer';
     export const Metadata = '/metadata';
     export const ReAnalyze = '/reanalyze';
+    export const QuickInfo = '/quickinfo';
 }
 
 export namespace WireProtocol {
@@ -471,6 +472,13 @@ export enum FileChangeType {
     Create = "Create",
     Delete = "Delete",
     DirectoryDelete = "DirectoryDelete"
+}
+
+export interface QuickInfoRequest extends Request {
+}
+
+export interface QuickInfoResponse {
+    Markdown?: string;
 }
 
 export namespace V2 {
