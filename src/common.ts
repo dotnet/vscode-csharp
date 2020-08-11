@@ -48,7 +48,7 @@ export async function execChildProcess(command: string, workingDirectory: string
             if (error) {
                 reject(error);
             }
-            else if (stderr && stderr.length > 0) {
+            else if (stderr && !stderr.includes("screen size is bogus")) {
                 reject(new Error(stderr));
             }
             else {
@@ -60,13 +60,13 @@ export async function execChildProcess(command: string, workingDirectory: string
 
 export async function getUnixChildProcessIds(pid: number): Promise<number[]> {
     return new Promise<number[]>((resolve, reject) => {
-        let ps = cp.exec('ps -A -o ppid,pid', (error, stdout, stderr) => {
+        cp.exec('ps -A -o ppid,pid', (error, stdout, stderr) => {
             if (error) {
                 return reject(error);
             }
 
-            if (stderr) {
-                return reject(stderr);
+            if (stderr && !stderr.includes("screen size is bogus")) {
+                return reject(new Error(stderr));
             }
 
             if (!stdout) {
@@ -86,18 +86,6 @@ export async function getUnixChildProcessIds(pid: number): Promise<number[]> {
             }
 
             resolve(children);
-        });
-
-        ps.on('error', reject);
-
-        ps.stderr.setEncoding('utf8');
-        ps.stderr.on('data', data => {
-            const e = data.toString();
-            if (e.indexOf('screen size is bogus') >= 0) {
-                // ignore this error silently; see https://github.com/microsoft/vscode/issues/75932
-            } else {
-                reject(new Error(data.toString()));
-            }
         });
     });
 }
