@@ -209,7 +209,7 @@ export class RemoteAttachPicker {
         let name: string = args ? args.name : null;
 
         if (!name) {
-            // Config name not found. 
+            // Config name not found.
             return Promise.reject<string>(new Error("Name not defined in current configuration."));
         }
 
@@ -497,7 +497,7 @@ async function execChildProcess(process: string, workingDirectory: string): Prom
                 return;
             }
 
-            if (stderr && stderr.length > 0) {
+            if (stderr && !stderr.includes("screen size is bogus")) {
                 reject(new Error(stderr));
                 return;
             }
