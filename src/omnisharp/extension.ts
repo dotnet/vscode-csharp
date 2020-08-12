@@ -38,6 +38,7 @@ import trackVirtualDocuments from '../features/virtualDocumentTracker';
 import { StructureProvider } from '../features/structureProvider';
 import { OmniSharpMonoResolver } from './OmniSharpMonoResolver';
 import { getMonoVersion } from '../utils/getMonoVersion';
+import { FixAllProvider } from '../features/fixAllProvider';
 import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
 import SemanticTokensProvider from '../features/semanticTokensProvider';
 
@@ -95,6 +96,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         const codeActionProvider = new CodeActionProvider(server, optionProvider, languageMiddlewareFeature);
         localDisposables.add(codeActionProvider);
         localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
+        localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, new FixAllProvider(server, languageMiddlewareFeature)));
         localDisposables.add(reportDiagnostics(server, advisor, languageMiddlewareFeature));
         localDisposables.add(forwardChanges(server));
         localDisposables.add(trackVirtualDocuments(server, eventStream));

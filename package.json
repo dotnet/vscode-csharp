@@ -855,6 +855,21 @@
         "category": "OmniSharp"
       },
       {
+        "command": "o.fixAll.solution",
+        "title": "Fix all code issues in solution",
+        "category": "OmniSharp"
+      },
+      {
+        "command": "o.fixAll.project",
+        "title": "Fix all code issues in project",
+        "category": "OmniSharp"
+      },
+      {
+        "command": "o.fixAll.document",
+        "title": "Fix all code issues in document",
+        "category": "OmniSharp"
+      },
+      {
         "command": "o.reanalyze.allProjects",
         "title": "Analyze all projects",
         "category": "OmniSharp"

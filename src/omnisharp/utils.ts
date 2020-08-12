@@ -43,6 +43,14 @@ export async function findSymbols(server: OmniSharpServer, request: protocol.Fin
     return server.makeRequest<protocol.FindSymbolsResponse>(protocol.Requests.FindSymbols, request, token);
 }
 
+export async function runFixAll(server: OmniSharpServer, request: protocol.RunFixAllRequest): Promise<protocol.RunFixAllActionResponse> {
+    return server.makeRequest<protocol.RunFixAllActionResponse>(protocol.Requests.RunFixAll, request);
+}
+
+export async function getFixAll(server: OmniSharpServer, request: protocol.GetFixAllRequest): Promise<protocol.GetFixAllResponse> {
+    return server.makeRequest<protocol.GetFixAllResponse>(protocol.Requests.GetFixAll, request);
+}
+
 export async function findUsages(server: OmniSharpServer, request: protocol.FindUsagesRequest, token: vscode.CancellationToken) {
     return server.makeRequest<protocol.QuickFixResponse>(protocol.Requests.FindUsages, request, token);
 }

@@ -28,6 +28,8 @@ export module Requests {
     export const TypeLookup = '/typelookup';
     export const UpdateBuffer = '/updatebuffer';
     export const Metadata = '/metadata';
+    export const RunFixAll = '/runfixall';
+    export const GetFixAll = '/getfixall';
     export const ReAnalyze = '/reanalyze';
     export const QuickInfo = '/quickinfo';
 }
@@ -254,6 +256,20 @@ export interface GetCodeActionsResponse {
     CodeActions: string[];
 }
 
+export interface RunFixAllActionResponse {
+    Text: string;
+    Changes: ModifiedFileResponse[];
+}
+
+export interface FixAllItem {
+    Id: string;
+    Message: string;
+}
+
+export interface GetFixAllResponse {
+    Items: FixAllItem[];
+}
+
 export interface SyntaxFeature {
     Name: string;
     Data: string;
@@ -474,6 +490,24 @@ export enum FileChangeType {
     DirectoryDelete = "DirectoryDelete"
 }
 
+export enum FixAllScope {
+    Document = "Document",
+    Project = "Project",
+    Solution = "Solution"
+}
+
+export interface GetFixAllRequest extends FileBasedRequest {
+    Scope: FixAllScope;
+    FixAllFilter?: FixAllItem[];
+}
+
+export interface RunFixAllRequest extends FileBasedRequest {
+    Scope: FixAllScope;
+    FixAllFilter?: FixAllItem[];
+    WantsTextChanges: boolean;
+    WantsAllCodeActionOperations: boolean;
+}
+  
 export interface QuickInfoRequest extends Request {
 }
 
