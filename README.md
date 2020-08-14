@@ -20,7 +20,7 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 -   [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 -   [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
-## Note about .NET Core SDK 3.1.401 and .NET 5 Preview 8 on Mono platforms
+## Note about using .NET Core 3.1.401 or .NET 5 Preview 8 SDKs on Mono platforms
 
 Because of the new minimum MSBuild version requirement of these new SDKs, it will be necessary to use the Mono packaged with the C# extension. You can set "omnisharp.useGlobalMono" to "never" in the VS Code settings to force the use of the included Mono.
 
