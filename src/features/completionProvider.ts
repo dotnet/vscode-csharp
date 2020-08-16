@@ -23,11 +23,13 @@ export default class OmnisharpCompletionProvider extends AbstractProvider implem
             const response = await serverUtils.getCompletion(this._server, request, token);
             const mappedItems = response.Items.map(this._convertToVscodeCompletionItem);
 
-            this.#lastCompletions = new Map();
+            let lastCompletions = new Map();
 
             for (let i = 0; i < mappedItems.length; i++) {
-                this.#lastCompletions.set(mappedItems[i], response.Items[i]);
+                lastCompletions.set(mappedItems[i], response.Items[i]);
             }
+
+            this.#lastCompletions = lastCompletions;
 
             return { items: mappedItems };
         }
@@ -37,11 +39,12 @@ export default class OmnisharpCompletionProvider extends AbstractProvider implem
     }
 
     public async resolveCompletionItem(item: CompletionItem, token: CancellationToken): Promise<CompletionItem> {
-        if (!this.#lastCompletions) {
+        const lastCompletions = this.#lastCompletions;
+        if (!lastCompletions) {
             return item;
         }
 
-        const lspItem = this.#lastCompletions.get(item);
+        const lspItem = lastCompletions.get(item);
         if (!lspItem) {
             return item;
         }
