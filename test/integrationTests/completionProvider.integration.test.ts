@@ -3,14 +3,14 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import OmniSharpCompletionItemProvider from "../../src/features/completionItemProvider";
+import OmniSharpCompletionProvider from "../../src/features/completionProvider";
 import * as vscode from 'vscode';
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
 import * as path from "path";
 import { expect } from "chai";
 import { activateCSharpExtension, isRazorWorkspace } from "./integrationHelpers";
 
-suite(`${OmniSharpCompletionItemProvider.name}: Returns the completion items`, () => {
+suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () => {
     let fileUri: vscode.Uri;
 
     suiteSetup(async function () {
