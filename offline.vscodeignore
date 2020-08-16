@@ -25,7 +25,7 @@ node_modules
 gulpfile.ts
 !install.Lock
 ISSUE_TEMPLATE
-mocha.opts
+.mocharc.jsonc
 *.vscodeignore
 package-lock.json
 package.json
