@@ -26,6 +26,11 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
         let dir = testAssetWorkspace.projects[0].projectDirectoryPath;
         fileUri = vscode.Uri.file(path.join(dir, fileName));
         await vscode.commands.executeCommand("vscode.open", fileUri);
+
+        // The override bit is commented out to allow later debugging to work correctly.
+        let overrideUncomment = new vscode.WorkspaceEdit();
+        overrideUncomment.delete(fileUri, new vscode.Range(new vscode.Position(11, 8), new vscode.Position(11, 11)));
+        await vscode.workspace.applyEdit(overrideUncomment);
     });
 
     suiteTeardown(async () => {
@@ -37,9 +42,26 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
         expect(completionList.items).to.not.be.empty;
     });
 
-    test("Preselect is enabled for atleast one completionItem when there is a new", async () => {
+    test("Preselect is enabled for at least one completionItem when there is a new", async () => {
         let completionList = <vscode.CompletionList>(await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", fileUri, new vscode.Position(8, 31), " "));
         let preselectList = completionList.items.filter(item => item.preselect === true);
         expect(preselectList).to.not.be.empty;
+    });
+
+    test("Resolve adds documentation", async () => {
+        let completionList = <vscode.CompletionList>(await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", fileUri, new vscode.Position(8, 31), " ", 10));
+        // At least some of the first 10 fully-resolved elements should have documentation attached. If this ever ends up not being
+        // true, adjust the cutoff appropriately.
+        const documentation = completionList.items.slice(0, 9).filter(item => item.documentation);
+        expect(documentation).to.not.be.empty;
+    });
+
+    test("Override completion has additional edits", async () => {
+        let completionList = <vscode.CompletionList>(await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", fileUri, new vscode.Position(11, 17), " "));
+        const nonSnippets = completionList.items.filter(c => c.kind != vscode.CompletionItemKind.Snippet);
+        for (const i of nonSnippets) {
+            expect((<vscode.SnippetString>i.insertText).value).contains("$0");
+            expect(i.additionalTextEdits).is.not.null;
+        }
     });
 });

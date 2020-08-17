@@ -6,7 +6,9 @@ namespace singleCsproj
     {
         static void shouldHaveCompletions(string[] args)
         {
-           Completion a = new Completion();
+            Completion a = new Completion();
         }
+
+        // override  // Trailing space is intentional
     }
 }
