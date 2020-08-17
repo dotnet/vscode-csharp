@@ -1,4 +1,4 @@
-## Known Issues in 1.23.0
+## Known Issues in 1.23.1
 
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
