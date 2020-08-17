@@ -16,23 +16,7 @@ import { DotnetInfo } from '../utils/getDotnetInfo';
 
 let _debugUtil: CoreClrDebugUtil = null;
 
-export async function activate(thisExtension: vscode.Extension<CSharpExtensionExports>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, eventStream: EventStream) {
-    _debugUtil = new CoreClrDebugUtil(context.extensionPath);
-
-    if (!CoreClrDebugUtil.existsSync(_debugUtil.debugAdapterDir())) {
-        let isInvalidArchitecture: boolean = await checkForInvalidArchitecture(platformInformation, eventStream);
-        if (!isInvalidArchitecture) {
-            eventStream.post(new DebuggerPrerequisiteFailure("[ERROR]: C# Extension failed to install the debugger package."));
-            showInstallErrorMessage(eventStream);
-        }
-    } else if (!CoreClrDebugUtil.existsSync(_debugUtil.installCompleteFilePath())) {
-        completeDebuggerInstall(platformInformation, eventStream);
-    }
-
-    const factory = new DebugAdapterExecutableFactory(platformInformation, eventStream, thisExtension.packageJSON, thisExtension.extensionPath);
-    context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('coreclr', factory));
-    context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('clr', factory));
-}
+export async function activate(thisExtension: vscode.Extension<CSharpExtensionExports>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, eventStream: EventStream) { }
 
 async function checkForInvalidArchitecture(platformInformation: PlatformInformation, eventStream: EventStream): Promise<boolean> {
     if (platformInformation) {
@@ -78,11 +62,6 @@ async function completeDebuggerInstall(platformInformation: PlatformInformation,
             // TODO: log telemetry?
             return false;
         });
-}
-
-function showInstallErrorMessage(eventStream: EventStream) {
-    eventStream.post(new DebuggerNotInstalledFailure());
-    vscode.window.showErrorMessage("An error occurred during installation of the .NET Core Debugger. The C# extension may need to be reinstalled.");
 }
 
 function showDotnetToolsWarning(message: string): void {
