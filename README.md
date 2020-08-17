@@ -24,6 +24,9 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 
 Because of the new minimum MSBuild version requirement of these new SDKs, it will be necessary to use the Mono packaged with the C# extension. You can set "omnisharp.useGlobalMono" to "never" in the VS Code settings to force the use of the included Mono.
 
+## What's new in 1.23.1
+-   Register FixAll commands for disposal ([#3984](https://github.com/OmniSharp/omnisharp-vscode/issues/3984), PR: [#3985](https://github.com/OmniSharp/omnisharp-vscode/pull/3985))
+
 ## What's new in 1.23.0
 -   Fix typo in supressBuildAssetsNotification setting name ([#3941](https://github.com/OmniSharp/omnisharp-vscode/issues/3941), PR: [#3942](https://github.com/OmniSharp/omnisharp-vscode/pull/3942))
 -   Introduced a new `/quickinfo` endpoint to provide a richer set of information compared to `/typeinfo`. Consumers are encouraged to use it as their hover provider ([omnisharp-roslyn#1808](https://github.com/OmniSharp/omnisharp-roslyn/issues/1808), PR: [omnisharp-roslyn#1860](https://github.com/OmniSharp/omnisharp-roslyn/pull/1860)
