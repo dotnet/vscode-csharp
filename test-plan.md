@@ -184,6 +184,19 @@ To setup a test project to verify on you can do:
 2. `dotnet new blazorserverside`
 3. Open `Pages/Index.razor`
 
+#### Light bulbs
+* Typing `@code { public int MyProperty { get; set; } }` and putting your cursor over `@code` provides you with a light bulb to "Extract block to code behind". Executing the light bulb results in the code block you wrote being removed and a new `*.razor.cs` file being created side-by-side.
+* Typing `<SomeUnknownTag>` provides a light bulb to "Create component from tag". Executing the light bulb creates a new `SomeUnknokwnTag.razor` file.
+* Updating a component (`Counter.razor`) to have a different namesapce (`@namespace SomeOtherNamespace`) results in attempted usages (`<Counter>`) providing light bulbs to "Fully Qualify" and to "@using SomeOtherNamespace".
+  - Executing Fully Qualify results in `<SomeOtherNamespace.Counter>`
+  - Executing "@using SomeOtherNamespace" adds a `@using SomeOtherNamespace` statement at the top of the file.
+
+#### Go-to-definition
+* Performing go to definition on a Component (i.e. `<Counter>`) brings you to the corresponding .razor file.
+
+#### Rename
+* Renaming a component (i.e. `<Counter>`) renames all usages of that component and renames the components file name.
+
 ##### C# Completion
 * Typing `@DateTime.Now` and `@(DateTime.Now)` provides completions throughout typing.
 * Completion is available for types that exist in the project (i.e. `Program`)
