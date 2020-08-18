@@ -23,6 +23,9 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
     const requiredMonoVersion = "6.4.0";
     const higherMonoVersion = "6.6.0";
 
+    // Sets the meaning of UseGlobalMono "auto". When false, "auto" means "never".
+    const autoMeansAlways = false;
+
     const getMono = (version: string) => async (env: NodeJS.ProcessEnv) => {
         getMonoCalled = true;
         environment = env;
@@ -54,7 +57,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
         expect(monoInfo).to.be.undefined;
     });
 
-    test(`it returns the path and version if the version is greater than or equal to ${requiredMonoVersion} and getGlobalMonoInfo is always`, async () => {
+    test(`it returns the path and version if the version is greater than or equal to ${requiredMonoVersion} and useGlobalMono is always`, async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono(requiredMonoVersion));
         let monoInfo = await monoResolver.getGlobalMonoInfo({
             ...options,
@@ -66,7 +69,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
         expect(monoInfo.path).to.be.equal(monoPath);
     });
 
-    test(`it returns the path and version if the version is greater than or equal to ${requiredMonoVersion} and getGlobalMonoInfo is auto`, async () => {
+    test(`it returns the path and version if the version is greater than or equal to ${requiredMonoVersion} and useGlobalMono is auto`, async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono(higherMonoVersion));
         let monoInfo = await monoResolver.getGlobalMonoInfo({
             ...options,
@@ -74,8 +77,13 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
             monoPath: monoPath
         });
 
-        expect(monoInfo.version).to.be.equal(higherMonoVersion);
-        expect(monoInfo.path).to.be.equal(monoPath);
+        if (!autoMeansAlways) {
+            expect(monoInfo).to.be.undefined;
+        }
+        else {
+            expect(monoInfo.version).to.be.equal(higherMonoVersion);
+            expect(monoInfo.path).to.be.equal(monoPath);
+        }
     });
 
     test(`it throws exception if getGlobalMonoInfo is always and version<${requiredMonoVersion}`, async () => {
@@ -96,11 +104,16 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
             monoPath: monoPath
         });
 
-        expect(monoInfo.env["PATH"]).to.contain(join(monoPath, 'bin'));
-        expect(monoInfo.env["MONO_GAC_PREFIX"]).to.be.equal(monoPath);
+        if (!autoMeansAlways) {
+            expect(monoInfo).to.be.undefined;
+        }
+        else {
+            expect(monoInfo.env["PATH"]).to.contain(join(monoPath, 'bin'));
+            expect(monoInfo.env["MONO_GAC_PREFIX"]).to.be.equal(monoPath);
+        }
     });
 
-    test("sets the environment with the monoPath id useGlobalMono is always", async () => {
+    test("sets the environment with the monoPath id useGlobalMono is auto", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono(requiredMonoVersion));
         let monoInfo = await monoResolver.getGlobalMonoInfo({
             ...options,
@@ -108,8 +121,13 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
             monoPath: monoPath
         });
 
-        expect(monoInfo.env["PATH"]).to.contain(join(monoPath, 'bin'));
-        expect(monoInfo.env["MONO_GAC_PREFIX"]).to.be.equal(monoPath);
+        if (!autoMeansAlways) {
+            expect(monoInfo).to.be.undefined;
+        }
+        else {
+            expect(monoInfo.env["PATH"]).to.contain(join(monoPath, 'bin'));
+            expect(monoInfo.env["MONO_GAC_PREFIX"]).to.be.equal(monoPath);
+        }
     });
 
     test("doesn't set the environment with the monoPath if useGlobalMono is never", async () => {

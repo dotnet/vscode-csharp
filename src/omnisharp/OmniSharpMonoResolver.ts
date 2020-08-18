@@ -45,9 +45,13 @@ export class OmniSharpMonoResolver implements IMonoResolver {
 
             return monoInfo;
         }
-        else if (options.useGlobalMono === "auto" && isValid) {
-            return monoInfo;
-        }
+
+        // While wwaiting for Mono to ship with a MSBuild version 16.7 or higher, we will treat "auto"
+        // as "Use included Mono".
+
+        // else if (options.useGlobalMono === "auto" && isValid) {
+        //     return monoInfo;
+        //}
 
         return undefined;
     }
