@@ -62,6 +62,10 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
         for (const i of nonSnippets) {
             expect((<vscode.SnippetString>i.insertText).value).contains("$0");
             expect(i.additionalTextEdits).is.not.null;
+            expect(i.additionalTextEdits[0].range.start.line).equals(11);
+            expect(i.additionalTextEdits[0].range.start.character).equals(8);
+            expect(i.additionalTextEdits[0].range.end.line).equals(11);
+            expect(i.additionalTextEdits[0].range.end.character).equals(16);
         }
     });
 });
