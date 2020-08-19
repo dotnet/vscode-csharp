@@ -25,7 +25,8 @@ export const getNullChannel = (): vscode.OutputChannel => {
 
 export const getNullTelemetryReporter = (): ITelemetryReporter => {
     let reporter: ITelemetryReporter = {
-        sendTelemetryEvent: (eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }) => { }
+        sendTelemetryEvent: (eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }) => { },
+        sendTelemetryErrorEvent: (eventName: string, properties?: { [key: string]: string; }, measures?: { [key: string]: number; }, errorProps?: string[]) => { }
     };
 
     return reporter;
@@ -185,10 +186,15 @@ export function getWorkspaceInformationUpdated(msbuild: protocol.MsBuildWorkspac
 export function getVSCodeWithConfig() {
     const vscode = getFakeVsCode();
 
+    const _vscodeConfig = getWorkspaceConfiguration();
     const _omnisharpConfig = getWorkspaceConfiguration();
     const _csharpConfig = getWorkspaceConfiguration();
 
     vscode.workspace.getConfiguration = (section?, resource?) => {
+        if (!section) {
+            return _vscodeConfig;
+        }
+
         if (section === 'omnisharp') {
             return _omnisharpConfig;
         }

@@ -209,7 +209,7 @@ export class RemoteAttachPicker {
         let name: string = args ? args.name : null;
 
         if (!name) {
-            // Config name not found. 
+            // Config name not found.
             return Promise.reject<string>(new Error("Name not defined in current configuration."));
         }
 
@@ -238,7 +238,7 @@ export class RemoteAttachPicker {
     public static async getRemoteOSAndProcesses(pipeCmd: string, pipeCwd: string, platformInfo: PlatformInformation): Promise<AttachItem[]> {
         const scriptPath = path.join(getExtensionPath(), 'scripts', 'remoteProcessPickerScript');
 
-        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} < ${scriptPath}`, pipeCwd, RemoteAttachPicker._channel, platformInfo).then(output => {
+        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} < "${scriptPath}"`, pipeCwd, RemoteAttachPicker._channel, platformInfo).then(output => {
             // OS will be on first line
             // Processess will follow if listed
             let lines = output.split(/\r?\n/);
@@ -497,7 +497,7 @@ async function execChildProcess(process: string, workingDirectory: string): Prom
                 return;
             }
 
-            if (stderr && stderr.length > 0) {
+            if (stderr && !stderr.includes("screen size is bogus")) {
                 reject(new Error(stderr));
                 return;
             }

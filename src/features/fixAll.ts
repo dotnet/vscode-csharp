@@ -3,12 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from "vscode";
+import AbstractProvider from "./abstractProvider";
 
-export async function htmlLanguageFeaturesExtensionReady() {
-    let extension = vscode.extensions.getExtension<any>('vscode.html-language-features');
-
-    if (!extension.isActive) {
-        await extension.activate();
-    }
+export class FixAll extends AbstractProvider
+{
 }

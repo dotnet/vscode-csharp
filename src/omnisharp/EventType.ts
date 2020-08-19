@@ -79,6 +79,10 @@ export enum EventType {
     OmnisharpServerOnStart = 72,
     OmnisharpOnBeforeServerInstall = 73,
     ProjectConfigurationReceived = 74,
+    ProjectDiagnosticStatus = 75,
+    DotNetTestRunInContextStart = 76,
+    DotNetTestDebugInContextStart = 77,
+    TelemetryErrorEvent = 78
 }
 
 //Note that the EventType protocol is shared with Razor.VSCode and the numbers here should not be altered

@@ -48,7 +48,7 @@ export async function execChildProcess(command: string, workingDirectory: string
             if (error) {
                 reject(error);
             }
-            else if (stderr && stderr.length > 0) {
+            else if (stderr && !stderr.includes("screen size is bogus")) {
                 reject(new Error(stderr));
             }
             else {
@@ -60,14 +60,13 @@ export async function execChildProcess(command: string, workingDirectory: string
 
 export async function getUnixChildProcessIds(pid: number): Promise<number[]> {
     return new Promise<number[]>((resolve, reject) => {
-        let ps = cp.exec('ps -A -o ppid,pid', (error, stdout, stderr) =>
-        {
+        cp.exec('ps -A -o ppid,pid', (error, stdout, stderr) => {
             if (error) {
                 return reject(error);
             }
 
-            if (stderr) {
-                return reject(stderr);
+            if (stderr && !stderr.includes("screen size is bogus")) {
+                return reject(new Error(stderr));
             }
 
             if (!stdout) {
@@ -88,8 +87,6 @@ export async function getUnixChildProcessIds(pid: number): Promise<number[]> {
 
             resolve(children);
         });
-
-        ps.on('error', reject);
     });
 }
 
@@ -108,21 +105,21 @@ export async function fileExists(filePath: string): Promise<boolean> {
 
 export async function deleteIfExists(filePath: string): Promise<void> {
     return fileExists(filePath)
-    .then(async (exists: boolean) => {
-        return new Promise<void>((resolve, reject) => {
-            if (!exists) {
-                return resolve();
-            }
-
-            fs.unlink(filePath, err => {
-                if (err) {
-                    return reject(err);
+        .then(async (exists: boolean) => {
+            return new Promise<void>((resolve, reject) => {
+                if (!exists) {
+                    return resolve();
                 }
 
-                resolve();
+                fs.unlink(filePath, err => {
+                    if (err) {
+                        return reject(err);
+                    }
+
+                    resolve();
+                });
             });
         });
-    });
 }
 
 export enum InstallFileType {
@@ -130,7 +127,7 @@ export enum InstallFileType {
     Lock
 }
 
-export  function getInstallFilePath(folderPath: AbsolutePath, type: InstallFileType): string {
+export function getInstallFilePath(folderPath: AbsolutePath, type: InstallFileType): string {
     let installFile = 'install.' + InstallFileType[type];
     return path.resolve(folderPath.value, installFile);
 }
@@ -172,9 +169,9 @@ export function convertNativePathToPosix(pathString: string): string {
 
 /**
  * This function checks to see if a subfolder is part of folder.
- * 
+ *
  * Assumes subfolder and folder are absolute paths and have consistent casing.
- * 
+ *
  * @param subfolder subfolder to check if it is part of the folder parameter
  * @param folder folder to check aganist
  */

@@ -24,7 +24,7 @@ export class FakeMonoResolver implements IMonoResolver {
         if (this.willReturnMonoInfo) {
             return Promise.resolve(fakeMonoInfo);
         }
-        
+
         return Promise.resolve(undefined);
     }
 }

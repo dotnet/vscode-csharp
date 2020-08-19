@@ -1,17 +1,81 @@
-/*--------------------------------------------------------------------------------------------- 
- *  Copyright (c) Microsoft Corporation. All rights reserved. 
- *  Licensed under the MIT License. See License.txt in the project root for license information. 
- *--------------------------------------------------------------------------------------------*/ 
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
-export default async function poll<T>(getValue: () => T, duration: number, step: number): Promise<T> {
+function defaultAssertion<T>(value: T): void {
+    if (value === undefined) {
+        throw "Default assertion of poll: Excepted value not to be undefined.";
+    }
+
+    if (Array.isArray(value) && value.length === 0) {
+        throw "Default assertion of poll: Value was array but it got length of '0'.";
+    }
+}
+
+export async function assertWithPoll<T>(
+    getValue: () => T,
+    duration: number,
+    step: number,
+    assertForValue: (input: T) => void = defaultAssertion): Promise<T> {
+
+    let assertResult: Error = undefined;
+
     while (duration > 0) {
         let value = await getValue();
 
-        if(Array.isArray(value) && value.length > 0) {
-            return value;
+        try {
+            assertResult = undefined;
+            assertForValue(value);
+        } catch (error) {
+            assertResult = error;
         }
 
-        if (!Array.isArray(value) && value) {
+        if (assertResult === undefined) {
+            return;
+        }
+
+        await sleep(step);
+
+        duration -= step;
+    }
+
+    throw assertResult;
+}
+
+function defaultPollExpression<T>(value: T): boolean {
+    return value !== undefined && ((Array.isArray(value) && value.length > 0) || (!Array.isArray(value) && !!value));
+}
+
+export async function pollDoesNotHappen<T>(
+    getValue: () => T,
+    duration: number,
+    step: number,
+    expression: (input: T) => boolean = defaultPollExpression): Promise<void> {
+    while (duration > 0) {
+        let value = await getValue();
+
+        if (expression(value)) {
+            throw new Error("Polling succeeded within the alotted duration, but should not have.");
+        }
+
+        await sleep(step);
+
+        duration -= step;
+    }
+
+    // Successfully never happened
+}
+
+export async function poll<T>(
+    getValue: () => Promise<T> | T,
+    duration: number,
+    step: number,
+    expression: (input: T) => boolean = defaultPollExpression): Promise<T> {
+    while (duration > 0) {
+        let value = await getValue();
+
+        if (expression(value)) {
             return value;
         }
 

@@ -9,13 +9,13 @@ import { SpawnOptions, spawn } from "child_process";
 import { nodePath, rootPath } from "./projectPaths";
 const { join } = require("async-child-process");
 
-export default async function spawnNode(args?: string[], options?: SpawnOptions): Promise<{code: string; signal: string;}> {
+export default async function spawnNode(args?: string[], options?: SpawnOptions): Promise<{ code: string; signal: string; }> {
     if (!options) {
         options = {
             env: {}
         };
     }
-    
+
     let optionsWithFullEnvironment = {
         cwd: rootPath,
         ...options,
@@ -24,11 +24,11 @@ export default async function spawnNode(args?: string[], options?: SpawnOptions)
             ...options.env
         }
     };
-    
+
     console.log(`starting ${nodePath} ${args.join(' ')}`);
 
     let spawned = spawn(nodePath, args, optionsWithFullEnvironment);
-    
+
     spawned.stderr.pipe(process.stdout);
     spawned.stdout.pipe(process.stdout);
 

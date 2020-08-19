@@ -26,7 +26,7 @@ import * as ObservableEvents from './loggingEvents';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import { Subject } from 'rxjs';
-import {debounceTime} from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
@@ -55,6 +55,8 @@ module Events {
     export const ProjectChanged = 'ProjectChanged';
     export const ProjectAdded = 'ProjectAdded';
     export const ProjectRemoved = 'ProjectRemoved';
+
+    export const ProjectDiagnosticStatus = 'ProjectDiagnosticStatus';
 
     export const MsBuildProjectDiagnostics = 'MsBuildProjectDiagnostics';
 
@@ -96,7 +98,7 @@ export class OmniSharpServer {
     private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
     private firstUpdateProject: boolean;
 
-    constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private packageJSON: any, private platformInfo: PlatformInformation, private eventStream: EventStream, private optionProvider: OptionProvider, private extensionPath: string, private monoResolver: IMonoResolver) {
+    constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private packageJSON: any, private platformInfo: PlatformInformation, private eventStream: EventStream, private optionProvider: OptionProvider, private extensionPath: string, private monoResolver: IMonoResolver, public decompilationAuthorized: boolean) {
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
         let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, this.packageJSON, platformInfo, extensionPath);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
@@ -194,6 +196,10 @@ export class OmniSharpServer {
         return this._addListener(Events.ProjectRemoved, listener, thisArg);
     }
 
+    public onProjectDiagnosticStatus(listener: (e: protocol.ProjectDiagnosticStatus) => any, thisArg?: any) {
+        return this._addListener(Events.ProjectDiagnosticStatus, listener, thisArg);
+    }
+
     public onMsBuildProjectDiagnostics(listener: (e: protocol.MSBuildProjectDiagnostics) => any, thisArg?: any) {
         return this._addListener(Events.MsBuildProjectDiagnostics, listener, thisArg);
     }
@@ -282,6 +288,10 @@ export class OmniSharpServer {
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnStart());
         }));
 
+        disposables.add(this.onProjectDiagnosticStatus((message: protocol.ProjectDiagnosticStatus) =>
+            this.eventStream.post(new ObservableEvents.OmnisharpProjectDiagnosticStatus(message))
+        ));
+
         disposables.add(this.onProjectConfigurationReceived((message: protocol.ProjectConfigurationMessage) => {
             this.eventStream.post(new ObservableEvents.ProjectConfiguration(message));
         }));
@@ -323,11 +333,10 @@ export class OmniSharpServer {
             args.push('--debug');
         }
 
-        for (let i = 0; i < options.excludePaths.length; i++)
-        {
+        for (let i = 0; i < options.excludePaths.length; i++) {
             args.push(`FileOptions:SystemExcludeSearchPatterns:${i}=${options.excludePaths[i]}`);
         }
-        
+
         if (options.enableMsBuildLoadProjectsOnDemand === true) {
             args.push('MsBuild:LoadProjectsOnDemand=true');
         }
@@ -338,6 +347,10 @@ export class OmniSharpServer {
 
         if (options.enableEditorConfigSupport === true) {
             args.push('FormattingOptions:EnableEditorConfigSupport=true');
+        }
+
+        if (this.decompilationAuthorized && options.enableDecompilationSupport === true) {
+            args.push('RoslynExtensionsOptions:EnableDecompilationSupport=true');
         }
 
         let launchInfo: LaunchInfo;
@@ -379,8 +392,8 @@ export class OmniSharpServer {
             return this.stop();
         }
     }
-    
-    private onProjectConfigurationReceived(listener: (e: protocol.ProjectConfigurationMessage) => void){
+
+    private onProjectConfigurationReceived(listener: (e: protocol.ProjectConfigurationMessage) => void) {
         return this._addListener(Events.ProjectConfiguration, listener);
     }
 

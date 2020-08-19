@@ -5,7 +5,7 @@
 import { should, expect } from 'chai';
 import { TelemetryObserver } from '../../../src/observers/TelemetryObserver';
 import { PlatformInformation } from '../../../src/platform';
-import { PackageInstallation, InstallationFailure, InstallationSuccess, TestExecutionCountReport, TelemetryEventWithMeasures, OmnisharpDelayTrackerEventMeasures, OmnisharpStart, TelemetryEvent, ProjectConfiguration } from '../../../src/omnisharp/loggingEvents';
+import { PackageInstallation, InstallationFailure, InstallationSuccess, TestExecutionCountReport, TelemetryEventWithMeasures, OmnisharpDelayTrackerEventMeasures, OmnisharpStart, TelemetryEvent, ProjectConfiguration, TelemetryErrorEvent } from '../../../src/omnisharp/loggingEvents';
 import { getNullTelemetryReporter } from '../testAssets/Fakes';
 import { Package } from '../../../src/packageManager/Package';
 import { PackageError } from '../../../src/packageManager/PackageError';
@@ -19,6 +19,7 @@ suite('TelemetryReporterObserver', () => {
     let name = "";
     let property: { [key: string]: string } = null;
     let measure: { [key: string]: number }[] = [];
+    let errorProp: string[][] = [];
     let observer = new TelemetryObserver(platformInfo, () => {
         return {
             ...getNullTelemetryReporter,
@@ -26,7 +27,13 @@ suite('TelemetryReporterObserver', () => {
                 name += eventName;
                 property = properties;
                 measure.push(measures);
-            }
+            },
+            sendTelemetryErrorEvent: (eventName: string, properties?: { [key: string]: string; }, measures?: { [key: string]: number; }, errorProps?: string[]) => {
+                name += eventName;
+                property = properties;
+                measure.push(measures);
+                errorProp.push(errorProps);
+            },
         };
     });
 
@@ -34,6 +41,7 @@ suite('TelemetryReporterObserver', () => {
         name = "";
         property = null;
         measure = [];
+        errorProp = [];
     });
 
     test('PackageInstallation: AcquisitionStart is reported', () => {
@@ -50,22 +58,34 @@ suite('TelemetryReporterObserver', () => {
     });
 
     test(`${ProjectConfiguration.name}: Telemetry props contains project id and target framework`, () => {
-        const targetFrameworks = new Array("tfm1", "tfm2");
+        const targetFrameworks = ["tfm1", "tfm2"];
         const projectId = "sample";
-        const references = new Array("ref1", "ref2");
-        const fileExtensions = new Array(".cs", ".cshtml");
+        const sessionId = "session01";
+        const outputKind = 3;
+        const projectCapabilities = ["cap1", "cap2"];
+        const references = ["ref1", "ref2"];
+        const fileExtensions = [".cs", ".cshtml"];
+        const fileCounts = [7, 3];
         let event = new ProjectConfiguration({
+            ProjectCapabilities: projectCapabilities,
             TargetFrameworks: targetFrameworks,
             ProjectId: projectId,
+            SessionId: sessionId,
+            OutputKind: outputKind,
             References: references,
-            FileExtensions: fileExtensions
+            FileExtensions: fileExtensions,
+            FileCounts: fileCounts
         });
 
         observer.post(event);
+        expect(property["ProjectCapabilities"]).to.be.equal("cap1 cap2");
         expect(property["TargetFrameworks"]).to.be.equal("tfm1|tfm2");
         expect(property["ProjectId"]).to.be.equal(projectId);
+        expect(property["SessionId"]).to.be.equal(sessionId);
+        expect(property["OutputType"]).to.be.equal(outputKind.toString());
         expect(property["References"]).to.be.equal("ref1|ref2");
         expect(property["FileExtensions"]).to.be.equal(".cs|.cshtml");
+        expect(property["FileCounts"]).to.be.equal("7|3");
     });
 
     [
@@ -85,6 +105,15 @@ suite('TelemetryReporterObserver', () => {
         expect(name).to.contain(event.eventName);
         expect(measure).to.be.containingAllOf([event.measures]);
         expect(property).to.be.equal(event.properties);
+    });
+
+    test(`${TelemetryErrorEvent.name}: SendTelemetry error event is called with the name, properties, measures, and errorProps`, () => {
+        let event = new TelemetryErrorEvent("someName", { "key": "value" }, { someKey: 1 }, ["StackTrace"]);
+        observer.post(event);
+        expect(name).to.contain(event.eventName);
+        expect(measure).to.be.containingAllOf([event.measures]);
+        expect(property).to.be.equal(event.properties);
+        expect(errorProp).to.be.containingAllOf([event.errorProps]);
     });
 
     suite('InstallationFailure', () => {

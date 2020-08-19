@@ -5,7 +5,7 @@
 
 let Subscriber: (message: string) => void;
 
-export function SubscribeToAllLoggers(subscriber: (message:string) => void) {
+export function SubscribeToAllLoggers(subscriber: (message: string) => void) {
     Subscriber = subscriber;
 }
 
@@ -36,7 +36,7 @@ export class Logger {
             this._atLineStart = false;
         }
 
-        this.write(message); 
+        this.write(message);
     }
 
     public increaseIndent(): void {

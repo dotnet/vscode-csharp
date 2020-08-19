@@ -45,7 +45,7 @@ The default launch.json template (as of C# extension v1.20.0) for ASP.NET Core p
 ```json
     "serverReadyAction": {
         "action": "openExternally",
-        "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)"
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
     }
 ```
 
@@ -62,12 +62,11 @@ Notes about this:
     Code, and it also allows using a script debugger. You can continue using `launchBrowser` instead 
     if none of those features are important to you. You also can continue to use `launchBrowser` if
     you want to run a specific program instead of starting the default browser.
-4. More documentation for `servereReadyAction` can be found in the [Visual Studio Code February 2019 release notes](https://code.visualstudio.com/updates/v1_32#_automatically-open-a-uri-when-debugging-a-server-program).
+4. More documentation for `serverReadyAction` can be found in the [Visual Studio Code February 2019 release notes](https://code.visualstudio.com/updates/v1_32#_automatically-open-a-uri-when-debugging-a-server-program).
 5. The way this works is that VS Code will scrape the output which is set to the console. If a line 
     matches the pattern, it will launch a browser against the URL which was 'captured' by the pattern.
     Here is an explanation of what the pattern does:
-    * `^`: This indicates that the pattern should only be matched against the beginning of a line.
-    * `\\s*` : Matches zero or more whitespace characters. Note that `\s` indicates a whitespace character, but because this is in a json string, the `\` needs to be escaped, hence `\\s`.
+    * `\\b` : Matches on a word boundery. Note that `\b` indicates a word boundary, but because this is in a json string, the `\` needs to be escaped, hence `\\b`.
     * `Now listening on:` : This is a string literal, meaning that the next text must be `Now listening on:`.
     * `\\s+` : Matches one or more space characters.
     * `(` : This is the beginning of a 'capture group' -- this indicates which region of text will be saved and used to launch the browser.
@@ -87,7 +86,7 @@ If you want to ignore the URL from the console output, you can remove the
 ```json
     "serverReadyAction": {
         "action": "openExternally",
-        "pattern": "^\\s*Now listening on:\\s+https?://\\S",
+        "pattern": "\\bNow listening on:\\s+https?://\\S",
         "uriFormat": "http://localhost:1234"
     }
 ```
@@ -97,7 +96,7 @@ If you want to use the port number from the console output, but not the host nam
 ```json
     "serverReadyAction": {
         "action": "openExternally",
-        "pattern": "^\\s*Now listening on:\\s+http://\\S+:([0-9]+)",
+        "pattern": "\\bNow listening on:\\s+http://\\S+:([0-9]+)",
         "uriFormat": "http://localhost:%s"
     }
 ```
@@ -213,11 +212,12 @@ If you are only interested in debugging code you are building locally, it is bes
 
 1: In situations where you are attaching the debugger to an already running process, this option will have no effect on modules that were already loaded at the time the debugger was attached.
 
-2: This option has no effect on dlls that have been pre-compiled (a.k.a ngen'ed) to native code. However, you can disable usage of pre-compiled code by starting the process with the environment variable 'COMPlus_ZapDisable' set to '1'. If you are launching under the debugger, this code be done by adding this to launch.json --
+2: This option has no effect on dlls that have been pre-compiled (a.k.a ngen'ed) to native code. However, you can disable usage of pre-compiled code by starting the process with the environment variable `COMPlus_ReadyToRun` set to `0`. If you are targetting an older version of .NET Core (2.x) also set `COMPlus_ZapDisable` set to '1'. If you are launching under the debugger, this code be done by adding this to launch.json --
 
 ```json
     "env": {
-        "COMPlus_ZapDisable": "1"
+        "COMPlus_ZapDisable": "1",
+        "COMPlus_ReadyToRun": "0"
     }
 ```
 

@@ -130,11 +130,27 @@ export class AssetGenerator {
             throw new Error("Startup project not set");
         }
 
-        let projectFileText = fs.readFileSync(this.startupProject.Path, 'utf8');
+        return this.startupProject.IsWebProject;
+    }
 
-        // Assume that this is an MSBuild project. In that case, look for the 'Sdk="Microsoft.NET.Sdk.Web"' attribute.
-        // TODO: Have OmniSharp provide the list of SDKs used by a project and check that list instead.
-        return projectFileText.toLowerCase().indexOf('sdk="microsoft.net.sdk.web"') >= 0;
+    public computeProgramLaunchType(): ProgramLaunchType {
+        if (!this.startupProject) {
+            throw new Error("Startup project not set");
+        }
+
+        if (this.startupProject.IsBlazorWebAssemblyStandalone) {
+            return ProgramLaunchType.BlazorWebAssemblyStandalone;
+        }
+
+        if (this.startupProject.IsBlazorWebAssemblyHosted) {
+            return ProgramLaunchType.BlazorWebAssemblyHosted;
+        }
+
+        if (this.startupProject.IsWebProject) {
+            return ProgramLaunchType.Web;
+        }
+
+        return ProgramLaunchType.Console;
     }
 
     private computeProgramPath() {
@@ -145,8 +161,8 @@ export class AssetGenerator {
         const startupProjectDir = path.dirname(this.startupProject.Path);
         const relativeProjectDir = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, startupProjectDir));
         const configurationName = 'Debug';
-        const targetFramework = protocol.findNetCoreAppTargetFramework(this.startupProject).ShortName;
-        const result = path.join(relativeProjectDir, `bin/${configurationName}/${targetFramework}/${this.startupProject.AssemblyName}.dll`);
+        const targetFramework = protocol.findNetCoreAppTargetFramework(this.startupProject) ?? protocol.findNet5TargetFramework(this.startupProject);
+        const result = path.join(relativeProjectDir, `bin/${configurationName}/${targetFramework.ShortName}/${this.startupProject.AssemblyName}.dll`);
         return result;
     }
 
@@ -160,24 +176,40 @@ export class AssetGenerator {
         return path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, startupProjectDir));
     }
 
-    public createLaunchJson(isWebProject: boolean): string {
-        if (!isWebProject) {
-            const launchConfigurationsMassaged: string = indentJsonString(createLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory()));
-            const attachConfigurationsMassaged: string = indentJsonString(createAttachConfiguration());
-            return `
+    public createLaunchJsonConfigurations(programLaunchType: ProgramLaunchType): string {
+        switch (programLaunchType) {
+            case ProgramLaunchType.Console: {
+                const launchConfigurationsMassaged: string = indentJsonString(createLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory()));
+                const attachConfigurationsMassaged: string = indentJsonString(createAttachConfiguration());
+                return `
 [
     ${launchConfigurationsMassaged},
     ${attachConfigurationsMassaged}
 ]`;
-        }
-        else {
-            const webLaunchConfigurationsMassaged: string = indentJsonString(createWebLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory()));
-            const attachConfigurationsMassaged: string = indentJsonString(createAttachConfiguration());
-            return `
+            }
+            case ProgramLaunchType.Web: {
+                const webLaunchConfigurationsMassaged: string = indentJsonString(createWebLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory()));
+                const attachConfigurationsMassaged: string = indentJsonString(createAttachConfiguration());
+                return `
 [
     ${webLaunchConfigurationsMassaged},
     ${attachConfigurationsMassaged}
 ]`;
+            }
+            case ProgramLaunchType.BlazorWebAssemblyHosted: {
+                const hostedLaunchConfigMassaged: string = indentJsonString(createBlazorWebAssemblyHostedLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory()));
+                return `
+[
+    ${hostedLaunchConfigMassaged}
+]`;
+            }
+            case ProgramLaunchType.BlazorWebAssemblyStandalone: {
+                const standaloneLaunchConfigMassaged: string = indentJsonString(createBlazorWebAssemblyStandaloneLaunchConfiguration(this.computeWorkingDirectory()));
+                return `
+[
+    ${standaloneLaunchConfigMassaged}
+]`;
+            }
         }
     }
 
@@ -195,12 +227,12 @@ export class AssetGenerator {
         };
     }
 
-    
+
     private createPublishTaskDescription(): tasks.TaskDescription {
         let commandArgs = ['publish'];
-        
+
         this.AddAdditionalCommandArgs(commandArgs);
-        
+
         return {
             label: 'publish',
             command: 'dotnet',
@@ -209,12 +241,12 @@ export class AssetGenerator {
             problemMatcher: '$msCompile'
         };
     }
-    
+
     private createWatchTaskDescription(): tasks.TaskDescription {
-        let commandArgs = ['watch','run'];
-        
+        let commandArgs = ['watch', 'run'];
+
         this.AddAdditionalCommandArgs(commandArgs);
-        
+
         return {
             label: 'watch',
             command: 'dotnet',
@@ -223,7 +255,7 @@ export class AssetGenerator {
             problemMatcher: '$msCompile'
         };
     }
-    
+
     private AddAdditionalCommandArgs(commandArgs: string[]) {
         let buildProject = this.startupProject;
         if (!buildProject) {
@@ -237,13 +269,20 @@ export class AssetGenerator {
         commandArgs.push("/property:GenerateFullPaths=true");
         commandArgs.push("/consoleloggerparameters:NoSummary");
     }
-    
+
     public createTasksConfiguration(): tasks.TaskConfiguration {
         return {
             version: "2.0.0",
             tasks: [this.createBuildTaskDescription(), this.createPublishTaskDescription(), this.createWatchTaskDescription()]
         };
     }
+}
+
+export enum ProgramLaunchType {
+    Console,
+    Web,
+    BlazorWebAssemblyHosted,
+    BlazorWebAssemblyStandalone,
 }
 
 export function createWebLaunchConfiguration(programPath: string, workingDirectory: string): string {
@@ -261,7 +300,7 @@ export function createWebLaunchConfiguration(programPath: string, workingDirecto
     // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
     "serverReadyAction": {
         "action": "openExternally",
-        "pattern": "^\\\\s*Now listening on:\\\\s+(https?://\\\\S+)"                
+        "pattern": "\\\\bNow listening on:\\\\s+(https?://\\\\S+)"
     },
     "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -269,6 +308,29 @@ export function createWebLaunchConfiguration(programPath: string, workingDirecto
     "sourceFileMap": {
         "/Views": "\${workspaceFolder}/Views"
     }
+}`;
+}
+
+export function createBlazorWebAssemblyHostedLaunchConfiguration(programPath: string, workingDirectory: string): string {
+    return `
+{
+    "name": "Launch and Debug Hosted Blazor WebAssembly App",
+    "type": "blazorwasm",
+    "request": "launch",
+    "hosted": true,
+    // If you have changed target frameworks, make sure to update the program path.
+    "program": "${util.convertNativePathToPosix(programPath)}",
+    "cwd": "${util.convertNativePathToPosix(workingDirectory)}"
+}`;
+}
+
+export function createBlazorWebAssemblyStandaloneLaunchConfiguration(workingDirectory: string): string {
+    return `
+{
+    "name": "Launch and Debug Standalone Blazor WebAssembly App",
+    "type": "blazorwasm",
+    "request": "launch",
+    "cwd": "${util.convertNativePathToPosix(workingDirectory)}"
 }`;
 }
 
@@ -455,10 +517,22 @@ async function promptToAddAssets(workspaceFolder: vscode.WorkspaceFolder) {
 
         const projectName = path.basename(workspaceFolder.uri.fsPath);
 
-        vscode.window.showWarningMessage(
-            `Required assets to build and debug are missing from '${projectName}'. Add them?`, disableItem, noItem, yesItem)
-            .then(selection => resolve(selection.result));
+        if (!getBuildAssetsNotificationSetting()) {
+            vscode.window.showWarningMessage(
+                `Required assets to build and debug are missing from '${projectName}'. Add them?`, disableItem, noItem, yesItem)
+                .then(selection => resolve(selection?.result ?? PromptResult.No));
+        }
     });
+}
+
+function getBuildAssetsNotificationSetting() {
+    const newSettingName: string = 'suppressBuildAssetsNotification';
+    let csharpConfig = vscode.workspace.getConfiguration('csharp');
+    if (csharpConfig.has(newSettingName)) {
+        return csharpConfig.get<boolean>(newSettingName);
+    }
+
+    return csharpConfig.get<boolean>('supressBuildAssetsNotification');
 }
 
 export async function addTasksJsonIfNecessary(generator: AssetGenerator, operations: AssetOperations) {
@@ -507,10 +581,10 @@ async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: A
         // already exists, and in the command case, we delete the launch.json file, but the VS
         // Code API will return old configurations anyway, which we do NOT want.
 
-        const isWebProject = generator.hasWebServerDependency();
-        let launchJson: string = generator.createLaunchJson(isWebProject);
+        const programLaunchType = generator.computeProgramLaunchType();
+        const launchJsonConfigurations: string = generator.createLaunchJsonConfigurations(programLaunchType);
+        const configurationsMassaged: string = indentJsonString(launchJsonConfigurations);
 
-        const configurationsMassaged: string = indentJsonString(launchJson);
         const launchJsonText = `
 {
    // Use IntelliSense to find out which attributes exist for C# debugging

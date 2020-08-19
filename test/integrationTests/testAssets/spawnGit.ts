@@ -14,7 +14,7 @@ export default async function spawnGit(args?: string[], options?: SpawnOptions):
             env: {}
         };
     }
-    
+
     let optionsWithFullEnvironment = {
         ...options,
         env: {
@@ -22,7 +22,7 @@ export default async function spawnGit(args?: string[], options?: SpawnOptions):
             ...options.env
         }
     };
-    
+
     let spawned = spawn('git', args, optionsWithFullEnvironment);
 
     //spawned.stdout.on('data', (data) => console.log(data.toString()));

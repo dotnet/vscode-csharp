@@ -38,10 +38,19 @@ import trackVirtualDocuments from '../features/virtualDocumentTracker';
 import { StructureProvider } from '../features/structureProvider';
 import { OmniSharpMonoResolver } from './OmniSharpMonoResolver';
 import { getMonoVersion } from '../utils/getMonoVersion';
+import { FixAllProvider } from '../features/fixAllProvider';
+import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
+import SemanticTokensProvider from '../features/semanticTokensProvider';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
     readonly advisor: Advisor;
+    readonly testManager: TestManager;
+}
+
+let _semanticTokensProvider: SemanticTokensProvider;
+export function getSemanticTokensProvider() {
+    return _semanticTokensProvider;
 }
 
 export async function activate(context: vscode.ExtensionContext, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, eventStream: EventStream, optionProvider: OptionProvider, extensionPath: string) {
@@ -51,10 +60,15 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
 
     const options = optionProvider.GetLatestOptions();
     let omnisharpMonoResolver = new OmniSharpMonoResolver(getMonoVersion);
-    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver);
+    const decompilationAuthorized = context.workspaceState.get<boolean | undefined>("decompilationAuthorized") ?? false;
+    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver, decompilationAuthorized);
     const advisor = new Advisor(server, optionProvider); // create before server is started
     const disposables = new CompositeDisposable();
+    const languageMiddlewareFeature = new LanguageMiddlewareFeature();
+    languageMiddlewareFeature.register();
+    disposables.add(languageMiddlewareFeature);
     let localDisposables: CompositeDisposable;
+    const testManager = new TestManager(server, eventStream, languageMiddlewareFeature);
 
     disposables.add(server.onServerStart(() => {
         // register language feature provider on start
@@ -62,32 +76,46 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         const definitionMetadataDocumentProvider = new DefinitionMetadataDocumentProvider();
         definitionMetadataDocumentProvider.register();
         localDisposables.add(definitionMetadataDocumentProvider);
-        const definitionProvider = new DefinitionProvider(server, definitionMetadataDocumentProvider);
+        const definitionProvider = new DefinitionProvider(server, definitionMetadataDocumentProvider, languageMiddlewareFeature);
         localDisposables.add(vscode.languages.registerDefinitionProvider(documentSelector, definitionProvider));
         localDisposables.add(vscode.languages.registerDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
-        localDisposables.add(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server)));
-        const testManager = new TestManager(server, eventStream);
-        localDisposables.add(testManager);
-        localDisposables.add(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, testManager, optionProvider)));
-        localDisposables.add(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server)));
-        localDisposables.add(vscode.languages.registerDocumentSymbolProvider(documentSelector, new DocumentSymbolProvider(server)));
-        localDisposables.add(vscode.languages.registerReferenceProvider(documentSelector, new ReferenceProvider(server)));
-        localDisposables.add(vscode.languages.registerHoverProvider(documentSelector, new HoverProvider(server)));
-        localDisposables.add(vscode.languages.registerRenameProvider(documentSelector, new RenameProvider(server)));
+        localDisposables.add(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server, languageMiddlewareFeature)));
+        localDisposables.add(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, testManager, optionProvider, languageMiddlewareFeature)));
+        localDisposables.add(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server, languageMiddlewareFeature)));
+        localDisposables.add(vscode.languages.registerDocumentSymbolProvider(documentSelector, new DocumentSymbolProvider(server, languageMiddlewareFeature)));
+        localDisposables.add(vscode.languages.registerReferenceProvider(documentSelector, new ReferenceProvider(server, languageMiddlewareFeature)));
+        localDisposables.add(vscode.languages.registerHoverProvider(documentSelector, new HoverProvider(server, languageMiddlewareFeature)));
+        localDisposables.add(vscode.languages.registerRenameProvider(documentSelector, new RenameProvider(server, languageMiddlewareFeature)));
         if (options.useFormatting) {
-            localDisposables.add(vscode.languages.registerDocumentRangeFormattingEditProvider(documentSelector, new FormatProvider(server)));
-            localDisposables.add(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new FormatProvider(server), '}', ';'));
+            localDisposables.add(vscode.languages.registerDocumentRangeFormattingEditProvider(documentSelector, new FormatProvider(server, languageMiddlewareFeature)));
+            localDisposables.add(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new FormatProvider(server, languageMiddlewareFeature), '}', ';'));
         }
-        localDisposables.add(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionItemProvider(server), '.', ' '));
-        localDisposables.add(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server, optionProvider)));
-        localDisposables.add(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server), '(', ','));
-        const codeActionProvider = new CodeActionProvider(server, optionProvider);
+        localDisposables.add(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionItemProvider(server, languageMiddlewareFeature), '.', ' '));
+        localDisposables.add(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server, optionProvider, languageMiddlewareFeature)));
+        localDisposables.add(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server, languageMiddlewareFeature), '(', ','));
+        // Since the CodeActionProvider registers its own commands, we must instantiate it and add it to the localDisposables
+        // so that it will be cleaned up if OmniSharp is restarted.
+        const codeActionProvider = new CodeActionProvider(server, optionProvider, languageMiddlewareFeature);
         localDisposables.add(codeActionProvider);
         localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
-        localDisposables.add(reportDiagnostics(server, advisor));
+        // Since the FixAllProviders registers its own commands, we must instantiate it and add it to the localDisposables
+        // so that it will be cleaned up if OmniSharp is restarted.
+        const fixAllProvider = new FixAllProvider(server, languageMiddlewareFeature);
+        localDisposables.add(fixAllProvider);
+        localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, fixAllProvider));
+        localDisposables.add(reportDiagnostics(server, advisor, languageMiddlewareFeature));
         localDisposables.add(forwardChanges(server));
         localDisposables.add(trackVirtualDocuments(server, eventStream));
-        localDisposables.add(vscode.languages.registerFoldingRangeProvider(documentSelector, new StructureProvider(server)));
+        localDisposables.add(vscode.languages.registerFoldingRangeProvider(documentSelector, new StructureProvider(server, languageMiddlewareFeature)));
+
+        const semanticTokensProvider = new SemanticTokensProvider(server, optionProvider, languageMiddlewareFeature);
+        // Make the semantic token provider available for testing
+        if (process.env.OSVC_SUITE !== undefined) {
+            _semanticTokensProvider = semanticTokensProvider;
+        }
+
+        localDisposables.add(vscode.languages.registerDocumentSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
+        localDisposables.add(vscode.languages.registerDocumentRangeSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
     }));
 
     disposables.add(server.onServerStop(() => {
@@ -98,7 +126,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables = null;
     }));
 
-    disposables.add(registerCommands(server, platformInfo, eventStream, optionProvider, omnisharpMonoResolver, packageJSON, extensionPath));
+    disposables.add(registerCommands(context, server, platformInfo, eventStream, optionProvider, omnisharpMonoResolver, packageJSON, extensionPath));
 
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
         disposables.add(server.onServerStart(() => {
@@ -169,6 +197,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
 
     // stop server on deactivate
     disposables.add(new Disposable(() => {
+        testManager.dispose();
         advisor.dispose();
         server.stop();
     }));
@@ -180,5 +209,5 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
 
     return new Promise<ActivationResult>(resolve =>
         server.onServerStart(e =>
-            resolve({ server, advisor })));
+            resolve({ server, advisor, testManager })));
 }

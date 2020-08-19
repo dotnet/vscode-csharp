@@ -24,7 +24,7 @@ export function getProxyAgent(requestURL: Url, proxy: string, strictSSL: boolean
     if (!proxyURL) {
         return null;
     }
-    
+
     const proxyEndpoint = parseUrl(proxyURL);
 
     if (!/^https?:$/.test(proxyEndpoint.protocol)) {

@@ -64,7 +64,7 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
     //
     // TODO:
     //   * It should be possible to choose a .csproj as a launch target
-    //   * It should be possible to choose a .sln file even when no .csproj files are found 
+    //   * It should be possible to choose a .sln file even when no .csproj files are found
     //     within the root.
 
     if (!Array.isArray(resources)) {
@@ -262,7 +262,7 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
     }
 
     let monoInfo = await monoResolver.getGlobalMonoInfo(options);
-    
+
     if (monoInfo) {
         const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
         let childEnv = monoInfo.env;
@@ -327,16 +327,15 @@ function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResul
     };
 }
 
-function launchNixMono(launchPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv, useDebugger:boolean): LaunchResult {
+function launchNixMono(launchPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv, useDebugger: boolean): LaunchResult {
     let argsCopy = args.slice(0); // create copy of details args
     argsCopy.unshift(launchPath);
     argsCopy.unshift("--assembly-loader=strict");
 
-    if (useDebugger)
-        {
-            argsCopy.unshift("--debug");
-            argsCopy.unshift("--debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55555");
-        }
+    if (useDebugger) {
+        argsCopy.unshift("--debug");
+        argsCopy.unshift("--debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55555");
+    }
 
     let process = spawn('mono', argsCopy, {
         detached: false,

@@ -1,13 +1,13 @@
-/*--------------------------------------------------------------------------------------------- 
-*  Copyright (c) Microsoft Corporation. All rights reserved. 
-*  Licensed under the MIT License. See License.txt in the project root for license information. 
+/*---------------------------------------------------------------------------------------------
+*  Copyright (c) Microsoft Corporation. All rights reserved.
+*  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { should, expect } from 'chai';
-import { activateCSharpExtension } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
 const chai = require('chai');
@@ -19,8 +19,14 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
 
     suiteSetup(async function () {
         should();
-        await testAssetWorkspace.restore();
+
+        // These tests don't run on the BasicRazorApp2_1 solution
+        if (isRazorWorkspace(vscode.workspace)) {
+            this.skip();
+        }
+
         await activateCSharpExtension();
+        await testAssetWorkspace.restore();
 
         let fileName = 'documentSymbols.cs';
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;

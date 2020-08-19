@@ -1,11 +1,12 @@
-/*--------------------------------------------------------------------------------------------- 
-*  Copyright (c) Microsoft Corporation. All rights reserved. 
-*  Licensed under the MIT License. See License.txt in the project root for license information. 
+/*---------------------------------------------------------------------------------------------
+*  Copyright (c) Microsoft Corporation. All rights reserved.
+*  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+
 import { expect } from 'chai';
-import { activateCSharpExtension } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -14,8 +15,13 @@ chai.use(require('chai-fs'));
 suite(`WorkspaceSymbolProvider: ${testAssetWorkspace.description}`, function () {
 
     suiteSetup(async function () {
-        await testAssetWorkspace.restore();
+        // These tests don't run on the BasicRazorApp2_1 solution
+        if (isRazorWorkspace(vscode.workspace)) {
+            this.skip();
+        }
+
         await activateCSharpExtension();
+        await testAssetWorkspace.restore();
         let projectDirectory = vscode.Uri.file(testAssetWorkspace.projects[0].projectDirectoryPath);
         await vscode.commands.executeCommand("vscode.open", projectDirectory);
     });

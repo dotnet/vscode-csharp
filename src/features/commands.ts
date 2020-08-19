@@ -13,24 +13,28 @@ import * as protocol from '../omnisharp/protocol';
 import * as vscode from 'vscode';
 import { DotNetAttachItemsProviderFactory, AttachPicker, RemoteAttachPicker } from './processPicker';
 import { generateAssets } from '../assets';
-import { getAdapterExecutionCommand } from '../coreclr-debug/activate';
 import { ShowOmniSharpChannel, CommandDotNetRestoreStart, CommandDotNetRestoreProgress, CommandDotNetRestoreSucceeded, CommandDotNetRestoreFailed } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 import { PlatformInformation } from '../platform';
 import CompositeDisposable from '../CompositeDisposable';
 import OptionProvider from '../observers/OptionProvider';
 import reportIssue from './reportIssue';
-import setNextStatement from '../coreclr-debug/setNextStatement';
 import { IMonoResolver } from '../constants/IMonoResolver';
 import { getDotnetInfo } from '../utils/getDotnetInfo';
+import { getDecompilationAuthorization } from '../omnisharp/decompilationPrompt';
+import { getSemanticTokensProvider } from '../omnisharp/extension';
 
-export default function registerCommands(server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionProvider: OptionProvider, monoResolver: IMonoResolver, packageJSON: any, extensionPath: string): CompositeDisposable {
+export default function registerCommands(context: vscode.ExtensionContext, server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionProvider: OptionProvider, monoResolver: IMonoResolver, packageJSON: any, extensionPath: string): CompositeDisposable {
     let disposable = new CompositeDisposable();
-    disposable.add(vscode.commands.registerCommand('o.restart', () => restartOmniSharp(server)));
+    disposable.add(vscode.commands.registerCommand('o.restart', async () => restartOmniSharp(context, server, optionProvider)));
     disposable.add(vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionProvider)));
     disposable.add(vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new ShowOmniSharpChannel())));
+
     disposable.add(vscode.commands.registerCommand('dotnet.restore.project', async () => pickProjectAndDotnetRestore(server, eventStream)));
     disposable.add(vscode.commands.registerCommand('dotnet.restore.all', async () => dotnetRestoreAllProjects(server, eventStream)));
+
+    disposable.add(vscode.commands.registerCommand('o.reanalyze.allProjects', async () => reAnalyzeAllProjects(server, eventStream)));
+    disposable.add(vscode.commands.registerCommand('o.reanalyze.currentProject', async () => reAnalyzeCurrentProject(server, eventStream)));
 
     // register empty handler for csharp.installDebugger
     // running the command activates the extension, which is all we need for installation to kickoff
@@ -40,24 +44,35 @@ export default function registerCommands(server: OmniSharpServer, platformInfo: 
     let attachItemsProvider = DotNetAttachItemsProviderFactory.Get();
     let attacher = new AttachPicker(attachItemsProvider);
     disposable.add(vscode.commands.registerCommand('csharp.listProcess', async () => attacher.ShowAttachEntries()));
-
     // Register command for generating tasks.json and launch.json assets.
     disposable.add(vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex) => generateAssets(server, selectedIndex)));
-
     // Register command for remote process picker for attach
     disposable.add(vscode.commands.registerCommand('csharp.listRemoteProcess', async (args) => RemoteAttachPicker.ShowAttachEntries(args, platformInfo)));
 
-    disposable.add(vscode.commands.registerCommand('csharp.setNextStatement', async () => setNextStatement()));
-
-    // Register command for adapter executable command.
-    disposable.add(vscode.commands.registerCommand('csharp.coreclrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream, packageJSON, extensionPath)));
-    disposable.add(vscode.commands.registerCommand('csharp.clrAdapterExecutableCommand', async (args) => getAdapterExecutionCommand(platformInfo, eventStream, packageJSON, extensionPath)));
     disposable.add(vscode.commands.registerCommand('csharp.reportIssue', async () => reportIssue(vscode, eventStream, getDotnetInfo, platformInfo.isValidPlatformForMono(), optionProvider.GetLatestOptions(), monoResolver)));
+
+    disposable.add(vscode.commands.registerCommand('csharp.showDecompilationTerms', async () => showDecompilationTerms(context, server, optionProvider)));
+
+    if (process.env.OSVC_SUITE !== undefined) {
+        // Register commands used for integration tests.
+        disposable.add(vscode.commands.registerCommand('csharp.private.getSemanticTokensLegend', async () => getSemanticTokensLegend()));
+        disposable.add(vscode.commands.registerCommand('csharp.private.getSemanticTokens', async (fileUri) => await getSemanticTokens(fileUri)));
+    }
 
     return new CompositeDisposable(disposable);
 }
 
-function restartOmniSharp(server: OmniSharpServer) {
+async function showDecompilationTerms(context: vscode.ExtensionContext, server: OmniSharpServer, optionProvider: OptionProvider) {
+    // Reset the decompilation authorization so the user will be prompted on restart.
+    context.workspaceState.update("decompilationAuthorized", undefined);
+
+    await restartOmniSharp(context, server, optionProvider);
+}
+
+async function restartOmniSharp(context: vscode.ExtensionContext, server: OmniSharpServer, optionProvider: OptionProvider) {
+    // Update decompilation authorization for this workspace.
+    server.decompilationAuthorized = await getDecompilationAuthorization(context, optionProvider);
+
     if (server.isRunning()) {
         server.restart();
     }
@@ -114,7 +129,7 @@ function projectsToCommands(projects: protocol.ProjectDescriptor[], eventStream:
                     label: `dotnet restore - (${project.Name || path.basename(project.Directory)})`,
                     description: projectDirectory,
                     async execute() {
-                        return dotnetRestore(projectDirectory, eventStream);
+                        return dotnetRestore(projectDirectory, eventStream, project.Name);
                     }
                 });
             });
@@ -132,11 +147,21 @@ async function pickProjectAndDotnetRestore(server: OmniSharpServer, eventStream:
     }
 }
 
+async function reAnalyzeAllProjects(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
+    await serverUtils.reAnalyze(server, {});
+}
+
+async function reAnalyzeCurrentProject(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
+    await serverUtils.reAnalyze(server, {
+        fileName: vscode.window.activeTextEditor.document.uri.fsPath
+    });
+}
+
 async function dotnetRestoreAllProjects(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
     let descriptors = await getProjectDescriptors(server);
     eventStream.post(new CommandDotNetRestoreStart());
     for (let descriptor of descriptors) {
-        await dotnetRestore(descriptor.Directory, eventStream);
+        await dotnetRestore(descriptor.Directory, eventStream, descriptor.Name);
     }
 }
 
@@ -152,6 +177,15 @@ async function getProjectDescriptors(server: OmniSharpServer): Promise<protocol.
     }
 
     return descriptors;
+}
+
+function getSemanticTokensLegend() {
+    return getSemanticTokensProvider().getLegend();
+}
+
+async function getSemanticTokens(fileUri: vscode.Uri) {
+    const document = await vscode.workspace.openTextDocument(fileUri);
+    return await getSemanticTokensProvider().provideDocumentSemanticTokens(document, null);
 }
 
 export async function dotnetRestore(cwd: string, eventStream: EventStream, filePath?: string): Promise<void> {

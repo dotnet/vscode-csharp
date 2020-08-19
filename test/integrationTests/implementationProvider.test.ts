@@ -1,6 +1,6 @@
-/*--------------------------------------------------------------------------------------------- 
-*  Copyright (c) Microsoft Corporation. All rights reserved. 
-*  Licensed under the MIT License. See License.txt in the project root for license information. 
+/*---------------------------------------------------------------------------------------------
+*  Copyright (c) Microsoft Corporation. All rights reserved.
+*  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
@@ -8,14 +8,19 @@ import CSharpImplementationProvider from "../../src/features/implementationProvi
 import * as path from "path";
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
 import { expect } from "chai";
-import { activateCSharpExtension } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
 
 suite(`${CSharpImplementationProvider.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;
 
-    suiteSetup(async () => {
-        await testAssetWorkspace.restore();
+    suiteSetup(async function () {
+        // These tests don't run on the BasicRazorApp2_1 solution
+        if (isRazorWorkspace(vscode.workspace)) {
+            this.skip();
+        }
+
         await activateCSharpExtension();
+        await testAssetWorkspace.restore();
 
         let fileName = 'implementation.cs';
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
@@ -27,7 +32,7 @@ suite(`${CSharpImplementationProvider.name}: ${testAssetWorkspace.description}`,
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test("Returns the implementation", async() => {
+    test("Returns the implementation", async () => {
         let implementationList = <vscode.Location[]>(await vscode.commands.executeCommand("vscode.executeImplementationProvider", fileUri, new vscode.Position(4, 22)));
         expect(implementationList.length).to.be.equal(2);
     });

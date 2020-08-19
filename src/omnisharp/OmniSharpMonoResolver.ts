@@ -10,8 +10,9 @@ import { IMonoResolver } from '../constants/IMonoResolver';
 import { MonoInformation } from '../constants/MonoInformation';
 import { IGetMonoVersion } from '../constants/IGetMonoVersion';
 
-export class OmniSharpMonoResolver implements IMonoResolver { 
-    private minimumMonoVersion = "5.8.1";
+export class OmniSharpMonoResolver implements IMonoResolver {
+    private minimumMonoVersion = "6.4.0";
+
     constructor(private getMonoVersion: IGetMonoVersion) {
     }
 
@@ -23,7 +24,7 @@ export class OmniSharpMonoResolver implements IMonoResolver {
             env['MONO_GAC_PREFIX'] = options.monoPath;
             monoPath = options.monoPath;
         }
-    
+
         let version = await this.getMonoVersion(env);
 
         return {
@@ -44,9 +45,13 @@ export class OmniSharpMonoResolver implements IMonoResolver {
 
             return monoInfo;
         }
-        else if (options.useGlobalMono === "auto" && isValid) {
-            return monoInfo;
-        }
+
+        // While wwaiting for Mono to ship with a MSBuild version 16.7 or higher, we will treat "auto"
+        // as "Use included Mono".
+
+        // else if (options.useGlobalMono === "auto" && isValid) {
+        //     return monoInfo;
+        //}
 
         return undefined;
     }
