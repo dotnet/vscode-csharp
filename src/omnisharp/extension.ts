@@ -11,7 +11,7 @@ import { safeLength, sum } from '../common';
 import { CSharpConfigurationProvider } from '../configurationProvider';
 import CodeActionProvider from '../features/codeActionProvider';
 import CodeLensProvider from '../features/codeLensProvider';
-import CompletionItemProvider from '../features/completionItemProvider';
+import CompletionProvider from '../features/completionProvider';
 import DefinitionMetadataDocumentProvider from '../features/definitionMetadataDocumentProvider';
 import DefinitionProvider from '../features/definitionProvider';
 import DocumentHighlightProvider from '../features/documentHighlightProvider';
@@ -90,7 +90,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
             localDisposables.add(vscode.languages.registerDocumentRangeFormattingEditProvider(documentSelector, new FormatProvider(server, languageMiddlewareFeature)));
             localDisposables.add(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new FormatProvider(server, languageMiddlewareFeature), '}', ';'));
         }
-        localDisposables.add(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionItemProvider(server, languageMiddlewareFeature), '.', ' '));
+        localDisposables.add(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionProvider(server, languageMiddlewareFeature), '.', ' '));
         localDisposables.add(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server, optionProvider, languageMiddlewareFeature)));
         localDisposables.add(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server, languageMiddlewareFeature), '(', ','));
         // Since the CodeActionProvider registers its own commands, we must instantiate it and add it to the localDisposables
