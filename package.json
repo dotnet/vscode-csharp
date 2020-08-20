@@ -3438,6 +3438,16 @@
       }
     ],
     "menus": {
+      "commandPalette": [
+        {
+          "command": "csharp.listProcess",
+          "when": "never"
+        },
+        {
+          "command": "csharp.listRemoteProcess",
+          "when": "never"
+        }
+      ],
       "editor/title": [
         {
           "command": "extension.showRazorCSharpWindow",
