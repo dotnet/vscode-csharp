@@ -856,17 +856,17 @@
       },
       {
         "command": "o.fixAll.solution",
-        "title": "Fix all code issues in solution",
+        "title": "Fix all occurrences of a code issue within solution",
         "category": "OmniSharp"
       },
       {
         "command": "o.fixAll.project",
-        "title": "Fix all code issues in project",
+        "title": "Fix all occurrences of a code issue within project",
         "category": "OmniSharp"
       },
       {
         "command": "o.fixAll.document",
-        "title": "Fix all code issues in document",
+        "title": "Fix all occurrences of a code issue within document",
         "category": "OmniSharp"
       },
       {
