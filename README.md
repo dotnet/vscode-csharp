@@ -47,4 +47,4 @@ vsce package
 ```
 then run `Extensions: Install from VSIX` from the command pallete and select the `csharp-VERSION_NUMBER.vsix` file.
 
-**alternatively** you can download the vsix file from github releases or from [open-vsx.org](https://open-vsx.org/extension/muhammad-sammy/csharp)
+**alternatively** you can download the vsix file from [open-vsx.org](https://open-vsx.org/extension/muhammad-sammy/csharp)
