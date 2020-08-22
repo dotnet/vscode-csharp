@@ -68,6 +68,7 @@ async function runIntegrationTest(testAssetName: string) {
         CODE_EXTENSIONS_PATH: codeExtensionPath,
         CODE_TESTS_WORKSPACE: path.join(testAssetsRootPath, testAssetName),
         CODE_WORKSPACE_ROOT: rootPath,
+        CODE_DISABLE_EXTENSIONS: "true",
     };
 
     return spawnNode([vscodeTestHostPath], { env, cwd: rootPath });

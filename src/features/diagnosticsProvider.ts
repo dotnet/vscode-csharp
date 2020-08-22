@@ -112,8 +112,8 @@ export class Advisor {
     }
 }
 
-export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor, languageMiddlewareFeature: LanguageMiddlewareFeature): IDisposable {
-    return new DiagnosticsProvider(server, advisor, languageMiddlewareFeature);
+export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor, languageMiddlewareFeature: LanguageMiddlewareFeature, options: OptionProvider): IDisposable {
+    return new DiagnosticsProvider(server, advisor, languageMiddlewareFeature, options);
 }
 
 class DiagnosticsProvider extends AbstractSupport {
@@ -127,7 +127,7 @@ class DiagnosticsProvider extends AbstractSupport {
     private _subscriptions: Subscription[] = [];
     private _suppressHiddenDiagnostics: boolean;
 
-    constructor(server: OmniSharpServer, validationAdvisor: Advisor, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+    constructor(server: OmniSharpServer, validationAdvisor: Advisor, languageMiddlewareFeature: LanguageMiddlewareFeature, options: OptionProvider) {
         super(server, languageMiddlewareFeature);
 
         this._analyzersEnabled = vscode.workspace.getConfiguration('omnisharp').get('enableRoslynAnalyzers', false);
@@ -135,10 +135,12 @@ class DiagnosticsProvider extends AbstractSupport {
         this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
         this._suppressHiddenDiagnostics = vscode.workspace.getConfiguration('csharp').get('suppressHiddenDiagnostics', true);
 
-        this._subscriptions.push(this._validateCurrentDocumentPipe
-            .asObservable()
-            .pipe(throttleTime(750))
-            .subscribe(async x => await this._validateDocument(x)));
+        if (!options.GetLatestOptions().enableLspDriver) {
+            this._subscriptions.push(this._validateCurrentDocumentPipe
+                .asObservable()
+                .pipe(throttleTime(750))
+                .subscribe(async x => await this._validateDocument(x)));
+        }
 
         this._subscriptions.push(this._validateAllPipe
             .asObservable()

@@ -273,8 +273,8 @@ export default class TestManager extends AbstractProvider {
 
         const request: protocol.V2.RunTestsInContextRequest = {
             FileName: fileName,
-            Line: active.line + 1,
-            Column: active.character + 1,
+            Line: active.line,
+            Column: active.character,
             RunSettings: runSettings,
             TargetFrameworkVersion: targetFrameworkVersion
         };
@@ -504,8 +504,8 @@ export default class TestManager extends AbstractProvider {
 
         const request: protocol.V2.DebugTestsInContextGetStartInfoRequest = {
             FileName: fileName,
-            Line: line + 1,
-            Column: column + 1,
+            Line: line,
+            Column: column,
             RunSettings: runSettings,
             TargetFrameworkVersion: targetFrameworkVersion
         };
