@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import * as protocol from '../protocol';
 import { CancellationToken } from '../../vscodeAdapter';
 import { LaunchTarget } from '../launcher';
@@ -54,7 +59,7 @@ import {
 } from 'vscode-languageserver-protocol/lib/messages';
 import { LanguageMiddlewareFeature } from '../LanguageMiddlewareFeature';
 import { Events } from '../server';
-import { IEngine } from '../IEngine';
+import { IEngine } from './IEngine';
 
 export class LspEngine implements IEngine {
     client: LanguageClient;
@@ -164,7 +169,7 @@ export class LspEngine implements IEngine {
         };
 
         const client = new LanguageClient(
-            'csharp',
+            'omnisharp',
             'Omnisharp Server',
             serverOptions,
             clientOptions
@@ -233,7 +238,7 @@ export class LspEngine implements IEngine {
         );
         return this.client.onReady();
     }
-    stop(): Promise<void> {
+    async stop(): Promise<void> {
         return this.client.stop();
     }
     async waitForInitialize(): Promise<void> {
@@ -249,13 +254,30 @@ export class LspEngine implements IEngine {
         data?: any,
         token?: CancellationToken
     ): Promise<TResponse> {
-        // TOOD: Add trim?
-        const response = await this.client.sendRequest<TResponse>(
-            `o#/${command}`.replace(/\/\//g, '/').toLowerCase(),
-            data || {},
-            token ?? new CancellationTokenSource().token
-        );
-        return response;
+        let tries = 0;
+        while (tries < 5) {
+            try {
+                // TOOD: Add trim?
+                const response = await this.client.sendRequest<TResponse>(
+                    `o#/${command}`.replace(/\/\//g, '/').toLowerCase(),
+                    data || {},
+                    token ?? new CancellationTokenSource().token
+                );
+                return response;
+            } catch (error) {
+                /*if (tries < 5 && error?.code === -32800) { // Request Cancelled
+                    tries++;
+                }
+                else
+                */
+                if (tries < 5 && error?.code === -32801) { // Content modified
+                    tries++;
+                } else {
+                    console.error(error);
+                    throw error;
+                }
+            }
+        }
     }
 
     public addListener<T = {}>(
@@ -293,7 +315,9 @@ export class LspEngine implements IEngine {
                     }
                 );
                 for (const event of Object.values(Events)) {
-                    if (typeof event !== 'string') continue;
+                    if (typeof event !== 'string') {
+                        continue;
+                    }
                     const eventName = `o#/${event}`
                         .replace(/\/\//g, '/')
                         .toLowerCase();
@@ -303,5 +327,5 @@ export class LspEngine implements IEngine {
                 }
             },
         };
-    };
+    }
 }

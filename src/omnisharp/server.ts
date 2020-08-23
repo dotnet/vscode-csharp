@@ -473,14 +473,14 @@ export class OmniSharpServer {
         } else {
             this.updateProjectDebouncer.next(new ObservableEvents.ProjectModified());
         }
-    };
+    }
 
     private updateProjectInfo = async () => {
         this.firstUpdateProject = false;
         let info = await serverUtils.requestWorkspaceInformation(this);
         //once we get the info, push the event into the event stream
         this.eventStream.post(new ObservableEvents.WorkspaceInformationUpdated(info));
-    };
+    }
 
     public async stop() {
         if (this._engine) {
