@@ -532,7 +532,7 @@ function getBuildAssetsNotificationSetting() {
         return csharpConfig.get<boolean>(newSettingName);
     }
 
-    return csharpConfig.get<boolean>('suppressBuildAssetsNotification');
+    return csharpConfig.get<boolean>('supressBuildAssetsNotification');
 }
 
 export async function addTasksJsonIfNecessary(generator: AssetGenerator, operations: AssetOperations) {
