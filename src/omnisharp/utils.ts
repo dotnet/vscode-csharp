@@ -93,14 +93,20 @@ export async function requestWorkspaceInformation(server: OmniSharpServer) {
             blazorWebAssemblyProjectFound = blazorWebAssemblyProjectFound || isProjectBlazorWebAssemblyProject;
         }
 
-        if (!blazorDetectionEnabled && blazorWebAssemblyProjectFound) {
+        const configuration = vscode.workspace.getConfiguration('razor');
+        const disableBlazorDebugPrompt = configuration.get('disableBlazorDebugPrompt');
+
+        if (!blazorDetectionEnabled && blazorWebAssemblyProjectFound && !disableBlazorDebugPrompt) {
             // There's a Blazor Web Assembly project but VSCode isn't configured to debug the WASM code, show a notification
             // to help the user configure their VSCode appropriately.
-            vscode.window.showInformationMessage('Additional setup is required to debug Blazor WebAssembly applications.', 'Learn more', 'Close')
+            vscode.window.showInformationMessage('Additional setup is required to debug Blazor WebAssembly applications.', 'Don\'t Ask Again', 'Learn more', 'Close')
                 .then(async result => {
                     if (result === 'Learn more') {
                         const uriToOpen = vscode.Uri.parse('https://aka.ms/blazordebugging#vscode');
                         await vscode.commands.executeCommand('vscode.open', uriToOpen);
+                    }
+                    if (result === 'Don\'t Ask Again') {
+                        await configuration.update('disableBlazorDebugPrompt', true);
                     }
                 });
         }
@@ -234,11 +240,6 @@ async function isBlazorWebAssemblyProject(project: MSBuildProject): Promise<bool
 }
 
 function hasBlazorWebAssemblyDebugPrerequisites() {
-    const jsDebugExtension = vscode.extensions.getExtension('ms-vscode.js-debug-nightly');
-    if (!jsDebugExtension) {
-        return false;
-    }
-
     const debugJavaScriptConfigSection = vscode.workspace.getConfiguration('debug.javascript');
     const usePreviewValue = debugJavaScriptConfigSection.get('usePreview');
     if (usePreviewValue) {
