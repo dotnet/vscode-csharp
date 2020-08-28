@@ -1,7 +1,9 @@
 # free-omnisharp-vscode
-VS Code's C# extension but without the debugger.
+
+VS Code's C# extension without the debugger.
 
 ## Why?
+
 The debugger included in the official C# extension is [proprietary](https://aka.ms/VSCode-DotNet-DbgLicense) and is licensed to only work with Microsoft versions of vscode.
 
 ## Note about using .NET Core 3.1.401 or .NET 5 Preview 8 SDKs on Mono platforms

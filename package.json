@@ -2,7 +2,7 @@
   "name": "csharp",
   "publisher": "muhammad-sammy",
   "version": "1.23.2",
-  "description": "C# for Visual Studio Code (powered by OmniSharp).",
+  "description": "C# support for vscode-compatible editors (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
   "license": "SEE LICENSE IN RuntimeLicenses/license.txt",
