@@ -28,6 +28,7 @@ export class Options {
         public enableRoslynAnalyzers: boolean,
         public enableEditorConfigSupport: boolean,
         public enableDecompilationSupport: boolean,
+        public enableImportCompletion: boolean,
         public useSemanticHighlighting: boolean,
         public razorPluginPath?: string,
         public defaultLaunchSolution?: string,
@@ -70,6 +71,7 @@ export class Options {
         const enableRoslynAnalyzers = omnisharpConfig.get<boolean>('enableRoslynAnalyzers', false);
         const enableEditorConfigSupport = omnisharpConfig.get<boolean>('enableEditorConfigSupport', false);
         const enableDecompilationSupport = omnisharpConfig.get<boolean>('enableDecompilationSupport', false);
+        const enableImportCompletion = omnisharpConfig.get<boolean>('enableImportCompletion', false);
 
         const useFormatting = csharpConfig.get<boolean>('format.enable', true);
 
@@ -117,6 +119,7 @@ export class Options {
             enableRoslynAnalyzers,
             enableEditorConfigSupport,
             enableDecompilationSupport,
+            enableImportCompletion,
             useSemanticHighlighting,
             razorPluginPath,
             defaultLaunchSolution,

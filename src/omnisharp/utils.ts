@@ -11,10 +11,6 @@ import * as vscode from 'vscode';
 import { MSBuildProject } from './protocol';
 import { CancellationToken } from 'vscode-languageserver-protocol';
 
-export async function autoComplete(server: OmniSharpServer, request: protocol.AutoCompleteRequest, token: vscode.CancellationToken) {
-    return server.makeRequest<protocol.AutoCompleteResponse[]>(protocol.Requests.AutoComplete, request, token);
-}
-
 export async function codeCheck(server: OmniSharpServer, request: protocol.Request, token: vscode.CancellationToken) {
     return server.makeRequest<protocol.QuickFixResponse>(protocol.Requests.CodeCheck, request, token);
 }
@@ -97,14 +93,20 @@ export async function requestWorkspaceInformation(server: OmniSharpServer) {
             blazorWebAssemblyProjectFound = blazorWebAssemblyProjectFound || isProjectBlazorWebAssemblyProject;
         }
 
-        if (!blazorDetectionEnabled && blazorWebAssemblyProjectFound) {
+        const configuration = vscode.workspace.getConfiguration('razor');
+        const disableBlazorDebugPrompt = configuration.get('disableBlazorDebugPrompt');
+
+        if (!blazorDetectionEnabled && blazorWebAssemblyProjectFound && !disableBlazorDebugPrompt) {
             // There's a Blazor Web Assembly project but VSCode isn't configured to debug the WASM code, show a notification
             // to help the user configure their VSCode appropriately.
-            vscode.window.showInformationMessage('Additional setup is required to debug Blazor WebAssembly applications.', 'Learn more', 'Close')
+            vscode.window.showInformationMessage('Additional setup is required to debug Blazor WebAssembly applications.', 'Don\'t Ask Again', 'Learn more', 'Close')
                 .then(async result => {
                     if (result === 'Learn more') {
                         const uriToOpen = vscode.Uri.parse('https://aka.ms/blazordebugging#vscode');
                         await vscode.commands.executeCommand('vscode.open', uriToOpen);
+                    }
+                    if (result === 'Don\'t Ask Again') {
+                        await configuration.update('disableBlazorDebugPrompt', true);
                     }
                 });
         }
@@ -181,6 +183,14 @@ export async function getQuickInfo(server: OmniSharpServer, request: protocol.Qu
     return server.makeRequest<protocol.QuickInfoResponse>(protocol.Requests.QuickInfo, request, token);
 }
 
+export async function getCompletion(server: OmniSharpServer, request: protocol.CompletionRequest, context: vscode.CancellationToken) {
+    return server.makeRequest<protocol.CompletionResponse>(protocol.Requests.Completion, request, context);
+}
+
+export async function getCompletionResolve(server: OmniSharpServer, request: protocol.CompletionResolveRequest, context: vscode.CancellationToken) {
+    return server.makeRequest<protocol.CompletionResolveResponse>(protocol.Requests.CompletionResolve, request, context);
+}
+
 export async function isNetCoreProject(project: protocol.MSBuildProject) {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp') || tf.ShortName.startsWith('netstandard')) !== undefined;
 }
@@ -230,11 +240,6 @@ async function isBlazorWebAssemblyProject(project: MSBuildProject): Promise<bool
 }
 
 function hasBlazorWebAssemblyDebugPrerequisites() {
-    const jsDebugExtension = vscode.extensions.getExtension('ms-vscode.js-debug-nightly');
-    if (!jsDebugExtension) {
-        return false;
-    }
-
     const debugJavaScriptConfigSection = vscode.workspace.getConfiguration('debug.javascript');
     const usePreviewValue = debugJavaScriptConfigSection.get('usePreview');
     if (usePreviewValue) {

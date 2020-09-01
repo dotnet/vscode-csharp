@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
+import { CompletionTriggerKind, CompletionItemKind, CompletionItemTag, InsertTextFormat } from 'vscode-languageserver-protocol';
 
 export module Requests {
     export const AddToProject = '/addtoproject';
@@ -32,6 +33,8 @@ export module Requests {
     export const GetFixAll = '/getfixall';
     export const ReAnalyze = '/reanalyze';
     export const QuickInfo = '/quickinfo';
+    export const Completion = '/completion';
+    export const CompletionResolve = '/completion/resolve';
 }
 
 export namespace WireProtocol {
@@ -275,30 +278,6 @@ export interface SyntaxFeature {
     Data: string;
 }
 
-export interface AutoCompleteRequest extends Request {
-    WordToComplete: string;
-    WantDocumentationForEveryCompletionResult?: boolean;
-    WantImportableTypes?: boolean;
-    WantMethodHeader?: boolean;
-    WantSnippet?: boolean;
-    WantReturnType?: boolean;
-    WantKind?: boolean;
-    TriggerCharacter?: string;
-}
-
-export interface AutoCompleteResponse {
-    CompletionText: string;
-    Description: string;
-    DisplayText: string;
-    RequiredNamespaceImport: string;
-    MethodHeader: string;
-    ReturnType: string;
-    Snippet: string;
-    Kind: string;
-    IsSuggestionMode: boolean;
-    Preselect: boolean;
-}
-
 export interface ProjectInformationResponse {
     MsBuildProject: MSBuildProject;
 }
@@ -507,12 +486,46 @@ export interface RunFixAllRequest extends FileBasedRequest {
     WantsTextChanges: boolean;
     WantsAllCodeActionOperations: boolean;
 }
-  
+
 export interface QuickInfoRequest extends Request {
 }
 
 export interface QuickInfoResponse {
     Markdown?: string;
+}
+
+export interface CompletionRequest extends Request {
+    CompletionTrigger: CompletionTriggerKind;
+    TriggerCharacter?: string;
+}
+
+export interface CompletionResponse {
+    IsIncomplete: boolean;
+    Items: OmnisharpCompletionItem[];
+}
+
+export interface CompletionResolveRequest {
+    Item: OmnisharpCompletionItem;
+}
+
+export interface CompletionResolveResponse {
+    Item: OmnisharpCompletionItem;
+}
+
+export interface OmnisharpCompletionItem {
+    Label: string;
+    Kind: CompletionItemKind;
+    Tags?: CompletionItemTag[];
+    Detail?: string;
+    Documentation?: string;
+    Preselect: boolean;
+    SortText?: string;
+    FilterText?: string;
+    InsertText?: string;
+    InsertTextFormat?: InsertTextFormat;
+    CommitCharacters?: string[];
+    AdditionalTextEdits?: LinePositionSpanTextChange[];
+    Data: any;
 }
 
 export namespace V2 {
