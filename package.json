@@ -8,7 +8,6 @@
   "license": "SEE LICENSE IN RuntimeLicenses/license.txt",
   "icon": "images/csharpIcon.png",
   "preview": false,
-  "enableProposedApi": true,
   "bugs": {
     "url": "https://github.com/OmniSharp/omnisharp-vscode/issues"
   },
