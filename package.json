@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-dotnettools",
-  "version": "1.23.1",
+  "version": "1.23.2",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -29,7 +29,7 @@
     "dotnet"
   ],
   "defaults": {
-    "omniSharp": "1.37.0",
+    "omniSharp": "1.37.1",
     "razor": "6.0.0-alpha.1.20418.9"
   },
   "main": "./dist/extension",
@@ -161,41 +161,41 @@
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/58378208-fe81-49fb-87a4-7b68012b1444/32db11926bcaa92a44cc682d4d156254/omnisharp-win-x86-1.37.0.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.0/omnisharp-win-x86-1.37.0.zip",
-      "installPath": ".omnisharp/1.37.0",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/46933d64-075c-4f9f-b205-da4a839e2e3c/c4b99377f9918c2b153326596f8f8d6b/omnisharp-win-x86-1.37.1.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.1/omnisharp-win-x86-1.37.1.zip",
+      "installPath": ".omnisharp/1.37.1",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.omnisharp/1.37.0/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.37.1/OmniSharp.exe",
       "platformId": "win-x86",
-      "integrity": "B68B2B28C21BAC05C2A2A5554A3F96A7CA2292BBE8332D0044E6002272427198"
+      "integrity": "EB60D297E2873DBD6D45A8C206FE6B5912468390314BA1533C3F697D7B932C62"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/58378208-fe81-49fb-87a4-7b68012b1444/f685717e82eeb5cded478ac291643898/omnisharp-win-x64-1.37.0.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.0/omnisharp-win-x64-1.37.0.zip",
-      "installPath": ".omnisharp/1.37.0",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/46933d64-075c-4f9f-b205-da4a839e2e3c/da13877ae5f7ca392152bb1a9bcc6539/omnisharp-win-x64-1.37.1.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.1/omnisharp-win-x64-1.37.1.zip",
+      "installPath": ".omnisharp/1.37.1",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/1.37.0/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.37.1/OmniSharp.exe",
       "platformId": "win-x64",
-      "integrity": "4505E6DFEAC1EF93318F0371DA2678C04DDB6BE916DEDF1CE95EC7A1CE37561E"
+      "integrity": "0EA9D21DA5BA2CE9FAA7A7DA983A960AA8F3A2C931984DA0E5ED4CA20CDFB1BA"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/58378208-fe81-49fb-87a4-7b68012b1444/5701e95fd6b802c2417e67aa7b9b9c45/omnisharp-osx-1.37.0.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.0/omnisharp-osx-1.37.0.zip",
-      "installPath": ".omnisharp/1.37.0",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/46933d64-075c-4f9f-b205-da4a839e2e3c/9898d5fbc8fa518acafd3c10ec124783/omnisharp-osx-1.37.1.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.1/omnisharp-osx-1.37.1.zip",
+      "installPath": ".omnisharp/1.37.1",
       "platforms": [
         "darwin"
       ],
@@ -203,16 +203,16 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.37.0/run",
+      "installTestPath": "./.omnisharp/1.37.1/run",
       "platformId": "osx",
-      "integrity": "64761F4D1ACF7C121FB9735C1F5842A4E1845D4782ED390A285436B9F3B6E62F"
+      "integrity": "06CCA2BB112298E67CA5432D22C20292A1C1E7BCCB741D5933106141396E7CAE"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/58378208-fe81-49fb-87a4-7b68012b1444/52ae129aa3fbc33e11a40183e625de77/omnisharp-linux-x86-1.37.0.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.0/omnisharp-linux-x86-1.37.0.zip",
-      "installPath": ".omnisharp/1.37.0",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/46933d64-075c-4f9f-b205-da4a839e2e3c/035abe61cf4cf27778603fb0236beb67/omnisharp-linux-x86-1.37.1.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.1/omnisharp-linux-x86-1.37.1.zip",
+      "installPath": ".omnisharp/1.37.1",
       "platforms": [
         "linux"
       ],
@@ -224,16 +224,16 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.37.0/run",
+      "installTestPath": "./.omnisharp/1.37.1/run",
       "platformId": "linux-x86",
-      "integrity": "56FA2ABCDA6400D3E45F6D28B9237530CA689944FB7D743187EBCFB47281E4DD"
+      "integrity": "F3E80F43D6E138960F2C97187306C9B2031FDBD8192F2242D0CF124F54F39C75"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/58378208-fe81-49fb-87a4-7b68012b1444/aff0374fda57f9071cb63d5005abc950/omnisharp-linux-x64-1.37.0.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.0/omnisharp-linux-x64-1.37.0.zip",
-      "installPath": ".omnisharp/1.37.0",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/46933d64-075c-4f9f-b205-da4a839e2e3c/4bba2c3f40106056b53721c164ff86fa/omnisharp-linux-x64-1.37.1.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.1/omnisharp-linux-x64-1.37.1.zip",
+      "installPath": ".omnisharp/1.37.1",
       "platforms": [
         "linux"
       ],
@@ -244,9 +244,9 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.37.0/run",
+      "installTestPath": "./.omnisharp/1.37.1/run",
       "platformId": "linux-x64",
-      "integrity": "09E9CB207A61972DD7C608999024EF38B4A66E703041C1C013277CAB98A4F8D6"
+      "integrity": "7F6F61C04443A67D6951E14DBF81A294140E6867BEE2A3C15E027B07F09AFD7B"
     },
     {
       "id": "Debugger",
@@ -3449,12 +3449,12 @@
     "menus": {
       "commandPalette": [
         {
-          "command": "csharp.listProcess",
-          "when": "never"
+          "command": "dotnet.test.runTestsInContext",
+          "when": "editorLangId == csharp"
         },
         {
-          "command": "csharp.listRemoteProcess",
-          "when": "never"
+          "command": "dotnet.test.debugTestsInContext",
+          "when": "editorLangId == csharp"
         }
       ],
       "editor/title": [
@@ -3481,16 +3481,6 @@
           "command": "dotnet.test.debugTestsInContext",
           "when": "editorLangId == csharp",
           "group": "2_dotnet@2"
-        }
-      ],
-      "commandPalette": [
-        {
-          "command": "dotnet.test.runTestsInContext",
-          "when": "editorLangId == csharp"
-        },
-        {
-          "command": "dotnet.test.debugTestsInContext",
-          "when": "editorLangId == csharp"
         }
       ]
     }
