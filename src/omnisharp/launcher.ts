@@ -74,7 +74,7 @@ export async function findLaunchTargets(options: Options): Promise<LaunchTarget[
     return resourcesToLaunchTargets(projectFiles.concat(csFiles));
 }
 
-function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
+export function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
     // The list of launch targets is calculated like so:
     //   * If there are .csproj files, .sln files are considered as launch targets.
     //   * Any project.json file is considered a launch target.
