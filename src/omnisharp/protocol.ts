@@ -523,6 +523,7 @@ export interface OmnisharpCompletionItem {
     FilterText?: string;
     InsertText?: string;
     InsertTextFormat?: InsertTextFormat;
+    TextEdit?: LinePositionSpanTextChange;
     CommitCharacters?: string[];
     AdditionalTextEdits?: LinePositionSpanTextChange[];
     Data: any;
