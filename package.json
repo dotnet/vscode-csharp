@@ -409,10 +409,12 @@
     "workspaceContains:project.json",
     "workspaceContains:*.csproj",
     "workspaceContains:*.sln",
+    "workspaceContains:*.slnf",
     "workspaceContains:*.csx",
     "workspaceContains:*.cake",
     "workspaceContains:**/*.csproj",
     "workspaceContains:**/*.sln",
+    "workspaceContains:**/*.slnf",
     "workspaceContains:**/*.csx",
     "workspaceContains:**/*.cake"
   ],
