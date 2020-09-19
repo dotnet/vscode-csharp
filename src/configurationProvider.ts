@@ -40,7 +40,7 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
         }
 
         let serverFolder = solutionPathOrFolder;
-        // If its a .sln file, get the folder of the solution.
+        // If its a .sln or .slnf file, get the folder of the solution.
         return fs.lstat(solutionPathOrFolder).then(stat => {
             return stat.isFile();
         }).then(isFile => {
