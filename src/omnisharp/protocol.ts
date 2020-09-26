@@ -72,6 +72,7 @@ export interface Request extends FileBasedRequest {
     Column?: number;
     Buffer?: string;
     Changes?: LinePositionSpanTextChange[];
+    ApplyChangesTogether?: boolean;
 }
 
 export interface GoToDefinitionRequest extends Request {
