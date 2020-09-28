@@ -486,6 +486,7 @@ export interface RunFixAllRequest extends FileBasedRequest {
     FixAllFilter?: FixAllItem[];
     WantsTextChanges: boolean;
     WantsAllCodeActionOperations: boolean;
+    ApplyChanges: boolean;
 }
 
 export interface QuickInfoRequest extends Request {

@@ -71,7 +71,14 @@ export class FixAllProvider extends AbstractProvider implements vscode.CodeActio
     }
 
     private async applyFixes(fileName: string, scope: FixAllScope, fixAllFilter: FixAllItem[]): Promise<boolean | string | {}> {
-        let response = await serverUtils.runFixAll(this.server, { FileName: fileName, Scope: scope, FixAllFilter: fixAllFilter, WantsAllCodeActionOperations: true, WantsTextChanges: true });
+        let response = await serverUtils.runFixAll(this.server, {
+            FileName: fileName,
+            Scope: scope,
+            FixAllFilter: fixAllFilter,
+            WantsAllCodeActionOperations: true,
+            WantsTextChanges: true,
+            ApplyChanges: false
+        });
 
         if (response && Array.isArray(response.Changes)) {
             let edit = new vscode.WorkspaceEdit();
@@ -94,7 +101,7 @@ export class FixAllProvider extends AbstractProvider implements vscode.CodeActio
                 {
                     // The CodeAction requested that we open a file.
                     // Record that file name and keep processing CodeActions.
-                    // If a CodeAction requests that we open multiple files 
+                    // If a CodeAction requests that we open multiple files
                     // we only open the last one (what would it mean to open multiple files?)
                     fileToOpen = vscode.Uri.file(change.FileName);
                 }
@@ -127,7 +134,7 @@ export class FixAllProvider extends AbstractProvider implements vscode.CodeActio
             let next = applyEditPromise;
             if (renamedFiles.some(r => r.fsPath == vscode.window.activeTextEditor.document.uri.fsPath))
             {
-                next = applyEditPromise.then(_ => 
+                next = applyEditPromise.then(_ =>
                     {
                         return vscode.commands.executeCommand("workbench.action.closeActiveEditor");
                     });
