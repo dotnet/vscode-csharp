@@ -50,8 +50,8 @@ interface IPipeTransportOptions {
 
 export class RemoteAttachPicker {
     public static get commColumnTitle() { return Array(PsOutputParser.secondColumnCharacters).join("a"); }
-    public static get linuxPsCommand() { return `ps -axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args=`; }
-    public static get osxPsCommand() { return `ps -axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args= -c`; }
+    public static get linuxPsCommand() { return `ps axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args=`; }
+    public static get osxPsCommand() { return `ps axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args= -c`; }
     public static get debuggerCommand() { return "${debuggerCommand}"; }
     public static get scriptShellCmd() { return "sh -s"; }
 
