@@ -24,7 +24,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
     const higherMonoVersion = "6.6.0";
 
     // Sets the meaning of UseGlobalMono "auto". When false, "auto" means "never".
-    const autoMeansAlways = false;
+    const autoMeansAlways = true;
 
     const getMono = (version: string) => async (env: NodeJS.ProcessEnv) => {
         getMonoCalled = true;
