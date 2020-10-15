@@ -20,10 +20,20 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 -   [Documentation](https://code.visualstudio.com/docs/languages/csharp)
 -   [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
 
-## Note about using .NET Core 3.1.401 or .NET 5 Preview 8 SDKs on Mono platforms
+## Note about using .NET 5 SDKs
 
-Because of the new minimum MSBuild version requirement of these new SDKs, it will be necessary to use the Mono packaged with the C# extension. The meaning of "omnisharp.useGlobalMono" has change to "never", this forces the use of the included Mono. To use your system
-install of Mono set the value to "always" although it may not be compatible with newer SDKs.
+The .NET 5 SDK requires version 16.8 of MSBuild.
+
+For Windows users who have Visual Studio installed, this means you will need to be on the latest Visual Studio 16.8 Preview.
+For MacOS and Linux users who have Mono installed, this means you will need to be on the latest stable Mono (6.12.0).
+
+## What's new in 1.23.4
+-   Use incremental changes to update language server (PR: [#4088](https://github.com/OmniSharp/omnisharp-vscode/pull/4088))
+-   Set meaning of UseGlobalMono "auto" to "always" now that Mono 6.12.0 ships with MSBuild 16.8 (PR: [#4115](https://github.com/OmniSharp/omnisharp-vscode/pull/4115))
+-   Updated OmniSharp to 1.37.3
+    -   Fixed a bug when the server wouldn't start on MacOS/Linux when a username contained a space (PR: [omnisharp-roslyn/#1979](https://github.com/OmniSharp/omnisharp-roslyn/pull/1979))
+    -   Update to Mono 6.12.0 (PR: [omnisharp-roslyn/#1981](https://github.com/OmniSharp/omnisharp-roslyn/pull/1981))
+    -   Fix responsiveness regression with targeted DiagnosticWorker revert ([omnisharp-roslyn/#1982](https://github.com/OmniSharp/omnisharp-roslyn/issues/1982), [omnisharp-roslyn/#1983](https://github.com/OmniSharp/omnisharp-roslyn/issues/1983), PR: [omnisharp-roslyn/#1984](https://github.com/OmniSharp/omnisharp-roslyn/pull/1984))
 
 ## What's new in 1.23.3
 -   Fix ps call for Alpine images ([#4023](https://github.com/OmniSharp/omnisharp-vscode/issues/4023), PR: [#4097](https://github.com/OmniSharp/omnisharp-vscode/pull/4097))
