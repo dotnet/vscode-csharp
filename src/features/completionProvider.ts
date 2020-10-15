@@ -60,20 +60,26 @@ export default class OmnisharpCompletionProvider extends AbstractProvider implem
     }
 
     private _convertToVscodeCompletionItem(omnisharpCompletion: protocol.OmnisharpCompletionItem): CompletionItem {
-        let docs: MarkdownString | undefined = omnisharpCompletion.Documentation ? new MarkdownString(omnisharpCompletion.Documentation, false) : undefined;
+        const docs: MarkdownString | undefined = omnisharpCompletion.Documentation ? new MarkdownString(omnisharpCompletion.Documentation, false) : undefined;
 
-        const mapTextEdit = function (edit: protocol.LinePositionSpanTextChange): TextEdit {
+        const mapRange = function (edit: protocol.LinePositionSpanTextChange): Range {
             const newStart = new Position(edit.StartLine - 1, edit.StartColumn - 1);
             const newEnd = new Position(edit.EndLine - 1, edit.EndColumn - 1);
-            const newRange = new Range(newStart, newEnd);
-            return new TextEdit(newRange, edit.NewText);
+            return new Range(newStart, newEnd);
+        };
+
+        const mapTextEdit = function (edit: protocol.LinePositionSpanTextChange): TextEdit {
+            return new TextEdit(mapRange(edit), edit.NewText);
         };
 
         const additionalTextEdits = omnisharpCompletion.AdditionalTextEdits?.map(mapTextEdit);
 
+        const newText = omnisharpCompletion.TextEdit?.NewText ?? omnisharpCompletion.InsertText;
         const insertText = omnisharpCompletion.InsertTextFormat === InsertTextFormat.Snippet
-            ? new SnippetString(omnisharpCompletion.InsertText)
-            : omnisharpCompletion.InsertText;
+            ? new SnippetString(newText)
+            : newText;
+
+        const insertRange = omnisharpCompletion.TextEdit ? mapRange(omnisharpCompletion.TextEdit) : undefined;
 
         return {
             label: omnisharpCompletion.Label,
@@ -84,6 +90,7 @@ export default class OmnisharpCompletionProvider extends AbstractProvider implem
             preselect: omnisharpCompletion.Preselect,
             filterText: omnisharpCompletion.FilterText,
             insertText: insertText,
+            range: insertRange,
             tags: omnisharpCompletion.Tags,
             sortText: omnisharpCompletion.SortText,
             additionalTextEdits: additionalTextEdits,

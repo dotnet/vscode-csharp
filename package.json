@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "muhammad-sammy",
-  "version": "1.23.2",
+  "version": "1.23.3",
   "description": "C# support for vscode-compatible editors (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -29,8 +29,8 @@
     "dotnet"
   ],
   "defaults": {
-    "omniSharp": "1.37.1",
-    "razor": "6.0.0-alpha.1.20418.9"
+    "omniSharp": "1.37.2",
+    "razor": "6.0.0-alpha.1.20479.2"
   },
   "main": "./dist/extension",
   "scripts": {
@@ -79,7 +79,7 @@
     "http-proxy-agent": "2.1.0",
     "https-proxy-agent": "^3.0.1",
     "jsonc-parser": "2.0.3",
-    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/757f5246-2b09-43fe-9a8d-840cfd15092b/cdad169d976850542ede3d3b8c7cb58f/microsoft.aspnetcore.razor.vscode-6.0.0-alpha.1.20418.9.tgz",
+    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/7c23a575-eeee-47ba-814a-370fcb3bfb51/40d55e9484f6be2a1800f489d750bd21/microsoft.aspnetcore.razor.vscode-6.0.0-alpha.1.20479.2.tgz",
     "mkdirp": "^1.0.3",
     "node-filter-async": "1.1.1",
     "node-machine-id": "1.1.12",
@@ -161,41 +161,41 @@
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/46933d64-075c-4f9f-b205-da4a839e2e3c/c4b99377f9918c2b153326596f8f8d6b/omnisharp-win-x86-1.37.1.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.1/omnisharp-win-x86-1.37.1.zip",
-      "installPath": ".omnisharp/1.37.1",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/629d3d3b-feb3-4034-a8f7-3262b4bcdace/2b796a0bb27b816d543577d519b6a5a2/omnisharp-win-x86-1.37.2.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.2/omnisharp-win-x86-1.37.2.zip",
+      "installPath": ".omnisharp/1.37.2",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.omnisharp/1.37.1/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.37.2/OmniSharp.exe",
       "platformId": "win-x86",
-      "integrity": "EB60D297E2873DBD6D45A8C206FE6B5912468390314BA1533C3F697D7B932C62"
+      "integrity": "1AE479E04E1C73A5991FAB22FD1110DE614E7182FA3B65940DD0995CD113E2EA"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/46933d64-075c-4f9f-b205-da4a839e2e3c/da13877ae5f7ca392152bb1a9bcc6539/omnisharp-win-x64-1.37.1.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.1/omnisharp-win-x64-1.37.1.zip",
-      "installPath": ".omnisharp/1.37.1",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/629d3d3b-feb3-4034-a8f7-3262b4bcdace/97dcfcf480bf1bd5c8bb0a10ac3e5782/omnisharp-win-x64-1.37.2.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.2/omnisharp-win-x64-1.37.2.zip",
+      "installPath": ".omnisharp/1.37.2",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/1.37.1/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.37.2/OmniSharp.exe",
       "platformId": "win-x64",
-      "integrity": "0EA9D21DA5BA2CE9FAA7A7DA983A960AA8F3A2C931984DA0E5ED4CA20CDFB1BA"
+      "integrity": "E06C415107A8874A323C1B9779F699A2143EB2D3B4B84B8E765120BC921105C7"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/46933d64-075c-4f9f-b205-da4a839e2e3c/9898d5fbc8fa518acafd3c10ec124783/omnisharp-osx-1.37.1.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.1/omnisharp-osx-1.37.1.zip",
-      "installPath": ".omnisharp/1.37.1",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/629d3d3b-feb3-4034-a8f7-3262b4bcdace/f57fe2aed239711c69cda6c82ee7a2bf/omnisharp-osx-1.37.2.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.2/omnisharp-osx-1.37.2.zip",
+      "installPath": ".omnisharp/1.37.2",
       "platforms": [
         "darwin"
       ],
@@ -203,16 +203,16 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.37.1/run",
+      "installTestPath": "./.omnisharp/1.37.2/run",
       "platformId": "osx",
-      "integrity": "06CCA2BB112298E67CA5432D22C20292A1C1E7BCCB741D5933106141396E7CAE"
+      "integrity": "94CAF422B6FA516BE4DCAA2BBBBB6D657CAC957B134FD5AF614FA58665E1A9A7"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/46933d64-075c-4f9f-b205-da4a839e2e3c/035abe61cf4cf27778603fb0236beb67/omnisharp-linux-x86-1.37.1.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.1/omnisharp-linux-x86-1.37.1.zip",
-      "installPath": ".omnisharp/1.37.1",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/629d3d3b-feb3-4034-a8f7-3262b4bcdace/4cf34bc86b969db7a466d4cdd00c1d7b/omnisharp-linux-x86-1.37.2.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.2/omnisharp-linux-x86-1.37.2.zip",
+      "installPath": ".omnisharp/1.37.2",
       "platforms": [
         "linux"
       ],
@@ -224,16 +224,16 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.37.1/run",
+      "installTestPath": "./.omnisharp/1.37.2/run",
       "platformId": "linux-x86",
-      "integrity": "F3E80F43D6E138960F2C97187306C9B2031FDBD8192F2242D0CF124F54F39C75"
+      "integrity": "7813A9F3DD5E32EAE106F9172BB39EB7F441AA2A32B81709A454DCBE5A347B45"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/46933d64-075c-4f9f-b205-da4a839e2e3c/4bba2c3f40106056b53721c164ff86fa/omnisharp-linux-x64-1.37.1.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.1/omnisharp-linux-x64-1.37.1.zip",
-      "installPath": ".omnisharp/1.37.1",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/629d3d3b-feb3-4034-a8f7-3262b4bcdace/503ebd3f8f242394cebd496b76e726c7/omnisharp-linux-x64-1.37.2.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.2/omnisharp-linux-x64-1.37.2.zip",
+      "installPath": ".omnisharp/1.37.2",
       "platforms": [
         "linux"
       ],
@@ -244,15 +244,15 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.37.1/run",
+      "installTestPath": "./.omnisharp/1.37.2/run",
       "platformId": "linux-x64",
-      "integrity": "7F6F61C04443A67D6951E14DBF81A294140E6867BEE2A3C15E027B07F09AFD7B"
+      "integrity": "41A1111915AA66224174B561FA70B1C88340AA5D9FEBC8B8583B19B68F8A4F00"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/757f5246-2b09-43fe-9a8d-840cfd15092b/49aae2627ac29087608b8c8b1e5f796e/razorlanguageserver-win-x64-6.0.0-alpha.1.20418.9.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x64-6.0.0-alpha.1.20418.9.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/7c23a575-eeee-47ba-814a-370fcb3bfb51/087ef8770e05073204daecdf5701fcf9/razorlanguageserver-win-x64-6.0.0-alpha.1.20479.2.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x64-6.0.0-alpha.1.20479.2.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -264,8 +264,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/757f5246-2b09-43fe-9a8d-840cfd15092b/898bd06092383d62a0635c0fc47bc346/razorlanguageserver-win-x86-6.0.0-alpha.1.20418.9.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x86-6.0.0-alpha.1.20418.9.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/7c23a575-eeee-47ba-814a-370fcb3bfb51/1f4b86673ce34352bb86a59d601ad43a/razorlanguageserver-win-x86-6.0.0-alpha.1.20479.2.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x86-6.0.0-alpha.1.20479.2.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -277,8 +277,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/757f5246-2b09-43fe-9a8d-840cfd15092b/2b6d8eee0470acf725c1c7a09f8b6475/razorlanguageserver-linux-x64-6.0.0-alpha.1.20418.9.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-linux-x64-6.0.0-alpha.1.20418.9.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/7c23a575-eeee-47ba-814a-370fcb3bfb51/112fe9289fb974e5ff14207a3633933d/razorlanguageserver-linux-x64-6.0.0-alpha.1.20479.2.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-linux-x64-6.0.0-alpha.1.20479.2.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -293,8 +293,8 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/757f5246-2b09-43fe-9a8d-840cfd15092b/1350e896e43b4d0bc67886b27a6e44a9/razorlanguageserver-osx-x64-6.0.0-alpha.1.20418.9.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-osx-x64-6.0.0-alpha.1.20418.9.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/7c23a575-eeee-47ba-814a-370fcb3bfb51/4892ef64ea15017b17c4e6c23384aea8/razorlanguageserver-osx-x64-6.0.0-alpha.1.20479.2.zip",
+      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-osx-x64-6.0.0-alpha.1.20479.2.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -3102,6 +3102,54 @@
               "env": {
                 "type": "object",
                 "description": "Environment variables passed to dotnet. Only valid for hosted apps."
+              },
+              "logging": {
+                "description": "Optional flags to determine what types of messages should be logged to the output window. Applicable only for the app server of hosted Blazor WASM apps.",
+                "type": "object",
+                "required": [],
+                "default": {},
+                "properties": {
+                  "exceptions": {
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether exception messages should be logged to the output window.",
+                    "default": true
+                  },
+                  "moduleLoad": {
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether module load events should be logged to the output window.",
+                    "default": true
+                  },
+                  "programOutput": {
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
+                    "default": true
+                  },
+                  "engineLogging": {
+                    "type": "boolean",
+                    "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
+                    "default": false
+                  },
+                  "browserStdOut": {
+                    "type": "boolean",
+                    "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
+                    "default": true
+                  },
+                  "elapsedTiming": {
+                    "type": "boolean",
+                    "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
+                    "default": false
+                  },
+                  "threadExit": {
+                    "type": "boolean",
+                    "description": "Controls if a message is logged when a thread in the target process exits. Default: `false`.",
+                    "default": false
+                  },
+                  "processExit": {
+                    "type": "boolean",
+                    "description": "Controls if a message is logged when the target process exits, or debugging is stopped. Default: `true`.",
+                    "default": true
+                  }
+                }
               }
             }
           },
