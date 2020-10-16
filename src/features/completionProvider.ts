@@ -3,16 +3,24 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CompletionItemProvider, TextDocument, Position, CompletionContext, CompletionList, CompletionItem, MarkdownString, TextEdit, Range, SnippetString } from "vscode";
+import { CompletionItemProvider, TextDocument, Position, CompletionContext, CompletionList, CompletionItem, MarkdownString, TextEdit, Range, SnippetString, window, Selection } from "vscode";
 import AbstractProvider from "./abstractProvider";
 import * as protocol from "../omnisharp/protocol";
 import * as serverUtils from '../omnisharp/utils';
 import { CancellationToken, CompletionTriggerKind as LspCompletionTriggerKind, InsertTextFormat } from "vscode-languageserver-protocol";
 import { createRequest } from "../omnisharp/typeConversion";
+import { LanguageMiddlewareFeature } from "../omnisharp/LanguageMiddlewareFeature";
+import { OmniSharpServer } from "../omnisharp/server";
+
+export const CompletionAfterInsertCommand = "csharp.completion.afterInsert";
 
 export default class OmnisharpCompletionProvider extends AbstractProvider implements CompletionItemProvider {
 
     #lastCompletions?: Map<CompletionItem, protocol.OmnisharpCompletionItem>;
+
+    constructor(server: OmniSharpServer, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+        super(server, languageMiddlewareFeature);
+    }
 
     public async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionList> {
         let request = createRequest<protocol.CompletionRequest>(document, position);
@@ -21,7 +29,7 @@ export default class OmnisharpCompletionProvider extends AbstractProvider implem
 
         try {
             const response = await serverUtils.getCompletion(this._server, request, token);
-            const mappedItems = response.Items.map(this._convertToVscodeCompletionItem);
+            const mappedItems = response.Items.map(arg => this._convertToVscodeCompletionItem(arg));
 
             let lastCompletions = new Map();
 
@@ -53,6 +61,36 @@ export default class OmnisharpCompletionProvider extends AbstractProvider implem
         try {
             const response = await serverUtils.getCompletionResolve(this._server, request, token);
             return this._convertToVscodeCompletionItem(response.Item);
+        }
+        catch (error) {
+            return;
+        }
+    }
+
+    public async afterInsert(item: protocol.OmnisharpCompletionItem) {
+        try {
+            const response = await serverUtils.getCompletionAfterInsert(this._server, { Item: item });
+
+            if (!response.Changes || !response.Column || !response.Line) {
+                return;
+            }
+
+            const applied = await window.activeTextEditor.edit(editBuilder => {
+                for (const change of response.Changes) {
+                    const replaceRange = new Range(change.StartLine, change.StartColumn, change.EndLine, change.EndColumn);
+                    editBuilder.replace(replaceRange, change.NewText);
+                }
+            });
+
+            if (!applied) {
+                return;
+            }
+
+            const responseLine = response.Line;
+            const responseColumn = response.Column;
+
+            const finalPosition = new Position(responseLine, responseColumn);
+            window.activeTextEditor.selections = [new Selection(finalPosition, finalPosition)];
         }
         catch (error) {
             return;
@@ -94,7 +132,8 @@ export default class OmnisharpCompletionProvider extends AbstractProvider implem
             tags: omnisharpCompletion.Tags,
             sortText: omnisharpCompletion.SortText,
             additionalTextEdits: additionalTextEdits,
-            keepWhitespace: true
+            keepWhitespace: true,
+            command: omnisharpCompletion.HasAfterInsertStep ? { command: CompletionAfterInsertCommand, title: "", arguments: [omnisharpCompletion] } : undefined
         };
     }
 }

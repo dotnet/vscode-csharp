@@ -48,7 +48,6 @@
     "test:integration:slnFilterWithCsproj": "tsc -p ./ && gulp test:integration:slnFilterWithCsproj",
     "test:release": "mocha --config ./.mocharc.jsonc test/releaseTests/**/*.test.ts",
     "test:artifacts": "mocha --config ./.mocharc.jsonc test/artifactTests/**/*.test.ts",
-
     "unpackage:vsix": "gulp vsix:release:unpackage",
     "gulp": "gulp"
   },
@@ -806,6 +805,11 @@
           "type": "boolean",
           "default": false,
           "description": "Specifies whether 'using' directives should be grouped and sorted during document formatting."
+        },
+        "omnisharp.enableAsyncCompletion": {
+          "type": "boolean",
+          "default": false,
+          "description": "(EXPERIMENTAL) Enables support for resolving completion edits asynchronously. This can speed up time to show the completion list, particularly override and partial method completion lists, at the cost of slight delays after inserting a completion item. Most completion items will have no noticeable impact with this feature, but typing immediately after inserting an override or partial method completion, before the insert is completed, can have unpredictable results."
         },
         "razor.plugin.path": {
           "type": [

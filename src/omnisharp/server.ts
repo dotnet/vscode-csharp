@@ -372,6 +372,10 @@ export class OmniSharpServer {
             args.push('RoslynExtensionsOptions:EnableImportCompletion=true');
         }
 
+        if (options.enableAsyncCompletion === true) {
+            args.push('RoslynExtensionsOptions:EnableAsyncCompletion=true');
+        }
+
         let launchInfo: LaunchInfo;
         try {
             launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, serverUrl, latestVersionFileServerPath, installPath, this.extensionPath);
