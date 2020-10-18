@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CompletionItemProvider, TextDocument, Position, CompletionContext, CompletionList, CompletionItem, MarkdownString, TextEdit, Range, SnippetString, window, Selection } from "vscode";
+import { CompletionItemProvider, TextDocument, Position, CompletionContext, CompletionList, CompletionItem, MarkdownString, TextEdit, Range, SnippetString, window, Selection, WorkspaceEdit, workspace } from "vscode";
 import AbstractProvider from "./abstractProvider";
 import * as protocol from "../omnisharp/protocol";
 import * as serverUtils from '../omnisharp/utils';
@@ -69,19 +69,23 @@ export default class OmnisharpCompletionProvider extends AbstractProvider implem
 
     public async afterInsert(item: protocol.OmnisharpCompletionItem) {
         try {
+            const uri = window.activeTextEditor.document.uri;
             const response = await serverUtils.getCompletionAfterInsert(this._server, { Item: item });
 
             if (!response.Changes || !response.Column || !response.Line) {
                 return;
             }
 
-            const applied = await window.activeTextEditor.edit(editBuilder => {
-                for (const change of response.Changes) {
-                    const replaceRange = new Range(change.StartLine, change.StartColumn, change.EndLine, change.EndColumn);
-                    editBuilder.replace(replaceRange, change.NewText);
-                }
-            });
+            let edit = new WorkspaceEdit();
+            edit.set(uri, response.Changes.map(change => ({
+                newText: change.NewText,
+                range: new Range(new Position(change.StartLine, change.StartColumn),
+                    new Position(change.EndLine, change.EndColumn))
+            })));
 
+            edit = await this._languageMiddlewareFeature.remap("remapWorkspaceEdit", edit, CancellationToken.None);
+
+            const applied = await workspace.applyEdit(edit);
             if (!applied) {
                 return;
             }
