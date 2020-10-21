@@ -25,7 +25,10 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 The .NET 5 SDK requires version 16.8 of MSBuild.
 
 For Windows users who have Visual Studio installed, this means you will need to be on the latest Visual Studio 16.8 Preview.
-For MacOS and Linux users who have Mono installed, this means you will need to be on the latest stable Mono (6.12.0).
+For MacOS and Linux users who have Mono installed, this means you will need to set `omnisharp.useGlobalMono` to `never` until a version of Mono ships with MSBuild 16.8.
+
+## What's new in 1.23.5
+-   Set meaning of UseGlobalMono "auto" to "never" since Mono 6.12.0 still ships with MSBuild 16.7 (PR: [#4130](https://github.com/OmniSharp/omnisharp-vscode/pull/4130))
 
 ## What's new in 1.23.4
 -   Use incremental changes to update language server (PR: [#4088](https://github.com/OmniSharp/omnisharp-vscode/pull/4088))

@@ -1,5 +1,6 @@
-## Known Issues in 1.23.4
+## Known Issues in 1.23.5
 
+* For Mono-based development (e.g. Unity) that requires full .NET framework, you need to set `"omnisharp.useGlobalMono": "always"`. This is needed until Mono [upgrades their bundled MSBuild version](https://github.com/mono/mono/issues/20250)
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
   * Limited support for formatting
@@ -10,7 +11,10 @@
 * Renaming symbol fails within a file that had recently been renamed without saving changes.
   * As a workaround, make an edit within the file before using Rename Symbol.
 
-## 1.23.4 (Not yet released)
+## 1.23.5 (Not yet released)
+* Set meaning of UseGlobalMono "auto" to "never" since Mono 6.12.0 still ships with MSBuild 16.7 (PR: [#4130](https://github.com/OmniSharp/omnisharp-vscode/pull/4130))
+
+## 1.23.4 (October, 19, 2020)
 * Use incremental changes to update language server (PR: [#4088](https://github.com/OmniSharp/omnisharp-vscode/pull/4088))
 * Set meaning of UseGlobalMono "auto" to "always" now that Mono 6.12.0 ships with MSBuild 16.8 (PR: [#4115](https://github.com/OmniSharp/omnisharp-vscode/pull/4115))
 * Updated OmniSharp to 1.37.3
