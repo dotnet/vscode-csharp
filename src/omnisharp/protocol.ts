@@ -72,6 +72,7 @@ export interface Request extends FileBasedRequest {
     Column?: number;
     Buffer?: string;
     Changes?: LinePositionSpanTextChange[];
+    ApplyChangesTogether?: boolean;
 }
 
 export interface GoToDefinitionRequest extends Request {
@@ -485,6 +486,7 @@ export interface RunFixAllRequest extends FileBasedRequest {
     FixAllFilter?: FixAllItem[];
     WantsTextChanges: boolean;
     WantsAllCodeActionOperations: boolean;
+    ApplyChanges: boolean;
 }
 
 export interface QuickInfoRequest extends Request {

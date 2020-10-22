@@ -6,7 +6,7 @@
 import { Uri, workspace } from 'vscode';
 import { OmniSharpServer } from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
-import { FileChangeType } from '../omnisharp/protocol';
+import { FileChangeType, LinePositionSpanTextChange } from '../omnisharp/protocol';
 import { IDisposable } from '../Disposable';
 import CompositeDisposable from '../CompositeDisposable';
 
@@ -23,7 +23,18 @@ function forwardDocumentChanges(server: OmniSharpServer): IDisposable {
             return;
         }
 
-        serverUtils.updateBuffer(server, { Buffer: document.getText(), FileName: document.fileName }).catch(err => {
+        const lineChanges = event.contentChanges.map(function (change): LinePositionSpanTextChange {
+            const range = change.range;
+            return {
+                NewText: change.text,
+                StartLine: range.start.line + 1,
+                StartColumn: range.start.character + 1,
+                EndLine: range.end.line + 1,
+                EndColumn: range.end.character + 1
+            };
+        });
+
+        serverUtils.updateBuffer(server, { Changes: lineChanges, FileName: document.fileName, ApplyChangesTogether: true }).catch(err => {
             console.error(err);
             return err;
         });
