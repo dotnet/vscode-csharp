@@ -13,6 +13,7 @@
 
 ## 1.23.5 (Not yet released)
 * Set meaning of UseGlobalMono "auto" to "never" since Mono 6.12.0 still ships with MSBuild 16.7 (PR: [#4130](https://github.com/OmniSharp/omnisharp-vscode/pull/4130))
+* Ensure that the rename identifier and run code action providers do not apply changes twice PR: [4133](https://github.com/OmniSharp/omnisharp-vscode/pull/4133)
 
 ## 1.23.4 (October, 19, 2020)
 * Use incremental changes to update language server (PR: [#4088](https://github.com/OmniSharp/omnisharp-vscode/pull/4088))
