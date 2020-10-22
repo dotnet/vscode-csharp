@@ -192,7 +192,7 @@
     },
     {
       "id": "OmniSharp",
-      "description": "OmniSharp for OSX",
+      "description": "OmniSharp for macOS",
       "url": "https://download.visualstudio.microsoft.com/download/pr/629d3d3b-feb3-4034-a8f7-3262b4bcdace/f57fe2aed239711c69cda6c82ee7a2bf/omnisharp-osx-1.37.2.zip",
       "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.2/omnisharp-osx-1.37.2.zip",
       "installPath": ".omnisharp/1.37.2",
@@ -247,6 +247,51 @@
       "installTestPath": "./.omnisharp/1.37.2/run",
       "platformId": "linux-x64",
       "integrity": "41A1111915AA66224174B561FA70B1C88340AA5D9FEBC8B8583B19B68F8A4F00"
+    },
+    {
+      "id": "Debugger",
+      "description": ".NET Core Debugger (Windows / x64)",
+      "url": "https://github.com/jamsilva/netcoredbg/releases/download/latest/netcoredbg-win64-master.zip",
+      "installPath": ".debugger",
+      "platforms": [
+        "win32"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "installTestPath": ".debugger/netcoredbg/netcoredbg.exe"
+    },
+    {
+      "id": "Debugger",
+      "description": ".NET Core Debugger (macOS / x64)",
+      "url": "https://github.com/jamsilva/netcoredbg/releases/download/latest/netcoredbg-osx-master.zip",
+      "installPath": ".debugger",
+      "platforms": [
+        "darwin"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "binaries": [
+        "netcoredbg/netcoredbg"
+      ],
+      "installTestPath": ".debugger/netcoredbg/netcoredbg"
+    },
+    {
+      "id": "Debugger",
+      "description": ".NET Core Debugger (linux / x64)",
+      "url": "https://github.com/jamsilva/netcoredbg/releases/download/latest/netcoredbg-linux-master.zip",
+      "installPath": ".debugger",
+      "platforms": [
+        "linux"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "binaries": [
+        "netcoredbg/netcoredbg"
+      ],
+      "installTestPath": ".debugger/netcoredbg/netcoredbg"
     },
     {
       "id": "Razor",
@@ -1174,7 +1219,7 @@
                 }
               },
               "pipeTransport": {
-                "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg).",
+                "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (netcoredbg).",
                 "type": "object",
                 "required": [
                   "debuggerPath"
@@ -1183,7 +1228,7 @@
                   "pipeCwd": "${workspaceFolder}",
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                   "pipeArgs": [],
-                  "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
+                  "debuggerPath": "enter the path for the debugger on the target machine, for example /usr/bin/netcoredbg"
                 },
                 "properties": {
                   "pipeCwd": {
@@ -1217,7 +1262,7 @@
                   "debuggerPath": {
                     "type": "string",
                     "description": "The full path to the debugger on the target machine.",
-                    "default": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
+                    "default": "enter the path for the debugger on the target machine, for example /usr/bin/netcoredbg"
                   },
                   "pipeEnv": {
                     "type": "object",
@@ -1606,7 +1651,7 @@
                 }
               },
               "pipeTransport": {
-                "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg).",
+                "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (netcoredbg).",
                 "type": "object",
                 "required": [
                   "debuggerPath"
@@ -1615,7 +1660,7 @@
                   "pipeCwd": "${workspaceFolder}",
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                   "pipeArgs": [],
-                  "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
+                  "debuggerPath": "enter the path for the debugger on the target machine, for example /usr/bin/netcoredbg"
                 },
                 "properties": {
                   "pipeCwd": {
@@ -1649,7 +1694,7 @@
                   "debuggerPath": {
                     "type": "string",
                     "description": "The full path to the debugger on the target machine.",
-                    "default": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
+                    "default": "enter the path for the debugger on the target machine, for example /usr/bin/netcoredbg"
                   },
                   "pipeEnv": {
                     "type": "object",
@@ -2004,7 +2049,7 @@
                 "pipeCwd": "^\"\\${workspaceFolder}\"",
                 "pipeProgram": "^\"${3:enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'}\"",
                 "pipeArgs": [],
-                "debuggerPath": "^\"${4:enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg}\""
+                "debuggerPath": "^\"${4:enter the path for the debugger on the target machine, for example /usr/bin/netcoredbg}\""
               }
             }
           },
@@ -2020,7 +2065,7 @@
                 "pipeCwd": "^\"\\${workspaceFolder}\"",
                 "pipeProgram": "^\"${1:enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'}\"",
                 "pipeArgs": [],
-                "debuggerPath": "^\"${2:enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg}\""
+                "debuggerPath": "^\"${2:enter the path for the debugger on the target machine, for example /usr/bin/netcoredbg}\""
               }
             }
           }
@@ -2271,7 +2316,7 @@
                 }
               },
               "pipeTransport": {
-                "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg).",
+                "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (netcoredbg).",
                 "type": "object",
                 "required": [
                   "debuggerPath"
@@ -2280,7 +2325,7 @@
                   "pipeCwd": "${workspaceFolder}",
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                   "pipeArgs": [],
-                  "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
+                  "debuggerPath": "enter the path for the debugger on the target machine, for example /usr/bin/netcoredbg"
                 },
                 "properties": {
                   "pipeCwd": {
@@ -2314,7 +2359,7 @@
                   "debuggerPath": {
                     "type": "string",
                     "description": "The full path to the debugger on the target machine.",
-                    "default": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
+                    "default": "enter the path for the debugger on the target machine, for example /usr/bin/netcoredbg"
                   },
                   "pipeEnv": {
                     "type": "object",
@@ -2703,7 +2748,7 @@
                 }
               },
               "pipeTransport": {
-                "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg).",
+                "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (netcoredbg).",
                 "type": "object",
                 "required": [
                   "debuggerPath"
@@ -2712,7 +2757,7 @@
                   "pipeCwd": "${workspaceFolder}",
                   "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
                   "pipeArgs": [],
-                  "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
+                  "debuggerPath": "enter the path for the debugger on the target machine, for example /usr/bin/netcoredbg"
                 },
                 "properties": {
                   "pipeCwd": {
@@ -2746,7 +2791,7 @@
                   "debuggerPath": {
                     "type": "string",
                     "description": "The full path to the debugger on the target machine.",
-                    "default": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
+                    "default": "enter the path for the debugger on the target machine, for example /usr/bin/netcoredbg"
                   },
                   "pipeEnv": {
                     "type": "object",

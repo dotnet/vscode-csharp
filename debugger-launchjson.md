@@ -166,13 +166,13 @@ The debugger steps over properties and operators in managed code by default. In 
 You can optionally enable or disable messages that should be logged to the output window. The flags in the logging field are: 'exceptions', 'moduleLoad', 'programOutput', 'engineLogging', and 'browserStdOut'.
 
 ## PipeTransport
-If you need to have the debugger to connect to a remote computer using another executable to relay standard input and output bewteen VS Code and the .NET Core debugger backend (vsdbg), 
+If you need to have the debugger to connect to a remote computer using another executable to relay standard input and output bewteen VS Code and the .NET Core debugger backend (netcoredbg), 
 then add the pipeTransport field folloing this schema:
 
     "pipeTransport": {
         "pipeProgram": "ssh",
         "pipeArgs": [ "-T", "ExampleAccount@ExampleTargetComputer" ],
-        "debuggerPath": "~/vsdbg/vsdbg",
+        "debuggerPath": "/usr/bin/netcoredbg",
         "pipeCwd": "${workspaceFolder}",
         "quoteArgs": true
     }

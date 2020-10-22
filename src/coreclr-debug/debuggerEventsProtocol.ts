@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-// This contains the definition of messages that VsDbg-UI can send back to a listener which registers itself via the 'debuggerEventsPipeName'
+// This contains the definition of messages that netcoredbg can send back to a listener which registers itself via the 'debuggerEventsPipeName'
 // property on a launch or attach request.
 //
 // All messages are sent as UTF-8 JSON text with a tailing '\n'
 export namespace DebuggerEventsProtocol {
     export module EventType {
-        // Indicates that the vsdbg-ui has received the attach or launch request and is starting up
+        // Indicates that the netcoredbg has received the attach or launch request and is starting up
         export const Starting = "starting";
-        // Indicates that vsdbg-ui has successfully launched the specified process.
+        // Indicates that netcoredbg has successfully launched the specified process.
         // The ProcessLaunchedEvent interface details the event payload.
         export const ProcessLaunched = "processLaunched";
         // Debug session is ending

@@ -106,8 +106,7 @@ export let testPackageJSON = {
         },
         {
             "description": "Non omnisharp package without platformId",
-            "url": "https://download.visualstudio.microsoft.com/download/pr/100317420/a30d7e11bc435433d297adc824ee837f/coreclr-debug-win7-x64.zip",
-            "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-14-4/coreclr-debug-win7-x64.zip",
+            "url": "https://github.com/jamsilva/netcoredbg/releases/download/latest/netcoredbg-win64-master.zip",
             "installPath": ".debugger",
             "platforms": [
                 "win32"
@@ -115,7 +114,7 @@ export let testPackageJSON = {
             "architectures": [
                 "x86_64"
             ],
-            "installTestPath": "./.debugger/vsdbg-ui.exe"
+            "installTestPath": "./.debugger/netcoredbg/netcoredbg.exe"
         }
     ]
 };
