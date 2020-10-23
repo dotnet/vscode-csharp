@@ -49,6 +49,13 @@ function forwardFileChanges(server: OmniSharpServer): IDisposable {
                 return;
             }
 
+            if (changeType === FileChangeType.Change && uri.fsPath.endsWith(".cs")) {
+                // The server watches for file system events from .cs files, if we send
+                // a file changed event as well it will cause a double-apply and potentially
+                // invalidate the file state
+                return;
+            }
+
             let req = { FileName: uri.fsPath, changeType };
 
             serverUtils.filesChanged(server, [req]).catch(err => {
