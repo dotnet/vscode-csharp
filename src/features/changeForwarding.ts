@@ -49,6 +49,16 @@ function forwardFileChanges(server: OmniSharpServer): IDisposable {
                 return;
             }
 
+            if (changeType === FileChangeType.Change && uri.fsPath.endsWith(".cs")) {
+                // When a file changes on disk a FileSystemEvent is generated as well as
+                // a DidChangeTextDocumentEvent. The OmniSharp server listens for Change events
+                // for ".cs" files and reloads their text from disk. This creates a situation where the server
+                // may have updated the document to reflect disk and also recieves a set of TextChanges
+                // to apply to the document. In order to avoid that situation, we will not send Change events
+                // for ".cs" files and instead allow them to be updated via the DidChangeTextDocumentEvent.
+                return;
+            }
+
             let req = { FileName: uri.fsPath, changeType };
 
             serverUtils.filesChanged(server, [req]).catch(err => {
