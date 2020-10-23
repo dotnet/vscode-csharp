@@ -49,17 +49,24 @@ function forwardFileChanges(server: OmniSharpServer): IDisposable {
                 return;
             }
 
-            if (changeType === FileChangeType.Change && uri.fsPath.endsWith(".cs")) {
-                // When a file changes on disk a FileSystemEvent is generated as well as
-                // a DidChangeTextDocumentEvent. The OmniSharp server listens for Change events
-                // for ".cs" files and reloads their text from disk. This creates a situation where the server
-                // may have updated the document to reflect disk and also recieves a set of TextChanges
-                // to apply to the document. In order to avoid that situation, we will not send Change events
-                // for ".cs" files and instead allow them to be updated via the DidChangeTextDocumentEvent.
+            const docs = workspace.textDocuments.filter(doc => doc.uri.fsPath === uri.fsPath);
+            if (Array.isArray(docs) && docs.some(doc => !doc.isClosed)) {
+                // When a file changes on disk a FileSystemEvent is generated as well as a
+                // DidChangeTextDocumentEvent.The ordering of these is:
+                //  1. This method is called back. vscode's TextDocument has not yet been reloaded, so it has
+                //     the version from before the changes are applied.
+                //  2. vscode reloads the file, and fires onDidChangeTextDocument. The document has been updated,
+                //     and the changes have the delta.
+                // If we send this change to the server, then it will reload from the disk, which means it will
+                // be synchronized to the version after the changes. Then, onDidChangeTextDocument will fire and
+                // send the delta changes, which will cause the server to apply those exact changes. The results
+                // being that the file is now in an inconsistent state.
+                // If the document is closed, however, it will no longer be synchronized, so the text change will
+                // not be triggered and we should tell the server to reread from the disk.
                 return;
             }
 
-            let req = { FileName: uri.fsPath, changeType };
+            const req = { FileName: uri.fsPath, changeType };
 
             serverUtils.filesChanged(server, [req]).catch(err => {
                 console.warn(`[o] failed to forward file change event for ${uri.fsPath}`, err);
@@ -75,7 +82,7 @@ function forwardFileChanges(server: OmniSharpServer): IDisposable {
             }
 
             if (changeType === FileChangeType.Delete) {
-                let requests = [{ FileName: uri.fsPath, changeType: FileChangeType.DirectoryDelete }];
+                const requests = [{ FileName: uri.fsPath, changeType: FileChangeType.DirectoryDelete }];
 
                 serverUtils.filesChanged(server, requests).catch(err => {
                     console.warn(`[o] failed to forward file change event for ${uri.fsPath}`, err);
