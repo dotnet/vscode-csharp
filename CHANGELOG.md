@@ -15,7 +15,7 @@
 * Set meaning of UseGlobalMono "auto" to "never" since Mono 6.12.0 still ships with MSBuild 16.7 (PR: [#4130](https://github.com/OmniSharp/omnisharp-vscode/pull/4130))
 * Ensure that the rename identifier and run code action providers do not apply changes twice (PR: [#4133](https://github.com/OmniSharp/omnisharp-vscode/pull/4133))
 * Do not send file changed events for .cs files (PR: [#4141](https://github.com/OmniSharp/omnisharp-vscode/pull/4141), [#4143](https://github.com/OmniSharp/omnisharp-vscode/pull/4143))
-* Update Razor to 6.0.0-alpha1.20521.3:
+* Update Razor to 6.0.0-alpha.1.20526.2:
   * Improvements to HTML colorization for non-C# portions of the document.
   * Bug fix - the `razor.format.enable` option is honored again
 
