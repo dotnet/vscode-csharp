@@ -30,7 +30,7 @@
   ],
   "defaults": {
     "omniSharp": "1.37.3",
-    "razor": "6.0.0-alpha.1.20521.3"
+    "razor": "6.0.0-alpha.1.20526.2"
   },
   "main": "./dist/extension",
   "scripts": {
