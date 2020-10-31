@@ -4,7 +4,7 @@ C# extension for vscode-compatible editors.
 
 ## Why?
 The debugger included in the official C# extension is [proprietary](https://aka.ms/VSCode-DotNet-DbgLicense) and is licensed to only work with Microsoft versions of vscode.
-This extension replaces it with a [custom version](https://github.com/jamsilva/netcoredbg) of [Samsung's MIT-licensed alternative](https://github.com/Samsung/netcoredbg/blob/master/LICENSE).
+This extension replaces it with [Samsung's MIT-licensed alternative](https://github.com/Samsung/netcoredbg/blob/master/LICENSE).
 
 ## Installation:
 This extension is published at [open-vsx.org](https://open-vsx.org/extension/muhammad-sammy/csharp).

@@ -155,7 +155,7 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
         // use the executable specified in the package.json if it exists or determine it based on some other information (e.g. the session)
         if (!executable) {
             const command = path.join(common.getExtensionPath(), ".debugger", "netcoredbg", "netcoredbg" + CoreClrDebugUtil.getPlatformExeExtension());
-            executable = new vscode.DebugAdapterExecutable(command);
+            executable = new vscode.DebugAdapterExecutable(command, ["--interpreter=vscode"]);
         }
 
         // make VS Code launch the DA executable

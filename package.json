@@ -89,6 +89,7 @@
     "semver": "5.6.0",
     "stream": "0.0.2",
     "strip-bom": "3.0.0",
+    "tar": "6.0.5",
     "tmp": "0.0.33",
     "vscode-debugprotocol": "1.33.0",
     "vscode-extension-telemetry": "0.1.6",
@@ -111,6 +112,7 @@
     "@types/mocha": "5.2.5",
     "@types/node": "10.12.24",
     "@types/semver": "5.5.0",
+    "@types/tar": "4.0.3",
     "@types/tmp": "0.0.33",
     "@types/unzipper": "^0.9.1",
     "@types/vscode": "1.33.0",
@@ -251,7 +253,8 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://github.com/jamsilva/netcoredbg/releases/download/latest/netcoredbg-win64-master.zip",
+      "url": "https://github.com/Samsung/netcoredbg/releases/latest/download/netcoredbg-win64-master.zip",
+      "fallbackUrl": "https://web.archive.org/web/20201023212102if_/https://github-production-release-asset-2e65be.s3.amazonaws.com/113926796/d4b97d80-155d-11eb-8d5f-3dd1c01c1a8e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20201023%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20201023T212101Z&X-Amz-Expires=300&X-Amz-Signature=eee689635c857b27244d450d90d65600f392ed41b7d5a6ce77fa44fe2060f879&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=113926796&response-content-disposition=attachment%3B%20filename%3Dnetcoredbg-win64.zip&response-content-type=application%2Foctet-stream",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -264,7 +267,8 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://github.com/jamsilva/netcoredbg/releases/download/latest/netcoredbg-osx-master.zip",
+      "url": "https://github.com/Samsung/netcoredbg/releases/latest/download/netcoredbg-win64-master.zip",
+      "fallbackUrl": "https://web.archive.org/web/20201023212454if_/https://github-production-release-asset-2e65be.s3.amazonaws.com/113926796/e77a8500-1552-11eb-8b31-fe0e14726f36?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20201023%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20201023T212454Z&X-Amz-Expires=300&X-Amz-Signature=2a34e55e502e63d3e2b470ec64124f2a5ec4e31dfc71b4e4058171a747f940e6&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=113926796&response-content-disposition=attachment%3B%20filename%3Dnetcoredbg-osx.tar.gz&response-content-type=application%2Foctet-stream",
       "installPath": ".debugger",
       "platforms": [
         "darwin"
@@ -272,24 +276,19 @@
       "architectures": [
         "x86_64"
       ],
-      "binaries": [
-        "netcoredbg/netcoredbg"
-      ],
       "installTestPath": ".debugger/netcoredbg/netcoredbg"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://github.com/jamsilva/netcoredbg/releases/download/latest/netcoredbg-linux-master.zip",
+      "url": "https://github.com/Samsung/netcoredbg/releases/latest/download/netcoredbg-linux-bionic.tar.gz",
+      "fallbackUrl": "https://web.archive.org/web/20201023212424if_/https://github-production-release-asset-2e65be.s3.amazonaws.com/113926796/cddb3c80-1556-11eb-832f-5361171540d7?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20201023%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20201023T212424Z&X-Amz-Expires=300&X-Amz-Signature=67fb4e138819eaa325ccde7ed6965d9db54fc2296b0a9d2fe4518325d4ab04f2&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=113926796&response-content-disposition=attachment%3B%20filename%3Dnetcoredbg-linux-bionic.tar.gz&response-content-type=application%2Foctet-stream",
       "installPath": ".debugger",
       "platforms": [
         "linux"
       ],
       "architectures": [
         "x86_64"
-      ],
-      "binaries": [
-        "netcoredbg/netcoredbg"
       ],
       "installTestPath": ".debugger/netcoredbg/netcoredbg"
     },
