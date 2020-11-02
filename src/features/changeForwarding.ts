@@ -14,8 +14,13 @@ function forwardDocumentChanges(server: OmniSharpServer): IDisposable {
 
     return workspace.onDidChangeTextDocument(event => {
 
-        let { document } = event;
+        let { document, contentChanges } = event;
         if (document.isUntitled || document.languageId !== 'csharp' || document.uri.scheme !== 'file') {
+            return;
+        }
+
+        if (contentChanges.length === 0) {
+            // This callback fires with no changes when a document's state changes between "clean" and "dirty".
             return;
         }
 
@@ -23,7 +28,7 @@ function forwardDocumentChanges(server: OmniSharpServer): IDisposable {
             return;
         }
 
-        const lineChanges = event.contentChanges.map(function (change): LinePositionSpanTextChange {
+        const lineChanges = contentChanges.map(function (change): LinePositionSpanTextChange {
             const range = change.range;
             return {
                 NewText: change.text,
