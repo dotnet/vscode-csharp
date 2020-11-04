@@ -16,6 +16,7 @@ export default class OmnisharpRenameProvider extends AbstractSupport implements 
         let req = createRequest<protocol.RenameRequest>(document, position);
         req.WantsTextChanges = true;
         req.RenameTo = newName;
+        req.ApplyTextChanges = false;
 
         try {
             let response = await serverUtils.rename(this._server, req, token);
