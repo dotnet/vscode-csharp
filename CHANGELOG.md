@@ -10,7 +10,11 @@
 * Renaming symbol fails within a file that had recently been renamed without saving changes.
   * As a workaround, make an edit within the file before using Rename Symbol.
 
-## 1.23.5 (Not yet released)
+## 1.23.6 (Not yet released)
+* Do not call updateBuffer if there are no changes. (PR: [#4170](https://github.com/OmniSharp/omnisharp-vscode/pull/4170))
+* Only skip file changed events when document is open. (PR: [#4178](https://github.com/OmniSharp/omnisharp-vscode/pull/4178))
+
+## 1.23.5 (November 3, 2020)
 * Set meaning of UseGlobalMono "auto" to "never" since Mono 6.12.0 still ships with MSBuild 16.7 (PR: [#4130](https://github.com/OmniSharp/omnisharp-vscode/pull/4130))
 * Ensure that the rename identifier and run code action providers do not apply changes twice (PR: [#4133](https://github.com/OmniSharp/omnisharp-vscode/pull/4133))
 * Do not send file changed events for .cs files (PR: [#4141](https://github.com/OmniSharp/omnisharp-vscode/pull/4141), [#4143](https://github.com/OmniSharp/omnisharp-vscode/pull/4143))
@@ -18,7 +22,7 @@
   * Improvements to HTML colorization for non-C# portions of the document.
   * Bug fix - the `razor.format.enable` option is honored again
 
-## 1.23.4 (October, 19, 2020)
+## 1.23.4 (October 19, 2020)
 * Use incremental changes to update language server (PR: [#4088](https://github.com/OmniSharp/omnisharp-vscode/pull/4088))
 * Set meaning of UseGlobalMono "auto" to "always" now that Mono 6.12.0 ships with MSBuild 16.8 (PR: [#4115](https://github.com/OmniSharp/omnisharp-vscode/pull/4115))
 * Updated OmniSharp to 1.37.3
