@@ -6,7 +6,7 @@
 import { Uri, workspace } from 'vscode';
 import { OmniSharpServer } from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
-import { FileChangeType } from '../omnisharp/protocol';
+import { FileChangeType, LinePositionSpanTextChange } from '../omnisharp/protocol';
 import { IDisposable } from '../Disposable';
 import CompositeDisposable from '../CompositeDisposable';
 
@@ -14,8 +14,13 @@ function forwardDocumentChanges(server: OmniSharpServer): IDisposable {
 
     return workspace.onDidChangeTextDocument(event => {
 
-        let { document } = event;
+        let { document, contentChanges } = event;
         if (document.isUntitled || document.languageId !== 'csharp' || document.uri.scheme !== 'file') {
+            return;
+        }
+
+        if (contentChanges.length === 0) {
+            // This callback fires with no changes when a document's state changes between "clean" and "dirty".
             return;
         }
 
@@ -23,7 +28,18 @@ function forwardDocumentChanges(server: OmniSharpServer): IDisposable {
             return;
         }
 
-        serverUtils.updateBuffer(server, { Buffer: document.getText(), FileName: document.fileName }).catch(err => {
+        const lineChanges = contentChanges.map(function (change): LinePositionSpanTextChange {
+            const range = change.range;
+            return {
+                NewText: change.text,
+                StartLine: range.start.line + 1,
+                StartColumn: range.start.character + 1,
+                EndLine: range.end.line + 1,
+                EndColumn: range.end.character + 1
+            };
+        });
+
+        serverUtils.updateBuffer(server, { Changes: lineChanges, FileName: document.fileName, ApplyChangesTogether: true }).catch(err => {
             console.error(err);
             return err;
         });
@@ -38,7 +54,26 @@ function forwardFileChanges(server: OmniSharpServer): IDisposable {
                 return;
             }
 
-            let req = { FileName: uri.fsPath, changeType };
+            if (changeType === FileChangeType.Change) {
+                const docs = workspace.textDocuments.filter(doc => doc.uri.fsPath === uri.fsPath);
+                if (Array.isArray(docs) && docs.some(doc => !doc.isClosed)) {
+                    // When a file changes on disk a FileSystemEvent is generated as well as a
+                    // DidChangeTextDocumentEvent.The ordering of these is:
+                    //  1. This method is called back. vscode's TextDocument has not yet been reloaded, so it has
+                    //     the version from before the changes are applied.
+                    //  2. vscode reloads the file, and fires onDidChangeTextDocument. The document has been updated,
+                    //     and the changes have the delta.
+                    // If we send this change to the server, then it will reload from the disk, which means it will
+                    // be synchronized to the version after the changes. Then, onDidChangeTextDocument will fire and
+                    // send the delta changes, which will cause the server to apply those exact changes. The results
+                    // being that the file is now in an inconsistent state.
+                    // If the document is closed, however, it will no longer be synchronized, so the text change will
+                    // not be triggered and we should tell the server to reread from the disk.
+                    return;
+                }
+            }
+
+            const req = { FileName: uri.fsPath, changeType };
 
             serverUtils.filesChanged(server, [req]).catch(err => {
                 console.warn(`[o] failed to forward file change event for ${uri.fsPath}`, err);
@@ -54,7 +89,7 @@ function forwardFileChanges(server: OmniSharpServer): IDisposable {
             }
 
             if (changeType === FileChangeType.Delete) {
-                let requests = [{ FileName: uri.fsPath, changeType: FileChangeType.DirectoryDelete }];
+                const requests = [{ FileName: uri.fsPath, changeType: FileChangeType.DirectoryDelete }];
 
                 serverUtils.filesChanged(server, requests).catch(err => {
                     console.warn(`[o] failed to forward file change event for ${uri.fsPath}`, err);

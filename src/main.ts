@@ -197,7 +197,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
             let langService = await langServicePromise;
             return langService.advisor;
         },
-        getTestManager: async() => {
+        getTestManager: async () => {
             let langService = await langServicePromise;
             return langService.testManager;
         },
@@ -207,7 +207,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
 function isSupportedPlatform(platform: PlatformInformation): boolean {
     if (platform.isWindows()) {
-        return platform.architecture === "x86" || platform.architecture === "x86_64";
+        return platform.architecture === "x86" || platform.architecture === "x86_64" || platform.architecture === "arm64";
     }
 
     if (platform.isMacOS()) {

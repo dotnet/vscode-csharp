@@ -72,6 +72,7 @@ export interface Request extends FileBasedRequest {
     Column?: number;
     Buffer?: string;
     Changes?: LinePositionSpanTextChange[];
+    ApplyChangesTogether?: boolean;
 }
 
 export interface GoToDefinitionRequest extends Request {
@@ -261,7 +262,7 @@ export interface GetCodeActionsResponse {
 
 export interface RunFixAllActionResponse {
     Text: string;
-    Changes: ModifiedFileResponse[];
+    Changes: FileOperationResponse[];
 }
 
 export interface FixAllItem {
@@ -370,13 +371,24 @@ export interface DotNetFramework {
 export interface RenameRequest extends Request {
     RenameTo: string;
     WantsTextChanges?: boolean;
+    ApplyTextChanges: boolean;
 }
 
-export interface ModifiedFileResponse {
+export interface FileOperationResponse {
     FileName: string;
+    ModificationType: FileModificationType;
+}
+
+export interface ModifiedFileResponse extends FileOperationResponse {
     Buffer: string;
     Changes: TextChange[];
-    ModificationType: FileModificationType;
+}
+
+export interface RenamedFileResponse extends FileOperationResponse {
+    NewFileName: string;
+}
+
+export interface OpenFileResponse extends FileOperationResponse {
 }
 
 export enum FileModificationType {
@@ -485,6 +497,7 @@ export interface RunFixAllRequest extends FileBasedRequest {
     FixAllFilter?: FixAllItem[];
     WantsTextChanges: boolean;
     WantsAllCodeActionOperations: boolean;
+    ApplyChanges: boolean;
 }
 
 export interface QuickInfoRequest extends Request {
@@ -523,6 +536,7 @@ export interface OmnisharpCompletionItem {
     FilterText?: string;
     InsertText?: string;
     InsertTextFormat?: InsertTextFormat;
+    TextEdit?: LinePositionSpanTextChange;
     CommitCharacters?: string[];
     AdditionalTextEdits?: LinePositionSpanTextChange[];
     Data: any;
@@ -593,10 +607,11 @@ export namespace V2 {
         Selection?: Range;
         WantsTextChanges: boolean;
         WantsAllCodeActionOperations: boolean;
+        ApplyTextChanges: boolean;
     }
 
     export interface RunCodeActionResponse {
-        Changes: ModifiedFileResponse[];
+        Changes: FileOperationResponse[];
     }
 
     export interface MSBuildProjectDiagnostics {
