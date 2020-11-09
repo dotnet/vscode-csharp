@@ -43,6 +43,8 @@
     "test:unit": "gulp test:unit",
     "test:feature": "gulp test:feature",
     "test:integration": "gulp test:integration",
+    "test:integration:stdio": "gulp test:integration:stdio",
+    "test:integration:lsp": "gulp test:integration:lsp",
     "test:integration:singleCsproj": "gulp test:integration:singleCsproj",
     "test:integration:slnWithCsproj": "gulp test:integration:slnWithCsproj",
     "test:release": "mocha --config ./.mocharc.jsonc test/releaseTests/**/*.test.ts",
@@ -708,7 +710,7 @@
             "null"
           ],
           "default": null,
-          "scope": "machine",
+          "scope": "window",
           "description": "Specifies the path to OmniSharp. When left empty the OmniSharp version pinned to the C# Extension is used. This can be the absolute path to an OmniSharp executable, a specific version number, or \"latest\". If a version number or \"latest\" is specified, the appropriate version of OmniSharp will be downloaded on your behalf. Setting \"latest\" is an opt-in into latest beta releases of OmniSharp."
         },
         "omnisharp.useGlobalMono": {

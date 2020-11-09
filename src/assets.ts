@@ -47,7 +47,7 @@ export class AssetGenerator {
                 resourcePath = workspaceInfo.MsBuild.SolutionPath;
             }
 
-            this.workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(resourcePath));
+            this.workspaceFolder = resourcePath ? vscode.workspace.getWorkspaceFolder(vscode.Uri.file(resourcePath)) : vscode.workspace.workspaceFolders[0];
         }
 
         this.vscodeFolder = path.join(this.workspaceFolder.uri.fsPath, '.vscode');

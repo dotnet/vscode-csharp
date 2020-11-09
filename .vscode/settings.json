@@ -2,23 +2,19 @@
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
     "prettier.requireConfig": true,
-
     "files.exclude": {
-        "out": true,
         "typings": false,
         "vsix": true
     },
-
     "search.exclude": {
         "**/node_modules": true,
         "out/": true,
         "vsix/": true
     },
-
     "csharp.suppressDotnetRestoreNotification": true,
-
     "tslint.rulesDirectory": "node_modules/tslint-microsoft-contrib",
     "typescript.tsdk": "./node_modules/typescript/lib",
     "mocha.enabled": true,
-    "omnisharp.autoStart": false
+    "omnisharp.autoStart": false,
+    "editor.formatOnSave": false
 }

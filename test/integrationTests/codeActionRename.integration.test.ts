@@ -42,6 +42,9 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
     test("Code actions can rename and open files", async () => {
         await vscode.commands.executeCommand("vscode.open", fileUri);
         let c = await vscode.commands.executeCommand("vscode.executeCodeActionProvider", fileUri, new vscode.Range(0, 7, 0, 7)) as { command: string, title: string, arguments: string[] }[];
+        if (!c || c.some(z => !z?.title)) {
+            c = await vscode.commands.executeCommand("vscode.executeCodeActionProvider", fileUri, new vscode.Range(0, 7, 0, 7)) as { command: string, title: string, arguments: string[] }[];
+        }
         let command = c.find(
             (s) => { return s.title == "Rename file to C.cs"; }
         );

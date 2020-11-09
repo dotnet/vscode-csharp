@@ -60,19 +60,21 @@ suite(`SemanticTokensProvider: ${testAssetWorkspace.description}`, function () {
         }
 
         const activation = await activateCSharpExtension();
-        await testAssetWorkspace.restore();
 
         // Wait for workspace information to be returned
         let isWorkspaceLoaded = false;
 
         const subscription = activation.eventStream.subscribe(event => {
+            console.log(event);
             if (event.type === EventType.WorkspaceInformationUpdated) {
                 isWorkspaceLoaded = true;
                 subscription.unsubscribe();
             }
         });
 
-        await poll(() => isWorkspaceLoaded, 25000, 500);
+        await testAssetWorkspace.restore();
+
+        await poll(() => isWorkspaceLoaded, 50000, 500);
 
         const fileName = 'semantictokens.cs';
         const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
