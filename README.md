@@ -20,7 +20,7 @@ cd free-omnisharp-vscode
 
 npm install
 
-npm run package
+npx gulp 'vsix:release:package'
 
 ```
 then run `Extensions: Install from VSIX` from the command pallete and select the `csharp-VERSION_NUMBER.vsix` file.
