@@ -276,6 +276,7 @@
       "architectures": [
         "x86_64"
       ],
+      "binaries": ["./netcoredbg"],
       "installTestPath": ".debugger/netcoredbg/netcoredbg"
     },
     {
@@ -290,6 +291,7 @@
       "architectures": [
         "x86_64"
       ],
+      "binaries": ["./netcoredbg"],
       "installTestPath": ".debugger/netcoredbg/netcoredbg"
     },
     {
