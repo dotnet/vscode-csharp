@@ -253,8 +253,8 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://github.com/Samsung/netcoredbg/releases/latest/download/netcoredbg-win64-master.zip",
-      "fallbackUrl": "https://web.archive.org/web/20201023212102if_/https://github-production-release-asset-2e65be.s3.amazonaws.com/113926796/d4b97d80-155d-11eb-8d5f-3dd1c01c1a8e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20201023%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20201023T212101Z&X-Amz-Expires=300&X-Amz-Signature=eee689635c857b27244d450d90d65600f392ed41b7d5a6ce77fa44fe2060f879&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=113926796&response-content-disposition=attachment%3B%20filename%3Dnetcoredbg-win64.zip&response-content-type=application%2Foctet-stream",
+      "url": "https://github.com/Samsung/netcoredbg/releases/latest/download/netcoredbg-win64.zip",
+      "fallbackUrl": "https://web.archive.org/web/20201114153556if_/https://github-production-release-asset-2e65be.s3.amazonaws.com/113926796/d4b97d80-155d-11eb-8d5f-3dd1c01c1a8e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20201114%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20201114T153556Z&X-Amz-Expires=300&X-Amz-Signature=cca2fa29711b17bf0ab332e8142fc4c27792f515d53dc685396d8ea1009f4bd8&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=113926796&response-content-disposition=attachment%3B%20filename%3Dnetcoredbg-win64.zip&response-content-type=application%2Foctet-stream",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -267,8 +267,8 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://github.com/Samsung/netcoredbg/releases/latest/download/netcoredbg-win64-master.zip",
-      "fallbackUrl": "https://web.archive.org/web/20201023212454if_/https://github-production-release-asset-2e65be.s3.amazonaws.com/113926796/e77a8500-1552-11eb-8b31-fe0e14726f36?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20201023%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20201023T212454Z&X-Amz-Expires=300&X-Amz-Signature=2a34e55e502e63d3e2b470ec64124f2a5ec4e31dfc71b4e4058171a747f940e6&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=113926796&response-content-disposition=attachment%3B%20filename%3Dnetcoredbg-osx.tar.gz&response-content-type=application%2Foctet-stream",
+      "url": "https://github.com/Samsung/netcoredbg/releases/latest/download/netcoredbg-osx.tar.gz",
+      "fallbackUrl": "https://web.archive.org/web/20201114153845if_/https://github-production-release-asset-2e65be.s3.amazonaws.com/113926796/e77a8500-1552-11eb-8b31-fe0e14726f36?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20201114%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20201114T153659Z&X-Amz-Expires=300&X-Amz-Signature=5782fc0120f26ad4ec919f9cc21b70c42986436a05de7f857fff3e7604e077fb&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=113926796&response-content-disposition=attachment%3B%20filename%3Dnetcoredbg-osx.tar.gz&response-content-type=application%2Foctet-stream",
       "installPath": ".debugger",
       "platforms": [
         "darwin"
