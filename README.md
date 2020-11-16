@@ -12,7 +12,6 @@ This extension is published at [open-vsx.org](https://open-vsx.org/extension/muh
 ### Build from source:
 Requirements:
 - [nodejs](https://nodejs.org)
-- [vsce](https://code.visualstudio.com/api/working-with-extensions/publishing-extension#vsce)
 
 ```
 git clone https://github.com/muhammadsammy/free-omnisharp-vscode.git
@@ -21,9 +20,8 @@ cd free-omnisharp-vscode
 
 npm install
 
-npm run compile
+npm run package
 
-vsce package
 ```
 then run `Extensions: Install from VSIX` from the command pallete and select the `csharp-VERSION_NUMBER.vsix` file.
 
