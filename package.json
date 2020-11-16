@@ -1,10 +1,10 @@
 {
   "name": "csharp",
   "publisher": "muhammad-sammy",
-  "version": "1.23.5",
-  "description": "C# support for vscode-compatible editors (powered by OmniSharp).",
+  "version": "1.23.6",
+  "description": "C# support for vscode-compatible editors (powered by OmniSharp and NetCoreDbg).",
   "displayName": "C#",
-  "author": "Microsoft Corporation",
+  "author": "Muhammad Sammy",
   "license": "SEE LICENSE IN RuntimeLicenses/license.txt",
   "icon": "images/csharpIcon.png",
   "preview": false,
