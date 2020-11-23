@@ -85,7 +85,7 @@ function forwardFileChanges(server: OmniSharpServer): IDisposable {
     }
 
     function isCSharpCodeFile(uri: Uri) : Boolean {
-        let normalized = uri.path.toLocaleLowerCase();
+        const normalized = uri.path.toLocaleLowerCase();
         return normalized.endsWith(".cs") || normalized.endsWith(".csx") || normalized.endsWith(".cake");
     }
 
