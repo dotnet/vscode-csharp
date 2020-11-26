@@ -543,6 +543,8 @@ export async function addTasksJsonIfNecessary(generator: AssetGenerator, operati
 
         const tasksJson = generator.createTasksConfiguration();
 
+        // TODO: check if the task exists and update just that node, instead of appending on update
+
         // NOTE: We only want to do this when we are supposed to update the task configuration. Otherwise,
         // in the case of the 'generateAssets' command, even though we already deleted the tasks.json file
         // this will still return the old tasks.json content
@@ -575,6 +577,8 @@ async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: A
         if (!operations.addLaunchJson) {
             return resolve();
         }
+
+        // TODO: patch this to actuall merge in
 
         // NOTE: We will NOT attempt to merge in the existing launch.json configurations
         // because in the startup prompt case, we will not attempt to create a launch.json if it
@@ -685,26 +689,29 @@ async function deleteAssets(generator: AssetGenerator) {
     ]);
 }
 
-async function shouldGenerateAssets(generator: AssetGenerator): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
+async function shouldOverwriteAssets(generator: AssetGenerator): Promise<'Yes' | 'No' | 'Cancel'> {
+    return new Promise<'Yes' | 'No' | 'Cancel'>((resolve, reject) => {
         doesAnyAssetExist(generator).then(res => {
             if (res) {
                 const yesItem = { title: 'Yes' };
+                const noItem = { title: 'No' }
                 const cancelItem = { title: 'Cancel', isCloseAffordance: true };
-                vscode.window.showWarningMessage('Replace existing build and debug assets?', cancelItem, yesItem)
+                vscode.window.showWarningMessage('Replace existing build and debug assets?', cancelItem, noItem, yesItem)
                     .then(selection => {
                         if (selection === yesItem) {
-                            resolve(true);
+                            resolve('Yes');
+                        }
+                        else if (selection === noItem) { 
+                            resolve('No');
                         }
                         else {
-                            // The user clicked cancel
-                            resolve(false);
+                            resolve('Cancel');
                         }
                     });
             }
             else {
                 // The assets don't exist, so we're good to go.
-                resolve(true);
+                resolve('Yes');
             }
         });
 
@@ -716,22 +723,29 @@ export async function generateAssets(server: OmniSharpServer, selectedIndex?: nu
         let workspaceInformation = await serverUtils.requestWorkspaceInformation(server);
         if (workspaceInformation.MsBuild && workspaceInformation.MsBuild.Projects.length > 0) {
             const generator = new AssetGenerator(workspaceInformation);
-            let doGenerateAssets = await shouldGenerateAssets(generator);
-            if (!doGenerateAssets) {
+            let doOverwriteAssets = await shouldOverwriteAssets(generator);
+            if (doOverwriteAssets === 'Cancel') {
                 return; // user cancelled
             }
 
+            let overwrite = doOverwriteAssets === 'Yes';
+
             const operations: AssetOperations = {
                 addLaunchJson: generator.hasExecutableProjects(),
-                addTasksJson: true
+                addTasksJson: overwrite,
+                updateTasksJson: !overwrite,
             };
+
             if (operations.addLaunchJson) {
                 if (!await generator.selectStartupProject(selectedIndex)) {
                     return; // user cancelled
                 }
             }
 
-            await deleteAssets(generator);
+            if (overwrite) {
+                await deleteAssets(generator);
+            }
+
             await fs.ensureDir(generator.vscodeFolder);
             await addAssets(generator, operations);
         }
