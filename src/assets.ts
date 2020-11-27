@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs-extra';
+import * as parse from 'jsonc-parser';
 import * as path from 'path';
 import * as protocol from './omnisharp/protocol';
 import * as serverUtils from './omnisharp/utils';
@@ -398,6 +399,7 @@ export interface AssetOperations {
     addTasksJson?: boolean;
     updateTasksJson?: boolean;
     addLaunchJson?: boolean;
+    updateLaunchJson?: boolean;
 }
 
 function hasAddOperations(operations: AssetOperations) {
@@ -542,18 +544,27 @@ export async function addTasksJsonIfNecessary(generator: AssetGenerator, operati
         }
 
         const tasksJson = generator.createTasksConfiguration();
+        const tasksConfigs = vscode.workspace.getConfiguration('tasks');
+        const existingTaskConfigs = tasksConfigs.get<Array<tasks.TaskDescription>>('tasks');
 
-        // TODO: check if the task exists and update just that node, instead of appending on update
-
-        // NOTE: We only want to do this when we are supposed to update the task configuration. Otherwise,
-        // in the case of the 'generateAssets' command, even though we already deleted the tasks.json file
-        // this will still return the old tasks.json content
-        if (operations.updateTasksJson) {
-            const tasksConfigs = vscode.workspace.getConfiguration('tasks');
-            let existingTaskConfigs = tasksConfigs.get<Array<tasks.TaskDescription>>('tasks');
-
-            if (existingTaskConfigs) {
-                tasksJson['tasks'] = tasksJson['tasks'].concat(existingTaskConfigs);
+        if (existingTaskConfigs) {
+            const tasks = tasksJson['tasks'];
+            const taskLabels = tasks.map(t => t.label);
+            if (existingTaskConfigs.some(t => taskLabels.includes(t.label))) {
+                // tasks with our names exist
+                if (operations.updateTasksJson) {
+                    // when updating don't overwrite them
+                    return reject(`At least one of the tasks named '${taskLabels.join('\', \'')}' already exist, and you chose to not overwrite them.`);
+                }
+                else { 
+                    // otherwise remove all tasks with the same name and append ours
+                    const filteredTasks = existingTaskConfigs.filter(t => !taskLabels.includes(t.label));
+                    tasksJson['tasks'] = filteredTasks.concat(tasks);
+                }
+            }
+            else {
+                // tasks with our names don't exist just append ours to the existing ones
+                tasksJson['tasks'] = existingTaskConfigs.concat(tasksJson['tasks']);
             }
         }
 
@@ -585,26 +596,40 @@ async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: A
         // already exists, and in the command case, we delete the launch.json file, but the VS
         // Code API will return old configurations anyway, which we do NOT want.
 
+        let launchConfig = vscode.workspace.getConfiguration('launch');
+
+        if (!launchConfig) {
+            // create launch.json if there is none
+            const launchJsonText = `
+            {
+            // Use IntelliSense to find out which attributes exist for C# debugging
+            // Use hover for the description of the existing attributes
+            // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+            "version": "0.2.0",
+            "configurations": [ ]
+            }`;
+            
+            fs.writeFile(generator.launchJsonPath, launchJsonText.trim(), err => {
+                if (err) {
+                    return reject(err);
+                }
+
+                resolve();
+            });
+
+            // reload
+            launchConfig = vscode.workspace.getConfiguration('launch');
+        }
+
+        const existingLaunchConfigs : any = launchConfig['configurations'];
+
         const programLaunchType = generator.computeProgramLaunchType();
         const launchJsonConfigurations: string = generator.createLaunchJsonConfigurations(programLaunchType);
-        const configurationsMassaged: string = indentJsonString(launchJsonConfigurations);
-
-        const launchJsonText = `
-{
-   // Use IntelliSense to find out which attributes exist for C# debugging
-   // Use hover for the description of the existing attributes
-   // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
-   "version": "0.2.0",
-   "configurations": ${configurationsMassaged}
-}`;
-
-        fs.writeFile(generator.launchJsonPath, launchJsonText.trim(), err => {
-            if (err) {
-                return reject(err);
-            }
-
-            resolve();
-        });
+        
+        const ourConfigs = parse.parse(launchJsonConfigurations);
+        const ourConfigNames = ourConfigs.map((c: { name: string; }) => c.name);
+        const filtered = existingLaunchConfigs.filter((c: { name: any; }) => !ourConfigNames.includes(c.name));
+        return launchConfig.update('configurations', filtered.concat(ourConfigs), false);
     });
 }
 
@@ -694,7 +719,7 @@ async function shouldOverwriteAssets(generator: AssetGenerator): Promise<'Yes' |
         doesAnyAssetExist(generator).then(res => {
             if (res) {
                 const yesItem = { title: 'Yes' };
-                const noItem = { title: 'No' }
+                const noItem = { title: 'No' };
                 const cancelItem = { title: 'Cancel', isCloseAffordance: true };
                 vscode.window.showWarningMessage('Replace existing build and debug assets?', cancelItem, noItem, yesItem)
                     .then(selection => {
@@ -742,7 +767,7 @@ export async function generateAssets(server: OmniSharpServer, selectedIndex?: nu
                 }
             }
 
-            if (overwrite) {
+            if (false && overwrite) {
                 await deleteAssets(generator);
             }
 
