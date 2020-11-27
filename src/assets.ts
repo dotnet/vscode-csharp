@@ -543,39 +543,29 @@ export async function addTasksJsonIfNecessary(generator: AssetGenerator, operati
             return resolve();
         }
 
+        
         const tasksJson = generator.createTasksConfiguration();
-        const tasksConfigs = vscode.workspace.getConfiguration('tasks');
-        const existingTaskConfigs = tasksConfigs.get<Array<tasks.TaskDescription>>('tasks');
 
-        if (existingTaskConfigs) {
-            const tasks = tasksJson['tasks'];
-            const taskLabels = tasks.map(t => t.label);
-            if (existingTaskConfigs.some(t => taskLabels.includes(t.label))) {
-                // tasks with our names exist
-                if (operations.updateTasksJson) {
-                    // when updating don't overwrite them
-                    return reject(`At least one of the tasks named '${taskLabels.join('\', \'')}' already exist, and you chose to not overwrite them.`);
+        if (!fs.pathExistsSync(generator.tasksJsonPath)) {
+            // when tasks.json does not exist create it and write all the content
+            const tasksJsonText = JSON.stringify(tasksJson, null, '    ');
+            fs.writeFile(generator.tasksJsonPath, tasksJsonText, err => {
+                if (err) {
+                    return reject(err);
                 }
-                else { 
-                    // otherwise remove all tasks with the same name and append ours
-                    const filteredTasks = existingTaskConfigs.filter(t => !taskLabels.includes(t.label));
-                    tasksJson['tasks'] = filteredTasks.concat(tasks);
-                }
-            }
-            else {
-                // tasks with our names don't exist just append ours to the existing ones
-                tasksJson['tasks'] = existingTaskConfigs.concat(tasksJson['tasks']);
-            }
+
+                resolve();
+            });
         }
-
-        const tasksJsonText = JSON.stringify(tasksJson, null, '    ');
-        fs.writeFile(generator.tasksJsonPath, tasksJsonText, err => {
-            if (err) {
-                return reject(err);
-            }
-
-            resolve();
-        });
+        else {
+            // when tasks.json exists just update the tasks node
+            const tasksConfig = vscode.workspace.getConfiguration('tasks');
+            const existingTaskConfigs = tasksConfig.get<Array<tasks.TaskDescription>>('tasks');
+            const tasks = tasksJson['tasks'];
+            const taskLabels = tasks.map(t => t.label);    
+            const filteredTasks = existingTaskConfigs.filter(t => !taskLabels.includes(t.label));
+            return tasksConfig.update('tasks', filteredTasks.concat(tasks), false);
+        }
     });
 }
 
@@ -589,24 +579,20 @@ async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: A
             return resolve();
         }
 
-        // TODO: patch this to actuall merge in
+        const programLaunchType = generator.computeProgramLaunchType();
+        const launchJsonConfigurations: string = generator.createLaunchJsonConfigurations(programLaunchType);
 
-        // NOTE: We will NOT attempt to merge in the existing launch.json configurations
-        // because in the startup prompt case, we will not attempt to create a launch.json if it
-        // already exists, and in the command case, we delete the launch.json file, but the VS
-        // Code API will return old configurations anyway, which we do NOT want.
 
-        let launchConfig = vscode.workspace.getConfiguration('launch');
-
-        if (!launchConfig) {
-            // create launch.json if there is none
+        if (!fs.pathExistsSync(generator.launchJsonPath)) {
+            // when launch.json does not exist, create it and write all the content directly
+            const configurationsMassaged: string = indentJsonString(launchJsonConfigurations);
             const launchJsonText = `
             {
-            // Use IntelliSense to find out which attributes exist for C# debugging
-            // Use hover for the description of the existing attributes
-            // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
-            "version": "0.2.0",
-            "configurations": [ ]
+                // Use IntelliSense to find out which attributes exist for C# debugging
+                // Use hover for the description of the existing attributes
+                // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+                "version": "0.2.0",
+                "configurations": ${configurationsMassaged}
             }`;
             
             fs.writeFile(generator.launchJsonPath, launchJsonText.trim(), err => {
@@ -616,20 +602,16 @@ async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: A
 
                 resolve();
             });
-
-            // reload
-            launchConfig = vscode.workspace.getConfiguration('launch');
+        } 
+        else {
+            // when launch.json exists append our configurations
+            let launchConfig = vscode.workspace.getConfiguration('launch');
+            const existingLaunchConfigs : any = launchConfig['configurations'];
+            const ourConfigs = parse.parse(launchJsonConfigurations);
+            const ourConfigNames = ourConfigs.map((c: { name: string; }) => c.name);
+            const filtered = existingLaunchConfigs.filter((c: { name: any; }) => !ourConfigNames.includes(c.name));
+            return launchConfig.update('configurations', filtered.concat(ourConfigs), false);
         }
-
-        const existingLaunchConfigs : any = launchConfig['configurations'];
-
-        const programLaunchType = generator.computeProgramLaunchType();
-        const launchJsonConfigurations: string = generator.createLaunchJsonConfigurations(programLaunchType);
-        
-        const ourConfigs = parse.parse(launchJsonConfigurations);
-        const ourConfigNames = ourConfigs.map((c: { name: string; }) => c.name);
-        const filtered = existingLaunchConfigs.filter((c: { name: any; }) => !ourConfigNames.includes(c.name));
-        return launchConfig.update('configurations', filtered.concat(ourConfigs), false);
     });
 }
 
