@@ -22,8 +22,8 @@ import { OmnisharpLoggerObserver } from './observers/OmnisharpLoggerObserver';
 import { OmnisharpStatusBarObserver } from './observers/OmnisharpStatusBarObserver';
 import { PlatformInformation } from './platform';
 import { StatusBarItemAdapter } from './statusBarItemAdapter';
-import { TelemetryObserver } from './observers/TelemetryObserver';
-import TelemetryReporter from 'vscode-extension-telemetry';
+// import { TelemetryObserver } from './observers/TelemetryObserver';
+// import TelemetryReporter from 'vscode-extension-telemetry';
 import { addJSONProviders } from './features/json/jsonContributions';
 import { ProjectStatusBarObserver } from './observers/ProjectStatusBarObserver';
 import CSharpExtensionExports from './CSharpExtensionExports';
@@ -50,9 +50,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
     const extensionId = CSharpExtensionId;
     const extension = vscode.extensions.getExtension<CSharpExtensionExports>(extensionId);
-    const extensionVersion = extension.packageJSON.version;
-    const aiKey = extension.packageJSON.contributes.debuggers[0].aiKey;
-    const reporter = new TelemetryReporter(extensionId, extensionVersion, aiKey);
 
     util.setExtensionPath(extension.extensionPath);
 
@@ -148,8 +145,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         return null;
     }
 
-    let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter);
-    eventStream.subscribe(telemetryObserver.post);
+    // let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter);
+    // eventStream.subscribe(telemetryObserver.post);
 
     let networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
     let installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload);
@@ -226,4 +223,3 @@ function isSupportedPlatform(platform: PlatformInformation): boolean {
 async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, installDependencies: IInstallDependencies): Promise<boolean> {
     return installRuntimeDependencies(extension.packageJSON, extension.extensionPath, installDependencies, eventStream, platformInfo);
 }
-

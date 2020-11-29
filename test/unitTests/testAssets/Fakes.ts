@@ -6,7 +6,6 @@
 import * as vscode from '../../../src/vscodeAdapter';
 import * as protocol from '../../../src/omnisharp/protocol';
 import { DocumentSelector, MessageItem, TextDocument, Uri, GlobPattern, ConfigurationChangeEvent, Disposable } from '../../../src/vscodeAdapter';
-import { ITelemetryReporter } from '../../../src/observers/TelemetryObserver';
 import { MSBuildDiagnosticsMessage } from '../../../src/omnisharp/protocol';
 import { OmnisharpServerMsBuildProjectDiagnostics, OmnisharpServerOnError, OmnisharpServerUnresolvedDependencies, WorkspaceInformationUpdated } from '../../../src/omnisharp/loggingEvents';
 
@@ -23,14 +22,6 @@ export const getNullChannel = (): vscode.OutputChannel => {
     return returnChannel;
 };
 
-export const getNullTelemetryReporter = (): ITelemetryReporter => {
-    let reporter: ITelemetryReporter = {
-        sendTelemetryEvent: (eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }) => { },
-        sendTelemetryErrorEvent: (eventName: string, properties?: { [key: string]: string; }, measures?: { [key: string]: number; }, errorProps?: string[]) => { }
-    };
-
-    return reporter;
-};
 
 export const getWorkspaceConfiguration = (): vscode.WorkspaceConfiguration => {
     let values: { [key: string]: any } = {};

@@ -92,7 +92,6 @@
     "tar": "6.0.5",
     "tmp": "0.0.33",
     "vscode-debugprotocol": "1.33.0",
-    "vscode-extension-telemetry": "0.1.6",
     "vscode-languageserver-protocol": "^3.15.3",
     "yauzl": "2.10.0"
   },
@@ -276,7 +275,9 @@
       "architectures": [
         "x86_64"
       ],
-      "binaries": ["./netcoredbg"],
+      "binaries": [
+        "./netcoredbg"
+      ],
       "installTestPath": ".debugger/netcoredbg/netcoredbg"
     },
     {
@@ -291,7 +292,9 @@
       "architectures": [
         "x86_64"
       ],
-      "binaries": ["./netcoredbg"],
+      "binaries": [
+        "./netcoredbg"
+      ],
       "installTestPath": ".debugger/netcoredbg/netcoredbg"
     },
     {
@@ -982,7 +985,6 @@
           "pickProcess": "csharp.listProcess",
           "pickRemoteProcess": "csharp.listRemoteProcess"
         },
-        "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
         "configurationAttributes": {
           "launch": {
             "type": "object",
@@ -2079,7 +2081,6 @@
           "pickProcess": "csharp.listProcess",
           "pickRemoteProcess": "csharp.listRemoteProcess"
         },
-        "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
         "configurationAttributes": {
           "launch": {
             "type": "object",
