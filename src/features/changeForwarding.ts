@@ -55,7 +55,7 @@ function forwardFileChanges(server: OmniSharpServer): IDisposable {
             }
 
             if (changeType === FileChangeType.Change) {
-                const docs = workspace.textDocuments.filter(doc => doc.uri.fsPath === uri.fsPath);
+                const docs = workspace.textDocuments.filter(doc => doc.uri.fsPath === uri.fsPath && isCSharpCodeFile(doc.uri));
                 if (Array.isArray(docs) && docs.some(doc => !doc.isClosed)) {
                     // When a file changes on disk a FileSystemEvent is generated as well as a
                     // DidChangeTextDocumentEvent.The ordering of these is:
@@ -69,6 +69,8 @@ function forwardFileChanges(server: OmniSharpServer): IDisposable {
                     // being that the file is now in an inconsistent state.
                     // If the document is closed, however, it will no longer be synchronized, so the text change will
                     // not be triggered and we should tell the server to reread from the disk.
+                    // This applies to C# code files only, not other files significant for OmniSharp
+                    // e.g. csproj or editorconfig files
                     return;
                 }
             }
@@ -80,6 +82,11 @@ function forwardFileChanges(server: OmniSharpServer): IDisposable {
                 return err;
             });
         };
+    }
+
+    function isCSharpCodeFile(uri: Uri) : Boolean {
+        const normalized = uri.path.toLocaleLowerCase();
+        return normalized.endsWith(".cs") || normalized.endsWith(".csx") || normalized.endsWith(".cake");
     }
 
     function onFolderEvent(changeType: FileChangeType): (uri: Uri) => void {
