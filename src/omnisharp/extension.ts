@@ -88,7 +88,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables.add(vscode.languages.registerRenameProvider(documentSelector, new RenameProvider(server, languageMiddlewareFeature)));
         if (options.useFormatting) {
             localDisposables.add(vscode.languages.registerDocumentRangeFormattingEditProvider(documentSelector, new FormatProvider(server, languageMiddlewareFeature)));
-            localDisposables.add(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new FormatProvider(server, languageMiddlewareFeature), '}', ';'));
+            localDisposables.add(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new FormatProvider(server, languageMiddlewareFeature), '}', '/', '\n', ';'));
         }
         localDisposables.add(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionProvider(server, languageMiddlewareFeature), '.', ' '));
         localDisposables.add(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server, optionProvider, languageMiddlewareFeature)));
