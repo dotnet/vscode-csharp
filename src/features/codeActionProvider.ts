@@ -7,13 +7,11 @@ import * as vscode from 'vscode';
 import { OmniSharpServer } from '../omnisharp/server';
 import AbstractProvider from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
-import { toRange2 } from '../omnisharp/typeConversion';
 import * as serverUtils from '../omnisharp/utils';
-import { FileModificationType } from '../omnisharp/protocol';
-import { Uri } from 'vscode';
 import CompositeDisposable from '../CompositeDisposable';
 import OptionProvider from '../observers/OptionProvider';
 import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import { buildEditForResponse } from '../omnisharp/fileOperationsResponseEditBuilder';
 
 export default class CodeActionProvider extends AbstractProvider implements vscode.CodeActionProvider {
 
@@ -84,7 +82,8 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
                     Selection: selection,
                     Identifier: codeAction.Identifier,
                     WantsTextChanges: true,
-                    WantsAllCodeActionOperations: true
+                    WantsAllCodeActionOperations: true,
+                    ApplyTextChanges: false
                 };
 
                 return {
@@ -101,79 +100,11 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
 
     private async _runCodeAction(req: protocol.V2.RunCodeActionRequest, token: vscode.CancellationToken): Promise<boolean | string | {}> {
 
-        return serverUtils.runCodeAction(this._server, req).then(async response => {
-            if (response && Array.isArray(response.Changes)) {
-
-                let edit = new vscode.WorkspaceEdit();
-
-                let fileToOpen: Uri = null;
-                let renamedFiles: Uri[] = [];
-
-                for (let change of response.Changes) {
-                    if (change.ModificationType == FileModificationType.Renamed)
-                    {
-                        // The file was renamed. Omnisharp has already persisted
-                        // the right changes to disk. We don't need to try to
-                        // apply text changes (and will skip this file if we see an edit)
-                        renamedFiles.push(Uri.file(change.FileName));
-                    }
-                }
-
-                for (let change of response.Changes) {
-                    if (change.ModificationType == FileModificationType.Opened)
-                    {
-                        // The CodeAction requested that we open a file.
-                        // Record that file name and keep processing CodeActions.
-                        // If a CodeAction requests that we open multiple files
-                        // we only open the last one (what would it mean to open multiple files?)
-                        fileToOpen = vscode.Uri.file(change.FileName);
-                    }
-
-                    if (change.ModificationType == FileModificationType.Modified)
-                    {
-                        let uri = vscode.Uri.file(change.FileName);
-                        if (renamedFiles.some(r => r == uri))
-                        {
-                            // This file got renamed. OmniSharp has already
-                            // persisted the new file with any applicable changes.
-                            continue;
-                        }
-
-                        let edits: vscode.TextEdit[] = [];
-                        for (let textChange of change.Changes) {
-                            edits.push(vscode.TextEdit.replace(toRange2(textChange), textChange.NewText));
-                        }
-
-                        edit.set(uri, edits);
-                    }
-                }
-
-                // Allow language middlewares to re-map its edits if necessary.
-                edit = await this._languageMiddlewareFeature.remap("remapWorkspaceEdit", edit, token);
-
-                let applyEditPromise = vscode.workspace.applyEdit(edit);
-
-                // Unfortunately, the textEditor.Close() API has been deprecated
-                // and replaced with a command that can only close the active editor.
-                // If files were renamed that weren't the active editor, their tabs will
-                // be left open and marked as "deleted" by VS Code
-                let next = applyEditPromise;
-                if (renamedFiles.some(r => r.fsPath == vscode.window.activeTextEditor.document.uri.fsPath))
-                {
-                    next = applyEditPromise.then(_ =>
-                        {
-                            return vscode.commands.executeCommand("workbench.action.closeActiveEditor");
-                        });
-                }
-
-                return fileToOpen != null
-                 ? next.then(_ =>
-                        {
-                            return vscode.commands.executeCommand("vscode.open", fileToOpen);
-                        })
-                 : next;
-                }
-            }, async (error) => {
+        return serverUtils.runCodeAction(this._server, req).then(response => {
+            if (response) {
+                return buildEditForResponse(response.Changes, this._languageMiddlewareFeature, token);
+            }
+        }, async (error) => {
             return Promise.reject(`Problem invoking 'RunCodeAction' on OmniSharp server: ${error}`);
         });
     }

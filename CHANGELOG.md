@@ -1,8 +1,8 @@
-## Known Issues in 1.23.4
+## Known Issues in 1.23.6
 
+* For Mono-based development (e.g. Unity) that requires full .NET framework, you need to set `"omnisharp.useGlobalMono": "always"`. The current value of "auto" will remain "never" until Mono [upgrades their bundled MSBuild version](https://github.com/mono/mono/issues/20250).
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
-  * Limited support for formatting
   * Error squiggles misaligned for expressions near the start of a new line
   * Emmet based abbreviation expansion is not yet supported (See note in readme for how to enable through your settings.json)
 * There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
@@ -10,7 +10,31 @@
 * Renaming symbol fails within a file that had recently been renamed without saving changes.
   * As a workaround, make an edit within the file before using Rename Symbol.
 
-## 1.23.4 (Not yet released)
+## 1.23.7 (Not yet released)
+* Update OmniSharp version to 1.37.4 (PR: [#4224](https://github.com/OmniSharp/omnisharp-vscode/pull/4224))
+  * Fixed global Mono MSBuild version reporting (PR: [omnisharp-roslyn#1988](https://github.com/OmniSharp/omnisharp-roslyn/pull/1988))
+  * Fixed incremental changes and completion in Cake (PR: [omnisharp-roslyn#1997](https://github.com/OmniSharp/omnisharp-roslyn/pull/1997))
+  * Omnisharp now uses libPaths and sourcePaths defined in custom .rsp file for scripting (PR: [omnisharp-roslyn#2000](https://github.com/OmniSharp/omnisharp-roslyn/pull/2000))
+  * C# scripting should use language version "latest" by default (PR: [omnisharp-roslyn#2001](https://github.com/OmniSharp/omnisharp-roslyn/pull/2001))
+  * Improve handling with Cake Script Service (PR: [omnisharp-vscode#2013](https://github.com/OmniSharp/omnisharp-roslyn/pull/2013))
+  * Updated to latest Dotnet.Script scripting packages for .NET 5.0 ([omnisharp-vscode#2020](https://github.com/OmniSharp/omnisharp-roslyn/issues/2020), PR: [omnisharp-vscode#2012](https://github.com/OmniSharp/omnisharp-roslyn/pull/2012))
+  * Updated Roslyn to `3.8.0`, MSBuild to `16.8.0`, DotNetHostResolver to `5.0.0`, Nuget packages to `5.8.0-rc.6930` and MSBuildSDKResolver to `5.0.101-servicing.20564.2` to match .NET 5.0.100 SDK (PR: [omnisharp-vscode#2015](https://github.com/OmniSharp/omnisharp-roslyn/pull/2015), [omnisharp-vscode#2016](https://github.com/OmniSharpomnisharp-roslyn/pull/2016))
+  * Workspace create file workaround for VS Code (to avoid race condtion on newly created files) ([omnisharp-vscode#4181](https://github.com/OmniSharp/omnisharp-vscode/issues/4181), PR: [omnisharp-vscode#2019](https://github.com/OmniSharp/omnisharp-roslyn/pull/2019))
+  * Response file can now used enviroment variables in the path + more error handling (PR: [omnisharp-vscode#2008](https://github.com/OmniSharp/omnisharp-roslyn/pull/2008))
+
+## 1.23.6 (November 13, 2020)
+* Do not call updateBuffer if there are no changes. (PR: [#4170](https://github.com/OmniSharp/omnisharp-vscode/pull/4170))
+* Only skip file changed events when document is open. (PR: [#4178](https://github.com/OmniSharp/omnisharp-vscode/pull/4178))
+
+## 1.23.5 (November 3, 2020)
+* Set meaning of UseGlobalMono "auto" to "never" since Mono 6.12.0 still ships with MSBuild 16.7 (PR: [#4130](https://github.com/OmniSharp/omnisharp-vscode/pull/4130))
+* Ensure that the rename identifier and run code action providers do not apply changes twice (PR: [#4133](https://github.com/OmniSharp/omnisharp-vscode/pull/4133))
+* Do not send file changed events for .cs files (PR: [#4141](https://github.com/OmniSharp/omnisharp-vscode/pull/4141), [#4143](https://github.com/OmniSharp/omnisharp-vscode/pull/4143))
+* Update Razor to 6.0.0-alpha.1.20529.17:
+  * Improvements to HTML colorization for non-C# portions of the document.
+  * Bug fix - the `razor.format.enable` option is honored again
+
+## 1.23.4 (October 19, 2020)
 * Use incremental changes to update language server (PR: [#4088](https://github.com/OmniSharp/omnisharp-vscode/pull/4088))
 * Set meaning of UseGlobalMono "auto" to "always" now that Mono 6.12.0 ships with MSBuild 16.8 (PR: [#4115](https://github.com/OmniSharp/omnisharp-vscode/pull/4115))
 * Updated OmniSharp to 1.37.3
@@ -35,7 +59,7 @@
   * [Debugger licensing errors are not reported to the UI ([#3759](https://github.com/OmniSharp/omnisharp-vscode/issues/3759))
   * [Error processing 'variables' request. Unknown Error: 0x8000211d ([#3926](https://github.com/OmniSharp/omnisharp-vscode/issues/3926))
   * [Method with a function pointer local breaks variables view and debug console ([#4052](https://github.com/OmniSharp/omnisharp-vscode/issues/4052))
-* Update to OmniSharp 1.37.2 (PR: [#4107](https://github.com/OmniSharp/omnisharp-vscode/pull/4107))
+* Update OmniSharp to 1.37.2 (PR: [#4107](https://github.com/OmniSharp/omnisharp-vscode/pull/4107))
   * Updated MSBuild, MSBuild resolvers and Roslyn to match .NET Core 5.0 RC2 and VS 16.8 Preview 4. (PR: [omnisharp-roslyn/#1971](https://github.com/OmniSharp/omnisharp-roslyn/pull/1971), PR: [omnisharp-roslyn/#1974](https://github.com/OmniSharp/omnisharp-roslyn/pull/1974))
   * Decouple FixAll from the workspace ([omnisharp-roslyn/#1960](https://github.com/OmniSharp/omnisharp-roslyn/issues/1960), PR: [omnisharp-roslyn/#1962](https://github.com/OmniSharp/omnisharp-roslyn/pull/1962))
   * Added binding redirects for Microsoft.CodeAnalysis.Features and Microsoft.CodeAnalysis.CSharp.Features (PR: [omnisharp-roslyn/#1964](https://github.com/OmniSharp/omnisharp-roslyn/pull/1964))
