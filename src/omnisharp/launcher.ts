@@ -17,7 +17,8 @@ export enum LaunchTargetKind {
     ProjectJson,
     Folder,
     Csx,
-    Cake
+    Cake,
+    LiveShare
 }
 
 /**
@@ -30,6 +31,24 @@ export interface LaunchTarget {
     target: string;
     kind: LaunchTargetKind;
 }
+
+export const vslsTarget: LaunchTarget = {
+    label: "VSLS",
+    description: "Visual Studio Live Share",
+    directory: "",
+    target: "",
+    kind: LaunchTargetKind.LiveShare
+};
+
+/** Live share scheme */
+export const vsls = 'vsls';
+
+/*
+ * File scheme for which OmniSharp language feature should be disabled
+ */
+export const disabledSchemes = new Set([
+    vsls,
+]);
 
 /**
  * Returns a list of potential targets on which OmniSharp can be launched.
@@ -55,7 +74,7 @@ export async function findLaunchTargets(options: Options): Promise<LaunchTarget[
     return resourcesToLaunchTargets(projectFiles.concat(csFiles));
 }
 
-function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
+export function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
     // The list of launch targets is calculated like so:
     //   * If there are .csproj files, .sln files are considered as launch targets.
     //   * Any project.json file is considered a launch target.
@@ -67,13 +86,20 @@ function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
     //   * It should be possible to choose a .sln file even when no .csproj files are found
     //     within the root.
 
-    if (!Array.isArray(resources)) {
+    if (!Array.isArray(resources) || resources.length === 0) {
         return [];
+    }
+
+    // Since language server functionality is run on the server instance there is no need
+    // to start OmniSharp on the LiveShare client.
+    const localResources = resources.filter(resource => !disabledSchemes.has(resource.scheme));
+    if (localResources.length === 0) {
+        return [vslsTarget];
     }
 
     let workspaceFolderToUriMap = new Map<number, vscode.Uri[]>();
 
-    for (let resource of resources) {
+    for (let resource of localResources) {
         let folder = vscode.workspace.getWorkspaceFolder(resource);
         if (folder) {
             let buckets: vscode.Uri[];
