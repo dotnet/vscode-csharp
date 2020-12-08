@@ -242,7 +242,8 @@ const filteredSymbolNames: { [name: string]: boolean } = {
     'Finalize': true,
     'GetHashCode': true,
     'ToString': true,
-    'Dispose': true
+    'Dispose': true,
+    'GetEnumerator': true,
 };
 
 function isValidElementForReferencesCodeLens(element: Structure.CodeElement): boolean {
