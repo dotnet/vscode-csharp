@@ -882,6 +882,13 @@
     },
     "jsonValidation": [
       {
+        "fileMatch": [
+          "appsettings.json",
+          "appsettings.*.json"
+        ],
+        "url": "https://json.schemastore.org/appsettings"
+      },
+      {
         "fileMatch": "project.json",
         "url": "http://json.schemastore.org/project"
       },
