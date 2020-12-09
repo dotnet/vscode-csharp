@@ -10,7 +10,13 @@
 * Renaming symbol fails within a file that had recently been renamed without saving changes.
   * As a workaround, make an edit within the file before using Rename Symbol.
 
-## 1.23.7 (Not yet released)
+## 1.23.8 (Not yet released)
+* Debugger
+  * Updated the version of .NET that the debugger uses for running its own C# code to .NET 5
+  * Updated .NET debugging services loader to address problem with debugging after installing XCode12 ([dotnet/runtime/#42311](https://github.com/dotnet/runtime/issues/42311))
+  * Fixed integrated terminal on non-Windows ([#4203](https://github.com/OmniSharp/omnisharp-vscode/issues/4203))
+
+## 1.23.7 (December 7, 2020)
 * Update OmniSharp version to 1.37.4 (PR: [#4224](https://github.com/OmniSharp/omnisharp-vscode/pull/4224))
   * Fixed global Mono MSBuild version reporting (PR: [omnisharp-roslyn#1988](https://github.com/OmniSharp/omnisharp-roslyn/pull/1988))
   * Fixed incremental changes and completion in Cake (PR: [omnisharp-roslyn#1997](https://github.com/OmniSharp/omnisharp-roslyn/pull/1997))
