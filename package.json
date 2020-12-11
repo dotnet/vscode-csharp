@@ -896,6 +896,10 @@
       {
         "fileMatch": "omnisharp.json",
         "url": "http://json.schemastore.org/omnisharp"
+      },
+      {
+        "fileMatch": "global.json",
+        "url": "http://json.schemastore.org/global"
       }
     ],
     "commands": [
