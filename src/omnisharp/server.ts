@@ -11,7 +11,7 @@ import * as utils from '../common';
 import * as serverUtils from '../omnisharp/utils';
 import { vscode, CancellationToken } from '../vscodeAdapter';
 import { ChildProcess, exec } from 'child_process';
-import { LaunchTarget, findLaunchTargets } from './launcher';
+import { LaunchTarget, findLaunchTargets, LaunchTargetKind } from './launcher';
 import { ReadLine, createInterface } from 'readline';
 import { Request, RequestQueueCollection } from './requestQueue';
 import { DelayTracker } from './delayTracker';
@@ -245,6 +245,11 @@ export class OmniSharpServer {
     // --- start, stop, and connect
 
     private async _start(launchTarget: LaunchTarget, options: Options): Promise<void> {
+
+        if (launchTarget.kind === LaunchTargetKind.LiveShare) {
+            this.eventStream.post(new ObservableEvents.OmnisharpServerMessage("During Live Share sessions language services are provided by the Live Share server."));
+            return;
+        }
 
         let disposables = new CompositeDisposable();
 
