@@ -1,9 +1,13 @@
+/*---------------------------------------------------------------------------------------------
+*  Copyright (c) Microsoft Corporation. All rights reserved.
+*  Licensed under the MIT License. See License.txt in the project root for license information.
+*--------------------------------------------------------------------------------------------*/
+
 import { expect, should } from 'chai';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { isRazorWorkspace } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { skip } from 'rxjs/operators';
 
 const onTypeFormatProviderCommand = 'vscode.executeFormatOnTypeProvider';
 
