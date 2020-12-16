@@ -55,24 +55,24 @@ suite(`SemanticTokensProvider: ${testAssetWorkspace.description}`, function () {
         should();
 
         // These tests don't run on the BasicRazorApp2_1 solution
-        if (isRazorWorkspace(vscode.workspace)) {
+        if (isRazorWorkspace(vscode.workspace) || process.env.OMNISHARP_DRIVER === 'lsp') {
             this.skip();
+            return;
         }
 
         const activation = await activateCSharpExtension();
+        await testAssetWorkspace.restore();
+
 
         // Wait for workspace information to be returned
         let isWorkspaceLoaded = false;
 
         const subscription = activation.eventStream.subscribe(event => {
-            console.log(event);
             if (event.type === EventType.WorkspaceInformationUpdated) {
                 isWorkspaceLoaded = true;
                 subscription.unsubscribe();
             }
         });
-
-        await testAssetWorkspace.restore();
 
         await poll(() => isWorkspaceLoaded, 50000, 500);
 

@@ -56,7 +56,11 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
         expect(documentation).to.not.be.empty;
     });
 
-    test.skip("Override completion has additional edits", async () => {
+    test("Override completion has additional edits", async function () {
+        if (process.env.OMNISHARP_DRIVER === 'lsp') {
+            this.skip();
+        }
+
         let completionList = <vscode.CompletionList>(await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", fileUri, new vscode.Position(11, 17), " "));
         const nonSnippets = completionList.items.filter(c => c.kind != vscode.CompletionItemKind.Snippet);
         for (const i of nonSnippets) {
