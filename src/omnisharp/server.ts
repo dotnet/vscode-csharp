@@ -8,7 +8,10 @@ import * as path from 'path';
 import * as protocol from './protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { vscode, CancellationToken } from '../vscodeAdapter';
-import { LaunchTarget, findLaunchTargets } from './launcher';
+import { ChildProcess, exec } from 'child_process';
+import { LaunchTarget, findLaunchTargets, LaunchTargetKind } from './launcher';
+import { ReadLine, createInterface } from 'readline';
+import { Request, RequestQueueCollection } from './requestQueue';
 import { DelayTracker } from './delayTracker';
 import { EventEmitter } from 'events';
 import { OmnisharpManager, LaunchInfo } from './OmnisharpManager';
@@ -253,11 +256,16 @@ export class OmniSharpServer {
     }
 
     // --- start, stop, and connect
-
     public async start(
         launchTarget: LaunchTarget,
         options: Options
     ): Promise<void> {
+
+        if (launchTarget.kind === LaunchTargetKind.LiveShare) {
+            this.eventStream.post(new ObservableEvents.OmnisharpServerMessage("During Live Share sessions language services are provided by the Live Share server."));
+            return;
+        }
+
         let disposables = new CompositeDisposable();
 
         if (options.enableLspDriver) {
