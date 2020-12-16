@@ -18,7 +18,7 @@ export class StructureProvider extends AbstractSupport implements FoldingRangePr
             let response = await blockStructure(this._server, request, token);
             let ranges: FoldingRange[] = [];
             for (let member of response.Spans) {
-                ranges.push(new FoldingRange(member.Range.Start.Line - 1, member.Range.End.Line - 1, this.GetType(member.Kind)));
+                ranges.push(new FoldingRange(member.Range.Start.Line, member.Range.End.Line, this.GetType(member.Kind)));
             }
 
             return ranges;

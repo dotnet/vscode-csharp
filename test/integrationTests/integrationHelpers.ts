@@ -15,6 +15,12 @@ export interface ActivationResult {
 }
 
 export async function activateCSharpExtension(): Promise<ActivationResult | undefined> {
+    const configuration = vscode.workspace.getConfiguration('omnisharp');
+    configuration.update('enableLspDriver', process.env.OMNISHARP_DRIVER === 'lsp' ? true : false);
+    if (process.env.OMNISHARP_LOCATION) {
+        configuration.update('path', process.env.OMNISHARP_LOCATION);
+    }
+
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-dotnettools.csharp");
 
     if (!csharpExtension.isActive) {

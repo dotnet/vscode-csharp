@@ -53,20 +53,20 @@ export function getSemanticTokensProvider() {
     return _semanticTokensProvider;
 }
 
-export async function activate(context: vscode.ExtensionContext, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, eventStream: EventStream, optionProvider: OptionProvider, extensionPath: string) {
+export async function activate(context: vscode.ExtensionContext, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, eventStream: EventStream, optionProvider: OptionProvider, extensionPath: string, outputChannel: vscode.OutputChannel) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
     };
 
+    const disposables = new CompositeDisposable();
     const options = optionProvider.GetLatestOptions();
     let omnisharpMonoResolver = new OmniSharpMonoResolver(getMonoVersion);
-    const decompilationAuthorized = context.workspaceState.get<boolean | undefined>("decompilationAuthorized") ?? false;
-    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver, decompilationAuthorized);
-    const advisor = new Advisor(server, optionProvider); // create before server is started
-    const disposables = new CompositeDisposable();
     const languageMiddlewareFeature = new LanguageMiddlewareFeature();
     languageMiddlewareFeature.register();
     disposables.add(languageMiddlewareFeature);
+    const decompilationAuthorized = context.workspaceState.get<boolean | undefined>("decompilationAuthorized") ?? false;
+    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver, decompilationAuthorized, context, outputChannel, languageMiddlewareFeature);
+    const advisor = new Advisor(server, optionProvider); // create before server is started
     let localDisposables: CompositeDisposable;
     const testManager = new TestManager(server, eventStream, languageMiddlewareFeature);
 
@@ -103,8 +103,10 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         const fixAllProvider = new FixAllProvider(server, languageMiddlewareFeature);
         localDisposables.add(fixAllProvider);
         localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, fixAllProvider));
-        localDisposables.add(reportDiagnostics(server, advisor, languageMiddlewareFeature));
-        localDisposables.add(forwardChanges(server));
+        localDisposables.add(reportDiagnostics(server, advisor, languageMiddlewareFeature, optionProvider));
+        if (!options.enableLspDriver) {
+            localDisposables.add(forwardChanges(server));
+        }
         localDisposables.add(trackVirtualDocuments(server, eventStream));
         localDisposables.add(vscode.languages.registerFoldingRangeProvider(documentSelector, new StructureProvider(server, languageMiddlewareFeature)));
 

@@ -14,9 +14,9 @@ gulp.task("test:feature", async () => {
     let env = {
         ...process.env,
         OSVC_SUITE: "featureTests",
-        CODE_TESTS_PATH: path.join(testRootPath, "featureTests")
+        CODE_TESTS_PATH: path.join(testRootPath, "featureTests"),
+        // CODE_DISABLE_EXTENSIONS: "true",
     };
-
     return spawnNode([vscodeTestHostPath, "--verbose"], {
         env
     });
@@ -37,37 +37,34 @@ gulp.task("test:unit", async () => {
     ]);
 });
 
-gulp.task("test:integration:singleCsproj", async () => {
-    return runIntegrationTest("singleCsproj");
-});
+const projectNames = [
+    "singleCsproj",
+    "slnWithCsproj",
+    "BasicRazorApp2_1"
+];
 
-gulp.task("test:integration:slnWithCsproj", async () => {
-    return runIntegrationTest("slnWithCsproj");
-});
+for (const projectName of projectNames) {
+    gulp.task(`test:integration:${projectName}:stdio`, () => runIntegrationTest(projectName, 'stdio'));
+    gulp.task(`test:integration:${projectName}:lsp`, () => runIntegrationTest(projectName, 'lsp'));
+    gulp.task(`test:integration:${projectName}`, gulp.series(`test:integration:${projectName}:stdio`, `test:integration:${projectName}:lsp`));
+}
 
-gulp.task("test:integration:BasicRazorApp2_1", async () => {
-    return runIntegrationTest("BasicRazorApp2_1");
-});
 
-gulp.task(
-    "test:integration", gulp.series(
-        "test:integration:singleCsproj",
-        "test:integration:slnWithCsproj",
-        "test:integration:BasicRazorApp2_1"
-    ));
+gulp.task("test:integration", gulp.series(projectNames.map(projectName => `test:integration:${projectName}`)));
+gulp.task("test:integration:stdio", gulp.series(projectNames.map(projectName => `test:integration:${projectName}:lsp`)));
+gulp.task("test:integration:lsp", gulp.series(projectNames.map(projectName => `test:integration:${projectName}:stdio`)));
+gulp.task("test", gulp.series("test:feature", "test:unit", "test:integration"));
 
-gulp.task("test", gulp.series(
-    "test:feature",
-    "test:unit",
-    "test:integration"));
-
-async function runIntegrationTest(testAssetName: string) {
+async function runIntegrationTest(testAssetName: string, driver: 'stdio' | 'lsp') {
     let env = {
         OSVC_SUITE: testAssetName,
         CODE_TESTS_PATH: path.join(testRootPath, "integrationTests"),
         CODE_EXTENSIONS_PATH: codeExtensionPath,
         CODE_TESTS_WORKSPACE: path.join(testAssetsRootPath, testAssetName),
         CODE_WORKSPACE_ROOT: rootPath,
+        OMNISHARP_DRIVER: driver,
+        OMNISHARP_LOCATION: process.env.OMNISHARP_LOCATION,
+        CODE_DISABLE_EXTENSIONS: 'true',
     };
 
     return spawnNode([vscodeTestHostPath], { env, cwd: rootPath });

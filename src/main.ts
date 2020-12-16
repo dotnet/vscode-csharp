@@ -159,7 +159,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     await getDecompilationAuthorization(context, optionProvider);
 
     // activate language services
-    let langServicePromise = OmniSharp.activate(context, extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionProvider, extension.extensionPath);
+    let langServicePromise = OmniSharp.activate(context, extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionProvider, extension.extensionPath, omnisharpChannel);
 
     // register JSON completion & hover providers for project.json
     context.subscriptions.push(addJSONProviders());
@@ -189,7 +189,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     return {
         initializationFinished: async () => {
             let langService = await langServicePromise;
-            await langService.server.waitForEmptyEventQueue();
+            await langService.server.waitForInitialize();
             await coreClrDebugPromise;
             await razorPromise;
         },
