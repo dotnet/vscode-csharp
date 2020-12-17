@@ -314,6 +314,7 @@ export class OmniSharpServer {
         const cwd = path.dirname(solutionPath);
 
         let args = [
+            '-z',
             '-s', solutionPath,
             '--hostPID', process.pid.toString(),
             'DotNet:enablePackageRestore=false',
