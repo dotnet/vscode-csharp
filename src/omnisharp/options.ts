@@ -16,6 +16,7 @@ export class Options {
         public maxProjectResults: number,
         public useEditorFormattingSettings: boolean,
         public useFormatting: boolean,
+        public organizeImportsOnFormat: boolean,
         public showReferencesCodeLens: boolean,
         public showTestsCodeLens: boolean,
         public disableCodeActions: boolean,
@@ -74,6 +75,7 @@ export class Options {
         const enableImportCompletion = omnisharpConfig.get<boolean>('enableImportCompletion', false);
 
         const useFormatting = csharpConfig.get<boolean>('format.enable', true);
+        const organizeImportsOnFormat = omnisharpConfig.get<boolean>('organizeImportsOnFormat', false);
 
         const showReferencesCodeLens = csharpConfig.get<boolean>('referencesCodeLens.enabled', true);
         const showTestsCodeLens = csharpConfig.get<boolean>('testsCodeLens.enabled', true);
@@ -107,6 +109,7 @@ export class Options {
             maxProjectResults,
             useEditorFormattingSettings,
             useFormatting,
+            organizeImportsOnFormat,
             showReferencesCodeLens,
             showTestsCodeLens,
             disableCodeActions,
