@@ -355,6 +355,10 @@ export class OmniSharpServer {
             args.push('FormattingOptions:EnableEditorConfigSupport=true');
         }
 
+        if (options.organizeImportsOnFormat === true) {
+            args.push('FormattingOptions:OrganizeImports=true');
+        }
+
         if (this.decompilationAuthorized && options.enableDecompilationSupport === true) {
             args.push('RoslynExtensionsOptions:EnableDecompilationSupport=true');
         }
