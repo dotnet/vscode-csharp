@@ -43,8 +43,8 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
                 // The editor does not have a selection. Use the active position of the selection (i.e. the caret).
                 let active = editor.selection.active;
 
-                line = active.line + 1;
-                column = active.character + 1;
+                line = active.line;
+                column = active.character;
             }
             else {
                 // The editor has a selection. Use it.
@@ -52,16 +52,16 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
                 let end = editor.selection.end;
 
                 selection = {
-                    Start: { Line: start.line + 1, Column: start.character + 1 },
-                    End: { Line: end.line + 1, Column: end.character + 1 }
+                    Start: { Line: start.line, Column: start.character },
+                    End: { Line: end.line, Column: end.character }
                 };
             }
         }
         else {
             // We couldn't find the editor, so just use the range we were provided.
             selection = {
-                Start: { Line: range.start.line + 1, Column: range.start.character + 1 },
-                End: { Line: range.end.line + 1, Column: range.end.character + 1 }
+                Start: { Line: range.start.line, Column: range.start.character },
+                End: { Line: range.end.line, Column: range.end.character }
             };
         }
 

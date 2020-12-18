@@ -32,10 +32,10 @@ function forwardDocumentChanges(server: OmniSharpServer): IDisposable {
             const range = change.range;
             return {
                 NewText: change.text,
-                StartLine: range.start.line + 1,
-                StartColumn: range.start.character + 1,
-                EndLine: range.end.line + 1,
-                EndColumn: range.end.character + 1
+                StartLine: range.start.line,
+                StartColumn: range.start.character,
+                EndLine: range.end.line,
+                EndColumn: range.end.character
             };
         });
 
