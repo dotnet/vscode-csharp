@@ -63,9 +63,7 @@ class RequestQueue {
             request.onError(new Error(`Pending request cancelled: ${request.command}`));
         }
 
-        console.log(`canceling waiting request ${request.command} ${request.id}`);
         if (request.id){
-            console.log(`dequeueing request ${request.command} with id ${request.id}`);
             this.dequeue(request.id);
         }
     }
@@ -89,21 +87,18 @@ class RequestQueue {
      */
     public processPending() {
         if (this._pending.length === 0) {
-            console.log("non pending: break");
             return;
         }
 
         this.eventStream.post(new OmnisharpServerProcessRequestStart(this._name));
 
         const slots = this._maxSize - this._waiting.size;
-        console.log(`slots available: ${slots}`);
 
         for (let i = 0; i < slots && this._pending.length > 0; i++) {
             const item = this._pending.shift();
             item.startTime = Date.now();
 
             const id = this._makeRequest(item);
-            console.log(`requested: ${item.command}, id: ${id}`);
             this._waiting.set(id, item);
 
             if (this.isFull()) {
@@ -167,36 +162,30 @@ export class RequestQueueCollection {
 
     public drain() {
         if (this._isProcessing) {
-            console.log("is processing: break");
             return false;
         }
 
         if (this._priorityQueue.isFull()) {
-            console.log("priority queue is full: break");
             return false;
         }
 
         if (this._normalQueue.isFull() && this._deferredQueue.isFull()) {
-            console.log("other queues are full: break");
             return false;
         }
 
         this._isProcessing = true;
 
         if (this._priorityQueue.hasPending()) {
-            console.log("processing priority queue");
             this._priorityQueue.processPending();
             this._isProcessing = false;
             return;
         }
 
         if (this._normalQueue.hasPending()) {
-            console.log("processing normal queue");
             this._normalQueue.processPending();
         }
 
         if (this._deferredQueue.hasPending()) {
-            console.log("processing deferred queue");
             this._deferredQueue.processPending();
         }
 
