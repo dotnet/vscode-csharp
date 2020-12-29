@@ -572,6 +572,7 @@ export class OmniSharpServer {
 
         if (token) {
             token.onCancellationRequested(() => {
+                this.eventStream.post(new ObservableEvents.OmnisharpServerRequestCanceled(request.command, request.id));
                 this._requestQueue.cancelRequest(request);
             });
         }

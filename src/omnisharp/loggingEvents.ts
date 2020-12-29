@@ -123,6 +123,11 @@ export class OmnisharpServerDequeueRequest implements BaseEvent {
     constructor(public name: string, public command: string, public id: number) { }
 }
 
+export class OmnisharpServerRequestCanceled implements BaseEvent {
+    type = EventType.OmnisharpServerRequestCanceled;
+    constructor(public command: string, public id: number) { }
+}
+
 export class OmnisharpServerProcessRequestStart implements BaseEvent {
     type = EventType.OmnisharpServerProcessRequestStart;
     constructor(public name: string) { }
