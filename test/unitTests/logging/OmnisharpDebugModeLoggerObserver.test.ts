@@ -46,14 +46,15 @@ suite("OmnisharpDebugModeLoggerObserver", () => {
     });
 
     test(`OmnisharpProcessRequestStart: Name is logged`, () => {
-        let event = new OmnisharpServerProcessRequestStart("foobar");
+        let event = new OmnisharpServerProcessRequestStart("foobar", 2);
         observer.post(event);
         expect(logOutput).to.contain(event.name);
+        expect(logOutput).to.contain(event.slots);
     });
 
     test(`OmnisharpServer messages increase and decrease indent`, () => {
         observer.post(new OmnisharpServerVerboseMessage("!indented_1"));
-        observer.post(new OmnisharpServerProcessRequestStart("name"));
+        observer.post(new OmnisharpServerProcessRequestStart("name", 2));
         observer.post(new OmnisharpServerVerboseMessage("indented"));
         observer.post(new OmnisharpServerProcessRequestComplete());
         observer.post(new OmnisharpServerVerboseMessage("!indented_2"));
