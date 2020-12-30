@@ -709,7 +709,7 @@ export class OmniSharpServer {
     private _makeRequest(request: Request) {
         const id = OmniSharpServer._nextId++;
         request.id = id;
-        
+
         const requestPacket: protocol.WireProtocol.RequestPacket = {
             Type: 'request',
             Seq: id,

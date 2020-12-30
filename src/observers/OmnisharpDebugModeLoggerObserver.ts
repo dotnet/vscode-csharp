@@ -23,7 +23,7 @@ export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
             case EventType.OmnisharpServerRequestCancelled:
                 this.handleOmnisharpServerRequestCancelled(<OmnisharpServerRequestCancelled>event);
                 break;
-                case EventType.OmnisharpServerProcessRequestStart:
+            case EventType.OmnisharpServerProcessRequestStart:
                 this.handleOmnisharpProcessRequestStart(<OmnisharpServerProcessRequestStart>event);
                 break;
             case EventType.OmnisharpServerProcessRequestComplete:
@@ -52,7 +52,7 @@ export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
     }
 
     private handleOmnisharpServerDequeueRequest(event: OmnisharpServerDequeueRequest) {
-        this.logger.appendLine(`Dequeue from ${event.queueName} with status ${event.queueStatus} request for ${event.command}${event.id? ` (${event.id})`: ''}.`);
+        this.logger.appendLine(`Dequeue from ${event.queueName} with status ${event.queueStatus} request for ${event.command}${event.id ? ` (${event.id})` : ''}.`);
         this.logger.appendLine();
     }
 

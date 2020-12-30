@@ -89,7 +89,6 @@ class RequestQueue {
         }
 
         const slots = this._maxSize - this._waiting.size;
-        
         this.eventStream.post(new OmnisharpServerProcessRequestStart(this._name, slots));
 
         for (let i = 0; i < slots && this._pending.length > 0; i++) {
