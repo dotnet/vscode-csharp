@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { use, should, expect } from 'chai';
 import { getNullChannel } from '../testAssets/Fakes';
-import { OmnisharpServerVerboseMessage, EventWithMessage, OmnisharpRequestMessage, OmnisharpServerEnqueueRequest, OmnisharpServerDequeueRequest, OmnisharpServerProcessRequestStart, OmnisharpEventPacketReceived, OmnisharpServerProcessRequestComplete } from '../../../src/omnisharp/loggingEvents';
+import { OmnisharpServerVerboseMessage, EventWithMessage, OmnisharpRequestMessage, OmnisharpServerEnqueueRequest, OmnisharpServerDequeueRequest, OmnisharpServerProcessRequestStart, OmnisharpEventPacketReceived, OmnisharpServerProcessRequestComplete, OmnisharpServerRequestCancelled } from '../../../src/omnisharp/loggingEvents';
 import { OmnisharpDebugModeLoggerObserver } from '../../../src/observers/OmnisharpDebugModeLoggerObserver';
 
 use(require("chai-string"));
@@ -33,23 +33,31 @@ suite("OmnisharpDebugModeLoggerObserver", () => {
     test(`OmnisharpServerEnqueueRequest: Name and Command is logged`, () => {
         let event = new OmnisharpServerEnqueueRequest("foo", "someCommand");
         observer.post(event);
-        expect(logOutput).to.contain(event.name);
+        expect(logOutput).to.contain(event.queueName);
         expect(logOutput).to.contain(event.command);
     });
 
-    test(`OmnisharpServerDequeueRequest: Name and Command is logged`, () => {
-        let event = new OmnisharpServerDequeueRequest("foo", "someCommand", 1);
+    test(`OmnisharpServerDequeueRequest: QueueName, QueueStatus, Command and Id is logged`, () => {
+        let event = new OmnisharpServerDequeueRequest("foo", "pending", "someCommand", 1);
         observer.post(event);
-        expect(logOutput).to.contain(event.name);
+        expect(logOutput).to.contain(event.queueName);
+        expect(logOutput).to.contain(event.queueStatus);
         expect(logOutput).to.contain(event.command);
         expect(logOutput).to.contain(event.id);
     });
 
-    test(`OmnisharpProcessRequestStart: Name is logged`, () => {
+    test(`OmnisharpProcessRequestStart: Name and slots is logged`, () => {
         let event = new OmnisharpServerProcessRequestStart("foobar", 2);
         observer.post(event);
         expect(logOutput).to.contain(event.name);
         expect(logOutput).to.contain(event.slots);
+    });
+
+    test(`OmnisharpServerRequestCancelled: Name and Id is logged`, () => {
+        let event = new OmnisharpServerRequestCancelled("foobar", 23);
+        observer.post(event);
+        expect(logOutput).to.contain(event.command);
+        expect(logOutput).to.contain(event.id);
     });
 
     test(`OmnisharpServer messages increase and decrease indent`, () => {

@@ -5,7 +5,7 @@
 
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import * as os from 'os';
-import { BaseEvent, OmnisharpRequestMessage, OmnisharpServerEnqueueRequest, OmnisharpServerDequeueRequest, OmnisharpServerRequestCanceled, OmnisharpServerVerboseMessage, OmnisharpServerProcessRequestStart, OmnisharpEventPacketReceived } from "../omnisharp/loggingEvents";
+import { BaseEvent, OmnisharpRequestMessage, OmnisharpServerEnqueueRequest, OmnisharpServerDequeueRequest, OmnisharpServerRequestCancelled, OmnisharpServerVerboseMessage, OmnisharpServerProcessRequestStart, OmnisharpEventPacketReceived } from "../omnisharp/loggingEvents";
 import { EventType } from "../omnisharp/EventType";
 
 export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
@@ -20,8 +20,8 @@ export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
             case EventType.OmnisharpServerDequeueRequest:
                 this.handleOmnisharpServerDequeueRequest(<OmnisharpServerDequeueRequest>event);
                 break;
-            case EventType.OmnisharpServerRequestCanceled:
-                this.handleOmnisharpServerRequestCanceled(<OmnisharpServerRequestCanceled>event);
+            case EventType.OmnisharpServerRequestCancelled:
+                this.handleOmnisharpServerRequestCancelled(<OmnisharpServerRequestCancelled>event);
                 break;
                 case EventType.OmnisharpServerProcessRequestStart:
                 this.handleOmnisharpProcessRequestStart(<OmnisharpServerProcessRequestStart>event);
@@ -47,17 +47,17 @@ export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
     }
 
     private handleOmnisharpServerEnqueueRequest(event: OmnisharpServerEnqueueRequest) {
-        this.logger.appendLine(`Enqueue ${event.name} request for ${event.command}.`);
+        this.logger.appendLine(`Enqueue to ${event.queueName} request for ${event.command}.`);
         this.logger.appendLine();
     }
 
     private handleOmnisharpServerDequeueRequest(event: OmnisharpServerDequeueRequest) {
-        this.logger.appendLine(`Dequeue ${event.name} request for ${event.command} (${event.id}).`);
+        this.logger.appendLine(`Dequeue from ${event.queueName} with status ${event.queueStatus} request for ${event.command}${event.id? ` (${event.id})`: ''}.`);
         this.logger.appendLine();
     }
 
-    private handleOmnisharpServerRequestCanceled(event: OmnisharpServerRequestCanceled) {
-        this.logger.appendLine(`Canceled request for ${event.command} (${event.id}).`);
+    private handleOmnisharpServerRequestCancelled(event: OmnisharpServerRequestCancelled) {
+        this.logger.appendLine(`Cancelled request for ${event.command} (${event.id}).`);
         this.logger.appendLine();
     }
 
