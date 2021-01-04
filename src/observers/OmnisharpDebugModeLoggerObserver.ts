@@ -62,7 +62,7 @@ export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
     }
 
     private handleOmnisharpProcessRequestStart(event: OmnisharpServerProcessRequestStart) {
-        this.logger.appendLine(`Processing ${event.name} queue, empty slots ${event.slots}`);
+        this.logger.appendLine(`Processing ${event.name} queue, available slots ${event.availableRequestSlots}`);
         this.logger.increaseIndent();
     }
 

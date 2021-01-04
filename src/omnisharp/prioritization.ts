@@ -15,7 +15,6 @@ const priorityCommands = [
 const normalCommands = [
     protocol.Requests.Completion,
     protocol.Requests.CompletionResolve,
-    protocol.Requests.AutoComplete,
     protocol.Requests.FilesChanged,
     protocol.Requests.FindSymbols,
     protocol.Requests.FindUsages,

@@ -50,7 +50,7 @@ suite("OmnisharpDebugModeLoggerObserver", () => {
         let event = new OmnisharpServerProcessRequestStart("foobar", 2);
         observer.post(event);
         expect(logOutput).to.contain(event.name);
-        expect(logOutput).to.contain(event.slots);
+        expect(logOutput).to.contain(event.availableRequestSlots);
     });
 
     test(`OmnisharpServerRequestCancelled: Name and Id is logged`, () => {

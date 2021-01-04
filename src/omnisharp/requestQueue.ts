@@ -88,10 +88,10 @@ class RequestQueue {
             return;
         }
 
-        const slots = this._maxSize - this._waiting.size;
-        this.eventStream.post(new OmnisharpServerProcessRequestStart(this._name, slots));
+        const availableRequestSlots = this._maxSize - this._waiting.size;
+        this.eventStream.post(new OmnisharpServerProcessRequestStart(this._name, availableRequestSlots));
 
-        for (let i = 0; i < slots && this._pending.length > 0; i++) {
+        for (let i = 0; i < availableRequestSlots && this._pending.length > 0; i++) {
             const item = this._pending.shift();
             item.startTime = Date.now();
 

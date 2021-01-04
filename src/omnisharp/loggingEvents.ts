@@ -130,7 +130,7 @@ export class OmnisharpServerRequestCancelled implements BaseEvent {
 
 export class OmnisharpServerProcessRequestStart implements BaseEvent {
     type = EventType.OmnisharpServerProcessRequestStart;
-    constructor(public name: string, public slots: number) { }
+    constructor(public name: string, public availableRequestSlots: number) { }
 }
 
 export class OmnisharpEventPacketReceived implements BaseEvent {
