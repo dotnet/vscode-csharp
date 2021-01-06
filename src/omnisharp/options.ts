@@ -21,6 +21,7 @@ export class Options {
         public showTestsCodeLens: boolean,
         public disableCodeActions: boolean,
         public disableMSBuildDiagnosticWarning: boolean,
+        public showOmnisharpLogOnError: boolean,
         public minFindSymbolsFilterLength: number,
         public maxFindSymbolsItems: number,
         public razorDisabled: boolean,
@@ -86,6 +87,8 @@ export class Options {
 
         const disableMSBuildDiagnosticWarning = omnisharpConfig.get<boolean>('disableMSBuildDiagnosticWarning', false);
 
+        const showOmnisharpLogOnError = csharpConfig.get<boolean>('showOmnisharpLogOnError', true);
+
         const minFindSymbolsFilterLength = omnisharpConfig.get<number>('minFindSymbolsFilterLength', 0);
         const maxFindSymbolsItems = omnisharpConfig.get<number>('maxFindSymbolsItems', 1000);   // The limit is applied only when this setting is set to a number greater than zero
 
@@ -114,6 +117,7 @@ export class Options {
             showTestsCodeLens,
             disableCodeActions,
             disableMSBuildDiagnosticWarning,
+            showOmnisharpLogOnError,
             minFindSymbolsFilterLength,
             maxFindSymbolsItems,
             razorDisabled,

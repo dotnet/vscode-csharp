@@ -702,6 +702,11 @@
           "description": "Enable/disable Semantic Highlighting for C# files (Razor files currently unsupported). Defaults to false. Close open files for changes to take effect.",
           "scope": "window"
         },
+        "csharp.showOmnisharpLogOnError": {
+          "type": "boolean",
+          "default": true,
+          "description": "Shows the OmniSharp log in the Output pane when OmniSharp reports an error."
+        },
         "omnisharp.path": {
           "type": [
             "string",
