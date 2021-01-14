@@ -289,19 +289,19 @@ export enum ProgramLaunchType {
 
 export function createWebLaunchConfiguration(programPath: string, workingDirectory: string): string {
     const o = {
-        "MS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
-        "MS-COMMENT2": "Use hover for the description of the existing attributes",
-        "MS-COMMENT3": "For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md",
+        "OS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
+        "OS-COMMENT2": "Use hover for the description of the existing attributes",
+        "OS-COMMENT3": "For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md",
         "name": ".NET Core Launch (web)",
         "type": "coreclr",
         "request": "launch",
         "preLaunchTask": "build",
-        "MS-COMMENT4": "If you have changed target frameworks, make sure to update the program path.",
+        "OS-COMMENT4": "If you have changed target frameworks, make sure to update the program path.",
         "program": "${util.convertNativePathToPosix(programPath)}",
         "args": Array(0),
         "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
         "stopAtEntry": false,
-        "MS-COMMENT5": "Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser",
+        "OS-COMMENT5": "Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser",
         "serverReadyAction": {
             "action": "openExternally",
             "pattern": "\\\\bNow listening on:\\\\s+(https?://\\\\S+)"
@@ -323,7 +323,7 @@ export function createBlazorWebAssemblyHostedLaunchConfiguration(programPath: st
         "type": "blazorwasm",
         "request": "launch",
         "hosted": true,
-        "MS-COMMENT1": "If you have changed target frameworks, make sure to update the program path.",
+        "OS-COMMENT1": "If you have changed target frameworks, make sure to update the program path.",
         "program": "${util.convertNativePathToPosix(programPath)}",
         "cwd": "${util.convertNativePathToPosix(workingDirectory)}"
     };
@@ -344,18 +344,18 @@ export function createBlazorWebAssemblyStandaloneLaunchConfiguration(workingDire
 
 export function createLaunchConfiguration(programPath: string, workingDirectory: string): string {
     const o = {
-        "MS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
-        "MS-COMMENT2": "Use hover for the description of the existing attributes",
-        "MS-COMMENT3": "For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md",
+        "OS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
+        "OS-COMMENT2": "Use hover for the description of the existing attributes",
+        "OS-COMMENT3": "For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md",
         "name": ".NET Core Launch (console)",
         "type": "coreclr",
         "request": "launch",
         "preLaunchTask": "build",
-        "MS-COMMENT4": "If you have changed target frameworks, make sure to update the program path.",
+        "OS-COMMENT4": "If you have changed target frameworks, make sure to update the program path.",
         "program": "${util.convertNativePathToPosix(programPath)}",
         "args": Array(0),
         "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
-        "MS-COMMENT5": "For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console",
+        "OS-COMMENT5": "For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console",
         "console": "internalConsole",
         "stopAtEntry": false
     };
@@ -366,9 +366,9 @@ export function createLaunchConfiguration(programPath: string, workingDirectory:
 // DebugConfiguration written to launch.json when the extension fails to generate a good configuration
 export function createFallbackLaunchConfiguration(): string {
     const o = {
-        "MS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
-        "MS-COMMENT2": "Use hover for the description of the existing attributes",
-        "MS-COMMENT3": "For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md",
+        "OS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
+        "OS-COMMENT2": "Use hover for the description of the existing attributes",
+        "OS-COMMENT3": "For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md",
         "name": ".NET Core Launch (console)",
         "type": "coreclr",
         "request": "launch",
@@ -736,7 +736,7 @@ async function getExistingAssets(generator: AssetGenerator) {
 async function shouldGenerateAssets(generator: AssetGenerator): Promise<Boolean> {
     return new Promise<Boolean>((resolve, reject) => {
         getExistingAssets(generator).then(res => {
-            if (res) {
+            if (res && res.length) {
                 const yesItem = { title: 'Yes' };
                 const cancelItem = { title: 'Cancel', isCloseAffordance: true };
                 vscode.window.showWarningMessage('Replace existing build and debug assets?', cancelItem, yesItem)
@@ -793,8 +793,8 @@ export async function generateAssets(server: OmniSharpServer, selectedIndex?: nu
 }
 
 function replaceCommentPropertiesWithComments(text: string) {
-    // replacing dummy properties MS-COMMENT with the normal comment syntax
-    let regex = /["']ms-comment\d*["']\s*\:\s*["'](.*)["']\s*?,/gi;
+    // replacing dummy properties OS-COMMENT with the normal comment syntax
+    let regex = /["']OS-COMMENT\d*["']\s*\:\s*["'](.*)["']\s*?,/gi;
     let withComments = text.replace(regex, '// $1');
     
     return withComments;
