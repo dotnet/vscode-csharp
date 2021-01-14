@@ -3,7 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { expect } from 'chai';
-import { getNullChannel } from '../testAssets/Fakes';
+import { vscode } from '.,/../../src/vscodeAdapter';
+import { getNullChannel, updateConfig, getVSCodeWithConfig } from '../testAssets/Fakes';
 import { OmnisharpChannelObserver } from '../../../src/observers/OmnisharpChannelObserver';
 import { OmnisharpFailure, ShowOmniSharpChannel, BaseEvent, OmnisharpRestart, OmnisharpServerOnStdErr } from '../../../src/omnisharp/loggingEvents';
 
@@ -12,12 +13,14 @@ suite("OmnisharpChannelObserver", () => {
     let hasShown: boolean;
     let hasCleared: boolean;
     let preserveFocus: boolean;
+    let vscode: vscode;
     let observer: OmnisharpChannelObserver;
 
     setup(() => {
         hasShown = false;
         hasCleared = false;
         preserveFocus = false;
+        vscode = getVSCodeWithConfig();
         observer = new OmnisharpChannelObserver({
             ...getNullChannel(),
             show: (preserve) => {
@@ -25,7 +28,9 @@ suite("OmnisharpChannelObserver", () => {
                 preserveFocus = preserve;
             },
             clear: () => { hasCleared = true; }
-        });
+        }, vscode);
+
+        updateConfig(vscode, "csharp", "showOmnisharpLogOnError", true);
     });
 
     [
@@ -39,6 +44,15 @@ suite("OmnisharpChannelObserver", () => {
             expect(hasShown).to.be.true;
             expect(preserveFocus).to.be.true;
         });
+    });
+
+    test(`OmnisharpServerOnStdErr: Channel is not shown when disabled in configuration`, () => {
+        updateConfig(vscode, "csharp", "showOmnisharpLogOnError", false);
+
+        expect(hasShown).to.be.false;
+        observer.post(new OmnisharpServerOnStdErr("std err"));
+        expect(hasShown).to.be.false;
+        expect(preserveFocus).to.be.false;
     });
 
     [
