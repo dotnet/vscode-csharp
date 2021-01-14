@@ -297,9 +297,9 @@ export function createWebLaunchConfiguration(programPath: string, workingDirecto
         "request": "launch",
         "preLaunchTask": "build",
         "OS-COMMENT4": "If you have changed target frameworks, make sure to update the program path.",
-        "program": "${util.convertNativePathToPosix(programPath)}",
+        "program": `${util.convertNativePathToPosix(programPath)}`,
         "args": Array(0),
-        "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
+        "cwd": `${util.convertNativePathToPosix(workingDirectory)}`,
         "stopAtEntry": false,
         "OS-COMMENT5": "Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser",
         "serverReadyAction": {
@@ -324,8 +324,8 @@ export function createBlazorWebAssemblyHostedLaunchConfiguration(programPath: st
         "request": "launch",
         "hosted": true,
         "OS-COMMENT1": "If you have changed target frameworks, make sure to update the program path.",
-        "program": "${util.convertNativePathToPosix(programPath)}",
-        "cwd": "${util.convertNativePathToPosix(workingDirectory)}"
+        "program": `${util.convertNativePathToPosix(programPath)}`,
+        "cwd": `${util.convertNativePathToPosix(workingDirectory)}`
     };
 
     return indentJsonString(JSON.stringify(o));
@@ -336,7 +336,7 @@ export function createBlazorWebAssemblyStandaloneLaunchConfiguration(workingDire
         "name": "Launch and Debug Standalone Blazor WebAssembly App",
         "type": "blazorwasm",
         "request": "launch",
-        "cwd": "${util.convertNativePathToPosix(workingDirectory)}"
+        "cwd": `${util.convertNativePathToPosix(workingDirectory)}`
     };
 
     return indentJsonString(JSON.stringify(o));
@@ -352,9 +352,9 @@ export function createLaunchConfiguration(programPath: string, workingDirectory:
         "request": "launch",
         "preLaunchTask": "build",
         "OS-COMMENT4": "If you have changed target frameworks, make sure to update the program path.",
-        "program": "${util.convertNativePathToPosix(programPath)}",
+        "program": `${util.convertNativePathToPosix(programPath)}`,
         "args": Array(0),
-        "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
+        "cwd": `${util.convertNativePathToPosix(workingDirectory)}`,
         "OS-COMMENT5": "For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console",
         "console": "internalConsole",
         "stopAtEntry": false
