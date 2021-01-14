@@ -740,12 +740,13 @@ async function shouldGenerateAssets(generator: AssetGenerator): Promise<Boolean>
             if (res) {
                 const yesItem = { title: 'Yes' };
                 const cancelItem = { title: 'Cancel', isCloseAffordance: true };
-                vscode.window.showWarningMessage(`Replace existing build and debug tasks?`, cancelItem, yesItem)
+                vscode.window.showWarningMessage('Replace existing build and debug assets?', cancelItem, yesItem)
                     .then(selection => {
                         if (selection === yesItem) {
                             resolve(true);
                         }
                         else {
+                            // The user clicked cancel
                             resolve(false);
                         }
                     });
@@ -771,9 +772,7 @@ export async function generateAssets(server: OmniSharpServer, selectedIndex?: nu
 
             const operations: AssetOperations = {
                 addLaunchJson: generator.hasExecutableProjects(),
-                // TODO: this distinction does make sense anymore, we either Update, or do nothing.
-                addTasksJson: true,
-                updateTasksJson: false,
+                addTasksJson: true
             };
 
             if (operations.addLaunchJson) {
