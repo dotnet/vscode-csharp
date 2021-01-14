@@ -4,7 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs-extra';
-import * as parse from 'jsonc-parser';
+import * as jsonc from 'jsonc-parser';
+import { FormattingOptions, ModificationOptions } from 'jsonc-parser'; 
 import * as path from 'path';
 import * as protocol from './omnisharp/protocol';
 import * as serverUtils from './omnisharp/utils';
@@ -287,74 +288,87 @@ export enum ProgramLaunchType {
 }
 
 export function createWebLaunchConfiguration(programPath: string, workingDirectory: string): string {
-    return `
-{
-    "name": ".NET Core Launch (web)",
-    "type": "coreclr",
-    "request": "launch",
-    "preLaunchTask": "build",
-    // If you have changed target frameworks, make sure to update the program path.
-    "program": "${util.convertNativePathToPosix(programPath)}",
-    "args": [],
-    "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
-    "stopAtEntry": false,
-    // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
-    "serverReadyAction": {
-        "action": "openExternally",
-        "pattern": "\\\\bNow listening on:\\\\s+(https?://\\\\S+)"
-    },
-    "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-    },
-    "sourceFileMap": {
-        "/Views": "\${workspaceFolder}/Views"
-    }
-}`;
+    const o = {
+        "MS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
+        "MS-COMMENT2": "Use hover for the description of the existing attributes",
+        "MS-COMMENT3": "For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md",
+        "name": ".NET Core Launch (web)",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build",
+        "MS-COMMENT4": "If you have changed target frameworks, make sure to update the program path.",
+        "program": "${util.convertNativePathToPosix(programPath)}",
+        "args": Array(0),
+        "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
+        "stopAtEntry": false,
+        "MS-COMMENT5": "Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser",
+        "serverReadyAction": {
+            "action": "openExternally",
+            "pattern": "\\\\bNow listening on:\\\\s+(https?://\\\\S+)"
+        },
+        "env": {
+            "ASPNETCORE_ENVIRONMENT": "Development"
+        },
+        "sourceFileMap": {
+            "/Views": "\${workspaceFolder}/Views"
+        }
+    };
+
+    return indentJsonString(JSON.stringify(o));
 }
 
 export function createBlazorWebAssemblyHostedLaunchConfiguration(programPath: string, workingDirectory: string): string {
-    return `
-{
-    "name": "Launch and Debug Hosted Blazor WebAssembly App",
-    "type": "blazorwasm",
-    "request": "launch",
-    "hosted": true,
-    // If you have changed target frameworks, make sure to update the program path.
-    "program": "${util.convertNativePathToPosix(programPath)}",
-    "cwd": "${util.convertNativePathToPosix(workingDirectory)}"
-}`;
+    const o = {
+        "name": "Launch and Debug Hosted Blazor WebAssembly App",
+        "type": "blazorwasm",
+        "request": "launch",
+        "hosted": true,
+        "MS-COMMENT1": "If you have changed target frameworks, make sure to update the program path.",
+        "program": "${util.convertNativePathToPosix(programPath)}",
+        "cwd": "${util.convertNativePathToPosix(workingDirectory)}"
+    };
+
+    return indentJsonString(JSON.stringify(o));
 }
 
 export function createBlazorWebAssemblyStandaloneLaunchConfiguration(workingDirectory: string): string {
-    return `
-{
-    "name": "Launch and Debug Standalone Blazor WebAssembly App",
-    "type": "blazorwasm",
-    "request": "launch",
-    "cwd": "${util.convertNativePathToPosix(workingDirectory)}"
-}`;
+    const o = {
+        "name": "Launch and Debug Standalone Blazor WebAssembly App",
+        "type": "blazorwasm",
+        "request": "launch",
+        "cwd": "${util.convertNativePathToPosix(workingDirectory)}"
+    };
+
+    return indentJsonString(JSON.stringify(o));
 }
 
 export function createLaunchConfiguration(programPath: string, workingDirectory: string): string {
-    return `
-{
-    "name": ".NET Core Launch (console)",
-    "type": "coreclr",
-    "request": "launch",
-    "preLaunchTask": "build",
-    // If you have changed target frameworks, make sure to update the program path.
-    "program": "${util.convertNativePathToPosix(programPath)}",
-    "args": [],
-    "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
-    // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
-    "console": "internalConsole",
-    "stopAtEntry": false
-}`;
+    const o = {
+        "MS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
+        "MS-COMMENT2": "Use hover for the description of the existing attributes",
+        "MS-COMMENT3": "For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md",
+        "name": ".NET Core Launch (console)",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build",
+        "MS-COMMENT4": "If you have changed target frameworks, make sure to update the program path.",
+        "program": "${util.convertNativePathToPosix(programPath)}",
+        "args": Array(0),
+        "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
+        "MS-COMMENT5": "For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console",
+        "console": "internalConsole",
+        "stopAtEntry": false
+    };
+
+    return indentJsonString(JSON.stringify(o));
 }
 
 // DebugConfiguration written to launch.json when the extension fails to generate a good configuration
-export function createFallbackLaunchConfiguration(): vscode.DebugConfiguration {
-    return {
+export function createFallbackLaunchConfiguration(): string {
+    const o = {
+        "MS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
+        "MS-COMMENT2": "Use hover for the description of the existing attributes",
+        "MS-COMMENT3": "For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md",
         "name": ".NET Core Launch (console)",
         "type": "coreclr",
         "request": "launch",
@@ -377,22 +391,25 @@ export function createFallbackLaunchConfiguration(): vscode.DebugConfiguration {
         "WARNING17": "*********************************************************************************",
         "preLaunchTask": "build",
         "program": "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll",
-        "args": [],
+        "args": Array(0),
         "cwd": "${workspaceFolder}",
         "console": "internalConsole",
         "stopAtEntry": false
     };
+
+    return indentJsonString(JSON.stringify(o));
 }
 
 // AttachConfiguration
 export function createAttachConfiguration(): string {
-    return `
-{
-    "name": ".NET Core Attach",
-    "type": "coreclr",
-    "request": "attach",
-    "processId": "\${command:pickProcess}"
-}`;
+    const o = {
+        "name": ".NET Core Attach",
+        "type": "coreclr",
+        "request": "attach",
+        "processId": "\${command:pickProcess}"
+    };
+
+    return indentJsonString(JSON.stringify(o));
 }
 
 export interface AssetOperations {
@@ -543,29 +560,37 @@ export async function addTasksJsonIfNecessary(generator: AssetGenerator, operati
             return resolve();
         }
 
+        const formattingOptions: FormattingOptions = {
+            insertSpaces: true,
+            tabSize: 4,
+            eol: '\n'
+        };
         
         const tasksJson = generator.createTasksConfiguration();
 
+        let text: string;
         if (!fs.pathExistsSync(generator.tasksJsonPath)) {
-            // when tasks.json does not exist create it and write all the content
-            const tasksJsonText = JSON.stringify(tasksJson, null, '    ');
-            fs.writeFile(generator.tasksJsonPath, tasksJsonText, err => {
+            // when tasks.json does not exist create it and write all the content directly
+            const tasksJsonText = JSON.stringify(tasksJson);
+            const tasksJsonTextFormatted = jsonc.applyEdits(tasksJsonText, jsonc.format(tasksJsonText, null, formattingOptions));
+            text = tasksJsonTextFormatted;
+        }
+        else {
+            // when tasks.json exists just update the tasks node
+            const ourConfigs = tasksJson.tasks;
+            const content = fs.readFileSync(generator.tasksJsonPath).toString(); 
+            const updatedJson = updateJsonWithComments(content, ourConfigs, 'tasks', 'label', formattingOptions);
+            text = updatedJson;
+        }
+
+        const tasksJsonTextCommented = replaceCommentPropertiesWithComments(text);
+            fs.writeFile(generator.tasksJsonPath, tasksJsonTextCommented, err => {
                 if (err) {
                     return reject(err);
                 }
 
                 resolve();
             });
-        }
-        else {
-            // when tasks.json exists just update the tasks node
-            const tasksConfig = vscode.workspace.getConfiguration('tasks');
-            const existingTaskConfigs = tasksConfig.get<Array<tasks.TaskDescription>>('tasks');
-            const tasks = tasksJson['tasks'];
-            const taskLabels = tasks.map(t => t.label);    
-            const filteredTasks = existingTaskConfigs.filter(t => !taskLabels.includes(t.label));
-            return tasksConfig.update('tasks', filteredTasks.concat(tasks), false);
-        }
     });
 }
 
@@ -581,37 +606,40 @@ async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: A
 
         const programLaunchType = generator.computeProgramLaunchType();
         const launchJsonConfigurations: string = generator.createLaunchJsonConfigurations(programLaunchType);
+        const formattingOptions: FormattingOptions = {
+            insertSpaces: true,
+            tabSize: 4,
+            eol: '\n'
+        };
 
-
+        let text: string;
         if (!fs.pathExistsSync(generator.launchJsonPath)) {
             // when launch.json does not exist, create it and write all the content directly
-            const configurationsMassaged: string = indentJsonString(launchJsonConfigurations);
+            const configurationsMassaged: string = launchJsonConfigurations;
             const launchJsonText = `
             {
-                // Use IntelliSense to find out which attributes exist for C# debugging
-                // Use hover for the description of the existing attributes
-                // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
                 "version": "0.2.0",
                 "configurations": ${configurationsMassaged}
             }`;
-            
-            fs.writeFile(generator.launchJsonPath, launchJsonText.trim(), err => {
-                if (err) {
-                    return reject(err);
-                }
 
-                resolve();
-            });
+            text = jsonc.applyEdits(launchJsonText, jsonc.format(launchJsonText, null, formattingOptions));
         } 
         else {
-            // when launch.json exists append our configurations
-            let launchConfig = vscode.workspace.getConfiguration('launch');
-            const existingLaunchConfigs : any = launchConfig['configurations'];
-            const ourConfigs = parse.parse(launchJsonConfigurations);
-            const ourConfigNames = ourConfigs.map((c: { name: string; }) => c.name);
-            const filtered = existingLaunchConfigs.filter((c: { name: any; }) => !ourConfigNames.includes(c.name));
-            return launchConfig.update('configurations', filtered.concat(ourConfigs), false);
+            // when launch.json exists replace or append our configurations
+            const ourConfigs = jsonc.parse(launchJsonConfigurations);
+            const content = fs.readFileSync(generator.launchJsonPath).toString();
+            const updatedJson = updateJsonWithComments(content, ourConfigs, 'configurations', 'name', formattingOptions);
+            text = updatedJson;
         }
+
+        const textWithComments = replaceCommentPropertiesWithComments(text);
+        fs.writeFile(generator.launchJsonPath, textWithComments, err => {
+            if (err) {
+                return reject(err);
+            }
+
+            resolve();
+        });
     });
 }
 
@@ -674,51 +702,57 @@ export async function addAssetsIfNecessary(server: OmniSharpServer): Promise<Add
     });
 }
 
-async function doesAnyAssetExist(generator: AssetGenerator) {
-    return new Promise<boolean>((resolve, reject) => {
-        fs.exists(generator.launchJsonPath, exists => {
-            if (exists) {
-                resolve(true);
-            }
-            else {
-                fs.exists(generator.tasksJsonPath, exists => {
-                    resolve(exists);
-                });
-            }
-        });
+async function getExistingAssets(generator: AssetGenerator) {
+    return new Promise<string[]>((resolve, reject) => {
+        let assets: string[] = [];
+        if (fs.pathExistsSync(generator.tasksJsonPath)) {
+            const content = fs.readFileSync(generator.tasksJsonPath).toString();
+            let taskLabels = [ "build", "publish", "watch" ];
+            const tasks = jsonc.parse(content)?.tasks?.
+                map((t: { label: string; }) => t.label).
+                filter((l: string) => taskLabels.includes(l));
+
+            assets = assets.concat(tasks);
+        }
+
+        if(fs.pathExistsSync(generator.launchJsonPath)) { 
+            const content = fs.readFileSync(generator.launchJsonPath).toString();
+            let configurationNames = [
+                ".NET Core Launch (console)", 
+                ".NET Core Launch (web)",
+                ".NET Core Attach",
+                "Launch and Debug Standalone Blazor WebAssembly App", 
+            ];
+            const configurations = jsonc.parse(content)?.configurations?.
+                map((t: { name: string; }) => t.name).
+                filter((n: string) => configurationNames.includes(n));
+                
+            assets = assets.concat(configurations);
+        }
+
+        resolve(assets);
     });
 }
 
-async function deleteAssets(generator: AssetGenerator) {
-    return Promise.all([
-        util.deleteIfExists(generator.launchJsonPath),
-        util.deleteIfExists(generator.tasksJsonPath)
-    ]);
-}
-
-async function shouldOverwriteAssets(generator: AssetGenerator): Promise<'Yes' | 'No' | 'Cancel'> {
-    return new Promise<'Yes' | 'No' | 'Cancel'>((resolve, reject) => {
-        doesAnyAssetExist(generator).then(res => {
+async function shouldGenerateAssets(generator: AssetGenerator): Promise<Boolean> {
+    return new Promise<Boolean>((resolve, reject) => {
+        getExistingAssets(generator).then(res => {
             if (res) {
                 const yesItem = { title: 'Yes' };
-                const noItem = { title: 'No' };
                 const cancelItem = { title: 'Cancel', isCloseAffordance: true };
-                vscode.window.showWarningMessage('Replace existing build and debug assets?', cancelItem, noItem, yesItem)
+                vscode.window.showWarningMessage(`Replace existing build and debug tasks?`, cancelItem, yesItem)
                     .then(selection => {
                         if (selection === yesItem) {
-                            resolve('Yes');
-                        }
-                        else if (selection === noItem) { 
-                            resolve('No');
+                            resolve(true);
                         }
                         else {
-                            resolve('Cancel');
+                            resolve(false);
                         }
                     });
             }
             else {
                 // The assets don't exist, so we're good to go.
-                resolve('Yes');
+                resolve(true);
             }
         });
 
@@ -730,27 +764,22 @@ export async function generateAssets(server: OmniSharpServer, selectedIndex?: nu
         let workspaceInformation = await serverUtils.requestWorkspaceInformation(server);
         if (workspaceInformation.MsBuild && workspaceInformation.MsBuild.Projects.length > 0) {
             const generator = new AssetGenerator(workspaceInformation);
-            let doOverwriteAssets = await shouldOverwriteAssets(generator);
-            if (doOverwriteAssets === 'Cancel') {
+            let doGenerateAssets = await shouldGenerateAssets(generator);
+            if (!doGenerateAssets) {
                 return; // user cancelled
             }
 
-            let overwrite = doOverwriteAssets === 'Yes';
-
             const operations: AssetOperations = {
                 addLaunchJson: generator.hasExecutableProjects(),
-                addTasksJson: overwrite,
-                updateTasksJson: !overwrite,
+                // TODO: this distinction does make sense anymore, we either Update, or do nothing.
+                addTasksJson: true,
+                updateTasksJson: false,
             };
 
             if (operations.addLaunchJson) {
                 if (!await generator.selectStartupProject(selectedIndex)) {
                     return; // user cancelled
                 }
-            }
-
-            if (false && overwrite) {
-                await deleteAssets(generator);
             }
 
             await fs.ensureDir(generator.vscodeFolder);
@@ -763,4 +792,45 @@ export async function generateAssets(server: OmniSharpServer, selectedIndex?: nu
     catch (err) {
         await vscode.window.showErrorMessage(`Unable to generate assets to build and debug. ${err}`);
     }
+}
+
+function replaceCommentPropertiesWithComments(text: string) {
+    // replacing dummy properties MS-COMMENT with the normal comment syntax
+    let regex = /["']ms-comment\d*["']\s*\:\s*["'](.*)["']\s*?,/gi;
+    let withComments = text.replace(regex, '// $1');
+    
+    return withComments;
+}
+
+function updateJsonWithComments(text: string, replacements: any[], nodeName: string, keyName: string, formattingOptions: FormattingOptions) : string { 
+    let modificationOptions : ModificationOptions = {
+        formattingOptions
+    };
+    
+    // parse using jsonc because there are comments
+    // only use this to determine what to change
+    // we will modify it as text to keep existing comments
+    let parsed = jsonc.parse(text);
+    let items = parsed[nodeName];
+    let itemKeys : string[] = items.map((i: { [x: string]: string; }) => i[keyName]);
+    
+    let modified = text;
+    // count how many items we inserted to ensure we are putting items at the end
+    // in the same order as they are in the replacements array
+    let insertCount = 0;
+    replacements.map((replacement: { [x: string]: string; }) => {
+        let index = itemKeys.indexOf(replacement[keyName]);
+
+        let found = index >= 0;
+        let modificationIndex = found ? index : items.length + insertCount++;
+        let edits = jsonc.modify(modified, [nodeName, modificationIndex], replacement, modificationOptions);
+        let updated = jsonc.applyEdits(modified, edits);
+
+        // we need to carry out the changes one by one, because we are inserting into the json
+        // and so we cannot just figure out all the edits from the original text, instead we need to apply
+        // changes one by one
+        modified = updated;
+    });
+    
+    return replaceCommentPropertiesWithComments(modified);
 }
