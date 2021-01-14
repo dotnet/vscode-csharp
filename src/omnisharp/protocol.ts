@@ -8,7 +8,6 @@ import { CompletionTriggerKind, CompletionItemKind, CompletionItemTag, InsertTex
 
 export module Requests {
     export const AddToProject = '/addtoproject';
-    export const AutoComplete = '/autocomplete';
     export const CodeCheck = '/codecheck';
     export const CodeFormat = '/codeformat';
     export const ChangeBuffer = '/changebuffer';

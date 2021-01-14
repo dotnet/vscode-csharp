@@ -63,8 +63,8 @@ export default class OmnisharpCompletionProvider extends AbstractProvider implem
         const docs: MarkdownString | undefined = omnisharpCompletion.Documentation ? new MarkdownString(omnisharpCompletion.Documentation, false) : undefined;
 
         const mapRange = function (edit: protocol.LinePositionSpanTextChange): Range {
-            const newStart = new Position(edit.StartLine - 1, edit.StartColumn - 1);
-            const newEnd = new Position(edit.EndLine - 1, edit.EndColumn - 1);
+            const newStart = new Position(edit.StartLine, edit.StartColumn);
+            const newEnd = new Position(edit.EndLine, edit.EndColumn);
             return new Range(newStart, newEnd);
         };
 
