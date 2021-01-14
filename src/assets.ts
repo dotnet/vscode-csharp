@@ -416,7 +416,6 @@ export interface AssetOperations {
     addTasksJson?: boolean;
     updateTasksJson?: boolean;
     addLaunchJson?: boolean;
-    updateLaunchJson?: boolean;
 }
 
 function hasAddOperations(operations: AssetOperations) {
@@ -584,13 +583,13 @@ export async function addTasksJsonIfNecessary(generator: AssetGenerator, operati
         }
 
         const tasksJsonTextCommented = replaceCommentPropertiesWithComments(text);
-            fs.writeFile(generator.tasksJsonPath, tasksJsonTextCommented, err => {
-                if (err) {
-                    return reject(err);
-                }
+        fs.writeFile(generator.tasksJsonPath, tasksJsonTextCommented, err => {
+            if (err) {
+                return reject(err);
+            }
 
-                resolve();
-            });
+            resolve();
+        });
     });
 }
 
