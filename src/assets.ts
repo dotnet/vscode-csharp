@@ -792,7 +792,7 @@ export async function generateAssets(server: OmniSharpServer, selectedIndex?: nu
     }
 }
 
-function replaceCommentPropertiesWithComments(text: string) {
+export function replaceCommentPropertiesWithComments(text: string) {
     // replacing dummy properties OS-COMMENT with the normal comment syntax
     let regex = /["']OS-COMMENT\d*["']\s*\:\s*["'](.*)["']\s*?,/gi;
     let withComments = text.replace(regex, '// $1');
@@ -800,7 +800,7 @@ function replaceCommentPropertiesWithComments(text: string) {
     return withComments;
 }
 
-function updateJsonWithComments(text: string, replacements: any[], nodeName: string, keyName: string, formattingOptions: FormattingOptions) : string { 
+export function updateJsonWithComments(text: string, replacements: any[], nodeName: string, keyName: string, formattingOptions: FormattingOptions) : string { 
     let modificationOptions : ModificationOptions = {
         formattingOptions
     };
