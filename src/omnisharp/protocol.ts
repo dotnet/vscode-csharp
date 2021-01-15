@@ -874,7 +874,7 @@ export function findNetCoreAppTargetFramework(project: MSBuildProject): TargetFr
 }
 
 export function findModernNetFrameworkTargetFramework(project: MSBuildProject): TargetFramework {
-    let regexp = new RegExp('^net[5-6]');
+    let regexp = new RegExp('^net[5-9]');
     const targetFramework = project.TargetFrameworks.find(tf => regexp.test(tf.ShortName));
 
     // Shortname is being reported as net50 instead of net5.0

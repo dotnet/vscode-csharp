@@ -73,30 +73,35 @@ suite("Asset generation: csproj", () => {
         segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
     });
 
-    test("Create launch.json for NET 5 project opened in workspace", () => {
-        let rootPath = path.resolve('testRoot');
-        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'net5.0', /*isExe*/ true);
-        let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
-        generator.setStartupProject(0);
-        let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Console), undefined, { disallowComments: true });
-        let programPath = launchJson[0].program;
+    [5, 6, 7, 8, 9].forEach(version => {
+        const shortName = `net${version}.0`;
+        const alternameShortName = `net${version}0`;
 
-        // ${workspaceFolder}/bin/Debug/net5.0/testApp.dll
-        let segments = programPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', 'net5.0', 'testApp.dll']);
-    });
+        test(`Create launch.json for NET ${version} project opened in workspace with shortname '${shortName}'`, () => {
+            let rootPath = path.resolve('testRoot');
+            let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', shortName, /*isExe*/ true);
+            let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
+            generator.setStartupProject(0);
+            let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Console), undefined, { disallowComments: true });
+            let programPath = launchJson[0].program;
 
-    test("Create launch.json for NET 6 project opened in workspace", () => {
-        let rootPath = path.resolve('testRoot');
-        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'net60', /*isExe*/ true);
-        let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
-        generator.setStartupProject(0);
-        let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Console), undefined, { disallowComments: true });
-        let programPath = launchJson[0].program;
+            // ${workspaceFolder}/bin/Debug/net#.0/testApp.dll
+            let segments = programPath.split(path.posix.sep);
+            segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', shortName, 'testApp.dll']);
+        });
 
-        // ${workspaceFolder}/bin/Debug/net6.0/testApp.dll
-        let segments = programPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', 'net6.0', 'testApp.dll']);
+        test(`Create launch.json for NET ${version} project opened in workspace with shortname '${alternameShortName}'`, () => {
+            let rootPath = path.resolve('testRoot');
+            let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', alternameShortName, /*isExe*/ true);
+            let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
+            generator.setStartupProject(0);
+            let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Console), undefined, { disallowComments: true });
+            let programPath = launchJson[0].program;
+
+            // ${workspaceFolder}/bin/Debug/net#.0/testApp.dll
+            let segments = programPath.split(path.posix.sep);
+            segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', shortName, 'testApp.dll']);
+        });
     });
 
     test("Create launch.json for nested project opened in workspace", () => {
