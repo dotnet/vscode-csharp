@@ -6,6 +6,7 @@
 import * as fs from 'fs-extra';
 import * as jsonc from 'jsonc-parser';
 import { FormattingOptions, ModificationOptions } from 'jsonc-parser'; 
+import * as os from 'os';
 import * as path from 'path';
 import * as protocol from './omnisharp/protocol';
 import * as serverUtils from './omnisharp/utils';
@@ -181,8 +182,8 @@ export class AssetGenerator {
     public createLaunchJsonConfigurations(programLaunchType: ProgramLaunchType): string {
         switch (programLaunchType) {
             case ProgramLaunchType.Console: {
-                const launchConfigurationsMassaged: string = indentJsonString(createLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory()));
-                const attachConfigurationsMassaged: string = indentJsonString(createAttachConfiguration());
+                const launchConfigurationsMassaged: string = createLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory());
+                const attachConfigurationsMassaged: string = createAttachConfiguration();
                 return `
 [
     ${launchConfigurationsMassaged},
@@ -190,8 +191,8 @@ export class AssetGenerator {
 ]`;
             }
             case ProgramLaunchType.Web: {
-                const webLaunchConfigurationsMassaged: string = indentJsonString(createWebLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory()));
-                const attachConfigurationsMassaged: string = indentJsonString(createAttachConfiguration());
+                const webLaunchConfigurationsMassaged: string = createWebLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory());
+                const attachConfigurationsMassaged: string = createAttachConfiguration();
                 return `
 [
     ${webLaunchConfigurationsMassaged},
@@ -199,14 +200,14 @@ export class AssetGenerator {
 ]`;
             }
             case ProgramLaunchType.BlazorWebAssemblyHosted: {
-                const hostedLaunchConfigMassaged: string = indentJsonString(createBlazorWebAssemblyHostedLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory()));
+                const hostedLaunchConfigMassaged: string = createBlazorWebAssemblyHostedLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory());
                 return `
 [
     ${hostedLaunchConfigMassaged}
 ]`;
             }
             case ProgramLaunchType.BlazorWebAssemblyStandalone: {
-                const standaloneLaunchConfigMassaged: string = indentJsonString(createBlazorWebAssemblyStandaloneLaunchConfiguration(this.computeWorkingDirectory()));
+                const standaloneLaunchConfigMassaged: string = createBlazorWebAssemblyStandaloneLaunchConfiguration(this.computeWorkingDirectory());
                 return `
 [
     ${standaloneLaunchConfigMassaged}
@@ -288,7 +289,7 @@ export enum ProgramLaunchType {
 }
 
 export function createWebLaunchConfiguration(programPath: string, workingDirectory: string): string {
-    const o = {
+    const configuration = {
         "OS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
         "OS-COMMENT2": "Use hover for the description of the existing attributes",
         "OS-COMMENT3": "For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md",
@@ -314,11 +315,11 @@ export function createWebLaunchConfiguration(programPath: string, workingDirecto
         }
     };
 
-    return indentJsonString(JSON.stringify(o));
+    return JSON.stringify(configuration);
 }
 
 export function createBlazorWebAssemblyHostedLaunchConfiguration(programPath: string, workingDirectory: string): string {
-    const o = {
+    const configuration = {
         "name": "Launch and Debug Hosted Blazor WebAssembly App",
         "type": "blazorwasm",
         "request": "launch",
@@ -328,22 +329,22 @@ export function createBlazorWebAssemblyHostedLaunchConfiguration(programPath: st
         "cwd": `${util.convertNativePathToPosix(workingDirectory)}`
     };
 
-    return indentJsonString(JSON.stringify(o));
+    return JSON.stringify(configuration);
 }
 
 export function createBlazorWebAssemblyStandaloneLaunchConfiguration(workingDirectory: string): string {
-    const o = {
+    const configuration = {
         "name": "Launch and Debug Standalone Blazor WebAssembly App",
         "type": "blazorwasm",
         "request": "launch",
         "cwd": `${util.convertNativePathToPosix(workingDirectory)}`
     };
 
-    return indentJsonString(JSON.stringify(o));
+    return JSON.stringify(configuration);
 }
 
 export function createLaunchConfiguration(programPath: string, workingDirectory: string): string {
-    const o = {
+    const configuration = {
         "OS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
         "OS-COMMENT2": "Use hover for the description of the existing attributes",
         "OS-COMMENT3": "For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md",
@@ -360,12 +361,12 @@ export function createLaunchConfiguration(programPath: string, workingDirectory:
         "stopAtEntry": false
     };
 
-    return indentJsonString(JSON.stringify(o));
+    return JSON.stringify(configuration);
 }
 
 // DebugConfiguration written to launch.json when the extension fails to generate a good configuration
 export function createFallbackLaunchConfiguration(): string {
-    const o = {
+    const configuration = {
         "OS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
         "OS-COMMENT2": "Use hover for the description of the existing attributes",
         "OS-COMMENT3": "For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md",
@@ -397,19 +398,19 @@ export function createFallbackLaunchConfiguration(): string {
         "stopAtEntry": false
     };
 
-    return indentJsonString(JSON.stringify(o));
+    return JSON.stringify(configuration);
 }
 
 // AttachConfiguration
 export function createAttachConfiguration(): string {
-    const o = {
+    const configuration = {
         "name": ".NET Core Attach",
         "type": "coreclr",
         "request": "attach",
         "processId": "\${command:pickProcess}"
     };
 
-    return indentJsonString(JSON.stringify(o));
+    return JSON.stringify(configuration);
 }
 
 export interface AssetOperations {
@@ -553,17 +554,32 @@ function getBuildAssetsNotificationSetting() {
     return csharpConfig.get<boolean>('supressBuildAssetsNotification');
 }
 
+export function getFormattingOptions(): FormattingOptions { 
+    const editorConfig = vscode.workspace.getConfiguration('editor'); 
+
+    const tabSize = editorConfig.get<number>('tabSize') ?? 4;
+    const insertSpaces = editorConfig.get<boolean>('insertSpaces') ?? true;
+
+    const filesConfig = vscode.workspace.getConfiguration('files');
+    const eolSetting = filesConfig.get<string>('eol');
+    const eol = !eolSetting || eolSetting === 'auto' ? os.EOL : '\n';
+
+    const formattingOptions: FormattingOptions = {
+        insertSpaces: insertSpaces,
+        tabSize: tabSize,
+        eol: eol
+    };
+
+    return formattingOptions;
+}
+
 export async function addTasksJsonIfNecessary(generator: AssetGenerator, operations: AssetOperations) {
     return new Promise<void>((resolve, reject) => {
         if (!operations.addTasksJson && !operations.updateTasksJson) {
             return resolve();
         }
 
-        const formattingOptions: FormattingOptions = {
-            insertSpaces: true,
-            tabSize: 4,
-            eol: '\n'
-        };
+        const formattingOptions = getFormattingOptions();
         
         const tasksJson = generator.createTasksConfiguration();
 
@@ -593,10 +609,6 @@ export async function addTasksJsonIfNecessary(generator: AssetGenerator, operati
     });
 }
 
-function indentJsonString(json: string, numSpaces: number = 4): string {
-    return json.split('\n').map(line => ' '.repeat(numSpaces) + line).join('\n').trim();
-}
-
 async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: AssetOperations) {
     return new Promise<void>((resolve, reject) => {
         if (!operations.addLaunchJson) {
@@ -605,11 +617,7 @@ async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: A
 
         const programLaunchType = generator.computeProgramLaunchType();
         const launchJsonConfigurations: string = generator.createLaunchJsonConfigurations(programLaunchType);
-        const formattingOptions: FormattingOptions = {
-            insertSpaces: true,
-            tabSize: 4,
-            eol: '\n'
-        };
+        const formattingOptions = getFormattingOptions();
 
         let text: string;
         if (!fs.pathExistsSync(generator.launchJsonPath)) {
