@@ -865,18 +865,24 @@ export function findNetFrameworkTargetFramework(project: MSBuildProject): Target
     return project.TargetFrameworks.find(tf => regexp.test(tf.ShortName));
 }
 
-export function findNet5TargetFramework(project: MSBuildProject): TargetFramework {
-    const targetFramework = project.TargetFrameworks.find(tf => tf.ShortName.startsWith('net5'));
-    // Temprorary workaround until changes to support the net5.0 TFM is settled. Some NuGet
-    // builds report the shortname as net50.
-    if (targetFramework !== undefined) {
-        targetFramework.ShortName = "net5.0";
-    }
-    return targetFramework;
+export function findNetCoreTargetFramework(project: MSBuildProject): TargetFramework {
+    return findNetCoreAppTargetFramework(project) ?? findModernNetFrameworkTargetFramework(project);
 }
 
 export function findNetCoreAppTargetFramework(project: MSBuildProject): TargetFramework {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp'));
+}
+
+export function findModernNetFrameworkTargetFramework(project: MSBuildProject): TargetFramework {
+    let regexp = new RegExp('^net[5-6]');
+    const targetFramework = project.TargetFrameworks.find(tf => regexp.test(tf.ShortName));
+
+    // Shortname is being reported as net50 instead of net5.0
+    if (targetFramework !== undefined && targetFramework.ShortName.charAt(4) !== ".") {
+        targetFramework.ShortName = targetFramework.ShortName.substr(0, 4) + "." + targetFramework.ShortName.substr(4);
+    }
+
+    return targetFramework;
 }
 
 export function findNetStandardTargetFramework(project: MSBuildProject): TargetFramework {
@@ -884,8 +890,7 @@ export function findNetStandardTargetFramework(project: MSBuildProject): TargetF
 }
 
 export function isDotNetCoreProject(project: MSBuildProject): Boolean {
-    return findNet5TargetFramework(project) !== undefined ||
-        findNetCoreAppTargetFramework(project) !== undefined ||
+    return findNetCoreTargetFramework(project) !== undefined ||
         findNetStandardTargetFramework(project) !== undefined ||
         findNetFrameworkTargetFramework(project) !== undefined;
 }
@@ -928,8 +933,7 @@ export function findExecutableMSBuildProjects(projects: MSBuildProject[]) {
     let result: MSBuildProject[] = [];
 
     projects.forEach(project => {
-        const projectIsNotNetFramework = findNetCoreAppTargetFramework(project) !== undefined
-            || findNet5TargetFramework(project) !== undefined
+        const projectIsNotNetFramework = findNetCoreTargetFramework(project) !== undefined
             || project.IsBlazorWebAssemblyStandalone;
 
         if (project.IsExe && projectIsNotNetFramework) {

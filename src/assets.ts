@@ -161,7 +161,7 @@ export class AssetGenerator {
         const startupProjectDir = path.dirname(this.startupProject.Path);
         const relativeProjectDir = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, startupProjectDir));
         const configurationName = 'Debug';
-        const targetFramework = protocol.findNetCoreAppTargetFramework(this.startupProject) ?? protocol.findNet5TargetFramework(this.startupProject);
+        const targetFramework = protocol.findNetCoreTargetFramework(this.startupProject);
         const result = path.join(relativeProjectDir, `bin/${configurationName}/${targetFramework.ShortName}/${this.startupProject.AssemblyName}.dll`);
         return result;
     }
