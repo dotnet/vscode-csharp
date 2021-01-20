@@ -365,11 +365,8 @@ export function createLaunchConfiguration(programPath: string, workingDirectory:
 }
 
 // DebugConfiguration written to launch.json when the extension fails to generate a good configuration
-export function createFallbackLaunchConfiguration(): string {
-    const configuration = {
-        "OS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
-        "OS-COMMENT2": "Use hover for the description of the existing attributes",
-        "OS-COMMENT3": "For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md",
+export function createFallbackLaunchConfiguration(): vscode.DebugConfiguration {
+    return {
         "name": ".NET Core Launch (console)",
         "type": "coreclr",
         "request": "launch",
@@ -392,13 +389,11 @@ export function createFallbackLaunchConfiguration(): string {
         "WARNING17": "*********************************************************************************",
         "preLaunchTask": "build",
         "program": "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll",
-        "args": Array(0),
+        "args": [],
         "cwd": "${workspaceFolder}",
         "console": "internalConsole",
         "stopAtEntry": false
     };
-
-    return JSON.stringify(configuration);
 }
 
 // AttachConfiguration
