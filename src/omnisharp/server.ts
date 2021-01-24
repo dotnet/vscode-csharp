@@ -8,10 +8,7 @@ import * as path from 'path';
 import * as protocol from './protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { vscode, CancellationToken } from '../vscodeAdapter';
-import { ChildProcess, exec } from 'child_process';
 import { LaunchTarget, findLaunchTargets, LaunchTargetKind } from './launcher';
-import { ReadLine, createInterface } from 'readline';
-import { Request, RequestQueueCollection } from './requestQueue';
 import { DelayTracker } from './delayTracker';
 import { EventEmitter } from 'events';
 import { OmnisharpManager, LaunchInfo } from './OmnisharpManager';
@@ -118,7 +115,7 @@ export class OmniSharpServer {
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
         this.updateProjectDebouncer
             .pipe(debounceTime(1500))
-            .subscribe((event) => {
+            .subscribe(() => {
                 this.updateProjectInfo();
             });
         this.firstUpdateProject = true;
@@ -525,7 +522,7 @@ export class OmniSharpServer {
             // If there aren't any potential launch targets, we create file watcher and try to
             // start the server again once a *.sln, *.csproj, project.json, CSX or Cake file is created.
             if (launchTargets.length === 0) {
-                return new Promise<void>((resolve, reject) => {
+                return new Promise<void>((resolve) => {
                     // 1st watch for files
                     let watcher = this.vscode.workspace.createFileSystemWatcher(
                         '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
@@ -534,7 +531,7 @@ export class OmniSharpServer {
                         /*ignoreDeleteEvents*/ true
                     );
 
-                    watcher.onDidCreate((uri) => {
+                    watcher.onDidCreate(() => {
                         watcher.dispose();
                         resolve();
                     });
