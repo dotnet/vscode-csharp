@@ -15,7 +15,7 @@ gulp.task("test:feature", async () => {
         ...process.env,
         OSVC_SUITE: "featureTests",
         CODE_TESTS_PATH: path.join(testRootPath, "featureTests"),
-        // CODE_DISABLE_EXTENSIONS: "true",
+        CODE_DISABLE_EXTENSIONS: "true",
     };
     return spawnNode([vscodeTestHostPath, "--verbose"], {
         env

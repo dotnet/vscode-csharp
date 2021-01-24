@@ -56,7 +56,8 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             await vscode.commands.executeCommand("vscode.open", razorFileUri);
         });
 
-        test.skip("Razor shouldn't give diagnostics for virtual files", async () => {
+        test("Razor shouldn't give diagnostics for virtual files", async function () {
+
             await pollDoesNotHappen(() => vscode.languages.getDiagnostics(), 5 * 1000, 500, function (res) {
                 const virtual = res.find(r => r[0].fsPath === virtualRazorFileUri.fsPath);
 
@@ -94,6 +95,10 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         });
 
         test("Returns any diagnostics from file", async function () {
+            if (process.env.OMNISHARP_DRIVER === 'lsp') {
+                this.skip();
+            }
+
             await assertWithPoll(
                 () => vscode.languages.getDiagnostics(fileUri),
                 /*duration*/ 30 * 1000,
@@ -102,6 +107,10 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         });
 
         test("Return unnecessary tag in case of unused variable", async function () {
+            if (process.env.OMNISHARP_DRIVER === 'lsp') {
+                this.skip();
+            }
+
             let result = await poll(
                 () => vscode.languages.getDiagnostics(fileUri),
                 /*duration*/ 30 * 1000,
@@ -115,6 +124,10 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         });
 
         test("Return unnecessary tag in case of unnesessary using", async function () {
+            if (process.env.OMNISHARP_DRIVER === 'lsp') {
+                this.skip();
+            }
+
             let result = await poll(
                 () => vscode.languages.getDiagnostics(fileUri),
                 /*duration*/ 30 * 1000,
@@ -128,6 +141,10 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         });
 
         test("Return fadeout diagnostics like unused variables based on roslyn analyzers", async function () {
+            if (process.env.OMNISHARP_DRIVER === 'lsp') {
+                this.skip();
+            }
+
             let result = await poll(
                 () => vscode.languages.getDiagnostics(fileUri),
                 /*duration*/ 30 * 1000,
@@ -141,6 +158,10 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         });
 
         test("On small workspaces also show/fetch closed document analysis results", async function () {
+            if (process.env.OMNISHARP_DRIVER === 'lsp') {
+                this.skip();
+            }
+
             await assertWithPoll(() => vscode.languages.getDiagnostics(secondaryFileUri), 15 * 1000, 500, res => expect(res.length).to.be.greaterThan(0));
         });
 
@@ -163,7 +184,8 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             await activateCSharpExtension();
         });
 
-        test.skip("When workspace is count as 'large', then only show/fetch diagnostics from open documents", async function () {
+        test("When workspace is count as 'large', then only show/fetch diagnostics from open documents", async function () {
+
             // This is to trigger manual cleanup for diagnostics before test because we modify max project file count on fly.
             await vscode.commands.executeCommand("vscode.open", secondaryFileUri);
             await vscode.commands.executeCommand("vscode.open", fileUri);

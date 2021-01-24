@@ -115,7 +115,7 @@ export class OmniSharpServer {
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
         this.updateProjectDebouncer
             .pipe(debounceTime(1500))
-            .subscribe(() => {
+            .subscribe((event) => {
                 this.updateProjectInfo();
             });
         this.firstUpdateProject = true;
@@ -344,8 +344,10 @@ export class OmniSharpServer {
 
         let args = [
             '-z',
-            '-s', solutionPath,
-            '--hostPID', process.pid.toString(),
+            '-s',
+            solutionPath,
+            '--hostPID',
+            process.pid.toString(),
             'DotNet:enablePackageRestore=false',
             '--encoding',
             'utf-8',
@@ -531,7 +533,7 @@ export class OmniSharpServer {
                         /*ignoreDeleteEvents*/ true
                     );
 
-                    watcher.onDidCreate(() => {
+                    watcher.onDidCreate((uri) => {
                         watcher.dispose();
                         resolve();
                     });
