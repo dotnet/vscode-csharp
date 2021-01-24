@@ -26,7 +26,7 @@ suite("Options tests", () => {
         options.showReferencesCodeLens.should.equal(true);
         options.showTestsCodeLens.should.equal(true);
         options.disableCodeActions.should.equal(false);
-        options.disableCodeActions.should.equal(false);
+        options.showOmnisharpLogOnError.should.equal(true);
         options.minFindSymbolsFilterLength.should.equal(0);
         options.maxFindSymbolsItems.should.equal(1000);
         options.enableMsBuildLoadProjectsOnDemand.should.equal(false);

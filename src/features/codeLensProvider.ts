@@ -115,8 +115,8 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
     private async resolveReferencesCodeLens(codeLens: ReferencesCodeLens, token: vscode.CancellationToken): Promise<vscode.CodeLens> {
         const request: protocol.FindUsagesRequest = {
             FileName: codeLens.fileName,
-            Line: codeLens.range.start.line, // OmniSharp is 1-based
-            Column: codeLens.range.start.character, // OmniSharp is 1-based
+            Line: codeLens.range.start.line,
+            Column: codeLens.range.start.character,
             OnlyThisFile: false,
             ExcludeDefinition: true
         };

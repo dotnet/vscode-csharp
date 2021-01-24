@@ -346,10 +346,9 @@ export class OmniSharpServer {
         const cwd = path.dirname(solutionPath);
 
         let args = [
-            '-s',
-            solutionPath,
-            '--hostPID',
-            process.pid.toString(),
+            '-z',
+            '-s', solutionPath,
+            '--hostPID', process.pid.toString(),
             'DotNet:enablePackageRestore=false',
             '--encoding',
             'utf-8',
@@ -391,6 +390,10 @@ export class OmniSharpServer {
 
         if (options.enableEditorConfigSupport === true) {
             args.push('FormattingOptions:EnableEditorConfigSupport=true');
+        }
+
+        if (options.organizeImportsOnFormat === true) {
+            args.push('FormattingOptions:OrganizeImports=true');
         }
 
         if (this.decompilationAuthorized && options.enableDecompilationSupport === true) {
