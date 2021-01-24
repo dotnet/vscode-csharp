@@ -44,8 +44,8 @@ const projectNames = [
 ];
 
 for (const projectName of projectNames) {
-    gulp.task(`test:integration:${projectName}:stdio`, () => runIntegrationTest(projectName, 'stdio'));
-    gulp.task(`test:integration:${projectName}:lsp`, () => runIntegrationTest(projectName, 'lsp'));
+    gulp.task(`test:integration:${projectName}:stdio`, async () => runIntegrationTest(projectName, 'stdio'));
+    gulp.task(`test:integration:${projectName}:lsp`, async () => runIntegrationTest(projectName, 'lsp'));
     gulp.task(`test:integration:${projectName}`, gulp.series(`test:integration:${projectName}:stdio`, `test:integration:${projectName}:lsp`));
 }
 

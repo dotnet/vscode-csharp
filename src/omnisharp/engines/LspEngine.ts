@@ -254,7 +254,9 @@ export class LspEngine implements IEngine {
         data?: any,
         token?: CancellationToken
     ): Promise<TResponse> {
-        if (data?.Buffer) delete data.Buffer;
+        if (data?.Buffer) {
+            delete data.Buffer;
+        }
         let tries = 0;
         while (tries < 5) {
             try {
