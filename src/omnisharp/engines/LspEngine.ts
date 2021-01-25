@@ -30,14 +30,12 @@ import {
     DocumentHighlightRequest,
     DocumentSymbolRequest,
     WorkspaceSymbolRequest,
-    CodeActionRequest,
     CodeLensRequest,
     DocumentFormattingRequest,
     DocumentRangeFormattingRequest,
     DocumentOnTypeFormattingRequest,
     RenameRequest,
     DocumentLinkRequest,
-    ExecuteCommandRequest,
 } from 'vscode-languageclient';
 import {
     ExtensionContext,
@@ -211,14 +209,12 @@ export class LspEngine implements IEngine {
         disableFeature(DocumentHighlightRequest);
         disableFeature(DocumentSymbolRequest);
         disableFeature(WorkspaceSymbolRequest);
-        disableFeature(CodeActionRequest);
         disableFeature(CodeLensRequest);
         disableFeature(DocumentFormattingRequest);
         disableFeature(DocumentRangeFormattingRequest);
         disableFeature(DocumentOnTypeFormattingRequest);
         disableFeature(RenameRequest);
         disableFeature(DocumentLinkRequest);
-        disableFeature(ExecuteCommandRequest);
         disableFeature(TypeDefinitionFeature);
         disableFeature(SelectionRangeFeature);
         disableFeature(ImplementationFeature);

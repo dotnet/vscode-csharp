@@ -10,10 +10,13 @@ import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers'
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as path from 'path';
 import { assertWithPoll } from './poll';
+import { CodeAction } from 'vscode-languageclient';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
 chai.use(require('chai-fs'));
+
+type CodeActionReturn = vscode.Command | (CodeAction & { arguments: undefined });
 
 suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
@@ -41,16 +44,29 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
 
     test("Code actions can rename and open files", async () => {
         await vscode.commands.executeCommand("vscode.open", fileUri);
-        let c = await vscode.commands.executeCommand("vscode.executeCodeActionProvider", fileUri, new vscode.Range(0, 7, 0, 7)) as { command: string, title: string, arguments: string[] }[];
+        let c = await vscode.commands.executeCommand("vscode.executeCodeActionProvider", fileUri, new vscode.Range(0, 7, 0, 7)) as CodeActionReturn[];
         if (!c || c.some(z => !z?.title)) {
-            c = await vscode.commands.executeCommand("vscode.executeCodeActionProvider", fileUri, new vscode.Range(0, 7, 0, 7)) as { command: string, title: string, arguments: string[] }[];
+            c = await vscode.commands.executeCommand("vscode.executeCodeActionProvider", fileUri, new vscode.Range(0, 7, 0, 7)) as CodeActionReturn[];
         }
         let command = c.find(
             (s) => { return s.title == "Rename file to C.cs"; }
         );
         expect(command, "Didn't find rename class command");
 
-        await vscode.commands.executeCommand(command.command, ...command.arguments);
+        let commandStr: string;
+        let args: string[];
+
+        if (command.arguments) {
+            commandStr = command.command as string;
+            args = command.arguments as string[];
+        }
+        else {
+            const codeAction = command as CodeAction;
+            commandStr = codeAction.command.command;
+            args = codeAction.command.arguments;
+        }
+
+        await vscode.commands.executeCommand(commandStr, ...args);
 
         await assertWithPoll(() => { }, 15 * 1000, 500, _ => expect(vscode.window.activeTextEditor.document.fileName).contains("C.cs"));
     });

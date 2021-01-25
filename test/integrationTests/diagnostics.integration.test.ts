@@ -188,6 +188,10 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         });
 
         test("When workspace is count as 'large', then only show/fetch diagnostics from open documents", async function () {
+            if (process.env.OMNISHARP_DRIVER === 'lsp') {
+                // lsp does pull-based diagnostics. If you ask for a file specifically, you'll get it.
+                this.skip()
+            }
 
             // This is to trigger manual cleanup for diagnostics before test because we modify max project file count on fly.
             await vscode.commands.executeCommand("vscode.open", secondaryFileUri);
