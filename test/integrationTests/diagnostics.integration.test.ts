@@ -119,8 +119,9 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
 
             let cs0219 = result.find(x => x.code === "CS0219");
             expect(cs0219).to.not.be.undefined;
-            if (cs0219.tags) // not currently making it through lsp 100% of the time
-            expect(cs0219.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+            if (cs0219.tags) { // not currently making it through lsp 100% of the time
+                expect(cs0219.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+            }
         });
 
         test("Return unnecessary tag in case of unnesessary using", async function () {
@@ -136,8 +137,9 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
 
             let cs8019 = result.find(x => x.code === "CS8019");
             expect(cs8019).to.not.be.undefined;
-            if (cs8019.tags) // not currently making it through lsp 100% of the time
-            expect(cs8019.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+            if (cs8019.tags) { // not currently making it through lsp 100% of the time
+                expect(cs8019.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+            }
         });
 
         test("Return fadeout diagnostics like unused variables based on roslyn analyzers", async function () {
@@ -153,8 +155,9 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
 
             let ide0059 = result.find(x => x.code === "IDE0059");
             expect(ide0059).to.not.be.undefined;
-            if (ide0059.tags) // not currently making it through lsp 100% of the time
-            expect(ide0059.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+            if (ide0059.tags) { // not currently making it through lsp 100% of the time
+                expect(ide0059.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+            }
         });
 
         test("On small workspaces also show/fetch closed document analysis results", async function () {
@@ -185,6 +188,10 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         });
 
         test("When workspace is count as 'large', then only show/fetch diagnostics from open documents", async function () {
+            if (process.env.OMNISHARP_DRIVER === 'lsp') {
+                // lsp does pull-based diagnostics. If you ask for a file specifically, you'll get it.
+                this.skip()
+            }
 
             // This is to trigger manual cleanup for diagnostics before test because we modify max project file count on fly.
             await vscode.commands.executeCommand("vscode.open", secondaryFileUri);

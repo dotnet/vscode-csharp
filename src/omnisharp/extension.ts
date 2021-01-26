@@ -93,11 +93,6 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables.add(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionProvider(server, languageMiddlewareFeature), '.', ' '));
         localDisposables.add(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server, optionProvider, languageMiddlewareFeature)));
         localDisposables.add(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server, languageMiddlewareFeature), '(', ','));
-        // Since the CodeActionProvider registers its own commands, we must instantiate it and add it to the localDisposables
-        // so that it will be cleaned up if OmniSharp is restarted.
-        const codeActionProvider = new CodeActionProvider(server, optionProvider, languageMiddlewareFeature);
-        localDisposables.add(codeActionProvider);
-        localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
         // Since the FixAllProviders registers its own commands, we must instantiate it and add it to the localDisposables
         // so that it will be cleaned up if OmniSharp is restarted.
         const fixAllProvider = new FixAllProvider(server, languageMiddlewareFeature);
@@ -106,6 +101,11 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables.add(reportDiagnostics(server, advisor, languageMiddlewareFeature, optionProvider));
         if (!options.enableLspDriver) {
             localDisposables.add(forwardChanges(server));
+            // Since the CodeActionProvider registers its own commands, we must instantiate it and add it to the localDisposables
+            // so that it will be cleaned up if OmniSharp is restarted.
+            const codeActionProvider = new CodeActionProvider(server, optionProvider, languageMiddlewareFeature);
+            localDisposables.add(codeActionProvider);
+            localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
         }
         localDisposables.add(trackVirtualDocuments(server, eventStream));
         localDisposables.add(vscode.languages.registerFoldingRangeProvider(documentSelector, new StructureProvider(server, languageMiddlewareFeature)));
