@@ -9,8 +9,8 @@ import * as path from 'path';
 import { should, assert } from 'chai';
 import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { EventType } from '../../src/omnisharp/EventType';
 import { poll } from './poll';
+import { EventType } from '../../src/omnisharp/EventType';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -45,7 +45,7 @@ async function assertTokens(fileUri: vscode.Uri, expected: ExpectedToken[] | nul
         lastLine = line;
         lastCharacter = character;
     }
-    assert.deepEqual(actualRanges, expected, message);
+    assert.deepEqual(expected, actualRanges, message);
 }
 
 suite(`SemanticTokensProvider: ${testAssetWorkspace.description}`, function () {
@@ -55,13 +55,11 @@ suite(`SemanticTokensProvider: ${testAssetWorkspace.description}`, function () {
         should();
 
         // These tests don't run on the BasicRazorApp2_1 solution
-        if (isRazorWorkspace(vscode.workspace) || process.env.OMNISHARP_DRIVER === 'lsp') {
+        if (isRazorWorkspace(vscode.workspace)) {
             this.skip();
-            return;
         }
 
         const activation = await activateCSharpExtension();
-
 
         // Wait for workspace information to be returned
         let isWorkspaceLoaded = false;
@@ -73,6 +71,8 @@ suite(`SemanticTokensProvider: ${testAssetWorkspace.description}`, function () {
                 subscription.unsubscribe();
             }
         });
+
+        await testAssetWorkspace.restore();
 
         await poll(() => isWorkspaceLoaded, 50000, 500);
 
