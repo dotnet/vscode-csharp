@@ -64,17 +64,21 @@ suite(`SemanticTokensProvider: ${testAssetWorkspace.description}`, function () {
         // Wait for workspace information to be returned
         let isWorkspaceLoaded = false;
 
-        const subscription = activation.eventStream.subscribe(event => {
-            console.log(event);
-            if (event.type === EventType.WorkspaceInformationUpdated) {
-                isWorkspaceLoaded = true;
-                subscription.unsubscribe();
-            }
-        });
+        if (!activation.wasActive) {
+            const subscription = activation.eventStream.subscribe(event => {
+                console.log(event);
+                if (event.type === EventType.WorkspaceInformationUpdated) {
+                    isWorkspaceLoaded = true;
+                    subscription.unsubscribe();
+                }
+            });
+        } else {
+            isWorkspaceLoaded = true;
+        }
 
         await testAssetWorkspace.restore();
 
-        await poll(() => isWorkspaceLoaded, 50000, 500);
+        await poll(() => isWorkspaceLoaded, 20000, 500);
 
         const fileName = 'semantictokens.cs';
         const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;

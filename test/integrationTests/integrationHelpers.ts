@@ -12,6 +12,7 @@ import { EventStream } from '../../src/EventStream';
 export interface ActivationResult {
     readonly advisor: Advisor;
     readonly eventStream: EventStream;
+    readonly wasActive: boolean;
 }
 
 export async function activateCSharpExtension(): Promise<ActivationResult | undefined> {
@@ -22,8 +23,9 @@ export async function activateCSharpExtension(): Promise<ActivationResult | unde
     }
 
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-dotnettools.csharp");
+    const isActive = csharpExtension.isActive;
 
-    if (!csharpExtension.isActive) {
+    if (!isActive) {
         await csharpExtension.activate();
     }
 
@@ -32,7 +34,8 @@ export async function activateCSharpExtension(): Promise<ActivationResult | unde
         console.log("ms-dotnettools.csharp activated");
         return {
             advisor: await csharpExtension.exports.getAdvisor(),
-            eventStream: csharpExtension.exports.eventStream
+            eventStream: csharpExtension.exports.eventStream,
+            wasActive: isActive
         };
     }
     catch (err) {
