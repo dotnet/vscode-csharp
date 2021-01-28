@@ -155,7 +155,7 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
     }
 
     private getCurrentWord(document: TextDocument, position: Position) {
-        let i = position.character;
+        let i = position.character - 1;
         let text = document.lineAt(position.line).text;
         while (i >= 0 && ' \t\n\r\v":{[,'.indexOf(text.charAt(i)) === -1) {
             i--;
