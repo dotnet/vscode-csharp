@@ -250,6 +250,13 @@ class DiagnosticsProvider extends AbstractSupport {
                     return;
                 }
 
+                // If we're over the file limit and the file shouldn't have diagnostics, don't add them. This can
+                // happen if a file is opened then immediately closed, as the on doc close event will occur before
+                // diagnostics come back from the server.
+                if (!this._validationAdvisor.shouldValidateAll() && vscode.workspace.textDocuments.every(doc => doc.uri !== document.uri)) {
+                    return;
+                }
+
                 // (re)set new diagnostics for this document
                 let diagnosticsInFile = this._mapQuickFixesAsDiagnosticsInFile(quickFixes);
 
