@@ -318,7 +318,7 @@ export class StdioEngine implements IEngine {
     }
 
     public dispose() {
-        this._disposables.dispose();
+        this._disposables?.dispose();
     }
 
     // --- requests et al
