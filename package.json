@@ -456,11 +456,13 @@
         {
           "id": "syntaxTree",
           "name": "Syntax Tree",
-          "type": "tree"
+          "type": "tree",
+          "when": "config.csharp.enableSyntaxVisualizer"
         },
         {
           "id": "syntaxProperties",
-          "name": "Syntax Node Properties"
+          "name": "Syntax Node Properties",
+          "when": "config.csharp.enableSyntaxVisualizer"
         }
       ]
     },
@@ -734,6 +736,11 @@
           "type": "boolean",
           "default": true,
           "description": "Shows the OmniSharp log in the Output pane when OmniSharp reports an error."
+        },
+        "csharp.enableSyntaxVisualizer": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enables the Syntax Visualizer panel, which shows the syntax tree of the active C# file, along with detailed node and semantic information for the currently-selected location in the file. This is useful when developing Roslyn analyzers or code generators."
         },
         "omnisharp.path": {
           "type": [
