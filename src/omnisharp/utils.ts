@@ -191,6 +191,22 @@ export async function getCompletionResolve(server: OmniSharpServer, request: pro
     return server.makeRequest<protocol.CompletionResolveResponse>(protocol.Requests.CompletionResolve, request, context);
 }
 
+export async function getSyntaxTree(server: OmniSharpServer, request: protocol.SyntaxTreeRequest) {
+    return server.makeRequest<protocol.SyntaxTreeResponse>(protocol.Requests.SyntaxTree, request);
+}
+
+export async function getSyntaxNodeAtRange(server: OmniSharpServer, request: protocol.SyntaxNodeAtRangeRequest) {
+    return server.makeRequest<protocol.SyntaxNodeAtRangeResponse>(protocol.Requests.SyntaxNodeAtPoint, request);
+}
+
+export async function getSyntaxNodeParent(server: OmniSharpServer, request: protocol.SyntaxNodeParentRequest) {
+    return server.makeRequest<protocol.SyntaxNodeParentResponse>(protocol.Requests.SyntaxTreeParentNode, request);
+}
+
+export async function getSyntaxNodeInfo(server: OmniSharpServer, request: protocol.SyntaxNodeInfoRequest) {
+    return server.makeRequest<protocol.SyntaxNodeInfoResponse>(protocol.Requests.SyntaxTreeNodeInfo, request);
+}
+
 export async function isNetCoreProject(project: protocol.MSBuildProject) {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp') || tf.ShortName.startsWith('netstandard')) !== undefined;
 }

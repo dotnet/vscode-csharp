@@ -41,6 +41,7 @@ import { getMonoVersion } from '../utils/getMonoVersion';
 import { FixAllProvider } from '../features/fixAllProvider';
 import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
 import SemanticTokensProvider from '../features/semanticTokensProvider';
+import { createSyntaxTreeVisualizer } from '../features/syntaxTreeProvider';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
@@ -107,6 +108,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables.add(forwardChanges(server));
         localDisposables.add(trackVirtualDocuments(server, eventStream));
         localDisposables.add(vscode.languages.registerFoldingRangeProvider(documentSelector, new StructureProvider(server, languageMiddlewareFeature)));
+        localDisposables.add(createSyntaxTreeVisualizer(server));
 
         const semanticTokensProvider = new SemanticTokensProvider(server, optionProvider, languageMiddlewareFeature);
         // Make the semantic token provider available for testing

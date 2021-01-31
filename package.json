@@ -442,6 +442,34 @@
         "path": "./themes/vs2019_light.json"
       }
     ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "csharp-syntax-visualizer",
+          "title": "CSharp Syntax Visualizer",
+          "icon": "images/syntaxtree.ico"
+        }
+      ]
+    },
+    "views": {
+      "csharp-syntax-visualizer": [
+        {
+          "id": "syntaxTree",
+          "name": "Syntax Tree",
+          "type": "tree"
+        },
+        {
+          "id": "syntaxProperties",
+          "name": "Syntax Node Properties"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "syntaxTree",
+        "contents": "No C# file opened."
+      }
+    ],
     "configuration": {
       "title": "C# configuration",
       "properties": {
@@ -1012,6 +1040,11 @@
         "command": "dotnet.test.debugTestsInContext",
         "title": "Debug Tests in Context",
         "category": ".NET"
+      },
+      {
+        "command": "csharp.syntaxTreeVisualizer.clearHighlight",
+        "title": "Clear Syntax Highlight",
+        "icon": "$(extensions-clear-search-results)"
       }
     ],
     "keybindings": [
@@ -3662,6 +3695,13 @@
           "command": "dotnet.test.debugTestsInContext",
           "when": "editorLangId == csharp",
           "group": "2_dotnet@2"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "csharp.syntaxTreeVisualizer.clearHighlight",
+          "group": "navigation",
+          "when": "view == syntaxTree"
         }
       ]
     }

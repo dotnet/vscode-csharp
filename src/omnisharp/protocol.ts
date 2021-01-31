@@ -34,6 +34,10 @@ export module Requests {
     export const QuickInfo = '/quickinfo';
     export const Completion = '/completion';
     export const CompletionResolve = '/completion/resolve';
+    export const SyntaxTree = '/syntaxtree';
+    export const SyntaxNodeAtPoint = '/syntaxtree/nodeatpoint';
+    export const SyntaxTreeParentNode = '/syntaxtree/parentnode';
+    export const SyntaxTreeNodeInfo = '/syntaxtree/info';
 }
 
 export namespace WireProtocol {
@@ -539,6 +543,64 @@ export interface OmnisharpCompletionItem {
     CommitCharacters?: string[];
     AdditionalTextEdits?: LinePositionSpanTextChange[];
     Data: any;
+}
+
+export interface SyntaxTreeRequest extends FileBasedRequest {
+    Parent?: SyntaxTreeNode;
+}
+
+export interface SyntaxTreeResponse {
+    TreeItems: SyntaxTreeNode[];
+}
+
+export interface SyntaxTreeNode {
+    NodeType: SymbolAndKind;
+    Range: V2.Range;
+    HasChildren: boolean;
+    Id: number;
+}
+
+export interface SyntaxNodeAtRangeRequest extends FileBasedRequest {
+    Range: V2.Range;
+}
+
+export interface SyntaxNodeAtRangeResponse {
+    Node: SyntaxTreeNode;
+}
+
+export interface SyntaxNodeParentRequest {
+    Child: SyntaxTreeNode;
+}
+
+export interface SyntaxNodeParentResponse {
+    Parent?: SyntaxTreeNode;
+}
+
+export interface SyntaxNodeInfoRequest {
+    Node: SyntaxTreeNode;
+}
+
+export interface SyntaxNodeInfoResponse {
+    NodeType: SymbolAndKind;
+    NodeSyntaxKind: string;
+    SemanticClassification?: string;
+    NodeSymbolInfo?: {
+        Symbol: SymbolAndKind;
+        CandidateReason: string;
+        CandidateSymbols: SymbolAndKind[];
+    };
+    NodeTypeInfo?: {
+        Type: SymbolAndKind,
+        ConvertedType: SymbolAndKind;
+        Conversion: string;
+    };
+    NodeDeclaredSymbol: SymbolAndKind;
+    Properties: { [name: string]: string };
+}
+
+export interface SymbolAndKind {
+    Symbol?: string;
+    SymbolKind?: V2.OmnisharpSymbolKind;
 }
 
 export namespace V2 {
