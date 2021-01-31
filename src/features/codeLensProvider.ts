@@ -14,7 +14,7 @@ import TestManager from './dotnetTest';
 import OptionProvider from '../observers/OptionProvider';
 
 import Structure = protocol.V2.Structure;
-import SymbolKinds = protocol.V2.SymbolKinds;
+import OmnisharpSymbolKind = protocol.V2.OmnisharpSymbolKind;
 import SymbolPropertyNames = protocol.V2.SymbolPropertyNames;
 import SymbolRangeNames = protocol.V2.SymbolRangeNames;
 import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
@@ -247,11 +247,11 @@ const filteredSymbolNames: { [name: string]: boolean } = {
 };
 
 function isValidElementForReferencesCodeLens(element: Structure.CodeElement): boolean {
-    if (element.Kind === SymbolKinds.Namespace) {
+    if (element.Kind === OmnisharpSymbolKind.Namespace) {
         return false;
     }
 
-    if (element.Kind === SymbolKinds.Method && filteredSymbolNames[element.Name]) {
+    if (element.Kind === OmnisharpSymbolKind.Method && filteredSymbolNames[element.Name]) {
         return false;
     }
 
@@ -260,7 +260,7 @@ function isValidElementForReferencesCodeLens(element: Structure.CodeElement): bo
 
 
 function isValidClassForTestCodeLens(element: Structure.CodeElement): boolean {
-    if (element.Kind != SymbolKinds.Class) {
+    if (element.Kind != OmnisharpSymbolKind.Class) {
         return false;
     }
 
@@ -272,7 +272,7 @@ function isValidClassForTestCodeLens(element: Structure.CodeElement): boolean {
 }
 
 function isValidMethodForTestCodeLens(element: Structure.CodeElement): boolean {
-    if (element.Kind != SymbolKinds.Method) {
+    if (element.Kind != OmnisharpSymbolKind.Method) {
         return false;
     }
 

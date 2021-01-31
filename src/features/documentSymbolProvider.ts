@@ -9,7 +9,7 @@ import * as serverUtils from '../omnisharp/utils';
 import * as vscode from 'vscode';
 
 import Structure = protocol.V2.Structure;
-import SymbolKinds = protocol.V2.SymbolKinds;
+import OmnisharpSymbolKind = protocol.V2.OmnisharpSymbolKind;
 import SymbolRangeNames = protocol.V2.SymbolRangeNames;
 import { toRange3 } from '../omnisharp/typeConversion';
 
@@ -55,24 +55,26 @@ function createSymbolForElement(element: Structure.CodeElement): vscode.Document
 
 const kinds: { [kind: string]: vscode.SymbolKind; } = {};
 
-kinds[SymbolKinds.Class] = vscode.SymbolKind.Class;
-kinds[SymbolKinds.Delegate] = vscode.SymbolKind.Class;
-kinds[SymbolKinds.Enum] = vscode.SymbolKind.Enum;
-kinds[SymbolKinds.Interface] = vscode.SymbolKind.Interface;
-kinds[SymbolKinds.Struct] = vscode.SymbolKind.Struct;
+kinds[OmnisharpSymbolKind.Array] = vscode.SymbolKind.Array;
+kinds[OmnisharpSymbolKind.Class] = vscode.SymbolKind.Class;
+kinds[OmnisharpSymbolKind.Delegate] = vscode.SymbolKind.Class;
+kinds[OmnisharpSymbolKind.Enum] = vscode.SymbolKind.Enum;
+kinds[OmnisharpSymbolKind.Interface] = vscode.SymbolKind.Interface;
+kinds[OmnisharpSymbolKind.Struct] = vscode.SymbolKind.Struct;
+kinds[OmnisharpSymbolKind.TypeParameter] = vscode.SymbolKind.TypeParameter;
 
-kinds[SymbolKinds.Constant] = vscode.SymbolKind.Constant;
-kinds[SymbolKinds.Destructor] = vscode.SymbolKind.Method;
-kinds[SymbolKinds.EnumMember] = vscode.SymbolKind.EnumMember;
-kinds[SymbolKinds.Event] = vscode.SymbolKind.Event;
-kinds[SymbolKinds.Field] = vscode.SymbolKind.Field;
-kinds[SymbolKinds.Indexer] = vscode.SymbolKind.Property;
-kinds[SymbolKinds.Method] = vscode.SymbolKind.Method;
-kinds[SymbolKinds.Operator] = vscode.SymbolKind.Operator;
-kinds[SymbolKinds.Property] = vscode.SymbolKind.Property;
+kinds[OmnisharpSymbolKind.Constant] = vscode.SymbolKind.Constant;
+kinds[OmnisharpSymbolKind.Destructor] = vscode.SymbolKind.Method;
+kinds[OmnisharpSymbolKind.EnumMember] = vscode.SymbolKind.EnumMember;
+kinds[OmnisharpSymbolKind.Event] = vscode.SymbolKind.Event;
+kinds[OmnisharpSymbolKind.Field] = vscode.SymbolKind.Field;
+kinds[OmnisharpSymbolKind.Indexer] = vscode.SymbolKind.Property;
+kinds[OmnisharpSymbolKind.Method] = vscode.SymbolKind.Method;
+kinds[OmnisharpSymbolKind.Operator] = vscode.SymbolKind.Operator;
+kinds[OmnisharpSymbolKind.Property] = vscode.SymbolKind.Property;
 
-kinds[SymbolKinds.Namespace] = vscode.SymbolKind.Namespace;
-kinds[SymbolKinds.Unknown] = vscode.SymbolKind.Class;
+kinds[OmnisharpSymbolKind.Namespace] = vscode.SymbolKind.Namespace;
+kinds[OmnisharpSymbolKind.Unknown] = vscode.SymbolKind.Class;
 
 function toSymbolKind(kind: string): vscode.SymbolKind {
     // Note: 'constructor' is a special property name for JavaScript objects.

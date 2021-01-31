@@ -780,29 +780,32 @@ export namespace V2 {
         Kind: string;
     }
 
-    export module SymbolKinds {
+    export enum OmnisharpSymbolKind {
         // types
-        export const Class = 'class';
-        export const Delegate = 'delegate';
-        export const Enum = 'enum';
-        export const Interface = 'interface';
-        export const Struct = 'struct';
+        Array = 'array',
+        Class = 'class',
+        Delegate = 'delegate',
+        Enum = 'enum',
+        Interface = 'interface',
+        Struct = 'struct',
+        TypeParameter = 'typeparameter',
 
         // members
-        export const Constant = 'constant';
-        export const Constructor = 'constructor';
-        export const Destructor = 'destructor';
-        export const EnumMember = 'enummember';
-        export const Event = 'event';
-        export const Field = 'field';
-        export const Indexer = 'indexer';
-        export const Method = 'method';
-        export const Operator = 'operator';
-        export const Property = 'property';
+        Constant = 'constant',
+        Constructor = 'constructor',
+        Destructor = 'destructor',
+        EnumMember = 'enummember',
+        Event = 'event',
+        Field = 'field',
+        Indexer = 'indexer',
+        Method = 'method',
+        Operator = 'operator',
+        Parameter = 'parameter',
+        Property = 'property',
 
         // other
-        export const Namespace = 'namespace';
-        export const Unknown = 'unknown';
+        Namespace = 'namespace',
+        Unknown = 'unknown',
     }
 
     export module SymbolAccessibilities {
@@ -829,7 +832,7 @@ export namespace V2 {
 
     export namespace Structure {
         export interface CodeElement {
-            Kind: string;
+            Kind: OmnisharpSymbolKind;
             Name: string;
             DisplayName: string;
             Children?: CodeElement[];
