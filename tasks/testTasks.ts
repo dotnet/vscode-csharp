@@ -40,7 +40,7 @@ gulp.task("test:unit", async () => {
 const projectNames = [
     "singleCsproj",
     "slnWithCsproj",
-    // "BasicRazorApp2_1" // Fix: No .NET Core projects found
+    "BasicRazorApp2_1"
 ];
 
 for (const projectName of projectNames) {
