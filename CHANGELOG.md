@@ -18,7 +18,7 @@
 * Support building launch assets for NET6-NET9 projects ([#4346](https://github.com/OmniSharp/omnisharp-vscode/issues/4346), PR: [#4349](https://github.com/OmniSharp/omnisharp-vscode/pull/4349))
 * Add debugger support for Concord extensions. See the [ConcordExtensibilitySamples wiki](https://github.com/microsoft/ConcordExtensibilitySamples/wiki/Support-for-cross-platform-.NET-scenarios) for more information.
 * Update OmniSharp version to 1.37.6
-  *  * Handle records in syntax highlighting ([#2048](https://github.com/OmniSharp/omnisharp-roslyn/issues/2048), PR: [#2049](https://github.com/OmniSharp/omnisharp-roslyn/pull/2049))
+  *  Handle records in syntax highlighting ([#2048](https://github.com/OmniSharp/omnisharp-roslyn/issues/2048), PR: [#2049](https://github.com/OmniSharp/omnisharp-roslyn/pull/2049))
   * Remove formatting on new line (PR: [#2053](https://github.com/OmniSharp/omnisharp-roslyn/pull/2053))
   * Validate highlighting ranges in semantic highlighting requests (PR: [#2055](https://github.com/OmniSharp/omnisharp-roslyn/pull/2055))
   * Delay project system init to avoid solution update race (PR: [#2057](https://github.com/OmniSharp/omnisharp-roslyn/pull/2057))
