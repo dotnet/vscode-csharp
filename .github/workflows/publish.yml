@@ -1,0 +1,32 @@
+on:
+  release:
+    types:
+      - released
+
+name: Publish the Extension to OpenVSX
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 10
+
+      - name: Install tools and deps
+      - run: npm ci
+      - run: npm install -g gulp
+
+      - name: Package extensions as a vsix file
+      - run: gulp 'vsix:release:package'
+
+      - name: upload vsix artifact
+        uses: actions/upload-artifact@v2
+        with:
+            name: extension-artifact
+            path: /*.vsix
+
+      - name: Publish to Open VSX Registry
+      - run: npm install -g ovsx
+      - run: ovsx publish extension-artifact -p ${{ secrets.OPEN_VSX_TOKEN }}
