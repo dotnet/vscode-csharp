@@ -31,7 +31,7 @@ export default class OmnisharpRenameProvider extends AbstractSupport implements 
 
                 change.Changes.forEach(change => {
                     edit.replace(uri,
-                        new Range(change.StartLine - 1, change.StartColumn - 1, change.EndLine - 1, change.EndColumn - 1),
+                        new Range(change.StartLine, change.StartColumn, change.EndLine, change.EndColumn),
                         change.NewText);
                 });
             });

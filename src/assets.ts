@@ -4,6 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs-extra';
+import * as jsonc from 'jsonc-parser';
+import { FormattingOptions, ModificationOptions } from 'jsonc-parser'; 
+import * as os from 'os';
 import * as path from 'path';
 import * as protocol from './omnisharp/protocol';
 import * as serverUtils from './omnisharp/utils';
@@ -161,7 +164,7 @@ export class AssetGenerator {
         const startupProjectDir = path.dirname(this.startupProject.Path);
         const relativeProjectDir = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, startupProjectDir));
         const configurationName = 'Debug';
-        const targetFramework = protocol.findNetCoreAppTargetFramework(this.startupProject) ?? protocol.findNet5TargetFramework(this.startupProject);
+        const targetFramework = protocol.findNetCoreTargetFramework(this.startupProject);
         const result = path.join(relativeProjectDir, `bin/${configurationName}/${targetFramework.ShortName}/${this.startupProject.AssemblyName}.dll`);
         return result;
     }
@@ -179,8 +182,8 @@ export class AssetGenerator {
     public createLaunchJsonConfigurations(programLaunchType: ProgramLaunchType): string {
         switch (programLaunchType) {
             case ProgramLaunchType.Console: {
-                const launchConfigurationsMassaged: string = indentJsonString(createLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory()));
-                const attachConfigurationsMassaged: string = indentJsonString(createAttachConfiguration());
+                const launchConfigurationsMassaged: string = createLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory());
+                const attachConfigurationsMassaged: string = createAttachConfiguration();
                 return `
 [
     ${launchConfigurationsMassaged},
@@ -188,8 +191,8 @@ export class AssetGenerator {
 ]`;
             }
             case ProgramLaunchType.Web: {
-                const webLaunchConfigurationsMassaged: string = indentJsonString(createWebLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory()));
-                const attachConfigurationsMassaged: string = indentJsonString(createAttachConfiguration());
+                const webLaunchConfigurationsMassaged: string = createWebLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory());
+                const attachConfigurationsMassaged: string = createAttachConfiguration();
                 return `
 [
     ${webLaunchConfigurationsMassaged},
@@ -197,14 +200,14 @@ export class AssetGenerator {
 ]`;
             }
             case ProgramLaunchType.BlazorWebAssemblyHosted: {
-                const hostedLaunchConfigMassaged: string = indentJsonString(createBlazorWebAssemblyHostedLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory()));
+                const hostedLaunchConfigMassaged: string = createBlazorWebAssemblyHostedLaunchConfiguration(this.computeProgramPath(), this.computeWorkingDirectory());
                 return `
 [
     ${hostedLaunchConfigMassaged}
 ]`;
             }
             case ProgramLaunchType.BlazorWebAssemblyStandalone: {
-                const standaloneLaunchConfigMassaged: string = indentJsonString(createBlazorWebAssemblyStandaloneLaunchConfiguration(this.computeWorkingDirectory()));
+                const standaloneLaunchConfigMassaged: string = createBlazorWebAssemblyStandaloneLaunchConfiguration(this.computeWorkingDirectory());
                 return `
 [
     ${standaloneLaunchConfigMassaged}
@@ -286,69 +289,79 @@ export enum ProgramLaunchType {
 }
 
 export function createWebLaunchConfiguration(programPath: string, workingDirectory: string): string {
-    return `
-{
-    "name": ".NET Core Launch (web)",
-    "type": "coreclr",
-    "request": "launch",
-    "preLaunchTask": "build",
-    // If you have changed target frameworks, make sure to update the program path.
-    "program": "${util.convertNativePathToPosix(programPath)}",
-    "args": [],
-    "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
-    "stopAtEntry": false,
-    // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
-    "serverReadyAction": {
-        "action": "openExternally",
-        "pattern": "\\\\bNow listening on:\\\\s+(https?://\\\\S+)"
-    },
-    "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-    },
-    "sourceFileMap": {
-        "/Views": "\${workspaceFolder}/Views"
-    }
-}`;
+    const configuration = {
+        "OS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
+        "OS-COMMENT2": "Use hover for the description of the existing attributes",
+        "OS-COMMENT3": "For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md",
+        "name": ".NET Core Launch (web)",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build",
+        "OS-COMMENT4": "If you have changed target frameworks, make sure to update the program path.",
+        "program": `${util.convertNativePathToPosix(programPath)}`,
+        "args": Array(0),
+        "cwd": `${util.convertNativePathToPosix(workingDirectory)}`,
+        "stopAtEntry": false,
+        "OS-COMMENT5": "Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser",
+        "serverReadyAction": {
+            "action": "openExternally",
+            "pattern": "\\\\bNow listening on:\\\\s+(https?://\\\\S+)"
+        },
+        "env": {
+            "ASPNETCORE_ENVIRONMENT": "Development"
+        },
+        "sourceFileMap": {
+            "/Views": "\${workspaceFolder}/Views"
+        }
+    };
+
+    return JSON.stringify(configuration);
 }
 
 export function createBlazorWebAssemblyHostedLaunchConfiguration(programPath: string, workingDirectory: string): string {
-    return `
-{
-    "name": "Launch and Debug Hosted Blazor WebAssembly App",
-    "type": "blazorwasm",
-    "request": "launch",
-    "hosted": true,
-    // If you have changed target frameworks, make sure to update the program path.
-    "program": "${util.convertNativePathToPosix(programPath)}",
-    "cwd": "${util.convertNativePathToPosix(workingDirectory)}"
-}`;
+    const configuration = {
+        "name": "Launch and Debug Hosted Blazor WebAssembly App",
+        "type": "blazorwasm",
+        "request": "launch",
+        "hosted": true,
+        "OS-COMMENT1": "If you have changed target frameworks, make sure to update the program path.",
+        "program": `${util.convertNativePathToPosix(programPath)}`,
+        "cwd": `${util.convertNativePathToPosix(workingDirectory)}`
+    };
+
+    return JSON.stringify(configuration);
 }
 
 export function createBlazorWebAssemblyStandaloneLaunchConfiguration(workingDirectory: string): string {
-    return `
-{
-    "name": "Launch and Debug Standalone Blazor WebAssembly App",
-    "type": "blazorwasm",
-    "request": "launch",
-    "cwd": "${util.convertNativePathToPosix(workingDirectory)}"
-}`;
+    const configuration = {
+        "name": "Launch and Debug Standalone Blazor WebAssembly App",
+        "type": "blazorwasm",
+        "request": "launch",
+        "cwd": `${util.convertNativePathToPosix(workingDirectory)}`
+    };
+
+    return JSON.stringify(configuration);
 }
 
 export function createLaunchConfiguration(programPath: string, workingDirectory: string): string {
-    return `
-{
-    "name": ".NET Core Launch (console)",
-    "type": "coreclr",
-    "request": "launch",
-    "preLaunchTask": "build",
-    // If you have changed target frameworks, make sure to update the program path.
-    "program": "${util.convertNativePathToPosix(programPath)}",
-    "args": [],
-    "cwd": "${util.convertNativePathToPosix(workingDirectory)}",
-    // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
-    "console": "internalConsole",
-    "stopAtEntry": false
-}`;
+    const configuration = {
+        "OS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
+        "OS-COMMENT2": "Use hover for the description of the existing attributes",
+        "OS-COMMENT3": "For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md",
+        "name": ".NET Core Launch (console)",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build",
+        "OS-COMMENT4": "If you have changed target frameworks, make sure to update the program path.",
+        "program": `${util.convertNativePathToPosix(programPath)}`,
+        "args": Array(0),
+        "cwd": `${util.convertNativePathToPosix(workingDirectory)}`,
+        "OS-COMMENT5": "For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console",
+        "console": "internalConsole",
+        "stopAtEntry": false
+    };
+
+    return JSON.stringify(configuration);
 }
 
 // DebugConfiguration written to launch.json when the extension fails to generate a good configuration
@@ -385,13 +398,14 @@ export function createFallbackLaunchConfiguration(): vscode.DebugConfiguration {
 
 // AttachConfiguration
 export function createAttachConfiguration(): string {
-    return `
-{
-    "name": ".NET Core Attach",
-    "type": "coreclr",
-    "request": "attach",
-    "processId": "\${command:pickProcess}"
-}`;
+    const configuration = {
+        "name": ".NET Core Attach",
+        "type": "coreclr",
+        "request": "attach",
+        "processId": "\${command:pickProcess}"
+    };
+
+    return JSON.stringify(configuration);
 }
 
 export interface AssetOperations {
@@ -535,28 +549,52 @@ function getBuildAssetsNotificationSetting() {
     return csharpConfig.get<boolean>('supressBuildAssetsNotification');
 }
 
+export function getFormattingOptions(): FormattingOptions { 
+    const editorConfig = vscode.workspace.getConfiguration('editor'); 
+
+    const tabSize = editorConfig.get<number>('tabSize') ?? 4;
+    const insertSpaces = editorConfig.get<boolean>('insertSpaces') ?? true;
+
+    const filesConfig = vscode.workspace.getConfiguration('files');
+    const eolSetting = filesConfig.get<string>('eol');
+    const eol = !eolSetting || eolSetting === 'auto' ? os.EOL : '\n';
+
+    const formattingOptions: FormattingOptions = {
+        insertSpaces: insertSpaces,
+        tabSize: tabSize,
+        eol: eol
+    };
+
+    return formattingOptions;
+}
+
 export async function addTasksJsonIfNecessary(generator: AssetGenerator, operations: AssetOperations) {
     return new Promise<void>((resolve, reject) => {
         if (!operations.addTasksJson && !operations.updateTasksJson) {
             return resolve();
         }
 
+        const formattingOptions = getFormattingOptions();
+        
         const tasksJson = generator.createTasksConfiguration();
 
-        // NOTE: We only want to do this when we are supposed to update the task configuration. Otherwise,
-        // in the case of the 'generateAssets' command, even though we already deleted the tasks.json file
-        // this will still return the old tasks.json content
-        if (operations.updateTasksJson) {
-            const tasksConfigs = vscode.workspace.getConfiguration('tasks');
-            let existingTaskConfigs = tasksConfigs.get<Array<tasks.TaskDescription>>('tasks');
-
-            if (existingTaskConfigs) {
-                tasksJson['tasks'] = tasksJson['tasks'].concat(existingTaskConfigs);
-            }
+        let text: string;
+        if (!fs.pathExistsSync(generator.tasksJsonPath)) {
+            // when tasks.json does not exist create it and write all the content directly
+            const tasksJsonText = JSON.stringify(tasksJson);
+            const tasksJsonTextFormatted = jsonc.applyEdits(tasksJsonText, jsonc.format(tasksJsonText, null, formattingOptions));
+            text = tasksJsonTextFormatted;
+        }
+        else {
+            // when tasks.json exists just update the tasks node
+            const ourConfigs = tasksJson.tasks;
+            const content = fs.readFileSync(generator.tasksJsonPath).toString(); 
+            const updatedJson = updateJsonWithComments(content, ourConfigs, 'tasks', 'label', formattingOptions);
+            text = updatedJson;
         }
 
-        const tasksJsonText = JSON.stringify(tasksJson, null, '    ');
-        fs.writeFile(generator.tasksJsonPath, tasksJsonText, err => {
+        const tasksJsonTextCommented = replaceCommentPropertiesWithComments(text);
+        fs.writeFile(generator.tasksJsonPath, tasksJsonTextCommented, err => {
             if (err) {
                 return reject(err);
             }
@@ -566,35 +604,38 @@ export async function addTasksJsonIfNecessary(generator: AssetGenerator, operati
     });
 }
 
-function indentJsonString(json: string, numSpaces: number = 4): string {
-    return json.split('\n').map(line => ' '.repeat(numSpaces) + line).join('\n').trim();
-}
-
 async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: AssetOperations) {
     return new Promise<void>((resolve, reject) => {
         if (!operations.addLaunchJson) {
             return resolve();
         }
 
-        // NOTE: We will NOT attempt to merge in the existing launch.json configurations
-        // because in the startup prompt case, we will not attempt to create a launch.json if it
-        // already exists, and in the command case, we delete the launch.json file, but the VS
-        // Code API will return old configurations anyway, which we do NOT want.
-
         const programLaunchType = generator.computeProgramLaunchType();
         const launchJsonConfigurations: string = generator.createLaunchJsonConfigurations(programLaunchType);
-        const configurationsMassaged: string = indentJsonString(launchJsonConfigurations);
+        const formattingOptions = getFormattingOptions();
 
-        const launchJsonText = `
-{
-   // Use IntelliSense to find out which attributes exist for C# debugging
-   // Use hover for the description of the existing attributes
-   // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
-   "version": "0.2.0",
-   "configurations": ${configurationsMassaged}
-}`;
+        let text: string;
+        if (!fs.pathExistsSync(generator.launchJsonPath)) {
+            // when launch.json does not exist, create it and write all the content directly
+            const configurationsMassaged: string = launchJsonConfigurations;
+            const launchJsonText = `
+            {
+                "version": "0.2.0",
+                "configurations": ${configurationsMassaged}
+            }`;
 
-        fs.writeFile(generator.launchJsonPath, launchJsonText.trim(), err => {
+            text = jsonc.applyEdits(launchJsonText, jsonc.format(launchJsonText, null, formattingOptions));
+        } 
+        else {
+            // when launch.json exists replace or append our configurations
+            const ourConfigs = jsonc.parse(launchJsonConfigurations);
+            const content = fs.readFileSync(generator.launchJsonPath).toString();
+            const updatedJson = updateJsonWithComments(content, ourConfigs, 'configurations', 'name', formattingOptions);
+            text = updatedJson;
+        }
+
+        const textWithComments = replaceCommentPropertiesWithComments(text);
+        fs.writeFile(generator.launchJsonPath, textWithComments, err => {
             if (err) {
                 return reject(err);
             }
@@ -663,32 +704,42 @@ export async function addAssetsIfNecessary(server: OmniSharpServer): Promise<Add
     });
 }
 
-async function doesAnyAssetExist(generator: AssetGenerator) {
-    return new Promise<boolean>((resolve, reject) => {
-        fs.exists(generator.launchJsonPath, exists => {
-            if (exists) {
-                resolve(true);
-            }
-            else {
-                fs.exists(generator.tasksJsonPath, exists => {
-                    resolve(exists);
-                });
-            }
-        });
+async function getExistingAssets(generator: AssetGenerator) {
+    return new Promise<string[]>((resolve, reject) => {
+        let assets: string[] = [];
+        if (fs.pathExistsSync(generator.tasksJsonPath)) {
+            const content = fs.readFileSync(generator.tasksJsonPath).toString();
+            let taskLabels = [ "build", "publish", "watch" ];
+            const tasks = jsonc.parse(content)?.tasks?.
+                map((t: { label: string; }) => t.label).
+                filter((l: string) => taskLabels.includes(l));
+
+            assets = assets.concat(tasks);
+        }
+
+        if(fs.pathExistsSync(generator.launchJsonPath)) { 
+            const content = fs.readFileSync(generator.launchJsonPath).toString();
+            let configurationNames = [
+                ".NET Core Launch (console)", 
+                ".NET Core Launch (web)",
+                ".NET Core Attach",
+                "Launch and Debug Standalone Blazor WebAssembly App", 
+            ];
+            const configurations = jsonc.parse(content)?.configurations?.
+                map((t: { name: string; }) => t.name).
+                filter((n: string) => configurationNames.includes(n));
+                
+            assets = assets.concat(configurations);
+        }
+
+        resolve(assets);
     });
 }
 
-async function deleteAssets(generator: AssetGenerator) {
-    return Promise.all([
-        util.deleteIfExists(generator.launchJsonPath),
-        util.deleteIfExists(generator.tasksJsonPath)
-    ]);
-}
-
-async function shouldGenerateAssets(generator: AssetGenerator): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-        doesAnyAssetExist(generator).then(res => {
-            if (res) {
+async function shouldGenerateAssets(generator: AssetGenerator): Promise<Boolean> {
+    return new Promise<Boolean>((resolve, reject) => {
+        getExistingAssets(generator).then(res => {
+            if (res && res.length) {
                 const yesItem = { title: 'Yes' };
                 const cancelItem = { title: 'Cancel', isCloseAffordance: true };
                 vscode.window.showWarningMessage('Replace existing build and debug assets?', cancelItem, yesItem)
@@ -725,13 +776,13 @@ export async function generateAssets(server: OmniSharpServer, selectedIndex?: nu
                 addLaunchJson: generator.hasExecutableProjects(),
                 addTasksJson: true
             };
+
             if (operations.addLaunchJson) {
                 if (!await generator.selectStartupProject(selectedIndex)) {
                     return; // user cancelled
                 }
             }
 
-            await deleteAssets(generator);
             await fs.ensureDir(generator.vscodeFolder);
             await addAssets(generator, operations);
         }
@@ -742,4 +793,45 @@ export async function generateAssets(server: OmniSharpServer, selectedIndex?: nu
     catch (err) {
         await vscode.window.showErrorMessage(`Unable to generate assets to build and debug. ${err}`);
     }
+}
+
+export function replaceCommentPropertiesWithComments(text: string) {
+    // replacing dummy properties OS-COMMENT with the normal comment syntax
+    let regex = /["']OS-COMMENT\d*["']\s*\:\s*["'](.*)["']\s*?,/gi;
+    let withComments = text.replace(regex, '// $1');
+    
+    return withComments;
+}
+
+export function updateJsonWithComments(text: string, replacements: any[], nodeName: string, keyName: string, formattingOptions: FormattingOptions) : string { 
+    let modificationOptions : ModificationOptions = {
+        formattingOptions
+    };
+    
+    // parse using jsonc because there are comments
+    // only use this to determine what to change
+    // we will modify it as text to keep existing comments
+    let parsed = jsonc.parse(text);
+    let items = parsed[nodeName];
+    let itemKeys : string[] = items.map((i: { [x: string]: string; }) => i[keyName]);
+    
+    let modified = text;
+    // count how many items we inserted to ensure we are putting items at the end
+    // in the same order as they are in the replacements array
+    let insertCount = 0;
+    replacements.map((replacement: { [x: string]: string; }) => {
+        let index = itemKeys.indexOf(replacement[keyName]);
+
+        let found = index >= 0;
+        let modificationIndex = found ? index : items.length + insertCount++;
+        let edits = jsonc.modify(modified, [nodeName, modificationIndex], replacement, modificationOptions);
+        let updated = jsonc.applyEdits(modified, edits);
+
+        // we need to carry out the changes one by one, because we are inserting into the json
+        // and so we cannot just figure out all the edits from the original text, instead we need to apply
+        // changes one by one
+        modified = updated;
+    });
+    
+    return replaceCommentPropertiesWithComments(modified);
 }
