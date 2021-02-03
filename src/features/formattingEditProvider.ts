@@ -14,10 +14,10 @@ export default class FormattingSupport extends AbstractSupport implements Docume
 
         let request = <protocol.FormatRangeRequest>{
             FileName: document.fileName,
-            Line: range.start.line + 1,
-            Column: range.start.character + 1,
-            EndLine: range.end.line + 1,
-            EndColumn: range.end.character + 1
+            Line: range.start.line,
+            Column: range.start.character,
+            EndLine: range.end.line,
+            EndColumn: range.end.character
         };
 
         try {
@@ -35,8 +35,8 @@ export default class FormattingSupport extends AbstractSupport implements Docume
 
         let request = <protocol.FormatAfterKeystrokeRequest>{
             FileName: document.fileName,
-            Line: position.line + 1,
-            Column: position.character + 1,
+            Line: position.line,
+            Column: position.character,
             Character: ch
         };
 
@@ -53,7 +53,7 @@ export default class FormattingSupport extends AbstractSupport implements Docume
 
     private static _asEditOptionation(change: protocol.TextChange): TextEdit {
         return new TextEdit(
-            new Range(change.StartLine - 1, change.StartColumn - 1, change.EndLine - 1, change.EndColumn - 1),
+            new Range(change.StartLine, change.StartColumn, change.EndLine, change.EndColumn),
             change.NewText);
     }
 }

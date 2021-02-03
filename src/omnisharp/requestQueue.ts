@@ -14,6 +14,7 @@ export interface Request {
     onError(err: any): void;
     startTime?: number;
     endTime?: number;
+    id?: number;
 }
 
 /**
@@ -47,7 +48,7 @@ class RequestQueue {
 
         if (request) {
             this._waiting.delete(id);
-            this.eventStream.post(new OmnisharpServerDequeueRequest(this._name, request.command, id));
+            this.eventStream.post(new OmnisharpServerDequeueRequest(this._name, "waiting", request.command, id));
         }
 
         return request;
@@ -57,12 +58,12 @@ class RequestQueue {
         let index = this._pending.indexOf(request);
         if (index !== -1) {
             this._pending.splice(index, 1);
-
-            // Note: This calls reject() on the promise returned by OmniSharpServer.makeRequest
-            request.onError(new Error(`Pending request cancelled: ${request.command}`));
+            this.eventStream.post(new OmnisharpServerDequeueRequest(this._name, "pending", request.command));
         }
 
-        // TODO: Handle cancellation of a request already waiting on the OmniSharp server.
+        if (request.id){
+            this.dequeue(request.id);
+        }
     }
 
     /**
@@ -87,11 +88,10 @@ class RequestQueue {
             return;
         }
 
-        this.eventStream.post(new OmnisharpServerProcessRequestStart(this._name));
+        const availableRequestSlots = this._maxSize - this._waiting.size;
+        this.eventStream.post(new OmnisharpServerProcessRequestStart(this._name, availableRequestSlots));
 
-        const slots = this._maxSize - this._waiting.size;
-
-        for (let i = 0; i < slots && this._pending.length > 0; i++) {
+        for (let i = 0; i < availableRequestSlots && this._pending.length > 0; i++) {
             const item = this._pending.shift();
             item.startTime = Date.now();
 

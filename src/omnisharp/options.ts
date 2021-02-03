@@ -16,10 +16,12 @@ export class Options {
         public maxProjectResults: number,
         public useEditorFormattingSettings: boolean,
         public useFormatting: boolean,
+        public organizeImportsOnFormat: boolean,
         public showReferencesCodeLens: boolean,
         public showTestsCodeLens: boolean,
         public disableCodeActions: boolean,
         public disableMSBuildDiagnosticWarning: boolean,
+        public showOmnisharpLogOnError: boolean,
         public minFindSymbolsFilterLength: number,
         public maxFindSymbolsItems: number,
         public razorDisabled: boolean,
@@ -74,6 +76,7 @@ export class Options {
         const enableImportCompletion = omnisharpConfig.get<boolean>('enableImportCompletion', false);
 
         const useFormatting = csharpConfig.get<boolean>('format.enable', true);
+        const organizeImportsOnFormat = omnisharpConfig.get<boolean>('organizeImportsOnFormat', false);
 
         const showReferencesCodeLens = csharpConfig.get<boolean>('referencesCodeLens.enabled', true);
         const showTestsCodeLens = csharpConfig.get<boolean>('testsCodeLens.enabled', true);
@@ -83,6 +86,8 @@ export class Options {
         const disableCodeActions = csharpConfig.get<boolean>('disableCodeActions', false);
 
         const disableMSBuildDiagnosticWarning = omnisharpConfig.get<boolean>('disableMSBuildDiagnosticWarning', false);
+
+        const showOmnisharpLogOnError = csharpConfig.get<boolean>('showOmnisharpLogOnError', true);
 
         const minFindSymbolsFilterLength = omnisharpConfig.get<number>('minFindSymbolsFilterLength', 0);
         const maxFindSymbolsItems = omnisharpConfig.get<number>('maxFindSymbolsItems', 1000);   // The limit is applied only when this setting is set to a number greater than zero
@@ -107,10 +112,12 @@ export class Options {
             maxProjectResults,
             useEditorFormattingSettings,
             useFormatting,
+            organizeImportsOnFormat,
             showReferencesCodeLens,
             showTestsCodeLens,
             disableCodeActions,
             disableMSBuildDiagnosticWarning,
+            showOmnisharpLogOnError,
             minFindSymbolsFilterLength,
             maxFindSymbolsItems,
             razorDisabled,

@@ -115,17 +115,22 @@ export class OmnisharpServerUnresolvedDependencies implements BaseEvent {
 
 export class OmnisharpServerEnqueueRequest implements BaseEvent {
     type = EventType.OmnisharpServerEnqueueRequest;
-    constructor(public name: string, public command: string) { }
+    constructor(public queueName: string, public command: string) { }
 }
 
 export class OmnisharpServerDequeueRequest implements BaseEvent {
     type = EventType.OmnisharpServerDequeueRequest;
-    constructor(public name: string, public command: string, public id: number) { }
+    constructor(public queueName: string, public queueStatus: string, public command: string, public id?: number) { }
+}
+
+export class OmnisharpServerRequestCancelled implements BaseEvent {
+    type = EventType.OmnisharpServerRequestCancelled;
+    constructor(public command: string, public id: number) { }
 }
 
 export class OmnisharpServerProcessRequestStart implements BaseEvent {
     type = EventType.OmnisharpServerProcessRequestStart;
-    constructor(public name: string) { }
+    constructor(public name: string, public availableRequestSlots: number) { }
 }
 
 export class OmnisharpEventPacketReceived implements BaseEvent {

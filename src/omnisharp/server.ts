@@ -314,6 +314,7 @@ export class OmniSharpServer {
         const cwd = path.dirname(solutionPath);
 
         let args = [
+            '-z',
             '-s', solutionPath,
             '--hostPID', process.pid.toString(),
             'DotNet:enablePackageRestore=false',
@@ -352,6 +353,10 @@ export class OmniSharpServer {
 
         if (options.enableEditorConfigSupport === true) {
             args.push('FormattingOptions:EnableEditorConfigSupport=true');
+        }
+
+        if (options.organizeImportsOnFormat === true) {
+            args.push('FormattingOptions:OrganizeImports=true');
         }
 
         if (this.decompilationAuthorized && options.enableDecompilationSupport === true) {
@@ -567,7 +572,10 @@ export class OmniSharpServer {
 
         if (token) {
             token.onCancellationRequested(() => {
+                this.eventStream.post(new ObservableEvents.OmnisharpServerRequestCancelled(request.command, request.id));
                 this._requestQueue.cancelRequest(request);
+                // Note: This calls reject() on the promise returned by OmniSharpServer.makeRequest
+                request.onError(new Error(`Request ${request.command} cancelled, id: ${request.id}`));
             });
         }
 
@@ -700,6 +708,7 @@ export class OmniSharpServer {
 
     private _makeRequest(request: Request) {
         const id = OmniSharpServer._nextId++;
+        request.id = id;
 
         const requestPacket: protocol.WireProtocol.RequestPacket = {
             Type: 'request',

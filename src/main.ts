@@ -77,7 +77,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
     let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
     let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel);
-    let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel);
+    let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel, vscode);
     eventStream.subscribe(omnisharpLogObserver.post);
     eventStream.subscribe(omnisharpChannelObserver.post);
 

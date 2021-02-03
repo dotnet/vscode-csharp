@@ -60,7 +60,7 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
                 }
 
                 const uri: Uri = this._definitionMetadataDocumentProvider.addMetadataResponse(metadataResponse);
-                location = new Location(uri, new Position(gotoDefinitionResponse.Line - 1, gotoDefinitionResponse.Column - 1));
+                location = new Location(uri, new Position(gotoDefinitionResponse.Line, gotoDefinitionResponse.Column));
             }
 
             // Allow language middlewares to re-map its edits if necessary.
