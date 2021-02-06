@@ -1,0 +1,49 @@
+name: OmniSharp-VSCode CI
+
+on:
+  push:
+    branches: [ master ]
+
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup virtual display
+      run: /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+
+    - name: Install .NET Core 3.1 SDK
+      uses: actions/setup-dotnet@v1.7.2
+      with:
+        dotnet-version: 3.1.x
+
+    - name: Install Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+
+    - name: Install dependencies
+      run: npm ci && npm i -g gulp
+
+    - name: Build
+      run: gulp 'vsix:release:package'
+
+    - name: Initialize code coverage
+      run: gulp cov:instrument
+
+    - name: Run unit and integration tests
+      run: gulp test
+      env:
+        CODE_VERSION: 1.45.0
+        DISPLAY: :99.0
+
+    - name: Report code coverage
+      run: gulp cov:report
+
+    - name: Run artifact tests
+      run: npm run test:artifacts

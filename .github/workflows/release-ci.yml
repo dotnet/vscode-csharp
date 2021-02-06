@@ -1,0 +1,40 @@
+name: OmniSharp-VSCode Release CI
+
+on:
+  release:
+    types:
+      - created
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+
+    - name: Install dependencies
+      run: npm ci && npm i -g gulp
+
+    - name: Build
+      run: gulp 'vsix:release:package'
+
+    - name: Run release tests
+      run: npm run test:release
+
+    - name: Get package version
+      run: node -e "console.log('VERSION=' + require('./package.json').version)" >> $GITHUB_ENV
+
+    - name: Upload release build
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./csharp-${{ env.VERSION }}.vsix
+        asset_name: csharp-${{ env.VERSION }}.vsix
+        asset_content_type: application/zip  
