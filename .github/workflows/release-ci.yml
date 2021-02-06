@@ -35,6 +35,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./omnisharp-vscode/csharp-${{ env.VERSION }}.zip
-        asset_name: csharp-${{ env.VERSION }}.zip
+        asset_path: ./csharp-${{ env.VERSION }}.vsix
+        asset_name: csharp-${{ env.VERSION }}.vsix
         asset_content_type: application/zip  
