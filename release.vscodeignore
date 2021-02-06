@@ -4,7 +4,7 @@
 .nyc_output/**
 .omnisharp/**
 .rpt2_cache/**
-.travis/**
+.github/**
 .vscode/**
 .vscode-test/**
 coverage/**
@@ -21,7 +21,6 @@ node_modules/**
 
 .editorconfig
 .gitignore
-.travis.yml
 gulpfile.ts
 install.Lock
 ISSUE_TEMPLATE
