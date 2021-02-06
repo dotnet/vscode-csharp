@@ -1,9 +1,9 @@
 name: OmniSharp-VSCode Release CI
 
 on:
-  push:
-    tags: [ v* ]
-
+  release:
+    types:
+      - created
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,24 +28,13 @@ jobs:
     - name: Get package version
       run: node -e "console.log('::set-env name=VERSION::'+ require('./package.json').version)"
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-          tag_name: ${{ github.ref }}
-          release_name:  v${{ VERSION }}
-          draft: false
-          prerelease: true
-
-    - name: Upload Release Asset
+    - name: Upload release build
       id: upload-release-asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./csharp-${{ VERSION }}.zip
-        asset_name: csharp-${{ VERSION }}.zip
-        asset_content_type: application/zip
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./csharp-${{ env.VERSION }}.zip
+        asset_name: csharp-${{ env.VERSION }}.zip
+        asset_content_type: application/zip  
