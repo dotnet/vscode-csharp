@@ -47,6 +47,3 @@ jobs:
 
     - name: Run artifact tests
       run: npm run test:artifacts
-
-    - name: Print logs
-      run: ./.travis/printLogs.sh

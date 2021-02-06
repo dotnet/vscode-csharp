@@ -25,9 +25,6 @@ jobs:
     - name: Run release tests
       run: npm run test:release
 
-    - name: Print logs
-      run: ./.travis/printLogs.sh
-
     - name: Get package version
       run: node -e "console.log('::set-env name=VERSION::'+ require('./package.json').version)"
 
