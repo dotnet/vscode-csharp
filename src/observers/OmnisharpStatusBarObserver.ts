@@ -33,7 +33,7 @@ export class OmnisharpStatusBarObserver extends BaseStatusBarItemObserver {
                 this.ResetAndHideStatusBar();
                 break;
             case EventType.OmnisharpServerOnStart:
-                this.SetAndShowStatusBar('$(flame)', 'o.showOutput', 'OmniSharp server is running');
+                this.SetAndShowStatusBar('$(flame)', 'o.showOutput', undefined, 'OmniSharp server is running');
                 break;
             case EventType.DownloadStart:
                 this.SetAndShowStatusBar("$(cloud-download) Downloading packages", '', '', `Downloading package '${(<DownloadStart>event).packageDescription}...' `);
