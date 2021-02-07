@@ -86,8 +86,9 @@ export class LspEngine implements IEngine {
             },
             debug: {
                 command: launchInfo.MonoLaunchPath ?? launchInfo.LaunchPath,
-                args: [/*"-d", */ '-lsp'].concat(args),
-                // args: ["-d", "-lsp"].concat(args),
+                // Sometimes you might want to disable -d if you're just debugging the extension and not the server
+                //args: ['-lsp'].concat(args),
+                args: ["-d", "-lsp"].concat(args),
                 options: {
                     cwd,
                 },
