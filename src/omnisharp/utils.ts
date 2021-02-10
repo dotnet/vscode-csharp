@@ -240,6 +240,19 @@ async function isBlazorWebAssemblyProject(project: MSBuildProject): Promise<bool
 }
 
 function hasBlazorWebAssemblyDebugPrerequisites() {
+    const companionExtension = vscode.extensions.getExtension('ms-dotnettools.blazorwasm-companion');
+    if (!companionExtension) {
+        const msg = 'The Blazor WASM Debugging Extension is required to debug Blazor WASM apps in VS Code.';
+        vscode.window.showInformationMessage(msg, 'Install Extension', 'Close')
+            .then(async result => {
+                if (result === 'Install Extension') {
+                    const uriToOpen = vscode.Uri.parse('vscode:extension/ms-dotnettools.blazorwasm-companion');
+                    await vscode.commands.executeCommand('vscode.open', uriToOpen);
+                }
+            });
+        return false;
+    }
+
     const debugJavaScriptConfigSection = vscode.workspace.getConfiguration('debug.javascript');
     const usePreviewValue = debugJavaScriptConfigSection.get('usePreview');
     if (usePreviewValue) {
