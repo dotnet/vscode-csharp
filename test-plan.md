@@ -236,6 +236,12 @@ To setup a test project to verify on you can do:
 
 ##### Debugging with blazorwasm debug adapter
 
+**Note:** On a VS Code installation with no extensions, you should recieve an alert like the following:
+
+> The Blazor WASM Debugging Extension is required to debug Blazor WASM apps in VS Code.
+
+Press "Install Extension" before step 2 in each of the test scenarios below.
+
 ###### Standalone app
 
 To set up a test project to verify on, create a new Blazor WebAssembly application using the dotnet CLI.
