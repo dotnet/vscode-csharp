@@ -4,16 +4,17 @@ node_modules
 out
 .omnisharp/
 .omnisharp-*/
-.debugger
-.razor
-.vscode-test
-.razor
+.vs/
+.debugger/
+.razor/
+.vscode-test/
 dist/
 *.razor.json
 
 install.*
 
 *.vsix
+*.map
 
 
 test/**/.vscode/launch.json
