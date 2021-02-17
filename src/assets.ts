@@ -179,6 +179,25 @@ export class AssetGenerator {
         return path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, startupProjectDir));
     }
 
+    public createLaunchJsonConfigurationsArray(programLaunchType: ProgramLaunchType): vscode.DebugConfiguration[] {
+        const launchJson: string = this.createLaunchJsonConfigurations(programLaunchType);
+
+        const configurationArray: vscode.DebugConfiguration[] = JSON.parse(launchJson);
+
+        // Remove comments
+        configurationArray.forEach((configuration) => {
+            for (const key in configuration) {
+                if (Object.prototype.hasOwnProperty.call(configuration, key)) {
+                    if (key.startsWith("OS-COMMENT")) {
+                        delete configuration[key];
+                    }
+                }
+            }
+        });
+
+        return configurationArray;
+    }
+
     public createLaunchJsonConfigurations(programLaunchType: ProgramLaunchType): string {
         switch (programLaunchType) {
             case ProgramLaunchType.Console: {
@@ -305,7 +324,7 @@ export function createWebLaunchConfiguration(programPath: string, workingDirecto
         "OS-COMMENT5": "Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser",
         "serverReadyAction": {
             "action": "openExternally",
-            "pattern": "\\\\bNow listening on:\\\\s+(https?://\\\\S+)"
+            "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
         },
         "env": {
             "ASPNETCORE_ENVIRONMENT": "Development"
