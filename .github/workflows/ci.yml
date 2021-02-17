@@ -33,12 +33,6 @@ jobs:
     - name: Build
       run: gulp 'vsix:release:package'
 
-    - name: Upload vsix build artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: ci-extension-artifact
-        path: ./*.vsix
-
     - name: Initialize code coverage
       run: gulp cov:instrument
 
@@ -53,3 +47,9 @@ jobs:
 
     - name: Run artifact tests
       run: npm run test:artifacts
+
+    - name: Upload VSIX build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ci-extension-artifact
+        path: ./*.vsix
