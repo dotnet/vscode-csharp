@@ -11,6 +11,7 @@ import * as vscode from 'vscode';
 import { Options } from './options';
 import { LaunchInfo } from './OmnisharpManager';
 import { IMonoResolver } from '../constants/IMonoResolver';
+import { ObservedValueOf } from 'rxjs';
 
 export enum LaunchTargetKind {
     Solution,
@@ -272,35 +273,77 @@ export async function launchOmniSharp(cwd: string, args: string[], launchInfo: L
             .catch(reason => reject(reason));
     });
 }
-
-async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IMonoResolver): Promise<LaunchResult> {
+export async function configure(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IMonoResolver) {
     if (options.useEditorFormattingSettings) {
         let globalConfig = vscode.workspace.getConfiguration('', null);
         let csharpConfig = vscode.workspace.getConfiguration('[csharp]', null);
 
-        args.push('-z'); // zero based indices
         args.push(`formattingOptions:useTabs=${!getConfigurationValue(globalConfig, csharpConfig, 'editor.insertSpaces', true)}`);
         args.push(`formattingOptions:tabSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
         args.push(`formattingOptions:indentationSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
     }
 
     if (platformInfo.isWindows()) {
-        return launchWindows(launchInfo.LaunchPath, cwd, args);
+        return { path: launchInfo.LaunchPath, cwd, args };
     }
 
     let monoInfo = await monoResolver.getGlobalMonoInfo(options);
 
     if (monoInfo) {
         const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
-        let childEnv = monoInfo.env;
+        let argsCopy = args.slice(0); // create copy of details args
+        argsCopy.unshift(launchPath);
+        argsCopy.unshift("--assembly-loader=strict");
+
+        if (options.waitForDebugger) {
+            argsCopy.unshift("--debug");
+            argsCopy.unshift("--debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55555");
+        }
+
         return {
-            ...launchNixMono(launchPath, cwd, args, childEnv, options.waitForDebugger),
+            path: 'mono',
+            cwd,
+            args: argsCopy,
             monoVersion: monoInfo.version,
-            monoPath: monoInfo.path
+            monoPath: monoInfo.path ?? 'mono',
+            monoEnv: monoInfo.env
+        }
+    }
+    else {
+        return {
+            path: launchInfo.LaunchPath,
+            cwd,
+            args
+        };
+    }
+}
+
+async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IMonoResolver): Promise<LaunchResult> {
+    const configureResults = await configure(cwd, args, launchInfo, platformInfo, options, monoResolver);
+    return coreLaunch(platformInfo, configureResults);
+}
+
+function isMonoConfig(configuration: ObservedValueOf<ReturnType<typeof configure>>) {
+    return !!configuration.monoPath;
+}
+
+function coreLaunch(platformInfo: PlatformInformation, configuration: ObservedValueOf<ReturnType<typeof configure>>) {
+    const { cwd, args, path } = configuration;
+
+    if (platformInfo.isWindows()) {
+        return launchWindows(path, cwd, args);
+    }
+
+    if (isMonoConfig(configuration)) {
+
+        return {
+            ...launchNixMono(configuration.monoPath, cwd, args, configuration.monoEnv),
+            monoVersion: configuration.monoVersion,
+            monoPath: configuration.monoPath
         };
     }
     else {
-        return launchNix(launchInfo.LaunchPath, cwd, args);
+        return launchNix(path, cwd, args);
     }
 }
 
@@ -354,17 +397,8 @@ function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResul
     };
 }
 
-function launchNixMono(launchPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv, useDebugger: boolean): LaunchResult {
-    let argsCopy = args.slice(0); // create copy of details args
-    argsCopy.unshift(launchPath);
-    argsCopy.unshift("--assembly-loader=strict");
-
-    if (useDebugger) {
-        argsCopy.unshift("--debug");
-        argsCopy.unshift("--debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55555");
-    }
-
-    let process = spawn('mono', argsCopy, {
+function launchNixMono(launchPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv): LaunchResult {
+    let process = spawn('mono', args, {
         detached: false,
         cwd: cwd,
         env: environment

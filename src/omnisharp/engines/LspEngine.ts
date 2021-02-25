@@ -5,7 +5,7 @@
 
 import * as protocol from '../protocol';
 import { CancellationToken } from '../../vscodeAdapter';
-import { LaunchTarget } from '../launcher';
+import { configure, LaunchTarget } from '../launcher';
 import { EventEmitter } from 'events';
 import { LaunchInfo } from '../OmnisharpManager';
 import { Options } from '../options';
@@ -36,6 +36,8 @@ import {
     DocumentOnTypeFormattingRequest,
     RenameRequest,
     DocumentLinkRequest,
+    // ErrorAction,
+    // CloseAction,
 } from 'vscode-languageclient';
 import {
     ExtensionContext,
@@ -58,6 +60,8 @@ import {
 import { LanguageMiddlewareFeature } from '../LanguageMiddlewareFeature';
 import { Events } from '../server';
 import { IEngine } from './IEngine';
+import { PlatformInformation } from '../../platform';
+import { IMonoResolver } from '../../constants/IMonoResolver';
 
 export class LspEngine implements IEngine {
     client: LanguageClient;
@@ -67,7 +71,9 @@ export class LspEngine implements IEngine {
         private context: ExtensionContext,
         private outputChannel: OutputChannel,
         private disposables: CompositeDisposable,
-        private languageMiddlewareFeature: LanguageMiddlewareFeature
+        private languageMiddlewareFeature: LanguageMiddlewareFeature,
+        private platformInfo: PlatformInformation,
+        private monoResolver: IMonoResolver,
     ) {}
     public async start(
         cwd: string,
@@ -76,19 +82,18 @@ export class LspEngine implements IEngine {
         launchInfo: LaunchInfo,
         options: Options
     ): Promise<void> {
+        const configuration =  await configure(cwd, ['-lsp'].concat(args), launchInfo, this.platformInfo, options, this.monoResolver);
         let serverOptions: ServerOptions = {
             run: {
-                command: launchInfo.MonoLaunchPath ?? launchInfo.LaunchPath,
-                args: ['-lsp'].concat(args),
+                command: configuration.path,
+                args: configuration.args,
                 options: {
-                    cwd,
+                    cwd: configuration.cwd,
                 },
             },
             debug: {
-                command: launchInfo.MonoLaunchPath ?? launchInfo.LaunchPath,
-                // Sometimes you might want to disable -d if you're just debugging the extension and not the server
-                //args: ['-lsp'].concat(args),
-                args: ["-d", "-lsp"].concat(args),
+                command: configuration.path,
+                args: configuration.args.concat('-d'),
                 options: {
                     cwd,
                 },
@@ -98,6 +103,14 @@ export class LspEngine implements IEngine {
         const languageMiddlewareFeature = this.languageMiddlewareFeature;
 
         let clientOptions: LanguageClientOptions = {
+            // errorHandler: {
+            //     error(error, message, count) {
+            //         return ErrorAction.Continue;
+            //     },
+            //     closed() {
+            //         return CloseAction.Restart;
+            //     }
+            // },
             diagnosticCollectionName: 'csharp',
             progressOnInitialization: true,
             outputChannel: this.outputChannel,
@@ -231,7 +244,7 @@ export class LspEngine implements IEngine {
         this.disposables.add(disposable);
         this.context.subscriptions.push(disposable);
         this.eventStream.post(
-            new ObservableEvents.OmnisharpLaunch('', '', '', -1)
+            new ObservableEvents.OmnisharpLaunch(configuration.monoVersion ?? '', configuration.monoPath, configuration.monoPath ?? configuration.path, -1)
         );
         return this.client.onReady();
     }

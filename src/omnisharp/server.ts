@@ -272,7 +272,9 @@ export class OmniSharpServer {
                 this.context,
                 this.outputChannel,
                 disposables,
-                this.languageMiddlewareFeature
+                this.languageMiddlewareFeature,
+                this.platformInfo,
+                this.monoResolver
             );
         } else {
             this._engine = new StdioEngine(
