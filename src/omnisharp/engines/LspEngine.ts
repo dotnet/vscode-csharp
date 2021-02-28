@@ -82,20 +82,22 @@ export class LspEngine implements IEngine {
         launchInfo: LaunchInfo,
         options: Options
     ): Promise<void> {
-        const configuration =  await configure(cwd, ['-lsp'].concat(args), launchInfo, this.platformInfo, options, this.monoResolver);
+        const configuration = await configure(cwd, ['-lsp', '--encoding', 'ascii'].concat(args), launchInfo, this.platformInfo, options, this.monoResolver);
         let serverOptions: ServerOptions = {
             run: {
                 command: configuration.path,
                 args: configuration.args,
                 options: {
                     cwd: configuration.cwd,
+                    env: configuration.env
                 },
             },
             debug: {
                 command: configuration.path,
-                args: configuration.args.concat('-d'),
+                args: configuration.args,//.concat('-d'),
                 options: {
                     cwd,
+                    env: configuration.env
                 },
             },
         };

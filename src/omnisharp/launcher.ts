@@ -284,7 +284,7 @@ export async function configure(cwd: string, args: string[], launchInfo: LaunchI
     }
 
     if (platformInfo.isWindows()) {
-        return { path: launchInfo.LaunchPath, cwd, args };
+        return { path: launchInfo.LaunchPath, cwd, args, env: process.env };
     }
 
     let monoInfo = await monoResolver.getGlobalMonoInfo(options);
@@ -306,14 +306,15 @@ export async function configure(cwd: string, args: string[], launchInfo: LaunchI
             args: argsCopy,
             monoVersion: monoInfo.version,
             monoPath: monoInfo.path ?? 'mono',
-            monoEnv: monoInfo.env
-        }
+            env: monoInfo.env,
+        };
     }
     else {
         return {
             path: launchInfo.LaunchPath,
             cwd,
-            args
+            args,
+            env: process.env,
         };
     }
 }
@@ -337,7 +338,7 @@ function coreLaunch(platformInfo: PlatformInformation, configuration: ObservedVa
     if (isMonoConfig(configuration)) {
 
         return {
-            ...launchNixMono(configuration.monoPath, cwd, args, configuration.monoEnv),
+            ...launchNixMono(configuration.monoPath, cwd, args, configuration.env),
             monoVersion: configuration.monoVersion,
             monoPath: configuration.monoPath
         };

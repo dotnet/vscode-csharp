@@ -351,8 +351,6 @@ export class OmniSharpServer {
             '--hostPID',
             process.pid.toString(),
             'DotNet:enablePackageRestore=false',
-            '--encoding',
-            'utf-8',
             '--loglevel',
             options.loggingLevel,
         ];

@@ -126,7 +126,7 @@ export class StdioEngine implements IEngine {
     ): Promise<void> {
         const launchResult = await launchOmniSharp(
             cwd,
-            args,
+            args.concat('--encoding', 'utf-8'),
             launchInfo,
             this.platformInfo,
             options,
