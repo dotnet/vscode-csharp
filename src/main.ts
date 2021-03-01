@@ -224,11 +224,11 @@ function isSupportedPlatform(platform: PlatformInformation): boolean {
 }
 
 async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, installDependencies: IInstallDependencies): Promise<boolean> {
-    await activateSdkExtension(eventStream);
+    await activateSdkExtension(eventStream, platformInfo);
     return installRuntimeDependencies(extension.packageJSON, extension.extensionPath, installDependencies, eventStream, platformInfo);
 }
 
-async function activateSdkExtension(eventStream: EventStream) {
+async function activateSdkExtension(eventStream: EventStream, platformInfo: PlatformInformation) {
     const sdkExtension = vscode.extensions.getExtension("ms-dotnettools.vscode-dotnet-sdk");
     if (sdkExtension !== undefined) {
         // Activate extension.
@@ -237,7 +237,16 @@ async function activateSdkExtension(eventStream: EventStream) {
         // Ensure SDK is installed.
         eventStream.post(new PackageInstallation(".NET 5.0 SDK"));
         const aquisitionResult = await vscode.commands.executeCommand<{ dotnetPath: string }>('dotnet-sdk.acquire', { version: '5.0' });
-        const result = aquisitionResult.dotnetPath?.length > 0
+
+        const success = aquisitionResult.dotnetPath?.length > 0;
+        if (success) {
+            const separator = platformInfo.isWindows
+                ? ";"
+                : ":";
+            process.env.PATH += separator + aquisitionResult.dotnetPath;
+        }
+
+        const result = success
             ? new InstallationSuccess()
             : new InstallationFailure("Aquisition", "Select '.NET SDK' from the Output pane for more details.");
         eventStream.post(result);
