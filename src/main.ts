@@ -7,6 +7,7 @@ import * as OmniSharp from './omnisharp/extension';
 import * as coreclrdebug from './coreclr-debug/activate';
 import * as util from './common';
 import * as vscode from 'vscode';
+import * as path from 'path';
 
 import { ActivationFailure, ActiveTextEditorChanged, InstallationFailure, InstallationSuccess, PackageInstallation } from './omnisharp/loggingEvents';
 import { WarningMessageObserver } from './observers/WarningMessageObserver';
@@ -153,7 +154,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
     let networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
     let installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload);
-    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo, installDependencies);
+    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, context.environmentVariableCollection, eventStream, platformInfo, installDependencies);
 
     // Prompt to authorize decompilation in this workspace
     await getDecompilationAuthorization(context, optionProvider);
@@ -223,27 +224,35 @@ function isSupportedPlatform(platform: PlatformInformation): boolean {
     return false;
 }
 
-async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, installDependencies: IInstallDependencies): Promise<boolean> {
-    await activateSdkExtension(eventStream, platformInfo);
+async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, environmentVariables: vscode.EnvironmentVariableCollection, eventStream: EventStream, platformInfo: PlatformInformation, installDependencies: IInstallDependencies): Promise<boolean> {
+    await activateSdkExtension(environmentVariables, eventStream);
     return installRuntimeDependencies(extension.packageJSON, extension.extensionPath, installDependencies, eventStream, platformInfo);
 }
 
-async function activateSdkExtension(eventStream: EventStream, platformInfo: PlatformInformation) {
+async function activateSdkExtension(environmentVariables: vscode.EnvironmentVariableCollection, eventStream: EventStream) {
     const sdkExtension = vscode.extensions.getExtension("ms-dotnettools.vscode-dotnet-sdk");
     if (sdkExtension !== undefined) {
-        // Activate extension.
+        // Activate SDK extension.
         await sdkExtension.activate();
 
         // Ensure SDK is installed.
         eventStream.post(new PackageInstallation(".NET 5.0 SDK"));
-        const aquisitionResult = await vscode.commands.executeCommand<{ dotnetPath: string }>('dotnet-sdk.acquire', { version: '5.0' });
+        const aquisitionResult = await vscode.commands.executeCommand<{ dotnetPath: string }>('dotnet-sdk.acquire', { version: '5.0', requestingExtensionId: 'ms-dotnettools.csharp' });
 
         const success = aquisitionResult.dotnetPath?.length > 0;
         if (success) {
-            const separator = platformInfo.isWindows
-                ? ";"
-                : ":";
-            process.env.PATH += separator + aquisitionResult.dotnetPath;
+            const dotnetDirectory = path.dirname(aquisitionResult.dotnetPath);
+
+            // Determine if dotnet path should be added to the Environment Path.
+            if (!process.env.PATH.includes(dotnetDirectory)) {
+                const appendDotnetPath = path.delimiter + dotnetDirectory;
+
+                // Updates VS Code terminal instances and tasks with type 'shell'.
+                environmentVariables.append("PATH", appendDotnetPath);
+
+                // Updates processes started by this extension
+                process.env.PATH += appendDotnetPath;
+            }
         }
 
         const result = success
