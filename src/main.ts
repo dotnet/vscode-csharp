@@ -8,7 +8,7 @@ import * as coreclrdebug from './coreclr-debug/activate';
 import * as util from './common';
 import * as vscode from 'vscode';
 
-import { ActivationFailure, ActiveTextEditorChanged } from './omnisharp/loggingEvents';
+import { ActivationFailure, ActiveTextEditorChanged, InstallationFailure, InstallationSuccess, PackageInstallation } from './omnisharp/loggingEvents';
 import { WarningMessageObserver } from './observers/WarningMessageObserver';
 import { CsharpChannelObserver } from './observers/CsharpChannelObserver';
 import { CsharpLoggerObserver } from './observers/CsharpLoggerObserver';
@@ -224,6 +224,22 @@ function isSupportedPlatform(platform: PlatformInformation): boolean {
 }
 
 async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, installDependencies: IInstallDependencies): Promise<boolean> {
+    await activateSdkExtension(eventStream);
     return installRuntimeDependencies(extension.packageJSON, extension.extensionPath, installDependencies, eventStream, platformInfo);
 }
 
+async function activateSdkExtension(eventStream: EventStream) {
+    const sdkExtension = vscode.extensions.getExtension("ms-dotnettools.vscode-dotnet-sdk");
+    if (sdkExtension !== undefined) {
+        // Activate extension.
+        await sdkExtension.activate();
+
+        // Ensure SDK is installed.
+        eventStream.post(new PackageInstallation(".NET 5.0 SDK"));
+        const aquisitionResult = await vscode.commands.executeCommand<{ dotnetPath: string }>('dotnet-sdk.acquire', { version: '5.0' });
+        const result = aquisitionResult.dotnetPath?.length > 0
+            ? new InstallationSuccess()
+            : new InstallationFailure("Aquisition", "Select '.NET SDK' from the Output pane for more details.");
+        eventStream.post(result);
+    }
+}
