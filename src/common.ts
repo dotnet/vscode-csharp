@@ -44,7 +44,7 @@ export async function buildPromiseChain<T, TResult>(array: T[], builder: (item: 
 
 export async function execChildProcess(command: string, workingDirectory: string = getExtensionPath()): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-        cp.exec(command, { cwd: workingDirectory, maxBuffer: 500 * 1024 }, (error, stdout, stderr) => {
+        cp.exec(command, { cwd: workingDirectory, maxBuffer: 500 * 1024, env: process.env }, (error, stdout, stderr) => {
             if (error) {
                 reject(error);
             }
