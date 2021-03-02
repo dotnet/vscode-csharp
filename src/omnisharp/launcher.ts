@@ -329,28 +329,26 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
         '"' + argsCopy.map(escapeIfNeeded).join(' ') + '"'
     ].join(' ')];
 
-    let omniSharpProcess = spawn('cmd', argsCopy, {
+    let process = spawn('cmd', argsCopy, {
         windowsVerbatimArguments: true,
         detached: false,
-        cwd: cwd,
-        env: process.env
+        cwd: cwd
     });
 
     return {
-        process: omniSharpProcess,
+        process,
         command: launchPath,
     };
 }
 
 function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResult {
-    let omniSharpProcess = spawn(launchPath, args, {
+    let process = spawn(launchPath, args, {
         detached: false,
-        cwd: cwd,
-        env: process.env
+        cwd: cwd
     });
 
     return {
-        process: omniSharpProcess,
+        process,
         command: launchPath
     };
 }
@@ -365,14 +363,14 @@ function launchNixMono(launchPath: string, cwd: string, args: string[], environm
         argsCopy.unshift("--debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55555");
     }
 
-    let omniSharpProcess = spawn('mono', argsCopy, {
+    let process = spawn('mono', argsCopy, {
         detached: false,
         cwd: cwd,
         env: environment
     });
 
     return {
-        process: omniSharpProcess,
+        process,
         command: launchPath
     };
 }
