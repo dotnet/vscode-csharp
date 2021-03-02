@@ -1,11 +1,5 @@
 ## C# for Visual Studio Code (powered by OmniSharp)
 
-|                                                                     Master                                                                     |                                                                     Release                                                                      |
-| :--------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------: |
-| [![Master Build Status](https://travis-ci.org/OmniSharp/omnisharp-vscode.svg?branch=master)](https://travis-ci.org/OmniSharp/omnisharp-vscode) | [![Release Build Status](https://travis-ci.org/OmniSharp/omnisharp-vscode.svg?branch=release)](https://travis-ci.org/OmniSharp/omnisharp-vscode) |
-
-[![Wallaby.js](https://img.shields.io/badge/wallaby.js-configured-green.svg)](https://wallabyjs.com)
-
 Welcome to the C# extension for Visual Studio Code! This extension provides the following features inside VS Code:
 
 -   Lightweight development tools for [.NET Core](https://dotnet.github.io).
@@ -33,6 +27,43 @@ The .NET 5 SDK requires version 16.8 of MSBuild.
 For Windows users who have Visual Studio installed, this means you will need to be on the latest Visual Studio 16.8 Preview.
 For MacOS and Linux users who have Mono installed, this means you will need to set `omnisharp.useGlobalMono` to `never` until a version of Mono ships with MSBuild 16.8.
 
+## What's new in 1.23.9
+- Add option to organize imports during document formatting. (PR: [#4302](https://github.com/OmniSharp/omnisharp-vscode/pull/4302))
+- Update to use zero based indexes (PR: [#4300](https://github.com/OmniSharp/omnisharp-vscode/pull/4300))
+- Improve request queues to improve code completion performance (PR: [#4310](https://github.com/OmniSharp/omnisharp-vscode/pull/4310))
+- Add setting to control whether to show the OmniSharp log on error ([#4102](https://github.com/OmniSharp/omnisharp-vscode/issues/4102), [#4330](https://github.com/OmniSharp/omnisharp-vscode/issues/4330), PR: [#4333](https://github.com/OmniSharp/omnisharp-vscode/pull/4333))
+- Support building launch assets for NET6-NET9 projects ([#4346](https://github.com/OmniSharp/omnisharp-vscode/issues/4346), PR: [#4349](https://github.com/OmniSharp/omnisharp-vscode/pull/4349))
+- Add debugger support for Concord extensions. See the [ConcordExtensibilitySamples wiki](https://github.com/microsoft/ConcordExtensibilitySamples/wiki/Support-for-cross-platform-.NET-scenarios) for more information.
+- Update OmniSharp version to 1.37.6
+  - Handle records in syntax highlighting ([#2048](https://github.com/OmniSharp/omnisharp-roslyn/issues/2048), PR: [#2049](https://github.com/OmniSharp/omnisharp-roslyn/pull/2049))
+  - Remove formatting on new line (PR: [#2053](https://github.com/OmniSharp/omnisharp-roslyn/pull/2053))
+  - Validate highlighting ranges in semantic highlighting requests (PR: [#2055](https://github.com/OmniSharp/omnisharp-roslyn/pull/2055))
+  - Delay project system init to avoid solution update race (PR: [#2057](https://github.com/OmniSharp/omnisharp-roslyn/pull/2057))
+  - Use "variable" kind for parameter completion ([#2060](https://github.com/OmniSharp/omnisharp-roslyn/issues/2060), PR: [#2061](https://github.com/OmniSharp/omnisharp-roslyn/pull/2061))
+  - Log request when response fails ([#2064](https://github.com/OmniSharp/omnisharp-roslyn/pull/2064))
+
+## What's new in 1.23.8
+-   Updated Debugger support (PR: [#4281](https://github.com/OmniSharp/omnisharp-vscode/pull/4281))
+    -   Updated the version of .NET that the debugger uses for running its own C# code to .NET 5
+    -   Updated .NET debugging services loader to address problem with debugging after installing XCode12 ([dotnet/runtime/#42311](https://github.com/dotnet/runtime/issues/42311))
+    -   Fixed integrated terminal on non-Windows ([#4203](https://github.com/OmniSharp/omnisharp-vscode/issues/4203))
+-   Updated Razor support (PR: [#4278](https://github.com/OmniSharp/omnisharp-vscode/pull/4278))
+    -   Bug fixes
+-   Update OmniSharp version to 1.37.5 (PR: [#4299](https://github.com/OmniSharp/omnisharp-vscode/pull/4299))
+    -   Update Roslyn version to 3.9.0-2.20570.24 (PR: [omnisharp-roslyn#2022](https://github.com/OmniSharp/omnisharp-roslyn/pull/2022))
+    -   Editorconfig improvements - do not lose state, trigger re-analysis on change ([omnisharp-roslyn#1955](https://github.com/OmniSharp/omnisharp-roslyn/issues/1955), [#4165](https://github.com/OmniSharp/omnisharp-vscode/issues/4165), [#4184](https://github.com/OmniSharp/omnisharp-vscode/issues/4184), PR: [omnisharp-roslyn#2028](https://github.com/OmniSharp/omnisharp-roslyn/pull/2028))
+    -   Add documentation comment creation to the FormatAfterKeystrokeService (PR: [omnisharp-roslyn#2023](https://github.com/OmniSharp/omnisharp-roslyn/pull/2023))
+    -   Raise default GotoDefinitionRequest timeout from 2s to 10s ([#4260](https://github.com/OmniSharp/omnisharp-vscode/issues/4260), PR: [omnisharp-roslyn#2032](https://github.com/OmniSharp/omnisharp-roslyn/pull/2032))
+    -   Workspace create file workaround (PR: [omnisharp-roslyn#2019](https://github.com/OmniSharp/omnisharp-roslyn/pull/2019))
+    -   Added `msbuild:UseBundledOnly` option to force the usage of bundled MSBuild (PR: [omnisharp-roslyn#2038](https://github.com/OmniSharp/omnisharp-roslyn/pull/2038))
+-   Support auto doc comment generation ([#8](https://github.com/OmniSharp/omnisharp-vscode/issues/8), PR: [#4261](https://github.com/OmniSharp/omnisharp-vscode/pull/4261))
+-   Add schema support for appsettings.json ([#4279](https://github.com/OmniSharp/omnisharp-vscode/issues/4279), PR: [#4280](https://github.com/OmniSharp/omnisharp-vscode/pull/4280))
+-   Add schema support for global.json (PR: [#4290](https://github.com/OmniSharp/omnisharp-vscode/pull/4290))
+-   Update remoteProcessPickerScript windows ssh exit ([#3482](https://github.com/OmniSharp/omnisharp-vscode/issues/3482), PR: [#4225](https://github.com/OmniSharp/omnisharp-vscode/pull/4225))
+-   Do not start OmniSharp server in Live Share scenarios ([#3910](https://github.com/OmniSharp/omnisharp-vscode/issues/3910), PR: [#4038](https://github.com/OmniSharp/omnisharp-vscode/pull/4038))
+-   Suppress codelens for IEnumerable.GetEnumerator ([#4245](https://github.com/OmniSharp/omnisharp-vscode/issues/4245), PR: [#4246](https://github.com/OmniSharp/omnisharp-vscode/pull/4246))
+-   Allow arm64 MacOS to debug dotnet projects ([#4277](https://github.com/OmniSharp/omnisharp-vscode/issues/4277), PR: [#4288](https://github.com/OmniSharp/omnisharp-vscode/pull/4288))
+
 ## What's new in 1.23.7
 -   Update OmniSharp version to 1.37.4 (PR: [#4224](https://github.com/OmniSharp/omnisharp-vscode/pull/4224))
     -   Fixed global Mono MSBuild version reporting (PR: [omnisharp-roslyn#1988](https://github.com/OmniSharp/omnisharp-roslyn/pull/1988))
@@ -48,26 +79,6 @@ For MacOS and Linux users who have Mono installed, this means you will need to s
 -   Update remoteProcessPickerScript windows ssh exit (PR: [#4225](https://github.com/OmniSharp/omnisharp-vscode/pull/4225))
 -   Only suppress file changed notifications for C# files ([#4178](https://github.com/OmniSharp/omnisharp-vscode/pull/4178), PR: [#4230](https://github.com/OmniSharp/omnisharp-vscode/pull/4230))
 -   Suppress codelens for IEnumerable.GetEnumerator ([#4245](https://github.com/OmniSharp/omnisharp-vscode/issues/4245), PR: [#4246](https://github.com/OmniSharp/omnisharp-vscode/pull/4246))
-
-## What's new in 1.23.6
--   Do not call updateBuffer if there are no changes. (PR: [#4170](https://github.com/OmniSharp/omnisharp-vscode/pull/4170))
--   Only skip file changed events when document is open. (PR: [#4178](https://github.com/OmniSharp/omnisharp-vscode/pull/4178))
-
-## What's new in 1.23.5
--   Set meaning of UseGlobalMono "auto" to "never" since Mono 6.12.0 still ships with MSBuild 16.7 (PR: [#4130](https://github.com/OmniSharp/omnisharp-vscode/pull/4130))
--   Ensure that the rename identifier and run code action providers do not apply changes twice (PR: [#4133](https://github.com/OmniSharp/omnisharp-vscode/pull/4133))
--   Do not send file changed events for .cs files (PR: [#4141](https://github.com/OmniSharp/omnisharp-vscode/pull/4141))
--   Update Razor to 6.0.0-alpha1.20521.3:
-    -   Improvements to HTML colorization for non-C# portions of the document.
-    -   Bug fix - the `razor.format.enable` option is honored again
-
-## What's new in 1.23.4
--   Use incremental changes to update language server (PR: [#4088](https://github.com/OmniSharp/omnisharp-vscode/pull/4088))
--   Set meaning of UseGlobalMono "auto" to "always" now that Mono 6.12.0 ships with MSBuild 16.8 (PR: [#4115](https://github.com/OmniSharp/omnisharp-vscode/pull/4115))
--   Updated OmniSharp to 1.37.3
-    -   Fixed a bug when the server wouldn't start on MacOS/Linux when a username contained a space (PR: [omnisharp-roslyn/#1979](https://github.com/OmniSharp/omnisharp-roslyn/pull/1979))
-    -   Update to Mono 6.12.0 (PR: [omnisharp-roslyn/#1981](https://github.com/OmniSharp/omnisharp-roslyn/pull/1981))
-    -   Fix responsiveness regression with targeted DiagnosticWorker revert ([omnisharp-roslyn/#1982](https://github.com/OmniSharp/omnisharp-roslyn/issues/1982), [omnisharp-roslyn/#1983](https://github.com/OmniSharp/omnisharp-roslyn/issues/1983), PR: [omnisharp-roslyn/#1984](https://github.com/OmniSharp/omnisharp-roslyn/pull/1984))
 
 ### Emmet support in Razor files
 

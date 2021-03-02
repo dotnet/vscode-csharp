@@ -20,7 +20,8 @@ const omniSharpOptions: ReadonlyArray<OptionsKey> = [
     "loggingLevel",
     "enableEditorConfigSupport",
     "enableDecompilationSupport",
-    "enableImportCompletion"
+    "enableImportCompletion",
+    "organizeImportsOnFormat",
 ];
 
 function OmniSharpOptionChangeObservable(optionObservable: Observable<Options>): Observable<Options> {

@@ -25,7 +25,7 @@ abstract class OmniSharpCodeLens extends vscode.CodeLens {
         public fileName: string) {
 
         super(new vscode.Range(
-            range.Start.Line - 1, range.Start.Column - 1, range.End.Line - 1, range.End.Column - 1
+            range.Start.Line, range.Start.Column, range.End.Line, range.End.Column
         ));
     }
 }
@@ -115,8 +115,8 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
     private async resolveReferencesCodeLens(codeLens: ReferencesCodeLens, token: vscode.CancellationToken): Promise<vscode.CodeLens> {
         const request: protocol.FindUsagesRequest = {
             FileName: codeLens.fileName,
-            Line: codeLens.range.start.line + 1, // OmniSharp is 1-based
-            Column: codeLens.range.start.character + 1, // OmniSharp is 1-based
+            Line: codeLens.range.start.line,
+            Column: codeLens.range.start.character,
             OnlyThisFile: false,
             ExcludeDefinition: true
         };

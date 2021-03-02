@@ -13,7 +13,8 @@ const priorityCommands = [
 ];
 
 const normalCommands = [
-    protocol.Requests.AutoComplete,
+    protocol.Requests.Completion,
+    protocol.Requests.CompletionResolve,
     protocol.Requests.FilesChanged,
     protocol.Requests.FindSymbols,
     protocol.Requests.FindUsages,

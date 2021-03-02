@@ -43,6 +43,9 @@ async function checkForInvalidArchitecture(platformInformation: PlatformInformat
         else if (platformInformation.architecture !== "x86_64") {
             if (platformInformation.isWindows() && platformInformation.architecture === "x86") {
                 eventStream.post(new DebuggerPrerequisiteWarning(`[WARNING]: x86 Windows is not currently supported by the .NET Core debugger. Debugging will not be available.`));
+            } else if (platformInformation.isMacOS() && platformInformation.architecture === "arm64") {
+                eventStream.post(new DebuggerPrerequisiteWarning(`[WARNING]: arm64 macOS is not officially supported by the .NET Core debugger. You may experience unexpected issues when running in this configuration.`));
+                return false;
             } else {
                 eventStream.post(new DebuggerPrerequisiteWarning(`[WARNING]: Processor architecture '${platformInformation.architecture}' is not currently supported by the .NET Core debugger. Debugging will not be available.`));
             }

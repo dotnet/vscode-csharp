@@ -12,13 +12,13 @@ export function toLocation(location: protocol.ResourceLocation | protocol.QuickF
 }
 
 export function toLocationFromUri(uri: vscode.Uri, location: protocol.ResourceLocation | protocol.QuickFix): vscode.Location {
-    const position = new vscode.Position(location.Line - 1, location.Column - 1);
+    const position = new vscode.Position(location.Line, location.Column);
 
     const endLine = (<protocol.QuickFix>location).EndLine;
     const endColumn = (<protocol.QuickFix>location).EndColumn;
 
     if (endLine !== undefined && endColumn !== undefined) {
-        const endPosition = new vscode.Position(endLine - 1, endColumn - 1);
+        const endPosition = new vscode.Position(endLine, endColumn);
         return new vscode.Location(uri, new vscode.Range(position, endPosition));
     }
 
@@ -40,7 +40,7 @@ export function toRange3(range: protocol.V2.Range): vscode.Range {
 }
 
 export function toVSCodeRange(StartLine: number, StartColumn: number, EndLine: number, EndColumn: number): vscode.Range {
-    return new vscode.Range(StartLine - 1, StartColumn - 1, EndLine - 1, EndColumn - 1);
+    return new vscode.Range(StartLine, StartColumn, EndLine, EndColumn);
 }
 
 export function createRequest<T extends protocol.Request>(document: vscode.TextDocument, where: vscode.Position | vscode.Range, includeBuffer: boolean = false): T {
@@ -48,11 +48,11 @@ export function createRequest<T extends protocol.Request>(document: vscode.TextD
     let Line: number, Column: number;
 
     if (where instanceof vscode.Position) {
-        Line = where.line + 1;
-        Column = where.character + 1;
+        Line = where.line;
+        Column = where.character;
     } else if (where instanceof vscode.Range) {
-        Line = where.start.line + 1;
-        Column = where.start.character + 1;
+        Line = where.start.line;
+        Column = where.start.character;
     }
 
     // for metadata sources, we need to remove the [metadata] from the filename, and prepend the $metadata$ authority

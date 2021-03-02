@@ -80,7 +80,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
     let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
     let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel);
-    let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel);
+    let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel, vscode);
     eventStream.subscribe(omnisharpLogObserver.post);
     eventStream.subscribe(omnisharpChannelObserver.post);
 
@@ -125,7 +125,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     if (!isSupportedPlatform(platformInfo)) {
         const platform: string = platformInfo.platform ? platformInfo.platform : "this platform";
         const architecture: string = platformInfo.architecture ? platformInfo.architecture : " and <unknown processor architecture>";
-        let errorMessage: string = `The C# extension for Visual Studio Code (powered by OmniSharp) is incompatiable on ${platform} ${architecture}`;
+        let errorMessage: string = `The C# extension for Visual Studio Code (powered by OmniSharp) is incompatible on ${platform} ${architecture}`;
         const messageOptions: vscode.MessageOptions = {
         };
 
