@@ -11,8 +11,15 @@
 * Renaming symbol fails within a file that had recently been renamed without saving changes.
   * As a workaround, make an edit within the file before using Rename Symbol.
 
+## 1.23.12 (Not yet released)
+* Debugger changes:
+  * Added support for osx-arm64 debugging ([#4390](https://github.com/OmniSharp/omnisharp-vscode/issues/4390))
+  * Added support for exception conditions. See [documentation](https://aka.ms/VSCode-CS-ExceptionSettings) for more information ([#4356](https://github.com/OmniSharp/omnisharp-vscode/issues/4356)).
+  * Fixed an issue with character encoding for multi-byte characters written to the debug console ([#4398](https://github.com/OmniSharp/omnisharp-vscode/issues/4398))
+
 ## 1.23.11 (April 9, 2021)
 * Move the global Mono check to the correct place ([#4489](https://github.com/OmniSharp/omnisharp-vscode/issues/4489), PR: [#4492](https://github.com/OmniSharp/omnisharp-vscode/pull/4492))
+
 ## 1.23.10 (April 9, 2021)
 * Support solution filters (*.slnf) (PR: [#4481](https://github.com/OmniSharp/omnisharp-vscode/pull/4481))
 * Prompt user to install Blazor WASM companion extension if needed (PR: [#4392](https://github.com/OmniSharp/omnisharp-vscode/pull/4392))
