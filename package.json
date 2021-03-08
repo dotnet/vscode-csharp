@@ -739,7 +739,7 @@
           ],
           "default": null,
           "scope": "machine",
-          "description": "Specifies the path to a mono installation to use when \"useGlobalMono\" is set to \"always\" or \"auto\", instead of the default system one."
+          "description": "Specifies the path to a mono installation to use when \"useGlobalMono\" is set to \"always\", instead of the default system one. Example: \"/Library/Frameworks/Mono.framework/Versions/Current\""
         },
         "omnisharp.waitForDebugger": {
           "type": "boolean",
