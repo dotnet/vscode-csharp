@@ -3263,6 +3263,37 @@
                     "default": true
                   }
                 }
+              },
+              "justMyCode": {
+                "type": "boolean",
+                "description": "Optional flag to only show user code.",
+                "default": true
+              },
+              "sourceFileMap": {
+                "type": "object",
+                "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "default": {
+                  "<insert-source-path-here>": "<insert-target-path-here>"
+                }
+              },
+              "browserConfig": {
+                "description": "Options based to the underlying JavaScript debugger. For more info, see https://github.com/microsoft/vscode-js-debug/blob/master/OPTIONS.md.",
+                "type": "object",
+                "required": [],
+                "default": {},
+                "properties": {
+                  "outputCapture": {
+                    "enum": [
+                      "console",
+                      "std"
+                    ],
+                    "description": "From where to capture output messages: the default debug API if set to `console`, or stdout/stderr streams if set to `std`.",
+                    "default": "console"
+                  }
+                }
               }
             }
           },
