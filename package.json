@@ -3264,19 +3264,27 @@
                   }
                 }
               },
-              "justMyCode": {
-                "type": "boolean",
-                "description": "Optional flag to only show user code.",
-                "default": true
-              },
-              "sourceFileMap": {
+              "dotNetConfig": {
+                "description": "Options passed to the underlying .NET debugger. For more info, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger.md.",
                 "type": "object",
-                "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
-                "additionalProperties": {
-                  "type": "string"
-                },
-                "default": {
-                  "<insert-source-path-here>": "<insert-target-path-here>"
+                "required": [],
+                "default": {},
+                "properties": {
+                  "justMyCode": {
+                    "type": "boolean",
+                    "description": "Optional flag to only show user code.",
+                    "default": true
+                  },
+                  "sourceFileMap": {
+                    "type": "object",
+                    "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "default": {
+                      "<insert-source-path-here>": "<insert-target-path-here>"
+                    }
+                  }
                 }
               },
               "browserConfig": {
