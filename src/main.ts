@@ -148,6 +148,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         return null;
     }
 
+    await tryAddDotNetToPath();
+
     let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter);
     eventStream.subscribe(telemetryObserver.post);
 
@@ -227,3 +229,24 @@ async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExten
     return installRuntimeDependencies(extension.packageJSON, extension.extensionPath, installDependencies, eventStream, platformInfo);
 }
 
+async function tryAddDotNetToPath() {
+    const sdkExtension = vscode.extensions.getExtension("ms-dotnettools.vscode-dotnet-pack");
+    if (sdkExtension) {
+        try {
+            if (!sdkExtension.isActive) {
+                await sdkExtension.activate();
+            }
+
+            // Invoking acquireStatus updates the process.env.PATH with the folder that contains the dotnet cli.
+            // This will allow child processes such as OmniSharp to use the dotnet cli.
+            const request = { version: '5.0', requestingExtensionId: 'ms-dotnettools.csharp' };
+            const statusResult = await vscode.commands.executeCommand<{ dotnetPath: string }>('dotnet-sdk.acquireStatus', request);
+
+            return statusResult.dotnetPath?.length > 0;
+        }
+        catch {
+        }
+    }
+
+    return false;
+}
