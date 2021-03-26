@@ -58,20 +58,7 @@
     "gulp": "gulp"
   },
   "nyc": {
-    "include": [
-      "src/**/*.ts",
-      "src/**/*.tsx"
-    ],
-    "extension": [
-      ".ts",
-      ".tsx"
-    ],
-    "require": [
-      "ts-node/register",
-      "source-map-support/register"
-    ],
-    "sourceMap": true,
-    "instrument": true
+    "extends": "@istanbuljs/nyc-config-typescript"
   },
   "dependencies": {
     "async-file": "2.0.2",
@@ -96,6 +83,7 @@
     "yauzl": "2.10.0"
   },
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "1.0.1",
     "@types/archiver": "2.1.2",
     "@types/chai": "4.1.7",
     "@types/chai-arrays": "1.0.2",
@@ -141,7 +129,7 @@
     "mock-http-server": "0.2.0",
     "natives": "1.1.6",
     "npm-run-all": "4.1.5",
-    "nyc": "^15.0.0",
+    "nyc": "15.0.1",
     "plist": "3.0.1",
     "remap-istanbul": "0.13.0",
     "source-map-support": "0.5.10",
