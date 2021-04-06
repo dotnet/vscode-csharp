@@ -22,10 +22,10 @@ jobs:
       with:
         dotnet-version: 3.1.x
 
-    - name: Install Node.js 12.x
+    - name: Install Node.js 15.x
       uses: actions/setup-node@v1
       with:
-        node-version: '12.x'
+        node-version: '15.x'
 
     - name: Install dependencies
       run: |
