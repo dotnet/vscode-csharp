@@ -100,7 +100,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
 
     private async _runCodeAction(req: protocol.V2.RunCodeActionRequest, token: vscode.CancellationToken): Promise<boolean | string | {}> {
 
-        return serverUtils.runCodeAction(this._server, req).then(response => {
+        return serverUtils.runCodeAction(this._server, req).then(async response => {
             if (response) {
                 return buildEditForResponse(response.Changes, this._languageMiddlewareFeature, token);
             }
