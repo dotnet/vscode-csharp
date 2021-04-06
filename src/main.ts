@@ -45,6 +45,7 @@ import { installRuntimeDependencies } from './InstallRuntimeDependencies';
 import { isValidDownload } from './packageManager/isValidDownload';
 import { BackgroundWorkStatusBarObserver } from './observers/BackgroundWorkStatusBarObserver';
 import { getDecompilationAuthorization } from './omnisharp/decompilationPrompt';
+import { getDotnetPackApi } from './DotNetPack';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -148,7 +149,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         return null;
     }
 
-    await tryAddDotNetToPath();
+    // If the dotnet bundle is installed, this will ensure the dotnet CLI is on the path.
+    await initializeDotnetPath();
 
     let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter);
     eventStream.subscribe(telemetryObserver.post);
@@ -229,24 +231,10 @@ async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExten
     return installRuntimeDependencies(extension.packageJSON, extension.extensionPath, installDependencies, eventStream, platformInfo);
 }
 
-async function tryAddDotNetToPath() {
-    const sdkExtension = vscode.extensions.getExtension("ms-dotnettools.vscode-dotnet-pack");
-    if (sdkExtension) {
-        try {
-            if (!sdkExtension.isActive) {
-                await sdkExtension.activate();
-            }
-
-            // Invoking acquireStatus updates the process.env.PATH with the folder that contains the dotnet cli.
-            // This will allow child processes such as OmniSharp to use the dotnet cli.
-            const request = { version: '5.0', requestingExtensionId: 'ms-dotnettools.csharp' };
-            const statusResult = await vscode.commands.executeCommand<{ dotnetPath: string }>('dotnet-sdk.acquireStatus', request);
-
-            return statusResult.dotnetPath?.length > 0;
-        }
-        catch {
-        }
+async function initializeDotnetPath() {
+    const dotnetPackApi = await getDotnetPackApi();
+    if (!dotnetPackApi) {
+        return null;
     }
-
-    return false;
+    return await dotnetPackApi.getDotnetPath();
 }
