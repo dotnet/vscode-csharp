@@ -29,7 +29,7 @@
     "dotnet"
   ],
   "defaults": {
-    "omniSharp": "1.37.6",
+    "omniSharp": "1.37.8",
     "razor": "6.0.0-alpha.1.20575.5"
   },
   "main": "./dist/extension",
@@ -58,20 +58,7 @@
     "gulp": "gulp"
   },
   "nyc": {
-    "include": [
-      "src/**/*.ts",
-      "src/**/*.tsx"
-    ],
-    "extension": [
-      ".ts",
-      ".tsx"
-    ],
-    "require": [
-      "ts-node/register",
-      "source-map-support/register"
-    ],
-    "sourceMap": true,
-    "instrument": true
+    "extends": "@istanbuljs/nyc-config-typescript"
   },
   "dependencies": {
     "async-file": "2.0.2",
@@ -92,10 +79,11 @@
     "tmp": "0.0.33",
     "vscode-debugprotocol": "1.33.0",
     "vscode-extension-telemetry": "0.1.6",
-    "vscode-languageserver-protocol": "^3.15.3",
+    "vscode-languageserver-protocol": "3.16.0",
     "yauzl": "2.10.0"
   },
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "1.0.1",
     "@types/archiver": "2.1.2",
     "@types/chai": "4.1.7",
     "@types/chai-arrays": "1.0.2",
@@ -113,7 +101,6 @@
     "@types/semver": "5.5.0",
     "@types/tmp": "0.0.33",
     "@types/unzipper": "^0.9.1",
-    "@types/vscode": "1.33.0",
     "@types/yauzl": "2.9.1",
     "archiver": "3.0.0",
     "async-child-process": "1.1.1",
@@ -141,7 +128,7 @@
     "mock-http-server": "0.2.0",
     "natives": "1.1.6",
     "npm-run-all": "4.1.5",
-    "nyc": "^15.0.0",
+    "nyc": "15.0.1",
     "plist": "3.0.1",
     "remap-istanbul": "0.13.0",
     "source-map-support": "0.5.10",
@@ -153,49 +140,49 @@
     "typescript": "^3.8.3",
     "unzipper": "0.9.10",
     "vsce": "1.57.0",
-    "vscode": "1.1.36",
-    "webpack": "4.29.3",
-    "webpack-cli": "^3.3.11"
+    "vscode": "1.1.37",
+    "webpack": "5.30.0",
+    "webpack-cli": "4.6.0"
   },
   "runtimeDependencies": [
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/7a933188-8245-4549-bbcc-b7e611f06ef1/94c851f64db400aabf05c23c4ed0777f/omnisharp-win-x86-1.37.6.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.6/omnisharp-win-x86-1.37.6.zip",
-      "installPath": ".omnisharp/1.37.6",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9166c456-55b4-4c77-92e5-92c9314f8eeb/885a7da9c9a450445006b389a7e473d7/omnisharp-win-x86-1.37.8.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.8/omnisharp-win-x86-1.37.8.zip",
+      "installPath": ".omnisharp/1.37.8",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.omnisharp/1.37.6/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.37.8/OmniSharp.exe",
       "platformId": "win-x86",
-      "integrity": "B23E52AA250A825218157C8102C432053F20A146B3E183FC39F2C2A310319DC4"
+      "integrity": "96D95AE63FF2ED84C467B73D86AF108C536F7479CFE4E277C481B8875482684F"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/7a933188-8245-4549-bbcc-b7e611f06ef1/10b370161f0e5a51f7c9ab82bd62e0cf/omnisharp-win-x64-1.37.6.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.6/omnisharp-win-x64-1.37.6.zip",
-      "installPath": ".omnisharp/1.37.6",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9166c456-55b4-4c77-92e5-92c9314f8eeb/4fdbe776755c2467591dcba0a900ed32/omnisharp-win-x64-1.37.8.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.8/omnisharp-win-x64-1.37.8.zip",
+      "installPath": ".omnisharp/1.37.8",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/1.37.6/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.37.8/OmniSharp.exe",
       "platformId": "win-x64",
-      "integrity": "C2B0282E0AAFE41A29C944713980692EDCE1460906EF94EA4E39371B40AECB7B"
+      "integrity": "4780414FF3C5B10469BD154E506245E3D9CC25A4C9021109391E90B70054C3A7"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/7a933188-8245-4549-bbcc-b7e611f06ef1/425d897d70c1ebfa8816c564967cbacb/omnisharp-osx-1.37.6.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.6/omnisharp-osx-1.37.6.zip",
-      "installPath": ".omnisharp/1.37.6",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9166c456-55b4-4c77-92e5-92c9314f8eeb/b08d8706dbdfe32fe3413c5b9bc6365a/omnisharp-osx-1.37.8.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.8/omnisharp-osx-1.37.8.zip",
+      "installPath": ".omnisharp/1.37.8",
       "platforms": [
         "darwin"
       ],
@@ -203,16 +190,16 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.37.6/run",
+      "installTestPath": "./.omnisharp/1.37.8/run",
       "platformId": "osx",
-      "integrity": "6FB05A4D488D64307AF1AE156EAB959EAA5D22E4D929C74A40DECB0403999E26"
+      "integrity": "147AED153860BF9C7454B4571C00A649E95014E0D0CC894B836CFC24B5A18CA7"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/7a933188-8245-4549-bbcc-b7e611f06ef1/703d8f9a2fa49aeba9a08dc35c9a0f41/omnisharp-linux-x86-1.37.6.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.6/omnisharp-linux-x86-1.37.6.zip",
-      "installPath": ".omnisharp/1.37.6",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9166c456-55b4-4c77-92e5-92c9314f8eeb/24d7c6ffbf8e03d6292faed97f5e4286/omnisharp-linux-x86-1.37.8.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.8/omnisharp-linux-x86-1.37.8.zip",
+      "installPath": ".omnisharp/1.37.8",
       "platforms": [
         "linux"
       ],
@@ -224,16 +211,16 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.37.6/run",
+      "installTestPath": "./.omnisharp/1.37.8/run",
       "platformId": "linux-x86",
-      "integrity": "85F401AD2438E1A3DD40B4CA0EB60398C03204CD16E3035AFD4A81A98BA18F69"
+      "integrity": "34A5B6477507606FE04A67F857B0B5E749D25EBB7D4F95EE2539DFF249BB42C3"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/7a933188-8245-4549-bbcc-b7e611f06ef1/d6b65943b969e58f8f35aeac49334030/omnisharp-linux-x64-1.37.6.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.6/omnisharp-linux-x64-1.37.6.zip",
-      "installPath": ".omnisharp/1.37.6",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9166c456-55b4-4c77-92e5-92c9314f8eeb/001b960216f0287efd3c7147718ecc03/omnisharp-linux-x64-1.37.8.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.8/omnisharp-linux-x64-1.37.8.zip",
+      "installPath": ".omnisharp/1.37.8",
       "platforms": [
         "linux"
       ],
@@ -244,9 +231,9 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.37.6/run",
+      "installTestPath": "./.omnisharp/1.37.8/run",
       "platformId": "linux-x64",
-      "integrity": "7B855776DAA1C983AC9D13C6293D95C808BB0F8A8EF312F9ECBBF1C22166E4AA"
+      "integrity": "E3E1452E689EAFC73ECC0BC19DABEA483F70C64A2C34363BEA49237EE8F8B470"
     },
     {
       "id": "Debugger",
@@ -739,7 +726,7 @@
           ],
           "default": null,
           "scope": "machine",
-          "description": "Specifies the path to a mono installation to use when \"useGlobalMono\" is set to \"always\" or \"auto\", instead of the default system one."
+          "description": "Specifies the path to a mono installation to use when \"useGlobalMono\" is set to \"always\", instead of the default system one. Example: \"/Library/Frameworks/Mono.framework/Versions/Current\""
         },
         "omnisharp.waitForDebugger": {
           "type": "boolean",
@@ -3216,51 +3203,90 @@
                 "type": "object",
                 "description": "Environment variables passed to dotnet. Only valid for hosted apps."
               },
-              "logging": {
-                "description": "Optional flags to determine what types of messages should be logged to the output window. Applicable only for the app server of hosted Blazor WASM apps.",
+              "dotNetConfig": {
+                "description": "Options passed to the underlying .NET debugger. For more info, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger.md.",
                 "type": "object",
                 "required": [],
                 "default": {},
                 "properties": {
-                  "exceptions": {
+                  "justMyCode": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether exception messages should be logged to the output window.",
+                    "description": "Optional flag to only show user code.",
                     "default": true
                   },
-                  "moduleLoad": {
-                    "type": "boolean",
-                    "description": "Optional flag to determine whether module load events should be logged to the output window.",
-                    "default": true
+                  "logging": {
+                    "description": "Optional flags to determine what types of messages should be logged to the output window. Applicable only for the app server of hosted Blazor WASM apps.",
+                    "type": "object",
+                    "required": [],
+                    "default": {},
+                    "properties": {
+                      "exceptions": {
+                        "type": "boolean",
+                        "description": "Optional flag to determine whether exception messages should be logged to the output window.",
+                        "default": true
+                      },
+                      "moduleLoad": {
+                        "type": "boolean",
+                        "description": "Optional flag to determine whether module load events should be logged to the output window.",
+                        "default": true
+                      },
+                      "programOutput": {
+                        "type": "boolean",
+                        "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
+                        "default": true
+                      },
+                      "engineLogging": {
+                        "type": "boolean",
+                        "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
+                        "default": false
+                      },
+                      "browserStdOut": {
+                        "type": "boolean",
+                        "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
+                        "default": true
+                      },
+                      "elapsedTiming": {
+                        "type": "boolean",
+                        "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
+                        "default": false
+                      },
+                      "threadExit": {
+                        "type": "boolean",
+                        "description": "Controls if a message is logged when a thread in the target process exits. Default: `false`.",
+                        "default": false
+                      },
+                      "processExit": {
+                        "type": "boolean",
+                        "description": "Controls if a message is logged when the target process exits, or debugging is stopped. Default: `true`.",
+                        "default": true
+                      }
+                    }
                   },
-                  "programOutput": {
-                    "type": "boolean",
-                    "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
-                    "default": true
-                  },
-                  "engineLogging": {
-                    "type": "boolean",
-                    "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
-                    "default": false
-                  },
-                  "browserStdOut": {
-                    "type": "boolean",
-                    "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
-                    "default": true
-                  },
-                  "elapsedTiming": {
-                    "type": "boolean",
-                    "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
-                    "default": false
-                  },
-                  "threadExit": {
-                    "type": "boolean",
-                    "description": "Controls if a message is logged when a thread in the target process exits. Default: `false`.",
-                    "default": false
-                  },
-                  "processExit": {
-                    "type": "boolean",
-                    "description": "Controls if a message is logged when the target process exits, or debugging is stopped. Default: `true`.",
-                    "default": true
+                  "sourceFileMap": {
+                    "type": "object",
+                    "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "default": {
+                      "<insert-source-path-here>": "<insert-target-path-here>"
+                    }
+                  }
+                }
+              },
+              "browserConfig": {
+                "description": "Options based to the underlying JavaScript debugger. For more info, see https://github.com/microsoft/vscode-js-debug/blob/master/OPTIONS.md.",
+                "type": "object",
+                "required": [],
+                "default": {},
+                "properties": {
+                  "outputCapture": {
+                    "enum": [
+                      "console",
+                      "std"
+                    ],
+                    "description": "From where to capture output messages: the default debug API if set to `console`, or stdout/stderr streams if set to `std`.",
+                    "default": "console"
                   }
                 }
               }

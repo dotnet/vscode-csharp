@@ -11,15 +11,17 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install Node.js 12.x
+    - name: Install Node.js 15.x
       uses: actions/setup-node@v1
       with:
-        node-version: '12.x'
+        node-version: '15.x'
 
     - name: Install dependencies
-      run: npm ci && npm i -g gulp
+      run: |
+          npm ci
+          npm i -g gulp
 
-    - name: Build
+    - name: Build extension package
       run: gulp 'vsix:release:package'
 
     - name: Run release tests
@@ -37,4 +39,4 @@ jobs:
         upload_url: ${{ github.event.release.upload_url }}
         asset_path: ./csharp-${{ env.VERSION }}.vsix
         asset_name: csharp-${{ env.VERSION }}.vsix
-        asset_content_type: application/zip  
+        asset_content_type: application/zip

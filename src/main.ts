@@ -45,6 +45,7 @@ import { installRuntimeDependencies } from './InstallRuntimeDependencies';
 import { isValidDownload } from './packageManager/isValidDownload';
 import { BackgroundWorkStatusBarObserver } from './observers/BackgroundWorkStatusBarObserver';
 import { getDecompilationAuthorization } from './omnisharp/decompilationPrompt';
+import { getDotnetPackApi } from './DotnetPack';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -148,6 +149,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         return null;
     }
 
+    // If the dotnet bundle is installed, this will ensure the dotnet CLI is on the path.
+    await initializeDotnetPath();
+
     let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter);
     eventStream.subscribe(telemetryObserver.post);
 
@@ -227,3 +231,10 @@ async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExten
     return installRuntimeDependencies(extension.packageJSON, extension.extensionPath, installDependencies, eventStream, platformInfo);
 }
 
+async function initializeDotnetPath() {
+    const dotnetPackApi = await getDotnetPackApi();
+    if (!dotnetPackApi) {
+        return null;
+    }
+    return await dotnetPackApi.getDotnetPath();
+}
