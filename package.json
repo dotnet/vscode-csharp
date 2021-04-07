@@ -45,6 +45,7 @@
     "test:integration": "gulp test:integration",
     "test:integration:singleCsproj": "gulp test:integration:singleCsproj",
     "test:integration:slnWithCsproj": "gulp test:integration:slnWithCsproj",
+    "test:integration:slnFilterWithCsproj": "gulp test:integration:slnFilterWithCsproj",
     "test:release": "mocha --config ./.mocharc.jsonc test/releaseTests/**/*.test.ts",
     "test:artifacts": "mocha --config ./.mocharc.jsonc test/artifactTests/**/*.test.ts",
     "postinstall": "node ./node_modules/vscode/bin/install",

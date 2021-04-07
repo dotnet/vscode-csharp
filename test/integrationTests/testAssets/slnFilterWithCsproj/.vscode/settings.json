@@ -1,0 +1,5 @@
+{
+    "omnisharp.defaultLaunchSolution": "SolutionFilter.slnf",
+    "omnisharp.path": "latest",
+    "omnisharp.enableRoslynAnalyzers": true
+}
