@@ -93,6 +93,7 @@ export class OmniSharpServer {
     private _launchTarget: LaunchTarget;
     private _requestQueue: RequestQueueCollection;
     private _serverProcess: ChildProcess;
+    private _sessionProperties: { [key: string]: any } = {};
 
     private _omnisharpManager: OmnisharpManager;
     private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
@@ -104,6 +105,10 @@ export class OmniSharpServer {
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
         this.updateProjectDebouncer.pipe(debounceTime(1500)).subscribe((event) => { this.updateProjectInfo(); });
         this.firstUpdateProject = true;
+    }
+
+    public get sessionProperties() {
+        return this._sessionProperties;
     }
 
     public isRunning(): boolean {
@@ -433,6 +438,9 @@ export class OmniSharpServer {
     public async stop(): Promise<void> {
 
         let cleanupPromise: Promise<void>;
+
+        // Clear the session properties when the session ends.
+        this._sessionProperties = {};
 
         if (this._telemetryIntervalId !== undefined) {
             // Stop reporting telemetry
