@@ -2,9 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
 
-const dotnetPackExtensionId = "ms-dotnettools.vscode-dotnet-pack";
+const dotnetPackExtensionId = 'ms-dotnettools.vscode-dotnet-pack';
 
 export interface DotnetPackExtensionExports {
     getDotnetPath(version?: string): Promise<string | undefined>;
