@@ -45,6 +45,10 @@ gulp.task("test:integration:slnWithCsproj", async () => {
     return runIntegrationTest("slnWithCsproj");
 });
 
+gulp.task("test:integration:slnFilterWithCsproj", async () => {
+    return runIntegrationTest("slnFilterWithCsproj");
+});
+
 gulp.task("test:integration:BasicRazorApp2_1", async () => {
     return runIntegrationTest("BasicRazorApp2_1");
 });
@@ -53,6 +57,7 @@ gulp.task(
     "test:integration", gulp.series(
         "test:integration:singleCsproj",
         "test:integration:slnWithCsproj",
+        "test:integration:slnFilterWithCsproj",
         "test:integration:BasicRazorApp2_1"
     ));
 
