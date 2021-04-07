@@ -45,7 +45,7 @@ import { installRuntimeDependencies } from './InstallRuntimeDependencies';
 import { isValidDownload } from './packageManager/isValidDownload';
 import { BackgroundWorkStatusBarObserver } from './observers/BackgroundWorkStatusBarObserver';
 import { getDecompilationAuthorization } from './omnisharp/decompilationPrompt';
-import { getDotnetPackApi } from './DotNetPack';
+import { getDotnetPackApi } from './DotnetPack';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
