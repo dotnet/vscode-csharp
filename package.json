@@ -79,7 +79,7 @@
     "tmp": "0.0.33",
     "vscode-debugprotocol": "1.33.0",
     "vscode-extension-telemetry": "0.1.6",
-    "vscode-languageserver-protocol": "^3.15.3",
+    "vscode-languageserver-protocol": "3.16.0",
     "yauzl": "2.10.0"
   },
   "devDependencies": {

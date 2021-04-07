@@ -32,6 +32,9 @@ jobs:
           npm ci
           npm i -g gulp
 
+    - name: Compile
+      run: npm run compile
+
     - name: Build extension package
       run: gulp 'vsix:release:package'
 
