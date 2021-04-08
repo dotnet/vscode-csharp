@@ -7,7 +7,6 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceRoot}"
             ],
             "stopOnEntry": false,
@@ -130,6 +129,31 @@
             "preLaunchTask": "buildDev"
         },
         {
+            "name": "Launch slnFilterWithCsproj Workspace Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnFilterWithCsproj",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
+            ],
+            "env": {
+                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
+                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
+                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnFilterWithCsproj",
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "OSVC_SUITE": "slnFilterWithCsproj"
+            },
+            "stopOnEntry": false,
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/dist/*.js"
+            ],
+            "preLaunchTask": "buildDev"
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "Update package dependencies",
@@ -139,8 +163,8 @@
                 "updatePackageDependencies"
             ],
             "env": {
-                "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/7a933188-8245-4549-bbcc-b7e611f06ef1/d6b65943b969e58f8f35aeac49334030/omnisharp-linux-x64-1.37.6.zip,https://download.visualstudio.microsoft.com/download/pr/7a933188-8245-4549-bbcc-b7e611f06ef1/703d8f9a2fa49aeba9a08dc35c9a0f41/omnisharp-linux-x86-1.37.6.zip,https://download.visualstudio.microsoft.com/download/pr/7a933188-8245-4549-bbcc-b7e611f06ef1/425d897d70c1ebfa8816c564967cbacb/omnisharp-osx-1.37.6.zip,https://download.visualstudio.microsoft.com/download/pr/7a933188-8245-4549-bbcc-b7e611f06ef1/10b370161f0e5a51f7c9ab82bd62e0cf/omnisharp-win-x64-1.37.6.zip,https://download.visualstudio.microsoft.com/download/pr/7a933188-8245-4549-bbcc-b7e611f06ef1/94c851f64db400aabf05c23c4ed0777f/omnisharp-win-x86-1.37.6.zip",
-                "NEW_DEPS_VERSION": "1.37.6"
+                "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/9166c456-55b4-4c77-92e5-92c9314f8eeb/001b960216f0287efd3c7147718ecc03/omnisharp-linux-x64-1.37.8.zip,https://download.visualstudio.microsoft.com/download/pr/9166c456-55b4-4c77-92e5-92c9314f8eeb/24d7c6ffbf8e03d6292faed97f5e4286/omnisharp-linux-x86-1.37.8.zip,https://download.visualstudio.microsoft.com/download/pr/9166c456-55b4-4c77-92e5-92c9314f8eeb/b08d8706dbdfe32fe3413c5b9bc6365a/omnisharp-osx-1.37.8.zip,https://download.visualstudio.microsoft.com/download/pr/9166c456-55b4-4c77-92e5-92c9314f8eeb/4fdbe776755c2467591dcba0a900ed32/omnisharp-win-x64-1.37.8.zip,https://download.visualstudio.microsoft.com/download/pr/9166c456-55b4-4c77-92e5-92c9314f8eeb/885a7da9c9a450445006b389a7e473d7/omnisharp-win-x86-1.37.8.zip",
+                "NEW_DEPS_VERSION": "1.37.8"
             },
             "cwd": "${workspaceFolder}"
         }

@@ -6,15 +6,17 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-import {ITestAssetWorkspace, TestAssetWorkspace} from './testAssets';
+import { ITestAssetWorkspace, TestAssetWorkspace } from './testAssets';
 
 import singleCsproj from './singleCsproj';
 import slnWithCsproj from './slnWithCsproj';
+import slnFilterWithCsproj from './slnFilterWithCsproj';
 import BasicRazorApp2_1 from './BasicRazorApp2_1';
 
 const testAssetWorkspaces: { [x: string]: ITestAssetWorkspace } = {
     singleCsproj,
     slnWithCsproj,
+    slnFilterWithCsproj,
     BasicRazorApp2_1
 };
 

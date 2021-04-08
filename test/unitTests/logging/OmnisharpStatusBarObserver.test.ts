@@ -78,7 +78,6 @@ suite('OmnisharpStatusBarObserver', () => {
         expect(statusBarItem.text).to.be.equal('$(flame)');
         expect(statusBarItem.command).to.equal('o.showOutput');
         expect(statusBarItem.tooltip).to.be.equal('OmniSharp server is running');
-        expect(statusBarItem.color).to.be.equal(StatusBarColors.White);
     });
 
     test('OnServerStop: Status bar is hidden and the attributes are set to undefined', () => {

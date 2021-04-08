@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { Proposed } from 'vscode-languageserver-protocol';
+import { SemanticTokenTypes } from 'vscode-languageserver-protocol';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { createRequest, toRange2 } from '../omnisharp/typeConversion';
@@ -235,28 +235,28 @@ export default class SemanticTokensProvider extends AbstractProvider implements 
 }
 
 const tokenTypes: string[] = [];
-tokenTypes[DefaultTokenType.comment] = Proposed.SemanticTokenTypes.comment;
-tokenTypes[DefaultTokenType.string] = Proposed.SemanticTokenTypes.string;
-tokenTypes[DefaultTokenType.keyword] = Proposed.SemanticTokenTypes.keyword;
-tokenTypes[DefaultTokenType.number] = Proposed.SemanticTokenTypes.number;
-tokenTypes[DefaultTokenType.regexp] = Proposed.SemanticTokenTypes.regexp;
-tokenTypes[DefaultTokenType.operator] = Proposed.SemanticTokenTypes.operator;
-tokenTypes[DefaultTokenType.namespace] = Proposed.SemanticTokenTypes.namespace;
-tokenTypes[DefaultTokenType.type] = Proposed.SemanticTokenTypes.type;
-tokenTypes[DefaultTokenType.struct] = Proposed.SemanticTokenTypes.struct;
-tokenTypes[DefaultTokenType.class] = Proposed.SemanticTokenTypes.class;
-tokenTypes[DefaultTokenType.interface] = Proposed.SemanticTokenTypes.interface;
-tokenTypes[DefaultTokenType.enum] = Proposed.SemanticTokenTypes.enum;
-tokenTypes[DefaultTokenType.typeParameter] = Proposed.SemanticTokenTypes.typeParameter;
-tokenTypes[DefaultTokenType.function] = Proposed.SemanticTokenTypes.function;
-tokenTypes[DefaultTokenType.member] = Proposed.SemanticTokenTypes.member;
-tokenTypes[DefaultTokenType.macro] = Proposed.SemanticTokenTypes.macro;
-tokenTypes[DefaultTokenType.variable] = Proposed.SemanticTokenTypes.variable;
-tokenTypes[DefaultTokenType.parameter] = Proposed.SemanticTokenTypes.parameter;
-tokenTypes[DefaultTokenType.property] = Proposed.SemanticTokenTypes.property;
+tokenTypes[DefaultTokenType.comment] = SemanticTokenTypes.comment;
+tokenTypes[DefaultTokenType.string] = SemanticTokenTypes.string;
+tokenTypes[DefaultTokenType.keyword] = SemanticTokenTypes.keyword;
+tokenTypes[DefaultTokenType.number] = SemanticTokenTypes.number;
+tokenTypes[DefaultTokenType.regexp] = SemanticTokenTypes.regexp;
+tokenTypes[DefaultTokenType.operator] = SemanticTokenTypes.operator;
+tokenTypes[DefaultTokenType.namespace] = SemanticTokenTypes.namespace;
+tokenTypes[DefaultTokenType.type] = SemanticTokenTypes.type;
+tokenTypes[DefaultTokenType.struct] = SemanticTokenTypes.struct;
+tokenTypes[DefaultTokenType.class] = SemanticTokenTypes.class;
+tokenTypes[DefaultTokenType.interface] = SemanticTokenTypes.interface;
+tokenTypes[DefaultTokenType.enum] = SemanticTokenTypes.enum;
+tokenTypes[DefaultTokenType.typeParameter] = SemanticTokenTypes.typeParameter;
+tokenTypes[DefaultTokenType.function] = SemanticTokenTypes.function;
+tokenTypes[DefaultTokenType.member] = 'member';
+tokenTypes[DefaultTokenType.macro] = SemanticTokenTypes.macro;
+tokenTypes[DefaultTokenType.variable] = SemanticTokenTypes.variable;
+tokenTypes[DefaultTokenType.parameter] = SemanticTokenTypes.parameter;
+tokenTypes[DefaultTokenType.property] = SemanticTokenTypes.property;
 tokenTypes[DefaultTokenType.enumMember] = 'enumMember';
 tokenTypes[DefaultTokenType.event] = 'event';
-tokenTypes[DefaultTokenType.label] = Proposed.SemanticTokenTypes.label;
+tokenTypes[DefaultTokenType.label] = 'label';
 tokenTypes[CustomTokenType.plainKeyword] = "plainKeyword";
 tokenTypes[CustomTokenType.controlKeyword] = "controlKeyword";
 tokenTypes[CustomTokenType.operatorOverloaded] = "operatorOverloaded";

@@ -45,6 +45,7 @@ import { installRuntimeDependencies } from './InstallRuntimeDependencies';
 import { isValidDownload } from './packageManager/isValidDownload';
 import { BackgroundWorkStatusBarObserver } from './observers/BackgroundWorkStatusBarObserver';
 import { getDecompilationAuthorization } from './omnisharp/decompilationPrompt';
+import { getDotnetPackApi } from './DotnetPack';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
 
@@ -122,7 +123,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     if (!isSupportedPlatform(platformInfo)) {
         const platform: string = platformInfo.platform ? platformInfo.platform : "this platform";
         const architecture: string = platformInfo.architecture ? platformInfo.architecture : " and <unknown processor architecture>";
-        let errorMessage: string = `The C# extension for Visual Studio Code (powered by OmniSharp) is incompatiable on ${platform} ${architecture}`;
+        let errorMessage: string = `The C# extension for Visual Studio Code (powered by OmniSharp) is incompatible on ${platform} ${architecture}`;
         const messageOptions: vscode.MessageOptions = {
         };
 

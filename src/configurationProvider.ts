@@ -40,7 +40,7 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
         }
 
         let serverFolder = solutionPathOrFolder;
-        // If its a .sln file, get the folder of the solution.
+        // If its a .sln or .slnf file, get the folder of the solution.
         return fs.lstat(solutionPathOrFolder).then(stat => {
             return stat.isFile();
         }).then(isFile => {
@@ -95,10 +95,9 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
                 await addTasksJsonIfNecessary(generator, buildOperations);
 
                 const programLaunchType = generator.computeProgramLaunchType();
-                const launchJson: string = generator.createLaunchJsonConfigurations(programLaunchType);
+                const launchJson: vscode.DebugConfiguration[] = generator.createLaunchJsonConfigurationsArray(programLaunchType);
 
-                // jsonc-parser's parse function parses a JSON string with comments into a JSON object. However, this removes the comments.
-                return parse(launchJson);
+                return launchJson;
 
             } else {
                 // Error to be caught in the .catch() below to write default C# configurations

@@ -1,12 +1,12 @@
 # Validating C# Extension for VS Code
 
 #### Opening projects
-When you open a directory in VS Code, the C# extension should look for a .csproj or .sln file in that directory and use "OmniSharp" to load it. If a .cs file is present and no .csproj or .sln file are present, Omnisharp should start but the intellisense should only appear when a change is made to the file.
+When you open a directory in VS Code, the C# extension should look for a .csproj, .sln, or .slnf file in that directory and use "OmniSharp" to load it. If a .cs file is present and no .csproj, .sln, or .slnf file are present, Omnisharp should start but the intellisense should only appear when a change is made to the file.
 If you look in "Output > Omnisharp Log" a bunch of information should be printed about what copy of MSBuild was used and what projects were load
 
 Project types to test:
 * Standalone csproj
-* Directory containing .sln file that references csprojs--projects should be loaded
+* Directory containing .sln or .slnf file that references csprojs--projects should be loaded
 * .NET Core/.NET Standard csproj
 * (Windows) Desktop .NET projects
 * Unity projects
@@ -235,6 +235,12 @@ To setup a test project to verify on you can do:
 * Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file.
 
 ##### Debugging with blazorwasm debug adapter
+
+**Note:** On a VS Code installation with no extensions, you should recieve an alert like the following:
+
+> The Blazor WASM Debugging Extension is required to debug Blazor WASM apps in VS Code.
+
+Press "Install Extension" before step 2 in each of the test scenarios below.
 
 ###### Standalone app
 

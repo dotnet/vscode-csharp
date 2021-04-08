@@ -282,6 +282,24 @@ suite("Asset generation: csproj", () => {
         lines[4].trim().should.equal('// This is a dotnet build command');
         lines[5].trim().should.equal('// this is the default command.');
     });
+
+    test("createLaunchJsonConfigurationsArray removes comments", () => {
+        let rootPath = path.resolve('testRoot');
+        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netcoreapp1.0', /*isExe*/ true, /*isWebProject*/ true);
+        let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
+        generator.setStartupProject(0);
+        let launchConfigurations: vscode.DebugConfiguration[] = generator.createLaunchJsonConfigurationsArray(ProgramLaunchType.Web);
+
+        launchConfigurations.should.have.lengthOf(2);
+
+        launchConfigurations[0].type.should.equal("coreclr");
+        launchConfigurations[0].request.should.equal("launch");
+
+        launchConfigurations[1].type.should.equal("coreclr");
+        launchConfigurations[1].request.should.equal("attach");
+
+        JSON.stringify(launchConfigurations).indexOf("OS-COMMENT").should.lessThan(0);
+    });
 });
 
 function createMockWorkspaceFolder(rootPath: string): vscode.WorkspaceFolder {

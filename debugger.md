@@ -2,21 +2,14 @@
 This page gives you detailed instructions on how to debug code running under .NET Core in VS Code. 
 
 #### Your Feedback​
-File bugs and feature requests [here](https://github.com/OmniSharp/omnisharp-vscode/issues) and [join our insiders group](http://landinghub.visualstudio.com/dotnetcoreinsiders) to help us build great tooling for .NET Core.
+File bugs and feature requests [here](https://github.com/OmniSharp/omnisharp-vscode/issues) to help us build great tooling for .NET Core.
 
 ### First Time setup
 ##### 1: Get Visual Studio Code
-Install Visual Studio Code (VSC). Pick the latest VSC version from here: https://code.visualstudio.com Make sure it is at least 1.5. 
-
-If you are not sure what version you have, you can see your version of VS Code:
-
-* **OSX:** Code->About Visual Studio Code
-* **Windows / Linux:** Help->About
+Install Visual Studio Code (VS Code). Pick the latest VS Code version from here: https://code.visualstudio.com
 
 ##### 2: Install .NET command line tools
-Install the .NET Core command line tools (CLI) by following the installation part of the instructions here: https://www.microsoft.com/net/core
-
-**OSX:** .NET Core requires openSSL to work. Don't forget this! Execute: `brew install openssl`
+Install the .NET Core command line tools (CLI) by following the installation part of the instructions here: https://dotnet.microsoft.com/download
 
 ##### 3: Install C# Extension for VS Code
 Open the command palette in VS Code (press <kbd>F1</kbd>) and run `Extensions: Install Extensions`. Enter `C#` in the search box and press `Enter`. Select the extension and click on `Install`.
@@ -30,15 +23,14 @@ The first time that C# code is opened in VS Code, the extension will download th
 ### Once for each project
 The following steps have to be executed for every project. 
 ##### 1: Get a project
-You can start from scratch by creating an empty project with `dotnet new`. Begin by opening the terminal in Visual Studio Code (`View->Integrated Terminal`) and type these commands:
+You can start from scratch by creating an empty console project with `dotnet new`. Begin by opening the terminal in Visual Studio Code (`View->Integrated Terminal`) and type these commands:
 
     cd ~
     mkdir MyApplication
     cd MyApplication
-    dotnet new
-    dotnet restore
-
-If you want a web project (ASP.NET project) use `dotnet new web`. For web projects, makes sure to run `bower install` before running so that they can restore assets.
+    dotnet new console
+    
+See `dotnet new --list` for a list of all the available project templates.
 
 ##### 2: Open the directory in VS Code
 Go to `File->Open Folder` (`File->Open` on macOS) and open the directory in Visual Studio Code. If this is the first time that the C# extension has been activated, it will now download additional platform-specific dependencies.
