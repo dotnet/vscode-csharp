@@ -27,6 +27,9 @@ The .NET 5 SDK requires version 16.8 of MSBuild.
 For Windows users who have Visual Studio installed, this means you will need to be on the latest Visual Studio 16.8 Preview.
 For MacOS and Linux users who have Mono installed, this means you will need to set `omnisharp.useGlobalMono` to `never` until a version of Mono ships with MSBuild 16.8.
 
+## What's new in 1.23.11
+- Move the global Mono check to the correct place ([#4489](https://github.com/OmniSharp/omnisharp-vscode/issues/4489), PR: [#4492](https://github.com/OmniSharp/omnisharp-vscode/pull/4492))
+
 ## What's new in 1.23.10
 - Support solution filters (*.slnf) (PR: [#4481](https://github.com/OmniSharp/omnisharp-vscode/pull/4481))
 - Prompt user to install Blazor WASM companion extension if needed (PR: [#4392](https://github.com/OmniSharp/omnisharp-vscode/pull/4392))
