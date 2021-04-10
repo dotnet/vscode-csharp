@@ -16,14 +16,18 @@ jobs:
         node-version: 10
 
     - run: npm ci
-    - run: npm install -g gulp
+    - run: npm install -g gulp ovsx
     - run: gulp 'vsix:release:package'
 
     - name: upload vsix artifact
       uses: actions/upload-artifact@v2
       with:
-        name: extension-artifact
-        path: /*.vsix
+        name: extension
+        path: ./*.vsix
+    
+    - name: download vsix artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: extension.vsix
 
-    - run: npm install -g ovsx
-    - run: ovsx publish extension-artifact -p ${{ secrets.OPEN_VSX_TOKEN }}
+    - run: ovsx publish **/*.vsix -p ${{ secrets.OPEN_VSX_TOKEN }}
