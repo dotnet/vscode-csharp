@@ -16,8 +16,9 @@ This extension is published at [open-vsx.org](https://open-vsx.org/extension/muh
 Requirements:
 
 - [nodejs](https://nodejs.org)
+- npm (comes with nodejs)
 
-```
+```bash
 git clone https://github.com/muhammadsammy/free-omnisharp-vscode.git
 
 cd free-omnisharp-vscode
@@ -29,8 +30,6 @@ npx gulp 'vsix:release:package'
 ```
 
 then run `Extensions: Install from VSIX` from the command pallete and select the `csharp-VERSION_NUMBER.vsix` file.
-
-<br />
 
 # From [OmniSharp/omnisharp-vscode](https://github.com/OmniSharp/omnisharp-vscode) README
 
