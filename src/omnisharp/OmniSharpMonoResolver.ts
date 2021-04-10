@@ -36,17 +36,16 @@ export class OmniSharpMonoResolver implements IMonoResolver {
 
     public async getGlobalMonoInfo(options: Options): Promise<MonoInformation> {
         let monoInfo = await this.configureEnvironmentAndGetInfo(options);
-
-        let isMissing = monoInfo.version === undefined;
-        if (isMissing) {
-            const suggestedAction = options.monoPath
-                ? "Update the \"omnisharp.monoPath\" setting to point to the folder containing Mono's '/bin' folder."
-                : "Ensure that Mono's '/bin' folder is added to your environment's PATH variable.";
-            throw new Error(`Unable to find Mono. ${suggestedAction}`);
-        }
-
         let isValid = monoInfo.version && satisfies(monoInfo.version, `>=${this.minimumMonoVersion}`);
         if (options.useGlobalMono === "always") {
+            let isMissing = monoInfo.version === undefined;
+            if (isMissing) {
+                const suggestedAction = options.monoPath
+                    ? "Update the \"omnisharp.monoPath\" setting to point to the folder containing Mono's '/bin' folder."
+                    : "Ensure that Mono's '/bin' folder is added to your environment's PATH variable.";
+                throw new Error(`Unable to find Mono. ${suggestedAction}`);
+            }
+            
             if (!isValid) {
                 throw new Error(`Found Mono version ${monoInfo.version}. Cannot start OmniSharp because Mono version >=${this.minimumMonoVersion} is required.`);
             }
