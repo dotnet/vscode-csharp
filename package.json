@@ -239,8 +239,8 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/22843236-af09-4293-9d23-ca35003ca60a/8ef4bedc8923b38b9a6ab98d7ec2df16/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-9/coreclr-debug-win7-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/15786370-6d35-4cac-8d70-618dfc5aa9ad/d133bd53b5360d1041f8a6ab28b82d4e/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-12/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -249,14 +249,14 @@
         "x86_64"
       ],
       "installTestPath": "./.debugger/vsdbg-ui.exe",
-      "integrity": "52D76850494F1F6B04B9CABB4C80B9E63C0762BFA676CFDD16292EBC77462989"
+      "integrity": "D6B804513BA83E10B1428CEEDD6E2AC4749DC2AAFFD5BE56AEB6FD430C916618"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/22843236-af09-4293-9d23-ca35003ca60a/c091f9f76df625e2f6cbae32521c7149/coreclr-debug-osx-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-9/coreclr-debug-osx-x64.zip",
-      "installPath": ".debugger",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/15786370-6d35-4cac-8d70-618dfc5aa9ad/829575bd3a1e1837b3be4c2d1e02fc85/coreclr-debug-osx-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-12/coreclr-debug-osx-x64.zip",
+      "installPath": ".debugger/x86_64",
       "platforms": [
         "darwin"
       ],
@@ -268,14 +268,33 @@
         "./vsdbg-ui",
         "./vsdbg"
       ],
-      "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "E728CB6D8374D6F8BD75B23D352CB3C9B30C202C94F928AFB425E0A1CECEB54A"
+      "installTestPath": "./.debugger/x86_64/vsdbg-ui",
+      "integrity": "2C7CD642F8F3B405D0AB95FABD3CCAD51A6DD2B919B9BE221C0F18FC724604AE"
+    },
+    {
+      "id": "Debugger",
+      "description": ".NET Core Debugger (macOS / arm64)",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/15786370-6d35-4cac-8d70-618dfc5aa9ad/55697478c628061578739b1b2ae62dc4/coreclr-debug-osx-arm64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-12/coreclr-debug-osx-arm64.zip",
+      "installPath": ".debugger/arm64",
+      "platforms": [
+        "darwin"
+      ],
+      "architectures": [
+        "arm64"
+      ],
+      "binaries": [
+        "./vsdbg-ui",
+        "./vsdbg"
+      ],
+      "installTestPath": "./.debugger/arm64/vsdbg-ui",
+      "integrity": "1B2954EB75B647D5168AD816A942F61D46EB8DCEF384A8C2514DB9898B1F0022"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/22843236-af09-4293-9d23-ca35003ca60a/83983aa140267cbf90b3780dfdf640a8/coreclr-debug-linux-arm.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-9/coreclr-debug-linux-arm.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/15786370-6d35-4cac-8d70-618dfc5aa9ad/9ff9dada26542d0d6f3799cbc969339c/coreclr-debug-linux-arm.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-12/coreclr-debug-linux-arm.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -288,13 +307,13 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "9CCDD89F495BF8FD2168FBD9D15730B1F98CD03CB2EFC74F57FCA9AD22E278DD"
+      "integrity": "2D45ABEB478F8234854AB2A0E801B9EA0143B47F208F97AFC95F6020BC4E7BB7"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/22843236-af09-4293-9d23-ca35003ca60a/bfa6b939db12aacd40cf2ebda28b621d/coreclr-debug-linux-arm64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-9/coreclr-debug-linux-arm64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/15786370-6d35-4cac-8d70-618dfc5aa9ad/e64e76d0bfb1e50da16678db728c8bad/coreclr-debug-linux-arm64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-12/coreclr-debug-linux-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -307,13 +326,13 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "BF4C56C6A74175AC02C4DD96A1602457B318D7FE6309B1331FB535F7DF42E01D"
+      "integrity": "0F1BED966A9FBF308A431995A1CC7EC49D690C8E3986F88F47FF3DA198B4F997"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/22843236-af09-4293-9d23-ca35003ca60a/5736b04572b255dee1c529cc41623a4b/coreclr-debug-linux-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-9/coreclr-debug-linux-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/15786370-6d35-4cac-8d70-618dfc5aa9ad/92eeb7715c63c006df2318abeefc15b4/coreclr-debug-linux-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-12/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -326,7 +345,7 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "29F5ABE6D317F956F0BCBF86C1344FD298D66F276597F6A0E15B5462CA8122A7"
+      "integrity": "A1AF7EB043B14DB777108D6B9D91F8CA2DC5551E3BC8340C96477B5BDC974C4B"
     },
     {
       "id": "Razor",
@@ -1605,6 +1624,10 @@
                 "type": "string",
                 "description": "When set, text that the target application writes to stdout and stderr (ex: Console.WriteLine) will be saved to the specified file. This option is ignored if console is set to something other than internalConsole.",
                 "default": "${workspaceFolder}/out.txt"
+              },
+              "targetArchitecture": {
+                "type": "string",
+                "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
               }
             }
           },
@@ -2702,6 +2725,10 @@
                 "type": "string",
                 "description": "When set, text that the target application writes to stdout and stderr (ex: Console.WriteLine) will be saved to the specified file. This option is ignored if console is set to something other than internalConsole.",
                 "default": "${workspaceFolder}/out.txt"
+              },
+              "targetArchitecture": {
+                "type": "string",
+                "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
               }
             }
           },

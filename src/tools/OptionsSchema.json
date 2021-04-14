@@ -386,6 +386,10 @@
           "type": "string",
           "description": "When set, text that the target application writes to stdout and stderr (ex: Console.WriteLine) will be saved to the specified file. This option is ignored if console is set to something other than internalConsole.",
           "default": "${workspaceFolder}/out.txt"
+        },
+        "targetArchitecture": {
+          "type": "string",
+          "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
         }
       }
     },

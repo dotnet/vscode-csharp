@@ -6,13 +6,13 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as common from './../common';
-import { CoreClrDebugUtil } from './util';
+import { CoreClrDebugUtil, getTargetArchitecture } from './util';
 import { PlatformInformation } from './../platform';
 import { DebuggerPrerequisiteWarning, DebuggerPrerequisiteFailure, DebuggerNotInstalledFailure } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 import CSharpExtensionExports from '../CSharpExtensionExports';
 import { getRuntimeDependencyPackageWithId } from '../tools/RuntimeDependencyPackageUtils';
-import { DotnetInfo } from '../utils/getDotnetInfo';
+import { getDotnetInfo, DotnetInfo } from '../utils/getDotnetInfo';
 
 let _debugUtil: CoreClrDebugUtil = null;
 
@@ -36,16 +36,22 @@ export async function activate(thisExtension: vscode.Extension<CSharpExtensionEx
 
 async function checkForInvalidArchitecture(platformInformation: PlatformInformation, eventStream: EventStream): Promise<boolean> {
     if (platformInformation) {
-        if (platformInformation.isMacOS() && !CoreClrDebugUtil.isMacOSSupported()) {
-            eventStream.post(new DebuggerPrerequisiteFailure("[ERROR] The debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer."));
-            return true;
+        if (platformInformation.isMacOS()) {
+            if (platformInformation.architecture === "arm64") {
+                eventStream.post(new DebuggerPrerequisiteWarning(`[WARNING]: arm64 macOS is not officially supported by the .NET Core debugger. You may experience unexpected issues when running in this configuration.`));
+                return false;
+            }
+
+            // Validate we are on compatiable macOS version if we are x86_64
+            if ((platformInformation.architecture !== "x86_64") || 
+                (platformInformation.architecture === "x86_64" && !CoreClrDebugUtil.isMacOSSupported())) {
+                eventStream.post(new DebuggerPrerequisiteFailure("[ERROR] The debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer."));
+                return true;
+            }
         }
         else if (platformInformation.architecture !== "x86_64") {
             if (platformInformation.isWindows() && platformInformation.architecture === "x86") {
                 eventStream.post(new DebuggerPrerequisiteWarning(`[WARNING]: x86 Windows is not currently supported by the .NET Core debugger. Debugging will not be available.`));
-            } else if (platformInformation.isMacOS() && platformInformation.architecture === "arm64") {
-                eventStream.post(new DebuggerPrerequisiteWarning(`[WARNING]: arm64 macOS is not officially supported by the .NET Core debugger. You may experience unexpected issues when running in this configuration.`));
-                return false;
             } else {
                 eventStream.post(new DebuggerPrerequisiteWarning(`[WARNING]: Processor architecture '${platformInformation.architecture}' is not currently supported by the .NET Core debugger. Debugging will not be available.`));
             }
@@ -155,9 +161,12 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
 
         // debugger has finished installation, kick off our debugger process
 
+        // Check for targetArchitecture
+        const targetArchitecture: string = getTargetArchitecture(this.platformInfo, _session.configuration.targetArchitecture, await getDotnetInfo());
+
         // use the executable specified in the package.json if it exists or determine it based on some other information (e.g. the session)
         if (!executable) {
-            const command = path.join(common.getExtensionPath(), ".debugger", "vsdbg-ui" + CoreClrDebugUtil.getPlatformExeExtension());
+            const command = path.join(common.getExtensionPath(), ".debugger", targetArchitecture, "vsdbg-ui" + CoreClrDebugUtil.getPlatformExeExtension());
             executable = new vscode.DebugAdapterExecutable(command);
         }
 
