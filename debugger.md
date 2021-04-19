@@ -105,4 +105,5 @@ Examples conditions:
 | System.NullReferenceException | This will break on just null reference exceptions. |
 | System.NullReferenceException, System.InvalidOperationException | This will break on both null reference exceptions and invalid operation exceptions. |
 | !System.Threading.Tasks.TaskCanceledException | This will break on all exceptions except for task canceled. |
+| !System.Threading.Tasks.TaskCanceledException, System.NotImplementedException | This will break on all exceptions except for task cancelled and not implemented. |
 
