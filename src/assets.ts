@@ -420,8 +420,7 @@ export function createAttachConfiguration(): string {
     const configuration = {
         "name": ".NET Core Attach",
         "type": "coreclr",
-        "request": "attach",
-        "processId": ""
+        "request": "attach"
     };
 
     return JSON.stringify(configuration);
