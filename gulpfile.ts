@@ -14,7 +14,6 @@ require('./tasks/testTasks');
 require('./tasks/onlinePackagingTasks');
 require('./tasks/offlinePackagingTasks');
 require('./tasks/backcompatTasks');
-require('./tasks/coverageTasks');
 
 // Disable warning about wanting an async function
 // tslint:disable-next-line

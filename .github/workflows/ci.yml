@@ -40,24 +40,8 @@ jobs:
 
     - name: Run unit and integration tests
       run: |
-          gulp cov:instrument
           gulp test
-          gulp cov:merge
           npm run test:artifacts
       env:
         CODE_VERSION: 1.45.0
         DISPLAY: :99.0
-
-    - name: Report unit test coverage
-      uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./coverage/unit/lcov.info
-        flags: unit
-
-    - name: Report integration test coverage
-      uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./coverage/integration/lcov.info
-        flags: integration

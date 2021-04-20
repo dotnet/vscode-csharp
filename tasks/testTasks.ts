@@ -6,8 +6,9 @@
 'use strict';
 
 import * as gulp from 'gulp';
+import * as mocha from 'gulp-mocha';
 import * as path from 'path';
-import { codeExtensionPath, nycPath, rootPath, testAssetsRootPath, testRootPath, unitTestCoverageRootPath, mochaPath, vscodeTestHostPath } from './projectPaths';
+import { codeExtensionPath, rootPath, testAssetsRootPath, testRootPath, vscodeTestHostPath } from './projectPaths';
 import spawnNode from './spawnNode';
 
 gulp.task("test:feature", async () => {
@@ -23,18 +24,8 @@ gulp.task("test:feature", async () => {
 });
 
 gulp.task("test:unit", async () => {
-    return spawnNode([
-        nycPath,
-        '-r',
-        'lcovonly',
-        '--report-dir',
-        unitTestCoverageRootPath,
-        mochaPath,
-        '--ui',
-        'tdd',
-        '--',
-        'test/unitTests/**/*.test.ts'
-    ]);
+    return gulp.src('test/unitTests/**/*.test.ts', { read: false })
+        .pipe(mocha({ ui: 'tdd', useColors: true }));
 });
 
 gulp.task("test:integration:singleCsproj", async () => {
