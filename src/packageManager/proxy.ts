@@ -5,8 +5,9 @@
 
 import { Url, parse as parseUrl } from 'url';
 import { isBoolean } from '../common';
-const HttpProxyAgent = require('http-proxy-agent');
-const HttpsProxyAgent = require('https-proxy-agent');
+import HttpProxyAgent = require('http-proxy-agent');
+import HttpsProxyAgent = require('https-proxy-agent');
+import { Agent } from 'http';
 
 function getSystemProxyURL(requestURL: Url): string {
     if (requestURL.protocol === 'http:') {
@@ -18,7 +19,7 @@ function getSystemProxyURL(requestURL: Url): string {
     return null;
 }
 
-export function getProxyAgent(requestURL: Url, proxy: string, strictSSL: boolean): any {
+export function getProxyAgent(requestURL: Url, proxy: string, strictSSL: boolean): Agent {
     const proxyURL = proxy || getSystemProxyURL(requestURL);
 
     if (!proxyURL) {
@@ -38,5 +39,5 @@ export function getProxyAgent(requestURL: Url, proxy: string, strictSSL: boolean
         rejectUnauthorized: isBoolean(strictSSL) ? strictSSL : true
     };
 
-    return requestURL.protocol === 'http:' ? new HttpProxyAgent(opts) : new HttpsProxyAgent(opts);
+    return requestURL.protocol === 'http:' ? HttpProxyAgent(opts) : HttpsProxyAgent(opts);
 }

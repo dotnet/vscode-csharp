@@ -14,6 +14,7 @@ export const onlineVscodeignorePath = path.join(rootPath, 'release.vscodeignore'
 
 export const nodeModulesPath = path.join(rootPath, 'node_modules');
 export const vscePath = path.join(nodeModulesPath, 'vsce', 'out', 'vsce');
+export const mochaPath = path.join(nodeModulesPath, 'mocha', 'bin', 'mocha');
 export const vscodeTestHostPath = path.join(nodeModulesPath, 'vscode', 'bin', 'test');
 
 export const packageJsonPath = path.join(rootPath, "package.json");

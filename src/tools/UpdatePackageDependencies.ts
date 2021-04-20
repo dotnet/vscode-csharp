@@ -12,7 +12,7 @@ import * as Event from "../omnisharp/loggingEvents";
 import NetworkSettings, { NetworkSettingsProvider } from '../NetworkSettings';
 import { getBufferIntegrityHash } from '../packageManager/isValidDownload';
 import { EventType } from '../omnisharp/EventType';
-const findVersions = require('find-versions');
+import findVersions = require('find-versions');
 
 interface PackageJSONFile {
     runtimeDependencies: Package[];

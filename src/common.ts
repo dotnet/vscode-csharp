@@ -31,6 +31,21 @@ export function sum<T>(arr: T[], selector: (item: T) => number): number {
     return arr.reduce((prev, curr) => prev + selector(curr), 0);
 }
 
+export async function mapAsync<T1, T2>(
+    array: T1[],
+    selector: (value: T1, index: number, array: T1[]) => Promise<T2>,
+): Promise<T2[]> {
+    return Promise.all(array.map(selector));
+}
+
+export async function filterAsync<T>(
+    array: T[],
+    predicate: (value: T, index: number, array: T[]) => Promise<boolean>,
+): Promise<T[]> {
+    const filterMap = await mapAsync(array, predicate);
+    return array.filter((_, index) => filterMap[index]);
+}
+
 /** Retrieve the length of an array. Returns 0 if the array is `undefined`. */
 export function safeLength<T>(arr: T[] | undefined) {
     return arr ? arr.length : 0;
