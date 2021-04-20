@@ -29,9 +29,9 @@ export async function run(): Promise<void> {
 
     // Create the mocha test
     const mocha = new Mocha({
-        timeout: 100000,
-        ui: 'tdd',
-        useColors: true
+        timeout: 60000,
+        ui: 'tdd',      // the TDD UI is being used in extension.test.ts (suite, test, etc.)
+        useColors: true // colored output from test results
     });
 
     const testsRoot = path.resolve(__dirname, '.');
