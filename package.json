@@ -2061,8 +2061,7 @@
             "body": {
               "name": ".NET Core Attach",
               "type": "coreclr",
-              "request": "attach",
-              "processId": ""
+              "request": "attach"
             }
           },
           {
@@ -2117,7 +2116,6 @@
               "name": ".NET Core Attach",
               "type": "coreclr",
               "request": "attach",
-              "processId": "",
               "pipeTransport": {
                 "pipeCwd": "^\"\\${workspaceFolder}\"",
                 "pipeProgram": "^\"${1:enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'}\"",
