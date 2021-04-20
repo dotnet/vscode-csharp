@@ -21,8 +21,10 @@ async function main() {
         // tests against is set in an evironment variable.
         const workspacePath = process.env.CODE_TESTS_WORKSPACE;
 
+        console.log(`workspace path = '${workspacePath}'`);
+
         // Download VS Code, unzip it and run the integration test
-        await runTests({ extensionDevelopmentPath, extensionTestsPath, launchArgs: [workspacePath] });
+        await runTests({ extensionDevelopmentPath, extensionTestsPath, launchArgs: [workspacePath, '-n'], extensionTestsEnv: process.env });
     } catch (err) {
         console.error(err);
         console.error('Failed to run tests');

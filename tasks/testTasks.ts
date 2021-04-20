@@ -67,5 +67,12 @@ async function runIntegrationTest(testAssetName: string) {
         CODE_WORKSPACE_ROOT: rootPath,
     };
 
-    return spawnNode([integrationTestRunnerPath], { env });
+    const result = await spawnNode([integrationTestRunnerPath], { env });
+
+    if (result.code > 0) {
+        // Ensure that gulp fails when tests fail
+        throw new Error(`Exit code: ${result.code}  Signal: ${result.signal}`);
+    }
+
+    return result;
 }
