@@ -13,6 +13,7 @@ import { EventStream } from '../EventStream';
 import CSharpExtensionExports from '../CSharpExtensionExports';
 import { getRuntimeDependencyPackageWithId } from '../tools/RuntimeDependencyPackageUtils';
 import { getDotnetInfo, DotnetInfo } from '../utils/getDotnetInfo';
+import { CoreCLRConfigurationProvider } from './debugConfigurationProvider';
 
 let _debugUtil: CoreClrDebugUtil = null;
 
@@ -30,6 +31,7 @@ export async function activate(thisExtension: vscode.Extension<CSharpExtensionEx
     }
 
     const factory = new DebugAdapterExecutableFactory(platformInformation, eventStream, thisExtension.packageJSON, thisExtension.extensionPath);
+    context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('coreclr', new CoreCLRConfigurationProvider(platformInformation)));
     context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('coreclr', factory));
     context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('clr', factory));
 }
