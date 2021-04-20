@@ -421,7 +421,7 @@ export function createAttachConfiguration(): string {
         "name": ".NET Core Attach",
         "type": "coreclr",
         "request": "attach",
-        "processId": "\${command:pickProcess}"
+        "processId": ""
     };
 
     return JSON.stringify(configuration);

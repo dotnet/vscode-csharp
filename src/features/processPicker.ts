@@ -24,24 +24,7 @@ export interface AttachItemsProvider {
 export class AttachPicker {
     constructor(private attachItemsProvider: AttachItemsProvider) { }
 
-    public async ShowAttachEntries(): Promise<string> {
-        return this.attachItemsProvider.getAttachItems()
-            .then(processEntries => {
-                let attachPickOptions: vscode.QuickPickOptions = {
-                    ignoreFocusOut: true,
-                    matchOnDescription: true,
-                    matchOnDetail: true,
-                    placeHolder: "Select the process to attach to"
-                };
-
-                return vscode.window.showQuickPick(processEntries, attachPickOptions)
-                    .then(chosenProcess => {
-                        return chosenProcess ? chosenProcess.id : null;
-                    });
-            });
-    }
-
-    public async SelectProcess(): Promise<AttachItem> {
+    public async ShowAttachEntries(): Promise<AttachItem> {
         return this.attachItemsProvider.getAttachItems()
             .then(processEntries => {
                 let attachPickOptions: vscode.QuickPickOptions = {
@@ -214,7 +197,7 @@ export class RemoteAttachPicker {
         return args.map(arg => this.quoteArg(arg)).join(" ");
     }
 
-    public static async ShowAttachEntries(args: any, platformInfo: PlatformInformation): Promise<string> {
+    public static async ShowAttachEntries(args: any, platformInfo: PlatformInformation): Promise<AttachItem> {
         // Create remote attach output channel for errors.
         if (!RemoteAttachPicker._channel) {
             RemoteAttachPicker._channel = vscode.window.createOutputChannel('remote-attach');
@@ -228,13 +211,13 @@ export class RemoteAttachPicker {
 
         if (!name) {
             // Config name not found.
-            return Promise.reject<string>(new Error("Name not defined in current configuration."));
+            return Promise.reject<AttachItem>(new Error("Name not defined in current configuration."));
         }
 
         if (!args.pipeTransport || !args.pipeTransport.debuggerPath) {
             // Missing PipeTransport and debuggerPath, prompt if user wanted to just do local attach.
-            return Promise.reject<string>(new Error("Configuration \"" + name + "\" in launch.json does not have a " +
-                "pipeTransport argument with debuggerPath for pickRemoteProcess. Use pickProcess for local attach."));
+            return Promise.reject<AttachItem>(new Error("Configuration \"" + name + "\" in launch.json does not have a " +
+                "pipeTransport argument with debuggerPath for remote process listing."));
         } else {
             let pipeTransport = this.getPipeTransportOptions(args.pipeTransport, os.platform());
 
@@ -248,8 +231,7 @@ export class RemoteAttachPicker {
                         placeHolder: "Select the process to attach to"
                     };
                     return vscode.window.showQuickPick(processes, attachPickOptions);
-                })
-                .then(item => { return item ? item.id : Promise.reject<string>(new Error("Could not find a process id to attach.")); });
+                });
         }
     }
 
@@ -423,7 +405,7 @@ export class PsOutputParser {
         //   - any leading whitespace
         //   - PID
         //   - whitespace
-        //   - flags
+        //   - flags (hex value)
         //   - whitespace
         //   - executable name --> this is PsAttachItemsProvider.secondColumnCharacters - 1 because ps reserves one character
         //     for the whitespace separator
