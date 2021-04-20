@@ -5,8 +5,6 @@
 
 //@ts-check
 
-'use strict';
-
 const path = require('path');
 /**@type {import('webpack').Configuration}*/
 const config = {
