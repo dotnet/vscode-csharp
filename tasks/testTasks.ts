@@ -3,12 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import * as gulp from 'gulp';
-import * as mocha from 'gulp-mocha';
 import * as path from 'path';
-import { codeExtensionPath, rootPath, testAssetsRootPath, testRootPath, vscodeTestHostPath } from './projectPaths';
+import { codeExtensionPath, mochaPath, rootPath, testAssetsRootPath, testRootPath, vscodeTestHostPath } from './projectPaths';
 import spawnNode from './spawnNode';
 
 gulp.task("test:feature", async () => {
@@ -24,8 +21,13 @@ gulp.task("test:feature", async () => {
 });
 
 gulp.task("test:unit", async () => {
-    return gulp.src('test/unitTests/**/*.test.ts', { read: false })
-        .pipe(mocha({ ui: 'tdd', useColors: true }));
+    return spawnNode([
+        mochaPath,
+        '--ui',
+        'tdd',
+        '-c',
+        'test/unitTests/**/*.test.ts'
+    ]);
 });
 
 gulp.task("test:integration:singleCsproj", async () => {

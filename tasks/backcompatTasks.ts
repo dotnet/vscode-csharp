@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import * as gulp from 'gulp';
 
 gulp.task('package:offline', gulp.series('vsix:offline:package'));
