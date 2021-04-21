@@ -77,7 +77,7 @@ The C# debugger supports attaching to processes. To do this, switch to the Debug
 
 ![Debug launch configuration drop down](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/images/debug-launch-configurations.png)
 
-Select the '.NET Core Attach' configuration. Clicking the play button (or pressing <kbd>F5</kbd>) will then try to attach. In launch.json, if `processId` is set to `"${command:pickProcess}"` this will provide UI to select which process to attach to.
+Select the '.NET Core Attach' configuration. Clicking the play button (or pressing <kbd>F5</kbd>) will then try to attach. In launch.json, if `processId` is set to `""` this will provide UI to select which process to attach to.
 
 #### Remote Debugging
 

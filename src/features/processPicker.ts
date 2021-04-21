@@ -14,6 +14,7 @@ import { getExtensionPath } from '../common';
 
 export interface AttachItem extends vscode.QuickPickItem {
     id: string;
+    flags: number;
 }
 
 export interface AttachItemsProvider {
@@ -23,7 +24,7 @@ export interface AttachItemsProvider {
 export class AttachPicker {
     constructor(private attachItemsProvider: AttachItemsProvider) { }
 
-    public async ShowAttachEntries(): Promise<string> {
+    public async ShowAttachEntries(): Promise<AttachItem> {
         return this.attachItemsProvider.getAttachItems()
             .then(processEntries => {
                 let attachPickOptions: vscode.QuickPickOptions = {
@@ -35,7 +36,7 @@ export class AttachPicker {
 
                 return vscode.window.showQuickPick(processEntries, attachPickOptions)
                     .then(chosenProcess => {
-                        return chosenProcess ? chosenProcess.id : null;
+                        return chosenProcess;
                     });
             });
     }
@@ -50,8 +51,8 @@ interface IPipeTransportOptions {
 
 export class RemoteAttachPicker {
     public static get commColumnTitle() { return Array(PsOutputParser.secondColumnCharacters).join("a"); }
-    public static get linuxPsCommand() { return `ps axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args=`; }
-    public static get osxPsCommand() { return `ps axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args= -c`; }
+    public static get linuxPsCommand() { return `ps axww -o pid=,flags=,comm=${RemoteAttachPicker.commColumnTitle},args=`; }
+    public static get osxPsCommand() { return `ps axww -o pid=,flags=,comm=${RemoteAttachPicker.commColumnTitle},args= -c`; }
     public static get debuggerCommand() { return "${debuggerCommand}"; }
     public static get scriptShellCmd() { return "sh -s"; }
 
@@ -196,7 +197,7 @@ export class RemoteAttachPicker {
         return args.map(arg => this.quoteArg(arg)).join(" ");
     }
 
-    public static async ShowAttachEntries(args: any, platformInfo: PlatformInformation): Promise<string> {
+    public static async ShowAttachEntries(args: any, platformInfo: PlatformInformation): Promise<AttachItem> {
         // Create remote attach output channel for errors.
         if (!RemoteAttachPicker._channel) {
             RemoteAttachPicker._channel = vscode.window.createOutputChannel('remote-attach');
@@ -210,13 +211,13 @@ export class RemoteAttachPicker {
 
         if (!name) {
             // Config name not found.
-            return Promise.reject<string>(new Error("Name not defined in current configuration."));
+            return Promise.reject<AttachItem>(new Error("Name not defined in current configuration."));
         }
 
         if (!args.pipeTransport || !args.pipeTransport.debuggerPath) {
             // Missing PipeTransport and debuggerPath, prompt if user wanted to just do local attach.
-            return Promise.reject<string>(new Error("Configuration \"" + name + "\" in launch.json does not have a " +
-                "pipeTransport argument with debuggerPath for pickRemoteProcess. Use pickProcess for local attach."));
+            return Promise.reject<AttachItem>(new Error("Configuration \"" + name + "\" in launch.json does not have a " +
+                "pipeTransport argument with debuggerPath for remote process listing."));
         } else {
             let pipeTransport = this.getPipeTransportOptions(args.pipeTransport, os.platform());
 
@@ -230,8 +231,7 @@ export class RemoteAttachPicker {
                         placeHolder: "Select the process to attach to"
                     };
                     return vscode.window.showQuickPick(processes, attachPickOptions);
-                })
-                .then(item => { return item ? item.id : Promise.reject<string>(new Error("Could not find a process id to attach.")); });
+                });
         }
     }
 
@@ -266,14 +266,15 @@ export class RemoteAttachPicker {
 }
 
 class Process {
-    constructor(public name: string, public pid: string, public commandLine: string) { }
+    constructor(public name: string, public pid: string, public commandLine: string, public flags: number) { }
 
     public toAttachItem(): AttachItem {
         return {
             label: this.name,
             description: this.pid,
             detail: this.commandLine,
-            id: this.pid
+            id: this.pid,
+            flags: this.flags
         };
     }
 }
@@ -404,17 +405,20 @@ export class PsOutputParser {
         //   - any leading whitespace
         //   - PID
         //   - whitespace
+        //   - flags (hex value)
+        //   - whitespace
         //   - executable name --> this is PsAttachItemsProvider.secondColumnCharacters - 1 because ps reserves one character
         //     for the whitespace separator
         //   - whitespace
         //   - args (might be empty)
-        const psEntry = new RegExp(`^\\s*([0-9]+)\\s+(.{${PsOutputParser.secondColumnCharacters - 1}})\\s+(.*)$`);
+        const psEntry = new RegExp(`^\\s*([0-9]+)\\s+([0-9a-fA-F]+)\\s+(.{${PsOutputParser.secondColumnCharacters - 1}})\\s+(.*)$`);
         const matches = psEntry.exec(line);
-        if (matches && matches.length === 4) {
+        if (matches && matches.length === 5) {
             const pid = matches[1].trim();
-            const executable = matches[2].trim();
-            const cmdline = matches[3].trim();
-            return new Process(executable, pid, cmdline);
+            const flags = parseInt(matches[2].trim(), 16); // flags comes in as hex
+            const executable = matches[3].trim();
+            const cmdline = matches[4].trim();
+            return new Process(executable, pid, cmdline, flags);
         }
     }
 }
@@ -444,7 +448,7 @@ export class WmicOutputParser {
     // Only public for tests.
     public static parseProcessFromWmic(processes: string): Process[] {
         let lines = processes.split(os.EOL);
-        let currentProcess: Process = new Process(null, null, null);
+        let currentProcess: Process = new Process(null, null, null, null);
         let processEntries: Process[] = [];
 
         for (let i = 0; i < lines.length; i++) {
@@ -458,7 +462,7 @@ export class WmicOutputParser {
             // Each entry of processes has ProcessId as the last line
             if (line.startsWith(WmicOutputParser.wmicPidTitle)) {
                 processEntries.push(currentProcess);
-                currentProcess = new Process(null, null, null);
+                currentProcess = new Process(null, null, null, null);
             }
         }
 
