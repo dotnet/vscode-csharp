@@ -5,19 +5,18 @@
 
 import * as gulp from 'gulp';
 import * as path from 'path';
-import { codeExtensionPath, mochaPath, rootPath, testAssetsRootPath, testRootPath, vscodeTestHostPath } from './projectPaths';
+import { codeExtensionPath, featureTestRunnerPath, integrationTestRunnerPath, mochaPath, rootPath, testAssetsRootPath, testRootPath } from './projectPaths';
 import spawnNode from './spawnNode';
 
 gulp.task("test:feature", async () => {
     let env = {
-        ...process.env,
         OSVC_SUITE: "featureTests",
-        CODE_TESTS_PATH: path.join(testRootPath, "featureTests")
+        CODE_EXTENSIONS_PATH: codeExtensionPath,
+        CODE_TESTS_PATH: path.join(testRootPath, "featureTests"),
+        CODE_WORKSPACE_ROOT: rootPath,
     };
 
-    return spawnNode([vscodeTestHostPath, "--verbose"], {
-        env
-    });
+    return spawnNode([featureTestRunnerPath], { env });
 });
 
 gulp.task("test:unit", async () => {
@@ -68,5 +67,12 @@ async function runIntegrationTest(testAssetName: string) {
         CODE_WORKSPACE_ROOT: rootPath,
     };
 
-    return spawnNode([vscodeTestHostPath], { env, cwd: rootPath });
+    const result = await spawnNode([integrationTestRunnerPath], { env, cwd: rootPath });
+
+    if (result.code > 0) {
+        // Ensure that gulp fails when tests fail
+        throw new Error(`Exit code: ${result.code}  Signal: ${result.signal}`);
+    }
+
+    return result;
 }

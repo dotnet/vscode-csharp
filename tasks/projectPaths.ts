@@ -15,7 +15,6 @@ export const onlineVscodeignorePath = path.join(rootPath, 'release.vscodeignore'
 export const nodeModulesPath = path.join(rootPath, 'node_modules');
 export const vscePath = path.join(nodeModulesPath, 'vsce', 'out', 'vsce');
 export const mochaPath = path.join(nodeModulesPath, 'mocha', 'bin', 'mocha');
-export const vscodeTestHostPath = path.join(nodeModulesPath, 'vscode', 'bin', 'test');
 
 export const packageJsonPath = path.join(rootPath, "package.json");
 
@@ -27,6 +26,8 @@ export const codeExtensionPath = commandLineOptions.codeExtensionPath || rootPat
 export const codeExtensionSourcesPath = path.join(codeExtensionPath, "dist");
 
 export const testRootPath = path.join(rootPath, "out", "test");
+export const featureTestRunnerPath = path.join(testRootPath, "runFeatureTests.js");
+export const integrationTestRunnerPath = path.join(testRootPath, "runIntegrationTests.js");
 export const testAssetsRootPath = path.join(rootPath, "test", "integrationTests", "testAssets");
 
 export const nodePath = path.join(process.env.NVM_BIN
