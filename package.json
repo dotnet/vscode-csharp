@@ -1616,12 +1616,12 @@
                 "anyOf": [
                   {
                     "type": "string",
-                    "description": "The process id to attach to. Use \"${command:pickProcess}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
-                    "default": "${command:pickProcess}"
+                    "description": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                    "default": ""
                   },
                   {
                     "type": "integer",
-                    "description": "The process id to attach to. Use \"${command:pickProcess}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                    "description": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
                     "default": 0
                   }
                 ]
@@ -2053,8 +2053,7 @@
             "body": {
               "name": ".NET Core Attach",
               "type": "coreclr",
-              "request": "attach",
-              "processId": "^\"\\${command:pickProcess}\""
+              "request": "attach"
             }
           },
           {
@@ -2109,7 +2108,6 @@
               "name": ".NET Core Attach",
               "type": "coreclr",
               "request": "attach",
-              "processId": "^\"\\${command:pickRemoteProcess}\"",
               "pipeTransport": {
                 "pipeCwd": "^\"\\${workspaceFolder}\"",
                 "pipeProgram": "^\"${1:enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'}\"",
@@ -2717,12 +2715,12 @@
                 "anyOf": [
                   {
                     "type": "string",
-                    "description": "The process id to attach to. Use \"${command:pickProcess}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
-                    "default": "${command:pickProcess}"
+                    "description": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                    "default": ""
                   },
                   {
                     "type": "integer",
-                    "description": "The process id to attach to. Use \"${command:pickProcess}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                    "description": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
                     "default": 0
                   }
                 ]
