@@ -24,7 +24,7 @@ async function main() {
         console.log(`workspace path = '${workspacePath}'`);
 
         // Download VS Code, unzip it and run the integration test
-        await runTests({ extensionDevelopmentPath, extensionTestsPath, launchArgs: [workspacePath, '-n'], extensionTestsEnv: process.env });
+        await runTests({ extensionDevelopmentPath, extensionTestsPath, launchArgs: [workspacePath, '-n', '--verbose'], extensionTestsEnv: process.env });
     } catch (err) {
         console.error(err);
         console.error('Failed to run tests');
