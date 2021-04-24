@@ -223,6 +223,8 @@ function isSupportedPlatform(platform: PlatformInformation): boolean {
             platform.architecture === "x86" ||
             platform.architecture === "i686" ||
             platform.architecture === "aarch64" ||
+            platform.architecture === "arm64" ||
+            platform.architecture === "arm" ||
             platform.architecture === "armv7l";
     }
 

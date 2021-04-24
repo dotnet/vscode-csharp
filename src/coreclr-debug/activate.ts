@@ -46,14 +46,15 @@ async function checkForInvalidArchitecture(platformInformation: PlatformInformat
             }
 
             // Validate we are on compatiable macOS version if we are x86_64
-            if ((platformInformation.architecture !== "x86_64") ||
+            if ((platformInformation.architecture !== "x86_64") || 
                 (platformInformation.architecture === "x86_64" && !CoreClrDebugUtil.isMacOSSupported())) {
                 eventStream.post(new DebuggerPrerequisiteFailure("[ERROR] The debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer."));
                 return true;
             }
         }
         else if (platformInformation.isLinux()) {
-            if (platformInformation.architecture === 'armv7l' || platformInformation.architecture === 'aarch64')
+            if (platformInformation.architecture === 'armv7l' || platformInformation.architecture === 'aarch64' ||
+                platformInformation.architecture === 'arm64' || platformInformation.architecture === 'arm')
                 return false;
         }
         else if (platformInformation.architecture !== "x86_64") {
