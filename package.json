@@ -272,7 +272,8 @@
         "linux"
       ],
       "architectures": [
-        "arm"
+        "arm",
+        "armv7l"
       ],
       "binaries": [
         "./vsdbg-ui",
@@ -291,7 +292,8 @@
         "linux"
       ],
       "architectures": [
-        "arm64"
+        "arm64",
+        "aarch64"
       ],
       "binaries": [
         "./vsdbg-ui",
