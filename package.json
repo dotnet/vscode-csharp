@@ -417,6 +417,11 @@
         "label": "Visual Studio 2019 Light",
         "uiTheme": "vs",
         "path": "./themes/vs2019_light.json"
+      },
+      {
+        "label": "Visual Studio 2019 Blue",
+        "uiTheme": "vs",
+        "path": "./themes/vs2019_blue.json"
       }
     ],
     "configuration": {
