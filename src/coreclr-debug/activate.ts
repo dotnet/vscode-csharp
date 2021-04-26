@@ -54,8 +54,9 @@ async function checkForInvalidArchitecture(platformInformation: PlatformInformat
         }
         else if (platformInformation.isLinux()) {
             if (platformInformation.architecture === 'armv7l' || platformInformation.architecture === 'aarch64' ||
-                platformInformation.architecture === 'arm64' || platformInformation.architecture === 'arm')
-                return false;
+                platformInformation.architecture === 'arm64' || platformInformation.architecture === 'arm') {
+                    return false;
+                }
         }
         else if (platformInformation.architecture !== "x86_64") {
             if (platformInformation.isWindows() && platformInformation.architecture === "x86") {
