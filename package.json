@@ -663,6 +663,14 @@
           "default": true,
           "description": "Specifies whether the references CodeLens should be shown."
         },
+        "csharp.referencesCodeLens.filteredSymbols": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Array of custom symbol names for which CodeLens should be disabled."
+        },
         "csharp.testsCodeLens.enabled": {
           "type": "boolean",
           "default": true,
