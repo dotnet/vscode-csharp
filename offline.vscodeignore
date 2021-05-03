@@ -33,7 +33,6 @@ tsconfig.json
 tslint.json
 wallaby.js
 webpack.config.js
-codecov.yml
 
 !src/razor/language-configuration.json
 !src/razor/syntaxes/*

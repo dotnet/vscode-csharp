@@ -3,18 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-declare module 'http-proxy-agent' {
+import { ITestAssetWorkspace } from "./testAssets";
 
-    interface IHttpProxyAgentOptions {
-        host: string;
-        port: number;
-        auth?: string;
-    }
+let workspace: ITestAssetWorkspace = {
+    description: "sln filter with a csproj's",
+    projects: [{
+        relativeFilePath: "src/app/app.csproj"
+    }]
+};
 
-    class HttpProxyAgent {
-        constructor(proxy: string);
-        constructor(opts: IHttpProxyAgentOptions);
-    }
-
-    export = HttpProxyAgent;
-}
+export default workspace;

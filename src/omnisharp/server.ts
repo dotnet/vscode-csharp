@@ -93,6 +93,7 @@ export class OmniSharpServer {
     private _launchTarget: LaunchTarget;
     private _requestQueue: RequestQueueCollection;
     private _serverProcess: ChildProcess;
+    private _sessionProperties: { [key: string]: any } = {};
 
     private _omnisharpManager: OmnisharpManager;
     private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
@@ -104,6 +105,10 @@ export class OmniSharpServer {
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
         this.updateProjectDebouncer.pipe(debounceTime(1500)).subscribe((event) => { this.updateProjectInfo(); });
         this.firstUpdateProject = true;
+    }
+
+    public get sessionProperties() {
+        return this._sessionProperties;
     }
 
     public isRunning(): boolean {
@@ -434,6 +439,9 @@ export class OmniSharpServer {
 
         let cleanupPromise: Promise<void>;
 
+        // Clear the session properties when the session ends.
+        this._sessionProperties = {};
+
         if (this._telemetryIntervalId !== undefined) {
             // Stop reporting telemetry
             clearInterval(this._telemetryIntervalId);
@@ -498,11 +506,11 @@ export class OmniSharpServer {
         const options = this.optionProvider.GetLatestOptions();
         return findLaunchTargets(options).then(async launchTargets => {
             // If there aren't any potential launch targets, we create file watcher and try to
-            // start the server again once a *.sln, *.csproj, project.json, CSX or Cake file is created.
+            // start the server again once a *.sln, *.slnf, *.csproj, project.json, CSX or Cake file is created.
             if (launchTargets.length === 0) {
                 return new Promise<void>((resolve, reject) => {
                     // 1st watch for files
-                    let watcher = this.vscode.workspace.createFileSystemWatcher('{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
+                    let watcher = this.vscode.workspace.createFileSystemWatcher('{**/*.sln,**/*.slnf,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
                         /*ignoreCreateEvents*/ false,
                         /*ignoreChangeEvents*/ true,
                         /*ignoreDeleteEvents*/ true);

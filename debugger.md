@@ -77,8 +77,33 @@ The C# debugger supports attaching to processes. To do this, switch to the Debug
 
 ![Debug launch configuration drop down](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/images/debug-launch-configurations.png)
 
-Select the '.NET Core Attach' configuration. Clicking the play button (or pressing <kbd>F5</kbd>) will then try to attach. In launch.json, if `processId` is set to `"${command:pickProcess}"` this will provide UI to select which process to attach to.
+Select the '.NET Core Attach' configuration. Clicking the play button (or pressing <kbd>F5</kbd>) will then try to attach. In launch.json, if `processId` is set to `""` this will provide UI to select which process to attach to.
 
 #### Remote Debugging
 
 The debugger supports remotely launching or attaching to processes. See [Attaching to remote processes](https://github.com/OmniSharp/omnisharp-vscode/wiki/Attaching-to-remote-processes) in the wiki for more information.
+
+#### Exception Settings
+
+The VS Code .NET debugger supports configuration options for if the debugger stops when exceptions are thrown or caught. This is done through two different entries in the BREAKPOINTS section of the Run view:
+
+![Exceptions settings in BREAKPOINTS Run View](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/images/Exception-Settings.png)
+
+Note that the BREAKPOINTS section will be missing these entries until the first time that the folder has been debugged with the .NET debugger.
+
+Checking 'All Exceptions' will configure the debugger to stop when an exception is thrown. If Just My Code is enabled (which it is by default) the debugger will not break if an exception is internally thrown and caught in library code. Though if the exception is thrown in library code and returned to user code the debugger will break then.
+
+Checking 'User-Unhandled Exceptions' will configure the debugger to stop when an exception is caught in non-user code after having been thrown in user code or traveled through user code. Exceptions that become user-unhandled aren't always a problem, it could be that user code is implementing an API and is expected to raise an exception in this scenario, but it is often a problem. So, by default, the debugger will stop when an exception becomes user-unhandled.
+
+##### Exception Conditions
+Both checkboxes support conditions to break on only selected exception types. To edit the condition, click on the pencil icon (see image above) or right click on the entry and invoke 'Edit Condition'. The condition is a comma-separated list of exception types to break on, or if the list starts with '!', a list of exception types to ignore.
+
+Examples conditions:
+
+| Example condition value | Result |
+|-------------------------|--------|
+| System.NullReferenceException | This will break on just null reference exceptions. |
+| System.NullReferenceException, System.InvalidOperationException | This will break on both null reference exceptions and invalid operation exceptions. |
+| !System.Threading.Tasks.TaskCanceledException | This will break on all exceptions except for task canceled. |
+| !System.Threading.Tasks.TaskCanceledException, System.NotImplementedException | This will break on all exceptions except for task cancelled and not implemented. |
+

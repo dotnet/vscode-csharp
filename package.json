@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-dotnettools",
-  "version": "1.23.10",
+  "version": "1.23.11",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -30,7 +30,7 @@
   ],
   "defaults": {
     "omniSharp": "1.37.8",
-    "razor": "6.0.0-alpha.1.20575.5"
+    "razor": "6.0.0-alpha.1.21201.19"
   },
   "main": "./dist/extension",
   "scripts": {
@@ -39,43 +39,33 @@
     "compileDev": "tsc -p ./ && gulp tslint && webpack --mode development",
     "watch": "tsc -watch -p ./",
     "tdd": "mocha --config ./.mocharc.jsonc --watch --watch-extensions ts test/unitTests/**/*.test.ts*",
-    "test": "gulp test",
-    "test:unit": "gulp test:unit",
-    "test:feature": "gulp test:feature",
-    "test:integration": "gulp test:integration",
-    "test:integration:singleCsproj": "gulp test:integration:singleCsproj",
-    "test:integration:slnWithCsproj": "gulp test:integration:slnWithCsproj",
+    "test": "tsc -p ./ && gulp test",
+    "test:unit": "tsc -p ./ && gulp test:unit",
+    "test:feature": "tsc -p ./ && gulp test:feature",
+    "test:integration": "tsc -p ./ && gulp test:integration",
+    "test:integration:singleCsproj": "tsc -p ./ && gulp test:integration:singleCsproj",
+    "test:integration:slnWithCsproj": "tsc -p ./ && gulp test:integration:slnWithCsproj",
+    "test:integration:slnFilterWithCsproj": "tsc -p ./ && gulp test:integration:slnFilterWithCsproj",
     "test:release": "mocha --config ./.mocharc.jsonc test/releaseTests/**/*.test.ts",
     "test:artifacts": "mocha --config ./.mocharc.jsonc test/artifactTests/**/*.test.ts",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "cov:instrument": "gulp cov:instrument",
-    "cov:merge": "gulp cov:merge",
-    "cov:merge-html": "gulp cov:merge-html",
-    "cov:report": "npm-run-all cov:report:integration cov:report:unit",
-    "cov:report:unit": "gulp cov:report:unit",
-    "cov:report:integration": "gulp cov:report:integration",
+
     "unpackage:vsix": "gulp vsix:release:unpackage",
     "gulp": "gulp"
   },
-  "nyc": {
-    "extends": "@istanbuljs/nyc-config-typescript"
-  },
   "dependencies": {
     "async-file": "2.0.2",
-    "fs-extra": "7.0.1",
-    "http-proxy-agent": "2.1.0",
-    "https-proxy-agent": "^3.0.1",
+    "fs-extra": "9.1.0",
+    "http-proxy-agent": "4.0.1",
+    "https-proxy-agent": "5.0.0",
     "jsonc-parser": "3.0.0",
-    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/a1999a11-02b4-49cf-9716-bdf7fb656b0b/0c405b000bd7d75cee8b9f8020e136a3/microsoft.aspnetcore.razor.vscode-6.0.0-alpha.1.20575.5.tgz",
-    "mkdirp": "^1.0.3",
-    "node-filter-async": "1.1.1",
+    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/92748a92-32fe-4cf9-b6c2-e3d0edacf90d/d2dce097206432dfa3e47d9b09e58c93/microsoft.aspnetcore.razor.vscode-6.0.0-alpha.1.21201.19.tgz",
     "node-machine-id": "1.1.12",
-    "remove-bom-buffer": "3.0.0",
-    "request-light": "0.2.4",
-    "rxjs": "6.4.0",
+    "request-light": "0.4.0",
+    "rxjs": "6.6.7",
     "semver": "5.6.0",
     "stream": "0.0.2",
-    "strip-bom": "3.0.0",
+    "strip-bom": "5.0.0",
+    "strip-bom-buf": "2.0.0",
     "tmp": "0.0.33",
     "vscode-debugprotocol": "1.33.0",
     "vscode-extension-telemetry": "0.1.6",
@@ -83,65 +73,48 @@
     "yauzl": "2.10.0"
   },
   "devDependencies": {
-    "@istanbuljs/nyc-config-typescript": "1.0.1",
-    "@types/archiver": "2.1.2",
-    "@types/chai": "4.1.7",
-    "@types/chai-arrays": "1.0.2",
-    "@types/chai-as-promised": "7.1.0",
-    "@types/chai-string": "1.4.1",
+    "@types/archiver": "5.1.0",
+    "@types/chai": "4.2.16",
+    "@types/chai-arrays": "2.0.0",
+    "@types/chai-as-promised": "7.1.3",
+    "@types/chai-string": "1.4.2",
     "@types/del": "3.0.1",
     "@types/fs-extra": "5.0.4",
     "@types/gulp": "4.0.5",
-    "@types/gulp-mocha": "0.0.32",
-    "@types/istanbul": "0.4.30",
-    "@types/minimist": "1.2.0",
-    "@types/mkdirp": "0.5.2",
+    "@types/minimist": "1.2.1",
     "@types/mocha": "5.2.5",
     "@types/node": "10.12.24",
     "@types/semver": "5.5.0",
     "@types/tmp": "0.0.33",
     "@types/unzipper": "^0.9.1",
+    "@types/vscode": "1.44.0",
     "@types/yauzl": "2.9.1",
-    "archiver": "3.0.0",
-    "async-child-process": "1.1.1",
-    "async-shelljs": "0.1.2",
-    "chai": "4.2.0",
-    "chai-arrays": "2.0.0",
+    "archiver": "5.3.0",
+    "chai": "4.3.4",
+    "chai-arrays": "2.2.0",
     "chai-as-promised": "7.1.1",
     "chai-fs": "2.0.0",
     "chai-string": "1.5.0",
-    "codecov": "3.7.1",
-    "copyfiles": "^2.3.0",
-    "cross-env": "5.2.0",
     "del": "3.0.0",
-    "find-versions": "3.0.0",
-    "get-port": "4.1.0",
-    "glob-promise": "3.4.0",
-    "gulp": "4.0.0",
-    "gulp-mocha": "6.0.0",
-    "gulp-tslint": "8.1.3",
-    "istanbul": "0.4.5",
-    "ltcdr": "2.2.1",
-    "mocha": "^8.1.1",
-    "mocha-typescript": "1.1.17",
-    "mock-fs": "4.8.0",
-    "mock-http-server": "0.2.0",
-    "natives": "1.1.6",
+    "find-versions": "4.0.0",
+    "get-port": "5.1.1",
+    "glob-promise": "4.1.0",
+    "gulp": "4.0.2",
+    "gulp-tslint": "8.1.4",
+    "mocha": "8.3.2",
+    "mock-fs": "4.13.0",
+    "mock-http-server": "1.4.2",
     "npm-run-all": "4.1.5",
-    "nyc": "15.0.1",
-    "plist": "3.0.1",
-    "remap-istanbul": "0.13.0",
-    "source-map-support": "0.5.10",
-    "ts-loader": "5.3.3",
-    "ts-node": "8.0.2",
+    "ts-loader": "9.0.0",
+    "ts-node": "9.1.1",
     "tslint": "5.12.1",
     "tslint-microsoft-contrib": "6.0.0",
     "tslint-no-unused-expression-chai": "0.1.4",
-    "typescript": "^3.8.3",
-    "unzipper": "0.9.10",
+    "typescript": "4.2.4",
+    "unzipper": "0.10.11",
     "vsce": "1.57.0",
-    "vscode": "1.1.37",
-    "webpack": "5.30.0",
+    "vscode-test": "1.5.2",
+    "webpack": "5.34.0",
     "webpack-cli": "4.6.0"
   },
   "runtimeDependencies": [
@@ -238,8 +211,8 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/22843236-af09-4293-9d23-ca35003ca60a/8ef4bedc8923b38b9a6ab98d7ec2df16/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-9/coreclr-debug-win7-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/15786370-6d35-4cac-8d70-618dfc5aa9ad/d133bd53b5360d1041f8a6ab28b82d4e/coreclr-debug-win7-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-12/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -248,14 +221,14 @@
         "x86_64"
       ],
       "installTestPath": "./.debugger/vsdbg-ui.exe",
-      "integrity": "52D76850494F1F6B04B9CABB4C80B9E63C0762BFA676CFDD16292EBC77462989"
+      "integrity": "D6B804513BA83E10B1428CEEDD6E2AC4749DC2AAFFD5BE56AEB6FD430C916618"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/22843236-af09-4293-9d23-ca35003ca60a/c091f9f76df625e2f6cbae32521c7149/coreclr-debug-osx-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-9/coreclr-debug-osx-x64.zip",
-      "installPath": ".debugger",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/15786370-6d35-4cac-8d70-618dfc5aa9ad/829575bd3a1e1837b3be4c2d1e02fc85/coreclr-debug-osx-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-12/coreclr-debug-osx-x64.zip",
+      "installPath": ".debugger/x86_64",
       "platforms": [
         "darwin"
       ],
@@ -267,14 +240,33 @@
         "./vsdbg-ui",
         "./vsdbg"
       ],
-      "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "E728CB6D8374D6F8BD75B23D352CB3C9B30C202C94F928AFB425E0A1CECEB54A"
+      "installTestPath": "./.debugger/x86_64/vsdbg-ui",
+      "integrity": "2C7CD642F8F3B405D0AB95FABD3CCAD51A6DD2B919B9BE221C0F18FC724604AE"
+    },
+    {
+      "id": "Debugger",
+      "description": ".NET Core Debugger (macOS / arm64)",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/15786370-6d35-4cac-8d70-618dfc5aa9ad/55697478c628061578739b1b2ae62dc4/coreclr-debug-osx-arm64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-12/coreclr-debug-osx-arm64.zip",
+      "installPath": ".debugger/arm64",
+      "platforms": [
+        "darwin"
+      ],
+      "architectures": [
+        "arm64"
+      ],
+      "binaries": [
+        "./vsdbg-ui",
+        "./vsdbg"
+      ],
+      "installTestPath": "./.debugger/arm64/vsdbg-ui",
+      "integrity": "1B2954EB75B647D5168AD816A942F61D46EB8DCEF384A8C2514DB9898B1F0022"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/22843236-af09-4293-9d23-ca35003ca60a/83983aa140267cbf90b3780dfdf640a8/coreclr-debug-linux-arm.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-9/coreclr-debug-linux-arm.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/15786370-6d35-4cac-8d70-618dfc5aa9ad/9ff9dada26542d0d6f3799cbc969339c/coreclr-debug-linux-arm.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-12/coreclr-debug-linux-arm.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -287,13 +279,13 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "9CCDD89F495BF8FD2168FBD9D15730B1F98CD03CB2EFC74F57FCA9AD22E278DD"
+      "integrity": "2D45ABEB478F8234854AB2A0E801B9EA0143B47F208F97AFC95F6020BC4E7BB7"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/22843236-af09-4293-9d23-ca35003ca60a/bfa6b939db12aacd40cf2ebda28b621d/coreclr-debug-linux-arm64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-9/coreclr-debug-linux-arm64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/15786370-6d35-4cac-8d70-618dfc5aa9ad/e64e76d0bfb1e50da16678db728c8bad/coreclr-debug-linux-arm64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-12/coreclr-debug-linux-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -306,13 +298,13 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "BF4C56C6A74175AC02C4DD96A1602457B318D7FE6309B1331FB535F7DF42E01D"
+      "integrity": "0F1BED966A9FBF308A431995A1CC7EC49D690C8E3986F88F47FF3DA198B4F997"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/22843236-af09-4293-9d23-ca35003ca60a/5736b04572b255dee1c529cc41623a4b/coreclr-debug-linux-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-9/coreclr-debug-linux-x64.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/15786370-6d35-4cac-8d70-618dfc5aa9ad/92eeb7715c63c006df2318abeefc15b4/coreclr-debug-linux-x64.zip",
+      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-12/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -325,13 +317,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "29F5ABE6D317F956F0BCBF86C1344FD298D66F276597F6A0E15B5462CA8122A7"
+      "integrity": "A1AF7EB043B14DB777108D6B9D91F8CA2DC5551E3BC8340C96477B5BDC974C4B"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/a1999a11-02b4-49cf-9716-bdf7fb656b0b/c2388ccf719057b1b8d29aab27173206/razorlanguageserver-win-x64-6.0.0-alpha.1.20575.5.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x64-6.0.0-alpha.1.20575.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/92748a92-32fe-4cf9-b6c2-e3d0edacf90d/32982b98737ab510fb2f840e6271b668/razorlanguageserver-win-x64-6.0.0-alpha.1.21201.19.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -343,8 +334,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/a1999a11-02b4-49cf-9716-bdf7fb656b0b/64c771fec994a60d2e131a642e96dba0/razorlanguageserver-win-x86-6.0.0-alpha.1.20575.5.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-win-x86-6.0.0-alpha.1.20575.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/92748a92-32fe-4cf9-b6c2-e3d0edacf90d/d44b829f47f1227c021f0c00acc22e2e/razorlanguageserver-win-x86-6.0.0-alpha.1.21201.19.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -356,8 +346,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/a1999a11-02b4-49cf-9716-bdf7fb656b0b/2f31e7f61004f5c924695b9e1b8cd16e/razorlanguageserver-linux-x64-6.0.0-alpha.1.20575.5.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-linux-x64-6.0.0-alpha.1.20575.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/92748a92-32fe-4cf9-b6c2-e3d0edacf90d/edb3faa70dfc2896bc656a379538f5cc/razorlanguageserver-linux-x64-6.0.0-alpha.1.21201.19.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -372,8 +361,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/a1999a11-02b4-49cf-9716-bdf7fb656b0b/e7ae75595f3cc9153e3316affcdaf051/razorlanguageserver-osx-x64-6.0.0-alpha.1.20575.5.zip",
-      "fallbackUrl": "https://razorvscodetest.blob.core.windows.net/languageserver/RazorLanguageServer-osx-x64-6.0.0-alpha.1.20575.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/92748a92-32fe-4cf9-b6c2-e3d0edacf90d/43ccc87635d42521809c69061b4ec787/razorlanguageserver-osx-x64-6.0.0-alpha.1.21201.19.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -409,10 +397,12 @@
     "workspaceContains:project.json",
     "workspaceContains:*.csproj",
     "workspaceContains:*.sln",
+    "workspaceContains:*.slnf",
     "workspaceContains:*.csx",
     "workspaceContains:*.cake",
     "workspaceContains:**/*.csproj",
     "workspaceContains:**/*.sln",
+    "workspaceContains:**/*.slnf",
     "workspaceContains:**/*.csx",
     "workspaceContains:**/*.cake"
   ],
@@ -1606,6 +1596,10 @@
                 "type": "string",
                 "description": "When set, text that the target application writes to stdout and stderr (ex: Console.WriteLine) will be saved to the specified file. This option is ignored if console is set to something other than internalConsole.",
                 "default": "${workspaceFolder}/out.txt"
+              },
+              "targetArchitecture": {
+                "type": "string",
+                "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
               }
             }
           },
@@ -1622,12 +1616,12 @@
                 "anyOf": [
                   {
                     "type": "string",
-                    "description": "The process id to attach to. Use \"${command:pickProcess}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
-                    "default": "${command:pickProcess}"
+                    "description": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                    "default": ""
                   },
                   {
                     "type": "integer",
-                    "description": "The process id to attach to. Use \"${command:pickProcess}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                    "description": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
                     "default": 0
                   }
                 ]
@@ -2059,8 +2053,7 @@
             "body": {
               "name": ".NET Core Attach",
               "type": "coreclr",
-              "request": "attach",
-              "processId": "^\"\\${command:pickProcess}\""
+              "request": "attach"
             }
           },
           {
@@ -2115,7 +2108,6 @@
               "name": ".NET Core Attach",
               "type": "coreclr",
               "request": "attach",
-              "processId": "^\"\\${command:pickRemoteProcess}\"",
               "pipeTransport": {
                 "pipeCwd": "^\"\\${workspaceFolder}\"",
                 "pipeProgram": "^\"${1:enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'}\"",
@@ -2703,6 +2695,10 @@
                 "type": "string",
                 "description": "When set, text that the target application writes to stdout and stderr (ex: Console.WriteLine) will be saved to the specified file. This option is ignored if console is set to something other than internalConsole.",
                 "default": "${workspaceFolder}/out.txt"
+              },
+              "targetArchitecture": {
+                "type": "string",
+                "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
               }
             }
           },
@@ -2719,12 +2715,12 @@
                 "anyOf": [
                   {
                     "type": "string",
-                    "description": "The process id to attach to. Use \"${command:pickProcess}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
-                    "default": "${command:pickProcess}"
+                    "description": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                    "default": ""
                   },
                   {
                     "type": "integer",
-                    "description": "The process id to attach to. Use \"${command:pickProcess}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                    "description": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
                     "default": 0
                   }
                 ]

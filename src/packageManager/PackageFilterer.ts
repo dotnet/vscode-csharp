@@ -8,8 +8,6 @@ import * as util from '../common';
 import { PackageError } from "./PackageError";
 import { AbsolutePathPackage } from "./AbsolutePathPackage";
 
-const { filterAsync } = require('node-filter-async');
-
 export async function getNotInstalledPackagesForPlatform(packages: AbsolutePathPackage[], platformInfo: PlatformInformation): Promise<AbsolutePathPackage[]> {
     let platformPackages = filterPlatformPackages(packages, platformInfo);
     return filterAlreadyInstalledPackages(platformPackages);
@@ -35,7 +33,7 @@ export function filterPlatformPackages(packages: AbsolutePathPackage[], platform
 }
 
 async function filterAlreadyInstalledPackages(packages: AbsolutePathPackage[]): Promise<AbsolutePathPackage[]> {
-    return filterAsync(packages, async (pkg: AbsolutePathPackage) => {
+    return util.filterAsync(packages, async (pkg: AbsolutePathPackage) => {
         //If the install.Lock file is present for this package then do not install it again
         let testPath = util.getInstallFilePath(pkg.installPath, util.InstallFileType.Lock);
         if (!testPath) {

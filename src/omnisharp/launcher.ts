@@ -52,9 +52,9 @@ export const disabledSchemes = new Set([
 
 /**
  * Returns a list of potential targets on which OmniSharp can be launched.
- * This includes `project.json` files, `*.sln` files (if any `*.csproj` files are found), and the root folder
+ * This includes `project.json` files, `*.sln` and `*.slnf` files (if any `*.csproj` files are found), and the root folder
  * (if it doesn't contain a `project.json` file, but `project.json` files exist). In addition, the root folder
- * is included if there are any `*.csproj` files present, but a `*.sln* file is not found.
+ * is included if there are any `*.csproj` files present, but a `*.sln` or `*.slnf` file is not found.
  */
 export async function findLaunchTargets(options: Options): Promise<LaunchTarget[]> {
     if (!vscode.workspace.workspaceFolders) {
@@ -62,7 +62,7 @@ export async function findLaunchTargets(options: Options): Promise<LaunchTarget[
     }
 
     const projectFiles = await vscode.workspace.findFiles(
-        /*include*/ '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
+        /*include*/ '{**/*.sln,**/*.slnf,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
         /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
         /*maxResults*/ options.maxProjectResults);
 
@@ -76,14 +76,14 @@ export async function findLaunchTargets(options: Options): Promise<LaunchTarget[
 
 export function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
     // The list of launch targets is calculated like so:
-    //   * If there are .csproj files, .sln files are considered as launch targets.
+    //   * If there are .csproj files, .sln and .slnf files are considered as launch targets.
     //   * Any project.json file is considered a launch target.
     //   * If there is no project.json file in a workspace folder, the workspace folder as added as a launch target.
-    //   * Additionally, if there are .csproj files, but no .sln file, the root is added as a launch target.
+    //   * Additionally, if there are .csproj files, but no .sln or .slnf file, the root is added as a launch target.
     //
     // TODO:
     //   * It should be possible to choose a .csproj as a launch target
-    //   * It should be possible to choose a .sln file even when no .csproj files are found
+    //   * It should be possible to choose a .sln or .slnf file even when no .csproj files are found
     //     within the root.
 
     if (!Array.isArray(resources) || resources.length === 0) {
@@ -132,7 +132,7 @@ export function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[
         let folderPath = folder.uri.fsPath;
 
         resources.forEach(resource => {
-            // Add .sln files if there are .csproj files
+            // Add .sln and .slnf files if there are .csproj files
             if (hasCsProjFiles && isSolution(resource)) {
                 hasSlnFile = true;
                 targets.push({
@@ -176,7 +176,7 @@ export function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[
         });
 
         // Add the root folder under the following circumstances:
-        // * If there are .csproj files, but no .sln file, and none in the root.
+        // * If there are .csproj files, but no .sln or .slnf file, and none in the root.
         // * If there are project.json files, but none in the root.
         if ((hasCsProjFiles && !hasSlnFile) || (hasProjectJson && !hasProjectJsonAtRoot)) {
             targets.push({
@@ -229,7 +229,7 @@ function isCSharpProject(resource: vscode.Uri): boolean {
 }
 
 function isSolution(resource: vscode.Uri): boolean {
-    return /\.sln$/i.test(resource.fsPath);
+    return /\.slnf?$/i.test(resource.fsPath);
 }
 
 function isProjectJson(resource: vscode.Uri): boolean {

@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { should, expect } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace, restartOmniSharpServer } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { poll, assertWithPoll, pollDoesNotHappen } from './poll';
 
@@ -158,11 +158,11 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             await setDiagnosticWorkspaceLimit(1);
             await testAssetWorkspace.restore();
             await activateCSharpExtension();
+            await restartOmniSharpServer();
         });
 
         test("When workspace is count as 'large', then only show/fetch diagnostics from open documents", async function () {
-            // This is to trigger manual cleanup for diagnostics before test because we modify max project file count on fly.
-            await vscode.commands.executeCommand("vscode.open", secondaryFileUri);
+            // We are not opening the secondary file so there should be no diagnostics reported for it.
             await vscode.commands.executeCommand("vscode.open", fileUri);
 
             await assertWithPoll(() => vscode.languages.getDiagnostics(fileUri), 10 * 1000, 500, openFileDiag => expect(openFileDiag.length).to.be.greaterThan(0));

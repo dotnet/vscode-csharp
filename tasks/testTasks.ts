@@ -3,36 +3,28 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import * as gulp from 'gulp';
 import * as path from 'path';
-import { codeExtensionPath, nycPath, rootPath, testAssetsRootPath, testRootPath, unitTestCoverageRootPath, mochaPath, vscodeTestHostPath } from './projectPaths';
+import { codeExtensionPath, featureTestRunnerPath, integrationTestRunnerPath, mochaPath, rootPath, testAssetsRootPath, testRootPath } from './projectPaths';
 import spawnNode from './spawnNode';
 
 gulp.task("test:feature", async () => {
     let env = {
-        ...process.env,
         OSVC_SUITE: "featureTests",
-        CODE_TESTS_PATH: path.join(testRootPath, "featureTests")
+        CODE_EXTENSIONS_PATH: codeExtensionPath,
+        CODE_TESTS_PATH: path.join(testRootPath, "featureTests"),
+        CODE_WORKSPACE_ROOT: rootPath,
     };
 
-    return spawnNode([vscodeTestHostPath, "--verbose"], {
-        env
-    });
+    return spawnNode([featureTestRunnerPath], { env });
 });
 
 gulp.task("test:unit", async () => {
     return spawnNode([
-        nycPath,
-        '-r',
-        'lcovonly',
-        '--report-dir',
-        unitTestCoverageRootPath,
         mochaPath,
         '--ui',
         'tdd',
-        '--',
+        '-c',
         'test/unitTests/**/*.test.ts'
     ]);
 });
@@ -45,6 +37,10 @@ gulp.task("test:integration:slnWithCsproj", async () => {
     return runIntegrationTest("slnWithCsproj");
 });
 
+gulp.task("test:integration:slnFilterWithCsproj", async () => {
+    return runIntegrationTest("slnFilterWithCsproj");
+});
+
 gulp.task("test:integration:BasicRazorApp2_1", async () => {
     return runIntegrationTest("BasicRazorApp2_1");
 });
@@ -53,6 +49,7 @@ gulp.task(
     "test:integration", gulp.series(
         "test:integration:singleCsproj",
         "test:integration:slnWithCsproj",
+        "test:integration:slnFilterWithCsproj",
         "test:integration:BasicRazorApp2_1"
     ));
 
@@ -70,5 +67,12 @@ async function runIntegrationTest(testAssetName: string) {
         CODE_WORKSPACE_ROOT: rootPath,
     };
 
-    return spawnNode([vscodeTestHostPath], { env, cwd: rootPath });
+    const result = await spawnNode([integrationTestRunnerPath], { env, cwd: rootPath });
+
+    if (result.code > 0) {
+        // Ensure that gulp fails when tests fail
+        throw new Error(`Exit code: ${result.code}  Signal: ${result.signal}`);
+    }
+
+    return result;
 }
