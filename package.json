@@ -29,7 +29,10 @@
     "dotnet"
   ],
   "capabilities": {
-    "virtualWorkspaces": false
+    "virtualWorkspaces": false,
+    "untrustedWorkspaces": {
+      "supported": false
+    }
   },
   "defaults": {
     "omniSharp": "1.37.8",
