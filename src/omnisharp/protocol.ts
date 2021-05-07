@@ -510,7 +510,6 @@ export interface QuickInfoResponse {
 export interface CompletionRequest extends Request {
     CompletionTrigger: CompletionTriggerKind;
     TriggerCharacter?: string;
-    UseAsyncCompletion: boolean;
 }
 
 export interface CompletionResponse {
