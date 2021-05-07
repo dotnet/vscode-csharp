@@ -19,6 +19,7 @@ export class Options {
         public organizeImportsOnFormat: boolean,
         public showReferencesCodeLens: boolean,
         public showTestsCodeLens: boolean,
+        public filteredSymbolsCodeLens: string[],
         public disableCodeActions: boolean,
         public disableMSBuildDiagnosticWarning: boolean,
         public showOmnisharpLogOnError: boolean,
@@ -82,6 +83,7 @@ export class Options {
 
         const showReferencesCodeLens = csharpConfig.get<boolean>('referencesCodeLens.enabled', true);
         const showTestsCodeLens = csharpConfig.get<boolean>('testsCodeLens.enabled', true);
+        const filteredSymbolsCodeLens = csharpConfig.get<string[]>('referencesCodeLens.filteredSymbols', []);
 
         const useSemanticHighlighting = csharpConfig.get<boolean>('semanticHighlighting.enabled', false);
 
@@ -117,6 +119,7 @@ export class Options {
             organizeImportsOnFormat,
             showReferencesCodeLens,
             showTestsCodeLens,
+            filteredSymbolsCodeLens,
             disableCodeActions,
             disableMSBuildDiagnosticWarning,
             showOmnisharpLogOnError,

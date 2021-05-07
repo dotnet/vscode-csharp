@@ -194,7 +194,7 @@ function createCodeLenses(elements: Structure.CodeElement[], fileName: string, o
 function createCodeLensesForElement(element: Structure.CodeElement, fileName: string, options: Options): vscode.CodeLens[] {
     let results: vscode.CodeLens[] = [];
 
-    if (options.showReferencesCodeLens && isValidElementForReferencesCodeLens(element)) {
+    if (options.showReferencesCodeLens && isValidElementForReferencesCodeLens(element, options)) {
         let range = element.Ranges[SymbolRangeNames.Name];
         if (range) {
             results.push(new ReferencesCodeLens(range, fileName));
@@ -246,12 +246,16 @@ const filteredSymbolNames: { [name: string]: boolean } = {
     'GetEnumerator': true,
 };
 
-function isValidElementForReferencesCodeLens(element: Structure.CodeElement): boolean {
+function isValidElementForReferencesCodeLens(element: Structure.CodeElement, options: Options): boolean {
     if (element.Kind === SymbolKinds.Namespace) {
         return false;
     }
 
     if (element.Kind === SymbolKinds.Method && filteredSymbolNames[element.Name]) {
+        return false;
+    }
+
+    if(options.filteredSymbolsCodeLens.includes(element.Name)) {
         return false;
     }
 
