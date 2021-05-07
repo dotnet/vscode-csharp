@@ -28,6 +28,9 @@
     ".NET Core",
     "dotnet"
   ],
+  "capabilities": {
+    "virtualWorkspaces": false
+  },
   "defaults": {
     "omniSharp": "1.37.8",
     "razor": "6.0.0-alpha.1.21201.19"
