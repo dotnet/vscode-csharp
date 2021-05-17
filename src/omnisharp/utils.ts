@@ -179,6 +179,10 @@ export async function getCompletionResolve(server: OmniSharpServer, request: pro
     return server.makeRequest<protocol.CompletionResolveResponse>(protocol.Requests.CompletionResolve, request, context);
 }
 
+export async function getCompletionAfterInsert(server: OmniSharpServer, request: protocol.CompletionAfterInsertionRequest) {
+    return server.makeRequest<protocol.CompletionAfterInsertResponse>(protocol.Requests.CompletionAfterInsert, request);
+}
+
 export async function isNetCoreProject(project: protocol.MSBuildProject) {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp') || tf.ShortName.startsWith('netstandard')) !== undefined;
 }

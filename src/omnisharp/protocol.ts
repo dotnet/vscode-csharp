@@ -34,6 +34,7 @@ export module Requests {
     export const QuickInfo = '/quickinfo';
     export const Completion = '/completion';
     export const CompletionResolve = '/completion/resolve';
+    export const CompletionAfterInsert = '/completion/afterInsert';
 }
 
 export namespace WireProtocol {
@@ -524,6 +525,16 @@ export interface CompletionResolveResponse {
     Item: OmnisharpCompletionItem;
 }
 
+export interface CompletionAfterInsertionRequest {
+    Item: OmnisharpCompletionItem;
+}
+
+export interface CompletionAfterInsertResponse {
+    Changes?: LinePositionSpanTextChange[];
+    Line?: number;
+    Column?: number;
+}
+
 export interface OmnisharpCompletionItem {
     Label: string;
     Kind: CompletionItemKind;
@@ -539,6 +550,7 @@ export interface OmnisharpCompletionItem {
     CommitCharacters?: string[];
     AdditionalTextEdits?: LinePositionSpanTextChange[];
     Data: any;
+    HasAfterInsertStep: boolean;
 }
 
 export namespace V2 {

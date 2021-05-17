@@ -32,6 +32,7 @@ export class Options {
         public enableEditorConfigSupport: boolean,
         public enableDecompilationSupport: boolean,
         public enableImportCompletion: boolean,
+        public enableAsyncCompletion: boolean,
         public useSemanticHighlighting: boolean,
         public razorPluginPath?: string,
         public defaultLaunchSolution?: string,
@@ -75,6 +76,7 @@ export class Options {
         const enableEditorConfigSupport = omnisharpConfig.get<boolean>('enableEditorConfigSupport', false);
         const enableDecompilationSupport = omnisharpConfig.get<boolean>('enableDecompilationSupport', false);
         const enableImportCompletion = omnisharpConfig.get<boolean>('enableImportCompletion', false);
+        const enableAsyncCompletion = omnisharpConfig.get<boolean>('enableAsyncCompletion', false);
 
         const useFormatting = csharpConfig.get<boolean>('format.enable', true);
         const organizeImportsOnFormat = omnisharpConfig.get<boolean>('organizeImportsOnFormat', false);
@@ -130,6 +132,7 @@ export class Options {
             enableEditorConfigSupport,
             enableDecompilationSupport,
             enableImportCompletion,
+            enableAsyncCompletion,
             useSemanticHighlighting,
             razorPluginPath,
             defaultLaunchSolution,
