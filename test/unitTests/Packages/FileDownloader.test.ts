@@ -93,7 +93,12 @@ suite("FileDownloader", () => {
 
     suite('If the response status code is not 301, 302 or 200 then the download fails', () => {
         test('Error is thrown', async () => {
-            expect(DownloadFile(fileDescription, eventStream, networkSettingsProvider, getURL(errorUrlPath))).be.rejected;
+            const downloadPromise = DownloadFile(fileDescription, eventStream, networkSettingsProvider, getURL(errorUrlPath));
+            try {
+                await downloadPromise;
+            }
+            catch { }
+            expect(downloadPromise).be.rejected;
         });
 
         test('Download Start and Download Failure events are created', async () => {
