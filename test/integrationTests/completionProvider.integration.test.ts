@@ -67,7 +67,8 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
                 expect(i.additionalTextEdits[0].range.start.line).to.equal(1);
                 expect(i.additionalTextEdits[0].range.start.character).to.equal(0);
                 expect(i.additionalTextEdits[0].range.end.line).to.equal(1);
-                expect(i.additionalTextEdits[0].range.end.character).to.equal(1);
+                // Can be either 0 or 1, depending on the platform this test is run on
+                expect(i.additionalTextEdits[0].range.end.character).to.be.lessThanOrEqual(1).and.greaterThanOrEqual(0);
             }
             else {
                 sawEmptyAdditionalTextEdits = true;
