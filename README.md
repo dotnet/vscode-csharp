@@ -28,7 +28,7 @@ For Windows users who have Visual Studio installed, this means you will need to 
 For MacOS and Linux users who have Mono installed, this means you will need to set `omnisharp.useGlobalMono` to `never` until a version of Mono ships with MSBuild 16.8.
 
 ## What's new in 1.23.12
-- Support async completion (PR: [#4116](https://www.github.com/OmniSharp/omnisharp-vscode/pull/4116))
+- Support experimental async completion (PR: [#4116](https://www.github.com/OmniSharp/omnisharp-vscode/pull/4116))
 - Add option to to exclude custom symbols from codelens ([#4335](https://github.com/OmniSharp/omnisharp-vscode/issues/4335), PR: [#4418](https://www.github.com/OmniSharp/omnisharp-vscode/pull/4418))
 - Handle ProcessPicker via resolveDebugConfiguration (PR: [#4509](https://www.github.com/OmniSharp/omnisharp-vscode/pull/4509))
 - Update OmniSharp version to 1.37.9

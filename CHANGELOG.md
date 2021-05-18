@@ -12,7 +12,7 @@
   * As a workaround, make an edit within the file before using Rename Symbol.
 
 ## 1.23.12 (Not yet released)
-* Support async completion (PR: [#4116](https://www.github.com/OmniSharp/omnisharp-vscode/pull/4116))
+* Support experimental async completion (PR: [#4116](https://www.github.com/OmniSharp/omnisharp-vscode/pull/4116))
 * Add option to to exclude custom symbols from codelens ([#4335](https://github.com/OmniSharp/omnisharp-vscode/issues/4335), PR: [#4418](https://www.github.com/OmniSharp/omnisharp-vscode/pull/4418))
 * Handle ProcessPicker via resolveDebugConfiguration (PR: [#4509](https://www.github.com/OmniSharp/omnisharp-vscode/pull/4509))
 * Update OmniSharp version to 1.37.9
