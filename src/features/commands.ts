@@ -21,7 +21,6 @@ import reportIssue from './reportIssue';
 import { IMonoResolver } from '../constants/IMonoResolver';
 import { getDotnetInfo } from '../utils/getDotnetInfo';
 import { getDecompilationAuthorization } from '../omnisharp/decompilationPrompt';
-import { getSemanticTokensProvider } from '../omnisharp/extension';
 
 export default function registerCommands(context: vscode.ExtensionContext, server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionProvider: OptionProvider, monoResolver: IMonoResolver, packageJSON: any, extensionPath: string): CompositeDisposable {
     let disposable = new CompositeDisposable();
@@ -50,12 +49,6 @@ export default function registerCommands(context: vscode.ExtensionContext, serve
     disposable.add(vscode.commands.registerCommand('csharp.reportIssue', async () => reportIssue(vscode, eventStream, getDotnetInfo, platformInfo.isValidPlatformForMono(), optionProvider.GetLatestOptions(), monoResolver)));
 
     disposable.add(vscode.commands.registerCommand('csharp.showDecompilationTerms', async () => showDecompilationTerms(context, server, optionProvider)));
-
-    if (process.env.OSVC_SUITE !== undefined) {
-        // Register commands used for integration tests.
-        disposable.add(vscode.commands.registerCommand('csharp.private.getSemanticTokensLegend', async () => getSemanticTokensLegend()));
-        disposable.add(vscode.commands.registerCommand('csharp.private.getSemanticTokens', async (fileUri) => await getSemanticTokens(fileUri)));
-    }
 
     return new CompositeDisposable(disposable);
 }
@@ -175,15 +168,6 @@ async function getProjectDescriptors(server: OmniSharpServer): Promise<protocol.
     }
 
     return descriptors;
-}
-
-function getSemanticTokensLegend() {
-    return getSemanticTokensProvider().getLegend();
-}
-
-async function getSemanticTokens(fileUri: vscode.Uri) {
-    const document = await vscode.workspace.openTextDocument(fileUri);
-    return await getSemanticTokensProvider().provideDocumentSemanticTokens(document, null);
 }
 
 export async function dotnetRestore(cwd: string, eventStream: EventStream, filePath?: string): Promise<void> {

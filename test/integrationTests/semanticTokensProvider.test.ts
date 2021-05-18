@@ -25,10 +25,10 @@ interface ExpectedToken {
 
 async function assertTokens(fileUri: vscode.Uri, expected: ExpectedToken[] | null, message?: string): Promise<void> {
 
-    const legend = <vscode.SemanticTokensLegend>await vscode.commands.executeCommand("csharp.private.getSemanticTokensLegend");
-    const actual = <vscode.SemanticTokens>await vscode.commands.executeCommand("csharp.private.getSemanticTokens", fileUri);
+    const legend = <vscode.SemanticTokensLegend>await vscode.commands.executeCommand("vscode.provideDocumentSemanticTokensLegend", fileUri);
+    const actual = <vscode.SemanticTokens>await vscode.commands.executeCommand("vscode.provideDocumentSemanticTokens", fileUri);
 
-    if (actual === null) {
+    if (!actual) {
         assert.isNull(expected, message);
         return;
     }
@@ -78,6 +78,7 @@ suite(`SemanticTokensProvider: ${testAssetWorkspace.description}`, function () {
         const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
 
         fileUri = vscode.Uri.file(path.join(projectDirectory, fileName));
+        await vscode.commands.executeCommand("vscode.open", fileUri);
     });
 
     test('Semantic Highlighting returns null when disabled', async () => {
