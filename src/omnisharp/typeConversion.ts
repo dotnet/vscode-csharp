@@ -43,6 +43,10 @@ export function toVSCodeRange(StartLine: number, StartColumn: number, EndLine: n
     return new vscode.Range(StartLine, StartColumn, EndLine, EndColumn);
 }
 
+export function toOmnisharpRange(range: vscode.Range): protocol.V2.Range {
+    return { Start: { Line: range.start.line, Column: range.start.character }, End: { Line: range.end.line, Column: range.end.character } };
+}
+
 export function createRequest<T extends protocol.Request>(document: vscode.TextDocument, where: vscode.Position | vscode.Range, includeBuffer: boolean = false): T {
 
     let Line: number, Column: number;

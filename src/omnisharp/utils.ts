@@ -183,6 +183,10 @@ export async function getCompletionAfterInsert(server: OmniSharpServer, request:
     return server.makeRequest<protocol.CompletionAfterInsertResponse>(protocol.Requests.CompletionAfterInsert, request);
 }
 
+export async function getInlineValues(server: OmniSharpServer, request: protocol.InlineValuesRequest, context: vscode.CancellationToken) {
+    return server.makeRequest<protocol.InlineValuesResponse>(protocol.Requests.InlineValues, request, context);
+}
+
 export async function isNetCoreProject(project: protocol.MSBuildProject) {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp') || tf.ShortName.startsWith('netstandard')) !== undefined;
 }

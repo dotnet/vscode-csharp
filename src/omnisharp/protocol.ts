@@ -35,6 +35,7 @@ export module Requests {
     export const Completion = '/completion';
     export const CompletionResolve = '/completion/resolve';
     export const CompletionAfterInsert = '/completion/afterInsert';
+    export const InlineValues = '/inlinevalues';
 }
 
 export namespace WireProtocol {
@@ -551,6 +552,31 @@ export interface OmnisharpCompletionItem {
     AdditionalTextEdits?: LinePositionSpanTextChange[];
     Data: any;
     HasAfterInsertStep: boolean;
+}
+
+export interface InlineValuesRequest extends FileBasedRequest {
+    ViewPort: V2.Range;
+    Context: InlineValuesContext;
+}
+
+export interface InlineValuesContext {
+    FrameId: number;
+    StoppedLocation: V2.Range;
+}
+
+export interface InlineValuesResponse {
+    Values: InlineValue[];
+}
+
+export interface InlineValue {
+    Kind: InlineValueKind;
+    Text?: string;
+    Range: V2.Range;
+    CaseSensitiveLookup: boolean;
+}
+
+export enum InlineValueKind {
+    Text, VariableLookup, EvaluatableExpression
 }
 
 export namespace V2 {

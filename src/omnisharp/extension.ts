@@ -41,6 +41,7 @@ import { getMonoVersion } from '../utils/getMonoVersion';
 import { FixAllProvider } from '../features/fixAllProvider';
 import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
 import SemanticTokensProvider from '../features/semanticTokensProvider';
+import CSharpInlineValuesProvider from '../features/inlineValuesProvider';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
@@ -108,6 +109,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         const semanticTokensProvider = new SemanticTokensProvider(server, optionProvider, languageMiddlewareFeature);
         localDisposables.add(vscode.languages.registerDocumentSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
         localDisposables.add(vscode.languages.registerDocumentRangeSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
+        localDisposables.add(vscode.languages.registerInlineValuesProvider(documentSelector, new CSharpInlineValuesProvider(server, languageMiddlewareFeature)));
     }));
 
     disposables.add(server.onServerStop(() => {
