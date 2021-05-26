@@ -12,7 +12,7 @@ import * as Event from "../omnisharp/loggingEvents";
 import NetworkSettings, { NetworkSettingsProvider } from '../NetworkSettings';
 import { getBufferIntegrityHash } from '../packageManager/isValidDownload';
 import { EventType } from '../omnisharp/EventType';
-const findVersions = require('find-versions');
+import findVersions = require('find-versions');
 
 interface PackageJSONFile {
     runtimeDependencies: Package[];
@@ -198,7 +198,12 @@ function getLowercaseFileNameFromUrl(url: string): string {
 
     let index = url.lastIndexOf("/");
     let fileName = url.substr(index + 1).toLowerCase();
-    let versions = findVersions(fileName);
+
+    // With Razor putting two version numbers into their filename we need to split up the name to
+    // correctly identify the version part of the filename.
+    let nameParts = fileName.split('-');
+    let potentialVersionPart = nameParts[nameParts.length - 1];
+    let versions = findVersions(potentialVersionPart, { loose: true });
     if (!versions || versions.length == 0) {
         return fileName;
     }

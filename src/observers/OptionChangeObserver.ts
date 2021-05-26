@@ -22,6 +22,7 @@ const omniSharpOptions: ReadonlyArray<OptionsKey> = [
     "enableDecompilationSupport",
     "enableImportCompletion",
     "organizeImportsOnFormat",
+    "enableAsyncCompletion",
 ];
 
 function OmniSharpOptionChangeObservable(optionObservable: Observable<Options>): Observable<Options> {

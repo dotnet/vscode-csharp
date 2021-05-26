@@ -108,7 +108,7 @@ suite("OmniSharpConfigChangeObserver", () => {
                 };
 
                 doClickOk = () => {
-                    resolve(...items);
+                    resolve(items[0]);
                 };
             });
         };

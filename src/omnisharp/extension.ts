@@ -11,7 +11,7 @@ import { safeLength, sum } from '../common';
 import { CSharpConfigurationProvider } from '../configurationProvider';
 import CodeActionProvider from '../features/codeActionProvider';
 import CodeLensProvider from '../features/codeLensProvider';
-import CompletionProvider from '../features/completionProvider';
+import CompletionProvider, { CompletionAfterInsertCommand } from '../features/completionProvider';
 import DefinitionMetadataDocumentProvider from '../features/definitionMetadataDocumentProvider';
 import DefinitionProvider from '../features/definitionProvider';
 import DocumentHighlightProvider from '../features/documentHighlightProvider';
@@ -48,11 +48,6 @@ export interface ActivationResult {
     readonly testManager: TestManager;
 }
 
-let _semanticTokensProvider: SemanticTokensProvider;
-export function getSemanticTokensProvider() {
-    return _semanticTokensProvider;
-}
-
 export async function activate(context: vscode.ExtensionContext, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, eventStream: EventStream, optionProvider: OptionProvider, extensionPath: string) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
@@ -69,6 +64,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     disposables.add(languageMiddlewareFeature);
     let localDisposables: CompositeDisposable;
     const testManager = new TestManager(server, eventStream, languageMiddlewareFeature);
+    const completionProvider = new CompletionProvider(server, languageMiddlewareFeature);
 
     disposables.add(server.onServerStart(() => {
         // register language feature provider on start
@@ -90,7 +86,8 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
             localDisposables.add(vscode.languages.registerDocumentRangeFormattingEditProvider(documentSelector, new FormatProvider(server, languageMiddlewareFeature)));
             localDisposables.add(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new FormatProvider(server, languageMiddlewareFeature), '}', '/', '\n', ';'));
         }
-        localDisposables.add(vscode.languages.registerCompletionItemProvider(documentSelector, new CompletionProvider(server, languageMiddlewareFeature), '.', ' '));
+        localDisposables.add(vscode.languages.registerCompletionItemProvider(documentSelector, completionProvider, '.', ' '));
+        localDisposables.add(vscode.commands.registerCommand(CompletionAfterInsertCommand, async (item) => completionProvider.afterInsert(item)));
         localDisposables.add(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server, optionProvider, languageMiddlewareFeature)));
         localDisposables.add(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server, languageMiddlewareFeature), '(', ','));
         // Since the CodeActionProvider registers its own commands, we must instantiate it and add it to the localDisposables
@@ -109,11 +106,6 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables.add(vscode.languages.registerFoldingRangeProvider(documentSelector, new StructureProvider(server, languageMiddlewareFeature)));
 
         const semanticTokensProvider = new SemanticTokensProvider(server, optionProvider, languageMiddlewareFeature);
-        // Make the semantic token provider available for testing
-        if (process.env.OSVC_SUITE !== undefined) {
-            _semanticTokensProvider = semanticTokensProvider;
-        }
-
         localDisposables.add(vscode.languages.registerDocumentSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
         localDisposables.add(vscode.languages.registerDocumentRangeSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
     }));

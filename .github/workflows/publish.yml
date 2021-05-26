@@ -1,33 +1,33 @@
 on:
-  release:
-    types:
-      - released
+    release:
+        types:
+            - released
 
 name: Publish the Extension to OpenVSX
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
 
-    - uses: actions/setup-node@v1
-      with:
-        node-version: 10
+            - uses: actions/setup-node@v1
+              with:
+                  node-version: 10
 
-    - run: npm ci
-    - run: npm install -g gulp ovsx
-    - run: gulp 'vsix:release:package'
+            - run: npm ci
+            - run: npm install -g gulp ovsx
+            - run: gulp 'vsix:release:package'
 
-    - name: upload vsix artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: extension
-        path: ./*.vsix
-    
-    - name: download vsix artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: extension.vsix
+            - name: upload vsix artifact
+              uses: actions/upload-artifact@v2
+              with:
+                  name: extension
+                  path: ./*.vsix
 
-    - run: ovsx publish **/*.vsix -p ${{ secrets.OPEN_VSX_TOKEN }}
+            - name: download vsix artifact
+              uses: actions/download-artifact@v2
+              with:
+                  name: extension.vsix
+
+            - run: ovsx publish ./extension.vsix -p ${{ secrets.OPEN_VSX_TOKEN }}
