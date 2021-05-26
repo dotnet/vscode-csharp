@@ -37,7 +37,7 @@ export async function activateCSharpExtension(): Promise<ActivationResult | unde
 }
 
 export async function restartOmniSharpServer(): Promise<void> {
-    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-dotnettools.csharp");
+    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("muhammad-sammy.csharp");
 
     if (!csharpExtension.isActive) {
         await activateCSharpExtension();
