@@ -351,7 +351,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux / x64)",
-      "url": " https://download.visualstudio.microsoft.com/download/pr/752cb2c4-4352-499f-ab81-54454d6e7a92/344a62e65802d1f611bb0a8e94751cc8/razorlanguageserver-linux-x64-6.0.0-preview.5.21271.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/752cb2c4-4352-499f-ab81-54454d6e7a92/344a62e65802d1f611bb0a8e94751cc8/razorlanguageserver-linux-x64-6.0.0-preview.5.21271.1.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
