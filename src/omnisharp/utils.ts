@@ -63,8 +63,8 @@ export async function getCodeActions(server: OmniSharpServer, request: protocol.
     return server.makeRequest<protocol.V2.GetCodeActionsResponse>(protocol.V2.Requests.GetCodeActions, request, token);
 }
 
-export async function goToDefinition(server: OmniSharpServer, request: protocol.GoToDefinitionRequest, token: vscode.CancellationToken) {
-    return server.makeRequest<protocol.GoToDefinitionResponse>(protocol.Requests.GoToDefinition, request);
+export async function goToDefinition(server: OmniSharpServer, request: protocol.V2.GoToDefinitionRequest, token: vscode.CancellationToken) {
+    return server.makeRequest<protocol.V2.GoToDefinitionResponse>(protocol.V2.Requests.GoToDefinition, request);
 }
 
 export async function rename(server: OmniSharpServer, request: protocol.RenameRequest, token: vscode.CancellationToken) {
