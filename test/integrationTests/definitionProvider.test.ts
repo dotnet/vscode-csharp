@@ -8,7 +8,8 @@ import CSharpDefinitionProvider from "../../src/features/definitionProvider";
 import * as path from "path";
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
 import { expect } from "chai";
-import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace, isSlnWithCsproj, restartOmniSharpServer } from './integrationHelpers';
+import { assertWithPoll } from "./poll";
 
 suite(`${CSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;
@@ -53,5 +54,44 @@ suite(`${CSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () 
         expect(definitionList[0].uri.path).to.contain("definition.cs");
         expect(definitionList[1]).to.exist;
         expect(definitionList[1].uri.path).to.contain("definition.cs");
+    });
+
+    test("Generated file returns definitions and adds source", async () => {
+        if (!isSlnWithCsproj(vscode.workspace)) {
+            return;
+        }
+
+        const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
+        const generatorTriggerUri = vscode.Uri.file(path.join(projectDirectory, 'GeneratorTrigger.cs'));
+        const textStart = new vscode.Position(11, 41);
+        await vscode.commands.executeCommand('vscode.open', generatorTriggerUri);
+
+        // We need to do a full build in order to get the source generator built and ready to run, or tests will fail
+        const task = (await vscode.tasks.fetchTasks()).filter(task => task.name === 'build')[0];
+        expect(task).to.not.be.undefined;
+        await vscode.tasks.executeTask(task);
+        await restartOmniSharpServer();
+
+        const definitionList = <vscode.Location[]>(await vscode.commands.executeCommand("vscode.executeDefinitionProvider", generatorTriggerUri, textStart));
+        expect(definitionList.length).to.be.equal(1);
+        expect(definitionList[0]).to.exist;
+        expect(definitionList[0].uri.path).to.contain("GeneratedCode.cs");
+
+        const generatedCodeUri = definitionList[0].uri;
+        let generatedCodeDocument = await vscode.workspace.openTextDocument(generatedCodeUri);
+        expect(generatedCodeDocument.getText()).contains("Hello world!");
+        expect(generatedCodeDocument.getText()).does.not.contain("Goodbye");
+
+        await vscode.commands.executeCommand('vscode.open', generatorTriggerUri);
+        const textEdit = new vscode.WorkspaceEdit();
+        textEdit.replace(generatorTriggerUri, new vscode.Range(new vscode.Position(9, 27), new vscode.Position(9, 38)), "Goodbye");
+        expect(await vscode.workspace.applyEdit(textEdit)).to.be.true;
+
+        await vscode.commands.executeCommand('vscode.open', generatedCodeUri);
+        await assertWithPoll(() => { }, 15 * 1000, 500, _ => {
+            const documentText = vscode.window.activeTextEditor.document.getText();
+            expect(documentText).does.not.contain("Hello world!");
+            expect(documentText).contains("Goodbye");
+        });
     });
 });

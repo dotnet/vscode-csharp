@@ -67,3 +67,10 @@ export function isRazorWorkspace(workspace: typeof vscode.workspace) {
 
     return projectFileName === 'BasicRazorApp2_1';
 }
+
+export function isSlnWithCsproj(workspace: typeof vscode.workspace) {
+    const primeWorkspace = workspace.workspaceFolders[0];
+    const projectFileName = primeWorkspace.uri.fsPath.split(path.sep).pop();
+
+    return projectFileName === 'slnWithCsproj';
+}

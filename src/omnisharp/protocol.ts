@@ -34,6 +34,9 @@ export module Requests {
     export const Completion = '/completion';
     export const CompletionResolve = '/completion/resolve';
     export const CompletionAfterInsert = '/completion/afterInsert';
+    export const SourceGeneratedFile = '/sourcegeneratedfile';
+    export const UpdateSourceGeneratedFile = '/updatesourcegeneratedfile';
+    export const SourceGeneratedFileClosed = '/sourcegeneratedfileclosed';
 }
 
 export namespace WireProtocol {
@@ -545,6 +548,36 @@ export interface OmnisharpCompletionItem {
     HasAfterInsertStep: boolean;
 }
 
+export interface SourceGeneratedFileInfo {
+    ProjectGuid: string;
+    DocumentGuid: string;
+}
+
+export interface SourceGeneratedFileRequest extends SourceGeneratedFileInfo {
+}
+
+export interface SourceGeneratedFileResponse {
+    Source: string;
+    SourceName: string;
+}
+
+export interface UpdateSourceGeneratedFileRequest extends SourceGeneratedFileInfo {
+}
+
+export interface UpdateSourceGeneratedFileResponse {
+    UpdateType: UpdateType;
+    Source?: string;
+}
+
+export enum UpdateType {
+    Unchanged,
+    Deleted,
+    Modified
+}
+
+export interface SourceGeneratedFileClosedRequest extends SourceGeneratedFileInfo {
+}
+
 export namespace V2 {
 
     export module Requests {
@@ -880,6 +913,7 @@ export namespace V2 {
     export interface Definition {
         Location: Location;
         MetadataSource?: MetadataSource;
+        SourceGeneratedFileInfo?: SourceGeneratedFileInfo;
     }
 }
 

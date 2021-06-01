@@ -64,7 +64,19 @@ export async function getCodeActions(server: OmniSharpServer, request: protocol.
 }
 
 export async function goToDefinition(server: OmniSharpServer, request: protocol.V2.GoToDefinitionRequest, token: vscode.CancellationToken) {
-    return server.makeRequest<protocol.V2.GoToDefinitionResponse>(protocol.V2.Requests.GoToDefinition, request);
+    return server.makeRequest<protocol.V2.GoToDefinitionResponse>(protocol.V2.Requests.GoToDefinition, request, token);
+}
+
+export async function getSourceGeneratedFile(server: OmniSharpServer, request: protocol.SourceGeneratedFileRequest, token: vscode.CancellationToken) {
+    return server.makeRequest<protocol.SourceGeneratedFileResponse>(protocol.Requests.SourceGeneratedFile, request, token);
+}
+
+export async function getUpdatedSourceGeneratedFile(server: OmniSharpServer, request: protocol.UpdateSourceGeneratedFileRequest) {
+    return server.makeRequest<protocol.UpdateSourceGeneratedFileResponse>(protocol.Requests.UpdateSourceGeneratedFile, request);
+}
+
+export async function sourceGeneratedFileClosed(server: OmniSharpServer, request: protocol.SourceGeneratedFileRequest) {
+    return server.makeRequest(protocol.Requests.SourceGeneratedFileClosed, request);
 }
 
 export async function rename(server: OmniSharpServer, request: protocol.RenameRequest, token: vscode.CancellationToken) {

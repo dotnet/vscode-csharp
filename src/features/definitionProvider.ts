@@ -8,17 +8,18 @@ import { CancellationToken, DefinitionProvider, Location, Position, TextDocument
 import { MetadataRequest, MetadataSource, V2 } from '../omnisharp/protocol';
 import { createRequest, toRange3, toVscodeLocation } from '../omnisharp/typeConversion';
 import AbstractSupport from './abstractProvider';
-import DefinitionMetadataDocumentProvider from './definitionMetadataDocumentProvider';
+import DefinitionMetadataOrSourceGeneratedDocumentProvider from './definitionMetadataDocumentProvider';
 import { OmniSharpServer } from '../omnisharp/server';
 import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import SourceGeneratedDocumentProvider from './sourceGeneratedDocumentProvider';
 
 export default class CSharpDefinitionProvider extends AbstractSupport implements DefinitionProvider {
-    private _definitionMetadataDocumentProvider: DefinitionMetadataDocumentProvider;
-
-    constructor(server: OmniSharpServer, definitionMetadataDocumentProvider: DefinitionMetadataDocumentProvider, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+    constructor(
+        server: OmniSharpServer,
+        private definitionMetadataDocumentProvider: DefinitionMetadataOrSourceGeneratedDocumentProvider,
+        private sourceGeneratedDocumentProvider: SourceGeneratedDocumentProvider,
+        languageMiddlewareFeature: LanguageMiddlewareFeature) {
         super(server, languageMiddlewareFeature);
-
-        this._definitionMetadataDocumentProvider = definitionMetadataDocumentProvider;
     }
 
     public async provideDefinition(document: TextDocument, position: Position, token: CancellationToken): Promise<Location[]> {
@@ -35,7 +36,7 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
                 for (const definition of gotoDefinitionResponse.Definitions) {
                     if (definition.Location.FileName.startsWith("$metadata$")) {
                         // if it is part of an already used metadata file, retrieve its uri instead of going to the physical file
-                        const uri = this._definitionMetadataDocumentProvider.getExistingMetadataResponseUri(definition.Location.FileName);
+                        const uri = this.definitionMetadataDocumentProvider.getExistingMetadataResponseUri(definition.Location.FileName);
                         const vscodeRange = toRange3(definition.Location.Range);
                         locations.push(new Location(uri, vscodeRange));
                     } else if (definition.MetadataSource) {
@@ -56,9 +57,23 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
                             continue;
                         }
 
-                        const uri: Uri = this._definitionMetadataDocumentProvider.addMetadataResponse(metadataResponse);
+                        const uri: Uri = this.definitionMetadataDocumentProvider.addMetadataResponse(metadataResponse);
                         const vscodeRange = toRange3(definition.Location.Range);
                         locations.push(new Location(uri, vscodeRange));
+                    } else if (definition.SourceGeneratedFileInfo) {
+                        // File is source generated
+                        let uri = this.sourceGeneratedDocumentProvider.tryGetExistingSourceGeneratedFile(definition.SourceGeneratedFileInfo);
+                        if (!uri) {
+                            const sourceGeneratedFileResponse = await serverUtils.getSourceGeneratedFile(this._server, definition.SourceGeneratedFileInfo, token);
+
+                            if (!sourceGeneratedFileResponse || !sourceGeneratedFileResponse.Source || !sourceGeneratedFileResponse.SourceName) {
+                                continue;
+                            }
+
+                            uri = this.sourceGeneratedDocumentProvider.addSourceGeneratedFile(definition.SourceGeneratedFileInfo, sourceGeneratedFileResponse);
+                        }
+
+                        locations.push(new Location(uri, toRange3(definition.Location.Range)));
                     } else {
                         // if it is a normal source definition, convert the response to a location
                         locations.push(toVscodeLocation(definition.Location));
