@@ -38,7 +38,8 @@ export class Options {
         public defaultLaunchSolution?: string,
         public monoPath?: string,
         public excludePaths?: string[],
-        public maxProjectFileCountForDiagnosticAnalysis?: number | null) {
+        public maxProjectFileCountForDiagnosticAnalysis?: number | null,
+        public testRunSettings?: string) {
     }
 
     public static Read(vscode: vscode): Options {
@@ -104,6 +105,8 @@ export class Options {
 
         const maxProjectFileCountForDiagnosticAnalysis = csharpConfig.get<number | null>('maxProjectFileCountForDiagnosticAnalysis', 1000);
 
+        const testRunSettings = omnisharpConfig.get<string>('testRunSettings', undefined);
+
         const excludePaths = this.getExcludedPaths(vscode);
 
         return new Options(
@@ -138,7 +141,8 @@ export class Options {
             defaultLaunchSolution,
             monoPath,
             excludePaths,
-            maxProjectFileCountForDiagnosticAnalysis
+            maxProjectFileCountForDiagnosticAnalysis,
+            testRunSettings
         );
     }
 

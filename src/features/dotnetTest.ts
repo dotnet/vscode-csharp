@@ -19,6 +19,7 @@ import LaunchConfiguration from './launchConfiguration';
 import Disposable from '../Disposable';
 import CompositeDisposable from '../CompositeDisposable';
 import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import OptionProvider from '../observers/OptionProvider';
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 
@@ -29,7 +30,7 @@ export default class TestManager extends AbstractProvider {
     private _telemetryIntervalId: NodeJS.Timer = undefined;
     private _eventStream: EventStream;
 
-    constructor(server: OmniSharpServer, eventStream: EventStream, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+    constructor(private optionProvider: OptionProvider, server: OmniSharpServer, eventStream: EventStream, languageMiddlewareFeature: LanguageMiddlewareFeature) {
         super(server, languageMiddlewareFeature);
         this._eventStream = eventStream;
 
@@ -172,8 +173,8 @@ export default class TestManager extends AbstractProvider {
     public async discoverTests(fileName: string, testFrameworkName: string, noBuild: boolean): Promise<protocol.V2.TestInfo[]> {
 
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
-        let runSettings = vscode.workspace.getConfiguration('omnisharp').get<string>('testRunSettings');
-
+        let runSettings = this._getRunSettings();
+        
         const request: protocol.V2.DiscoverTestsRequest = {
             FileName: fileName,
             RunSettings: runSettings,
@@ -192,7 +193,7 @@ export default class TestManager extends AbstractProvider {
     }
 
     private _getRunSettings(): string | undefined {
-        return vscode.workspace.getConfiguration('omnisharp').get<string>('testRunSettings');
+        return this.optionProvider.GetLatestOptions().testRunSettings;
     }
 
     public async runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string, noBuild: boolean = false) {
