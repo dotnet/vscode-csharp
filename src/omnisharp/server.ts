@@ -250,6 +250,10 @@ export class OmniSharpServer {
     // --- start, stop, and connect
 
     private async _start(launchTarget: LaunchTarget, options: Options): Promise<void> {
+        if (this._state != ServerState.Stopped) {
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError("Attempt to start OmniSharp server failed because another server instance is running."));
+            return;
+        }
 
         if (launchTarget.kind === LaunchTargetKind.LiveShare) {
             this.eventStream.post(new ObservableEvents.OmnisharpServerMessage("During Live Share sessions language services are provided by the Live Share server."));
@@ -498,6 +502,11 @@ export class OmniSharpServer {
     }
 
     public async restart(launchTarget: LaunchTarget = this._launchTarget): Promise<void> {
+        if (this._state == ServerState.Starting) {
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError("Attempt to restart OmniSharp server failed because another server instance is starting."));
+            return;
+        }
+
         if (launchTarget) {
             await this.stop();
             this.eventStream.post(new ObservableEvents.OmnisharpRestart());
