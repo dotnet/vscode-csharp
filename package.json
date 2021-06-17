@@ -399,6 +399,7 @@
     "onCommand:csharp.downloadDebugger",
     "onCommand:csharp.listProcess",
     "onCommand:csharp.listRemoteProcess",
+    "onCommand:csharp.listDockerRemoteProcess",
     "onCommand:omnisharp.registerLanguageMiddleware",
     "workspaceContains:project.json",
     "workspaceContains:*.csproj",
@@ -975,6 +976,11 @@
         "category": "CSharp"
       },
       {
+        "command": "csharp.listRemoteDockerProcess",
+        "title": "List processes on Docker connection",
+        "category": "CSharp"
+      },
+      {
         "command": "csharp.reportIssue",
         "title": "Report an issue",
         "category": "CSharp"
@@ -1043,7 +1049,8 @@
         "label": ".NET Core",
         "variables": {
           "pickProcess": "csharp.listProcess",
-          "pickRemoteProcess": "csharp.listRemoteProcess"
+          "pickRemoteProcess": "csharp.listRemoteProcess",
+          "pickRemoteDockerProcess": "csharp.listRemoteDockerProcess"
         },
         "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
         "configurationAttributes": {
@@ -2142,7 +2149,8 @@
         "label": ".NET",
         "variables": {
           "pickProcess": "csharp.listProcess",
-          "pickRemoteProcess": "csharp.listRemoteProcess"
+          "pickRemoteProcess": "csharp.listRemoteProcess",
+          "pickRemoteDockerProcess": "csharp.listRemoteDockerProcess"
         },
         "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
         "configurationAttributes": {
