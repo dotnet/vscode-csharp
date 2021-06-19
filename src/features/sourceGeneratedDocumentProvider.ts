@@ -101,7 +101,7 @@ export default class SourceGeneratedDocumentProvider implements TextDocumentCont
         let triggerUpdate = false;
 
         if (this._uriToDocumentInfo.has(uriString)) {
-            // Old version of the file in the cache. Remove it, and after it's replace trigger vscode to update the file.
+            // Old version of the file in the cache. Remove it, and after it's replaced trigger vscode to update the file.
             this._documents.delete(fileInfo);
             this._uriToDocumentInfo.delete(uriString);
             triggerUpdate = true;

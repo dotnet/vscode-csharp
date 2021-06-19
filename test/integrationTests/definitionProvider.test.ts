@@ -20,8 +20,8 @@ suite(`${CSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () 
             this.skip();
         }
 
-        await activateCSharpExtension();
-        await testAssetWorkspace.restore();
+        const activation = await activateCSharpExtension();
+        await testAssetWorkspace.restoreAndWait(activation);
 
         const fileName = 'definition.cs';
         const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
@@ -41,6 +41,9 @@ suite(`${CSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () 
     });
 
     test("Returns the definition from Metadata", async () => {
+        const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
+        await omnisharpConfig.update('enableDecompilationSupport', false, vscode.ConfigurationTarget.Global);
+
         const definitionList = <vscode.Location[]>(await vscode.commands.executeCommand("vscode.executeDefinitionProvider", fileUri, new vscode.Position(10, 25)));
         expect(definitionList.length).to.be.equal(1);
         expect(definitionList[0]).to.exist;
