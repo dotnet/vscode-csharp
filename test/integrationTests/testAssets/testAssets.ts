@@ -6,6 +6,9 @@
 import * as fs from 'async-file';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { EventType } from '../../../src/omnisharp/EventType';
+import { ActivationResult } from '../integrationHelpers';
+import { poll } from '../poll';
 import spawnGit from './spawnGit';
 
 export class TestAssetProject {
@@ -39,6 +42,22 @@ export class TestAssetWorkspace {
 
     async restore(): Promise<void> {
         await vscode.commands.executeCommand("dotnet.restore.all");
+    }
+
+    async restoreAndWait(activation: ActivationResult): Promise<void> {
+        await this.restore();
+
+        // Wait for workspace information to be returned
+        let isWorkspaceLoaded = false;
+
+        const subscription = activation.eventStream.subscribe(event => {
+            if (event.type === EventType.WorkspaceInformationUpdated) {
+                isWorkspaceLoaded = true;
+                subscription.unsubscribe();
+            }
+        });
+
+        await poll(() => isWorkspaceLoaded, 25000, 500);
     }
 
     get vsCodeDirectoryPath(): string {
