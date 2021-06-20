@@ -20,7 +20,7 @@ function setDiagnosticWorkspaceLimit(to: number | null) {
     return csharpConfig.update('maxProjectFileCountForDiagnosticAnalysis', to);
 }
 
-suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
+suite.only(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
     let secondaryFileUri: vscode.Uri;
     let razorFileUri: vscode.Uri;
@@ -29,8 +29,8 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
 
-        await activateCSharpExtension();
-        await testAssetWorkspace.restore();
+        const activation = await activateCSharpExtension();
+        await testAssetWorkspace.restoreAndWait(activation);
 
         let fileName = 'diagnostics.cs';
         let secondaryFileName = 'secondaryDiagnostics.cs';
@@ -51,8 +51,8 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
                 this.skip();
             }
 
-            await activateCSharpExtension();
-            await testAssetWorkspace.restore();
+            const activation = await activateCSharpExtension();
+            await testAssetWorkspace.restoreAndWait(activation);
             await vscode.commands.executeCommand("vscode.open", razorFileUri);
         });
 
@@ -88,15 +88,15 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
                 this.skip();
             }
 
-            await activateCSharpExtension();
-            await testAssetWorkspace.restore();
+            const activation = await activateCSharpExtension();
+            await testAssetWorkspace.restoreAndWait(activation);
             await vscode.commands.executeCommand("vscode.open", fileUri);
         });
 
         test("Returns any diagnostics from file", async function () {
             await assertWithPoll(
                 () => vscode.languages.getDiagnostics(fileUri),
-                /*duration*/ 10 * 1000,
+                /*duration*/ 15 * 1000,
                 /*step*/ 500,
                 res => expect(res.length).to.be.greaterThan(0));
         });
@@ -156,9 +156,9 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             }
 
             await setDiagnosticWorkspaceLimit(1);
-            await testAssetWorkspace.restore();
-            await activateCSharpExtension();
             await restartOmniSharpServer();
+            const activation = await activateCSharpExtension();
+            await testAssetWorkspace.restoreAndWait(activation);
         });
 
         test("When workspace is count as 'large', then only show/fetch diagnostics from open documents", async function () {
