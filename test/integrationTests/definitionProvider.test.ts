@@ -9,7 +9,7 @@ import * as path from "path";
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
 import { expect } from "chai";
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithCsproj, restartOmniSharpServer } from './integrationHelpers';
-import { assertWithPoll } from "./poll";
+import { assertWithPoll, sleep } from "./poll";
 
 suite(`${CSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;
@@ -71,7 +71,10 @@ suite(`${CSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () 
         await vscode.commands.executeCommand('vscode.open', generatorTriggerUri);
 
         // We need to do a full build in order to get the source generator built and ready to run, or tests will fail
-        const task = (await vscode.tasks.fetchTasks()).filter(task => task.name === 'build')[0];
+        await vscode.commands.executeCommand("dotnet.generateAssets", 0);
+        await sleep(100);
+        const tasks = await vscode.tasks.fetchTasks();
+        const task = (tasks).filter(task => task.name === 'build')[0];
         expect(task).to.not.be.undefined;
         await vscode.tasks.executeTask(task);
         await restartOmniSharpServer();
@@ -97,5 +100,9 @@ suite(`${CSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () 
             expect(documentText).does.not.contain("Hello world!");
             expect(documentText).contains("Goodbye");
         });
+    });
+
+    suiteTeardown(async () => {
+        await testAssetWorkspace.cleanupWorkspace();
     });
 });

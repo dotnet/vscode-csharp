@@ -20,7 +20,7 @@ function setDiagnosticWorkspaceLimit(to: number | null) {
     return csharpConfig.update('maxProjectFileCountForDiagnosticAnalysis', to);
 }
 
-suite.only(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
+suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
     let secondaryFileUri: vscode.Uri;
     let razorFileUri: vscode.Uri;
@@ -51,8 +51,6 @@ suite.only(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () 
                 this.skip();
             }
 
-            const activation = await activateCSharpExtension();
-            await testAssetWorkspace.restoreAndWait(activation);
             await vscode.commands.executeCommand("vscode.open", razorFileUri);
         });
 
@@ -88,8 +86,6 @@ suite.only(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () 
                 this.skip();
             }
 
-            const activation = await activateCSharpExtension();
-            await testAssetWorkspace.restoreAndWait(activation);
             await vscode.commands.executeCommand("vscode.open", fileUri);
         });
 
@@ -165,7 +161,12 @@ suite.only(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () 
             // We are not opening the secondary file so there should be no diagnostics reported for it.
             await vscode.commands.executeCommand("vscode.open", fileUri);
 
-            await assertWithPoll(() => vscode.languages.getDiagnostics(fileUri), 10 * 1000, 500, openFileDiag => expect(openFileDiag.length).to.be.greaterThan(0));
+            await assertWithPoll(
+                () =>
+                    vscode.languages.getDiagnostics(fileUri),
+                10 * 1000, 500,
+                openFileDiag =>
+                    expect(openFileDiag.length).to.be.greaterThan(0));
             await assertWithPoll(() => vscode.languages.getDiagnostics(secondaryFileUri), 10 * 1000, 500, secondaryDiag => expect(secondaryDiag.length).to.be.eq(0));
         });
 
