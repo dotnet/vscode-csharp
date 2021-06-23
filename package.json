@@ -1047,6 +1047,12 @@
       {
         "type": "coreclr",
         "label": ".NET Core",
+        "languages": [
+          "csharp",
+          "razor",
+          "qsharp",
+          "aspnetcorerazor"
+        ],
         "variables": {
           "pickProcess": "csharp.listProcess",
           "pickRemoteProcess": "csharp.listRemoteProcess",
@@ -2147,6 +2153,12 @@
       {
         "type": "clr",
         "label": ".NET",
+        "languages": [
+          "csharp",
+          "razor",
+          "qsharp",
+          "aspnetcorerazor"
+        ],
         "variables": {
           "pickProcess": "csharp.listProcess",
           "pickRemoteProcess": "csharp.listRemoteProcess",
