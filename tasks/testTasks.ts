@@ -30,19 +30,19 @@ gulp.task("test:unit", async () => {
 });
 
 gulp.task("test:integration:singleCsproj", async () => {
-    return runIntegrationTest("singleCsproj");
+    return runIntegrationTest("singleCsproj", "singleCsproj.csproj");
 });
 
 gulp.task("test:integration:slnWithCsproj", async () => {
-    return runIntegrationTest("slnWithCsproj");
+    return runIntegrationTest("slnWithCsproj", "a_FirstInOrder_SlnFile.sln");
 });
 
 gulp.task("test:integration:slnFilterWithCsproj", async () => {
-    return runIntegrationTest("slnFilterWithCsproj");
+    return runIntegrationTest("slnFilterWithCsproj", "SolutionFilter.slnf");
 });
 
 gulp.task("test:integration:BasicRazorApp2_1", async () => {
-    return runIntegrationTest("BasicRazorApp2_1");
+    return runIntegrationTest("BasicRazorApp2_1", "BasicRazorApp2_1.csproj");
 });
 
 gulp.task(
@@ -58,12 +58,13 @@ gulp.task("test", gulp.series(
     "test:unit",
     "test:integration"));
 
-async function runIntegrationTest(testAssetName: string) {
+async function runIntegrationTest(testAssetName: string, projectName: string) {
     let env = {
         OSVC_SUITE: testAssetName,
         CODE_TESTS_PATH: path.join(testRootPath, "integrationTests"),
         CODE_EXTENSIONS_PATH: codeExtensionPath,
         CODE_TESTS_WORKSPACE: path.join(testAssetsRootPath, testAssetName),
+        CODE_TESTS_PROJECT: projectName,
         CODE_WORKSPACE_ROOT: rootPath,
     };
 

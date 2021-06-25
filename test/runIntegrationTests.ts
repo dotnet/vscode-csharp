@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
+import * as cp from 'child_process';
 
 import { runTests } from 'vscode-test';
 
@@ -21,6 +22,10 @@ async function main() {
         // tests against is set in an evironment variable.
         const workspacePath = process.env.CODE_TESTS_WORKSPACE;
 
+        const projectName = process.env.CODE_TESTS_PROJECT;
+
+        await dotnetBuild(workspacePath, projectName)
+
         console.log(`workspace path = '${workspacePath}'`);
 
         // Download VS Code, unzip it and run the integration test
@@ -30,6 +35,25 @@ async function main() {
         console.error('Failed to run tests');
         process.exit(1);
     }
+}
+
+async function dotnetBuild(cwd: string, filePath?: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        let cmd = 'dotnet';
+        let args = ['build'];
+
+        if (filePath) {
+            args.push(filePath);
+        }
+
+        let dotnet = cp.spawn(cmd, args, { cwd: cwd, env: process.env });
+        dotnet.on('close', (code, signal) => {
+            resolve();
+        });
+        dotnet.on('error', err => {
+            reject(err);
+        });
+    });
 }
 
 main();
