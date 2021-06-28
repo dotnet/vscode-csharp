@@ -44,8 +44,10 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
             this.skip();
         }
 
-        eventStream = (await activateCSharpExtension()).eventStream;
-        await testAssetWorkspace.restore();
+        const activation = await activateCSharpExtension();
+        await testAssetWorkspace.restoreAndWait(activation);
+
+        eventStream = activation.eventStream;
 
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
         interfaceUri = vscode.Uri.file(path.join(projectDirectory, 'ISomeInterface.cs'));

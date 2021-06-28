@@ -9,8 +9,6 @@ import * as path from 'path';
 import { should, assert } from 'chai';
 import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { EventType } from '../../src/omnisharp/EventType';
-import { poll } from './poll';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -60,19 +58,7 @@ suite(`SemanticTokensProvider: ${testAssetWorkspace.description}`, function () {
         }
 
         const activation = await activateCSharpExtension();
-        await testAssetWorkspace.restore();
-
-        // Wait for workspace information to be returned
-        let isWorkspaceLoaded = false;
-
-        const subscription = activation.eventStream.subscribe(event => {
-            if (event.type === EventType.WorkspaceInformationUpdated) {
-                isWorkspaceLoaded = true;
-                subscription.unsubscribe();
-            }
-        });
-
-        await poll(() => isWorkspaceLoaded, 25000, 500);
+        await testAssetWorkspace.restoreAndWait(activation);
 
         const fileName = 'semantictokens.cs';
         const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
