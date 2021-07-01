@@ -23,6 +23,16 @@ export function getExtensionPath() {
     return extensionPath;
 }
 
+export function getUnixTempDirectory(){
+    let envTmp = process.env.TMPDIR;
+    if(!envTmp)
+    {
+        return "/tmp/";
+    }
+
+    return envTmp;
+}
+
 export function isBoolean(obj: any): obj is boolean {
     return obj === true || obj === false;
 }
