@@ -547,17 +547,12 @@ class DebugEventListener {
         this._eventStream = eventStream;
         const pipeSuffix = "TestDebugEvents-" + process.pid;
 
-        let platform = os.platform();
-        if (platform === 'win32') {
+        if (os.platform() === 'win32') {
             this._pipePath = "\\\\.\\pipe\\Microsoft.VSCode.CSharpExt." + pipeSuffix;
-        } 
-        else if (platform === 'linux' || platform === 'darwin') {
-            // NOTE: The max pipe name on *NIX is fairly small, so this name shouldn't be too long.
-            let tmpdir = utils.getUnixTempDirectory();
-            this._pipePath = path.join(tmpdir,"." + pipeSuffix);
         }
         else {
-            this._pipePath = path.join(utils.getExtensionPath(), "." + pipeSuffix);
+            let tmpdir = utils.getUnixTempDirectory();
+            this._pipePath = path.join(tmpdir, "." + pipeSuffix);
         }
     }
 
