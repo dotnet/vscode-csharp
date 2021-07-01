@@ -546,7 +546,7 @@ class DebugEventListener {
         this._server = server;
         this._eventStream = eventStream;
         // NOTE: The max pipe name on OSX is fairly small, so this name shouldn't bee too long.
-        const pipeSuffix = "TestDebugEvents-" + process.pid;
+        const pipeSuffix = "T-" + process.pid;
         if (os.platform() === 'win32') {
             this._pipePath = "\\\\.\\pipe\\Microsoft.VSCode.CSharpExt." + pipeSuffix;
         } else {
