@@ -545,14 +545,13 @@ class DebugEventListener {
         this._fileName = fileName;
         this._server = server;
         this._eventStream = eventStream;
-        const pipeSuffix = "TestDebugEvents-" + process.pid;
 
         if (os.platform() === 'win32') {
-            this._pipePath = "\\\\.\\pipe\\Microsoft.VSCode.CSharpExt." + pipeSuffix;
+            this._pipePath = "\\\\.\\pipe\\Microsoft.VSCode.CSharpExt.TestDebugEvents" + process.pid;
         }
         else {
             let tmpdir = utils.getUnixTempDirectory();
-            this._pipePath = path.join(tmpdir, "." + pipeSuffix);
+            this._pipePath = path.join(tmpdir, "ms-dotnettools.csharp-tde-" + process.pid);
         }
     }
 
