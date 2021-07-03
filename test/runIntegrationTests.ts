@@ -30,7 +30,8 @@ async function main() {
         console.log(`workspace path = '${workspacePath}'`);
 
         // Run a build before the tests, to ensure that source generators are set up correctly
-        await execChildProcess(`dotnet build`, workspacePath);
+        const dotnetPath = path.join(process.env.DOTNET_ROOT, 'dotnet');
+        await execChildProcess(`${dotnetPath} build`, workspacePath);
 
         // Download VS Code, unzip it and run the integration test
         await runTests({ extensionDevelopmentPath, extensionTestsPath, launchArgs: [workspacePath, '-n', '--verbose'], extensionTestsEnv: process.env });
