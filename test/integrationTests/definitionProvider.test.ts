@@ -9,7 +9,7 @@ import * as path from "path";
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
 import { expect } from "chai";
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithCsproj, restartOmniSharpServer } from './integrationHelpers';
-import { assertWithPoll, sleep } from "./poll";
+import { assertWithPoll } from "./poll";
 
 suite(`${CSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;
@@ -70,14 +70,14 @@ suite(`${CSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () 
         const textStart = new vscode.Position(11, 41);
         await vscode.commands.executeCommand('vscode.open', generatorTriggerUri);
 
-        // We need to do a full build in order to get the source generator built and ready to run, or tests will fail
-        await vscode.commands.executeCommand("dotnet.generateAssets", 0);
-        await sleep(100);
-        const tasks = await vscode.tasks.fetchTasks();
-        const task = (tasks).filter(task => task.name === 'build')[0];
-        expect(task).to.not.be.undefined;
-        await vscode.tasks.executeTask(task);
-        await restartOmniSharpServer();
+        // // We need to do a full build in order to get the source generator built and ready to run, or tests will fail
+        // await vscode.commands.executeCommand("dotnet.generateAssets", 0);
+        // await sleep(100);
+        // const tasks = await vscode.tasks.fetchTasks();
+        // const task = (tasks).filter(task => task.name === 'build')[0];
+        // expect(task).to.not.be.undefined;
+        // await vscode.tasks.executeTask(task);
+        // await restartOmniSharpServer();
 
         const definitionList = <vscode.Location[]>(await vscode.commands.executeCommand("vscode.executeDefinitionProvider", generatorTriggerUri, textStart));
         expect(definitionList.length).to.be.equal(1);
