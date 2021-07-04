@@ -9,13 +9,9 @@ import { runTests } from 'vscode-test';
 import { execChildProcess } from '../src/common';
 
 function getSln(workspacePath: string): string | undefined {
-    if (workspacePath.endsWith("slnWithCsproj")) {
-        return "b_SecondInOrder_SlnFile.sln";
+    if (workspacePath.endsWith("slnWithGenerator")) {
+        return "slnWithGenerator.sln";
     }
-    else if (workspacePath.endsWith("slnFilterWithCsproj")) {
-        return "SolutionFile.sln";
-    }
-
     return undefined;
 }
 

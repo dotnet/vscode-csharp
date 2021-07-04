@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
  <ItemGroup>
-  <ProjectReference Include="..\..\generator\generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   <ProjectReference Include="..\lib\lib.csproj" />
  </ItemGroup>
   <PropertyGroup>

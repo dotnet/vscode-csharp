@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { should, expect } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace, restartOmniSharpServer } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator, restartOmniSharpServer } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { poll, assertWithPoll, pollDoesNotHappen } from './poll';
 
@@ -28,6 +28,10 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
 
     suiteSetup(async function () {
         should();
+
+        if (isSlnWithGenerator(vscode.workspace)) {
+            this.skip();
+        }
 
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restoreAndWait(activation);

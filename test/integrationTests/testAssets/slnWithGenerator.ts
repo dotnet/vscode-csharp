@@ -6,13 +6,11 @@
 import { ITestAssetWorkspace } from "./testAssets";
 
 let workspace: ITestAssetWorkspace = {
-    description: "sln with several csproj's",
+    description: "sln with a source generator",
     projects: [{
-        relativeFilePath: "src/app/app.csproj"
+        relativeFilePath: "app/app.csproj"
     }, {
-        relativeFilePath: "src/lib/lib.csproj"
-    }, {
-        relativeFilePath: "test/test.csproj"
+        relativeFilePath: "generator/generator.csproj"
     }]
 };
 
