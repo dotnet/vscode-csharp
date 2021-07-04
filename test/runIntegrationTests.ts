@@ -8,6 +8,17 @@ import * as path from 'path';
 import { runTests } from 'vscode-test';
 import { execChildProcess } from '../src/common';
 
+function getSln(workspacePath: string): string | undefined {
+    if (workspacePath.endsWith("slnWithCsproj")) {
+        return "b_SecondInOrder_SlnFile.sln";
+    }
+    else if (workspacePath.endsWith("slnFilterWithCsproj")) {
+        return "SolutionFile.sln";
+    }
+
+    return undefined;
+}
+
 async function main() {
     try {
         // The folder containing the Extension Manifest package.json
@@ -29,9 +40,12 @@ async function main() {
 
         console.log(`workspace path = '${workspacePath}'`);
 
-        // Run a build before the tests, to ensure that source generators are set up correctly
-        const dotnetPath = path.join(process.env.DOTNET_ROOT, 'dotnet');
-        await execChildProcess(`${dotnetPath} build`, workspacePath);
+        const sln = getSln(workspacePath);
+        if (sln) {
+            // Run a build before the tests, to ensure that source generators are set up correctly
+            const dotnetPath = path.join(process.env.DOTNET_ROOT, 'dotnet');
+            await execChildProcess(`${dotnetPath} build ${sln}`, workspacePath);
+        }
 
         // Download VS Code, unzip it and run the integration test
         await runTests({ extensionDevelopmentPath, extensionTestsPath, launchArgs: [workspacePath, '-n', '--verbose'], extensionTestsEnv: process.env });
