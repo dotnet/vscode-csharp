@@ -33,8 +33,8 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             this.skip();
         }
 
-        const activation = await activateCSharpExtension();
-        await testAssetWorkspace.restoreAndWait(activation);
+        await activateCSharpExtension();
+        await testAssetWorkspace.restore();
 
         let fileName = 'diagnostics.cs';
         let secondaryFileName = 'secondaryDiagnostics.cs';
@@ -55,6 +55,8 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
                 this.skip();
             }
 
+            await activateCSharpExtension();
+            await testAssetWorkspace.restore();
             await vscode.commands.executeCommand("vscode.open", razorFileUri);
         });
 
@@ -86,17 +88,19 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             should();
 
             // These tests don't run on the BasicRazorApp2_1 solution
-            if (isRazorWorkspace(vscode.workspace)) {
+            if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
                 this.skip();
             }
 
+            await activateCSharpExtension();
+            await testAssetWorkspace.restore();
             await vscode.commands.executeCommand("vscode.open", fileUri);
         });
 
         test("Returns any diagnostics from file", async function () {
             await assertWithPoll(
                 () => vscode.languages.getDiagnostics(fileUri),
-                /*duration*/ 15 * 1000,
+                /*duration*/ 10 * 1000,
                 /*step*/ 500,
                 res => expect(res.length).to.be.greaterThan(0));
         });
@@ -151,26 +155,21 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             should();
 
             // These tests don't run on the BasicRazorApp2_1 solution
-            if (isRazorWorkspace(vscode.workspace)) {
+            if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
                 this.skip();
             }
 
             await setDiagnosticWorkspaceLimit(1);
+            await testAssetWorkspace.restore();
+            await activateCSharpExtension();
             await restartOmniSharpServer();
-            const activation = await activateCSharpExtension();
-            await testAssetWorkspace.restoreAndWait(activation);
         });
 
         test("When workspace is count as 'large', then only show/fetch diagnostics from open documents", async function () {
             // We are not opening the secondary file so there should be no diagnostics reported for it.
             await vscode.commands.executeCommand("vscode.open", fileUri);
 
-            await assertWithPoll(
-                () =>
-                    vscode.languages.getDiagnostics(fileUri),
-                10 * 1000, 500,
-                openFileDiag =>
-                    expect(openFileDiag.length).to.be.greaterThan(0));
+            await assertWithPoll(() => vscode.languages.getDiagnostics(fileUri), 10 * 1000, 500, openFileDiag => expect(openFileDiag.length).to.be.greaterThan(0));
             await assertWithPoll(() => vscode.languages.getDiagnostics(secondaryFileUri), 10 * 1000, 500, secondaryDiag => expect(secondaryDiag.length).to.be.eq(0));
         });
 
