@@ -545,12 +545,13 @@ class DebugEventListener {
         this._fileName = fileName;
         this._server = server;
         this._eventStream = eventStream;
-        // NOTE: The max pipe name on OSX is fairly small, so this name shouldn't bee too long.
-        const pipeSuffix = "TestDebugEvents-" + process.pid;
+
         if (os.platform() === 'win32') {
-            this._pipePath = "\\\\.\\pipe\\Microsoft.VSCode.CSharpExt." + pipeSuffix;
-        } else {
-            this._pipePath = path.join(utils.getExtensionPath(), "." + pipeSuffix);
+            this._pipePath = "\\\\.\\pipe\\Microsoft.VSCode.CSharpExt.TestDebugEvents" + process.pid;
+        }
+        else {
+            let tmpdir = utils.getUnixTempDirectory();
+            this._pipePath = path.join(tmpdir, "ms-dotnettools.csharp-tde-" + process.pid);
         }
     }
 

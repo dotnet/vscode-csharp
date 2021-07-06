@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 
 import { should, assert } from 'chai';
-import { activateCSharpExtension } from './integrationHelpers';
+import { activateCSharpExtension, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { IDisposable } from '../../src/Disposable';
 
@@ -20,6 +20,9 @@ suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function ()
     let virtualUri: vscode.Uri;
 
     suiteSetup(async function () {
+        if (isSlnWithGenerator(vscode.workspace)) {
+            this.skip();
+        }
         should();
 
         const virtualCSharpDocumentProvider = new VirtualCSharpDocumentProvider();
@@ -31,6 +34,10 @@ suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function ()
     });
 
     suiteTeardown(async () => {
+        if (isSlnWithGenerator(vscode.workspace)) {
+            return;
+        }
+
         await testAssetWorkspace.cleanupWorkspace();
         virtualDocumentRegistration.dispose();
     });

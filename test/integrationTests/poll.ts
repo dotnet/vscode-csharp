@@ -87,6 +87,6 @@ export async function poll<T>(
     throw new Error("Polling did not succeed within the alotted duration.");
 }
 
-async function sleep(ms = 0) {
+export async function sleep(ms = 0) {
     return new Promise(r => setTimeout(r, ms));
 }

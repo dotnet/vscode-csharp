@@ -11,6 +11,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as protocol from '../omnisharp/protocol';
 import * as vscode from 'vscode';
+import { RemoteAttachPicker } from './processPicker';
 import { generateAssets } from '../assets';
 import { ShowOmniSharpChannel, CommandDotNetRestoreStart, CommandDotNetRestoreProgress, CommandDotNetRestoreSucceeded, CommandDotNetRestoreFailed } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
@@ -42,6 +43,12 @@ export default function registerCommands(context: vscode.ExtensionContext, serve
     disposable.add(vscode.commands.registerCommand('csharp.listProcess', () => ""));
     disposable.add(vscode.commands.registerCommand('csharp.listRemoteProcess', () => ""));
 
+    // List remote processes for docker extension.
+    // Change to return "" when https://github.com/microsoft/vscode/issues/110889 is resolved.
+    disposable.add(vscode.commands.registerCommand('csharp.listRemoteDockerProcess', async (args) => {
+        const attachItem = await RemoteAttachPicker.ShowAttachEntries(args, platformInfo);
+        return attachItem ? attachItem.id : Promise.reject<string>(new Error("Could not find a process id to attach."));
+    }));
 
     // Register command for generating tasks.json and launch.json assets.
     disposable.add(vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex) => generateAssets(server, selectedIndex)));

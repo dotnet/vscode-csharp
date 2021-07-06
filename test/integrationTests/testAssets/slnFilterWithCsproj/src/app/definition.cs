@@ -2,7 +2,7 @@ using System;
 
 namespace Test
 {
-    public class Definition
+    public partial class Definition
     {
         public static string Foo { get; set; }
 
@@ -11,4 +11,6 @@ namespace Test
             Console.WriteLine(Foo);
         }
     }
+
+    public partial class Definition { }
 }

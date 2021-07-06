@@ -95,14 +95,17 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     eventStream.subscribe(errorMessageObserver.post);
 
     let omnisharpStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, Number.MIN_VALUE + 2));
+    omnisharpStatusBar.name = "C# Language Service Status";
     let omnisharpStatusBarObserver = new OmnisharpStatusBarObserver(omnisharpStatusBar);
     eventStream.subscribe(omnisharpStatusBarObserver.post);
 
     let projectStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, Number.MIN_VALUE + 1));
+    projectStatusBar.name = "C# Project Selector";
     let projectStatusBarObserver = new ProjectStatusBarObserver(projectStatusBar);
     eventStream.subscribe(projectStatusBarObserver.post);
 
     let backgroundWorkStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, Number.MIN_VALUE));
+    backgroundWorkStatusBar.name = "C# Code Analysis";
     let backgroundWorkStatusBarObserver = new BackgroundWorkStatusBarObserver(backgroundWorkStatusBar);
     eventStream.subscribe(backgroundWorkStatusBarObserver.post);
 

@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { should, expect } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { poll, assertWithPoll } from './poll';
 import { EventStream } from '../../src/EventStream';
@@ -40,12 +40,14 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
         should();
 
         // These tests don't run on the BasicRazorApp2_1 solution
-        if (isRazorWorkspace(vscode.workspace)) {
+        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
             this.skip();
         }
 
-        eventStream = (await activateCSharpExtension()).eventStream;
-        await testAssetWorkspace.restore();
+        const activation = await activateCSharpExtension();
+        await testAssetWorkspace.restoreAndWait(activation);
+
+        eventStream = activation.eventStream;
 
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
         interfaceUri = vscode.Uri.file(path.join(projectDirectory, 'ISomeInterface.cs'));

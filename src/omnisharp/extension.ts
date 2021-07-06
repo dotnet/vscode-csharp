@@ -42,6 +42,7 @@ import { FixAllProvider } from '../features/fixAllProvider';
 import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
 import SemanticTokensProvider from '../features/semanticTokensProvider';
 import CSharpInlineValuesProvider from '../features/inlineValuesProvider';
+import SourceGeneratedDocumentProvider from '../features/sourceGeneratedDocumentProvider';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
@@ -73,7 +74,10 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         const definitionMetadataDocumentProvider = new DefinitionMetadataDocumentProvider();
         definitionMetadataDocumentProvider.register();
         localDisposables.add(definitionMetadataDocumentProvider);
-        const definitionProvider = new DefinitionProvider(server, definitionMetadataDocumentProvider, languageMiddlewareFeature);
+        const sourceGeneratedDocumentProvider = new SourceGeneratedDocumentProvider(server);
+        sourceGeneratedDocumentProvider.register();
+        localDisposables.add(sourceGeneratedDocumentProvider);
+        const definitionProvider = new DefinitionProvider(server, definitionMetadataDocumentProvider, sourceGeneratedDocumentProvider, languageMiddlewareFeature);
         localDisposables.add(vscode.languages.registerDefinitionProvider(documentSelector, definitionProvider));
         localDisposables.add(vscode.languages.registerDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
         localDisposables.add(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server, languageMiddlewareFeature)));
