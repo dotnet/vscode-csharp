@@ -6,12 +6,19 @@
 import * as vscode from 'vscode';
 import { assert } from "chai";
 import { resourcesToLaunchTargets, vsls, vslsTarget } from "../../src/omnisharp/launcher";
+import { isSlnWithGenerator } from './integrationHelpers';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
 chai.use(require('chai-fs'));
 
 suite(`launcher:`, () => {
+
+    suiteSetup(async function () {
+        if (isSlnWithGenerator(vscode.workspace)) {
+            this.skip();
+        }
+    });
 
     test(`Returns the LiveShare launch target when processing vsls resources`, () => {
         const testResources: vscode.Uri[] = [

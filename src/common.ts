@@ -71,7 +71,9 @@ export async function execChildProcess(command: string, workingDirectory: string
     return new Promise<string>((resolve, reject) => {
         cp.exec(command, { cwd: workingDirectory, maxBuffer: 500 * 1024 }, (error, stdout, stderr) => {
             if (error) {
-                reject(error);
+                reject(`${error}
+${stdout}
+${stderr}`);
             }
             else if (stderr && !stderr.includes("screen size is bogus")) {
                 reject(new Error(stderr));

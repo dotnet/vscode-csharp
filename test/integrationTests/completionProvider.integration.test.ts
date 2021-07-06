@@ -8,14 +8,14 @@ import * as vscode from 'vscode';
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
 import * as path from "path";
 import { expect } from "chai";
-import { activateCSharpExtension, isRazorWorkspace } from "./integrationHelpers";
+import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from "./integrationHelpers";
 
 suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () => {
     let fileUri: vscode.Uri;
 
     suiteSetup(async function () {
         // These tests don't run on the BasicRazorApp2_1 solution
-        if (isRazorWorkspace(vscode.workspace)) {
+        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
             this.skip();
         }
 
