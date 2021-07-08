@@ -133,7 +133,8 @@
         "win32"
       ],
       "architectures": [
-        "x86"
+        "x86",
+        "arm64"
       ],
       "installTestPath": "./.omnisharp/1.37.11/OmniSharp.exe",
       "platformId": "win-x86",
@@ -345,7 +346,8 @@
         "win32"
       ],
       "architectures": [
-        "x86"
+        "x86",
+        "arm64"
       ]
     },
     {
