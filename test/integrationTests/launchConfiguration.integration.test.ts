@@ -25,10 +25,6 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
 
         await activateCSharpExtension();
         await testAssetWorkspace.restore();
-
-        await vscode.commands.executeCommand("dotnet.generateAssets", 0);
-
-        await poll(async () => await fs.exists(testAssetWorkspace.launchJsonPath), 10000, 100);
     });
 
     suiteTeardown(async () => {
@@ -36,6 +32,8 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
     });
 
     test("Starting .NET Core Launch (console) from the workspace root should create an Active Debug Session", async () => {
+        vscode.commands.executeCommand("dotnet.generateAssets", 0);
+        await poll(async () => fs.exists(testAssetWorkspace.launchJsonPath), 10000, 100);
 
         const onChangeSubscription = vscode.debug.onDidChangeActiveDebugSession((e) => {
             onChangeSubscription.dispose();
