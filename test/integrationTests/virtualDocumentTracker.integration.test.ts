@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 
-import { assert, expect, should } from 'chai';
+import { expect, should } from 'chai';
 import { activateCSharpExtension, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { IDisposable } from '../../src/Disposable';
