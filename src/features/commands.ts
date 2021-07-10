@@ -5,7 +5,7 @@
 
 import { OmniSharpServer } from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
-import { findLaunchTargets } from '../omnisharp/launcher';
+import { findLaunchTargets, LaunchTarget } from '../omnisharp/launcher';
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -92,14 +92,18 @@ async function pickProjectAndStart(server: OmniSharpServer, optionProvider: Opti
             }
         }
 
-        return vscode.window.showQuickPick(targets, {
-            matchOnDescription: true,
-            placeHolder: `Select 1 of ${targets.length} projects`
-        }).then(async launchTarget => {
-            if (launchTarget) {
-                return server.restart(launchTarget);
-            }
-        });
+        return showProjectSelector(server, targets);
+    });
+}
+
+export async function showProjectSelector(server: OmniSharpServer, targets: LaunchTarget[]): Promise<void> {
+    return vscode.window.showQuickPick(targets, {
+        matchOnDescription: true,
+        placeHolder: `Select 1 of ${targets.length} projects`
+    }).then(async launchTarget => {
+        if (launchTarget) {
+            return server.restart(launchTarget);
+        }
     });
 }
 

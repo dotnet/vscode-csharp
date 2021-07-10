@@ -5,20 +5,11 @@
 
 import * as vscode from 'vscode';
 import { assert } from "chai";
-import { resourcesToLaunchTargets, vsls, vslsTarget } from "../../src/omnisharp/launcher";
-import { isSlnWithGenerator } from './integrationHelpers';
-
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
+import { LaunchTargetKind, resourcesAndFolderMapToLaunchTargets, vsls, vslsTarget } from "../../src/omnisharp/launcher";
 
 suite(`launcher:`, () => {
 
-    suiteSetup(async function () {
-        if (isSlnWithGenerator(vscode.workspace)) {
-            this.skip();
-        }
-    });
+    const folderMap = new Map<number, vscode.Uri[]>([[0, [vscode.Uri.parse(`/`)]]]);
 
     test(`Returns the LiveShare launch target when processing vsls resources`, () => {
         const testResources: vscode.Uri[] = [
@@ -27,7 +18,7 @@ suite(`launcher:`, () => {
             vscode.Uri.parse(`${vsls}:/test/Program.cs`),
         ];
 
-        const launchTargets = resourcesToLaunchTargets(testResources);
+        const launchTargets = resourcesAndFolderMapToLaunchTargets(testResources, folderMap);
 
         const liveShareTarget = launchTargets.find(target => target === vslsTarget);
         assert.exists(liveShareTarget, "Launch targets was not the Visual Studio Live Share target.");
@@ -40,9 +31,25 @@ suite(`launcher:`, () => {
             vscode.Uri.parse(`/test/Program.cs`),
         ];
 
-        const launchTargets = resourcesToLaunchTargets(testResources);
+        const launchTargets = resourcesAndFolderMapToLaunchTargets(testResources, folderMap);
 
         const liveShareTarget = launchTargets.find(target => target === vslsTarget);
         assert.notExists(liveShareTarget, "Launch targets contained the Visual Studio Live Share target.");
+    });
+
+    test(`Returns a Solution and Project target`, () => {
+        const testResources: vscode.Uri[] = [
+            vscode.Uri.parse(`/test.sln`),
+            vscode.Uri.parse(`/test/test.csproj`),
+            vscode.Uri.parse(`/test/Program.cs`),
+        ];
+
+        const launchTargets = resourcesAndFolderMapToLaunchTargets(testResources, folderMap);
+
+        const solutionTarget = launchTargets.find(target => target.kind === LaunchTargetKind.Solution && target.directory === "/test.sln");
+        assert.exists(solutionTarget, "Launch targets did not include `/test.sln`");
+
+        const projectTarget = launchTargets.find(target => target.kind === LaunchTargetKind.Project && target.directory === "/test");
+        assert.exists(projectTarget, "Launch targets did not include `/test/test.csproj`");
     });
 });
