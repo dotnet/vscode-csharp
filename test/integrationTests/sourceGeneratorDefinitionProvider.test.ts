@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import { expect, should } from "chai";
 import * as vscode from "vscode";
 import * as path from 'path';
 import CSharpDefinitionProvider from "../../src/features/definitionProvider";
@@ -10,7 +10,8 @@ suite(`${CSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () 
     let fileUri: vscode.Uri;
 
     suiteSetup(async function () {
-        // These tests don't run on the BasicRazorApp2_1 solution
+        should();
+
         if (!isSlnWithGenerator(vscode.workspace)) {
             this.skip();
         }
