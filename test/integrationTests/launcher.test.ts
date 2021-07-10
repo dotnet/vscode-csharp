@@ -5,11 +5,10 @@
 
 import * as vscode from 'vscode';
 import { assert } from "chai";
-import { LaunchTargetKind, resourcesAndFolderMapToLaunchTargets, vsls, vslsTarget } from "../../src/omnisharp/launcher";
+import { LaunchTargetKind, resourcesAndFolderMapToLaunchTargets, resourcesToLaunchTargets, vsls, vslsTarget } from "../../src/omnisharp/launcher";
 
 suite(`launcher:`, () => {
-
-    const folderMap = new Map<number, vscode.Uri[]>([[0, [vscode.Uri.parse(`/`)]]]);
+    const workspaceFolders: vscode.WorkspaceFolder[] = [{ uri: vscode.Uri.parse('/'), name: "root", index: 0 }];
 
     test(`Returns the LiveShare launch target when processing vsls resources`, () => {
         const testResources: vscode.Uri[] = [
@@ -18,7 +17,7 @@ suite(`launcher:`, () => {
             vscode.Uri.parse(`${vsls}:/test/Program.cs`),
         ];
 
-        const launchTargets = resourcesAndFolderMapToLaunchTargets(testResources, folderMap);
+        const launchTargets = resourcesToLaunchTargets(testResources);
 
         const liveShareTarget = launchTargets.find(target => target === vslsTarget);
         assert.exists(liveShareTarget, "Launch targets was not the Visual Studio Live Share target.");
@@ -30,8 +29,9 @@ suite(`launcher:`, () => {
             vscode.Uri.parse(`/test/test.csproj`),
             vscode.Uri.parse(`/test/Program.cs`),
         ];
+        const folderMap = new Map<number, vscode.Uri[]>([[0, testResources]]);
 
-        const launchTargets = resourcesAndFolderMapToLaunchTargets(testResources, folderMap);
+        const launchTargets = resourcesAndFolderMapToLaunchTargets(testResources, workspaceFolders, folderMap);
 
         const liveShareTarget = launchTargets.find(target => target === vslsTarget);
         assert.notExists(liveShareTarget, "Launch targets contained the Visual Studio Live Share target.");
@@ -43,13 +43,14 @@ suite(`launcher:`, () => {
             vscode.Uri.parse(`/test/test.csproj`),
             vscode.Uri.parse(`/test/Program.cs`),
         ];
+        const folderMap = new Map<number, vscode.Uri[]>([[0, testResources]]);
 
-        const launchTargets = resourcesAndFolderMapToLaunchTargets(testResources, folderMap);
+        const launchTargets = resourcesAndFolderMapToLaunchTargets(testResources, workspaceFolders, folderMap);
 
-        const solutionTarget = launchTargets.find(target => target.kind === LaunchTargetKind.Solution && target.directory === "/test.sln");
+        const solutionTarget = launchTargets.find(target => target.kind === LaunchTargetKind.Solution && target.label === "test.sln");
         assert.exists(solutionTarget, "Launch targets did not include `/test.sln`");
 
-        const projectTarget = launchTargets.find(target => target.kind === LaunchTargetKind.Project && target.directory === "/test");
+        const projectTarget = launchTargets.find(target => target.kind === LaunchTargetKind.Project && target.label === "test.csproj");
         assert.exists(projectTarget, "Launch targets did not include `/test/test.csproj`");
     });
 });

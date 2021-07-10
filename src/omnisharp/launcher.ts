@@ -116,10 +116,10 @@ export function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[
         }
     }
 
-    return resourcesAndFolderMapToLaunchTargets(resources, workspaceFolderToUriMap);
+    return resourcesAndFolderMapToLaunchTargets(resources, vscode.workspace.workspaceFolders.concat(), workspaceFolderToUriMap);
 }
 
-export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], workspaceFolderToUriMap: Map<number, vscode.Uri[]>): LaunchTarget[] {
+export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], workspaceFolders: vscode.WorkspaceFolder[], workspaceFolderToUriMap: Map<number, vscode.Uri[]>): LaunchTarget[] {
     let solutionTargets: LaunchTarget[] = [];
     let projectJsonTargets: LaunchTarget[] = [];
     let projectTargets: LaunchTarget[] = [];
@@ -131,7 +131,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
         let hasCake = false;
         let hasCs = false;
 
-        let folder = vscode.workspace.workspaceFolders[folderIndex];
+        let folder = workspaceFolders[folderIndex];
         let folderPath = folder.uri.fsPath;
 
         resources.forEach(resource => {
