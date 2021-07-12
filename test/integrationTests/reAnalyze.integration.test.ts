@@ -39,7 +39,6 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
 
-        // These tests don't run on the BasicRazorApp2_1 solution
         if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
             this.skip();
         }

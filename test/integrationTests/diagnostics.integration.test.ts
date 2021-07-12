@@ -50,7 +50,6 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         suiteSetup(async function () {
             should();
 
-            // These tests only run on the BasicRazorApp2_1 solution
             if (!isRazorWorkspace(vscode.workspace)) {
                 this.skip();
             }
