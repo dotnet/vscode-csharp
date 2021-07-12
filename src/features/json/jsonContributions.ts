@@ -9,7 +9,7 @@ import { configure as configureXHR, xhr } from 'request-light';
 
 import {
     CompletionItem, CompletionItemProvider, CompletionList, TextDocument, Position, Hover, HoverProvider,
-    CancellationToken, Range, TextEdit, MarkedString, DocumentSelector, languages, workspace
+    CancellationToken, Range, MarkedString, DocumentSelector, languages, workspace
 } from 'vscode';
 import CompositeDisposable from '../../CompositeDisposable';
 
@@ -113,10 +113,11 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
         let proposed: { [key: string]: boolean } = {};
         let collector: ISuggestionsCollector = {
             add: (suggestion: CompletionItem) => {
-                if (!proposed[suggestion.label]) {
-                    proposed[suggestion.label] = true;
+                if (!proposed[<string>suggestion.label]) {
+                    proposed[<string>suggestion.label] = true;
                     if (overwriteRange) {
-                        suggestion.textEdit = TextEdit.replace(overwriteRange, <string>suggestion.insertText);
+                        suggestion.insertText = suggestion.insertText;
+                        suggestion.range = overwriteRange;
                     }
 
                     items.push(suggestion);
