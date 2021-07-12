@@ -34,16 +34,22 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
             if (gotoDefinitionResponse && gotoDefinitionResponse.Definitions) {
 
                 for (const definition of gotoDefinitionResponse.Definitions) {
-                    if (definition.Location.FileName.startsWith("$metadata$")) {
-                        // if it is part of an already used metadata file, retrieve its uri instead of going to the physical file
-                        const uri = this.definitionMetadataDocumentProvider.getExistingMetadataResponseUri(definition.Location.FileName);
-                        const vscodeRange = toRange3(definition.Location.Range);
-                        locations.push(new Location(uri, vscodeRange));
-                    } else if (definition.MetadataSource) {
+                    if (definition.MetadataSource) {
                         // the definition is in metadata
                         const metadataSource: MetadataSource = definition.MetadataSource;
 
-                        // go to metadata endpoint for more information
+                        // Do we already have a document for this metadata reference?
+                        if (definition.Location.FileName.startsWith("$metadata$") &&
+                            this.definitionMetadataDocumentProvider.hasMetadataDocument(definition.Location.FileName)) {
+
+                            // if it is part of an already used metadata file, retrieve its uri instead of going to the physical file
+                            const uri = this.definitionMetadataDocumentProvider.getExistingMetadataResponseUri(definition.Location.FileName);
+                            const vscodeRange = toRange3(definition.Location.Range);
+                            locations.push(new Location(uri, vscodeRange));
+                            continue;
+                        }
+
+                        // We need to go to the metadata endpoint for more information
                         const metadataResponse = await serverUtils.getMetadata(this._server, <MetadataRequest>{
                             Timeout: 5000,
                             AssemblyName: metadataSource.AssemblyName,
