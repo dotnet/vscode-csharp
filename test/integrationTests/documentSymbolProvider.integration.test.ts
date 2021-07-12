@@ -20,7 +20,6 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
 
-        // These tests don't run on the BasicRazorApp2_1 solution
         if (integrationHelpers.isRazorWorkspace(vscode.workspace) || integrationHelpers.isSlnWithGenerator(vscode.workspace)) {
             this.skip();
         }
