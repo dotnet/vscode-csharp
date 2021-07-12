@@ -7,14 +7,15 @@ import * as vscode from "vscode";
 import CSharpDefinitionProvider from "../../src/features/definitionProvider";
 import * as path from "path";
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
-import { expect } from "chai";
+import { expect, should } from "chai";
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator, restartOmniSharpServer } from './integrationHelpers';
 
 suite(`${CSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;
 
     suiteSetup(async function () {
-        // These tests don't run on the BasicRazorApp2_1 solution
+        should();
+
         if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
             this.skip();
         }
