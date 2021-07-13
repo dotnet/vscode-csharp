@@ -19,15 +19,7 @@ jobs:
             - run: npm install -g gulp ovsx
             - run: gulp 'vsix:release:package'
 
-            - name: upload vsix artifact
-              uses: actions/upload-artifact@v2
-              with:
-                  name: extension
-                  path: ./*.vsix
+            - name: Get package version
+              run: node -e "console.log('VERSION=' + require('./package.json').version)" >> $GITHUB_ENV
 
-            - name: download vsix artifact
-              uses: actions/download-artifact@v2
-              with:
-                  name: extension.vsix
-
-            - run: ovsx publish ./extension.vsix -p ${{ secrets.OPEN_VSX_TOKEN }}
+            - run: ovsx publish ./csharp-${{ env.VERSION }}.vsix -p ${{ secrets.OPEN_VSX_TOKEN }}
