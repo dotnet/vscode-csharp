@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { should, expect } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace, restartOmniSharpServer } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator, restartOmniSharpServer } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { poll, assertWithPoll, pollDoesNotHappen } from './poll';
 
@@ -29,6 +29,10 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
 
+        if (isSlnWithGenerator(vscode.workspace)) {
+            this.skip();
+        }
+
         await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
@@ -46,7 +50,6 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         suiteSetup(async function () {
             should();
 
-            // These tests only run on the BasicRazorApp2_1 solution
             if (!isRazorWorkspace(vscode.workspace)) {
                 this.skip();
             }
@@ -84,7 +87,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             should();
 
             // These tests don't run on the BasicRazorApp2_1 solution
-            if (isRazorWorkspace(vscode.workspace)) {
+            if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
                 this.skip();
             }
 
@@ -151,7 +154,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             should();
 
             // These tests don't run on the BasicRazorApp2_1 solution
-            if (isRazorWorkspace(vscode.workspace)) {
+            if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
                 this.skip();
             }
 

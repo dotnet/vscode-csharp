@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { should, expect } from 'chai';
-import { activateCSharpExtension } from './integrationHelpers';
+import { activateCSharpExtension, isSlnWithCsproj, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
 const chai = require('chai');
@@ -18,6 +18,10 @@ suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
 
     suiteSetup(async function () {
+        if (isSlnWithGenerator(vscode.workspace)) {
+            this.skip();
+        }
+
         should();
         await activateCSharpExtension();
         await testAssetWorkspace.restore();
@@ -67,7 +71,7 @@ suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function ()
         should();
 
         // These tests only run on the slnWithCsproj solution
-        if (vscode.workspace.workspaceFolders[0].uri.fsPath.split(path.sep).pop() !== 'slnWithCsproj') {
+        if (!isSlnWithCsproj(vscode.workspace)) {
             this.skip();
         }
         else {

@@ -7,10 +7,8 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { should, assert } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { EventType } from '../../src/omnisharp/EventType';
-import { poll } from './poll';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -54,25 +52,12 @@ suite(`SemanticTokensProvider: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
 
-        // These tests don't run on the BasicRazorApp2_1 solution
-        if (isRazorWorkspace(vscode.workspace)) {
+        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
             this.skip();
         }
 
         const activation = await activateCSharpExtension();
-        await testAssetWorkspace.restore();
-
-        // Wait for workspace information to be returned
-        let isWorkspaceLoaded = false;
-
-        const subscription = activation.eventStream.subscribe(event => {
-            if (event.type === EventType.WorkspaceInformationUpdated) {
-                isWorkspaceLoaded = true;
-                subscription.unsubscribe();
-            }
-        });
-
-        await poll(() => isWorkspaceLoaded, 25000, 500);
+        await testAssetWorkspace.restoreAndWait(activation);
 
         const fileName = 'semantictokens.cs';
         const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;

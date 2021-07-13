@@ -6,7 +6,7 @@
 import { expect, should } from 'chai';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { isRazorWorkspace } from './integrationHelpers';
+import { isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
 const onTypeFormatProviderCommand = 'vscode.executeFormatOnTypeProvider';
@@ -25,7 +25,7 @@ suite(`Documentation Comment Auto Formatting: ${testAssetWorkspace.description}`
     suiteSetup(async function () {
         should();
 
-        if (isRazorWorkspace(vscode.workspace)) {
+        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
             // The format-on-type provider does not run for razor files.
             this.skip();
         }

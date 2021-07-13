@@ -33,7 +33,8 @@ function setupLogging() {
 export async function run(testsRoot: string, options?: Mocha.MochaOptions) {
     options ??= {
         ui: 'tdd',
-        useColors: true
+        useColors: true,
+        retries: 2
     };
 
     const mocha = new Mocha(options);
