@@ -124,9 +124,8 @@ export default class OmnisharpCompletionProvider extends AbstractProvider implem
         const insertRange = omnisharpCompletion.TextEdit ? mapRange(omnisharpCompletion.TextEdit) : undefined;
 
         return {
-            label: omnisharpCompletion.Label,
+            label: { label: omnisharpCompletion.Label, description: omnisharpCompletion.Detail },
             kind: omnisharpCompletion.Kind - 1,
-            detail: omnisharpCompletion.Detail,
             documentation: docs,
             commitCharacters: omnisharpCompletion.CommitCharacters,
             preselect: omnisharpCompletion.Preselect,

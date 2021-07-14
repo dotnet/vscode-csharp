@@ -6,7 +6,7 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
-import { expect } from "chai";
+import { expect, should } from "chai";
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 import { LanguageMiddleware, LanguageMiddlewareFeature } from "../../src/omnisharp/LanguageMiddlewareFeature";
 
@@ -15,7 +15,8 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
     let remappedFileUri: vscode.Uri;
 
     suiteSetup(async function () {
-        // These tests don't run on the BasicRazorApp2_1 solution
+        should();
+
         if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
             this.skip();
         }

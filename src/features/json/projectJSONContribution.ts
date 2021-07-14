@@ -185,7 +185,7 @@ export class ProjectJSONContribution implements IJSONContribution {
     public resolveSuggestion(item: CompletionItem): Thenable<CompletionItem> {
         if (item.kind === CompletionItemKind.Property) {
             let pack = item.label;
-            return this.getInfo(pack).then(info => {
+            return this.getInfo(<string>pack).then(info => {
                 if (info.description) {
                     item.documentation = info.description;
                 }

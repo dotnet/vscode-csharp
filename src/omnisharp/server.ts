@@ -31,6 +31,7 @@ import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
 import { IMonoResolver } from '../constants/IMonoResolver';
+import { showProjectSelector } from '../features/commands';
 import { removeBOMFromBuffer, removeBOMFromString } from '../utils/removeBOM';
 
 enum ServerState {
@@ -537,10 +538,13 @@ export class OmniSharpServer {
                     return this.autoStart(preferredPath);
                 });
             }
-
-            const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().defaultLaunchSolution;
+            else if (launchTargets.length === 1) {
+                // If there's only one target, just start
+                return this.restart(launchTargets[0]);
+            }
 
             // First, try to launch against something that matches the user's preferred target
+            const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().defaultLaunchSolution;
             const defaultLaunchSolutionTarget = launchTargets.find((a) => (path.basename(a.target) === defaultLaunchSolutionConfigValue));
             if (defaultLaunchSolutionTarget) {
                 return this.restart(defaultLaunchSolutionTarget);
@@ -549,21 +553,15 @@ export class OmniSharpServer {
             // If there's more than one launch target, we start the server if one of the targets
             // matches the preferred path. Otherwise, we fire the "MultipleLaunchTargets" event,
             // which is handled in status.ts to display the launch target selector.
-            if (launchTargets.length > 1 && preferredPath) {
-
-                for (let launchTarget of launchTargets) {
-                    if (launchTarget.target === preferredPath) {
-                        // start preferred path
-                        return this.restart(launchTarget);
-                    }
+            if (preferredPath) {
+                const preferredLaunchTarget = launchTargets.find((a) => a.target === preferredPath);
+                if (preferredLaunchTarget) {
+                    return this.restart(preferredLaunchTarget);
                 }
-
-                this._fireEvent(Events.MultipleLaunchTargets, launchTargets);
-                return Promise.reject<void>(undefined);
             }
 
-            // If there's only one target, just start
-            return this.restart(launchTargets[0]);
+            this._fireEvent(Events.MultipleLaunchTargets, launchTargets);
+            return showProjectSelector(this, launchTargets);
         });
     }
 
