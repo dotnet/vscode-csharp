@@ -62,11 +62,12 @@ async function checkIsValidArchitecture(platformInformation: PlatformInformation
 
             return true;
         }
-        else {
+        else if (platformInformation.isLinux()) {
             return true;
         }
     }
 
+    eventStream.post(new DebuggerPrerequisiteFailure("[ERROR] The debugger cannot be installed. Unknown platform."));
     return false;
 }
 
