@@ -74,9 +74,9 @@ async function completeDebuggerInstall(platformInformation: PlatformInformation,
     return _debugUtil.checkDotNetCli()
         .then(async (dotnetInfo: DotnetInfo) => {
 
-            let isInvalidArchitecture: boolean = await checkForInvalidArchitecture(platformInformation, eventStream);
+            let isValidArchitecture: boolean = await checkIsValidArchitecture(platformInformation, eventStream);
 
-            if (isInvalidArchitecture) {
+            if (!isValidArchitecture) {
                 eventStream.post(new DebuggerNotInstalledFailure());
                 vscode.window.showErrorMessage('Failed to complete the installation of the C# extension. Please see the error in the output window below.');
                 return false;
