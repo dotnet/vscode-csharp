@@ -728,7 +728,6 @@
         "omnisharp.useGlobalMono": {
           "type": "string",
           "default": "auto",
-          "scope": "machine",
           "enum": [
             "auto",
             "always",
