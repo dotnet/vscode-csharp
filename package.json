@@ -239,7 +239,7 @@
         "win32"
       ],
       "architectures": [
-        "arm4"
+        "arm64"
       ],
       "installTestPath": "./.debugger/vsdbg-ui.exe",
       "integrity": "FD9A1B46DA9C7226828595826F6CE215DF769C5111D02DB567494A1EB095E155"
