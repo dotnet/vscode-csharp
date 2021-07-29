@@ -5,20 +5,10 @@
 
 import * as vscode from 'vscode';
 import { assert } from "chai";
-import { resourcesToLaunchTargets, vsls, vslsTarget } from "../../src/omnisharp/launcher";
-import { isSlnWithGenerator } from './integrationHelpers';
-
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
+import { LaunchTargetKind, resourcesAndFolderMapToLaunchTargets, resourcesToLaunchTargets, vsls, vslsTarget } from "../../src/omnisharp/launcher";
 
 suite(`launcher:`, () => {
-
-    suiteSetup(async function () {
-        if (isSlnWithGenerator(vscode.workspace)) {
-            this.skip();
-        }
-    });
+    const workspaceFolders: vscode.WorkspaceFolder[] = [{ uri: vscode.Uri.parse('/'), name: "root", index: 0 }];
 
     test(`Returns the LiveShare launch target when processing vsls resources`, () => {
         const testResources: vscode.Uri[] = [
@@ -39,10 +29,28 @@ suite(`launcher:`, () => {
             vscode.Uri.parse(`/test/test.csproj`),
             vscode.Uri.parse(`/test/Program.cs`),
         ];
+        const folderMap = new Map<number, vscode.Uri[]>([[0, testResources]]);
 
-        const launchTargets = resourcesToLaunchTargets(testResources);
+        const launchTargets = resourcesAndFolderMapToLaunchTargets(testResources, workspaceFolders, folderMap);
 
         const liveShareTarget = launchTargets.find(target => target === vslsTarget);
         assert.notExists(liveShareTarget, "Launch targets contained the Visual Studio Live Share target.");
+    });
+
+    test(`Returns a Solution and Project target`, () => {
+        const testResources: vscode.Uri[] = [
+            vscode.Uri.parse(`/test.sln`),
+            vscode.Uri.parse(`/test/test.csproj`),
+            vscode.Uri.parse(`/test/Program.cs`),
+        ];
+        const folderMap = new Map<number, vscode.Uri[]>([[0, testResources]]);
+
+        const launchTargets = resourcesAndFolderMapToLaunchTargets(testResources, workspaceFolders, folderMap);
+
+        const solutionTarget = launchTargets.find(target => target.kind === LaunchTargetKind.Solution && target.label === "test.sln");
+        assert.exists(solutionTarget, "Launch targets did not include `/test.sln`");
+
+        const projectTarget = launchTargets.find(target => target.kind === LaunchTargetKind.Project && target.label === "test.csproj");
+        assert.exists(projectTarget, "Launch targets did not include `/test/test.csproj`");
     });
 });

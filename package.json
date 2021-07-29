@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "muhammad-sammy",
-  "version": "1.23.13",
+  "version": "1.23.14",
   "description": "C# support for vscode-compatible editors (powered by OmniSharp and NetCoreDbg).",
   "displayName": "C#",
   "author": "Muhammad Sammy",
@@ -35,7 +35,7 @@
     }
   },
   "defaults": {
-    "omniSharp": "1.37.12",
+    "omniSharp": "1.37.14",
     "razor": "6.0.0-preview.5.21358.6"
   },
   "main": "./dist/extension",
@@ -127,9 +127,9 @@
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/e0ec0683-568e-4729-826c-925cb904e0e4/fb84198a5897439914e28e3954639c7f/omnisharp-win-x86-1.37.12.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.12/omnisharp-win-x86-1.37.12.zip",
-      "installPath": ".omnisharp/1.37.12",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/5dc8cd5b-fe44-4cd1-a25b-d97e42c1b09d/4d9c13ba784867e1960dbc90bf17707a/omnisharp-win-x86-1.37.14.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.14/omnisharp-win-x86-1.37.14.zip",
+      "installPath": ".omnisharp/1.37.14",
       "platforms": [
         "win32"
       ],
@@ -137,32 +137,32 @@
         "x86",
         "arm64"
       ],
-      "installTestPath": "./.omnisharp/1.37.12/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.37.14/OmniSharp.exe",
       "platformId": "win-x86",
-      "integrity": "B37631B7B24D6675A726A24D50913380F5B0009A003A6D87024C4CDB6CBA5F76"
+      "integrity": "5BDD229934EB09EB54EB1C11CFA2284E1E4F3B6286E41E88763FAC72844911A2"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.6 / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/e0ec0683-568e-4729-826c-925cb904e0e4/c9a3648abc9b449dc8a20bbbb9cf7836/omnisharp-win-x64-1.37.12.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.12/omnisharp-win-x64-1.37.12.zip",
-      "installPath": ".omnisharp/1.37.12",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/5dc8cd5b-fe44-4cd1-a25b-d97e42c1b09d/7644fc2499e29df11c0a15022045e292/omnisharp-win-x64-1.37.14.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.14/omnisharp-win-x64-1.37.14.zip",
+      "installPath": ".omnisharp/1.37.14",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/1.37.12/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.37.14/OmniSharp.exe",
       "platformId": "win-x64",
-      "integrity": "32DE8DF9BBBB7D65FAF742AC6001E1E2AAF26F6B0C7576B70982559565BA6EB0"
+      "integrity": "DB5F0F1EC6ECE7F547B21953218AA18B829A0AEACF0E15032D9FBA7452E03DE9"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for OSX",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/e0ec0683-568e-4729-826c-925cb904e0e4/5011d2b538f09203b0d46ffc35c425ae/omnisharp-osx-1.37.12.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.12/omnisharp-osx-1.37.12.zip",
-      "installPath": ".omnisharp/1.37.12",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/5dc8cd5b-fe44-4cd1-a25b-d97e42c1b09d/6c2317a3a86a31e3a5d0a11ab401a17e/omnisharp-osx-1.37.14.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.14/omnisharp-osx-1.37.14.zip",
+      "installPath": ".omnisharp/1.37.14",
       "platforms": [
         "darwin"
       ],
@@ -170,16 +170,16 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.37.12/run",
+      "installTestPath": "./.omnisharp/1.37.14/run",
       "platformId": "osx",
-      "integrity": "3BE059E300393E9CAC108D4120E4D43720C87F7087D10E3AAEEFDD4895C91405"
+      "integrity": "A06F8C5B1659DA5C3923BB7D773676FEE2AB6A78944F5A98252E684FF80ABC22"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/e0ec0683-568e-4729-826c-925cb904e0e4/e98ac03c455ed07c02df937f873c4647/omnisharp-linux-x86-1.37.12.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.12/omnisharp-linux-x86-1.37.12.zip",
-      "installPath": ".omnisharp/1.37.12",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/5dc8cd5b-fe44-4cd1-a25b-d97e42c1b09d/b312e31eb66167dcda0e1bd87cd9458d/omnisharp-linux-x86-1.37.14.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.14/omnisharp-linux-x86-1.37.14.zip",
+      "installPath": ".omnisharp/1.37.14",
       "platforms": [
         "linux"
       ],
@@ -191,16 +191,16 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.37.12/run",
+      "installTestPath": "./.omnisharp/1.37.14/run",
       "platformId": "linux-x86",
-      "integrity": "FF894406DC3518877F3E00CD13DBD61AAC745E9425AD404F297FC5C512D49799"
+      "integrity": "154C7AAB23383DEAF7F7EEF89C842E73EDAB046A7BB716C175E3732976441909"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/e0ec0683-568e-4729-826c-925cb904e0e4/3c4f351cd57f4ee47da8fe4c0f8c1ec2/omnisharp-linux-x64-1.37.12.zip",
-      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.12/omnisharp-linux-x64-1.37.12.zip",
-      "installPath": ".omnisharp/1.37.12",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/5dc8cd5b-fe44-4cd1-a25b-d97e42c1b09d/e145d76552fb4969f272a142374e5675/omnisharp-linux-x64-1.37.14.zip",
+      "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.14/omnisharp-linux-x64-1.37.14.zip",
+      "installPath": ".omnisharp/1.37.14",
       "platforms": [
         "linux"
       ],
@@ -211,9 +211,9 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.37.12/run",
+      "installTestPath": "./.omnisharp/1.37.14/run",
       "platformId": "linux-x64",
-      "integrity": "FB468802F7B7CEC76CEFFA306C1995F70819FC9A20AE2498196B38B68E607917"
+      "integrity": "8B963FC3E368E53441B5953934327B7A22D70C35668478992DB963956DE9F4A4"
     },
     {
       "id": "Debugger",
@@ -322,7 +322,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.57.0"
+    "vscode": "^1.58.0"
   },
   "activationEvents": [
     "onDebugInitialConfigurations",
@@ -652,7 +652,6 @@
         "omnisharp.useGlobalMono": {
           "type": "string",
           "default": "auto",
-          "scope": "machine",
           "enum": [
             "auto",
             "always",
