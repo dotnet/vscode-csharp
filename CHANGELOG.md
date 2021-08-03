@@ -1,4 +1,4 @@
-## Known Issues in 1.23.14
+## Known Issues in 1.23.15
 
 * For Mono-based development (e.g. Unity) that requires full .NET framework, you need to set `"omnisharp.useGlobalMono": "always"`. The current value of "auto" will remain "never" until Mono [upgrades their bundled MSBuild version](https://github.com/mono/mono/issues/20250).
 * After selecting a solution filter (*.slnf) from the project selector, the solution's name will be displayed in the status bar instead of the filter's.
@@ -10,6 +10,9 @@
   * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
 * Renaming symbol fails within a file that had recently been renamed without saving changes.
   * As a workaround, make an edit within the file before using Rename Symbol.
+
+## 1.23.15 (Not yet released)
+* Restore launch target for workspace root when no solution present ([#4691](https://github.com/OmniSharp/omnisharp-vscode/issues/4691), PR: [#4695](https://github.com/OmniSharp/omnisharp-vscode/pull/4695))
 
 ## 1.23.14 (July 28th, 2021)
 * Bump minimum required version of VS Code (PR: [#4664](https://github.com/OmniSharp/omnisharp-vscode/pull/4664))
