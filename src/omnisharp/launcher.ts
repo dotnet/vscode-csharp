@@ -188,6 +188,19 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
         const hasSlnFile = solutionTargets.length > 0;
         const hasProjectJson = projectJsonTargets.length > 0;
 
+        // Add the root folder under the following circumstances:
+        // * If there are .csproj files, but no .sln or .slnf file, and none in the root.
+        // * If there are project.json files, but none in the root.
+        if ((hasCsProjFiles && !hasSlnFile) || (hasProjectJson && !hasProjectJsonAtRoot)) {
+            projectTargets.push({
+                label: path.basename(folderPath),
+                description: '',
+                target: folderPath,
+                directory: folderPath,
+                kind: LaunchTargetKind.Folder
+            });
+        }
+
         // if we noticed any CSX file(s), add a single CSX-specific target pointing at the root folder
         if (hasCSX) {
             otherTargets.push({
