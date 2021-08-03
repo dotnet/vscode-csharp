@@ -122,6 +122,7 @@ export function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[
 export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], workspaceFolders: vscode.WorkspaceFolder[], workspaceFolderToUriMap: Map<number, vscode.Uri[]>): LaunchTarget[] {
     let solutionTargets: LaunchTarget[] = [];
     let projectJsonTargets: LaunchTarget[] = [];
+    let projectRootTargets: LaunchTarget[] = [];
     let projectTargets: LaunchTarget[] = [];
     let otherTargets: LaunchTarget[] = [];
 
@@ -192,7 +193,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
         // * If there are .csproj files, but no .sln or .slnf file, and none in the root.
         // * If there are project.json files, but none in the root.
         if ((hasCsProjFiles && !hasSlnFile) || (hasProjectJson && !hasProjectJsonAtRoot)) {
-            projectTargets.push({
+            projectRootTargets.push({
                 label: path.basename(folderPath),
                 description: '',
                 target: folderPath,
@@ -235,10 +236,11 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
     });
 
     solutionTargets = solutionTargets.sort((a, b) => a.directory.localeCompare(b.directory));
+    projectRootTargets = projectRootTargets.sort((a, b) => a.directory.localeCompare(b.directory));
     projectJsonTargets = projectJsonTargets.sort((a, b) => a.directory.localeCompare(b.directory));
     projectTargets = projectTargets.sort((a, b) => a.directory.localeCompare(b.directory));
 
-    return otherTargets.concat(solutionTargets).concat(projectJsonTargets).concat(projectTargets);
+    return otherTargets.concat(solutionTargets).concat(projectRootTargets).concat(projectJsonTargets).concat(projectTargets);
 }
 
 function isCSharpProject(resource: vscode.Uri): boolean {
