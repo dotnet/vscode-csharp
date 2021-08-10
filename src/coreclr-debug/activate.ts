@@ -21,8 +21,8 @@ export async function activate(thisExtension: vscode.Extension<CSharpExtensionEx
     _debugUtil = new CoreClrDebugUtil(context.extensionPath);
 
     if (!CoreClrDebugUtil.existsSync(_debugUtil.debugAdapterDir())) {
-        let isInvalidArchitecture: boolean = await checkForInvalidArchitecture(platformInformation, eventStream);
-        if (!isInvalidArchitecture) {
+        let isValidArchitecture: boolean = await checkIsValidArchitecture(platformInformation, eventStream);
+        if (!isValidArchitecture) {
             eventStream.post(new DebuggerPrerequisiteFailure("[ERROR]: C# Extension failed to install the debugger package."));
             showInstallErrorMessage(eventStream);
         }
@@ -37,31 +37,37 @@ export async function activate(thisExtension: vscode.Extension<CSharpExtensionEx
     context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('clr', factory));
 }
 
-async function checkForInvalidArchitecture(platformInformation: PlatformInformation, eventStream: EventStream): Promise<boolean> {
+async function checkIsValidArchitecture(platformInformation: PlatformInformation, eventStream: EventStream): Promise<boolean> {
     if (platformInformation) {
         if (platformInformation.isMacOS()) {
             if (platformInformation.architecture === "arm64") {
                 eventStream.post(new DebuggerPrerequisiteWarning(`[WARNING]: arm64 macOS is not officially supported by the .NET Core debugger. You may experience unexpected issues when running in this configuration.`));
-                return false;
+                return true;
             }
 
             // Validate we are on compatiable macOS version if we are x86_64
             if ((platformInformation.architecture !== "x86_64") || 
                 (platformInformation.architecture === "x86_64" && !CoreClrDebugUtil.isMacOSSupported())) {
                 eventStream.post(new DebuggerPrerequisiteFailure("[ERROR] The debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer."));
-                return true;
+                return false;
             }
+
+            return true;
         }
-        else if (platformInformation.architecture !== "x86_64") {
-            if (platformInformation.isWindows() && platformInformation.architecture === "x86") {
+        else if (platformInformation.isWindows()) {
+            if (platformInformation.architecture === "x86") {
                 eventStream.post(new DebuggerPrerequisiteWarning(`[WARNING]: x86 Windows is not currently supported by the .NET Core debugger. Debugging will not be available.`));
-            } else {
-                eventStream.post(new DebuggerPrerequisiteWarning(`[WARNING]: Processor architecture '${platformInformation.architecture}' is not currently supported by the .NET Core debugger. Debugging will not be available.`));
+                return false;
             }
+
+            return true;
+        }
+        else if (platformInformation.isLinux()) {
             return true;
         }
     }
 
+    eventStream.post(new DebuggerPrerequisiteFailure("[ERROR] The debugger cannot be installed. Unknown platform."));
     return false;
 }
 
@@ -69,9 +75,9 @@ async function completeDebuggerInstall(platformInformation: PlatformInformation,
     return _debugUtil.checkDotNetCli()
         .then(async (dotnetInfo: DotnetInfo) => {
 
-            let isInvalidArchitecture: boolean = await checkForInvalidArchitecture(platformInformation, eventStream);
+            let isValidArchitecture: boolean = await checkIsValidArchitecture(platformInformation, eventStream);
 
-            if (isInvalidArchitecture) {
+            if (!isValidArchitecture) {
                 eventStream.post(new DebuggerNotInstalledFailure());
                 vscode.window.showErrorMessage('Failed to complete the installation of the C# extension. Please see the error in the output window below.');
                 return false;
