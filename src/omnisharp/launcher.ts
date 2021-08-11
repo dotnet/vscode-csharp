@@ -195,7 +195,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
         if ((hasCsProjFiles && !hasSlnFile) || (hasProjectJson && !hasProjectJsonAtRoot)) {
             projectRootTargets.push({
                 label: path.basename(folderPath),
-                description: '',
+                description: 'All contained projects',
                 target: folderPath,
                 directory: folderPath,
                 kind: LaunchTargetKind.Folder
