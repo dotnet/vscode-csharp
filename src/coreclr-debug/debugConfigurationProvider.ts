@@ -55,7 +55,8 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
             }
             else
             {
-                throw new Error("No process was selected.");
+                vscode.window.showErrorMessage("No process was selected.", { modal: true });
+                return undefined;
             }
         }
 
