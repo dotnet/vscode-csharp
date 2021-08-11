@@ -7,6 +7,8 @@ import * as path from 'path';
 import * as testRunner from '../testRunner';
 
 export async function run() {
+    process.env.RUNNING_INTEGRATION_TESTS = "true";
+
     return testRunner.run(
         path.resolve(__dirname, '.'),
         {

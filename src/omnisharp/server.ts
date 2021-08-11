@@ -551,8 +551,7 @@ export class OmniSharpServer {
             }
 
             // If there's more than one launch target, we start the server if one of the targets
-            // matches the preferred path. Otherwise, we fire the "MultipleLaunchTargets" event,
-            // which is handled in status.ts to display the launch target selector.
+            // matches the preferred path.
             if (preferredPath) {
                 const preferredLaunchTarget = launchTargets.find((a) => a.target === preferredPath);
                 if (preferredLaunchTarget) {
@@ -560,6 +559,13 @@ export class OmniSharpServer {
                 }
             }
 
+            // When running integration tests, open the first launch target.
+            if (process.env.RUNNING_INTEGRATION_TESTS === "true") {
+                return this.restart(launchTargets[0]);
+            }
+
+            // Otherwise, we fire the "MultipleLaunchTargets" event,
+            // which is handled in status.ts to display the launch target selector.
             this._fireEvent(Events.MultipleLaunchTargets, launchTargets);
             return showProjectSelector(this, launchTargets);
         });
