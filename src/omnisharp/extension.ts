@@ -103,7 +103,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         // so that it will be cleaned up if OmniSharp is restarted.
         const fixAllProvider = new FixAllProvider(server, languageMiddlewareFeature);
         localDisposables.add(fixAllProvider);
-        localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, fixAllProvider));
+        localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, fixAllProvider, FixAllProvider.metadata));
         localDisposables.add(reportDiagnostics(server, advisor, languageMiddlewareFeature));
         localDisposables.add(forwardChanges(server));
         localDisposables.add(trackVirtualDocuments(server, eventStream));
