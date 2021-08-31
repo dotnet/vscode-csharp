@@ -17,7 +17,7 @@
 * Support nserting outside code when texts are selected (PR: [#4715](https://github.com/OmniSharp/omnisharp-vscode/pull/4715))
 * Fix autoFix on save ([#4401](https://github.com/OmniSharp/omnisharp-roslyn/issues/4401) ,PR: [#4717](https://github.com/OmniSharp/omnisharp-vscode/pull/4717))
 
-Update OmniSharp version to 1.37.15: 
+* Update OmniSharp version to 1.37.15: 
   * Update Roslyn to 4.0.0-4.21427.11 (PR: [omnisharp-roslyn#2220](https://github.com/OmniSharp/omnisharp-roslyn/pull/2220))
   * Update NuGet to 5.10.0 ([omnisharp-roslyn#2027](https://github.com/OmniSharp/omnisharp-roslyn/issues/2027), PR: [omnisharp-roslyn#2034](https://github.com/OmniSharp/omnisharp-roslyn/pull/2034))
   * Remove .NET Core 2.1 (PR: [omnisharp-roslyn#2219](https://github.com/OmniSharp/omnisharp-roslyn/pull/2219))
