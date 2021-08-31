@@ -188,8 +188,8 @@
                 "updatePackageDependencies"
             ],
             "env": {
-                "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/5dc8cd5b-fe44-4cd1-a25b-d97e42c1b09d/e145d76552fb4969f272a142374e5675/omnisharp-linux-x64-1.37.14.zip,https://download.visualstudio.microsoft.com/download/pr/5dc8cd5b-fe44-4cd1-a25b-d97e42c1b09d/b312e31eb66167dcda0e1bd87cd9458d/omnisharp-linux-x86-1.37.14.zip,https://download.visualstudio.microsoft.com/download/pr/5dc8cd5b-fe44-4cd1-a25b-d97e42c1b09d/6c2317a3a86a31e3a5d0a11ab401a17e/omnisharp-osx-1.37.14.zip,https://download.visualstudio.microsoft.com/download/pr/5dc8cd5b-fe44-4cd1-a25b-d97e42c1b09d/7644fc2499e29df11c0a15022045e292/omnisharp-win-x64-1.37.14.zip,https://download.visualstudio.microsoft.com/download/pr/5dc8cd5b-fe44-4cd1-a25b-d97e42c1b09d/4d9c13ba784867e1960dbc90bf17707a/omnisharp-win-x86-1.37.14.zip",
-                "NEW_DEPS_VERSION": "1.37.14"
+                "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/4fbf71ce-5375-4ca9-b70d-8024ba1b9e0a/b96375395e639233d546a4937be3bd32/omnisharp-linux-x64-1.37.15.zip,https://download.visualstudio.microsoft.com/download/pr/4fbf71ce-5375-4ca9-b70d-8024ba1b9e0a/a58d94b65bbe08b47c772514ce8f31e6/omnisharp-linux-x86-1.37.15.zip,https://download.visualstudio.microsoft.com/download/pr/4fbf71ce-5375-4ca9-b70d-8024ba1b9e0a/bc6ac844afef87eedaab5191f11dc374/omnisharp-osx-1.37.15.zip,https://download.visualstudio.microsoft.com/download/pr/4fbf71ce-5375-4ca9-b70d-8024ba1b9e0a/5b2da7f5be18cab4fa055879cba02d13/omnisharp-win-x64-1.37.15.zip,https://download.visualstudio.microsoft.com/download/pr/4fbf71ce-5375-4ca9-b70d-8024ba1b9e0a/91377167ee803c9c0ac4af282aae0d5c/omnisharp-win-x86-1.37.15.zip",
+                "NEW_DEPS_VERSION": "1.37.15"
             },
             "cwd": "${workspaceFolder}"
         }
