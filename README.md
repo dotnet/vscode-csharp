@@ -29,18 +29,18 @@ For MacOS and Linux users who have Mono installed, this means you will need to s
 
 ## What's new in 1.23.15
 * Restore launch target for workspace root when no solution present ([#4691](https://github.com/OmniSharp/omnisharp-vscode/issues/4691), PR: [#4695](https://github.com/OmniSharp/omnisharp-vscode/pull/4695))
-* Don't create launch.json for no select process ([#4696](https://github.com/OmniSharp/omnisharp-roslyn/issues/4696, PR: [#4699](https://github.com/OmniSharp/omnisharp-vscode/pull/4699))
+* Don't create launch.json for no select process ([omnisharp-roslyn#4696](https://github.com/OmniSharp/omnisharp-roslyn/issues/4696), PR: [#4699](https://github.com/OmniSharp/omnisharp-vscode/pull/4699))
 * Support nserting outside code when texts are selected (PR: [#4715](https://github.com/OmniSharp/omnisharp-vscode/pull/4715))
-* Fix autoFix on save ([#4401](https://github.com/OmniSharp/omnisharp-roslyn/issues/4401 ,PR: [#4717](https://github.com/OmniSharp/omnisharp-vscode/pull/4717))
+* Fix autoFix on save ([#4401](https://github.com/OmniSharp/omnisharp-roslyn/issues/4401) ,PR: [#4717](https://github.com/OmniSharp/omnisharp-vscode/pull/4717))
 
 Update OmniSharp version to 1.37.15: 
-  * Update Roslyn to 4.0.0-4.21427.11 (PR: [#2220](https://github.com/OmniSharp/omnisharp-roslyn/pull/2220))
-  * Update NuGet to 5.10.0 ([#2027](https://github.com/OmniSharp/omnisharp-roslyn/issues/2027), PR: [#2034](https://github.com/OmniSharp/omnisharp-roslyn/pull/2034))
-  * Remove .NET Core 2.1 (PR: [#2219](https://github.com/OmniSharp/omnisharp-roslyn/pull/2219))
-  * Update versions to match .NET SDK 6 RC1 (PR: [#2217](https://github.com/OmniSharp/omnisharp-roslyn/pull/2217))
-  * Use FullPaths for Locations that are returned with relative paths. ([#2215](https://github.com/OmniSharp/omnisharp-roslyn/issues/2215), PR: [#2216](https://github.com/OmniSharp/omnisharp-roslyn/pull/2216))
-  * Improved logging in project manager (PR: [#2203](https://github.com/OmniSharp/omnisharp-roslyn/pull/2203))
-  * Log a warning when external features path has no assemblies ([#2201](https://github.com/OmniSharp/omnisharp-roslyn/issues/2201), PR: [#2202](https://github.com/OmniSharp/omnisharp-roslyn/pull/2202))
+  * Update Roslyn to 4.0.0-4.21427.11 (PR: [omnisharp-roslyn#2220](https://github.com/OmniSharp/omnisharp-roslyn/pull/2220))
+  * Update NuGet to 5.10.0 ([omnisharp-roslyn#2027](https://github.com/OmniSharp/omnisharp-roslyn/issues/2027), PR: [omnisharp-roslyn#2034](https://github.com/OmniSharp/omnisharp-roslyn/pull/2034))
+  * Remove .NET Core 2.1 (PR: [omnisharp-roslyn#2219](https://github.com/OmniSharp/omnisharp-roslyn/pull/2219))
+  * Update versions to match .NET SDK 6 RC1 (PR: [omnisharp-roslyn#2217](https://github.com/OmniSharp/omnisharp-roslyn/pull/2217))
+  * Use FullPaths for Locations that are returned with relative paths. ([omnisharp-roslyn#2215](https://github.com/OmniSharp/omnisharp-roslyn/issues/2215), PR: [omnisharp-roslyn#2216](https://github.com/OmniSharp/omnisharp-roslyn/pull/2216))
+  * Improved logging in project manager (PR: [omnisharp-roslyn#2203](https://github.com/OmniSharp/omnisharp-roslyn/pull/2203))
+  * Log a warning when external features path has no assemblies ([omnisharp-roslyn#2201](https://github.com/OmniSharp/omnisharp-roslyn/issues/2201), PR: [omnisharp-roslyn#2202](https://github.com/OmniSharp/omnisharp-roslyn/pull/2202))
 
 ## What's new in 1.23.14
 * Bump minimum required version of VS Code (PR: [#4664](https://github.com/OmniSharp/omnisharp-vscode/pull/4664))
