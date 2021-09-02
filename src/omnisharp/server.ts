@@ -381,6 +381,10 @@ export class OmniSharpServer {
             args.push('RoslynExtensionsOptions:EnableAsyncCompletion=true');
         }
 
+        for (let i = 0; i < options.dotNetCliPaths.length; i++) {
+            args.push(`DotNetCliOptions:LocationPaths:${i}=${options.dotNetCliPaths[i]}`);
+        }
+
         let launchInfo: LaunchInfo;
         try {
             launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, serverUrl, latestVersionFileServerPath, installPath, this.extensionPath);
