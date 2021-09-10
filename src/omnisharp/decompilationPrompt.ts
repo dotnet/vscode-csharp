@@ -6,15 +6,19 @@
 import * as vscode from "vscode";
 import OptionProvider from "../observers/OptionProvider";
 
+export async function resetDecompilationAuthorization(context: vscode.ExtensionContext) {
+    context.globalState.update("csharp.decompilationAuthorized", undefined);
+}
+
 export async function getDecompilationAuthorization(context: vscode.ExtensionContext, optionProvider: OptionProvider) {
-    // If decompilation is disabled the return false
+    // If decompilation is disabled, then return false
     const options = optionProvider.GetLatestOptions();
     if (options.enableDecompilationSupport === false) {
         return false;
     }
 
-    // If the terms have been acknowledged for this workspace then return.
-    let decompilationAutorized = context.workspaceState.get<boolean | undefined>("decompilationAuthorized");
+    // If the terms have been acknowledged, then return whether it was authorized.
+    let decompilationAutorized = context.globalState.get<boolean | undefined>("csharp.decompilationAuthorized");
     if (decompilationAutorized !== undefined) {
         return decompilationAutorized;
     }
@@ -22,7 +26,7 @@ export async function getDecompilationAuthorization(context: vscode.ExtensionCon
     const result = await promptToAcceptDecompilationTerms();
     decompilationAutorized = result === PromptResult.Yes;
 
-    await context.workspaceState.update("decompilationAuthorized", decompilationAutorized);
+    await context.globalState.update("csharp.decompilationAuthorized", decompilationAutorized);
 
     return decompilationAutorized;
 }
