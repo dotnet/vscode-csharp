@@ -81,7 +81,7 @@ async function restartOmniSharp(context: vscode.ExtensionContext, server: OmniSh
 
 async function pickProjectAndStart(server: OmniSharpServer, optionProvider: OptionProvider): Promise<void> {
     let options = optionProvider.GetLatestOptions();
-    return findLaunchTargets(options).then(targets => {
+    return findLaunchTargets(options).then(async targets => {
 
         let currentPath = server.getSolutionPathOrFolder();
         if (currentPath) {
