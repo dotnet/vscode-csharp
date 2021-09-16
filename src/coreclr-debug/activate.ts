@@ -106,8 +106,8 @@ function showInstallErrorMessage(eventStream: EventStream) {
 function showDotnetToolsWarning(message: string): void {
     const config = vscode.workspace.getConfiguration('csharp');
     if (!config.get('suppressDotnetInstallWarning', false)) {
-        const getDotNetMessage = 'Get the .NET Core SDK';
-        const goToSettingsMessage = 'Disable this message in user settings';
+        const getDotNetMessage = 'Get the SDK';
+        const goToSettingsMessage = 'Disable message in settings';
         const helpMessage = 'Help';
         // Buttons are shown in right-to-left order, with a close button to the right of everything;
         // getDotNetMessage will be the first button, then goToSettingsMessage, then the close button.
