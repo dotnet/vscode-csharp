@@ -561,8 +561,8 @@ export class OmniSharpServer {
 
             // To maintain previous behavior when there are mulitple targets available,
             // launch with first Solution or Folder target.
-            const firstFolderOrSolutionTarget = launchTargets.find(target => target.kind == LaunchTargetKind.Folder)
-                ?? launchTargets.find(target => target.kind == LaunchTargetKind.Solution);
+            const firstFolderOrSolutionTarget = launchTargets
+                .find(target => target.kind == LaunchTargetKind.Folder || target.kind == LaunchTargetKind.Solution);
             if (firstFolderOrSolutionTarget) {
                 return this.restart(firstFolderOrSolutionTarget);
             }
