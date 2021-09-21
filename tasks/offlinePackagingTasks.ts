@@ -109,7 +109,7 @@ async function install(platformInfo: PlatformInformation, packageJSON: any) {
         throw Error("Failed to download package.");
     }
 
-    // The VSIX Format doesn't allow files that differ only my case. The Linux OmniSharp package had a lowercase version of these files ('.targets') targets from mono,
+    // The VSIX Format doesn't allow files that differ only by case. The Linux OmniSharp package had a lowercase version of these files ('.targets') targets from mono,
     // and an upper case ('.Targets') from Microsoft.Build.Runtime. Remove the lowercase versions.
     await del([ '.omnisharp/*/omnisharp/.msbuild/Current/Bin/Workflow.targets', '.omnisharp/*/omnisharp/.msbuild/Current/Bin/Workflow.VisualBasic.targets' ]);
 }
