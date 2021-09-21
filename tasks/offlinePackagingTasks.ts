@@ -4,11 +4,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as debugUtil from '../src/coreclr-debug/util';
 import * as del from 'del';
 import * as fs from 'fs';
 import * as gulp from 'gulp';
 import * as path from 'path';
+import * as util from '../src/common';
 import spawnNode from '../tasks/spawnNode';
 import { codeExtensionPath, offlineVscodeignorePath, vscodeignorePath, vscePath, packedVsixOutputRoot } from '../tasks/projectPaths';
 import { CsharpLoggerObserver } from '../src/observers/CsharpLoggerObserver';
@@ -24,6 +24,13 @@ import { getAbsolutePathPackagesToInstall } from '../src/packageManager/getAbsol
 import { isValidDownload } from '../src/packageManager/isValidDownload';
 
 gulp.task('vsix:offline:package', async () => {
+
+    if (process.platform === 'win32') {
+        throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
+    }
+
+    await cleanAsync(true);
+
     del.sync(vscodeignorePath);
 
     fs.copyFileSync(offlineVscodeignorePath, vscodeignorePath);
@@ -39,10 +46,10 @@ gulp.task('vsix:offline:package', async () => {
 async function doPackageOffline() {
     if (commandLineOptions.retainVsix) {
         //if user doesnot want to clean up the existing vsix packages
-        cleanSync(false);
+        await cleanAsync(false);
     }
     else {
-        cleanSync(true);
+        await cleanAsync(true);
     }
 
     const packageJSON = getPackageJSON();
@@ -51,36 +58,41 @@ async function doPackageOffline() {
     const packageName = name + '.' + version;
 
     const packages = [
-        new PlatformInformation('win32', 'x86_64'),
-        new PlatformInformation('darwin', 'x86_64'),
-        new PlatformInformation('linux', 'x86_64')
+        { platformInfo: new PlatformInformation('win32', 'x86_64'), id: "win32-x64" },
+        { platformInfo: new PlatformInformation('win32', 'x86'), id: "win32-ia32" },
+        { platformInfo: new PlatformInformation('win32', 'arm64'), id: "win32-arm64" },
+        { platformInfo: new PlatformInformation('linux', 'x86_64'), id: "linux-x64" },
+        { platformInfo: new PlatformInformation('darwin', 'x86_64'), id: "darwin-x64" },
+        { platformInfo: new PlatformInformation('darwin', 'arm64'), id: "darwin-arm64" },
     ];
 
-    for (let platformInfo of packages) {
-        await doOfflinePackage(platformInfo, packageName, packageJSON, packedVsixOutputRoot);
+    for (let p of packages) {
+        try
+        {
+            await doOfflinePackage(p.platformInfo, p.id, packageName, packageJSON, packedVsixOutputRoot);
+        }
+        catch (err)
+        {
+            // NOTE: Extra `\n---` at the end is because gulp will print this message following by the 
+            // stack trace of this line. So that seperates the two stack traces.
+            throw Error(`Failed to create package ${p.id}. ${err.stack ?? err ?? '<unknown error>'}\n---`);
+        }
     }
 }
 
-function cleanSync(deleteVsix: boolean) {
-    del.sync('install.*');
-    del.sync('.omnisharp*');
-    del.sync('.debugger');
-    del.sync('.razor');
+async function cleanAsync(deleteVsix: boolean) {
+    await del([ 'install.*', '.omnisharp*', '.debugger', '.razor']);
 
     if (deleteVsix) {
-        del.sync('*.vsix');
+        await del('*.vsix');
     }
 }
 
-async function doOfflinePackage(platformInfo: PlatformInformation, packageName: string, packageJSON: any, outputFolder: string) {
-    if (process.platform === 'win32') {
-        throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
-    }
-
-    cleanSync(false);
-    const packageFileName = `${packageName}-${platformInfo.platform}-${platformInfo.architecture}.vsix`;
+async function doOfflinePackage(platformInfo: PlatformInformation, vscodePlatformId: string, packageName: string, packageJSON: any, outputFolder: string) {
+    await cleanAsync(false);
+    const packageFileName = `${packageName}-${vscodePlatformId}.vsix`;
     await install(platformInfo, packageJSON);
-    await doPackageSync(packageFileName, outputFolder);
+    await createPackageAsync(packageFileName, outputFolder, vscodePlatformId);
 }
 
 // Install Tasks
@@ -89,18 +101,29 @@ async function install(platformInfo: PlatformInformation, packageJSON: any) {
     const logger = new Logger(message => process.stdout.write(message));
     let stdoutObserver = new CsharpLoggerObserver(logger);
     eventStream.subscribe(stdoutObserver.post);
-    const debuggerUtil = new debugUtil.CoreClrDebugUtil(path.resolve('.'));
     let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON);
     let packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, codeExtensionPath);
     let provider = () => new NetworkSettings(undefined, undefined);
-    await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload);
-    await debugUtil.CoreClrDebugUtil.writeEmptyFile(debuggerUtil.installCompleteFilePath());
+    if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload)))
+    {
+        throw Error("Failed to download package.");
+    }
+
+    // The VSIX Format doesn't allow files that differ only my case. The Linux OmniSharp package had a lowercase version of these files ('.targets') targets from mono,
+    // and an upper case ('.Targets') from Microsoft.Build.Runtime. Remove the lowercase versions.
+    await del([ '.omnisharp/*/omnisharp/.msbuild/Current/Bin/Workflow.targets', '.omnisharp/*/omnisharp/.msbuild/Current/Bin/Workflow.VisualBasic.targets' ]);
 }
 
 /// Packaging (VSIX) Tasks
-async function doPackageSync(packageName: string, outputFolder: string) {
+async function createPackageAsync(packageName: string, outputFolder: string, vscodePlatformId: string) {
 
     let vsceArgs = [];
+    let packagePath = undefined;
+
+    if (!(await util.fileExists(vscePath))) {
+        throw new Error(`vsce does not exist at expected location: '${vscePath}'`);
+    }
+
     vsceArgs.push(vscePath);
     vsceArgs.push('package'); // package command
 
@@ -108,12 +131,22 @@ async function doPackageSync(packageName: string, outputFolder: string) {
         vsceArgs.push('-o');
         if (outputFolder) {
             //if we have specified an output folder then put the files in that output folder
-            vsceArgs.push(path.join(outputFolder, packageName));
+            packagePath = path.join(outputFolder, packageName);
+            vsceArgs.push(packagePath);
         }
         else {
             vsceArgs.push(packageName);
         }
     }
 
-    return spawnNode(vsceArgs);
+    const spawnResult = await spawnNode(vsceArgs);
+    if (spawnResult.code != 0) {
+        throw new Error(`'${vsceArgs.join(' ')}' failed with code ${spawnResult.code}.`);
+    }
+
+    if (packagePath) {
+        if (!(await util.fileExists(packagePath))) {
+            throw new Error(`vsce failed to create: '${packagePath}'`);
+        }
+    }
 }
