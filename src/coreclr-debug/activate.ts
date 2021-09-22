@@ -22,7 +22,9 @@ export async function activate(thisExtension: vscode.Extension<CSharpExtensionEx
 
     if (!CoreClrDebugUtil.existsSync(_debugUtil.debugAdapterDir())) {
         let isValidArchitecture: boolean = await checkIsValidArchitecture(platformInformation, eventStream);
-        if (!isValidArchitecture) {
+        // If this is a valid architecture, we should have had a debugger, so warn if we didn't, otherwise
+        // a warning was already issued, so do nothing.
+        if (isValidArchitecture) {
             eventStream.post(new DebuggerPrerequisiteFailure("[ERROR]: C# Extension failed to install the debugger package."));
             showInstallErrorMessage(eventStream);
         }
@@ -41,7 +43,7 @@ async function checkIsValidArchitecture(platformInformation: PlatformInformation
     if (platformInformation) {
         if (platformInformation.isMacOS()) {
             if (platformInformation.architecture === "arm64") {
-                eventStream.post(new DebuggerPrerequisiteWarning(`[WARNING]: arm64 macOS is not officially supported by the .NET Core debugger. You may experience unexpected issues when running in this configuration.`));
+                eventStream.post(new DebuggerPrerequisiteWarning(`[WARNING]: arm64 macOS is not officially supported by the .NET debugger. You may experience unexpected issues when running in this configuration.`));
                 return true;
             }
 
@@ -56,7 +58,7 @@ async function checkIsValidArchitecture(platformInformation: PlatformInformation
         }
         else if (platformInformation.isWindows()) {
             if (platformInformation.architecture === "x86") {
-                eventStream.post(new DebuggerPrerequisiteWarning(`[WARNING]: x86 Windows is not currently supported by the .NET Core debugger. Debugging will not be available.`));
+                eventStream.post(new DebuggerPrerequisiteWarning(`[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.`));
                 return false;
             }
 
@@ -85,7 +87,6 @@ async function completeDebuggerInstall(platformInformation: PlatformInformation,
 
             // Write install.complete
             CoreClrDebugUtil.writeEmptyFile(_debugUtil.installCompleteFilePath());
-            vscode.window.setStatusBarMessage('Successfully installed .NET Core Debugger.', 5000);
 
             return true;
         }, (err) => {
@@ -100,7 +101,7 @@ async function completeDebuggerInstall(platformInformation: PlatformInformation,
 
 function showInstallErrorMessage(eventStream: EventStream) {
     eventStream.post(new DebuggerNotInstalledFailure());
-    vscode.window.showErrorMessage("An error occurred during installation of the .NET Core Debugger. The C# extension may need to be reinstalled.");
+    vscode.window.showErrorMessage("An error occurred during installation of the .NET Debugger. The C# extension may need to be reinstalled.");
 }
 
 function showDotnetToolsWarning(message: string): void {
