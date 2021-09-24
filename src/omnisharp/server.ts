@@ -559,6 +559,14 @@ export class OmniSharpServer {
                 }
             }
 
+            // To maintain previous behavior when there are mulitple targets available,
+            // launch with first Solution or Folder target.
+            const firstFolderOrSolutionTarget = launchTargets
+                .find(target => target.kind == LaunchTargetKind.Folder || target.kind == LaunchTargetKind.Solution);
+            if (firstFolderOrSolutionTarget) {
+                return this.restart(firstFolderOrSolutionTarget);
+            }
+
             // When running integration tests, open the first launch target.
             if (process.env.RUNNING_INTEGRATION_TESTS === "true") {
                 return this.restart(launchTargets[0]);
