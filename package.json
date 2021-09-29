@@ -251,7 +251,7 @@
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
       "url": "https://github.com/Samsung/netcoredbg/releases/latest/download/netcoredbg-linux-amd64_fixed.tar.gz",
-      "fallbackUrl": "https://web.archive.org/web/20210704184708/https://github-releases.githubusercontent.com/113926796/fc5bfc00-dc3b-11eb-8d47-f99c4dc1c4c6?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20210704%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210704T184708Z&X-Amz-Expires=300&X-Amz-Signature=521e3d193946f1cd4598e55056b7597497e294322daa6827f3bf84d1be4e1d89&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=113926796&response-content-disposition=attachment%3B%20filename%3Dnetcoredbg-linux-amd64.tar.gz&response-content-type=application%2Foctet-stream",
+      "fallbackUrl": "https://web.archive.org/web/20210929015542/https://github-releases.githubusercontent.com/113926796/62b06fb2-062e-4f98-a518-78e527fab33f?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20210929%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210929T015541Z&X-Amz-Expires=300&X-Amz-Signature=920d3aa403b959f917ff9e4ec069cb85a9594bb2209d68d0610a1de382c0685e&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=113926796&response-content-disposition=attachment%3B%20filename%3Dnetcoredbg-linux-amd64_fixed.tar.gz&response-content-type=application%2Foctet-stream",
       "installPath": ".debugger",
       "platforms": [
         "linux"
