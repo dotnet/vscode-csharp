@@ -218,7 +218,7 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://github.com/Samsung/netcoredbg/releases/latest/download/netcoredbg-win64.zip",
+      "url": "https://github.com/Samsung/netcoredbg/releases/download/1.2.0-825/netcoredbg-win64.zip",
       "fallbackUrl": "https://web.archive.org/web/20201114153556if_/https://github-production-release-asset-2e65be.s3.amazonaws.com/113926796/d4b97d80-155d-11eb-8d5f-3dd1c01c1a8e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20201114%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20201114T153556Z&X-Amz-Expires=300&X-Amz-Signature=cca2fa29711b17bf0ab332e8142fc4c27792f515d53dc685396d8ea1009f4bd8&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=113926796&response-content-disposition=attachment%3B%20filename%3Dnetcoredbg-win64.zip&response-content-type=application%2Foctet-stream",
       "installPath": ".debugger",
       "platforms": [
@@ -232,7 +232,7 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://github.com/Samsung/netcoredbg/releases/latest/download/netcoredbg-osx.tar.gz",
+      "url": "https://github.com/Samsung/netcoredbg/releases/download/1.2.0-786/netcoredbg-osx.tar.gz",
       "fallbackUrl": "https://web.archive.org/web/20201114153845if_/https://github-production-release-asset-2e65be.s3.amazonaws.com/113926796/e77a8500-1552-11eb-8b31-fe0e14726f36?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20201114%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20201114T153659Z&X-Amz-Expires=300&X-Amz-Signature=5782fc0120f26ad4ec919f9cc21b70c42986436a05de7f857fff3e7604e077fb&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=113926796&response-content-disposition=attachment%3B%20filename%3Dnetcoredbg-osx.tar.gz&response-content-type=application%2Foctet-stream",
       "installPath": ".debugger",
       "platforms": [
@@ -250,8 +250,8 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://github.com/Samsung/netcoredbg/releases/latest/download/netcoredbg-linux-amd64_fixed.tar.gz",
-      "fallbackUrl": "https://web.archive.org/web/20210929015542/https://github-releases.githubusercontent.com/113926796/62b06fb2-062e-4f98-a518-78e527fab33f?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20210929%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210929T015541Z&X-Amz-Expires=300&X-Amz-Signature=920d3aa403b959f917ff9e4ec069cb85a9594bb2209d68d0610a1de382c0685e&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=113926796&response-content-disposition=attachment%3B%20filename%3Dnetcoredbg-linux-amd64_fixed.tar.gz&response-content-type=application%2Foctet-stream",
+      "url": "https://github.com/Samsung/netcoredbg/releases/download/1.2.0-825/netcoredbg-linux-amd64_fixed.tar.gz",
+      "fallbackUrl": "https://web.archive.org/web/20210704184708/https://github-releases.githubusercontent.com/113926796/fc5bfc00-dc3b-11eb-8d47-f99c4dc1c4c6?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20210704%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210704T184708Z&X-Amz-Expires=300&X-Amz-Signature=521e3d193946f1cd4598e55056b7597497e294322daa6827f3bf84d1be4e1d89&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=113926796&response-content-disposition=attachment%3B%20filename%3Dnetcoredbg-linux-amd64.tar.gz&response-content-type=application%2Foctet-stream",
       "installPath": ".debugger",
       "platforms": [
         "linux"
