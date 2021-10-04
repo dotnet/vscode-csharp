@@ -1,4 +1,4 @@
-## Known Issues in 1.23.15
+## Known Issues in 1.23.16
 
 * For Mono-based development (e.g. Unity) that requires full .NET framework, you need to set `"omnisharp.useGlobalMono": "always"`. The current value of "auto" will remain "never" until Mono [upgrades their bundled MSBuild version](https://github.com/mono/mono/issues/20250).
 * After selecting a solution filter (*.slnf) from the project selector, the solution's name will be displayed in the status bar instead of the filter's.
@@ -11,7 +11,20 @@
 * Renaming symbol fails within a file that had recently been renamed without saving changes.
   * As a workaround, make an edit within the file before using Rename Symbol.
 
-## 1.23.15 (Not yet released)
+## 1.23.16 Not released yet
+
+* Show decompilation authorization once per install. ([#3982](https://github.com/OmniSharp/omnisharp-vscode/issues/3982), PR: [#4760](https://github.com/OmniSharp/omnisharp-vscode/pull/4760))
+* Launch with first Folder or Solution target found (PR: [#4780](https://github.com/OmniSharp/omnisharp-vscode/pull/4780))
+* Update OmniSharp version to 1.37.16:
+  * Update included Build Tools to match .NET SDK 6 (PR: [omnisharp-roslyn#2239](https://github.com/OmniSharp/omnisharp-roslyn/pull/2239))
+  * Add Custom .NET CLI support to OmniSharp (PR: [omnisharp-roslyn#2227](https://github.com/OmniSharp/omnisharp-roslyn/pull/2227))
+  * Handle .editorconfig changes without running a new design time build ([omnisharp-roslyn#2112](https://github.com/OmniSharp/omnisharp-roslyn/issues/2112) PR: [omnisharp-roslyn#2234](https://github.com/OmniSharp/omnisharp-roslyn/pull/2234))
+  * Do not return nulls when getting documents by path ([omnisharp-roslyn#2125](https://github.com/OmniSharp/omnisharp-roslyn/issues/2125) PR: [omnisharp-roslyn#2233](https://github.com/OmniSharp/omnisharp-roslyn/pull/2233))
+  * handle RecordStructName in semantic highlighting classification ([omnisharp-roslyn#2228](https://github.com/OmniSharp/omnisharp-roslyn/issues/2228) PR: [omnisharp-roslyn#2232](https://github.com/OmniSharp/omnisharp-roslyn/pull/2232))
+  * Update CodeStructureService with FileScoped Namespace support ([omnisharp-roslyn#2225](https://github.com/OmniSharp/omnisharp-roslyn/issues/2225) PR: [omnisharp-roslyn#2226](https://github.com/OmniSharp/omnisharp-roslyn/pull/2226))
+
+
+## 1.23.15 (Aug 31st, 2021)
 * Restore launch target for workspace root when no solution present ([#4691](https://github.com/OmniSharp/omnisharp-vscode/issues/4691), PR: [#4695](https://github.com/OmniSharp/omnisharp-vscode/pull/4695))
 * Don't create launch.json for no select process ([omnisharp-roslyn#4696](https://github.com/OmniSharp/omnisharp-roslyn/issues/4696), PR: [#4699](https://github.com/OmniSharp/omnisharp-vscode/pull/4699))
 * Support nserting outside code when texts are selected (PR: [#4715](https://github.com/OmniSharp/omnisharp-vscode/pull/4715))
