@@ -1,23 +1,23 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "module": "commonjs",
-        "outDir": "out",
-        "lib": [
-            "ES2017"
-        ],
-        "sourceMap": true,
-        "moduleResolution": "node",
-        "alwaysStrict": true,
-        "noImplicitAny": true,
-        "skipLibCheck": true,
-        "noImplicitThis": true,
-        "noUnusedLocals": true,
-        "noFallthroughCasesInSwitch": true
-    },
-    "exclude": [
-        "syntaxes",
-        ".vscode-test",
-        "vsix"
-    ]
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "out",
+    "lib": [
+      "ES2017"
+    ],
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "exclude": [
+    "syntaxes",
+    ".vscode-test",
+    "vsix"
+  ]
 }
