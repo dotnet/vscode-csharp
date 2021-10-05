@@ -1062,7 +1062,7 @@
     "debuggers": [
       {
         "type": "coreclr",
-        "label": ".NET Core",
+        "label": ".NET 5+ and .NET Core",
         "languages": [
           "csharp",
           "razor",
@@ -2168,7 +2168,7 @@
       },
       {
         "type": "clr",
-        "label": ".NET",
+        "label": ".NET Framework 4.x (Windows only)",
         "languages": [
           "csharp",
           "razor",
