@@ -23,6 +23,21 @@ import { getRuntimeDependenciesPackages } from '../src/tools/RuntimeDependencyPa
 import { getAbsolutePathPackagesToInstall } from '../src/packageManager/getAbsolutePathPackagesToInstall';
 import { isValidDownload } from '../src/packageManager/isValidDownload';
 
+export const offlinePackages = [
+    { platformInfo: new PlatformInformation('win32', 'x86_64'), id: "win32-x64" },
+    { platformInfo: new PlatformInformation('win32', 'x86'), id: "win32-ia32" },
+    { platformInfo: new PlatformInformation('win32', 'arm64'), id: "win32-arm64" },
+    { platformInfo: new PlatformInformation('linux', 'x86_64'), id: "linux-x64" },
+    { platformInfo: new PlatformInformation('darwin', 'x86_64'), id: "darwin-x64" },
+    { platformInfo: new PlatformInformation('darwin', 'arm64'), id: "darwin-arm64" },
+];
+
+export function getPackageName(packageJSON: any, vscodePlatformId: string) {
+    const name = packageJSON.name;
+    const version = packageJSON.version;
+    return `${name}.${version}-${vscodePlatformId}.vsix`;
+}
+
 gulp.task('vsix:offline:package', async () => {
 
     if (process.platform === 'win32') {
@@ -53,27 +68,13 @@ async function doPackageOffline() {
     }
 
     const packageJSON = getPackageJSON();
-    const name = packageJSON.name;
-    const version = packageJSON.version;
-    const packageName = name + '.' + version;
 
-    const packages = [
-        { platformInfo: new PlatformInformation('win32', 'x86_64'), id: "win32-x64" },
-        { platformInfo: new PlatformInformation('win32', 'x86'), id: "win32-ia32" },
-        { platformInfo: new PlatformInformation('win32', 'arm64'), id: "win32-arm64" },
-        { platformInfo: new PlatformInformation('linux', 'x86_64'), id: "linux-x64" },
-        { platformInfo: new PlatformInformation('darwin', 'x86_64'), id: "darwin-x64" },
-        { platformInfo: new PlatformInformation('darwin', 'arm64'), id: "darwin-arm64" },
-    ];
-
-    for (let p of packages) {
-        try
-        {
-            await doOfflinePackage(p.platformInfo, p.id, packageName, packageJSON, packedVsixOutputRoot);
+    for (let p of offlinePackages) {
+        try {
+            await doOfflinePackage(p.platformInfo, p.id, packageJSON, packedVsixOutputRoot);
         }
-        catch (err)
-        {
-            // NOTE: Extra `\n---` at the end is because gulp will print this message following by the 
+        catch (err) {
+            // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
             // stack trace of this line. So that seperates the two stack traces.
             throw Error(`Failed to create package ${p.id}. ${err.stack ?? err ?? '<unknown error>'}\n---`);
         }
@@ -81,16 +82,16 @@ async function doPackageOffline() {
 }
 
 async function cleanAsync(deleteVsix: boolean) {
-    await del([ 'install.*', '.omnisharp*', '.debugger', '.razor']);
+    await del(['install.*', '.omnisharp*', '.debugger', '.razor']);
 
     if (deleteVsix) {
         await del('*.vsix');
     }
 }
 
-async function doOfflinePackage(platformInfo: PlatformInformation, vscodePlatformId: string, packageName: string, packageJSON: any, outputFolder: string) {
+async function doOfflinePackage(platformInfo: PlatformInformation, vscodePlatformId: string, packageJSON: any, outputFolder: string) {
     await cleanAsync(false);
-    const packageFileName = `${packageName}-${vscodePlatformId}.vsix`;
+    const packageFileName = getPackageName(packageJSON, vscodePlatformId);
     await install(platformInfo, packageJSON);
     await createPackageAsync(packageFileName, outputFolder, vscodePlatformId);
 }
@@ -104,14 +105,13 @@ async function install(platformInfo: PlatformInformation, packageJSON: any) {
     let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON);
     let packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, codeExtensionPath);
     let provider = () => new NetworkSettings(undefined, undefined);
-    if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload)))
-    {
+    if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload))) {
         throw Error("Failed to download package.");
     }
 
     // The VSIX Format doesn't allow files that differ only by case. The Linux OmniSharp package had a lowercase version of these files ('.targets') targets from mono,
     // and an upper case ('.Targets') from Microsoft.Build.Runtime. Remove the lowercase versions.
-    await del([ '.omnisharp/*/omnisharp/.msbuild/Current/Bin/Workflow.targets', '.omnisharp/*/omnisharp/.msbuild/Current/Bin/Workflow.VisualBasic.targets' ]);
+    await del(['.omnisharp/*/omnisharp/.msbuild/Current/Bin/Workflow.targets', '.omnisharp/*/omnisharp/.msbuild/Current/Bin/Workflow.VisualBasic.targets']);
 }
 
 /// Packaging (VSIX) Tasks
