@@ -9,11 +9,21 @@ import * as path from 'path';
 import { invokeNode } from './testAssets/testAssets';
 import { PlatformInformation } from '../../src/platform';
 import { TmpAsset, CreateTmpDir } from '../../src/CreateTmpAsset';
+import { version } from '../../package.json';
 
 suite("Offline packaging of VSIX", function () {
     let vsixFiles: string[];
     this.timeout(1000000);
     let tmpDir: TmpAsset;
+
+    const expectedPackages = [
+        new PlatformInformation('win32', 'x64'),
+        new PlatformInformation('win32', 'arm64'),
+        new PlatformInformation('darwin', 'x64'),
+        new PlatformInformation('darwin', 'arm64'),
+        new PlatformInformation('linux', 'x64'),
+        new PlatformInformation('linux', 'arm64')
+    ];
 
     suiteSetup(async () => {
         chai.should();
@@ -28,18 +38,14 @@ suite("Offline packaging of VSIX", function () {
         vsixFiles = glob.sync(path.join(tmpDir.name, '*.vsix'));
     });
 
-    test("Exactly 3 vsix files should be produced", () => {
-        vsixFiles.length.should.be.equal(3, "the build should produce exactly 3 vsix files");
+    test(`Exactly ${expectedPackages.length} vsix files should be produced`, () => {
+        vsixFiles.length.should.be.equal(expectedPackages.length, `the build should produce exactly ${expectedPackages.length} vsix files`);
     });
 
-    [
-        new PlatformInformation('win32', 'x86_64'),
-        new PlatformInformation('darwin', 'x86_64'),
-        new PlatformInformation('linux', 'x86_64')
-    ].forEach(element => {
+    expectedPackages.forEach(element => {
         test(`Given Platform: ${element.platform} and Architecture: ${element.architecture}, the vsix file is created`, () => {
-            vsixFiles.findIndex(elem => elem.indexOf(element.platform) != -1).should.not.be.equal(-1);
-            vsixFiles.findIndex(elem => elem.indexOf(element.architecture) != -1).should.not.be.equal(-1);
+            const expectedVsixName = `csharp.${version}-${element.platform}-${element.architecture}.vsix`;
+            vsixFiles.includes(expectedVsixName).should.be.equal(true, `offline packaging did not build package ${expectedVsixName}`);
         });
     });
 
