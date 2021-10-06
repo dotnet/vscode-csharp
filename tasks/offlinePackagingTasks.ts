@@ -44,7 +44,8 @@ gulp.task('vsix:offline:package', async () => {
         throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
     }
 
-    await cleanAsync(true);
+    //if user does not want to clean up the existing vsix packages
+    await cleanAsync(/* deleteVsix: */ !commandLineOptions.retainVsix);
 
     del.sync(vscodeignorePath);
 
@@ -59,13 +60,6 @@ gulp.task('vsix:offline:package', async () => {
 });
 
 async function doPackageOffline() {
-    if (commandLineOptions.retainVsix) {
-        //if user doesnot want to clean up the existing vsix packages
-        await cleanAsync(false);
-    }
-    else {
-        await cleanAsync(true);
-    }
 
     const packageJSON = getPackageJSON();
 
