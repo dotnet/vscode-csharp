@@ -21,6 +21,7 @@ export class Options {
         public showTestsCodeLens: boolean,
         public filteredSymbolsCodeLens: string[],
         public disableCodeActions: boolean,
+        public filteredDiagnosticsFixAll: Set<string>,
         public disableMSBuildDiagnosticWarning: boolean,
         public showOmnisharpLogOnError: boolean,
         public minFindSymbolsFilterLength: number,
@@ -88,6 +89,11 @@ export class Options {
         const useSemanticHighlighting = csharpConfig.get<boolean>('semanticHighlighting.enabled', false);
 
         const disableCodeActions = csharpConfig.get<boolean>('disableCodeActions', false);
+        const filteredDiagnosticsFixAllArray = csharpConfig.get<string[]>('fixAll.filteredDiagnostics', []);
+        const filteredDiagnosticsFixAll = filteredDiagnosticsFixAllArray.reduce((set, diagnosticId) => {
+            set.add(diagnosticId.toLowerCase());
+            return set;
+        }, new Set<string>());
 
         const disableMSBuildDiagnosticWarning = omnisharpConfig.get<boolean>('disableMSBuildDiagnosticWarning', false);
 
@@ -121,6 +127,7 @@ export class Options {
             showTestsCodeLens,
             filteredSymbolsCodeLens,
             disableCodeActions,
+            filteredDiagnosticsFixAll,
             disableMSBuildDiagnosticWarning,
             showOmnisharpLogOnError,
             minFindSymbolsFilterLength,

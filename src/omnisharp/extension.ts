@@ -101,7 +101,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
         // Since the FixAllProviders registers its own commands, we must instantiate it and add it to the localDisposables
         // so that it will be cleaned up if OmniSharp is restarted.
-        const fixAllProvider = new FixAllProvider(server, languageMiddlewareFeature);
+        const fixAllProvider = new FixAllProvider(server, optionProvider, languageMiddlewareFeature);
         localDisposables.add(fixAllProvider);
         localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, fixAllProvider, FixAllProvider.metadata));
         localDisposables.add(reportDiagnostics(server, advisor, languageMiddlewareFeature));

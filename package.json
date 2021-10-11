@@ -682,6 +682,14 @@
           "default": true,
           "description": "Suppress 'hidden' diagnostics (such as 'unnecessary using directives') from appearing in the editor or the Problems pane."
         },
+        "csharp.fixAll.filteredDiagnostics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Array of diagnostic ids which FixAll should ignore."
+        },
         "csharp.referencesCodeLens.enabled": {
           "type": "boolean",
           "default": true,

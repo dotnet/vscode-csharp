@@ -13,16 +13,17 @@ import AbstractProvider from './abstractProvider';
 import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
 import { buildEditForResponse } from '../omnisharp/fileOperationsResponseEditBuilder';
 import { CancellationToken } from 'vscode-languageserver-protocol';
+import OptionProvider from '../observers/OptionProvider';
 
 export class FixAllProvider extends AbstractProvider implements vscode.CodeActionProvider {
     public static fixAllCodeActionKind =
-      vscode.CodeActionKind.SourceFixAll.append('csharp');
-  
+        vscode.CodeActionKind.SourceFixAll.append('csharp');
+
     public static metadata: vscode.CodeActionProviderMetadata = {
-      providedCodeActionKinds: [FixAllProvider.fixAllCodeActionKind]
+        providedCodeActionKinds: [FixAllProvider.fixAllCodeActionKind]
     };
 
-    public constructor(private server: OmniSharpServer, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+    public constructor(private server: OmniSharpServer, private optionProvider: OptionProvider, languageMiddlewareFeature: LanguageMiddlewareFeature) {
         super(server, languageMiddlewareFeature);
         let disposable = new CompositeDisposable();
         disposable.add(vscode.commands.registerCommand('o.fixAll.solution', async () => this.fixAllMenu(server, protocol.FixAllScope.Solution)));
@@ -43,16 +44,26 @@ export class FixAllProvider extends AbstractProvider implements vscode.CodeActio
         }
 
         if (context.only.contains(FixAllProvider.fixAllCodeActionKind)) {
-            await this.applyFixes(document.fileName, FixAllScope.Document, undefined);
+            await this.fixAllOnSave(document);
         }
 
         return [];
     }
 
-    private async fixAllMenu(server: OmniSharpServer, scope: protocol.FixAllScope): Promise<void> {
-        let availableFixes = await serverUtils.getFixAll(server, { FileName: vscode.window.activeTextEditor.document.fileName, Scope: scope });
+    private async getFilteredFixAll(server: OmniSharpServer, scope: protocol.FixAllScope, diagnosticFilter: Set<string>): Promise<FixAllItem[]> {
+        const availableFixes = await serverUtils.getFixAll(server, { FileName: vscode.window.activeTextEditor.document.fileName, Scope: scope });
 
-        let targets = availableFixes.Items.map(x => `${x.Id}: ${x.Message}`);
+        return diagnosticFilter.size == 0
+            ? availableFixes.Items
+            : availableFixes.Items.filter(item => !diagnosticFilter.has(item.Id.toLowerCase()));
+    }
+
+    private async fixAllMenu(server: OmniSharpServer, scope: protocol.FixAllScope): Promise<void> {
+        const { filteredDiagnosticsFixAll } = this.optionProvider.GetLatestOptions();
+
+        let availableFixes = await this.getFilteredFixAll(server, scope, filteredDiagnosticsFixAll);
+
+        let targets = availableFixes.map(x => `${x.Id}: ${x.Message}`);
 
         if (scope === protocol.FixAllScope.Document) {
             targets = ["Fix all issues", ...targets];
@@ -75,6 +86,19 @@ export class FixAllProvider extends AbstractProvider implements vscode.CodeActio
 
             await this.applyFixes(vscode.window.activeTextEditor.document.fileName, scope, filter);
         });
+    }
+
+    private async fixAllOnSave(document: vscode.TextDocument) {
+        let fixes: FixAllItem[] = undefined;
+
+        const { filteredDiagnosticsFixAll } = this.optionProvider.GetLatestOptions();
+
+        // If we are not filtering then we do not have to pull down a list of FixAllItems.
+        if (filteredDiagnosticsFixAll.size > 0) {
+            fixes = await this.getFilteredFixAll(super._server, FixAllScope.Document, filteredDiagnosticsFixAll);
+        }
+
+        await this.applyFixes(document.fileName, FixAllScope.Document, fixes);
     }
 
     private async applyFixes(fileName: string, scope: FixAllScope, fixAllFilter: FixAllItem[]): Promise<boolean | string | {}> {
