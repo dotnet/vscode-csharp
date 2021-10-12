@@ -12,7 +12,7 @@ import { Options } from "../omnisharp/options";
 import { IMonoResolver } from "../constants/IMonoResolver";
 import { IGetDotnetInfo } from "../constants/IGetDotnetInfo";
 
-const issuesUrl = "https://github.com/OmniSharp/omnisharp-vscode/issues/new";
+const issuesUrl = "https://github.com/muhammadsammy/free-omnisharp-vscode/issues/new";
 
 export default async function reportIssue(vscode: vscode, eventStream: EventStream, getDotnetInfo: IGetDotnetInfo, isValidPlatformForMono: boolean, options: Options, monoResolver: IMonoResolver) {
     const dotnetInfo = await getDotnetInfo();
