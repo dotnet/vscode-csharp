@@ -37,6 +37,8 @@ export default async function reportIssue(vscode: vscode, eventStream: EventStre
 
 ## Environment information ##
 
+⚠️⚠️ This report was from [this extension](https://github.com/muhammadsammy/free-omnisharp-vscode) which is a **fork** of the official extension
+
 **VSCode version**: ${vscode.version}
 **C# Extension**: ${csharpExtVersion}
 
