@@ -43,7 +43,7 @@ For MacOS and Linux users who have Mono installed, this means you will need to s
 ## What's new in 1.23.15
 * Restore launch target for workspace root when no solution present ([#4691](https://github.com/OmniSharp/omnisharp-vscode/issues/4691), PR: [#4695](https://github.com/OmniSharp/omnisharp-vscode/pull/4695))
 * Don't create launch.json for no select process ([omnisharp-roslyn#4696](https://github.com/OmniSharp/omnisharp-roslyn/issues/4696), PR: [#4699](https://github.com/OmniSharp/omnisharp-vscode/pull/4699))
-* Support nserting outside code when texts are selected (PR: [#4715](https://github.com/OmniSharp/omnisharp-vscode/pull/4715))
+* Support inserting outside code when texts are selected (PR: [#4715](https://github.com/OmniSharp/omnisharp-vscode/pull/4715))
 * Fix autoFix on save ([#4401](https://github.com/OmniSharp/omnisharp-roslyn/issues/4401), PR: [#4717](https://github.com/OmniSharp/omnisharp-vscode/pull/4717))
 
 * Update OmniSharp version to 1.37.15:
