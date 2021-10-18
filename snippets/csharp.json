@@ -465,11 +465,11 @@
             "[Fact]",
             "public void ${1:TestName}()",
             "{",
-            "//Given",
+            "    // Given",
             "",
-            "//When",
+            "    // When",
             "",
-            "//Then",
+            "    // Then",
             "}$0"
         ],
         "description": "create xunit test method"
