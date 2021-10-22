@@ -63,8 +63,20 @@ export async function getCodeActions(server: OmniSharpServer, request: protocol.
     return server.makeRequest<protocol.V2.GetCodeActionsResponse>(protocol.V2.Requests.GetCodeActions, request, token);
 }
 
-export async function goToDefinition(server: OmniSharpServer, request: protocol.GoToDefinitionRequest, token: vscode.CancellationToken) {
-    return server.makeRequest<protocol.GoToDefinitionResponse>(protocol.Requests.GoToDefinition, request);
+export async function goToDefinition(server: OmniSharpServer, request: protocol.V2.GoToDefinitionRequest, token: vscode.CancellationToken) {
+    return server.makeRequest<protocol.V2.GoToDefinitionResponse>(protocol.V2.Requests.GoToDefinition, request, token);
+}
+
+export async function getSourceGeneratedFile(server: OmniSharpServer, request: protocol.SourceGeneratedFileRequest, token: vscode.CancellationToken) {
+    return server.makeRequest<protocol.SourceGeneratedFileResponse>(protocol.Requests.SourceGeneratedFile, request, token);
+}
+
+export async function getUpdatedSourceGeneratedFile(server: OmniSharpServer, request: protocol.UpdateSourceGeneratedFileRequest) {
+    return server.makeRequest<protocol.UpdateSourceGeneratedFileResponse>(protocol.Requests.UpdateSourceGeneratedFile, request);
+}
+
+export async function sourceGeneratedFileClosed(server: OmniSharpServer, request: protocol.SourceGeneratedFileRequest) {
+    return server.makeRequest(protocol.Requests.SourceGeneratedFileClosed, request);
 }
 
 export async function rename(server: OmniSharpServer, request: protocol.RenameRequest, token: vscode.CancellationToken) {
@@ -177,6 +189,10 @@ export async function getCompletion(server: OmniSharpServer, request: protocol.C
 
 export async function getCompletionResolve(server: OmniSharpServer, request: protocol.CompletionResolveRequest, context: vscode.CancellationToken) {
     return server.makeRequest<protocol.CompletionResolveResponse>(protocol.Requests.CompletionResolve, request, context);
+}
+
+export async function getCompletionAfterInsert(server: OmniSharpServer, request: protocol.CompletionAfterInsertionRequest) {
+    return server.makeRequest<protocol.CompletionAfterInsertResponse>(protocol.Requests.CompletionAfterInsert, request);
 }
 
 export async function isNetCoreProject(project: protocol.MSBuildProject) {

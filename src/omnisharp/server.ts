@@ -31,6 +31,7 @@ import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
 import { IMonoResolver } from '../constants/IMonoResolver';
+import { showProjectSelector } from '../features/commands';
 import { removeBOMFromBuffer, removeBOMFromString } from '../utils/removeBOM';
 
 enum ServerState {
@@ -250,6 +251,10 @@ export class OmniSharpServer {
     // --- start, stop, and connect
 
     private async _start(launchTarget: LaunchTarget, options: Options): Promise<void> {
+        if (this._state != ServerState.Stopped) {
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError("Attempt to start OmniSharp server failed because another server instance is running."));
+            return;
+        }
 
         if (launchTarget.kind === LaunchTargetKind.LiveShare) {
             this.eventStream.post(new ObservableEvents.OmnisharpServerMessage("During Live Share sessions language services are provided by the Live Share server."));
@@ -370,6 +375,10 @@ export class OmniSharpServer {
 
         if (options.enableImportCompletion === true) {
             args.push('RoslynExtensionsOptions:EnableImportCompletion=true');
+        }
+
+        if (options.enableAsyncCompletion === true) {
+            args.push('RoslynExtensionsOptions:EnableAsyncCompletion=true');
         }
 
         let launchInfo: LaunchInfo;
@@ -494,6 +503,11 @@ export class OmniSharpServer {
     }
 
     public async restart(launchTarget: LaunchTarget = this._launchTarget): Promise<void> {
+        if (this._state == ServerState.Starting) {
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError("Attempt to restart OmniSharp server failed because another server instance is starting."));
+            return;
+        }
+
         if (launchTarget) {
             await this.stop();
             this.eventStream.post(new ObservableEvents.OmnisharpRestart());
@@ -524,33 +538,36 @@ export class OmniSharpServer {
                     return this.autoStart(preferredPath);
                 });
             }
-
-            const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().defaultLaunchSolution;
+            else if (launchTargets.length === 1) {
+                // If there's only one target, just start
+                return this.restart(launchTargets[0]);
+            }
 
             // First, try to launch against something that matches the user's preferred target
+            const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().defaultLaunchSolution;
             const defaultLaunchSolutionTarget = launchTargets.find((a) => (path.basename(a.target) === defaultLaunchSolutionConfigValue));
             if (defaultLaunchSolutionTarget) {
                 return this.restart(defaultLaunchSolutionTarget);
             }
 
             // If there's more than one launch target, we start the server if one of the targets
-            // matches the preferred path. Otherwise, we fire the "MultipleLaunchTargets" event,
-            // which is handled in status.ts to display the launch target selector.
-            if (launchTargets.length > 1 && preferredPath) {
-
-                for (let launchTarget of launchTargets) {
-                    if (launchTarget.target === preferredPath) {
-                        // start preferred path
-                        return this.restart(launchTarget);
-                    }
+            // matches the preferred path.
+            if (preferredPath) {
+                const preferredLaunchTarget = launchTargets.find((a) => a.target === preferredPath);
+                if (preferredLaunchTarget) {
+                    return this.restart(preferredLaunchTarget);
                 }
-
-                this._fireEvent(Events.MultipleLaunchTargets, launchTargets);
-                return Promise.reject<void>(undefined);
             }
 
-            // If there's only one target, just start
-            return this.restart(launchTargets[0]);
+            // When running integration tests, open the first launch target.
+            if (process.env.RUNNING_INTEGRATION_TESTS === "true") {
+                return this.restart(launchTargets[0]);
+            }
+
+            // Otherwise, we fire the "MultipleLaunchTargets" event,
+            // which is handled in status.ts to display the launch target selector.
+            this._fireEvent(Events.MultipleLaunchTargets, launchTargets);
+            return showProjectSelector(this, launchTargets);
         });
     }
 

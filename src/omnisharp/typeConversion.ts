@@ -25,6 +25,10 @@ export function toLocationFromUri(uri: vscode.Uri, location: protocol.ResourceLo
     return new vscode.Location(uri, position);
 }
 
+export function toVscodeLocation(omnisharpLocation: protocol.V2.Location): vscode.Location {
+    return new vscode.Location(vscode.Uri.file(omnisharpLocation.FileName), toRange3(omnisharpLocation.Range));
+}
+
 export function toRange(rangeLike: { Line: number; Column: number; EndLine: number; EndColumn: number; }): vscode.Range {
     let { Line, Column, EndLine, EndColumn } = rangeLike;
     return toVSCodeRange(Line, Column, EndLine, EndColumn);

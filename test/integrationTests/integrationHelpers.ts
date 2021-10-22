@@ -62,8 +62,20 @@ export async function restartOmniSharpServer(): Promise<void> {
 }
 
 export function isRazorWorkspace(workspace: typeof vscode.workspace) {
+    return isGivenSln(workspace, 'BasicRazorApp2_1');
+}
+
+export function isSlnWithCsproj(workspace: typeof vscode.workspace) {
+    return isGivenSln(workspace, 'slnWithCsproj');
+}
+
+export function isSlnWithGenerator(workspace: typeof vscode.workspace) {
+    return isGivenSln(workspace,  'slnWithGenerator');
+}
+
+function isGivenSln(workspace: typeof vscode.workspace, expectedProjectFileName: string) {
     const primeWorkspace = workspace.workspaceFolders[0];
     const projectFileName = primeWorkspace.uri.fsPath.split(path.sep).pop();
 
-    return projectFileName === 'BasicRazorApp2_1';
+    return projectFileName === expectedProjectFileName;
 }

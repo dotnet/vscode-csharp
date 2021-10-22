@@ -5,8 +5,8 @@
 
 import * as vscode from 'vscode';
 
-import { should, assert } from 'chai';
-import { activateCSharpExtension } from './integrationHelpers';
+import { expect, should } from 'chai';
+import { activateCSharpExtension, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { IDisposable } from '../../src/Disposable';
 
@@ -22,26 +22,34 @@ suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function ()
     suiteSetup(async function () {
         should();
 
-        const virtualCSharpDocumentProvider = new VirtualCSharpDocumentProvider();
-        virtualDocumentRegistration = vscode.workspace.registerTextDocumentContentProvider(virtualScheme, virtualCSharpDocumentProvider);
-        virtualUri = vscode.Uri.parse(`${virtualScheme}://${testAssetWorkspace.projects[0].projectDirectoryPath}/_virtualFile.cs`);
+        if (isSlnWithGenerator(vscode.workspace)) {
+            this.skip();
+        }
 
         await activateCSharpExtension();
         await testAssetWorkspace.restore();
+
+        const virtualCSharpDocumentProvider = new VirtualCSharpDocumentProvider();
+        virtualDocumentRegistration = vscode.workspace.registerTextDocumentContentProvider(virtualScheme, virtualCSharpDocumentProvider);
+        virtualUri = vscode.Uri.parse(`${virtualScheme}://${testAssetWorkspace.projects[0].projectDirectoryPath}/_virtualFile.cs`);
     });
 
     suiteTeardown(async () => {
+        if (isSlnWithGenerator(vscode.workspace)) {
+            return;
+        }
+
         await testAssetWorkspace.cleanupWorkspace();
-        virtualDocumentRegistration.dispose();
+        virtualDocumentRegistration?.dispose();
     });
 
     test("Virtual documents are operated on.", async () => {
         await vscode.workspace.openTextDocument(virtualUri);
 
         let position = new vscode.Position(2, 0);
-        let completionItems = <vscode.CompletionList>await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", virtualUri, position);
+        let completionList = <vscode.CompletionList>await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", virtualUri, position);
 
-        assert.include(completionItems.items.map(({ label }) => label), "while");
+        expect(completionList.items).to.not.be.empty;
     });
 });
 

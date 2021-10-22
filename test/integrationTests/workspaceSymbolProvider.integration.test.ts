@@ -5,8 +5,8 @@
 
 import * as vscode from 'vscode';
 
-import { expect } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
+import { expect, should } from 'chai';
+import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -15,8 +15,9 @@ chai.use(require('chai-fs'));
 suite(`WorkspaceSymbolProvider: ${testAssetWorkspace.description}`, function () {
 
     suiteSetup(async function () {
-        // These tests don't run on the BasicRazorApp2_1 solution
-        if (isRazorWorkspace(vscode.workspace)) {
+        should();
+
+        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
             this.skip();
         }
 

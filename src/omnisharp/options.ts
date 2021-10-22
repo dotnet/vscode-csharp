@@ -19,6 +19,7 @@ export class Options {
         public organizeImportsOnFormat: boolean,
         public showReferencesCodeLens: boolean,
         public showTestsCodeLens: boolean,
+        public filteredSymbolsCodeLens: string[],
         public disableCodeActions: boolean,
         public disableMSBuildDiagnosticWarning: boolean,
         public showOmnisharpLogOnError: boolean,
@@ -31,6 +32,7 @@ export class Options {
         public enableEditorConfigSupport: boolean,
         public enableDecompilationSupport: boolean,
         public enableImportCompletion: boolean,
+        public enableAsyncCompletion: boolean,
         public useSemanticHighlighting: boolean,
         public razorPluginPath?: string,
         public defaultLaunchSolution?: string,
@@ -74,12 +76,14 @@ export class Options {
         const enableEditorConfigSupport = omnisharpConfig.get<boolean>('enableEditorConfigSupport', false);
         const enableDecompilationSupport = omnisharpConfig.get<boolean>('enableDecompilationSupport', false);
         const enableImportCompletion = omnisharpConfig.get<boolean>('enableImportCompletion', false);
+        const enableAsyncCompletion = omnisharpConfig.get<boolean>('enableAsyncCompletion', false);
 
         const useFormatting = csharpConfig.get<boolean>('format.enable', true);
         const organizeImportsOnFormat = omnisharpConfig.get<boolean>('organizeImportsOnFormat', false);
 
         const showReferencesCodeLens = csharpConfig.get<boolean>('referencesCodeLens.enabled', true);
         const showTestsCodeLens = csharpConfig.get<boolean>('testsCodeLens.enabled', true);
+        const filteredSymbolsCodeLens = csharpConfig.get<string[]>('referencesCodeLens.filteredSymbols', []);
 
         const useSemanticHighlighting = csharpConfig.get<boolean>('semanticHighlighting.enabled', false);
 
@@ -115,6 +119,7 @@ export class Options {
             organizeImportsOnFormat,
             showReferencesCodeLens,
             showTestsCodeLens,
+            filteredSymbolsCodeLens,
             disableCodeActions,
             disableMSBuildDiagnosticWarning,
             showOmnisharpLogOnError,
@@ -127,6 +132,7 @@ export class Options {
             enableEditorConfigSupport,
             enableDecompilationSupport,
             enableImportCompletion,
+            enableAsyncCompletion,
             useSemanticHighlighting,
             razorPluginPath,
             defaultLaunchSolution,

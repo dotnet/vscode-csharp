@@ -2,7 +2,7 @@ using System;
 
 namespace singleCsproj
 {
-    class Completion
+    class Completion : CompletionBase
     {
         static void shouldHaveCompletions(string[] args)
         {

@@ -34,7 +34,7 @@
         "body": [
             "checked",
             "{",
-            "    $0",
+            "    ${TM_SELECTED_TEXT}$0",
             "}"
         ],
         "description": "Checked block"
@@ -52,7 +52,7 @@
     "Console.WriteLine": {
         "prefix": "cw",
         "body": [
-            "System.Console.WriteLine($0);"
+            "System.Console.WriteLine(${TM_SELECTED_TEXT}$0);"
         ],
         "description": "Console.WriteLine"
     },
@@ -61,7 +61,7 @@
         "body": [
             "do",
             "{",
-            "    $0",
+            "    ${TM_SELECTED_TEXT}$0",
             "} while (${1:true});"
         ],
         "description": "do...while loop"
@@ -71,7 +71,7 @@
         "body": [
             "else",
             "{",
-            "    $0",
+            "    ${TM_SELECTED_TEXT}$0",
             "}"
         ],
         "description": "Else statement"
@@ -140,7 +140,7 @@
         "body": [
             "foreach (${1:var} ${2:item} in ${3:collection})",
             "{",
-            "    $0",
+            "    ${TM_SELECTED_TEXT}$0",
             "}"
         ],
         "description": "Foreach statement"
@@ -150,7 +150,7 @@
         "body": [
             "for (int ${1:i} = ${2:length} - 1; ${1:i} >= 0 ; ${1:i}--)",
             "{",
-            "    $0",
+            "    ${TM_SELECTED_TEXT}$0",
             "}"
         ],
         "description": "Reverse for loop"
@@ -160,7 +160,7 @@
         "body": [
             "for (int ${1:i} = 0; ${1:i} < ${2:length}; ${1:i}++)",
             "{",
-            "    $0",
+            "    ${TM_SELECTED_TEXT}$0",
             "}"
         ],
         "description": "for loop"
@@ -170,7 +170,7 @@
         "body": [
             "if (${1:true})",
             "{",
-            "    $0",
+            "    ${TM_SELECTED_TEXT}$0",
             "}"
         ],
         "description": "if statement"
@@ -271,7 +271,7 @@
         "body": [
             "lock (${1:this})",
             "{",
-            "    $0",
+            "     ${TM_SELECTED_TEXT}$0",
             "}"
         ],
         "description": "Lock statement"
@@ -297,7 +297,7 @@
         "prefix": "ifd",
         "body": [
             "#if ${1:true}",
-            "    $0",
+            "     ${TM_SELECTED_TEXT}$0",
             "#endif"
         ],
         "description": "#if"
@@ -306,7 +306,7 @@
         "prefix": "region",
         "body": [
             "#region ${1:Name}",
-            "    $0",
+            "     ${TM_SELECTED_TEXT}$0",
             "#endregion"
         ],
         "description": "#region"
@@ -385,7 +385,7 @@
         "body": [
             "try",
             "{",
-            "    $1",
+            "     ${TM_SELECTED_TEXT}$1",
             "}",
             "finally",
             "{",
@@ -399,7 +399,7 @@
         "body": [
             "try",
             "{",
-            "    $1",
+            "     ${TM_SELECTED_TEXT}$1",
             "}",
             "catch (${2:System.Exception})",
             "{",
@@ -414,7 +414,7 @@
         "body": [
             "unchecked",
             "{",
-            "    $0",
+            "     ${TM_SELECTED_TEXT}$0",
             "}"
         ],
         "description": "Unchecked block"
@@ -424,7 +424,7 @@
         "body": [
             "unsafe",
             "{",
-            "    $0",
+            "     ${TM_SELECTED_TEXT}$0",
             "}"
         ],
         "description": "Unsafe statement"
@@ -434,7 +434,7 @@
         "body": [
             "using (${1:resource})",
             "{",
-            "    $0",
+            "     ${TM_SELECTED_TEXT}$0",
             "}"
         ],
         "description": "Using statement"
@@ -444,7 +444,7 @@
         "body": [
             "while (${1:true})",
             "{",
-            "    $0",
+            "     ${TM_SELECTED_TEXT}$0",
             "}"
         ],
         "description": "While loop"

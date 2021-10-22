@@ -1,4 +1,4 @@
-## Known Issues in 1.23.11
+## Known Issues in 1.23.15
 
 * For Mono-based development (e.g. Unity) that requires full .NET framework, you need to set `"omnisharp.useGlobalMono": "always"`. The current value of "auto" will remain "never" until Mono [upgrades their bundled MSBuild version](https://github.com/mono/mono/issues/20250).
 * After selecting a solution filter (*.slnf) from the project selector, the solution's name will be displayed in the status bar instead of the filter's.
@@ -11,11 +11,67 @@
 * Renaming symbol fails within a file that had recently been renamed without saving changes.
   * As a workaround, make an edit within the file before using Rename Symbol.
 
-## 1.23.12 (Not yet released)
+## 1.23.15 (Not yet released)
+* Restore launch target for workspace root when no solution present ([#4691](https://github.com/OmniSharp/omnisharp-vscode/issues/4691), PR: [#4695](https://github.com/OmniSharp/omnisharp-vscode/pull/4695))
+
+## 1.23.14 (July 28th, 2021)
+* Bump minimum required version of VS Code (PR: [#4664](https://github.com/OmniSharp/omnisharp-vscode/pull/4664))
+* Change useGlobalMono scope to default (window) (PR: [#4674](https://github.com/OmniSharp/omnisharp-vscode/pull/4674))
+* Fix a typo in package.json (PR: [#4675](https://github.com/OmniSharp/omnisharp-vscode/pull/4675))
+* Update OmniSharp version to 1.37.14
+    * Update Roslyn to 4.0.0-2.21354.7 (PR: [omnisharp-roslyn#2189](https://github.com/OmniSharp/omnisharp-roslyn/pull/2189))
+    * Update included Build Tools to match .NET SDK 6 Preview 6 (PR: [omnisharp-roslyn#2187](https://github.com/OmniSharp/omnisharp-roslyn/pull/2187))
+    * Update to latest .NET SDKs (PR: [omnisharp-roslyn#2197](https://github.com/OmniSharp/omnisharp-roslyn/pull/2197))
+    * Update included Build Tools to match .NET SDK 6 Preview 7 (PR: [omnisharp-roslyn#2196](https://github.com/OmniSharp/omnisharp-roslyn/pull/2196))
+    * Upgrade McMaster.Extensions.CommandLineUtils to 3.1.0 ([#4090](https://github.com/OmniSharp/omnisharp-vscode/issues/4090), PR: [omnisharp-roslyn#2192](https://github.com/OmniSharp/omnisharp-roslyn/pull/2192))
+* Debugger changes:
+    * Added support for win10-arm64 debugging ([#3006](https://github.com/OmniSharp/omnisharp-vscode/issues/3006), PR: [#4672](https://github.com/OmniSharp/omnisharp-vscode/pull/4672))
+
+## 1.23.13 (July 13th, 2021)
+* Fixes Razor editing support (PR: [#4642](https://github.com/OmniSharp/omnisharp-vscode/pull/4642))
+* Show C# project files in the project selector ([#4633](https://github.com/OmniSharp/omnisharp-vscode/issues/4633), PR: [#4644](https://github.com/OmniSharp/omnisharp-vscode/pull/4644))
+* Use new CompletionItem label API ([#4640](https://github.com/OmniSharp/omnisharp-vscode/issues/4640), PR: [#4648](https://github.com/OmniSharp/omnisharp-vscode/pull/4648))
+* Support V2 version of GoToDefinition, which can show more than one location for partial types and show source-generated file information (PR: [#4581](https://github.com/OmniSharp/omnisharp-vscode/pull/4581))
+* Add command 'listRemoteDockerProcess' and variable 'pickRemoteDockerProcess' ([#4607](https://github.com/OmniSharp/omnisharp-vscode/issues/4607), PR: [#4617](https://www.github.com/OmniSharp/omnisharp-vscode/pull/4617))
+* Ensure we only start one instance of OmniSharp server (PR: [#4612](https://www.github.com/OmniSharp/omnisharp-vscode/pull/4612))
+* Set the names of status bar items (PR: [#4621](https://github.com/OmniSharp/omnisharp-vscode/pull/4621))
+* Add Debugger Languages (PR: [#4626](https://github.com/OmniSharp/omnisharp-vscode/pull/4626))
+* Use temporary directory for debug sockets on NIX systems (PR: [#4637](https://github.com/OmniSharp/omnisharp-vscode/pull/4637))
+* Update OmniSharp version to 1.37.12
+    * Include timing info in logged responses (PR: [omnisharp-roslyn#2173](https://www.github.com/omnisharp/omnisharp-roslyn/pull/2173))
+    * Defend against null value in BuildErrorEventArgs ([omnisharp-roslyn#2171](https://github.com/OmniSharp/omnisharp-roslyn/issues/2171), PR: [omnisharp-roslyn#2172](https://www.github.com/omnisharp/omnisharp-roslyn/pull/2172))
+    * Updated to all the latest .NET SDKs (PR: [omnisharp-roslyn#2166](https://www.github.com/omnisharp/omnisharp-roslyn/pull/2166))
+    * Add support for GoToDefinition on source-generated files (PR: [omnisharp-roslyn#2170](https://www.github.com/omnisharp/omnisharp-roslyn/pull/2170))
+    * Add V2 version of GotoDefinitionService (PR: [omnisharp-roslyn#2168](https://www.github.com/omnisharp/omnisharp-roslyn/pull/2168))
+    * avoid NRE when document is null (PR: [omnisharp-roslyn#2163](https://www.github.com/omnisharp/omnisharp-roslyn/pull/2163)))
+    * Update Roslyn to 4.0.0-2.21322.50 (PR: [omnisharp-roslyn#2183](https://www.github.com/OmniSharp/omnisharp-roslyn/pull/2183))
+    * Added support for diagnostic suppressors ([omnisharp-roslyn#1711](https://github.com/OmniSharp/omnisharp-roslyn/issues/1711), PR: [omnisharp-roslyn#2182](https://www.github.com/OmniSharp/omnisharp-roslyn/pull/2182))
+    * Use the Microsoft.Build.Locator package for discovery (PR: [omnisharp-roslyn#2181](https://www.github.com/OmniSharp/omnisharp-roslyn/pull/2181))
+    * Update build tools to match NET 6 Preview 5 (PR: [omnisharp-roslyn#2175](https://www.github.com/OmniSharp/omnisharp-roslyn/pull/2175))
+
+## 1.23.12 (May 26th, 2021)
+* Support experimental async completion (PR: [#4116](https://www.github.com/OmniSharp/omnisharp-vscode/pull/4116))
+* Add option to to exclude custom symbols from codelens ([#4335](https://github.com/OmniSharp/omnisharp-vscode/issues/4335), PR: [#4418](https://www.github.com/OmniSharp/omnisharp-vscode/pull/4418))
+* Handle ProcessPicker via resolveDebugConfiguration (PR: [#4509](https://www.github.com/OmniSharp/omnisharp-vscode/pull/4509))
+* Update OmniSharp version to 1.37.10
+  * Update included toolset to match .NET 6 preview4 (PR: [omnisharp-roslyn#2159](https://github.com/OmniSharp/omnisharp-roslyn/pull/2159))
+  * Add async completion support (PR: [omnisharp-roslyn#1986](https://www.github.com/OmniSharp/omnisharp-roslyn/pull/1986))
+  * Only subscribe to AppDomain.AssemblyResolve once (PR: [omnisharp-roslyn#2149](https://www.github.com/OmniSharp/omnisharp-roslyn/pull/2149))
+  * Update build tools to match .NET 6 Preview 3 SDK. (PR: [omnisharp-roslyn#2134](https://www.github.com/OmniSharp/omnisharp-roslyn/pull/2134))
+  * Do not return null responses from BlockStructureService and CodeStructureService (PR: [omnisharp-roslyn#2148](https://www.github.com/OmniSharp/omnisharp-roslyn/pull/2148))
+  * Strong-name sign OmniSharp assemblies (PR: [omnisharp-roslyn#2143](https://www.github.com/OmniSharp/omnisharp-roslyn/pull/2143))
+  * Updated IL Spy to 7.0.0 stable (PR: [omnisharp-roslyn#2142](https://www.github.com/OmniSharp/omnisharp-roslyn/pull/2142))
+  * Do not crash on startup when configuration is invalid (PR: [omnisharp-roslyn#2140](https://www.github.com/OmniSharp/omnisharp-roslyn/pull/2140))
+  * Bump System.Text.Encodings.Web from 4.7.1 to 4.7.2 in /tools (PR: [omnisharp-roslyn#2137](https://www.github.com/OmniSharp/omnisharp-roslyn/pull/2137))
+  * Correctly set compilation platform of the project (PR: [omnisharp-roslyn#2135](https://www.github.com/OmniSharp/omnisharp-roslyn/pull/2135))
+  * Fix typo (PR: [omnisharp-roslyn#2098](https://www.github.com/OmniSharp/omnisharp-roslyn/pull/2098))
+  * Rework completion resolution ([omnisharp-roslyn#2123](https://github.com/OmniSharp/omnisharp-roslyn/issues/2123), PR: [omnisharp-roslyn#2126](https://www.github.com/OmniSharp/omnisharp-roslyn/pull/2126))
+  * Report back the solution filter name in workspace updated event (PR: [omnisharp-roslyn#2130](https://www.github.com/OmniSharp/omnisharp-roslyn/pull/2130))
 * Debugger changes:
   * Added support for osx-arm64 debugging ([#4390](https://github.com/OmniSharp/omnisharp-vscode/issues/4390))
   * Added support for exception conditions. See [documentation](https://aka.ms/VSCode-CS-ExceptionSettings) for more information ([#4356](https://github.com/OmniSharp/omnisharp-vscode/issues/4356)).
   * Fixed an issue with character encoding for multi-byte characters written to the debug console ([#4398](https://github.com/OmniSharp/omnisharp-vscode/issues/4398))
+* Fixed a bug where Blazor WASM debugging would fail to launch correctly ([dotnet/aspnetcore#31653](https://github.com/dotnet/aspnetcore/issues/31653))
 
 ## 1.23.11 (April 9, 2021)
 * Move the global Mono check to the correct place ([#4489](https://github.com/OmniSharp/omnisharp-vscode/issues/4489), PR: [#4492](https://github.com/OmniSharp/omnisharp-vscode/pull/4492))

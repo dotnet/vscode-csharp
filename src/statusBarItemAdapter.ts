@@ -48,6 +48,14 @@ export class StatusBarItemAdapter implements vscodeAdapter.StatusBarItem {
         this.statusBarItem.command = value;
     }
 
+    get name(): string {
+        return this.statusBarItem.name;
+    }
+
+    set name(value: string) {
+        this.statusBarItem.name = value;
+    }
+
     show(): void {
         this.statusBarItem.show();
     }

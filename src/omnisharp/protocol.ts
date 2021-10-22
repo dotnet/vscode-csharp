@@ -17,7 +17,6 @@ export module Requests {
     export const FormatAfterKeystroke = '/formatAfterKeystroke';
     export const FormatRange = '/formatRange';
     export const GetCodeActions = '/getcodeactions';
-    export const GoToDefinition = '/gotoDefinition';
     export const FindImplementations = '/findimplementations';
     export const Project = '/project';
     export const Projects = '/projects';
@@ -34,6 +33,10 @@ export module Requests {
     export const QuickInfo = '/quickinfo';
     export const Completion = '/completion';
     export const CompletionResolve = '/completion/resolve';
+    export const CompletionAfterInsert = '/completion/afterInsert';
+    export const SourceGeneratedFile = '/sourcegeneratedfile';
+    export const UpdateSourceGeneratedFile = '/updatesourcegeneratedfile';
+    export const SourceGeneratedFileClosed = '/sourcegeneratedfileclosed';
 }
 
 export namespace WireProtocol {
@@ -72,10 +75,6 @@ export interface Request extends FileBasedRequest {
     Buffer?: string;
     Changes?: LinePositionSpanTextChange[];
     ApplyChangesTogether?: boolean;
-}
-
-export interface GoToDefinitionRequest extends Request {
-    WantMetadata?: boolean;
 }
 
 export interface FindImplementationsRequest extends Request {
@@ -182,9 +181,6 @@ export interface ResourceLocation {
     Column: number;
 }
 
-export interface GoToDefinitionResponse extends ResourceLocation {
-    MetadataSource?: MetadataSource;
-}
 
 export interface Error {
     Message: string;
@@ -524,6 +520,16 @@ export interface CompletionResolveResponse {
     Item: OmnisharpCompletionItem;
 }
 
+export interface CompletionAfterInsertionRequest {
+    Item: OmnisharpCompletionItem;
+}
+
+export interface CompletionAfterInsertResponse {
+    Changes?: LinePositionSpanTextChange[];
+    Line?: number;
+    Column?: number;
+}
+
 export interface OmnisharpCompletionItem {
     Label: string;
     Kind: CompletionItemKind;
@@ -539,6 +545,37 @@ export interface OmnisharpCompletionItem {
     CommitCharacters?: string[];
     AdditionalTextEdits?: LinePositionSpanTextChange[];
     Data: any;
+    HasAfterInsertStep: boolean;
+}
+
+export interface SourceGeneratedFileInfo {
+    ProjectGuid: string;
+    DocumentGuid: string;
+}
+
+export interface SourceGeneratedFileRequest extends SourceGeneratedFileInfo {
+}
+
+export interface SourceGeneratedFileResponse {
+    Source: string;
+    SourceName: string;
+}
+
+export interface UpdateSourceGeneratedFileRequest extends SourceGeneratedFileInfo {
+}
+
+export interface UpdateSourceGeneratedFileResponse {
+    UpdateType: UpdateType;
+    Source?: string;
+}
+
+export enum UpdateType {
+    Unchanged,
+    Deleted,
+    Modified
+}
+
+export interface SourceGeneratedFileClosedRequest extends SourceGeneratedFileInfo {
 }
 
 export namespace V2 {
@@ -559,6 +596,7 @@ export namespace V2 {
         export const BlockStructure = '/v2/blockstructure';
         export const CodeStructure = '/v2/codestructure';
         export const Highlight = '/v2/highlight';
+        export const GoToDefinition = '/v2/gotodefinition';
     }
 
     export interface SemanticHighlightSpan {
@@ -586,6 +624,11 @@ export namespace V2 {
     export interface Range {
         Start: Point;
         End: Point;
+    }
+
+    export interface Location {
+        FileName: string;
+        Range: Range;
     }
 
     export interface GetCodeActionsRequest extends Request {
@@ -857,6 +900,20 @@ export namespace V2 {
 
             walker(elements);
         }
+    }
+
+    export interface GoToDefinitionRequest extends Request {
+        WantMetadata?: boolean;
+    }
+
+    export interface GoToDefinitionResponse {
+        Definitions?: Definition[];
+    }
+
+    export interface Definition {
+        Location: Location;
+        MetadataSource?: MetadataSource;
+        SourceGeneratedFileInfo?: SourceGeneratedFileInfo;
     }
 }
 
