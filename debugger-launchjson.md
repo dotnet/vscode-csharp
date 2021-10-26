@@ -136,11 +136,16 @@ The `"console"` setting controls what console (terminal) window the target app i
 `"externalTerminal"`: the target process will run inside its own external terminal.
 
 ## Source File Map
-You can optionally configure a file by file mapping by providing map following this schema:
+You can optionally configure how source files are opened by providing a map using this form:
 
     "sourceFileMap": {
         "C:\\foo":"/home/me/foo"
     }
+
+In this example:
+* `C:\foo` is the original location for one or more source files (example: `program.cs`) when a module (example: MyCode.dll) was compiled. It can either be a directory that has source files under it, or a complete path to a source file (example: `c:\foo\program.cs`). It doesn't need to exist either on the computer running Visual Studio Code, or if you are remote debugging, on the remote machine. The debugger will read the path to the source file from the .pdb (symbol) file, and it will transform it using this map.
+* `/home/me/foo` is the path where the source file can now be found by Visual Studio Code.
+
 
 ## Just My Code
 You can optionally disable `justMyCode` by setting it to "false". You should disable Just My Code when you are trying to debug into a library that you pulled down which doesn't have symbols or is optimized.
