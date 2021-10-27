@@ -3212,7 +3212,7 @@
               "browser": {
                 "type": "string",
                 "description": "The debugging browser to launch (Edge or Chrome)",
-                "default": "chrome",
+                "default": "edge",
                 "enum": [
                   "chrome",
                   "edge"
