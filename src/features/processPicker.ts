@@ -427,9 +427,6 @@ export class PsOutputParser {
 export class CimAttachItemsProvider extends DotNetAttachItemsProvider {
     constructor(private pwsh: string) { super(); }
 
-    // Perf numbers on Win10:
-    // TODO
-
     protected async getInternalProcessEntries(): Promise<Process[]> {
         const pwshCommand: string = `${this.pwsh} -NoProfile -Command`;
         const cimCommand: string = 'Get-CimInstance Win32_Process | Select-Object Name,ProcessId,CommandLine | ConvertTo-JSON';

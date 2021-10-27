@@ -215,11 +215,10 @@ export function isSubfolderOf(subfolder: string, folder: string): boolean {
  */
  export function findPowerShell(): string | undefined {
     const dirs: string[] = (process.env.PATH || '').replace(/"+/g, '').split(';').filter(x => x);
-    const exts: string[] = (process.env.PATHEXT || '').split(';');
-    const names: string[] = ['pwsh', 'powershell'];
+    const names: string[] = ['pwsh.exe', 'powershell.exe'];
     for (const name of names) {
         const candidates: string[] = dirs.reduce<string[]>((paths, dir) => [
-            ...paths, ...exts.map(ext => path.join(dir, name + ext))
+            ...paths, path.join(dir, name)
         ], []);
         for (const candidate of candidates) {
             try {

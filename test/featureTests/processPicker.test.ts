@@ -185,6 +185,8 @@ suite("Remote Process Picker: Validate quoting arguments.", () => {
 
         const parsedOutput: Process[] = CimProcessParser.ParseProcessFromCim(cimOutput);
 
+        parsedOutput.length.should.equal(4);
+
         const process1: Process = parsedOutput[0];
         const process2: Process = parsedOutput[1];
         const process3: Process = parsedOutput[2];
