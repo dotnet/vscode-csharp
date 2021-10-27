@@ -209,3 +209,25 @@ export function isSubfolderOf(subfolder: string, folder: string): boolean {
     // Check to see that every sub directory in subfolder exists in folder.
     return subfolderArray.length <= folderArray.length && subfolderArray.every((subpath, index) => folderArray[index] === subpath);
 }
+
+/**
+ * Find PowerShell executable from PATH (for Windows only).
+ */
+ export function findPowerShell(): string | undefined {
+    const dirs: string[] = (process.env.PATH || '').replace(/"+/g, '').split(';').filter(x => x);
+    const exts: string[] = (process.env.PATHEXT || '').split(';');
+    const names: string[] = ['pwsh', 'powershell'];
+    for (const name of names) {
+        const candidates: string[] = dirs.reduce<string[]>((paths, dir) => [
+            ...paths, ...exts.map(ext => path.join(dir, name + ext))
+        ], []);
+        for (const candidate of candidates) {
+            try {
+                if (fs.statSync(candidate).isFile()) {
+                    return name;
+                }
+            } catch (e) {
+            }
+        }
+    }
+}
