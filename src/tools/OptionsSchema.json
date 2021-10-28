@@ -323,6 +323,18 @@
           "description": "Attribute 'externalConsole' is deprecated, use 'console' instead.",
           "default": false
         },
+        "launchSettingsProfile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "If specified, indicates the name of the profile in {cwd}/Properties/launchSettings.json to use. This is ignored if launchSettings.json is not found. If this is set to null or an empty string then launchSettings.json is ignored. If this value is not specified the first 'Project' profile will be used.",
+          "default": "<insert-profile-name>"
+        },
         "sourceFileMap": {
           "type": "object",
           "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",

@@ -217,8 +217,7 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/49f44239-bd47-4fb5-91be-4c91d7638fff/b490d6a6de4ec50e2bd22f690489ef6c/coreclr-debug-win7-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-14/coreclr-debug-win7-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-23-17/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -227,13 +226,12 @@
         "x86_64"
       ],
       "installTestPath": "./.debugger/vsdbg-ui.exe",
-      "integrity": "9EA16813520F5E74535739DAD1E9E72465D7F496A6C8465AEA3EF57C86CF320C"
+      "integrity": "DEE5667896B7399AB0AAA1A1CC10C6FB2B7D8F47AB17C12E40ABA97677AB90D3"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/49f44239-bd47-4fb5-91be-4c91d7638fff/82a75a9c89a2e5087908651b602d7d01/coreclr-debug-win10-arm64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-14/coreclr-debug-win10-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-23-17/coreclr-debug-win10-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -242,13 +240,12 @@
         "arm64"
       ],
       "installTestPath": "./.debugger/vsdbg-ui.exe",
-      "integrity": "FD9A1B46DA9C7226828595826F6CE215DF769C5111D02DB567494A1EB095E155"
+      "integrity": "30BF86A94A1362465B539DC42995BF2E066F0656B2FF53D259B9ADB2A50DBF3E"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/49f44239-bd47-4fb5-91be-4c91d7638fff/c1122f7141735472d9583c1124024c55/coreclr-debug-osx-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-14/coreclr-debug-osx-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-23-17/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "darwin"
@@ -262,13 +259,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/x86_64/vsdbg-ui",
-      "integrity": "554436E48F02C994BD05AD365EFFF9E242710C49CD2BDE695DBABD222098E323"
+      "integrity": "EAFB7B0F3489B9F2D89C2BC4CB855729398D25D6F2A6587913732018B9BBB362"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / arm64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/49f44239-bd47-4fb5-91be-4c91d7638fff/96a88189c7904a517f3bb59b2dba8bd1/coreclr-debug-osx-arm64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-14/coreclr-debug-osx-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-23-17/coreclr-debug-osx-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "darwin"
@@ -281,13 +277,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/arm64/vsdbg-ui",
-      "integrity": "40395770CDBA25FD67D2A5B8630F16146B293EAE8A07205DF1646D1805F87384"
+      "integrity": "AB272AD7F519FA1564A3C9AA7052D5ADD972A6DDAD7A2B6CA0DF775A7F83704C"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/49f44239-bd47-4fb5-91be-4c91d7638fff/f346e34bb51c0595cf7f4727cac76907/coreclr-debug-linux-arm.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-14/coreclr-debug-linux-arm.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-23-17/coreclr-debug-linux-arm.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -300,13 +295,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "4283432742665B400B1807A76770475B2CA43895C7E7870D85E34C3ADF4D1B3F"
+      "integrity": "C03F6DBE1F84717483C016F67AC92C56391798BAB4EE41D58521588D5EDF1ED0"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/49f44239-bd47-4fb5-91be-4c91d7638fff/7a723bfbda6d196c52084226b6835b36/coreclr-debug-linux-arm64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-14/coreclr-debug-linux-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-23-17/coreclr-debug-linux-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -319,13 +313,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "7C266186F481159BFC40406BF4CE479FC4144179C69128B01CD3E1E3062E8AB4"
+      "integrity": "4C3564FE7FBD7403E7B987C44FC4B6E532D177BF179321595D892D7239D1293D"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/49f44239-bd47-4fb5-91be-4c91d7638fff/dd019b4c839f458596e26bfcfe6a3e7f/coreclr-debug-linux-x64.zip",
-      "fallbackUrl": "https://vsdebugger.blob.core.windows.net/coreclr-debug-1-23-14/coreclr-debug-linux-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-23-17/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -338,7 +331,7 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "F389283020F345DA4BAC1067E9D8E5B28BD4306338C651075D07285D0600BE30"
+      "integrity": "3CF4619DB967FA71FE04615D1A171B9C03E6CA97335BAC3C0E04116490B73336"
     },
     {
       "id": "Razor",
@@ -1237,6 +1230,18 @@
                 "type": "boolean",
                 "description": "Attribute 'externalConsole' is deprecated, use 'console' instead.",
                 "default": false
+              },
+              "launchSettingsProfile": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "If specified, indicates the name of the profile in {cwd}/Properties/launchSettings.json to use. This is ignored if launchSettings.json is not found. If this is set to null or an empty string then launchSettings.json is ignored. If this value is not specified the first 'Project' profile will be used.",
+                "default": "<insert-profile-name>"
               },
               "sourceFileMap": {
                 "type": "object",
@@ -2343,6 +2348,18 @@
                 "type": "boolean",
                 "description": "Attribute 'externalConsole' is deprecated, use 'console' instead.",
                 "default": false
+              },
+              "launchSettingsProfile": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "If specified, indicates the name of the profile in {cwd}/Properties/launchSettings.json to use. This is ignored if launchSettings.json is not found. If this is set to null or an empty string then launchSettings.json is ignored. If this value is not specified the first 'Project' profile will be used.",
+                "default": "<insert-profile-name>"
               },
               "sourceFileMap": {
                 "type": "object",

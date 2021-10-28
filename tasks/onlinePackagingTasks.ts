@@ -21,7 +21,7 @@ gulp.task('vsix:release:unpackage', () => {
     return fs.createReadStream(packageName).pipe(Extract({ path: unpackedVsixPath }));
 });
 
-gulp.task('vsix:release:package', async (onError) => {
+gulp.task('vsix:release:package:platform-neutral', async (onError) => {
     del.sync(vscodeignorePath);
 
     fs.copyFileSync(onlineVscodeignorePath, vscodeignorePath);
