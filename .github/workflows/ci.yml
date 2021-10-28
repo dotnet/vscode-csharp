@@ -35,8 +35,8 @@ jobs:
     - name: Compile
       run: npm run compile
 
-    - name: Build extension package
-      run: gulp 'vsix:release:package'
+    - name: Build platform-neutral extension package
+      run: gulp 'vsix:release:package:platform-neutral'
 
     - name: Run unit and integration tests
       run: |
@@ -45,3 +45,6 @@ jobs:
       env:
         CODE_VERSION: 1.45.0
         DISPLAY: :99.0
+
+    - name: Build platform-specific extension package
+      run: gulp 'vsix:release:package:platform-specific'
