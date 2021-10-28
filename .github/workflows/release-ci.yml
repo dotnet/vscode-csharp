@@ -31,7 +31,7 @@ jobs:
       run: node -e "console.log('VERSION=' + require('./package.json').version)" >> $GITHUB_ENV
 
     - name: Upload release build (darwin-arm64)
-      id: upload-release-asset
+      id: upload-release-asset-darwin-arm64
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -42,7 +42,7 @@ jobs:
         asset_content_type: application/zip
 
     - name: Upload release build (darwin-x64)
-      id: upload-release-asset
+      id: upload-release-asset-darwin-x64
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -53,7 +53,7 @@ jobs:
         asset_content_type: application/zip
 
     - name: Upload release build (linux-x64)
-      id: upload-release-asset
+      id: upload-release-asset-linux-x64
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -64,7 +64,7 @@ jobs:
         asset_content_type: application/zip
 
     - name: Upload release build (win32-arm64)
-      id: upload-release-asset
+      id: upload-release-asset-win32-arm64
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -75,7 +75,7 @@ jobs:
         asset_content_type: application/zip
 
     - name: Upload release build (win32-ia32)
-      id: upload-release-asset
+      id: upload-release-asset-win32-ia32
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -86,7 +86,7 @@ jobs:
         asset_content_type: application/zip
 
     - name: Upload release build (win32-x64)
-      id: upload-release-asset
+      id: upload-release-asset-win32-x64
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
