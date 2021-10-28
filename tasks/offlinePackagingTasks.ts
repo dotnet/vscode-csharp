@@ -131,6 +131,11 @@ async function createPackageAsync(packageName: string, outputFolder: string, vsc
         else {
             vsceArgs.push(packageName);
         }
+
+        if (vscodePlatformId !== undefined) {
+            vsceArgs.push("--target");
+            vsceArgs.push(vscodePlatformId);
+        }
     }
 
     const spawnResult = await spawnNode(vsceArgs);
