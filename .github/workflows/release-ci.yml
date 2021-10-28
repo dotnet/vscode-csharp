@@ -37,8 +37,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./csharp-${{ env.VERSION }}-(darwin-arm64).vsix
-        asset_name: csharp-${{ env.VERSION }}-(darwin-arm64).vsix
+        asset_path: ./csharp-${{ env.VERSION }}-darwin-arm64.vsix
+        asset_name: csharp-${{ env.VERSION }}-darwin-arm64.vsix
         asset_content_type: application/zip
 
     - name: Upload release build (darwin-x64)
@@ -48,8 +48,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./csharp-${{ env.VERSION }}-(darwin-x64).vsix
-        asset_name: csharp-${{ env.VERSION }}-(darwin-x64).vsix
+        asset_path: ./csharp-${{ env.VERSION }}-darwin-x64.vsix
+        asset_name: csharp-${{ env.VERSION }}-darwin-x64.vsix
         asset_content_type: application/zip
 
     - name: Upload release build (linux-x64)
@@ -59,8 +59,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./csharp-${{ env.VERSION }}-(linux-x64).vsix
-        asset_name: csharp-${{ env.VERSION }}-(linux-x64).vsix
+        asset_path: ./csharp-${{ env.VERSION }}-linux-x64.vsix
+        asset_name: csharp-${{ env.VERSION }}-linux-x64.vsix
         asset_content_type: application/zip
 
     - name: Upload release build (win32-arm64)
@@ -70,8 +70,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./csharp-${{ env.VERSION }}-(win32-arm64).vsix
-        asset_name: csharp-${{ env.VERSION }}-(win32-arm64).vsix
+        asset_path: ./csharp-${{ env.VERSION }}-win32-arm64.vsix
+        asset_name: csharp-${{ env.VERSION }}-win32-arm64.vsix
         asset_content_type: application/zip
 
     - name: Upload release build (win32-ia32)
@@ -81,8 +81,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./csharp-${{ env.VERSION }}-(win32-ia32).vsix
-        asset_name: csharp-${{ env.VERSION }}-(win32-ia32).vsix
+        asset_path: ./csharp-${{ env.VERSION }}-win32-ia32.vsix
+        asset_name: csharp-${{ env.VERSION }}-win32-ia32.vsix
         asset_content_type: application/zip
 
     - name: Upload release build (win32-x64)
@@ -92,6 +92,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./csharp-${{ env.VERSION }}-(win32-x64).vsix
-        asset_name: csharp-${{ env.VERSION }}-(win32-x64).vsix
+        asset_path: ./csharp-${{ env.VERSION }}-win32-x64.vsix
+        asset_name: csharp-${{ env.VERSION }}-win32-x64.vsix
         asset_content_type: application/zip
