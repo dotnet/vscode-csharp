@@ -172,7 +172,7 @@ export default class TestManager extends AbstractProvider {
     public async discoverTests(fileName: string, testFrameworkName: string, noBuild: boolean): Promise<protocol.V2.TestInfo[]> {
 
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
-        let runSettings = vscode.workspace.getConfiguration('omnisharp').get<string>('testRunSettings');
+        let runSettings = this._getRunSettings(fileName);
 
         const request: protocol.V2.DiscoverTestsRequest = {
             FileName: fileName,
@@ -191,8 +191,21 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    private _getRunSettings(): string | undefined {
-        return vscode.workspace.getConfiguration('omnisharp').get<string>('testRunSettings');
+    private _getRunSettings(filename: string): string | undefined {
+        const testSettingsPath = vscode.workspace.getConfiguration('omnisharp').get<string>('testRunSettings');
+        if (!testSettingsPath) {
+            return undefined;
+        }
+
+        if (path.isAbsolute(testSettingsPath)) {
+            return testSettingsPath;
+        }
+
+        // Path is relative to the workspace. Create absolute path.
+        const fileUri = vscode.Uri.file(filename);
+        const workspaceFolder = vscode.workspace.getWorkspaceFolder(fileUri);
+
+        return path.join(workspaceFolder.uri.fsPath, testSettingsPath);
     }
 
     public async runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string, noBuild: boolean = false) {
@@ -204,7 +217,7 @@ export default class TestManager extends AbstractProvider {
         });
 
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
-        let runSettings = this._getRunSettings();
+        let runSettings = this._getRunSettings(fileName);
 
         try {
             let results = await this._runTest(fileName, testMethod, runSettings, testFrameworkName, targetFrameworkVersion, noBuild);
@@ -228,7 +241,7 @@ export default class TestManager extends AbstractProvider {
         });
 
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
-        let runSettings = this._getRunSettings();
+        let runSettings = this._getRunSettings(fileName);
 
         try {
             let results = await this._runTestsInClass(fileName, runSettings, testFrameworkName, targetFrameworkVersion, methodsInClass, noBuild);
@@ -269,7 +282,7 @@ export default class TestManager extends AbstractProvider {
         });
 
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName);
-        let runSettings = this._getRunSettings();
+        let runSettings = this._getRunSettings(fileName);
 
         const request: protocol.V2.RunTestsInContextRequest = {
             FileName: fileName,
@@ -395,7 +408,7 @@ export default class TestManager extends AbstractProvider {
         this._eventStream.post(new DotNetTestDebugStart(testMethod));
 
         let { debugEventListener, targetFrameworkVersion } = await this._recordDebugAndGetDebugValues(fileName, testFrameworkName);
-        let runSettings = this._getRunSettings();
+        let runSettings = this._getRunSettings(fileName);
 
         try {
             let config = await this._getLaunchConfigurationForVSTest(fileName, testMethod, runSettings, testFrameworkName, targetFrameworkVersion, debugEventListener, noBuild);
@@ -415,7 +428,7 @@ export default class TestManager extends AbstractProvider {
         this._eventStream.post(new DotNetTestsInClassDebugStart(className));
 
         let { debugEventListener, targetFrameworkVersion } = await this._recordDebugAndGetDebugValues(fileName, testFrameworkName);
-        let runSettings = this._getRunSettings();
+        let runSettings = this._getRunSettings(fileName);
 
         try {
             let config = await this._getLaunchConfigurationForVSTestClass(fileName, methodsToRun, runSettings, testFrameworkName, targetFrameworkVersion, debugEventListener, noBuild);
@@ -440,7 +453,7 @@ export default class TestManager extends AbstractProvider {
 
         let { debugEventListener, targetFrameworkVersion } = await this._recordDebugAndGetDebugValues(fileName);
 
-        let runSettings = this._getRunSettings();
+        let runSettings = this._getRunSettings(fileName);
 
         try {
             let config = await this._getLaunchConfigurationForVSTestInContext(fileName, active.line, active.character, runSettings, targetFrameworkVersion, debugEventListener);
