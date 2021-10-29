@@ -192,7 +192,7 @@ suite("Remote Process Picker: Validate quoting arguments.", () => {
         const process3: Process = parsedOutput[2];
         const process4: Process = parsedOutput[3];
 
-        var should = require('chai').should();
+        const should = require('chai').should();
         should.not.exist(process1.commandLine);
         process1.name.should.equal('System Idle Process');
         process1.pid.should.equal('0');
