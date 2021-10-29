@@ -35,7 +35,7 @@ export const offlinePackages = [
 export function getPackageName(packageJSON: any, vscodePlatformId: string) {
     const name = packageJSON.name;
     const version = packageJSON.version;
-    return `${name}.${version}-${vscodePlatformId}.vsix`;
+    return `${name}-${version}-${vscodePlatformId}.vsix`;
 }
 
 gulp.task('vsix:release:package:platform-specific', async () => {
