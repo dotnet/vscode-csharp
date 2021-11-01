@@ -836,6 +836,14 @@
           "default": false,
           "description": "(EXPERIMENTAL) Enables support for resolving completion edits asynchronously. This can speed up time to show the completion list, particularly override and partial method completion lists, at the cost of slight delays after inserting a completion item. Most completion items will have no noticeable impact with this feature, but typing immediately after inserting an override or partial method completion, before the insert is completed, can have unpredictable results."
         },
+        "omnisharp.testRunSettings": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Path to the .runsettings file which should be used when running unit tests."
+        },
         "razor.plugin.path": {
           "type": [
             "string",

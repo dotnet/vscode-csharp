@@ -42,7 +42,7 @@ suite("Offline packaging of VSIX", function () {
 
         test(`Given Platform: ${platformInfo.platform} and Architecture: ${platformInfo.architecture}, the vsix file is created`, () => {
             const expectedVsixName = getPackageName(packageJson, packageId);
-            const vsixFile = vsixFiles.find(file => file.endsWith(expectedVsixName))
+            const vsixFile = vsixFiles.find(file => file.endsWith(expectedVsixName));
             expect(vsixFile, `offline packaging did not build package ${expectedVsixName}`)
                 .to.not.be.null;
         });
