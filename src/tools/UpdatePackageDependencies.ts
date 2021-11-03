@@ -28,8 +28,9 @@ export async function updatePackageDependencies(): Promise<void> {
 
     const newPrimaryUrls = process.env["NEW_DEPS_URLS"];
     const newVersion = process.env["NEW_DEPS_VERSION"];
+    const packageId = process.env["NEW_DEPS_ID"];
 
-    if (!newPrimaryUrls || !newVersion) {
+    if ((!packageId && !newPrimaryUrls) || !newVersion) {
         console.log();
         console.log("'npm run gulp updatePackageDependencies' will update package.json with new URLs of dependencies.");
         console.log();
@@ -37,17 +38,13 @@ export async function updatePackageDependencies(): Promise<void> {
         const setEnvVarPrefix = os.platform() === 'win32' ? "set " : "export ";
         const setEnvVarQuote = os.platform() === 'win32' ? "" : "\'";
         console.log(`  ${setEnvVarPrefix}NEW_DEPS_URLS=${setEnvVarQuote}https://example1/foo-osx.zip,https://example1/foo-win.zip,https://example1/foo-linux.zip${setEnvVarQuote}`);
+        console.log("-or-");
+        console.log(`  ${setEnvVarPrefix}NEW_DEPS_ID=${setEnvVarQuote}Debugger${setEnvVarQuote}`);
+        console.log("-and-");
         console.log(`  ${setEnvVarPrefix}NEW_DEPS_VERSION=${setEnvVarQuote}1.2.3${setEnvVarQuote}`);
         console.log("  npm run gulp updatePackageDependencies");
         console.log();
         return;
-    }
-
-    const newPrimaryUrlArray = newPrimaryUrls.split(',');
-    for (let urlToUpdate of newPrimaryUrlArray) {
-        if (!urlToUpdate.startsWith("https://")) {
-            throw new Error("Unexpected 'NEW_DEPS_URLS' value. All URLs should start with 'https://'.");
-        }
     }
 
     if (! /^[0-9]+\.[0-9]+\.[0-9]+$/.test(newVersion)) {
@@ -56,38 +53,6 @@ export async function updatePackageDependencies(): Promise<void> {
 
     let packageJSON: PackageJSONFile = JSON.parse(fs.readFileSync('package.json').toString());
 
-    // map from lowercase filename to Package
-    const mapFileNameToDependency: { [key: string]: Package } = {};
-
-    // First build the map
-    packageJSON.runtimeDependencies.forEach(dependency => {
-        let fileName = getLowercaseFileNameFromUrl(dependency.url);
-        let existingDependency = mapFileNameToDependency[fileName];
-        if (existingDependency !== undefined) {
-            throw new Error(`Multiple dependencies found with filename '${fileName}': '${existingDependency.url}' and '${dependency.url}'.`);
-        }
-        mapFileNameToDependency[fileName] = dependency;
-    });
-
-    let findDependencyToUpdate = (url: string): Package => {
-        let fileName = getLowercaseFileNameFromUrl(url);
-        let dependency = mapFileNameToDependency[fileName];
-        if (dependency === undefined) {
-            throw new Error(`Unable to update item for url '${url}'. No 'runtimeDependency' found with filename '${fileName}'.`);
-        }
-        return dependency;
-    };
-
-    // First quickly make sure we could match up the URL to an existing item.
-    for (let urlToUpdate of newPrimaryUrlArray) {
-        const dependency = findDependencyToUpdate(urlToUpdate);
-        //Fallback url should contain a version
-        verifyVersionSubstringCount(dependency.fallbackUrl, true);
-        verifyVersionSubstringCount(dependency.installPath);
-        verifyVersionSubstringCount(dependency.installTestPath);
-    }
-
-    // Next take another pass to try and update to the URL
     const eventStream = new EventStream();
     eventStream.subscribe((event: Event.BaseEvent) => {
         switch (event.type) {
@@ -104,9 +69,7 @@ export async function updatePackageDependencies(): Promise<void> {
         return getBufferIntegrityHash(buffer);
     };
 
-    for (let urlToUpdate of newPrimaryUrlArray) {
-        let dependency = findDependencyToUpdate(urlToUpdate);
-        dependency.url = urlToUpdate;
+    const updateDependency = async (dependency: Package): Promise<void> => {
         dependency.integrity = await downloadAndGetHash(dependency.url);
         dependency.fallbackUrl = replaceVersion(dependency.fallbackUrl, newVersion);
         dependency.installPath = replaceVersion(dependency.installPath, newVersion);
@@ -123,6 +86,80 @@ export async function updatePackageDependencies(): Promise<void> {
             if (dependency.integrity !== fallbackUrlIntegrity) {
                 throw new Error(`File downloaded from primary URL '${dependency.url}' doesn't match '${dependency.fallbackUrl}'.`);
             }
+        }
+    };
+
+    if (newPrimaryUrls) {
+        const newPrimaryUrlArray = newPrimaryUrls.split(',');
+        for (let urlToUpdate of newPrimaryUrlArray) {
+            if (!urlToUpdate.startsWith("https://")) {
+                throw new Error("Unexpected 'NEW_DEPS_URLS' value. All URLs should start with 'https://'.");
+            }
+        }
+
+        // map from lowercase filename to Package
+        const mapFileNameToDependency: { [key: string]: Package } = {};
+
+        // First build the map
+        packageJSON.runtimeDependencies.forEach(dependency => {
+            let fileName = getLowercaseFileNameFromUrl(dependency.url);
+            let existingDependency = mapFileNameToDependency[fileName];
+            if (existingDependency !== undefined) {
+                throw new Error(`Multiple dependencies found with filename '${fileName}': '${existingDependency.url}' and '${dependency.url}'.`);
+            }
+            mapFileNameToDependency[fileName] = dependency;
+        });
+
+        let findDependencyToUpdate = (url: string): Package => {
+            let fileName = getLowercaseFileNameFromUrl(url);
+            let dependency = mapFileNameToDependency[fileName];
+            if (dependency === undefined) {
+                throw new Error(`Unable to update item for url '${url}'. No 'runtimeDependency' found with filename '${fileName}'.`);
+            }
+            return dependency;
+        };
+
+        // First quickly make sure we could match up the URL to an existing item.
+        for (let urlToUpdate of newPrimaryUrlArray) {
+            const dependency = findDependencyToUpdate(urlToUpdate);
+            //Fallback url should contain a version
+            verifyVersionSubstringCount(dependency.fallbackUrl, true);
+            verifyVersionSubstringCount(dependency.installPath);
+            verifyVersionSubstringCount(dependency.installTestPath);
+        }
+
+        for (let urlToUpdate of newPrimaryUrlArray) {
+            let dependency = findDependencyToUpdate(urlToUpdate);
+            dependency.url = urlToUpdate;
+
+            await updateDependency(dependency);
+        }
+    }
+    else {
+        let packageFound = false;
+        // First quickly make sure that 'url' contains a version
+        for (let dependency of packageJSON.runtimeDependencies) {
+            if (dependency.id !== packageId) {
+                continue;
+            }
+            packageFound = true;
+            verifyVersionSubstringCount(dependency.url, true);
+            verifyVersionSubstringCount(dependency.fallbackUrl, true);
+            verifyVersionSubstringCount(dependency.installPath);
+            verifyVersionSubstringCount(dependency.installTestPath);
+        }
+        if (!packageFound) {
+            throw new Error(`Failed to find package with 'id' of '${packageId}'.`);
+        }
+
+        // Now update the versions
+        for (let dependency of packageJSON.runtimeDependencies) {
+            if (dependency.id !== packageId) {
+                continue;
+            }
+
+            dependency.url = replaceVersion(dependency.url, newVersion);
+            await updateDependency(dependency);
         }
     }
 

@@ -108,9 +108,26 @@ Environment variables may be passed to your program using this schema:
         "myVariableName":"theValueGoesHere"
     }
 
-NOTE: Environment variables can also be configured through a `${cwd}/Properties/launchSettings.json` file, which is useful for environment variables that should be set in all development scenarios -- when the project is started from the command line (`dotnet run`), from Visual Studio Code, or Visual Studio.
+## Console (terminal) window
 
-Example Properties/launchSettings.json file:
+The `"console"` setting controls what console (terminal) window the target app is launched into. It can be set to any of these values --
+
+`"internalConsole"` (default) : the target process's console output (stdout/stderr) goes to the VS Code Debug Console. This is useful for executables that take their input from the network, files, etc. But this does **NOT** work for applications that want to read from the console (ex: `Console.ReadLine`). 
+
+`"integratedTerminal"` : the target process will run inside [VS Code's integrated terminal](https://code.visualstudio.com/docs/editor/integrated-terminal). Click the 'Terminal' tab in the tab group beneath the editor to interact with your application. Alternatively add `"internalConsoleOptions": "neverOpen"` to make it so that the default foreground tab is the terminal tab.
+
+`"externalTerminal"`: the target process will run inside its own external terminal.
+
+## launchSettings.json support
+
+In addition to launch.json, launch options can be configured through a {cwd}/Properties/launchSettings.json file. The advantage of 
+launchSettings.json is that it allows settings to be shared between Visual Studio Code, full Visual Studio, and `dotnet run`.
+
+To configure which launchSettings.json profile to use (or to prevent it from being used), set the `launchSettingsProfile` option:
+
+    "launchSettingsProfile": "ProfileNameGoesHere"
+
+Which would then, for example, use `myVariableName` from this example launchSettings.json file:
 
 ```json
 {
@@ -125,22 +142,29 @@ Example Properties/launchSettings.json file:
 }
 ```
 
-## Console (terminal) window
+If `launchSettingsProfile` is NOT specified, the first profile with `"commandName": "Project"` will be used.
 
-The `"console"` setting controls what console (terminal) window the target app is launched into. It can be set to any of these values --
+If `launchSettingsProfile` is set to null/an empty string, then Properties/launchSettings.json will be ignored.
 
-`"internalConsole"` (default) : the target process's console output (stdout/stderr) goes to the VS Code Debug Console. This is useful for executables that take their input from the network, files, etc. But this does **NOT** work for applications that want to read from the console (ex: `Console.ReadLine`). 
-
-`"integratedTerminal"` : the target process will run inside [VS Code's integrated terminal](https://code.visualstudio.com/docs/editor/integrated-terminal). Click the 'Terminal' tab in the tab group beneath the editor to interact with your application. Alternatively add `"internalConsoleOptions": "neverOpen"` to make it so that the default foreground tab is the terminal tab.
-
-`"externalTerminal"`: the target process will run inside its own external terminal.
+Restrictions:
+1. The launchSettings.json file must be in {cwd}/Properties/launchSettings.json
+2. Only profiles with `"commandName": "Project"` are supported.
+3. Only `environmentVariables`, `applicationUrl` and `commandLineArgs` properties are supported
+4. Settings in launch.json will take precedence over settings in launchSettings.json, so for example, if `args` 
+is already set to something other than an empty string/array in `launch.json` then the launchSettings.json 
+content will be ignored.
 
 ## Source File Map
-You can optionally configure a file by file mapping by providing map following this schema:
+You can optionally configure how source files are opened by providing a map using this form:
 
     "sourceFileMap": {
         "C:\\foo":"/home/me/foo"
     }
+
+In this example:
+* `C:\foo` is the original location for one or more source files (example: `program.cs`) when a module (example: MyCode.dll) was compiled. It can either be a directory that has source files under it, or a complete path to a source file (example: `c:\foo\program.cs`). It doesn't need to exist either on the computer running Visual Studio Code, or if you are remote debugging, on the remote machine. The debugger will read the path to the source file from the .pdb (symbol) file, and it will transform it using this map.
+* `/home/me/foo` is the path where the source file can now be found by Visual Studio Code.
+
 
 ## Just My Code
 You can optionally disable `justMyCode` by setting it to "false". You should disable Just My Code when you are trying to debug into a library that you pulled down which doesn't have symbols or is optimized.

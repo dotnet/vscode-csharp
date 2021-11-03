@@ -21,7 +21,7 @@ import OptionProvider from '../observers/OptionProvider';
 import reportIssue from './reportIssue';
 import { IMonoResolver } from '../constants/IMonoResolver';
 import { getDotnetInfo } from '../utils/getDotnetInfo';
-import { getDecompilationAuthorization } from '../omnisharp/decompilationPrompt';
+import { getDecompilationAuthorization, resetDecompilationAuthorization } from '../omnisharp/decompilationPrompt';
 
 export default function registerCommands(context: vscode.ExtensionContext, server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionProvider: OptionProvider, monoResolver: IMonoResolver, packageJSON: any, extensionPath: string): CompositeDisposable {
     let disposable = new CompositeDisposable();
@@ -62,13 +62,13 @@ export default function registerCommands(context: vscode.ExtensionContext, serve
 
 async function showDecompilationTerms(context: vscode.ExtensionContext, server: OmniSharpServer, optionProvider: OptionProvider) {
     // Reset the decompilation authorization so the user will be prompted on restart.
-    context.workspaceState.update("decompilationAuthorized", undefined);
+    resetDecompilationAuthorization(context);
 
     await restartOmniSharp(context, server, optionProvider);
 }
 
 async function restartOmniSharp(context: vscode.ExtensionContext, server: OmniSharpServer, optionProvider: OptionProvider) {
-    // Update decompilation authorization for this workspace.
+    // Update decompilation authorization.
     server.decompilationAuthorized = await getDecompilationAuthorization(context, optionProvider);
 
     if (server.isRunning()) {
@@ -81,7 +81,7 @@ async function restartOmniSharp(context: vscode.ExtensionContext, server: OmniSh
 
 async function pickProjectAndStart(server: OmniSharpServer, optionProvider: OptionProvider): Promise<void> {
     let options = optionProvider.GetLatestOptions();
-    return findLaunchTargets(options).then(targets => {
+    return findLaunchTargets(options).then(async targets => {
 
         let currentPath = server.getSolutionPathOrFolder();
         if (currentPath) {

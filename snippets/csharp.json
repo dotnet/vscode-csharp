@@ -29,6 +29,15 @@
         ],
         "description": "Attribute using recommended pattern"
     },
+    "Disable format": {
+		"prefix": "disableformat",
+		"body": [
+			"#pragma warning disable format",
+			"$0${TM_SELECTED_TEXT}",
+			"#pragma warning restore format"
+		],
+		"description": "disable format of dotnet code"
+	},
     "Checked block": {
         "prefix": "checked",
         "body": [
@@ -465,11 +474,11 @@
             "[Fact]",
             "public void ${1:TestName}()",
             "{",
-            "//Given",
+            "    // Given",
             "",
-            "//When",
+            "    // When",
             "",
-            "//Then",
+            "    // Then",
             "}$0"
         ],
         "description": "create xunit test method"

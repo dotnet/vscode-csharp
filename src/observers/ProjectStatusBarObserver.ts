@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { basename, join } from 'path';
+import { basename } from 'path';
 import { BaseEvent, WorkspaceInformationUpdated } from "../omnisharp/loggingEvents";
 import { BaseStatusBarItemObserver } from './BaseStatusBarItemObserver';
 import { EventType } from '../omnisharp/EventType';
@@ -27,22 +27,7 @@ export class ProjectStatusBarObserver extends BaseStatusBarItemObserver {
         let label: string;
         let msbuild = event.info.MsBuild;
         if (msbuild && msbuild.SolutionPath) {
-            if (msbuild.SolutionPath.endsWith(".sln")) {
-                label = basename(msbuild.SolutionPath);
-            }
-            else {
-                // a project file was open, determine which project
-                for (const project of msbuild.Projects) {
-                    // Get the project name.
-                    label = basename(project.Path);
-
-                    // The solution path is the folder containing the open project. Combine it with the
-                    // project name and see if it matches the project's path.
-                    if (join(msbuild.SolutionPath, label) === project.Path) {
-                        break;
-                    }
-                }
-            }
+            label = basename(msbuild.SolutionPath);
             this.SetAndShowStatusBar('$(file-directory) ' + label, 'o.pickProjectAndStart');
         }
         else {

@@ -10,7 +10,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 import { PlatformInformation } from '../platform';
-import { getExtensionPath } from '../common';
+import { findPowerShell, getExtensionPath } from '../common';
 
 export interface AttachItem extends vscode.QuickPickItem {
     id: string;
@@ -265,7 +265,7 @@ export class RemoteAttachPicker {
     }
 }
 
-class Process {
+export class Process {
     constructor(public name: string, public pid: string, public commandLine: string, public flags: number) { }
 
     public toAttachItem(): AttachItem {
@@ -282,7 +282,8 @@ class Process {
 export class DotNetAttachItemsProviderFactory {
     static Get(): AttachItemsProvider {
         if (os.platform() === 'win32') {
-            return new WmicAttachItemsProvider();
+            const pwsh: string | undefined = findPowerShell();
+            return pwsh ? new CimAttachItemsProvider(pwsh) : new WmicAttachItemsProvider();
         }
         else {
             return new PsAttachItemsProvider();
@@ -420,6 +421,43 @@ export class PsOutputParser {
             const cmdline = matches[4].trim();
             return new Process(executable, pid, cmdline, flags);
         }
+    }
+}
+
+export class CimAttachItemsProvider extends DotNetAttachItemsProvider {
+    constructor(private pwsh: string) { super(); }
+
+    protected async getInternalProcessEntries(): Promise<Process[]> {
+        const pwshCommand: string = `${this.pwsh} -NoProfile -Command`;
+        const cimCommand: string = 'Get-CimInstance Win32_Process | Select-Object Name,ProcessId,CommandLine | ConvertTo-JSON';
+        const processes: string = await execChildProcess(`${pwshCommand} "${cimCommand}"`, undefined);
+        return CimProcessParser.ParseProcessFromCim(processes);
+    }
+}
+
+type CimProcessInfo = {
+    Name: string;
+    ProcessId: number;
+    CommandLine: string | null;
+};
+
+export class CimProcessParser {
+    private static get extendedLengthPathPrefix(): string { return '\\\\?\\'; }
+    private static get ntObjectManagerPathPrefix(): string { return '\\??\\'; }
+
+    // Only public for tests.
+    public static ParseProcessFromCim(processes: string): Process[] {
+        const processInfos: CimProcessInfo[] = JSON.parse(processes);
+        return processInfos.map(info => {
+            let cmdline: string | undefined = info.CommandLine || undefined;
+            if (cmdline?.startsWith(this.extendedLengthPathPrefix)) {
+                cmdline = cmdline.slice(this.extendedLengthPathPrefix.length);
+            }
+            if (cmdline?.startsWith(this.ntObjectManagerPathPrefix)) {
+                cmdline = cmdline.slice(this.ntObjectManagerPathPrefix.length);
+            }
+            return new Process(info.Name, `${info.ProcessId}`, cmdline, null);
+        });
     }
 }
 
