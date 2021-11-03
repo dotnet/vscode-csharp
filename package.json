@@ -843,6 +843,14 @@
           "default": false,
           "description": "(EXPERIMENTAL) Enables support for resolving completion edits asynchronously. This can speed up time to show the completion list, particularly override and partial method completion lists, at the cost of slight delays after inserting a completion item. Most completion items will have no noticeable impact with this feature, but typing immediately after inserting an override or partial method completion, before the insert is completed, can have unpredictable results."
         },
+        "omnisharp.dotNetCliPaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Paths to a local download of the .NET CLI.",
+          "uniqueItems": true
+        },
         "razor.plugin.path": {
           "type": [
             "string",
