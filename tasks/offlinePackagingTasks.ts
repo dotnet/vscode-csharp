@@ -35,10 +35,10 @@ export const offlinePackages = [
 export function getPackageName(packageJSON: any, vscodePlatformId: string) {
     const name = packageJSON.name;
     const version = packageJSON.version;
-    return `${name}.${version}-${vscodePlatformId}.vsix`;
+    return `${name}-${version}-${vscodePlatformId}.vsix`;
 }
 
-gulp.task('vsix:offline:package', async () => {
+gulp.task('vsix:release:package:platform-specific', async () => {
 
     if (process.platform === 'win32') {
         throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
@@ -130,6 +130,11 @@ async function createPackageAsync(packageName: string, outputFolder: string, vsc
         }
         else {
             vsceArgs.push(packageName);
+        }
+
+        if (vscodePlatformId !== undefined) {
+            vsceArgs.push("--target");
+            vsceArgs.push(vscodePlatformId);
         }
     }
 

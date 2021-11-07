@@ -22,7 +22,7 @@ jobs:
           npm i -g gulp
 
     - name: Build extension package
-      run: gulp 'vsix:release:package'
+      run: gulp 'vsix:release:package:platform-specific'
 
     - name: Run release tests
       run: npm run test:release
@@ -30,13 +30,68 @@ jobs:
     - name: Get package version
       run: node -e "console.log('VERSION=' + require('./package.json').version)" >> $GITHUB_ENV
 
-    - name: Upload release build
-      id: upload-release-asset
+    - name: Upload release build (darwin-arm64)
+      id: upload-release-asset-darwin-arm64
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./csharp-${{ env.VERSION }}.vsix
-        asset_name: csharp-${{ env.VERSION }}.vsix
+        asset_path: ./csharp-${{ env.VERSION }}-darwin-arm64.vsix
+        asset_name: csharp-${{ env.VERSION }}-darwin-arm64.vsix
+        asset_content_type: application/zip
+
+    - name: Upload release build (darwin-x64)
+      id: upload-release-asset-darwin-x64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./csharp-${{ env.VERSION }}-darwin-x64.vsix
+        asset_name: csharp-${{ env.VERSION }}-darwin-x64.vsix
+        asset_content_type: application/zip
+
+    - name: Upload release build (linux-x64)
+      id: upload-release-asset-linux-x64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./csharp-${{ env.VERSION }}-linux-x64.vsix
+        asset_name: csharp-${{ env.VERSION }}-linux-x64.vsix
+        asset_content_type: application/zip
+
+    - name: Upload release build (win32-arm64)
+      id: upload-release-asset-win32-arm64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./csharp-${{ env.VERSION }}-win32-arm64.vsix
+        asset_name: csharp-${{ env.VERSION }}-win32-arm64.vsix
+        asset_content_type: application/zip
+
+    - name: Upload release build (win32-ia32)
+      id: upload-release-asset-win32-ia32
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./csharp-${{ env.VERSION }}-win32-ia32.vsix
+        asset_name: csharp-${{ env.VERSION }}-win32-ia32.vsix
+        asset_content_type: application/zip
+
+    - name: Upload release build (win32-x64)
+      id: upload-release-asset-win32-x64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./csharp-${{ env.VERSION }}-win32-x64.vsix
+        asset_name: csharp-${{ env.VERSION }}-win32-x64.vsix
         asset_content_type: application/zip
