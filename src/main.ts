@@ -220,7 +220,8 @@ function isSupportedPlatform(platform: PlatformInformation): boolean {
     if (platform.isLinux()) {
         return platform.architecture === "x86_64" ||
             platform.architecture === "x86" ||
-            platform.architecture === "i686";
+            platform.architecture === "i686" ||
+            platform.architecture === "arm64";
     }
 
     return false;

@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-dotnettools",
-  "version": "1.23.17",
+  "version": "1.23.18",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -213,6 +213,26 @@
       "installTestPath": "./.omnisharp/1.37.17/run",
       "platformId": "linux-x64",
       "integrity": "34276181B4C1F9968AFA10DEC058F6A2D79DE362FA01B565A04E879CA84A74FE"
+    },
+    {
+      "id": "OmniSharp",
+      "description": "OmniSharp for Linux (arm64)",
+      "url": null,
+      "fallbackUrl": null,
+      "installPath": null,
+      "platforms": [
+        "linux"
+      ],
+      "architectures": [
+        "arm64"
+      ],
+      "binaries": [
+        "./mono.linux-arm64",
+        "./run"
+      ],
+      "installTestPath": null,
+      "platformId": "linux-arm64",
+      "integrity": null
     },
     {
       "id": "Debugger",
