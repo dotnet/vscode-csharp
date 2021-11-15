@@ -28,6 +28,7 @@ export const offlinePackages = [
     { platformInfo: new PlatformInformation('win32', 'x86'), id: "win32-ia32" },
     { platformInfo: new PlatformInformation('win32', 'arm64'), id: "win32-arm64" },
     { platformInfo: new PlatformInformation('linux', 'x86_64'), id: "linux-x64" },
+    { platformInfo: new PlatformInformation('linux', 'arm64'), id: "linux-arm64" },
     { platformInfo: new PlatformInformation('darwin', 'x86_64'), id: "darwin-x64" },
     { platformInfo: new PlatformInformation('darwin', 'arm64'), id: "darwin-arm64" },
 ];
