@@ -23,7 +23,7 @@ export async function downloadAndInstallPackages(packages: AbsolutePathPackage[]
             let installationStage = "touchBeginFile";
 
             if (pkg.url === null && pkg.id === "OmniSharp") {
-                eventStream.post(new InstallationFailure(installationStage, new Error("A release package of OmniSharp does not exist for this platform. To use a experimental build set \"omnisharp.path\" to \"latest\" in Settings and restart.")));
+                eventStream.post(new InstallationFailure(installationStage, new Error("A release package of OmniSharp does not exist for this platform. Set \"omnisharp.path\" to \"latest\" in Settings to use an experimental build.")));
                 continue;
             }
 
