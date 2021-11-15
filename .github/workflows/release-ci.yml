@@ -52,6 +52,17 @@ jobs:
         asset_name: csharp-${{ env.VERSION }}-darwin-x64.vsix
         asset_content_type: application/zip
 
+    - name: Upload release build (linux-arm64)
+      id: upload-release-asset-linux-arm64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./csharp-${{ env.VERSION }}-linux-arm64.vsix
+        asset_name: csharp-${{ env.VERSION }}-linux-arm64.vsix
+        asset_content_type: application/zip
+
     - name: Upload release build (linux-x64)
       id: upload-release-asset-linux-x64
       uses: actions/upload-release-asset@v1

@@ -203,7 +203,14 @@ export class PlatformInformation {
         return util.execChildProcess('uname -m')
             .then(architecture => {
                 if (architecture) {
-                    return architecture.trim();
+                    architecture = architecture.trim();
+
+                    switch (architecture) {
+                        case "aarch64":
+                            return "arm64";
+                        default:
+                            return architecture;
+                    }
                 }
 
                 return null;
