@@ -120,7 +120,7 @@ The `"console"` setting controls what console (terminal) window the target app i
 
 ## launchSettings.json support
 
-In addition to launch.json, launch options can be configured through a {cwd}/Properties/launchSettings.json file. The advantage of 
+In addition to launch.json, launch options can be configured through a launchSettings.json file. The advantage of 
 launchSettings.json is that it allows settings to be shared between Visual Studio Code, full Visual Studio, and `dotnet run`.
 
 To configure which launchSettings.json profile to use (or to prevent it from being used), set the `launchSettingsProfile` option:
@@ -146,11 +146,14 @@ If `launchSettingsProfile` is NOT specified, the first profile with `"commandNam
 
 If `launchSettingsProfile` is set to null/an empty string, then Properties/launchSettings.json will be ignored.
 
+By default, the debugger will search for launchSettings.json in {cwd}/Properties/launchSettings.json. To customize this path, set `launchSettingsFilePath`:
+
+   "launchSettingsFilePath": "${workspaceFolder}/<Relative-Path-To-Project-Directory/Properties/launchSettings.json"
+
 Restrictions:
-1. The launchSettings.json file must be in {cwd}/Properties/launchSettings.json
-2. Only profiles with `"commandName": "Project"` are supported.
-3. Only `environmentVariables`, `applicationUrl` and `commandLineArgs` properties are supported
-4. Settings in launch.json will take precedence over settings in launchSettings.json, so for example, if `args` 
+1. Only profiles with `"commandName": "Project"` are supported.
+2. Only `environmentVariables`, `applicationUrl` and `commandLineArgs` properties are supported
+3. Settings in launch.json will take precedence over settings in launchSettings.json, so for example, if `args` 
 is already set to something other than an empty string/array in `launch.json` then the launchSettings.json 
 content will be ignored.
 
