@@ -309,3 +309,17 @@ To disable Source Link for all URLs, use `"sourceLinkOptions": { "*": { "enabled
 If multiple entries cover the same URL, the more specific entry (the entry with the longer string length) will be used.
 
 Currently Source Link only works for source files that can be accessed without authentication. So, for example, the debugger can download source files from open source projects on GitHub, but it cannot download from private GitHub repos, or from Visual Studio Team Services.
+
+## Target Architecture options (macOS M1)
+
+.NET on Apple M1 supports both x86_64 and ARM64. When debugging, the architecture of the process the debugger is attaching to and the debugger must match. If they do not match, it may result in `Unknown Error: 0x80131c3c`.
+
+The extension will try to resolve `targetArchitecture` based on the output of `dotnet --info` in the PATH, else it will try to use the same architecture as VS Code.
+
+You can override this behavior by setting `targetArchitecture` in your `launch.json`.
+
+Example:
+
+```json
+    "targetArchitecture": "arm64"
+```
