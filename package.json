@@ -3598,6 +3598,38 @@
       {
         "id": "xmlDocCommentText",
         "description": ""
+      },
+      {
+        "id": "regexComment",
+        "description": ""
+      },
+      {
+        "id": "regexCharacterClass",
+        "description": ""
+      },
+      {
+        "id": "regexAnchor",
+        "description": ""
+      },
+      {
+        "id": "regexQuantifier",
+        "description": ""
+      },
+      {
+        "id": "regexGrouping",
+        "description": ""
+      },
+      {
+        "id": "regexAlternation",
+        "description": ""
+      },
+      {
+        "id": "regexSelfEscapedCharacter",
+        "description": ""
+      },
+      {
+        "id": "regexOtherEscape",
+        "description": ""
       }
     ],
     "semanticTokenModifiers": [],
@@ -3735,6 +3767,40 @@
           ],
           "xmlDocCommentText": [
             "comment.documentation.cs"
+          ],
+          "regexComment": [
+            "string.regexp.comment.cs"
+          ],
+          "regexCharacterClass": [
+            "constant.character.character-class.regexp.cs",
+            "constant.other.character-class.set.regexp.cs",
+            "constant.other.character-class.regexp.cs",
+            "constant.character.set.regexp.cs"
+          ],
+          "regexAnchor": [
+            "keyword.control.anchor.regexp.cs"
+          ],
+          "regexQuantifier": [
+            "keyword.operator.quantifier.regexp.cs"
+          ],
+          "regexGrouping": [
+            "punctuation.definition.group.regexp.cs",
+            "punctuation.definition.group.assertion.regexp.cs",
+            "punctuation.definition.character-class.regexp.cs",
+            "punctuation.character.set.begin.regexp.cs",
+            "punctuation.character.set.end.regexp.cs",
+            "keyword.operator.negation.regexp.cs",
+            "support.other.parenthesis.regexp.cs"
+          ],
+          "regexAlternation": [
+            "keyword.operator.or.regexp.cs",
+            "keyword.control.anchor.regexp.cs"
+          ],
+          "regexSelfEscapedCharacter": [
+            "string.regexp.self-escaped-character.cs"
+          ],
+          "regexOtherEscape": [
+            "string.regexp.other-escape.cs"
           ]
         }
       }
