@@ -3761,7 +3761,10 @@
         "mimetypes": [
           "text/x-cshtml"
         ],
-        "configuration": "./src/razor/language-configuration.json"
+        "configuration": "./src/razor/language-configuration.json",
+        "aliases": [
+          "ASP.NET Razor"
+        ]
       }
     ],
     "grammars": [
