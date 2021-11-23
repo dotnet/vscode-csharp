@@ -491,6 +491,10 @@
           "type": "boolean",
           "description": "When true (the default state), the debugger will attempt faster evaluation by simulating execution of simple properties and methods.",
           "default": true
+        },
+        "targetArchitecture": {
+          "type": "string",
+          "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
         }
       }
     },
