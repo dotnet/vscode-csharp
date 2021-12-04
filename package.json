@@ -195,7 +195,7 @@
     },
     {
       "id": "OmniSharp",
-      "description": "OmniSharp for OSX (Mono)",
+      "description": "OmniSharp for OSX (Mono / x64)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/47df6cf8-7648-4fff-9e9c-304f0202d31c/9f560aead2b823079775c00110972c04/omnisharp-osx-1.37.17.zip",
       "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.17/omnisharp-osx-1.37.17.zip",
       "installPath": ".omnisharp/1.37.17",
@@ -213,16 +213,18 @@
     },
     {
       "id": "OmniSharp",
-      "description": "OmniSharp for OSX (.NET 6)",
+      "description": "OmniSharp for OSX (.NET 6 / x64)",
       "url": null,
       "fallbackUrl": null,
       "installPath": null,
       "platforms": [
         "darwin"
       ],
+      "architectures": [
+        "x86_64"
+      ],
       "binaries": [
-        "./mono.osx",
-        "./run"
+        "OmniSharp"
       ],
       "installTestPath": null,
       "platformId": "osx",
@@ -231,7 +233,27 @@
     },
     {
       "id": "OmniSharp",
-      "description": "OmniSharp for Linux (Mono, x86)",
+      "description": "OmniSharp for OSX (.NET 6 / arm64)",
+      "url": null,
+      "fallbackUrl": null,
+      "installPath": null,
+      "platforms": [
+        "darwin"
+      ],
+      "architectures": [
+        "arm64"
+      ],
+      "binaries": [
+        "OmniSharp"
+      ],
+      "installTestPath": null,
+      "platformId": "osx",
+      "isFramework": false,
+      "integrity": null
+    },
+    {
+      "id": "OmniSharp",
+      "description": "OmniSharp for Linux (Mono / x86)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/47df6cf8-7648-4fff-9e9c-304f0202d31c/6f3d66d4ffa4fa627225221fb00e106e/omnisharp-linux-x86-1.37.17.zip",
       "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.17/omnisharp-linux-x86-1.37.17.zip",
       "installPath": ".omnisharp/1.37.17",
@@ -253,7 +275,7 @@
     },
     {
       "id": "OmniSharp",
-      "description": "OmniSharp for Linux (.NET 6 x86)",
+      "description": "OmniSharp for Linux (.NET 6 / x86)",
       "url": null,
       "fallbackUrl": null,
       "installPath": null,
@@ -265,8 +287,7 @@
         "i686"
       ],
       "binaries": [
-        "./mono.linux-x86",
-        "./run"
+        "OmniSharp"
       ],
       "installTestPath": null,
       "platformId": "linux-x86",
@@ -275,7 +296,7 @@
     },
     {
       "id": "OmniSharp",
-      "description": "OmniSharp for Linux (Mono, x64)",
+      "description": "OmniSharp for Linux (Mono / x64)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/47df6cf8-7648-4fff-9e9c-304f0202d31c/6cf1b92d91f942929922013b2139cca9/omnisharp-linux-x64-1.37.17.zip",
       "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.17/omnisharp-linux-x64-1.37.17.zip",
       "installPath": ".omnisharp/1.37.17",
@@ -296,7 +317,7 @@
     },
     {
       "id": "OmniSharp",
-      "description": "OmniSharp for Linux (.NET 6, x64)",
+      "description": "OmniSharp for Linux (.NET 6 / x64)",
       "url": null,
       "fallbackUrl": null,
       "installPath": null,
@@ -307,8 +328,7 @@
         "x86_64"
       ],
       "binaries": [
-        "./mono.linux-x86_64",
-        "./run"
+        "OmniSharp"
       ],
       "installTestPath": null,
       "platformId": "linux-x64",
@@ -317,7 +337,7 @@
     },
     {
       "id": "OmniSharp",
-      "description": "OmniSharp for Linux (Framework, arm64)",
+      "description": "OmniSharp for Linux (Framework / arm64)",
       "url": null,
       "fallbackUrl": null,
       "installPath": null,
@@ -338,7 +358,7 @@
     },
     {
       "id": "OmniSharp",
-      "description": "OmniSharp for Linux (.NET 6, arm64)",
+      "description": "OmniSharp for Linux (.NET 6 / arm64)",
       "url": null,
       "fallbackUrl": null,
       "installPath": null,
@@ -349,8 +369,7 @@
         "arm64"
       ],
       "binaries": [
-        "./mono.linux-arm64",
-        "./run"
+        "OmniSharp"
       ],
       "installTestPath": null,
       "platformId": "linux-arm64",
