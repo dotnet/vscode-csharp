@@ -138,7 +138,26 @@
       ],
       "installTestPath": "./.omnisharp/1.37.17/OmniSharp.exe",
       "platformId": "win-x86",
+      "isFramework": true,
       "integrity": "95ECBABF821ED45E4E6F3173E2165C5F593FC4611040475DBD6D54C16D78F4F8"
+    },
+    {
+      "id": "OmniSharp",
+      "description": "OmniSharp for Windows (.NET 6 / x86)",
+      "url": null,
+      "fallbackUrl": null,
+      "installPath": null,
+      "platforms": [
+        "win32"
+      ],
+      "architectures": [
+        "x86",
+        "arm64"
+      ],
+      "installTestPath": null,
+      "platformId": "win-x86",
+      "isFramework": false,
+      "integrity": null
     },
     {
       "id": "OmniSharp",
@@ -154,11 +173,29 @@
       ],
       "installTestPath": "./.omnisharp/1.37.17/OmniSharp.exe",
       "platformId": "win-x64",
+      "isFramework": true,
       "integrity": "BD81F1284FA4A9E6D63292074D0304B65CD39C24539CB761B54E8727619070DF"
     },
     {
       "id": "OmniSharp",
-      "description": "OmniSharp for OSX",
+      "description": "OmniSharp for Windows (.NET 6 / x64)",
+      "url": null,
+      "fallbackUrl": null,
+      "installPath": null,
+      "platforms": [
+        "win32"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "installTestPath": null,
+      "platformId": "win-x64",
+      "isFramework": false,
+      "integrity": null
+    },
+    {
+      "id": "OmniSharp",
+      "description": "OmniSharp for OSX (Mono)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/47df6cf8-7648-4fff-9e9c-304f0202d31c/9f560aead2b823079775c00110972c04/omnisharp-osx-1.37.17.zip",
       "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.17/omnisharp-osx-1.37.17.zip",
       "installPath": ".omnisharp/1.37.17",
@@ -171,11 +208,30 @@
       ],
       "installTestPath": "./.omnisharp/1.37.17/run",
       "platformId": "osx",
+      "isFramework": true,
       "integrity": "43D6B18F390B8ED92231044E87413831E565E9AB5938223B19CA97B3628DDDF4"
     },
     {
       "id": "OmniSharp",
-      "description": "OmniSharp for Linux (x86)",
+      "description": "OmniSharp for OSX (.NET 6)",
+      "url": null,
+      "fallbackUrl": null,
+      "installPath": null,
+      "platforms": [
+        "darwin"
+      ],
+      "binaries": [
+        "./mono.osx",
+        "./run"
+      ],
+      "installTestPath": null,
+      "platformId": "osx",
+      "isFramework": false,
+      "integrity": null
+    },
+    {
+      "id": "OmniSharp",
+      "description": "OmniSharp for Linux (Mono, x86)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/47df6cf8-7648-4fff-9e9c-304f0202d31c/6f3d66d4ffa4fa627225221fb00e106e/omnisharp-linux-x86-1.37.17.zip",
       "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.17/omnisharp-linux-x86-1.37.17.zip",
       "installPath": ".omnisharp/1.37.17",
@@ -192,11 +248,34 @@
       ],
       "installTestPath": "./.omnisharp/1.37.17/run",
       "platformId": "linux-x86",
+      "isFramework": true,
       "integrity": "75676E50D9FB62B9DC20A6A10E65420B54EFE2FFAE80AC21F59A4C483A4902BB"
     },
     {
       "id": "OmniSharp",
-      "description": "OmniSharp for Linux (x64)",
+      "description": "OmniSharp for Linux (.NET 6 x86)",
+      "url": null,
+      "fallbackUrl": null,
+      "installPath": null,
+      "platforms": [
+        "linux"
+      ],
+      "architectures": [
+        "x86",
+        "i686"
+      ],
+      "binaries": [
+        "./mono.linux-x86",
+        "./run"
+      ],
+      "installTestPath": null,
+      "platformId": "linux-x86",
+      "isFramework": false,
+      "integrity": null
+    },
+    {
+      "id": "OmniSharp",
+      "description": "OmniSharp for Linux (Mono, x64)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/47df6cf8-7648-4fff-9e9c-304f0202d31c/6cf1b92d91f942929922013b2139cca9/omnisharp-linux-x64-1.37.17.zip",
       "fallbackUrl": "https://roslynomnisharp.blob.core.windows.net/releases/1.37.17/omnisharp-linux-x64-1.37.17.zip",
       "installPath": ".omnisharp/1.37.17",
@@ -212,11 +291,33 @@
       ],
       "installTestPath": "./.omnisharp/1.37.17/run",
       "platformId": "linux-x64",
+      "isFramework": true,
       "integrity": "34276181B4C1F9968AFA10DEC058F6A2D79DE362FA01B565A04E879CA84A74FE"
     },
     {
       "id": "OmniSharp",
-      "description": "OmniSharp for Linux (arm64)",
+      "description": "OmniSharp for Linux (.NET 6, x64)",
+      "url": null,
+      "fallbackUrl": null,
+      "installPath": null,
+      "platforms": [
+        "linux"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "binaries": [
+        "./mono.linux-x86_64",
+        "./run"
+      ],
+      "installTestPath": null,
+      "platformId": "linux-x64",
+      "isFramework": false,
+      "integrity": null
+    },
+    {
+      "id": "OmniSharp",
+      "description": "OmniSharp for Linux (Framework, arm64)",
       "url": null,
       "fallbackUrl": null,
       "installPath": null,
@@ -232,7 +333,29 @@
       ],
       "installTestPath": null,
       "platformId": "linux-arm64",
-      "integrity": null
+      "integrity": null,
+      "isFramework": true
+    },
+    {
+      "id": "OmniSharp",
+      "description": "OmniSharp for Linux (.NET 6, arm64)",
+      "url": null,
+      "fallbackUrl": null,
+      "installPath": null,
+      "platforms": [
+        "linux"
+      ],
+      "architectures": [
+        "arm64"
+      ],
+      "binaries": [
+        "./mono.linux-arm64",
+        "./run"
+      ],
+      "installTestPath": null,
+      "platformId": "linux-arm64",
+      "integrity": null,
+      "isFramework": false
     },
     {
       "id": "Debugger",
@@ -741,6 +864,13 @@
           "default": null,
           "scope": "machine",
           "description": "Specifies the path to OmniSharp. When left empty the OmniSharp version pinned to the C# Extension is used. This can be the absolute path to an OmniSharp executable, a specific version number, or \"latest\". If a version number or \"latest\" is specified, the appropriate version of OmniSharp will be downloaded on your behalf. Setting \"latest\" is an opt-in into latest beta releases of OmniSharp."
+        },
+        "omnisharp.useModernNet": {
+          "type": "boolean",
+          "default": "false",
+          "scope": "window",
+          "title": "Use .NET 6 build of OmniSharp (experimental)",
+          "description": "Use OmniSharp build for .NET 6. This version _does not_ support non-SDK-style .NET Framework projects, including Unity. SDK-style Framework, .NET Core, and .NET 5+ projects should see significant performance improvements, but there may still be bugs. Please open issues if you find any bugs."
         },
         "omnisharp.useGlobalMono": {
           "type": "string",

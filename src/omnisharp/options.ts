@@ -8,6 +8,7 @@ import { vscode, WorkspaceConfiguration } from '../vscodeAdapter';
 export class Options {
     constructor(
         public path: string,
+        public useModernNet: boolean,
         public useGlobalMono: string,
         public waitForDebugger: boolean,
         public loggingLevel: string,
@@ -54,6 +55,7 @@ export class Options {
         const razorConfig = vscode.workspace.getConfiguration('razor');
 
         const path = Options.readPathOption(csharpConfig, omnisharpConfig);
+        const useFramework = omnisharpConfig.get<boolean>("useModernNet");
         const useGlobalMono = Options.readUseGlobalMonoOption(omnisharpConfig, csharpConfig);
         const monoPath = omnisharpConfig.get<string>('monoPath', undefined) || undefined;
 
@@ -108,6 +110,7 @@ export class Options {
 
         return new Options(
             path,
+            useFramework,
             useGlobalMono,
             waitForDebugger,
             loggingLevel,
