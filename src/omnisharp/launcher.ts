@@ -30,7 +30,7 @@ export interface LaunchTarget {
     description: string;
     directory: string;
     target: string;
-    kind: LaunchTargetKind;
+    workspaceKind: LaunchTargetKind;
 }
 
 export const vslsTarget: LaunchTarget = {
@@ -38,7 +38,7 @@ export const vslsTarget: LaunchTarget = {
     description: "Visual Studio Live Share",
     directory: "",
     target: "",
-    kind: LaunchTargetKind.LiveShare
+    workspaceKind: LaunchTargetKind.LiveShare
 };
 
 /** Live share scheme */
@@ -144,7 +144,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
                     description: vscode.workspace.asRelativePath(dirname),
                     target: resource.fsPath,
                     directory: path.dirname(resource.fsPath),
-                    kind: LaunchTargetKind.Solution
+                    workspaceKind: LaunchTargetKind.Solution
                 });
             }
             // Add project.json files
@@ -156,7 +156,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
                     description: vscode.workspace.asRelativePath(dirname),
                     target: dirname,
                     directory: dirname,
-                    kind: LaunchTargetKind.ProjectJson
+                    workspaceKind: LaunchTargetKind.ProjectJson
                 });
             }
             // Add .csproj files
@@ -170,7 +170,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
                     description: vscode.workspace.asRelativePath(dirname),
                     target: dirname,
                     directory: dirname,
-                    kind: LaunchTargetKind.Project
+                    workspaceKind: LaunchTargetKind.Project
                 });
             }
             else {
@@ -198,7 +198,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
                 description: 'All contained projects',
                 target: folderPath,
                 directory: folderPath,
-                kind: LaunchTargetKind.Folder
+                workspaceKind: LaunchTargetKind.Folder
             });
         }
 
@@ -209,7 +209,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
                 description: path.basename(folderPath),
                 target: folderPath,
                 directory: folderPath,
-                kind: LaunchTargetKind.Csx
+                workspaceKind: LaunchTargetKind.Csx
             });
         }
 
@@ -220,7 +220,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
                 description: path.basename(folderPath),
                 target: folderPath,
                 directory: folderPath,
-                kind: LaunchTargetKind.Cake
+                workspaceKind: LaunchTargetKind.Cake
             });
         }
 
@@ -230,7 +230,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
                 description: '',
                 target: folderPath,
                 directory: folderPath,
-                kind: LaunchTargetKind.Folder
+                workspaceKind: LaunchTargetKind.Folder
             });
         }
     });

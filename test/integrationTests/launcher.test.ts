@@ -47,10 +47,10 @@ suite(`launcher:`, () => {
 
         const launchTargets = resourcesAndFolderMapToLaunchTargets(testResources, workspaceFolders, folderMap);
 
-        const solutionTarget = launchTargets.find(target => target.kind === LaunchTargetKind.Solution && target.label === "test.sln");
+        const solutionTarget = launchTargets.find(target => target.workspaceKind === LaunchTargetKind.Solution && target.label === "test.sln");
         assert.exists(solutionTarget, "Launch targets did not include `/test.sln`");
 
-        const projectTarget = launchTargets.find(target => target.kind === LaunchTargetKind.Project && target.label === "test.csproj");
+        const projectTarget = launchTargets.find(target => target.workspaceKind === LaunchTargetKind.Project && target.label === "test.csproj");
         assert.exists(projectTarget, "Launch targets did not include `/test/test.csproj`");
     });
 });
