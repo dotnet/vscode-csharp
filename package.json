@@ -867,7 +867,7 @@
         },
         "omnisharp.useModernNet": {
           "type": "boolean",
-          "default": "false",
+          "default": false,
           "scope": "window",
           "title": "Use .NET 6 build of OmniSharp (experimental)",
           "description": "Use OmniSharp build for .NET 6. This version _does not_ support non-SDK-style .NET Framework projects, including Unity. SDK-style Framework, .NET Core, and .NET 5+ projects should see significant performance improvements, but there may still be bugs. Please open issues if you find any bugs."

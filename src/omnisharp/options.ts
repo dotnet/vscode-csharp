@@ -55,7 +55,7 @@ export class Options {
         const razorConfig = vscode.workspace.getConfiguration('razor');
 
         const path = Options.readPathOption(csharpConfig, omnisharpConfig);
-        const useFramework = omnisharpConfig.get<boolean>("useModernNet");
+        const useModernNet = omnisharpConfig.get<boolean>("useModernNet", false);
         const useGlobalMono = Options.readUseGlobalMonoOption(omnisharpConfig, csharpConfig);
         const monoPath = omnisharpConfig.get<string>('monoPath', undefined) || undefined;
 
@@ -110,7 +110,7 @@ export class Options {
 
         return new Options(
             path,
-            useFramework,
+            useModernNet,
             useGlobalMono,
             waitForDebugger,
             loggingLevel,
