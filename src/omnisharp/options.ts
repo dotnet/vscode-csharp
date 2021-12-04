@@ -38,6 +38,7 @@ export class Options {
         public razorPluginPath?: string,
         public defaultLaunchSolution?: string,
         public monoPath?: string,
+        public dotnetPath?: string,
         public excludePaths?: string[],
         public maxProjectFileCountForDiagnosticAnalysis?: number | null) {
     }
@@ -58,6 +59,7 @@ export class Options {
         const useModernNet = omnisharpConfig.get<boolean>("useModernNet", false);
         const useGlobalMono = Options.readUseGlobalMonoOption(omnisharpConfig, csharpConfig);
         const monoPath = omnisharpConfig.get<string>('monoPath', undefined) || undefined;
+        const dotnetPath = omnisharpConfig.get<string>('dotnetPath', undefined) || undefined;
 
         const waitForDebugger = omnisharpConfig.get<boolean>('waitForDebugger', false);
 
@@ -140,6 +142,7 @@ export class Options {
             razorPluginPath,
             defaultLaunchSolution,
             monoPath,
+            dotnetPath,
             excludePaths,
             maxProjectFileCountForDiagnosticAnalysis
         );

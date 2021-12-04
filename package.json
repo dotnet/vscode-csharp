@@ -906,6 +906,15 @@
           "scope": "machine",
           "description": "Specifies the path to a mono installation to use when \"useGlobalMono\" is set to \"always\", instead of the default system one. Example: \"/Library/Frameworks/Mono.framework/Versions/Current\""
         },
+        "omnisharp.dotnetPath": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "scope": "window",
+          "description": "Specified the path to a dotnet installation to use when \"useModernNet\" is set to true, instead of the default system one. Example: \"/home/username/mycustomdotnetdirectory\"."
+        },
         "omnisharp.waitForDebugger": {
           "type": "boolean",
           "default": false,

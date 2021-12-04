@@ -11,8 +11,9 @@ import { PlatformInformation } from '../platform';
 import { modernNetVersion } from './OmnisharpPackageCreator';
 
 export interface LaunchInfo {
-    LaunchPath: string;
+    LaunchPath?: string;
     MonoLaunchPath?: string;
+    DotnetLaunchPath?: string;
 }
 
 export class OmnisharpManager {
@@ -72,14 +73,14 @@ export class OmnisharpManager {
     }
 
     private GetLaunchInfo(platformInfo: PlatformInformation, isFramework: boolean, basePath: string): LaunchInfo {
-        if (platformInfo.isWindows()) {
+        if (!isFramework) {
             return {
-                LaunchPath: path.join(basePath, 'OmniSharp.exe')
+                DotnetLaunchPath: path.join(basePath, 'OmniSharp.dll')
             };
         }
-        else if (!isFramework) {
+        else if (platformInfo.isWindows()) {
             return {
-                LaunchPath: path.join(basePath, 'OmniSharp')
+                LaunchPath: path.join(basePath, 'OmniSharp.exe')
             };
         }
 

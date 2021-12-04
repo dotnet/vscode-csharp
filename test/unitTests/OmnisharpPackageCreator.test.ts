@@ -27,7 +27,7 @@ suite("GetOmnisharpPackage : Output package depends on the input package and oth
     const useFrameworkOptions = [true, false];
 
     useFrameworkOptions.forEach((useFramework) => {
-        const suffix = useFramework ? '' : `-net${modernNetVersion}`;
+        const pathSuffix = useFramework ? '' : `-net${modernNetVersion}`;
 
         test(`Throws exception if version is empty useFramework: ${useFramework}`, () => {
             let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "os-architecture"));
@@ -61,37 +61,37 @@ suite("GetOmnisharpPackage : Output package depends on the input package and oth
         test(`Install path is calculated using the specified path and version useFramework: ${useFramework}`, () => {
             let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "os-architecture"));
             let resultPackage = SetBinaryAndGetPackage(testPackage, useFramework, serverUrl, "1.2.3", "experimentPath");
-            resultPackage.installPath.should.equal(`experimentPath/1.2.3${suffix}`);
+            resultPackage.installPath.should.equal(`experimentPath/1.2.3${pathSuffix}`);
         });
 
-        test(`Install test path is calculated using specified path, version and ends with Omnisharp.exe - Windows(x86) useFramework: ${useFramework}`, () => {
+        test(`Install test path is calculated using specified path, version and ends with OmniSharp.exe or OmniSharp.dll - Windows(x86) useFramework: ${useFramework}`, () => {
             let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "win-x86"));
             let resultPackage = SetBinaryAndGetPackage(testPackage, useFramework, serverUrl, "1.2.3", "experimentPath");
-            resultPackage.installTestPath.should.equal(`./experimentPath/1.2.3${suffix}/OmniSharp.exe`);
+            resultPackage.installTestPath.should.equal(`./experimentPath/1.2.3${pathSuffix}/OmniSharp.${useFramework ? 'exe' : 'dll'}`);
         });
 
-        test(`Install test path is calculated using specified path, version and ends with Omnisharp.exe - Windows(x64) useFramework: ${useFramework}`, () => {
+        test(`Install test path is calculated using specified path, version and ends with OmniSharp.exe or OmniSharp.dll - Windows(x64) useFramework: ${useFramework}`, () => {
             let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "win-x64"));
             let resultPackage = SetBinaryAndGetPackage(testPackage, useFramework, serverUrl, "1.2.3", "experimentPath");
-            resultPackage.installTestPath.should.equal(`./experimentPath/1.2.3${suffix}/OmniSharp.exe`);
+            resultPackage.installTestPath.should.equal(`./experimentPath/1.2.3${pathSuffix}/OmniSharp.${useFramework ? 'exe' : 'dll'}`);
         });
 
         test(`Install test path is calculated using specified path, version and ends with correct binary - OSX useFramework: ${useFramework}`, () => {
             let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "osx"));
             let resultPackage = SetBinaryAndGetPackage(testPackage, useFramework, serverUrl, "1.2.3", "experimentPath");
-            resultPackage.installTestPath.should.equal(`./experimentPath/1.2.3${suffix}/${useFramework ? 'run' : 'OmniSharp'}`);
+            resultPackage.installTestPath.should.equal(`./experimentPath/1.2.3${pathSuffix}/${useFramework ? 'run' : 'OmniSharp.dll'}`);
         });
 
         test(`Install test path is calculated using specified path, version and ends with correct binary - Linux(x86) useFramework: ${useFramework}`, () => {
             let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "linux-x86"));
             let resultPackage = SetBinaryAndGetPackage(testPackage, useFramework, serverUrl, "1.2.3", "experimentPath");
-            resultPackage.installTestPath.should.equal(`./experimentPath/1.2.3${suffix}/${useFramework ? 'run' : 'OmniSharp'}`);
+            resultPackage.installTestPath.should.equal(`./experimentPath/1.2.3${pathSuffix}/${useFramework ? 'run' : 'OmniSharp.dll'}`);
         });
 
         test(`Install test path is calculated using specified path, version and ends with correct binary - Linux(x64) useFramework: ${useFramework}`, () => {
             let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "linux-x64"));
             let resultPackage = SetBinaryAndGetPackage(testPackage, useFramework, serverUrl, "1.2.3", "experimentPath");
-            resultPackage.installTestPath.should.equal(`./experimentPath/1.2.3${suffix}/${useFramework ? 'run' : 'OmniSharp'}`);
+            resultPackage.installTestPath.should.equal(`./experimentPath/1.2.3${pathSuffix}/${useFramework ? 'run' : 'OmniSharp.dll'}`);
         });
     });
 
@@ -185,8 +185,8 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
             let outPackages = GetPackagesFromVersion("1.1.1", useFramework, inputPackages, serverUrl, "experimentPath");
             const suffix = useFramework ? '' : `-net${modernNetVersion}`;
             outPackages.length.should.equal(2);
-            outPackages[0].installTestPath.should.equal(`./experimentPath/1.1.1${suffix}/OmniSharp.exe`);
-            outPackages[1].installTestPath.should.equal(`./experimentPath/1.1.1${suffix}/${useFramework ? 'run' : 'OmniSharp'}`);
+            outPackages[0].installTestPath.should.equal(`./experimentPath/1.1.1${suffix}/OmniSharp.${useFramework ? 'exe' : 'dll'}`);
+            outPackages[1].installTestPath.should.equal(`./experimentPath/1.1.1${suffix}/${useFramework ? 'run' : 'OmniSharp.dll'}`);
         });
 
         test('Returns only omnisharp packages with experimentalIds', () => {

@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Options } from "../omnisharp/options";
-import { MonoInformation } from "./MonoInformation";
+import { HostExecutableInformation } from "./HostExecutableInformation";
 
-export interface IMonoResolver {
-    getGlobalMonoInfo(options: Options): Promise<MonoInformation>;
+export interface IHostExecutableResolver {
+    getHostExecutableInfo(options: Options): Promise<HostExecutableInformation>;
 }

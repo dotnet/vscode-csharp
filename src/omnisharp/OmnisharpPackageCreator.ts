@@ -24,14 +24,15 @@ export function GetPackagesFromVersion(version: string, useFramework: boolean, r
 
 export function SetBinaryAndGetPackage(inputPackage: Package, useFramework: boolean, serverUrl: string, version: string, installPath: string): Package {
     let installBinary: string;
-    if (inputPackage.platformId === "win-x86" || inputPackage.platformId === "win-x64") {
-        installBinary = "OmniSharp.exe";
+    if (!useFramework) {
+        // .NET 6 packages use system `dotnet OmniSharp.dll`
+        installBinary = 'OmniSharp.dll';
     }
-    else if (!useFramework) {
-        installBinary = 'OmniSharp';
+    else if (inputPackage.platformId === 'win-x86' || inputPackage.platformId === 'win-x64' || inputPackage.platformId === 'win-arm64') {
+        installBinary = 'OmniSharp.exe';
     }
     else {
-        installBinary = "run";
+        installBinary = 'run';
     }
 
     return GetPackage(inputPackage, useFramework, serverUrl, version, installPath, installBinary);
