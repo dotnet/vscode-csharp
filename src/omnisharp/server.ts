@@ -256,7 +256,7 @@ export class OmniSharpServer {
             return;
         }
 
-        if (launchTarget.kind === LaunchTargetKind.LiveShare) {
+        if (launchTarget.workspaceKind === LaunchTargetKind.LiveShare) {
             this.eventStream.post(new ObservableEvents.OmnisharpServerMessage("During Live Share sessions language services are provided by the Live Share server."));
             return;
         }
@@ -562,7 +562,7 @@ export class OmniSharpServer {
             // To maintain previous behavior when there are mulitple targets available,
             // launch with first Solution or Folder target.
             const firstFolderOrSolutionTarget = launchTargets
-                .find(target => target.kind == LaunchTargetKind.Folder || target.kind == LaunchTargetKind.Solution);
+                .find(target => target.workspaceKind == LaunchTargetKind.Folder || target.workspaceKind == LaunchTargetKind.Solution);
             if (firstFolderOrSolutionTarget) {
                 return this.restart(firstFolderOrSolutionTarget);
             }

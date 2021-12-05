@@ -18,7 +18,9 @@ const config = {
     },
     devtool: 'source-map',
     externals: {
-        vscode: "commonjs vscode" // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
+        vscode: "commonjs vscode", // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
+        'applicationinsights-native-metrics': 'commonjs applicationinsights-native-metrics', // we're not native
+        '@opentelemetry/tracing': 'commonjs @opentelemetry/tracing', // optional
     },
     resolve: { // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
         extensions: ['.ts', '.js']
