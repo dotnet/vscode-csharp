@@ -39,8 +39,8 @@ export class OmniSharpDotnetResolver implements IHostExecutableResolver {
             throw new Error(`Unknown result output from 'dotnet --version'. Received ${result.stdout}`);
         }
 
-        if (this.testVersionPart(segments[0], minimumDotnetMajor, result.stdout)
-            || this.testVersionPart(segments[1], minimumDotnetMinor, result.stdout)) {
+        if (this.versionPartIsGreaterThanMinimum(segments[0], minimumDotnetMajor, result.stdout)
+            || this.versionPartIsGreaterThanMinimum(segments[1], minimumDotnetMinor, result.stdout)) {
             return {
                 version: result.stdout,
                 path: options.dotnetPath,
@@ -48,7 +48,7 @@ export class OmniSharpDotnetResolver implements IHostExecutableResolver {
             };
         }
 
-        this.testVersionPart(segments[2], minimumDotnetPatch, result.stdout);
+        this.versionPartIsGreaterThanMinimum(segments[2], minimumDotnetPatch, result.stdout);
 
         return {
             version: result.stdout,
@@ -57,11 +57,11 @@ export class OmniSharpDotnetResolver implements IHostExecutableResolver {
         };
     }
 
-    private testVersionPart(actualVersion: number, minimumRequired: number, foundVersion: string): boolean {
+    private versionPartIsGreaterThanMinimum(actualVersion: number, minimumRequired: number, foundVersion: string): boolean {
         if (actualVersion < minimumRequired) {
             throw new Error(`Found dotnet version ${foundVersion}. Minimum required version is ${minimumDotnetMajor}.${minimumDotnetMinor}.${minimumDotnetPatch}.`);
         }
 
-        return actualVersion === minimumRequired;
+        return actualVersion > minimumRequired;
     }
 }
