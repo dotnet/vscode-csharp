@@ -43,6 +43,7 @@ import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
 import SemanticTokensProvider from '../features/semanticTokensProvider';
 import SourceGeneratedDocumentProvider from '../features/sourceGeneratedDocumentProvider';
 import { getDecompilationAuthorization } from './decompilationPrompt';
+import { OmniSharpDotnetResolver } from './OmniSharpDotnetResolver';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
@@ -56,9 +57,10 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     };
 
     const options = optionProvider.GetLatestOptions();
-    let omnisharpMonoResolver = new OmniSharpMonoResolver(getMonoVersion);
+    const omnisharpMonoResolver = new OmniSharpMonoResolver(getMonoVersion);
+    const omnisharpDotnetResolver = new OmniSharpDotnetResolver(platformInfo);
     const decompilationAuthorized = await getDecompilationAuthorization(context, optionProvider);
-    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver, decompilationAuthorized);
+    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver, omnisharpDotnetResolver, decompilationAuthorized);
     const advisor = new Advisor(server, optionProvider); // create before server is started
     const disposables = new CompositeDisposable();
     const languageMiddlewareFeature = new LanguageMiddlewareFeature();
