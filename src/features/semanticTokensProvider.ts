@@ -77,6 +77,10 @@ enum DefaultTokenModifier {
     readonly,
 }
 
+enum CustomTokenModifier {
+    Access = DefaultTokenModifier.readonly + 1,
+}
+
 // All classifications from Roslyn's ClassificationTypeNames https://github.com/dotnet/roslyn/blob/master/src/Workspaces/Core/Portable/Classification/ClassificationTypeNames.cs
 // Keep in sync with omnisharp-roslyn's SemanticHighlightClassification
 enum SemanticHighlightClassification {
@@ -148,7 +152,8 @@ enum SemanticHighlightClassification {
 }
 
 enum SemanticHighlightModifier {
-    Static
+    Static,
+    Access,
 }
 
 export default class SemanticTokensProvider extends AbstractProvider implements vscode.DocumentSemanticTokensProvider, vscode.DocumentRangeSemanticTokensProvider {
@@ -224,6 +229,19 @@ export default class SemanticTokensProvider extends AbstractProvider implements 
 
             // We can use the returned range because we made sure the document version is the same.
             let spanRange = toRange2(span);
+
+            // Add in access modifier tokens as omnisharp does not support it
+            if (span.Type === SemanticHighlightClassification.Keyword) {
+                switch (document.getText(spanRange)) {
+                    case "public":
+                    case "private":
+                    case "protected":
+                    case "internal":
+                        tokenModifiers += 2 ** CustomTokenModifier.Access;
+                        break;
+                }
+            }
+
             for (let line = spanRange.start.line; line <= spanRange.end.line; line++) {
                 const startCharacter = (line === spanRange.start.line ? spanRange.start.character : 0);
                 const endCharacter = (line === spanRange.end.line ? spanRange.end.character : document.lineAt(line).text.length);
@@ -290,6 +308,8 @@ tokenModifiers[DefaultTokenModifier.deprecated] = 'deprecated';
 tokenModifiers[DefaultTokenModifier.modification] = 'modification';
 tokenModifiers[DefaultTokenModifier.async] = 'async';
 tokenModifiers[DefaultTokenModifier.readonly] = 'readonly';
+
+tokenModifiers[CustomTokenModifier.Access] = 'access';
 
 const tokenTypeMap: number[] = [];
 tokenTypeMap[SemanticHighlightClassification.Comment] = DefaultTokenType.comment;
@@ -360,3 +380,4 @@ tokenTypeMap[SemanticHighlightClassification.RegexOtherEscape] = DefaultTokenTyp
 
 const tokenModifierMap: number[] = [];
 tokenModifierMap[SemanticHighlightModifier.Static] = 2 ** DefaultTokenModifier.static;
+tokenModifierMap[SemanticHighlightModifier.Access] = 2 ** CustomTokenModifier.Access;
