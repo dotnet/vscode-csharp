@@ -6,17 +6,17 @@
 import { satisfies } from 'semver';
 import * as path from 'path';
 import { Options } from './options';
-import { IMonoResolver } from '../constants/IMonoResolver';
-import { MonoInformation } from '../constants/MonoInformation';
+import { IHostExecutableResolver } from '../constants/IHostExecutableResolver';
+import { HostExecutableInformation } from '../constants/HostExecutableInformation';
 import { IGetMonoVersion } from '../constants/IGetMonoVersion';
 
-export class OmniSharpMonoResolver implements IMonoResolver {
+export class OmniSharpMonoResolver implements IHostExecutableResolver {
     private minimumMonoVersion = "6.4.0";
 
     constructor(private getMonoVersion: IGetMonoVersion) {
     }
 
-    private async configureEnvironmentAndGetInfo(options: Options): Promise<MonoInformation> {
+    private async configureEnvironmentAndGetInfo(options: Options): Promise<HostExecutableInformation> {
         let env = { ...process.env };
         let monoPath: string;
         if (options.useGlobalMono !== "never" && options.monoPath !== undefined) {
@@ -34,7 +34,7 @@ export class OmniSharpMonoResolver implements IMonoResolver {
         };
     }
 
-    public async getGlobalMonoInfo(options: Options): Promise<MonoInformation> {
+    public async getHostExecutableInfo(options: Options): Promise<HostExecutableInformation> {
         let monoInfo = await this.configureEnvironmentAndGetInfo(options);
         let isValid = monoInfo.version && satisfies(monoInfo.version, `>=${this.minimumMonoVersion}`);
         if (options.useGlobalMono === "always") {
@@ -45,7 +45,7 @@ export class OmniSharpMonoResolver implements IMonoResolver {
                     : "Ensure that Mono's '/bin' folder is added to your environment's PATH variable.";
                 throw new Error(`Unable to find Mono. ${suggestedAction}`);
             }
-            
+
             if (!isValid) {
                 throw new Error(`Found Mono version ${monoInfo.version}. Cannot start OmniSharp because Mono version >=${this.minimumMonoVersion} is required.`);
             }

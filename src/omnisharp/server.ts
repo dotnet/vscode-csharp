@@ -30,7 +30,7 @@ import { debounceTime } from 'rxjs/operators';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
-import { IMonoResolver } from '../constants/IMonoResolver';
+import { IHostExecutableResolver } from '../constants/IHostExecutableResolver';
 import { showProjectSelector } from '../features/commands';
 import { removeBOMFromBuffer, removeBOMFromString } from '../utils/removeBOM';
 
@@ -100,7 +100,17 @@ export class OmniSharpServer {
     private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
     private firstUpdateProject: boolean;
 
-    constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private packageJSON: any, private platformInfo: PlatformInformation, private eventStream: EventStream, private optionProvider: OptionProvider, private extensionPath: string, private monoResolver: IMonoResolver, public decompilationAuthorized: boolean) {
+    constructor(
+        private vscode: vscode,
+        networkSettingsProvider: NetworkSettingsProvider,
+        private packageJSON: any,
+        private platformInfo: PlatformInformation,
+        private eventStream: EventStream,
+        private optionProvider: OptionProvider,
+        private extensionPath: string,
+        private monoResolver: IHostExecutableResolver,
+        private dotnetResolver: IHostExecutableResolver,
+        public decompilationAuthorized: boolean) {
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
         let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, this.packageJSON, platformInfo, extensionPath);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
@@ -383,7 +393,7 @@ export class OmniSharpServer {
 
         let launchInfo: LaunchInfo;
         try {
-            launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, serverUrl, latestVersionFileServerPath, installPath, this.extensionPath);
+            launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, /* useFramework */ !options.useModernNet, serverUrl, latestVersionFileServerPath, installPath, this.extensionPath);
         }
         catch (error) {
             this.eventStream.post(new ObservableEvents.OmnisharpFailure(`Error occurred in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));
@@ -394,8 +404,8 @@ export class OmniSharpServer {
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
         try {
-            let launchResult = await launchOmniSharp(cwd, args, launchInfo, this.platformInfo, options, this.monoResolver);
-            this.eventStream.post(new ObservableEvents.OmnisharpLaunch(launchResult.monoVersion, launchResult.monoPath, launchResult.command, launchResult.process.pid));
+            const launchResult = await launchOmniSharp(cwd, args, launchInfo, this.platformInfo, options, this.monoResolver, this.dotnetResolver);
+            this.eventStream.post(new ObservableEvents.OmnisharpLaunch(launchResult.hostVersion, launchResult.hostPath, launchResult.hostIsMono, launchResult.command, launchResult.process.pid));
 
             if (razorPluginPath && options.razorPluginPath) {
                 if (fs.existsSync(razorPluginPath)) {

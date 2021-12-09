@@ -9,12 +9,12 @@ import { CSharpExtensionId } from "../constants/CSharpExtensionId";
 import { EventStream } from "../EventStream";
 import { OpenURL } from "../omnisharp/loggingEvents";
 import { Options } from "../omnisharp/options";
-import { IMonoResolver } from "../constants/IMonoResolver";
+import { IHostExecutableResolver } from "../constants/IHostExecutableResolver";
 import { IGetDotnetInfo } from "../constants/IGetDotnetInfo";
 
 const issuesUrl = "https://github.com/OmniSharp/omnisharp-vscode/issues/new";
 
-export default async function reportIssue(vscode: vscode, eventStream: EventStream, getDotnetInfo: IGetDotnetInfo, isValidPlatformForMono: boolean, options: Options, monoResolver: IMonoResolver) {
+export default async function reportIssue(vscode: vscode, eventStream: EventStream, getDotnetInfo: IGetDotnetInfo, isValidPlatformForMono: boolean, options: Options, monoResolver: IHostExecutableResolver) {
     const dotnetInfo = await getDotnetInfo();
     const monoInfo = await getMonoIfPlatformValid(isValidPlatformForMono, options, monoResolver);
     let extensions = getInstalledExtensions(vscode);
@@ -81,11 +81,11 @@ ${tableHeader}\n${table};
     return extensionTable;
 }
 
-async function getMonoIfPlatformValid(isValidPlatformForMono: boolean, options: Options, monoResolver: IMonoResolver): Promise<string> {
+async function getMonoIfPlatformValid(isValidPlatformForMono: boolean, options: Options, monoResolver: IHostExecutableResolver): Promise<string> {
     if (isValidPlatformForMono) {
         let monoVersion: string;
         try {
-            let globalMonoInfo = await monoResolver.getGlobalMonoInfo(options);
+            let globalMonoInfo = await monoResolver.getHostExecutableInfo(options);
             if (globalMonoInfo) {
                 monoVersion = `OmniSharp using global mono :${globalMonoInfo.version}`;
             }

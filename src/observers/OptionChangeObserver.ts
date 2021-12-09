@@ -23,6 +23,7 @@ const omniSharpOptions: ReadonlyArray<OptionsKey> = [
     "enableImportCompletion",
     "organizeImportsOnFormat",
     "enableAsyncCompletion",
+    "useModernNet",
 ];
 
 function OmniSharpOptionChangeObservable(optionObservable: Observable<Options>): Observable<Options> {
