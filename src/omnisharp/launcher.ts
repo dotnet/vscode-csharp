@@ -357,7 +357,7 @@ async function launchDotnet(launchInfo: LaunchInfo, cwd: string, args: string[],
 
     return {
         process,
-        command: launchInfo.DotnetLaunchPath,
+        command: launchInfo.DotnetLaunchPath ?? launchInfo.LaunchPath,
         hostVersion: dotnetInfo.version,
         hostPath: dotnetInfo.path,
         hostIsMono: false,
