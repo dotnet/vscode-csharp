@@ -302,12 +302,12 @@
         ],
         "description": "Namespace"
     },
-    "ShortNamespace": {
-        "prefix": "snamespace",
+    "FileScopedNamespace": {
+        "prefix": "fsnamespace",
         "body": [
             "namespace ${1:Name};"
         ],
-        "description": "Short namespace (.NET 6)"
+        "description": "File-scoped namespace"
     },
     "#if": {
         "prefix": "ifd",
