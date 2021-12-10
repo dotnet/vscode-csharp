@@ -302,6 +302,13 @@
         ],
         "description": "Namespace"
     },
+    "ShortNamespace": {
+        "prefix": "snamespace",
+        "body": [
+            "namespace ${1:Name};"
+        ],
+        "description": "Short namespace (.NET 6)"
+    },
     "#if": {
         "prefix": "ifd",
         "body": [
