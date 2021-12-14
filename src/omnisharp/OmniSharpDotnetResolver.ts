@@ -55,7 +55,6 @@ export class OmniSharpDotnetResolver implements IHostExecutableResolver {
             segments.push(Number.parseInt(segment));
         }
 
-        result.stdout.split('.').map(str => Number.parseInt(str));
 
         if (this.versionPartIsGreaterThanMinimum(segments[0], minimumDotnetMajor, result.stdout)
             || this.versionPartIsGreaterThanMinimum(segments[1], minimumDotnetMinor, result.stdout)) {
