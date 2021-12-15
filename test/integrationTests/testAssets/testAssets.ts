@@ -49,11 +49,8 @@ export class TestAssetWorkspace {
     async restoreAndWait(activation: ActivationResult): Promise<void> {
         await this.restore();
 
-        // Wait for workspace information to be returned
-        await this.waitForEvent(activation.eventStream, EventType.WorkspaceInformationUpdated, _ => true, 30 * 1000);
-
         // Wait for activity to settle before proceeding
-        await this.waitForIdle(activation.eventStream, 15 * 1000);
+        await this.waitForIdle(activation.eventStream, 25 * 1000);
     }
 
     async waitForEvent<T extends BaseEvent>(stream: EventStream, captureType: EventType, stopCondition: (e: T) => boolean, timeout: number): Promise<T> {
