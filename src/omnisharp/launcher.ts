@@ -340,15 +340,24 @@ function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csha
 
 async function launchDotnet(launchInfo: LaunchInfo, cwd: string, args: string[], platformInfo: PlatformInformation, options: Options, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
     const dotnetInfo = await dotnetResolver.getHostExecutableInfo(options);
-    const dotnet = platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
+    let command: string;
     const argsCopy = args.slice(0);
-    argsCopy.unshift(launchInfo.DotnetLaunchPath);
 
-    const process = spawn(dotnet, argsCopy, { detached: false, cwd, env: dotnetInfo.env });
+
+    if (launchInfo.LaunchPath && !launchInfo.LaunchPath.endsWith('.dll')) {
+        // If we're not being asked to launch a dll, assume whatever we're given is an executable
+        command = launchInfo.LaunchPath;
+    }
+    else {
+        command = platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
+        argsCopy.unshift(launchInfo.DotnetLaunchPath ?? launchInfo.LaunchPath);
+    }
+
+    const process = spawn(command, argsCopy, { detached: false, cwd, env: dotnetInfo.env });
 
     return {
         process,
-        command: launchInfo.DotnetLaunchPath,
+        command: launchInfo.DotnetLaunchPath ?? launchInfo.LaunchPath,
         hostVersion: dotnetInfo.version,
         hostPath: dotnetInfo.path,
         hostIsMono: false,
