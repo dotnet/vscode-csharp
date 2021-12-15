@@ -31,7 +31,7 @@ suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
         }
         else {
             const activation = await activateCSharpExtension();
-            await testAssetWorkspace.restoreAndWait(activation);
+            await testAssetWorkspace.restore();
 
             eventStream = activation.eventStream;
 
@@ -42,7 +42,7 @@ suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
 
             await vscode.commands.executeCommand("vscode.open", fileUri);
 
-            await testAssetWorkspace.waitForIdle(eventStream, 90 * 1000);
+            await testAssetWorkspace.waitForIdle(activation.eventStream);
         }
     });
 

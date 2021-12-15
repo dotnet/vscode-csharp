@@ -32,7 +32,7 @@ suite(`Advisor ${testAssetWorkspace.description}`, function () {
         }
 
         const activation = await activateCSharpExtension();
-        await testAssetWorkspace.restoreAndWait(activation);
+        await testAssetWorkspace.restore();
 
         if (!activation) {
             throw new Error('Cannot activate extension.');
@@ -44,6 +44,8 @@ suite(`Advisor ${testAssetWorkspace.description}`, function () {
         let dir = testAssetWorkspace.projects[0].projectDirectoryPath;
         let fileUri = vscode.Uri.file(path.join(dir, fileName));
         await vscode.commands.executeCommand('vscode.open', fileUri);
+
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     suiteTeardown(async () => {

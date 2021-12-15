@@ -55,8 +55,9 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             }
 
             const activation = await activateCSharpExtension();
-            await testAssetWorkspace.restoreAndWait(activation);
+            await testAssetWorkspace.restore();
             await vscode.commands.executeCommand("vscode.open", razorFileUri);
+            await testAssetWorkspace.waitForIdle(activation.eventStream);
         });
 
         test("Razor shouldn't give diagnostics for virtual files", async () => {
@@ -92,8 +93,10 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             }
 
             const activation = await activateCSharpExtension();
-            await testAssetWorkspace.restoreAndWait(activation);
+            await testAssetWorkspace.restore();
             await vscode.commands.executeCommand("vscode.open", fileUri);
+
+            await testAssetWorkspace.waitForIdle(activation.eventStream);
         });
 
         test("Returns any diagnostics from file", async function () {
@@ -160,8 +163,9 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
 
             await setDiagnosticWorkspaceLimit(1);
             const activation = await activateCSharpExtension();
-            await testAssetWorkspace.restoreAndWait(activation);
+            await testAssetWorkspace.restore();
             await restartOmniSharpServer();
+            await testAssetWorkspace.waitForIdle(activation.eventStream);
         });
 
         test("When workspace is count as 'large', then only show/fetch diagnostics from open documents", async function () {

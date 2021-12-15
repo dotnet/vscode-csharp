@@ -24,7 +24,7 @@ suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
 
         should();
         const activation = await activateCSharpExtension();
-        await testAssetWorkspace.restoreAndWait(activation);
+        await testAssetWorkspace.restore();
 
         let fileName = 'Program.cs';
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
@@ -36,6 +36,8 @@ suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
         await csharpConfig.update('testsCodeLens.enabled', true);
 
         await vscode.commands.executeCommand("vscode.open", fileUri);
+
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     suiteTeardown(async () => {
