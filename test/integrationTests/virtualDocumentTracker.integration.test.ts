@@ -26,8 +26,8 @@ suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function ()
             this.skip();
         }
 
-        await activateCSharpExtension();
-        await testAssetWorkspace.restore();
+        const activation = await activateCSharpExtension();
+        await testAssetWorkspace.restoreAndWait(activation);
 
         const virtualCSharpDocumentProvider = new VirtualCSharpDocumentProvider();
         virtualDocumentRegistration = vscode.workspace.registerTextDocumentContentProvider(virtualScheme, virtualCSharpDocumentProvider);

@@ -26,8 +26,8 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
             this.skip();
         }
 
-        await activateCSharpExtension();
-        await testAssetWorkspace.restore();
+        const activation = await activateCSharpExtension();
+        await testAssetWorkspace.restoreAndWait(activation);
     });
 
     suiteTeardown(async () => {

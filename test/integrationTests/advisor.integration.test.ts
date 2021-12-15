@@ -31,19 +31,21 @@ suite(`Advisor ${testAssetWorkspace.description}`, function () {
             this.skip();
         }
 
-        let activationResult = await activateCSharpExtension();
+        const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
-        if (!activationResult) {
+        if (!activation) {
             throw new Error('Cannot activate extension.');
         } else {
-            advisor = activationResult.advisor;
+            advisor = activation.advisor;
         }
 
         let fileName = 'completion.cs';
         let dir = testAssetWorkspace.projects[0].projectDirectoryPath;
         let fileUri = vscode.Uri.file(path.join(dir, fileName));
         await vscode.commands.executeCommand('vscode.open', fileUri);
+
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     suiteTeardown(async () => {
