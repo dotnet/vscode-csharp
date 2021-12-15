@@ -21,9 +21,9 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
             this.skip();
         }
 
-        await activateCSharpExtension();
+        const activation = await activateCSharpExtension();
         await registerLanguageMiddleware();
-        await testAssetWorkspace.restore();
+        await testAssetWorkspace.restoreAndWait(activation);
 
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
         let remappedFileName = 'remapped.txt';

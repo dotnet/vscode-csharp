@@ -33,8 +33,8 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             this.skip();
         }
 
-        await activateCSharpExtension();
-        await testAssetWorkspace.restore();
+        const activation = await activateCSharpExtension();
+        await testAssetWorkspace.restoreAndWait(activation);
 
         let fileName = 'diagnostics.cs';
         let secondaryFileName = 'secondaryDiagnostics.cs';
@@ -54,8 +54,8 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
                 this.skip();
             }
 
-            await activateCSharpExtension();
-            await testAssetWorkspace.restore();
+            const activation = await activateCSharpExtension();
+            await testAssetWorkspace.restoreAndWait(activation);
             await vscode.commands.executeCommand("vscode.open", razorFileUri);
         });
 
@@ -91,8 +91,8 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
                 this.skip();
             }
 
-            await activateCSharpExtension();
-            await testAssetWorkspace.restore();
+            const activation = await activateCSharpExtension();
+            await testAssetWorkspace.restoreAndWait(activation);
             await vscode.commands.executeCommand("vscode.open", fileUri);
         });
 
@@ -159,8 +159,8 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             }
 
             await setDiagnosticWorkspaceLimit(1);
-            await testAssetWorkspace.restore();
-            await activateCSharpExtension();
+            const activation = await activateCSharpExtension();
+            await testAssetWorkspace.restoreAndWait(activation);
             await restartOmniSharpServer();
         });
 

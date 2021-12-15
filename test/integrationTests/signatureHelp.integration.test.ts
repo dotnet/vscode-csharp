@@ -24,8 +24,8 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
             this.skip();
         }
 
-        await activateCSharpExtension();
-        await testAssetWorkspace.restore();
+        const activation = await activateCSharpExtension();
+        await testAssetWorkspace.restoreAndWait(activation);
 
         let fileName = 'sigHelp.cs';
         let dir = testAssetWorkspace.projects[0].projectDirectoryPath;

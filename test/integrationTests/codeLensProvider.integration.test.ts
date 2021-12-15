@@ -23,8 +23,8 @@ suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
         }
 
         should();
-        await activateCSharpExtension();
-        await testAssetWorkspace.restore();
+        const activation = await activateCSharpExtension();
+        await testAssetWorkspace.restoreAndWait(activation);
 
         let fileName = 'Program.cs';
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
@@ -75,8 +75,8 @@ suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function ()
             this.skip();
         }
         else {
-            await activateCSharpExtension();
-            await testAssetWorkspace.restore();
+            const activation = await activateCSharpExtension();
+            await testAssetWorkspace.restoreAndWait(activation);
 
             let fileName = 'UnitTest1.cs';
             let projectDirectory = testAssetWorkspace.projects[2].projectDirectoryPath;

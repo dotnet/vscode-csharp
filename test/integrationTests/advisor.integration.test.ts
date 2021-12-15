@@ -31,13 +31,13 @@ suite(`Advisor ${testAssetWorkspace.description}`, function () {
             this.skip();
         }
 
-        let activationResult = await activateCSharpExtension();
-        await testAssetWorkspace.restore();
+        const activation = await activateCSharpExtension();
+        await testAssetWorkspace.restoreAndWait(activation);
 
-        if (!activationResult) {
+        if (!activation) {
             throw new Error('Cannot activate extension.');
         } else {
-            advisor = activationResult.advisor;
+            advisor = activation.advisor;
         }
 
         let fileName = 'completion.cs';

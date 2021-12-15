@@ -20,8 +20,8 @@ suite(`${OmnisharpReferenceProvider.name}: ${testAssetWorkspace.description}`, (
             this.skip();
         }
 
-        await activateCSharpExtension();
-        await testAssetWorkspace.restore();
+        const activation = await activateCSharpExtension();
+        await testAssetWorkspace.restoreAndWait(activation);
 
         let fileName = 'reference.cs';
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;

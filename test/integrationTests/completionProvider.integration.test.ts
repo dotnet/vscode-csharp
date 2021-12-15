@@ -20,8 +20,8 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
             this.skip();
         }
 
-        await activateCSharpExtension();
-        await testAssetWorkspace.restore();
+        const activation = await activateCSharpExtension();
+        await testAssetWorkspace.restoreAndWait(activation);
 
         let fileName = 'completion.cs';
         let dir = testAssetWorkspace.projects[0].projectDirectoryPath;

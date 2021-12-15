@@ -24,8 +24,8 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
             this.skip();
         }
 
-        await integrationHelpers.activateCSharpExtension();
-        await testAssetWorkspace.restore();
+        const activation = await integrationHelpers.activateCSharpExtension();
+        await testAssetWorkspace.restoreAndWait(activation);
 
         let fileName = 'documentSymbols.cs';
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
