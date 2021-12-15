@@ -20,7 +20,7 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
             this.skip();
         }
 
-        await activateCSharpExtension();
+        const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
         let fileName = 'completion.cs';
@@ -32,6 +32,8 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
         let overrideUncomment = new vscode.WorkspaceEdit();
         overrideUncomment.delete(fileUri, new vscode.Range(new vscode.Position(11, 8), new vscode.Position(11, 11)));
         await vscode.workspace.applyEdit(overrideUncomment);
+
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     suiteTeardown(async () => {
