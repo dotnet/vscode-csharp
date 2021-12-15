@@ -21,7 +21,7 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
             this.skip();
         }
 
-        await activateCSharpExtension();
+        const activation = await activateCSharpExtension();
         await registerLanguageMiddleware();
         await testAssetWorkspace.restore();
 
@@ -31,6 +31,8 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
         let fileName = 'remap.cs';
         fileUri = vscode.Uri.file(path.join(projectDirectory, fileName));
         await vscode.commands.executeCommand("vscode.open", fileUri);
+
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     suiteTeardown(async () => {
