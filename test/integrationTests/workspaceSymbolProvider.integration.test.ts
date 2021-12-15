@@ -21,10 +21,12 @@ suite(`WorkspaceSymbolProvider: ${testAssetWorkspace.description}`, function () 
             this.skip();
         }
 
-        await activateCSharpExtension();
+        const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
         let projectDirectory = vscode.Uri.file(testAssetWorkspace.projects[0].projectDirectoryPath);
         await vscode.commands.executeCommand("vscode.open", projectDirectory);
+
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     suiteTeardown(async () => {

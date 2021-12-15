@@ -24,7 +24,7 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
             this.skip();
         }
 
-        await activateCSharpExtension();
+        const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
         let fileName = 'sigHelp.cs';
@@ -32,6 +32,8 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
         let loc = path.join(dir, fileName);
         fileUri = vscode.Uri.file(loc);
         await vscode.commands.executeCommand("vscode.open", fileUri);
+
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     suiteTeardown(async () => {

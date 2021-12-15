@@ -33,8 +33,8 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             this.skip();
         }
 
-        await activateCSharpExtension();
-        await testAssetWorkspace.restore();
+        const activation = await activateCSharpExtension();
+        await testAssetWorkspace.restoreAndWait(activation);
 
         let fileName = 'diagnostics.cs';
         let secondaryFileName = 'secondaryDiagnostics.cs';
@@ -54,9 +54,10 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
                 this.skip();
             }
 
-            await activateCSharpExtension();
+            const activation = await activateCSharpExtension();
             await testAssetWorkspace.restore();
             await vscode.commands.executeCommand("vscode.open", razorFileUri);
+            await testAssetWorkspace.waitForIdle(activation.eventStream);
         });
 
         test("Razor shouldn't give diagnostics for virtual files", async () => {
@@ -91,9 +92,11 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
                 this.skip();
             }
 
-            await activateCSharpExtension();
+            const activation = await activateCSharpExtension();
             await testAssetWorkspace.restore();
             await vscode.commands.executeCommand("vscode.open", fileUri);
+
+            await testAssetWorkspace.waitForIdle(activation.eventStream);
         });
 
         test("Returns any diagnostics from file", async function () {
@@ -159,9 +162,10 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             }
 
             await setDiagnosticWorkspaceLimit(1);
+            const activation = await activateCSharpExtension();
             await testAssetWorkspace.restore();
-            await activateCSharpExtension();
             await restartOmniSharpServer();
+            await testAssetWorkspace.waitForIdle(activation.eventStream);
         });
 
         test("When workspace is count as 'large', then only show/fetch diagnostics from open documents", async function () {
