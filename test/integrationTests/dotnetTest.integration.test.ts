@@ -11,42 +11,12 @@ import { activateCSharpExtension, isSlnWithCsproj } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { EventStream } from '../../src/EventStream';
 import { EventType } from '../../src/omnisharp/EventType';
-import { BaseEvent, OmnisharpRequestMessage } from '../../src/omnisharp/loggingEvents';
-import { poll } from './poll';
+import { OmnisharpRequestMessage } from '../../src/omnisharp/loggingEvents';
 import { V2 } from '../../src/omnisharp/protocol';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
 chai.use(require('chai-fs'));
-
-async function waitActivityToSettle(stream: EventStream, timeout: number): Promise<void> {
-    let event: BaseEvent = { type: 0 };
-
-    const subscription = stream.subscribe((e: BaseEvent) => event = e);
-
-    await poll(() => event, timeout, 500, e => !e || (event = null));
-
-    subscription.unsubscribe();
-}
-
-async function waitForEvent<T extends BaseEvent>(stream: EventStream, captureType: EventType, stopCondition: (e: T) => boolean, timeout: number): Promise<T> {
-    let event: T = null;
-
-    const subscription = stream.subscribe((e: BaseEvent) => {
-        if (e.type === captureType) {
-            const tEvent = <T>e;
-
-            if (stopCondition(tEvent)) {
-                event = tEvent;
-                subscription.unsubscribe();
-            }
-        }
-    });
-
-    await poll(() => event, timeout, 500, e => !!e);
-
-    return event;
-}
 
 suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
@@ -61,7 +31,7 @@ suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
         }
         else {
             const activation = await activateCSharpExtension();
-            await testAssetWorkspace.restoreAndWait(activation);
+            await testAssetWorkspace.restore();
 
             eventStream = activation.eventStream;
 
@@ -72,7 +42,7 @@ suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
 
             await vscode.commands.executeCommand("vscode.open", fileUri);
 
-            await waitActivityToSettle(eventStream, 90 * 1000);
+            await testAssetWorkspace.waitForIdle(activation.eventStream);
         }
     });
 
@@ -84,7 +54,7 @@ suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
         const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
         await omnisharpConfig.update('testRunSettings', undefined);
 
-        const eventWaiter = waitForEvent<OmnisharpRequestMessage>(eventStream, EventType.OmnisharpRequestMessage, e => e.request.command === V2.Requests.RunTestsInContext, /* timeout */ 10 * 1000);
+        const eventWaiter = testAssetWorkspace.waitForEvent<OmnisharpRequestMessage>(eventStream, EventType.OmnisharpRequestMessage, e => e.request.command === V2.Requests.RunTestsInContext, /* timeout */ 10 * 1000);
 
         await vscode.commands.executeCommand('dotnet.test.runTestsInContext');
 
@@ -101,7 +71,7 @@ suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
         const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
         await omnisharpConfig.update('testRunSettings', absoluteRunSettingsPath);
 
-        const eventWaiter = waitForEvent<OmnisharpRequestMessage>(eventStream, EventType.OmnisharpRequestMessage, e => e.request.command === V2.Requests.RunTestsInContext, /* timeout */ 10 * 1000);
+        const eventWaiter = testAssetWorkspace.waitForEvent<OmnisharpRequestMessage>(eventStream, EventType.OmnisharpRequestMessage, e => e.request.command === V2.Requests.RunTestsInContext, /* timeout */ 10 * 1000);
 
         await vscode.commands.executeCommand('dotnet.test.runTestsInContext');
 
@@ -118,7 +88,7 @@ suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
         const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
         await omnisharpConfig.update('testRunSettings', relativeRunSettingPath);
 
-        const eventWaiter = waitForEvent<OmnisharpRequestMessage>(eventStream, EventType.OmnisharpRequestMessage, e => e.request.command === V2.Requests.RunTestsInContext, /* timeout */ 10 * 1000);
+        const eventWaiter = testAssetWorkspace.waitForEvent<OmnisharpRequestMessage>(eventStream, EventType.OmnisharpRequestMessage, e => e.request.command === V2.Requests.RunTestsInContext, /* timeout */ 10 * 1000);
 
         await vscode.commands.executeCommand('dotnet.test.runTestsInContext');
 

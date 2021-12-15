@@ -22,7 +22,7 @@ suite(`${CSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () 
         }
 
         const activation = await activateCSharpExtension();
-        await testAssetWorkspace.restoreAndWait(activation);
+        await testAssetWorkspace.restore();
         await vscode.commands.executeCommand("dotnet.generateAssets", 0);
         await sleep(100);
         const tasks = await vscode.tasks.fetchTasks();
@@ -35,6 +35,8 @@ suite(`${CSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () 
         const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
         fileUri = vscode.Uri.file(path.join(projectDirectory, fileName));
         await vscode.commands.executeCommand("vscode.open", fileUri);
+
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     test("Generated file returns definitions and adds source", async () => {

@@ -302,6 +302,13 @@
         ],
         "description": "Namespace"
     },
+    "FileScopedNamespace": {
+        "prefix": "fsnamespace",
+        "body": [
+            "namespace ${1:Name};"
+        ],
+        "description": "File-scoped namespace"
+    },
     "#if": {
         "prefix": "ifd",
         "body": [

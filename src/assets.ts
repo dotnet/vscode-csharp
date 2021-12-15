@@ -267,7 +267,14 @@ export class AssetGenerator {
     private createWatchTaskDescription(): tasks.TaskDescription {
         let commandArgs = ['watch', 'run'];
 
-        this.AddAdditionalCommandArgs(commandArgs);
+        const buildProject = this.getBuildProjectPath();
+        if (buildProject) {
+            commandArgs.push('--project');
+            commandArgs.push(buildProject);
+        }
+
+        // NOTE: Don't add any additional args, or this will disable hot reload. See:
+        // https://github.com/dotnet/sdk/blob/957ae5ca599fdeaee425d23928d42da711373a5e/src/BuiltInTools/dotnet-watch/Program.cs#L247-L256
 
         return {
             label: 'watch',
@@ -279,17 +286,26 @@ export class AssetGenerator {
     }
 
     private AddAdditionalCommandArgs(commandArgs: string[]) {
+        const buildProject = this.getBuildProjectPath();
+        if (buildProject) {
+            commandArgs.push(buildProject);
+        }
+
+        commandArgs.push("/property:GenerateFullPaths=true");
+        commandArgs.push("/consoleloggerparameters:NoSummary");
+    }
+
+    private getBuildProjectPath() : string|null {
         let buildProject = this.startupProject;
         if (!buildProject) {
             buildProject = this.fallbackBuildProject;
         }
         if (buildProject) {
             const buildPath = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, buildProject.Path));
-            commandArgs.push(util.convertNativePathToPosix(buildPath));
+            return util.convertNativePathToPosix(buildPath);
         }
 
-        commandArgs.push("/property:GenerateFullPaths=true");
-        commandArgs.push("/consoleloggerparameters:NoSummary");
+        return null;
     }
 
     public createTasksConfiguration(): tasks.TaskConfiguration {
