@@ -6,7 +6,9 @@
 import * as fs from 'async-file';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { EventStream } from '../../../src/EventStream';
 import { EventType } from '../../../src/omnisharp/EventType';
+import { BaseEvent } from '../../../src/omnisharp/loggingEvents';
 import { ActivationResult } from '../integrationHelpers';
 import { poll } from '../poll';
 import spawnGit from './spawnGit';
@@ -48,16 +50,39 @@ export class TestAssetWorkspace {
         await this.restore();
 
         // Wait for workspace information to be returned
-        let isWorkspaceLoaded = false;
+        await this.waitForEvent(activation.eventStream, EventType.WorkspaceInformationUpdated, _ => true, 25 * 1000);
 
-        const subscription = activation.eventStream.subscribe(event => {
-            if (event.type === EventType.WorkspaceInformationUpdated) {
-                isWorkspaceLoaded = true;
-                subscription.unsubscribe();
+        // Wait for activity to settle before proceeding
+        await this.waitForIdle(activation.eventStream, 5 * 1000);
+    }
+
+    async waitForEvent<T extends BaseEvent>(stream: EventStream, captureType: EventType, stopCondition: (e: T) => boolean, timeout: number): Promise<T> {
+        let event: T = null;
+
+        const subscription = stream.subscribe((e: BaseEvent) => {
+            if (e.type === captureType) {
+                const tEvent = <T>e;
+
+                if (stopCondition(tEvent)) {
+                    event = tEvent;
+                    subscription.unsubscribe();
+                }
             }
         });
 
-        await poll(() => isWorkspaceLoaded, 25000, 500);
+        await poll(() => event, timeout, 500, e => !!e);
+
+        return event;
+    }
+
+    async waitForIdle(stream: EventStream, timeout: number): Promise<void> {
+        let event: BaseEvent = { type: 0 };
+
+        const subscription = stream.subscribe((e: BaseEvent) => event = e);
+
+        await poll(() => event, timeout, 500, e => !e || (event = null));
+
+        subscription.unsubscribe();
     }
 
     get vsCodeDirectoryPath(): string {
