@@ -259,6 +259,7 @@ The `symbolOptions` element allows customization of how the debugger searches fo
             "https://my-companies-symbols-server"
         ],
         "searchMicrosoftSymbolServer": true,
+        "searchNuGetOrgSymbolServer": true,
         "cachePath": "/symcache",
         "moduleFilter": {
             "mode": "loadAllButExcluded",
@@ -272,6 +273,8 @@ The `symbolOptions` element allows customization of how the debugger searches fo
 **searchPaths**: Array of symbol server URLs (example: https://msdl.microsoft.com/download/symbols) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.
 
 **searchMicrosoftSymbolServer**: If `true` the Microsoft Symbol server (https://msdl.microsoft.com/download/symbols) is added to the symbols search path. If unspecified, this option defaults to `false`.
+
+**searchNuGetOrgSymbolServer**: If `true` the Nuget.org Symbol server (https://symbols.nuget.org/download/symbols) is added to the symbols search path. If unspecified, this option defaults to `false`.
 
 **cachePath**": Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.
 

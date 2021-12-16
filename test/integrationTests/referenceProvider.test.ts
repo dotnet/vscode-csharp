@@ -20,13 +20,15 @@ suite(`${OmnisharpReferenceProvider.name}: ${testAssetWorkspace.description}`, (
             this.skip();
         }
 
-        await activateCSharpExtension();
+        const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
         let fileName = 'reference.cs';
         let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
         fileUri = vscode.Uri.file(path.join(projectDirectory, fileName));
         await vscode.commands.executeCommand("vscode.open", fileUri);
+
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     suiteTeardown(async () => {

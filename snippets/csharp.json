@@ -253,6 +253,13 @@
         "body": ["namespace ${1:Name}", "{", "\t$0", "}"],
         "description": "Namespace"
     },
+    "FileScopedNamespace": {
+        "prefix": "fsnamespace",
+        "body": [
+            "namespace ${1:Name};"
+        ],
+        "description": "File-scoped namespace"
+    },
     "#if": {
         "prefix": "ifd",
         "body": ["#if ${1:true}", "\t ${TM_SELECTED_TEXT}$0", "#endif"],
