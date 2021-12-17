@@ -40,32 +40,59 @@
     },
     "Checked block": {
         "prefix": "checked",
-        "body": ["checked", "{", "\t${TM_SELECTED_TEXT}$0", "}"],
+        "body": [
+            "checked",
+            "{",
+            "\t${TM_SELECTED_TEXT}$0",
+            "}"
+        ],
         "description": "Checked block"
     },
     "Class": {
         "prefix": "class",
-        "body": ["class ${1:Name}", "{", "\t$0", "}"],
+        "body": [
+            "class ${1:Name}",
+            "{",
+            "\t$0",
+            "}"
+        ],
         "description": "Class"
     },
     "Console.WriteLine": {
         "prefix": "cw",
-        "body": ["System.Console.WriteLine(${TM_SELECTED_TEXT}$0);"],
+        "body": [
+            "System.Console.WriteLine(${TM_SELECTED_TEXT}$0);"
+        ],
         "description": "Console.WriteLine"
     },
     "do...while loop": {
         "prefix": "do",
-        "body": ["do", "{", "\t${TM_SELECTED_TEXT}$0", "} while (${1:true});"],
+        "body": [
+            "do",
+            "{",
+            "\t${TM_SELECTED_TEXT}$0",
+            "} while (${1:true});"
+        ],
         "description": "do...while loop"
     },
     "Else statement": {
         "prefix": "else",
-        "body": ["else", "{", "\t${TM_SELECTED_TEXT}$0", "}"],
+        "body": [
+            "else",
+            "{",
+            "\t${TM_SELECTED_TEXT}$0",
+            "}"
+        ],
         "description": "Else statement"
     },
     "Enum": {
         "prefix": "enum",
-        "body": ["enum ${1:Name}", "{", "\t$0", "}"],
+        "body": [
+            "enum ${1:Name}",
+            "{",
+            "\t$0",
+            "}"
+        ],
         "description": "Enum"
     },
     "Implementing Equals() according to guidelines": {
@@ -149,7 +176,12 @@
     },
     "if statement": {
         "prefix": "if",
-        "body": ["if (${1:true})", "{", "\t${TM_SELECTED_TEXT}$0", "}"],
+        "body": [
+            "if (${1:true})",
+            "{",
+            "\t${TM_SELECTED_TEXT}$0",
+            "}"
+        ],
         "description": "if statement"
     },
     "Indexer": {
@@ -165,7 +197,12 @@
     },
     "Interface": {
         "prefix": "interface",
-        "body": ["interface I${1:Name}", "{", "\t$0", "}"],
+        "body": [
+            "interface I${1:Name}",
+            "{",
+            "\t$0",
+            "}"
+        ],
         "description": "Interface"
     },
     "Safely invoking an event": {
@@ -240,17 +277,29 @@
     },
     "Lock statement": {
         "prefix": "lock",
-        "body": ["lock (${1:this})", "{", "\t ${TM_SELECTED_TEXT}$0", "}"],
+        "body": [
+            "lock (${1:this})",
+            "{",
+            "\t${TM_SELECTED_TEXT}$0",
+            "}"
+        ],
         "description": "Lock statement"
     },
     "MessageBox.Show": {
         "prefix": "mbox",
-        "body": ["System.Windows.Forms.MessageBox.Show(\"${1:Text}\");$0"],
+        "body": [
+            "System.Windows.Forms.MessageBox.Show(\"${1:Text}\");$0"
+        ],
         "description": "MessageBox.Show"
     },
     "Namespace": {
         "prefix": "namespace",
-        "body": ["namespace ${1:Name}", "{", "\t$0", "}"],
+        "body": [
+            "namespace ${1:Name}",
+            "{",
+            "\t$0",
+            "}"
+        ],
         "description": "Namespace"
     },
     "FileScopedNamespace": {
@@ -262,12 +311,20 @@
     },
     "#if": {
         "prefix": "ifd",
-        "body": ["#if ${1:true}", "\t ${TM_SELECTED_TEXT}$0", "#endif"],
+        "body": [
+            "#if ${1:true}",
+            "\t${TM_SELECTED_TEXT}$0",
+            "#endif"
+        ],
         "description": "#if"
     },
     "#region": {
         "prefix": "region",
-        "body": ["#region ${1:Name}", "\t ${TM_SELECTED_TEXT}$0", "#endregion"],
+        "body": [
+            "#region ${1:Name}",
+            "\t${TM_SELECTED_TEXT}$0",
+            "#endregion"
+        ],
         "description": "#region"
     },
     "Property and backing field": {
@@ -285,12 +342,16 @@
     },
     "propg": {
         "prefix": "propg",
-        "body": ["public ${1:int} ${2:MyProperty} { get; private set; }$0"],
+        "body": [
+            "public ${1:int} ${2:MyProperty} { get; private set; }$0"
+        ],
         "description": "An automatically implemented property with a 'get' accessor and a private 'set' accessor. C# 3.0 or higher"
     },
     "prop": {
         "prefix": "prop",
-        "body": ["public ${1:int} ${2:MyProperty} { get; set; }$0"],
+        "body": [
+            "public ${1:int} ${2:MyProperty} { get; set; }$0"
+        ],
         "description": "An automatically implemented property. C# 3.0 or higher"
     },
     "sim": {
@@ -306,17 +367,33 @@
     },
     "Struct": {
         "prefix": "struct",
-        "body": ["struct ${1:Name}", "{", "\t$0", "}"],
+        "body": [
+            "struct ${1:Name}",
+            "{",
+            "\t$0",
+            "}"
+        ],
         "description": "Struct"
     },
     "svm": {
         "prefix": "svm",
-        "body": ["static void Main(string[] args)", "{", "\t$0", "}"],
+        "body": [
+            "static void Main(string[] args)",
+            "{",
+            "\t$0",
+            "}"
+        ],
         "description": "void Main()"
     },
     "Switch statement": {
         "prefix": "switch",
-        "body": ["switch (${1:switch_on})", "{", "\t$0", "\tdefault:", "}"],
+        "body": [
+            "switch (${1:switch_on})",
+            "{",
+            "\t$0",
+            "\tdefault:",
+            "}"
+        ],
         "description": "Switch statement"
     },
     "Try finally": {
@@ -324,7 +401,7 @@
         "body": [
             "try",
             "{",
-            "\t ${TM_SELECTED_TEXT}$1",
+            "\t${TM_SELECTED_TEXT}$1",
             "}",
             "finally",
             "{",
@@ -338,7 +415,7 @@
         "body": [
             "try",
             "{",
-            "\t ${TM_SELECTED_TEXT}$1",
+            "\t${TM_SELECTED_TEXT}$1",
             "}",
             "catch (${2:System.Exception})",
             "{",
@@ -350,22 +427,42 @@
     },
     "Unchecked block": {
         "prefix": "unchecked",
-        "body": ["unchecked", "{", "\t ${TM_SELECTED_TEXT}$0", "}"],
+        "body": [
+            "unchecked",
+            "{",
+            "\t${TM_SELECTED_TEXT}$0",
+            "}"
+        ],
         "description": "Unchecked block"
     },
     "Unsafe statement": {
         "prefix": "unsafe",
-        "body": ["unsafe", "{", "\t ${TM_SELECTED_TEXT}$0", "}"],
+        "body": [
+            "unsafe",
+            "{",
+            "\t${TM_SELECTED_TEXT}$0",
+            "}"
+        ],
         "description": "Unsafe statement"
     },
     "Using statement": {
         "prefix": "using",
-        "body": ["using (${1:resource})", "{", "\t ${TM_SELECTED_TEXT}$0", "}"],
+        "body": [
+            "using (${1:resource})",
+            "{",
+            "\t${TM_SELECTED_TEXT}$0",
+            "}"
+        ],
         "description": "Using statement"
     },
     "While loop": {
         "prefix": "while",
-        "body": ["while (${1:true})", "{", "\t ${TM_SELECTED_TEXT}$0", "}"],
+        "body": [
+            "while (${1:true})",
+            "{",
+            "\t${TM_SELECTED_TEXT}$0",
+            "}"
+        ],
         "description": "While loop"
     },
     "constructor": {
