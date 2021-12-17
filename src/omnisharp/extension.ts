@@ -67,7 +67,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     languageMiddlewareFeature.register();
     disposables.add(languageMiddlewareFeature);
     let localDisposables: CompositeDisposable;
-    const testManager = new TestManager(server, eventStream, languageMiddlewareFeature);
+    const testManager = new TestManager(optionProvider, server, eventStream, languageMiddlewareFeature);
     const completionProvider = new CompletionProvider(server, languageMiddlewareFeature);
 
     disposables.add(server.onServerStart(() => {

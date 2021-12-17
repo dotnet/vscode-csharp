@@ -34,6 +34,7 @@ suite("Options tests", () => {
         options.enableEditorConfigSupport.should.equal(false);
         options.enableDecompilationSupport.should.equal(false);
         options.enableImportCompletion.should.equal(false);
+        expect(options.testRunSettings).to.be.undefined;
         expect(options.defaultLaunchSolution).to.be.undefined;
     });
 
@@ -142,5 +143,14 @@ suite("Options tests", () => {
         const options = Options.Read(vscode);
 
         options.defaultLaunchSolution.should.equal("some_valid_solution.sln");
+    });
+
+    test('"omnisharp.testRunSettings" is used if set', () => {
+        const vscode = getVSCodeWithConfig();
+        updateConfig(vscode, 'omnisharp', 'testRunSettings', 'some_valid_path\\some_valid_runsettings_files.runsettings');
+
+        const options = Options.Read(vscode);
+
+        options.testRunSettings.should.equal("some_valid_path\\some_valid_runsettings_files.runsettings");
     });
 });

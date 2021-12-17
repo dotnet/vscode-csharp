@@ -19,6 +19,7 @@ import LaunchConfiguration from './launchConfiguration';
 import Disposable from '../Disposable';
 import CompositeDisposable from '../CompositeDisposable';
 import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import OptionProvider from '../observers/OptionProvider';
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 
@@ -29,7 +30,7 @@ export default class TestManager extends AbstractProvider {
     private _telemetryIntervalId: NodeJS.Timer = undefined;
     private _eventStream: EventStream;
 
-    constructor(server: OmniSharpServer, eventStream: EventStream, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+    constructor(private optionProvider: OptionProvider, server: OmniSharpServer, eventStream: EventStream, languageMiddlewareFeature: LanguageMiddlewareFeature) {
         super(server, languageMiddlewareFeature);
         this._eventStream = eventStream;
 
@@ -192,7 +193,7 @@ export default class TestManager extends AbstractProvider {
     }
 
     private _getRunSettings(filename: string): string | undefined {
-        const testSettingsPath = vscode.workspace.getConfiguration('omnisharp').get<string>('testRunSettings');
+        const testSettingsPath = this.optionProvider.GetLatestOptions().testRunSettings;
         if (!testSettingsPath) {
             return undefined;
         }

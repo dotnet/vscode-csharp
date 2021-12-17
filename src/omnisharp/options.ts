@@ -40,7 +40,8 @@ export class Options {
         public monoPath?: string,
         public dotnetPath?: string,
         public excludePaths?: string[],
-        public maxProjectFileCountForDiagnosticAnalysis?: number | null) {
+        public maxProjectFileCountForDiagnosticAnalysis?: number | null,
+        public testRunSettings?: string) {
     }
 
     public static Read(vscode: vscode): Options {
@@ -108,6 +109,8 @@ export class Options {
 
         const maxProjectFileCountForDiagnosticAnalysis = csharpConfig.get<number | null>('maxProjectFileCountForDiagnosticAnalysis', 1000);
 
+        const testRunSettings = omnisharpConfig.get<string>('testRunSettings', undefined);
+
         const excludePaths = this.getExcludedPaths(vscode);
 
         return new Options(
@@ -144,7 +147,8 @@ export class Options {
             monoPath,
             dotnetPath,
             excludePaths,
-            maxProjectFileCountForDiagnosticAnalysis
+            maxProjectFileCountForDiagnosticAnalysis,
+            testRunSettings
         );
     }
 
