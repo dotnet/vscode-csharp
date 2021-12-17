@@ -69,7 +69,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
 
     suite("If the download and install succeeds", () => {
         test("The expected files are installed at the specified path", async () => {
-            await downloadAndInstallPackages(downloadablePackage, networkSettingsProvider, eventStream, downloadValidator);
+            await downloadAndInstallPackages(downloadablePackage, networkSettingsProvider, eventStream, downloadValidator, /*useFramework*/ true);
             for (let elem of testZip.files) {
                 let filePath = path.join(tmpDirPath, elem.path);
                 expect(await util.fileExists(filePath)).to.be.true;
@@ -77,7 +77,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
         });
 
         test("install.Lock is present", async () => {
-            await downloadAndInstallPackages(downloadablePackage, networkSettingsProvider, eventStream, downloadValidator);
+            await downloadAndInstallPackages(downloadablePackage, networkSettingsProvider, eventStream, downloadValidator, /*useFramework*/ true);
             expect(await util.fileExists(path.join(tmpDirPath, "install.Lock"))).to.be.true;
         });
 
@@ -91,7 +91,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
                 new InstallationStart(packageDescription)
             ];
 
-            await downloadAndInstallPackages(downloadablePackage, networkSettingsProvider, eventStream, downloadValidator);
+            await downloadAndInstallPackages(downloadablePackage, networkSettingsProvider, eventStream, downloadValidator, /*useFramework*/ true);
             expect(eventBus.getEvents()).to.be.deep.equal(eventsSequence);
         });
 
@@ -120,7 +120,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
                 new InstallationStart(packageDescription)
             ];
 
-            await downloadAndInstallPackages(downloadablePackage, networkSettingsProvider, eventStream, downloadValidator);
+            await downloadAndInstallPackages(downloadablePackage, networkSettingsProvider, eventStream, downloadValidator, /*useFramework*/ true);
             expect(eventBus.getEvents()).to.be.deep.equal(eventsSequence);
         });
     });
@@ -142,7 +142,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
                 new IntegrityCheckFailure(packageDescription, downloadablePackage[0].url, false),
             ];
 
-            await downloadAndInstallPackages(downloadablePackage, networkSettingsProvider, eventStream, downloadValidator);
+            await downloadAndInstallPackages(downloadablePackage, networkSettingsProvider, eventStream, downloadValidator, /*useFramework*/ true);
             expect(eventBus.getEvents()).to.be.deep.equal(eventsSequence);
         });
 
@@ -153,7 +153,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
                 new DownloadFailure(`Failed to download from ${notDownloadablePackage[0].url}. Error code '404')`),
             ];
 
-            await downloadAndInstallPackages(notDownloadablePackage, networkSettingsProvider, eventStream, downloadValidator);
+            await downloadAndInstallPackages(notDownloadablePackage, networkSettingsProvider, eventStream, downloadValidator, /*useFramework*/ true);
             let obtainedEvents = eventBus.getEvents();
             expect(obtainedEvents[0]).to.be.deep.equal(eventsSequence[0]);
             expect(obtainedEvents[1]).to.be.deep.equal(eventsSequence[1]);
@@ -164,7 +164,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
         });
 
         test("install.Lock is not present when the download fails", async () => {
-            await downloadAndInstallPackages(notDownloadablePackage, networkSettingsProvider, eventStream, downloadValidator);
+            await downloadAndInstallPackages(notDownloadablePackage, networkSettingsProvider, eventStream, downloadValidator, /*useFramework*/ true);
             expect(await util.fileExists(path.join(tmpDirPath, "install.Lock"))).to.be.false;
         });
     });
