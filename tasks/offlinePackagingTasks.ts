@@ -24,13 +24,13 @@ import { getAbsolutePathPackagesToInstall } from '../src/packageManager/getAbsol
 import { isValidDownload } from '../src/packageManager/isValidDownload';
 
 export const offlinePackages = [
-    { platformInfo: new PlatformInformation('win32', 'x86_64'), id: "win32-x64" },
-    { platformInfo: new PlatformInformation('win32', 'x86'), id: "win32-ia32" },
-    { platformInfo: new PlatformInformation('win32', 'arm64'), id: "win32-arm64" },
-    { platformInfo: new PlatformInformation('linux', 'x86_64'), id: "linux-x64" },
-    { platformInfo: new PlatformInformation('linux', 'arm64'), id: "linux-arm64" },
-    { platformInfo: new PlatformInformation('darwin', 'x86_64'), id: "darwin-x64" },
-    { platformInfo: new PlatformInformation('darwin', 'arm64'), id: "darwin-arm64" },
+    { platformInfo: new PlatformInformation('win32', 'x86_64'), id: "win32-x64", isFramework: true },
+    { platformInfo: new PlatformInformation('win32', 'x86'), id: "win32-ia32", isFramework: true },
+    { platformInfo: new PlatformInformation('win32', 'arm64'), id: "win32-arm64", isFramework: true },
+    { platformInfo: new PlatformInformation('linux', 'x86_64'), id: "linux-x64", isFramework: true },
+    { platformInfo: new PlatformInformation('linux', 'arm64'), id: "linux-arm64", isFramework: true },
+    { platformInfo: new PlatformInformation('darwin', 'x86_64'), id: "darwin-x64", isFramework: true },
+    { platformInfo: new PlatformInformation('darwin', 'arm64'), id: "darwin-arm64", isFramework: true },
 ];
 
 export function getPackageName(packageJSON: any, vscodePlatformId: string) {
@@ -66,7 +66,7 @@ async function doPackageOffline() {
 
     for (let p of offlinePackages) {
         try {
-            await doOfflinePackage(p.platformInfo, p.id, packageJSON, packedVsixOutputRoot);
+            await doOfflinePackage(p.platformInfo, p.id, p.isFramework, packageJSON, packedVsixOutputRoot);
         }
         catch (err) {
             // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
@@ -84,23 +84,24 @@ async function cleanAsync(deleteVsix: boolean) {
     }
 }
 
-async function doOfflinePackage(platformInfo: PlatformInformation, vscodePlatformId: string, packageJSON: any, outputFolder: string) {
+async function doOfflinePackage(platformInfo: PlatformInformation, vscodePlatformId: string, isFramework: boolean, packageJSON: any, outputFolder: string) {
     await cleanAsync(false);
     const packageFileName = getPackageName(packageJSON, vscodePlatformId);
-    await install(platformInfo, packageJSON);
+    await install(platformInfo, packageJSON, isFramework);
     await createPackageAsync(packageFileName, outputFolder, vscodePlatformId);
 }
 
 // Install Tasks
-async function install(platformInfo: PlatformInformation, packageJSON: any) {
+async function install(platformInfo: PlatformInformation, packageJSON: any, isFramework: boolean) {
     let eventStream = new EventStream();
     const logger = new Logger(message => process.stdout.write(message));
     let stdoutObserver = new CsharpLoggerObserver(logger);
     eventStream.subscribe(stdoutObserver.post);
-    let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON);
+    let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON)
+        .filter(dep => dep.isFramework === undefined || dep.isFramework === isFramework);
     let packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, codeExtensionPath);
     let provider = () => new NetworkSettings(undefined, undefined);
-    if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload))) {
+    if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload, isFramework))) {
         throw Error("Failed to download package.");
     }
 
