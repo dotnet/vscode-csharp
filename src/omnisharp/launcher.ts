@@ -10,10 +10,11 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { Options } from './options';
 import { LaunchInfo } from './OmnisharpManager';
-import { IMonoResolver } from '../constants/IMonoResolver';
+import { IHostExecutableResolver } from '../constants/IHostExecutableResolver';
 
 export enum LaunchTargetKind {
     Solution,
+    Project,
     ProjectJson,
     Folder,
     Csx,
@@ -29,7 +30,7 @@ export interface LaunchTarget {
     description: string;
     directory: string;
     target: string;
-    kind: LaunchTargetKind;
+    workspaceKind: LaunchTargetKind;
 }
 
 export const vslsTarget: LaunchTarget = {
@@ -37,7 +38,7 @@ export const vslsTarget: LaunchTarget = {
     description: "Visual Studio Live Share",
     directory: "",
     target: "",
-    kind: LaunchTargetKind.LiveShare
+    workspaceKind: LaunchTargetKind.LiveShare
 };
 
 /** Live share scheme */
@@ -115,113 +116,131 @@ export function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[
         }
     }
 
-    let targets: LaunchTarget[] = [];
+    return resourcesAndFolderMapToLaunchTargets(resources, vscode.workspace.workspaceFolders.concat(), workspaceFolderToUriMap);
+}
+
+export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], workspaceFolders: vscode.WorkspaceFolder[], workspaceFolderToUriMap: Map<number, vscode.Uri[]>): LaunchTarget[] {
+    let solutionTargets: LaunchTarget[] = [];
+    let projectJsonTargets: LaunchTarget[] = [];
+    let projectRootTargets: LaunchTarget[] = [];
+    let projectTargets: LaunchTarget[] = [];
+    let otherTargets: LaunchTarget[] = [];
 
     workspaceFolderToUriMap.forEach((resources, folderIndex) => {
-        let hasCsProjFiles = false,
-            hasSlnFile = false,
-            hasProjectJson = false,
-            hasProjectJsonAtRoot = false,
-            hasCSX = false,
-            hasCake = false,
-            hasCs = false;
+        let hasProjectJsonAtRoot = false;
+        let hasCSX = false;
+        let hasCake = false;
+        let hasCs = false;
 
-        hasCsProjFiles = resources.some(isCSharpProject);
-
-        let folder = vscode.workspace.workspaceFolders[folderIndex];
+        let folder = workspaceFolders[folderIndex];
         let folderPath = folder.uri.fsPath;
 
         resources.forEach(resource => {
-            // Add .sln and .slnf files if there are .csproj files
-            if (hasCsProjFiles && isSolution(resource)) {
-                hasSlnFile = true;
-                targets.push({
+            // Add .sln and .slnf files
+            if (isSolution(resource)) {
+                const dirname = path.dirname(resource.fsPath);
+                solutionTargets.push({
                     label: path.basename(resource.fsPath),
-                    description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
+                    description: vscode.workspace.asRelativePath(dirname),
                     target: resource.fsPath,
                     directory: path.dirname(resource.fsPath),
-                    kind: LaunchTargetKind.Solution
+                    workspaceKind: LaunchTargetKind.Solution
                 });
             }
-
             // Add project.json files
-            if (isProjectJson(resource)) {
+            else if (isProjectJson(resource)) {
                 const dirname = path.dirname(resource.fsPath);
-                hasProjectJson = true;
                 hasProjectJsonAtRoot = hasProjectJsonAtRoot || dirname === folderPath;
-
-                targets.push({
+                projectJsonTargets.push({
                     label: path.basename(resource.fsPath),
-                    description: vscode.workspace.asRelativePath(path.dirname(resource.fsPath)),
+                    description: vscode.workspace.asRelativePath(dirname),
                     target: dirname,
                     directory: dirname,
-                    kind: LaunchTargetKind.ProjectJson
+                    workspaceKind: LaunchTargetKind.ProjectJson
                 });
             }
-
-            // Discover if there is any CSX file
-            if (!hasCSX && isCsx(resource)) {
-                hasCSX = true;
+            // Add .csproj files
+            else if (isCSharpProject(resource)) {
+                const dirname = path.dirname(resource.fsPath);
+                // OmniSharp doesn't support opening a project directly, however, it will open a project if
+                // we pass a folder path which contains a single .csproj. This is similar to how project.json
+                // is supported.
+                projectTargets.push({
+                    label: path.basename(resource.fsPath),
+                    description: vscode.workspace.asRelativePath(dirname),
+                    target: dirname,
+                    directory: dirname,
+                    workspaceKind: LaunchTargetKind.Project
+                });
             }
+            else {
+                // Discover if there is any CSX file
+                hasCSX ||= isCsx(resource);
 
-            // Discover if there is any Cake file
-            if (!hasCake && isCake(resource)) {
-                hasCake = true;
-            }
+                // Discover if there is any Cake file
+                hasCake ||= isCake(resource);
 
-            //Discover if there is any cs file
-            if (!hasCs && isCs(resource)) {
-                hasCs = true;
+                //Discover if there is any cs file
+                hasCs ||= isCs(resource);
             }
         });
+
+        const hasCsProjFiles = projectTargets.length > 0;
+        const hasSlnFile = solutionTargets.length > 0;
+        const hasProjectJson = projectJsonTargets.length > 0;
 
         // Add the root folder under the following circumstances:
         // * If there are .csproj files, but no .sln or .slnf file, and none in the root.
         // * If there are project.json files, but none in the root.
         if ((hasCsProjFiles && !hasSlnFile) || (hasProjectJson && !hasProjectJsonAtRoot)) {
-            targets.push({
+            projectRootTargets.push({
                 label: path.basename(folderPath),
-                description: '',
+                description: 'All contained projects',
                 target: folderPath,
                 directory: folderPath,
-                kind: LaunchTargetKind.Folder
+                workspaceKind: LaunchTargetKind.Folder
             });
         }
 
         // if we noticed any CSX file(s), add a single CSX-specific target pointing at the root folder
         if (hasCSX) {
-            targets.push({
+            otherTargets.push({
                 label: "CSX",
                 description: path.basename(folderPath),
                 target: folderPath,
                 directory: folderPath,
-                kind: LaunchTargetKind.Csx
+                workspaceKind: LaunchTargetKind.Csx
             });
         }
 
         // if we noticed any Cake file(s), add a single Cake-specific target pointing at the root folder
         if (hasCake) {
-            targets.push({
+            otherTargets.push({
                 label: "Cake",
                 description: path.basename(folderPath),
                 target: folderPath,
                 directory: folderPath,
-                kind: LaunchTargetKind.Cake
+                workspaceKind: LaunchTargetKind.Cake
             });
         }
 
         if (hasCs && !hasSlnFile && !hasCsProjFiles && !hasProjectJson && !hasProjectJsonAtRoot) {
-            targets.push({
+            otherTargets.push({
                 label: path.basename(folderPath),
                 description: '',
                 target: folderPath,
                 directory: folderPath,
-                kind: LaunchTargetKind.Folder
+                workspaceKind: LaunchTargetKind.Folder
             });
         }
     });
 
-    return targets.sort((a, b) => a.directory.localeCompare(b.directory));
+    solutionTargets = solutionTargets.sort((a, b) => a.directory.localeCompare(b.directory));
+    projectRootTargets = projectRootTargets.sort((a, b) => a.directory.localeCompare(b.directory));
+    projectJsonTargets = projectJsonTargets.sort((a, b) => a.directory.localeCompare(b.directory));
+    projectTargets = projectTargets.sort((a, b) => a.directory.localeCompare(b.directory));
+
+    return otherTargets.concat(solutionTargets).concat(projectRootTargets).concat(projectJsonTargets).concat(projectTargets);
 }
 
 function isCSharpProject(resource: vscode.Uri): boolean {
@@ -251,13 +270,14 @@ function isCs(resource: vscode.Uri): boolean {
 export interface LaunchResult {
     process: ChildProcess;
     command: string;
-    monoVersion?: string;
-    monoPath?: string;
+    hostIsMono: boolean;
+    hostVersion?: string;
+    hostPath?: string;
 }
 
-export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IMonoResolver): Promise<LaunchResult> {
+export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        launch(cwd, args, launchInfo, platformInfo, options, monoResolver)
+        launch(cwd, args, launchInfo, platformInfo, options, monoResolver, dotnetResolver)
             .then(result => {
                 // async error - when target not not ENEOT
                 result.process.on('error', err => {
@@ -273,7 +293,7 @@ export async function launchOmniSharp(cwd: string, args: string[], launchInfo: L
     });
 }
 
-async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IMonoResolver): Promise<LaunchResult> {
+async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
     if (options.useEditorFormattingSettings) {
         let globalConfig = vscode.workspace.getConfiguration('', null);
         let csharpConfig = vscode.workspace.getConfiguration('[csharp]', null);
@@ -283,19 +303,24 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
         args.push(`formattingOptions:indentationSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
     }
 
+    if (options.useModernNet) {
+        return await launchDotnet(launchInfo, cwd, args, platformInfo, options, dotnetResolver);
+    }
+
     if (platformInfo.isWindows()) {
         return launchWindows(launchInfo.LaunchPath, cwd, args);
     }
 
-    let monoInfo = await monoResolver.getGlobalMonoInfo(options);
+    let monoInfo = await monoResolver.getHostExecutableInfo(options);
 
     if (monoInfo) {
         const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
         let childEnv = monoInfo.env;
         return {
             ...launchNixMono(launchPath, cwd, args, childEnv, options.waitForDebugger),
-            monoVersion: monoInfo.version,
-            monoPath: monoInfo.path
+            hostIsMono: true,
+            hostVersion: monoInfo.version,
+            hostPath: monoInfo.path
         };
     }
     else {
@@ -311,6 +336,32 @@ function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csha
     }
 
     return globalConfig.get(configurationPath, defaultValue);
+}
+
+async function launchDotnet(launchInfo: LaunchInfo, cwd: string, args: string[], platformInfo: PlatformInformation, options: Options, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
+    const dotnetInfo = await dotnetResolver.getHostExecutableInfo(options);
+    let command: string;
+    const argsCopy = args.slice(0);
+
+
+    if (launchInfo.LaunchPath && !launchInfo.LaunchPath.endsWith('.dll')) {
+        // If we're not being asked to launch a dll, assume whatever we're given is an executable
+        command = launchInfo.LaunchPath;
+    }
+    else {
+        command = platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
+        argsCopy.unshift(launchInfo.DotnetLaunchPath ?? launchInfo.LaunchPath);
+    }
+
+    const process = spawn(command, argsCopy, { detached: false, cwd, env: dotnetInfo.env });
+
+    return {
+        process,
+        command: launchInfo.DotnetLaunchPath ?? launchInfo.LaunchPath,
+        hostVersion: dotnetInfo.version,
+        hostPath: dotnetInfo.path,
+        hostIsMono: false,
+    };
 }
 
 function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchResult {
@@ -338,6 +389,7 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
     return {
         process,
         command: launchPath,
+        hostIsMono: false,
     };
 }
 
@@ -349,7 +401,8 @@ function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResul
 
     return {
         process,
-        command: launchPath
+        command: launchPath,
+        hostIsMono: false
     };
 }
 
@@ -371,7 +424,7 @@ function launchNixMono(launchPath: string, cwd: string, args: string[], environm
 
     return {
         process,
-        command: launchPath
+        command: launchPath,
+        hostIsMono: true
     };
 }
-

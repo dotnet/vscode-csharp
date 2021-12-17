@@ -7,19 +7,20 @@ import OmniSharpCompletionProvider from "../../src/features/completionProvider";
 import * as vscode from 'vscode';
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
 import * as path from "path";
-import { expect } from "chai";
-import { activateCSharpExtension, isRazorWorkspace } from "./integrationHelpers";
+import { expect, should } from "chai";
+import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from "./integrationHelpers";
 
 suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () => {
     let fileUri: vscode.Uri;
 
     suiteSetup(async function () {
-        // These tests don't run on the BasicRazorApp2_1 solution
-        if (isRazorWorkspace(vscode.workspace)) {
+        should();
+
+        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
             this.skip();
         }
 
-        await activateCSharpExtension();
+        const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
         let fileName = 'completion.cs';
@@ -31,6 +32,8 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
         let overrideUncomment = new vscode.WorkspaceEdit();
         overrideUncomment.delete(fileUri, new vscode.Range(new vscode.Position(11, 8), new vscode.Position(11, 11)));
         await vscode.workspace.applyEdit(overrideUncomment);
+
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     suiteTeardown(async () => {

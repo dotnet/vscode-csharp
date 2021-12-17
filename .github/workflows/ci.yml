@@ -17,10 +17,10 @@ jobs:
     - name: Setup virtual display
       run: /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
-    - name: Install .NET Core 3.1 SDK
+    - name: Install .NET Core 5.0 SDK
       uses: actions/setup-dotnet@v1.7.2
       with:
-        dotnet-version: 3.1.x
+        dotnet-version: 5.0.x
 
     - name: Install Node.js 15.x
       uses: actions/setup-node@v1
@@ -35,8 +35,8 @@ jobs:
     - name: Compile
       run: npm run compile
 
-    - name: Build extension package
-      run: gulp 'vsix:release:package'
+    - name: Build platform-neutral extension package
+      run: gulp 'vsix:release:package:platform-neutral'
 
     - name: Run unit and integration tests
       run: |
@@ -45,3 +45,6 @@ jobs:
       env:
         CODE_VERSION: 1.45.0
         DISPLAY: :99.0
+
+    - name: Build platform-specific extension package
+      run: gulp 'vsix:release:package:platform-specific'

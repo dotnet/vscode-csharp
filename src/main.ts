@@ -44,7 +44,6 @@ import IInstallDependencies from './packageManager/IInstallDependencies';
 import { installRuntimeDependencies } from './InstallRuntimeDependencies';
 import { isValidDownload } from './packageManager/isValidDownload';
 import { BackgroundWorkStatusBarObserver } from './observers/BackgroundWorkStatusBarObserver';
-import { getDecompilationAuthorization } from './omnisharp/decompilationPrompt';
 import { getDotnetPackApi } from './DotnetPack';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports> {
@@ -94,17 +93,17 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     let errorMessageObserver = new ErrorMessageObserver(vscode);
     eventStream.subscribe(errorMessageObserver.post);
 
-    let omnisharpStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, Number.MIN_VALUE + 2));
+    let omnisharpStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem("C#-Language-Service-Status", vscode.StatusBarAlignment.Left, Number.MIN_VALUE + 2));
     omnisharpStatusBar.name = "C# Language Service Status";
     let omnisharpStatusBarObserver = new OmnisharpStatusBarObserver(omnisharpStatusBar);
     eventStream.subscribe(omnisharpStatusBarObserver.post);
 
-    let projectStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, Number.MIN_VALUE + 1));
+    let projectStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem("C#-Project-Selector", vscode.StatusBarAlignment.Left, Number.MIN_VALUE + 1));
     projectStatusBar.name = "C# Project Selector";
     let projectStatusBarObserver = new ProjectStatusBarObserver(projectStatusBar);
     eventStream.subscribe(projectStatusBarObserver.post);
 
-    let backgroundWorkStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, Number.MIN_VALUE));
+    let backgroundWorkStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem("C#-Code-Analysis", vscode.StatusBarAlignment.Left, Number.MIN_VALUE));
     backgroundWorkStatusBar.name = "C# Code Analysis";
     let backgroundWorkStatusBarObserver = new BackgroundWorkStatusBarObserver(backgroundWorkStatusBar);
     eventStream.subscribe(backgroundWorkStatusBarObserver.post);
@@ -159,11 +158,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     eventStream.subscribe(telemetryObserver.post);
 
     let networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
-    let installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload);
+    const useFramework = optionProvider.GetLatestOptions().useModernNet !== true;
+    let installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload, useFramework);
     let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo, installDependencies);
-
-    // Prompt to authorize decompilation in this workspace
-    await getDecompilationAuthorization(context, optionProvider);
 
     // activate language services
     let langServicePromise = OmniSharp.activate(context, extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionProvider, extension.extensionPath);
@@ -224,7 +221,8 @@ function isSupportedPlatform(platform: PlatformInformation): boolean {
     if (platform.isLinux()) {
         return platform.architecture === "x86_64" ||
             platform.architecture === "x86" ||
-            platform.architecture === "i686";
+            platform.architecture === "i686" ||
+            platform.architecture === "arm64";
     }
 
     return false;

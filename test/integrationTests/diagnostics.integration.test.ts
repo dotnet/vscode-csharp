@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { should, expect } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace, restartOmniSharpServer } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator, restartOmniSharpServer } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { poll, assertWithPoll, pollDoesNotHappen } from './poll';
 
@@ -29,8 +29,12 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
 
-        await activateCSharpExtension();
-        await testAssetWorkspace.restore();
+        if (isSlnWithGenerator(vscode.workspace)) {
+            this.skip();
+        }
+
+        const activation = await activateCSharpExtension();
+        await testAssetWorkspace.restoreAndWait(activation);
 
         let fileName = 'diagnostics.cs';
         let secondaryFileName = 'secondaryDiagnostics.cs';
@@ -46,14 +50,14 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         suiteSetup(async function () {
             should();
 
-            // These tests only run on the BasicRazorApp2_1 solution
             if (!isRazorWorkspace(vscode.workspace)) {
                 this.skip();
             }
 
-            await activateCSharpExtension();
+            const activation = await activateCSharpExtension();
             await testAssetWorkspace.restore();
             await vscode.commands.executeCommand("vscode.open", razorFileUri);
+            await testAssetWorkspace.waitForIdle(activation.eventStream);
         });
 
         test("Razor shouldn't give diagnostics for virtual files", async () => {
@@ -84,13 +88,15 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             should();
 
             // These tests don't run on the BasicRazorApp2_1 solution
-            if (isRazorWorkspace(vscode.workspace)) {
+            if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
                 this.skip();
             }
 
-            await activateCSharpExtension();
+            const activation = await activateCSharpExtension();
             await testAssetWorkspace.restore();
             await vscode.commands.executeCommand("vscode.open", fileUri);
+
+            await testAssetWorkspace.waitForIdle(activation.eventStream);
         });
 
         test("Returns any diagnostics from file", async function () {
@@ -151,14 +157,15 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             should();
 
             // These tests don't run on the BasicRazorApp2_1 solution
-            if (isRazorWorkspace(vscode.workspace)) {
+            if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
                 this.skip();
             }
 
             await setDiagnosticWorkspaceLimit(1);
+            const activation = await activateCSharpExtension();
             await testAssetWorkspace.restore();
-            await activateCSharpExtension();
             await restartOmniSharpServer();
+            await testAssetWorkspace.waitForIdle(activation.eventStream);
         });
 
         test("When workspace is count as 'large', then only show/fetch diagnostics from open documents", async function () {

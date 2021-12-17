@@ -19,7 +19,7 @@ const normalCommands = [
     protocol.Requests.FindSymbols,
     protocol.Requests.FindUsages,
     protocol.Requests.GetCodeActions,
-    protocol.Requests.GoToDefinition,
+    protocol.V2.Requests.GoToDefinition,
     protocol.Requests.RunCodeAction,
     protocol.Requests.SignatureHelp,
     protocol.Requests.TypeLookup

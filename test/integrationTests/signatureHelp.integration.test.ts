@@ -6,8 +6,8 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-import { expect } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
+import { expect, should } from 'chai';
+import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
 const chai = require('chai');
@@ -18,12 +18,13 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
 
     suiteSetup(async function () {
-        // These tests don't run on the BasicRazorApp2_1 solution
-        if (isRazorWorkspace(vscode.workspace)) {
+        should();
+
+        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
             this.skip();
         }
 
-        await activateCSharpExtension();
+        const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
         let fileName = 'sigHelp.cs';
@@ -31,6 +32,8 @@ suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
         let loc = path.join(dir, fileName);
         fileUri = vscode.Uri.file(loc);
         await vscode.commands.executeCommand("vscode.open", fileUri);
+
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     suiteTeardown(async () => {

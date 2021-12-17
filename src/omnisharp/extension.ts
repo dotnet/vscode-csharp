@@ -41,6 +41,9 @@ import { getMonoVersion } from '../utils/getMonoVersion';
 import { FixAllProvider } from '../features/fixAllProvider';
 import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
 import SemanticTokensProvider from '../features/semanticTokensProvider';
+import SourceGeneratedDocumentProvider from '../features/sourceGeneratedDocumentProvider';
+import { getDecompilationAuthorization } from './decompilationPrompt';
+import { OmniSharpDotnetResolver } from './OmniSharpDotnetResolver';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
@@ -54,9 +57,10 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     };
 
     const options = optionProvider.GetLatestOptions();
-    let omnisharpMonoResolver = new OmniSharpMonoResolver(getMonoVersion);
-    const decompilationAuthorized = context.workspaceState.get<boolean | undefined>("decompilationAuthorized") ?? false;
-    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver, decompilationAuthorized);
+    const omnisharpMonoResolver = new OmniSharpMonoResolver(getMonoVersion);
+    const omnisharpDotnetResolver = new OmniSharpDotnetResolver(platformInfo);
+    const decompilationAuthorized = await getDecompilationAuthorization(context, optionProvider);
+    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver, omnisharpDotnetResolver, decompilationAuthorized);
     const advisor = new Advisor(server, optionProvider); // create before server is started
     const disposables = new CompositeDisposable();
     const languageMiddlewareFeature = new LanguageMiddlewareFeature();
@@ -72,7 +76,10 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         const definitionMetadataDocumentProvider = new DefinitionMetadataDocumentProvider();
         definitionMetadataDocumentProvider.register();
         localDisposables.add(definitionMetadataDocumentProvider);
-        const definitionProvider = new DefinitionProvider(server, definitionMetadataDocumentProvider, languageMiddlewareFeature);
+        const sourceGeneratedDocumentProvider = new SourceGeneratedDocumentProvider(server);
+        sourceGeneratedDocumentProvider.register();
+        localDisposables.add(sourceGeneratedDocumentProvider);
+        const definitionProvider = new DefinitionProvider(server, definitionMetadataDocumentProvider, sourceGeneratedDocumentProvider, languageMiddlewareFeature);
         localDisposables.add(vscode.languages.registerDefinitionProvider(documentSelector, definitionProvider));
         localDisposables.add(vscode.languages.registerDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
         localDisposables.add(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server, languageMiddlewareFeature)));
@@ -99,7 +106,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         // so that it will be cleaned up if OmniSharp is restarted.
         const fixAllProvider = new FixAllProvider(server, languageMiddlewareFeature);
         localDisposables.add(fixAllProvider);
-        localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, fixAllProvider));
+        localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, fixAllProvider, FixAllProvider.metadata));
         localDisposables.add(reportDiagnostics(server, advisor, languageMiddlewareFeature));
         localDisposables.add(forwardChanges(server));
         localDisposables.add(trackVirtualDocuments(server, eventStream));

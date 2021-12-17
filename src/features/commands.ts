@@ -5,7 +5,7 @@
 
 import { OmniSharpServer } from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
-import { findLaunchTargets } from '../omnisharp/launcher';
+import { findLaunchTargets, LaunchTarget } from '../omnisharp/launcher';
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -19,11 +19,11 @@ import { PlatformInformation } from '../platform';
 import CompositeDisposable from '../CompositeDisposable';
 import OptionProvider from '../observers/OptionProvider';
 import reportIssue from './reportIssue';
-import { IMonoResolver } from '../constants/IMonoResolver';
+import { IHostExecutableResolver } from '../constants/IHostExecutableResolver';
 import { getDotnetInfo } from '../utils/getDotnetInfo';
-import { getDecompilationAuthorization } from '../omnisharp/decompilationPrompt';
+import { getDecompilationAuthorization, resetDecompilationAuthorization } from '../omnisharp/decompilationPrompt';
 
-export default function registerCommands(context: vscode.ExtensionContext, server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionProvider: OptionProvider, monoResolver: IMonoResolver, packageJSON: any, extensionPath: string): CompositeDisposable {
+export default function registerCommands(context: vscode.ExtensionContext, server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionProvider: OptionProvider, monoResolver: IHostExecutableResolver, packageJSON: any, extensionPath: string): CompositeDisposable {
     let disposable = new CompositeDisposable();
     disposable.add(vscode.commands.registerCommand('o.restart', async () => restartOmniSharp(context, server, optionProvider)));
     disposable.add(vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionProvider)));
@@ -62,13 +62,13 @@ export default function registerCommands(context: vscode.ExtensionContext, serve
 
 async function showDecompilationTerms(context: vscode.ExtensionContext, server: OmniSharpServer, optionProvider: OptionProvider) {
     // Reset the decompilation authorization so the user will be prompted on restart.
-    context.workspaceState.update("decompilationAuthorized", undefined);
+    resetDecompilationAuthorization(context);
 
     await restartOmniSharp(context, server, optionProvider);
 }
 
 async function restartOmniSharp(context: vscode.ExtensionContext, server: OmniSharpServer, optionProvider: OptionProvider) {
-    // Update decompilation authorization for this workspace.
+    // Update decompilation authorization.
     server.decompilationAuthorized = await getDecompilationAuthorization(context, optionProvider);
 
     if (server.isRunning()) {
@@ -81,7 +81,7 @@ async function restartOmniSharp(context: vscode.ExtensionContext, server: OmniSh
 
 async function pickProjectAndStart(server: OmniSharpServer, optionProvider: OptionProvider): Promise<void> {
     let options = optionProvider.GetLatestOptions();
-    return findLaunchTargets(options).then(targets => {
+    return findLaunchTargets(options).then(async targets => {
 
         let currentPath = server.getSolutionPathOrFolder();
         if (currentPath) {
@@ -92,14 +92,18 @@ async function pickProjectAndStart(server: OmniSharpServer, optionProvider: Opti
             }
         }
 
-        return vscode.window.showQuickPick(targets, {
-            matchOnDescription: true,
-            placeHolder: `Select 1 of ${targets.length} projects`
-        }).then(async launchTarget => {
-            if (launchTarget) {
-                return server.restart(launchTarget);
-            }
-        });
+        return showProjectSelector(server, targets);
+    });
+}
+
+export async function showProjectSelector(server: OmniSharpServer, targets: LaunchTarget[]): Promise<void> {
+    return vscode.window.showQuickPick(targets, {
+        matchOnDescription: true,
+        placeHolder: `Select 1 of ${targets.length} projects`
+    }).then(async launchTarget => {
+        if (launchTarget) {
+            return server.restart(launchTarget);
+        }
     });
 }
 

@@ -6,25 +6,31 @@
 import * as vscode from "vscode";
 import OptionProvider from "../observers/OptionProvider";
 
+const DecompilationAuthorizedOption = "csharp.decompilationAuthorized";
+
+export async function resetDecompilationAuthorization(context: vscode.ExtensionContext) {
+    context.globalState.update(DecompilationAuthorizedOption, undefined);
+}
+
 export async function getDecompilationAuthorization(context: vscode.ExtensionContext, optionProvider: OptionProvider) {
-    // If decompilation is disabled the return false
+    // If decompilation is disabled, then return false
     const options = optionProvider.GetLatestOptions();
     if (options.enableDecompilationSupport === false) {
         return false;
     }
 
-    // If the terms have been acknowledged for this workspace then return.
-    let decompilationAutorized = context.workspaceState.get<boolean | undefined>("decompilationAuthorized");
-    if (decompilationAutorized !== undefined) {
-        return decompilationAutorized;
+    // If the terms have been acknowledged, then return whether it was authorized.
+    let decompilationAuthorized = context.globalState.get<boolean | undefined>(DecompilationAuthorizedOption);
+    if (decompilationAuthorized !== undefined) {
+        return decompilationAuthorized;
     }
 
     const result = await promptToAcceptDecompilationTerms();
-    decompilationAutorized = result === PromptResult.Yes;
+    decompilationAuthorized = result === PromptResult.Yes;
 
-    await context.workspaceState.update("decompilationAuthorized", decompilationAutorized);
+    await context.globalState.update(DecompilationAuthorizedOption, decompilationAuthorized);
 
-    return decompilationAutorized;
+    return decompilationAuthorized;
 }
 
 enum PromptResult {

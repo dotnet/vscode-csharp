@@ -56,10 +56,10 @@ export class OmnisharpLoggerObserver extends BaseLoggerObserver {
 
     private handleOmnisharpLaunch(event: OmnisharpLaunch) {
         this.logger.append(`OmniSharp server started`);
-        if (event.monoVersion) {
-            this.logger.append(` with Mono ${event.monoVersion}`);
-            if (event.monoPath !== undefined) {
-                this.logger.append(` (${event.monoPath})`);
+        if (event.hostVersion) {
+            this.logger.append(` with ${event.hostIsMono ? 'Mono' : '.NET'} ${event.hostVersion}`);
+            if (event.hostPath !== undefined) {
+                this.logger.append(` (${event.hostPath})`);
             }
         }
         this.logger.appendLine('.');

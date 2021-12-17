@@ -9,7 +9,7 @@ import { IDisposable } from '../Disposable';
 
 export default class DefinitionMetadataDocumentProvider implements TextDocumentContentProvider, IDisposable {
     readonly scheme = "omnisharp-metadata";
-    private _registration : IDisposable;
+    private _registration: IDisposable;
     private _documents: Map<string, MetadataResponse>;
     private _documentClosedSubscription: IDisposable;
 
@@ -18,36 +18,41 @@ export default class DefinitionMetadataDocumentProvider implements TextDocumentC
         this._documentClosedSubscription = workspace.onDidCloseTextDocument(this.onTextDocumentClosed, this);
     }
 
-    private onTextDocumentClosed(document: TextDocument) : void {
+    private onTextDocumentClosed(document: TextDocument): void {
         this._documents.delete(document.uri.toString());
     }
 
-    public dispose() : void {
+    public dispose(): void {
         this._registration.dispose();
         this._documentClosedSubscription.dispose();
         this._documents.clear();
     }
 
-    public addMetadataResponse(metadataResponse: MetadataResponse) : Uri {
+    public addMetadataResponse(metadataResponse: MetadataResponse): Uri {
         const uri = this.createUri(metadataResponse.SourceName);
         this._documents.set(uri.toString(), metadataResponse);
 
         return uri;
     }
 
-    public getExistingMetadataResponseUri(sourceName: string) : Uri {
+    public getExistingMetadataResponseUri(sourceName: string): Uri {
         return this.createUri(sourceName);
     }
 
-    public register() : void {
+    public hasMetadataDocument(sourceName: string): boolean {
+        const uri = this.createUri(sourceName);
+        return this._documents.has(uri.toString());
+    }
+
+    public register(): void {
         this._registration = workspace.registerTextDocumentContentProvider(this.scheme, this);
     }
 
-    public provideTextDocumentContent(uri: Uri) : string {
-        return this._documents.get(uri.toString()).Source;
+    public provideTextDocumentContent(uri: Uri): string {
+        return this._documents.get(uri.toString())?.Source;
     }
 
-    private createUri(sourceName: string) : Uri {
+    private createUri(sourceName: string): Uri {
         return Uri.parse(this.scheme + "://" +
             sourceName.replace(/\\/g, "/").replace(/(.*)\/(.*)/g, "$1/[metadata] $2"));
     }

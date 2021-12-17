@@ -24,14 +24,14 @@ export class OmnisharpDownloader {
         private extensionPath: string) {
     }
 
-    public async DownloadAndInstallOmnisharp(version: string, serverUrl: string, installPath: string): Promise<boolean> {
+    public async DownloadAndInstallOmnisharp(version: string, useFramework: boolean, serverUrl: string, installPath: string): Promise<boolean> {
         let runtimeDependencies = getRuntimeDependenciesPackages(this.packageJSON);
-        let omniSharpPackages = GetPackagesFromVersion(version, runtimeDependencies, serverUrl, installPath);
+        let omniSharpPackages = GetPackagesFromVersion(version, useFramework, runtimeDependencies, serverUrl, installPath);
         let packagesToInstall = await getAbsolutePathPackagesToInstall(omniSharpPackages, this.platformInfo, this.extensionPath);
         if (packagesToInstall && packagesToInstall.length > 0) {
             this.eventStream.post(new PackageInstallation(`OmniSharp Version = ${version}`));
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
-            if (await downloadAndInstallPackages(packagesToInstall, this.networkSettingsProvider, this.eventStream, isValidDownload)) {
+            if (await downloadAndInstallPackages(packagesToInstall, this.networkSettingsProvider, this.eventStream, isValidDownload, useFramework)) {
                 this.eventStream.post(new InstallationSuccess());
                 return true;
             }

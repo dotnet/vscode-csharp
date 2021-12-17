@@ -5,9 +5,9 @@
 
 import * as vscode from 'vscode';
 
-import { expect } from 'chai';
+import { expect, should } from 'chai';
 import * as path from 'path';
-import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
 import { Advisor } from '../../src/features/diagnosticsProvider';
@@ -25,24 +25,27 @@ suite(`Advisor ${testAssetWorkspace.description}`, function () {
     let advisor: Advisor;
 
     suiteSetup(async function () {
-        // These tests don't run on the BasicRazorApp2_1 solution
-        if (isRazorWorkspace(vscode.workspace)) {
+        should();
+
+        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
             this.skip();
         }
 
-        let activationResult = await activateCSharpExtension();
+        const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
-        if (!activationResult) {
+        if (!activation) {
             throw new Error('Cannot activate extension.');
         } else {
-            advisor = activationResult.advisor;
+            advisor = activation.advisor;
         }
 
         let fileName = 'completion.cs';
         let dir = testAssetWorkspace.projects[0].projectDirectoryPath;
         let fileUri = vscode.Uri.file(path.join(dir, fileName));
         await vscode.commands.executeCommand('vscode.open', fileUri);
+
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     suiteTeardown(async () => {

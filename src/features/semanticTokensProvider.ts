@@ -64,6 +64,14 @@ enum CustomTokenType {
     xmlDocCommentName,
     xmlDocCommentProcessingInstruction,
     xmlDocCommentText,
+    regexComment,
+    regexCharacterClass,
+    regexAnchor,
+    regexQuantifier,
+    regexGrouping,
+    regexAlternation,
+    regexSelfEscapedCharacter,
+    regexOtherEscape,
 }
 
 // The default TokenModifiers defined by VS Code https://github.com/microsoft/vscode/blob/master/src/vs/platform/theme/common/tokenClassificationRegistry.ts#L393
@@ -190,6 +198,14 @@ export default class SemanticTokensProvider extends AbstractProvider implements 
         let req = createRequest<protocol.V2.SemanticHighlightRequest>(document, new vscode.Position(0, 0));
         req.Range = range;
 
+
+        // We need to include the document contents in our request when we are highlighting a version of the document other than the current version, such as in the Diff view.
+        const currentDocument = vscode.workspace.textDocuments.find(d => d.fileName === document.fileName);
+        const isCurrentVersion = currentDocument?.version === document.version;
+        if (!isCurrentVersion) {
+            req.VersionedText = document.getText();
+        }
+
         const versionBeforeRequest = document.version;
 
         const response = await serverUtils.getSemanticHighlights(this._server, req);
@@ -281,6 +297,14 @@ tokenTypes[CustomTokenType.xmlDocCommentEntityReference] = "xmlDocCommentEntityR
 tokenTypes[CustomTokenType.xmlDocCommentName] = "xmlDocCommentName";
 tokenTypes[CustomTokenType.xmlDocCommentProcessingInstruction] = "xmlDocCommentProcessingInstruction";
 tokenTypes[CustomTokenType.xmlDocCommentText] = "xmlDocCommentText";
+tokenTypes[CustomTokenType.regexComment] = "regexComment";
+tokenTypes[CustomTokenType.regexCharacterClass] = "regexCharacterClass";
+tokenTypes[CustomTokenType.regexAnchor] = "regexAnchor";
+tokenTypes[CustomTokenType.regexQuantifier] = "regexQuantifier";
+tokenTypes[CustomTokenType.regexGrouping] = "regexGrouping";
+tokenTypes[CustomTokenType.regexAlternation] = "regexAlternation";
+tokenTypes[CustomTokenType.regexSelfEscapedCharacter] = "regexSelfEscapedCharacter";
+tokenTypes[CustomTokenType.regexOtherEscape] = "regexOtherEscape";
 
 const tokenModifiers: string[] = [];
 tokenModifiers[DefaultTokenModifier.declaration] = 'declaration';
@@ -348,15 +372,15 @@ tokenTypeMap[SemanticHighlightClassification.XmlLiteralEntityReference] = undefi
 tokenTypeMap[SemanticHighlightClassification.XmlLiteralName] = undefined;
 tokenTypeMap[SemanticHighlightClassification.XmlLiteralProcessingInstruction] = undefined;
 tokenTypeMap[SemanticHighlightClassification.XmlLiteralText] = undefined;
-tokenTypeMap[SemanticHighlightClassification.RegexComment] = DefaultTokenType.regexp;
-tokenTypeMap[SemanticHighlightClassification.RegexCharacterClass] = DefaultTokenType.regexp;
-tokenTypeMap[SemanticHighlightClassification.RegexAnchor] = DefaultTokenType.regexp;
-tokenTypeMap[SemanticHighlightClassification.RegexQuantifier] = DefaultTokenType.regexp;
-tokenTypeMap[SemanticHighlightClassification.RegexGrouping] = DefaultTokenType.regexp;
-tokenTypeMap[SemanticHighlightClassification.RegexAlternation] = DefaultTokenType.regexp;
+tokenTypeMap[SemanticHighlightClassification.RegexComment] = CustomTokenType.regexComment;
+tokenTypeMap[SemanticHighlightClassification.RegexCharacterClass] = CustomTokenType.regexCharacterClass;
+tokenTypeMap[SemanticHighlightClassification.RegexAnchor] = CustomTokenType.regexAnchor;
+tokenTypeMap[SemanticHighlightClassification.RegexQuantifier] = CustomTokenType.regexQuantifier;
+tokenTypeMap[SemanticHighlightClassification.RegexGrouping] = CustomTokenType.regexGrouping;
+tokenTypeMap[SemanticHighlightClassification.RegexAlternation] = CustomTokenType.regexAlternation;
 tokenTypeMap[SemanticHighlightClassification.RegexText] = DefaultTokenType.regexp;
-tokenTypeMap[SemanticHighlightClassification.RegexSelfEscapedCharacter] = DefaultTokenType.regexp;
-tokenTypeMap[SemanticHighlightClassification.RegexOtherEscape] = DefaultTokenType.regexp;
+tokenTypeMap[SemanticHighlightClassification.RegexSelfEscapedCharacter] = CustomTokenType.regexSelfEscapedCharacter;
+tokenTypeMap[SemanticHighlightClassification.RegexOtherEscape] = CustomTokenType.regexOtherEscape;
 
 const tokenModifierMap: number[] = [];
 tokenModifierMap[SemanticHighlightModifier.Static] = 2 ** DefaultTokenModifier.static;

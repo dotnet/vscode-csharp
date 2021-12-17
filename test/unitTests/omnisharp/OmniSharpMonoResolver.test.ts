@@ -39,7 +39,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
 
     test(`it returns undefined if the version is less than ${requiredMonoVersion} and useGlobalMono is auto`, async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono(lowerMonoVersion));
-        let monoInfo = await monoResolver.getGlobalMonoInfo({
+        let monoInfo = await monoResolver.getHostExecutableInfo({
             ...options,
             useGlobalMono: "auto",
             monoPath: monoPath
@@ -49,7 +49,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
 
     test("it returns undefined if useGlobalMono is never", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono(higherMonoVersion));
-        let monoInfo = await monoResolver.getGlobalMonoInfo({
+        let monoInfo = await monoResolver.getHostExecutableInfo({
             ...options,
             useGlobalMono: "never",
             monoPath: monoPath
@@ -59,7 +59,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
 
     test(`it returns the path and version if the version is greater than or equal to ${requiredMonoVersion} and useGlobalMono is always`, async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono(requiredMonoVersion));
-        let monoInfo = await monoResolver.getGlobalMonoInfo({
+        let monoInfo = await monoResolver.getHostExecutableInfo({
             ...options,
             useGlobalMono: "always",
             monoPath: monoPath
@@ -71,7 +71,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
 
     test(`it returns the path and version if the version is greater than or equal to ${requiredMonoVersion} and useGlobalMono is auto`, async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono(higherMonoVersion));
-        let monoInfo = await monoResolver.getGlobalMonoInfo({
+        let monoInfo = await monoResolver.getHostExecutableInfo({
             ...options,
             useGlobalMono: "auto",
             monoPath: monoPath
@@ -89,7 +89,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
     test(`it throws exception if getGlobalMonoInfo is always and version<${requiredMonoVersion}`, async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono(lowerMonoVersion));
 
-        await expect(monoResolver.getGlobalMonoInfo({
+        await expect(monoResolver.getHostExecutableInfo({
             ...options,
             useGlobalMono: "always",
             monoPath: monoPath
@@ -98,7 +98,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
 
     test("sets the environment with the monoPath id useGlobalMono is auto", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono(requiredMonoVersion));
-        let monoInfo = await monoResolver.getGlobalMonoInfo({
+        let monoInfo = await monoResolver.getHostExecutableInfo({
             ...options,
             useGlobalMono: "auto",
             monoPath: monoPath
@@ -115,7 +115,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
 
     test("sets the environment with the monoPath id useGlobalMono is auto", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono(requiredMonoVersion));
-        let monoInfo = await monoResolver.getGlobalMonoInfo({
+        let monoInfo = await monoResolver.getHostExecutableInfo({
             ...options,
             useGlobalMono: "auto",
             monoPath: monoPath
@@ -132,7 +132,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
 
     test("doesn't set the environment with the monoPath if useGlobalMono is never", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono(requiredMonoVersion));
-        await monoResolver.getGlobalMonoInfo({
+        await monoResolver.getHostExecutableInfo({
             ...options,
             useGlobalMono: "never",
             monoPath: monoPath
@@ -145,7 +145,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
 
     test("getMono is called with the environment that includes the monoPath if the useGlobalMono is auto or always", async () => {
         let monoResolver = new OmniSharpMonoResolver(getMono(requiredMonoVersion));
-        await monoResolver.getGlobalMonoInfo({
+        await monoResolver.getHostExecutableInfo({
             ...options,
             useGlobalMono: "auto",
             monoPath: monoPath

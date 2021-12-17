@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { should, assert } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
 const chai = require('chai');
@@ -52,19 +52,20 @@ suite(`SemanticTokensProvider: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
 
-        // These tests don't run on the BasicRazorApp2_1 solution
-        if (isRazorWorkspace(vscode.workspace)) {
+        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
             this.skip();
         }
 
         const activation = await activateCSharpExtension();
-        await testAssetWorkspace.restoreAndWait(activation);
+        await testAssetWorkspace.restore();
 
         const fileName = 'semantictokens.cs';
         const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
 
         fileUri = vscode.Uri.file(path.join(projectDirectory, fileName));
         await vscode.commands.executeCommand("vscode.open", fileUri);
+
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     test('Semantic Highlighting returns null when disabled', async () => {

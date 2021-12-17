@@ -15,6 +15,13 @@ import { buildEditForResponse } from '../omnisharp/fileOperationsResponseEditBui
 import { CancellationToken } from 'vscode-languageserver-protocol';
 
 export class FixAllProvider extends AbstractProvider implements vscode.CodeActionProvider {
+    public static fixAllCodeActionKind =
+      vscode.CodeActionKind.SourceFixAll.append('csharp');
+  
+    public static metadata: vscode.CodeActionProviderMetadata = {
+      providedCodeActionKinds: [FixAllProvider.fixAllCodeActionKind]
+    };
+
     public constructor(private server: OmniSharpServer, languageMiddlewareFeature: LanguageMiddlewareFeature) {
         super(server, languageMiddlewareFeature);
         let disposable = new CompositeDisposable();
@@ -35,7 +42,7 @@ export class FixAllProvider extends AbstractProvider implements vscode.CodeActio
             return [];
         }
 
-        if (context.only.value === "source.fixAll.csharp") {
+        if (context.only.contains(FixAllProvider.fixAllCodeActionKind)) {
             await this.applyFixes(document.fileName, FixAllScope.Document, undefined);
         }
 

@@ -30,7 +30,8 @@ import { debounceTime } from 'rxjs/operators';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
-import { IMonoResolver } from '../constants/IMonoResolver';
+import { IHostExecutableResolver } from '../constants/IHostExecutableResolver';
+import { showProjectSelector } from '../features/commands';
 import { removeBOMFromBuffer, removeBOMFromString } from '../utils/removeBOM';
 
 enum ServerState {
@@ -99,7 +100,17 @@ export class OmniSharpServer {
     private updateProjectDebouncer = new Subject<ObservableEvents.ProjectModified>();
     private firstUpdateProject: boolean;
 
-    constructor(private vscode: vscode, networkSettingsProvider: NetworkSettingsProvider, private packageJSON: any, private platformInfo: PlatformInformation, private eventStream: EventStream, private optionProvider: OptionProvider, private extensionPath: string, private monoResolver: IMonoResolver, public decompilationAuthorized: boolean) {
+    constructor(
+        private vscode: vscode,
+        networkSettingsProvider: NetworkSettingsProvider,
+        private packageJSON: any,
+        private platformInfo: PlatformInformation,
+        private eventStream: EventStream,
+        private optionProvider: OptionProvider,
+        private extensionPath: string,
+        private monoResolver: IHostExecutableResolver,
+        private dotnetResolver: IHostExecutableResolver,
+        public decompilationAuthorized: boolean) {
         this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
         let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, this.packageJSON, platformInfo, extensionPath);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
@@ -255,7 +266,7 @@ export class OmniSharpServer {
             return;
         }
 
-        if (launchTarget.kind === LaunchTargetKind.LiveShare) {
+        if (launchTarget.workspaceKind === LaunchTargetKind.LiveShare) {
             this.eventStream.post(new ObservableEvents.OmnisharpServerMessage("During Live Share sessions language services are provided by the Live Share server."));
             return;
         }
@@ -382,7 +393,7 @@ export class OmniSharpServer {
 
         let launchInfo: LaunchInfo;
         try {
-            launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, serverUrl, latestVersionFileServerPath, installPath, this.extensionPath);
+            launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, /* useFramework */ !options.useModernNet, serverUrl, latestVersionFileServerPath, installPath, this.extensionPath);
         }
         catch (error) {
             this.eventStream.post(new ObservableEvents.OmnisharpFailure(`Error occurred in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));
@@ -393,8 +404,8 @@ export class OmniSharpServer {
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
         try {
-            let launchResult = await launchOmniSharp(cwd, args, launchInfo, this.platformInfo, options, this.monoResolver);
-            this.eventStream.post(new ObservableEvents.OmnisharpLaunch(launchResult.monoVersion, launchResult.monoPath, launchResult.command, launchResult.process.pid));
+            const launchResult = await launchOmniSharp(cwd, args, launchInfo, this.platformInfo, options, this.monoResolver, this.dotnetResolver);
+            this.eventStream.post(new ObservableEvents.OmnisharpLaunch(launchResult.hostVersion, launchResult.hostPath, launchResult.hostIsMono, launchResult.command, launchResult.process.pid));
 
             if (razorPluginPath && options.razorPluginPath) {
                 if (fs.existsSync(razorPluginPath)) {
@@ -537,33 +548,44 @@ export class OmniSharpServer {
                     return this.autoStart(preferredPath);
                 });
             }
-
-            const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().defaultLaunchSolution;
+            else if (launchTargets.length === 1) {
+                // If there's only one target, just start
+                return this.restart(launchTargets[0]);
+            }
 
             // First, try to launch against something that matches the user's preferred target
+            const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().defaultLaunchSolution;
             const defaultLaunchSolutionTarget = launchTargets.find((a) => (path.basename(a.target) === defaultLaunchSolutionConfigValue));
             if (defaultLaunchSolutionTarget) {
                 return this.restart(defaultLaunchSolutionTarget);
             }
 
             // If there's more than one launch target, we start the server if one of the targets
-            // matches the preferred path. Otherwise, we fire the "MultipleLaunchTargets" event,
-            // which is handled in status.ts to display the launch target selector.
-            if (launchTargets.length > 1 && preferredPath) {
-
-                for (let launchTarget of launchTargets) {
-                    if (launchTarget.target === preferredPath) {
-                        // start preferred path
-                        return this.restart(launchTarget);
-                    }
+            // matches the preferred path.
+            if (preferredPath) {
+                const preferredLaunchTarget = launchTargets.find((a) => a.target === preferredPath);
+                if (preferredLaunchTarget) {
+                    return this.restart(preferredLaunchTarget);
                 }
-
-                this._fireEvent(Events.MultipleLaunchTargets, launchTargets);
-                return Promise.reject<void>(undefined);
             }
 
-            // If there's only one target, just start
-            return this.restart(launchTargets[0]);
+            // To maintain previous behavior when there are mulitple targets available,
+            // launch with first Solution or Folder target.
+            const firstFolderOrSolutionTarget = launchTargets
+                .find(target => target.workspaceKind == LaunchTargetKind.Folder || target.workspaceKind == LaunchTargetKind.Solution);
+            if (firstFolderOrSolutionTarget) {
+                return this.restart(firstFolderOrSolutionTarget);
+            }
+
+            // When running integration tests, open the first launch target.
+            if (process.env.RUNNING_INTEGRATION_TESTS === "true") {
+                return this.restart(launchTargets[0]);
+            }
+
+            // Otherwise, we fire the "MultipleLaunchTargets" event,
+            // which is handled in status.ts to display the launch target selector.
+            this._fireEvent(Events.MultipleLaunchTargets, launchTargets);
+            return showProjectSelector(this, launchTargets);
         });
     }
 

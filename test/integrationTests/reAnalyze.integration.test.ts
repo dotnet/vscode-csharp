@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { should, expect } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { poll, assertWithPoll } from './poll';
 import { EventStream } from '../../src/EventStream';
@@ -39,13 +39,12 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
 
-        // These tests don't run on the BasicRazorApp2_1 solution
-        if (isRazorWorkspace(vscode.workspace)) {
+        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
             this.skip();
         }
 
         const activation = await activateCSharpExtension();
-        await testAssetWorkspace.restoreAndWait(activation);
+        await testAssetWorkspace.restore();
 
         eventStream = activation.eventStream;
 
@@ -55,6 +54,8 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
 
         await vscode.commands.executeCommand("vscode.open", interfaceImplUri);
         await vscode.commands.executeCommand("vscode.open", interfaceUri);
+
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     suiteTeardown(async () => {

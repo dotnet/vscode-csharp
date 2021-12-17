@@ -16,11 +16,23 @@ import { mkdirpSync } from "fs-extra";
 import { PackageInstallStart } from "../omnisharp/loggingEvents";
 import { DownloadValidator } from './isValidDownload';
 
-export async function downloadAndInstallPackages(packages: AbsolutePathPackage[], provider: NetworkSettingsProvider, eventStream: EventStream, downloadValidator: DownloadValidator): Promise<boolean> {
+export async function downloadAndInstallPackages(packages: AbsolutePathPackage[], provider: NetworkSettingsProvider, eventStream: EventStream, downloadValidator: DownloadValidator, useFramework: boolean): Promise<boolean> {
     if (packages) {
         eventStream.post(new PackageInstallStart());
         for (let pkg of packages) {
             let installationStage = "touchBeginFile";
+
+            if (pkg.id === "OmniSharp") {
+                if (pkg.isFramework !== useFramework) {
+                    continue;
+                }
+
+                if (pkg.url === null) {
+                    eventStream.post(new InstallationFailure(installationStage, new Error("A release package of OmniSharp does not exist for this platform. Set \"omnisharp.path\" to \"latest\" in Settings to use an experimental build.")));
+                    continue;
+                }
+            }
+
             try {
                 mkdirpSync(pkg.installPath.value);
                 await touchInstallFile(pkg.installPath, InstallFileType.Begin);
