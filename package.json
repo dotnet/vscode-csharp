@@ -842,7 +842,7 @@
         },
         "csharp.semanticHighlighting.enabled": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "description": "Enable/disable Semantic Highlighting for C# files (Razor files currently unsupported). Defaults to false. Close open files for changes to take effect.",
           "scope": "window"
         },

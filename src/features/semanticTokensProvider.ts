@@ -198,6 +198,14 @@ export default class SemanticTokensProvider extends AbstractProvider implements 
         let req = createRequest<protocol.V2.SemanticHighlightRequest>(document, new vscode.Position(0, 0));
         req.Range = range;
 
+
+        // We need to include the document contents in our request when we are highlighting a version of the document other than the current version, such as in the Diff view.
+        const currentDocument = vscode.workspace.textDocuments.find(d => d.fileName === document.fileName);
+        const isCurrentVersion = currentDocument?.version === document.version;
+        if (!isCurrentVersion) {
+            req.VersionedText = document.getText();
+        }
+
         const versionBeforeRequest = document.version;
 
         const response = await serverUtils.getSemanticHighlights(this._server, req);
