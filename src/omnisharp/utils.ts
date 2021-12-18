@@ -104,11 +104,8 @@ export async function requestWorkspaceInformation(server: OmniSharpServer) {
             blazorWebAssemblyProjectFound = blazorWebAssemblyProjectFound || isProjectBlazorWebAssemblyProject;
         }
 
-        if (blazorWebAssemblyProjectFound && !hasBlazorWebAssemblyDebugPrerequisites(server)) {
-            const configuration = vscode.workspace.getConfiguration('razor');
-            // There's a Blazor Web Assembly project but VSCode isn't configured to debug the WASM code, show a notification
-            // to help the user configure their VSCode appropriately.
-            showBlazorConfigurationRequiredPrompt(server, configuration);
+        if (blazorWebAssemblyProjectFound && !vscode.extensions.getExtension('ms-dotnettools.blazorwasm-companion')) {
+            showBlazorDebuggingExtensionPrompt(server);
         }
     }
 
@@ -243,61 +240,12 @@ async function isBlazorWebAssemblyProject(project: MSBuildProject): Promise<bool
     return false;
 }
 
-function hasBlazorWebAssemblyDebugPrerequisites(server: OmniSharpServer) {
-    const companionExtension = vscode.extensions.getExtension('ms-dotnettools.blazorwasm-companion');
-    if (!companionExtension) {
-        showBlazorDebuggingExtensionPrompt(server);
-        return false;
-    }
-
-    const debugJavaScriptConfigSection = vscode.workspace.getConfiguration('debug.javascript');
-    const usePreviewValue = debugJavaScriptConfigSection.get('usePreview');
-    if (usePreviewValue) {
-        // If usePreview is truthy it takes priority over the useV3 variants.
-        return true;
-    }
-
-    const debugNodeConfigSection = vscode.workspace.getConfiguration('debug.node');
-    const useV3NodeValue = debugNodeConfigSection.get('useV3');
-    if (!useV3NodeValue) {
-        return false;
-    }
-
-    const debugChromeConfigSection = vscode.workspace.getConfiguration('debug.chrome');
-    const useV3ChromeValue = debugChromeConfigSection.get('useV3');
-    if (!useV3ChromeValue) {
-        return false;
-    }
-
-    return true;
-}
-
 function isWebProject(project: MSBuildProject): boolean {
     let projectFileText = fs.readFileSync(project.Path, 'utf8');
 
     // Assume that this is an MSBuild project. In that case, look for the 'Sdk="Microsoft.NET.Sdk.Web"' attribute.
     // TODO: Have OmniSharp provide the list of SDKs used by a project and check that list instead.
     return projectFileText.toLowerCase().indexOf('sdk="microsoft.net.sdk.web"') >= 0;
-}
-
-function showBlazorConfigurationRequiredPrompt(server: OmniSharpServer, configuration: vscode.WorkspaceConfiguration) {
-    const disableBlazorDebugPrompt = configuration.get('disableBlazorDebugPrompt');
-
-    const promptShownKey = 'blazor_configuration_required_prompt_shown';
-    if (!disableBlazorDebugPrompt && !server.sessionProperties[promptShownKey]) {
-        server.sessionProperties[promptShownKey] = true;
-
-        vscode.window.showInformationMessage('Additional setup is required to debug Blazor WebAssembly applications.', 'Don\'t Ask Again', 'Learn more', 'Close')
-            .then(async result => {
-                if (result === 'Learn more') {
-                    const uriToOpen = vscode.Uri.parse('https://aka.ms/blazordebugging#vscode');
-                    await vscode.commands.executeCommand('vscode.open', uriToOpen);
-                }
-                if (result === 'Don\'t Ask Again') {
-                    await configuration.update('disableBlazorDebugPrompt', true);
-                }
-            });
-    }
 }
 
 function showBlazorDebuggingExtensionPrompt(server: OmniSharpServer) {

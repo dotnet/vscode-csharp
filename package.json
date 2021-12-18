@@ -1055,11 +1055,6 @@
           "scope": "window",
           "default": true,
           "description": "Enable/disable default Razor formatter."
-        },
-        "razor.disableBlazorDebugPrompt": {
-          "type": "boolean",
-          "default": false,
-          "description": "Disable Blazor WebAssembly's debug requirements notification."
         }
       }
     },
