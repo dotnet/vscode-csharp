@@ -105,6 +105,7 @@ export async function requestWorkspaceInformation(server: OmniSharpServer) {
         }
 
         if (blazorWebAssemblyProjectFound && !vscode.extensions.getExtension('ms-dotnettools.blazorwasm-companion')) {
+            // No need to await this call, we don't depend on the prompt being shown.
             showBlazorDebuggingExtensionPrompt(server);
         }
     }
@@ -248,18 +249,16 @@ function isWebProject(project: MSBuildProject): boolean {
     return projectFileText.toLowerCase().indexOf('sdk="microsoft.net.sdk.web"') >= 0;
 }
 
-function showBlazorDebuggingExtensionPrompt(server: OmniSharpServer) {
+async function showBlazorDebuggingExtensionPrompt(server: OmniSharpServer) {
     const promptShownKey = 'blazor_debugging_extension_prompt_shown';
     if (!server.sessionProperties[promptShownKey]) {
         server.sessionProperties[promptShownKey] = true;
 
         const msg = 'The Blazor WASM Debugging Extension is required to debug Blazor WASM apps in VS Code.';
-        vscode.window.showInformationMessage(msg, 'Install Extension', 'Close')
-            .then(async result => {
-                if (result === 'Install Extension') {
-                    const uriToOpen = vscode.Uri.parse('vscode:extension/ms-dotnettools.blazorwasm-companion');
-                    await vscode.commands.executeCommand('vscode.open', uriToOpen);
-                }
-            });
+        const result = await vscode.window.showInformationMessage(msg, 'Install Extension', 'Close');
+        if (result === 'Install Extension') {
+            const uriToOpen = vscode.Uri.parse('vscode:extension/ms-dotnettools.blazorwasm-companion');
+            await vscode.commands.executeCommand('vscode.open', uriToOpen);
+        }
     }
 }
