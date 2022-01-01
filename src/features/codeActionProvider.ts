@@ -24,7 +24,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
         this.addDisposables(new CompositeDisposable(registerCommandDisposable));
     }
 
-    public async provideCodeActions(document: vscode.TextDocument, range: vscode.Range, context: vscode.CodeActionContext, token: vscode.CancellationToken): Promise<vscode.Command[]> {
+    public async provideCodeActions(document: vscode.TextDocument, range: vscode.Range, context: vscode.CodeActionContext, token: vscode.CancellationToken): Promise<vscode.CodeAction[]> {
         let options = this.optionProvider.GetLatestOptions();
         if (options.disableCodeActions) {
             return;
@@ -88,8 +88,11 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
 
                 return {
                     title: codeAction.Name,
-                    command: this._commandId,
-                    arguments: [runRequest, token]
+                    command: {
+                        title: codeAction.Name,
+                        command: this._commandId,
+                        arguments: [runRequest, token]
+                    },
                 };
             });
         }
