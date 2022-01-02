@@ -66,11 +66,11 @@ import { modernNetVersion } from "../../src/omnisharp/OmnisharpPackageCreator";
                 new PackageInstallation('OmniSharp Version = 1.2.3'),
                 new LogPlatformInfo(new PlatformInformation("win32", "x86")),
                 new PackageInstallStart(),
-                new DownloadStart(`OmniSharp for Windows (.NET ${useFramework ? '4.6' : '6'} / x86), Version = 1.2.3`),
+                new DownloadStart(`OmniSharp for Windows (.NET ${useFramework ? '4.7.2' : '6'} / x86), Version = 1.2.3`),
                 new DownloadSizeObtained(testZip.size),
-                new DownloadProgress(100, `OmniSharp for Windows (.NET ${useFramework ? '4.6' : '6'} / x86), Version = 1.2.3`),
+                new DownloadProgress(100, `OmniSharp for Windows (.NET ${useFramework ? '4.7.2' : '6'} / x86), Version = 1.2.3`),
                 new DownloadSuccess(' Done!'),
-                new InstallationStart(`OmniSharp for Windows (.NET ${useFramework ? '4.6' : '6'} / x86), Version = 1.2.3`),
+                new InstallationStart(`OmniSharp for Windows (.NET ${useFramework ? '4.7.2' : '6'} / x86), Version = 1.2.3`),
                 new InstallationSuccess()
             ];
 
