@@ -32,34 +32,29 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
 
         let line = range.start.line;
         let column = range.start.character;
-        let selection: protocol.V2.Range | undefined;
+
+        let request: protocol.V2.GetCodeActionsRequest = {
+            FileName: document.fileName,
+            Line: line,
+            Column: column,
+        };
 
         // Only suggest selection-based refactorings when a selection exists.
         // If there is no selection and the editor isn't focused,
         // VS Code will pass us an empty Selection rather than a Range,
         // hence the extra range.isEmpty check.
         if (range instanceof vscode.Selection && !range.isEmpty) {
-            selection = {
+            request.Selection = {
                 Start: { Line: range.start.line, Column: range.start.character },
                 End: { Line: range.end.line, Column: range.end.character }
             };
         }
 
-        let request: protocol.V2.GetCodeActionsRequest = {
-            FileName: document.fileName,
-            Line: line,
-            Column: column,
-            Selection: selection
-        };
-
         try {
             let response = await serverUtils.getCodeActions(this._server, request, token);
             return response.CodeActions.map(codeAction => {
                 let runRequest: protocol.V2.RunCodeActionRequest = {
-                    FileName: document.fileName,
-                    Line: line,
-                    Column: column,
-                    Selection: selection,
+                    ...request,
                     Identifier: codeAction.Identifier,
                     WantsTextChanges: true,
                     WantsAllCodeActionOperations: true,
