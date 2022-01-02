@@ -14,26 +14,25 @@ import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeatur
 import { buildEditForResponse } from '../omnisharp/fileOperationsResponseEditBuilder';
 
 export default class CodeActionProvider extends AbstractProvider implements vscode.CodeActionProvider {
-
     private _commandId: string;
 
     constructor(server: OmniSharpServer, private optionProvider: OptionProvider, languageMiddlewareFeature: LanguageMiddlewareFeature) {
         super(server, languageMiddlewareFeature);
         this._commandId = 'omnisharp.runCodeAction';
-        let registerCommandDisposable = vscode.commands.registerCommand(this._commandId, this._runCodeAction, this);
+        const registerCommandDisposable = vscode.commands.registerCommand(this._commandId, this._runCodeAction, this);
         this.addDisposables(new CompositeDisposable(registerCommandDisposable));
     }
 
     public async provideCodeActions(document: vscode.TextDocument, range: vscode.Range | vscode.Selection, context: vscode.CodeActionContext, token: vscode.CancellationToken): Promise<vscode.CodeAction[]> {
-        let options = this.optionProvider.GetLatestOptions();
+        const options = this.optionProvider.GetLatestOptions();
         if (options.disableCodeActions) {
             return;
         }
 
-        let line = range.start.line;
-        let column = range.start.character;
+        const line = range.start.line;
+        const column = range.start.character;
 
-        let request: protocol.V2.GetCodeActionsRequest = {
+        const request: protocol.V2.GetCodeActionsRequest = {
             FileName: document.fileName,
             Line: line,
             Column: column,
@@ -51,9 +50,9 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
         }
 
         try {
-            let response = await serverUtils.getCodeActions(this._server, request, token);
+            const response = await serverUtils.getCodeActions(this._server, request, token);
             return response.CodeActions.map(codeAction => {
-                let runRequest: protocol.V2.RunCodeActionRequest = {
+                const runRequest: protocol.V2.RunCodeActionRequest = {
                     ...request,
                     Identifier: codeAction.Identifier,
                     WantsTextChanges: true,
@@ -70,20 +69,19 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
                     },
                 };
             });
-        }
-        catch (error) {
+        } catch (error) {
             return Promise.reject(`Problem invoking 'GetCodeActions' on OmniSharp server: ${error}`);
         }
     }
 
     private async _runCodeAction(req: protocol.V2.RunCodeActionRequest, token: vscode.CancellationToken): Promise<boolean | string | {}> {
-
-        return serverUtils.runCodeAction(this._server, req).then(async response => {
+        try {
+            const response = await serverUtils.runCodeAction(this._server, req);
             if (response) {
                 return buildEditForResponse(response.Changes, this._languageMiddlewareFeature, token);
             }
-        }, async (error) => {
+        } catch (error) {
             return Promise.reject(`Problem invoking 'RunCodeAction' on OmniSharp server: ${error}`);
-        });
+        }
     }
 }
