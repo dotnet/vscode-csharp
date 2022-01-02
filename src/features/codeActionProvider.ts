@@ -24,41 +24,21 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
         this.addDisposables(new CompositeDisposable(registerCommandDisposable));
     }
 
-    public async provideCodeActions(document: vscode.TextDocument, range: vscode.Range, context: vscode.CodeActionContext, token: vscode.CancellationToken): Promise<vscode.CodeAction[]> {
+    public async provideCodeActions(document: vscode.TextDocument, range: vscode.Range | vscode.Selection, context: vscode.CodeActionContext, token: vscode.CancellationToken): Promise<vscode.CodeAction[]> {
         let options = this.optionProvider.GetLatestOptions();
         if (options.disableCodeActions) {
             return;
         }
 
-        let line: number;
-        let column: number;
-        let selection: protocol.V2.Range;
+        let line = range.start.line;
+        let column = range.start.character;
+        let selection: protocol.V2.Range | undefined;
 
-        // VS Code will pass the range of the word at the editor caret, even if there isn't a selection.
-        // To ensure that we don't suggest selection-based refactorings when there isn't a selection, we first
-        // find the text editor for this document and verify that there is a selection.
-        let editor = vscode.window.visibleTextEditors.find(e => e.document === document);
-        if (editor) {
-            if (editor.selection.isEmpty) {
-                // The editor does not have a selection. Use the active position of the selection (i.e. the caret).
-                let active = editor.selection.active;
-
-                line = active.line;
-                column = active.character;
-            }
-            else {
-                // The editor has a selection. Use it.
-                let start = editor.selection.start;
-                let end = editor.selection.end;
-
-                selection = {
-                    Start: { Line: start.line, Column: start.character },
-                    End: { Line: end.line, Column: end.character }
-                };
-            }
-        }
-        else {
-            // We couldn't find the editor, so just use the range we were provided.
+        // Only suggest selection-based refactorings when a selection exists.
+        // If there is no selection and the editor isn't focused,
+        // VS Code will pass us an empty Selection rather than a Range,
+        // hence the extra range.isEmpty check.
+        if (range instanceof vscode.Selection && !range.isEmpty) {
             selection = {
                 Start: { Line: range.start.line, Column: range.start.character },
                 End: { Line: range.end.line, Column: range.end.character }
