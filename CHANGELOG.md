@@ -3,6 +3,7 @@
 * For Mono-based development (e.g. Unity) that requires full .NET framework, you need to set `"omnisharp.useGlobalMono": "always"`. The current value of "auto" will remain "never" until Mono [upgrades their bundled MSBuild version](https://github.com/mono/mono/issues/20250).
 * After selecting a solution filter (*.slnf) from the project selector, the solution's name will be displayed in the status bar instead of the filter's.
 * Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
+  * Not all platforms ship with the Razor LSP, such as Linux arm64.
   * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
   * Error squiggles misaligned for expressions near the start of a new line
   * Emmet based abbreviation expansion is not yet supported (See note in readme for how to enable through your settings.json)
@@ -36,6 +37,11 @@
 * Update Debugger to 1.23.19 (PR: [4899](https://github.com/OmniSharp/omnisharp-vscode/pull/4899))
 * Add targetArch to Attach and documentation ([#4900](https://github.com/OmniSharp/omnisharp-vscode/pull/4900), PR: [#4901](https://github.com/OmniSharp/omnisharp-vscode/pull/4901))
 * Allow Linux Arm64 users to run the experimental O# build (PR: [#4892](https://github.com/OmniSharp/omnisharp-vscode/pull/4892))
+* Always send document text when Semantic Highlighting (PR: [#5003](https://github.com/OmniSharp/omnisharp-vscode/pull/5003))
+* Remove obsolete settings checks for Blazor debugging (PR: [#4964](https://github.com/OmniSharp/omnisharp-vscode/pull/4964))
+* Explicitly install vscode-nls as a dependency (PR: [#4980](https://github.com/OmniSharp/omnisharp-vscode/pull/4980))
+* Modernize code action provider (PR: [#4988](https://github.com/OmniSharp/omnisharp-vscode/pull/4988))
+* Fix OmnisharpDownloader tests (PR: [#4989](https://github.com/OmniSharp/omnisharp-vscode/pull/4989))
 
 ## 1.23.17 (Dec 3rd, 2021)
 * Greatly improved download experience: when the C# extension is downloaded from the VS Code Marketplace, it will include all of its dependencies already ([#4775](https://github.com/OmniSharp/omnisharp-vscode/issues/4775))

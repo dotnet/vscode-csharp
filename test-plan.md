@@ -468,6 +468,13 @@ Changing this option should result in a notification message at the bottom right
 
 #### OmniSharp Options
 
+  ### omnisharp.useModernNet (all platforms)
+  This option is defaulted to `false`.
+
+  When this option is set to `true` a .NET 6 build of OmniSharp is downloaded and used for language services. This setting should only be used when working with newer SDK style projects and would be expected to fail when trying to load a Full Framework projects (such as Unity projects).
+  * if the option is not set, the OmniSharp log should indicate that the registered MSBuild instance is either the Standalone MSBuild, a Visual Studio MSBuild instance, or a Mono MSBuild isntance.
+  * if the option is set, the OmniSharp log should inlcude text like the following "OmniSharp server started with .NET 6.0.100" and "Registered MSBuild instance: .NET Core SDK 6.0.100 17.0.0 - "/usr/local/share/dotnet/sdk/6.0.100/". All language services should continue to work as expected when an SDK-style project is open.
+
   #### omnisharp.useGlobalMono (for Linux/Mac)
   This option can be set to any of the following values:
   * "auto" - Will launch OmniSharp using mono if version>=5.2.0 is installed but will launch using the run script if that is not so.

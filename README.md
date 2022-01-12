@@ -73,6 +73,11 @@ You can also use the .NET 6 build of OmniSharp which runs on the .NET 6 SDK. See
 * Update Debugger to 1.23.19 (PR: [4899](https://github.com/OmniSharp/omnisharp-vscode/pull/4899))
 * Add targetArch to Attach and documentation ([#4900](https://github.com/OmniSharp/omnisharp-vscode/pull/4900), PR: [#4901](https://github.com/OmniSharp/omnisharp-vscode/pull/4901))
 * Allow Linux Arm64 users to run the experimental O# build (PR: [#4892](https://github.com/OmniSharp/omnisharp-vscode/pull/4892))
+* Always send document text when Semantic Highlighting (PR: [#5003](https://github.com/OmniSharp/omnisharp-vscode/pull/5003))
+* Remove obsolete settings checks for Blazor debugging (PR: [#4964](https://github.com/OmniSharp/omnisharp-vscode/pull/4964))
+* Explicitly install vscode-nls as a dependency (PR: [#4980](https://github.com/OmniSharp/omnisharp-vscode/pull/4980))
+* Modernize code action provider (PR: [#4988](https://github.com/OmniSharp/omnisharp-vscode/pull/4988))
+* Fix OmnisharpDownloader tests (PR: [#4989](https://github.com/OmniSharp/omnisharp-vscode/pull/4989))
 
 ## What's new in 1.23.17
 * Greatly improved download experience: when the C# extension is downloaded from the VS Code Marketplace, it will include all of its dependencies already ([#4775](https://github.com/OmniSharp/omnisharp-vscode/issues/4775))
