@@ -62,6 +62,7 @@
           "name": "keyword.control.razor.directive.codeblock.open"
         }
       },
+      "contentName": "source.cs",
       "patterns": [
         {
           "include": "#razor-codeblock-body"
@@ -120,10 +121,10 @@
       },
       "patterns": [
         {
-          "include": "#balanced-open-close-tag-body"
+          "include": "#wellformed-html"
         },
         {
-          "include": "#wellformed-html"
+          "include": "$self"
         }
       ],
       "end": "(</text>)",
@@ -169,13 +170,13 @@
           "include": "#void-tag"
         },
         {
-          "include": "#balanced-open-close-tag"
+          "include": "#non-void-tag"
         }
       ]
     },
     "void-tag": {
       "name": "meta.tag.structure.$3.void.html",
-      "begin": "(?i)(<)(!?)(area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)(?=\\s|/?>)",
+      "begin": "(?i)(<)(!)?(area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)(?=\\s|/?>)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.begin.html"
@@ -199,86 +200,65 @@
         }
       }
     },
-    "balanced-open-close-tag": {
-      "begin": "(?=<([^/\\s>]+))",
-      "patterns": [
-        {
-          "include": "#balanced-open-close-tag-start"
-        },
-        {
-          "include": "#balanced-open-close-tag-end"
-        },
-        {
-          "include": "#balanced-open-close-tag-body"
-        }
-      ],
-      "end": "(?<=(</\\1>))|(/>)"
-    },
-    "balanced-open-close-tag-start": {
-      "begin": "(<)(?!(/))([^/\\s>]+)",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.begin.html"
-        },
-        "2": {
-          "name": "constant.character.escape.razor.tagHelperOptOut"
-        },
-        "3": {
-          "name": "entity.name.tag.html"
-        }
-      },
-      "patterns": [
-        {
-          "include": "#balanced-open-close-tag-attributes"
-        }
-      ],
-      "end": "/?>",
+    "non-void-tag": {
+      "begin": "(?=<(!)?([^/\\s>]+)(\\s|/?>))",
+      "end": "(</)(\\2)\\s*(>)|(/>)",
       "endCaptures": {
-        "0": {
-          "name": "punctuation.definition.tag.end.html"
-        }
-      }
-    },
-    "balanced-open-close-tag-attributes": {
-      "begin": "(?=\\s)",
-      "patterns": [
-        {
-          "include": "#razor-control-structures"
-        },
-        {
-          "include": "text.html.basic#attribute"
-        }
-      ],
-      "end": "(?=/?>)"
-    },
-    "balanced-open-close-tag-body": {
-      "begin": "(?<=([^/])>)",
-      "patterns": [
-        {
-          "include": "#wellformed-html"
-        },
-        {
-          "include": "$self"
-        }
-      ],
-      "end": "(?=\\</)"
-    },
-    "balanced-open-close-tag-end": {
-      "match": "(</)(!?)([^/\\s>]+)\\s*(>)",
-      "captures": {
         "1": {
           "name": "punctuation.definition.tag.begin.html"
         },
         "2": {
-          "name": "constant.character.escape.razor.tagHelperOptOut"
+          "name": "entity.name.tag.html"
         },
         "3": {
-          "name": "entity.name.tag.html"
+          "name": "punctuation.definition.tag.end.html"
         },
         "4": {
           "name": "punctuation.definition.tag.end.html"
         }
-      }
+      },
+      "patterns": [
+        {
+          "begin": "(<)(!)?([^/\\s>]+)(?=\\s|/?>)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.tag.begin.html"
+            },
+            "2": {
+              "name": "constant.character.escape.razor.tagHelperOptOut"
+            },
+            "3": {
+              "name": "entity.name.tag.html"
+            }
+          },
+          "end": "(?=/?>)",
+          "patterns": [
+            {
+              "include": "#razor-control-structures"
+            },
+            {
+              "include": "text.html.basic#attribute"
+            }
+          ]
+        },
+        {
+          "begin": ">",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.tag.end.html"
+            }
+          },
+          "end": "(?=</)",
+          "patterns": [
+            {
+              "include": "#wellformed-html"
+            },
+            {
+              "include": "$self"
+            }
+          ]
+        }
+      ]
     },
     "explicit-razor-expression": {
       "name": "meta.expression.explicit.cshtml",
@@ -309,6 +289,7 @@
     },
     "implicit-expression": {
       "name": "meta.expression.implicit.cshtml",
+      "contentName": "source.cs",
       "begin": "(?<![[:alpha:][:alnum:]])(@)",
       "beginCaptures": {
         "1": {
@@ -572,6 +553,7 @@
         }
       },
       "name": "meta.structure.razor.directive.codeblock",
+      "contentName": "source.cs",
       "patterns": [
         {
           "include": "source.cs"
@@ -585,7 +567,7 @@
       }
     },
     "page-directive": {
-      "name": "meta.directive.page.cshtml",
+      "name": "meta.directive",
       "match": "(@)(page)\\s+([^$]+)?",
       "captures": {
         "1": {
@@ -608,7 +590,7 @@
       }
     },
     "addTagHelper-directive": {
-      "name": "meta.directive.addTagHelper.razor",
+      "name": "meta.directive",
       "match": "(@)(addTagHelper)\\s+([^$]+)?",
       "captures": {
         "1": {
@@ -631,7 +613,7 @@
       }
     },
     "removeTagHelper-directive": {
-      "name": "meta.directive.removeTagHelper.razor",
+      "name": "meta.directive",
       "match": "(@)(removeTagHelper)\\s+([^$]+)?",
       "captures": {
         "1": {
@@ -654,7 +636,7 @@
       }
     },
     "tagHelperPrefix-directive": {
-      "name": "meta.directive.tagHelperPrefix.razor",
+      "name": "meta.directive",
       "match": "(@)(tagHelperPrefix)\\s+([^$]+)?",
       "captures": {
         "1": {
@@ -691,7 +673,7 @@
       "match": "[^$]+"
     },
     "model-directive": {
-      "name": "meta.directive.model.cshtml",
+      "name": "meta.directive",
       "match": "(@)(model)\\s+([^$]+)?",
       "captures": {
         "1": {
@@ -714,7 +696,7 @@
       }
     },
     "inherits-directive": {
-      "name": "meta.directive.inherits.cshtml",
+      "name": "meta.directive",
       "match": "(@)(inherits)\\s+([^$]+)?",
       "captures": {
         "1": {
@@ -737,7 +719,7 @@
       }
     },
     "implements-directive": {
-      "name": "meta.directive.implements.razor",
+      "name": "meta.directive",
       "match": "(@)(implements)\\s+([^$]+)?",
       "captures": {
         "1": {
@@ -760,7 +742,7 @@
       }
     },
     "layout-directive": {
-      "name": "meta.directive.layout.razor",
+      "name": "meta.directive",
       "match": "(@)(layout)\\s+([^$]+)?",
       "captures": {
         "1": {
@@ -783,7 +765,7 @@
       }
     },
     "namespace-directive": {
-      "name": "meta.directive.namespace.razor",
+      "name": "meta.directive",
       "match": "(@)(namespace)\\s+([^\\s]+)?",
       "captures": {
         "1": {
@@ -817,7 +799,7 @@
       }
     },
     "inject-directive": {
-      "name": "meta.directive.inject.cshtml",
+      "name": "meta.directive",
       "match": "(@)(inject)\\s*([\\S\\s]+?)?\\s*([_[:alpha:]][_[:alnum:]]*)?\\s*(?=$)",
       "captures": {
         "1": {
@@ -843,7 +825,7 @@
       }
     },
     "attribute-directive": {
-      "name": "meta.directive.attribute.razor",
+      "name": "meta.directive",
       "begin": "(@)(attribute)\\b\\s+",
       "beginCaptures": {
         "1": {
@@ -865,7 +847,7 @@
       "end": "(?<=\\])|$"
     },
     "section-directive": {
-      "name": "meta.directive.section.razor",
+      "name": "meta.directive.block",
       "begin": "(@)(section)\\b\\s+([_[:alpha:]][_[:alnum:]]*)?",
       "beginCaptures": {
         "1": {
@@ -910,7 +892,7 @@
       }
     },
     "using-directive": {
-      "name": "meta.directive.using.cshtml",
+      "name": "meta.directive",
       "match": "(@)(using)\\b\\s+(?!\\(|\\s)(.+?)?(;)?$",
       "captures": {
         "1": {
