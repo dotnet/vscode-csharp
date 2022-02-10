@@ -160,7 +160,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     let networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
     const useFramework = optionProvider.GetLatestOptions().useModernNet !== true;
     let installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload, useFramework);
-    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo, installDependencies);
+    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, eventStream, platformInfo, installDependencies, useFramework);
 
     // activate language services
     let langServicePromise = OmniSharp.activate(context, extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionProvider, extension.extensionPath);
@@ -228,8 +228,8 @@ function isSupportedPlatform(platform: PlatformInformation): boolean {
     return false;
 }
 
-async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, installDependencies: IInstallDependencies): Promise<boolean> {
-    return installRuntimeDependencies(extension.packageJSON, extension.extensionPath, installDependencies, eventStream, platformInfo);
+async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, installDependencies: IInstallDependencies, useFramework: boolean): Promise<boolean> {
+    return installRuntimeDependencies(extension.packageJSON, extension.extensionPath, installDependencies, eventStream, platformInfo, useFramework);
 }
 
 async function initializeDotnetPath() {
