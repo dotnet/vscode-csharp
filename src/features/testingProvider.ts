@@ -16,6 +16,17 @@ import {
 import { OmniSharpServer } from "../omnisharp/server";
 import * as serverUtils from "../omnisharp/utils";
 import TestManager from "./dotnetTest";
+import { Subject } from "rxjs";
+import {
+    buffer,
+    debounceTime,
+    distinct,
+    filter,
+    mergeMap,
+} from "rxjs/operators";
+import Disposable from "../Disposable";
+
+const FILE_NAME_NOT_KNOWN: string = "file-not-known";
 
 export default class TestingProvider extends AbstractProvider {
     private readonly _testAssemblies: Map<string, TestAssembly> = new Map<
@@ -24,6 +35,10 @@ export default class TestingProvider extends AbstractProvider {
     >();
 
     public controller: vscode.TestController;
+
+    private readonly _fileChangeDebouncer = new Subject<string>();
+
+    private readonly _projectChangedDebouncer = new Subject<MSBuildProject>();
 
     constructor(
         private readonly _optionProvider: OptionProvider,
@@ -36,6 +51,27 @@ export default class TestingProvider extends AbstractProvider {
             "ms-dotnettools:csharp",
             ".Net Test Explorer"
         );
+        const flushFiles = this._fileChangeDebouncer.pipe(debounceTime(1500));
+        const s1 = this._fileChangeDebouncer
+            .pipe(
+                filter((x) => x.endsWith(".cs")),
+                distinct(null, flushFiles),
+                buffer(flushFiles),
+                filter((x) => x.length > 0),
+                mergeMap((files) => this._reportFileChanges(files))
+            )
+            .subscribe();
+        const flushProjects = this._projectChangedDebouncer.pipe(
+            debounceTime(1500)
+        );
+        const s2 = this._projectChangedDebouncer
+            .pipe(
+                // TODO this is obviously a bad idea
+                filter((x) => x.AssemblyName.endsWith("Tests")),
+                distinct((x) => x.Path, flushProjects),
+                mergeMap((projects) => this._reportProject(projects))
+            )
+            .subscribe();
         const d1 = this.controller.createRunProfile(
             "Run Tests",
             vscode.TestRunProfileKind.Run,
@@ -62,7 +98,18 @@ export default class TestingProvider extends AbstractProvider {
             (e) => void this.reportFileChange(e.document.fileName)
         );
         this.addDisposables(
-            new CompositeDisposable(this.controller, d1, d2, d3, d4, d5, d6, d7)
+            new CompositeDisposable(
+                this.controller,
+                d1,
+                d2,
+                d3,
+                d4,
+                d5,
+                d6,
+                d7,
+                new Disposable(s1),
+                new Disposable(s2)
+            )
         );
     }
 
@@ -78,38 +125,55 @@ export default class TestingProvider extends AbstractProvider {
         return testCase;
     }
 
-    public async reportFileChange(fileName: string): Promise<void> {
-        if (!fileName.endsWith(".cs")) {
-            return undefined;
+    public reportFileChange(fileName: string) {
+        this._fileChangeDebouncer.next(fileName);
+    }
+
+    private async _reportFileChanges(fileNames: string[]): Promise<void> {
+        for (const fileName of new Set(fileNames)) {
+            let projectInfo: ProjectInformationResponse;
+            try {
+                projectInfo = await serverUtils.requestProjectInformation(
+                    this._server,
+                    { FileName: fileName }
+                );
+            } catch (error) {
+                return undefined;
+            }
+            this.reportProject(projectInfo.MsBuildProject);
         }
-        let projectInfo: ProjectInformationResponse;
-        try {
-            projectInfo = await serverUtils.requestProjectInformation(
-                this._server,
-                { FileName: fileName }
-            );
-        } catch (error) {
-            return undefined;
-        }
-        await this.reportProject(projectInfo.MsBuildProject);
     }
 
     public async removeProject(project: MSBuildProject): Promise<void> {
         this._testAssemblies.delete(project.AssemblyName);
-        this._notify();
+        this.controller.items.delete(project.AssemblyName);
     }
 
-    public async reportProject(project: MSBuildProject): Promise<void> {
+    public reportProject(project: MSBuildProject) {
+        this._projectChangedDebouncer.next(project);
+    }
+
+    private async _reportProject(project: MSBuildProject): Promise<void> {
         if ((project.SourceFiles?.length ?? 0) == 0) {
             return;
         }
-        console.log("Project reported " + project.AssemblyName);
 
-        const testInfo = await this.testManager.discoverTests(
-            project.SourceFiles[0],
-            "xunit",
-            true
-        );
+        let testInfo: V2.TestInfo[] | undefined = undefined;
+        try {
+            await this.testManager.discoverTests(
+                project.SourceFiles[0],
+                "xunit",
+                false
+            );
+        } catch {}
+        if (testInfo == undefined) {
+            testInfo = await this.testManager.discoverTests(
+                project.SourceFiles[0],
+                "xunit",
+                true
+            );
+        }
+
         const name = project.AssemblyName;
         const discoveredTests = new Map<string, TestCase>();
         if (testInfo.length > 0) {
@@ -119,8 +183,9 @@ export default class TestingProvider extends AbstractProvider {
                     this._createTestCase(name, element)
                 );
             });
-            this._testAssemblies.set(name, { name, discoveredTests });
-            this._notify();
+            const assembly = { name, discoveredTests };
+            this._testAssemblies.set(name, assembly);
+            this._upsertAssemblyOnController(assembly);
         }
     }
 
@@ -153,20 +218,16 @@ export default class TestingProvider extends AbstractProvider {
         await runner.debugTests(token);
     };
 
-    private _notify(): void {
-        for (const element of this._testAssemblies.values()) {
-            const assemblyTestCollection = this.controller.createTestItem(
-                element.name,
-                element.name
-            );
-            this._mapTreeToTestItems(
-                assemblyTestCollection,
-                this._buildTestTree(
-                    Array.from(element.discoveredTests.values())
-                )
-            );
-            this.controller.items.add(assemblyTestCollection);
-        }
+    private _upsertAssemblyOnController(assembly: TestAssembly): void {
+        const assemblyTestCollection = this.controller.createTestItem(
+            assembly.name,
+            assembly.name
+        );
+        this._mapTreeToTestItems(
+            assemblyTestCollection,
+            this._buildTestTree(Array.from(assembly.discoveredTests.values()))
+        );
+        this.controller.items.add(assemblyTestCollection);
     }
 
     private _createTestCase(assembly: string, testInfo: V2.TestInfo): TestCase {
@@ -258,14 +319,23 @@ export default class TestingProvider extends AbstractProvider {
                 const childTestItem = this.controller.createTestItem(
                     `${child.assembly}/${child.FullyQualifiedName}`,
                     name,
-                    vscode.Uri.parse("file://" + child.CodeFilePath)
+                    child.CodeFilePath
+                        ? vscode.Uri.parse("file://" + child.CodeFilePath)
+                        : undefined
                 );
-                childTestItem.range = new vscode.Range(
-                    child.LineNumber,
-                    0,
-                    child.LineNumber,
-                    0
-                );
+
+                if (childTestItem.uri) {
+                    childTestItem.range = new vscode.Range(
+                        child.LineNumber - 2,
+                        0,
+                        child.LineNumber - 2,
+                        0
+                    );
+                } else {
+                    childTestItem.error =
+                        "OmniSharp did not provide a file name";
+                }
+
                 testItem.children.add(childTestItem);
             }
         }
@@ -317,7 +387,9 @@ class TestRunner {
             const batch = testQueue.dequeueBatch();
             await this._testAapter.testManager.debugDotnetTestsInClass(
                 "",
-                batch.tests.map((x) => x.testCase.FullyQualifiedName),
+                batch.tests.map(
+                    (assembly) => assembly.testCase.FullyQualifiedName
+                ),
                 batch.fileName,
                 "xunit"
             );
@@ -328,31 +400,47 @@ class TestRunner {
         queue: TestQueue,
         token: vscode.CancellationToken
     ): Promise<void> {
-        const batch = queue.dequeueBatch();
+        let batch = queue.dequeueBatch();
 
-        if (!batch || token.isCancellationRequested) {
-            return;
-        }
-
-        batch.tests.forEach(({ testItem }) => this._testRun.started(testItem));
-
-        try {
-            const results =
-                await this._testAapter.testManager.runDotnetTestsInClass(
-                    "",
-                    batch.tests.map((x) => x.testCase.FullyQualifiedName),
-                    batch.fileName,
-                    "xunit"
+        while (batch && !token.isCancellationRequested) {
+            if (batch.fileName == FILE_NAME_NOT_KNOWN) {
+                batch.tests.forEach(({ testItem }) =>
+                    this._testRun.failed(
+                        testItem,
+                        new vscode.TestMessage(
+                            "Omnisharp could not resolve file name"
+                        )
+                    )
                 );
+                return;
+            }
 
-            results.forEach((result) => this._reportTestResult(result, queue));
-        } catch (reason) {
             batch.tests.forEach(({ testItem }) =>
-                this._testRun.failed(
-                    testItem,
-                    new vscode.TestMessage(reason.toString())
-                )
+                this._testRun.started(testItem)
             );
+
+            try {
+                const results =
+                    await this._testAapter.testManager.runDotnetTestsInClass(
+                        "",
+                        batch.tests.map((x) => x.testCase.FullyQualifiedName),
+                        batch.fileName,
+                        "xunit"
+                    );
+
+                results.forEach((result) =>
+                    this._reportTestResult(result, queue)
+                );
+            } catch (reason) {
+                batch.tests.forEach(({ testItem }) =>
+                    this._testRun.failed(
+                        testItem,
+                        new vscode.TestMessage(reason.toString())
+                    )
+                );
+            }
+
+            batch = queue.dequeueBatch();
         }
     }
 
@@ -438,20 +526,13 @@ class TestRunner {
      * @returns a list of {@link TestCase}
      */
     private _createExecutableTests(items: vscode.TestItem[]): ExecutableTest[] {
-        return (
-            items
-                .map((testItem) => {
-                    const [assembly, id] = testItem.id.split("/", 2);
-                    const testCase = this._testAapter.resolveTestCase(
-                        assembly,
-                        id
-                    );
-                    return ExecutableTest.create(testCase, testItem);
-                })
-                .filter((x) => !!x.testCase) // ensure that the test case is resolved
-                // TODO: investigate why this can be null
-                .filter((x) => !!x.testCase.CodeFilePath)
-        );
+        return items
+            .map((testItem) => {
+                const [assembly, id] = testItem.id.split("/", 2);
+                const testCase = this._testAapter.resolveTestCase(assembly, id);
+                return ExecutableTest.create(testCase, testItem);
+            })
+            .filter((x) => !!x.testCase); // ensure that the test case is resolved
     }
 
     public static create(
@@ -502,10 +583,12 @@ class TestQueue {
     private static _createBatches(items: ExecutableTest[]): TestBatch[] {
         return Object.entries(
             items.reduce<Record<string, ExecutableTest[]>>((pr, cur) => {
-                if (!pr[cur.testCase.CodeFilePath]) {
-                    pr[cur.testCase.CodeFilePath] = [];
+                const codeFileName =
+                    cur.testCase?.CodeFilePath ?? FILE_NAME_NOT_KNOWN;
+                if (!pr[codeFileName]) {
+                    pr[codeFileName] = [];
                 }
-                pr[cur.testCase.CodeFilePath].push(cur);
+                pr[codeFileName].push(cur);
                 return pr;
             }, {})
         ).map(([fileName, tests]) => ({ fileName, tests }));
