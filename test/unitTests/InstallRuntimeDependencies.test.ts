@@ -25,6 +25,7 @@ suite(`${installRuntimeDependencies.name}`, () => {
     let eventStream: EventStream;
     let eventBus: TestEventBus;
     let platformInfo = new PlatformInformation("platform1", "architecture1");
+    const useFramework = true;
 
     setup(() => {
         eventStream = new EventStream();
@@ -40,7 +41,7 @@ suite(`${installRuntimeDependencies.name}`, () => {
         });
 
         test("True is returned", async () => {
-            let installed = await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo);
+            let installed = await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo, useFramework);
             expect(installed).to.be.true;
         });
 
@@ -49,7 +50,7 @@ suite(`${installRuntimeDependencies.name}`, () => {
                 runtimeDependencies: {}
             };
 
-            await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo);
+            await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo, useFramework);
             expect(eventBus.getEvents()).to.be.empty;
         });
     });
@@ -78,7 +79,7 @@ suite(`${installRuntimeDependencies.name}`, () => {
                 return Promise.resolve(true);
             };
 
-            let installed = await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo);
+            let installed = await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo, useFramework);
             expect(installed).to.be.true;
             expect(inputPackage).to.have.length(1);
             expect(inputPackage[0]).to.be.deep.equal(AbsolutePathPackage.getAbsolutePathPackage(packageToInstall, extensionPath));
@@ -86,7 +87,7 @@ suite(`${installRuntimeDependencies.name}`, () => {
 
         test("Returns false when installDependencies returns false", async () => {
             installDependencies = async () => Promise.resolve(false);
-            let installed = await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo);
+            let installed = await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo, useFramework);
             expect(installed).to.be.false;
         });
     });
