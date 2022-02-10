@@ -247,6 +247,7 @@ export default class TestManager extends AbstractProvider {
         try {
             let results = await this._runTestsInClass(fileName, runSettings, testFrameworkName, targetFrameworkVersion, methodsInClass, noBuild);
             this._eventStream.post(new ReportDotNetTestResults(results));
+            return results;
         }
         catch (reason) {
             this._eventStream.post(new DotNetTestRunFailure(reason));

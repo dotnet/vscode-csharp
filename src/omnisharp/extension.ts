@@ -44,6 +44,7 @@ import SemanticTokensProvider from '../features/semanticTokensProvider';
 import SourceGeneratedDocumentProvider from '../features/sourceGeneratedDocumentProvider';
 import { getDecompilationAuthorization } from './decompilationPrompt';
 import { OmniSharpDotnetResolver } from './OmniSharpDotnetResolver';
+import TestingProvider from '../features/testingProvider';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
@@ -68,6 +69,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     disposables.add(languageMiddlewareFeature);
     let localDisposables: CompositeDisposable;
     const testManager = new TestManager(optionProvider, server, eventStream, languageMiddlewareFeature);
+    const testingProvider = new TestingProvider(optionProvider, testManager, server, languageMiddlewareFeature);
     const completionProvider = new CompletionProvider(server, languageMiddlewareFeature);
 
     disposables.add(server.onServerStart(() => {
@@ -197,6 +199,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     // stop server on deactivate
     disposables.add(new Disposable(() => {
         testManager.dispose();
+        testingProvider.dispose();
         advisor.dispose();
         server.stop();
     }));
