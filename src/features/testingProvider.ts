@@ -68,7 +68,7 @@ export default class TestingProvider extends AbstractProvider {
                 distinct(null, flushFiles),
                 buffer(flushFiles),
                 filter((x) => x.length > 0),
-                mergeMap((files) => this._reportFileChanges(files))
+                mergeMap((files) => void this._reportFileChanges(files))
             )
             .subscribe();
         const flushProjects = this._projectChangedDebouncer.pipe(
@@ -79,7 +79,7 @@ export default class TestingProvider extends AbstractProvider {
                 // TODO this is obviously a bad idea
                 filter((x) => x.AssemblyName.endsWith("Tests")),
                 distinct((x) => x.Path, flushProjects),
-                mergeMap((projects) => this._reportProject(projects))
+                mergeMap((projects) => void this._reportProject(projects))
             )
             .subscribe();
         const d1 = this.controller.createRunProfile(
@@ -265,7 +265,7 @@ export default class TestingProvider extends AbstractProvider {
             this._optionProvider.GetLatestOptions().testMaxDegreeOfParallelism,
             token
         );
-    };
+    }
 
     private _processDebugRequest = async (
         request: vscode.TestRunRequest,
@@ -278,7 +278,7 @@ export default class TestingProvider extends AbstractProvider {
             this._server
         );
         await runner.debugTests(token);
-    };
+    }
 
     private _upsertAssemblyOnController(assembly: TestAssembly): void {
         const assemblyTestCollection = this.controller.createTestItem(
