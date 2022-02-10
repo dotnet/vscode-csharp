@@ -84,6 +84,8 @@ export enum EventType {
     DotNetTestDebugInContextStart = 77,
     TelemetryErrorEvent = 78,
     OmnisharpServerRequestCancelled = 79,
+    DotNetTestDiscoveryResult = 80,
+    DotNetTestDiscoveryStart = 81,
 }
 
 //Note that the EventType protocol is shared with Razor.VSCode and the numbers here should not be altered

@@ -286,6 +286,19 @@ export class OmnisharpServerVerboseMessage extends EventWithMessage {
 export class DotNetTestMessage extends EventWithMessage {
     type = EventType.DotNetTestMessage;
 }
+
+export class DotNetTestDiscoveryResult implements BaseEvent {
+    type = EventType.DotNetTestDiscoveryResult;
+
+    constructor(public assemblyName: string, public testCount: number, public duration: number) {}
+}
+
+export class DotNetTestDiscoveryStart implements BaseEvent {
+    type = EventType.DotNetTestDiscoveryStart;
+
+    constructor(public assemblyName: string) {}
+}
+
 export class DotNetTestRunFailure extends EventWithMessage {
     type = EventType.DotNetTestRunFailure;
 }

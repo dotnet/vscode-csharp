@@ -11,6 +11,7 @@ import { LanguageMiddlewareFeature } from "../omnisharp/LanguageMiddlewareFeatur
 import {
     MSBuildProject,
     ProjectInformationResponse,
+    TargetFramework,
     V2,
 } from "../omnisharp/protocol";
 import { OmniSharpServer } from "../omnisharp/server";
@@ -25,8 +26,16 @@ import {
     mergeMap,
 } from "rxjs/operators";
 import Disposable from "../Disposable";
-
-const FILE_NAME_NOT_KNOWN: string = "file-not-known";
+import { CancellationTokenSource } from "vscode-languageserver-protocol";
+import { EventStream } from "../EventStream";
+import {
+    DotNetTestDiscoveryResult,
+    DotNetTestDiscoveryStart,
+} from "../omnisharp/loggingEvents";
+import Structure = V2.Structure;
+import SymbolKinds = V2.SymbolKinds;
+import SymbolPropertyNames = V2.SymbolPropertyNames;
+import SymbolRangeNames = V2.SymbolRangeNames;
 
 export default class TestingProvider extends AbstractProvider {
     private readonly _testAssemblies: Map<string, TestAssembly> = new Map<
@@ -42,6 +51,7 @@ export default class TestingProvider extends AbstractProvider {
 
     constructor(
         private readonly _optionProvider: OptionProvider,
+        private readonly _eventStream: EventStream,
         public readonly testManager: TestManager,
         server: OmniSharpServer,
         languageMiddlewareFeature: LanguageMiddlewareFeature
@@ -153,40 +163,92 @@ export default class TestingProvider extends AbstractProvider {
         this._projectChangedDebouncer.next(project);
     }
 
+    private async _discoverTests(
+        fileName: string,
+        testFramework: string,
+        targetFramework: string
+    ) {
+        let testInfo: V2.TestInfo[] | undefined = undefined;
+        try {
+            testInfo = await this.testManager.discoverTests(
+                fileName,
+                testFramework,
+                false,
+                targetFramework
+            );
+        } catch {}
+        if (testInfo == undefined) {
+            testInfo = await this.testManager.discoverTests(
+                fileName,
+                testFramework,
+                true,
+                targetFramework
+            );
+        }
+
+        return testInfo;
+    }
+
     private async _reportProject(project: MSBuildProject): Promise<void> {
         if ((project.SourceFiles?.length ?? 0) == 0) {
             return;
         }
 
-        let testInfo: V2.TestInfo[] | undefined = undefined;
-        try {
-            await this.testManager.discoverTests(
-                project.SourceFiles[0],
-                "xunit",
-                false
-            );
-        } catch {}
-        if (testInfo == undefined) {
-            testInfo = await this.testManager.discoverTests(
-                project.SourceFiles[0],
-                "xunit",
-                true
-            );
-        }
+        this._eventStream.post(
+            new DotNetTestDiscoveryStart(project.AssemblyName)
+        );
+
+        let testInfo: (V2.TestInfo & { targetFramework: string })[] = [];
+
+        const start = Date.now();
+        await Promise.all(
+            project.TargetFrameworks.map(async (targetFramework) => {
+                testInfo.push(
+                    ...(
+                        await this._discoverTests(
+                            project.SourceFiles[0],
+                            "xunit",
+                            mapTargetFramework(targetFramework)
+                        )
+                    ).map((x) => ({
+                        ...x,
+                        targetFramework: targetFramework.ShortName,
+                    }))
+                );
+            })
+        );
 
         const name = project.AssemblyName;
         const discoveredTests = new Map<string, TestCase>();
+        const inspector = await TestFileInspector.load(
+            this._server,
+            testInfo.map((x) => x.CodeFilePath).filter((x) => !!x)
+        );
         if (testInfo.length > 0) {
             testInfo.forEach((element) => {
-                discoveredTests.set(
-                    element.FullyQualifiedName,
-                    this._createTestCase(name, element)
+                const testCase = this._createTestCase(
+                    name,
+                    element,
+                    inspector,
+                    element.targetFramework
                 );
+                discoveredTests.set(testCase.id, testCase);
             });
-            const assembly = { name, discoveredTests };
+            const assembly = {
+                name,
+                discoveredTests,
+                targetFrameworks: project.TargetFrameworks,
+            };
             this._testAssemblies.set(name, assembly);
             this._upsertAssemblyOnController(assembly);
         }
+        this._eventStream.post(
+            new DotNetTestDiscoveryResult(
+                name,
+                discoveredTests.size,
+                Date.now() - start
+            )
+        );
     }
 
     private _processRunRequest = async (
@@ -223,17 +285,46 @@ export default class TestingProvider extends AbstractProvider {
             assembly.name,
             assembly.name
         );
-        this._mapTreeToTestItems(
-            assemblyTestCollection,
-            this._buildTestTree(Array.from(assembly.discoveredTests.values()))
-        );
+        assembly.targetFrameworks.map((targetFramework) => {
+            let collection: vscode.TestItem;
+            if (assembly.targetFrameworks.length == 1) {
+                collection = assemblyTestCollection;
+            } else {
+                collection = this.controller.createTestItem(
+                    targetFramework.ShortName,
+                    targetFramework.ShortName
+                );
+                assemblyTestCollection.children.add(collection);
+            }
+
+            this._mapTreeToTestItems(
+                collection,
+                this._buildTestTree(
+                    Array.from(assembly.discoveredTests.values()).filter(
+                        (x) => x.targetFramework == targetFramework.ShortName
+                    )
+                )
+            );
+        });
         this.controller.items.add(assemblyTestCollection);
     }
 
-    private _createTestCase(assembly: string, testInfo: V2.TestInfo): TestCase {
+    private _createTestCase(
+        assembly: string,
+        testInfo: V2.TestInfo,
+        inspector: TestFileInspector,
+        targetFramework: string
+    ): TestCase {
+        const discoveryInfo = inspector.getTestInfo(
+            testInfo.FullyQualifiedName
+        );
         return {
+            id: `${assembly}/${testInfo.FullyQualifiedName}/${targetFramework}`,
             ...testInfo,
             assembly,
+            discoveryInfo,
+            targetFramework,
+            testFramework: discoveryInfo?.testFramework ?? "xunit",
             nameSegments: this._parseName(testInfo.DisplayName),
         };
     }
@@ -252,6 +343,13 @@ export default class TestingProvider extends AbstractProvider {
                 }
                 name = name.substring(indexOfDot + 1);
             }
+        }
+
+        // Omnisharp does not support the execution of a single theory element, so we will just
+        // report it as one
+        const indexOfBracket = name.indexOf("(");
+        if (indexOfBracket != -1) {
+            name = name.substring(0, indexOfBracket);
         }
         segments.push(name);
         return segments;
@@ -317,21 +415,30 @@ export default class TestingProvider extends AbstractProvider {
                 this._mapTreeToTestItems(childTestItem, child);
             } else {
                 const childTestItem = this.controller.createTestItem(
-                    `${child.assembly}/${child.FullyQualifiedName}`,
+                    child.id,
                     name,
                     child.CodeFilePath
                         ? vscode.Uri.parse("file://" + child.CodeFilePath)
                         : undefined
                 );
 
-                if (childTestItem.uri) {
+                if (child.discoveryInfo?.range) {
                     childTestItem.range = new vscode.Range(
-                        child.LineNumber - 2,
-                        0,
-                        child.LineNumber - 2,
-                        0
+                        child.discoveryInfo.range.Start.Line,
+                        child.discoveryInfo.range.Start.Column,
+                        child.discoveryInfo.range.End.Line,
+                        child.discoveryInfo.range.End.Column
                     );
                 } else {
+                    childTestItem.range = new vscode.Range(
+                        child.LineNumber,
+                        0,
+                        child.LineNumber,
+                        0
+                    );
+                }
+
+                if (childTestItem.uri == undefined) {
                     childTestItem.error =
                         "OmniSharp did not provide a file name";
                 }
@@ -355,6 +462,11 @@ class TestRunner {
         maxDegreeOfParallelism: number,
         token: vscode.CancellationToken
     ): Promise<void> {
+        const combinationTokenSource = new CancellationTokenSource();
+        token.onCancellationRequested(() => combinationTokenSource.cancel());
+        this._testRun.token.onCancellationRequested(() =>
+            combinationTokenSource.cancel()
+        );
         const testItemsToExecute = this._extractTestItemsFromRequest();
         testItemsToExecute.forEach(this._testRun.enqueued);
         const executableTests = this._createExecutableTests(testItemsToExecute);
@@ -368,11 +480,17 @@ class TestRunner {
 
         try {
             for (let i = 0; i < maxDegreeOfParallelism; i++) {
-                workers.push(this._createBatchExecutor(testQueue, token));
+                workers.push(
+                    this._createBatchExecutor(
+                        testQueue,
+                        combinationTokenSource.token
+                    )
+                );
             }
 
             await Promise.all(workers);
         } finally {
+            this._testRun.end();
             listener.dispose();
         }
     }
@@ -390,8 +508,8 @@ class TestRunner {
                 batch.tests.map(
                     (assembly) => assembly.testCase.FullyQualifiedName
                 ),
-                batch.fileName,
-                "xunit"
+                batch.assemblyName,
+                batch.testFramework
             );
         }
     }
@@ -403,7 +521,12 @@ class TestRunner {
         let batch = queue.dequeueBatch();
 
         while (batch && !token.isCancellationRequested) {
-            if (batch.fileName == FILE_NAME_NOT_KNOWN) {
+            // omnisharp does lookup the porject based on a file name.
+            // we only need to provide a single file name to execute all the tests in a assembly
+            let fileName = batch.tests
+                .filter((x) => !!x.testCase.CodeFilePath)
+                .map((x) => x.testCase.CodeFilePath)[0];
+            if (!fileName) {
                 batch.tests.forEach(({ testItem }) =>
                     this._testRun.failed(
                         testItem,
@@ -424,8 +547,8 @@ class TestRunner {
                     await this._testAapter.testManager.runDotnetTestsInClass(
                         "",
                         batch.tests.map((x) => x.testCase.FullyQualifiedName),
-                        batch.fileName,
-                        "xunit"
+                        fileName,
+                        batch.testFramework
                     );
 
                 results.forEach((result) =>
@@ -528,8 +651,11 @@ class TestRunner {
     private _createExecutableTests(items: vscode.TestItem[]): ExecutableTest[] {
         return items
             .map((testItem) => {
-                const [assembly, id] = testItem.id.split("/", 2);
-                const testCase = this._testAapter.resolveTestCase(assembly, id);
+                const [assembly] = testItem.id.split("/", 3);
+                const testCase = this._testAapter.resolveTestCase(
+                    assembly,
+                    testItem.id
+                );
                 return ExecutableTest.create(testCase, testItem);
             })
             .filter((x) => !!x.testCase); // ensure that the test case is resolved
@@ -581,19 +707,36 @@ class TestQueue {
      * @returns a record with the assembly name as key and a list of tests as the value
      */
     private static _createBatches(items: ExecutableTest[]): TestBatch[] {
-        return Object.entries(
-            items.reduce<Record<string, ExecutableTest[]>>((pr, cur) => {
-                const codeFileName =
-                    cur.testCase?.CodeFilePath ?? FILE_NAME_NOT_KNOWN;
-                if (!pr[codeFileName]) {
-                    pr[codeFileName] = [];
-                }
-                pr[codeFileName].push(cur);
-                return pr;
-            }, {})
-        ).map(([fileName, tests]) => ({ fileName, tests }));
+        const batches: TestBatch[] = [];
+        groupBy(items, (x) => x.testCase.testFramework)
+            .map((x) => groupBy(x, (y) => y.testCase.assembly))
+            .forEach((byFramework) => {
+                byFramework
+                    .filter((x) => x.length > 0)
+                    .forEach((byAssembly) =>
+                        batches.push({
+                            testFramework: byAssembly[0].testCase.testFramework,
+                            assemblyName: byAssembly[0].testCase.assembly,
+                            tests: byAssembly,
+                        })
+                    );
+            });
+        return batches;
     }
 }
+
+const groupBy = <T>(items: T[], selector: (t: T) => string) => {
+    return Object.values(
+        items.reduce<Record<string, T[]>>((pr, cur) => {
+            const key = selector(cur);
+            if (!pr[key]) {
+                pr[key] = [];
+            }
+            pr[key].push(cur);
+            return pr;
+        }, {})
+    );
+};
 
 class ExecutableTest {
     private constructor(
@@ -610,18 +753,24 @@ class ExecutableTest {
 }
 
 interface TestBatch {
-    fileName: string;
+    assemblyName: string;
+    testFramework: string;
     tests: ExecutableTest[];
 }
 
 interface TestAssembly {
     name: string;
     discoveredTests: Map<string, TestCase>;
+    targetFrameworks: TargetFramework[];
 }
 
 interface TestCase extends V2.TestInfo {
+    id: string;
     assembly: string;
     nameSegments: string[];
+    discoveryInfo?: TestDiscoveryInfo;
+    testFramework: string;
+    targetFramework: string;
 }
 
 interface TestTreeNode {
@@ -631,3 +780,204 @@ interface TestTreeNode {
 
 const isNode = (node: TestCase | TestTreeNode): node is TestTreeNode =>
     "kind" in node;
+
+class TestFileInspector {
+    /**
+     *
+     */
+    constructor(
+        private readonly _loadedFiles: Map<string, TestFile>,
+        private readonly _loadedTests: Map<string, TestInfo>
+    ) {}
+
+    public getTestInfo(methodName: string) {
+        return this._loadedTests.get(methodName);
+    }
+    public getFileInfo(name: string) {
+        return this._loadedFiles.get(name);
+    }
+    public static async load(
+        server: OmniSharpServer,
+        fileNames: string[]
+    ): Promise<TestFileInspector> {
+        const token = new CancellationTokenSource().token;
+        const loadedFiles = new Map<string, TestFile>();
+        const loadedTests = new Map<string, TestInfo>();
+        const filesToLoad = [...new Set(fileNames)];
+
+        await Promise.all(
+            filesToLoad.map(async (file) => {
+                const structure = await serverUtils.codeStructure(
+                    server,
+                    {
+                        FileName: file,
+                    },
+                    token
+                );
+                Structure.walkCodeElements(structure.Elements, (e) => {
+                    for (const info of TestFileInspector._createTestInfo(e)) {
+                        if ("name" in info) {
+                            loadedFiles.set(info.name, info);
+                        } else {
+                            loadedTests.set(info.testMethodName, info);
+                        }
+                    }
+                });
+            })
+        );
+        return new TestFileInspector(loadedFiles, loadedTests);
+    }
+    private static _isValidClassForTestCodeLens(
+        element: Structure.CodeElement
+    ): boolean {
+        if (element.Kind != SymbolKinds.Class) {
+            return false;
+        }
+
+        if (!element.Children) {
+            return false;
+        }
+
+        return (
+            element.Children.find(
+                TestFileInspector._isValidMethodForTestCodeLens
+            ) !== undefined
+        );
+    }
+
+    private static _isValidMethodForTestCodeLens(
+        element: Structure.CodeElement
+    ): boolean {
+        if (element.Kind != SymbolKinds.Method) {
+            return false;
+        }
+
+        if (
+            !element.Properties ||
+            !element.Properties[SymbolPropertyNames.TestFramework] ||
+            !element.Properties[SymbolPropertyNames.TestMethodName]
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static _getTestFrameworkAndMethodName(
+        element: Structure.CodeElement
+    ): [string, string] {
+        if (!element.Properties) {
+            return [null, null];
+        }
+
+        const testFramework =
+            element.Properties[SymbolPropertyNames.TestFramework];
+        const testMethodName =
+            element.Properties[SymbolPropertyNames.TestMethodName];
+
+        return [testFramework, testMethodName];
+    }
+
+    private static _createTestInfo(
+        element: Structure.CodeElement
+    ): TestDiscoveryInfo[] {
+        const results: TestDiscoveryInfo[] = [];
+
+        if (TestFileInspector._isValidMethodForTestCodeLens(element)) {
+            let [testFramework, testMethodName] =
+                TestFileInspector._getTestFrameworkAndMethodName(element);
+            let range = element.Ranges[SymbolRangeNames.Name];
+
+            if (range && testFramework && testMethodName) {
+                const info: TestInfo = {
+                    range,
+                    testFramework,
+                    testMethodName,
+                    kind: "method",
+                };
+                results.push(info);
+            }
+        } else if (TestFileInspector._isValidClassForTestCodeLens(element)) {
+            // Note: We don't handle multiple test frameworks in the same class. The first test framework wins.
+            let testFramework: string = null;
+            let testMethodNames: string[] = [];
+            let range = element.Ranges[SymbolRangeNames.Name];
+
+            for (let childElement of element.Children) {
+                let [childTestFramework, childTestMethodName] =
+                    TestFileInspector._getTestFrameworkAndMethodName(
+                        childElement
+                    );
+
+                if (!testFramework && childTestFramework) {
+                    testFramework = childTestFramework;
+                    testMethodNames.push(childTestMethodName);
+                } else if (
+                    testFramework &&
+                    childTestFramework === testFramework
+                ) {
+                    testMethodNames.push(childTestMethodName);
+                }
+            }
+
+            const info: TestFile = {
+                kind: "file",
+                name: element.Name,
+                range,
+                testFramework,
+                testMethodNames,
+            };
+            results.push(info);
+        }
+
+        return results;
+    }
+}
+
+type TestDiscoveryInfo = TestInfo | TestFile;
+
+interface TestInfo {
+    range: V2.Range;
+    testFramework: string;
+    testMethodName: string;
+    kind: "method";
+}
+
+interface TestFile {
+    range: V2.Range;
+    testFramework: string;
+    testMethodNames: string[];
+    name: string;
+    kind: "file";
+}
+
+const mapTargetFramework = (targetFramework: TargetFramework) => {
+    if (targetFramework.ShortName.startsWith("net4")) {
+        return `.Framework,Version=v${targetFramework.ShortName.replace(
+            "net4",
+            "4."
+        )}`;
+    }
+    if (targetFramework.ShortName.startsWith("net")) {
+        return `.NETCoreApp,Version=v${targetFramework.ShortName.replace(
+            "net",
+            ""
+        )}`;
+    }
+    if (targetFramework.ShortName.startsWith("netcoreapp")) {
+        return `.NETCoreApp,Version=v${targetFramework.ShortName.replace(
+            "netcoreapp",
+            ""
+        )}`;
+    }
+    if (targetFramework.ShortName.startsWith("netstandard")) {
+        return `.NETStandard,Version=v${targetFramework.ShortName.replace(
+            "netstandard",
+            ""
+        )}`;
+    }
+    switch (targetFramework.Name) {
+        case ".NETCoreApp": {
+        }
+    }
+};

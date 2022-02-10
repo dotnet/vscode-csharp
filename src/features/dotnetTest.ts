@@ -170,16 +170,15 @@ export default class TestManager extends AbstractProvider {
         return targetFrameworkVersion;
     }
 
-    public async discoverTests(fileName: string, testFrameworkName: string, noBuild: boolean): Promise<protocol.V2.TestInfo[]> {
-
-        let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
+    public async discoverTests(fileName: string, testFrameworkName: string, noBuild: boolean, targetFrameworkVersion: string = null): Promise<protocol.V2.TestInfo[]> {
         let runSettings = this._getRunSettings(fileName);
 
         const request: protocol.V2.DiscoverTestsRequest = {
             FileName: fileName,
             RunSettings: runSettings,
             TestFrameworkName: testFrameworkName,
-            TargetFrameworkVersion: targetFrameworkVersion,
+            TargetFrameworkVersion: targetFrameworkVersion ??
+                await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName),
             NoBuild: noBuild
         };
 
