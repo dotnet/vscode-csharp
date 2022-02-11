@@ -341,23 +341,25 @@ export default class TestingProvider extends AbstractProvider {
         testFramework: string,
         targetFramework: string
     ) {
-        let testInfo: V2.TestInfo[] | undefined = undefined;
+        let testInfo: V2.TestInfo[] = [];
         try {
-            testInfo = await this.testManager.discoverTests(
-                fileName,
-                testFramework,
-                false,
-                targetFramework
-            );
+            try {
+                testInfo = await this.testManager.discoverTests(
+                    fileName,
+                    testFramework,
+                    false,
+                    targetFramework
+                );
+            } catch {}
+            if (testInfo == undefined) {
+                testInfo = await this.testManager.discoverTests(
+                    fileName,
+                    testFramework,
+                    true,
+                    targetFramework
+                );
+            }
         } catch {}
-        if (testInfo == undefined) {
-            testInfo = await this.testManager.discoverTests(
-                fileName,
-                testFramework,
-                true,
-                targetFramework
-            );
-        }
 
         return testInfo;
     }
@@ -388,7 +390,7 @@ export default class TestingProvider extends AbstractProvider {
                     ...(
                         await this._discoverTests(
                             sourceFile,
-                            "xunit",
+                            "", // the test framework is actually ingored by omnisharp
                             mapTargetFramework(targetFramework)
                         )
                     ).map((x) => ({
