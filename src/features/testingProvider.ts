@@ -770,8 +770,8 @@ class TestRunner {
         let batch = queue.dequeueBatch();
 
         while (batch && !token.isCancellationRequested) {
-            // omnisharp does lookup the porject based on a file name.
-            // we only need to provide a single file name to execute all the tests in a assembly
+            // omnisharp does lookup the project based on a file name.
+            // we only need to provide a single file name to execute all the tests in an assembly.
             let fileName = batch.tests
                 .filter((x) => !!x.testCase.CodeFilePath)
                 .map((x) => x.testCase.CodeFilePath)[0];

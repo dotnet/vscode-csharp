@@ -62,6 +62,7 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
         this.logger.appendLine(`----- Start discovering tests for ${event.assemblyName} -----`);
         this.logger.appendLine('');
     }
+
     private handleDotNetTestDiscoveryResult(event: DotNetTestDiscoveryResult) {
         this.logger.appendLine(`----- Discovered tests for ${event.assemblyName} -----`);
         this.logger.appendLine(`Total tests: ${event.testCount}. Discovery Time: ${event.duration}`);
