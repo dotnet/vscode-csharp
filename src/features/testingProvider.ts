@@ -48,7 +48,6 @@ export default class TestingProvider extends AbstractProvider {
 
     private readonly _fileChangeDebouncer = new Subject<string>();
     private readonly _fileSaveDebouncer = new Subject<string>();
-
     private readonly _projectChangedDebouncer = new Subject<MSBuildProject>();
 
     constructor(
@@ -63,37 +62,37 @@ export default class TestingProvider extends AbstractProvider {
             "ms-dotnettools:csharp",
             ".Net Test Explorer"
         );
+
         const flushFiles = this._fileChangeDebouncer.pipe(debounceTime(1500));
         const s1 = this._fileChangeDebouncer
             .pipe(
-                filter((x) => x.endsWith(".cs")),
-                distinct(null, flushFiles),
-                buffer(flushFiles),
-                filter((x) => x.length > 0),
-                mergeMap(async (files) => this._reportFileChanges(files))
+                filter((x) => x.endsWith(".cs")), // only c# files are of interest
+                distinct(null, flushFiles), // we wait until the channel is 1.5s silent
+                buffer(flushFiles), // buffer the flushed files
+                filter((x) => x.length > 0), // omit empty file lists
+                mergeMap(async (files) => this._reportFileChanges(files)) // notify about file changes
             )
             .subscribe();
+
         const flushSaved = this._fileSaveDebouncer.pipe(debounceTime(1500));
         const s2 = this._fileSaveDebouncer
             .pipe(
-                filter((x) => x.endsWith(".cs")),
-                distinct(null, flushSaved),
-                buffer(flushSaved),
-                filter((x) => x.length > 0),
-                mergeMap(async (files) => this._reportFileSaves(files))
+                filter((x) => x.endsWith(".cs")), // only c# files are of interest
+                distinct(null, flushSaved), // we wait until the channel is 1.5s silent (save many)
+                buffer(flushSaved), // buffer the flushed files
+                filter((x) => x.length > 0), // ignore empty list of files
+                mergeMap(async (files) => this._reportFileSaves(files)) // notify about file saves
             )
             .subscribe();
-        const flushProjects = this._projectChangedDebouncer.pipe(
-            debounceTime(1500)
-        );
+
         const s3 = this._projectChangedDebouncer
             .pipe(
                 // TODO this is obviously a bad idea
                 filter((x) => x.AssemblyName.endsWith("Tests")),
-                distinct((x) => x.Path, flushProjects),
                 concatMap(async (project) => this._reportProject(project))
             )
             .subscribe();
+
         const d1 = this.controller.createRunProfile(
             "Run Tests",
             vscode.TestRunProfileKind.Run,
@@ -180,6 +179,15 @@ export default class TestingProvider extends AbstractProvider {
         }
     }
 
+    public async removeProject(project: MSBuildProject): Promise<void> {
+        this._testAssemblies.delete(project.AssemblyName);
+        this.controller.items.delete(project.AssemblyName);
+    }
+
+    public reportProject(project: MSBuildProject) {
+        this._projectChangedDebouncer.next(project);
+    }
+
     private async _reportFileChanges(fileNames: string[]): Promise<void> {
         const inspector = await TestFileInspector.load(this._server, fileNames);
         const testFiles = inspector.getAllTests();
@@ -256,15 +264,6 @@ export default class TestingProvider extends AbstractProvider {
 
         this._upsertAssemblyOnController(assembly);
         return true;
-    }
-
-    public async removeProject(project: MSBuildProject): Promise<void> {
-        this._testAssemblies.delete(project.AssemblyName);
-        this.controller.items.delete(project.AssemblyName);
-    }
-
-    public reportProject(project: MSBuildProject) {
-        this._projectChangedDebouncer.next(project);
     }
 
     private async _discoverTests(
@@ -895,9 +894,6 @@ const isNode = (node: TestCase | TestTreeNode): node is TestTreeNode =>
     "kind" in node;
 
 class TestFileInspector {
-    /**
-     *
-     */
     constructor(
         private readonly _loadedFiles: Map<string, TestFile>,
         private readonly _loadedTests: Map<string, TestInfo>
@@ -947,6 +943,7 @@ class TestFileInspector {
         );
         return new TestFileInspector(loadedFiles, loadedTests);
     }
+
     private static _isValidClassForTestCodeLens(
         element: Structure.CodeElement
     ): boolean {
