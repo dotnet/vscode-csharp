@@ -424,11 +424,13 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    public async debugDotnetTestsInClass(className: string, methodsToRun: string[], fileName: string, testFrameworkName: string, noBuild: boolean = false) {
+    public async debugDotnetTestsInClass(className: string, methodsToRun: string[], fileName: string, testFrameworkName: string, noBuild: boolean = false, targetFrameworkVersion: string | undefined = undefined) {
 
         this._eventStream.post(new DotNetTestsInClassDebugStart(className));
 
-        let { debugEventListener, targetFrameworkVersion } = await this._recordDebugAndGetDebugValues(fileName, testFrameworkName);
+        let result = await this._recordDebugAndGetDebugValues(fileName, testFrameworkName);
+        let debugEventListener = result.debugEventListener;
+        targetFrameworkVersion ??= result.targetFrameworkVersion;
         let runSettings = this._getRunSettings(fileName);
 
         try {

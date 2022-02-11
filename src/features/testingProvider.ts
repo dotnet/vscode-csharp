@@ -757,7 +757,9 @@ class TestRunner {
                         (assembly) => assembly.testCase.FullyQualifiedName
                     ),
                     firstFileName,
-                    batch.testFramework
+                    batch.testFramework,
+                    false,
+                    batch.targetFramework
                 );
             }
         } finally {
