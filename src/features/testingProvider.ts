@@ -1083,12 +1083,6 @@ const mapTargetFramework = (targetFramework: TargetFramework) => {
             "4."
         )}`;
     }
-    if (targetFramework.ShortName.startsWith("net")) {
-        return `.NETCoreApp,Version=v${targetFramework.ShortName.replace(
-            "net",
-            ""
-        )}`;
-    }
     if (targetFramework.ShortName.startsWith("netcoreapp")) {
         return `.NETCoreApp,Version=v${targetFramework.ShortName.replace(
             "netcoreapp",
@@ -1101,8 +1095,10 @@ const mapTargetFramework = (targetFramework: TargetFramework) => {
             ""
         )}`;
     }
-    switch (targetFramework.Name) {
-        case ".NETCoreApp": {
-        }
+    if (targetFramework.ShortName.startsWith("net")) {
+        return `.NETCoreApp,Version=v${targetFramework.ShortName.replace(
+            "net",
+            ""
+        )}`;
     }
 };
