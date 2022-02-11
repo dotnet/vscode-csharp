@@ -38,12 +38,19 @@ import SymbolKinds = V2.SymbolKinds;
 import SymbolPropertyNames = V2.SymbolPropertyNames;
 import SymbolRangeNames = V2.SymbolRangeNames;
 
+/**
+ * A test provder for the VSCode Testing API
+ */
 export default class TestingProvider extends AbstractProvider {
     private readonly _testAssemblies: Map<string, TestAssembly> = new Map<
         string,
         TestAssembly
     >();
 
+    /**
+     * The controller the provider uses to report the tests to vscode
+     * @see {@link vscode.TestController}
+     */
     public controller: vscode.TestController;
 
     private readonly _fileChangeDebouncer = new Subject<string>();
@@ -58,6 +65,7 @@ export default class TestingProvider extends AbstractProvider {
         languageMiddlewareFeature: LanguageMiddlewareFeature
     ) {
         super(server, languageMiddlewareFeature);
+
         this.controller = vscode.tests.createTestController(
             "ms-dotnettools:csharp",
             ".Net Test Explorer"
@@ -139,55 +147,80 @@ export default class TestingProvider extends AbstractProvider {
         );
     }
 
-    public resolveTestCase(assembly: string, id: string): TestCase | undefined {
+    /**
+     * Resolves a {@link TestCase} based of on {@link vscode.TestItem.id}
+     * @param id The {@link vscode.TestItem.id}
+     * @returns A test case or undefined if the test case is not found
+     */
+    public resolveTestCaseById(id: string): TestCase | undefined {
+        const [assembly] = id.split("/", 3);
         return this._testAssemblies.get(assembly)?.discoveredTests.get(id);
     }
 
-    public getAllTestCases(): TestCase[] {
-        const testCase = [];
-        for (const assembly of this._testAssemblies.values()) {
-            testCase.push(...assembly.discoveredTests.values());
-        }
-        return testCase;
-    }
-
+    /**
+     * Informs the provider about a file change
+     * @param fileName The name of the file
+     */
     public reportFileChange(fileName: string) {
         this._fileChangeDebouncer.next(fileName);
     }
 
+    /**
+     * Informs the provider about a saved file
+     * @param fileName The name of the file
+     */
     public reportFileSave(fileName: string) {
         this._fileSaveDebouncer.next(fileName);
     }
 
+    /**
+     * Informs the provider about a deleted files
+     * @param fileNames The name of the files
+     */
     public reportFileDeletes(fileNames: string[]) {
         const uniqueFileNames = new Set(
             fileNames.filter((x) => x.endsWith(".cs"))
         );
-        if (uniqueFileNames.size > 0) {
-            for (const assembly of this._testAssemblies.values()) {
-                let hasChanged = false;
-                for (const test of assembly.discoveredTests.values()) {
-                    if (uniqueFileNames.has(test.CodeFilePath)) {
-                        hasChanged = true;
-                        assembly.discoveredTests.delete(test.id);
-                    }
+        if (uniqueFileNames.size == 0) {
+            return;
+        }
+
+        for (const assembly of this._testAssemblies.values()) {
+            let hasChanged = false;
+            for (const test of assembly.discoveredTests.values()) {
+                if (uniqueFileNames.has(test.CodeFilePath)) {
+                    hasChanged = true;
+                    assembly.discoveredTests.delete(test.id);
                 }
-                if (hasChanged) {
-                    this._upsertAssemblyOnController(assembly);
-                }
+            }
+            if (hasChanged) {
+                this._upsertAssemblyOnController(assembly);
             }
         }
     }
 
-    public async removeProject(project: MSBuildProject): Promise<void> {
+    /**
+     * Informs the provider about a removed project
+     * @param fileNames The name of the removed project
+     */
+    public async reportRemovedProject(project: MSBuildProject): Promise<void> {
         this._testAssemblies.delete(project.AssemblyName);
         this.controller.items.delete(project.AssemblyName);
     }
 
+    /**
+     * Informs the provider about a new project
+     * @param fileNames The name of the new project
+     */
     public reportProject(project: MSBuildProject) {
         this._projectChangedDebouncer.next(project);
     }
 
+    /**
+     * Processes many file changes. Tries to update the {@link TestCase.discoveryInfo.range } to
+     * position the execute buttons correctly. This will not force a reload of the project
+     * @param fileNames The names of the changed files
+     */
     private async _reportFileChanges(fileNames: string[]): Promise<void> {
         const inspector = await TestFileInspector.load(this._server, fileNames);
         const testFiles = inspector.getAllTests();
@@ -195,21 +228,32 @@ export default class TestingProvider extends AbstractProvider {
         for (const fileName of new Set(fileNames)) {
             let projectInfo: ProjectInformationResponse;
             try {
+                // request the project information so that we know the assembly name
                 projectInfo = await serverUtils.requestProjectInformation(
                     this._server,
                     { FileName: fileName }
                 );
             } catch (error) {
-                return undefined;
+                return;
             }
 
-            this._tryUpdateTestFile(projectInfo, fileName, testFiles);
+            this._tryUpdateTestInformationInline(
+                projectInfo.MsBuildProject,
+                fileName,
+                testFiles
+            );
         }
     }
 
+    /**
+     * Processes many file saved. Tries to do a inline update first. If the structure of the document
+     * has changed to much, the project will be reloaded from Omnisharp
+     * @param fileNames the names of the saved files
+     * @returns
+     */
     private async _reportFileSaves(fileNames: string[]): Promise<void> {
         const inspector = await TestFileInspector.load(this._server, fileNames);
-        const testFiles = inspector.getAllTests();
+        const testsFromCodeStructure = inspector.getAllTests();
 
         for (const fileName of new Set(fileNames)) {
             let projectInfo: ProjectInformationResponse;
@@ -222,50 +266,76 @@ export default class TestingProvider extends AbstractProvider {
                 return undefined;
             }
 
-            if (!this._tryUpdateTestFile(projectInfo, fileName, testFiles)) {
+            if (
+                !this._tryUpdateTestInformationInline(
+                    projectInfo.MsBuildProject,
+                    fileName,
+                    testsFromCodeStructure
+                )
+            ) {
+                // if the tests could not be updated inline, we reload the project
                 this.reportProject(projectInfo.MsBuildProject);
             }
         }
     }
 
-    private _tryUpdateTestFile(
-        projectInfo: ProjectInformationResponse,
+    /**
+     * Tries to update the tests without reloading the project. It reads the exisiting tests cases
+     * and compares them to the code structure of the changed file.
+     * @param project The project
+     * @param fileName The file name of the changed file
+     * @param testsFromCodeStructure The
+     * @returns
+     */
+    private _tryUpdateTestInformationInline(
+        project: MSBuildProject,
         fileName: string,
-        testFiles: TestInfo[]
+        testsFromCodeStructure: TestInfo[]
     ): boolean {
-        const assembly = this._testAssemblies.get(
-            projectInfo.MsBuildProject.AssemblyName
-        );
+        const assembly = this._testAssemblies.get(project.AssemblyName);
+        // in case we do not know the assembly, we do not know that it exists
         if (!assembly) {
             return false;
         }
-        const testsFromThisFile = [...assembly.discoveredTests.values()]
+        const testsInController = [...assembly.discoveredTests.values()]
             .filter((x) => x.CodeFilePath == fileName)
             .sort((x, y) =>
                 x.FullyQualifiedName.localeCompare(y.FullyQualifiedName)
             );
-        const testFromInspector = testFiles
+        const testFromInspector = testsFromCodeStructure
             .filter((x) => x.fileName == fileName)
             .sort((x, y) => x.testMethodName.localeCompare(y.testMethodName));
 
-        if (testsFromThisFile.length != testFromInspector.length) {
+        // in case the two lists are not equally long, there are new tests or a tests was deleted
+        if (testsInController.length != testFromInspector.length) {
             return false;
         }
 
         for (let i = 0; i < testFromInspector.length; i++) {
+            // check if a tests was renamed or replaced
             if (
-                testsFromThisFile[i].FullyQualifiedName !=
+                testsInController[i].FullyQualifiedName !=
                 testFromInspector[i].testMethodName
             ) {
                 return false;
             }
-            testsFromThisFile[i].discoveryInfo = testFromInspector[i];
+            testsInController[i].discoveryInfo = testFromInspector[i];
         }
 
+        // upsert the assembly on the controller
         this._upsertAssemblyOnController(assembly);
         return true;
     }
 
+    /**
+     * Discovers the tests in a assembly. Uses a file name to identifiy the relevant assembly.
+     * Tries first to build the project to get the newest tests, if this fails, tries to get the
+     * test info without building
+     * @param fileName  arbitrary file in the assembly
+     * @param testFramework the test framework that should be used
+     * @param targetFramework the targetframework that should be used
+     * @returns a list of disovered tests
+     */
     private async _discoverTests(
         fileName: string,
         testFramework: string,
@@ -292,8 +362,14 @@ export default class TestingProvider extends AbstractProvider {
         return testInfo;
     }
 
+    /**
+     * Loads the tests in a project and adds the tests to the test controller
+     * @param project The project to load the tests from
+     * @returns
+     */
     private async _reportProject(project: MSBuildProject): Promise<void> {
-        if ((project.SourceFiles?.length ?? 0) == 0) {
+        const sourceFile = project.SourceFiles?.[0];
+        if (!sourceFile) {
             return;
         }
 
@@ -304,12 +380,14 @@ export default class TestingProvider extends AbstractProvider {
         let testInfo: (V2.TestInfo & { targetFramework: string })[] = [];
 
         const start = Date.now();
+
+        // loads the target test infor from omnisharp concurrently
         await Promise.all(
             project.TargetFrameworks.map(async (targetFramework) => {
                 testInfo.push(
                     ...(
                         await this._discoverTests(
-                            project.SourceFiles[0],
+                            sourceFile,
                             "xunit",
                             mapTargetFramework(targetFramework)
                         )
@@ -321,7 +399,7 @@ export default class TestingProvider extends AbstractProvider {
             })
         );
 
-        const name = project.AssemblyName;
+        const assemblyName = project.AssemblyName;
         const discoveredTests = new Map<string, TestCase>();
         const inspector = await TestFileInspector.load(
             this._server,
@@ -330,7 +408,7 @@ export default class TestingProvider extends AbstractProvider {
         if (testInfo.length > 0) {
             testInfo.forEach((element) => {
                 const testCase = this._createTestCase(
-                    name,
+                    assemblyName,
                     element,
                     inspector,
                     element.targetFramework
@@ -338,22 +416,27 @@ export default class TestingProvider extends AbstractProvider {
                 discoveredTests.set(testCase.id, testCase);
             });
             const assembly = {
-                name,
+                name: assemblyName,
                 discoveredTests,
                 targetFrameworks: project.TargetFrameworks,
             };
-            this._testAssemblies.set(name, assembly);
+            this._testAssemblies.set(assemblyName, assembly);
             this._upsertAssemblyOnController(assembly);
         }
         this._eventStream.post(
             new DotNetTestDiscoveryResult(
-                name,
+                assemblyName,
                 discoveredTests.size,
                 Date.now() - start
             )
         );
     }
 
+    /**
+     * Processes a request from the testController to run tests
+     * @param request The request
+     * @param token The cancellation token
+     */
     private _processRunRequest = async (
         request: vscode.TestRunRequest,
         token: vscode.CancellationToken
@@ -370,6 +453,11 @@ export default class TestingProvider extends AbstractProvider {
         );
     };
 
+    /**
+     * Processes a request from the testController to debug tests
+     * @param request The request
+     * @param token The cancellation token
+     */
     private _processDebugRequest = async (
         request: vscode.TestRunRequest,
         token: vscode.CancellationToken
@@ -383,25 +471,31 @@ export default class TestingProvider extends AbstractProvider {
         await runner.debugTests(token);
     };
 
+    /**
+     * Adds or replaces the test item in the controller based on a assembly.
+     * @param assembly
+     */
     private _upsertAssemblyOnController(assembly: TestAssembly): void {
         const assemblyTestCollection = this.controller.createTestItem(
             assembly.name,
             assembly.name
         );
         assembly.targetFrameworks.map((targetFramework) => {
-            let collection: vscode.TestItem;
+            let parent: vscode.TestItem;
+            // only add a node to the tree when there are more than one target frameworks, else
+            // just display all the tests cases directly under the root
             if (assembly.targetFrameworks.length == 1) {
-                collection = assemblyTestCollection;
+                parent = assemblyTestCollection;
             } else {
-                collection = this.controller.createTestItem(
+                parent = this.controller.createTestItem(
                     targetFramework.ShortName,
                     targetFramework.ShortName
                 );
-                assemblyTestCollection.children.add(collection);
+                assemblyTestCollection.children.add(parent);
             }
 
             this._mapTreeToTestItems(
-                collection,
+                parent,
                 this._buildTestTree(
                     Array.from(assembly.discoveredTests.values()).filter(
                         (x) => x.targetFramework == targetFramework.ShortName
@@ -409,9 +503,13 @@ export default class TestingProvider extends AbstractProvider {
                 )
             );
         });
+
         this.controller.items.add(assemblyTestCollection);
     }
 
+    /**
+     * creates a tests case based on the provided information
+     */
     private _createTestCase(
         assembly: string,
         testInfo: V2.TestInfo,
@@ -432,6 +530,13 @@ export default class TestingProvider extends AbstractProvider {
         };
     }
 
+    /**
+     * Parses a name of a test into segments.
+     * @example Foo.Bar.Baz => [Foo, Bar, Baz]
+     * @example Foo.Bar.Baz(qux: "Quux") => [Foo, Bar, Baz]
+     * @param name the name to parse
+     * @returns the segement sof the parsed name
+     */
     private _parseName(name: string): string[] {
         const segments = [];
         while (name.indexOf(".") != -1) {
@@ -458,17 +563,27 @@ export default class TestingProvider extends AbstractProvider {
         return segments;
     }
 
+    /**
+     * Transforms a flat list of test cases into a tree
+     * @param testCases The test cases
+     * @returns The tree
+     */
     private _buildTestTree(testCases: TestCase[]): TestTreeNode {
         const root: TestTreeNode = { kind: "node", children: {} };
         for (const testCase of testCases) {
             let currentNode = root;
             for (let i = 0; i < testCase.nameSegments.length; i++) {
                 if (i == testCase.nameSegments.length - 1) {
+                    // element is leaf
                     currentNode.children[testCase.nameSegments[i]] = testCase;
                 } else {
+                    // element is node
                     const child =
                         currentNode.children[testCase.nameSegments[i]];
+
+                    // check if the path already exists
                     if (child == undefined) {
+                        // create a new node
                         const newNode: TestTreeNode = {
                             kind: "node",
                             children: {},
@@ -477,6 +592,7 @@ export default class TestingProvider extends AbstractProvider {
                             newNode;
                         currentNode = newNode;
                     } else if (isNode(child)) {
+                        // visit the already existing node
                         currentNode = child;
                     }
                 }
@@ -486,12 +602,31 @@ export default class TestingProvider extends AbstractProvider {
         return root;
     }
 
+    /**
+     * maps a tree of test items into a hirachy of test items. This methods also flattens the tree
+     * when there single items
+     * @example
+     * FROM:
+     *          a
+     *        |   \
+     *       b     c
+     *    |   \      \
+     *   d     e      f
+     * TO:
+     *          a
+     *        |   \
+     *       b     c.f
+     *     |   \
+     *   d     e
+     */
     private _mapTreeToTestItems(
         testItem: vscode.TestItem,
         tree: TestTreeNode,
         prefix: string = undefined
     ): vscode.TestItem {
         const keys = Object.keys(tree.children);
+
+        // flattens the path
         if (keys.length == 1) {
             const child = tree.children[keys[0]];
             if (isNode(child)) {
@@ -502,6 +637,7 @@ export default class TestingProvider extends AbstractProvider {
                 );
             }
         }
+
         for (const nameOfChildren in tree.children) {
             const child = tree.children[nameOfChildren];
             const name =
@@ -525,6 +661,7 @@ export default class TestingProvider extends AbstractProvider {
                         : undefined
                 );
 
+                // add the range from the discovery info when available because it is more accurate
                 if (child.discoveryInfo?.range) {
                     childTestItem.range = new vscode.Range(
                         child.discoveryInfo.range.Start.Line,
@@ -763,9 +900,7 @@ class TestRunner {
     private _createExecutableTests(items: vscode.TestItem[]): ExecutableTest[] {
         return items
             .map((testItem) => {
-                const [assembly] = testItem.id.split("/", 3);
-                const testCase = this._testAapter.resolveTestCase(
-                    assembly,
+                const testCase = this._testAapter.resolveTestCaseById(
                     testItem.id
                 );
                 return ExecutableTest.create(testCase, testItem);
@@ -784,6 +919,9 @@ class TestRunner {
     }
 }
 
+/**
+ * A queue of test batches cases
+ */
 class TestQueue {
     private readonly _testsLookup = new Map<string, ExecutableTest>();
 
@@ -795,27 +933,39 @@ class TestQueue {
         );
     }
 
+    /**
+     * @returns true if the queue is empty
+     */
     public isEmpty() {
         return this._batches.length == 0;
     }
 
+    /**
+     * Dequeues and returns the next batch from the queue
+     */
     public dequeueBatch(): TestBatch | undefined {
         return this._batches.splice(0, 1)[0];
     }
 
+    /**
+     * resolves a test item by the name of the method
+     */
     public getTestItemByMethodName(
         methodName: string
     ): vscode.TestItem | undefined {
         return this._testsLookup.get(methodName)?.testItem;
     }
 
+    /**
+     * creates a new instance of a test queue
+     */
     public static create(tests: ExecutableTest[]): TestQueue {
         const batches = this._createBatches(tests);
         return new TestQueue(batches);
     }
 
     /**
-     * Groups {@link ExecutableTest} by the assemlby
+     * Groups {@link ExecutableTest} by the testFramework and assembly
      * @returns a record with the assembly name as key and a list of tests as the value
      */
     private static _createBatches(items: ExecutableTest[]): TestBatch[] {
@@ -893,22 +1043,39 @@ interface TestTreeNode {
 const isNode = (node: TestCase | TestTreeNode): node is TestTreeNode =>
     "kind" in node;
 
+/**
+ * Inspects the code structure of files to get additional information about the files
+ */
 class TestFileInspector {
     constructor(
         private readonly _loadedFiles: Map<string, TestFile>,
         private readonly _loadedTests: Map<string, TestInfo>
     ) {}
 
+    /**
+     * gets all disvoered tests
+     */
     public getAllTests() {
         return [...this._loadedTests.values()];
     }
 
+    /**
+     * Gets the testinfo by the method name
+     */
     public getTestInfo(methodName: string) {
         return this._loadedTests.get(methodName);
     }
+
+    /**
+     * Gets the testinfo by the file name
+     */
     public getFileInfo(name: string) {
         return this._loadedFiles.get(name);
     }
+
+    /**
+     * Loads the structure of the files, inspects it and creates and instance of the inspector
+     */
     public static async load(
         server: OmniSharpServer,
         fileNames: string[]
@@ -916,10 +1083,11 @@ class TestFileInspector {
         const token = new CancellationTokenSource().token;
         const loadedFiles = new Map<string, TestFile>();
         const loadedTests = new Map<string, TestInfo>();
-        const filesToLoad = [...new Set(fileNames)];
+        const unqueFileNames = [...new Set(fileNames)];
 
+        // request the code structure concurrently from omnisharp
         await Promise.all(
-            filesToLoad.map(async (file) => {
+            unqueFileNames.map(async (file) => {
                 const structure = await serverUtils.codeStructure(
                     server,
                     {
