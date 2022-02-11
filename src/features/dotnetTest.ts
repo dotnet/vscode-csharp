@@ -231,7 +231,7 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    public async runDotnetTestsInClass(className: string, methodsInClass: string[], fileName: string, testFrameworkName: string, noBuild: boolean = false) {
+    public async runDotnetTestsInClass(className: string, methodsInClass: string[], fileName: string, testFrameworkName: string, noBuild: boolean = false, targetFrameworkVersion: string | undefined = undefined) {
 
         //to do: try to get the class name here
         this._eventStream.post(new DotNetTestsInClassRunStart(className));
@@ -240,7 +240,7 @@ export default class TestManager extends AbstractProvider {
             this._eventStream.post(new DotNetTestMessage(e.Message));
         });
 
-        let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
+        targetFrameworkVersion ??= await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
         let runSettings = this._getRunSettings(fileName);
 
         try {

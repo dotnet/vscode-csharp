@@ -391,7 +391,7 @@ export default class TestingProvider extends AbstractProvider {
                         await this._discoverTests(
                             sourceFile,
                             "", // the test framework is actually ingored by omnisharp
-                            mapTargetFramework(targetFramework)
+                            mapTargetFramework(targetFramework.ShortName)
                         )
                     ).map((x) => ({
                         ...x,
@@ -799,7 +799,9 @@ class TestRunner {
                         "",
                         batch.tests.map((x) => x.testCase.FullyQualifiedName),
                         fileName,
-                        batch.testFramework
+                        batch.testFramework,
+                        false,
+                        batch.targetFramework
                     );
 
                 results.forEach((result) =>
@@ -967,23 +969,36 @@ class TestQueue {
     }
 
     /**
-     * Groups {@link ExecutableTest} by the testFramework and assembly
+     * Groups {@link ExecutableTest} by the testFramework, targetFramework, and assembly
      * @returns a record with the assembly name as key and a list of tests as the value
      */
     private static _createBatches(items: ExecutableTest[]): TestBatch[] {
         const batches: TestBatch[] = [];
         groupBy(items, (x) => x.testCase.testFramework)
-            .map((x) => groupBy(x, (y) => y.testCase.assembly))
-            .forEach((byFramework) => {
-                byFramework
+            .map((x) =>
+                groupBy(x, (y) => y.testCase.testFramework).map((x) =>
+                    groupBy(x, (y) => y.testCase.assembly)
+                )
+            )
+            .forEach((byTestFramework) => {
+                byTestFramework
                     .filter((x) => x.length > 0)
-                    .forEach((byAssembly) =>
-                        batches.push({
-                            testFramework: byAssembly[0].testCase.testFramework,
-                            assemblyName: byAssembly[0].testCase.assembly,
-                            tests: byAssembly,
-                        })
-                    );
+                    .forEach((byTargetFramwork) => {
+                        byTargetFramwork
+                            .filter((x) => x.length > 0)
+                            .forEach((byAssembly) =>
+                                batches.push({
+                                    targetFramework: mapTargetFramework(
+                                        byAssembly[0].testCase.targetFramework
+                                    ),
+                                    testFramework:
+                                        byAssembly[0].testCase.testFramework,
+                                    assemblyName:
+                                        byAssembly[0].testCase.assembly,
+                                    tests: byAssembly,
+                                })
+                            );
+                    });
             });
         return batches;
     }
@@ -1019,6 +1034,7 @@ class ExecutableTest {
 interface TestBatch {
     assemblyName: string;
     testFramework: string;
+    targetFramework: string;
     tests: ExecutableTest[];
 }
 
@@ -1243,27 +1259,27 @@ interface TestFile {
     kind: "file";
 }
 
-const mapTargetFramework = (targetFramework: TargetFramework) => {
-    if (targetFramework.ShortName.startsWith("net4")) {
-        return `.Framework,Version=v${targetFramework.ShortName.replace(
+const mapTargetFramework = (targetFrameworkShortName: string) => {
+    if (targetFrameworkShortName.startsWith("net4")) {
+        return `.Framework,Version=v${targetFrameworkShortName.replace(
             "net4",
             "4."
         )}`;
     }
-    if (targetFramework.ShortName.startsWith("netcoreapp")) {
-        return `.NETCoreApp,Version=v${targetFramework.ShortName.replace(
+    if (targetFrameworkShortName.startsWith("netcoreapp")) {
+        return `.NETCoreApp,Version=v${targetFrameworkShortName.replace(
             "netcoreapp",
             ""
         )}`;
     }
-    if (targetFramework.ShortName.startsWith("netstandard")) {
-        return `.NETStandard,Version=v${targetFramework.ShortName.replace(
+    if (targetFrameworkShortName.startsWith("netstandard")) {
+        return `.NETStandard,Version=v${targetFrameworkShortName.replace(
             "netstandard",
             ""
         )}`;
     }
-    if (targetFramework.ShortName.startsWith("net")) {
-        return `.NETCoreApp,Version=v${targetFramework.ShortName.replace(
+    if (targetFrameworkShortName.startsWith("net")) {
+        return `.NETCoreApp,Version=v${targetFrameworkShortName.replace(
             "net",
             ""
         )}`;
