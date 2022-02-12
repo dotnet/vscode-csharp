@@ -491,20 +491,23 @@ export default class TestingProvider extends AbstractProvider {
     };
 
     /**
-     * Adds or replaces the test item in the controller based on a assembly.
+     * Maps the folder tree of an assembly into the test controller.
      * @param assembly
+     * @returns the deepest folder of the tree
      */
-    private _upsertAssemblyOnController(assembly: TestAssembly): void {
+    private _mapFolderTreeToTestController(
+        assembly: TestAssembly
+    ): vscode.TestItem | undefined {
         let folder: vscode.TestItem | undefined;
         const workspaceFolder = vscode.workspace.getWorkspaceFolder(
             vscode.Uri.file(assembly.path)
         ).uri.path;
-        let relativePathOfAssemblyToWorkspace = path.relative(
+        const relativePathOfAssemblyToWorkspace = path.relative(
             workspaceFolder,
             assembly.path
         );
 
-        let segments = path
+        const segments = path
             .dirname(relativePathOfAssemblyToWorkspace)
             .split(path.sep)
             .filter((x) => x.length > 0);
@@ -512,10 +515,10 @@ export default class TestingProvider extends AbstractProvider {
         let currentPath: string = workspaceFolder; // last slash will be add
         // we do not need the last folder, as this is the assembly
         for (let i = 0; i < segments.length - 1; i++) {
-            let segment = segments[i];
+            const segment = segments[i];
             let child = this.controller.items.get(currentPath);
             if (!child) {
-                let id = `${currentPath}/${segment}`;
+                const id = `${currentPath}/${segment}`;
                 child = this.controller.createTestItem(
                     currentPath,
                     segment,
@@ -532,6 +535,18 @@ export default class TestingProvider extends AbstractProvider {
             }
             folder = child;
         }
+
+        this.controller.items.add(folder);
+        return folder;
+    }
+
+    /**
+     * Adds or replaces the test item in the controller based on a assembly.
+     * @param assembly
+     */
+    private _upsertAssemblyOnController(assembly: TestAssembly): void {
+        const folder: vscode.TestItem | undefined =
+            this._mapFolderTreeToTestController(assembly);
 
         const assemblyTestCollection = this.controller.createTestItem(
             assembly.name,
@@ -564,7 +579,6 @@ export default class TestingProvider extends AbstractProvider {
 
         if (folder) {
             folder.children.add(assemblyTestCollection);
-            this.controller.items.add(folder);
         } else {
             this.controller.items.add(assemblyTestCollection);
         }
