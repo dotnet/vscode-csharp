@@ -290,13 +290,17 @@ export class DotNetTestMessage extends EventWithMessage {
 export class DotNetTestDiscoveryResult implements BaseEvent {
     type = EventType.DotNetTestDiscoveryResult;
 
-    constructor(public assemblyName: string, public testCount: number, public duration: number) {}
+    constructor(public assemblyName: string, public testCount: number, public duration: number, public noBuild: boolean) {}
 }
 
 export class DotNetTestDiscoveryStart implements BaseEvent {
     type = EventType.DotNetTestDiscoveryStart;
 
-    constructor(public assemblyName: string) {}
+    constructor(public assemblyName: string, public noBuild: boolean) {}
+}
+
+export class DotNetTestDiscoveryError extends EventWithMessage {
+    type = EventType.DotNetTestDiscoveryError;
 }
 
 export class DotNetTestRunFailure extends EventWithMessage {

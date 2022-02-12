@@ -86,6 +86,7 @@ export enum EventType {
     OmnisharpServerRequestCancelled = 79,
     DotNetTestDiscoveryResult = 80,
     DotNetTestDiscoveryStart = 81,
+    DotNetTestDiscoveryError = 82,
 }
 
 //Note that the EventType protocol is shared with Razor.VSCode and the numbers here should not be altered

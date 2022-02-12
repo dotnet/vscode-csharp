@@ -27,11 +27,13 @@ import {
     distinct,
     filter,
     mergeMap,
+    tap,
 } from "rxjs/operators";
 import Disposable from "../Disposable";
 import { CancellationTokenSource } from "vscode-languageserver-protocol";
 import { EventStream } from "../EventStream";
 import {
+    DotNetTestDiscoveryError,
     DotNetTestDiscoveryResult,
     DotNetTestDiscoveryStart,
 } from "../omnisharp/loggingEvents";
@@ -57,7 +59,8 @@ export default class TestingProvider extends AbstractProvider {
 
     private readonly _fileChangeDebouncer = new Subject<string>();
     private readonly _fileSaveDebouncer = new Subject<string>();
-    private readonly _projectChangedDebouncer = new Subject<MSBuildProject>();
+    private readonly _projectChangedDebouncer =
+        new Subject<ProjectBuildDiscoveryRequest>();
 
     constructor(
         private readonly _optionProvider: OptionProvider,
@@ -82,23 +85,46 @@ export default class TestingProvider extends AbstractProvider {
                 filter((x) => x.length > 0), // omit empty file lists
                 mergeMap(async (files) => this._reportFileChanges(files)) // notify about file changes
             )
-            .subscribe();
+            .subscribe(
+                () => {},
+                (e) =>
+                    this._reportDiscoveryError(
+                        `Fatal error in test discovery! Test change listener stopped!`,
+                        e
+                    ),
+                () =>
+                    this._reportDiscoveryError(
+                        "Testfile change listener stopped"
+                    )
+            );
 
         const flushSaved = this._fileSaveDebouncer.pipe(debounceTime(1500));
         const s2 = this._fileSaveDebouncer
             .pipe(
-                filter((x) => x.endsWith(".cs")), // only c# files are of interest
+                filter((x) => x.endsWith(".cs") || x.endsWith(".csproj")), // only c# files are of interest
                 distinct(null, flushSaved), // we wait until the channel is 1.5s silent (save many)
                 buffer(flushSaved), // buffer the flushed files
                 filter((x) => x.length > 0), // ignore empty list of files
                 mergeMap(async (files) => this._reportFileSaves(files)) // notify about file saves
             )
-            .subscribe();
+            .subscribe(
+                () => {},
+                (e) =>
+                    this._reportDiscoveryError(
+                        `Fatal error in test discovery! Test save listener stopped!`,
+                        e
+                    ),
+                () =>
+                    this._reportDiscoveryError("Testfile save listener stopped")
+            );
 
         const s3 = this._projectChangedDebouncer
             .pipe(
                 // TODO this is obviously a bad idea
-                filter((x) => x.AssemblyName.endsWith("Tests")),
+                filter((x) => x.project.AssemblyName.endsWith("Tests")),
+                tap((v) =>
+                    this._mapFolderTreeToTestController(v.project.Path, true)
+                ),
                 bufferTime(
                     // wait for projects to be reported, batch N
                     500,
@@ -109,13 +135,21 @@ export default class TestingProvider extends AbstractProvider {
                 concatMap(
                     async (projects) =>
                         await Promise.all(
-                            projects.map((project) =>
-                                this._reportProject(project)
+                            projects.map(({ project, noBuild }) =>
+                                this._reportProject(project, noBuild)
                             )
                         )
                 )
             )
-            .subscribe();
+            .subscribe(
+                () => {},
+                (e) =>
+                    this._reportDiscoveryError(
+                        `Fatal error in test discovery! Project disovery stopped!`,
+                        e
+                    ),
+                () => this._reportDiscoveryError("Project disovery stopped")
+            );
 
         const d1 = this.controller.createRunProfile(
             "Run Tests",
@@ -128,13 +162,13 @@ export default class TestingProvider extends AbstractProvider {
             this._processDebugRequest
         );
         const d3 = server.onProjectChange(
-            (p) => void this.reportProject(p.MsBuildProject)
+            (p) => void this.reportProject(p.MsBuildProject, false)
         );
         const d4 = server.onProjectAdded(
-            (p) => void this.reportProject(p.MsBuildProject)
+            (p) => void this.reportProject(p.MsBuildProject, false)
         );
         const d5 = server.onProjectRemoved(
-            (p) => void this.reportProject(p.MsBuildProject)
+            (p) => void this.reportRemovedProject(p.MsBuildProject)
         );
         const d6 = vscode.workspace.onDidChangeTextDocument(
             (e) => void this.reportFileChange(e.document.fileName)
@@ -221,15 +255,25 @@ export default class TestingProvider extends AbstractProvider {
      */
     public async reportRemovedProject(project: MSBuildProject): Promise<void> {
         this._testAssemblies.delete(project.AssemblyName);
-        this.controller.items.delete(project.AssemblyName);
+        const folder = this._mapFolderTreeToTestController(project.Path);
+        folder.children.delete(project.AssemblyName);
     }
 
     /**
      * Informs the provider about a new project
      * @param fileNames The name of the new project
      */
-    public reportProject(project: MSBuildProject) {
-        this._projectChangedDebouncer.next(project);
+    public reportProject(project: MSBuildProject, noBuild: boolean) {
+        this._projectChangedDebouncer.next({ project, noBuild });
+    }
+
+    private _reportDiscoveryError(message: string, error: any = null) {
+        if (error instanceof Error) {
+            message += `Exception: ${error.name}`;
+            message += `\n${error.message}`;
+            message += `\n${error.stack}`;
+        }
+        this._eventStream.post(new DotNetTestDiscoveryError(message));
     }
 
     /**
@@ -290,7 +334,7 @@ export default class TestingProvider extends AbstractProvider {
                 )
             ) {
                 // if the tests could not be updated inline, we reload the project
-                this.reportProject(projectInfo.MsBuildProject);
+                this.reportProject(projectInfo.MsBuildProject, false);
             }
         }
     }
@@ -308,6 +352,10 @@ export default class TestingProvider extends AbstractProvider {
         fileName: string,
         testsFromCodeStructure: TestDiscoveryInfo[]
     ): boolean {
+        if (!fileName.endsWith(".cs")) {
+            return false;
+        }
+
         const assembly = this._testAssemblies.get(project.AssemblyName);
         // in case we do not know the assembly, we do not know that it exists
         if (!assembly) {
@@ -366,7 +414,8 @@ export default class TestingProvider extends AbstractProvider {
     private async _discoverTests(
         fileName: string,
         testFramework: string,
-        targetFramework: string
+        targetFramework: string,
+        noBuild: boolean
     ) {
         let testInfo: V2.TestInfo[] = [];
         try {
@@ -374,7 +423,7 @@ export default class TestingProvider extends AbstractProvider {
                 testInfo = await this.testManager.discoverTests(
                     fileName,
                     testFramework,
-                    false,
+                    noBuild,
                     targetFramework
                 );
             } catch {}
@@ -396,14 +445,17 @@ export default class TestingProvider extends AbstractProvider {
      * @param project The project to load the tests from
      * @returns
      */
-    private async _reportProject(project: MSBuildProject): Promise<void> {
+    private async _reportProject(
+        project: MSBuildProject,
+        noBuild: boolean
+    ): Promise<void> {
         const sourceFile = project.SourceFiles?.[0];
         if (!sourceFile) {
             return;
         }
 
         this._eventStream.post(
-            new DotNetTestDiscoveryStart(project.AssemblyName)
+            new DotNetTestDiscoveryStart(project.AssemblyName, noBuild)
         );
 
         let testInfo: (V2.TestInfo & { targetFramework: string })[] = [];
@@ -418,7 +470,8 @@ export default class TestingProvider extends AbstractProvider {
                         await this._discoverTests(
                             sourceFile,
                             "", // the test framework is actually ingored by omnisharp
-                            mapTargetFramework(targetFramework.ShortName)
+                            mapTargetFramework(targetFramework.ShortName),
+                            noBuild
                         )
                     ).map((x) => ({
                         ...x,
@@ -452,12 +505,16 @@ export default class TestingProvider extends AbstractProvider {
             };
             this._testAssemblies.set(assemblyName, assembly);
             this._upsertAssemblyOnController(assembly);
+        } else {
+            const folder = this._mapFolderTreeToTestController(project.Path);
+            folder.parent!.children.delete(folder.id);
         }
         this._eventStream.post(
             new DotNetTestDiscoveryResult(
                 assemblyName,
                 discoveredTests.size,
-                Date.now() - start
+                Date.now() - start,
+                noBuild
             )
         );
     }
@@ -502,53 +559,97 @@ export default class TestingProvider extends AbstractProvider {
     };
 
     /**
-     * Maps the folder tree of an assembly into the test controller.
-     * @param assembly
-     * @returns the deepest folder of the tree
+     * Gets or creates the root of the test explorer tree for a workspace
+     * @param projectPath The path of a project in the workspace
      */
-    private _mapFolderTreeToTestController(
-        assembly: TestAssembly
-    ): vscode.TestItem | undefined {
-        let folder: vscode.TestItem | undefined;
+    private _getOrCreateWorkspaceRoot(
+        projectPath: string,
+        busy: boolean
+    ): vscode.TestItem {
         const workspaceFolder = vscode.workspace.getWorkspaceFolder(
-            vscode.Uri.file(assembly.path)
-        ).uri.path;
-        const relativePathOfAssemblyToWorkspace = path.relative(
-            workspaceFolder,
-            assembly.path
+            vscode.Uri.file(projectPath)
         );
 
-        const segments = path
-            .dirname(relativePathOfAssemblyToWorkspace)
-            .split(path.sep)
-            .filter((x) => x.length > 0);
+        let folder: vscode.TestItem;
+        if (workspaceFolder == undefined) {
+            let externalProject = this.controller.items.get(
+                "external-project-root"
+            );
+            if (!externalProject) {
+                externalProject = this.controller.createTestItem(
+                    "external-project-root",
+                    "[External]"
+                );
+                this.controller.items.add(externalProject);
+            }
+            folder = externalProject;
+        } else {
+            folder = this.controller.items.get(workspaceFolder.uri.path);
+            if (!folder) {
+                folder = this.controller.createTestItem(
+                    workspaceFolder.uri.path,
+                    workspaceFolder.name,
+                    vscode.Uri.file(workspaceFolder.uri.path)
+                );
+                this.controller.items.add(folder);
+            }
+        }
 
+        folder.busy = busy;
+        return folder;
+    }
+
+    /**
+     * Maps the path of a project as a tree of folders into the test controller.
+     * @param assembly
+     * @returns the folder the assemlbly is in
+     */
+    private _mapFolderTreeToTestController(
+        projectPath: string,
+        busy: boolean = false
+    ): vscode.TestItem {
+        let root: vscode.TestItem = this._getOrCreateWorkspaceRoot(
+            projectPath,
+            busy
+        );
+
+        const workspaceFolder = vscode.workspace.getWorkspaceFolder(
+            vscode.Uri.file(projectPath)
+        )?.uri?.path;
+
+        let segments: string[] = [];
+        if (workspaceFolder) {
+            const relativePathOfAssemblyToWorkspace = path.relative(
+                workspaceFolder,
+                projectPath
+            );
+
+            segments = path
+                .dirname(relativePathOfAssemblyToWorkspace)
+                .split(path.sep)
+                .filter((x) => x.length > 0);
+        }
+
+        let currentTestItem = root;
         let currentPath: string = workspaceFolder; // last slash will be add
-        // we do not need the last folder, as this is the assembly
-        for (let i = 0; i < segments.length - 1; i++) {
+        for (let i = 0; i < segments.length; i++) {
             const segment = segments[i];
-            let child = this.controller.items.get(currentPath);
+            currentPath = `${currentPath}/${segment}`;
+            let child = currentTestItem.children.get(currentPath);
             if (!child) {
-                const id = `${currentPath}/${segment}`;
                 child = this.controller.createTestItem(
                     currentPath,
                     segment,
-                    vscode.Uri.file(id)
+                    vscode.Uri.file(currentPath)
                 );
 
-                currentPath = id;
-
-                if (folder == undefined) {
-                    this.controller.items.add(child);
-                } else {
-                    folder.children.add(child);
-                }
+                currentTestItem.children.add(child);
             }
-            folder = child;
+            currentTestItem = child;
+            currentTestItem.busy = busy;
         }
 
-        this.controller.items.add(folder);
-        return folder;
+        return currentTestItem;
     }
 
     /**
@@ -556,14 +657,19 @@ export default class TestingProvider extends AbstractProvider {
      * @param assembly
      */
     private _upsertAssemblyOnController(assembly: TestAssembly): void {
-        const folder: vscode.TestItem | undefined =
-            this._mapFolderTreeToTestController(assembly);
+        let folder = this._mapFolderTreeToTestController(assembly.path);
 
-        const assemblyTestCollection = this.controller.createTestItem(
-            assembly.name,
+        const assemblyFolder = this.controller.createTestItem(
+            path.dirname(assembly.path),
             assembly.name,
             vscode.Uri.file(assembly.path)
         );
+
+        if (folder.id == path.dirname(assembly.path)) {
+            folder.parent.children.add(assemblyFolder);
+        } else {
+            folder.children.add(assemblyFolder);
+        }
 
         assembly.targetFrameworks.map((targetFramework) => {
             let parent: vscode.TestItem;
@@ -571,14 +677,19 @@ export default class TestingProvider extends AbstractProvider {
             // only add a node to the tree when there are more than one target frameworks, else
             // just display all the tests cases directly under the root
             if (assembly.targetFrameworks.length == 1) {
-                parent = assemblyTestCollection;
+                parent = assemblyFolder;
             } else {
-                parent = this.controller.createTestItem(
-                    targetFramework.ShortName,
-                    targetFramework.ShortName
-                );
-                assemblyTestCollection.children.add(parent);
+                parent =
+                    assemblyFolder.children.get(targetFramework.ShortName) ??
+                    this.controller.createTestItem(
+                        targetFramework.ShortName,
+                        targetFramework.ShortName
+                    );
+                assemblyFolder.children.add(parent);
             }
+
+            // clear old children
+            parent.children.replace([]);
 
             const tree = this._buildTestTree(
                 Array.from(assembly.discoveredTests.values()).filter(
@@ -587,12 +698,6 @@ export default class TestingProvider extends AbstractProvider {
             );
             this._mapTreeToTestItems(parent, tree);
         });
-
-        if (folder) {
-            folder.children.add(assemblyTestCollection);
-        } else {
-            this.controller.items.add(assemblyTestCollection);
-        }
     }
 
     /**
@@ -990,7 +1095,12 @@ class TestRunner {
      * @returns a flat list of items without collections
      */
     private _extractTestItemsFromRequest(): vscode.TestItem[] {
-        const included = this._request.include ?? [];
+        let included: vscode.TestItem[] = [];
+        if (this._request.include == null) {
+            this._testAapter.controller.items.forEach((x) => included.push(x));
+        } else {
+            included = this._request.include;
+        }
         const excludedIds = new Set(
             (this._request.exclude ?? []).map((x) => x.id)
         );
@@ -1428,3 +1538,8 @@ const mapTargetFramework = (targetFrameworkShortName: string) => {
         )}`;
     }
 };
+
+interface ProjectBuildDiscoveryRequest {
+    project: MSBuildProject;
+    noBuild: boolean;
+}

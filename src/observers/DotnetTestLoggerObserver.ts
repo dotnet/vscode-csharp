@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseEvent, DotNetTestRunStart, DotNetTestMessage, ReportDotNetTestResults, DotNetTestDebugStart, DotNetTestDebugWarning, DotNetTestDebugProcessStart, DotNetTestsInClassDebugStart, DotNetTestsInClassRunStart, DotNetTestRunInContextStart, DotNetTestDebugInContextStart, DotNetTestDiscoveryResult as DotNetTestDiscoveryResult, DotNetTestDiscoveryStart } from "../omnisharp/loggingEvents";
+import { BaseEvent, DotNetTestRunStart, DotNetTestMessage, ReportDotNetTestResults, DotNetTestDebugStart, DotNetTestDebugWarning, DotNetTestDebugProcessStart, DotNetTestsInClassDebugStart, DotNetTestsInClassRunStart, DotNetTestRunInContextStart, DotNetTestDebugInContextStart, DotNetTestDiscoveryResult as DotNetTestDiscoveryResult, DotNetTestDiscoveryStart, DotNetTestDiscoveryError } from "../omnisharp/loggingEvents";
 import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import * as protocol from '../omnisharp/protocol';
 import { EventType } from "../omnisharp/EventType";
@@ -51,6 +51,9 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
             case EventType.DotNetTestDiscoveryStart:
                 this.handleDotNetTestDiscoveryStart(<DotNetTestDiscoveryStart>event);
                 break;
+            case EventType.DotNetTestDiscoveryError:
+                this.handleDotNetTestDiscoveryError(<DotNetTestDiscoveryError>event);
+                break;
         }
     }
 
@@ -59,13 +62,19 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
     }
 
     private handleDotNetTestDiscoveryStart(event: DotNetTestDiscoveryStart) {
-        this.logger.appendLine(`----- Start discovering tests for ${event.assemblyName} -----`);
+        this.logger.appendLine(`----- Start discovering tests for ${event.assemblyName}. NoBuild: ${event.noBuild} -----`);
         this.logger.appendLine('');
     }
 
     private handleDotNetTestDiscoveryResult(event: DotNetTestDiscoveryResult) {
         this.logger.appendLine(`----- Discovered tests for ${event.assemblyName} -----`);
-        this.logger.appendLine(`Total tests: ${event.testCount}. Discovery Time: ${event.duration}`);
+        this.logger.appendLine(`Total tests: ${event.testCount}. Discovery Time: ${event.duration}. NoBuild: ${event.noBuild}`);
+        this.logger.appendLine('');
+    }
+
+    private handleDotNetTestDiscoveryError(event: DotNetTestDiscoveryError) {
+        this.logger.appendLine(`----- Error in discovery of tests -----`);
+        this.logger.appendLine(event.message);
         this.logger.appendLine('');
     }
 
