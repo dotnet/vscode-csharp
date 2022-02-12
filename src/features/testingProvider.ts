@@ -21,7 +21,6 @@ import TestManager from "./dotnetTest";
 import { Subject } from "rxjs";
 import {
     buffer,
-    bufferTime,
     concatMap,
     debounceTime,
     distinct,
@@ -118,20 +117,29 @@ export default class TestingProvider extends AbstractProvider {
                     this._reportDiscoveryError("Testfile save listener stopped")
             );
 
+        const flushProjectChange = this._projectChangedDebouncer.pipe(
+            debounceTime(1500)
+        );
         const s3 = this._projectChangedDebouncer
             .pipe(
                 // TODO this is obviously a bad idea
                 filter((x) => x.project.AssemblyName.endsWith("Tests")),
+                distinct((x) => x.project.Path, flushProjectChange), // we wait until the channel is 1.5s silent (startup)
                 tap((v) =>
                     this._mapFolderTreeToTestController(v.project.Path, true)
                 ),
-                bufferTime(
-                    // wait for projects to be reported, batch N
-                    500,
-                    undefined,
-                    this._optionProvider.GetLatestOptions()
-                        .testMaxLoadedProjectPerRequest
-                ),
+                buffer(flushProjectChange), // buffer the flushed projects
+                mergeMap((projects) => {
+                    // chunk projects
+                    const chunkSize =
+                        this._optionProvider.GetLatestOptions()
+                            .testMaxLoadedProjectPerRequest;
+                    const chunked = [];
+                    for (let i = 0; i < projects.length; i = i + chunkSize) {
+                        chunked.push(projects.slice(i, i + chunkSize));
+                    }
+                    return chunked;
+                }),
                 concatMap(
                     async (projects) =>
                         await Promise.all(
