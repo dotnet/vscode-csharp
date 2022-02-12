@@ -672,12 +672,7 @@ export default class TestingProvider extends AbstractProvider {
             assembly.name,
             vscode.Uri.file(assembly.path)
         );
-
-        if (folder.id == path.dirname(assembly.path)) {
-            folder.parent.children.add(assemblyFolder);
-        } else {
-            folder.children.add(assemblyFolder);
-        }
+        folder.parent.children.add(assemblyFolder);
 
         assembly.targetFrameworks.map((targetFramework) => {
             let parent: vscode.TestItem;
