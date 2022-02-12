@@ -21,6 +21,7 @@ import TestManager from "./dotnetTest";
 import { Subject } from "rxjs";
 import {
     buffer,
+    bufferTime,
     concatMap,
     debounceTime,
     distinct,
@@ -98,7 +99,20 @@ export default class TestingProvider extends AbstractProvider {
             .pipe(
                 // TODO this is obviously a bad idea
                 filter((x) => x.AssemblyName.endsWith("Tests")),
-                concatMap(async (project) => this._reportProject(project))
+                bufferTime( // wait for projects to be reported, batch N
+                    500,
+                    undefined,
+                    this._optionProvider.GetLatestOptions()
+                        .testMaxLoadedProjectPerRequest
+                ),
+                concatMap(
+                    async (projects) =>
+                        await Promise.all(
+                            projects.map((project) =>
+                                this._reportProject(project)
+                            )
+                        )
+                )
             )
             .subscribe();
 

@@ -36,6 +36,7 @@ export class Options {
         public enableAsyncCompletion: boolean,
         public useSemanticHighlighting: boolean,
         public testMaxDegreeOfParallelism: number,
+        public testMaxLoadedProjectPerRequest: number,
         public razorPluginPath?: string,
         public defaultLaunchSolution?: string,
         public monoPath?: string,
@@ -109,6 +110,7 @@ export class Options {
         const razorPluginPath = razorConfig ? razorConfig.get<string>('plugin.path', undefined) : undefined;
 
         const testMaxDegreeOfParallelism = csharpConfig.get<number>('testing.maxDegreeOfParallelism', 5);
+        const testMaxLoadedProjectPerRequest = csharpConfig.get<number>('testing.maxLoadedProjectPerRequest', 5);
 
         const maxProjectFileCountForDiagnosticAnalysis = csharpConfig.get<number | null>('maxProjectFileCountForDiagnosticAnalysis', 1000);
 
@@ -146,6 +148,7 @@ export class Options {
             enableAsyncCompletion,
             useSemanticHighlighting,
             testMaxDegreeOfParallelism,
+            testMaxLoadedProjectPerRequest,
             razorPluginPath,
             defaultLaunchSolution,
             monoPath,

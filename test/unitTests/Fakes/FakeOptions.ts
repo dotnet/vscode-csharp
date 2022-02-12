@@ -6,5 +6,5 @@
 import { Options } from "../../../src/omnisharp/options";
 
 export function getEmptyOptions(): Options {
-    return new Options("", false, "", false, "", false, 0, 0, false, false, false, false, false, [], false, false, false, 0, 0, false, false, false, false, false, false, false, false, undefined, 5, "", "", "");
+    return new Options("", false, "", false, "", false, 0, 0, false, false, false, false, false, [], false, false, false, 0, 0, false, false, false, false, false, false, false, false, undefined, 5, 5, "", "", "");
 }
