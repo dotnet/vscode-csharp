@@ -6,6 +6,7 @@
 import * as vscode from "vscode";
 import CompositeDisposable from "../CompositeDisposable";
 import AbstractProvider from "./abstractProvider";
+import * as path from "path";
 import OptionProvider from "../observers/OptionProvider";
 import { LanguageMiddlewareFeature } from "../omnisharp/LanguageMiddlewareFeature";
 import {
@@ -290,7 +291,7 @@ export default class TestingProvider extends AbstractProvider {
     private _tryUpdateTestInformationInline(
         project: MSBuildProject,
         fileName: string,
-        testsFromCodeStructure: TestInfo[]
+        testsFromCodeStructure: TestDiscoveryInfo[]
     ): boolean {
         const assembly = this._testAssemblies.get(project.AssemblyName);
         // in case we do not know the assembly, we do not know that it exists
@@ -417,8 +418,9 @@ export default class TestingProvider extends AbstractProvider {
                 );
                 discoveredTests.set(testCase.id, testCase);
             });
-            const assembly = {
+            const assembly: TestAssembly = {
                 name: assemblyName,
+                path: project.Path,
                 discoveredTests,
                 targetFrameworks: project.TargetFrameworks,
             };
@@ -478,12 +480,59 @@ export default class TestingProvider extends AbstractProvider {
      * @param assembly
      */
     private _upsertAssemblyOnController(assembly: TestAssembly): void {
+        let folder: vscode.TestItem | undefined;
+        const workspaceFolder = vscode.workspace.getWorkspaceFolder(
+            vscode.Uri.file(assembly.path)
+        ).uri.path;
+        let relativePathOfAssemblyToWorkspace = path.relative(
+            workspaceFolder,
+            assembly.path
+        );
+        console.log(relativePathOfAssemblyToWorkspace);
+        console.log(
+            vscode.workspace.getWorkspaceFolder(vscode.Uri.file(assembly.path))
+                .uri.path
+        );
+        console.log(assembly.path);
+
+        let segments = path
+            .dirname(relativePathOfAssemblyToWorkspace)
+            .split(path.sep)
+            .filter((x) => x.length > 0);
+
+        let currentPath: string = workspaceFolder; // last slash will be add
+        // we do not need the last folder, as this is the assembly
+        for (let i = 0; i < segments.length - 1; i++) {
+            let segment = segments[i];
+            let child = this.controller.items.get(currentPath);
+            if (!child) {
+                let id = `${currentPath}/${segment}`;
+                child = this.controller.createTestItem(
+                    currentPath,
+                    segment,
+                    vscode.Uri.file(id)
+                );
+
+                currentPath = id;
+
+                if (folder == undefined) {
+                    this.controller.items.add(child);
+                } else {
+                    folder.children.add(child);
+                }
+            }
+            folder = child;
+        }
+
         const assemblyTestCollection = this.controller.createTestItem(
             assembly.name,
-            assembly.name
+            assembly.name,
+            vscode.Uri.file(assembly.path)
         );
+
         assembly.targetFrameworks.map((targetFramework) => {
             let parent: vscode.TestItem;
+
             // only add a node to the tree when there are more than one target frameworks, else
             // just display all the tests cases directly under the root
             if (assembly.targetFrameworks.length == 1) {
@@ -496,17 +545,20 @@ export default class TestingProvider extends AbstractProvider {
                 assemblyTestCollection.children.add(parent);
             }
 
-            this._mapTreeToTestItems(
-                parent,
-                this._buildTestTree(
-                    Array.from(assembly.discoveredTests.values()).filter(
-                        (x) => x.targetFramework == targetFramework.ShortName
-                    )
+            const tree = this._buildTestTree(
+                Array.from(assembly.discoveredTests.values()).filter(
+                    (x) => x.targetFramework == targetFramework.ShortName
                 )
             );
+            this._mapTreeToTestItems(parent, tree);
         });
 
-        this.controller.items.add(assemblyTestCollection);
+        if (folder) {
+            folder.children.add(assemblyTestCollection);
+            this.controller.items.add(folder);
+        } else {
+            this.controller.items.add(assemblyTestCollection);
+        }
     }
 
     /**
@@ -521,14 +573,26 @@ export default class TestingProvider extends AbstractProvider {
         const discoveryInfo = inspector.getTestInfo(
             testInfo.FullyQualifiedName
         );
+        const fileInfo = inspector.getFileInfo(testInfo.CodeFilePath);
+
+        // we remove the assembly name from the fqn
+        let fullyQualifiedName = testInfo.FullyQualifiedName;
+        if (fullyQualifiedName.startsWith(`${assembly}.`)) {
+            fullyQualifiedName = testInfo.FullyQualifiedName.substring(
+                assembly.length + 1
+            );
+        }
+        const nameSegments = this._parseName(fullyQualifiedName);
+
         return {
             id: `${assembly}/${testInfo.FullyQualifiedName}/${targetFramework}`,
             ...testInfo,
             assembly,
             discoveryInfo,
+            fileInfo,
             targetFramework,
             testFramework: discoveryInfo?.testFramework ?? "xunit",
-            nameSegments: this._parseName(testInfo.DisplayName),
+            nameSegments,
         };
     }
 
@@ -571,25 +635,36 @@ export default class TestingProvider extends AbstractProvider {
      * @returns The tree
      */
     private _buildTestTree(testCases: TestCase[]): TestTreeNode {
-        const root: TestTreeNode = { kind: "node", children: {} };
+        const root: TestTreeElement = { kind: "namespace", children: {} };
         for (const testCase of testCases) {
-            let currentNode = root;
+            let currentNode: TestTreeElement = root;
             for (let i = 0; i < testCase.nameSegments.length; i++) {
-                if (i == testCase.nameSegments.length - 1) {
+                if (isClass(currentNode)) {
                     // element is leaf
                     currentNode.children[testCase.nameSegments[i]] = testCase;
-                } else {
+                } else if (isNamespace(currentNode)) {
                     // element is node
-                    const child =
+                    const child: TestNamespace | TestClass | undefined =
                         currentNode.children[testCase.nameSegments[i]];
 
                     // check if the path already exists
                     if (child == undefined) {
                         // create a new node
-                        const newNode: TestTreeNode = {
-                            kind: "node",
-                            children: {},
-                        };
+                        let newNode: TestTreeNode;
+                        if (i == testCase.nameSegments.length - 2) {
+                            // must be a class
+                            newNode = {
+                                kind: "class",
+                                children: {},
+                                fileInfo: testCase.fileInfo,
+                            };
+                        } else {
+                            // must be a namepsace
+                            newNode = {
+                                kind: "namespace",
+                                children: {},
+                            };
+                        }
                         currentNode.children[testCase.nameSegments[i]] =
                             newNode;
                         currentNode = newNode;
@@ -631,7 +706,7 @@ export default class TestingProvider extends AbstractProvider {
         // flattens the path
         if (keys.length == 1) {
             const child = tree.children[keys[0]];
-            if (isNode(child)) {
+            if (isNode(child) && !isClass(child)) {
                 return this._mapTreeToTestItems(
                     testItem,
                     child,
@@ -648,10 +723,23 @@ export default class TestingProvider extends AbstractProvider {
                     : nameOfChildren;
 
             if (isNode(child)) {
-                const childTestItem = this.controller.createTestItem(
-                    name,
-                    name
-                );
+                let childTestItem: vscode.TestItem;
+                if (isClass(child) && !!child.fileInfo) {
+                    childTestItem = this.controller.createTestItem(
+                        name,
+                        name,
+                        vscode.Uri.file(child.fileInfo.fileName)
+                    );
+
+                    childTestItem.range = new vscode.Range(
+                        child.fileInfo.range.Start.Line,
+                        child.fileInfo.range.Start.Column,
+                        child.fileInfo.range.End.Line,
+                        child.fileInfo.range.End.Column
+                    );
+                } else {
+                    childTestItem = this.controller.createTestItem(name, name);
+                }
                 testItem.children.add(childTestItem);
                 this._mapTreeToTestItems(childTestItem, child);
             } else {
@@ -659,7 +747,7 @@ export default class TestingProvider extends AbstractProvider {
                     child.id,
                     name,
                     child.CodeFilePath
-                        ? vscode.Uri.parse("file://" + child.CodeFilePath)
+                        ? vscode.Uri.file(child.CodeFilePath)
                         : undefined
                 );
 
@@ -1042,6 +1130,7 @@ interface TestBatch {
 
 interface TestAssembly {
     name: string;
+    path: string;
     discoveredTests: Map<string, TestCase>;
     targetFrameworks: TargetFramework[];
 }
@@ -1051,25 +1140,39 @@ interface TestCase extends V2.TestInfo {
     assembly: string;
     nameSegments: string[];
     discoveryInfo?: TestDiscoveryInfo;
+    fileInfo?: TestFileDiscoveryInfo;
     testFramework: string;
     targetFramework: string;
 }
 
-interface TestTreeNode {
-    kind: "node";
-    children: Record<string, TestCase | TestTreeNode>;
+type TestTreeElement = TestCase | TestTreeNode;
+type TestTreeNode = TestNamespace | TestClass;
+
+interface TestNamespace {
+    kind: "namespace";
+    children: Record<string, TestClass | TestNamespace>;
 }
 
-const isNode = (node: TestCase | TestTreeNode): node is TestTreeNode =>
-    "kind" in node;
+interface TestClass {
+    kind: "class";
+    fileInfo?: TestFileDiscoveryInfo;
+    children: Record<string, TestCase>;
+}
+
+const isNode = (node: TestTreeElement): node is TestTreeNode => "kind" in node;
+
+const isClass = (node: TestTreeNode): node is TestClass => node.kind == "class";
+
+const isNamespace = (node: TestTreeNode): node is TestNamespace =>
+    node.kind == "namespace";
 
 /**
  * Inspects the code structure of files to get additional information about the files
  */
 class TestFileInspector {
     constructor(
-        private readonly _loadedFiles: Map<string, TestFile>,
-        private readonly _loadedTests: Map<string, TestInfo>
+        private readonly _loadedFiles: Map<string, TestFileDiscoveryInfo>,
+        private readonly _loadedTests: Map<string, TestDiscoveryInfo>
     ) {}
 
     /**
@@ -1101,8 +1204,8 @@ class TestFileInspector {
         fileNames: string[]
     ): Promise<TestFileInspector> {
         const token = new CancellationTokenSource().token;
-        const loadedFiles = new Map<string, TestFile>();
-        const loadedTests = new Map<string, TestInfo>();
+        const loadedFiles = new Map<string, TestFileDiscoveryInfo>();
+        const loadedTests = new Map<string, TestDiscoveryInfo>();
         const unqueFileNames = [...new Set(fileNames)];
 
         // request the code structure concurrently from omnisharp
@@ -1121,7 +1224,7 @@ class TestFileInspector {
                         e
                     )) {
                         if ("name" in info) {
-                            loadedFiles.set(info.name, info);
+                            loadedFiles.set(file, info);
                         } else {
                             loadedTests.set(info.testMethodName, info);
                         }
@@ -1186,8 +1289,8 @@ class TestFileInspector {
     private static _createTestInfo(
         fileName: string,
         element: Structure.CodeElement
-    ): TestDiscoveryInfo[] {
-        const results: TestDiscoveryInfo[] = [];
+    ): DiscoveryInfo[] {
+        const results: DiscoveryInfo[] = [];
 
         if (TestFileInspector._isValidMethodForTestCodeLens(element)) {
             let [testFramework, testMethodName] =
@@ -1195,7 +1298,7 @@ class TestFileInspector {
             let range = element.Ranges[SymbolRangeNames.Name];
 
             if (range && testFramework && testMethodName) {
-                const info: TestInfo = {
+                const info: TestDiscoveryInfo = {
                     range,
                     testFramework,
                     testMethodName,
@@ -1227,7 +1330,7 @@ class TestFileInspector {
                 }
             }
 
-            const info: TestFile = {
+            const info: TestFileDiscoveryInfo = {
                 kind: "file",
                 name: element.Name,
                 fileName,
@@ -1242,9 +1345,9 @@ class TestFileInspector {
     }
 }
 
-type TestDiscoveryInfo = TestInfo | TestFile;
+type DiscoveryInfo = TestDiscoveryInfo | TestFileDiscoveryInfo;
 
-interface TestInfo {
+interface TestDiscoveryInfo {
     range: V2.Range;
     testFramework: string;
     testMethodName: string;
@@ -1252,7 +1355,7 @@ interface TestInfo {
     kind: "method";
 }
 
-interface TestFile {
+interface TestFileDiscoveryInfo {
     range: V2.Range;
     testFramework: string;
     testMethodNames: string[];
