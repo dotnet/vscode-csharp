@@ -313,7 +313,18 @@ export default class TestingProvider extends AbstractProvider {
         if (!assembly) {
             return false;
         }
-        const testsInController = [...assembly.discoveredTests.values()]
+
+        // we only validate the tests for a single target framework. This means inline updates
+        // would not work with framework specific tests
+        const groupedTestsFromController = groupBy(
+            [...assembly.discoveredTests.values()],
+            (x) => x.targetFramework
+        );
+        if (groupedTestsFromController.length != 1) {
+            return false;
+        }
+
+        const testsInController = groupedTestsFromController[0]
             .filter((x) => x.CodeFilePath == fileName)
             .sort((x, y) =>
                 x.FullyQualifiedName.localeCompare(y.FullyQualifiedName)
