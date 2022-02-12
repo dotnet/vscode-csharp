@@ -99,7 +99,8 @@ export default class TestingProvider extends AbstractProvider {
             .pipe(
                 // TODO this is obviously a bad idea
                 filter((x) => x.AssemblyName.endsWith("Tests")),
-                bufferTime( // wait for projects to be reported, batch N
+                bufferTime(
+                    // wait for projects to be reported, batch N
                     500,
                     undefined,
                     this._optionProvider.GetLatestOptions()
@@ -502,12 +503,6 @@ export default class TestingProvider extends AbstractProvider {
             workspaceFolder,
             assembly.path
         );
-        console.log(relativePathOfAssemblyToWorkspace);
-        console.log(
-            vscode.workspace.getWorkspaceFolder(vscode.Uri.file(assembly.path))
-                .uri.path
-        );
-        console.log(assembly.path);
 
         let segments = path
             .dirname(relativePathOfAssemblyToWorkspace)
@@ -814,25 +809,29 @@ class TestRunner {
         const testItemsToExecute = this._extractTestItemsFromRequest();
         testItemsToExecute.forEach(this._testRun.enqueued);
         const executableTests = this._createExecutableTests(testItemsToExecute);
-        const testQueue = TestQueue.create(executableTests);
-
-        const workers: Promise<void>[] = [];
-
         const listener = this._server.onTestMessage((e) => {
             this._testRun.appendOutput(`${e.Message}\n\r`);
         });
-
         try {
-            for (let i = 0; i < maxDegreeOfParallelism; i++) {
-                workers.push(
-                    this._createBatchExecutor(
-                        testQueue,
-                        combinationTokenSource.token
-                    )
-                );
-            }
+            for (const byTargetFramework of groupBy(
+                executableTests,
+                (x) => x.testCase.targetFramework
+            )) {
+                const testQueue = TestQueue.create(byTargetFramework);
 
-            await Promise.all(workers);
+                const workers: Promise<void>[] = [];
+
+                for (let i = 0; i < maxDegreeOfParallelism; i++) {
+                    workers.push(
+                        this._createBatchExecutor(
+                            testQueue,
+                            combinationTokenSource.token
+                        )
+                    );
+                }
+
+                await Promise.all(workers);
+            }
         } finally {
             this._testRun.end();
             listener.dispose();
