@@ -190,6 +190,11 @@ export default class SemanticTokensProvider extends AbstractProvider implements 
     }
 
     async _provideSemanticTokens(document: vscode.TextDocument, range: protocol.V2.Range, token: vscode.CancellationToken): Promise<vscode.SemanticTokens | null> {
+        // We can only semantically highlight file from disk.
+        if (document.uri.scheme !== "file") {
+            return null;
+        }
+
         const options = this.optionProvider.GetLatestOptions();
         if (!options.useSemanticHighlighting) {
             return null;
@@ -197,9 +202,6 @@ export default class SemanticTokensProvider extends AbstractProvider implements 
 
         let req = createRequest<protocol.V2.SemanticHighlightRequest>(document, new vscode.Position(0, 0));
         req.Range = range;
-        // We need to include the document contents in our request for cases where we are highlighting
-        // a version of the document other than the current version, such as in the Diff view.
-        req.VersionedText = document.getText();
 
         const versionBeforeRequest = document.version;
 
