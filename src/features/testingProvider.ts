@@ -143,7 +143,7 @@ export default class TestingProvider extends AbstractProvider {
                 concatMap(
                     async (projects) =>
                         await Promise.all(
-                            projects.map(({ project, noBuild }) =>
+                            projects.map(async ({ project, noBuild }) =>
                                 this._reportProject(project, noBuild)
                             )
                         )
@@ -546,7 +546,7 @@ export default class TestingProvider extends AbstractProvider {
             this._optionProvider.GetLatestOptions().testMaxDegreeOfParallelism,
             token
         );
-    };
+    }
 
     /**
      * Processes a request from the testController to debug tests
@@ -564,7 +564,7 @@ export default class TestingProvider extends AbstractProvider {
             this._server
         );
         await runner.debugTests(token);
-    };
+    }
 
     /**
      * Gets or creates the root of the test explorer tree for a workspace
@@ -610,12 +610,15 @@ export default class TestingProvider extends AbstractProvider {
     /**
      * Maps the path of a project as a tree of folders into the test controller.
      * @param assembly
-     * @returns the folder the assemlbly is in
+     * @returns the folder the assembly is in
      */
     private _mapFolderTreeToTestController(
         projectPath: string,
         busy: boolean = false
     ): vscode.TestItem {
+        // os independent filepath
+        projectPath = vscode.Uri.file(projectPath).path;
+
         let root: vscode.TestItem = this._getOrCreateWorkspaceRoot(
             projectPath,
             busy
@@ -627,7 +630,7 @@ export default class TestingProvider extends AbstractProvider {
 
         let segments: string[] = [];
         if (workspaceFolder) {
-            const relativePathOfAssemblyToWorkspace = path.relative(
+            const relativePathOfAssemblyToWorkspace =path.relative(
                 workspaceFolder,
                 projectPath
             );
