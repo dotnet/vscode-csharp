@@ -185,7 +185,7 @@ export default class TestingProvider extends AbstractProvider {
             (e) => void this.reportFileSave(e.fileName)
         );
         const d8 = vscode.workspace.onDidDeleteFiles(
-            (e) => void this.reportFileDeletes(e.files.map((x) => x.path))
+            (e) => void this.reportFileDeletes(e.files.map((x) => x.fsPath))
         );
         this.addDisposables(
             new CompositeDisposable(
@@ -592,12 +592,12 @@ export default class TestingProvider extends AbstractProvider {
             }
             folder = externalProject;
         } else {
-            folder = this.controller.items.get(workspaceFolder.uri.path);
+            folder = this.controller.items.get(workspaceFolder.uri.fsPath);
             if (!folder) {
                 folder = this.controller.createTestItem(
-                    workspaceFolder.uri.path,
+                    workspaceFolder.uri.fsPath,
                     workspaceFolder.name,
-                    vscode.Uri.file(workspaceFolder.uri.path)
+                    workspaceFolder.uri
                 );
                 this.controller.items.add(folder);
             }
@@ -616,9 +616,6 @@ export default class TestingProvider extends AbstractProvider {
         projectPath: string,
         busy: boolean = false
     ): vscode.TestItem {
-        // os independent filepath
-        projectPath = vscode.Uri.file(projectPath).path;
-
         let root: vscode.TestItem = this._getOrCreateWorkspaceRoot(
             projectPath,
             busy
@@ -626,7 +623,7 @@ export default class TestingProvider extends AbstractProvider {
 
         const workspaceFolder = vscode.workspace.getWorkspaceFolder(
             vscode.Uri.file(projectPath)
-        )?.uri?.path;
+        )?.uri?.fsPath;
 
         let segments: string[] = [];
         if (workspaceFolder) {
