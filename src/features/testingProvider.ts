@@ -546,7 +546,7 @@ export default class TestingProvider extends AbstractProvider {
             this._optionProvider.GetLatestOptions().testMaxDegreeOfParallelism,
             token
         );
-    }
+    };
 
     /**
      * Processes a request from the testController to debug tests
@@ -564,7 +564,7 @@ export default class TestingProvider extends AbstractProvider {
             this._server
         );
         await runner.debugTests(token);
-    }
+    };
 
     /**
      * Gets or creates the root of the test explorer tree for a workspace
@@ -627,7 +627,7 @@ export default class TestingProvider extends AbstractProvider {
 
         let segments: string[] = [];
         if (workspaceFolder) {
-            const relativePathOfAssemblyToWorkspace =path.relative(
+            const relativePathOfAssemblyToWorkspace = path.relative(
                 workspaceFolder,
                 projectPath
             );
@@ -1040,9 +1040,18 @@ class TestRunner {
                         batch.targetFramework
                     );
 
-                results.forEach((result) =>
-                    this._reportTestResult(result, queue)
-                );
+                if (results) {
+                    results.forEach((result) =>
+                        this._reportTestResult(result, queue)
+                    );
+                } else {
+                    batch.tests.forEach(({ testItem }) =>
+                        this._testRun.skipped(testItem)
+                    );
+                    vscode.window.showErrorMessage(
+                        "Could not start the tests. Do you have a build error?"
+                    );
+                }
             } catch (reason) {
                 batch.tests.forEach(({ testItem }) =>
                     this._testRun.failed(
