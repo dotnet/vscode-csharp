@@ -642,7 +642,7 @@ export default class TestingProvider extends AbstractProvider {
         let currentPath: string = workspaceFolder; // last slash will be add
         for (let i = 0; i < segments.length; i++) {
             const segment = segments[i];
-            currentPath = `${currentPath}/${segment}`;
+            currentPath = path.join(currentPath, segment);
             let child = currentTestItem.children.get(currentPath);
             if (!child) {
                 child = this.controller.createTestItem(
