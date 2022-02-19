@@ -924,7 +924,7 @@ export default class TestingProvider extends AbstractProvider {
 
 class TestRunner {
     private constructor(
-        private readonly _testAapter: TestingProvider,
+        private readonly _testAdapter: TestingProvider,
         private readonly _testRun: vscode.TestRun,
         private readonly _request: vscode.TestRunRequest,
         private readonly _server: OmniSharpServer
@@ -985,7 +985,7 @@ class TestRunner {
                 if (!firstFileName) {
                     return;
                 }
-                await this._testAapter.testManager.debugDotnetTestsInClass(
+                await this._testAdapter.testManager.debugDotnetTestsInClass(
                     "",
                     batch.tests.map(
                         (assembly) => assembly.testCase.FullyQualifiedName
@@ -1031,7 +1031,7 @@ class TestRunner {
 
             try {
                 const results =
-                    await this._testAapter.testManager.runDotnetTestsInClass(
+                    await this._testAdapter.testManager.runDotnetTestsInClass(
                         "",
                         batch.tests.map((x) => x.testCase.FullyQualifiedName),
                         fileName,
@@ -1109,7 +1109,7 @@ class TestRunner {
     private _extractTestItemsFromRequest(): vscode.TestItem[] {
         let included: vscode.TestItem[] = [];
         if (this._request.include == null) {
-            this._testAapter.controller.items.forEach((x) => included.push(x));
+            this._testAdapter.controller.items.forEach((x) => included.push(x));
         } else {
             included = this._request.include;
         }
@@ -1154,7 +1154,7 @@ class TestRunner {
     private _createExecutableTests(items: vscode.TestItem[]): ExecutableTest[] {
         return items
             .map((testItem) => {
-                const testCase = this._testAapter.resolveTestCaseById(
+                const testCase = this._testAdapter.resolveTestCaseById(
                     testItem.id
                 );
                 return ExecutableTest.create(testCase, testItem);
