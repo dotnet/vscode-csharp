@@ -16,17 +16,31 @@ gulp.task("test:feature", async () => {
         CODE_WORKSPACE_ROOT: rootPath,
     };
 
-    return spawnNode([featureTestRunnerPath], { env });
+    const result = await spawnNode([featureTestRunnerPath], { env });
+
+    if (result.code > 0) {
+        // Ensure that gulp fails when tests fail
+        throw new Error(`Exit code: ${result.code}  Signal: ${result.signal}`);
+    }
+
+    return result;
 });
 
 gulp.task("test:unit", async () => {
-    return spawnNode([
+    const result = await spawnNode([
         mochaPath,
         '--ui',
         'tdd',
         '-c',
         'test/unitTests/**/*.test.ts'
     ]);
+
+    if (result.code > 0) {
+        // Ensure that gulp fails when tests fail
+        throw new Error(`Exit code: ${result.code}  Signal: ${result.signal}`);
+    }
+
+    return result;
 });
 
 gulp.task("test:integration:singleCsproj", async () => {
