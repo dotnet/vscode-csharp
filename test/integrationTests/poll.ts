@@ -72,8 +72,10 @@ export async function poll<T>(
     duration: number,
     step: number,
     expression: (input: T) => boolean = defaultPollExpression): Promise<T> {
+    let value: T;
+
     while (duration > 0) {
-        let value = await getValue();
+        value = await getValue();
 
         if (expression(value)) {
             return value;
