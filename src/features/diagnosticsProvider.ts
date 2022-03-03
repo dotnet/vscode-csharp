@@ -15,7 +15,7 @@ import { isVirtualCSharpDocument } from './virtualDocumentTracker';
 import { TextDocument } from '../vscodeAdapter';
 import OptionProvider from '../observers/OptionProvider';
 import { Subject, Subscription } from 'rxjs';
-import { throttleTime } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 import { DiagnosticStatus } from '../omnisharp/protocol';
 import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
 
@@ -137,12 +137,12 @@ class DiagnosticsProvider extends AbstractSupport {
 
         this._subscriptions.push(this._validateCurrentDocumentPipe
             .asObservable()
-            .pipe(throttleTime(750))
+            .pipe(debounceTime(750))
             .subscribe(async x => await this._validateDocument(x)));
 
         this._subscriptions.push(this._validateAllPipe
             .asObservable()
-            .pipe(throttleTime(3000))
+            .pipe(debounceTime(3000))
             .subscribe(async () => {
                 if (this._validationAdvisor.shouldValidateAll()) {
                     await this._validateEntireWorkspace();
