@@ -50,7 +50,21 @@ function createSymbolForElement(element: Structure.CodeElement): vscode.Document
     const fullRange = element.Ranges[SymbolRangeNames.Full];
     const nameRange = element.Ranges[SymbolRangeNames.Name];
 
-    return new vscode.DocumentSymbol(element.DisplayName, /*detail*/ "", toSymbolKind(element.Kind), toRange3(fullRange), toRange3(nameRange));
+    var name = element.DisplayName;
+    switch (element.Kind) {
+        case SymbolKinds.Class:
+        case SymbolKinds.Delegate:
+        case SymbolKinds.Enum:
+        case SymbolKinds.Interface:
+        case SymbolKinds.Struct:
+            name = element.Name;
+            break;
+        default:
+            break;
+    }
+    const details = name == element.DisplayName ? "" : element.DisplayName;
+
+    return new vscode.DocumentSymbol(name, details, toSymbolKind(element.Kind), toRange3(fullRange), toRange3(nameRange));
 }
 
 const kinds: { [kind: string]: vscode.SymbolKind; } = {};
