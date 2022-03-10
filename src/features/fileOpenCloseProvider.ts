@@ -29,7 +29,7 @@ class FileOpenCloseProvider implements IDisposable {
         this._disposable = new CompositeDisposable(this._diagnostics,
             vscode.workspace.onDidOpenTextDocument(this._onDocumentOpen, this),
             vscode.workspace.onDidCloseTextDocument(this._onDocumentClose, this),
-            vscode.window.onDidChangeActiveTextEditor(this._onActiveTextEdtiorChnage, this)
+            vscode.window.onDidChangeActiveTextEditor(this._onActiveTextEditorChnage, this)
         );
     }
 
@@ -49,7 +49,7 @@ class FileOpenCloseProvider implements IDisposable {
         await serverUtils.fileClose(this._server, { FileName: e.fileName });
     }
 
-    private async _onActiveTextEdtiorChnage(e: vscode.TextEditor) {
+    private async _onActiveTextEditorChnage(e: vscode.TextEditor) {
         if (shouldIgnoreDocument(e.document)) {
             return;
         }

@@ -998,7 +998,7 @@
         "omnisharp.analyzeOpenDocumentsOnly": {
           "type": "boolean",
           "default": false,
-          "description": "Will only run analyzers against open files when 'enableRoslynAnalyzers' is true"
+          "description": "Only run analyzers against open files when 'enableRoslynAnalyzers' is true"
         },
         "omnisharp.testRunSettings": {
           "type": [
