@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
-import CSharpDefinitionProvider from "../../src/features/typeDefinitionProvider";
+import CSharpDefinitionProvider from "../../src/features/definitionProvider";
 import * as path from "path";
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
 import { expect, should } from "chai";
