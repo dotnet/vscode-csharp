@@ -23,7 +23,6 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
     }
 
     public async provideDefinition(document: TextDocument, position: Position, token: CancellationToken): Promise<Location[]> {
-
         let req = <V2.GoToDefinitionRequest>createRequest(document, position);
         req.WantMetadata = true;
 
