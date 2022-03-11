@@ -29,10 +29,7 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
 
         try {
             const gotoDefinitionResponse = await serverUtils.goToDefinition(this._server, req, token);
-            const locations = await this.GetLocationsFromResponse(gotoDefinitionResponse, token);
-            // Allow language middlewares to re-map its edits if necessary.
-            const result = await this._languageMiddlewareFeature.remap("remapLocations", locations, token);
-            return result;
+            return await this.GetLocationsFromResponse(gotoDefinitionResponse, token);
         }
         catch (error) {
             return [];
@@ -45,10 +42,7 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
 
         try {
             const goToTypeDefinitionResponse = await serverUtils.goToTypeDefinition(this._server, req, token);
-            const locations = await this.GetLocationsFromResponse(goToTypeDefinitionResponse, token);
-            // Allow language middlewares to re-map its edits if necessary.
-            const result = await this._languageMiddlewareFeature.remap("remapLocations", locations, token);
-            return result;
+            return await this.GetLocationsFromResponse(goToTypeDefinitionResponse, token);
         }
         catch (error) {
             return [];
@@ -112,6 +106,7 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
                 }
             }
         }
-        return locations;
+        // Allow language middlewares to re-map its edits if necessary.
+        return await this._languageMiddlewareFeature.remap("remapLocations", locations, token);
     }
 }
