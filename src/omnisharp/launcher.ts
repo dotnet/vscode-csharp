@@ -350,7 +350,7 @@ async function launchDotnet(launchInfo: LaunchInfo, cwd: string, args: string[],
     }
     else {
         command = platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
-        argsCopy.unshift(launchInfo.DotnetLaunchPath ?? launchInfo.LaunchPath);
+        argsCopy.unshift(`"${launchInfo.DotnetLaunchPath ?? launchInfo.LaunchPath}"`);
     }
 
     const process = spawn(command, argsCopy, { detached: false, cwd, env: dotnetInfo.env });
@@ -373,7 +373,7 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
     }
 
     let argsCopy = args.slice(0); // create copy of args
-    argsCopy.unshift(launchPath);
+    argsCopy.unshift(`"${launchPath}"`);
     argsCopy = [[
         '/s',
         '/c',
@@ -408,7 +408,7 @@ function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResul
 
 function launchNixMono(launchPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv, useDebugger: boolean): LaunchResult {
     let argsCopy = args.slice(0); // create copy of details args
-    argsCopy.unshift(launchPath);
+    argsCopy.unshift(`$"{launchPath}"`);
     argsCopy.unshift("--assembly-loader=strict");
 
     if (useDebugger) {
