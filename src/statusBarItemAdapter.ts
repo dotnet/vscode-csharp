@@ -25,7 +25,7 @@ export class StatusBarItemAdapter implements vscodeAdapter.StatusBarItem {
     }
 
     get tooltip(): string {
-        return this.statusBarItem.tooltip;
+        return <string>this.statusBarItem.tooltip;
     }
 
     set tooltip(value: string) {

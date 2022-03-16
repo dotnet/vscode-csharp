@@ -391,6 +391,24 @@ export class OmniSharpServer {
             args.push('RoslynExtensionsOptions:EnableAsyncCompletion=true');
         }
 
+        if (options.enableForParameters === true) {
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:EnableForParameters=${options.enableForParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForLiteralParameters=${options.forLiteralParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForIndexerParameters=${options.forIndexerParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForObjectCreationParameters=${options.forObjectCreationParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForOtherParameters=${options.forOtherParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatDifferOnlyBySuffix=${options.suppressForParametersThatDifferOnlyBySuffix.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatMatchMethodIntent=${options.suppressForParametersThatMatchMethodIntent.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatMatchArgumentName=${options.suppressForParametersThatMatchArgumentName.toString()}`);
+        }
+
+        if (options.enableForTypes === true) {
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:EnableForTypes=${options.enableForTypes.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForImplicitVariableTypes=${options.forImplicitVariableTypes.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForLambdaParameterTypes=${options.forLambdaParameterTypes.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForImplicitObjectCreation=${options.forImplicitObjectCreation.toString()}`);
+        }
+
         if (options.analyzeOpenDocumentsOnly === true) {
             args.push('RoslynExtensionsOptions:AnalyzeOpenDocumentsOnly=true');
         }

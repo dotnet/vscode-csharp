@@ -209,6 +209,14 @@ export async function isNetCoreProject(project: protocol.MSBuildProject) {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp') || tf.ShortName.startsWith('netstandard')) !== undefined;
 }
 
+export async function getInlayHints(server: OmniSharpServer, request: protocol.InlayHintRequest, context: vscode.CancellationToken) {
+    return server.makeRequest<protocol.InlayHintResponse>(protocol.Requests.InlayHint, request, context);
+}
+
+export async function resolveInlayHints(server: OmniSharpServer, request: protocol.InlayHintResolve, context: vscode.CancellationToken) {
+    return server.makeRequest<protocol.InlayHint>(protocol.Requests.InlayHintResolve, request, context);
+}
+
 function isBlazorWebAssemblyHosted(project: protocol.MSBuildProject, isProjectBlazorWebAssemblyProject: boolean): boolean {
     if (!isProjectBlazorWebAssemblyProject) {
         return false;

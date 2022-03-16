@@ -25,7 +25,19 @@ const omniSharpOptions: ReadonlyArray<OptionsKey> = [
     "enableAsyncCompletion",
     "useModernNet",
     "analyzeOpenDocumentsOnly",
-    "enableRoslynAnalyzers"
+    "enableRoslynAnalyzers",
+    "enableForParameters",
+    "forLiteralParameters",
+    "forObjectCreationParameters",
+    "forIndexerParameters",
+    "forOtherParameters",
+    "suppressForParametersThatDifferOnlyBySuffix",
+    "suppressForParametersThatMatchMethodIntent",
+    "suppressForParametersThatMatchArgumentName",
+    "enableForTypes",
+    "forImplicitVariableTypes",
+    "forLambdaParameterTypes",
+    "forImplicitObjectCreation",
 ];
 
 function OmniSharpOptionChangeObservable(optionObservable: Observable<Options>): Observable<Options> {

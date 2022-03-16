@@ -93,7 +93,7 @@
     "@types/semver": "5.5.0",
     "@types/tmp": "0.0.33",
     "@types/unzipper": "^0.9.1",
-    "@types/vscode": "1.58.0",
+    "@types/vscode": "1.65.0",
     "@types/yauzl": "2.9.1",
     "archiver": "5.3.0",
     "chai": "4.3.4",
@@ -539,7 +539,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.61.0"
+    "vscode": "^1.65.0"
   },
   "activationEvents": [
     "onDebugInitialConfigurations",
@@ -851,6 +851,66 @@
           "type": "boolean",
           "default": true,
           "description": "Shows the OmniSharp log in the Output pane when OmniSharp reports an error."
+        },
+        "csharp.inlayHints.parameters.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Display inline parameter name hints"
+        },
+        "csharp.inlayHints.parameters.forLiteralParameters": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show hints for literals"
+        },
+        "csharp.inlayHints.parameters.forObjectCreationParameters": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show hints for 'new' expressions"
+        },
+        "csharp.inlayHints.parameters.forIndexerParameters": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show hints for indexers"
+        },
+        "csharp.inlayHints.parameters.forOtherParameters": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show hints for everything else"
+        },
+        "csharp.inlayHints.parameters.suppressForParametersThatDifferOnlyBySuffix": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress hints when parameter names differ only by suffix"
+        },
+        "csharp.inlayHints.parameters.suppressForParametersThatMatchMethodIntent": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress hints when parameter name matches the method's intent"
+        },
+        "csharp.inlayHints.parameters.suppressForParametersThatMatchArgumentName": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress hints when argument matches parameter name"
+        },
+        "csharp.inlayHints.types.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Display inline type hints"
+        },
+        "csharp.inlayHints.types.forImplicitVariableTypes": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show hints for variables with inferred types"
+        },
+        "csharp.inlayHints.types.forLambdaParameterTypes": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show hints for lambda parameter types"
+        },
+        "csharp.inlayHints.types.forImplicitObjectCreation": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show hints for implicit object creation"
         },
         "omnisharp.path": {
           "type": [
