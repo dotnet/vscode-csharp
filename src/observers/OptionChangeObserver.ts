@@ -24,6 +24,8 @@ const omniSharpOptions: ReadonlyArray<OptionsKey> = [
     "organizeImportsOnFormat",
     "enableAsyncCompletion",
     "useModernNet",
+    "analyzeOpenDocumentsOnly",
+    "enableRoslynAnalyzers"
 ];
 
 function OmniSharpOptionChangeObservable(optionObservable: Observable<Options>): Observable<Options> {

@@ -37,6 +37,8 @@ export module Requests {
     export const SourceGeneratedFile = '/sourcegeneratedfile';
     export const UpdateSourceGeneratedFile = '/updatesourcegeneratedfile';
     export const SourceGeneratedFileClosed = '/sourcegeneratedfileclosed';
+    export const FileOpen = '/open';
+    export const FileClose = '/close';
 }
 
 export namespace WireProtocol {
