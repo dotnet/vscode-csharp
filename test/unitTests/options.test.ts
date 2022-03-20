@@ -34,6 +34,7 @@ suite("Options tests", () => {
         options.enableEditorConfigSupport.should.equal(false);
         options.enableDecompilationSupport.should.equal(false);
         options.enableImportCompletion.should.equal(false);
+        options.analyzeOpenDocumentsOnly.should.equal(false);
         expect(options.testRunSettings).to.be.undefined;
         expect(options.defaultLaunchSolution).to.be.undefined;
     });

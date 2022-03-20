@@ -75,7 +75,7 @@ export class TestAssetWorkspace {
     async waitForIdle(stream: EventStream, timeout: number = 25 * 1000): Promise<void> {
         let event: BaseEvent = { type: 0 };
 
-        const subscription = stream.subscribe((e: BaseEvent) => event = e);
+        const subscription = stream.subscribe((e: BaseEvent) => e.type !== EventType.ProjectDiagnosticStatus && (event = e));
 
         await poll(() => event, timeout, 500, e => !e || (event = null));
 

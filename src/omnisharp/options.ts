@@ -34,6 +34,7 @@ export class Options {
         public enableDecompilationSupport: boolean,
         public enableImportCompletion: boolean,
         public enableAsyncCompletion: boolean,
+        public analyzeOpenDocumentsOnly: boolean,
         public useSemanticHighlighting: boolean,
         public testMaxDegreeOfParallelism: number,
         public testMaxLoadedProjectPerRequest: number,
@@ -84,6 +85,7 @@ export class Options {
         const enableDecompilationSupport = omnisharpConfig.get<boolean>('enableDecompilationSupport', false);
         const enableImportCompletion = omnisharpConfig.get<boolean>('enableImportCompletion', false);
         const enableAsyncCompletion = omnisharpConfig.get<boolean>('enableAsyncCompletion', false);
+        const analyzeOpenDocumentsOnly = omnisharpConfig.get<boolean>('analyzeOpenDocumentsOnly', false);
 
         const useFormatting = csharpConfig.get<boolean>('format.enable', true);
         const organizeImportsOnFormat = omnisharpConfig.get<boolean>('organizeImportsOnFormat', false);
@@ -146,6 +148,7 @@ export class Options {
             enableDecompilationSupport,
             enableImportCompletion,
             enableAsyncCompletion,
+            analyzeOpenDocumentsOnly,
             useSemanticHighlighting,
             testMaxDegreeOfParallelism,
             testMaxLoadedProjectPerRequest,

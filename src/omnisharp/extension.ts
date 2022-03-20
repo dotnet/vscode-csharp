@@ -45,6 +45,7 @@ import SourceGeneratedDocumentProvider from '../features/sourceGeneratedDocument
 import { getDecompilationAuthorization } from './decompilationPrompt';
 import { OmniSharpDotnetResolver } from './OmniSharpDotnetResolver';
 import TestingProvider from '../features/testingProvider';
+import fileOpenClose from '../features/fileOpenCloseProvider';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
@@ -113,6 +114,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables.add(forwardChanges(server));
         localDisposables.add(trackVirtualDocuments(server, eventStream));
         localDisposables.add(vscode.languages.registerFoldingRangeProvider(documentSelector, new StructureProvider(server, languageMiddlewareFeature)));
+        localDisposables.add(fileOpenClose(server));
 
         const semanticTokensProvider = new SemanticTokensProvider(server, optionProvider, languageMiddlewareFeature);
         localDisposables.add(vscode.languages.registerDocumentSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
