@@ -408,7 +408,7 @@ function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResul
 
 function launchNixMono(launchPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv, useDebugger: boolean): LaunchResult {
     let argsCopy = args.slice(0); // create copy of details args
-    argsCopy.unshift(`$"{launchPath}"`);
+    argsCopy.unshift(`"${launchPath}"`);
     argsCopy.unshift("--assembly-loader=strict");
 
     if (useDebugger) {

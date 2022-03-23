@@ -197,6 +197,14 @@ export async function getCompletionAfterInsert(server: OmniSharpServer, request:
     return server.makeRequest<protocol.CompletionAfterInsertResponse>(protocol.Requests.CompletionAfterInsert, request);
 }
 
+export async function fileOpen(server: OmniSharpServer, request: protocol.Request) {
+    return server.makeRequest<void>(protocol.Requests.FileOpen, request);
+}
+
+export async function fileClose(server: OmniSharpServer, request: protocol.Request) {
+    return server.makeRequest<void>(protocol.Requests.FileClose, request);
+}
+
 export async function isNetCoreProject(project: protocol.MSBuildProject) {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp') || tf.ShortName.startsWith('netstandard')) !== undefined;
 }
