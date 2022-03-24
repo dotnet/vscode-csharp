@@ -170,16 +170,15 @@ export default class TestManager extends AbstractProvider {
         return targetFrameworkVersion;
     }
 
-    public async discoverTests(fileName: string, testFrameworkName: string, noBuild: boolean): Promise<protocol.V2.TestInfo[]> {
-
-        let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
+    public async discoverTests(fileName: string, testFrameworkName: string, noBuild: boolean, targetFrameworkVersion: string = null): Promise<protocol.V2.TestInfo[]> {
         let runSettings = this._getRunSettings(fileName);
 
         const request: protocol.V2.DiscoverTestsRequest = {
             FileName: fileName,
             RunSettings: runSettings,
             TestFrameworkName: testFrameworkName,
-            TargetFrameworkVersion: targetFrameworkVersion,
+            TargetFrameworkVersion: targetFrameworkVersion ??
+                await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName),
             NoBuild: noBuild
         };
 
@@ -232,7 +231,7 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    public async runDotnetTestsInClass(className: string, methodsInClass: string[], fileName: string, testFrameworkName: string, noBuild: boolean = false) {
+    public async runDotnetTestsInClass(className: string, methodsInClass: string[], fileName: string, testFrameworkName: string, noBuild: boolean = false, targetFrameworkVersion: string | undefined = undefined) {
 
         //to do: try to get the class name here
         this._eventStream.post(new DotNetTestsInClassRunStart(className));
@@ -241,12 +240,13 @@ export default class TestManager extends AbstractProvider {
             this._eventStream.post(new DotNetTestMessage(e.Message));
         });
 
-        let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
+        targetFrameworkVersion ??= await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
         let runSettings = this._getRunSettings(fileName);
 
         try {
             let results = await this._runTestsInClass(fileName, runSettings, testFrameworkName, targetFrameworkVersion, methodsInClass, noBuild);
             this._eventStream.post(new ReportDotNetTestResults(results));
+            return results;
         }
         catch (reason) {
             this._eventStream.post(new DotNetTestRunFailure(reason));
@@ -424,11 +424,13 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    public async debugDotnetTestsInClass(className: string, methodsToRun: string[], fileName: string, testFrameworkName: string, noBuild: boolean = false) {
+    public async debugDotnetTestsInClass(className: string, methodsToRun: string[], fileName: string, testFrameworkName: string, noBuild: boolean = false, targetFrameworkVersion: string | undefined = undefined) {
 
         this._eventStream.post(new DotNetTestsInClassDebugStart(className));
 
-        let { debugEventListener, targetFrameworkVersion } = await this._recordDebugAndGetDebugValues(fileName, testFrameworkName);
+        let result = await this._recordDebugAndGetDebugValues(fileName, testFrameworkName);
+        let debugEventListener = result.debugEventListener;
+        targetFrameworkVersion ??= result.targetFrameworkVersion;
         let runSettings = this._getRunSettings(fileName);
 
         try {
